@@ -25,5 +25,10 @@ namespace dnSpy.Contracts.Debugger {
 	/// and <see cref="AttachProgramOptions.GetOptions"/>. The options are then passed to <see cref="DbgManager.Start(StartDebuggingOptions)"/>.
 	/// </summary>
 	public abstract class StartDebuggingOptions {
+		/// <summary>
+		/// Clones this instance
+		/// </summary>
+		/// <returns></returns>
+		public abstract StartDebuggingOptions Clone();
 	}
 }

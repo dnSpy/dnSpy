@@ -82,11 +82,8 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public override bool CanTerminateAll => CanExecutePauseOrRunningCommand;
 		public override void TerminateAll() => dbgManager.Value.TerminateAll();
-
-		public override bool CanRestart => CanExecutePauseOrRunningCommand;//TODO:
-		public override void Restart() {
-			//TODO:
-		}
+		public override bool CanRestart => CanExecutePauseOrRunningCommand && dbgManager.Value.CanRestart;
+		public override void Restart() => dbgManager.Value.Restart();
 
 		public override bool CanShowNextStatement => CanExecutePauseCommand;
 		public override void ShowNextStatement() {

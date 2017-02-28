@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public DotNetFrameworkStartDebuggingOptions Clone() => CopyTo(new DotNetFrameworkStartDebuggingOptions());
+		public override StartDebuggingOptions Clone() => CopyTo(new DotNetFrameworkStartDebuggingOptions());
 
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/> and returns it

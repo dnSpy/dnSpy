@@ -45,6 +45,16 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract string Start(StartDebuggingOptions options);
 
 		/// <summary>
+		/// true if <see cref="Restart"/> can be called
+		/// </summary>
+		public abstract bool CanRestart { get; }
+
+		/// <summary>
+		/// Restarts the debugged program(s)
+		/// </summary>
+		public abstract void Restart();
+
+		/// <summary>
 		/// true if a program is being debugged
 		/// </summary>
 		public abstract bool IsDebugging { get; }

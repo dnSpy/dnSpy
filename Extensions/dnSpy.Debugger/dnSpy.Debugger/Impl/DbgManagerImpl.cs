@@ -114,6 +114,7 @@ namespace dnSpy.Debugger.Impl {
 		readonly List<EngineInfo> engines;
 		readonly Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>[] dbgEngineProviders;
 		readonly Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>[] dbgManagerStartListeners;
+		readonly List<StartDebuggingOptions> restartOptions;
 		int hasNotifiedStartListenersCounter;
 
 		[ImportingConstructor]
@@ -123,11 +124,17 @@ namespace dnSpy.Debugger.Impl {
 			processes = new List<DbgProcessImpl>();
 			debugTags = new TagsCollection();
 			dispatcherThread = new DispatcherThreadImpl();
+			restartOptions = new List<StartDebuggingOptions>();
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgManagerStartListeners = dbgManagerStartListeners.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public override string Start(StartDebuggingOptions options) {
+			var clonedOptions = options.Clone();
+			// Make sure Clone() works correctly by only using a clone of the input.
+			// If it's buggy, the owner will notice something's wrong and fix it.
+			options = clonedOptions.Clone();
+
 			lock (dbgManagerStartListeners) {
 				if (hasNotifiedStartListenersCounter == 0) {
 					hasNotifiedStartListenersCounter++;
@@ -149,6 +156,8 @@ namespace dnSpy.Debugger.Impl {
 								var oldIsRunning = cachedIsRunning;
 								raiseIsDebuggingChanged = engines.Count == 0;
 								var engineInfo = new EngineInfo(engine);
+								if (engine.StartKind == DbgStartKind.Start)
+									restartOptions.Add(clonedOptions);
 								engines.Add(engineInfo);
 								addedDebugTags = debugTags.Add(engineInfo.DebugTags);
 								cachedIsRunning = CalculateIsRunning_NoLock();
@@ -318,6 +327,7 @@ namespace dnSpy.Debugger.Impl {
 					Debug.Assert(debuggingContext != null);
 					debuggingContextToClose = debuggingContext;
 					debuggingContext = null;
+					restartOptions.Clear();
 				}
 				removedDebugTags = debugTags.Remove(info.DebugTags);
 				cachedIsRunning = CalculateIsRunning_NoLock();
@@ -361,9 +371,48 @@ namespace dnSpy.Debugger.Impl {
 			debuggingContextToClose?.Close(DispatcherThread);
 		}
 
+		public override bool CanRestart {
+			get {
+				lock (lockObj) {
+					if (breakAllHelper != null)
+						return false;
+					if (stopDebuggingHelper != null)
+						return false;
+					if (restartOptions.Count == 0)
+						return false;
+					return true;
+				}
+			}
+		}
+
+		public override void Restart() {
+			lock (lockObj) {
+				if (!CanRestart)
+					return;
+				var restartOptionsCopy = restartOptions.ToArray();
+				stopDebuggingHelper = new StopDebuggingHelper(this, success => {
+					lock (lockObj) {
+						Debug.Assert(stopDebuggingHelper != null);
+						stopDebuggingHelper = null;
+					}
+					if (success) {
+						foreach (var options in restartOptionsCopy)
+							Start(options);
+					}
+					else {
+						//TODO: Notify user that it timed out
+					}
+				});
+			}
+			stopDebuggingHelper.Initialize();
+		}
+		StopDebuggingHelper stopDebuggingHelper;
+
 		public override void BreakAll() {
 			lock (lockObj) {
 				if (breakAllHelper != null)
+					return;
+				if (stopDebuggingHelper != null)
 					return;
 				breakAllHelper = new BreakAllHelper(this);
 				breakAllHelper.Start_NoLock();
