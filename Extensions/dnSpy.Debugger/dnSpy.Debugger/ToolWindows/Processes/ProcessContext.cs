@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		ProcessFormatter ProcessFormatter { get; }
+		ProcessFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		bool IsVisible { get; }
 	}
@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		public ProcessFormatter ProcessFormatter { get; set; }
+		public ProcessFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool IsVisible { get; set; }
 

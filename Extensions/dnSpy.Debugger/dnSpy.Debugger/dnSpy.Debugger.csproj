@@ -83,6 +83,7 @@
     <Compile Include="ToolWindows\Memory\MemoryWindowService.cs" />
     <Compile Include="ToolWindows\Memory\MemoryWindowsHelper.cs" />
     <Compile Include="ToolWindows\Memory\ProcessHexBufferProvider.cs" />
+    <Compile Include="ToolWindows\Modules\Commands.cs" />
     <Compile Include="ToolWindows\Modules\ModuleColumnConverter.cs" />
     <Compile Include="ToolWindows\Modules\ModuleContext.cs" />
     <Compile Include="ToolWindows\Modules\ModuleFormatter.cs" />
@@ -90,9 +91,12 @@
     <Compile Include="ToolWindows\Modules\ModulesControl.xaml.cs">
       <DependentUpon>ModulesControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ToolWindows\Modules\ModulesOperations.cs" />
+    <Compile Include="ToolWindows\Modules\ModulesSaver.cs" />
     <Compile Include="ToolWindows\Modules\ModulesToolWindowContent.cs" />
     <Compile Include="ToolWindows\Modules\ModulesVM.cs" />
     <Compile Include="ToolWindows\Modules\ModuleVM.cs" />
+    <Compile Include="ToolWindows\Modules\PEFilesSaver.cs" />
     <Compile Include="ToolWindows\PathUtils.cs" />
     <Compile Include="ToolWindows\Processes\Commands.cs" />
     <Compile Include="ToolWindows\Processes\ProcessColumnConverter.cs" />

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -52,6 +53,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		ObservableCollection<ProcessVM> AllItems => processesVM.AllItems;
 		ObservableCollection<ProcessVM> SelectedItems => processesVM.SelectedItems;
+		//TODO: This should be view order
+		IEnumerable<ProcessVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
 		ProcessesOperationsImpl(IProcessesVM processesVM, DebuggerSettings debuggerSettings) {
@@ -62,8 +65,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
 			var output = new StringBuilderTextColorOutput();
-			foreach (var vm in SelectedItems.OrderBy(a => a.Order)) {
-				var formatter = vm.Context.ProcessFormatter;
+			foreach (var vm in SortedSelectedItems) {
+				var formatter = vm.Context.Formatter;
 				formatter.WriteImage(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteName(output, vm.Process);
@@ -88,7 +91,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			}
 		}
 
-		public override bool CanSelectAll => AllItems.Count != 0;
+		public override bool CanSelectAll => SelectedItems.Count != AllItems.Count;
 		public override void SelectAll() {
 			SelectedItems.Clear();
 			foreach (var vm in AllItems)

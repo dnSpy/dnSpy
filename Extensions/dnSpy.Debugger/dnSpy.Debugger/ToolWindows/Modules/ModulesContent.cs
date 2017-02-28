@@ -30,6 +30,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 	interface IModulesContent : IUIObjectProvider {
 		void Focus();
 		ListView ListView { get; }
+		ModulesOperations Operations { get; }
 	}
 
 	[Export(typeof(IModulesContent))]
@@ -38,15 +39,27 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public IInputElement FocusedElement => modulesControl.ListView;
 		public FrameworkElement ZoomElement => modulesControl;
 		public ListView ListView => modulesControl.ListView;
+		public ModulesOperations Operations { get; }
 
 		readonly ModulesControl modulesControl;
 		readonly IDocumentTabService documentTabService;
 
+		sealed class ControlVM {
+			public IModulesVM VM { get; }
+			ModulesOperations Operations { get; }
+
+			public ControlVM(IModulesVM vm, ModulesOperations operations) {
+				VM = vm;
+				Operations = operations;
+			}
+		}
+
 		[ImportingConstructor]
-		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, IDocumentTabService documentTabService) {
+		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, ModulesOperations modulesOperations, IDocumentTabService documentTabService) {
+			Operations = modulesOperations;
 			modulesControl = new ModulesControl();
 			this.documentTabService = documentTabService;
-			modulesControl.DataContext = modulesVM;
+			modulesControl.DataContext = new ControlVM(modulesVM, modulesOperations);
 			modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);

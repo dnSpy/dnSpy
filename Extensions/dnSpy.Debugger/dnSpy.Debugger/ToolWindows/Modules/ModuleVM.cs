@@ -41,10 +41,12 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public object AppDomainObject => new FormatterObject<ModuleVM>(this, PredefinedTextClassifierTags.ModulesWindowAppDomain);
 		public DbgModule Module { get; }
 		public IModuleContext Context { get; }
+		internal int Order { get; }
 
-		public ModuleVM(DbgModule module, IModuleContext context) {
+		public ModuleVM(DbgModule module, IModuleContext context, int order) {
 			Module = module ?? throw new ArgumentNullException(nameof(module));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
+			Order = order;
 			module.PropertyChanged += DbgModule_PropertyChanged;
 		}
 

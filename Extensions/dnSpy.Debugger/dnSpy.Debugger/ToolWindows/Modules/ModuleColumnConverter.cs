@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 			var writer = obj.VM.Context.TextClassifierTextColorWriter;
 			writer.Clear();
-			var formatter = obj.VM.Context.ModuleFormatter;
+			var formatter = obj.VM.Context.Formatter;
 			if (obj.Tag == PredefinedTextClassifierTags.ModulesWindowName)
 				formatter.WriteName(writer, obj.VM.Module);
 			else if (obj.Tag == PredefinedTextClassifierTags.ModulesWindowPath)

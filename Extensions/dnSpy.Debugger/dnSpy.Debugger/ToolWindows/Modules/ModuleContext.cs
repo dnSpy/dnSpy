@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		ModuleFormatter ModuleFormatter { get; }
+		ModuleFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 	}
 
@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		public ModuleFormatter ModuleFormatter { get; set; }
+		public ModuleFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 
 		public ModuleContext(Dispatcher dispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {

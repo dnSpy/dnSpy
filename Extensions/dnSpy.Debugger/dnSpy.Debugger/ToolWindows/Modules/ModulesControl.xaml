@@ -25,6 +25,7 @@
              xmlns:local="clr-namespace:dnSpy.Debugger.ToolWindows.Modules"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:ui="clr-namespace:dnSpy.Debugger.UI"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
@@ -35,11 +36,11 @@
             VirtualizingStackPanel.IsVirtualizing="True"
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"
+            ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
-            ItemsSource="{Binding Collection}"
-            SelectedItem="{Binding SelectedItem}">
+            ItemsSource="{Binding VM.AllItems}">
             <ListView.Resources>
                 <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource DbgTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
                 <local:ModuleColumnConverter x:Key="moduleColumnConverter" />

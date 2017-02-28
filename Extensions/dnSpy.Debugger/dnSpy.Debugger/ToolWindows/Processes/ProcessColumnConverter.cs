@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 			var writer = obj.VM.Context.TextClassifierTextColorWriter;
 			writer.Clear();
-			var formatter = obj.VM.Context.ProcessFormatter;
+			var formatter = obj.VM.Context.Formatter;
 			if (obj.Tag == PredefinedTextClassifierTags.ProcessesWindowName)
 				formatter.WriteName(writer, obj.VM.Process);
 			else if (obj.Tag == PredefinedTextClassifierTags.ProcessesWindowId)

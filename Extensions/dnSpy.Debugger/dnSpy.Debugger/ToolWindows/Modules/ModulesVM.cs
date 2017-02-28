@@ -32,34 +32,25 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Modules {
 	interface IModulesVM {
+		ObservableCollection<ModuleVM> AllItems { get; }
+		ObservableCollection<ModuleVM> SelectedItems { get; }
 	}
 
 	[Export(typeof(IModulesVM))]
 	[ExportDbgManagerStartListener]
 	sealed class ModulesVM : ViewModelBase, IModulesVM, IDbgManagerStartListener {
-		public ObservableCollection<ModuleVM> Collection => modulesList;
-		readonly ObservableCollection<ModuleVM> modulesList;
+		public ObservableCollection<ModuleVM> AllItems { get; }
+		public ObservableCollection<ModuleVM> SelectedItems { get; }
 
-		public object SelectedItem {
-			get => selectedItem;
-			set {
-				if (selectedItem != value) {
-					selectedItem = value;
-					OnPropertyChanged(nameof(SelectedItem));
-				}
-			}
-		}
-		object selectedItem;
-
-		readonly DbgManager dbgManager;
 		readonly ModuleContext moduleContext;
 		readonly ModuleFormatterProvider moduleFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
+		int moduleOrder;
 
 		[ImportingConstructor]
-		ModulesVM(DbgManager dbgManager, DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ModuleFormatterProvider moduleFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
-			this.dbgManager = dbgManager;
-			modulesList = new ObservableCollection<ModuleVM>();
+		ModulesVM(DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ModuleFormatterProvider moduleFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+			AllItems = new ObservableCollection<ModuleVM>();
+			SelectedItems = new ObservableCollection<ModuleVM>();
 			this.moduleFormatterProvider = moduleFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
 			// We could be in a random thread if IDbgManagerStartListener.OnStart() gets called after the ctor returns
@@ -67,7 +58,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 				var modCtx = new ModuleContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
 					SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-					ModuleFormatter = moduleFormatterProvider.Create(),
+					Formatter = moduleFormatterProvider.Create(),
 				};
 				classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -94,14 +85,14 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void RefreshThemeFields_UI() {
-			foreach (var vm in Collection)
+			foreach (var vm in AllItems)
 				vm.RefreshThemeFields();
 		}
 
 		// UI thread
 		void RefreshHexSettings_UI() {
-			moduleContext.ModuleFormatter = moduleFormatterProvider.Create();
-			foreach (var vm in Collection)
+			moduleContext.Formatter = moduleFormatterProvider.Create();
+			foreach (var vm in AllItems)
 				vm.RefreshHexFields();
 		}
 
@@ -122,7 +113,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				foreach (var p in e.Objects)
 					p.RuntimesChanged -= DbgProcess_RuntimesChanged;
 				UI(() => {
-					var coll = Collection;
+					var coll = AllItems;
 					for (int i = coll.Count - 1; i >= 0; i--) {
 						var moduleProcess = coll[i].Module.Process;
 						foreach (var p in e.Objects) {
@@ -138,15 +129,15 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void RemoveModuleAt_UI(int i) {
-			Debug.Assert(0 <= i && i < Collection.Count);
-			var vm = Collection[i];
+			Debug.Assert(0 <= i && i < AllItems.Count);
+			var vm = AllItems[i];
 			vm.Dispose();
-			Collection.RemoveAt(i);
+			AllItems.RemoveAt(i);
 		}
 
 		// UI thread
 		void RemoveModule_UI(DbgModule m) {
-			var coll = Collection;
+			var coll = AllItems;
 			for (int i = 0; i < coll.Count; i++) {
 				if (coll[i].Module == m) {
 					RemoveModuleAt_UI(i);
@@ -169,7 +160,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 					r.ModulesChanged -= DbgRuntime_ModulesChanged;
 				}
 				UI(() => {
-					var coll = Collection;
+					var coll = AllItems;
 					for (int i = coll.Count - 1; i >= 0; i--) {
 						var moduleRuntime = coll[i].Module.Runtime;
 						foreach (var r in e.Objects) {
@@ -193,7 +184,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				foreach (var a in e.Objects)
 					a.PropertyChanged -= DbgAppDomain_PropertyChanged;
 				UI(() => {
-					var coll = Collection;
+					var coll = AllItems;
 					for (int i = coll.Count - 1; i >= 0; i--) {
 						var moduleAppDomain = coll[i].Module.AppDomain;
 						if (moduleAppDomain == null)
@@ -214,7 +205,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			if (e.Added) {
 				UI(() => {
 					foreach (var m in e.Objects)
-						Collection.Add(new ModuleVM(m, moduleContext));
+						AllItems.Add(new ModuleVM(m, moduleContext, moduleOrder++));
 				});
 			}
 			else {
@@ -230,7 +221,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			if (e.PropertyName == nameof(DbgAppDomain.Name) || e.PropertyName == nameof(DbgAppDomain.Id)) {
 				UI(() => {
 					var appDomain = (DbgAppDomain)sender;
-					foreach (var vm in Collection)
+					foreach (var vm in AllItems)
 						vm.RefreshAppDomainNames(appDomain);
 				});
 			}

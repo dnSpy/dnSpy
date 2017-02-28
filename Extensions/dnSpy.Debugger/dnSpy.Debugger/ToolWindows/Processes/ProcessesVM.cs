@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 				var procCtx = new ProcessContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
 					SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-					ProcessFormatter = processFormatterProvider.Create(),
+					Formatter = processFormatterProvider.Create(),
 				};
 				classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// UI thread
-		void RecreateFormatter() => processContext.ProcessFormatter = processFormatterProvider.Create();
+		void RecreateFormatter() => processContext.Formatter = processFormatterProvider.Create();
 
 		// UI thread
 		void RefreshHexSettings_UI() {

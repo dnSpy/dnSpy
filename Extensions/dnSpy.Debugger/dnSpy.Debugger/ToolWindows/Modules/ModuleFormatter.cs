@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			output.WriteFilename(filename);
 		}
 
-		public void WriteName(ITextColorWriter output, DbgModule module) => WriteFilename(output, module, PathUtils.GetFilename(module.Name));
+		public void WriteName(ITextColorWriter output, DbgModule module) => WriteFilename(output, module, module.Name);
 		public void WritePath(ITextColorWriter output, DbgModule module) => WriteFilename(output, module, module.Filename);
 		public void WriteOptimized(ITextColorWriter output, DbgModule module) => output.WriteYesNoError(module.IsOptimized);
 		public void WriteDynamic(ITextColorWriter output, DbgModule module) => output.WriteYesNo(module.IsDynamic);

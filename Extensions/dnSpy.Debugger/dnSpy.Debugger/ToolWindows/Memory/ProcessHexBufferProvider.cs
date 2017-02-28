@@ -156,6 +156,8 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 
 			public void SetUnderlyingStream(HexBufferStream stream, DbgProcess process) {
+				if (Process == process && DebuggerHexBufferStream.UnderlyingStream == stream)
+					return;
 				Process = process;
 				DebuggerHexBufferStream.UnderlyingStream = stream;
 				UnderlyingStreamChanged?.Invoke(this, EventArgs.Empty);
