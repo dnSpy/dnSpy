@@ -444,6 +444,8 @@ namespace dnSpy.Debugger.Impl {
 				// Make a copy of it in the unlikely event that an engine gets disconnected
 				// when we call Terminate()/Detach() inside the lock
 				foreach (var info in engines.ToArray()) {
+					if (info.Process == null)
+						continue;
 					if (info.Process.ShouldDetach)
 						info.Engine.Detach();
 					else
