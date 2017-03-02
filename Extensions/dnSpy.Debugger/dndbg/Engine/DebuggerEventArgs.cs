@@ -25,6 +25,16 @@ namespace dndbg.Engine {
 		public new static readonly DebuggerEventArgs Empty = new DebuggerEventArgs();
 	}
 
+	sealed class ThreadDebuggerEventArgs : DebuggerEventArgs {
+		public DnThread Thread { get; }
+		public bool Added { get; }
+
+		public ThreadDebuggerEventArgs(DnThread thread, bool added) {
+			Thread = thread;
+			Added = added;
+		}
+	}
+
 	sealed class AppDomainDebuggerEventArgs : DebuggerEventArgs {
 		public DnAppDomain AppDomain { get; }
 		public bool Added { get; }

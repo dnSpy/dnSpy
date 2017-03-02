@@ -186,13 +186,14 @@ namespace dndbg.Engine {
 			return thread;
 		}
 
-		internal void ThreadExited(ICorDebugThread comThread) {
+		internal DnThread ThreadExited(ICorDebugThread comThread) {
 			var thread = threads.TryGet(comThread);
 			// Sometimes we don't get a CreateThread message
-			if (thread == null)
-				return;
-			thread.SetHasExited();
-			threads.Remove(comThread);
+			if (thread != null) {
+				thread.SetHasExited();
+				threads.Remove(comThread);
+			}
+			return thread;
 		}
 
 		/// <summary>

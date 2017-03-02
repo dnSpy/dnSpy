@@ -84,6 +84,10 @@ namespace dndbg.Engine {
 		public void SetProcessTerminated() => forceProcessTerminated = true;
 		bool forceProcessTerminated;
 
+		public event EventHandler<ThreadDebuggerEventArgs> OnThreadAdded;
+		void CallOnThreadAdded(DnThread thread, bool added) =>
+			OnThreadAdded?.Invoke(this, new ThreadDebuggerEventArgs(thread, added));
+
 		public event EventHandler<AppDomainDebuggerEventArgs> OnAppDomainAdded;
 		void CallOnAppDomainAdded(DnAppDomain appDomain, bool added) =>
 			OnAppDomainAdded?.Invoke(this, new AppDomainDebuggerEventArgs(appDomain, added));
@@ -799,8 +803,10 @@ namespace dndbg.Engine {
 				var ctArgs = (CreateThreadDebugCallbackEventArgs)e;
 				process = TryGetValidProcess(ctArgs.Thread);
 				if (process != null) {
-					process.TryAdd(ctArgs.Thread);
+					var dnThread = process.TryAdd(ctArgs.Thread);
 					//TODO: ICorDebugThread::SetDebugState
+					if (dnThread != null)
+						CallOnThreadAdded(dnThread, true);
 				}
 				InitializeCurrentDebuggerState(e, null, ctArgs.AppDomain, ctArgs.Thread);
 				break;
@@ -809,8 +815,11 @@ namespace dndbg.Engine {
 				var etArgs = (ExitThreadDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, etArgs.AppDomain, etArgs.Thread);
 				process = TryGetValidProcess(etArgs.Thread);
-				if (process != null)
-					process.ThreadExited(etArgs.Thread);
+				if (process != null) {
+					var dnThread = process.ThreadExited(etArgs.Thread);
+					if (dnThread != null)
+						CallOnThreadAdded(dnThread, false);
+				}
 				break;
 
 			case DebugCallbackKind.LoadModule:

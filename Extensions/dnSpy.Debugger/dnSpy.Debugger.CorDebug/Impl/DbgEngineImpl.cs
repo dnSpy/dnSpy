@@ -92,6 +92,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				dnDebugger.DebugCallbackEvent -= DnDebugger_DebugCallbackEvent;
 				dnDebugger.OnProcessStateChanged -= DnDebugger_OnProcessStateChanged;
 				dnDebugger.OnNameChanged -= DnDebugger_OnNameChanged;
+				dnDebugger.OnThreadAdded -= DnDebugger_OnThreadAdded;
 				dnDebugger.OnAppDomainAdded -= DnDebugger_OnAppDomainAdded;
 				dnDebugger.OnAssemblyAdded -= DnDebugger_OnAssemblyAdded;
 				dnDebugger.OnModuleAdded -= DnDebugger_OnModuleAdded;
@@ -128,6 +129,17 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				//TODO: Update thread name
 			}
 		});
+
+		void DnDebugger_OnThreadAdded(object sender, ThreadDebuggerEventArgs e) {
+			if (e.Added) {
+				// Must be created in the CLR dbg thread since it accesses a CLR dbg COM object
+				var appDomain = ClrRuntime.TryGetAppDomain(e.Thread.AppDomainOrNull);
+				var thread = new DbgClrThreadImpl(ClrRuntime, appDomain, e.Thread);
+				DbgThread(() => ClrRuntime.AddThread_DbgThread(thread));
+			}
+			else
+				DbgThread(() => ClrRuntime.RemoveThread_DbgThread(e.Thread));
+		}
 
 		void DnDebugger_OnAppDomainAdded(object sender, AppDomainDebuggerEventArgs e) {
 			if (e.Added) {
@@ -186,6 +198,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				dnDebugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
 				dnDebugger.OnProcessStateChanged += DnDebugger_OnProcessStateChanged;
 				dnDebugger.OnNameChanged += DnDebugger_OnNameChanged;
+				dnDebugger.OnThreadAdded += DnDebugger_OnThreadAdded;
 				dnDebugger.OnAppDomainAdded += DnDebugger_OnAppDomainAdded;
 				dnDebugger.OnAssemblyAdded += DnDebugger_OnAssemblyAdded;
 				dnDebugger.OnModuleAdded += DnDebugger_OnModuleAdded;

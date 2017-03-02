@@ -85,11 +85,14 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgThread>> ThreadsChanged;
 		public override DbgThread[] Threads {
 			get {
-				throw new NotImplementedException();//TODO:
+				lock (lockObj)
+					return threads.ToArray();
 			}
 		}
+		readonly List<DbgThread> threads;// Owned by the runtimes
 
 		readonly object lockObj;
 		readonly DbgManagerImpl owner;
@@ -98,6 +101,7 @@ namespace dnSpy.Debugger.Impl {
 		public DbgProcessImpl(DbgManagerImpl owner, int pid, DbgProcessState state, bool shouldDetach) {
 			lockObj = new object();
 			engineInfos = new List<EngineInfo>();
+			threads = new List<DbgThread>();
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			this.state = state;
 			Id = pid;
@@ -245,8 +249,23 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
+		void DbgRuntime_ThreadsChanged(object sender, DbgCollectionChangedEventArgs<DbgThread> e) {
+			lock (lockObj) {
+				if (e.Added)
+					threads.AddRange(e.Objects);
+				else {
+					foreach (var thread in e.Objects) {
+						bool b = threads.Remove(thread);
+						Debug.Assert(b);
+					}
+				}
+			}
+			ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(e.Objects, added: e.Added));
+		}
+
 		internal void Add_DbgThread(DbgEngine engine, DbgRuntime runtime, DbgProcessState newState) {
 			bool raiseStateChanged, raiseDebuggingChanged;
+			DbgThread[] addedThreads;
 			lock (lockObj) {
 				engineInfos.Add(new EngineInfo(engine, runtime));
 				var newDebugging = CalculateDebugging_NoLock();
@@ -254,8 +273,12 @@ namespace dnSpy.Debugger.Impl {
 				raiseDebuggingChanged = debugging != newDebugging;
 				state = newState;
 				debugging = newDebugging;
+				addedThreads = runtime.Threads;
+				runtime.ThreadsChanged += DbgRuntime_ThreadsChanged;
 			}
 			RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: true));
+			if (addedThreads.Length != 0)
+				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(addedThreads, added: true));
 			if (raiseStateChanged)
 				OnPropertyChanged(nameof(State));
 			if (raiseDebuggingChanged)
@@ -291,11 +314,24 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void NotifyRuntimesChanged_DbgThread(DbgRuntime runtime) {
 			bool raiseDebuggingChanged;
+			DbgThread[] removedThreads;
 			lock (lockObj) {
 				var newDebugging = CalculateDebugging_NoLock();
 				raiseDebuggingChanged = debugging != newDebugging;
 				debugging = newDebugging;
+				runtime.ThreadsChanged -= DbgRuntime_ThreadsChanged;
+				var threadsList = new List<DbgThread>();
+				for (int i = threads.Count - 1; i >= 0; i--) {
+					var thread = threads[i];
+					if (thread.Runtime == runtime) {
+						threadsList.Add(thread);
+						threads.RemoveAt(i);
+					}
+				}
+				removedThreads = threadsList.ToArray();
 			}
+			if (removedThreads.Length != 0)
+				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(removedThreads, added: false));
 			if (raiseDebuggingChanged)
 				OnPropertyChanged(nameof(Debugging));
 			if (runtime != null)

@@ -90,6 +90,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgThread[] Threads { get; }
 
 		/// <summary>
+		/// Raised when <see cref="Threads"/> is changed
+		/// </summary>
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgThread>> ThreadsChanged;
+
+		/// <summary>
 		/// Reads memory. Unreadable memory is returned as 0s.
 		/// </summary>
 		/// <param name="address">Address in the debugged process</param>

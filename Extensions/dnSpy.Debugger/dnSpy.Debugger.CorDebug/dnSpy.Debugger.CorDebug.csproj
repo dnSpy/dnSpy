@@ -56,6 +56,7 @@
     <Compile Include="Impl\DbgClrAssemblyImpl.cs" />
     <Compile Include="Impl\DbgClrModuleImpl.cs" />
     <Compile Include="Impl\DbgClrRuntimeImpl.cs" />
+    <Compile Include="Impl\DbgClrThreadImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />

@@ -48,5 +48,15 @@ namespace dnSpy.Contracts.Debugger {
 		/// Raised when <see cref="AppDomains"/> is changed
 		/// </summary>
 		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgAppDomain>> AppDomainsChanged;
+
+		/// <summary>
+		/// Gets all threads
+		/// </summary>
+		public abstract DbgThread[] Threads { get; }
+
+		/// <summary>
+		/// Raised when <see cref="Threads"/> is changed
+		/// </summary>
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgThread>> ThreadsChanged;
 	}
 }

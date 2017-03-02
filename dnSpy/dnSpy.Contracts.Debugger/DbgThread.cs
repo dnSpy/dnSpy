@@ -55,9 +55,14 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgAppDomain AppDomain { get; }
 
 		/// <summary>
-		/// Gets the thread kind
+		/// Gets the thread kind, see <see cref="PredefinedThreadKinds"/>
 		/// </summary>
-		public abstract DbgThreadKind Kind { get; }
+		public abstract string Kind { get; }
+
+		/// <summary>
+		/// Gets the id of this thread
+		/// </summary>
+		public abstract int Id { get; }
 
 		/// <summary>
 		/// Gets the managed id of this thread or null if it's not a managed thread
@@ -68,30 +73,5 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets the thread name
 		/// </summary>
 		public abstract string Name { get; }
-	}
-
-	/// <summary>
-	/// Thread kind
-	/// </summary>
-	public enum DbgThreadKind {
-		/// <summary>
-		/// Unknown thread
-		/// </summary>
-		Unknown,
-
-		/// <summary>
-		/// Some other type of thread
-		/// </summary>
-		Other,
-
-		/// <summary>
-		/// Main thread
-		/// </summary>
-		Main,
-
-		/// <summary>
-		/// Worker thread
-		/// </summary>
-		WorkerThread,
 	}
 }

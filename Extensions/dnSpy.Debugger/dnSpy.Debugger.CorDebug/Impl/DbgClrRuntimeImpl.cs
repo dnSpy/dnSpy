@@ -62,6 +62,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 		readonly List<DbgClrAppDomainImpl> clrAppDomains;
 
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgThread>> ThreadsChanged;
+		public override DbgThread[] Threads {
+			get {
+				lock (lockObj)
+					return clrThreads.ToArray();
+			}
+		}
+		readonly List<DbgClrThreadImpl> clrThreads;
+
 		readonly object lockObj;
 		readonly DbgManager dbgManager;
 
@@ -70,6 +79,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			clrModules = new List<DbgClrModuleImpl>();
 			clrAssemblies = new List<DbgClrAssemblyImpl>();
 			clrAppDomains = new List<DbgClrAppDomainImpl>();
+			clrThreads = new List<DbgClrThreadImpl>();
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			Version = new CorDebugRuntimeVersion(kind, version ?? throw new ArgumentNullException(nameof(version)));
 			ClrFilename = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
@@ -120,6 +130,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				removedModule.ClrAssemblyImpl.RemoveModule_DbgThread(removedModule);
 				removedModule.Close(DispatcherThread);
 			}
+		}
+
+		internal DbgClrAppDomainImpl TryGetAppDomain(DnAppDomain dnAppDomain) {
+			if (dnAppDomain == null)
+				return null;
+			lock (lockObj)
+				return TryGetAppDomain_NoLock(dnAppDomain);
 		}
 
 		DbgClrAppDomainImpl TryGetAppDomain_NoLock(DnAppDomain dnAppDomain) {
@@ -173,6 +190,33 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			foundAppDomain?.SetName_DbgThread(newName ?? string.Empty);
 		}
 
+		internal void AddThread_DbgThread(DbgClrThreadImpl thread) {
+			dbgManager.DispatcherThread.VerifyAccess();
+			lock (lockObj)
+				clrThreads.Add(thread);
+			ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(thread, added: true));
+		}
+
+		internal void RemoveThread_DbgThread(DnThread dnThread) {
+			dbgManager.DispatcherThread.VerifyAccess();
+			DbgClrThreadImpl removedThread = null;
+			lock (lockObj) {
+				for (int i = 0; i < clrThreads.Count; i++) {
+					var thread = clrThreads[i];
+					if (thread.DnThread == dnThread) {
+						clrThreads.RemoveAt(i);
+						removedThread = thread;
+						break;
+					}
+				}
+			}
+			Debug.Assert(removedThread != null);
+			if (removedThread != null) {
+				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(removedThread, added: false));
+				removedThread.Close(DispatcherThread);
+			}
+		}
+
 		internal void AddAppDomain_DbgThread(DbgClrAppDomainImpl appDomain) {
 			dbgManager.DispatcherThread.VerifyAccess();
 			lock (lockObj)
@@ -201,23 +245,30 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		protected override void CloseCore() {
+			DbgThread[] threads;
 			DbgModule[] modules;
 			DbgClrAssembly[] assemblies;
 			DbgAppDomain[] appDomains;
 			lock (lockObj) {
+				threads = clrThreads.ToArray();
 				modules = clrModules.ToArray();
 				assemblies = clrAssemblies.ToArray();
 				appDomains = clrAppDomains.ToArray();
+				clrThreads.Clear();
 				clrModules.Clear();
 				clrAssemblies.Clear();
 				clrAppDomains.Clear();
 			}
-			if (appDomains.Length != 0)
-				AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomains, added: false));
-			if (assemblies.Length != 0)
-				AssembliesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrAssembly>(assemblies, added: false));
+			if (threads.Length != 0)
+				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(threads, added: false));
 			if (modules.Length != 0)
 				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(modules, added: false));
+			if (assemblies.Length != 0)
+				AssembliesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrAssembly>(assemblies, added: false));
+			if (appDomains.Length != 0)
+				AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomains, added: false));
+			foreach (var thread in threads)
+				thread.Close(DispatcherThread);
 			foreach (var module in modules)
 				module.Close(DispatcherThread);
 			foreach (var assembly in assemblies)
