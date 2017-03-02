@@ -366,8 +366,8 @@ namespace dnSpy.Debugger.Impl {
 				ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(processToDispose, added: false));
 			}
 
-			engine.Close(DispatcherThread);
 			runtime?.Close(DispatcherThread);
+			engine.Close(DispatcherThread);
 			processToDispose?.Close(DispatcherThread);
 
 			// Raise them in reverse order (see Start())
