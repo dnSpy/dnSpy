@@ -654,6 +654,7 @@
       <DependentUpon>AskDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\AskVM.cs" />
+    <Compile Include="MainApp\DevBuildWarning.cs" />
     <Compile Include="MainApp\DocumentTreeViewWindowContent.cs" />
     <Compile Include="MainApp\DsLoaderControl.xaml.cs">
       <DependentUpon>DsLoaderControl.xaml</DependentUpon>
