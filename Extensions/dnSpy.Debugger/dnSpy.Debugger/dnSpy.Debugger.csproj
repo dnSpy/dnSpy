@@ -57,7 +57,6 @@
     <Compile Include="Impl\DbgEngineThreadImpl.cs" />
     <Compile Include="Impl\DbgManagerImpl.BreakAllHelper.cs" />
     <Compile Include="Impl\DbgManagerImpl.cs" />
-    <Compile Include="Impl\DbgManagerImpl.DelayedIsRunningHelper.cs" />
     <Compile Include="Impl\DbgManagerImpl.StopDebuggingHelper.cs" />
     <Compile Include="Impl\DbgManagerImpl.TagsCollection.cs" />
     <Compile Include="Impl\DbgModuleImpl.cs" />
@@ -66,6 +65,7 @@
     <Compile Include="Impl\DbgRuntimeImpl.cs" />
     <Compile Include="Impl\DbgThreadImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
+    <Compile Include="Impl\DelayedIsRunningHelper.cs" />
     <Compile Include="Impl\DispatcherThreadImpl.cs" />
     <Compile Include="Impl\SwitchToDebuggedProcess.cs" />
     <Compile Include="Native\Memset.cs" />

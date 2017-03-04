@@ -27,7 +27,7 @@ using dnSpy.Contracts.Debugger.Engine;
 
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgManager))]
-	sealed partial class DbgManagerImpl : DbgManager {
+	sealed partial class DbgManagerImpl : DbgManager, IIsRunningProvider {
 		public override DispatcherThread DispatcherThread => dispatcherThread;
 		readonly DispatcherThreadImpl dispatcherThread;
 
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.Impl {
 			restartOptions = new List<StartDebuggingOptions>();
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgManagerStartListeners = dbgManagerStartListeners.OrderBy(a => a.Metadata.Order).ToArray();
-			new DelayedIsRunningHelper(this);
+			new DelayedIsRunningHelper(this, dispatcherThread.Dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}
 
 		// DbgManager thread
@@ -269,7 +269,7 @@ namespace dnSpy.Debugger.Impl {
 						return p;
 				}
 				bool shouldDetach = startKind == DbgStartKind.Attach;
-				process = new DbgProcessImpl(this, pid, CalculateProcessState(null), shouldDetach);
+				process = new DbgProcessImpl(this, dispatcherThread.Dispatcher, pid, CalculateProcessState(null), shouldDetach);
 				processes.Add(process);
 			}
 			ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(process, added: true));

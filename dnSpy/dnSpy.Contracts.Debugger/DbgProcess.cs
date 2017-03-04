@@ -86,6 +86,21 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgThread>> ThreadsChanged;
 
 		/// <summary>
+		/// true if the process is running, false if it's paused or terminated (see <see cref="State"/>)
+		/// </summary>
+		public abstract bool IsRunning { get; }
+
+		/// <summary>
+		/// Raised when <see cref="IsRunning"/> is changed, see also <see cref="DelayedIsRunningChanged"/>
+		/// </summary>
+		public abstract event EventHandler IsRunningChanged;
+
+		/// <summary>
+		/// Raised when the process has been running for a little while, eg. 1 second.
+		/// </summary>
+		public abstract event EventHandler DelayedIsRunningChanged;
+
+		/// <summary>
 		/// Reads memory. Unreadable memory is returned as 0s.
 		/// </summary>
 		/// <param name="address">Address in the debugged process</param>

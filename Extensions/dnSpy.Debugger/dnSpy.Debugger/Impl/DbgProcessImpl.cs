@@ -22,13 +22,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.Native;
 using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Impl {
-	unsafe sealed class DbgProcessImpl : DbgProcess {
+	unsafe sealed class DbgProcessImpl : DbgProcess, IIsRunningProvider {
 		public override DbgManager DbgManager => owner;
 		public override int Id { get; }
 		public override int Bitness { get; }
@@ -37,6 +38,17 @@ namespace dnSpy.Debugger.Impl {
 
 		public override DbgProcessState State => state;
 		DbgProcessState state;
+
+		public override event EventHandler IsRunningChanged;
+		public override event EventHandler DelayedIsRunningChanged;
+		public override bool IsRunning {
+			get {
+				lock (lockObj)
+					return cachedIsRunning;
+			}
+		}
+		bool CalculateIsRunning_NoLock() => state == DbgProcessState.Running;
+		bool cachedIsRunning;
 
 		public override string Debugging {
 			get {
@@ -99,12 +111,13 @@ namespace dnSpy.Debugger.Impl {
 		readonly DbgManagerImpl owner;
 		readonly SafeProcessHandle hProcess;
 
-		public DbgProcessImpl(DbgManagerImpl owner, int pid, DbgProcessState state, bool shouldDetach) {
+		public DbgProcessImpl(DbgManagerImpl owner, Dispatcher dispatcher, int pid, DbgProcessState state, bool shouldDetach) {
 			lockObj = new object();
 			engineInfos = new List<EngineInfo>();
 			threads = new List<DbgThread>();
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			this.state = state;
+			cachedIsRunning = CalculateIsRunning_NoLock();
 			Id = pid;
 			ShouldDetach = shouldDetach;
 
@@ -116,7 +129,19 @@ namespace dnSpy.Debugger.Impl {
 			Bitness = GetBitness(hProcess.DangerousGetHandle());
 			Machine = GetMachine(Bitness);
 			Filename = GetProcessFilename(pid) ?? string.Empty;
+
+			new DelayedIsRunningHelper(this, dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}
+
+		// DbgManager thread
+		internal void RaiseDelayedIsRunningChanged_DbgThread() {
+			owner.DispatcherThread.VerifyAccess();
+			if (IsRunning)
+				DelayedIsRunningChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		bool IIsRunningProvider.IsDebugging => State != DbgProcessState.Terminated;
+		public event EventHandler IsDebuggingChanged;
 
 		public override event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) {
@@ -271,7 +296,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void Add_DbgThread(DbgEngine engine, DbgRuntime runtime, DbgProcessState newState) {
-			bool raiseStateChanged, raiseDebuggingChanged;
+			bool raiseStateChanged, raiseDebuggingChanged, raiseIsRunningChanged;
 			DbgThread[] addedThreads;
 			lock (lockObj) {
 				engineInfos.Add(new EngineInfo(engine, runtime));
@@ -280,6 +305,9 @@ namespace dnSpy.Debugger.Impl {
 				raiseDebuggingChanged = debugging != newDebugging;
 				state = newState;
 				debugging = newDebugging;
+				var newIsRunning = CalculateIsRunning_NoLock();
+				raiseIsRunningChanged = cachedIsRunning != newIsRunning;
+				cachedIsRunning = newIsRunning;
 				addedThreads = runtime.Threads;
 				runtime.ThreadsChanged += DbgRuntime_ThreadsChanged;
 			}
@@ -288,18 +316,28 @@ namespace dnSpy.Debugger.Impl {
 				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(addedThreads, added: true));
 			if (raiseStateChanged)
 				OnPropertyChanged(nameof(State));
+			if (raiseIsRunningChanged)
+				IsRunningChanged?.Invoke(this, EventArgs.Empty);
 			if (raiseDebuggingChanged)
 				OnPropertyChanged(nameof(Debugging));
 		}
 
 		internal void UpdateState_DbgThread(DbgProcessState newState) {
-			bool raiseStateChanged;
+			bool raiseStateChanged, raiseIsRunningChanged, raiseIsDebuggingChanged;
 			lock (lockObj) {
 				raiseStateChanged = state != newState;
 				state = newState;
+				var newIsRunning = CalculateIsRunning_NoLock();
+				raiseIsRunningChanged = cachedIsRunning != newIsRunning;
+				cachedIsRunning = newIsRunning;
+				raiseIsDebuggingChanged = state == DbgProcessState.Terminated;
 			}
 			if (raiseStateChanged)
 				OnPropertyChanged(nameof(State));
+			if (raiseIsRunningChanged)
+				IsRunningChanged?.Invoke(this, EventArgs.Empty);
+			if (raiseIsDebuggingChanged)
+				IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		internal (DbgRuntime runtime, bool hasMoreRuntimes) Remove_DbgThread(DbgEngine engine) {
