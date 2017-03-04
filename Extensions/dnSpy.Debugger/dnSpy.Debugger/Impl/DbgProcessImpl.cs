@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using dnSpy.Contracts.Debugger;
@@ -115,6 +116,12 @@ namespace dnSpy.Debugger.Impl {
 			Bitness = GetBitness(hProcess.DangerousGetHandle());
 			Machine = GetMachine(Bitness);
 			Filename = GetProcessFilename(pid) ?? string.Empty;
+		}
+
+		public override event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) {
+			DbgManager.DispatcherThread.VerifyAccess();
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
 		static string GetProcessFilename(int pid) {

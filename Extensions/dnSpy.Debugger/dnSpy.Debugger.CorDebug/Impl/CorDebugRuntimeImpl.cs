@@ -18,35 +18,20 @@
 */
 
 using System;
-using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.DotNet;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
-	sealed class DbgClrThreadImpl : DbgClrThread {
+	sealed class CorDebugRuntimeImpl : CorDebugRuntime {
 		public override DbgRuntime Runtime { get; }
-		public override DbgAppDomain AppDomain { get; }
-		public override string Kind => kind;
-		public override int Id => id;
-		public override int? ManagedId => managedId;
-		public override string Name => name;
-
-		internal DnThread DnThread { get; }
-		string kind;
-		int id;
-		int? managedId;
-		string name;
-
-		public DbgClrThreadImpl(DbgRuntime runtime, DbgAppDomain appDomain, DnThread dnThread) {
+		public override CorDebugRuntimeVersion Version { get; }
+		public override string ClrFilename { get; }
+		public override string RuntimeDirectory { get; }
+		public CorDebugRuntimeImpl(DbgRuntime runtime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
-			DnThread = dnThread ?? throw new ArgumentNullException(nameof(dnThread));
-			AppDomain = appDomain;
-			kind = PredefinedThreadKinds.Unknown;
-			id = dnThread.VolatileThreadId;
-			managedId = null;
-			name = null;
+			Version = new CorDebugRuntimeVersion(kind, version ?? throw new ArgumentNullException(nameof(version)));
+			ClrFilename = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
+			RuntimeDirectory = runtimeDir ?? throw new ArgumentNullException(nameof(runtimeDir));
 		}
-
-		protected override void CloseCore() { }
 	}
 }

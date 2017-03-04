@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Impl {
 		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
 			var process = dbgManager.Processes.FirstOrDefault();
-			Debug.Assert(process != null);
+			// Fails if the process hasn't been created yet (eg. the engine hasn't connected to the process yet)
 			if (process == null)
 				return;
 			try {

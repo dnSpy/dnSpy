@@ -52,17 +52,14 @@
     <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="Impl\BreakProcessKindHelpers.cs" />
-    <Compile Include="Impl\DbgClrAppDomainImpl.cs" />
-    <Compile Include="Impl\DbgClrAssemblyImpl.cs" />
-    <Compile Include="Impl\DbgClrModuleImpl.cs" />
-    <Compile Include="Impl\DbgClrRuntimeImpl.cs" />
-    <Compile Include="Impl\DbgClrThreadImpl.cs" />
+    <Compile Include="Impl\CorDebugRuntimeImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
     <Compile Include="Impl\DotNetCoreHelpers.cs" />
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
+    <Compile Include="Impl\ModuleCreator.cs" />
     <Compile Include="Impl\NativeMethods.cs" />
     <Compile Include="Impl\WpfDebugMessageDispatcher.cs" />
     <Compile Include="Properties\dnSpy.Debugger.CorDebug.Resources.Designer.cs">
@@ -77,10 +74,6 @@
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet.CorDebug\dnSpy.Contracts.Debugger.DotNet.CorDebug.csproj">
       <Project>{a6d1aa27-abdd-4832-b4d0-94e4b175c98f}</Project>
       <Name>dnSpy.Contracts.Debugger.DotNet.CorDebug</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
-      <Project>{eb01bd9d-767c-4313-aca6-eb2f0f18200a}</Project>
-      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
       <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>

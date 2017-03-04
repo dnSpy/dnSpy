@@ -105,6 +105,7 @@ namespace dnSpy.Debugger.Impl {
 			public DbgProcessImpl Process { get; set; }
 			public EngineState EngineState { get; set; } = EngineState.Starting;
 			public string[] DebugTags { get; }
+			public DbgObjectFactoryImpl ObjectFactory { get; set; }
 			public EngineInfo(DbgEngine engine) {
 				Engine = engine;
 				DebugTags = (string[])engine.DebugTags.Clone();
@@ -284,16 +285,22 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			var process = GetOrCreateProcess_DbgThread(e.ProcessId, engine.StartKind);
+			var runtime = new DbgRuntimeImpl(process);
+			var objectFactory = new DbgObjectFactoryImpl(this, runtime, engine);
 
 			DbgProcessState processState;
 			lock (lockObj) {
 				var info = GetEngineInfo_NoLock(engine);
 				info.Process = process;
+				info.ObjectFactory = objectFactory;
 				info.EngineState = EngineState.Running;
 				processState = CalculateProcessState(info.Process);
 				breakAllHelper?.OnConnected_DbgThread_NoLock(info);
 			}
-			process.Add_DbgThread(engine, engine.CreateRuntime(process), processState);
+			// Call OnConnected() before we add the runtime to the process so the engine can add
+			// data to the runtime before RuntimesChanged is raised.
+			engine.OnConnected(objectFactory, runtime);
+			process.Add_DbgThread(engine, runtime, processState);
 		}
 
 		DbgProcessState CalculateProcessState(DbgProcess process) {
@@ -328,8 +335,10 @@ namespace dnSpy.Debugger.Impl {
 			lock (lockObj) {
 				var oldIsRunning = cachedIsRunning;
 				var info = TryGetEngineInfo_NoLock(engine);
-				if (info != null)
+				if (info != null) {
 					engines.Remove(info);
+					info.ObjectFactory?.Dispose();
+				}
 				process = info?.Process;
 				raiseIsDebuggingChanged = engines.Count == 0;
 				if (raiseIsDebuggingChanged) {

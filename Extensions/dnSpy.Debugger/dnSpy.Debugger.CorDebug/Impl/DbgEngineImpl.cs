@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using dndbg.Engine;
@@ -40,35 +42,28 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly DbgManager dbgManager;
 		DnDebugger dnDebugger;
 		SafeHandle hProcess_debuggee;
-
-		DbgClrRuntimeImpl ClrRuntime {
-			get {
-				if (clrRuntime != null)
-					return clrRuntime;
-				lock (lockObj) {
-					if (clrRuntime != null)
-						return clrRuntime;
-					clrRuntime = new DbgClrRuntimeImpl(dbgManager, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
-				}
-				return clrRuntime;
-			}
-		}
-		DbgClrRuntimeImpl clrRuntime;
+		DbgObjectFactory objectFactory;
+		readonly Dictionary<DnAppDomain, DbgEngineAppDomain> toEngineAppDomain;
+		readonly Dictionary<DnModule, DbgEngineModule> toEngineModule;
+		readonly Dictionary<DnThread, DbgEngineThread> toEngineThread;
 
 		protected DbgEngineImpl(DbgManager dbgManager, DbgStartKind startKind) {
 			StartKind = startKind;
 			lockObj = new object();
+			toEngineAppDomain = new Dictionary<DnAppDomain, DbgEngineAppDomain>();
+			toEngineModule = new Dictionary<DnModule, DbgEngineModule>();
+			toEngineThread = new Dictionary<DnThread, DbgEngineThread>();
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
 		}
 
-		void ExecDebugThreadAsync(Action action) {
+		void CorDebugThread(Action action) {
 			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
 				Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
 		}
 
-		void ExecDebugThreadAsync(Action<object> action, object arg) {
+		void CorDebugThread(Action<object> action, object arg) {
 			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
 				Dispatcher.BeginInvoke(DispatcherPriority.Send, action, arg);
 		}
@@ -78,7 +73,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
 				hProcess_debuggee = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
+				needContinueInOnConnected = !e.Pause;
 				SendMessage(new DbgMessageConnected(cp.CorProcess.ProcessId));
+				if (needContinueInOnConnected) {
+					// Make sure it's paused until OnConnected() gets called
+					e.AddPauseReason(DebuggerPauseReason.Other);
+				}
 				break;
 
 			case DebugCallbackKind.ExitProcess:
@@ -86,6 +86,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				break;
 			}
 		}
+		bool needContinueInOnConnected;
 
 		void UnregisterEventsAndCloseProcessHandle() {
 			if (dnDebugger != null) {
@@ -94,14 +95,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				dnDebugger.OnNameChanged -= DnDebugger_OnNameChanged;
 				dnDebugger.OnThreadAdded -= DnDebugger_OnThreadAdded;
 				dnDebugger.OnAppDomainAdded -= DnDebugger_OnAppDomainAdded;
-				dnDebugger.OnAssemblyAdded -= DnDebugger_OnAssemblyAdded;
 				dnDebugger.OnModuleAdded -= DnDebugger_OnModuleAdded;
 			}
 			hProcess_debuggee?.Close();
 		}
-
-		void DbgThread(Action action) =>
-			dbgManager.DispatcherThread.BeginInvoke(action);
 
 		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			Debug.Assert(sender != null && sender == dnDebugger);
@@ -117,55 +114,106 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
-			// Must be read in the CLR dbg thread since it accesses a CLR dbg COM object
-			var appDomainName = e.AppDomain?.Name;
-			DbgThread(() => DnDebugger_OnNameChanged(e, appDomainName));
-		}
-
-		void DnDebugger_OnNameChanged(NameChangedDebuggerEventArgs e, string appDomainName) => DbgThread(() => {
-			if (e.AppDomain != null)
-				ClrRuntime.UpdateAppDomainName_DbgThread(e.AppDomain, appDomainName);
+			TryGetEngineAppDomain(e.AppDomain)?.UpdateName(e.AppDomain.Name);
 			if (e.Thread != null) {
 				//TODO: Update thread name
 			}
-		});
+		}
+
+		DbgEngineAppDomain TryGetEngineAppDomain(DnAppDomain dnAppDomain) {
+			if (dnAppDomain == null)
+				return null;
+			DbgEngineAppDomain engineAppDomain;
+			bool b;
+			lock (lockObj)
+				b = toEngineAppDomain.TryGetValue(dnAppDomain, out engineAppDomain);
+			Debug.Assert(b);
+			return engineAppDomain;
+		}
 
 		void DnDebugger_OnThreadAdded(object sender, ThreadDebuggerEventArgs e) {
+			Debug.Assert(objectFactory != null);
 			if (e.Added) {
-				// Must be created in the CLR dbg thread since it accesses a CLR dbg COM object
-				var appDomain = ClrRuntime.TryGetAppDomain(e.Thread.AppDomainOrNull);
-				var thread = new DbgClrThreadImpl(ClrRuntime, appDomain, e.Thread);
-				DbgThread(() => ClrRuntime.AddThread_DbgThread(thread));
+				var appDomain = TryGetEngineAppDomain(e.Thread.AppDomainOrNull)?.AppDomain;
+				string kind = PredefinedThreadKinds.Unknown;
+				int id = e.Thread.VolatileThreadId;
+				int? managedId = null;
+				string name = null;
+				var engineThread = objectFactory.CreateThread(appDomain, kind, id, managedId, name);
+				lock (lockObj)
+					toEngineThread.Add(e.Thread, engineThread);
 			}
-			else
-				DbgThread(() => ClrRuntime.RemoveThread_DbgThread(e.Thread));
+			else {
+				DbgEngineThread engineThread;
+				lock (lockObj) {
+					if (toEngineThread.TryGetValue(e.Thread, out engineThread))
+						toEngineThread.Remove(e.Thread);
+				}
+				engineThread?.Remove();
+			}
 		}
 
 		void DnDebugger_OnAppDomainAdded(object sender, AppDomainDebuggerEventArgs e) {
+			Debug.Assert(objectFactory != null);
 			if (e.Added) {
-				// Must be created in the CLR dbg thread since it accesses a CLR dbg COM object
-				var appDomain = new DbgClrAppDomainImpl(ClrRuntime, e.AppDomain);
-				DbgThread(() => ClrRuntime.AddAppDomain_DbgThread(appDomain));
+				var engineAppDomain = objectFactory.CreateAppDomain(e.AppDomain.Name, e.AppDomain.Id);
+				lock (lockObj)
+					toEngineAppDomain.Add(e.AppDomain, engineAppDomain);
 			}
-			else
-				DbgThread(() => ClrRuntime.RemoveAppDomain_DbgThread(e.AppDomain));
+			else {
+				DbgEngineAppDomain engineAppDomain;
+				List<DbgEngineThread> threadsToRemove = null;
+				List<DbgEngineModule> modulesToRemove = null;
+				lock (lockObj) {
+					if (toEngineAppDomain.TryGetValue(e.AppDomain, out engineAppDomain)) {
+						toEngineAppDomain.Remove(e.AppDomain);
+						var appDomain = engineAppDomain.AppDomain;
+						foreach (var kv in toEngineThread.ToArray()) {
+							if (kv.Value.Thread.AppDomain == appDomain) {
+								if (threadsToRemove == null)
+									threadsToRemove = new List<DbgEngineThread>();
+								threadsToRemove.Add(kv.Value);
+								toEngineThread.Remove(kv.Key);
+							}
+						}
+						foreach (var kv in toEngineModule.ToArray()) {
+							if (kv.Value.Module.AppDomain == appDomain) {
+								if (modulesToRemove == null)
+									modulesToRemove = new List<DbgEngineModule>();
+								modulesToRemove.Add(kv.Value);
+								toEngineModule.Remove(kv.Key);
+							}
+						}
+					}
+				}
+				engineAppDomain?.Remove();
+				if (threadsToRemove != null) {
+					foreach (var t in threadsToRemove)
+						t.Remove();
+				}
+				if (modulesToRemove != null) {
+					foreach (var m in modulesToRemove)
+						m.Remove();
+				}
+			}
 		}
 
-		void DnDebugger_OnAssemblyAdded(object sender, AssemblyDebuggerEventArgs e) => DbgThread(() => {
-			if (e.Added)
-				ClrRuntime.AddAssembly_DbgThread(e.Assembly);
-			else
-				ClrRuntime.RemoveAssembly_DbgThread(e.Assembly);
-		});
-
 		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {
+			Debug.Assert(objectFactory != null);
 			if (e.Added) {
-				// Must be created in the CLR dbg thread since it accesses a CLR dbg COM object
-				var module = new DbgClrModuleImpl(ClrRuntime, e.Module);
-				DbgThread(() => ClrRuntime.AddModule_DbgThread(module));
+				var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
+				var engineModule = ModuleCreator.CreateModule(objectFactory, appDomain, e.Module);
+				lock (lockObj)
+					toEngineModule.Add(e.Module, engineModule);
 			}
-			else
-				DbgThread(() => ClrRuntime.RemoveModule_DbgThread(e.Module));
+			else {
+				DbgEngineModule engineModule;
+				lock (lockObj) {
+					if (toEngineModule.TryGetValue(e.Module, out engineModule))
+						toEngineModule.Remove(e.Module);
+				}
+				engineModule?.Remove();
+			}
 		}
 
 		void SendMessage(DbgEngineMessage message) => Message?.Invoke(this, message);
@@ -173,7 +221,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		protected abstract CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options);
 
 		public override void Start(StartDebuggingOptions options) =>
-			ExecDebugThreadAsync(StartCore, options);
+			CorDebugThread(StartCore, options);
 
 		void StartCore(object arg) {
 			Dispatcher.VerifyAccess();
@@ -200,7 +248,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				dnDebugger.OnNameChanged += DnDebugger_OnNameChanged;
 				dnDebugger.OnThreadAdded += DnDebugger_OnThreadAdded;
 				dnDebugger.OnAppDomainAdded += DnDebugger_OnAppDomainAdded;
-				dnDebugger.OnAssemblyAdded += DnDebugger_OnAssemblyAdded;
 				dnDebugger.OnModuleAdded += DnDebugger_OnModuleAdded;
 				return;
 			}
@@ -230,17 +277,26 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		protected abstract CorDebugRuntimeKind CorDebugRuntimeKind { get; }
 
-		public override DbgRuntime CreateRuntime(DbgProcess process) {
-			var runtime = ClrRuntime;
-			if (runtime.Process != null)
-				throw new InvalidOperationException();
-			runtime.SetProcess(process);
-			return runtime;
+		public override void OnConnected(DbgObjectFactory objectFactory, DbgRuntime runtime) {
+			Debug.Assert(objectFactory.Runtime == runtime);
+			Debug.Assert(Array.IndexOf(objectFactory.Process.Runtimes, runtime) < 0);
+			this.objectFactory = objectFactory;
+			CorDebugRuntime.Add(new CorDebugRuntimeImpl(runtime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory));
+
+			if (needContinueInOnConnected) {
+				// It was paused when we got the CreateProcess event. Let it run again
+				CorDebugThread(() => dnDebugger.Continue());
+			}
 		}
 
 		protected override void CloseCore() {
 			UnregisterEventsAndCloseProcessHandle();
 			debuggerThread.Terminate();
+			lock (lockObj) {
+				toEngineAppDomain.Clear();
+				toEngineModule.Clear();
+				toEngineThread.Clear();
+			}
 		}
 
 		bool HasConnected_DebugThread {
@@ -252,7 +308,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		public override void Break() => ExecDebugThreadAsync(BreakCore);
+		public override void Break() => CorDebugThread(BreakCore);
 		void BreakCore() {
 			Dispatcher.VerifyAccess();
 			if (!HasConnected_DebugThread)
@@ -270,7 +326,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				SendMessage(new DbgMessageBreak());
 		}
 
-		public override void Run() => ExecDebugThreadAsync(RunCore);
+		public override void Run() => CorDebugThread(RunCore);
 		void RunCore() {
 			Dispatcher.VerifyAccess();
 			if (!HasConnected_DebugThread)
@@ -279,7 +335,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				dnDebugger.Continue();
 		}
 
-		public override void Terminate() => ExecDebugThreadAsync(TerminateCore);
+		public override void Terminate() => CorDebugThread(TerminateCore);
 		void TerminateCore() {
 			Dispatcher.VerifyAccess();
 			if (!HasConnected_DebugThread)
@@ -290,7 +346,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		public override bool CanDetach => true;
 
-		public override void Detach() => ExecDebugThreadAsync(DetachCore);
+		public override void Detach() => CorDebugThread(DetachCore);
 		void DetachCore() {
 			Dispatcher.VerifyAccess();
 			if (!HasConnected_DebugThread)

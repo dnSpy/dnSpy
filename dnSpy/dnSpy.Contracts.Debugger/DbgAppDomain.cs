@@ -28,16 +28,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Raised when a property is changed
 		/// </summary>
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		/// <summary>
-		/// Raises <see cref="PropertyChanged"/>
-		/// </summary>
-		/// <param name="propName">Name of property that got changed</param>
-		protected void OnPropertyChanged(string propName) {
-			Process.DbgManager.DispatcherThread.VerifyAccess();
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-		}
+		public abstract event PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
 		/// Gets the runtime

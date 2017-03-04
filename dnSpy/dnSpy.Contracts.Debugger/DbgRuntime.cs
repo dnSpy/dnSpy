@@ -30,16 +30,6 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgProcess Process { get; }
 
 		/// <summary>
-		/// Gets all modules
-		/// </summary>
-		public abstract DbgModule[] Modules { get; }
-
-		/// <summary>
-		/// Raised when <see cref="Modules"/> is changed
-		/// </summary>
-		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgModule>> ModulesChanged;
-
-		/// <summary>
 		/// Gets all app domains
 		/// </summary>
 		public abstract DbgAppDomain[] AppDomains { get; }
@@ -48,6 +38,16 @@ namespace dnSpy.Contracts.Debugger {
 		/// Raised when <see cref="AppDomains"/> is changed
 		/// </summary>
 		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgAppDomain>> AppDomainsChanged;
+
+		/// <summary>
+		/// Gets all modules
+		/// </summary>
+		public abstract DbgModule[] Modules { get; }
+
+		/// <summary>
+		/// Raised when <see cref="Modules"/> is changed
+		/// </summary>
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgModule>> ModulesChanged;
 
 		/// <summary>
 		/// Gets all threads

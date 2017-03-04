@@ -49,19 +49,7 @@ namespace dnSpy.Contracts.Debugger {
 		public event EventHandler Closed;
 
 		/// <summary>
-		/// Closes the instance asynchronously.
-		/// 
-		/// This method must only be called by the owner object.
-		/// </summary>
-		/// <param name="dispatcherThread">Dispatcher thread</param>
-		public void CloseAsync(DispatcherThread dispatcherThread) {
-			if (dispatcherThread == null)
-				throw new ArgumentNullException(nameof(dispatcherThread));
-			dispatcherThread.BeginInvoke(() => Close(dispatcherThread));
-		}
-
-		/// <summary>
-		/// Closes the instance. This method must only be executed in the dispatcher thread. See also <see cref="CloseAsync(DispatcherThread)"/>
+		/// Closes the instance. This method must only be executed in the dispatcher thread
 		/// 
 		/// This method must only be called by the owner object.
 		/// </summary>

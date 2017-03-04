@@ -53,9 +53,13 @@
     <Compile Include="DebuggerSettings.cs" />
     <Compile Include="DispatcherThread.cs" />
     <Compile Include="Engine\DbgEngine.cs" />
+    <Compile Include="Engine\DbgEngineAppDomain.cs" />
     <Compile Include="Engine\DbgEngineMessage.cs" />
     <Compile Include="Engine\DbgEngineMessageKind.cs" />
+    <Compile Include="Engine\DbgEngineModule.cs" />
     <Compile Include="Engine\DbgEngineProvider.cs" />
+    <Compile Include="Engine\DbgEngineThread.cs" />
+    <Compile Include="Engine\DbgObjectFactory.cs" />
     <Compile Include="IDbgManagerStartListener.cs" />
     <Compile Include="PredefinedDebugTags.cs" />
     <Compile Include="PredefinedThreadKinds.cs" />

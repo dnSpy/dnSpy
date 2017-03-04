@@ -17,11 +17,41 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
 	/// .NET runtime in a process
 	/// </summary>
-	public abstract class CorDebugRuntime : DbgClrRuntime {
+	public abstract class CorDebugRuntime {
+		sealed class Data {
+			public CorDebugRuntime CorDebugRuntime { get; }
+			public Data(CorDebugRuntime corDebugRuntime) => CorDebugRuntime = corDebugRuntime;
+		}
+
+		internal static void Add(CorDebugRuntime corDebugRuntime) {
+			if (corDebugRuntime == null)
+				throw new ArgumentNullException(nameof(corDebugRuntime));
+			corDebugRuntime.Runtime.GetOrCreateData<Data>(() => new Data(corDebugRuntime));
+		}
+
+		/// <summary>
+		/// Gets the <see cref="CorDebugRuntime"/> instance or null if it's not a CorDebug runtime
+		/// </summary>
+		/// <param name="runtime">Runtime</param>
+		/// <returns></returns>
+		public static CorDebugRuntime TryGet(DbgRuntime runtime) {
+			if (runtime == null)
+				return null;
+			runtime.TryGetData<Data>(out var data);
+			return data?.CorDebugRuntime;
+		}
+
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public abstract DbgRuntime Runtime { get; }
+
 		/// <summary>
 		/// Gets the runtime version
 		/// </summary>

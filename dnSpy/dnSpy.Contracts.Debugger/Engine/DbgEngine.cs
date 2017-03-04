@@ -54,11 +54,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract event EventHandler<DbgEngineMessage> Message;
 
 		/// <summary>
-		/// Creates the runtime. Called once after the engine has connected to the debugged process.
+		/// Called when its connected message has been received by <see cref="DbgManager"/>
 		/// </summary>
-		/// <param name="process">Owner process</param>
-		/// <returns></returns>
-		public abstract DbgRuntime CreateRuntime(DbgProcess process);
+		/// <param name="objectFactory">Object factory</param>
+		/// <param name="runtime">Runtime</param>
+		public abstract void OnConnected(DbgObjectFactory objectFactory, DbgRuntime runtime);
 
 		/// <summary>
 		/// Pauses the debugged program, if it's not already paused. This is an asynchronous method.

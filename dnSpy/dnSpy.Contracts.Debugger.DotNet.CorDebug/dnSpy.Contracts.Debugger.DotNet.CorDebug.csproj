@@ -50,10 +50,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
-      <Project>{eb01bd9d-767c-4313-aca6-eb2f0f18200a}</Project>
-      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
-    </ProjectReference>
     <ProjectReference Include="..\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
       <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>
       <Name>dnSpy.Contracts.Debugger</Name>
