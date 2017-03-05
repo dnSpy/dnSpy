@@ -17,19 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.IO;
+using System;
+using System.Windows.Controls;
+using System.Windows.Input;
+using dnSpy.Contracts.Utilities;
 
-namespace dnSpy.Debugger.ToolWindows {
-	static class PathUtils {
-		public static string GetFilename(string s) {
-			if (s == null)
-				return s;
-			try {
-				return Path.GetFileName(s);
-			}
-			catch {
-			}
-			return s;
+namespace dnSpy.Debugger.ToolWindows.Threads {
+	sealed partial class ThreadsControl : UserControl {
+		public ListView ListView => listView;
+
+		public ThreadsControl() => InitializeComponent();
+
+		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
+				return;
+			ThreadsListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
+
+		public event EventHandler ThreadsListViewDoubleClick;
 	}
 }

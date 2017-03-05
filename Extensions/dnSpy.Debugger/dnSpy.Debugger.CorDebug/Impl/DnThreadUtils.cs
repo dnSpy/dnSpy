@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using dndbg.COM.CorDebug;
@@ -37,8 +38,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			(CorDebugUserState.USER_UNSAFE_POINT, new DbgStateInfo(CorThreadUserStates.UnsafePoint, dnSpy_Debugger_CorDebug_Resources.Thread_UserState_UnsafePoint)),
 			(CorDebugUserState.USER_THREADPOOL, new DbgStateInfo(CorThreadUserStates.ThreadPool, dnSpy_Debugger_CorDebug_Resources.Thread_UserState_ThreadPool)),
 		};
+		static readonly ReadOnlyCollection<DbgStateInfo> emptyState = new ReadOnlyCollection<DbgStateInfo>(Array.Empty<DbgStateInfo>());
 
 		public static ReadOnlyCollection<DbgStateInfo> GetState(CorDebugUserState state) {
+			if (state == 0)
+				return emptyState;
+
 			var list = new List<DbgStateInfo>();
 			foreach (var info in userStates) {
 				if ((state & info.flag) != 0) {

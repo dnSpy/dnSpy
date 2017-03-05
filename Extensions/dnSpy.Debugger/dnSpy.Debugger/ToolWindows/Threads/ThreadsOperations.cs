@@ -17,19 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.IO;
+using System.ComponentModel.Composition;
 
-namespace dnSpy.Debugger.ToolWindows {
-	static class PathUtils {
-		public static string GetFilename(string s) {
-			if (s == null)
-				return s;
-			try {
-				return Path.GetFileName(s);
-			}
-			catch {
-			}
-			return s;
-		}
+namespace dnSpy.Debugger.ToolWindows.Threads {
+	abstract class ThreadsOperations {
+	}
+
+	[Export(typeof(ThreadsOperations))]
+	sealed class ThreadsOperationsImpl : ThreadsOperations {
 	}
 }

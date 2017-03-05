@@ -41,6 +41,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		[Flags]
 		public enum UpdateOptions {
 			/// <summary>
+			/// No option is enabled
+			/// </summary>
+			None				= 0,
+
+			/// <summary>
 			/// Update <see cref="DbgThread.Kind"/>
 			/// </summary>
 			Kind				= 0x00000001,
@@ -61,9 +66,14 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			Name				= 0x00000008,
 
 			/// <summary>
+			/// Update <see cref="DbgThread.SuspendedCount"/>
+			/// </summary>
+			SuspendedCount		= 0x00000010,
+
+			/// <summary>
 			/// Update <see cref="DbgThread.State"/>
 			/// </summary>
-			State				= 0x00000010,
+			State				= 0x00000020,
 		}
 
 		/// <summary>
@@ -91,6 +101,12 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public void UpdateName(string name) => Update(UpdateOptions.Name, name: name);
 
 		/// <summary>
+		/// Updates <see cref="DbgThread.SuspendedCount"/>
+		/// </summary>
+		/// <param name="suspendedCount">New value</param>
+		public void UpdateSuspendedCount(int suspendedCount) => Update(UpdateOptions.SuspendedCount, suspendedCount: suspendedCount);
+
+		/// <summary>
 		/// Updates <see cref="DbgThread.State"/>
 		/// </summary>
 		/// <param name="state">New value</param>
@@ -104,7 +120,8 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="id">New <see cref="DbgThread.Id"/> value</param>
 		/// <param name="managedId">New <see cref="DbgThread.ManagedId"/> value</param>
 		/// <param name="name">New <see cref="DbgThread.Name"/> value</param>
+		/// <param name="suspendedCount">New <see cref="DbgThread.SuspendedCount"/> value</param>
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
-		public abstract void Update(UpdateOptions options, string kind = null, int id = 0, int? managedId = null, string name = null, ReadOnlyCollection<DbgStateInfo> state = null);
+		public abstract void Update(UpdateOptions options, string kind = null, int id = 0, int? managedId = null, string name = null, int suspendedCount = 0, ReadOnlyCollection<DbgStateInfo> state = null);
 	}
 }

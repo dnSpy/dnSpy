@@ -19,7 +19,7 @@
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// Predefined thread kinds
+	/// Predefined thread kinds, see also <see cref="ThreadCategoryProvider"/>
 	/// </summary>
 	public static class PredefinedThreadKinds {
 		/// <summary>
@@ -33,8 +33,18 @@ namespace dnSpy.Contracts.Debugger {
 		public const string Main = nameof(Main);
 
 		/// <summary>
+		/// Thread pool thread
+		/// </summary>
+		public const string ThreadPool = nameof(ThreadPool);
+
+		/// <summary>
 		/// Worker thread
 		/// </summary>
 		public const string WorkerThread = nameof(WorkerThread);
+
+		/// <summary>
+		/// Terminated thread
+		/// </summary>
+		public const string Terminated = nameof(Terminated);
 	}
 }

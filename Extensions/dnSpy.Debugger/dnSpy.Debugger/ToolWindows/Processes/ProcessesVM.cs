@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				if (processContext.IsVisible != value) {
 					processContext.IsVisible = value;
 					if (processContext.IsVisible) {
-						RecreateFormatter();
+						RecreateFormatter_UI();
 						RefreshTitles_UI();
 						RefreshThemeFields_UI();
 					}
@@ -86,7 +86,10 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshThemeFields_UI();
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+			processContext.Dispatcher.VerifyAccess();
+			RefreshThemeFields_UI();
+		}
 
 		// random thread
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
@@ -94,8 +97,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
+			processContext.Dispatcher.VerifyAccess();
 			if (propertyName == nameof(DebuggerSettings.UseHexadecimal))
-				RefreshHexSettings_UI();
+				RefreshHexFields_UI();
 			else if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
 				processContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				RefreshThemeFields_UI();
@@ -104,30 +108,36 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		void RefreshTitles_UI() {
+			processContext.Dispatcher.VerifyAccess();
 			if (!processContext.IsVisible)
 				return;
 			foreach (var vm in AllItems)
-				vm.RefreshTitle();
+				vm.RefreshTitle_UI();
 		}
 
 		// UI thread
 		void RefreshThemeFields_UI() {
+			processContext.Dispatcher.VerifyAccess();
 			if (!processContext.IsVisible)
 				return;
 			foreach (var vm in AllItems)
-				vm.RefreshThemeFields();
+				vm.RefreshThemeFields_UI();
 		}
 
 		// UI thread
-		void RecreateFormatter() => processContext.Formatter = processFormatterProvider.Create();
+		void RecreateFormatter_UI() {
+			processContext.Dispatcher.VerifyAccess();
+			processContext.Formatter = processFormatterProvider.Create();
+		}
 
 		// UI thread
-		void RefreshHexSettings_UI() {
+		void RefreshHexFields_UI() {
+			processContext.Dispatcher.VerifyAccess();
 			if (!processContext.IsVisible)
 				return;
-			RecreateFormatter();
+			RecreateFormatter_UI();
 			foreach (var vm in AllItems)
-				vm.RefreshHexFields();
+				vm.RefreshHexFields_UI();
 		}
 
 		// random thread
@@ -173,6 +183,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		void RemoveProcessAt_UI(int i) {
+			processContext.Dispatcher.VerifyAccess();
 			Debug.Assert(0 <= i && i < AllItems.Count);
 			var vm = AllItems[i];
 			vm.Dispose();

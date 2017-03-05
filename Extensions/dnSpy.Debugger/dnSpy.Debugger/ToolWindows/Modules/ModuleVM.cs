@@ -51,7 +51,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		internal void RefreshThemeFields() {
+		internal void RefreshThemeFields_UI() {
+			Context.Dispatcher.VerifyAccess();
 			OnPropertyChanged(nameof(NameObject));
 			OnPropertyChanged(nameof(PathObject));
 			OnPropertyChanged(nameof(OptimizedObject));
@@ -66,20 +67,25 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		internal void RefreshHexFields() => OnPropertyChanged(nameof(ProcessObject));
+		internal void RefreshHexFields_UI() {
+			Context.Dispatcher.VerifyAccess();
+			OnPropertyChanged(nameof(ProcessObject));
+		}
 
 		// UI thread
 		internal void RefreshAppDomainNames(DbgAppDomain appDomain) {
+			Context.Dispatcher.VerifyAccess();
 			if (Module.AppDomain == appDomain)
 				OnPropertyChanged(nameof(AppDomainObject));
 		}
 
 		// DbgManager thread
 		void DbgModule_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
-			Context.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => DbgModule_PropertyChanged_UI(e.PropertyName)));
+			Context.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => DbgModule_PropertyChanged_UI(e.PropertyName)));
 
 		// UI thread
 		void DbgModule_PropertyChanged_UI(string propertyName) {
+			Context.Dispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(Module.IsExe):
 				OnPropertyChanged(nameof(ImageReference));
@@ -125,6 +131,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		public void Dispose() => Module.PropertyChanged -= DbgModule_PropertyChanged;
+		public void Dispose() {
+			Context.Dispatcher.VerifyAccess();
+			Module.PropertyChanged -= DbgModule_PropertyChanged;
+		}
 	}
 }

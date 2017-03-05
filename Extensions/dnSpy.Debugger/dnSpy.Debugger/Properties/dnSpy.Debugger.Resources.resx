@@ -261,8 +261,8 @@
   <data name="Column_ThreadState" xml:space="preserve">
     <value>State</value>
   </data>
-  <data name="Column_ThreadSuspended" xml:space="preserve">
-    <value>Suspended</value>
+  <data name="Column_ThreadSuspendedCount" xml:space="preserve">
+    <value>Suspended Count</value>
   </data>
   <data name="Column_Timestamp" xml:space="preserve">
     <value>Timestamp</value>
@@ -1382,5 +1382,8 @@ Are you sure you want to expand it?</value>
   </data>
   <data name="ProcessCommand" xml:space="preserve">
     <value>Process</value>
+  </data>
+  <data name="Column_ProcessName" xml:space="preserve">
+    <value>Process Name</value>
   </data>
 </root>

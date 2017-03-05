@@ -113,10 +113,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="id">New <see cref="DbgThread.Id"/> value</param>
 		/// <param name="managedId">New <see cref="DbgThread.ManagedId"/> value</param>
 		/// <param name="name">New <see cref="DbgThread.Name"/> value</param>
+		/// <param name="suspendedCount">New <see cref="DbgThread.SuspendedCount"/> value</param>
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
 		/// <returns></returns>
-		public DbgEngineThread CreateThread(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, ReadOnlyCollection<DbgStateInfo> state) =>
-			CreateThread<object>(appDomain, kind, id, managedId, name, state, null);
+		public DbgEngineThread CreateThread(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) =>
+			CreateThread<object>(appDomain, kind, id, managedId, name, suspendedCount, state, null);
 
 		/// <summary>
 		/// Creates a thread
@@ -127,9 +128,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="id">New <see cref="DbgThread.Id"/> value</param>
 		/// <param name="managedId">New <see cref="DbgThread.ManagedId"/> value</param>
 		/// <param name="name">New <see cref="DbgThread.Name"/> value</param>
+		/// <param name="suspendedCount">New <see cref="DbgThread.SuspendedCount"/> value</param>
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
 		/// <param name="data">Data to add to the <see cref="DbgThread"/> or null if nothing gets added</param>
 		/// <returns></returns>
-		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, ReadOnlyCollection<DbgStateInfo> state, T data) where T : class;
+		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, T data) where T : class;
 	}
 }

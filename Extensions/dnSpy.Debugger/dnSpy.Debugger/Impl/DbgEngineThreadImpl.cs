@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Remove() => thread.Remove();
 
-		public override void Update(UpdateOptions options, string kind, int id, int? managedId, string name, ReadOnlyCollection<DbgStateInfo> state) {
+		public override void Update(UpdateOptions options, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) => thread.Process.DbgManager.DispatcherThread.BeginInvoke(() => {
 			if (thread.IsClosed)
 				return;
 			if ((options & UpdateOptions.Kind) != 0)
@@ -42,8 +42,10 @@ namespace dnSpy.Debugger.Impl {
 				thread.UpdateManagedId_DbgThread(managedId);
 			if ((options & UpdateOptions.Name) != 0)
 				thread.UpdateName_DbgThread(name);
+			if ((options & UpdateOptions.SuspendedCount) != 0)
+				thread.UpdateSuspendedCount_DbgThread(suspendedCount);
 			if ((options & UpdateOptions.State) != 0)
 				thread.UpdateState_DbgThread(state);
-		}
+		});
 	}
 }

@@ -30,7 +30,7 @@ using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
-	abstract class DbgEngineImpl : DbgEngine {
+	abstract partial class DbgEngineImpl : DbgEngine {
 		public override DbgStartKind StartKind { get; }
 		public override string[] DebugTags => new[] { PredefinedDebugTags.DotNetDebugger };
 		public override event EventHandler<DbgEngineMessage> Message;
@@ -61,11 +61,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		void CorDebugThread(Action action) {
 			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
 				Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
-		}
-
-		void CorDebugThread(Action<object> action, object arg) {
-			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
-				Dispatcher.BeginInvoke(DispatcherPriority.Send, action, arg);
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
@@ -111,6 +106,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				SendMessage(new DbgMessageDisconnected(exitCode));
 				return;
 			}
+			else if (dnDebugger.ProcessState == DebuggerProcessState.Paused)
+				UpdateThreadProperties_CorDebug();
 		}
 
 		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
@@ -129,29 +126,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				b = toEngineAppDomain.TryGetValue(dnAppDomain, out engineAppDomain);
 			Debug.Assert(b);
 			return engineAppDomain;
-		}
-
-		void DnDebugger_OnThreadAdded(object sender, ThreadDebuggerEventArgs e) {
-			Debug.Assert(objectFactory != null);
-			if (e.Added) {
-				var appDomain = TryGetEngineAppDomain(e.Thread.AppDomainOrNull)?.AppDomain;
-				string kind = PredefinedThreadKinds.Unknown;
-				int id = e.Thread.VolatileThreadId;
-				int? managedId = null;
-				string name = null;
-				var state = DnThreadUtils.GetState(e.Thread.CorThread.UserState);
-				var engineThread = objectFactory.CreateThread(appDomain, kind, id, managedId, name, state);
-				lock (lockObj)
-					toEngineThread.Add(e.Thread, engineThread);
-			}
-			else {
-				DbgEngineThread engineThread;
-				lock (lockObj) {
-					if (toEngineThread.TryGetValue(e.Thread, out engineThread))
-						toEngineThread.Remove(e.Thread);
-				}
-				engineThread?.Remove();
-			}
 		}
 
 		void DnDebugger_OnAppDomainAdded(object sender, AppDomainDebuggerEventArgs e) {
@@ -222,15 +196,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		protected abstract CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options);
 
 		public override void Start(StartDebuggingOptions options) =>
-			CorDebugThread(StartCore, options);
+			CorDebugThread(() => StartCore((CorDebugStartDebuggingOptions)options));
 
-		void StartCore(object arg) {
+		void StartCore(CorDebugStartDebuggingOptions options) {
 			Dispatcher.VerifyAccess();
-			CorDebugStartDebuggingOptions options = null;
 			try {
 				if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
 					throw new InvalidOperationException("Dispatcher has shut down");
-				options = (CorDebugStartDebuggingOptions)arg;
 				var dbgOptions = new DebugProcessOptions(CreateDebugInfo(options)) {
 					DebugMessageDispatcher = new WpfDebugMessageDispatcher(Dispatcher),
 					CurrentDirectory = options.WorkingDirectory,
@@ -263,7 +235,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				else if (cex != null && cex.ErrorCode == unchecked((int)0x800702E4))
 					errMsg = dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerRequireAdminPrivLvl;
 				else
-					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerCheckAccessToFile, options?.Filename ?? "<???>", ex.Message);
+					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerCheckAccessToFile, options.Filename ?? "<???>", ex.Message);
 
 				SendMessage(new DbgMessageConnected(errMsg));
 				return;

@@ -339,7 +339,7 @@ namespace dnSpy.Debugger.DbgUI {
 		sealed class ThreadsWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
 			public ThreadsWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
-				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, true) {
+				: base(toolWindowService, ToolWindows.Threads.ThreadsToolWindowContent.THE_GUID, debugger, true) {
 			}
 		}
 

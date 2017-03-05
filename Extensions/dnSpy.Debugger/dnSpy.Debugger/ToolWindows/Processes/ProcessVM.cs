@@ -31,6 +31,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		internal bool IsSelectedProcess {
 			get => isSelectedProcess;
 			set {
+				Context.Dispatcher.VerifyAccess();
 				if (isSelectedProcess != value) {
 					isSelectedProcess = value;
 					OnPropertyChanged(nameof(ImageReference));
@@ -56,6 +57,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				return title;
 			}
 			private set {
+				Context.Dispatcher.VerifyAccess();
 				var newValue = value ?? string.Empty;
 				if (title != newValue) {
 					title = newValue;
@@ -85,10 +87,14 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// UI thread
-		internal void RefreshTitle() => Title = GetProcessTitle();
+		internal void RefreshTitle_UI() {
+			Context.Dispatcher.VerifyAccess();
+			Title = GetProcessTitle();
+		}
 
 		// UI thread
-		internal void RefreshThemeFields() {
+		internal void RefreshThemeFields_UI() {
+			Context.Dispatcher.VerifyAccess();
 			OnPropertyChanged(nameof(NameObject));
 			OnPropertyChanged(nameof(IdObject));
 			OnPropertyChanged(nameof(TitleObject));
@@ -98,14 +104,18 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// UI thread
-		internal void RefreshHexFields() => OnPropertyChanged(nameof(IdObject));
+		internal void RefreshHexFields_UI() {
+			Context.Dispatcher.VerifyAccess();
+			OnPropertyChanged(nameof(IdObject));
+		}
 
 		// DbgManager thread
 		void DbgProcess_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
-			Context.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => DbgProcess_PropertyChanged_UI(e.PropertyName)));
+			Context.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => DbgProcess_PropertyChanged_UI(e.PropertyName)));
 
 		// UI thread
 		void DbgProcess_PropertyChanged_UI(string propertyName) {
+			Context.Dispatcher.VerifyAccess();
 			if (!Context.IsVisible)
 				return;
 			switch (propertyName) {
@@ -129,6 +139,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// UI thread
-		public void Dispose() => Process.PropertyChanged -= DbgProcess_PropertyChanged;
+		internal void Dispose() {
+			Context.Dispatcher.VerifyAccess();
+			Process.PropertyChanged -= DbgProcess_PropertyChanged;
+		}
 	}
 }

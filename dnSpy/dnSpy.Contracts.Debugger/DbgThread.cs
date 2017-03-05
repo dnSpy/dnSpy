@@ -67,6 +67,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract string Name { get; }
 
 		/// <summary>
+		/// Gets the suspended count. It's 0 if the thread isn't suspended, and greater than zero if it's suspended.
+		/// </summary>
+		public abstract int SuspendedCount { get; }
+
+		/// <summary>
 		/// Thread state
 		/// </summary>
 		public abstract ReadOnlyCollection<DbgStateInfo> State { get; }

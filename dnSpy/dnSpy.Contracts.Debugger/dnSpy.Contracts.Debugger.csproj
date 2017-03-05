@@ -66,6 +66,7 @@
     <Compile Include="PredefinedThreadKinds.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StartDebuggingOptions.cs" />
+    <Compile Include="ThreadCategoryProvider.cs" />
     <Compile Include="UI\AttachProgramOptions.cs" />
     <Compile Include="UI\AttachProgramOptionsProvider.cs" />
     <Compile Include="UI\AttachProgramOptionsProviderFactory.cs" />

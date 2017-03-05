@@ -457,6 +457,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Process Name.
+        /// </summary>
+        public static string Column_ProcessName {
+            get {
+                return ResourceManager.GetString("Column_ProcessName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Title.
         /// </summary>
         public static string Column_ProcessTitle {
@@ -547,11 +556,11 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Suspended.
+        ///   Looks up a localized string similar to Suspended Count.
         /// </summary>
-        public static string Column_ThreadSuspended {
+        public static string Column_ThreadSuspendedCount {
             get {
-                return ResourceManager.GetString("Column_ThreadSuspended", resourceCulture);
+                return ResourceManager.GetString("Column_ThreadSuspendedCount", resourceCulture);
             }
         }
         

@@ -40,6 +40,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		[Flags]
 		public enum UpdateOptions {
 			/// <summary>
+			/// No option is enabled
+			/// </summary>
+			None				= 0,
+
+			/// <summary>
 			/// Update <see cref="DbgModule.IsExe"/>
 			/// </summary>
 			IsExe				= 0x00000001,

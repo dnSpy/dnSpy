@@ -123,6 +123,19 @@
     <Compile Include="ToolWindows\Processes\ProcessFormatter.cs" />
     <Compile Include="ToolWindows\Processes\ProcessVM.cs" />
     <Compile Include="ToolWindows\SimpleProcessReader.cs" />
+    <Compile Include="ToolWindows\Threads\DefaultThreadCategoryProvider.cs" />
+    <Compile Include="ToolWindows\Threads\ThreadCategoryService.cs" />
+    <Compile Include="ToolWindows\Threads\ThreadColumnConverter.cs" />
+    <Compile Include="ToolWindows\Threads\ThreadContext.cs" />
+    <Compile Include="ToolWindows\Threads\ThreadFormatter.cs" />
+    <Compile Include="ToolWindows\Threads\ThreadsContent.cs" />
+    <Compile Include="ToolWindows\Threads\ThreadsControl.xaml.cs">
+      <DependentUpon>ThreadsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\Threads\ThreadsOperations.cs" />
+    <Compile Include="ToolWindows\Threads\ThreadsToolWindowContent.cs" />
+    <Compile Include="ToolWindows\Threads\ThreadsVM.cs" />
+    <Compile Include="ToolWindows\Threads\ThreadVM.cs" />
     <Compile Include="UI\ContentTypeDefinitions.cs" />
     <Compile Include="UI\DebuggerDispatcher.cs" />
     <Compile Include="UI\ListBoxSelectedItemsAP.cs" />
@@ -188,6 +201,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ToolWindows\Processes\ProcessesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ToolWindows\Threads\ThreadsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

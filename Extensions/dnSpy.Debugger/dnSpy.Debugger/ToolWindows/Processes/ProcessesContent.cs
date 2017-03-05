@@ -23,7 +23,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Properties;
@@ -48,7 +47,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public ProcessesOperations Operations { get; }
 
 		readonly ProcessesControl processesControl;
-		readonly IDocumentTabService documentTabService;
 		readonly IProcessesVM processesVM;
 
 		sealed class ControlVM {
@@ -70,10 +68,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		[ImportingConstructor]
-		ProcessesContent(IWpfCommandService wpfCommandService, IProcessesVM processesVM, ProcessesOperations processesOperations, IDocumentTabService documentTabService) {
+		ProcessesContent(IWpfCommandService wpfCommandService, IProcessesVM processesVM, ProcessesOperations processesOperations) {
 			Operations = processesOperations;
 			processesControl = new ProcessesControl();
-			this.documentTabService = documentTabService;
 			this.processesVM = processesVM;
 			processesControl.DataContext = new ControlVM(processesVM, processesOperations);
 			processesControl.ProcessesListViewDoubleClick += ProcessesControl_ProcessesListViewDoubleClick;

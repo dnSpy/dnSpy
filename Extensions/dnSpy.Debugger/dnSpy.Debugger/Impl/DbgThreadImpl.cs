@@ -29,6 +29,7 @@ namespace dnSpy.Debugger.Impl {
 		public override string Kind => kind;
 		public override int Id => id;
 		public override string Name => name;
+		public override int SuspendedCount => suspendedCount;
 
 		public override ReadOnlyCollection<DbgStateInfo> State {
 			get {
@@ -53,10 +54,11 @@ namespace dnSpy.Debugger.Impl {
 		int id;
 		int? managedId;
 		string name;
+		int suspendedCount;
 		ReadOnlyCollection<DbgStateInfo> state;
 		static readonly ReadOnlyCollection<DbgStateInfo> emptyState = new ReadOnlyCollection<DbgStateInfo>(Array.Empty<DbgStateInfo>());
 
-		public DbgThreadImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, string kind, int id, int? managedId, string name, ReadOnlyCollection<DbgStateInfo> state) {
+		public DbgThreadImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) {
 			lockObj = new object();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.appDomain = appDomain;
@@ -64,6 +66,7 @@ namespace dnSpy.Debugger.Impl {
 			this.id = id;
 			this.managedId = managedId;
 			this.name = name;
+			this.suspendedCount = suspendedCount;
 			this.state = state ?? emptyState;
 		}
 
@@ -108,6 +111,14 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
+		internal void UpdateSuspendedCount_DbgThread(int suspendedCount) {
+			DispatcherThread.VerifyAccess();
+			if (this.suspendedCount != suspendedCount) {
+				this.suspendedCount = suspendedCount;
+				OnPropertyChanged(nameof(SuspendedCount));
+			}
+		}
+
 		internal void UpdateState_DbgThread(ReadOnlyCollection<DbgStateInfo> state) {
 			DispatcherThread.VerifyAccess();
 			if (state == null)
@@ -118,7 +129,7 @@ namespace dnSpy.Debugger.Impl {
 				this.state = state;
 			}
 			if (raiseEvent)
-				OnPropertyChanged(nameof(Name));
+				OnPropertyChanged(nameof(State));
 		}
 
 		static bool EqualsState(ReadOnlyCollection<DbgStateInfo> a, ReadOnlyCollection<DbgStateInfo> b) {

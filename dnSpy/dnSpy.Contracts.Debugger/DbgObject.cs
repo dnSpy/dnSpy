@@ -118,6 +118,17 @@ namespace dnSpy.Contracts.Debugger {
 		}
 
 		/// <summary>
+		/// Gets existing data or throws if the data doesn't exist
+		/// </summary>
+		/// <typeparam name="T">Type of data</typeparam>
+		/// <returns></returns>
+		public T GetData<T>() where T : class {
+			if (TryGetData<T>(out var data))
+				return data;
+			throw new InvalidOperationException();
+		}
+
+		/// <summary>
 		/// Gets or creates data. If it implements <see cref="IDisposable"/>, it will get disposed
 		/// when this object gets closed.
 		/// </summary>

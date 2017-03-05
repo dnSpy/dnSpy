@@ -67,7 +67,10 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshThemeFields_UI();
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+			moduleContext.Dispatcher.VerifyAccess();
+			RefreshThemeFields_UI();
+		}
 
 		// random thread
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
@@ -75,8 +78,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
+			moduleContext.Dispatcher.VerifyAccess();
 			if (propertyName == nameof(DebuggerSettings.UseHexadecimal))
-				RefreshHexSettings_UI();
+				RefreshHexFields_UI();
 			else if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
 				moduleContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				RefreshThemeFields_UI();
@@ -85,15 +89,17 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void RefreshThemeFields_UI() {
+			moduleContext.Dispatcher.VerifyAccess();
 			foreach (var vm in AllItems)
-				vm.RefreshThemeFields();
+				vm.RefreshThemeFields_UI();
 		}
 
 		// UI thread
-		void RefreshHexSettings_UI() {
+		void RefreshHexFields_UI() {
+			moduleContext.Dispatcher.VerifyAccess();
 			moduleContext.Formatter = moduleFormatterProvider.Create();
 			foreach (var vm in AllItems)
-				vm.RefreshHexFields();
+				vm.RefreshHexFields_UI();
 		}
 
 		// random thread
@@ -129,6 +135,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void RemoveModuleAt_UI(int i) {
+			moduleContext.Dispatcher.VerifyAccess();
 			Debug.Assert(0 <= i && i < AllItems.Count);
 			var vm = AllItems[i];
 			vm.Dispose();
@@ -137,6 +144,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void RemoveModule_UI(DbgModule m) {
+			moduleContext.Dispatcher.VerifyAccess();
 			var coll = AllItems;
 			for (int i = 0; i < coll.Count; i++) {
 				if (coll[i].Module == m) {

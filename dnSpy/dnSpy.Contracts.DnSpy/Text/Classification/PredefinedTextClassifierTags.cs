@@ -200,7 +200,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// Threads window column: Id
 		/// </summary>
-		public static readonly string ThreadsWindowId = "Id";
+		public static readonly string ThreadsWindowId = "ID";
 
 		/// <summary>
 		/// Threads window column: ManagedId
@@ -233,14 +233,14 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string ThreadsWindowAffinityMask = "AffinityMask";
 
 		/// <summary>
-		/// Threads window column: Suspended
+		/// Threads window column: Suspended Count
 		/// </summary>
-		public static readonly string ThreadsWindowSuspended = "Suspended";
+		public static readonly string ThreadsWindowSuspended = "SuspendedCount";
 
 		/// <summary>
-		/// Threads window column: Process
+		/// Threads window column: Process Name
 		/// </summary>
-		public static readonly string ThreadsWindowProcess = "Process";
+		public static readonly string ThreadsWindowProcess = "ProcessName";
 
 		/// <summary>
 		/// Threads window column: AppDomain
@@ -248,9 +248,9 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string ThreadsWindowAppDomain = "AppDomain";
 
 		/// <summary>
-		/// Threads window column: UserState
+		/// Threads window column: State
 		/// </summary>
-		public static readonly string ThreadsWindowUserState = "UserState";
+		public static readonly string ThreadsWindowUserState = "State";
 
 		/// <summary>
 		/// Processes window column: Name
