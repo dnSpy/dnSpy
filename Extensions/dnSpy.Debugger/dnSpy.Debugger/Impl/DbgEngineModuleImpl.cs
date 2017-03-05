@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Remove() => module.Remove();
 
-		public override void Update(UpdateOptions options, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, string realFilename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) => module.Process.DbgManager.DispatcherThread.BeginInvoke(() => {
+		public override void Update(UpdateOptions options, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) => module.Process.DbgManager.DispatcherThread.BeginInvoke(() => {
 			if (module.IsClosed)
 				return;
 			if ((options & UpdateOptions.IsExe) != 0)
@@ -45,8 +45,6 @@ namespace dnSpy.Debugger.Impl {
 				module.UpdateName_DbgThread(name);
 			if ((options & UpdateOptions.Filename) != 0)
 				module.UpdateFilename_DbgThread(filename);
-			if ((options & UpdateOptions.RealFilename) != 0)
-				module.UpdateRealFilename_DbgThread(realFilename);
 			if ((options & UpdateOptions.IsDynamic) != 0)
 				module.UpdateIsDynamic_DbgThread(isDynamic);
 			if ((options & UpdateOptions.IsInMemory) != 0)

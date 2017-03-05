@@ -70,39 +70,34 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			Filename			= 0x00000020,
 
 			/// <summary>
-			/// Update <see cref="DbgModule.RealFilename"/>
-			/// </summary>
-			RealFilename		= 0x00000040,
-
-			/// <summary>
 			/// Update <see cref="DbgModule.IsDynamic"/>
 			/// </summary>
-			IsDynamic			= 0x00000080,
+			IsDynamic			= 0x00000040,
 
 			/// <summary>
 			/// Update <see cref="DbgModule.IsInMemory"/>
 			/// </summary>
-			IsInMemory			= 0x00000100,
+			IsInMemory			= 0x00000080,
 
 			/// <summary>
 			/// Update <see cref="DbgModule.IsOptimized"/>
 			/// </summary>
-			IsOptimized			= 0x00000200,
+			IsOptimized			= 0x00000100,
 
 			/// <summary>
 			/// Update <see cref="DbgModule.Order"/>
 			/// </summary>
-			Order				= 0x00000400,
+			Order				= 0x00000200,
 
 			/// <summary>
 			/// Update <see cref="DbgModule.Timestamp"/>
 			/// </summary>
-			Timestamp			= 0x00000800,
+			Timestamp			= 0x00000400,
 
 			/// <summary>
 			/// Update <see cref="DbgModule.Version"/>
 			/// </summary>
-			Version				= 0x00001000,
+			Version				= 0x00000800,
 		}
 
 		/// <summary>
@@ -140,12 +135,6 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// </summary>
 		/// <param name="filename">New value</param>
 		public void UpdateFilename(string filename) => Update(UpdateOptions.Filename, filename: filename);
-
-		/// <summary>
-		/// Updates <see cref="DbgModule.RealFilename"/>
-		/// </summary>
-		/// <param name="realFilename">New value</param>
-		public void UpdateRealFilename(string realFilename) => Update(UpdateOptions.RealFilename, realFilename: realFilename);
 
 		/// <summary>
 		/// Updates <see cref="DbgModule.IsDynamic"/>
@@ -193,13 +182,12 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="imageLayout">New <see cref="DbgModule.ImageLayout"/> value</param>
 		/// <param name="name">New <see cref="DbgModule.Name"/> value</param>
 		/// <param name="filename">New <see cref="DbgModule.Filename"/> value</param>
-		/// <param name="realFilename">New <see cref="DbgModule.RealFilename"/> value</param>
 		/// <param name="isDynamic">New <see cref="DbgModule.IsDynamic"/> value</param>
 		/// <param name="isInMemory">New <see cref="DbgModule.IsInMemory"/> value</param>
 		/// <param name="isOptimized">New <see cref="DbgModule.IsOptimized"/> value</param>
 		/// <param name="order">New <see cref="DbgModule.Order"/> value</param>
 		/// <param name="timestamp">New <see cref="DbgModule.Timestamp"/> value</param>
 		/// <param name="version">New <see cref="DbgModule.Version"/> value</param>
-		public abstract void Update(UpdateOptions options, bool isExe = false, ulong address = 0, uint size = 0, DbgImageLayout imageLayout = 0, string name = null, string filename = null, string realFilename = null, bool isDynamic = false, bool isInMemory = false, bool? isOptimized = null, int order = 0, DateTime? timestamp = null, string version = null);
+		public abstract void Update(UpdateOptions options, bool isExe = false, ulong address = 0, uint size = 0, DbgImageLayout imageLayout = 0, string name = null, string filename = null, bool isDynamic = false, bool isInMemory = false, bool? isOptimized = null, int order = 0, DateTime? timestamp = null, string version = null);
 	}
 }

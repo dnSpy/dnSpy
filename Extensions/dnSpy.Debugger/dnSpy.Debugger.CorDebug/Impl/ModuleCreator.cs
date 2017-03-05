@@ -35,13 +35,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			var imageLayout = CalculateImageLayout(dnModule);
 			string name = GetFilename(dnModule.Name);
 			string filename = dnModule.Name;
-			string realFilename = dnModule.Name;//TODO: Find real filename
 			bool isDynamic = dnModule.IsDynamic;
 			bool isInMemory = dnModule.IsInMemory;
 			bool isOptimized = CalculateIsOptimized(dnModule);
 			int order = dnModule.UniqueId;
 			InitializeExeFields(dnModule, filename, imageLayout, out var isExe, out var timestamp, out var version);
-			return objectFactory.CreateModule(appDomain, isExe, address, size, imageLayout, name, filename, realFilename, isDynamic, isInMemory, isOptimized, order, timestamp, version);
+			return objectFactory.CreateModule(appDomain, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version);
 		}
 
 		static DbgImageLayout CalculateImageLayout(DnModule dnModule) {

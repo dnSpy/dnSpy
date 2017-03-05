@@ -73,7 +73,6 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="imageLayout">New <see cref="DbgModule.ImageLayout"/> value</param>
 		/// <param name="name">New <see cref="DbgModule.Name"/> value</param>
 		/// <param name="filename">New <see cref="DbgModule.Filename"/> value</param>
-		/// <param name="realFilename">New <see cref="DbgModule.RealFilename"/> value</param>
 		/// <param name="isDynamic">New <see cref="DbgModule.IsDynamic"/> value</param>
 		/// <param name="isInMemory">New <see cref="DbgModule.IsInMemory"/> value</param>
 		/// <param name="isOptimized">New <see cref="DbgModule.IsOptimized"/> value</param>
@@ -81,8 +80,8 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="timestamp">New <see cref="DbgModule.Timestamp"/> value</param>
 		/// <param name="version">New <see cref="DbgModule.Version"/> value</param>
 		/// <returns></returns>
-		public DbgEngineModule CreateModule(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, string realFilename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) =>
-			CreateModule<object>(appDomain, isExe, address, size, imageLayout, name, filename, realFilename, isDynamic, isInMemory, isOptimized, order, timestamp, version, null);
+		public DbgEngineModule CreateModule(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) =>
+			CreateModule<object>(appDomain, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, null);
 
 		/// <summary>
 		/// Creates a module
@@ -95,7 +94,6 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="imageLayout">New <see cref="DbgModule.ImageLayout"/> value</param>
 		/// <param name="name">New <see cref="DbgModule.Name"/> value</param>
 		/// <param name="filename">New <see cref="DbgModule.Filename"/> value</param>
-		/// <param name="realFilename">New <see cref="DbgModule.RealFilename"/> value</param>
 		/// <param name="isDynamic">New <see cref="DbgModule.IsDynamic"/> value</param>
 		/// <param name="isInMemory">New <see cref="DbgModule.IsInMemory"/> value</param>
 		/// <param name="isOptimized">New <see cref="DbgModule.IsOptimized"/> value</param>
@@ -104,7 +102,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="version">New <see cref="DbgModule.Version"/> value</param>
 		/// <param name="data">Data to add to the <see cref="DbgModule"/> or null if nothing gets added</param>
 		/// <returns></returns>
-		public abstract DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, string realFilename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, T data) where T : class;
+		public abstract DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, T data) where T : class;
 
 		/// <summary>
 		/// Creates a thread

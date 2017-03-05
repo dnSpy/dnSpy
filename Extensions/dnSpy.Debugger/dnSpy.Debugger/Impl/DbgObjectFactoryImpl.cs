@@ -59,10 +59,10 @@ namespace dnSpy.Debugger.Impl {
 			return appDomainImpl;
 		}
 
-		public override DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, string realFilename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, T data) {
+		public override DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, T data) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
-			var module = new DbgModuleImpl(runtime, VerifyOptionalAppDomain(appDomain), isExe, address, size, imageLayout, name, filename, realFilename, isDynamic, isInMemory, isOptimized, order, timestamp, version);
+			var module = new DbgModuleImpl(runtime, VerifyOptionalAppDomain(appDomain), isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version);
 			if (data != null)
 				module.GetOrCreateData(() => data);
 			var engineModule = new DbgEngineModuleImpl(module);

@@ -82,12 +82,6 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract string Filename { get; }
 
 		/// <summary>
-		/// Real filename of module if it exists on disk. It could be different from <see cref="Filename"/>
-		/// if it's an NGEN'd .NET module. This filename would then be the name of the *.ni.dll file.
-		/// </summary>
-		public abstract string RealFilename { get; }
-
-		/// <summary>
 		/// true if it's a dynamic module (the application can add more types and members to the module at runtime)
 		/// </summary>
 		public abstract bool IsDynamic { get; }

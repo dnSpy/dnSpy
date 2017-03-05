@@ -30,7 +30,6 @@ namespace dnSpy.Debugger.Impl {
 		public override DbgImageLayout ImageLayout => imageLayout;
 		public override string Name => name;
 		public override string Filename => filename;
-		public override string RealFilename => realFilename;
 		public override bool IsDynamic => isDynamic;
 		public override bool IsInMemory => isInMemory;
 		public override int Order => order;
@@ -68,7 +67,6 @@ namespace dnSpy.Debugger.Impl {
 		DbgImageLayout imageLayout;
 		string name;
 		string filename;
-		string realFilename;
 		bool isDynamic;
 		bool isInMemory;
 		bool? isOptimized;
@@ -76,7 +74,7 @@ namespace dnSpy.Debugger.Impl {
 		DateTime? timestamp;
 		string version;
 
-		public DbgModuleImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, string realFilename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) {
+		public DbgModuleImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) {
 			lockObj = new object();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.appDomain = appDomain;
@@ -86,7 +84,6 @@ namespace dnSpy.Debugger.Impl {
 			this.imageLayout = imageLayout;
 			this.name = name;
 			this.filename = filename;
-			this.realFilename = realFilename;
 			this.isDynamic = isDynamic;
 			this.isInMemory = isInMemory;
 			this.isOptimized = isOptimized;
@@ -149,14 +146,6 @@ namespace dnSpy.Debugger.Impl {
 			if (this.filename != filename) {
 				this.filename = filename;
 				OnPropertyChanged(nameof(Filename));
-			}
-		}
-
-		internal void UpdateRealFilename_DbgThread(string realFilename) {
-			DispatcherThread.VerifyAccess();
-			if (this.realFilename != realFilename) {
-				this.realFilename = realFilename;
-				OnPropertyChanged(nameof(RealFilename));
 			}
 		}
 
