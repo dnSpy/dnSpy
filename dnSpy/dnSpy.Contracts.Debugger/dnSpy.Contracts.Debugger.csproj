@@ -49,6 +49,7 @@
     <Compile Include="DbgObject.cs" />
     <Compile Include="DbgProcess.cs" />
     <Compile Include="DbgRuntime.cs" />
+    <Compile Include="DbgStateInfo.cs" />
     <Compile Include="DbgThread.cs" />
     <Compile Include="DebuggerSettings.cs" />
     <Compile Include="DispatcherThread.cs" />

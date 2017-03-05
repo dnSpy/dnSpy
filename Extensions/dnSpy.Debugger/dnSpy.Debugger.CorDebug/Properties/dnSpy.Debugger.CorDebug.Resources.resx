@@ -188,6 +188,33 @@ Error: {1}</value>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Debugger ({0})</value>
   </data>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>Background</value>
+  </data>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>StopRequested</value>
+  </data>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>SuspendRequested</value>
+  </data>
+  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
+    <value>ThreadPool</value>
+  </data>
+  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
+    <value>UnsafePoint</value>
+  </data>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>Unstarted</value>
+  </data>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>WaitSleepJoin</value>
+  </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
     <value>Use dnSpy-x86.exe to debug 32-bit applications.</value>
   </data>

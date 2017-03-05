@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 
@@ -70,10 +71,10 @@ namespace dnSpy.Debugger.Impl {
 			return engineModule;
 		}
 
-		public override DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, T data) {
+		public override DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, ReadOnlyCollection<DbgStateInfo> state, T data) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
-			var thread = new DbgThreadImpl(runtime, VerifyOptionalAppDomain(appDomain), kind, id, managedId, name);
+			var thread = new DbgThreadImpl(runtime, VerifyOptionalAppDomain(appDomain), kind, id, managedId, name, state);
 			if (data != null)
 				thread.GetOrCreateData(() => data);
 			var engineThread = new DbgEngineThreadImpl(thread);

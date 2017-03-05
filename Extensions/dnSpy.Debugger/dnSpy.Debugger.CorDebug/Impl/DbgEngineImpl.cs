@@ -139,7 +139,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				int id = e.Thread.VolatileThreadId;
 				int? managedId = null;
 				string name = null;
-				var engineThread = objectFactory.CreateThread(appDomain, kind, id, managedId, name);
+				var state = DnThreadUtils.GetState(e.Thread.CorThread.UserState);
+				var engineThread = objectFactory.CreateThread(appDomain, kind, id, managedId, name, state);
 				lock (lockObj)
 					toEngineThread.Add(e.Thread, engineThread);
 			}

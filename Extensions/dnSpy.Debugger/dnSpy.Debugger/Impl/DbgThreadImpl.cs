@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using dnSpy.Contracts.Debugger;
 
@@ -28,6 +29,13 @@ namespace dnSpy.Debugger.Impl {
 		public override string Kind => kind;
 		public override int Id => id;
 		public override string Name => name;
+
+		public override ReadOnlyCollection<DbgStateInfo> State {
+			get {
+				lock (lockObj)
+					return state;
+			}
+		}
 
 		public override int? ManagedId {
 			get {
@@ -45,8 +53,10 @@ namespace dnSpy.Debugger.Impl {
 		int id;
 		int? managedId;
 		string name;
+		ReadOnlyCollection<DbgStateInfo> state;
+		static readonly ReadOnlyCollection<DbgStateInfo> emptyState = new ReadOnlyCollection<DbgStateInfo>(Array.Empty<DbgStateInfo>());
 
-		public DbgThreadImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, string kind, int id, int? managedId, string name) {
+		public DbgThreadImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, string kind, int id, int? managedId, string name, ReadOnlyCollection<DbgStateInfo> state) {
 			lockObj = new object();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.appDomain = appDomain;
@@ -54,6 +64,7 @@ namespace dnSpy.Debugger.Impl {
 			this.id = id;
 			this.managedId = managedId;
 			this.name = name;
+			this.state = state ?? emptyState;
 		}
 
 		public override event PropertyChangedEventHandler PropertyChanged;
@@ -95,6 +106,33 @@ namespace dnSpy.Debugger.Impl {
 				this.name = name;
 				OnPropertyChanged(nameof(Name));
 			}
+		}
+
+		internal void UpdateState_DbgThread(ReadOnlyCollection<DbgStateInfo> state) {
+			DispatcherThread.VerifyAccess();
+			if (state == null)
+				state = emptyState;
+			bool raiseEvent;
+			lock (lockObj) {
+				raiseEvent = !EqualsState(this.state, state);
+				this.state = state;
+			}
+			if (raiseEvent)
+				OnPropertyChanged(nameof(Name));
+		}
+
+		static bool EqualsState(ReadOnlyCollection<DbgStateInfo> a, ReadOnlyCollection<DbgStateInfo> b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Count != b.Count)
+				return false;
+			for (int i = 0; i < a.Count; i++) {
+				if (a[i] != b[i])
+					return false;
+			}
+			return true;
 		}
 
 		internal void Remove() => DispatcherThread.BeginInvoke(() => runtime.Remove_DbgThread(this));

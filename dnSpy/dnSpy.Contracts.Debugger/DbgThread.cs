@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace dnSpy.Contracts.Debugger {
@@ -64,5 +65,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets the thread name
 		/// </summary>
 		public abstract string Name { get; }
+
+		/// <summary>
+		/// Thread state
+		/// </summary>
+		public abstract ReadOnlyCollection<DbgStateInfo> State { get; }
 	}
 }

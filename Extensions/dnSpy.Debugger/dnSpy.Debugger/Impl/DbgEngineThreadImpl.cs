@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 
@@ -30,7 +31,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Remove() => thread.Remove();
 
-		public override void Update(UpdateOptions options, string kind, int id, int? managedId, string name) {
+		public override void Update(UpdateOptions options, string kind, int id, int? managedId, string name, ReadOnlyCollection<DbgStateInfo> state) {
 			if (thread.IsClosed)
 				return;
 			if ((options & UpdateOptions.Kind) != 0)
@@ -41,6 +42,8 @@ namespace dnSpy.Debugger.Impl {
 				thread.UpdateManagedId_DbgThread(managedId);
 			if ((options & UpdateOptions.Name) != 0)
 				thread.UpdateName_DbgThread(name);
+			if ((options & UpdateOptions.State) != 0)
+				thread.UpdateState_DbgThread(state);
 		}
 	}
 }

@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="BreakProcessKind.cs" />
     <Compile Include="CorDebugStartDebuggingOptions.cs" />
+    <Compile Include="CorThreadUserStates.cs" />
     <Compile Include="DotNetCoreStartDebuggingOptions.cs" />
     <Compile Include="DotNetFrameworkStartDebuggingOptions.cs" />
     <Compile Include="CorDebugRuntime.cs" />

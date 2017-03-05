@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
@@ -58,6 +59,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			/// Update <see cref="DbgThread.Name"/>
 			/// </summary>
 			Name				= 0x00000008,
+
+			/// <summary>
+			/// Update <see cref="DbgThread.State"/>
+			/// </summary>
+			State				= 0x00000010,
 		}
 
 		/// <summary>
@@ -85,6 +91,12 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public void UpdateName(string name) => Update(UpdateOptions.Name, name: name);
 
 		/// <summary>
+		/// Updates <see cref="DbgThread.State"/>
+		/// </summary>
+		/// <param name="state">New value</param>
+		public void UpdateState(ReadOnlyCollection<DbgStateInfo> state) => Update(UpdateOptions.State, state: state);
+
+		/// <summary>
 		/// Updates <see cref="DbgThread"/> properties
 		/// </summary>
 		/// <param name="options">Options</param>
@@ -92,6 +104,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="id">New <see cref="DbgThread.Id"/> value</param>
 		/// <param name="managedId">New <see cref="DbgThread.ManagedId"/> value</param>
 		/// <param name="name">New <see cref="DbgThread.Name"/> value</param>
-		public abstract void Update(UpdateOptions options, string kind = null, int id = 0, int? managedId = null, string name = null);
+		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
+		public abstract void Update(UpdateOptions options, string kind = null, int id = 0, int? managedId = null, string name = null, ReadOnlyCollection<DbgStateInfo> state = null);
 	}
 }

@@ -56,6 +56,7 @@
     <Compile Include="Impl\DbgEngineImpl.cs" />
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
+    <Compile Include="Impl\DnThreadUtils.cs" />
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
     <Compile Include="Impl\DotNetCoreHelpers.cs" />
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
