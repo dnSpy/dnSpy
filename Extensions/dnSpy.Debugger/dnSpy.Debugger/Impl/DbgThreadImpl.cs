@@ -27,11 +27,18 @@ namespace dnSpy.Debugger.Impl {
 		public override DbgAppDomain AppDomain => appDomain;
 		public override string Kind => kind;
 		public override int Id => id;
-		public override int? ManagedId => managedId;
 		public override string Name => name;
+
+		public override int? ManagedId {
+			get {
+				lock (lockObj)
+					return managedId;
+			}
+		}
 
 		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
 
+		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
 		readonly DbgAppDomainImpl appDomain;
 		string kind;
@@ -40,6 +47,7 @@ namespace dnSpy.Debugger.Impl {
 		string name;
 
 		public DbgThreadImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, string kind, int id, int? managedId, string name) {
+			lockObj = new object();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.appDomain = appDomain;
 			this.kind = kind;
@@ -72,10 +80,13 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void UpdateManagedId_DbgThread(int? managedId) {
 			DispatcherThread.VerifyAccess();
-			if (this.managedId != managedId) {
+			bool raiseEvent;
+			lock (lockObj) {
+				raiseEvent = this.managedId != managedId;
 				this.managedId = managedId;
-				OnPropertyChanged(nameof(ManagedId));
 			}
+			if (raiseEvent)
+				OnPropertyChanged(nameof(ManagedId));
 		}
 
 		internal void UpdateName_DbgThread(string name) {

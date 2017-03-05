@@ -26,7 +26,6 @@ namespace dnSpy.Debugger.Impl {
 		public override DbgRuntime Runtime => runtime;
 		public override DbgAppDomain AppDomain => appDomain;
 		public override bool IsExe => isExe;
-		public override ulong Address => address;
 		public override uint Size => size;
 		public override DbgImageLayout ImageLayout => imageLayout;
 		public override string Name => name;
@@ -34,13 +33,33 @@ namespace dnSpy.Debugger.Impl {
 		public override string RealFilename => realFilename;
 		public override bool IsDynamic => isDynamic;
 		public override bool IsInMemory => isInMemory;
-		public override bool? IsOptimized => isOptimized;
 		public override int Order => order;
-		public override DateTime? Timestamp => timestamp;
 		public override string Version => version;
+
+		public override ulong Address {
+			get {
+				lock (lockObj)
+					return address;
+			}
+		}
+
+		public override bool? IsOptimized {
+			get {
+				lock (lockObj)
+					return isOptimized;
+			}
+		}
+
+		public override DateTime? Timestamp {
+			get {
+				lock (lockObj)
+					return timestamp;
+			}
+		}
 
 		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
 
+		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
 		readonly DbgAppDomainImpl appDomain;
 		bool isExe;
@@ -58,6 +77,7 @@ namespace dnSpy.Debugger.Impl {
 		string version;
 
 		public DbgModuleImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, string realFilename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) {
+			lockObj = new object();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.appDomain = appDomain;
 			this.isExe = isExe;
@@ -91,10 +111,13 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void UpdateAddress_DbgThread(ulong address) {
 			DispatcherThread.VerifyAccess();
-			if (this.address != address) {
+			bool raiseEvent;
+			lock (lockObj) {
+				raiseEvent = this.address != address;
 				this.address = address;
-				OnPropertyChanged(nameof(Address));
 			}
+			if (raiseEvent)
+				OnPropertyChanged(nameof(Address));
 		}
 
 		internal void UpdateSize_DbgThread(uint size) {
@@ -155,10 +178,13 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void UpdateIsOptimized_DbgThread(bool? isOptimized) {
 			DispatcherThread.VerifyAccess();
-			if (this.isOptimized != isOptimized) {
+			bool raiseEvent;
+			lock (lockObj) {
+				raiseEvent = this.isOptimized != isOptimized;
 				this.isOptimized = isOptimized;
-				OnPropertyChanged(nameof(IsOptimized));
 			}
+			if (raiseEvent)
+				OnPropertyChanged(nameof(IsOptimized));
 		}
 
 		internal void UpdateOrder_DbgThread(int order) {
@@ -171,10 +197,13 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void UpdateTimestamp_DbgThread(DateTime? timestamp) {
 			DispatcherThread.VerifyAccess();
-			if (this.timestamp != timestamp) {
+			bool raiseEvent;
+			lock (lockObj) {
+				raiseEvent = this.timestamp != timestamp;
 				this.timestamp = timestamp;
-				OnPropertyChanged(nameof(Timestamp));
 			}
+			if (raiseEvent)
+				OnPropertyChanged(nameof(Timestamp));
 		}
 
 		internal void UpdateVersion_DbgThread(string version) {
