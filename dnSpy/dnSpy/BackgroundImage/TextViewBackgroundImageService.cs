@@ -41,6 +41,7 @@ namespace dnSpy.BackgroundImage {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			this.wpfTextView = wpfTextView;
+			Initialize();
 			wpfTextView.Closed += WpfTextView_Closed;
 		}
 

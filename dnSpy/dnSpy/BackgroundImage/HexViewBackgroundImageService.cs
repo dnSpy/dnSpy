@@ -42,6 +42,7 @@ namespace dnSpy.BackgroundImage {
 			if (wpfHexView == null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			this.wpfHexView = wpfHexView;
+			Initialize();
 			wpfHexView.Closed += WpfHexView_Closed;
 		}
 

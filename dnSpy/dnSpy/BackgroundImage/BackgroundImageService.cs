@@ -33,8 +33,9 @@ namespace dnSpy.BackgroundImage {
 			if (imageSourceService == null)
 				throw new ArgumentNullException(nameof(imageSourceService));
 			this.imageSourceService = imageSourceService;
-			imageSourceService.Register(this);
 		}
+
+		protected void Initialize() => imageSourceService.Register(this);
 
 		protected abstract double ViewportWidth { get; }
 		protected abstract double ViewportHeight { get; }
