@@ -29,10 +29,10 @@ namespace dnSpy.BackgroundImage {
 		readonly IImageSourceService imageSourceService;
 		Image currentImage;
 
-		protected BackgroundImageService(IImageSourceService imageSourceService) {
+		protected BackgroundImageService(IImageSourceService imageSourceService) =>
 			this.imageSourceService = imageSourceService ?? throw new ArgumentNullException(nameof(imageSourceService));
-			imageSourceService.Register(this);
-		}
+
+		protected void Initialize() => imageSourceService.Register(this);
 
 		protected abstract double ViewportWidth { get; }
 		protected abstract double ViewportHeight { get; }

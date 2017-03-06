@@ -40,6 +40,7 @@ namespace dnSpy.BackgroundImage {
 		HexViewBackgroundImageService(WpfHexView wpfHexView, IImageSourceService imageSourceService)
 			: base(imageSourceService) {
 			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
+			Initialize();
 			wpfHexView.Closed += WpfHexView_Closed;
 		}
 

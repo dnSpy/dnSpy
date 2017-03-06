@@ -39,6 +39,7 @@ namespace dnSpy.BackgroundImage {
 		TextViewBackgroundImageService(IWpfTextView wpfTextView, IImageSourceService imageSourceService)
 			: base(imageSourceService) {
 			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			Initialize();
 			wpfTextView.Closed += WpfTextView_Closed;
 		}
 
