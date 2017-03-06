@@ -79,6 +79,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Debugger", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Debugger.DotNet.CorDebug", "dnSpy\dnSpy.Contracts.Debugger.DotNet.CorDebug\dnSpy.Contracts.Debugger.DotNet.CorDebug.csproj", "{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Diagnostics.Runtime", "Extensions\dnSpy.Debugger\clrmd\src\Microsoft.Diagnostics.Runtime\Microsoft.Diagnostics.Runtime.csproj", "{A82126CA-23AA-41F1-8586-A5938D44D0A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -473,6 +475,18 @@ Global
 		{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F}.Release|x64.Build.0 = Release|Any CPU
 		{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F}.Release|x86.ActiveCfg = Release|Any CPU
 		{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F}.Release|x86.Build.0 = Release|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|x64.Build.0 = Debug|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|x86.Build.0 = Debug|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|x64.ActiveCfg = Release|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|x64.Build.0 = Release|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -513,5 +527,6 @@ Global
 		{F7A40AE4-6945-447E-8CE0-BA0ED4B4097A} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
 		{C92217E8-A68E-4F8D-9B98-D7328E89DAF1} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F} = {293F0A13-6653-4580-9116-1D255F4C4E69}
+		{A82126CA-23AA-41F1-8586-A5938D44D0A7} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
 	EndGlobalSection
 EndGlobal

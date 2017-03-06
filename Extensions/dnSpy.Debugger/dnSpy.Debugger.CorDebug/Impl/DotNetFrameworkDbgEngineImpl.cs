@@ -21,14 +21,15 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.CorDebug.DAC;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DotNetFrameworkDbgEngineImpl : DbgEngineImpl {
 		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetFramework;
 		public override string Debugging => "CLR";
 
-		public DotNetFrameworkDbgEngineImpl(DbgManager dbgManager, DbgStartKind startKind)
-			: base(dbgManager, startKind) {
+		public DotNetFrameworkDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind)
+			: base(clrDacProvider, dbgManager, startKind) {
 		}
 
 		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) =>

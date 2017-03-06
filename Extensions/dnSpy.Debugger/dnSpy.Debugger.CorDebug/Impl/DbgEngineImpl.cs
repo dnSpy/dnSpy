@@ -27,18 +27,24 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.CorDebug.DAC;
 using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
-	abstract partial class DbgEngineImpl : DbgEngine {
+	abstract partial class DbgEngineImpl : DbgEngine, IClrDacDebugger {
 		public override DbgStartKind StartKind { get; }
 		public override string[] DebugTags => new[] { PredefinedDebugTags.DotNetDebugger };
 		public override event EventHandler<DbgEngineMessage> Message;
+		public event EventHandler ClrDacRunning;
+		public event EventHandler ClrDacPaused;
+		public event EventHandler ClrDacTerminated;
 
 		Dispatcher Dispatcher => debuggerThread.Dispatcher;
 
 		readonly DebuggerThread debuggerThread;
 		readonly object lockObj;
+		readonly ClrDacProvider clrDacProvider;
+		ClrDac clrDac;
 		readonly DbgManager dbgManager;
 		DnDebugger dnDebugger;
 		SafeHandle hProcess_debuggee;
@@ -47,13 +53,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly Dictionary<DnModule, DbgEngineModule> toEngineModule;
 		readonly Dictionary<DnThread, DbgEngineThread> toEngineThread;
 
-		protected DbgEngineImpl(DbgManager dbgManager, DbgStartKind startKind) {
+		protected DbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind) {
 			StartKind = startKind;
 			lockObj = new object();
 			toEngineAppDomain = new Dictionary<DnAppDomain, DbgEngineAppDomain>();
 			toEngineModule = new Dictionary<DnModule, DbgEngineModule>();
 			toEngineThread = new Dictionary<DnThread, DbgEngineThread>();
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
+			this.clrDacProvider = clrDacProvider ?? throw new ArgumentNullException(nameof(clrDacProvider));
 			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
 		}
@@ -73,6 +80,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				if (needContinueInOnConnected) {
 					// Make sure it's paused until OnConnected() gets called
 					e.AddPauseReason(DebuggerPauseReason.Other);
+				}
+				break;
+
+			case DebugCallbackKind.CreateAppDomain:
+				// We can't create it in the CreateProcess event
+				if (clrDac == null) {
+					var p = dnDebugger.Processes.FirstOrDefault();
+					if (p != null)
+						clrDac = clrDacProvider.Create(p.ProcessId, dnDebugger.CLRPath, this);
 				}
 				break;
 
@@ -101,13 +117,17 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			if (dnDebugger.ProcessState == DebuggerProcessState.Terminated) {
 				if (hProcess_debuggee == null || hProcess_debuggee.IsClosed || hProcess_debuggee.IsInvalid || !NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode))
 					exitCode = -1;
+				clrDac = null;
+				ClrDacTerminated?.Invoke(this, EventArgs.Empty);
 				UnregisterEventsAndCloseProcessHandle();
 
 				SendMessage(new DbgMessageDisconnected(exitCode));
 				return;
 			}
-			else if (dnDebugger.ProcessState == DebuggerProcessState.Paused)
+			else if (dnDebugger.ProcessState == DebuggerProcessState.Paused) {
+				ClrDacPaused?.Invoke(this, EventArgs.Empty);
 				UpdateThreadProperties_CorDebug();
+			}
 		}
 
 		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
@@ -256,7 +276,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 			if (needContinueInOnConnected) {
 				// It was paused when we got the CreateProcess event. Let it run again
-				CorDebugThread(() => dnDebugger.Continue());
+				CorDebugThread(() => Continue_CorDebug());
 			}
 		}
 
@@ -303,7 +323,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			if (!HasConnected_DebugThread)
 				return;
 			if (dnDebugger.ProcessState == DebuggerProcessState.Paused)
-				dnDebugger.Continue();
+				Continue_CorDebug();
+		}
+
+		void Continue_CorDebug() {
+			Dispatcher.VerifyAccess();
+			ClrDacRunning?.Invoke(this, EventArgs.Empty);
+			dnDebugger.Continue();
 		}
 
 		public override void Terminate() => CorDebugThread(TerminateCore);

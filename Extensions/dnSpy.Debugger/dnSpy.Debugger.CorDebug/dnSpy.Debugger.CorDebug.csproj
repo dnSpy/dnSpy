@@ -46,6 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DAC\ClrDac.cs" />
+    <Compile Include="DAC\ClrDacImpl.cs" />
+    <Compile Include="DAC\ClrDacProvider.cs" />
+    <Compile Include="DAC\IClrDacDebugger.cs" />
+    <Compile Include="DAC\NullClrDac.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetCoreStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetFrameworkStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetStartDebuggingOptionsPage.cs" />
@@ -90,6 +95,10 @@
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
       <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
       <Name>dnSpy.Contracts.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\clrmd\src\Microsoft.Diagnostics.Runtime\Microsoft.Diagnostics.Runtime.csproj">
+      <Project>{a82126ca-23aa-41f1-8586-a5938d44d0a7}</Project>
+      <Name>Microsoft.Diagnostics.Runtime</Name>
     </ProjectReference>
     <ProjectReference Include="..\dndbg\dndbg.csproj">
       <Project>{989a5c51-8c4c-4f4d-90a2-042cd1846075}</Project>

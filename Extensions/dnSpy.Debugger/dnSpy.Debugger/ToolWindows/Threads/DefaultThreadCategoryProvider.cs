@@ -36,6 +36,10 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				return new ThreadCategoryInfo(DsImages.Process, dnSpy_Debugger_Resources.ThreadType_Worker);
 			case PredefinedThreadKinds.Terminated:
 				return new ThreadCategoryInfo(DsImages.QuestionMark, dnSpy_Debugger_Resources.ThreadType_Terminated);
+			case PredefinedThreadKinds.GC:
+				return new ThreadCategoryInfo(DsImages.Process, "GC");// No need to localize it
+			case PredefinedThreadKinds.Finalizer:
+				return new ThreadCategoryInfo(DsImages.Process, "Finalizer");// No need to localize it
 			}
 			return null;
 		}

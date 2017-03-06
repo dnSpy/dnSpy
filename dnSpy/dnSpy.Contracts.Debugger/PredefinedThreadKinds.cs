@@ -46,5 +46,15 @@ namespace dnSpy.Contracts.Debugger {
 		/// Terminated thread
 		/// </summary>
 		public const string Terminated = nameof(Terminated);
+
+		/// <summary>
+		/// Garbage Collector thread
+		/// </summary>
+		public const string GC = nameof(GC);
+
+		/// <summary>
+		/// Finalizer thread
+		/// </summary>
+		public const string Finalizer = nameof(Finalizer);
 	}
 }

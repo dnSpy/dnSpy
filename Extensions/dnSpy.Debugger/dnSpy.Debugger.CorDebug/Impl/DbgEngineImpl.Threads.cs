@@ -17,12 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.CorDebug.DAC;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
@@ -40,8 +42,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				forceReadName = true;
 
 			var managedId = oldProperties?.ManagedId;
-			if (managedId == null && isCreateThread)
-				managedId = GetManagedId_CLRMD(thread);
+			// Always retry calling ClrDac since it sometimes fails the first time we call it
+			if (managedId == null)
+				managedId = GetManagedId_ClrDac(thread);
 			// If we should read the name, it means the CLR thread object is available so we
 			// should also read the managed ID.
 			if (managedId == null && forceReadName)
@@ -78,7 +81,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return managedId;
 		}
 
-		static int? GetManagedId_CLRMD(DnThread thread) => null;//TODO: Use CLRMD
+		int? GetManagedId_ClrDac(DnThread thread) {
+			Debug.Assert(clrDac != null);
+			if (clrDac == null)
+				return null;
+			var info = clrDac.GetThreadInfo(thread.VolatileThreadId);
+			if (info == null)
+				return null;
+			return info.Value.ManagedThreadId;
+		}
 
 		static string GetThreadName(DnThread thread) {
 			var threadObj = TryGetThreadObject(thread);
@@ -91,7 +102,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return name;
 		}
 
-		static string GetThreadKind(DnThread thread, int? managedId) {
+		string GetThreadKind(DnThread thread, int? managedId) {
+			if (managedId == 1)
+				return PredefinedThreadKinds.Main;
+
+			var s = GetThreadKind_ClrDac(thread);
+			if (s != null)
+				return s;
+
 			if (thread.CorThread.IsStopped)
 				return PredefinedThreadKinds.Terminated;
 			if (thread.CorThread.IsThreadPool)
@@ -102,10 +120,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				return PredefinedThreadKinds.WorkerThread;
 			return PredefinedThreadKinds.Unknown;
 
-			//TODO: This check is not correct
+			// This check is not correct but will only be called if ClrDac fails
 			bool IsWorkerThread(DnThread t) => t.CorThread.IsBackground;
 
-			//TODO: This isn't 100% accurate
+			// Not 100% accurate but it's only called if ClrDac fails
 			bool IsMainThread(DnThread t) {
 				if (!t.Process.WasAttached)
 					return t.UniqueIdProcess == 0;
@@ -117,6 +135,25 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					return false;
 				return t.UniqueIdProcess == 0;
 			}
+		}
+
+		string GetThreadKind_ClrDac(DnThread thread) {
+			Debug.Assert(clrDac != null);
+			if (clrDac == null)
+				return null;
+			var tmp = clrDac.GetThreadInfo(thread.VolatileThreadId);
+			if (tmp == null)
+				return null;
+			var info = tmp.Value;
+			if (!info.IsAlive)
+				return PredefinedThreadKinds.Terminated;
+			if (info.IsGC)
+				return PredefinedThreadKinds.GC;
+			if (info.IsFinalizer)
+				return PredefinedThreadKinds.Finalizer;
+			if (info.IsThreadpoolWorker)
+				return PredefinedThreadKinds.ThreadPool;
+			return PredefinedThreadKinds.WorkerThread;
 		}
 
 		void UpdateThreadProperties_CorDebug() {

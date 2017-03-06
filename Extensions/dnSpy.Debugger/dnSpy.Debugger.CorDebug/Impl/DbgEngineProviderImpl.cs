@@ -17,13 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.CorDebug.DAC;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	[ExportDbgEngineProvider]
 	sealed class DbgEngineProviderImpl : DbgEngineProvider {
+		readonly Lazy<ClrDacProvider> clrDacProvider;
+
+		[ImportingConstructor]
+		DbgEngineProviderImpl(Lazy<ClrDacProvider> clrDacProvider) {
+			this.clrDacProvider = clrDacProvider;
+		}
+
 		public override DbgEngine Create(DbgManager dbgManager, StartDebuggingOptions options) {
 			if (options is DotNetFrameworkStartDebuggingOptions dnfOptions)
 				return StartDotNetFramework(dbgManager, dnfOptions);
@@ -35,9 +45,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		DbgEngine StartDotNetFramework(DbgManager dbgManager, DotNetFrameworkStartDebuggingOptions dnfOptions) =>
-			new DotNetFrameworkDbgEngineImpl(dbgManager, DbgStartKind.Start);
+			new DotNetFrameworkDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Start);
 
 		DbgEngine StartDotNetCore(DbgManager dbgManager, DotNetCoreStartDebuggingOptions dncOptions) =>
-			new DotNetCoreDbgEngineImpl(dbgManager, DbgStartKind.Start);
+			new DotNetCoreDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Start);
 	}
 }
