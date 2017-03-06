@@ -16,3 +16,6 @@
 [submodule "Extensions/dnSpy.Debugger/netcorefiles"]
 	path = Extensions/dnSpy.Debugger/netcorefiles
 	url = https://github.com/0xd4d/netcorefiles.git
+[submodule "Extensions/dnSpy.Debugger/clrmd"]
+	path = Extensions/dnSpy.Debugger/clrmd
+	url = https://github.com/0xd4d/clrmd.git
