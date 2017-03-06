@@ -55,6 +55,12 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				output.Write(BoxedTextColor.Text, ">");
 		}
 
+		public void WriteManagedId(ITextColorWriter output, DbgThread thread) {
+			var managedId = thread.ManagedId;
+			if (managedId != null)
+				WriteInt32(output, managedId.Value);
+		}
+
 		public void WriteId(ITextColorWriter output, DbgThread thread) => WriteInt32(output, thread.Id);
 		public void WriteSuspendedCount(ITextColorWriter output, DbgThread thread) => WriteInt32(output, thread.SuspendedCount);
 		public void WriteCategoryText(ITextColorWriter output, ThreadVM vm) => output.Write(BoxedTextColor.Text, vm.CategoryText);

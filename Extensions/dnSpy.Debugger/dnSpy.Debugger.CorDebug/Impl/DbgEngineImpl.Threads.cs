@@ -28,26 +28,75 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
 		sealed class DbgThreadData {
 			public ThreadProperties Last { get; set; }
+			public bool HasNewName { get; set; }
 		}
 
-		ThreadProperties GetThreadProperties_CorDebug(DnThread thread) {
+		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties oldProperties, bool isCreateThread, bool forceReadName) {
 			debuggerThread.Dispatcher.VerifyAccess();
 			var appDomain = TryGetEngineAppDomain(thread.AppDomainOrNull)?.AppDomain;
-			var kind = GetThreadKind(thread);
 			var id = thread.VolatileThreadId;
-			int? managedId = null;//TODO:
-			string name = null;//TODO:
+
+			if (isCreateThread && !IsNewCreatedThread(thread))
+				forceReadName = true;
+
+			var managedId = oldProperties?.ManagedId;
+			if (managedId == null && isCreateThread)
+				managedId = GetManagedId_CLRMD(thread);
+			// If we should read the name, it means the CLR thread object is available so we
+			// should also read the managed ID.
+			if (managedId == null && forceReadName)
+				managedId = GetManagedId(thread);
+
+			// If it's a new thread, it has no name (m_Name is null)
+			var name = forceReadName ? GetThreadName(thread) : oldProperties?.Name;
+
 			int suspendedCount = thread.CorThread.IsSuspended ? 1 : 0;
 			var userState = thread.CorThread.UserState;
+			var kind = GetThreadKind(thread, managedId);
 			return new ThreadProperties(appDomain, kind, id, managedId, name, suspendedCount, userState);
 		}
 
-		string GetThreadKind(DnThread thread) {
+		// If we attached to the process, we don't know whether this thread is a new thread
+		// that got created after we attached to the process or if the CLR debugger is still
+		// notifying us of existing threads.
+		bool IsNewCreatedThread(DnThread thread) => StartKind != DbgStartKind.Attach;
+
+		static CorValue TryGetThreadObject(DnThread thread) {
+			var threadObj = thread.CorThread.Object?.NeuterCheckDereferencedValue;
+			if (threadObj == null || threadObj.IsNull)
+				return null;
+			return threadObj;
+		}
+
+		static int? GetManagedId(DnThread thread) {
+			var threadObj = TryGetThreadObject(thread);
+			if (threadObj == null)
+				return null;
+			// mscorlib 2.0 and 4.0 and CoreCLR all use this field name
+			if (!EvalReflectionUtils.ReadValue(threadObj, "m_ManagedThreadId", out int managedId))
+				return null;
+			return managedId;
+		}
+
+		static int? GetManagedId_CLRMD(DnThread thread) => null;//TODO: Use CLRMD
+
+		static string GetThreadName(DnThread thread) {
+			var threadObj = TryGetThreadObject(thread);
+			if (threadObj == null)
+				return null;
+			// mscorlib 2.0 and 4.0 and CoreCLR all use this field name. It's unlikely to change since
+			// VS' debugger probably hard codes the name as well.
+			if (!EvalReflectionUtils.ReadValue(threadObj, "m_Name", out string name))
+				return null;
+			return name;
+		}
+
+		static string GetThreadKind(DnThread thread, int? managedId) {
 			if (thread.CorThread.IsStopped)
 				return PredefinedThreadKinds.Terminated;
 			if (thread.CorThread.IsThreadPool)
 				return PredefinedThreadKinds.ThreadPool;
-			if (IsMainThread(thread))
+			if (managedId == 1 || IsMainThread(thread))
 				return PredefinedThreadKinds.Main;
 			if (IsWorkerThread(thread))
 				return PredefinedThreadKinds.WorkerThread;
@@ -76,7 +125,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			lock (lockObj) {
 				foreach (var kv in toEngineThread) {
 					var threadData = kv.Value.Thread.GetData<DbgThreadData>();
-					var newProps = GetThreadProperties_CorDebug(kv.Key);
+					var newProps = GetThreadProperties_CorDebug(kv.Key, threadData.Last, isCreateThread: false, forceReadName: threadData.HasNewName);
+					threadData.HasNewName = false;
 					var updateOptions = threadData.Last.Compare(newProps);
 					if (updateOptions == DbgEngineThread.UpdateOptions.None)
 						continue;
@@ -99,7 +149,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		void DnDebugger_OnThreadAdded(object sender, ThreadDebuggerEventArgs e) {
 			Debug.Assert(objectFactory != null);
 			if (e.Added) {
-				var props = GetThreadProperties_CorDebug(e.Thread);
+				var props = GetThreadProperties_CorDebug(e.Thread, null, isCreateThread: true, forceReadName: false);
 				var threadData = new DbgThreadData { Last = props };
 				var state = DnThreadUtils.GetState(props.UserState);
 				var engineThread = objectFactory.CreateThread(props.AppDomain, props.Kind, props.Id, props.ManagedId, props.Name, props.SuspendedCount, state, threadData);
@@ -114,6 +164,25 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				}
 				engineThread?.Remove();
 			}
+		}
+
+		DbgEngineThread TryGetEngineThread(DnThread thread) {
+			if (thread == null)
+				return null;
+			DbgEngineThread engineThread;
+			bool b;
+			lock (lockObj)
+				b = toEngineThread.TryGetValue(thread, out engineThread);
+			Debug.Assert(b);
+			return engineThread;
+		}
+
+		void OnNewThreadName_CorDebug(DnThread thread) {
+			debuggerThread.Dispatcher.VerifyAccess();
+			var engineThread = TryGetEngineThread(thread);
+			if (engineThread == null)
+				return;
+			engineThread.Thread.GetData<DbgThreadData>().HasNewName = true;
 		}
 	}
 }

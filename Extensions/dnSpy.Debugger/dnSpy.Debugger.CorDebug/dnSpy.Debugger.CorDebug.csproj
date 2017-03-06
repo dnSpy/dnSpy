@@ -61,6 +61,7 @@
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
     <Compile Include="Impl\DotNetCoreHelpers.cs" />
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
+    <Compile Include="Impl\EvalReflectionUtils.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />
     <Compile Include="Impl\NativeMethods.cs" />
     <Compile Include="Impl\ThreadProperties.cs" />

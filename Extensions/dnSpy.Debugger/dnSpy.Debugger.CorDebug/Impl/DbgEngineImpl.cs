@@ -112,9 +112,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
 			TryGetEngineAppDomain(e.AppDomain)?.UpdateName(e.AppDomain.Name);
-			if (e.Thread != null) {
-				//TODO: Update thread name
-			}
+			OnNewThreadName_CorDebug(e.Thread);
 		}
 
 		DbgEngineAppDomain TryGetEngineAppDomain(DnAppDomain dnAppDomain) {

@@ -35,6 +35,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			var formatter = obj.VM.Context.Formatter;
 			if (obj.Tag == PredefinedTextClassifierTags.ThreadsWindowId)
 				formatter.WriteId(writer, obj.VM.Thread);
+			else if (obj.Tag == PredefinedTextClassifierTags.ThreadsWindowManagedId)
+				formatter.WriteManagedId(writer, obj.VM.Thread);
 			else if (obj.Tag == PredefinedTextClassifierTags.ThreadsWindowCategoryText)
 				formatter.WriteCategoryText(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.ThreadsWindowName)
