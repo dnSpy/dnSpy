@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
@@ -134,6 +135,15 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 			case nameof(Process.Debugging):
 				OnPropertyChanged(nameof(DebuggingObject));
+				break;
+
+			case nameof(Process.Machine):
+			case nameof(Process.Bitness):
+			case nameof(Process.ShouldDetach):
+				break;
+
+			default:
+				Debug.Fail($"Unknown process property: {propertyName}");
 				break;
 			}
 		}

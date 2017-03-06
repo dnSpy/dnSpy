@@ -252,6 +252,10 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			if (disposed)
 				return;
 			switch (propertyName) {
+			case nameof(DbgThread.AppDomain):
+				OnPropertyChanged(nameof(AppDomainObject));
+				break;
+
 			case nameof(DbgThread.Kind):
 				initializeThreadCategory = true;
 				OnPropertyChanged(nameof(CategoryImageReference));
@@ -279,6 +283,10 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 			case nameof(DbgThread.State):
 				OnPropertyChanged(nameof(StateObject));
+				break;
+
+			default:
+				Debug.Fail($"Unknown thread property: {propertyName}");
 				break;
 			}
 		}

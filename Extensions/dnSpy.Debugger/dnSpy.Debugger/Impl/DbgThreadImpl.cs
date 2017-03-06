@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Impl {
 
 		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
-		readonly DbgAppDomainImpl appDomain;
+		DbgAppDomainImpl appDomain;
 		string kind;
 		int id;
 		int? managedId;
@@ -74,6 +74,15 @@ namespace dnSpy.Debugger.Impl {
 		void OnPropertyChanged(string propName) {
 			DispatcherThread.VerifyAccess();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		}
+
+		internal void UpdateAppDomain_DbgThread(DbgAppDomainImpl appDomain) {
+			DispatcherThread.VerifyAccess();
+			if (this.appDomain != appDomain) {
+				// Caller has verified that it's a valid app domain
+				this.appDomain = appDomain;
+				OnPropertyChanged(nameof(AppDomain));
+			}
 		}
 
 		internal void UpdateKind_DbgThread(string kind) {

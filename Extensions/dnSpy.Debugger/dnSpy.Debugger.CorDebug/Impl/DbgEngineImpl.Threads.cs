@@ -141,7 +141,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					ReadOnlyCollection<DbgStateInfo> state = null;
 					if ((info.updateOptions & DbgEngineThread.UpdateOptions.State) != 0)
 						state = DnThreadUtils.GetState(info.props.UserState);
-					info.engineThread.Update(info.updateOptions, kind: info.props.Kind, id: info.props.Id, managedId: info.props.ManagedId, name: info.props.Name, suspendedCount: info.props.SuspendedCount, state: state);
+					info.engineThread.Update(info.updateOptions, appDomain: info.props.AppDomain, kind: info.props.Kind, id: info.props.Id, managedId: info.props.ManagedId, name: info.props.Name, suspendedCount: info.props.SuspendedCount, state: state);
 				}
 			}
 		}

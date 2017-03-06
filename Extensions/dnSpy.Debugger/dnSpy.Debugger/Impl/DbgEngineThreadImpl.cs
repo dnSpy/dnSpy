@@ -31,21 +31,42 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Remove() => thread.Remove();
 
-		public override void Update(UpdateOptions options, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) => thread.Process.DbgManager.DispatcherThread.BeginInvoke(() => {
-			if (thread.IsClosed)
-				return;
-			if ((options & UpdateOptions.Kind) != 0)
-				thread.UpdateKind_DbgThread(kind);
-			if ((options & UpdateOptions.Id) != 0)
-				thread.UpdateId_DbgThread(id);
-			if ((options & UpdateOptions.ManagedId) != 0)
-				thread.UpdateManagedId_DbgThread(managedId);
-			if ((options & UpdateOptions.Name) != 0)
-				thread.UpdateName_DbgThread(name);
-			if ((options & UpdateOptions.SuspendedCount) != 0)
-				thread.UpdateSuspendedCount_DbgThread(suspendedCount);
-			if ((options & UpdateOptions.State) != 0)
-				thread.UpdateState_DbgThread(state);
-		});
+		DbgAppDomainImpl VerifyOptionalAppDomain(DbgAppDomain appDomain) {
+			if (appDomain == null)
+				return null;
+			var appDomainImpl = appDomain as DbgAppDomainImpl;
+			if (appDomainImpl == null)
+				throw new ArgumentOutOfRangeException(nameof(appDomain));
+			if (appDomainImpl.Runtime != thread.Runtime)
+				throw new ArgumentException();
+			if (appDomain.IsClosed)
+				throw new InvalidOperationException();
+			return appDomainImpl;
+		}
+
+		public override void Update(UpdateOptions options, DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) {
+			var appDomainImpl = VerifyOptionalAppDomain(appDomain);
+			thread.Process.DbgManager.DispatcherThread.BeginInvoke(() => {
+				if (thread.IsClosed)
+					return;
+				if ((options & UpdateOptions.AppDomain) != 0) {
+					if (appDomainImpl.IsClosed)
+						appDomainImpl = null;
+					thread.UpdateAppDomain_DbgThread(appDomainImpl);
+				}
+				if ((options & UpdateOptions.Kind) != 0)
+					thread.UpdateKind_DbgThread(kind);
+				if ((options & UpdateOptions.Id) != 0)
+					thread.UpdateId_DbgThread(id);
+				if ((options & UpdateOptions.ManagedId) != 0)
+					thread.UpdateManagedId_DbgThread(managedId);
+				if ((options & UpdateOptions.Name) != 0)
+					thread.UpdateName_DbgThread(name);
+				if ((options & UpdateOptions.SuspendedCount) != 0)
+					thread.UpdateSuspendedCount_DbgThread(suspendedCount);
+				if ((options & UpdateOptions.State) != 0)
+					thread.UpdateState_DbgThread(state);
+			});
+		}
 	}
 }

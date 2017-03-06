@@ -44,10 +44,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		public DbgEngineThread.UpdateOptions Compare(ThreadProperties other) {
 			var options = DbgEngineThread.UpdateOptions.None;
-			if (other.AppDomain != AppDomain) {
-				//TODO:
-				Debug.Fail("AppDomain changed");
-			}
+			if (other.AppDomain != AppDomain)
+				options |= DbgEngineThread.UpdateOptions.AppDomain;
 			if (other.Kind != Kind)
 				options |= DbgEngineThread.UpdateOptions.Kind;
 			if (other.Id != Id)

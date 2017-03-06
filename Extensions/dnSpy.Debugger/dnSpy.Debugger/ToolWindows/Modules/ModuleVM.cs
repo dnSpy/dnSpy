@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
@@ -126,6 +127,10 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			case nameof(Module.Address):
 			case nameof(Module.Size):
 				OnPropertyChanged(nameof(AddressObject));
+				break;
+
+			default:
+				Debug.Fail($"Unknown module property: {propertyName}");
 				break;
 			}
 		}

@@ -46,35 +46,46 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			None				= 0,
 
 			/// <summary>
+			/// Update <see cref="DbgThread.AppDomain"/>
+			/// </summary>
+			AppDomain			= 0x00000001,
+
+			/// <summary>
 			/// Update <see cref="DbgThread.Kind"/>
 			/// </summary>
-			Kind				= 0x00000001,
+			Kind				= 0x00000002,
 
 			/// <summary>
 			/// Update <see cref="DbgThread.Id"/>
 			/// </summary>
-			Id					= 0x00000002,
+			Id					= 0x00000004,
 
 			/// <summary>
 			/// Update <see cref="DbgThread.ManagedId"/>
 			/// </summary>
-			ManagedId			= 0x00000004,
+			ManagedId			= 0x00000008,
 
 			/// <summary>
 			/// Update <see cref="DbgThread.Name"/>
 			/// </summary>
-			Name				= 0x00000008,
+			Name				= 0x00000010,
 
 			/// <summary>
 			/// Update <see cref="DbgThread.SuspendedCount"/>
 			/// </summary>
-			SuspendedCount		= 0x00000010,
+			SuspendedCount		= 0x00000020,
 
 			/// <summary>
 			/// Update <see cref="DbgThread.State"/>
 			/// </summary>
-			State				= 0x00000020,
+			State				= 0x00000040,
 		}
+
+		/// <summary>
+		/// Updates <see cref="DbgThread.AppDomain"/>
+		/// </summary>
+		/// <param name="appDomain">New value</param>
+		public void UpdateAppDomain(DbgAppDomain appDomain) => Update(UpdateOptions.AppDomain, appDomain: appDomain);
 
 		/// <summary>
 		/// Updates <see cref="DbgThread.Kind"/>
@@ -116,12 +127,13 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Updates <see cref="DbgThread"/> properties
 		/// </summary>
 		/// <param name="options">Options</param>
+		/// <param name="appDomain">New <see cref="DbgThread.AppDomain"/> value</param>
 		/// <param name="kind">New <see cref="DbgThread.Kind"/> value</param>
 		/// <param name="id">New <see cref="DbgThread.Id"/> value</param>
 		/// <param name="managedId">New <see cref="DbgThread.ManagedId"/> value</param>
 		/// <param name="name">New <see cref="DbgThread.Name"/> value</param>
 		/// <param name="suspendedCount">New <see cref="DbgThread.SuspendedCount"/> value</param>
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
-		public abstract void Update(UpdateOptions options, string kind = null, int id = 0, int? managedId = null, string name = null, int suspendedCount = 0, ReadOnlyCollection<DbgStateInfo> state = null);
+		public abstract void Update(UpdateOptions options, DbgAppDomain appDomain = null, string kind = null, int id = 0, int? managedId = null, string name = null, int suspendedCount = 0, ReadOnlyCollection<DbgStateInfo> state = null);
 	}
 }
