@@ -272,6 +272,14 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			case nameof(DbgThread.Name):
 				OnPropertyChanged(nameof(NameObject));
 				break;
+
+			case nameof(DbgThread.SuspendedCount):
+				OnPropertyChanged(nameof(SuspendedCountObject));
+				break;
+
+			case nameof(DbgThread.State):
+				OnPropertyChanged(nameof(StateObject));
+				break;
 			}
 		}
 
