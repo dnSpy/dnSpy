@@ -45,6 +45,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly object lockObj;
 		readonly ClrDacProvider clrDacProvider;
 		ClrDac clrDac;
+		bool clrDacInitd;
 		readonly DbgManager dbgManager;
 		DnDebugger dnDebugger;
 		SafeHandle hProcess_debuggee;
@@ -61,6 +62,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			toEngineThread = new Dictionary<DnThread, DbgEngineThread>();
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			this.clrDacProvider = clrDacProvider ?? throw new ArgumentNullException(nameof(clrDacProvider));
+			clrDac = NullClrDac.Instance;
 			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
 		}
@@ -85,7 +87,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 			case DebugCallbackKind.CreateAppDomain:
 				// We can't create it in the CreateProcess event
-				if (clrDac == null) {
+				if (!clrDacInitd) {
+					clrDacInitd = true;
 					var p = dnDebugger.Processes.FirstOrDefault();
 					if (p != null)
 						clrDac = clrDacProvider.Create(p.ProcessId, dnDebugger.CLRPath, this);
@@ -117,7 +120,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			if (dnDebugger.ProcessState == DebuggerProcessState.Terminated) {
 				if (hProcess_debuggee == null || hProcess_debuggee.IsClosed || hProcess_debuggee.IsInvalid || !NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode))
 					exitCode = -1;
-				clrDac = null;
+				clrDac = NullClrDac.Instance;
 				ClrDacTerminated?.Invoke(this, EventArgs.Empty);
 				UnregisterEventsAndCloseProcessHandle();
 

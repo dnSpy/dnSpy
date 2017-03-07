@@ -82,9 +82,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		int? GetManagedId_ClrDac(DnThread thread) {
-			Debug.Assert(clrDac != null);
-			if (clrDac == null)
-				return null;
+			Debug.Assert(clrDacInitd);
 			var info = clrDac.GetThreadInfo(thread.VolatileThreadId);
 			if (info == null)
 				return null;
@@ -138,9 +136,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		string GetThreadKind_ClrDac(DnThread thread) {
-			Debug.Assert(clrDac != null);
-			if (clrDac == null)
-				return null;
+			Debug.Assert(clrDacInitd);
 			var tmp = clrDac.GetThreadInfo(thread.VolatileThreadId);
 			if (tmp == null)
 				return null;
