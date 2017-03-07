@@ -49,6 +49,7 @@
     <Compile Include="DAC\ClrDac.cs" />
     <Compile Include="DAC\ClrDacImpl.cs" />
     <Compile Include="DAC\ClrDacProvider.cs" />
+    <Compile Include="DAC\ClrDacThreadInfo.cs" />
     <Compile Include="DAC\IClrDacDebugger.cs" />
     <Compile Include="DAC\NullClrDac.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetCoreStartDebuggingOptionsPage.cs" />
