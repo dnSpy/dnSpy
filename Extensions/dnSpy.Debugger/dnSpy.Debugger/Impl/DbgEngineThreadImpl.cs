@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Impl {
 				if (thread.IsClosed)
 					return;
 				if ((options & UpdateOptions.AppDomain) != 0) {
-					if (appDomainImpl.IsClosed)
+					if (appDomainImpl?.IsClosed == true)
 						appDomainImpl = null;
 					thread.UpdateAppDomain_DbgThread(appDomainImpl);
 				}
