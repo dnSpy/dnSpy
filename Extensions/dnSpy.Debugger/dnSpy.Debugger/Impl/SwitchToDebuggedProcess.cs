@@ -26,9 +26,27 @@ using dnSpy.Debugger.Native;
 namespace dnSpy.Debugger.Impl {
 	[ExportDbgManagerStartListener]
 	sealed class SwitchToDebuggedProcess : IDbgManagerStartListener {
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
+		bool ignoreSetForeground;
+
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
+			dbgManager.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
+			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
+			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
+		}
+
+		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) => ignoreSetForeground = true;
+
+		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
+			var dbgManager = (DbgManager)sender;
+			if (dbgManager.IsRunning)
+				return;
+			ignoreSetForeground = false;
+		}
 
 		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) {
+			// Ignore it the first time because the OS will give the debugged process focus
+			if (ignoreSetForeground)
+				return;
 			var dbgManager = (DbgManager)sender;
 			var process = dbgManager.Processes.FirstOrDefault();
 			// Fails if the process hasn't been created yet (eg. the engine hasn't connected to the process yet)
