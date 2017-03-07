@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Engine;
 
 namespace dnSpy.Debugger.Impl {
 	sealed class DbgRuntimeImpl : DbgRuntime {
@@ -55,10 +56,12 @@ namespace dnSpy.Debugger.Impl {
 		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
 
 		readonly object lockObj;
+		readonly DbgEngine engine;
 
-		public DbgRuntimeImpl(DbgProcess process) {
+		public DbgRuntimeImpl(DbgProcess process, DbgEngine engine) {
 			lockObj = new object();
 			Process = process ?? throw new ArgumentNullException(nameof(process));
+			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			appDomains = new List<DbgAppDomain>();
 			modules = new List<DbgModule>();
 			threads = new List<DbgThread>();
@@ -149,6 +152,9 @@ namespace dnSpy.Debugger.Impl {
 			ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(thread, added: false));
 			thread.Close(DispatcherThread);
 		}
+
+		internal void Freeze(DbgThreadImpl thread) => engine.Freeze(thread);
+		internal void Thaw(DbgThreadImpl thread) => engine.Thaw(thread);
 
 		protected override void CloseCore() {
 			DispatcherThread.VerifyAccess();

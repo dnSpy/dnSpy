@@ -285,7 +285,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			var process = GetOrCreateProcess_DbgThread(e.ProcessId, engine.StartKind);
-			var runtime = new DbgRuntimeImpl(process);
+			var runtime = new DbgRuntimeImpl(process, engine);
 			var objectFactory = new DbgObjectFactoryImpl(this, runtime, engine);
 
 			DbgProcessState processState;

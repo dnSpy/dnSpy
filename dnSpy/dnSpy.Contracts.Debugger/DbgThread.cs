@@ -75,5 +75,15 @@ namespace dnSpy.Contracts.Debugger {
 		/// Thread state
 		/// </summary>
 		public abstract ReadOnlyCollection<DbgStateInfo> State { get; }
+
+		/// <summary>
+		/// Freezes the thread
+		/// </summary>
+		public abstract void Freeze();
+
+		/// <summary>
+		/// Thaws the thread
+		/// </summary>
+		public abstract void Thaw();
 	}
 }

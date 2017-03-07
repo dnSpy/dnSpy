@@ -124,18 +124,20 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			//TODO:
 		}
 
-		public override bool CanFreezeThread => SelectedItems.Count == 1 && SelectedItems[0].Thread.SuspendedCount == 0;
+		public override bool CanFreezeThread => SelectedItems.Any(a => a.Thread.SuspendedCount == 0);
 		public override void FreezeThread() {
-			if (!CanFreezeThread)
-				return;
-			//TODO:
+			foreach (var vm in SelectedItems) {
+				if (vm.Thread.SuspendedCount == 0)
+					vm.Thread.Freeze();
+			}
 		}
 
-		public override bool CanThawThread => SelectedItems.Count == 1 && SelectedItems[0].Thread.SuspendedCount != 0;
+		public override bool CanThawThread => SelectedItems.Any(a => a.Thread.SuspendedCount != 0);
 		public override void ThawThread() {
-			if (!CanThawThread)
-				return;
-			//TODO:
+			foreach (var vm in SelectedItems) {
+				if (vm.Thread.SuspendedCount != 0)
+					vm.Thread.Thaw();
+			}
 		}
 	}
 }

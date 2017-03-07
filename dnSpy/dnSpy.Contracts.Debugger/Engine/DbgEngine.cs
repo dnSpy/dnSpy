@@ -97,6 +97,18 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// must be sent.
 		/// </summary>
 		public abstract void Detach();
+
+		/// <summary>
+		/// Freezes the thread
+		/// </summary>
+		/// <param name="thread">Thread</param>
+		public abstract void Freeze(DbgThread thread);
+
+		/// <summary>
+		/// Thaws the thread
+		/// </summary>
+		/// <param name="thread">Thread</param>
+		public abstract void Thaw(DbgThread thread);
 	}
 
 	/// <summary>

@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Diagnostics;
 using dndbg.COM.CorDebug;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;

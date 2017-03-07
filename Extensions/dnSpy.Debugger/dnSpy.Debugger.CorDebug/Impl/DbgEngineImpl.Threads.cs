@@ -21,16 +21,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
-using dnSpy.Debugger.CorDebug.DAC;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
 		sealed class DbgThreadData {
+			public DnThread DnThread { get; }
 			public ThreadProperties Last { get; set; }
 			public bool HasNewName { get; set; }
+			public DbgThreadData(DnThread dnThread) => DnThread = dnThread ?? throw new ArgumentNullException(nameof(dnThread));
 		}
 
 		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties oldProperties, bool isCreateThread, bool forceReadName) {
@@ -152,30 +154,51 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return PredefinedThreadKinds.WorkerThread;
 		}
 
+		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug_NoLock(DnThread thread) {
+			debuggerThread.Dispatcher.VerifyAccess();
+			bool b = toEngineThread.TryGetValue(thread, out var engineThread);
+			Debug.Assert(b);
+			if (!b)
+				return null;
+			return UpdateThreadProperties_CorDebug_NoLock(engineThread);
+		}
+
+		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug_NoLock(DbgEngineThread engineThread) {
+			debuggerThread.Dispatcher.VerifyAccess();
+			var threadData = engineThread.Thread.GetData<DbgThreadData>();
+			var newProps = GetThreadProperties_CorDebug(threadData.DnThread, threadData.Last, isCreateThread: false, forceReadName: threadData.HasNewName);
+			threadData.HasNewName = false;
+			var updateOptions = threadData.Last.Compare(newProps);
+			if (updateOptions == DbgEngineThread.UpdateOptions.None)
+				return null;
+			threadData.Last = newProps;
+			return (engineThread, updateOptions, newProps);
+		}
+
+		void NotifyThreadPropertiesChanged_CorDebug(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props) {
+			debuggerThread.Dispatcher.VerifyAccess();
+			ReadOnlyCollection<DbgStateInfo> state = null;
+			if ((updateOptions & DbgEngineThread.UpdateOptions.State) != 0)
+				state = DnThreadUtils.GetState(props.UserState);
+			engineThread.Update(updateOptions, appDomain: props.AppDomain, kind: props.Kind, id: props.Id, managedId: props.ManagedId, name: props.Name, suspendedCount: props.SuspendedCount, state: state);
+		}
+
 		void UpdateThreadProperties_CorDebug() {
 			debuggerThread.Dispatcher.VerifyAccess();
 			List<(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)> threadsToUpdate = null;
 			lock (lockObj) {
 				foreach (var kv in toEngineThread) {
-					var threadData = kv.Value.Thread.GetData<DbgThreadData>();
-					var newProps = GetThreadProperties_CorDebug(kv.Key, threadData.Last, isCreateThread: false, forceReadName: threadData.HasNewName);
-					threadData.HasNewName = false;
-					var updateOptions = threadData.Last.Compare(newProps);
-					if (updateOptions == DbgEngineThread.UpdateOptions.None)
+					var info = UpdateThreadProperties_CorDebug_NoLock(kv.Value);
+					if (info == null)
 						continue;
-					threadData.Last = newProps;
 					if (threadsToUpdate == null)
 						threadsToUpdate = new List<(DbgEngineThread, DbgEngineThread.UpdateOptions, ThreadProperties)>();
-					threadsToUpdate.Add((kv.Value, updateOptions, newProps));
+					threadsToUpdate.Add(info.Value);
 				}
 			}
 			if (threadsToUpdate != null) {
-				foreach (var info in threadsToUpdate) {
-					ReadOnlyCollection<DbgStateInfo> state = null;
-					if ((info.updateOptions & DbgEngineThread.UpdateOptions.State) != 0)
-						state = DnThreadUtils.GetState(info.props.UserState);
-					info.engineThread.Update(info.updateOptions, appDomain: info.props.AppDomain, kind: info.props.Kind, id: info.props.Id, managedId: info.props.ManagedId, name: info.props.Name, suspendedCount: info.props.SuspendedCount, state: state);
-				}
+				foreach (var info in threadsToUpdate)
+					NotifyThreadPropertiesChanged_CorDebug(info.engineThread, info.updateOptions, info.props);
 			}
 		}
 
@@ -183,7 +206,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			Debug.Assert(objectFactory != null);
 			if (e.Added) {
 				var props = GetThreadProperties_CorDebug(e.Thread, null, isCreateThread: true, forceReadName: false);
-				var threadData = new DbgThreadData { Last = props };
+				var threadData = new DbgThreadData(e.Thread) { Last = props };
 				var state = DnThreadUtils.GetState(props.UserState);
 				var engineThread = objectFactory.CreateThread(props.AppDomain, props.Kind, props.Id, props.ManagedId, props.Name, props.SuspendedCount, state, threadData);
 				lock (lockObj)
@@ -216,6 +239,33 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			if (engineThread == null)
 				return;
 			engineThread.Thread.GetData<DbgThreadData>().HasNewName = true;
+		}
+
+		public override void Freeze(DbgThread thread) => CorDebugThread(() => FreezeThawCore(thread, freeze: true));
+		public override void Thaw(DbgThread thread) => CorDebugThread(() => FreezeThawCore(thread, freeze: false));
+		void FreezeThawCore(DbgThread thread, bool freeze) {
+			Dispatcher.VerifyAccess();
+			if (!HasConnected_DebugThread)
+				return;
+			if (dnDebugger.ProcessState != DebuggerProcessState.Paused)
+				return;
+			var threadData = thread.GetData<DbgThreadData>();
+			var corThread = threadData.DnThread.CorThread;
+			if (freeze) {
+				if (corThread.IsSuspended)
+					return;
+				corThread.State = CorDebugThreadState.THREAD_SUSPEND;
+			}
+			else {
+				if (!corThread.IsSuspended)
+					return;
+				corThread.State = CorDebugThreadState.THREAD_RUN;
+			}
+			(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? info;
+			lock (lockObj)
+				info = UpdateThreadProperties_CorDebug_NoLock(threadData.DnThread);
+			if (info != null)
+				NotifyThreadPropertiesChanged_CorDebug(info.Value.engineThread, info.Value.updateOptions, info.Value.props);
 		}
 	}
 }
