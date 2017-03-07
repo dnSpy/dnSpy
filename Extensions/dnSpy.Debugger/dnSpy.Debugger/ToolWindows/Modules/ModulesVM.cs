@@ -307,7 +307,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				UI(() => {
 					var appDomain = (DbgAppDomain)sender;
 					foreach (var vm in AllItems)
-						vm.RefreshAppDomainNames(appDomain);
+						vm.RefreshAppDomainNames_UI(appDomain);
 				});
 			}
 		}

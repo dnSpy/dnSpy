@@ -118,14 +118,25 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 					InitializeProcess_DbgThread(p);
 					if (!p.IsRunning)
 						threads.AddRange(p.Threads);
+					foreach (var r in p.Runtimes) {
+						InitializeRuntime_DbgThread(r);
+						foreach (var a in r.AppDomains)
+							InitializeAppDomain_DbgThread(a);
+					}
 				}
 				if (threads.Count > 0)
 					UI(() => AddItems_UI(threads));
 			}
 			else {
 				dbgManager.Value.ProcessesChanged -= DbgManager_ProcessesChanged;
-				foreach (var p in dbgManager.Value.Processes)
+				foreach (var p in dbgManager.Value.Processes) {
 					DeinitializeProcess_DbgThread(p);
+					foreach (var r in p.Runtimes) {
+						DeinitializeRuntime_DbgThread(r);
+						foreach (var a in r.AppDomains)
+							DeinitializeAppDomain_DbgThread(a);
+					}
+				}
 				UI(() => RemoveAllThreads_UI());
 			}
 		}
@@ -138,6 +149,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			process.IsRunningChanged += DbgProcess_IsRunningChanged;
 			process.DelayedIsRunningChanged += DbgProcess_DelayedIsRunningChanged;
 			process.ThreadsChanged += DbgProcess_ThreadsChanged;
+			process.RuntimesChanged += DbgProcess_RuntimesChanged;
 		}
 
 		// DbgManager thread
@@ -146,6 +158,31 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			process.IsRunningChanged -= DbgProcess_IsRunningChanged;
 			process.DelayedIsRunningChanged -= DbgProcess_DelayedIsRunningChanged;
 			process.ThreadsChanged -= DbgProcess_ThreadsChanged;
+			process.RuntimesChanged -= DbgProcess_RuntimesChanged;
+		}
+
+		// DbgManager thread
+		void InitializeRuntime_DbgThread(DbgRuntime runtime) {
+			runtime.Process.DbgManager.DispatcherThread.VerifyAccess();
+			runtime.AppDomainsChanged += DbgRuntime_AppDomainsChanged;
+		}
+
+		// DbgManager thread
+		void DeinitializeRuntime_DbgThread(DbgRuntime runtime) {
+			runtime.Process.DbgManager.DispatcherThread.VerifyAccess();
+			runtime.AppDomainsChanged -= DbgRuntime_AppDomainsChanged;
+		}
+
+		// DbgManager thread
+		void InitializeAppDomain_DbgThread(DbgAppDomain appDomain) {
+			appDomain.Process.DbgManager.DispatcherThread.VerifyAccess();
+			appDomain.PropertyChanged += DbgAppDomain_PropertyChanged;
+		}
+
+		// DbgManager thread
+		void DeinitializeAppDomain_DbgThread(DbgAppDomain appDomain) {
+			appDomain.Process.DbgManager.DispatcherThread.VerifyAccess();
+			appDomain.PropertyChanged -= DbgAppDomain_PropertyChanged;
 		}
 
 		// UI thread
@@ -217,6 +254,30 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// DbgManager thread
+		void DbgProcess_RuntimesChanged(object sender, DbgCollectionChangedEventArgs<DbgRuntime> e) {
+			if (e.Added) {
+				foreach (var r in e.Objects)
+					InitializeRuntime_DbgThread(r);
+			}
+			else {
+				foreach (var r in e.Objects)
+					DeinitializeRuntime_DbgThread(r);
+			}
+		}
+
+		// DbgManager thread
+		void DbgRuntime_AppDomainsChanged(object sender, DbgCollectionChangedEventArgs<DbgAppDomain> e) {
+			if (e.Added) {
+				foreach (var a in e.Objects)
+					InitializeAppDomain_DbgThread(a);
+			}
+			else {
+				foreach (var a in e.Objects)
+					DeinitializeAppDomain_DbgThread(a);
+			}
+		}
+
+		// DbgManager thread
 		void DbgProcess_IsRunningChanged(object sender, EventArgs e) {
 			var process = (DbgProcess)sender;
 			if (process.State == DbgProcessState.Terminated)
@@ -267,6 +328,17 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 						if (e.Objects.Contains(coll[i].Thread))
 							RemoveThreadAt_UI(i);
 					}
+				});
+			}
+		}
+
+		// DbgManager thread
+		void DbgAppDomain_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == nameof(DbgAppDomain.Name) || e.PropertyName == nameof(DbgAppDomain.Id)) {
+				UI(() => {
+					var appDomain = (DbgAppDomain)sender;
+					foreach (var vm in AllItems)
+						vm.RefreshAppDomainNames_UI(appDomain);
 				});
 			}
 		}

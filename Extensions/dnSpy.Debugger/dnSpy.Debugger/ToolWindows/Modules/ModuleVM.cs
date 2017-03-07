@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		internal void RefreshAppDomainNames(DbgAppDomain appDomain) {
+		internal void RefreshAppDomainNames_UI(DbgAppDomain appDomain) {
 			Context.Dispatcher.VerifyAccess();
 			if (Module.AppDomain == appDomain)
 				OnPropertyChanged(nameof(AppDomainObject));

@@ -218,6 +218,13 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// UI thread
+		internal void RefreshAppDomainNames_UI(DbgAppDomain appDomain) {
+			Context.Dispatcher.VerifyAccess();
+			if (Thread.AppDomain == appDomain)
+				OnPropertyChanged(nameof(AppDomainObject));
+		}
+
+		// UI thread
 		internal void UpdateFields_UI() {
 			Context.Dispatcher.VerifyAccess();
 			if (hThread == null)
