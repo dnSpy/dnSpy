@@ -123,6 +123,7 @@
     <Compile Include="ToolWindows\Processes\ProcessFormatter.cs" />
     <Compile Include="ToolWindows\Processes\ProcessVM.cs" />
     <Compile Include="ToolWindows\SimpleProcessReader.cs" />
+    <Compile Include="ToolWindows\Threads\Commands.cs" />
     <Compile Include="ToolWindows\Threads\DefaultThreadCategoryProvider.cs" />
     <Compile Include="ToolWindows\Threads\ThreadCategoryService.cs" />
     <Compile Include="ToolWindows\Threads\ThreadColumnConverter.cs" />
