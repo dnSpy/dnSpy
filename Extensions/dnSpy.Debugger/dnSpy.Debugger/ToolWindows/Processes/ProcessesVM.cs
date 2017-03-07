@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
@@ -39,12 +40,20 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 	}
 
 	[Export(typeof(IProcessesVM))]
-	[ExportDbgManagerStartListener]
-	sealed class ProcessesVM : ViewModelBase, IProcessesVM, IDbgManagerStartListener {
+	sealed class ProcessesVM : ViewModelBase, IProcessesVM {
 		public ObservableCollection<ProcessVM> AllItems { get; }
 		public ObservableCollection<ProcessVM> SelectedItems { get; }
 
-		public bool IsEnabled { get; set; }
+		public bool IsEnabled {
+			get => isEnabled;
+			set {
+				if (isEnabled == value)
+					return;
+				isEnabled = value;
+				InitializeDebugger_UI(isEnabled);
+			}
+		}
+		bool isEnabled;
 
 		public bool IsVisible {
 			get => processContext.IsVisible;
@@ -60,6 +69,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			}
 		}
 
+		readonly Lazy<DbgManager> dbgManager;
 		readonly ProcessContext processContext;
 		readonly ProcessFormatterProvider processFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
@@ -67,22 +77,60 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		bool refreshTitlesOnPause;
 
 		[ImportingConstructor]
-		ProcessesVM(DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ProcessFormatterProvider processFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+		ProcessesVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ProcessFormatterProvider processFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+			debuggerDispatcher.Dispatcher.VerifyAccess();
 			AllItems = new ObservableCollection<ProcessVM>();
 			SelectedItems = new ObservableCollection<ProcessVM>();
+			this.dbgManager = dbgManager;
 			this.processFormatterProvider = processFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
-			// We could be in a random thread if IDbgManagerStartListener.OnStart() gets called after the ctor returns
-			processContext = debuggerDispatcher.Dispatcher.Invoke(() => {
-				var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-				var procCtx = new ProcessContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
-					SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-					Formatter = processFormatterProvider.Create(),
-				};
-				classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
+			processContext = new ProcessContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
+				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
+				Formatter = processFormatterProvider.Create(),
+			};
+		}
+
+		// random thread
+		void DbgThread(Action action) =>
+			dbgManager.Value.DispatcherThread.BeginInvoke(action);
+
+		// UI thread
+		void InitializeDebugger_UI(bool enable) {
+			processContext.Dispatcher.VerifyAccess();
+			if (enable) {
+				processContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
-				return procCtx;
-			}, DispatcherPriority.Send);
+				RecreateFormatter_UI();
+				processContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
+				refreshTitlesOnPause = false;
+			}
+			else {
+				processContext.ClassificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
+				debuggerSettings.PropertyChanged -= DebuggerSettings_PropertyChanged;
+			}
+			DbgThread(() => InitializeDebugger_DbgThread(enable));
+		}
+
+		// DbgManager thread
+		void InitializeDebugger_DbgThread(bool enable) {
+			dbgManager.Value.DispatcherThread.VerifyAccess();
+			if (enable) {
+				dbgManager.Value.ProcessesChanged += DbgManager_ProcessesChanged;
+				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
+				dbgManager.Value.IsRunningChanged += DbgManager_IsRunningChanged;
+
+				var processes = dbgManager.Value.Processes;
+				if (processes.Length > 0)
+					UI(() => AddItems_UI(processes));
+			}
+			else {
+				dbgManager.Value.ProcessesChanged -= DbgManager_ProcessesChanged;
+				dbgManager.Value.DelayedIsRunningChanged -= DbgManager_DelayedIsRunningChanged;
+				dbgManager.Value.IsRunningChanged -= DbgManager_IsRunningChanged;
+
+				UI(() => RemoveAllProcesses_UI());
+			}
 		}
 
 		// UI thread
@@ -141,15 +189,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// random thread
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
-			dbgManager.ProcessesChanged += DbgManager_ProcessesChanged;
-			dbgManager.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
-			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
-		}
-
-		// random thread
 		void UI(Action action) =>
-			processContext.Dispatcher.BeginInvoke(DispatcherPriority.Background, action);
+			// Use Send so the window is updated as fast as possible when adding new items
+			processContext.Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
 
 		// DbgManager thread
 		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => refreshTitlesOnPause = true);
@@ -164,12 +206,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// DbgManager thread
 		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
-			if (e.Added) {
-				UI(() => {
-					foreach (var p in e.Objects)
-						AllItems.Add(new ProcessVM(p, processContext, processOrder++));
-				});
-			}
+			if (e.Added)
+				UI(() => AddItems_UI(e.Objects));
 			else {
 				UI(() => {
 					var coll = AllItems;
@@ -182,12 +220,27 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// UI thread
+		void AddItems_UI(IList<DbgProcess> processes) {
+			processContext.Dispatcher.VerifyAccess();
+			foreach (var p in processes)
+				AllItems.Add(new ProcessVM(p, processContext, processOrder++));
+		}
+
+		// UI thread
 		void RemoveProcessAt_UI(int i) {
 			processContext.Dispatcher.VerifyAccess();
 			Debug.Assert(0 <= i && i < AllItems.Count);
 			var vm = AllItems[i];
 			vm.Dispose();
 			AllItems.RemoveAt(i);
+		}
+
+		// UI thread
+		void RemoveAllProcesses_UI() {
+			processContext.Dispatcher.VerifyAccess();
+			var coll = AllItems;
+			for (int i = coll.Count - 1; i >= 0; i--)
+				RemoveProcessAt_UI(i);
 		}
 	}
 }

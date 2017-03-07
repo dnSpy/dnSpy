@@ -201,7 +201,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// random thread
 		void UI(Action action) =>
-			threadContext.Dispatcher.BeginInvoke(DispatcherPriority.Background, action);
+			// Use Send so the window is updated as fast as possible when adding new items
+			threadContext.Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
 
 		// DbgManager thread
 		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {

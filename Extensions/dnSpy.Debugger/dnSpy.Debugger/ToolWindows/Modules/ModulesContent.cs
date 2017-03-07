@@ -28,6 +28,10 @@ using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.ToolWindows.Modules {
 	interface IModulesContent : IUIObjectProvider {
+		void OnShow();
+		void OnClose();
+		void OnVisible();
+		void OnHidden();
 		void Focus();
 		ListView ListView { get; }
 		ModulesOperations Operations { get; }
@@ -43,6 +47,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		readonly ModulesControl modulesControl;
 		readonly IDocumentTabService documentTabService;
+		readonly IModulesVM modulesVM;
 
 		sealed class ControlVM {
 			public IModulesVM VM { get; }
@@ -58,6 +63,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, ModulesOperations modulesOperations, IDocumentTabService documentTabService) {
 			Operations = modulesOperations;
 			modulesControl = new ModulesControl();
+			this.modulesVM = modulesVM;
 			this.documentTabService = documentTabService;
 			modulesControl.DataContext = new ControlVM(modulesVM, modulesOperations);
 			modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
@@ -72,5 +78,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(modulesControl.ListView);
+		public void OnClose() => modulesVM.IsEnabled = false;
+		public void OnShow() => modulesVM.IsEnabled = true;
+		public void OnHidden() => modulesVM.IsVisible = false;
+		public void OnVisible() => modulesVM.IsVisible = true;
 	}
 }

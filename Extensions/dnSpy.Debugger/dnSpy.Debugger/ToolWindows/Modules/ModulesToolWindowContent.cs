@@ -58,6 +58,24 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		readonly Lazy<IModulesContent> modulesContent;
 
 		public ModulesToolWindowContent(Lazy<IModulesContent> modulesContent) => this.modulesContent = modulesContent;
+
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+			switch (visEvent) {
+			case ToolWindowContentVisibilityEvent.Added:
+				modulesContent.Value.OnShow();
+				break;
+			case ToolWindowContentVisibilityEvent.Removed:
+				modulesContent.Value.OnClose();
+				break;
+			case ToolWindowContentVisibilityEvent.Visible:
+				modulesContent.Value.OnVisible();
+				break;
+			case ToolWindowContentVisibilityEvent.Hidden:
+				modulesContent.Value.OnHidden();
+				break;
+			}
+		}
+
 		public void Focus() => modulesContent.Value.Focus();
 	}
 }

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
@@ -32,38 +33,139 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Modules {
 	interface IModulesVM {
+		bool IsEnabled { get; set; }
+		bool IsVisible { get; set; }
 		ObservableCollection<ModuleVM> AllItems { get; }
 		ObservableCollection<ModuleVM> SelectedItems { get; }
 	}
 
 	[Export(typeof(IModulesVM))]
-	[ExportDbgManagerStartListener]
-	sealed class ModulesVM : ViewModelBase, IModulesVM, IDbgManagerStartListener {
+	sealed class ModulesVM : ViewModelBase, IModulesVM {
 		public ObservableCollection<ModuleVM> AllItems { get; }
 		public ObservableCollection<ModuleVM> SelectedItems { get; }
 
+		public bool IsEnabled {
+			get => isEnabled;
+			set {
+				if (isEnabled == value)
+					return;
+				isEnabled = value;
+				InitializeDebugger_UI(isEnabled);
+			}
+		}
+		bool isEnabled;
+
+		public bool IsVisible { get; set; }
+
+		readonly Lazy<DbgManager> dbgManager;
 		readonly ModuleContext moduleContext;
 		readonly ModuleFormatterProvider moduleFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
 		int moduleOrder;
 
 		[ImportingConstructor]
-		ModulesVM(DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ModuleFormatterProvider moduleFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+		ModulesVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ModuleFormatterProvider moduleFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+			debuggerDispatcher.Dispatcher.VerifyAccess();
 			AllItems = new ObservableCollection<ModuleVM>();
 			SelectedItems = new ObservableCollection<ModuleVM>();
+			this.dbgManager = dbgManager;
 			this.moduleFormatterProvider = moduleFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
-			// We could be in a random thread if IDbgManagerStartListener.OnStart() gets called after the ctor returns
-			moduleContext = debuggerDispatcher.Dispatcher.Invoke(() => {
-				var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-				var modCtx = new ModuleContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
-					SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-					Formatter = moduleFormatterProvider.Create(),
-				};
-				classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
+			moduleContext = new ModuleContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
+				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
+				Formatter = moduleFormatterProvider.Create(),
+			};
+		}
+
+		// random thread
+		void DbgThread(Action action) =>
+			dbgManager.Value.DispatcherThread.BeginInvoke(action);
+
+		// UI thread
+		void InitializeDebugger_UI(bool enable) {
+			moduleContext.Dispatcher.VerifyAccess();
+			if (enable) {
+				moduleContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
-				return modCtx;
-			}, DispatcherPriority.Send);
+				RecreateFormatter_UI();
+				moduleContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
+			}
+			else {
+				moduleContext.ClassificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
+				debuggerSettings.PropertyChanged -= DebuggerSettings_PropertyChanged;
+			}
+			DbgThread(() => InitializeDebugger_DbgThread(enable));
+		}
+
+		// DbgManager thread
+		void InitializeDebugger_DbgThread(bool enable) {
+			dbgManager.Value.DispatcherThread.VerifyAccess();
+			if (enable) {
+				dbgManager.Value.ProcessesChanged += DbgManager_ProcessesChanged;
+				var modules = new List<DbgModule>();
+				foreach (var p in dbgManager.Value.Processes) {
+					InitializeProcess_DbgThread(p);
+					foreach (var r in p.Runtimes) {
+						InitializeRuntime_DbgThread(r);
+						modules.AddRange(r.Modules);
+						foreach (var a in r.AppDomains)
+							InitializeAppDomain_DbgThread(a);
+					}
+				}
+				if (modules.Count > 0)
+					UI(() => AddItems_UI(modules));
+			}
+			else {
+				dbgManager.Value.ProcessesChanged -= DbgManager_ProcessesChanged;
+				foreach (var p in dbgManager.Value.Processes) {
+					DeinitializeProcess_DbgThread(p);
+					foreach (var r in p.Runtimes) {
+						DeinitializeRuntime_DbgThread(r);
+						foreach (var a in r.AppDomains)
+							DeinitializeAppDomain_DbgThread(a);
+					}
+				}
+				UI(() => RemoveAllModules_UI());
+			}
+		}
+
+		// DbgManager thread
+		void InitializeProcess_DbgThread(DbgProcess process) {
+			process.DbgManager.DispatcherThread.VerifyAccess();
+			process.RuntimesChanged += DbgProcess_RuntimesChanged;
+		}
+
+		// DbgManager thread
+		void DeinitializeProcess_DbgThread(DbgProcess process) {
+			process.DbgManager.DispatcherThread.VerifyAccess();
+			process.RuntimesChanged -= DbgProcess_RuntimesChanged;
+		}
+
+		// DbgManager thread
+		void InitializeRuntime_DbgThread(DbgRuntime runtime) {
+			runtime.Process.DbgManager.DispatcherThread.VerifyAccess();
+			runtime.AppDomainsChanged += DbgRuntime_AppDomainsChanged;
+			runtime.ModulesChanged += DbgRuntime_ModulesChanged;
+		}
+
+		// DbgManager thread
+		void DeinitializeRuntime_DbgThread(DbgRuntime runtime) {
+			runtime.Process.DbgManager.DispatcherThread.VerifyAccess();
+			runtime.AppDomainsChanged -= DbgRuntime_AppDomainsChanged;
+			runtime.ModulesChanged -= DbgRuntime_ModulesChanged;
+		}
+
+		// DbgManager thread
+		void InitializeAppDomain_DbgThread(DbgAppDomain appDomain) {
+			appDomain.Process.DbgManager.DispatcherThread.VerifyAccess();
+			appDomain.PropertyChanged += DbgAppDomain_PropertyChanged;
+		}
+
+		// DbgManager thread
+		void DeinitializeAppDomain_DbgThread(DbgAppDomain appDomain) {
+			appDomain.Process.DbgManager.DispatcherThread.VerifyAccess();
+			appDomain.PropertyChanged -= DbgAppDomain_PropertyChanged;
 		}
 
 		// UI thread
@@ -95,29 +197,33 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		void RefreshHexFields_UI() {
+		void RecreateFormatter_UI() {
 			moduleContext.Dispatcher.VerifyAccess();
 			moduleContext.Formatter = moduleFormatterProvider.Create();
+		}
+
+		// UI thread
+		void RefreshHexFields_UI() {
+			moduleContext.Dispatcher.VerifyAccess();
+			RecreateFormatter_UI();
 			foreach (var vm in AllItems)
 				vm.RefreshHexFields_UI();
 		}
 
 		// random thread
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.ProcessesChanged += DbgManager_ProcessesChanged;
-
-		// random thread
 		void UI(Action action) =>
-			moduleContext.Dispatcher.BeginInvoke(DispatcherPriority.Background, action);
+			// Use Send so the window is updated as fast as possible when adding new items
+			moduleContext.Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
 
 		// DbgManager thread
 		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
 			if (e.Added) {
 				foreach (var p in e.Objects)
-					p.RuntimesChanged += DbgProcess_RuntimesChanged;
+					InitializeProcess_DbgThread(p);
 			}
 			else {
 				foreach (var p in e.Objects)
-					p.RuntimesChanged -= DbgProcess_RuntimesChanged;
+					DeinitializeProcess_DbgThread(p);
 				UI(() => {
 					var coll = AllItems;
 					for (int i = coll.Count - 1; i >= 0; i--) {
@@ -133,40 +239,15 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			}
 		}
 
-		// UI thread
-		void RemoveModuleAt_UI(int i) {
-			moduleContext.Dispatcher.VerifyAccess();
-			Debug.Assert(0 <= i && i < AllItems.Count);
-			var vm = AllItems[i];
-			vm.Dispose();
-			AllItems.RemoveAt(i);
-		}
-
-		// UI thread
-		void RemoveModule_UI(DbgModule m) {
-			moduleContext.Dispatcher.VerifyAccess();
-			var coll = AllItems;
-			for (int i = 0; i < coll.Count; i++) {
-				if (coll[i].Module == m) {
-					RemoveModuleAt_UI(i);
-					break;
-				}
-			}
-		}
-
 		// DbgManager thread
 		void DbgProcess_RuntimesChanged(object sender, DbgCollectionChangedEventArgs<DbgRuntime> e) {
 			if (e.Added) {
-				foreach (var r in e.Objects) {
-					r.AppDomainsChanged += DbgRuntime_AppDomainsChanged;
-					r.ModulesChanged += DbgRuntime_ModulesChanged;
-				}
+				foreach (var r in e.Objects)
+					InitializeRuntime_DbgThread(r);
 			}
 			else {
-				foreach (var r in e.Objects) {
-					r.AppDomainsChanged -= DbgRuntime_AppDomainsChanged;
-					r.ModulesChanged -= DbgRuntime_ModulesChanged;
-				}
+				foreach (var r in e.Objects)
+					DeinitializeRuntime_DbgThread(r);
 				UI(() => {
 					var coll = AllItems;
 					for (int i = coll.Count - 1; i >= 0; i--) {
@@ -186,11 +267,11 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		void DbgRuntime_AppDomainsChanged(object sender, DbgCollectionChangedEventArgs<DbgAppDomain> e) {
 			if (e.Added) {
 				foreach (var a in e.Objects)
-					a.PropertyChanged += DbgAppDomain_PropertyChanged;
+					InitializeAppDomain_DbgThread(a);
 			}
 			else {
 				foreach (var a in e.Objects)
-					a.PropertyChanged -= DbgAppDomain_PropertyChanged;
+					DeinitializeAppDomain_DbgThread(a);
 				UI(() => {
 					var coll = AllItems;
 					for (int i = coll.Count - 1; i >= 0; i--) {
@@ -210,16 +291,12 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// DbgManager thread
 		void DbgRuntime_ModulesChanged(object sender, DbgCollectionChangedEventArgs<DbgModule> e) {
-			if (e.Added) {
-				UI(() => {
-					foreach (var m in e.Objects)
-						AllItems.Add(new ModuleVM(m, moduleContext, moduleOrder++));
-				});
-			}
+			if (e.Added)
+				UI(() => AddItems_UI(e.Objects));
 			else {
 				UI(() => {
 					foreach (var m in e.Objects)
-						RemoveModule_UI(m);
+						RemoveModules_UI(m);
 				});
 			}
 		}
@@ -233,6 +310,42 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 						vm.RefreshAppDomainNames(appDomain);
 				});
 			}
+		}
+
+		// UI thread
+		void AddItems_UI(IList<DbgModule> modules) {
+			moduleContext.Dispatcher.VerifyAccess();
+			foreach (var m in modules)
+				AllItems.Add(new ModuleVM(m, moduleContext, moduleOrder++));
+		}
+
+		// UI thread
+		void RemoveModuleAt_UI(int i) {
+			moduleContext.Dispatcher.VerifyAccess();
+			Debug.Assert(0 <= i && i < AllItems.Count);
+			var vm = AllItems[i];
+			vm.Dispose();
+			AllItems.RemoveAt(i);
+		}
+
+		// UI thread
+		void RemoveModules_UI(DbgModule module) {
+			moduleContext.Dispatcher.VerifyAccess();
+			var coll = AllItems;
+			for (int i = 0; i < coll.Count; i++) {
+				if (coll[i].Module == module) {
+					RemoveModuleAt_UI(i);
+					break;
+				}
+			}
+		}
+
+		// UI thread
+		void RemoveAllModules_UI() {
+			moduleContext.Dispatcher.VerifyAccess();
+			var coll = AllItems;
+			for (int i = coll.Count - 1; i >= 0; i--)
+				RemoveModuleAt_UI(i);
 		}
 	}
 }
