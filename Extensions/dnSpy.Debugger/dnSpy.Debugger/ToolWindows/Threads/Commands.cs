@@ -37,6 +37,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.SwitchToThread(newTab: false), a => threadsContent.Value.Operations.CanSwitchToThread), ModifierKeys.None, Key.Enter);
 			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.SwitchToThread(newTab: true), a => threadsContent.Value.Operations.CanSwitchToThread), ModifierKeys.Control, Key.Enter);
 			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.SwitchToThread(newTab: true), a => threadsContent.Value.Operations.CanSwitchToThread), ModifierKeys.Shift, Key.Enter);
+			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.RenameThread(), a => threadsContent.Value.Operations.CanRenameThread), ModifierKeys.None, Key.F2);
 		}
 	}
 
@@ -120,7 +121,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.Operations.CanSwitchToThread;
 	}
 
-	[ExportMenuItem(Header = "res:RenameThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 20)]
+	[ExportMenuItem(Header = "res:RenameThreadCommand", InputGestureText = "res:ShortCutKeyF2", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 20)]
 	sealed class RenameThreadCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		RenameThreadCtxMenuCommand(Lazy<IThreadsContent> threadesContent)
