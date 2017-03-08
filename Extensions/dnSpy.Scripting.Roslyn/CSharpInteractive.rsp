@@ -2,6 +2,7 @@
 /r:System
 /r:System.Core
 /r:Microsoft.CSharp
+/r:System.ValueTuple.dll
 /u:System
 /u:System.IO
 /u:System.Collections.Generic
@@ -14,7 +15,6 @@
 /u:System.Threading.Tasks
 
 # Add extra stuff
-/r:System.ValueTuple.dll
 /r:dnSpy.Contracts.Logic.dll
 /r:dnSpy.Contracts.DnSpy.dll
 /r:dnlib.dll
