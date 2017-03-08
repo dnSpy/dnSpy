@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 
 			// Don't give back focus if the user canceled it by clicking somewhere with the mouse.
 			// Only do it if the user pressed Esc or Enter
-			if ((e.WasCanceled || e.NewText != null) && oldKeyboardFocus?.Target is IInputElement elem)
+			if (editValue.IsKeyboardFocused && oldKeyboardFocus?.Target is IInputElement elem)
 				elem.Focus();
 			oldKeyboardFocus = null;
 

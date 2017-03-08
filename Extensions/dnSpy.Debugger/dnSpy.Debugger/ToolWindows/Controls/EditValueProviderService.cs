@@ -100,6 +100,7 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 	sealed class EditValueImpl : IEditValue {
 		public event EventHandler<EditCompletedEventArgs> EditCompleted;
 		public object UIObject => uiControl;
+		public bool IsKeyboardFocused => wpfTextView.HasAggregateFocus;
 
 		sealed class UIControl : ContentControl {
 			readonly IWpfTextView wpfTextView;
@@ -159,12 +160,12 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 			wpfTextView.LostAggregateFocus += WpfTextView_LostAggregateFocus;
 		}
 
-		void WpfTextView_LostAggregateFocus(object sender, EventArgs e) => Cancel(false);
-		public void Cancel(bool wasCanceled) => OnEditCompleted(null, wasCanceled);
-		public void Commit() => OnEditCompleted(wpfTextView.TextBuffer.CurrentSnapshot.GetText(), false);
+		void WpfTextView_LostAggregateFocus(object sender, EventArgs e) => Cancel();
+		public void Cancel() => OnEditCompleted(null);
+		public void Commit() => OnEditCompleted(wpfTextView.TextBuffer.CurrentSnapshot.GetText());
 
-		void OnEditCompleted(string text, bool wasCanceled) {
-			EditCompleted?.Invoke(this, new EditCompletedEventArgs(text, wasCanceled));
+		void OnEditCompleted(string text) {
+			EditCompleted?.Invoke(this, new EditCompletedEventArgs(text));
 			Dispose();
 		}
 
@@ -228,7 +229,7 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 			if (group == CommandConstants.TextEditorGroup) {
 				switch ((TextEditorIds)cmdId) {
 				case TextEditorIds.CANCEL:
-					editValueImpl.Cancel(true);
+					editValueImpl.Cancel();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.RETURN:

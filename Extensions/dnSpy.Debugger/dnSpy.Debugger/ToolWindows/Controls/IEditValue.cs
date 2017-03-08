@@ -37,6 +37,11 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 		object UIObject { get; }
 
 		/// <summary>
+		/// true if the control has keyboard focus
+		/// </summary>
+		bool IsKeyboardFocused { get; }
+
+		/// <summary>
 		/// Raised when the edit is completed (there's new text or the user canceled the edit operation)
 		/// </summary>
 		event EventHandler<EditCompletedEventArgs> EditCompleted;
@@ -49,19 +54,9 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 		public string NewText { get; }
 
 		/// <summary>
-		/// true if it was canceled by the user by pressing Escape (not because the
-		/// edit control lost keyboard focus)
-		/// </summary>
-		public bool WasCanceled { get; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="newText">New text or null if it was canceled</param>
-		/// <param name="wasCanceled">true if user pressed Escape to cancel the edit operation</param>
-		public EditCompletedEventArgs(string newText, bool wasCanceled) {
-			NewText = newText;
-			WasCanceled = wasCanceled;
-		}
+		public EditCompletedEventArgs(string newText) => NewText = newText;
 	}
 }
