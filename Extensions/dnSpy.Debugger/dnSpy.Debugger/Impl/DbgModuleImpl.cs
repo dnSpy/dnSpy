@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Impl {
 			this.isInMemory = isInMemory;
 			this.isOptimized = isOptimized;
 			this.order = order;
-			this.timestamp = timestamp;
+			this.timestamp = timestamp?.ToUniversalTime();
 			this.version = version;
 		}
 
@@ -187,6 +187,7 @@ namespace dnSpy.Debugger.Impl {
 		internal void UpdateTimestamp_DbgThread(DateTime? timestamp) {
 			DispatcherThread.VerifyAccess();
 			bool raiseEvent;
+			timestamp = timestamp?.ToUniversalTime();
 			lock (lockObj) {
 				raiseEvent = this.timestamp != timestamp;
 				this.timestamp = timestamp;
