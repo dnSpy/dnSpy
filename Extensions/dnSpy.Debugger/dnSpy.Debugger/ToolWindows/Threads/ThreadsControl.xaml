@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.ToolWindows.Threads"
+             xmlns:ctrls="clr-namespace:dnSpy.Debugger.ToolWindows.Controls"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Debugger.UI"
@@ -102,7 +103,7 @@
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                <ctrls:EditValueControl ReadOnlyContent="{Binding NameObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" EditableValue="{Binding NameEditableValue}" EditValueProvider="{Binding NameEditValueProvider}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

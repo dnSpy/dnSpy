@@ -79,6 +79,12 @@
     <Compile Include="Settings\DebuggerAppSettingsPage.cs" />
     <Compile Include="Settings\DebuggerSettingsImpl.cs" />
     <Compile Include="TheExtension.cs" />
+    <Compile Include="ToolWindows\Controls\EditValueControl.xaml.cs">
+      <DependentUpon>EditValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\Controls\EditValueProviderService.cs" />
+    <Compile Include="ToolWindows\Controls\IEditableValue.cs" />
+    <Compile Include="ToolWindows\Controls\IEditValue.cs" />
     <Compile Include="ToolWindows\FormatterObject.cs" />
     <Compile Include="ToolWindows\FormatterUtils.cs" />
     <Compile Include="ToolWindows\Memory\BackgroundImageOptionDefinitions.cs" />
@@ -125,6 +131,7 @@
     <Compile Include="ToolWindows\SimpleProcessReader.cs" />
     <Compile Include="ToolWindows\Threads\Commands.cs" />
     <Compile Include="ToolWindows\Threads\DefaultThreadCategoryProvider.cs" />
+    <Compile Include="ToolWindows\Threads\TextViewTaggers.cs" />
     <Compile Include="ToolWindows\Threads\ThreadCategoryService.cs" />
     <Compile Include="ToolWindows\Threads\ThreadColumnConverter.cs" />
     <Compile Include="ToolWindows\Threads\ThreadContext.cs" />
@@ -192,6 +199,10 @@
     <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ToolWindows\Controls\EditValueControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ToolWindows\Memory\MemoryControl.xaml">
       <Generator>MSBuild:Compile</Generator>

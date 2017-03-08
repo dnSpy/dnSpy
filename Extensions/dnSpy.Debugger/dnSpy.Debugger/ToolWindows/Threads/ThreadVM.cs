@@ -27,6 +27,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
+using dnSpy.Debugger.ToolWindows.Controls;
 using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
@@ -122,8 +123,15 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 				return null;
 			}
+			private set {
+				if (userName == value)
+					return;
+				userName = value;
+				Thread.GetOrCreateData<ThreadState>().UserName = userName;
+				OnPropertyChanged(nameof(NameObject));
+			}
 		}
-		string userName = null;//TODO: Let user edit it
+		string userName;
 
 		public ThreadPriority Priority {
 			get {
@@ -147,16 +155,27 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 		ulong? affinityMask;
 
+		sealed class ThreadState {
+			public string UserName { get; set; }
+		}
+
+		public IEditableValue NameEditableValue { get; }
+		public IEditValueProvider NameEditValueProvider { get; }
+
 		readonly ThreadCategoryService threadCategoryService;
 		bool initializeThreadCategory;
 		SafeAccessTokenHandle hThread;
 
-		public ThreadVM(DbgThread thread, IThreadContext context, int order, ThreadCategoryService threadCategoryService) {
+		public ThreadVM(DbgThread thread, IThreadContext context, int order, ThreadCategoryService threadCategoryService, IEditValueProvider nameEditValueProvider) {
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
+			NameEditValueProvider = nameEditValueProvider ?? throw new ArgumentNullException(nameof(nameEditValueProvider));
+			NameEditableValue = new EditableValueImpl(() => Name, s => Name = s);
 			this.threadCategoryService = threadCategoryService ?? throw new ArgumentNullException(nameof(threadCategoryService));
 			initializeThreadCategory = true;
+			if (thread.TryGetData<ThreadState>(out var threadState))
+				userName = threadState.UserName;
 			thread.PropertyChanged += DbgThread_PropertyChanged;
 		}
 

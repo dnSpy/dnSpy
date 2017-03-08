@@ -224,6 +224,11 @@ namespace dnSpy.Contracts.Text {
 		public const string ThreadsWindow = nameof(ThreadsWindow);
 
 		/// <summary>
+		/// Threads window: name column
+		/// </summary>
+		public const string ThreadsWindowName = nameof(ThreadsWindowName);
+
+		/// <summary>
 		/// Processes window
 		/// </summary>
 		public const string ProcessesWindow = nameof(ProcessesWindow);

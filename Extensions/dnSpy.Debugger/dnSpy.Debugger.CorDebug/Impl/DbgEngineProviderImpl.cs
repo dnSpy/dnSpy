@@ -30,9 +30,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly Lazy<ClrDacProvider> clrDacProvider;
 
 		[ImportingConstructor]
-		DbgEngineProviderImpl(Lazy<ClrDacProvider> clrDacProvider) {
-			this.clrDacProvider = clrDacProvider;
-		}
+		DbgEngineProviderImpl(Lazy<ClrDacProvider> clrDacProvider) => this.clrDacProvider = clrDacProvider;
 
 		public override DbgEngine Create(DbgManager dbgManager, StartDebuggingOptions options) {
 			if (options is DotNetFrameworkStartDebuggingOptions dnfOptions)

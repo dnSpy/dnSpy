@@ -63,6 +63,11 @@ namespace dnSpy.Debugger.UI {
 		[Name(ContentTypes.ThreadsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition ThreadsWindow;
+
+		[Export]
+		[Name(ContentTypes.ThreadsWindowName)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition ThreadsWindowName;
 #pragma warning restore 0169
 	}
 }

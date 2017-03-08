@@ -27,7 +27,9 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.ToolWindows.Controls;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -55,6 +57,16 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 		bool isEnabled;
 
+		IEditValueProvider NameEditValueProvider {
+			get {
+				threadContext.Dispatcher.VerifyAccess();
+				if (nameEditValueProvider == null)
+					nameEditValueProvider = editValueProviderService.Create(ContentTypes.ThreadsWindowName, Array.Empty<string>());
+				return nameEditValueProvider;
+			}
+		}
+		IEditValueProvider nameEditValueProvider;
+
 		public bool IsVisible { get; set; }
 
 		sealed class ProcessState {
@@ -70,10 +82,11 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		readonly ThreadFormatterProvider threadFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
 		readonly ThreadCategoryService threadCategoryService;
+		readonly EditValueProviderService editValueProviderService;
 		int threadOrder;
 
 		[ImportingConstructor]
-		ThreadsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ThreadFormatterProvider threadFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, ThreadCategoryService threadCategoryService) {
+		ThreadsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ThreadFormatterProvider threadFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, ThreadCategoryService threadCategoryService, EditValueProviderService editValueProviderService) {
 			debuggerDispatcher.Dispatcher.VerifyAccess();
 			AllItems = new ObservableCollection<ThreadVM>();
 			SelectedItems = new ObservableCollection<ThreadVM>();
@@ -81,6 +94,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			this.threadFormatterProvider = threadFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
 			this.threadCategoryService = threadCategoryService;
+			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			threadContext = new ThreadContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
@@ -347,7 +361,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		void AddItems_UI(IList<DbgThread> threads) {
 			threadContext.Dispatcher.VerifyAccess();
 			foreach (var t in threads)
-				AllItems.Add(new ThreadVM(t, threadContext, threadOrder++, threadCategoryService));
+				AllItems.Add(new ThreadVM(t, threadContext, threadOrder++, threadCategoryService, NameEditValueProvider));
 		}
 
 		// UI thread

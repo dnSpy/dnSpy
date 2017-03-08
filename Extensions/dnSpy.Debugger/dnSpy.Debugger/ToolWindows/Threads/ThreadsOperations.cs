@@ -119,9 +119,11 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			//TODO:
 		}
 
-		public override bool CanRenameThread => SelectedItems.Count == 1;
+		public override bool CanRenameThread => SelectedItems.Count == 1 && !SelectedItems[0].NameEditableValue.IsEditingValue;
 		public override void RenameThread() {
-			//TODO:
+			if (!CanRenameThread)
+				return;
+			SelectedItems[0].NameEditableValue.IsEditingValue = true;
 		}
 
 		public override bool CanFreezeThread => SelectedItems.Any(a => a.Thread.SuspendedCount == 0);

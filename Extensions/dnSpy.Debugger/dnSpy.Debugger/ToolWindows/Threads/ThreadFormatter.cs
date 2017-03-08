@@ -84,8 +84,11 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			if (name == null)
 				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Thread_NoName);
 			else
-				output.Write(BoxedTextColor.String, FormatterUtils.FilterName(name, maxThreadName));
+				output.Write(NameColor, FormatterUtils.FilterName(name, maxThreadName));
 		}
+		// Make sure these fields are in sync
+		static readonly object NameColor = BoxedTextColor.String;
+		internal const string NameColorClassificationTypeName = Contracts.Text.Classification.ThemeClassificationTypeNames.String;
 
 		public void WriteLocation(ITextColorWriter output, DbgThread thread) {
 			//TODO:

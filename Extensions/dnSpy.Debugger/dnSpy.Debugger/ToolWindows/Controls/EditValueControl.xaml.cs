@@ -1,0 +1,200 @@
+﻿/*
+    Copyright (C) 2014-2017 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+
+namespace dnSpy.Debugger.ToolWindows.Controls {
+	sealed partial class EditValueControl : UserControl {
+		public static readonly DependencyProperty ReadOnlyContentProperty =
+			DependencyProperty.Register(nameof(ReadOnlyContent), typeof(object), typeof(EditValueControl),
+			new FrameworkPropertyMetadata(null));
+
+		public object ReadOnlyContent {
+			get => GetValue(ReadOnlyContentProperty);
+			set => SetValue(ReadOnlyContentProperty, value);
+		}
+
+		public static readonly DependencyProperty EditableValueProperty =
+			DependencyProperty.Register(nameof(EditableValue), typeof(IEditableValue), typeof(EditValueControl),
+			new FrameworkPropertyMetadata(null, EditableValueProperty_PropertyChangedCallback));
+
+		static void EditableValueProperty_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+			((EditValueControl)d).OnEditableValuePropertyChanged((IEditableValue)e.OldValue, (IEditableValue)e.NewValue, false);
+
+		public IEditableValue EditableValue {
+			get => (IEditableValue)GetValue(EditableValueProperty);
+			set => SetValue(EditableValueProperty, value);
+		}
+
+		public static readonly DependencyProperty EditValueProviderProperty =
+			DependencyProperty.Register(nameof(EditValueProvider), typeof(IEditValueProvider), typeof(EditValueControl),
+			new FrameworkPropertyMetadata(null, EditValueProviderProperty_PropertyChangedCallback));
+
+		static void EditValueProviderProperty_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+			((EditValueControl)d).OnEditValueProviderPropertyChanged();
+
+		public IEditValueProvider EditValueProvider {
+			get => (IEditValueProvider)GetValue(EditValueProviderProperty);
+			set => SetValue(EditValueProviderProperty, value);
+		}
+
+		IEditValue editValue;
+		WeakReference oldKeyboardFocus;
+
+		public EditValueControl() {
+			Loaded += EditValueControl_Loaded;
+			Unloaded += EditValueControl_Unloaded;
+			InitializeComponent();
+		}
+		bool isLoaded;
+
+		void EditValueControl_Loaded(object sender, RoutedEventArgs e) {
+			// Loaded can be raised multiple times without an Unloaded event
+			if (isLoaded)
+				return;
+			isLoaded = true;
+			OnEditableValuePropertyChanged(EditableValue, EditableValue, true);
+		}
+
+		void EditValueControl_Unloaded(object sender, RoutedEventArgs e) {
+			if (!isLoaded)
+				return;
+			isLoaded = false;
+			OnEditableValuePropertyChanged(EditableValue, null, true);
+		}
+
+		void OnEditableValuePropertyChanged(IEditableValue oldValue, IEditableValue newValue, bool force) {
+			if (!force && !isLoaded)
+				return;
+			CancelEdit(oldValue);
+			UnhookEvents(oldValue);
+			HookEvents(newValue);
+			OnIsEditingValueChanged(newValue);
+		}
+
+		void OnEditValueProviderPropertyChanged() => CancelEdit(EditableValue);
+
+		void HookEvents(IEditableValue editableValue) {
+			if (editableValue == null)
+				return;
+			editableValue.PropertyChanged += EditableValue_PropertyChanged;
+		}
+
+		void UnhookEvents(IEditableValue editableValue) {
+			if (editableValue == null)
+				return;
+			editableValue.PropertyChanged -= EditableValue_PropertyChanged;
+		}
+
+		void EditableValue_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			var editableValue = (IEditableValue)sender;
+			if (editableValue != EditableValue) {
+				UnhookEvents(editableValue);
+				return;
+			}
+			if (e.PropertyName == nameof(editableValue.IsEditingValue))
+				OnIsEditingValueChanged(editableValue);
+		}
+
+		void OnIsEditingValueChanged(IEditableValue editableValue) {
+			if (editableValue == null)
+				return;
+			if (!editableValue.CanEdit) {
+				CancelEdit(editableValue);
+				return;
+			}
+			if (!editableValue.IsEditingValue)
+				return;
+
+			DisposeEditValue();
+			Debug.Assert(editValue == null);
+			editValue = EditValueProvider?.Create(editableValue.Text);
+			if (editValue == null) {
+				CancelEdit(editableValue);
+				return;
+			}
+			var border = new Border {
+				BorderThickness = new Thickness(1),
+				Child = GetUIElement(editValue.UIObject),
+			};
+			border.SetResourceReference(Border.BorderBrushProperty, "CommonControlsTextBoxBorderFocused");
+			oldKeyboardFocus = new WeakReference(Keyboard.FocusedElement);
+			Content = border;
+			editValue.EditCompleted += EditValue_EditCompleted;
+		}
+
+		static UIElement GetUIElement(object obj) => obj as UIElement ?? new ContentPresenter { Content = obj };
+
+		void CancelEdit(IEditableValue editableValue) {
+			if (editableValue != null)
+				editableValue.IsEditingValue = false;
+			RemoveEditControl();
+		}
+
+		void RemoveEditControl() {
+			DisposeEditValue();
+			var binding = new Binding(nameof(ReadOnlyContent)) {
+				Source = this,
+			};
+			ClearValue(ContentProperty);
+			SetBinding(ContentProperty, binding);
+		}
+
+		void DisposeEditValue() {
+			oldKeyboardFocus = null;
+			if (editValue == null)
+				return;
+			editValue.EditCompleted -= EditValue_EditCompleted;
+			editValue.Dispose();
+			editValue = null;
+		}
+
+		void EditValue_EditCompleted(object sender, EditCompletedEventArgs e) {
+			if (editValue != sender)
+				return;
+
+			// Don't give back focus if the user canceled it by clicking somewhere with the mouse.
+			// Only do it if the user pressed Esc or Enter
+			if ((e.WasCanceled || e.NewText != null) && oldKeyboardFocus?.Target is IInputElement elem)
+				elem.Focus();
+			oldKeyboardFocus = null;
+
+			RemoveEditControl();
+			var editableValue = EditableValue;
+			if (editableValue == null)
+				return;
+			Debug.Assert(editableValue.IsEditingValue);
+			if (!editableValue.IsEditingValue)
+				return;
+			editableValue.IsEditingValue = false;
+			Debug.Assert(editableValue.CanEdit);
+			if (!editableValue.CanEdit)
+				return;
+			if (e.NewText == null)
+				return;
+			editableValue.Text = e.NewText;
+		}
+	}
+}
