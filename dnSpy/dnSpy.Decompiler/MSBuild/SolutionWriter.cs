@@ -111,6 +111,14 @@ namespace dnSpy.Decompiler.MSBuild {
 					writer.Write("MinimumVisualStudioVersion = 10.0.40219.1" + crlf);
 					break;
 
+				case ProjectVersion.VS2017:
+					writer.Write("Microsoft Visual Studio Solution File, Format Version 12.00" + crlf);
+					writer.Write("# Visual Studio 15" + crlf);
+					// 2017 RTW = 15.0.26228.4
+					writer.Write("VisualStudioVersion = 15.0.26228.4" + crlf);
+					writer.Write("MinimumVisualStudioVersion = 10.0.40219.1" + crlf);
+					break;
+
 				default:
 					throw new InvalidOperationException();
 				}

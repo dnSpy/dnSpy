@@ -59,7 +59,8 @@ namespace dnSpy.Decompiler.MSBuild {
 				var toolsVersion = GetToolsVersion();
 				if (toolsVersion != null)
 					writer.WriteAttributeString("ToolsVersion", toolsVersion);
-				writer.WriteAttributeString("DefaultTargets", "Build");
+				if (projectVersion <= ProjectVersion.VS2015)
+					writer.WriteAttributeString("DefaultTargets", "Build");
 				if (projectVersion >= ProjectVersion.VS2012) {
 					writer.WriteStartElement("Import");
 					writer.WriteAttributeString("Project", @"$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props");
@@ -285,6 +286,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			case ProjectVersion.VS2012: return "4.0";
 			case ProjectVersion.VS2013: return "12.0";
 			case ProjectVersion.VS2015: return "14.0";
+			case ProjectVersion.VS2017: return "15.0";
 			default: throw new InvalidOperationException();
 			}
 		}
@@ -333,6 +335,8 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		string GetAppDesignerFolder() {
 			if (project.Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
+				return null;
+			if (projectVersion >= ProjectVersion.VS2017)
 				return null;
 			return project.PropertiesFolder;
 		}

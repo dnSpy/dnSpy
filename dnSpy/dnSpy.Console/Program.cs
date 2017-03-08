@@ -551,6 +551,7 @@ namespace dnSpy_Console {
 						case 2012: projectVersion = ProjectVersion.VS2012; break;
 						case 2013: projectVersion = ProjectVersion.VS2013; break;
 						case 2015: projectVersion = ProjectVersion.VS2015; break;
+						case 2017: projectVersion = ProjectVersion.VS2017; break;
 						default: throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidVSVersion, vsVer));
 						}
 						break;
