@@ -611,6 +611,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Severity.
+        /// </summary>
+        public static string CompileDiagnostics_Header_Severity {
+            get {
+                return ResourceManager.GetString("CompileDiagnostics_Header_Severity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Constant.
         /// </summary>
         public static string ConstantDlg_Constant {
