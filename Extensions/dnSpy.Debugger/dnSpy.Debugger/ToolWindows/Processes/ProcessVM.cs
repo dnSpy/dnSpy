@@ -70,6 +70,33 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		internal int Order { get; }
 
+		sealed class ProcessState : IDisposable {
+			public string Title {
+				get {
+					if (process == null)
+						return string.Empty;
+					process.Refresh();
+					return process.MainWindowTitle;
+				}
+			}
+
+			// This is pretty expensive to recreate every time we need to get the window title so
+			// it's cached here and disposed of when the DbgProcess is closed.
+			// It's no problem if we're debugging just one process, but try 5-20 processes.
+			// ;)
+			readonly Process process;
+
+			public ProcessState(int pid) {
+				try {
+					process = System.Diagnostics.Process.GetProcessById(pid);
+				}
+				catch {
+				}
+			}
+
+			public void Dispose() => process?.Dispose();
+		}
+
 		public ProcessVM(DbgProcess process, IProcessContext context, int order) {
 			Process = process ?? throw new ArgumentNullException(nameof(process));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
@@ -77,15 +104,11 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			process.PropertyChanged += DbgProcess_PropertyChanged;
 		}
 
-		string GetProcessTitle() {
-			try {
-				using (var p = System.Diagnostics.Process.GetProcessById(Process.Id))
-					return p.MainWindowTitle;
-			}
-			catch {
-			}
-			return null;
-		}
+		// random thread
+		ProcessState GetProcessState() => Process.GetOrCreateData(() => new ProcessState(Process.Id));
+
+		// random thread
+		string GetProcessTitle() => GetProcessState().Title;
 
 		// UI thread
 		internal void RefreshTitle_UI() {
