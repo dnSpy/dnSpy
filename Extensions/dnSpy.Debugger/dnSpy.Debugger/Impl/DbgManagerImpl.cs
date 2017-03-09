@@ -413,13 +413,18 @@ namespace dnSpy.Debugger.Impl {
 						Debug.Assert(stopDebuggingHelper != null);
 						stopDebuggingHelper = null;
 					}
-					if (success) {
-						foreach (var options in restartOptionsCopy)
-							Start(options);
-					}
-					else {
-						//TODO: Notify user that it timed out
-					}
+					// Don't restart the programs in this thread since we're inside a ProcessesChanged callback.
+					// That will mess up notifying about eg. IsDebuggingChanged and other events that should be,
+					// but havent yet been raised.
+					ExecOnDbgThread(() => {
+						if (success) {
+							foreach (var options in restartOptionsCopy)
+								Start(options);
+						}
+						else {
+							//TODO: Notify user that it timed out
+						}
+					});
 				});
 			}
 			stopDebuggingHelper.Initialize();

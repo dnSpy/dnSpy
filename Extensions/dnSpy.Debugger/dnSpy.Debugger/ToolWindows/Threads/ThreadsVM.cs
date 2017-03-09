@@ -42,20 +42,19 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	}
 
 	[Export(typeof(IThreadsVM))]
-	sealed class ThreadsVM : ViewModelBase, IThreadsVM {
+	sealed class ThreadsVM : ViewModelBase, IThreadsVM, ILazyToolWindowVM {
 		public ObservableCollection<ThreadVM> AllItems { get; }
 		public ObservableCollection<ThreadVM> SelectedItems { get; }
 
 		public bool IsEnabled {
-			get => isEnabled;
-			set {
-				if (isEnabled == value)
-					return;
-				isEnabled = value;
-				InitializeDebugger_UI(isEnabled);
-			}
+			get => lazyToolWindowVMHelper.IsEnabled;
+			set => lazyToolWindowVMHelper.IsEnabled = value;
 		}
-		bool isEnabled;
+
+		public bool IsVisible {
+			get => lazyToolWindowVMHelper.IsVisible;
+			set => lazyToolWindowVMHelper.IsVisible = value;
+		}
 
 		IEditValueProvider NameEditValueProvider {
 			get {
@@ -66,8 +65,6 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			}
 		}
 		IEditValueProvider nameEditValueProvider;
-
-		public bool IsVisible { get; set; }
 
 		sealed class ProcessState {
 			/// <summary>
@@ -83,6 +80,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		readonly DebuggerSettings debuggerSettings;
 		readonly ThreadCategoryService threadCategoryService;
 		readonly EditValueProviderService editValueProviderService;
+		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		int threadOrder;
 
 		[ImportingConstructor]
@@ -93,6 +91,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			this.dbgManager = dbgManager;
 			this.threadFormatterProvider = threadFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
+			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, debuggerDispatcher, dbgManager);
 			this.threadCategoryService = threadCategoryService;
 			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
@@ -105,6 +104,18 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// random thread
 		void DbgThread(Action action) =>
 			dbgManager.Value.DispatcherThread.BeginInvoke(action);
+
+		// UI thread
+		void ILazyToolWindowVM.Show() {
+			threadContext.Dispatcher.VerifyAccess();
+			InitializeDebugger_UI(enable: true);
+		}
+
+		// UI thread
+		void ILazyToolWindowVM.Hide() {
+			threadContext.Dispatcher.VerifyAccess();
+			InitializeDebugger_UI(enable: false);
+		}
 
 		// UI thread
 		void InitializeDebugger_UI(bool enable) {
@@ -127,6 +138,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			dbgManager.Value.DispatcherThread.VerifyAccess();
 			if (enable) {
 				dbgManager.Value.ProcessesChanged += DbgManager_ProcessesChanged;
+				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
 				var threads = new List<DbgThread>();
 				foreach (var p in dbgManager.Value.Processes) {
 					InitializeProcess_DbgThread(p);
@@ -143,6 +155,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			}
 			else {
 				dbgManager.Value.ProcessesChanged -= DbgManager_ProcessesChanged;
+				dbgManager.Value.DelayedIsRunningChanged -= DbgManager_DelayedIsRunningChanged;
 				foreach (var p in dbgManager.Value.Processes) {
 					DeinitializeProcess_DbgThread(p);
 					foreach (var r in p.Runtimes) {
@@ -153,6 +166,13 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				}
 				UI(() => RemoveAllThreads_UI());
 			}
+		}
+
+		// DbgManager thread
+		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) {
+			// If all processes are running and the window is hidden, hide it now
+			if (!IsVisible)
+				UI(() => lazyToolWindowVMHelper.TryHideWindow());
 		}
 
 		// DbgManager thread

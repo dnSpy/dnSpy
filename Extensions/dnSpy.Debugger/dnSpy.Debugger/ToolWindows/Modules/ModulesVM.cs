@@ -40,27 +40,25 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 	}
 
 	[Export(typeof(IModulesVM))]
-	sealed class ModulesVM : ViewModelBase, IModulesVM {
+	sealed class ModulesVM : ViewModelBase, IModulesVM, ILazyToolWindowVM {
 		public ObservableCollection<ModuleVM> AllItems { get; }
 		public ObservableCollection<ModuleVM> SelectedItems { get; }
 
 		public bool IsEnabled {
-			get => isEnabled;
-			set {
-				if (isEnabled == value)
-					return;
-				isEnabled = value;
-				InitializeDebugger_UI(isEnabled);
-			}
+			get => lazyToolWindowVMHelper.IsEnabled;
+			set => lazyToolWindowVMHelper.IsEnabled = value;
 		}
-		bool isEnabled;
 
-		public bool IsVisible { get; set; }
+		public bool IsVisible {
+			get => lazyToolWindowVMHelper.IsVisible;
+			set => lazyToolWindowVMHelper.IsVisible = value;
+		}
 
 		readonly Lazy<DbgManager> dbgManager;
 		readonly ModuleContext moduleContext;
 		readonly ModuleFormatterProvider moduleFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
+		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		int moduleOrder;
 
 		[ImportingConstructor]
@@ -71,6 +69,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			this.dbgManager = dbgManager;
 			this.moduleFormatterProvider = moduleFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
+			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, debuggerDispatcher, dbgManager);
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			moduleContext = new ModuleContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
@@ -81,6 +80,18 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		// random thread
 		void DbgThread(Action action) =>
 			dbgManager.Value.DispatcherThread.BeginInvoke(action);
+
+		// UI thread
+		void ILazyToolWindowVM.Show() {
+			moduleContext.Dispatcher.VerifyAccess();
+			InitializeDebugger_UI(enable: true);
+		}
+
+		// UI thread
+		void ILazyToolWindowVM.Hide() {
+			moduleContext.Dispatcher.VerifyAccess();
+			InitializeDebugger_UI(enable: false);
+		}
 
 		// UI thread
 		void InitializeDebugger_UI(bool enable) {

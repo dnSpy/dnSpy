@@ -40,39 +40,25 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 	}
 
 	[Export(typeof(IProcessesVM))]
-	sealed class ProcessesVM : ViewModelBase, IProcessesVM {
+	sealed class ProcessesVM : ViewModelBase, IProcessesVM, ILazyToolWindowVM {
 		public ObservableCollection<ProcessVM> AllItems { get; }
 		public ObservableCollection<ProcessVM> SelectedItems { get; }
 
 		public bool IsEnabled {
-			get => isEnabled;
-			set {
-				if (isEnabled == value)
-					return;
-				isEnabled = value;
-				InitializeDebugger_UI(isEnabled);
-			}
+			get => lazyToolWindowVMHelper.IsEnabled;
+			set => lazyToolWindowVMHelper.IsEnabled = value;
 		}
-		bool isEnabled;
 
 		public bool IsVisible {
-			get => processContext.IsVisible;
-			set {
-				if (processContext.IsVisible != value) {
-					processContext.IsVisible = value;
-					if (processContext.IsVisible) {
-						RecreateFormatter_UI();
-						RefreshTitles_UI();
-						RefreshThemeFields_UI();
-					}
-				}
-			}
+			get => lazyToolWindowVMHelper.IsVisible;
+			set => lazyToolWindowVMHelper.IsVisible = value;
 		}
 
 		readonly Lazy<DbgManager> dbgManager;
 		readonly ProcessContext processContext;
 		readonly ProcessFormatterProvider processFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
+		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		int processOrder;
 		bool refreshTitlesOnPause;
 
@@ -84,6 +70,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			this.dbgManager = dbgManager;
 			this.processFormatterProvider = processFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
+			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, debuggerDispatcher, dbgManager);
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			processContext = new ProcessContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
@@ -94,6 +81,18 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		// random thread
 		void DbgThread(Action action) =>
 			dbgManager.Value.DispatcherThread.BeginInvoke(action);
+
+		// UI thread
+		void ILazyToolWindowVM.Show() {
+			processContext.Dispatcher.VerifyAccess();
+			InitializeDebugger_UI(enable: true);
+		}
+
+		// UI thread
+		void ILazyToolWindowVM.Hide() {
+			processContext.Dispatcher.VerifyAccess();
+			InitializeDebugger_UI(enable: false);
+		}
 
 		// UI thread
 		void InitializeDebugger_UI(bool enable) {
@@ -157,8 +156,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		// UI thread
 		void RefreshTitles_UI() {
 			processContext.Dispatcher.VerifyAccess();
-			if (!processContext.IsVisible)
-				return;
 			foreach (var vm in AllItems)
 				vm.RefreshTitle_UI();
 		}
@@ -166,8 +163,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		// UI thread
 		void RefreshThemeFields_UI() {
 			processContext.Dispatcher.VerifyAccess();
-			if (!processContext.IsVisible)
-				return;
 			foreach (var vm in AllItems)
 				vm.RefreshThemeFields_UI();
 		}
@@ -181,8 +176,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		// UI thread
 		void RefreshHexFields_UI() {
 			processContext.Dispatcher.VerifyAccess();
-			if (!processContext.IsVisible)
-				return;
 			RecreateFormatter_UI();
 			foreach (var vm in AllItems)
 				vm.RefreshHexFields_UI();
@@ -194,7 +187,12 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			processContext.Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
 
 		// DbgManager thread
-		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => refreshTitlesOnPause = true);
+		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => {
+			refreshTitlesOnPause = true;
+			// If all processes are running and the window is hidden, hide it now
+			if (!IsVisible)
+				lazyToolWindowVMHelper.TryHideWindow();
+		});
 
 		// DbgManager thread
 		void DbgManager_IsRunningChanged(object sender, EventArgs e) {

@@ -29,7 +29,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		ProcessFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
-		bool IsVisible { get; }
 	}
 
 	sealed class ProcessContext : IProcessContext {
@@ -39,7 +38,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public ProcessFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
-		public bool IsVisible { get; set; }
 
 		public ProcessContext(Dispatcher dispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
 			Dispatcher = dispatcher;

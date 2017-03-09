@@ -117,8 +117,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		// UI thread
 		void DbgProcess_PropertyChanged_UI(string propertyName) {
 			Context.Dispatcher.VerifyAccess();
-			if (!Context.IsVisible)
-				return;
 			switch (propertyName) {
 			case nameof(Process.Filename):
 				OnPropertyChanged(nameof(NameObject));
