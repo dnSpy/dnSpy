@@ -415,7 +415,7 @@ namespace dnSpy.Debugger.Impl {
 					}
 					// Don't restart the programs in this thread since we're inside a ProcessesChanged callback.
 					// That will mess up notifying about eg. IsDebuggingChanged and other events that should be,
-					// but havent yet been raised.
+					// but haven't yet been raised.
 					ExecOnDbgThread(() => {
 						if (success) {
 							foreach (var options in restartOptionsCopy)

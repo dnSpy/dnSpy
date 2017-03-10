@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		public static string GetDebugShimFilename(int bitness) {
 			var basePath = Path.GetDirectoryName(typeof(DotNetCoreHelpers).Assembly.Location);
-			basePath = Path.Combine(basePath, "debug");
+			basePath = Path.Combine(basePath, "debug", "core");
 			const string filename = "dbgshim.dll";
 			switch (bitness) {
 			case 32:	return Path.Combine(basePath, "x86", filename);
