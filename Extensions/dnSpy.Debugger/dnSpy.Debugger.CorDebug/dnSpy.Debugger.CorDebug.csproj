@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\DotNetDbgExceptionDefinitionProvider.cs" />
+    <Compile Include="Common\ExceptionInfo.cs" />
+    <Compile Include="Common\MDADbgExceptionDefinitionProvider.cs" />
     <Compile Include="DAC\ClrDac.cs" />
     <Compile Include="DAC\ClrDacImpl.cs" />
     <Compile Include="DAC\ClrDacProvider.cs" />
