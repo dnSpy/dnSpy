@@ -75,7 +75,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets the hash code
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(State) ^ StringComparer.Ordinal.GetHashCode(LocalizedState);
+		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(State ?? string.Empty) ^ StringComparer.Ordinal.GetHashCode(LocalizedState ?? string.Empty);
 
 		/// <summary>
 		/// Returns <see cref="LocalizedState"/>

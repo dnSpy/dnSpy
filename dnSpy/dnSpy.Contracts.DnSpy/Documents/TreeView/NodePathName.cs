@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => Guid.GetHashCode() ^ StringComparer.Ordinal.GetHashCode(Name);
+		public override int GetHashCode() => Guid.GetHashCode() ^ StringComparer.Ordinal.GetHashCode(Name ?? string.Empty);
 
 		/// <summary>
 		/// ToString()

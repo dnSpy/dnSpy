@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// Gets the hashcode
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Group) ^ (Name == null ? 0 : StringComparer.Ordinal.GetHashCode(Name));
+		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Group ?? string.Empty) ^ StringComparer.Ordinal.GetHashCode(Name ?? string.Empty);
 
 		/// <summary>
 		/// ToString()

@@ -56,6 +56,6 @@ namespace dnSpy.Contracts.Decompiler {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Namespace);
+		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Namespace ?? string.Empty);
 	}
 }
