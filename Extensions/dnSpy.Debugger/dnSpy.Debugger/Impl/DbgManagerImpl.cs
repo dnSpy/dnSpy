@@ -22,14 +22,15 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgManager))]
 	sealed partial class DbgManagerImpl : DbgManager, IIsRunningProvider {
-		public override DispatcherThread DispatcherThread => dispatcherThread;
-		readonly DispatcherThreadImpl dispatcherThread;
+		public override DispatcherThread DispatcherThread => dbgDispatcher.DispatcherThread;
+		Dispatcher Dispatcher => dbgDispatcher.Dispatcher;
 
 		public override event EventHandler<DbgCollectionChangedEventArgs<DbgProcess>> ProcessesChanged;
 		public override DbgProcess[] Processes {
@@ -113,6 +114,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		readonly object lockObj;
+		readonly DbgDispatcher dbgDispatcher;
 		readonly List<EngineInfo> engines;
 		readonly Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>[] dbgEngineProviders;
 		readonly Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>[] dbgManagerStartListeners;
@@ -120,21 +122,21 @@ namespace dnSpy.Debugger.Impl {
 		int hasNotifiedStartListenersCounter;
 
 		[ImportingConstructor]
-		DbgManagerImpl([ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners) {
+		DbgManagerImpl(DbgDispatcher dbgDispatcher, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners) {
 			lockObj = new object();
+			this.dbgDispatcher = dbgDispatcher;
 			engines = new List<EngineInfo>();
 			processes = new List<DbgProcessImpl>();
 			debugTags = new TagsCollection();
-			dispatcherThread = new DispatcherThreadImpl();
 			restartOptions = new List<StartDebuggingOptions>();
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgManagerStartListeners = dbgManagerStartListeners.OrderBy(a => a.Metadata.Order).ToArray();
-			new DelayedIsRunningHelper(this, dispatcherThread.Dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
+			new DelayedIsRunningHelper(this, Dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}
 
 		// DbgManager thread
 		internal void RaiseDelayedIsRunningChanged_DbgThread() {
-			dispatcherThread.VerifyAccess();
+			DispatcherThread.VerifyAccess();
 			if (IsRunning)
 				DelayedIsRunningChanged?.Invoke(this, EventArgs.Empty);
 		}
@@ -269,7 +271,7 @@ namespace dnSpy.Debugger.Impl {
 						return p;
 				}
 				bool shouldDetach = startKind == DbgStartKind.Attach;
-				process = new DbgProcessImpl(this, dispatcherThread.Dispatcher, pid, CalculateProcessState(null), shouldDetach);
+				process = new DbgProcessImpl(this, Dispatcher, pid, CalculateProcessState(null), shouldDetach);
 				processes.Add(process);
 			}
 			ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(process, added: true));

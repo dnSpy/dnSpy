@@ -52,6 +52,7 @@
     <Compile Include="Dialogs\DebugProgram\OptionsPageVM.cs" />
     <Compile Include="Impl\DbgAppDomainImpl.cs" />
     <Compile Include="Impl\DbgDebuggingContextImpl.cs" />
+    <Compile Include="Impl\DbgDispatcher.cs" />
     <Compile Include="Impl\DbgEngineAppDomainImpl.cs" />
     <Compile Include="Impl\DbgEngineModuleImpl.cs" />
     <Compile Include="Impl\DbgEngineThreadImpl.cs" />

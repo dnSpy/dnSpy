@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.Impl {
 						info.EngineInfo.Engine.Break();
 				}
 				if (!CheckIsDone_NoLock()) {
-					timer = new DispatcherTimer(DispatcherPriority.Send, owner.dispatcherThread.Dispatcher);
+					timer = new DispatcherTimer(DispatcherPriority.Send, owner.Dispatcher);
 					timer.Interval = TimeSpan.FromMilliseconds(breakTimeoutMilliseconds);
 					timer.Tick += Timer_Tick_DbgThread;
 					timer.Start();
