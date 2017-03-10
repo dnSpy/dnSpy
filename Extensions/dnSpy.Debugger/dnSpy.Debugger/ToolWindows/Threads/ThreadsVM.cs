@@ -23,7 +23,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
@@ -58,7 +57,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		IEditValueProvider NameEditValueProvider {
 			get {
-				threadContext.Dispatcher.VerifyAccess();
+				threadContext.UIDispatcher.VerifyAccess();
 				if (nameEditValueProvider == null)
 					nameEditValueProvider = editValueProviderService.Create(ContentTypes.ThreadsWindowName, Array.Empty<string>());
 				return nameEditValueProvider;
@@ -84,18 +83,18 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		int threadOrder;
 
 		[ImportingConstructor]
-		ThreadsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ThreadFormatterProvider threadFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, ThreadCategoryService threadCategoryService, EditValueProviderService editValueProviderService) {
-			debuggerDispatcher.Dispatcher.VerifyAccess();
+		ThreadsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ThreadFormatterProvider threadFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, ThreadCategoryService threadCategoryService, EditValueProviderService editValueProviderService) {
+			uiDispatcher.VerifyAccess();
 			AllItems = new ObservableCollection<ThreadVM>();
 			SelectedItems = new ObservableCollection<ThreadVM>();
 			this.dbgManager = dbgManager;
 			this.threadFormatterProvider = threadFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
-			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, debuggerDispatcher, dbgManager);
+			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
 			this.threadCategoryService = threadCategoryService;
 			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			threadContext = new ThreadContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
+			threadContext = new ThreadContext(uiDispatcher, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = threadFormatterProvider.Create(),
 			};
@@ -107,19 +106,19 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			InitializeDebugger_UI(enable: true);
 		}
 
 		// UI thread
 		void ILazyToolWindowVM.Hide() {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			InitializeDebugger_UI(enable: false);
 		}
 
 		// UI thread
 		void InitializeDebugger_UI(bool enable) {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			if (enable) {
 				threadContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -221,7 +220,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			RefreshThemeFields_UI();
 		}
 
@@ -231,7 +230,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			if (propertyName == nameof(DebuggerSettings.UseHexadecimal))
 				RefreshHexFields_UI();
 			else if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
@@ -244,20 +243,20 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void RefreshThemeFields_UI() {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			foreach (var vm in AllItems)
 				vm.RefreshThemeFields_UI();
 		}
 
 		// UI thread
 		void RecreateFormatter_UI() {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			threadContext.Formatter = threadFormatterProvider.Create();
 		}
 
 		// UI thread
 		void RefreshHexFields_UI() {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			RecreateFormatter_UI();
 			foreach (var vm in AllItems)
 				vm.RefreshHexFields_UI();
@@ -265,15 +264,13 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void RefreshEvalFields_UI() {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			foreach (var vm in AllItems)
 				vm.RefreshEvalFields_UI();
 		}
 
 		// random thread
-		void UI(Action action) =>
-			// Use Send so the window is updated as fast as possible when adding new items
-			threadContext.Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+		void UI(Action action) => threadContext.UIDispatcher.UI(action);
 
 		// DbgManager thread
 		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
@@ -333,7 +330,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void UpdateFields_UI() {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			foreach (var vm in AllItems)
 				vm.UpdateFields_UI();
 		}
@@ -379,14 +376,14 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void AddItems_UI(IList<DbgThread> threads) {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			foreach (var t in threads)
 				AllItems.Add(new ThreadVM(t, threadContext, threadOrder++, threadCategoryService, NameEditValueProvider));
 		}
 
 		// UI thread
 		void RemoveThreadAt_UI(int i) {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			Debug.Assert(0 <= i && i < AllItems.Count);
 			var vm = AllItems[i];
 			vm.Dispose();
@@ -395,7 +392,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void RemoveThreads_UI(DbgProcess process) {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			var coll = AllItems;
 			for (int i = coll.Count - 1; i >= 0; i--) {
 				if (coll[i].Thread.Process == process)
@@ -405,7 +402,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void RemoveAllThreads_UI() {
-			threadContext.Dispatcher.VerifyAccess();
+			threadContext.UIDispatcher.VerifyAccess();
 			var coll = AllItems;
 			for (int i = coll.Count - 1; i >= 0; i--)
 				RemoveThreadAt_UI(i);

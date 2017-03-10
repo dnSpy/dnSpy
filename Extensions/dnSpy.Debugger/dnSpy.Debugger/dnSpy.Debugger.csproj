@@ -146,8 +146,8 @@
     <Compile Include="ToolWindows\Threads\ThreadsVM.cs" />
     <Compile Include="ToolWindows\Threads\ThreadVM.cs" />
     <Compile Include="UI\ContentTypeDefinitions.cs" />
-    <Compile Include="UI\DebuggerDispatcher.cs" />
     <Compile Include="UI\ListBoxSelectedItemsAP.cs" />
+    <Compile Include="UI\UIDispatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">

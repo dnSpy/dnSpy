@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
@@ -32,12 +31,12 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 	[Export(typeof(IProcessHexBufferProviderListener))]
 	sealed class BufferFileCreator : IProcessHexBufferProviderListener {
 		readonly Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory;
-		readonly DebuggerDispatcher debuggerDispatcher;
+		readonly UIDispatcher uiDispatcher;
 
 		[ImportingConstructor]
-		BufferFileCreator(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, DebuggerDispatcher debuggerDispatcher) {
+		BufferFileCreator(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, UIDispatcher uiDispatcher) {
 			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
-			this.debuggerDispatcher = debuggerDispatcher;
+			this.uiDispatcher = uiDispatcher;
 		}
 
 		// random thread
@@ -46,24 +45,24 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 		// UI thread
 		void ProcessHexBufferProvider_HexBufferInfoCreated(object sender, HexBufferInfoCreatedEventArgs e) {
-			debuggerDispatcher.Dispatcher.VerifyAccess();
-			new ModuleListener(hexBufferFileServiceFactory.Value, e.HexBufferInfo, debuggerDispatcher);
+			uiDispatcher.VerifyAccess();
+			new ModuleListener(hexBufferFileServiceFactory.Value, e.HexBufferInfo, uiDispatcher);
 		}
 
 		sealed class ModuleListener {
 			readonly IHexBufferInfo hexBufferInfo;
 			readonly HexBufferFileService hexBufferFileService;
-			readonly DebuggerDispatcher debuggerDispatcher;
+			readonly UIDispatcher uiDispatcher;
 			readonly List<DbgRuntime> runtimes;
 			readonly Dictionary<HexPosition, int> moduleReferences;
 			readonly HashSet<DbgModule> addedModules;
 			DbgProcess process;
 
 			// UI thread
-			public ModuleListener(HexBufferFileServiceFactory hexBufferFileServiceFactory, IHexBufferInfo hexBufferInfo, DebuggerDispatcher debuggerDispatcher) {
-				debuggerDispatcher.Dispatcher.VerifyAccess();
+			public ModuleListener(HexBufferFileServiceFactory hexBufferFileServiceFactory, IHexBufferInfo hexBufferInfo, UIDispatcher uiDispatcher) {
+				uiDispatcher.VerifyAccess();
 				this.hexBufferInfo = hexBufferInfo;
-				this.debuggerDispatcher = debuggerDispatcher;
+				this.uiDispatcher = uiDispatcher;
 				runtimes = new List<DbgRuntime>();
 				moduleReferences = new Dictionary<HexPosition, int>();
 				addedModules = new HashSet<DbgModule>();
@@ -74,18 +73,17 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 
 			// random thread
-			void UI(Action action) =>
-				debuggerDispatcher.Dispatcher.BeginInvoke(DispatcherPriority.Background, action);
+			void UI(Action action) => uiDispatcher.UI(action);
 
 			// UI thread
 			void OnProcessChanged_UI() {
-				debuggerDispatcher.Dispatcher.VerifyAccess();
+				uiDispatcher.VerifyAccess();
 				OnProcessChanged_UI(hexBufferInfo.Process);
 			}
 
 			// UI thread
 			void OnProcessChanged_UI(DbgProcess newProcess) {
-				debuggerDispatcher.Dispatcher.VerifyAccess();
+				uiDispatcher.VerifyAccess();
 				if (disposed) {
 					Debug.Assert(process == null);
 					Debug.Assert(runtimes.Count == 0);
@@ -119,7 +117,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 			// UI thread
 			void Process_RuntimesChanged_UI(IList<DbgRuntime> runtimes, bool added) {
-				debuggerDispatcher.Dispatcher.VerifyAccess();
+				uiDispatcher.VerifyAccess();
 				if (added) {
 					foreach (var r in runtimes) {
 						if (r.Process != process)
@@ -143,7 +141,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 			// UI thread
 			void DbgRuntime_ModulesChanged_UI(DbgRuntime runtime, IList<DbgModule> modules, bool added) {
-				debuggerDispatcher.Dispatcher.VerifyAccess();
+				uiDispatcher.VerifyAccess();
 				if (runtime.Process != process)
 					return;
 				foreach (var module in modules) {
@@ -195,13 +193,13 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 			// UI thread
 			void HexBufferInfo_UnderlyingProcessChanged(object sender, EventArgs e) {
-				debuggerDispatcher.Dispatcher.VerifyAccess();
+				uiDispatcher.VerifyAccess();
 				OnProcessChanged_UI();
 			}
 
 			// UI thread
 			void Buffer_Disposed(object sender, EventArgs e) {
-				debuggerDispatcher.Dispatcher.VerifyAccess();
+				uiDispatcher.VerifyAccess();
 				OnProcessChanged_UI(null);
 				disposed = true;
 				hexBufferInfo.UnderlyingProcessChanged -= HexBufferInfo_UnderlyingProcessChanged;

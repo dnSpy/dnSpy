@@ -23,7 +23,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
@@ -63,16 +62,16 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		bool refreshTitlesOnPause;
 
 		[ImportingConstructor]
-		ProcessesVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ProcessFormatterProvider processFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
-			debuggerDispatcher.Dispatcher.VerifyAccess();
+		ProcessesVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ProcessFormatterProvider processFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+			uiDispatcher.VerifyAccess();
 			AllItems = new ObservableCollection<ProcessVM>();
 			SelectedItems = new ObservableCollection<ProcessVM>();
 			this.dbgManager = dbgManager;
 			this.processFormatterProvider = processFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
-			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, debuggerDispatcher, dbgManager);
+			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			processContext = new ProcessContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
+			processContext = new ProcessContext(uiDispatcher, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = processFormatterProvider.Create(),
 			};
@@ -84,19 +83,19 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			InitializeDebugger_UI(enable: true);
 		}
 
 		// UI thread
 		void ILazyToolWindowVM.Hide() {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			InitializeDebugger_UI(enable: false);
 		}
 
 		// UI thread
 		void InitializeDebugger_UI(bool enable) {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			if (enable) {
 				processContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -134,7 +133,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			RefreshThemeFields_UI();
 		}
 
@@ -144,7 +143,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			if (propertyName == nameof(DebuggerSettings.UseHexadecimal))
 				RefreshHexFields_UI();
 			else if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
@@ -155,36 +154,34 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		void RefreshTitles_UI() {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			foreach (var vm in AllItems)
 				vm.RefreshTitle_UI();
 		}
 
 		// UI thread
 		void RefreshThemeFields_UI() {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			foreach (var vm in AllItems)
 				vm.RefreshThemeFields_UI();
 		}
 
 		// UI thread
 		void RecreateFormatter_UI() {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			processContext.Formatter = processFormatterProvider.Create();
 		}
 
 		// UI thread
 		void RefreshHexFields_UI() {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			RecreateFormatter_UI();
 			foreach (var vm in AllItems)
 				vm.RefreshHexFields_UI();
 		}
 
 		// random thread
-		void UI(Action action) =>
-			// Use Send so the window is updated as fast as possible when adding new items
-			processContext.Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+		void UI(Action action) => processContext.UIDispatcher.UI(action);
 
 		// DbgManager thread
 		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => {
@@ -219,14 +216,14 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		void AddItems_UI(IList<DbgProcess> processes) {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			foreach (var p in processes)
 				AllItems.Add(new ProcessVM(p, processContext, processOrder++));
 		}
 
 		// UI thread
 		void RemoveProcessAt_UI(int i) {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			Debug.Assert(0 <= i && i < AllItems.Count);
 			var vm = AllItems[i];
 			vm.Dispose();
@@ -235,7 +232,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		void RemoveAllProcesses_UI() {
-			processContext.Dispatcher.VerifyAccess();
+			processContext.UIDispatcher.VerifyAccess();
 			var coll = AllItems;
 			for (int i = coll.Count - 1; i >= 0; i--)
 				RemoveProcessAt_UI(i);

@@ -23,7 +23,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
@@ -62,16 +61,16 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		int moduleOrder;
 
 		[ImportingConstructor]
-		ModulesVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ModuleFormatterProvider moduleFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
-			debuggerDispatcher.Dispatcher.VerifyAccess();
+		ModulesVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ModuleFormatterProvider moduleFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+			uiDispatcher.VerifyAccess();
 			AllItems = new ObservableCollection<ModuleVM>();
 			SelectedItems = new ObservableCollection<ModuleVM>();
 			this.dbgManager = dbgManager;
 			this.moduleFormatterProvider = moduleFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
-			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, debuggerDispatcher, dbgManager);
+			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			moduleContext = new ModuleContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
+			moduleContext = new ModuleContext(uiDispatcher, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = moduleFormatterProvider.Create(),
 			};
@@ -83,19 +82,19 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			InitializeDebugger_UI(enable: true);
 		}
 
 		// UI thread
 		void ILazyToolWindowVM.Hide() {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			InitializeDebugger_UI(enable: false);
 		}
 
 		// UI thread
 		void InitializeDebugger_UI(bool enable) {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			if (enable) {
 				moduleContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -181,7 +180,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			RefreshThemeFields_UI();
 		}
 
@@ -191,7 +190,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			if (propertyName == nameof(DebuggerSettings.UseHexadecimal))
 				RefreshHexFields_UI();
 			else if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
@@ -202,29 +201,27 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void RefreshThemeFields_UI() {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			foreach (var vm in AllItems)
 				vm.RefreshThemeFields_UI();
 		}
 
 		// UI thread
 		void RecreateFormatter_UI() {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			moduleContext.Formatter = moduleFormatterProvider.Create();
 		}
 
 		// UI thread
 		void RefreshHexFields_UI() {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			RecreateFormatter_UI();
 			foreach (var vm in AllItems)
 				vm.RefreshHexFields_UI();
 		}
 
 		// random thread
-		void UI(Action action) =>
-			// Use Send so the window is updated as fast as possible when adding new items
-			moduleContext.Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+		void UI(Action action) => moduleContext.UIDispatcher.UI(action);
 
 		// DbgManager thread
 		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
@@ -325,14 +322,14 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void AddItems_UI(IList<DbgModule> modules) {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			foreach (var m in modules)
 				AllItems.Add(new ModuleVM(m, moduleContext, moduleOrder++));
 		}
 
 		// UI thread
 		void RemoveModuleAt_UI(int i) {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			Debug.Assert(0 <= i && i < AllItems.Count);
 			var vm = AllItems[i];
 			vm.Dispose();
@@ -341,7 +338,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void RemoveModules_UI(DbgModule module) {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			var coll = AllItems;
 			for (int i = 0; i < coll.Count; i++) {
 				if (coll[i].Module == module) {
@@ -353,7 +350,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// UI thread
 		void RemoveAllModules_UI() {
-			moduleContext.Dispatcher.VerifyAccess();
+			moduleContext.UIDispatcher.VerifyAccess();
 			var coll = AllItems;
 			for (int i = coll.Count - 1; i >= 0; i--)
 				RemoveModuleAt_UI(i);

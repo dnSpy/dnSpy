@@ -78,24 +78,23 @@ namespace dnSpy.Debugger.ToolWindows {
 		bool IsWindowShown { get; set; }
 
 		readonly ILazyToolWindowVM vm;
-		readonly DebuggerDispatcher debuggerDispatcher;
+		readonly UIDispatcher uiDispatcher;
 		DispatcherTimer timer;
 
-		public LazyToolWindowVMHelper(ILazyToolWindowVM vm, DebuggerDispatcher debuggerDispatcher) {
+		public LazyToolWindowVMHelper(ILazyToolWindowVM vm, UIDispatcher uiDispatcher) {
 			this.vm = vm ?? throw new ArgumentNullException(nameof(vm));
-			this.debuggerDispatcher = debuggerDispatcher ?? throw new ArgumentNullException(nameof(debuggerDispatcher));
+			this.uiDispatcher = uiDispatcher ?? throw new ArgumentNullException(nameof(uiDispatcher));
 		}
 
 		// random thread
-		protected void UI(Action action) =>
-			debuggerDispatcher.Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+		protected void UI(Action action) => uiDispatcher.UI(action);
 
 		void StartTimer() {
 			StopTimer();
 			Debug.Assert(!IsVisible);
 			if (IsVisible)
 				return;
-			timer = new DispatcherTimer(DispatcherPriority.Send, debuggerDispatcher.Dispatcher);
+			timer = new DispatcherTimer(DispatcherPriority.Send, uiDispatcher.Dispatcher);
 			timer.Interval = hideWindowTimeout;
 			timer.Tick += Timer_Tick_UI;
 			timer.Start();
@@ -151,8 +150,8 @@ namespace dnSpy.Debugger.ToolWindows {
 	sealed class DebuggerLazyToolWindowVMHelper : LazyToolWindowVMHelper {
 		readonly Lazy<DbgManager> dbgManager;
 
-		public DebuggerLazyToolWindowVMHelper(ILazyToolWindowVM vm, DebuggerDispatcher debuggerDispatcher, Lazy<DbgManager> dbgManager)
-			: base(vm, debuggerDispatcher) => this.dbgManager = dbgManager;
+		public DebuggerLazyToolWindowVMHelper(ILazyToolWindowVM vm, UIDispatcher uiDispatcher, Lazy<DbgManager> dbgManager)
+			: base(vm, uiDispatcher) => this.dbgManager = dbgManager;
 
 		protected override void OnShow() => dbgManager.Value.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 		protected override void OnHide() => dbgManager.Value.IsDebuggingChanged -= DbgManager_IsDebuggingChanged;

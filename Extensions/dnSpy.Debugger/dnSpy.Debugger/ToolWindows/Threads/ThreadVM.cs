@@ -20,7 +20,6 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
@@ -44,7 +43,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		internal bool IsSelectedThread {
 			get => isSelectedProcess;
 			set {
-				Context.Dispatcher.VerifyAccess();
+				Context.UIDispatcher.VerifyAccess();
 				if (isSelectedProcess != value) {
 					isSelectedProcess = value;
 					OnPropertyChanged(nameof(CurrentImageReference));
@@ -57,7 +56,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		internal bool IsBreakThread {
 			get => isBreakThread;
 			set {
-				Context.Dispatcher.VerifyAccess();
+				Context.UIDispatcher.VerifyAccess();
 				if (isBreakThread != value) {
 					isBreakThread = value;
 					OnPropertyChanged(nameof(CurrentImageReference));
@@ -181,7 +180,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		ThreadPriority CalculateThreadPriority_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			Debug.Assert(hThread != null);
 			if (hThread == null || hThread.IsInvalid)
 				return (ThreadPriority)int.MinValue;
@@ -190,7 +189,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		ulong CalculateAffinityMask_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			Debug.Assert(hThread != null);
 			if (hThread == null || hThread.IsInvalid)
 				return 0;
@@ -204,7 +203,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void InitializeThreadCategory_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			initializeThreadCategory = false;
 			var info = threadCategoryService.GetInfo(Thread.Kind);
 			categoryImageReference = info.Image;
@@ -213,7 +212,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		internal void RefreshThemeFields_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			OnPropertyChanged(nameof(IdObject));
 			OnPropertyChanged(nameof(ManagedIdObject));
 			OnPropertyChanged(nameof(CategoryTextObject));
@@ -229,7 +228,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		internal void RefreshHexFields_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			OnPropertyChanged(nameof(IdObject));
 			OnPropertyChanged(nameof(ManagedIdObject));
 			OnPropertyChanged(nameof(LocationObject));
@@ -238,14 +237,14 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		internal void RefreshAppDomainNames_UI(DbgAppDomain appDomain) {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			if (Thread.AppDomain == appDomain)
 				OnPropertyChanged(nameof(AppDomainObject));
 		}
 
 		// UI thread
 		internal void UpdateFields_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			if (hThread == null)
 				OpenThread_UI();
 
@@ -264,17 +263,17 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		internal void RefreshEvalFields_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			//TODO:
 		}
 
 		// DbgManager thread
 		void DbgThread_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
-			Context.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => DbgThread_PropertyChanged_UI(e.PropertyName)));
+			Context.UIDispatcher.UI(() => DbgThread_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
 		void DbgThread_PropertyChanged_UI(string propertyName) {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			if (disposed)
 				return;
 			switch (propertyName) {
@@ -319,7 +318,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void CloseThreadHandle_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			hThread?.Close();
 			hThread = null;
 			priority = null;
@@ -328,7 +327,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		void OpenThread_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			if (hThread != null)
 				return;
 			const int dwDesiredAccess = NativeMethods.THREAD_QUERY_INFORMATION | NativeMethods.THREAD_SET_INFORMATION;
@@ -337,7 +336,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		// UI thread
 		internal void Dispose() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			if (disposed)
 				return;
 			disposed = true;

@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.UI;
@@ -46,13 +45,13 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		bool canEditMemory;
 
 		readonly DbgManager dbgManager;
-		readonly DebuggerDispatcher debuggerDispatcher;
+		readonly UIDispatcher uiDispatcher;
 		readonly ProcessHexBufferProvider processHexBufferProvider;
 
 		[ImportingConstructor]
-		MemoryVM(DbgManager dbgManager, DebuggerDispatcher debuggerDispatcher, ProcessHexBufferProvider processHexBufferProvider) {
+		MemoryVM(DbgManager dbgManager, UIDispatcher uiDispatcher, ProcessHexBufferProvider processHexBufferProvider) {
 			this.dbgManager = dbgManager;
-			this.debuggerDispatcher = debuggerDispatcher;
+			this.uiDispatcher = uiDispatcher;
 			this.processHexBufferProvider = processHexBufferProvider;
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 			InitializeCanEditMemory_UI();
@@ -60,13 +59,12 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 		// UI thread
 		void InitializeCanEditMemory_UI() {
-			debuggerDispatcher.Dispatcher.VerifyAccess();
+			uiDispatcher.VerifyAccess();
 			CanEditMemory = dbgManager.IsDebugging;
 		}
 
 		// random thread
-		void UI(Action action) =>
-			debuggerDispatcher.Dispatcher.BeginInvoke(DispatcherPriority.Background, action);
+		void UI(Action action) => uiDispatcher.UI(action);
 
 		// DbgManager thread
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) => UI(() => {

@@ -20,7 +20,6 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
@@ -32,7 +31,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		internal bool IsSelectedProcess {
 			get => isSelectedProcess;
 			set {
-				Context.Dispatcher.VerifyAccess();
+				Context.UIDispatcher.VerifyAccess();
 				if (isSelectedProcess != value) {
 					isSelectedProcess = value;
 					OnPropertyChanged(nameof(ImageReference));
@@ -58,7 +57,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				return title;
 			}
 			private set {
-				Context.Dispatcher.VerifyAccess();
+				Context.UIDispatcher.VerifyAccess();
 				var newValue = value ?? string.Empty;
 				if (title != newValue) {
 					title = newValue;
@@ -112,13 +111,13 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		internal void RefreshTitle_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			Title = GetProcessTitle();
 		}
 
 		// UI thread
 		internal void RefreshThemeFields_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			OnPropertyChanged(nameof(NameObject));
 			OnPropertyChanged(nameof(IdObject));
 			OnPropertyChanged(nameof(TitleObject));
@@ -129,17 +128,17 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		internal void RefreshHexFields_UI() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			OnPropertyChanged(nameof(IdObject));
 		}
 
 		// DbgManager thread
 		void DbgProcess_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
-			Context.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => DbgProcess_PropertyChanged_UI(e.PropertyName)));
+			Context.UIDispatcher.UI(() => DbgProcess_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
 		void DbgProcess_PropertyChanged_UI(string propertyName) {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(Process.Filename):
 				OnPropertyChanged(nameof(NameObject));
@@ -171,7 +170,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		internal void Dispose() {
-			Context.Dispatcher.VerifyAccess();
+			Context.UIDispatcher.VerifyAccess();
 			Process.PropertyChanged -= DbgProcess_PropertyChanged;
 		}
 	}

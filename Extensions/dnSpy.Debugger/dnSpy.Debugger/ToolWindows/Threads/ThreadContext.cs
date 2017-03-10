@@ -17,13 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Threading;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
 	interface IThreadContext {
-		Dispatcher Dispatcher { get; }
+		UIDispatcher UIDispatcher { get; }
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
@@ -32,15 +32,15 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	}
 
 	sealed class ThreadContext : IThreadContext {
-		public Dispatcher Dispatcher { get; }
+		public UIDispatcher UIDispatcher { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public ThreadFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 
-		public ThreadContext(Dispatcher dispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
-			Dispatcher = dispatcher;
+		public ThreadContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
+			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
