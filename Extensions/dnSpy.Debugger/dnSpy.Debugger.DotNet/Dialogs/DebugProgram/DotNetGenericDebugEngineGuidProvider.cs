@@ -23,7 +23,7 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Debugger.UI;
 
-namespace dnSpy.Debugger.Dialogs.DebugProgram {
+namespace dnSpy.Debugger.DotNet.Dialogs.DebugProgram {
 	[ExportGenericDebugEngineGuidProvider(PredefinedGenericDebugEngineGuidProviderOrders.DotNet)]
 	sealed class DotNetGenericDebugEngineGuidProvider : GenericDebugEngineGuidProvider {
 		public override Guid? GetEngineGuid(string filename) {

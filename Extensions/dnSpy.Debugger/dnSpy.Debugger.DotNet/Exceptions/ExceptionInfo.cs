@@ -20,7 +20,7 @@
 using System;
 using dnSpy.Contracts.Debugger.Exceptions;
 
-namespace dnSpy.Debugger.CorDebug.Common {
+namespace dnSpy.Debugger.DotNet.Exceptions {
 	struct ExceptionInfo {
 		public string Name { get; }
 		public DbgExceptionDefinitionFlags Flags { get; }

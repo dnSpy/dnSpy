@@ -48,7 +48,6 @@
       <DependentUpon>DebugProgramDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\DebugProgram\DebugProgramVM.cs" />
-    <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Dialogs\DebugProgram\OptionsPageVM.cs" />
     <Compile Include="Exceptions\DbgExceptionSettingsServiceImpl.cs" />
     <Compile Include="Exceptions\DefaultExceptionDefinitionsProvider.cs" />

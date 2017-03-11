@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using dnSpy.Contracts.Debugger.Exceptions;
 
-namespace dnSpy.Debugger.CorDebug.Common {
+namespace dnSpy.Debugger.DotNet.Exceptions {
 	[ExportDbgExceptionDefinitionProvider]
 	sealed class DotNetDbgExceptionDefinitionProvider : DbgExceptionDefinitionProvider {
 		// See ExceptionInfo.cs on how to regenerate this array
