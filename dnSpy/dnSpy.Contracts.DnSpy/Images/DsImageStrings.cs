@@ -75,6 +75,7 @@ namespace dnSpy.Contracts.Images {
 		public const string DisassemblyWindow = nameof(DisassemblyWindow);
 		public const string DownloadNoColor = nameof(DownloadNoColor);
 		public const string DraggedCurrentInstructionPointer = nameof(DraggedCurrentInstructionPointer);
+		public const string Edit = nameof(Edit);
 		public const string Editor = nameof(Editor);
 		public const string EnableAllBreakpoints = nameof(EnableAllBreakpoints);
 		public const string EntryPoint = nameof(EntryPoint);

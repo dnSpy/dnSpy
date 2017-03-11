@@ -76,6 +76,7 @@ namespace dnSpy.Contracts.Images {
 		public const string DisassemblyWindow = Prefix + DsImageStrings.DisassemblyWindow;
 		public const string DownloadNoColor = Prefix + DsImageStrings.DownloadNoColor;
 		public const string DraggedCurrentInstructionPointer = Prefix + DsImageStrings.DraggedCurrentInstructionPointer;
+		public const string Edit = Prefix + DsImageStrings.Edit;
 		public const string Editor = Prefix + DsImageStrings.Editor;
 		public const string EnableAllBreakpoints = Prefix + DsImageStrings.EnableAllBreakpoints;
 		public const string EntryPoint = Prefix + DsImageStrings.EntryPoint;

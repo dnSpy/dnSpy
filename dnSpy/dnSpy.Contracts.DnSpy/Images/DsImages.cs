@@ -79,6 +79,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference DisassemblyWindow { get; } = new ImageReference(assembly, DsImageStrings.DisassemblyWindow);
 		public static ImageReference DownloadNoColor { get; } = new ImageReference(assembly, DsImageStrings.DownloadNoColor);
 		public static ImageReference DraggedCurrentInstructionPointer { get; } = new ImageReference(assembly, DsImageStrings.DraggedCurrentInstructionPointer);
+		public static ImageReference Edit { get; } = new ImageReference(assembly, DsImageStrings.Edit);
 		public static ImageReference Editor { get; } = new ImageReference(assembly, DsImageStrings.Editor);
 		public static ImageReference EnableAllBreakpoints { get; } = new ImageReference(assembly, DsImageStrings.EnableAllBreakpoints);
 		public static ImageReference EntryPoint { get; } = new ImageReference(assembly, DsImageStrings.EntryPoint);
