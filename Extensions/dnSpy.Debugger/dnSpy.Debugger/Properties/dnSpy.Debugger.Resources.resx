@@ -1386,4 +1386,7 @@ Are you sure you want to expand it?</value>
   <data name="Column_ProcessName" xml:space="preserve">
     <value>Process Name</value>
   </data>
+  <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
+    <value>&lt;All {0} not in this list&gt;</value>
+  </data>
 </root>

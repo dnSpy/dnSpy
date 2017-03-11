@@ -106,6 +106,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;All {0} not in this list&gt;.
+        /// </summary>
+        public static string AllRemainingExceptionsNotInList {
+            get {
+                return ResourceManager.GetString("AllRemainingExceptionsNotInList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;not available&gt;.
         /// </summary>
         public static string AppDomainNotAvailable {
