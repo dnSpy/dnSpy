@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Exceptions;
-using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Exceptions {
 	[Export(typeof(DefaultExceptionDefinitionsProvider))]
@@ -58,14 +57,9 @@ namespace dnSpy.Debugger.Exceptions {
 			foreach (var group in GroupDefinitions) {
 				var id = new DbgExceptionId(group.Name);
 				if (!defs.ContainsKey(id))
-					defs.Add(id, new DbgExceptionDefinition(id, DbgExceptionDefinitionFlags.None, string.Empty));
-				var def = defs[id];
-				defs[id] = new DbgExceptionDefinition(def.Id, def.Flags, GetDefaultDisplayName(group), null);
+					defs.Add(id, new DbgExceptionDefinition(id, DbgExceptionDefinitionFlags.None));
 			}
 			Definitions = defs.Select(a => a.Value).ToArray();
 		}
-
-		static string GetDefaultDisplayName(DbgExceptionGroupDefinition group) =>
-			string.Format(dnSpy_Debugger_Resources.AllRemainingExceptionsNotInList, group.DisplayName);
 	}
 }

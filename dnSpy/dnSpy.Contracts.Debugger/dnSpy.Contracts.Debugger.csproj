@@ -69,6 +69,7 @@
     <Compile Include="Exceptions\DbgExceptionEvent.cs" />
     <Compile Include="Exceptions\DbgExceptionEventFlags.cs" />
     <Compile Include="Exceptions\DbgExceptionGroupDefinition.cs" />
+    <Compile Include="Exceptions\DbgExceptionGroupDefinitionFlags.cs" />
     <Compile Include="Exceptions\DbgExceptionId.cs" />
     <Compile Include="Exceptions\DbgExceptionSettings.cs" />
     <Compile Include="Exceptions\DbgExceptionSettingsService.cs" />

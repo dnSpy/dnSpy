@@ -24,28 +24,57 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// Exception ID
 	/// </summary>
 	public struct DbgExceptionId : IEquatable<DbgExceptionId> {
+		readonly string group;
+		readonly string name;
+		readonly int code;
+		readonly Flags flags;
+
+		[Flags]
+		enum Flags : byte {
+			None		= 0,
+			HasCode		= 1,
+			Default		= 2,
+		}
+
 		/// <summary>
 		/// Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/>
 		/// </summary>
-		public string Group { get; }
+		public string Group => group;
 
 		/// <summary>
-		/// Name of exception or null if this is the 'default' id
+		/// Name of exception. This property is only valid if <see cref="HasName"/> is true
 		/// </summary>
-		public string Name { get; }
+		public string Name => name;
+
+		/// <summary>
+		/// Exception code. This property is only valid if <see cref="HasCode"/> is true
+		/// </summary>
+		public int Code => code;
+
+		/// <summary>
+		/// true if the exception has a code, and not a name
+		/// </summary>
+		public bool HasCode => (flags & (Flags.HasCode | Flags.Default)) == Flags.HasCode;
+
+		/// <summary>
+		/// true if the exception has a name, and not a code
+		/// </summary>
+		public bool HasName => (flags & (Flags.HasCode | Flags.Default)) == 0;
 
 		/// <summary>
 		/// true if this is the default exception ID
 		/// </summary>
-		public bool IsDefaultId => Name == null;
+		public bool IsDefaultId => (flags & Flags.Default) != 0;
 
 		/// <summary>
 		/// Constructor for default ids
 		/// </summary>
 		/// <param name="group">Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/></param>
 		public DbgExceptionId(string group) {
-			Group = group ?? throw new ArgumentNullException(nameof(group));
-			Name = null;
+			this.group = group ?? throw new ArgumentNullException(nameof(group));
+			name = null;
+			code = 0;
+			flags = Flags.Default;
 		}
 
 		/// <summary>
@@ -54,8 +83,22 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="group">Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/></param>
 		/// <param name="name">Name of exception, must not be null</param>
 		public DbgExceptionId(string group, string name) {
-			Group = group ?? throw new ArgumentNullException(nameof(group));
-			Name = name ?? throw new ArgumentNullException(nameof(name));
+			this.group = group ?? throw new ArgumentNullException(nameof(group));
+			this.name = name ?? throw new ArgumentNullException(nameof(name));
+			code = 0;
+			flags = Flags.None;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="group">Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/></param>
+		/// <param name="code">Exception code</param>
+		public DbgExceptionId(string group, int code) {
+			this.group = group ?? throw new ArgumentNullException(nameof(group));
+			name = null;
+			this.code = code;
+			flags = Flags.HasCode;
 		}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
@@ -68,7 +111,21 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(DbgExceptionId other) => StringComparer.Ordinal.Equals(Name, other.Name) && StringComparer.Ordinal.Equals(Group, other.Group);
+		public bool Equals(DbgExceptionId other) {
+			if (flags != other.flags)
+				return false;
+			if ((flags & Flags.HasCode) != 0) {
+				if (code != other.code)
+					return false;
+			}
+			else {
+				if (!StringComparer.Ordinal.Equals(name, other.name))
+					return false;
+			}
+			if (!StringComparer.Ordinal.Equals(group, other.group))
+				return false;
+			return true;
+		}
 
 		/// <summary>
 		/// Equals()
@@ -81,12 +138,27 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// Gets the hashcode
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Group ?? string.Empty) ^ StringComparer.Ordinal.GetHashCode(Name ?? string.Empty);
+		public override int GetHashCode() {
+			int hc = (int)flags ^ StringComparer.Ordinal.GetHashCode(group ?? string.Empty);
+			if ((flags & Flags.HasCode) != 0)
+				hc ^= code;
+			else
+				hc ^= StringComparer.Ordinal.GetHashCode(name ?? string.Empty);
+			return hc;
+		}
 
 		/// <summary>
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => Group == null ? "<not-initialized>" : $"{Group} - {Name ?? "<<default>>"}";
+		public override string ToString() {
+			if (group == null)
+				return "<not-initialized>";
+			if (IsDefaultId)
+				return group + " - <<default>>";
+			if (HasCode)
+				return "0x" + code.ToString("X8");
+			return group + " - " + name;
+		}
 	}
 }

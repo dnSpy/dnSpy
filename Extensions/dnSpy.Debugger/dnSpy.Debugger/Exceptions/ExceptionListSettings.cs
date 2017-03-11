@@ -54,6 +54,13 @@ namespace dnSpy.Debugger.Exceptions {
 			Update,
 		}
 
+		[Flags]
+		enum IdFlags : byte {
+			None		= 0,
+			HasCode		= 1,
+			Default		= 2,
+		}
+
 		readonly DbgDispatcher dbgDispatcher;
 		readonly DbgExceptionSettingsService dbgExceptionSettingsService;
 		readonly ISettingsService settingsService;
@@ -85,22 +92,45 @@ namespace dnSpy.Debugger.Exceptions {
 					continue;
 
 				foreach (var exSect in groupSect.SectionsWithName("Exception")) {
-					var name = exSect.Attribute<string>("Name");
 					var diffType = exSect.Attribute<DiffType?>("DiffType");
 					if (diffType == null)
 						continue;
-					var id = name == null ? new DbgExceptionId(group) : new DbgExceptionId(group, name);
+
+					var flags = exSect.Attribute<IdFlags?>("IdFlags");
+					if (flags == null)
+						continue;
+
+					DbgExceptionId id;
+					switch (flags.Value) {
+					case IdFlags.Default:
+						id = new DbgExceptionId(group);
+						break;
+
+					case IdFlags.HasCode:
+						var code = exSect.Attribute<int?>("Code");
+						if (code == null)
+							continue;
+						id = new DbgExceptionId(group, code.Value);
+						break;
+
+					case IdFlags.None:
+						var name = exSect.Attribute<string>("Name");
+						if (name == null)
+							continue;
+						id = new DbgExceptionId(group, name);
+						break;
+
+					default:
+						continue;
+					}
 
 					DbgExceptionSettings settings;
 					switch (diffType.Value) {
 					case DiffType.Add:
-						var displayName = exSect.Attribute<string>("DisplayName");
-						var description = exSect.Attribute<string>("Description");
 						if (!ReadSettings(exSect, out settings))
 							continue;
-						if (id.Name == null && displayName == null)
-							continue;
-						exToAdd.Add(new DbgExceptionSettingsInfo(new DbgExceptionDefinition(id, settings.Flags, displayName, description), settings));
+						var description = exSect.Attribute<string>("Description");
+						exToAdd.Add(new DbgExceptionSettingsInfo(new DbgExceptionDefinition(id, settings.Flags, description), settings));
 						break;
 
 					case DiffType.Remove:
@@ -176,16 +206,39 @@ namespace dnSpy.Debugger.Exceptions {
 				var groupSect = section.CreateSection("Group");
 				groupSect.Attribute("Name", group);
 				var list = dict[group];
-				list.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.def.Id.Name, b.def.Id.Name));
+				list.Sort((a, b) => {
+					if (a.def.Id.IsDefaultId != b.def.Id.IsDefaultId) {
+						if (a.def.Id.IsDefaultId)
+							return -1;
+						if (b.def.Id.IsDefaultId)
+							return 1;
+					}
+					else if (a.def.Id.IsDefaultId)
+						return 0;
+
+					if (a.def.Id.HasCode != b.def.Id.HasCode) {
+						if (a.def.Id.HasCode)
+							return -1;
+						if (b.def.Id.HasCode)
+							return 1;
+					}
+					else if (a.def.Id.HasCode)
+						return a.def.Id.Code - b.def.Id.Code;
+
+					return StringComparer.OrdinalIgnoreCase.Compare(a.def.Id.Name, b.def.Id.Name);
+				});
 				foreach (var t in list) {
 					var exSect = section.CreateSection("Exception");
-					exSect.Attribute("Name", t.def.Id.Name);
+					exSect.Attribute("IdFlags", GetFlags(t.def.Id));
+					if (t.def.Id.HasName)
+						exSect.Attribute("Name", t.def.Id.Name);
+					if (t.def.Id.HasCode)
+						exSect.Attribute("Code", t.def.Id.Code);
+					exSect.Attribute("Description", t.def.Description);
 					exSect.Attribute("DiffType", t.diffType);
 
 					switch (t.diffType) {
 					case DiffType.Add:
-						exSect.Attribute("DisplayName", t.def.DisplayName);
-						exSect.Attribute("Description", t.def.Description);
 						AddSettings(exSect, t.settings);
 						break;
 
@@ -204,6 +257,15 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 		bool ignoreSave;
+
+		static IdFlags GetFlags(DbgExceptionId id) {
+			var flags = IdFlags.None;
+			if (id.IsDefaultId)
+				flags |= IdFlags.Default;
+			if (id.HasCode)
+				flags |= IdFlags.HasCode;
+			return flags;
+		}
 
 		static void AddSettings(ISettingsSection section, DbgExceptionSettings settings) {
 			section.Attribute("Flags", settings.Flags);

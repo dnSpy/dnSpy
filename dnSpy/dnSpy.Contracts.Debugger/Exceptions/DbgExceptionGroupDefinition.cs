@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// </summary>
 	public struct DbgExceptionGroupDefinition {
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public DbgExceptionGroupDefinitionFlags Flags { get; }
+
+		/// <summary>
 		/// Name of group, see also <see cref="PredefinedExceptionGroups"/>
 		/// </summary>
 		public string Name { get; }
@@ -37,9 +42,11 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="flags">Flags</param>
 		/// <param name="name">Name of group, see also <see cref="PredefinedExceptionGroups"/></param>
 		/// <param name="displayName">Localized name shown in the UI</param>
-		public DbgExceptionGroupDefinition(string name, string displayName) {
+		public DbgExceptionGroupDefinition(DbgExceptionGroupDefinitionFlags flags, string name, string displayName) {
+			Flags = flags;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
 		}

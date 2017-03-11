@@ -35,11 +35,6 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public DbgExceptionDefinitionFlags Flags { get; }
 
 		/// <summary>
-		/// Name shown in the UI
-		/// </summary>
-		public string DisplayName { get; }
-
-		/// <summary>
 		/// Description shown in the UI or null
 		/// </summary>
 		public string Description { get; }
@@ -50,7 +45,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="id">Exception id</param>
 		/// <param name="flags">Flags</param>
 		public DbgExceptionDefinition(DbgExceptionId id, DbgExceptionDefinitionFlags flags)
-			: this(id, flags, null, null) {
+			: this(id, flags, null) {
 		}
 
 		/// <summary>
@@ -58,24 +53,12 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="id">Exception id</param>
 		/// <param name="flags">Flags</param>
-		/// <param name="displayName">Display name or null to use <see cref="DbgExceptionId.Name"/></param>
-		public DbgExceptionDefinition(DbgExceptionId id, DbgExceptionDefinitionFlags flags, string displayName)
-			: this(id, flags, displayName, null) {
-		}
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="id">Exception id</param>
-		/// <param name="flags">Flags</param>
-		/// <param name="displayName">Display name or null to use <see cref="DbgExceptionId.Name"/></param>
 		/// <param name="description">Description shown in the UI or null</param>
-		public DbgExceptionDefinition(DbgExceptionId id, DbgExceptionDefinitionFlags flags, string displayName, string description) {
+		public DbgExceptionDefinition(DbgExceptionId id, DbgExceptionDefinitionFlags flags, string description) {
 			if (id.Group == null)
 				throw new ArgumentException();
 			Id = id;
 			Flags = flags;
-			DisplayName = displayName ?? id.Name ?? throw new ArgumentNullException(nameof(displayName));
 			Description = description;
 		}
 
@@ -83,6 +66,6 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => Description != null ? $"{Id.Group} - {DisplayName} - {Description}" : $"{Id.Group} - {DisplayName}";
+		public override string ToString() => Description == null ? $"{Id} - {Flags}" : $"{Id} ({Description}) - {Flags}";
 	}
 }

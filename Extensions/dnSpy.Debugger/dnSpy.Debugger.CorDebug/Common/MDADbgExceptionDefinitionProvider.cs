@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.CorDebug.Common {
 		const string groupDisplayName = "Managed Debugging Assistants";
 
 		public override IEnumerable<DbgExceptionGroupDefinition> CreateGroups() {
-			yield return new DbgExceptionGroupDefinition(groupName, groupDisplayName);
+			yield return new DbgExceptionGroupDefinition(DbgExceptionGroupDefinitionFlags.None, groupName, groupDisplayName);
 		}
 
 		public override IEnumerable<DbgExceptionDefinition> Create() {
