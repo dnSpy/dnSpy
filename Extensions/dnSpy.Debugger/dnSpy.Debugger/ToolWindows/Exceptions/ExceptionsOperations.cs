@@ -121,8 +121,18 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			// Toggling everything seems to be less useful, it's more likely that you'd want
 			// to enable all selected exceptions or disable all of them.
 			bool allSet = SelectedItems.All(a => a.BreakWhenThrown);
-			foreach (var vm in SelectedItems)
-				vm.BreakWhenThrown = !allSet;
+			var newSettings = new DbgExceptionIdAndSettings[SelectedItems.Count];
+			for (int i = 0; i < newSettings.Length; i++) {
+				var vm = SelectedItems[i];
+				var flags = vm.Settings.Flags;
+				if (allSet)
+					flags &= ~DbgExceptionDefinitionFlags.StopFirstChance;
+				else
+					flags |= DbgExceptionDefinitionFlags.StopFirstChance;
+				var settings = new DbgExceptionSettings(flags, vm.Settings.Conditions);
+				newSettings[i] = new DbgExceptionIdAndSettings(vm.Definition.Id, settings);
+			}
+			dbgExceptionSettingsService.Value.Modify(newSettings);
 		}
 	}
 }
