@@ -97,6 +97,19 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 		ExceptionGroupVM selectedGroup;
 
+		public bool SomethingMatched => !nothingMatched;
+		public bool NothingMatched {
+			get => nothingMatched;
+			set {
+				if (nothingMatched == value)
+					return;
+				nothingMatched = value;
+				OnPropertyChanged(nameof(NothingMatched));
+				OnPropertyChanged(nameof(SomethingMatched));
+			}
+		}
+		bool nothingMatched;
+
 		public IReadOnlyCollection<ExceptionGroupVM> ExceptionGroupCollection => exceptionGroups;
 		readonly ObservableCollection<ExceptionGroupVM> exceptionGroups;
 
@@ -324,6 +337,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			var newList = new List<ExceptionVMCached>(GetFilteredItems_UI(selectedGroup, filterText, showOnlyEnabledExceptions));
 			newList.Sort(ExceptionVMCachedComparer.Instance);
 			AllItems.Reset(newList.Select(a => a.VM));
+			NothingMatched = AllItems.Count == 0 && !(filterText == string.Empty && !showOnlyEnabledExceptions && selectedGroup == exceptionGroups.FirstOrDefault());
 		}
 
 		sealed class ExceptionVMCached {

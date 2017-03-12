@@ -76,6 +76,7 @@
         </Grid>
         <ListView
             Grid.Row="1"
+            Visibility="{Binding VM.SomethingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
             Name="listView"
             MouseDoubleClick="listView_MouseDoubleClick"
             VirtualizingStackPanel.IsVirtualizing="True"
@@ -123,5 +124,15 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Grid Grid.Row="1" Visibility="{Binding VM.NothingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
+              Background="{DynamicResource GridViewBackground}"
+              img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label Content="{x:Static p:dnSpy_Debugger_Resources.Exceptions_NoMatch}"/>
+                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

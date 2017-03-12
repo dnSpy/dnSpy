@@ -1906,6 +1906,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No exception types match your search filter..
+        /// </summary>
+        public static string Exceptions_NoMatch {
+            get {
+                return ResourceManager.GetString("Exceptions_NoMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove an exception from the list.
         /// </summary>
         public static string Exceptions_Remove_ToolTip {

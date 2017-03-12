@@ -1425,4 +1425,7 @@ Are you sure you want to expand it?</value>
   <data name="FindCommand" xml:space="preserve">
     <value>_Find</value>
   </data>
+  <data name="Exceptions_NoMatch" xml:space="preserve">
+    <value>No exception types match your search filter.</value>
+  </data>
 </root>
