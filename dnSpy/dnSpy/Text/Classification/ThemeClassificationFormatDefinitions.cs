@@ -1275,6 +1275,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.HexToolTipServiceCurrentField)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition HexToolTipServiceCurrentFieldClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ListFindMatchHighlight)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ListFindMatchHighlightClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3475,6 +3480,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = ThemeClassificationTypeNameKeys.HexToolTipServiceField1)]
 		sealed class HexToolTipServiceCurrentField : ThemeMarkerFormatDefinition {
 			HexToolTipServiceCurrentField() : base(TextColor.HexToolTipServiceCurrentField) => ZOrder = HexMarkerServiceZIndexes.ToolTipCurrentField;
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ListFindMatchHighlight)]
+		[Name(ThemeClassificationTypeNameKeys.ListFindMatchHighlight)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class ListFindMatchHighlight : ThemeClassificationFormatDefinition {
+			ListFindMatchHighlight() : base(TextColor.ListFindMatchHighlight) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

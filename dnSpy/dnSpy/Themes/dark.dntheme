@@ -244,6 +244,7 @@
 		<color name="hextooltipservicefield0" bg="#FF4C1D4C" fg="#FFCE4CCE" />
 		<color name="hextooltipservicefield1" bg="#FF491C1C" fg="#FFEA5B5B" />
 		<color name="hextooltipservicecurrentfield" bg="#FF082949" fg="#FFADC0D3" />
+		<color name="listfindmatchhighlight" bg="#FF773800" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

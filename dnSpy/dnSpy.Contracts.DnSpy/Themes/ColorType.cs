@@ -269,6 +269,7 @@ namespace dnSpy.Contracts.Themes {
 		HexToolTipServiceField0,
 		HexToolTipServiceField1,
 		HexToolTipServiceCurrentField,
+		ListFindMatchHighlight,
 
 		// Must be last in this group
 		LastNR,

@@ -271,6 +271,7 @@ namespace dnSpy.Contracts.Text {
 		HexToolTipServiceField0,
 		HexToolTipServiceField1,
 		HexToolTipServiceCurrentField,
+		ListFindMatchHighlight,
 
 		/// <summary>
 		/// Must be last
@@ -528,6 +529,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HexToolTipServiceField0 = TextColor.HexToolTipServiceField0;
 		public static readonly object HexToolTipServiceField1 = TextColor.HexToolTipServiceField1;
 		public static readonly object HexToolTipServiceCurrentField = TextColor.HexToolTipServiceCurrentField;
+		public static readonly object ListFindMatchHighlight = TextColor.ListFindMatchHighlight;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -787,6 +789,7 @@ namespace dnSpy.Contracts.Text {
 			HexToolTipServiceField0,
 			HexToolTipServiceField1,
 			HexToolTipServiceCurrentField,
+			ListFindMatchHighlight,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

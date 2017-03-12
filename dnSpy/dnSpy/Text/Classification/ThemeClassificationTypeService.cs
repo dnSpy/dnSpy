@@ -276,6 +276,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexToolTipServiceField0),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexToolTipServiceField1),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexToolTipServiceCurrentField),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ListFindMatchHighlight),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);
