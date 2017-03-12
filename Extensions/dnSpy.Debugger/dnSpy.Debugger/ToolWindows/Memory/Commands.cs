@@ -29,6 +29,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Memory {
 	static class Constants {
@@ -83,7 +84,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			foreach (var pid in processHexBufferProvider.ProcessIds.OrderBy(a => a)) {
 				var attr = new ExportMenuItemAttribute { Header = UIUtilities.EscapeMenuItemHeader(GetProcessHeader(pid)) };
 				bool isChecked = pid == currentPid;
-				var item = new MyMenuItem(ctx2 => processHexBufferProvider.SetProcessStream(ctx.Buffer, pid), isChecked);
+				var item = new DynamicCheckableMenuItem(ctx2 => processHexBufferProvider.SetProcessStream(ctx.Buffer, pid), isChecked);
 				yield return new CreatedMenuItem(attr, item);
 			}
 		}
@@ -117,18 +118,5 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 			return sb.ToString();
 		}
-	}
-
-	sealed class MyMenuItem : MenuItemBase {
-		readonly Action<IMenuItemContext> action;
-		readonly bool isChecked;
-
-		public MyMenuItem(Action<IMenuItemContext> action, bool isChecked = false) {
-			this.action = action;
-			this.isChecked = isChecked;
-		}
-
-		public override void Execute(IMenuItemContext context) => action(context);
-		public override bool IsChecked(IMenuItemContext context) => isChecked;
 	}
 }

@@ -1483,6 +1483,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Conditions....
+        /// </summary>
+        public static string EditConditionsCommand {
+            get {
+                return ResourceManager.GetString("EditConditionsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable All Breakpoi_nts.
         /// </summary>
         public static string EnableAllBreakpointsCommand {
@@ -1951,6 +1960,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exceptions.
+        /// </summary>
+        public static string ExceptionsCommand {
+            get {
+                return ResourceManager.GetString("ExceptionsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to E_xception Settings.
         /// </summary>
         public static string ExceptionSettingsCommand {
@@ -1967,6 +1985,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ExceptionThrownMessage {
             get {
                 return ResourceManager.GetString("ExceptionThrownMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Find.
+        /// </summary>
+        public static string FindCommand {
+            get {
+                return ResourceManager.GetString("FindCommand", resourceCulture);
             }
         }
         

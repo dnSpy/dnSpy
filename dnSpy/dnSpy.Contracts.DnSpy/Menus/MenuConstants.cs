@@ -482,6 +482,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Debugger/Exceptions, Group: Add</summary>
 		public const string GROUP_CTX_DBG_EXCEPTIONS_ADD = "1000,27050687-6367-48C4-A036-E6E368965BB4";
 
+		/// <summary>Group: Context Menu, Type: Debugger/Exceptions, Group: Options</summary>
+		public const string GROUP_CTX_DBG_EXCEPTIONS_OPTIONS = "5000,64A4FCD8-64BD-4435-84E3-5FD0F78BFFCF";
+
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Copy</summary>
 		public const string GROUP_CTX_DBG_LOCALS_COPY = "0,28D5E753-B1D0-415A-A8C8-7D8F1AC27592";
 

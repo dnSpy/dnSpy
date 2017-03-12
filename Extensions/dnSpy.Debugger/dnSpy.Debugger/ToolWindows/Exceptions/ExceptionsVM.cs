@@ -42,6 +42,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		ObservableCollection<ExceptionVM> SelectedItems { get; }
 		bool ShowOnlyEnabledExceptions { get; set; }
 		void ResetSearchSettings();
+		IReadOnlyCollection<ExceptionGroupVM> ExceptionGroupCollection { get; }
+		ExceptionGroupVM SelectedGroup { get; set; }
 	}
 
 	[Export(typeof(IExceptionsVM))]
@@ -95,7 +97,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 		ExceptionGroupVM selectedGroup;
 
-		public object ExceptionGroupCollection => exceptionGroups;
+		public IReadOnlyCollection<ExceptionGroupVM> ExceptionGroupCollection => exceptionGroups;
 		readonly ObservableCollection<ExceptionGroupVM> exceptionGroups;
 
 		readonly Lazy<DbgManager> dbgManager;

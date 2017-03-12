@@ -1416,4 +1416,13 @@ Are you sure you want to expand it?</value>
   <data name="Exceptions_AllGroups" xml:space="preserve">
     <value>All</value>
   </data>
+  <data name="EditConditionsCommand" xml:space="preserve">
+    <value>Edit Conditions...</value>
+  </data>
+  <data name="ExceptionsCommand" xml:space="preserve">
+    <value>Exceptions</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>_Find</value>
+  </data>
 </root>

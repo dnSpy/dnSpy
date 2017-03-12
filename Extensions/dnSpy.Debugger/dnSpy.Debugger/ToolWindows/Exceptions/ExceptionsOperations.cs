@@ -44,6 +44,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		public abstract void RestoreSettings();
 		public abstract bool CanResetSearchSettings { get; }
 		public abstract void ResetSearchSettings();
+		public abstract bool CanToggleBreakWhenThrown { get; }
+		public abstract void ToggleBreakWhenThrown();
 	}
 
 	[Export(typeof(ExceptionsOperations))]
@@ -115,5 +117,14 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		public override bool CanResetSearchSettings => true;
 		public override void ResetSearchSettings() => exceptionsVM.ResetSearchSettings();
+
+		public override bool CanToggleBreakWhenThrown => SelectedItems.Count > 0;
+		public override void ToggleBreakWhenThrown() {
+			// Toggling everything seems to be less useful, it's more likely that you'd want
+			// to enable all selected exceptions or disable all of them.
+			bool allSet = SelectedItems.All(a => a.BreakWhenThrown);
+			foreach (var vm in SelectedItems)
+				vm.BreakWhenThrown = !allSet;
+		}
 	}
 }
