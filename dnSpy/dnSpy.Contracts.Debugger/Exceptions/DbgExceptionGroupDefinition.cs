@@ -40,15 +40,22 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public string DisplayName { get; }
 
 		/// <summary>
+		/// Shorter localized name shown in the UI
+		/// </summary>
+		public string ShortDisplayName { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="flags">Flags</param>
 		/// <param name="name">Name of group, see also <see cref="PredefinedExceptionGroups"/></param>
 		/// <param name="displayName">Localized name shown in the UI</param>
-		public DbgExceptionGroupDefinition(DbgExceptionGroupDefinitionFlags flags, string name, string displayName) {
+		/// <param name="shortDisplayName">Shorter localized name shown in the UI</param>
+		public DbgExceptionGroupDefinition(DbgExceptionGroupDefinitionFlags flags, string name, string displayName, string shortDisplayName) {
 			Flags = flags;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
+			ShortDisplayName = shortDisplayName ?? throw new ArgumentNullException(nameof(shortDisplayName));
 		}
 
 		/// <summary>

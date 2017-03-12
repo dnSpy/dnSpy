@@ -39,5 +39,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// Exception code should be displayed in decimal and not in hexadecimal
 		/// </summary>
 		DecimalCode				= 0x00000002,
+
+		/// <summary>
+		/// Exception code is an unsigned integer
+		/// </summary>
+		UnsignedCode			= 0x00000004,
 	}
 }

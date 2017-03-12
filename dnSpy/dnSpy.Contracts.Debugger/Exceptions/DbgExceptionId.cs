@@ -101,6 +101,15 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 			flags = Flags.HasCode;
 		}
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="group">Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/></param>
+		/// <param name="code">Exception code</param>
+		public DbgExceptionId(string group, uint code)
+			: this(group, (int)code) {
+		}
+
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgExceptionId left, DbgExceptionId right) => left.Equals(right);
 		public static bool operator !=(DbgExceptionId left, DbgExceptionId right) => !left.Equals(right);

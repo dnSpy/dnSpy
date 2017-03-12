@@ -228,13 +228,14 @@ namespace dnSpy.Debugger.Exceptions {
 					return StringComparer.OrdinalIgnoreCase.Compare(a.def.Id.Name, b.def.Id.Name);
 				});
 				foreach (var t in list) {
-					var exSect = section.CreateSection("Exception");
+					var exSect = groupSect.CreateSection("Exception");
 					exSect.Attribute("IdFlags", GetFlags(t.def.Id));
 					if (t.def.Id.HasName)
 						exSect.Attribute("Name", t.def.Id.Name);
 					if (t.def.Id.HasCode)
 						exSect.Attribute("Code", t.def.Id.Code);
-					exSect.Attribute("Description", t.def.Description);
+					if (!string.IsNullOrEmpty(t.def.Description))
+						exSect.Attribute("Description", t.def.Description);
 					exSect.Attribute("DiffType", t.diffType);
 
 					switch (t.diffType) {

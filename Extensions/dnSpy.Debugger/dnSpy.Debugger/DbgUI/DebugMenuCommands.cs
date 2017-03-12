@@ -265,7 +265,7 @@ namespace dnSpy.Debugger.DbgUI {
 		sealed class ExceptionSettingsWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
 			public ExceptionSettingsWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
-				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, null) {
+				: base(toolWindowService, ToolWindows.Exceptions.ExceptionsToolWindowContent.THE_GUID, debugger, null) {
 			}
 		}
 

@@ -1389,4 +1389,31 @@ Are you sure you want to expand it?</value>
   <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
     <value>&lt;All {0} not in this list&gt;</value>
   </data>
+  <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
+    <value>Edit conditions</value>
+  </data>
+  <data name="Column_Conditions" xml:space="preserve">
+    <value>Conditions</value>
+  </data>
+  <data name="Column_BreakWhenThrown" xml:space="preserve">
+    <value>Break When Thrown</value>
+  </data>
+  <data name="Column_Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="Exception_Conditions_And" xml:space="preserve">
+    <value>And</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
+    <value>Module name equals {0}</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
+    <value>Module name not equals {0}</value>
+  </data>
+  <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all exceptions are shown</value>
+  </data>
+  <data name="Exceptions_AllGroups" xml:space="preserve">
+    <value>All</value>
+  </data>
 </root>

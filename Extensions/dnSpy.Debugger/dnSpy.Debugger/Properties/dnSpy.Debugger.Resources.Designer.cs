@@ -331,6 +331,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Break When Thrown.
+        /// </summary>
+        public static string Column_BreakWhenThrown {
+            get {
+                return ResourceManager.GetString("Column_BreakWhenThrown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conditions.
+        /// </summary>
+        public static string Column_Conditions {
+            get {
+                return ResourceManager.GetString("Column_Conditions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Debugging.
         /// </summary>
         public static string Column_Debugging {
@@ -354,6 +372,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Column_File {
             get {
                 return ResourceManager.GetString("Column_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group.
+        /// </summary>
+        public static string Column_Group {
+            get {
+                return ResourceManager.GetString("Column_Group", resourceCulture);
             }
         }
         
@@ -1740,6 +1767,33 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to And.
+        /// </summary>
+        public static string Exception_Conditions_And {
+            get {
+                return ResourceManager.GetString("Exception_Conditions_And", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module name equals {0}.
+        /// </summary>
+        public static string Exception_Conditions_ModuleNameEquals {
+            get {
+                return ResourceManager.GetString("Exception_Conditions_ModuleNameEquals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module name not equals {0}.
+        /// </summary>
+        public static string Exception_Conditions_ModuleNameNotEquals {
+            get {
+                return ResourceManager.GetString("Exception_Conditions_ModuleNameNotEquals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exception.
         /// </summary>
         public static string ExceptionInfo_Exception {
@@ -1825,11 +1879,38 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string Exceptions_AllGroups {
+            get {
+                return ResourceManager.GetString("Exceptions_AllGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit conditions.
+        /// </summary>
+        public static string Exceptions_EditConditions_ToolTip {
+            get {
+                return ResourceManager.GetString("Exceptions_EditConditions_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove an exception from the list.
         /// </summary>
         public static string Exceptions_Remove_ToolTip {
             get {
                 return ResourceManager.GetString("Exceptions_Remove_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all search criteria so that all exceptions are shown.
+        /// </summary>
+        public static string Exceptions_ResetSearchSettings_ToolTip {
+            get {
+                return ResourceManager.GetString("Exceptions_ResetSearchSettings_ToolTip", resourceCulture);
             }
         }
         

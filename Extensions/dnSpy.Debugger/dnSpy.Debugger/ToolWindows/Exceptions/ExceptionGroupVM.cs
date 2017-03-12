@@ -18,23 +18,21 @@
 */
 
 using System;
-using System.ComponentModel.Composition;
-using System.Windows.Threading;
-using dnSpy.Contracts.App;
+using dnSpy.Contracts.Debugger.Exceptions;
 
-namespace dnSpy.Debugger.UI {
-	[Export(typeof(UIDispatcher))]
-	sealed class UIDispatcher {
-		public Dispatcher Dispatcher { get; }
+namespace dnSpy.Debugger.ToolWindows.Exceptions {
+	sealed class ExceptionGroupVM {
+		public string DisplayName { get; }
+		public DbgExceptionGroupDefinition? Definition { get; }
 
-		[ImportingConstructor]
-		UIDispatcher(IAppWindow appWindow) => Dispatcher = appWindow.MainWindow.Dispatcher;
+		public ExceptionGroupVM(string displayName) {
+			Definition = null;
+			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
+		}
 
-		public void VerifyAccess() => Dispatcher.VerifyAccess();
-		public bool CheckAccess() => Dispatcher.CheckAccess();
-
-		public void UI(Action action) =>
-			// Use Send so the windows are updated as fast as possible when adding new items
-			Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+		public ExceptionGroupVM(DbgExceptionGroupDefinition definition) {
+			Definition = definition;
+			DisplayName = definition.ShortDisplayName;
+		}
 	}
 }

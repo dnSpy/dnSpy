@@ -17,24 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
-using System.Windows.Threading;
-using dnSpy.Contracts.App;
+using dnSpy.Contracts.Debugger.Exceptions;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Text;
 
-namespace dnSpy.Debugger.UI {
-	[Export(typeof(UIDispatcher))]
-	sealed class UIDispatcher {
-		public Dispatcher Dispatcher { get; }
-
-		[ImportingConstructor]
-		UIDispatcher(IAppWindow appWindow) => Dispatcher = appWindow.MainWindow.Dispatcher;
-
-		public void VerifyAccess() => Dispatcher.VerifyAccess();
-		public bool CheckAccess() => Dispatcher.CheckAccess();
-
-		public void UI(Action action) =>
-			// Use Send so the windows are updated as fast as possible when adding new items
-			Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+namespace dnSpy.Debugger.DotNet.Exceptions {
+	[ExportDbgExceptionFormatter(PredefinedExceptionGroups.MDA)]
+	sealed class MDADbgExceptionFormatter : DbgExceptionFormatter {
+		public override bool WriteName(IDebugOutputWriter writer, DbgExceptionDefinition definition) {
+			writer.Write(BoxedTextColor.Keyword, definition.Id.Name);
+			return true;
+		}
 	}
 }

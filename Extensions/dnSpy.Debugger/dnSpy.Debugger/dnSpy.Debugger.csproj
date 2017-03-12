@@ -81,13 +81,29 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\DebuggerAppSettingsPage.cs" />
     <Compile Include="Settings\DebuggerSettingsImpl.cs" />
+    <Compile Include="Text\DebugOutputWriterImpl.cs" />
     <Compile Include="TheExtension.cs" />
+    <Compile Include="ToolWindows\BulkObservableCollection.cs" />
     <Compile Include="ToolWindows\Controls\EditValueControl.xaml.cs">
       <DependentUpon>EditValueControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ToolWindows\Controls\EditValueProviderService.cs" />
     <Compile Include="ToolWindows\Controls\IEditableValue.cs" />
     <Compile Include="ToolWindows\Controls\IEditValue.cs" />
+    <Compile Include="ToolWindows\Exceptions\DbgExceptionFormatterService.cs" />
+    <Compile Include="ToolWindows\Exceptions\ExceptionColumnConverter.cs" />
+    <Compile Include="ToolWindows\Exceptions\ExceptionContext.cs" />
+    <Compile Include="ToolWindows\Exceptions\ExceptionControl.xaml.cs">
+      <DependentUpon>ExceptionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\Exceptions\ExceptionFormatter.cs" />
+    <Compile Include="ToolWindows\Exceptions\ExceptionGroupVM.cs" />
+    <Compile Include="ToolWindows\Exceptions\ExceptionsContent.cs" />
+    <Compile Include="ToolWindows\Exceptions\ExceptionsOperations.cs" />
+    <Compile Include="ToolWindows\Exceptions\ExceptionsToolWindowContent.cs" />
+    <Compile Include="ToolWindows\Exceptions\ExceptionsVM.cs" />
+    <Compile Include="ToolWindows\Exceptions\ExceptionVM.cs" />
+    <Compile Include="ToolWindows\Exceptions\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\FormatterObject.cs" />
     <Compile Include="ToolWindows\FormatterUtils.cs" />
     <Compile Include="ToolWindows\LazyToolWindowVMHelper.cs" />
@@ -133,6 +149,9 @@
     <Compile Include="ToolWindows\Processes\ProcessFormatter.cs" />
     <Compile Include="ToolWindows\Processes\ProcessVM.cs" />
     <Compile Include="ToolWindows\SimpleProcessReader.cs" />
+    <Compile Include="ToolWindows\Text\SearchMatcher.cs" />
+    <Compile Include="ToolWindows\Text\SearchTextClassifierContext.cs" />
+    <Compile Include="ToolWindows\Text\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\Threads\Commands.cs" />
     <Compile Include="ToolWindows\Threads\DefaultThreadCategoryProvider.cs" />
     <Compile Include="ToolWindows\Threads\TextViewTaggers.cs" />
@@ -207,6 +226,10 @@
     <Page Include="ToolWindows\Controls\EditValueControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ToolWindows\Exceptions\ExceptionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="ToolWindows\Memory\MemoryControl.xaml">
       <Generator>MSBuild:Compile</Generator>

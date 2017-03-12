@@ -56,9 +56,10 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 
 		const string groupName = PredefinedExceptionGroups.MDA;
 		const string groupDisplayName = "Managed Debugging Assistants";
+		const string shortGroupDisplayName = "MDA";
 
 		public override IEnumerable<DbgExceptionGroupDefinition> CreateGroups() {
-			yield return new DbgExceptionGroupDefinition(DbgExceptionGroupDefinitionFlags.None, groupName, groupDisplayName);
+			yield return new DbgExceptionGroupDefinition(DbgExceptionGroupDefinitionFlags.None, groupName, groupDisplayName, shortGroupDisplayName);
 		}
 
 		public override IEnumerable<DbgExceptionDefinition> Create() {

@@ -57,10 +57,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public bool Equals(DbgExceptionSettings other) {
 			if (Flags != other.Flags)
 				return false;
-			return Check(Conditions, other.Conditions);
+			return Equals(Conditions, other.Conditions);
 		}
 
-		static bool Check(DbgExceptionConditionSettings[] a, DbgExceptionConditionSettings[] b) {
+		static bool Equals(DbgExceptionConditionSettings[] a, DbgExceptionConditionSettings[] b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)

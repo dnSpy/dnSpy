@@ -18,23 +18,14 @@
 */
 
 using System;
-using System.ComponentModel.Composition;
-using System.Windows.Threading;
-using dnSpy.Contracts.App;
+using System.Collections.Generic;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
-namespace dnSpy.Debugger.UI {
-	[Export(typeof(UIDispatcher))]
-	sealed class UIDispatcher {
-		public Dispatcher Dispatcher { get; }
-
-		[ImportingConstructor]
-		UIDispatcher(IAppWindow appWindow) => Dispatcher = appWindow.MainWindow.Dispatcher;
-
-		public void VerifyAccess() => Dispatcher.VerifyAccess();
-		public bool CheckAccess() => Dispatcher.CheckAccess();
-
-		public void UI(Action action) =>
-			// Use Send so the windows are updated as fast as possible when adding new items
-			Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+namespace dnSpy.Debugger.ToolWindows.Text {
+	sealed class SearchTextClassifierContext : TextClassifierContext {
+		public SearchMatcher SearchMatcher { get; }
+		public SearchTextClassifierContext(SearchMatcher searchMatcher, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+			: base(text, tag, colorize, colors) => SearchMatcher = searchMatcher ?? throw new ArgumentNullException(nameof(searchMatcher));
 	}
 }

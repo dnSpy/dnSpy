@@ -186,10 +186,12 @@ namespace dnSpy.Debugger.Exceptions {
 			return new DbgExceptionSettings(DbgExceptionDefinitionFlags.None);
 		}
 
+		public override DbgExceptionGroupDefinition[] GroupDefinitions => defaultExceptionDefinitionsProvider.GroupDefinitions;
+
 		public override bool TryGetGroupDefinition(string groupName, out DbgExceptionGroupDefinition definition) {
 			if (groupName == null)
 				throw new ArgumentNullException(nameof(groupName));
-			foreach (var group in defaultExceptionDefinitionsProvider.GroupDefinitions) {
+			foreach (var group in GroupDefinitions) {
 				if (group.Name == groupName) {
 					definition = group;
 					return true;

@@ -405,9 +405,10 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 		};
 		const string groupName = PredefinedExceptionGroups.DotNet;
 		const string groupDisplayName = "Common Language Runtime Exceptions";
+		const string shortGroupDisplayName = ".NET";
 
 		public override IEnumerable<DbgExceptionGroupDefinition> CreateGroups() {
-			yield return new DbgExceptionGroupDefinition(DbgExceptionGroupDefinitionFlags.None, groupName, groupDisplayName);
+			yield return new DbgExceptionGroupDefinition(DbgExceptionGroupDefinitionFlags.None, groupName, groupDisplayName, shortGroupDisplayName);
 		}
 
 		public override IEnumerable<DbgExceptionDefinition> Create() {

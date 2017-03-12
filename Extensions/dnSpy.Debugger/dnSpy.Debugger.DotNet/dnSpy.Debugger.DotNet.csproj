@@ -46,9 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
+    <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />
     <Compile Include="Exceptions\DotNetDbgExceptionDefinitionProvider.cs" />
     <Compile Include="Exceptions\ExceptionInfo.cs" />
     <Compile Include="Exceptions\MDADbgExceptionDefinitionProvider.cs" />
+    <Compile Include="Exceptions\MDADbgExceptionFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TheExtension.cs" />
   </ItemGroup>

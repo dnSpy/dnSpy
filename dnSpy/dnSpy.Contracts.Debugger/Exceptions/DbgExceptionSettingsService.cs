@@ -100,6 +100,11 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="definition">Updated with the group definition if the method returns true</param>
 		/// <returns></returns>
 		public abstract bool TryGetGroupDefinition(string groupName, out DbgExceptionGroupDefinition definition);
+
+		/// <summary>
+		/// Gets all group definitions
+		/// </summary>
+		public abstract DbgExceptionGroupDefinition[] GroupDefinitions { get; }
 	}
 
 	/// <summary>

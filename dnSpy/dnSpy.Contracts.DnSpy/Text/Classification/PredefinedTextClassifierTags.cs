@@ -123,9 +123,19 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string AttachToProcessWindowTitle = "Title";
 
 		/// <summary>
-		/// Exception Settings window column: Name
+		/// Exception Settings window column: Break When Thrown
 		/// </summary>
 		public static readonly string ExceptionSettingsWindowName = "Name";
+
+		/// <summary>
+		/// Exception Settings window column: Group
+		/// </summary>
+		public static readonly string ExceptionSettingsWindowGroup = "Group";
+
+		/// <summary>
+		/// Exception Settings window column: Conditions
+		/// </summary>
+		public static readonly string ExceptionSettingsWindowConditions = "Conditions";
 
 		/// <summary>
 		/// Locals window column: Name
