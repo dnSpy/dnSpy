@@ -1428,4 +1428,13 @@ Are you sure you want to expand it?</value>
   <data name="Exceptions_NoMatch" xml:space="preserve">
     <value>No exception types match your search filter.</value>
   </data>
+  <data name="AddExceptionButton" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="ExceptionDescription" xml:space="preserve">
+    <value>Exception description</value>
+  </data>
+  <data name="Exception_Error_NameCanNotBeEmpty" xml:space="preserve">
+    <value>Name can't be empty</value>
+  </data>
 </root>

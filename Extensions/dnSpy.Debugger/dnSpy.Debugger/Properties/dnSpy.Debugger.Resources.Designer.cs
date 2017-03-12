@@ -79,6 +79,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        public static string AddExceptionButton {
+            get {
+                return ResourceManager.GetString("AddExceptionButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add E_xception.
         /// </summary>
         public static string AddExceptionCommand {
@@ -1799,6 +1808,24 @@ namespace dnSpy.Debugger.Properties {
         public static string Exception_Conditions_ModuleNameNotEquals {
             get {
                 return ResourceManager.GetString("Exception_Conditions_ModuleNameNotEquals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name can&apos;t be empty.
+        /// </summary>
+        public static string Exception_Error_NameCanNotBeEmpty {
+            get {
+                return ResourceManager.GetString("Exception_Error_NameCanNotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception description.
+        /// </summary>
+        public static string ExceptionDescription {
+            get {
+                return ResourceManager.GetString("ExceptionDescription", resourceCulture);
             }
         }
         

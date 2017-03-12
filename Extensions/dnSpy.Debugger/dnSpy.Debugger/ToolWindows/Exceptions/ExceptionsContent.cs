@@ -22,7 +22,9 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Properties;
@@ -75,15 +77,32 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		[ImportingConstructor]
-		ExceptionsContent(IWpfCommandService wpfCommandService, IExceptionsVM exceptionsVM, ExceptionsOperations exceptionsOperations) {
+		ExceptionsContent(IWpfCommandService wpfCommandService, IExceptionsVM exceptionsVM, ExceptionsOperations exceptionsOperations, Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) {
 			Operations = exceptionsOperations;
 			exceptionsControl = new ExceptionsControl();
+			var addVM = new AddExceptionVM(dbgExceptionSettingsService);
+			exceptionsControl.addExceptionControl.DataContext = addVM;
+			exceptionsControl.addExceptionControl.IsVisibleChanged += AddExceptionControl_IsVisibleChanged;
+			exceptionsControl.addExceptionControl.InputBindings.Add(new KeyBinding(addVM.SaveCommand, Key.Enter, ModifierKeys.None));
+			exceptionsControl.addExceptionControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => exceptionsVM.IsAddingExceptions = false), Key.Escape, ModifierKeys.None));
 			this.exceptionsVM = exceptionsVM;
 			exceptionsControl.DataContext = new ControlVM(exceptionsVM, exceptionsOperations);
 			exceptionsControl.ExceptionsListViewDoubleClick += ExceptionsControl_ExceptionsListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL, exceptionsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW, exceptionsControl.ListView);
+		}
+
+		void AddExceptionControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			((AddExceptionVM)exceptionsControl.addExceptionControl.DataContext).IsVisible = exceptionsControl.addExceptionControl.IsVisible;
+			if (!exceptionsControl.addExceptionControl.IsVisible)
+				Focus();
+			else {
+				exceptionsControl.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+					exceptionsControl.addExceptionControl.nameCodeTextBox.Focus();
+					exceptionsControl.addExceptionControl.nameCodeTextBox.SelectAll();
+				}));
+			}
 		}
 
 		void ExceptionsControl_ExceptionsListViewDoubleClick(object sender, EventArgs e) {

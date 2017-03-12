@@ -27,10 +27,12 @@
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Debugger.UI"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
+             Name="thisControl"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -54,9 +56,9 @@
                     <img:DsImage ImageReference="{x:Static img:DsImages.Filter}"/>
                 </CheckBox>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding AddExceptionCommand}" ToolTip="{Binding AddExceptionToolTip}">
+                <CheckBox Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" IsChecked="{Binding VM.IsAddingExceptions}" ToolTip="{Binding AddExceptionToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Add}"/>
-                </Button>
+                </CheckBox>
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveExceptionsCommand}" ToolTip="{Binding RemoveExceptionsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.RemoveCommand}"/>
                 </Button>
@@ -74,8 +76,9 @@
             <Label Grid.Column="1" Margin="5 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Search}" ToolTip="{Binding SearchToolTip}" />
             <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding VM.FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding SearchToolTip}" />
         </Grid>
+        <local:AddExceptionControl Grid.Row="1" Margin="0 2" x:Name="addExceptionControl" Visibility="{Binding ElementName=thisControl, Path=DataContext.VM.IsAddingExceptions, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <ListView
-            Grid.Row="1"
+            Grid.Row="2"
             Visibility="{Binding VM.SomethingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
             Name="listView"
             MouseDoubleClick="listView_MouseDoubleClick"
@@ -124,7 +127,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Grid Grid.Row="1" Visibility="{Binding VM.NothingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
+        <Grid Grid.Row="2" Visibility="{Binding VM.NothingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
               mvvm:InitDataTemplateAP.Initialize="True"
               Background="{DynamicResource GridViewBackground}"
               img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}">

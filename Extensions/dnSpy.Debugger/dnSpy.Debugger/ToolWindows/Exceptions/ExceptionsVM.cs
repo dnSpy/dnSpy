@@ -44,6 +44,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		void ResetSearchSettings();
 		IReadOnlyCollection<ExceptionGroupVM> ExceptionGroupCollection { get; }
 		ExceptionGroupVM SelectedGroup { get; set; }
+		bool IsAddingExceptions { get; set; }
 	}
 
 	[Export(typeof(IExceptionsVM))]
@@ -60,6 +61,17 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			get => lazyToolWindowVMHelper.IsVisible;
 			set => lazyToolWindowVMHelper.IsVisible = value;
 		}
+
+		public bool IsAddingExceptions {
+			get => isAddingExceptions;
+			set {
+				if (isAddingExceptions == value)
+					return;
+				isAddingExceptions = value;
+				OnPropertyChanged(nameof(IsAddingExceptions));
+			}
+		}
+		bool isAddingExceptions;
 
 		public bool ShowOnlyEnabledExceptions {
 			get => showOnlyEnabledExceptions;
@@ -164,6 +176,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			if (exceptionGroups.Count == 0)
 				InitializeExceptionGroups_UI();
+			IsAddingExceptions = false;
 			ResetSearchSettings();
 			if (enable) {
 				exceptionContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
@@ -289,6 +302,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				NothingMatched = false;
 		}
 
+		// UI thread
 		int GetInsertionIndex_UI(ExceptionVMCached vmc) {
 			Debug.Assert(exceptionContext.UIDispatcher.CheckAccess());
 			var comparer = ExceptionVMCachedComparer.Instance;
@@ -330,6 +344,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				RemoveExceptionAt_UI(i);
 		}
 
+		// UI thread
 		void FilterTreeView_UI(string filterText, bool showOnlyEnabledExceptions, ExceptionGroupVM selectedGroup) {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			if (string.IsNullOrWhiteSpace(filterText))
@@ -380,6 +395,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			}
 		}
 
+		// UI thread
 		IEnumerable<ExceptionVMCached> GetFilteredItems_UI(ExceptionGroupVM selectedGroup, string filterText, bool showOnlyEnabledExceptions) {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			var groupName = selectedGroup?.Definition?.Name;
@@ -392,11 +408,13 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			}
 		}
 
+		// UI thread
 		ExceptionVMCached CreateCached_UI(ExceptionVM vm) {
 			Debug.Assert(exceptionContext.UIDispatcher.CheckAccess());
 			return new ExceptionVMCached(vm);
 		}
 
+		// UI thread
 		bool IsMatch_UI(ExceptionVMCached vmc, string filterText, bool showOnlyEnabledExceptions) {
 			Debug.Assert(exceptionContext.UIDispatcher.CheckAccess());
 			if (showOnlyEnabledExceptions && !vmc.VM.BreakWhenThrown)
@@ -407,6 +425,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			return exceptionContext.SearchMatcher.IsMatchAll(vmc.AllStrings);
 		}
 
+		// UI thread
 		static string GetName_UI(ExceptionVM vm) {
 			Debug.Assert(vm.Context.UIDispatcher.CheckAccess());
 			var writer = vm.Context.TextClassifierTextColorWriter;
@@ -416,6 +435,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			return writer.Text;
 		}
 
+		// UI thread
 		static string GetGroup_UI(ExceptionVM vm) {
 			Debug.Assert(vm.Context.UIDispatcher.CheckAccess());
 			var writer = vm.Context.TextClassifierTextColorWriter;
@@ -425,6 +445,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			return writer.Text;
 		}
 
+		// UI thread
 		static string GetConditions_UI(ExceptionVM vm) {
 			Debug.Assert(vm.Context.UIDispatcher.CheckAccess());
 			var writer = vm.Context.TextClassifierTextColorWriter;
@@ -434,6 +455,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			return writer.Text;
 		}
 
+		// UI thread
 		public void ResetSearchSettings() {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			ShowOnlyEnabledExceptions = false;

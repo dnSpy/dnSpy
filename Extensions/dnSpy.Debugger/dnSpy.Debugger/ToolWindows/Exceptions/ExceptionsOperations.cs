@@ -94,9 +94,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		public override bool CanAddException => true;
-		public override void AddException() {
-			//TODO:
-		}
+		public override void AddException() => exceptionsVM.IsAddingExceptions = !exceptionsVM.IsAddingExceptions;
 
 		public override bool CanRemoveExceptions => SelectedItems.Count > 0;
 		public override void RemoveExceptions() {
