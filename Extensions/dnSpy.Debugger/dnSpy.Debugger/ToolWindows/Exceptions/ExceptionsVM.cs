@@ -285,6 +285,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					AllItems.Insert(insertionIndex, vm);
 				}
 			}
+			if (NothingMatched && AllItems.Count != 0)
+				NothingMatched = false;
 		}
 
 		int GetInsertionIndex_UI(ExceptionVMCached vmc) {

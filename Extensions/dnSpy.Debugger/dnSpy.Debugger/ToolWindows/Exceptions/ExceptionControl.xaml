@@ -125,6 +125,7 @@
             </ListView.View>
         </ListView>
         <Grid Grid.Row="1" Visibility="{Binding VM.NothingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
+              mvvm:InitDataTemplateAP.Initialize="True"
               Background="{DynamicResource GridViewBackground}"
               img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
