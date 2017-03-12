@@ -55,13 +55,6 @@ namespace dnSpy.Debugger.Exceptions {
 			Update,
 		}
 
-		[Flags]
-		enum IdFlags : byte {
-			None		= 0,
-			HasCode		= 1,
-			Default		= 2,
-		}
-
 		readonly DbgDispatcher dbgDispatcher;
 		readonly DbgExceptionSettingsService dbgExceptionSettingsService;
 		readonly ISettingsService settingsService;
@@ -97,24 +90,24 @@ namespace dnSpy.Debugger.Exceptions {
 					if (diffType == null)
 						continue;
 
-					var flags = exSect.Attribute<IdFlags?>("IdFlags");
-					if (flags == null)
+					var idKind = exSect.Attribute<DbgExceptionIdKind?>("IdKind");
+					if (idKind == null)
 						continue;
 
 					DbgExceptionId id;
-					switch (flags.Value) {
-					case IdFlags.Default:
+					switch (idKind.Value) {
+					case DbgExceptionIdKind.DefaultId:
 						id = new DbgExceptionId(group);
 						break;
 
-					case IdFlags.HasCode:
+					case DbgExceptionIdKind.Code:
 						var code = exSect.Attribute<int?>("Code");
 						if (code == null)
 							continue;
 						id = new DbgExceptionId(group, code.Value);
 						break;
 
-					case IdFlags.None:
+					case DbgExceptionIdKind.Name:
 						var name = exSect.Attribute<string>("Name");
 						if (name == null)
 							continue;
@@ -122,6 +115,7 @@ namespace dnSpy.Debugger.Exceptions {
 						break;
 
 					default:
+						Debug.Fail($"Unknown id kind: {idKind.Value}");
 						continue;
 					}
 
@@ -231,7 +225,7 @@ namespace dnSpy.Debugger.Exceptions {
 				});
 				foreach (var t in list) {
 					var exSect = groupSect.CreateSection("Exception");
-					exSect.Attribute("IdFlags", GetFlags(t.def.Id));
+					exSect.Attribute("IdKind", t.def.Id.Kind);
 					if (t.def.Id.HasName)
 						exSect.Attribute("Name", t.def.Id.Name);
 					if (t.def.Id.HasCode)
@@ -260,15 +254,6 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 		bool ignoreSave;
-
-		static IdFlags GetFlags(DbgExceptionId id) {
-			var flags = IdFlags.None;
-			if (id.IsDefaultId)
-				flags |= IdFlags.Default;
-			if (id.HasCode)
-				flags |= IdFlags.HasCode;
-			return flags;
-		}
 
 		static void AddSettings(ISettingsSection section, DbgExceptionSettings settings) {
 			section.Attribute("Flags", settings.Flags);

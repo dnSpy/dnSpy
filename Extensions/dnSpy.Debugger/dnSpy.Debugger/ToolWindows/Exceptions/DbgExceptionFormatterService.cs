@@ -73,9 +73,17 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		void DefaultWriteName(IDebugOutputWriter output, DbgExceptionDefinition definition) {
-			if (definition.Id.HasCode) {
-				DbgExceptionGroupDefinitionFlags flags;
+			switch (definition.Id.Kind) {
+			case DbgExceptionIdKind.DefaultId:
 				if (exceptionSettingsService.Value.TryGetGroupDefinition(definition.Id.Group, out var groupDef))
+					output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_Resources.AllRemainingExceptionsNotInList, groupDef.DisplayName));
+				else
+					WriteError(output);
+				break;
+
+			case DbgExceptionIdKind.Code:
+				DbgExceptionGroupDefinitionFlags flags;
+				if (exceptionSettingsService.Value.TryGetGroupDefinition(definition.Id.Group, out groupDef))
 					flags = groupDef.Flags;
 				else
 					flags = DbgExceptionGroupDefinitionFlags.None;
@@ -85,17 +93,16 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					output.Write(BoxedTextColor.Number, ((uint)definition.Id.Code).ToString());
 				else
 					output.Write(BoxedTextColor.Number, definition.Id.Code.ToString());
-			}
-			else if (definition.Id.HasName)
+				break;
+
+			case DbgExceptionIdKind.Name:
 				output.Write(BoxedTextColor.Text, definition.Id.Name);
-			else if (definition.Id.IsDefaultId) {
-				if (exceptionSettingsService.Value.TryGetGroupDefinition(definition.Id.Group, out var groupDef))
-					output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_Resources.AllRemainingExceptionsNotInList, groupDef.DisplayName));
-				else
-					WriteError(output);
-			}
-			else
+				break;
+
+			default:
 				WriteError(output);
+				break;
+			}
 		}
 
 		void WriteDescription(IDebugOutputWriter writer, DbgExceptionDefinition definition) {

@@ -31,10 +31,13 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 
 		[Flags]
 		enum Flags : byte {
-			None		= 0,
-			HasCode		= 1,
-			Default		= 2,
+			KindMask	= 3,
 		}
+
+		/// <summary>
+		/// Gets the id kind
+		/// </summary>
+		public DbgExceptionIdKind Kind => (DbgExceptionIdKind)(flags & Flags.KindMask);
 
 		/// <summary>
 		/// Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/>
@@ -54,17 +57,17 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// true if the exception has a code, and not a name
 		/// </summary>
-		public bool HasCode => (flags & (Flags.HasCode | Flags.Default)) == Flags.HasCode;
+		public bool HasCode => Kind == DbgExceptionIdKind.Code;
 
 		/// <summary>
 		/// true if the exception has a name, and not a code
 		/// </summary>
-		public bool HasName => (flags & (Flags.HasCode | Flags.Default)) == 0;
+		public bool HasName => Kind == DbgExceptionIdKind.Name;
 
 		/// <summary>
 		/// true if this is the default exception ID
 		/// </summary>
-		public bool IsDefaultId => (flags & Flags.Default) != 0;
+		public bool IsDefaultId => Kind == DbgExceptionIdKind.DefaultId;
 
 		/// <summary>
 		/// Constructor for default ids
@@ -74,7 +77,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 			this.group = group ?? throw new ArgumentNullException(nameof(group));
 			name = null;
 			code = 0;
-			flags = Flags.Default;
+			flags = (Flags)DbgExceptionIdKind.DefaultId;
 		}
 
 		/// <summary>
@@ -86,7 +89,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 			this.group = group ?? throw new ArgumentNullException(nameof(group));
 			this.name = name ?? throw new ArgumentNullException(nameof(name));
 			code = 0;
-			flags = Flags.None;
+			flags = (Flags)DbgExceptionIdKind.Name;
 		}
 
 		/// <summary>
@@ -98,7 +101,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 			this.group = group ?? throw new ArgumentNullException(nameof(group));
 			name = null;
 			this.code = code;
-			flags = Flags.HasCode;
+			flags = (Flags)DbgExceptionIdKind.Code;
 		}
 
 		/// <summary>
@@ -123,7 +126,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public bool Equals(DbgExceptionId other) {
 			if (flags != other.flags)
 				return false;
-			if ((flags & Flags.HasCode) != 0) {
+			if (Kind == DbgExceptionIdKind.Code) {
 				if (code != other.code)
 					return false;
 			}
@@ -149,7 +152,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <returns></returns>
 		public override int GetHashCode() {
 			int hc = (int)flags ^ StringComparer.Ordinal.GetHashCode(group ?? string.Empty);
-			if ((flags & Flags.HasCode) != 0)
+			if (Kind == DbgExceptionIdKind.Code)
 				hc ^= code;
 			else
 				hc ^= StringComparer.Ordinal.GetHashCode(name ?? string.Empty);
@@ -163,11 +166,32 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public override string ToString() {
 			if (group == null)
 				return "<not-initialized>";
-			if (IsDefaultId)
-				return group + " - <<default>>";
-			if (HasCode)
-				return "0x" + code.ToString("X8");
-			return group + " - " + name;
+			switch (Kind) {
+			case DbgExceptionIdKind.DefaultId:	return group + " - <<default>>";
+			case DbgExceptionIdKind.Code:		return "0x" + code.ToString("X8");
+			case DbgExceptionIdKind.Name:		return group + " - " + name;
+			default:							return "???";
+			}
 		}
+	}
+
+	/// <summary>
+	/// <see cref="DbgExceptionId"/> kind
+	/// </summary>
+	public enum DbgExceptionIdKind {
+		/// <summary>
+		/// Default ID
+		/// </summary>
+		DefaultId,
+
+		/// <summary>
+		/// Code
+		/// </summary>
+		Code,
+
+		/// <summary>
+		/// Name
+		/// </summary>
+		Name,
 	}
 }
