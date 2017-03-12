@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -165,20 +166,21 @@ namespace dnSpy.Debugger.Exceptions {
 			var flags = section.Attribute<DbgExceptionDefinitionFlags?>("Flags");
 			if (flags == null)
 				return false;
-			DbgExceptionConditionSettings[] condSettings;
+			ReadOnlyCollection<DbgExceptionConditionSettings> condSettings;
 			var condSects = section.SectionsWithName("Conditions");
 			if (condSects.Length == 0)
-				condSettings = Array.Empty<DbgExceptionConditionSettings>();
+				condSettings = null;
 			else {
-				condSettings = new DbgExceptionConditionSettings[condSects.Length];
+				var conds = new DbgExceptionConditionSettings[condSects.Length];
 				for (int i = 0; i < condSects.Length; i++) {
 					var condSect = condSects[i];
 					var condType = condSect.Attribute<DbgExceptionConditionType?>("Type");
 					var cond = condSect.Attribute<string>("Condition");
 					if (condType == null || cond == null || !IsValid(condType.Value))
 						return false;
-					condSettings[i] = new DbgExceptionConditionSettings(condType.Value, cond);
+					conds[i] = new DbgExceptionConditionSettings(condType.Value, cond);
 				}
+				condSettings = new ReadOnlyCollection<DbgExceptionConditionSettings>(conds);
 			}
 			settings = new DbgExceptionSettings(flags.Value, condSettings);
 			return true;
@@ -278,7 +280,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		IEnumerable<(DiffType diffType, DbgExceptionDefinition def, DbgExceptionSettings settings)> GetDiff() {
-			var defaultDefs = new Dictionary<DbgExceptionId, DbgExceptionDefinition>(defaultExceptionDefinitionsProvider.Definitions.Length);
+			var defaultDefs = new Dictionary<DbgExceptionId, DbgExceptionDefinition>(defaultExceptionDefinitionsProvider.Definitions.Count);
 			foreach (var def in defaultExceptionDefinitionsProvider.Definitions)
 				defaultDefs[def.Id] = def;
 
@@ -297,7 +299,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		static bool Compare(DbgExceptionSettings settings, DbgExceptionDefinition def) {
-			if (settings.Conditions.Length != 0)
+			if (settings.Conditions.Count != 0)
 				return false;
 			return settings.Flags == def.Flags;
 		}

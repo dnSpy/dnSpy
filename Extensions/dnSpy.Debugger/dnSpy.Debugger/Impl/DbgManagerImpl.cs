@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.Impl {
 		public override string[] DebugTags {
 			get {
 				lock (lockObj)
-					return debugTags.Tags;
+					return debugTags.Tags.ToArray();
 			}
 		}
 		readonly TagsCollection debugTags;

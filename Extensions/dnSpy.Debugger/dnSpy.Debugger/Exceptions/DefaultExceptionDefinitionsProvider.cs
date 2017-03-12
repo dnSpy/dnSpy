@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -27,8 +28,8 @@ using dnSpy.Contracts.Debugger.Exceptions;
 namespace dnSpy.Debugger.Exceptions {
 	[Export(typeof(DefaultExceptionDefinitionsProvider))]
 	sealed class DefaultExceptionDefinitionsProvider {
-		public DbgExceptionGroupDefinition[] GroupDefinitions { get; }
-		public DbgExceptionDefinition[] Definitions { get; }
+		public ReadOnlyCollection<DbgExceptionGroupDefinition> GroupDefinitions { get; }
+		public ReadOnlyCollection<DbgExceptionDefinition> Definitions { get; }
 
 		[ImportingConstructor]
 		DefaultExceptionDefinitionsProvider([ImportMany] IEnumerable<Lazy<DbgExceptionDefinitionProvider, IDbgExceptionDefinitionProviderMetadata>> dbgExceptionDefinitionProviders) {
@@ -41,7 +42,7 @@ namespace dnSpy.Debugger.Exceptions {
 						groupDefs.Add(def.Name, def);
 				}
 			}
-			GroupDefinitions = groupDefs.Select(a => a.Value).ToArray();
+			GroupDefinitions = new ReadOnlyCollection<DbgExceptionGroupDefinition>(groupDefs.Select(a => a.Value).ToArray());
 
 			var defs = new Dictionary<DbgExceptionId, DbgExceptionDefinition>();
 			foreach (var p in providers) {
@@ -59,7 +60,7 @@ namespace dnSpy.Debugger.Exceptions {
 				if (!defs.ContainsKey(id))
 					defs.Add(id, new DbgExceptionDefinition(id, DbgExceptionDefinitionFlags.None));
 			}
-			Definitions = defs.Select(a => a.Value).ToArray();
+			Definitions = new ReadOnlyCollection<DbgExceptionDefinition>(defs.Select(a => a.Value).ToArray());
 		}
 	}
 }

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -111,7 +112,7 @@ namespace dnSpy.Debugger.Exceptions {
 				}
 			}
 			if (modified.Count > 0)
-				ExceptionSettingsModified?.Invoke(this, new DbgExceptionSettingsModifiedEventArgs(modified.ToArray()));
+				ExceptionSettingsModified?.Invoke(this, new DbgExceptionSettingsModifiedEventArgs(new ReadOnlyCollection<DbgExceptionIdAndSettings>(modified)));
 		}
 
 		public override void Remove(DbgExceptionId[] ids) {
@@ -186,7 +187,7 @@ namespace dnSpy.Debugger.Exceptions {
 			return new DbgExceptionSettings(DbgExceptionDefinitionFlags.None);
 		}
 
-		public override DbgExceptionGroupDefinition[] GroupDefinitions => defaultExceptionDefinitionsProvider.GroupDefinitions;
+		public override ReadOnlyCollection<DbgExceptionGroupDefinition> GroupDefinitions => defaultExceptionDefinitionsProvider.GroupDefinitions;
 
 		public override bool TryGetGroupDefinition(string groupName, out DbgExceptionGroupDefinition definition) {
 			if (groupName == null)

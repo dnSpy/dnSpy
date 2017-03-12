@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
@@ -71,14 +72,14 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			Order = order;
 		}
 
-		static bool Equals(DbgExceptionConditionSettings[] a, DbgExceptionConditionSettings[] b) {
+		static bool Equals(ReadOnlyCollection<DbgExceptionConditionSettings> a, ReadOnlyCollection<DbgExceptionConditionSettings> b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
 				return false;
-			if (a.Length != b.Length)
+			if (a.Count != b.Count)
 				return false;
-			for (int i = 0; i < a.Length; i++) {
+			for (int i = 0; i < a.Count; i++) {
 				if (a[i].ConditionType != b[i].ConditionType)
 					return false;
 				if (!StringComparer.Ordinal.Equals(a[i].Condition, b[i].Condition))

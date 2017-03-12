@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
@@ -104,7 +105,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Gets all group definitions
 		/// </summary>
-		public abstract DbgExceptionGroupDefinition[] GroupDefinitions { get; }
+		public abstract ReadOnlyCollection<DbgExceptionGroupDefinition> GroupDefinitions { get; }
 	}
 
 	/// <summary>
@@ -172,13 +173,13 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Gets the ID and new settings
 		/// </summary>
-		public DbgExceptionIdAndSettings[] IdAndSettings { get; }
+		public ReadOnlyCollection<DbgExceptionIdAndSettings> IdAndSettings { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="idAndSettings">New settings</param>
-		public DbgExceptionSettingsModifiedEventArgs(DbgExceptionIdAndSettings[] idAndSettings) =>
+		public DbgExceptionSettingsModifiedEventArgs(ReadOnlyCollection<DbgExceptionIdAndSettings> idAndSettings) =>
 			IdAndSettings = idAndSettings ?? throw new ArgumentNullException(nameof(idAndSettings));
 	}
 }

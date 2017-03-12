@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		public void WriteConditions(ITextColorWriter output, ExceptionVM vm) {
 			var conditions = vm.Settings.Conditions;
-			for (int i = 0; i < conditions.Length; i++) {
+			for (int i = 0; i < conditions.Count; i++) {
 				if (i != 0) {
 					output.WriteSpace();
 					output.Write(BoxedTextColor.Keyword, dnSpy_Debugger_Resources.Exception_Conditions_And);
