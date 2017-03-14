@@ -52,11 +52,11 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Module name equals <see cref="DbgExceptionConditionSettings.Condition"/>
 		/// </summary>
-		ModuleEquals,
+		ModuleNameEquals,
 
 		/// <summary>
 		/// Module name does not equal <see cref="DbgExceptionConditionSettings.Condition"/>
 		/// </summary>
-		ModuleNotEquals,
+		ModuleNameNotEquals,
 	}
 }

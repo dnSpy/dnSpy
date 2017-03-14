@@ -1405,10 +1405,10 @@ Are you sure you want to expand it?</value>
     <value>And</value>
   </data>
   <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
-    <value>Module name equals {0}</value>
+    <value>Module name equals</value>
   </data>
   <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
-    <value>Module name not equals {0}</value>
+    <value>Module name not equals</value>
   </data>
   <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
     <value>Reset all search criteria so that all exceptions are shown</value>
@@ -1436,5 +1436,11 @@ Are you sure you want to expand it?</value>
   </data>
   <data name="Exception_Error_NameCanNotBeEmpty" xml:space="preserve">
     <value>Name can't be empty</value>
+  </data>
+  <data name="EditConditions_Title" xml:space="preserve">
+    <value>Edit Conditions</value>
+  </data>
+  <data name="Button_AddCondition" xml:space="preserve">
+    <value>_Add Condition</value>
   </data>
 </root>

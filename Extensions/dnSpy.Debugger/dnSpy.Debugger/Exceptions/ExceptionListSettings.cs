@@ -170,7 +170,7 @@ namespace dnSpy.Debugger.Exceptions {
 					var condSect = condSects[i];
 					var condType = condSect.Attribute<DbgExceptionConditionType?>("Type");
 					var cond = condSect.Attribute<string>("Condition");
-					if (condType == null || cond == null || !IsValid(condType.Value))
+					if (condType == null || string.IsNullOrWhiteSpace(cond) || !IsValid(condType.Value))
 						return false;
 					conds[i] = new DbgExceptionConditionSettings(condType.Value, cond);
 				}
@@ -180,7 +180,7 @@ namespace dnSpy.Debugger.Exceptions {
 			return true;
 		}
 
-		static bool IsValid(DbgExceptionConditionType type) => (uint)type <= (uint)DbgExceptionConditionType.ModuleNotEquals;
+		static bool IsValid(DbgExceptionConditionType type) => (uint)type <= (uint)DbgExceptionConditionType.ModuleNameNotEquals;
 
 		void DbgExceptionSettingsService_ExceptionsChanged(object sender, DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo> e) => Save();
 		void DbgExceptionSettingsService_ExceptionSettingsModified(object sender, DbgExceptionSettingsModifiedEventArgs e) => Save();

@@ -18,7 +18,6 @@
 */
 
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text;
@@ -57,11 +56,11 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				}
 				var cond = conditions[i];
 				switch (cond.ConditionType) {
-				case DbgExceptionConditionType.ModuleEquals:
+				case DbgExceptionConditionType.ModuleNameEquals:
 					WriteQuotedString(output, dnSpy_Debugger_Resources.Exception_Conditions_ModuleNameEquals, cond.Condition);
 					break;
 
-				case DbgExceptionConditionType.ModuleNotEquals:
+				case DbgExceptionConditionType.ModuleNameNotEquals:
 					WriteQuotedString(output, dnSpy_Debugger_Resources.Exception_Conditions_ModuleNameNotEquals, cond.Condition);
 					break;
 
@@ -72,18 +71,10 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			}
 		}
 
-		void WriteQuotedString(ITextColorWriter output, string formatString, string s) {
-			const string PATTERN = "{0}";
-			int index = formatString.IndexOf(PATTERN);
-			Debug.Assert(index >= 0);
-			if (index < 0)
-				return;
-			if (index != 0)
-				output.Write(BoxedTextColor.Text, formatString.Substring(0, index));
-			var quotedString = SimpleTypeConverter.ToString(s, true);
-			output.Write(BoxedTextColor.String, quotedString);
-			if (index + PATTERN.Length != formatString.Length)
-				output.Write(BoxedTextColor.Text, formatString.Substring(index + PATTERN.Length));
+		void WriteQuotedString(ITextColorWriter output, string text, string s) {
+			output.Write(BoxedTextColor.Text, text);
+			output.Write(BoxedTextColor.Text, " ");
+			output.Write(BoxedTextColor.String, SimpleTypeConverter.ToString(s, true));
 		}
 	}
 }

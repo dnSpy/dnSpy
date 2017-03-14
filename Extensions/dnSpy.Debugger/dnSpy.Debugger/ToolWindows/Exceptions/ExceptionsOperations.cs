@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Text;
@@ -50,6 +51,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 	[Export(typeof(ExceptionsOperations))]
 	sealed class ExceptionsOperationsImpl : ExceptionsOperations {
+		readonly IAppWindow appWindow;
 		readonly IExceptionsVM exceptionsVM;
 		readonly Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService;
 
@@ -59,7 +61,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		IEnumerable<ExceptionVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		ExceptionsOperationsImpl(IExceptionsVM exceptionsVM, Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) {
+		ExceptionsOperationsImpl(IAppWindow appWindow, IExceptionsVM exceptionsVM, Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) {
+			this.appWindow = appWindow;
 			this.exceptionsVM = exceptionsVM;
 			this.dbgExceptionSettingsService = dbgExceptionSettingsService;
 		}
@@ -104,7 +107,26 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		public override bool CanEditConditions => SelectedItems.Count > 0;
 		public override void EditConditions() {
-			//TODO: All selected items should get the same edited conditions
+			if (SelectedItems.Count == 0)
+				return;
+
+			var dlg = new EditExceptionConditionsDlg();
+			var vm = new EditExceptionConditionsVM(SortedSelectedItems.First().Settings.Conditions);
+			dlg.DataContext = vm;
+			dlg.Owner = appWindow.MainWindow;
+			var res = dlg.ShowDialog();
+			if (res != true)
+				return;
+
+			var newConditions = vm.GetConditions();
+			var newSettings = new DbgExceptionIdAndSettings[SelectedItems.Count];
+			for (int i = 0; i < newSettings.Length; i++) {
+				var item = SelectedItems[i];
+				var flags = item.Settings.Flags | DbgExceptionDefinitionFlags.StopFirstChance;
+				var settings = new DbgExceptionSettings(flags, newConditions);
+				newSettings[i] = new DbgExceptionIdAndSettings(item.Definition.Id, settings);
+			}
+			dbgExceptionSettingsService.Value.Modify(newSettings);
 		}
 
 		public override bool CanRestoreSettings => true;

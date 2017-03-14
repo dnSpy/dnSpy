@@ -259,6 +259,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Add Condition.
+        /// </summary>
+        public static string Button_AddCondition {
+            get {
+                return ResourceManager.GetString("Button_AddCondition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Attach.
         /// </summary>
         public static string Button_Attach {
@@ -1492,6 +1501,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Conditions.
+        /// </summary>
+        public static string EditConditions_Title {
+            get {
+                return ResourceManager.GetString("EditConditions_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Conditions....
         /// </summary>
         public static string EditConditionsCommand {
@@ -1794,7 +1812,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Module name equals {0}.
+        ///   Looks up a localized string similar to Module name equals.
         /// </summary>
         public static string Exception_Conditions_ModuleNameEquals {
             get {
@@ -1803,7 +1821,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Module name not equals {0}.
+        ///   Looks up a localized string similar to Module name not equals.
         /// </summary>
         public static string Exception_Conditions_ModuleNameNotEquals {
             get {

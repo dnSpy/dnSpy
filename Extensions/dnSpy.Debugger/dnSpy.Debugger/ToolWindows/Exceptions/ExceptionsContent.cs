@@ -106,7 +106,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		void ExceptionsControl_ExceptionsListViewDoubleClick(object sender, EventArgs e) {
-			//TODO: Show edit conditions dlg box
+			if (Operations.CanEditConditions)
+				Operations.EditConditions();
 		}
 
 		public void FocusSearchTextBox() => exceptionsControl.FocusSearchTextBox();

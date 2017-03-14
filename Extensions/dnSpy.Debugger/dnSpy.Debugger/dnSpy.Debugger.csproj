@@ -96,6 +96,10 @@
     <Compile Include="ToolWindows\Exceptions\AddExceptionVM.cs" />
     <Compile Include="ToolWindows\Exceptions\Commands.cs" />
     <Compile Include="ToolWindows\Exceptions\DbgExceptionFormatterService.cs" />
+    <Compile Include="ToolWindows\Exceptions\EditExceptionConditionsDlg.xaml.cs">
+      <DependentUpon>EditExceptionConditionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\Exceptions\EditExceptionConditionsVM.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionColumnConverter.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionContext.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionControl.xaml.cs">
@@ -172,6 +176,7 @@
     <Compile Include="ToolWindows\Threads\ThreadsToolWindowContent.cs" />
     <Compile Include="ToolWindows\Threads\ThreadsVM.cs" />
     <Compile Include="ToolWindows\Threads\ThreadVM.cs" />
+    <Compile Include="UI\BooleanToHiddenVisibilityConverter.cs" />
     <Compile Include="UI\ContentTypeDefinitions.cs" />
     <Compile Include="UI\DynamicCheckableMenuItem.cs" />
     <Compile Include="UI\ListBoxSelectedItemsAP.cs" />
@@ -234,6 +239,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ToolWindows\Exceptions\AddExceptionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ToolWindows\Exceptions\EditExceptionConditionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

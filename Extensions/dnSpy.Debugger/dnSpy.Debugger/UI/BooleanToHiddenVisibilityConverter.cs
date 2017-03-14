@@ -17,10 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Controls;
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Data;
 
-namespace dnSpy.Debugger.Dialogs.DebugProgram {
-	sealed partial class DebugProgramDlg : WindowBase {
-		public DebugProgramDlg() => InitializeComponent();
+namespace dnSpy.Debugger.UI {
+	sealed class BooleanToHiddenVisibilityConverter : IValueConverter {
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+			value as bool? ?? false ? Visibility.Visible : Visibility.Hidden;
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+			if (value is Visibility vis)
+				return vis == Visibility.Visible;
+			return false;
+		}
 	}
 }

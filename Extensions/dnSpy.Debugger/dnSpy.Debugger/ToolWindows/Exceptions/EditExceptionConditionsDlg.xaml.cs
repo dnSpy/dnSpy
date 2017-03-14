@@ -19,8 +19,8 @@
 
 using dnSpy.Contracts.Controls;
 
-namespace dnSpy.Debugger.Dialogs.DebugProgram {
-	sealed partial class DebugProgramDlg : WindowBase {
-		public DebugProgramDlg() => InitializeComponent();
+namespace dnSpy.Debugger.ToolWindows.Exceptions {
+	sealed partial class EditExceptionConditionsDlg : WindowBase {
+		public EditExceptionConditionsDlg() => InitializeComponent();
 	}
 }

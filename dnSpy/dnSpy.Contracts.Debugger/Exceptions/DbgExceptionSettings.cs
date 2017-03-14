@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="conditions">Conditions or null</param>
 		public DbgExceptionSettings(DbgExceptionDefinitionFlags flags, ReadOnlyCollection<DbgExceptionConditionSettings> conditions = null) {
 			Flags = flags;
-			Conditions = conditions ?? emptyConditionsCollection;
+			Conditions = conditions == null || conditions.Count == 0 ? emptyConditionsCollection : conditions;
 		}
 		static readonly ReadOnlyCollection<DbgExceptionConditionSettings> emptyConditionsCollection = new ReadOnlyCollection<DbgExceptionConditionSettings>(Array.Empty<DbgExceptionConditionSettings>());
 
