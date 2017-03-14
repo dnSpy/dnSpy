@@ -118,7 +118,18 @@ namespace dnSpy.Images {
 			isHighContrast = themeService.Theme.IsHighContrast;
 		}
 
-		Color? GetColor(Brush brush) => (brush as SolidColorBrush)?.Color;
+		Color? GetColor(Brush brush) {
+			if (brush is SolidColorBrush scb)
+				return scb.Color;
+			if (brush is GradientBrush gb) {
+				int count = gb.GradientStops.Count;
+				if (count > 0) {
+					// Pick the middle one, perhaps it's more correct for most images
+					return gb.GradientStops[count / 2].Color;
+				}
+			}
+			return null;
+		}
 
 		Size GetDpi(DependencyObject dpiObject, Size dpi) {
 			if (dpiObject != null) {
