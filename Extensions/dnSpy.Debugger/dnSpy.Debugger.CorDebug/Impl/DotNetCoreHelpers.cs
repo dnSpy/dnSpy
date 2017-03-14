@@ -19,6 +19,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	static class DotNetCoreHelpers {
@@ -66,7 +67,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		public static string GetDebugShimFilename(int bitness) {
-			var basePath = Path.GetDirectoryName(typeof(DotNetCoreHelpers).Assembly.Location);
+			var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 			basePath = Path.Combine(basePath, "debug", "core");
 			const string filename = "dbgshim.dll";
 			switch (bitness) {

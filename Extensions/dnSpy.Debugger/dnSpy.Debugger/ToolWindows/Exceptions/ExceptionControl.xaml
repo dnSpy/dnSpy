@@ -56,7 +56,7 @@
                     <img:DsImage ImageReference="{x:Static img:DsImages.Filter}"/>
                 </CheckBox>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                <CheckBox Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" IsChecked="{Binding VM.IsAddingExceptions}" ToolTip="{Binding AddExceptionToolTip}">
+                <CheckBox Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" IsChecked="{Binding VM.IsAddingExceptions}" ToolTip="{Binding AddExceptionToolTip}" IsEnabled="{Binding VM.IsAddingExceptionsEnabled}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Add}"/>
                 </CheckBox>
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveExceptionsCommand}" ToolTip="{Binding RemoveExceptionsToolTip}">

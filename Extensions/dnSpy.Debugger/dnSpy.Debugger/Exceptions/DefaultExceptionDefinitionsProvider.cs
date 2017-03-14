@@ -22,7 +22,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using dnSpy.Contracts.Debugger.Exceptions;
 
 namespace dnSpy.Debugger.Exceptions {
@@ -35,12 +37,36 @@ namespace dnSpy.Debugger.Exceptions {
 		DefaultExceptionDefinitionsProvider([ImportMany] IEnumerable<Lazy<DbgExceptionDefinitionProvider, IDbgExceptionDefinitionProviderMetadata>> dbgExceptionDefinitionProviders) {
 			var providers = dbgExceptionDefinitionProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
+			var xmlFiles = new List<string>();
+			foreach (var p in providers) {
+				foreach (var file in p.Value.GetExceptionFilenames()) {
+					string filename;
+					if (Path.IsPathRooted(file))
+						filename = file;
+					else
+						filename = Path.Combine(Path.GetDirectoryName(p.Value.GetType().Assembly.Location), file);
+					if (!File.Exists(filename))
+						continue;
+					xmlFiles.Add(filename);
+				}
+			}
+			var debugDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "debug");
+			xmlFiles.AddRange(Directory.GetFiles(debugDir, "*.ex.xml").OrderBy(a => a, StringComparer.OrdinalIgnoreCase));
+			var reader = new ExceptionsFileReader();
+			foreach (var file in xmlFiles.Distinct(StringComparer.OrdinalIgnoreCase))
+				reader.Read(file);
+
 			var groupDefs = new Dictionary<string, DbgExceptionGroupDefinition>(StringComparer.Ordinal);
 			foreach (var p in providers) {
 				foreach (var def in p.Value.CreateGroups()) {
 					if (!groupDefs.ContainsKey(def.Name))
 						groupDefs.Add(def.Name, def);
 				}
+			}
+			// Groups from files have lower priority than anything from CreateGroups()
+			foreach (var def in reader.GroupDefinitions) {
+				if (!groupDefs.ContainsKey(def.Name))
+					groupDefs.Add(def.Name, def);
 			}
 			GroupDefinitions = new ReadOnlyCollection<DbgExceptionGroupDefinition>(groupDefs.Select(a => a.Value).ToArray());
 
@@ -54,6 +80,15 @@ namespace dnSpy.Debugger.Exceptions {
 					if (!defs.ContainsKey(def.Id))
 						defs.Add(def.Id, def);
 				}
+			}
+			// Exceptions from files have lower priority than anything from Create()
+			foreach (var def in reader.ExceptionDefinitions) {
+				bool b = groupDefs.ContainsKey(def.Id.Group);
+				Debug.Assert(b);
+				if (!b)
+					continue;
+				if (!defs.ContainsKey(def.Id))
+					defs.Add(def.Id, def);
 			}
 			foreach (var group in GroupDefinitions) {
 				var id = new DbgExceptionId(group.Name);

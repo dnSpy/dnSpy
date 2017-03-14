@@ -62,6 +62,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			set => lazyToolWindowVMHelper.IsVisible = value;
 		}
 
+		public bool IsAddingExceptionsEnabled => dbgExceptionSettingsService.Value.GroupDefinitions.Count > 0;
 		public bool IsAddingExceptions {
 			get => isAddingExceptions;
 			set {

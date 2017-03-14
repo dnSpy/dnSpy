@@ -28,16 +28,30 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// </summary>
 	public abstract class DbgExceptionDefinitionProvider {
 		/// <summary>
+		/// Gets exception files (*.ex.xml) that define exceptions and exception groups. If a relative filename
+		/// is returned, it's relative to the assembly of the called type.
+		/// There's no need to return files already in the debug directory.
+		/// </summary>
+		/// <returns></returns>
+		public virtual IEnumerable<string> GetExceptionFilenames() {
+			yield break;
+		}
+
+		/// <summary>
 		/// Returns all exception group definitions
 		/// </summary>
 		/// <returns></returns>
-		public abstract IEnumerable<DbgExceptionGroupDefinition> CreateGroups();
+		public virtual IEnumerable<DbgExceptionGroupDefinition> CreateGroups() {
+			yield break;
+		}
 
 		/// <summary>
 		/// Returns all exception definitions
 		/// </summary>
 		/// <returns></returns>
-		public abstract IEnumerable<DbgExceptionDefinition> Create();
+		public virtual IEnumerable<DbgExceptionDefinition> Create() {
+			yield break;
+		}
 	}
 
 	/// <summary>Metadata</summary>

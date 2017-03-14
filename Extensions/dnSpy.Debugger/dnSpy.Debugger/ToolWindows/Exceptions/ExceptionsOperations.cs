@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				SelectedItems.Add(vm);
 		}
 
-		public override bool CanAddException => true;
+		public override bool CanAddException => dbgExceptionSettingsService.Value.GroupDefinitions.Count > 0;
 		public override void AddException() => exceptionsVM.IsAddingExceptions = !exceptionsVM.IsAddingExceptions;
 
 		public override bool CanRemoveExceptions => SelectedItems.Count > 0;

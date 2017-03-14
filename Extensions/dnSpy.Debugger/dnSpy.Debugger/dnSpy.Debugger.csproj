@@ -52,6 +52,8 @@
     <Compile Include="Exceptions\DbgExceptionSettingsServiceImpl.cs" />
     <Compile Include="Exceptions\DefaultExceptionDefinitionsProvider.cs" />
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
+    <Compile Include="Exceptions\ExceptionsFileReader.cs" />
+    <None Include="Exceptions\GenerateExceptionsXmlFile.cs" />
     <Compile Include="Impl\DbgAppDomainImpl.cs" />
     <Compile Include="Impl\DbgDebuggingContextImpl.cs" />
     <Compile Include="Impl\DbgDispatcher.cs" />
@@ -207,6 +209,8 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
