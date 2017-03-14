@@ -23,16 +23,19 @@ using dnSpy.Contracts.Debugger.Exceptions;
 namespace dnSpy.Debugger.ToolWindows.Exceptions {
 	sealed class ExceptionGroupVM {
 		public string DisplayName { get; }
+		public string ShortDisplayName { get; }
 		public DbgExceptionGroupDefinition? Definition { get; }
 
 		public ExceptionGroupVM(string displayName) {
 			Definition = null;
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
+			ShortDisplayName = DisplayName;
 		}
 
 		public ExceptionGroupVM(DbgExceptionGroupDefinition definition) {
 			Definition = definition;
-			DisplayName = definition.ShortDisplayName;
+			DisplayName = definition.DisplayName;
+			ShortDisplayName = definition.ShortDisplayName;
 		}
 	}
 }

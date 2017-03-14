@@ -197,7 +197,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			if (exceptionGroups.Count != 0)
 				return;
-			foreach (var g in dbgExceptionSettingsService.Value.GroupDefinitions.Select(a => new ExceptionGroupVM(a)).OrderBy(a => a.DisplayName, StringComparer.CurrentCultureIgnoreCase))
+			foreach (var g in dbgExceptionSettingsService.Value.GroupDefinitions.Select(a => new ExceptionGroupVM(a)).OrderBy(a => a.ShortDisplayName, StringComparer.CurrentCultureIgnoreCase))
 				exceptionGroups.Add(g);
 			exceptionGroups.Insert(0, new ExceptionGroupVM(dnSpy_Debugger_Resources.Exceptions_AllGroups));
 			SelectedGroup = exceptionGroups[0];

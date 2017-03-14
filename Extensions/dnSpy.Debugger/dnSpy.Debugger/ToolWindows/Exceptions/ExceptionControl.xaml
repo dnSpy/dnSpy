@@ -68,7 +68,7 @@
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RestoreSettingsCommand}" ToolTip="{Binding RestoreSettingsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.UndoCheckBoxList}"/>
                 </Button>
-                <ComboBox Margin="5 0 0 0" Width="100" ItemsSource="{Binding VM.ExceptionGroupCollection}" SelectedItem="{Binding VM.SelectedGroup}" DisplayMemberPath="DisplayName" />
+                <ComboBox Margin="5 0 0 0" Width="100" ItemsSource="{Binding VM.ExceptionGroupCollection}" SelectedItem="{Binding VM.SelectedGroup}" DisplayMemberPath="ShortDisplayName" />
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
                 </Button>
