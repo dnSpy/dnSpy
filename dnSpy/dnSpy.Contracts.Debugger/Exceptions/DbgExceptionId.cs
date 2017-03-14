@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public string Group => group;
 
 		/// <summary>
-		/// Name of exception. This property is only valid if <see cref="HasName"/> is true
+		/// Name of exception (case insensitive). This property is only valid if <see cref="HasName"/> is true
 		/// </summary>
 		public string Name => name;
 
@@ -131,7 +131,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 					return false;
 			}
 			else {
-				if (!StringComparer.Ordinal.Equals(name, other.name))
+				if (!StringComparer.OrdinalIgnoreCase.Equals(name, other.name))
 					return false;
 			}
 			if (!StringComparer.Ordinal.Equals(group, other.group))
@@ -155,7 +155,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 			if (Kind == DbgExceptionIdKind.Code)
 				hc ^= code;
 			else
-				hc ^= StringComparer.Ordinal.GetHashCode(name ?? string.Empty);
+				hc ^= StringComparer.OrdinalIgnoreCase.GetHashCode(name ?? string.Empty);
 			return hc;
 		}
 
