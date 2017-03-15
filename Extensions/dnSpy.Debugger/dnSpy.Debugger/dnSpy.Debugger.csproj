@@ -49,6 +49,7 @@
     </Compile>
     <Compile Include="Dialogs\DebugProgram\DebugProgramVM.cs" />
     <Compile Include="Dialogs\DebugProgram\OptionsPageVM.cs" />
+    <Compile Include="Exceptions\DbgExceptionFormatterService.cs" />
     <Compile Include="Exceptions\DbgExceptionImpl.cs" />
     <Compile Include="Exceptions\DbgExceptionSettingsServiceImpl.cs" />
     <Compile Include="Exceptions\DefaultExceptionDefinitionsProvider.cs" />
@@ -99,7 +100,6 @@
     </Compile>
     <Compile Include="ToolWindows\Exceptions\AddExceptionVM.cs" />
     <Compile Include="ToolWindows\Exceptions\Commands.cs" />
-    <Compile Include="ToolWindows\Exceptions\DbgExceptionFormatterService.cs" />
     <Compile Include="ToolWindows\Exceptions\EditExceptionConditionsDlg.xaml.cs">
       <DependentUpon>EditExceptionConditionsDlg.xaml</DependentUpon>
     </Compile>

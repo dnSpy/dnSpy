@@ -18,7 +18,6 @@
 */
 
 using System;
-using dnSpy.Contracts.Debugger.Exceptions;
 
 namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>

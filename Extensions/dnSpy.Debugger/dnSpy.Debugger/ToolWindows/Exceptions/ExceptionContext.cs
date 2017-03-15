@@ -20,6 +20,7 @@
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Exceptions;
 using dnSpy.Debugger.Text;
 using dnSpy.Debugger.ToolWindows.Text;
 using dnSpy.Debugger.UI;

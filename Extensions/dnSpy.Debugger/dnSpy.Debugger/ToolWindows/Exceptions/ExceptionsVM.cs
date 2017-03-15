@@ -29,6 +29,7 @@ using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Exceptions;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.ToolWindows.Text;
 using dnSpy.Debugger.UI;

@@ -258,7 +258,7 @@ namespace dnSpy.Debugger.Impl {
 				break;
 
 			default:
-				//TODO:
+				Debug.Fail($"Unknown message: {e.MessageKind}");
 				break;
 			}
 		}

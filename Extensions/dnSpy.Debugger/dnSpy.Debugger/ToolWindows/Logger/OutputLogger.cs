@@ -25,6 +25,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.Exceptions;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Utilities;
@@ -48,14 +49,16 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		readonly Lazy<IOutputService> outputService;
 		readonly Lazy<IContentTypeRegistryService> contentTypeRegistryService;
 		readonly OutputLoggerSettings outputLoggerSettings;
+		readonly Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService;
 		IOutputTextPane textPane;
 
 		[ImportingConstructor]
-		OutputLogger(UIDispatcher uiDispatcher, Lazy<IOutputService> outputService, Lazy<IContentTypeRegistryService> contentTypeRegistryService, OutputLoggerSettings outputLoggerSettings) {
+		OutputLogger(UIDispatcher uiDispatcher, Lazy<IOutputService> outputService, Lazy<IContentTypeRegistryService> contentTypeRegistryService, OutputLoggerSettings outputLoggerSettings, Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService) {
 			this.uiDispatcher = uiDispatcher;
 			this.outputService = outputService;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.outputLoggerSettings = outputLoggerSettings;
+			this.dbgExceptionFormatterService = dbgExceptionFormatterService;
 		}
 
 		void IOutputServiceListener2.Initialize(IOutputService outputService) => Initialize();
@@ -204,15 +207,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			}
 		}
 
-		string GetExceptionName(DbgExceptionId id) {
-			switch (id.Kind) {
-			case DbgExceptionIdKind.Name:		return id.Name;
-			case DbgExceptionIdKind.Code:		return "0x" + id.Code.ToString("X8");
-			case DbgExceptionIdKind.DefaultId:
-			default:
-				return "???";
-			}
-		}
+		string GetExceptionName(DbgExceptionId id) => dbgExceptionFormatterService.Value.ToString(id);
 
 		string GetProcessName(DbgProcess process) {
 			if (process == null)

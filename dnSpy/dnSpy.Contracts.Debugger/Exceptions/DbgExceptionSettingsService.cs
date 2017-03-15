@@ -80,6 +80,14 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo>> ExceptionsChanged;
 
 		/// <summary>
+		/// Returns the exception definition if it exists
+		/// </summary>
+		/// <param name="id">Exception id</param>
+		/// <param name="definition">Updated with the exception definition if the method returns true</param>
+		/// <returns></returns>
+		public abstract bool TryGetDefinition(DbgExceptionId id, out DbgExceptionDefinition definition);
+
+		/// <summary>
 		/// Returns exception settings or false if the exception doesn't exist in the collection
 		/// </summary>
 		/// <param name="id">Id of exception</param>

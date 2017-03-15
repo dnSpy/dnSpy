@@ -162,6 +162,19 @@ namespace dnSpy.Debugger.Exceptions {
 				ExceptionsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo>(added.ToArray(), added: true));
 		}
 
+		public override bool TryGetDefinition(DbgExceptionId id, out DbgExceptionDefinition definition) {
+			if (id.Group == null)
+				throw new ArgumentException();
+			lock (lockObj) {
+				if (toExceptionInfo.TryGetValue(id, out var info)) {
+					definition = info.Definition;
+					return true;
+				}
+			}
+			definition = default(DbgExceptionDefinition);
+			return false;
+		}
+
 		public override bool TryGetSettings(DbgExceptionId id, out DbgExceptionSettings settings) {
 			if (id.Group == null)
 				throw new ArgumentException();

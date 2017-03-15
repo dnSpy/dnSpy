@@ -26,9 +26,16 @@ using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
 
-namespace dnSpy.Debugger.ToolWindows.Exceptions {
+namespace dnSpy.Debugger.Exceptions {
 	abstract class DbgExceptionFormatterService {
 		public abstract void WriteName(IDebugOutputWriter writer, DbgExceptionDefinition definition, bool includeDescription);
+		public abstract void WriteName(IDebugOutputWriter writer, DbgExceptionId id, bool includeDescription);
+
+		public string ToString(DbgExceptionId id, bool includeDescription = true) {
+			var writer = new StringBuilderDebugOutputWriter();
+			WriteName(writer, id, includeDescription);
+			return writer.ToString();
+		}
 	}
 
 	[Export(typeof(DbgExceptionFormatterService))]
@@ -114,5 +121,11 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		void WriteError(IDebugOutputWriter output) => output.Write(BoxedTextColor.Error, "???");
+
+		public override void WriteName(IDebugOutputWriter writer, DbgExceptionId id, bool includeDescription) {
+			if (!exceptionSettingsService.Value.TryGetDefinition(id, out var def))
+				def = new DbgExceptionDefinition(id, DbgExceptionDefinitionFlags.None, description: null);
+			WriteName(writer, def, includeDescription);
+		}
 	}
 }
