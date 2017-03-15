@@ -21,6 +21,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Debugger.Native;
+using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Impl {
 	sealed class DbgThreadImpl : DbgThread {
@@ -49,6 +51,7 @@ namespace dnSpy.Debugger.Impl {
 
 		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
+		readonly SafeAccessTokenHandle hThread;
 		DbgAppDomainImpl appDomain;
 		string kind;
 		int id;
@@ -68,6 +71,8 @@ namespace dnSpy.Debugger.Impl {
 			this.name = name;
 			this.suspendedCount = suspendedCount;
 			this.state = state ?? emptyState;
+			const int dwDesiredAccess = NativeMethods.THREAD_QUERY_INFORMATION;
+			hThread = NativeMethods.OpenThread(dwDesiredAccess, false, (uint)id);
 		}
 
 		public override event PropertyChangedEventHandler PropertyChanged;
@@ -155,11 +160,20 @@ namespace dnSpy.Debugger.Impl {
 			return true;
 		}
 
+		internal int GetExitCode() {
+			if (NativeMethods.GetExitCodeThread(hThread.DangerousGetHandle(), out int threadExitCode))
+				return threadExitCode;
+			return -1;
+		}
+
 		internal void Remove() => DispatcherThread.BeginInvoke(() => runtime.Remove_DbgThread(this));
 
 		public override void Freeze() => runtime.Freeze(this);
 		public override void Thaw() => runtime.Thaw(this);
 
-		protected override void CloseCore() => DispatcherThread.VerifyAccess();
+		protected override void CloseCore() {
+			DispatcherThread.VerifyAccess();
+			hThread.Dispose();
+		}
 	}
 }

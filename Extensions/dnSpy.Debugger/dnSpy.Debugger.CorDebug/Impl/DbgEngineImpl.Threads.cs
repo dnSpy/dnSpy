@@ -219,7 +219,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					if (toEngineThread.TryGetValue(e.Thread, out engineThread))
 						toEngineThread.Remove(e.Thread);
 				}
-				engineThread?.Remove();
+				if (engineThread != null) {
+					e.ShouldPause = true;
+					engineThread.Remove();
+				}
 			}
 		}
 

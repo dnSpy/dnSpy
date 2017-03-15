@@ -420,6 +420,12 @@ namespace dnSpy.Debugger.Impl {
 		}
 		bool shouldDetach;
 
+		internal int GetExitCode() {
+			if (NativeMethods.GetExitCodeProcess(hProcess.DangerousGetHandle(), out int processExitCode))
+				return processExitCode;
+			return -1;
+		}
+
 		public override void Detach() => owner.Detach(this);
 		public override void Terminate() => owner.Terminate(this);
 	}

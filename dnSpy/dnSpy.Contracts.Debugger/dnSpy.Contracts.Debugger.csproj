@@ -45,6 +45,7 @@
     <Compile Include="DbgDebuggingContext.cs" />
     <Compile Include="DbgImageLayout.cs" />
     <Compile Include="DbgManager.cs" />
+    <Compile Include="DbgMessageEventArgs.cs" />
     <Compile Include="DbgModule.cs" />
     <Compile Include="DbgObject.cs" />
     <Compile Include="DbgProcess.cs" />

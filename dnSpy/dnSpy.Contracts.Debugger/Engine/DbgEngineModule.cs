@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgModule Module { get; }
 
 		/// <summary>
-		/// Removes the module and disposes of it
+		/// Removes the module and disposes of it. The engine has paused the program.
 		/// </summary>
 		public abstract void Remove();
 

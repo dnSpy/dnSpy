@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgAppDomain AppDomain { get; }
 
 		/// <summary>
-		/// Removes the app domain and disposes of it
+		/// Removes the app domain and disposes of it. The engine has paused the program.
 		/// </summary>
 		public abstract void Remove();
 

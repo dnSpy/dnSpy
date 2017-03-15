@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgThread Thread { get; }
 
 		/// <summary>
-		/// Removes the thread and disposes of it
+		/// Removes the thread and disposes of it. The engine has paused the program.
 		/// </summary>
 		public abstract void Remove();
 

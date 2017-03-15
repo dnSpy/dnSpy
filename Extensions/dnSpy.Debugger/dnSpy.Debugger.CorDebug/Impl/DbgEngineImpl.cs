@@ -209,38 +209,23 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 			else {
 				DbgEngineAppDomain engineAppDomain;
-				List<DbgEngineThread> threadsToRemove = null;
-				List<DbgEngineModule> modulesToRemove = null;
 				lock (lockObj) {
 					if (toEngineAppDomain.TryGetValue(e.AppDomain, out engineAppDomain)) {
 						toEngineAppDomain.Remove(e.AppDomain);
 						var appDomain = engineAppDomain.AppDomain;
 						foreach (var kv in toEngineThread.ToArray()) {
-							if (kv.Value.Thread.AppDomain == appDomain) {
-								if (threadsToRemove == null)
-									threadsToRemove = new List<DbgEngineThread>();
-								threadsToRemove.Add(kv.Value);
+							if (kv.Value.Thread.AppDomain == appDomain)
 								toEngineThread.Remove(kv.Key);
-							}
 						}
 						foreach (var kv in toEngineModule.ToArray()) {
-							if (kv.Value.Module.AppDomain == appDomain) {
-								if (modulesToRemove == null)
-									modulesToRemove = new List<DbgEngineModule>();
-								modulesToRemove.Add(kv.Value);
+							if (kv.Value.Module.AppDomain == appDomain)
 								toEngineModule.Remove(kv.Key);
-							}
 						}
 					}
 				}
-				engineAppDomain?.Remove();
-				if (threadsToRemove != null) {
-					foreach (var t in threadsToRemove)
-						t.Remove();
-				}
-				if (modulesToRemove != null) {
-					foreach (var m in modulesToRemove)
-						m.Remove();
+				if (engineAppDomain != null) {
+					e.ShouldPause = true;
+					engineAppDomain.Remove();
 				}
 			}
 		}
@@ -260,7 +245,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					if (toEngineModule.TryGetValue(e.Module, out engineModule))
 						toEngineModule.Remove(e.Module);
 				}
-				engineModule?.Remove();
+				if (engineModule != null) {
+					e.ShouldPause = true;
+					engineModule.Remove();
+				}
 			}
 		}
 

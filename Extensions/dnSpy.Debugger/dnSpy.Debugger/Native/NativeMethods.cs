@@ -44,6 +44,11 @@ namespace dnSpy.Debugger.Native {
 		public const int THREAD_QUERY_LIMITED_INFORMATION = 0x0800;
 
 		[DllImport("kernel32", SetLastError = true)]
+		public static extern bool GetExitCodeThread(IntPtr hThread, out int lpExitCode);
+		[DllImport("kernel32", SetLastError = true)]
+		public static extern bool GetExitCodeProcess(IntPtr hProcess, out int lpExitCode);
+
+		[DllImport("kernel32", SetLastError = true)]
 		public static extern IntPtr SetThreadAffinityMask(IntPtr hThread, IntPtr dwThreadAffinityMask);
 		[DllImport("kernel32", SetLastError = true)]
 		public static extern int GetThreadPriority(IntPtr hThread);
