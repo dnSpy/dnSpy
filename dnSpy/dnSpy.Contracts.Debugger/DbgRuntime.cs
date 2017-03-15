@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgProcess Process { get; }
 
 		/// <summary>
+		/// Gets the runtime name
+		/// </summary>
+		public abstract string Name { get; }
+
+		/// <summary>
 		/// Gets all app domains
 		/// </summary>
 		public abstract DbgAppDomain[] AppDomains { get; }

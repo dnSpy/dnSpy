@@ -138,6 +138,7 @@ namespace dnSpy.Output {
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
 				foreach (var lazy in outputServiceListeners) {
 					var l = lazy.Value;
+					(l as IOutputServiceListener2)?.Initialize(this);
 				}
 			}));
 		}

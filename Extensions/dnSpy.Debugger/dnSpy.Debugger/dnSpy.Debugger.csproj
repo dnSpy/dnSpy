@@ -120,6 +120,10 @@
     <Compile Include="ToolWindows\FormatterObject.cs" />
     <Compile Include="ToolWindows\FormatterUtils.cs" />
     <Compile Include="ToolWindows\LazyToolWindowVMHelper.cs" />
+    <Compile Include="ToolWindows\Logger\Commands.cs" />
+    <Compile Include="ToolWindows\Logger\ContentTypeDefinitions.cs" />
+    <Compile Include="ToolWindows\Logger\OutputLogger.cs" />
+    <Compile Include="ToolWindows\Logger\OutputLoggerSettings.cs" />
     <Compile Include="ToolWindows\Memory\BackgroundImageOptionDefinitions.cs" />
     <Compile Include="ToolWindows\Memory\BufferFileCreator.cs" />
     <Compile Include="ToolWindows\Memory\Commands.cs" />

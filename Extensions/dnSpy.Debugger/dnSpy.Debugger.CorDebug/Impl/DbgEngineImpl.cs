@@ -116,6 +116,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			case DebugCallbackKind.ExitProcess:
 				// Handled in DnDebugger_OnProcessStateChanged()
 				break;
+
+			case DebugCallbackKind.LogMessage:
+				var lmsgArgs = (LogMessageDebugCallbackEventArgs)e;
+				var msg = lmsgArgs.Message;
+				if (msg != null) {
+					e.AddPauseReason(DebuggerPauseReason.Other);
+					SendMessage(new DbgMessageProgramMessage(msg));
+				}
+				break;
 			}
 		}
 
@@ -274,6 +283,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				dbgOptions.DebugOptions.IgnoreBreakInstructions = options.IgnoreBreakInstructions;
 
 				dnDebugger = DnDebugger.DebugProcess(dbgOptions);
+				OnDebugProcess(dnDebugger);
 				if (options.DisableManagedDebuggerDetection)
 					DisableSystemDebuggerDetection.Initialize(dnDebugger);
 
@@ -302,6 +312,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				return;
 			}
 		}
+
+		protected virtual void OnDebugProcess(DnDebugger dnDebugger) { }
 
 		static string GetIncompatiblePlatformErrorMessage() {
 			if (IntPtr.Size == 4)

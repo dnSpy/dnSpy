@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
@@ -28,11 +29,22 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetFramework;
 		public override string Debugging => "CLR";
 
+		public override string RuntimeName {
+			get {
+				Debug.Assert(runtimeName != null);
+				return runtimeName;
+			}
+		}
+		string runtimeName;
+
 		public DotNetFrameworkDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind)
 			: base(clrDacProvider, dbgManager, startKind) {
 		}
 
 		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) =>
 			new DesktopCLRTypeDebugInfo();
+
+		protected override void OnDebugProcess(DnDebugger dnDebugger) =>
+			runtimeName = "CLR " + dnDebugger.DebuggeeVersion;
 	}
 }

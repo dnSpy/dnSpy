@@ -28,6 +28,18 @@ namespace dnSpy.Contracts.Output {
 	public interface IOutputServiceListener {
 	}
 
+	/// <summary>
+	/// Gets created when <see cref="IOutputService"/> gets created. Use
+	/// <see cref="ExportOutputServiceListenerAttribute"/> to export an instance.
+	/// </summary>
+	public interface IOutputServiceListener2 : IOutputServiceListener {
+		/// <summary>
+		/// Called to initialize the instance
+		/// </summary>
+		/// <param name="outputService">Output service</param>
+		void Initialize(IOutputService outputService);
+	}
+
 	/// <summary>Metadata</summary>
 	public interface IOutputServiceListenerMetadata {
 		/// <summary>See <see cref="ExportOutputServiceListenerAttribute.Order"/></summary>

@@ -79,6 +79,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// An exception was thrown (<see cref="DbgMessageExceptionThrownEventArgs"/>)
 		/// </summary>
 		ExceptionThrown,
+
+		/// <summary>
+		/// Message from the debugged program (<see cref="DbgMessageProgramMessageEventArgs"/>)
+		/// </summary>
+		ProgramMessage,
 	}
 
 	/// <summary>
@@ -397,5 +402,27 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="exception">Exception</param>
 		public DbgMessageExceptionThrownEventArgs(DbgException exception) =>
 			Exception = exception ?? throw new ArgumentNullException(nameof(exception));
+	}
+
+	/// <summary>
+	/// Message from the debugged program (<see cref="DbgMessageKind.ProgramMessage"/>)
+	/// </summary>
+	public sealed class DbgMessageProgramMessageEventArgs : DbgMessageEventArgs {
+		/// <summary>
+		/// Returns <see cref="DbgMessageKind.ProgramMessage"/>
+		/// </summary>
+		public override DbgMessageKind Kind => DbgMessageKind.ProgramMessage;
+
+		/// <summary>
+		/// Gets the text
+		/// </summary>
+		public string Message { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="message">Message</param>
+		public DbgMessageProgramMessageEventArgs(string message) =>
+			Message = message ?? throw new ArgumentNullException(nameof(message));
 	}
 }

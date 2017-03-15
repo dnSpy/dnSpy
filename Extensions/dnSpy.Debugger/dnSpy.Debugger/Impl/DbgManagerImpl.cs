@@ -253,6 +253,10 @@ namespace dnSpy.Debugger.Impl {
 				OnBreak_DbgThread(engine, (DbgMessageBreak)e);
 				break;
 
+			case DbgEngineMessageKind.ProgramMessage:
+				OnProgramMessage_DbgThread(engine, (DbgMessageProgramMessage)e);
+				break;
+
 			default:
 				//TODO:
 				break;
@@ -518,6 +522,12 @@ namespace dnSpy.Debugger.Impl {
 			}
 			if (raiseIsRunning)
 				IsRunningChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		void OnProgramMessage_DbgThread(DbgEngine engine, DbgMessageProgramMessage e) {
+			DispatcherThread.VerifyAccess();
+			var ep = new DbgMessageProgramMessageEventArgs(e.Message);
+			OnConditionalBreak_DbgThread(engine, ep);
 		}
 
 		internal void AddAppDomain_DbgThread(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain) {

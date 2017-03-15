@@ -20,8 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Windows.Threading;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
@@ -271,13 +273,21 @@ namespace dnSpy.Debugger.DbgUI {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:OutputCommand", Icon = DsImagesAttribute.Output, Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS, Order = 20)]
 		sealed class OutputWindowCommand : DebugMainMenuCommand {
+			readonly IDsToolWindowService toolWindowService;
+			readonly Lazy<IOutputService> outputService;
+
 			[ImportingConstructor]
-			public OutputWindowCommand(Lazy<Debugger> debugger)
+			public OutputWindowCommand(Lazy<Debugger> debugger, IDsToolWindowService toolWindowService, Lazy<IOutputService> outputService)
 				: base(debugger, null) {
+				this.toolWindowService = toolWindowService;
+				this.outputService = outputService;
 			}
 
 			public override void Execute(IMenuItemContext context) {
-				//TODO: Show the Debug output in the Output window
+				toolWindowService.Show(new Guid("90A45E97-727E-4F31-8692-06E19218D99A"));
+				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+					outputService.Value.Select(ToolWindows.Logger.OutputLogger.GUID_OUTPUT_LOGGER_DEBUG);
+				}));
 			}
 		}
 

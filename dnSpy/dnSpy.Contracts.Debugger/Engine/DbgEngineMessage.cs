@@ -122,4 +122,25 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="errorMessage">Error message</param>
 		public DbgMessageBreak(string errorMessage) : base(errorMessage) { }
 	}
+
+	/// <summary>
+	/// <see cref="DbgEngineMessageKind.ProgramMessage"/> event
+	/// </summary>
+	public sealed class DbgMessageProgramMessage : DbgEngineMessage {
+		/// <summary>
+		/// Returns <see cref="DbgEngineMessageKind.ProgramMessage"/>
+		/// </summary>
+		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.ProgramMessage;
+
+		/// <summary>
+		/// Gets the message
+		/// </summary>
+		public string Message { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="message">Message</param>
+		public DbgMessageProgramMessage(string message) => Message = message ?? throw new ArgumentNullException(nameof(message));
+	}
 }

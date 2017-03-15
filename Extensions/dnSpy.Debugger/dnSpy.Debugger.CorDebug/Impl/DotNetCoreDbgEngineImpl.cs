@@ -29,6 +29,7 @@ using dnSpy.Debugger.CorDebug.Properties;
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DotNetCoreDbgEngineImpl : DbgEngineImpl {
 		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetCore;
+		public override string RuntimeName => "CoreCLR";
 		public override string Debugging => "CoreCLR";
 
 		public DotNetCoreDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind)
