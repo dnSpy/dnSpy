@@ -40,10 +40,5 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// The debugged executable is paused due to a call to <see cref="DbgEngine.Break"/>
 		/// </summary>
 		Break,
-
-		/// <summary>
-		/// An exception was thrown in the debugged process. The engine has paused the program.
-		/// </summary>
-		Exception,
 	}
 }

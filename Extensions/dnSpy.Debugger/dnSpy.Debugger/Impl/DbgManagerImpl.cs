@@ -246,10 +246,6 @@ namespace dnSpy.Debugger.Impl {
 				OnBreak_DbgThread(engine, (DbgMessageBreak)e);
 				break;
 
-			case DbgEngineMessageKind.Exception:
-				OnException_DbgThread(engine, (DbgMessageException)e);
-				break;
-
 			default:
 				//TODO:
 				break;
@@ -499,9 +495,39 @@ namespace dnSpy.Debugger.Impl {
 				IsRunningChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		void OnException_DbgThread(DbgEngine engine, DbgMessageException e) {
+		internal void AddAppDomain_DbgThread(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain) {
 			DispatcherThread.VerifyAccess();
-			OnConditionalBreak_DbgThread(engine, e.Exception, () => exceptionConditionsChecker.ShouldBreak(e.Exception));
+			Debug.Assert(IsOurEngine(runtime.Engine));
+			if (!IsOurEngine(runtime.Engine))
+				return;
+			runtime.Add_DbgThread(appDomain);
+			OnConditionalBreak_DbgThread(runtime.Engine, null, () => false);
+		}
+
+		internal void AddModule_DbgThread(DbgRuntimeImpl runtime, DbgModuleImpl module) {
+			DispatcherThread.VerifyAccess();
+			Debug.Assert(IsOurEngine(runtime.Engine));
+			if (!IsOurEngine(runtime.Engine))
+				return;
+			runtime.Add_DbgThread(module);
+			OnConditionalBreak_DbgThread(runtime.Engine, null, () => false);
+		}
+
+		internal void AddThread_DbgThread(DbgRuntimeImpl runtime, DbgThreadImpl thread) {
+			DispatcherThread.VerifyAccess();
+			Debug.Assert(IsOurEngine(runtime.Engine));
+			if (!IsOurEngine(runtime.Engine))
+				return;
+			runtime.Add_DbgThread(thread);
+			OnConditionalBreak_DbgThread(runtime.Engine, null, () => false);
+		}
+
+		internal void AddException_DbgThread(DbgRuntimeImpl runtime, DbgExceptionImpl exception) {
+			DispatcherThread.VerifyAccess();
+			Debug.Assert(IsOurEngine(runtime.Engine));
+			if (!IsOurEngine(runtime.Engine))
+				return;
+			OnConditionalBreak_DbgThread(runtime.Engine, exception, () => exceptionConditionsChecker.ShouldBreak(exception));
 		}
 
 		static bool IsValidExceptionImpl(DbgException exception) => exception == null || exception is DbgExceptionImpl;
@@ -522,7 +548,6 @@ namespace dnSpy.Debugger.Impl {
 				DbgProcessImpl process;
 				lock (lockObj) {
 					var info = GetEngineInfo_NoLock(engine);
-					Debug.Assert(info.EngineState != EngineState.Paused);
 					info.EngineState = EngineState.Paused;
 					Debug.Assert(info.Exception == null);
 					info.Exception?.Close(DispatcherThread);

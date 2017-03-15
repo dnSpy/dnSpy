@@ -208,6 +208,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				var props = GetThreadProperties_CorDebug(e.Thread, null, isCreateThread: true, forceReadName: false);
 				var threadData = new DbgThreadData(e.Thread) { Last = props };
 				var state = DnThreadUtils.GetState(props.UserState);
+				e.ShouldPause = true;
 				var engineThread = objectFactory.CreateThread(props.AppDomain, props.Kind, props.Id, props.ManagedId, props.Name, props.SuspendedCount, state, threadData);
 				lock (lockObj)
 					toEngineThread.Add(e.Thread, engineThread);

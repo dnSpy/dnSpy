@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgRuntime Runtime { get; }
 
 		/// <summary>
-		/// Creates an app domain
+		/// Creates an app domain. The engine has paused the program.
 		/// </summary>
 		/// <param name="name">New <see cref="DbgAppDomain.Name"/> value</param>
 		/// <param name="id">New <see cref="DbgAppDomain.Id"/> value</param>
@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			CreateAppDomain<object>(name, id, null);
 
 		/// <summary>
-		/// Creates an app domain
+		/// Creates an app domain. The engine has paused the program.
 		/// </summary>
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="name">New <see cref="DbgAppDomain.Name"/> value</param>
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgEngineAppDomain CreateAppDomain<T>(string name, int id, T data) where T : class;
 
 		/// <summary>
-		/// Creates a module
+		/// Creates a module. The engine has paused the program.
 		/// </summary>
 		/// <param name="appDomain">New <see cref="DbgModule.AppDomain"/> value</param>
 		/// <param name="isExe">New <see cref="DbgModule.IsExe"/> value</param>
@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			CreateModule<object>(appDomain, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, null);
 
 		/// <summary>
-		/// Creates a module
+		/// Creates a module. The engine has paused the program.
 		/// </summary>
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="appDomain">New <see cref="DbgModule.AppDomain"/> value</param>
@@ -107,7 +107,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, T data) where T : class;
 
 		/// <summary>
-		/// Creates a thread
+		/// Creates a thread. The engine has paused the program.
 		/// </summary>
 		/// <param name="appDomain">New <see cref="DbgThread.AppDomain"/> value</param>
 		/// <param name="kind">New <see cref="DbgThread.Kind"/> value</param>
@@ -121,7 +121,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			CreateThread<object>(appDomain, kind, id, managedId, name, suspendedCount, state, null);
 
 		/// <summary>
-		/// Creates a thread
+		/// Creates a thread. The engine has paused the program.
 		/// </summary>
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="appDomain">New <see cref="DbgThread.AppDomain"/> value</param>
@@ -136,7 +136,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, T data) where T : class;
 
 		/// <summary>
-		/// Creates an exception
+		/// Creates an exception. The engine has paused the program.
 		/// </summary>
 		/// <param name="id">Exception id</param>
 		/// <param name="flags">Exception event flags</param>
@@ -148,7 +148,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			CreateException<object>(id, flags, message, thread, module, null);
 
 		/// <summary>
-		/// Creates an exception
+		/// Creates an exception. The engine has paused the program.
 		/// </summary>
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="id">Exception id</param>

@@ -85,20 +85,32 @@ namespace dndbg.Engine {
 		bool forceProcessTerminated;
 
 		public event EventHandler<ThreadDebuggerEventArgs> OnThreadAdded;
-		void CallOnThreadAdded(DnThread thread, bool added) =>
-			OnThreadAdded?.Invoke(this, new ThreadDebuggerEventArgs(thread, added));
+		void CallOnThreadAdded(DnThread thread, bool added, out bool shouldPause) {
+			var e = new ThreadDebuggerEventArgs(thread, added);
+			OnThreadAdded?.Invoke(this, e);
+			shouldPause = e.ShouldPause;
+		}
 
 		public event EventHandler<AppDomainDebuggerEventArgs> OnAppDomainAdded;
-		void CallOnAppDomainAdded(DnAppDomain appDomain, bool added) =>
-			OnAppDomainAdded?.Invoke(this, new AppDomainDebuggerEventArgs(appDomain, added));
+		void CallOnAppDomainAdded(DnAppDomain appDomain, bool added, out bool shouldPause) {
+			var e = new AppDomainDebuggerEventArgs(appDomain, added);
+			OnAppDomainAdded?.Invoke(this, e);
+			shouldPause = e.ShouldPause;
+		}
 
 		public event EventHandler<AssemblyDebuggerEventArgs> OnAssemblyAdded;
-		void CallOnAssemblyAdded(DnAssembly assembly, bool added) =>
-			OnAssemblyAdded?.Invoke(this, new AssemblyDebuggerEventArgs(assembly, added));
+		void CallOnAssemblyAdded(DnAssembly assembly, bool added, out bool shouldPause) {
+			var e = new AssemblyDebuggerEventArgs(assembly, added);
+			OnAssemblyAdded?.Invoke(this, e);
+			shouldPause = e.ShouldPause;
+		}
 
 		public event EventHandler<ModuleDebuggerEventArgs> OnModuleAdded;
-		void CallOnModuleAdded(DnModule module, bool added) =>
-			OnModuleAdded?.Invoke(this, new ModuleDebuggerEventArgs(module, added));
+		void CallOnModuleAdded(DnModule module, bool added, out bool shouldPause) {
+			var e = new ModuleDebuggerEventArgs(module, added);
+			OnModuleAdded?.Invoke(this, e);
+			shouldPause = e.ShouldPause;
+		}
 
 		public event EventHandler<NameChangedDebuggerEventArgs> OnNameChanged;
 		void CallOnNameChanged(DnAppDomain appDomain, DnThread thread) =>
@@ -693,7 +705,6 @@ namespace dndbg.Engine {
 		void OnAppDomainUnloaded(DnAppDomain appDomain) {
 			if (appDomain == null)
 				return;
-			CallOnAppDomainAdded(appDomain, false);
 			foreach (var assembly in appDomain.Assemblies) {
 				OnAssemblyUnloaded(assembly);
 				appDomain.AssemblyUnloaded(assembly.CorAssembly.RawObject);
@@ -703,14 +714,12 @@ namespace dndbg.Engine {
 		void OnAssemblyUnloaded(DnAssembly assembly) {
 			if (assembly == null)
 				return;
-			CallOnAssemblyAdded(assembly, false);
 			foreach (var module in assembly.Modules)
 				OnModuleUnloaded(module);
 		}
 
 		void OnModuleUnloaded(DnModule module) {
 			module.Assembly.ModuleUnloaded(module);
-			CallOnModuleAdded(module, false);
 			RemoveModuleFromBreakpoints(module);
 		}
 
@@ -724,7 +733,7 @@ namespace dndbg.Engine {
 		}
 
 		void HandleManagedCallback(DebugCallbackEventArgs e) {
-			bool b;
+			bool b, shouldPause;
 			DnProcess process;
 			DnAppDomain appDomain;
 			DnAssembly assembly;
@@ -805,8 +814,11 @@ namespace dndbg.Engine {
 				if (process != null) {
 					var dnThread = process.TryAdd(ctArgs.Thread);
 					//TODO: ICorDebugThread::SetDebugState
-					if (dnThread != null)
-						CallOnThreadAdded(dnThread, true);
+					if (dnThread != null) {
+						CallOnThreadAdded(dnThread, true, out shouldPause);
+						if (shouldPause)
+							e.AddPauseReason(DebuggerPauseReason.Other);
+					}
 				}
 				InitializeCurrentDebuggerState(e, null, ctArgs.AppDomain, ctArgs.Thread);
 				break;
@@ -817,8 +829,11 @@ namespace dndbg.Engine {
 				process = TryGetValidProcess(etArgs.Thread);
 				if (process != null) {
 					var dnThread = process.ThreadExited(etArgs.Thread);
-					if (dnThread != null)
-						CallOnThreadAdded(dnThread, false);
+					if (dnThread != null) {
+						CallOnThreadAdded(dnThread, false, out shouldPause);
+						if (shouldPause)
+							e.AddPauseReason(DebuggerPauseReason.Other);
+					}
 				}
 				break;
 
@@ -836,7 +851,9 @@ namespace dndbg.Engine {
 					module.InitializeCachedValues();
 					AddBreakpoints(module);
 
-					CallOnModuleAdded(module, true);
+					CallOnModuleAdded(module, true, out shouldPause);
+					if (shouldPause)
+						e.AddPauseReason(DebuggerPauseReason.Other);
 				}
 				break;
 
@@ -847,6 +864,11 @@ namespace dndbg.Engine {
 				if (assembly != null) {
 					var module = assembly.TryGetModule(umArgs.Module);
 					OnModuleUnloaded(module);
+					if (module != null) {
+						CallOnModuleAdded(module, false, out shouldPause);
+						if (shouldPause)
+							e.AddPauseReason(DebuggerPauseReason.Other);
+					}
 				}
 				break;
 
@@ -906,8 +928,11 @@ namespace dndbg.Engine {
 						appDomain = process.TryAdd(cadArgs.AppDomain);
 				}
 				InitializeCurrentDebuggerState(e, cadArgs.Process, cadArgs.AppDomain, null);
-				if (appDomain != null)
-					CallOnAppDomainAdded(appDomain, true);
+				if (appDomain != null) {
+					CallOnAppDomainAdded(appDomain, true, out shouldPause);
+					if (shouldPause)
+						e.AddPauseReason(DebuggerPauseReason.Other);
+				}
 				break;
 
 			case DebugCallbackKind.ExitAppDomain:
@@ -915,7 +940,12 @@ namespace dndbg.Engine {
 				InitializeCurrentDebuggerState(e, eadArgs.Process, eadArgs.AppDomain, null);
 				process = processes.TryGet(eadArgs.Process);
 				if (process != null) {
-					OnAppDomainUnloaded(process.TryGetAppDomain(eadArgs.AppDomain));
+					OnAppDomainUnloaded(appDomain = process.TryGetAppDomain(eadArgs.AppDomain));
+					if (appDomain != null) {
+						CallOnAppDomainAdded(appDomain, false, out shouldPause);
+						if (shouldPause)
+							e.AddPauseReason(DebuggerPauseReason.Other);
+					}
 					process.AppDomainExited(eadArgs.AppDomain);
 				}
 				break;
@@ -926,8 +956,11 @@ namespace dndbg.Engine {
 				appDomain = TryGetValidAppDomain(laArgs.AppDomain);
 				if (appDomain != null) {
 					assembly = appDomain.TryAdd(laArgs.Assembly);
-					if (assembly != null)
-						CallOnAssemblyAdded(assembly, true);
+					if (assembly != null) {
+						CallOnAssemblyAdded(assembly, true, out shouldPause);
+						if (shouldPause)
+							e.AddPauseReason(DebuggerPauseReason.Other);
+					}
 				}
 				break;
 
@@ -936,7 +969,12 @@ namespace dndbg.Engine {
 				InitializeCurrentDebuggerState(e, null, uaArgs.AppDomain, null);
 				appDomain = TryGetAppDomain(uaArgs.AppDomain);
 				if (appDomain != null) {
-					OnAssemblyUnloaded(appDomain.TryGetAssembly(uaArgs.Assembly));
+					OnAssemblyUnloaded(assembly = appDomain.TryGetAssembly(uaArgs.Assembly));
+					if (assembly != null) {
+						CallOnAssemblyAdded(assembly, false, out shouldPause);
+						if (shouldPause)
+							e.AddPauseReason(DebuggerPauseReason.Other);
+					}
 					appDomain.AssemblyUnloaded(uaArgs.Assembly);
 				}
 				break;

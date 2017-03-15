@@ -54,14 +54,14 @@ namespace dnSpy.Debugger.Impl {
 		readonly List<DbgThread> threads;
 
 		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
+		internal DbgEngine Engine { get; }
 
 		readonly object lockObj;
-		readonly DbgEngine engine;
 
 		public DbgRuntimeImpl(DbgProcess process, DbgEngine engine) {
 			lockObj = new object();
 			Process = process ?? throw new ArgumentNullException(nameof(process));
-			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
+			Engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			appDomains = new List<DbgAppDomain>();
 			modules = new List<DbgModule>();
 			threads = new List<DbgThread>();
@@ -153,8 +153,8 @@ namespace dnSpy.Debugger.Impl {
 			thread.Close(DispatcherThread);
 		}
 
-		internal void Freeze(DbgThreadImpl thread) => engine.Freeze(thread);
-		internal void Thaw(DbgThreadImpl thread) => engine.Thaw(thread);
+		internal void Freeze(DbgThreadImpl thread) => Engine.Freeze(thread);
+		internal void Thaw(DbgThreadImpl thread) => Engine.Thaw(thread);
 
 		protected override void CloseCore() {
 			DispatcherThread.VerifyAccess();

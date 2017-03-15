@@ -28,6 +28,7 @@ namespace dndbg.Engine {
 	sealed class ThreadDebuggerEventArgs : DebuggerEventArgs {
 		public DnThread Thread { get; }
 		public bool Added { get; }
+		public bool ShouldPause { get; set; }
 
 		public ThreadDebuggerEventArgs(DnThread thread, bool added) {
 			Thread = thread;
@@ -38,6 +39,7 @@ namespace dndbg.Engine {
 	sealed class AppDomainDebuggerEventArgs : DebuggerEventArgs {
 		public DnAppDomain AppDomain { get; }
 		public bool Added { get; }
+		public bool ShouldPause { get; set; }
 
 		public AppDomainDebuggerEventArgs(DnAppDomain appDomain, bool added) {
 			AppDomain = appDomain;
@@ -48,6 +50,7 @@ namespace dndbg.Engine {
 	sealed class AssemblyDebuggerEventArgs : DebuggerEventArgs {
 		public DnAssembly Assembly { get; }
 		public bool Added { get; }
+		public bool ShouldPause { get; set; }
 
 		public AssemblyDebuggerEventArgs(DnAssembly assembly, bool added) {
 			Assembly = assembly;
@@ -58,6 +61,7 @@ namespace dndbg.Engine {
 	sealed class ModuleDebuggerEventArgs : DebuggerEventArgs {
 		public DnModule Module { get; }
 		public bool Added { get; }
+		public bool ShouldPause { get; set; }
 
 		public ModuleDebuggerEventArgs(DnModule module, bool added) {
 			Module = module;

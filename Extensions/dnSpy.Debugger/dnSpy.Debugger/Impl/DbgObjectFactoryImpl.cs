@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.Impl {
 			if (data != null)
 				appDomain.GetOrCreateData(() => data);
 			var engineAppDomain = new DbgEngineAppDomainImpl(appDomain);
-			owner.DispatcherThread.BeginInvoke(() => runtime.Add_DbgThread(appDomain));
+			owner.DispatcherThread.BeginInvoke(() => owner.AddAppDomain_DbgThread(runtime, appDomain));
 			return engineAppDomain;
 		}
 
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.Impl {
 			if (data != null)
 				module.GetOrCreateData(() => data);
 			var engineModule = new DbgEngineModuleImpl(module);
-			owner.DispatcherThread.BeginInvoke(() => runtime.Add_DbgThread(module));
+			owner.DispatcherThread.BeginInvoke(() => owner.AddModule_DbgThread(runtime, module));
 			return engineModule;
 		}
 
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.Impl {
 			if (data != null)
 				thread.GetOrCreateData(() => data);
 			var engineThread = new DbgEngineThreadImpl(thread);
-			owner.DispatcherThread.BeginInvoke(() => runtime.Add_DbgThread(thread));
+			owner.DispatcherThread.BeginInvoke(() => owner.AddThread_DbgThread(runtime, thread));
 			return engineThread;
 		}
 
@@ -90,6 +90,7 @@ namespace dnSpy.Debugger.Impl {
 			var exception = new DbgExceptionImpl(runtime, id, flags, message, thread, module);
 			if (data != null)
 				exception.GetOrCreateData(() => data);
+			owner.DispatcherThread.BeginInvoke(() => owner.AddException_DbgThread(runtime, exception));
 			return exception;
 		}
 

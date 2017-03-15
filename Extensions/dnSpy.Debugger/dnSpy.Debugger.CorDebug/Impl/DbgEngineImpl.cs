@@ -75,7 +75,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
-			DbgException exception;
 			switch (e.Kind) {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
@@ -104,15 +103,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				else
 					break;
 				var exObj = e2.CorThread?.CurrentException;
-				exception = objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionGroups.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread));
-				SendMessage(new DbgMessageException(exception));
+				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionGroups.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread));
 				e.AddPauseReason(DebuggerPauseReason.Exception);
 				break;
 
 			case DebugCallbackKind.MDANotification:
 				var mdan = (MDANotificationDebugCallbackEventArgs)e;
-				exception = objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionGroups.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread));
-				SendMessage(new DbgMessageException(exception));
+				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionGroups.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread));
 				e.AddPauseReason(DebuggerPauseReason.Exception);
 				break;
 
@@ -205,6 +202,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		void DnDebugger_OnAppDomainAdded(object sender, AppDomainDebuggerEventArgs e) {
 			Debug.Assert(objectFactory != null);
 			if (e.Added) {
+				e.ShouldPause = true;
 				var engineAppDomain = objectFactory.CreateAppDomain(e.AppDomain.Name, e.AppDomain.Id);
 				lock (lockObj)
 					toEngineAppDomain.Add(e.AppDomain, engineAppDomain);
@@ -250,6 +248,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {
 			Debug.Assert(objectFactory != null);
 			if (e.Added) {
+				e.ShouldPause = true;
 				var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
 				var engineModule = ModuleCreator.CreateModule(objectFactory, appDomain, e.Module);
 				lock (lockObj)
