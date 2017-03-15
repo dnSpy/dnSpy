@@ -157,6 +157,7 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 			var snapshot = wpfTextView.TextSnapshot;
 			wpfTextView.Selection.Select(new SnapshotSpan(snapshot, new Span(0, snapshot.Length)), isReversed: false);
 			wpfTextView.Caret.MoveTo(new SnapshotPoint(snapshot, snapshot.Length));
+			wpfTextView.Caret.EnsureVisible();
 			wpfTextView.LostAggregateFocus += WpfTextView_LostAggregateFocus;
 		}
 
