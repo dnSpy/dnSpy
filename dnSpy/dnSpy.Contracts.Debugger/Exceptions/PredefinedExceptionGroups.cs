@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public const string DotNet = nameof(DotNet);
 
 		/// <summary>
-		/// MDA (Managed Debugging Assistant)
+		/// MDA (Managed Debugging Assistants)
 		/// </summary>
 		public const string MDA = nameof(MDA);
 	}
