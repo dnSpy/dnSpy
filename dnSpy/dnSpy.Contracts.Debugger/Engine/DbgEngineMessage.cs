@@ -137,9 +137,18 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public string Message { get; }
 
 		/// <summary>
+		/// Gets the thread or null if it's not known
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="message">Message</param>
-		public DbgMessageProgramMessage(string message) => Message = message ?? throw new ArgumentNullException(nameof(message));
+		/// <param name="thread">Thread or null if it's not known</param>
+		public DbgMessageProgramMessage(string message, DbgThread thread) {
+			Message = message ?? throw new ArgumentNullException(nameof(message));
+			Thread = thread;
+		}
 	}
 }

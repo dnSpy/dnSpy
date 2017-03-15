@@ -122,7 +122,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				var msg = lmsgArgs.Message;
 				if (msg != null) {
 					e.AddPauseReason(DebuggerPauseReason.Other);
-					SendMessage(new DbgMessageProgramMessage(msg));
+					var thread = TryGetThread(lmsgArgs.CorThread);
+					SendMessage(new DbgMessageProgramMessage(msg, thread));
 				}
 				break;
 			}
