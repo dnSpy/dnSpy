@@ -221,4 +221,7 @@ Error: {1}</value>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
     <value>Use dnSpy.exe to debug 64-bit applications.</value>
   </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;no exception message&gt;"</value>
+  </data>
 </root>

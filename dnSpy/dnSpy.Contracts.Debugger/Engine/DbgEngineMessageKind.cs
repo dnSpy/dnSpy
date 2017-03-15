@@ -25,6 +25,9 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// The engine has connected to the debugged process. This message is the first
 		/// message sent by the <see cref="DbgEngine"/>, even on failure.
+		/// 
+		/// If the connection was successful, the program must be paused until
+		/// <see cref="DbgEngine.Run"/> gets called.
 		/// </summary>
 		Connected,
 
@@ -37,5 +40,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// The debugged executable is paused due to a call to <see cref="DbgEngine.Break"/>
 		/// </summary>
 		Break,
+
+		/// <summary>
+		/// An exception was thrown in the debugged process. The engine has paused the program.
+		/// </summary>
+		Exception,
 	}
 }

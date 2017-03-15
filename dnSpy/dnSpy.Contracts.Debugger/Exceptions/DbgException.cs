@@ -33,13 +33,43 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public abstract DbgRuntime Runtime { get; }
 
 		/// <summary>
-		/// Gets the exception ID
+		/// Gets the exception id
 		/// </summary>
-		public DbgExceptionId Id => ExceptionEvent.Id;
+		public abstract DbgExceptionId Id { get; }
 
 		/// <summary>
-		/// Gets the exception event
+		/// Gets the exception event flags
 		/// </summary>
-		public abstract DbgExceptionEvent ExceptionEvent { get; }
+		public abstract DbgExceptionEventFlags Flags { get; }
+
+		/// <summary>
+		/// true if it's a first chance exception
+		/// </summary>
+		public bool IsFirstChance => (Flags & DbgExceptionEventFlags.FirstChance) != 0;
+
+		/// <summary>
+		/// true if it's a second chance exception
+		/// </summary>
+		public bool IsSecondChance => (Flags & DbgExceptionEventFlags.SecondChance) != 0;
+
+		/// <summary>
+		/// true if it's an unhandled exception. The program will be terminated if it tries to run again.
+		/// </summary>
+		public bool IsUnhandled => (Flags & DbgExceptionEventFlags.Unhandled) != 0;
+
+		/// <summary>
+		/// Exception message or null if none
+		/// </summary>
+		public abstract string Message { get; }
+
+		/// <summary>
+		/// Thread where exception was thrown or null if it's not known
+		/// </summary>
+		public abstract DbgThread Thread { get; }
+
+		/// <summary>
+		/// Module where exception was thrown or null if it's not known
+		/// </summary>
+		public abstract DbgModule Module { get; }
 	}
 }

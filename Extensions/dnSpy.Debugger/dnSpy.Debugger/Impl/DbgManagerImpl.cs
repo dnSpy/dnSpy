@@ -25,6 +25,8 @@ using System.Linq;
 using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Contracts.Debugger.Exceptions;
+using dnSpy.Debugger.Exceptions;
 
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgManager))]
@@ -107,6 +109,7 @@ namespace dnSpy.Debugger.Impl {
 			public EngineState EngineState { get; set; } = EngineState.Starting;
 			public string[] DebugTags { get; }
 			public DbgObjectFactoryImpl ObjectFactory { get; set; }
+			public DbgException Exception { get; set; }
 			public EngineInfo(DbgEngine engine) {
 				Engine = engine;
 				DebugTags = (string[])engine.DebugTags.Clone();
@@ -115,6 +118,7 @@ namespace dnSpy.Debugger.Impl {
 
 		readonly object lockObj;
 		readonly DbgDispatcher dbgDispatcher;
+		readonly ExceptionConditionsChecker exceptionConditionsChecker;
 		readonly List<EngineInfo> engines;
 		readonly Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>[] dbgEngineProviders;
 		readonly Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>[] dbgManagerStartListeners;
@@ -122,9 +126,10 @@ namespace dnSpy.Debugger.Impl {
 		int hasNotifiedStartListenersCounter;
 
 		[ImportingConstructor]
-		DbgManagerImpl(DbgDispatcher dbgDispatcher, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners) {
+		DbgManagerImpl(DbgDispatcher dbgDispatcher, ExceptionConditionsChecker exceptionConditionsChecker, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners) {
 			lockObj = new object();
 			this.dbgDispatcher = dbgDispatcher;
+			this.exceptionConditionsChecker = exceptionConditionsChecker;
 			engines = new List<EngineInfo>();
 			processes = new List<DbgProcessImpl>();
 			debugTags = new TagsCollection();
@@ -241,6 +246,10 @@ namespace dnSpy.Debugger.Impl {
 				OnBreak_DbgThread(engine, (DbgMessageBreak)e);
 				break;
 
+			case DbgEngineMessageKind.Exception:
+				OnException_DbgThread(engine, (DbgMessageException)e);
+				break;
+
 			default:
 				//TODO:
 				break;
@@ -291,18 +300,23 @@ namespace dnSpy.Debugger.Impl {
 			var objectFactory = new DbgObjectFactoryImpl(this, runtime, engine);
 
 			DbgProcessState processState;
+			bool pauseProgram;
 			lock (lockObj) {
 				var info = GetEngineInfo_NoLock(engine);
 				info.Process = process;
 				info.ObjectFactory = objectFactory;
-				info.EngineState = EngineState.Running;
+				info.EngineState = EngineState.Paused;
 				processState = CalculateProcessState(info.Process);
+				// Compare it before notifying the helper since it could clear it
+				pauseProgram = breakAllHelper != null;
 				breakAllHelper?.OnConnected_DbgThread_NoLock(info);
 			}
 			// Call OnConnected() before we add the runtime to the process so the engine can add
 			// data to the runtime before RuntimesChanged is raised.
 			engine.OnConnected(objectFactory, runtime);
 			process.Add_DbgThread(engine, runtime, processState);
+			if (!pauseProgram)
+				Run_DbgThread(engine);
 		}
 
 		DbgProcessState CalculateProcessState(DbgProcess process) {
@@ -330,6 +344,7 @@ namespace dnSpy.Debugger.Impl {
 			DispatcherThread.VerifyAccess();
 			DbgProcessImpl processToDispose = null;
 			DbgRuntime runtime = null;
+			var objectsToClose = new List<DbgObject>();
 			bool raiseIsDebuggingChanged, raiseIsRunningChanged;
 			string[] removedDebugTags;
 			DbgProcessImpl process;
@@ -338,6 +353,8 @@ namespace dnSpy.Debugger.Impl {
 				var oldIsRunning = cachedIsRunning;
 				var info = TryGetEngineInfo_NoLock(engine);
 				if (info != null) {
+					if (info.Exception != null)
+						objectsToClose.Add(info.Exception);
 					engines.Remove(info);
 					info.ObjectFactory?.Dispose();
 				}
@@ -369,6 +386,9 @@ namespace dnSpy.Debugger.Impl {
 
 				breakAllHelper?.OnDisconnected_DbgThread_NoLock(engine);
 			}
+
+			foreach (var obj in objectsToClose)
+				obj.Close(DispatcherThread);
 
 			process?.NotifyRuntimesChanged_DbgThread(runtime);
 
@@ -464,7 +484,7 @@ namespace dnSpy.Debugger.Impl {
 				process = info.Process;
 			}
 			breakAllHelper?.OnBreak_DbgThread(engine);
-			process.UpdateState_DbgThread(processState);
+			process?.UpdateState_DbgThread(processState);
 		}
 
 		void BreakCompleted_DbgThread(bool success) {
@@ -479,11 +499,70 @@ namespace dnSpy.Debugger.Impl {
 				IsRunningChanged?.Invoke(this, EventArgs.Empty);
 		}
 
+		void OnException_DbgThread(DbgEngine engine, DbgMessageException e) {
+			DispatcherThread.VerifyAccess();
+			OnConditionalBreak_DbgThread(engine, e.Exception, () => exceptionConditionsChecker.ShouldBreak(e.Exception));
+		}
+
+		static bool IsValidExceptionImpl(DbgException exception) => exception == null || exception is DbgExceptionImpl;
+
+		void OnConditionalBreak_DbgThread(DbgEngine engine, DbgException exception, Func<bool> checkShouldBreak, Action onRun = null) {
+			DispatcherThread.VerifyAccess();
+			Debug.Assert(IsValidExceptionImpl(exception));
+			if (!IsValidExceptionImpl(exception))
+				return;
+
+			bool shouldBreak = checkShouldBreak();
+			if (!shouldBreak) {
+				lock (lockObj)
+					shouldBreak |= breakAllHelper != null;
+			}
+			if (shouldBreak) {
+				DbgProcessState processState;
+				DbgProcessImpl process;
+				lock (lockObj) {
+					var info = GetEngineInfo_NoLock(engine);
+					Debug.Assert(info.EngineState != EngineState.Paused);
+					info.EngineState = EngineState.Paused;
+					Debug.Assert(info.Exception == null);
+					info.Exception?.Close(DispatcherThread);
+					info.Exception = exception;
+					processState = CalculateProcessState(info.Process);
+					process = info.Process;
+				}
+				breakAllHelper?.OnBreak_DbgThread(engine);
+				process?.UpdateState_DbgThread(processState);
+				BreakAll();
+			}
+			else {
+				onRun?.Invoke();
+				exception?.Close(DispatcherThread);
+				engine.Run();
+			}
+		}
+
 		public override void RunAll() =>
 			ExecOnDbgThread(() => RunAll_DbgThread());
 
 		void RunAll_DbgThread() {
 			DispatcherThread.VerifyAccess();
+
+			List<DbgException> exceptions = null;
+			lock (lockObj) {
+				foreach (var info in engines) {
+					if (info.EngineState == EngineState.Paused && info.Exception != null) {
+						if (exceptions == null)
+							exceptions = new List<DbgException>();
+						exceptions.Add(info.Exception);
+						info.Exception = null;
+					}
+				}
+			}
+			if (exceptions != null) {
+				foreach (var exception in exceptions)
+					exception.Close(DispatcherThread);
+			}
+
 			bool raiseIsRunning;
 			var processes = new List<DbgProcessImpl>();
 			lock (lockObj) {
@@ -497,9 +576,10 @@ namespace dnSpy.Debugger.Impl {
 				// when we call Run() inside the lock
 				foreach (var info in engines.ToArray()) {
 					if (info.EngineState == EngineState.Paused) {
-						if (!processes.Contains(info.Process))
+						if (info.Process != null && !processes.Contains(info.Process))
 							processes.Add(info.Process);
 						info.EngineState = EngineState.Running;
+						Debug.Assert(info.Exception == null);
 						info.Engine.Run();
 					}
 				}
@@ -513,14 +593,44 @@ namespace dnSpy.Debugger.Impl {
 				process.UpdateState_DbgThread(CalculateProcessState(process));
 		}
 
+		void Run_DbgThread(DbgEngine engine) {
+			DispatcherThread.VerifyAccess();
+
+			DbgException exception;
+			lock (lockObj) {
+				var info = GetEngineInfo_NoLock(engine);
+				Debug.Assert(info.EngineState == EngineState.Paused);
+				exception = info.Exception;
+				info.Exception = null;
+			}
+			exception?.Close(DispatcherThread);
+
+			bool raiseIsRunning;
+			DbgProcessImpl process;
+			lock (lockObj) {
+				var oldIsRunning = cachedIsRunning;
+
+				var info = GetEngineInfo_NoLock(engine);
+				process = info.Process;
+				info.EngineState = EngineState.Running;
+				Debug.Assert(info.Exception == null);
+				info.Engine.Run();
+
+				cachedIsRunning = CalculateIsRunning_NoLock();
+				raiseIsRunning = oldIsRunning != cachedIsRunning;
+			}
+			if (raiseIsRunning)
+				IsRunningChanged?.Invoke(this, EventArgs.Empty);
+			process?.UpdateState_DbgThread(CalculateProcessState(process));
+		}
+
 		public override void StopDebuggingAll() {
 			lock (lockObj) {
 				// Make a copy of it in the unlikely event that an engine gets disconnected
 				// when we call Terminate()/Detach() inside the lock
 				foreach (var info in engines.ToArray()) {
-					if (info.Process == null)
-						continue;
-					if (info.Process.ShouldDetach)
+					// Process could be null if it hasn't been connected yet
+					if (info.Process?.ShouldDetach ?? info.Engine.StartKind == DbgStartKind.Attach)
 						info.Engine.Detach();
 					else
 						info.Engine.Terminate();

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
 using dnlib.DotNet;
@@ -427,5 +428,20 @@ namespace dndbg.Engine {
 
 		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
 		public override string ToString() => ToString(TypePrinterFlags.Default);
+
+		public string ToReflectionString() {
+			var list = MetaDataUtils.GetTypeDefFullNames(Module.GetMetaDataInterface<IMetaDataImport>(), token);
+			if (list.Count == 0)
+				return "???";
+			if (list.Count == 1)
+				return list[0].Name;
+			var sb = new StringBuilder();
+			for (int i = 0; i < list.Count; i++) {
+				if (i > 0)
+					sb.Append('+');
+				sb.Append(list[i].Name);
+			}
+			return sb.ToString();
+		}
 	}
 }

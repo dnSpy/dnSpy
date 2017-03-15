@@ -39,5 +39,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// Second chance exception
 		/// </summary>
 		SecondChance				= 0x00000002,
+
+		/// <summary>
+		/// Unhandled exception. The program will be terminated if it tries to run again.
+		/// </summary>
+		Unhandled					= 0x00000004,
 	}
 }

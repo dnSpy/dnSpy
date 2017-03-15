@@ -23,10 +23,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
+using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Debugger.CorDebug.DAC;
 using dnSpy.Debugger.CorDebug.Properties;
 
@@ -73,16 +75,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
+			DbgException exception;
 			switch (e.Kind) {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
 				hProcess_debuggee = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
-				needContinueInOnConnected = !e.Pause;
 				SendMessage(new DbgMessageConnected(cp.CorProcess.ProcessId));
-				if (needContinueInOnConnected) {
-					// Make sure it's paused until OnConnected() gets called
-					e.AddPauseReason(DebuggerPauseReason.Other);
-				}
+				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
 			case DebugCallbackKind.CreateAppDomain:
@@ -95,12 +94,66 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				}
 				break;
 
+			case DebugCallbackKind.Exception2:
+				var e2 = (Exception2DebugCallbackEventArgs)e;
+				DbgExceptionEventFlags exFlags;
+				if (e2.EventType == CorDebugExceptionCallbackType.DEBUG_EXCEPTION_FIRST_CHANCE)
+					exFlags = DbgExceptionEventFlags.FirstChance;
+				else if (e2.EventType == CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED)
+					exFlags = DbgExceptionEventFlags.SecondChance | DbgExceptionEventFlags.Unhandled;
+				else
+					break;
+				var exObj = e2.CorThread?.CurrentException;
+				exception = objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionGroups.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread));
+				SendMessage(new DbgMessageException(exception));
+				e.AddPauseReason(DebuggerPauseReason.Exception);
+				break;
+
+			case DebugCallbackKind.MDANotification:
+				var mdan = (MDANotificationDebugCallbackEventArgs)e;
+				exception = objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionGroups.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread));
+				SendMessage(new DbgMessageException(exception));
+				e.AddPauseReason(DebuggerPauseReason.Exception);
+				break;
+
 			case DebugCallbackKind.ExitProcess:
 				// Handled in DnDebugger_OnProcessStateChanged()
 				break;
 			}
 		}
-		bool needContinueInOnConnected;
+
+		string TryGetExceptionName(CorValue exObj) => exObj?.ExactType?.Class?.ToReflectionString();
+
+		string TryGetExceptionMessage(CorValue exObj) {
+			if (EvalReflectionUtils.ReadExceptionMessage(exObj, out var message))
+				return message ?? dnSpy_Debugger_CorDebug_Resources.ExceptionMessageIsNull;
+			return null;
+		}
+
+		DbgThread TryGetThread(CorThread thread) {
+			if (thread == null)
+				return null;
+			var dnThread = dnDebugger.Processes.FirstOrDefault()?.Threads.FirstOrDefault(a => a.CorThread == thread);
+			if (dnThread == null)
+				return null;
+			DbgEngineThread engineThread;
+			lock (lockObj)
+				toEngineThread.TryGetValue(dnThread, out engineThread);
+			return engineThread?.Thread;
+		}
+
+		DbgModule TryGetModule(CorFrame frame, CorThread thread) {
+			if (frame == null)
+				frame = thread?.ActiveFrame ?? thread?.AllFrames.FirstOrDefault();
+			var corModule = frame?.Function?.Module;
+			var module = dnDebugger.Modules.FirstOrDefault(a => a.CorModule == corModule);
+			if (module == null)
+				return null;
+			DbgEngineModule engineModule;
+			lock (lockObj)
+				toEngineModule.TryGetValue(module, out engineModule);
+			return engineModule?.Module;
+		}
 
 		void UnregisterEventsAndCloseProcessHandle() {
 			if (dnDebugger != null) {
@@ -276,11 +329,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			Debug.Assert(Array.IndexOf(objectFactory.Process.Runtimes, runtime) < 0);
 			this.objectFactory = objectFactory;
 			CorDebugRuntime.Add(new CorDebugRuntimeImpl(runtime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory));
-
-			if (needContinueInOnConnected) {
-				// It was paused when we got the CreateProcess event. Let it run again
-				CorDebugThread(() => Continue_CorDebug());
-			}
 		}
 
 		protected override void CloseCore() {

@@ -105,6 +105,12 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			public void OnConnected_DbgThread_NoLock(EngineInfo engineInfo) {
+				foreach (var info2 in infos) {
+					if (info2.EngineInfo == engineInfo) {
+						OnBreak_DbgThread(engineInfo.Engine);
+						return;
+					}
+				}
 				var info = new Info(engineInfo);
 				infos.Add(info);
 				info.EngineInfo.Engine.Break();

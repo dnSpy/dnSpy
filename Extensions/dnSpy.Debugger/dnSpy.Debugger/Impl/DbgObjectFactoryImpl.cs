@@ -21,6 +21,8 @@ using System;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Contracts.Debugger.Exceptions;
+using dnSpy.Debugger.Exceptions;
 
 namespace dnSpy.Debugger.Impl {
 	sealed class DbgObjectFactoryImpl : DbgObjectFactory {
@@ -80,6 +82,15 @@ namespace dnSpy.Debugger.Impl {
 			var engineThread = new DbgEngineThreadImpl(thread);
 			owner.DispatcherThread.BeginInvoke(() => runtime.Add_DbgThread(thread));
 			return engineThread;
+		}
+
+		public override DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, T data) {
+			if (id.IsDefaultId)
+				throw new ArgumentException();
+			var exception = new DbgExceptionImpl(runtime, id, flags, message, thread, module);
+			if (data != null)
+				exception.GetOrCreateData(() => data);
+			return exception;
 		}
 
 		internal void Dispose() => disposed = true;

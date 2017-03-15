@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.Exceptions;
 
 namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
@@ -120,5 +121,27 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// </summary>
 		/// <param name="errorMessage">Error message</param>
 		public DbgMessageBreak(string errorMessage) : base(errorMessage) { }
+	}
+
+	/// <summary>
+	/// <see cref="DbgEngineMessageKind.Exception"/> event
+	/// </summary>
+	public sealed class DbgMessageException : DbgEngineMessageWithPossibleErrorMessage {
+		/// <summary>
+		/// Returns <see cref="DbgEngineMessageKind.Exception"/>
+		/// </summary>
+		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.Exception;
+
+		/// <summary>
+		/// Gets the exception
+		/// </summary>
+		public DbgException Exception { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="exception">Exception</param>
+		public DbgMessageException(DbgException exception) =>
+			Exception = exception ?? throw new ArgumentNullException(nameof(exception));
 	}
 }

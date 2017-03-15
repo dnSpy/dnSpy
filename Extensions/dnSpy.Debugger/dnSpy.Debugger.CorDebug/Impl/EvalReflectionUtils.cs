@@ -21,6 +21,13 @@ using dndbg.Engine;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	static class EvalReflectionUtils {
+		public static bool ReadExceptionMessage(CorValue thisRef, out string result) {
+			result = null;
+			if (thisRef == null)
+				return false;
+			return ReadValue(thisRef, "_message", out result);
+		}
+
 		public static bool ReadValue<T>(CorValue thisRef, string fieldName, out T value) {
 			value = default(T);
 			if (thisRef == null)

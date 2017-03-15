@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using dnSpy.Contracts.Debugger.Exceptions;
 
 namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
@@ -133,5 +134,30 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="data">Data to add to the <see cref="DbgThread"/> or null if nothing gets added</param>
 		/// <returns></returns>
 		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, T data) where T : class;
+
+		/// <summary>
+		/// Creates an exception
+		/// </summary>
+		/// <param name="id">Exception id</param>
+		/// <param name="flags">Exception event flags</param>
+		/// <param name="message">Exception message or null if it's not available</param>
+		/// <param name="thread">Thread where exception was thrown or null if it's unknown</param>
+		/// <param name="module">Module where exception was thrown or null if it's unknown</param>
+		/// <returns></returns>
+		public DbgException CreateException(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module) =>
+			CreateException<object>(id, flags, message, thread, module, null);
+
+		/// <summary>
+		/// Creates an exception
+		/// </summary>
+		/// <typeparam name="T">Type of data</typeparam>
+		/// <param name="id">Exception id</param>
+		/// <param name="flags">Exception event flags</param>
+		/// <param name="message">Exception message or null if it's not available</param>
+		/// <param name="thread">Thread where exception was thrown or null if it's unknown</param>
+		/// <param name="module">Module where exception was thrown or null if it's unknown</param>
+		/// <param name="data">Data to add to the <see cref="DbgException"/> or null if nothing gets added</param>
+		/// <returns></returns>
+		public abstract DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, T data) where T : class;
 	}
 }
