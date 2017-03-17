@@ -74,8 +74,13 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				get {
 					if (process == null)
 						return string.Empty;
-					process.Refresh();
-					return process.MainWindowTitle;
+					try {
+						process.Refresh();
+						return process.MainWindowTitle;
+					}
+					catch (InvalidOperationException) {
+					}
+					return string.Empty;
 				}
 			}
 
