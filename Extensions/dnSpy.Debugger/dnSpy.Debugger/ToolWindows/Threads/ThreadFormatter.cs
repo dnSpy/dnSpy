@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public void WriteProcessName(ITextColorWriter output, DbgThread thread) {
 			var process = thread.Process;
-			output.WriteFilename(PathUtils.GetFilename(process.Filename));
+			output.WriteFilename(process.Name);
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Punctuation, "(");
 			output.Write(BoxedTextColor.Text, "id");

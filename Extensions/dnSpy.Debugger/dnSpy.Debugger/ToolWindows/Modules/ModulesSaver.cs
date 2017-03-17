@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 					return;
 				for (int i = 0; i < modules.Length; i++) {
 					var file = modules[i];
-					var filename = PathUtils.GetFilename(file.Module.Filename);
+					var filename = file.Module.Name;
 					const StringComparison comp = StringComparison.OrdinalIgnoreCase;
 					if (!(filename.EndsWith(".exe", comp) || filename.EndsWith(".dll", comp) || filename.EndsWith(".netmodule", comp)))
 						filename += file.Module.IsExe ? ".exe" : ".dll";
@@ -93,8 +93,6 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		static string GetModuleFilename(DbgModule module) {
 			if (module.IsDynamic)
 				return null;
-			if (!module.IsInMemory)
-				return PathUtils.GetFilename(module.Filename);
 			return module.Name;
 		}
 

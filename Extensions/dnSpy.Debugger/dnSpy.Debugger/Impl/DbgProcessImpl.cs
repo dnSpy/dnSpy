@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
@@ -35,6 +36,7 @@ namespace dnSpy.Debugger.Impl {
 		public override int Bitness { get; }
 		public override DbgMachine Machine { get; }
 		public override string Filename { get; }
+		public override string Name { get; }
 
 		public override DbgProcessState State => state;
 		DbgProcessState state;
@@ -129,6 +131,7 @@ namespace dnSpy.Debugger.Impl {
 			Bitness = GetBitness(hProcess.DangerousGetHandle());
 			Machine = GetMachine(Bitness);
 			Filename = GetProcessFilename(pid) ?? string.Empty;
+			Name = Path.GetFileName(Filename);
 
 			new DelayedIsRunningHelper(this, dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}

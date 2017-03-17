@@ -71,6 +71,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract string Filename { get; }
 
 		/// <summary>
+		/// Gets the process name or an empty string if it's unknown
+		/// </summary>
+		public abstract string Name { get; }
+
+		/// <summary>
 		/// What is being debugged. This is shown in the UI (eg. Processes window)
 		/// </summary>
 		public abstract string Debugging { get; }

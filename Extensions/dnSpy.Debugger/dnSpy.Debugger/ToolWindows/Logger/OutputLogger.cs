@@ -212,19 +212,19 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		string GetProcessName(DbgProcess process) {
 			if (process == null)
 				return "???";
-			var name = process.Filename;
+			var name = process.Name;
 			if (string.IsNullOrEmpty(name))
 				return "0x" + process.Id.ToString("X");
-			return Path.GetFileName(name);
+			return name;
 		}
 
 		string GetProcessFullPath(DbgProcess process) {
 			if (process == null)
 				return "???";
-			var name = process.Filename;
-			if (string.IsNullOrEmpty(name))
+			var filename = process.Filename;
+			if (string.IsNullOrEmpty(filename))
 				return "0x" + process.Id.ToString("X");
-			return name;
+			return filename;
 		}
 
 		string GetProcessNameWithPID(DbgProcess process) => $"[0x{process?.Id ?? -1:X}] {GetProcessName(process)}";

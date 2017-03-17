@@ -152,7 +152,6 @@
     <Compile Include="ToolWindows\Modules\ModulesVM.cs" />
     <Compile Include="ToolWindows\Modules\ModuleVM.cs" />
     <Compile Include="ToolWindows\Modules\PEFilesSaver.cs" />
-    <Compile Include="ToolWindows\PathUtils.cs" />
     <Compile Include="ToolWindows\Processes\Commands.cs" />
     <Compile Include="ToolWindows\Processes\ProcessColumnConverter.cs" />
     <Compile Include="ToolWindows\Processes\ProcessContext.cs" />
