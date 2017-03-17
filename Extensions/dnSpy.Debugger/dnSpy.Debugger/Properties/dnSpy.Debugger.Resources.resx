@@ -1443,4 +1443,37 @@ Are you sure you want to expand it?</value>
   <data name="Button_AddCondition" xml:space="preserve">
     <value>_Add Condition</value>
   </data>
+  <data name="ModuleBreakpointsCommand" xml:space="preserve">
+    <value>Mod_ule Breakpoints</value>
+  </data>
+  <data name="Window_ModuleBreakpoints" xml:space="preserve">
+    <value>Module Breakpoints</value>
+  </data>
+  <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
+    <value>Add breakpoint</value>
+  </data>
+  <data name="Breakpoints_RemoveAllBreakpoints_ToolTip" xml:space="preserve">
+    <value>Remove all breakpoints</value>
+  </data>
+  <data name="Breakpoints_RemoveBreakpoints_ToolTip" xml:space="preserve">
+    <value>Remove breakpoints</value>
+  </data>
+  <data name="EditAppDomainNameCommand" xml:space="preserve">
+    <value>Edit AppDomain Name</value>
+  </data>
+  <data name="EditModuleNameCommand" xml:space="preserve">
+    <value>Edit Module Name</value>
+  </data>
+  <data name="EditOrderCommand" xml:space="preserve">
+    <value>Edit Module Load Order</value>
+  </data>
+  <data name="EditProcessNameCommand" xml:space="preserve">
+    <value>Edit Process Name</value>
+  </data>
+  <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
+    <value>Remove All Breakpoints</value>
+  </data>
+  <data name="RemoveBreakpointsCommand" xml:space="preserve">
+    <value>Remove Breakpoints</value>
+  </data>
 </root>

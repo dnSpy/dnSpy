@@ -52,6 +52,12 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>Guid of debugger breakpoints <see cref="ListView"/></summary>
 		public static readonly Guid GUID_DEBUGGER_BREAKPOINTS_LISTVIEW = new Guid("E178917C-199C-4A99-95F9-9724806E528F");
 
+		/// <summary>Guid of debugger module breakpoints control</summary>
+		public static readonly Guid GUID_DEBUGGER_MODULEBREAKPOINTS_CONTROL = new Guid("D64862B4-6282-4579-BE84-41B1D629F980");
+
+		/// <summary>Guid of debugger module breakpoints <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_MODULEBREAKPOINTS_LISTVIEW = new Guid("DAB850F0-BA82-454E-9C00-2EF9C12CCF7F");
+
 		/// <summary>Guid of debugger call stack control</summary>
 		public static readonly Guid GUID_DEBUGGER_CALLSTACK_CONTROL = new Guid("D0EDBB27-8367-4806-BB03-03B6990A7D32");
 

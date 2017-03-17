@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 
 			DisposeEditValue();
 			Debug.Assert(editValue == null);
-			editValue = EditValueProvider?.Create(editableValue.Text);
+			editValue = EditValueProvider?.Create(editableValue.Text ?? string.Empty);
 			if (editValue == null) {
 				CancelEdit(editableValue);
 				return;

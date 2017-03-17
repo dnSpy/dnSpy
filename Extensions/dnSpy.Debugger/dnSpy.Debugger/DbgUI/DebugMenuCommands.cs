@@ -263,7 +263,15 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:ExceptionSettingsCommand", Icon = DsImagesAttribute.ExceptionSettings, InputGestureText = "res:ShortCutKeyCtrlAltE", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:ModuleBreakpointsCommand", Icon = DsImagesAttribute.ModulePublic, Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS, Order = 10)]
+		sealed class ModuleBreakpointsWindowCommand : DebugToolWindowMainMenuCommand {
+			[ImportingConstructor]
+			public ModuleBreakpointsWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
+				: base(toolWindowService, ToolWindows.ModuleBreakpoints.ModuleBreakpointsToolWindowContent.THE_GUID, debugger, null) {
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:ExceptionSettingsCommand", Icon = DsImagesAttribute.ExceptionSettings, InputGestureText = "res:ShortCutKeyCtrlAltE", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS, Order = 20)]
 		sealed class ExceptionSettingsWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
 			public ExceptionSettingsWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
@@ -271,7 +279,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:OutputCommand", Icon = DsImagesAttribute.Output, Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS, Order = 20)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:OutputCommand", Icon = DsImagesAttribute.Output, Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS, Order = 30)]
 		sealed class OutputWindowCommand : DebugMainMenuCommand {
 			readonly IDsToolWindowService toolWindowService;
 			readonly Lazy<IOutputService> outputService;

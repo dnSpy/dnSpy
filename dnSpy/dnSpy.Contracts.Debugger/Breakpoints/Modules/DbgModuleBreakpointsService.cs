@@ -81,6 +81,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		public abstract void Remove(DbgModuleBreakpoint[] breakpoints);
 
 		/// <summary>
+		/// Removes all module breakpoints
+		/// </summary>
+		public abstract void Clear();
+
+		/// <summary>
 		/// Finds breakpoints
 		/// </summary>
 		/// <param name="module">Module</param>

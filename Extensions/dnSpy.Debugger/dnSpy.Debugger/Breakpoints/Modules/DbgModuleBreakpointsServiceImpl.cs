@@ -139,10 +139,26 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 					this.breakpoints.Remove(bpImpl);
 				}
 			}
-			if (removed.Count > 0)
+			if (removed.Count > 0) {
 				BreakpointsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModuleBreakpoint>(removed, added: false));
-			foreach (var bp in removed)
-				bp.Close(dbgDispatcher.DispatcherThread);
+				foreach (var bp in removed)
+					bp.Close(dbgDispatcher.DispatcherThread);
+			}
+		}
+
+		public override void Clear() => Dbg(() => ClearCore());
+		void ClearCore() {
+			dbgDispatcher.VerifyAccess();
+			DbgModuleBreakpoint[] removed;
+			lock (lockObj) {
+				removed = breakpoints.ToArray();
+				breakpoints.Clear();
+			}
+			if (removed.Length > 0) {
+				BreakpointsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModuleBreakpoint>(removed, added: false));
+				foreach (var bp in removed)
+					bp.Close(dbgDispatcher.DispatcherThread);
+			}
 		}
 
 		public override DbgModuleBreakpoint[] Find(DbgBreakpointModule module) {

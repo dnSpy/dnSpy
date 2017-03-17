@@ -241,6 +241,33 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add breakpoint.
+        /// </summary>
+        public static string Breakpoints_AddBreakpoint_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_AddBreakpoint_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove all breakpoints.
+        /// </summary>
+        public static string Breakpoints_RemoveAllBreakpoints_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_RemoveAllBreakpoints_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove breakpoints.
+        /// </summary>
+        public static string Breakpoints_RemoveBreakpoints_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_RemoveBreakpoints_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Breakpoints.
         /// </summary>
         public static string BreakpointsCommand {
@@ -1501,6 +1528,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit AppDomain Name.
+        /// </summary>
+        public static string EditAppDomainNameCommand {
+            get {
+                return ResourceManager.GetString("EditAppDomainNameCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Conditions.
         /// </summary>
         public static string EditConditions_Title {
@@ -1515,6 +1551,33 @@ namespace dnSpy.Debugger.Properties {
         public static string EditConditionsCommand {
             get {
                 return ResourceManager.GetString("EditConditionsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Module Name.
+        /// </summary>
+        public static string EditModuleNameCommand {
+            get {
+                return ResourceManager.GetString("EditModuleNameCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Module Load Order.
+        /// </summary>
+        public static string EditOrderCommand {
+            get {
+                return ResourceManager.GetString("EditOrderCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Process Name.
+        /// </summary>
+        public static string EditProcessNameCommand {
+            get {
+                return ResourceManager.GetString("EditProcessNameCommand", resourceCulture);
             }
         }
         
@@ -2587,6 +2650,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mod_ule Breakpoints.
+        /// </summary>
+        public static string ModuleBreakpointsCommand {
+            get {
+                return ResourceManager.GetString("ModuleBreakpointsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy Filename.
         /// </summary>
         public static string ModuleCopyFilenameCommand {
@@ -2754,6 +2826,24 @@ namespace dnSpy.Debugger.Properties {
         public static string ReloadAllMethodBodiesCommand {
             get {
                 return ResourceManager.GetString("ReloadAllMethodBodiesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove All Breakpoints.
+        /// </summary>
+        public static string RemoveAllBreakpointsCommand {
+            get {
+                return ResourceManager.GetString("RemoveAllBreakpointsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Breakpoints.
+        /// </summary>
+        public static string RemoveBreakpointsCommand {
+            get {
+                return ResourceManager.GetString("RemoveBreakpointsCommand", resourceCulture);
             }
         }
         
@@ -3906,6 +3996,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Window_Memory_N_MenuItem2 {
             get {
                 return ResourceManager.GetString("Window_Memory_N_MenuItem2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module Breakpoints.
+        /// </summary>
+        public static string Window_ModuleBreakpoints {
+            get {
+                return ResourceManager.GetString("Window_ModuleBreakpoints", resourceCulture);
             }
         }
         

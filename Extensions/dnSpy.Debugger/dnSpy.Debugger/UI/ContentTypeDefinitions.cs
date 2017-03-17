@@ -30,6 +30,31 @@ namespace dnSpy.Debugger.UI {
 		static readonly ContentTypeDefinition BreakpointsWindow;
 
 		[Export]
+		[Name(ContentTypes.ModuleBreakpointsWindow)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition ModuleBreakpointsWindow;
+
+		[Export]
+		[Name(ContentTypes.ModuleBreakpointsWindowModuleName)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition ModuleBreakpointsWindowModuleName;
+
+		[Export]
+		[Name(ContentTypes.ModuleBreakpointsWindowOrder)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition ModuleBreakpointsWindowOrder;
+
+		[Export]
+		[Name(ContentTypes.ModuleBreakpointsWindowAppDomainName)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition ModuleBreakpointsWindowAppDomainName;
+
+		[Export]
+		[Name(ContentTypes.ModuleBreakpointsWindowProcessName)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition ModuleBreakpointsWindowProcessName;
+
+		[Export]
 		[Name(ContentTypes.CallStackWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition CallStackWindow;

@@ -34,23 +34,26 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// <summary>Order of debugger breakpoints tool window</summary>
 		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_BREAKPOINTS = 20001;
 
+		/// <summary>Order of debugger module breakpoints tool window</summary>
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MODULEBREAKPOINTS = 20002;
+
 		/// <summary>Order of debugger call stack tool window</summary>
-		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CALLSTACK = 20002;
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CALLSTACK = 20003;
 
 		/// <summary>Order of debugger threads tool window</summary>
-		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_THREADS = 20003;
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_THREADS = 20004;
 
 		/// <summary>Order of debugger exceptions tool window</summary>
-		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_EXCEPTIONS = 20004;
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_EXCEPTIONS = 20005;
 
 		/// <summary>Order of debugger modules tool window</summary>
-		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MODULES = 20005;
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MODULES = 20006;
 
 		/// <summary>Order of debugger modules tool window</summary>
-		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_PROCESSES = 20006;
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_PROCESSES = 20007;
 
 		/// <summary>Order of debugger memory tool window</summary>
-		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MEMORY = 20007;
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MEMORY = 20008;
 
 		/// <summary>Order of C# interactive window</summary>
 		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_SCRIPTING_CSHARP = 21000;

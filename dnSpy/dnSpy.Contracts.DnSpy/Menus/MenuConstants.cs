@@ -464,6 +464,15 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Options</summary>
 		public const string GROUP_CTX_DBG_BPS_OPTS = "10000,E326374F-8D4F-4CC4-B454-BB3F2C585299";
 
+		/// <summary>Group: Context Menu, Type: Debugger/Module Breakpoints, Group: Copy</summary>
+		public const string GROUP_CTX_DBG_MODULEBPS_COPY = "0,648E5B4C-BADE-4226-9B18-EE983438728E";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Module Breakpoints, Group: Commands</summary>
+		public const string GROUP_CTX_DBG_MODULEBPS_CMDS1 = "1000,F07E3763-5827-4DE1-95A3-EEBD224B711A";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Module Breakpoints, Group: Commands</summary>
+		public const string GROUP_CTX_DBG_MODULEBPS_CMDS2 = "2000,2AE615AA-3786-424A-8C90-B028032DFD6C";
+
 		/// <summary>Group: Context Menu, Type: Debugger/CallStack, Group: Copy</summary>
 		public const string GROUP_CTX_DBG_CALLSTACK_COPY = "0,FA7DD7BA-CC6B-46F4-8838-F8015B586911";
 

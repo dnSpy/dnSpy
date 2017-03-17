@@ -194,6 +194,31 @@ namespace dnSpy.Contracts.Text {
 		public const string BreakpointsWindow = nameof(BreakpointsWindow);
 
 		/// <summary>
+		/// Module breakpoints window
+		/// </summary>
+		public const string ModuleBreakpointsWindow = nameof(ModuleBreakpointsWindow);
+
+		/// <summary>
+		/// Module breakpoints window: module name column
+		/// </summary>
+		public const string ModuleBreakpointsWindowModuleName = nameof(ModuleBreakpointsWindowModuleName);
+
+		/// <summary>
+		/// Module breakpoints window: order column
+		/// </summary>
+		public const string ModuleBreakpointsWindowOrder = nameof(ModuleBreakpointsWindowOrder);
+
+		/// <summary>
+		/// Module breakpoints window: app domain name column
+		/// </summary>
+		public const string ModuleBreakpointsWindowAppDomainName = nameof(ModuleBreakpointsWindowAppDomainName);
+
+		/// <summary>
+		/// Module breakpoints window: process name column
+		/// </summary>
+		public const string ModuleBreakpointsWindowProcessName = nameof(ModuleBreakpointsWindowProcessName);
+
+		/// <summary>
 		/// Call Stack window
 		/// </summary>
 		public const string CallStackWindow = nameof(CallStackWindow);

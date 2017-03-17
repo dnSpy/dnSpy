@@ -59,6 +59,19 @@
     <Compile Include="Exceptions\DefaultExceptionDefinitionsProvider.cs" />
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
+    <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
+    <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointColumnConverter.cs" />
+    <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointContext.cs" />
+    <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointFormatter.cs" />
+    <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointsContent.cs" />
+    <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointsControl.xaml.cs">
+      <DependentUpon>ModuleBreakpointsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointsOperations.cs" />
+    <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointsToolWindowContent.cs" />
+    <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointsVM.cs" />
+    <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointVM.cs" />
+    <Compile Include="ToolWindows\ModuleBreakpoints\TextViewTaggers.cs" />
     <Compile Include="Utilities\WildcardsUtils.cs" />
     <None Include="Exceptions\GenerateExceptionsXmlFile.cs" />
     <Compile Include="Impl\DbgAppDomainImpl.cs" />
@@ -267,6 +280,10 @@
     <Page Include="ToolWindows\Memory\MemoryControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ToolWindows\Modules\ModulesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
