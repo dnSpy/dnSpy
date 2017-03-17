@@ -141,6 +141,8 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			}
 			if (removed.Count > 0)
 				BreakpointsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModuleBreakpoint>(removed, added: false));
+			foreach (var bp in removed)
+				bp.Close(dbgDispatcher.DispatcherThread);
 		}
 
 		public override DbgModuleBreakpoint[] Find(DbgBreakpointModule module) {
