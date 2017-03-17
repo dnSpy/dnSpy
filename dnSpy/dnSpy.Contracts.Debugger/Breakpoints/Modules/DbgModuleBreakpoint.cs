@@ -110,5 +110,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 				Settings = settings;
 			}
 		}
+
+		/// <summary>
+		/// Removes this breakpoint from the module breakpoints list
+		/// </summary>
+		public abstract void Remove();
 	}
 }

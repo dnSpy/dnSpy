@@ -85,5 +85,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 				regexWeakRef = new WeakReference(regex = WildcardsUtils.CreateRegex(wildcardsString));
 			return regex.IsMatch(value ?? string.Empty);
 		}
+
+		public override void Remove() => owner.Remove(this);
 	}
 }
