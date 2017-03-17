@@ -21,7 +21,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Debugger.Utilities;
 

@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.IO;
 using System.Text;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Exceptions;
