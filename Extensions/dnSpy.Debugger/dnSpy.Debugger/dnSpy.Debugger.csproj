@@ -36,6 +36,8 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Breakpoints\Modules\DbgModuleBreakpointImpl.cs" />
+    <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsServiceImpl.cs" />
     <Compile Include="DbgUI\Debugger.cs" />
     <Compile Include="DbgUI\DebuggerImpl.cs" />
     <Compile Include="DbgUI\DebugMenu.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="Exceptions\DefaultExceptionDefinitionsProvider.cs" />
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
+    <Compile Include="Utilities\WildcardsUtils.cs" />
     <None Include="Exceptions\GenerateExceptionsXmlFile.cs" />
     <Compile Include="Impl\DbgAppDomainImpl.cs" />
     <Compile Include="Impl\DbgDebuggingContextImpl.cs" />

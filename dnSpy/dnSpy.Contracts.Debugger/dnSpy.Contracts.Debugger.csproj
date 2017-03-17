@@ -40,6 +40,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Breakpoints\Modules\DbgBreakpointModule.cs" />
+    <Compile Include="Breakpoints\Modules\DbgModuleBreakpoint.cs" />
+    <Compile Include="Breakpoints\Modules\DbgModuleBreakpointSettings.cs" />
+    <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsService.cs" />
     <Compile Include="DbgAppDomain.cs" />
     <Compile Include="DbgCollectionChangedEventArgs.cs" />
     <Compile Include="DbgDebuggingContext.cs" />

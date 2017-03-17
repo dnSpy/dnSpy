@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using dnSpy.Contracts.Debugger.Exceptions;
+using dnSpy.Debugger.Utilities;
 
 namespace dnSpy.Debugger.Impl {
 	abstract class ExceptionConditionsChecker {
@@ -96,9 +97,7 @@ namespace dnSpy.Debugger.Impl {
 		bool CompareStrings(string s, string wildcardString) {
 			if (s == null || wildcardString == null)
 				return false;
-			const RegexOptions flags = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline;
-			var regex = new Regex("^" + Regex.Escape(wildcardString).Replace(@"\*", ".*").Replace(@"\?", ".") + "$", flags);
-			return regex.IsMatch(s);
+			return WildcardsUtils.CreateRegex(wildcardString).IsMatch(s);
 		}
 	}
 }
