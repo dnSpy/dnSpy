@@ -76,6 +76,22 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULEBREAKPOINTS_CONTROL, moduleBreakpointsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULEBREAKPOINTS_LISTVIEW, moduleBreakpointsControl.ListView);
+
+			moduleBreakpointsControl.ListView.PreviewKeyDown += ListView_PreviewKeyDown;
+		}
+
+		void ListView_PreviewKeyDown(object sender, KeyEventArgs e) {
+			if (!e.Handled) {
+				// Use a KeyDown handler. If we add this as a key command to the listview, the textview
+				// (used when editing eg. module name) won't see the space.
+				if (e.Key == Key.Space && e.KeyboardDevice.Modifiers == ModifierKeys.None) {
+					if (Operations.CanToggleEnabled) {
+						Operations.ToggleEnabled();
+						e.Handled = true;
+						return;
+					}
+				}
+			}
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(moduleBreakpointsControl.ListView);

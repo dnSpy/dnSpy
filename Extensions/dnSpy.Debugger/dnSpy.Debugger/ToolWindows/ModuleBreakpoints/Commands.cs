@@ -40,7 +40,6 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditOrder(), a => moduleBreakpointsContent.Value.Operations.CanEditOrder), ModifierKeys.Control, Key.D2);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditProcessName(), a => moduleBreakpointsContent.Value.Operations.CanEditProcessName), ModifierKeys.Control, Key.D3);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditAppDomainName(), a => moduleBreakpointsContent.Value.Operations.CanEditAppDomainName), ModifierKeys.Control, Key.D4);
-			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.ToggleEnabled(), a => moduleBreakpointsContent.Value.Operations.CanToggleEnabled), ModifierKeys.None, Key.Space);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.RemoveModuleBreakpoints(), a => moduleBreakpointsContent.Value.Operations.CanRemoveModuleBreakpoints), ModifierKeys.None, Key.Delete);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.AddModuleBreakpoint(), a => moduleBreakpointsContent.Value.Operations.CanAddModuleBreakpoint), ModifierKeys.None, Key.Insert);
 		}

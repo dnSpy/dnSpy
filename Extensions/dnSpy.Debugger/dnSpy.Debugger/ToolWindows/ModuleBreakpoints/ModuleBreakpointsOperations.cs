@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			SelectedItems[0].AppDomainNameEditableValue.IsEditingValue = true;
 		}
 
-		public override bool CanToggleEnabled => SelectedItems.Count > 0;
+		public override bool CanToggleEnabled => SelectedItems.Count > 0 && !IsEditingValues;
 		public override void ToggleEnabled() {
 			// Toggling everything seems to be less useful, it's more likely that you'd want
 			// to enable all selected module breakpoints or disable all of them.
