@@ -159,5 +159,16 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			Context.UIDispatcher.VerifyAccess();
 			ClearEditingValueProperties();
 		}
+
+		// UI thread
+		internal bool IsEditingValues {
+			get {
+				Context.UIDispatcher.VerifyAccess();
+				return ModuleNameEditableValue.IsEditingValue ||
+					OrderEditableValue.IsEditingValue ||
+					ProcessNameEditableValue.IsEditingValue ||
+					AppDomainNameEditableValue.IsEditingValue;
+			}
+		}
 	}
 }

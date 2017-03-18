@@ -31,6 +31,7 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 		/// When true is written to this property, the edit textbox is made visible and the
 		/// user can edit the value. The control will write false to it when the edit operation
 		/// is completed (eg. the user hit enter or escape.)
+		/// The control also writes true to this property if the user double clicks it.
 		/// </summary>
 		bool IsEditingValue { get; set; }
 

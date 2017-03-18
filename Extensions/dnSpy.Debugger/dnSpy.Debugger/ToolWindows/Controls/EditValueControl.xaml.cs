@@ -85,6 +85,18 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 			OnEditableValuePropertyChanged(EditableValue, null, true);
 		}
 
+		protected override void OnMouseDoubleClick(MouseButtonEventArgs e) {
+			if (!e.Handled && isLoaded) {
+				var editableValue = EditableValue;
+				if (editableValue?.CanEdit == true) {
+					editableValue.IsEditingValue = true;
+					e.Handled = true;
+					return;
+				}
+			}
+			base.OnMouseDoubleClick(e);
+		}
+
 		void OnEditableValuePropertyChanged(IEditableValue oldValue, IEditableValue newValue, bool force) {
 			if (!force && !isLoaded)
 				return;

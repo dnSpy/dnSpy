@@ -73,15 +73,9 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			moduleBreakpointsControl = new ModuleBreakpointsControl();
 			this.moduleBreakpointsVM = moduleBreakpointsVM;
 			moduleBreakpointsControl.DataContext = new ControlVM(moduleBreakpointsVM, moduleBreakpointsOperations);
-			moduleBreakpointsControl.ModuleBreakpointsListViewDoubleClick += ModuleBreakpointsControl_ModuleBreakpointsListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULEBREAKPOINTS_CONTROL, moduleBreakpointsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULEBREAKPOINTS_LISTVIEW, moduleBreakpointsControl.ListView);
-		}
-
-		void ModuleBreakpointsControl_ModuleBreakpointsListViewDoubleClick(object sender, EventArgs e) {
-			if (Operations.CanEditModuleName)
-				Operations.EditModuleName();
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(moduleBreakpointsControl.ListView);

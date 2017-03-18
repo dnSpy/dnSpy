@@ -54,6 +54,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public abstract void EnableBreakpoints();
 		public abstract bool CanDisableBreakpoints { get; }
 		public abstract void DisableBreakpoints();
+		public abstract bool IsEditingValues { get; }
 	}
 
 	[Export(typeof(ModuleBreakpointsOperations))]
@@ -188,6 +189,16 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			}
 			if (newSettings.Count > 0)
 				dbgModuleBreakpointsService.Value.Modify(newSettings.ToArray());
+		}
+
+		public override bool IsEditingValues {
+			get {
+				foreach (var vm in SelectedItems) {
+					if (vm.IsEditingValues)
+						return true;
+				}
+				return false;
+			}
 		}
 	}
 }
