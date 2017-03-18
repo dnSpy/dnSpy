@@ -246,6 +246,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: App Menu: Debug, Group: Continue/Stop/etc commands</summary>
 		public const string GROUP_APP_MENU_DEBUG_CONTINUE = "1000,E9AEB324-1425-4CBF-8998-B1796A16AA06";
 
+		/// <summary>Group: App Menu: Debug, Group: Step (Current Process) commands</summary>
+		public const string GROUP_APP_MENU_DEBUG_STEP_CURRENTPROCESS = "1999,D7C0F536-DD76-428C-8E87-A9D27D4C19A9";
+
 		/// <summary>Group: App Menu: Debug, Group: Step commands</summary>
 		public const string GROUP_APP_MENU_DEBUG_STEP = "2000,5667E48E-5E33-46E9-9661-98B979D65F5D";
 
@@ -536,14 +539,17 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Copy</summary>
 		public const string GROUP_CTX_DBG_PROCESSES_COPY = "0,CC3C28D9-E9F7-448B-9299-31038143439F";
 
-		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Operations</summary>
-		public const string GROUP_CTX_DBG_PROCESSES_OPERATIONS = "1000,276A37FE-50C8-4B56-BF56-4A0F414207DF";
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Continue/Break</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_CONTINUE = "1000,3F9F65B7-A18C-4657-AED7-CBB521196C34";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Detach/Terminate</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_TERMINATE = "2000,276A37FE-50C8-4B56-BF56-4A0F414207DF";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Options</summary>
-		public const string GROUP_CTX_DBG_PROCESSES_OPTIONS = "2000,09039E26-03A2-453C-B164-F43DF8154D3F";
+		public const string GROUP_CTX_DBG_PROCESSES_OPTIONS = "3000,09039E26-03A2-453C-B164-F43DF8154D3F";
 
-		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Operations</summary>
-		public const string GROUP_CTX_DBG_PROCESSES_OPERATIONS2 = "3000,1F9D28D0-282B-46BB-9E2D-59703E28A5FF";
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Attach</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_ATTACH = "4000,1F9D28D0-282B-46BB-9E2D-59703E28A5FF";
 
 		/// <summary>Group: Context Menu, Type: REPL text editor, Group: Reset</summary>
 		public const string GROUP_CTX_REPL_RESET = "0,407111D9-B090-4151-83FF-2C01C3816DF3";

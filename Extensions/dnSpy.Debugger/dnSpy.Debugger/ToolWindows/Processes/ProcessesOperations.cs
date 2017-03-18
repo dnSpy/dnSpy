@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
@@ -32,6 +33,16 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public abstract void Copy();
 		public abstract bool CanSelectAll { get; }
 		public abstract void SelectAll();
+		public abstract bool CanContinueProcess { get; }
+		public abstract void ContinueProcess();
+		public abstract bool CanBreakProcess { get; }
+		public abstract void BreakProcess();
+		public abstract bool CanStepIntoProcess { get; }
+		public abstract void StepIntoProcess();
+		public abstract bool CanStepOverProcess { get; }
+		public abstract void StepOverProcess();
+		public abstract bool CanStepOutProcess { get; }
+		public abstract void StepOutProcess();
 		public abstract bool CanDetachProcess { get; }
 		public abstract void DetachProcess();
 		public abstract bool CanTerminateProcess { get; }
@@ -52,6 +63,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 	sealed class ProcessesOperationsImpl : ProcessesOperations {
 		readonly IProcessesVM processesVM;
 		readonly DebuggerSettings debuggerSettings;
+		readonly Lazy<DbgManager> dbgManager;
 
 		ObservableCollection<ProcessVM> AllItems => processesVM.AllItems;
 		ObservableCollection<ProcessVM> SelectedItems => processesVM.SelectedItems;
@@ -59,9 +71,10 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		IEnumerable<ProcessVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		ProcessesOperationsImpl(IProcessesVM processesVM, DebuggerSettings debuggerSettings) {
+		ProcessesOperationsImpl(IProcessesVM processesVM, DebuggerSettings debuggerSettings, Lazy<DbgManager> dbgManager) {
 			this.processesVM = processesVM;
 			this.debuggerSettings = debuggerSettings;
+			this.dbgManager = dbgManager;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -98,6 +111,33 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			SelectedItems.Clear();
 			foreach (var vm in AllItems)
 				SelectedItems.Add(vm);
+		}
+
+		public override bool CanContinueProcess => SelectedItems.Any(a => a.Process.State == DbgProcessState.Paused);
+		public override void ContinueProcess() {
+			foreach (var vm in SelectedItems)
+				vm.Process.Run();
+		}
+
+		public override bool CanBreakProcess => SelectedItems.Any(a => a.Process.State == DbgProcessState.Running);
+		public override void BreakProcess() {
+			foreach (var vm in SelectedItems)
+				vm.Process.Break();
+		}
+
+		public override bool CanStepIntoProcess => dbgManager.Value.CurrentProcess != null;
+		public override void StepIntoProcess() {
+			//TODO: Use current process, not selected process
+		}
+
+		public override bool CanStepOverProcess => dbgManager.Value.CurrentProcess != null;
+		public override void StepOverProcess() {
+			//TODO: Use current process, not selected process
+		}
+
+		public override bool CanStepOutProcess => dbgManager.Value.CurrentProcess != null;
+		public override void StepOutProcess() {
+			//TODO: Use current process, not selected process
 		}
 
 		public override bool CanDetachProcess => SelectedItems.Count != 0;

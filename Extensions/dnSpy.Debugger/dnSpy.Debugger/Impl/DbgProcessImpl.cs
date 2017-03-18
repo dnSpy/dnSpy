@@ -431,5 +431,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Detach() => owner.Detach(this);
 		public override void Terminate() => owner.Terminate(this);
+		public override void Break() => owner.Break(this);
+		public override void Run() => owner.Run(this);
 	}
 }

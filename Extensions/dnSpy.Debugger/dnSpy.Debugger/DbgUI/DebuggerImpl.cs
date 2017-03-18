@@ -76,6 +76,7 @@ namespace dnSpy.Debugger.DbgUI {
 			//TODO:
 		}
 
+		bool CanExecuteCurrentProcessPauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.CurrentProcess?.State == DbgProcessState.Paused;
 		bool CanExecutePauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != true;
 		bool CanExecuteRunningCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != false;
 		bool CanExecutePauseOrRunningCommand => dbgManager.Value.IsDebugging;
@@ -117,6 +118,21 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public override bool CanStepOut => CanExecutePauseCommand;
 		public override void StepOut() {
+			//TODO:
+		}
+
+		public override bool CanStepIntoCurrentProcess => CanExecuteCurrentProcessPauseCommand;
+		public override void StepIntoCurrentProcess() {
+			//TODO:
+		}
+
+		public override bool CanStepOverCurrentProcess => CanExecuteCurrentProcessPauseCommand;
+		public override void StepOverCurrentProcess() {
+			//TODO:
+		}
+
+		public override bool CanStepOutCurrentProcess => CanExecuteCurrentProcessPauseCommand;
+		public override void StepOutCurrentProcess() {
 			//TODO:
 		}
 

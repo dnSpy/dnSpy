@@ -168,6 +168,16 @@ namespace dnSpy.Contracts.Debugger {
 		/// Terminates the process
 		/// </summary>
 		public abstract void Terminate();
+
+		/// <summary>
+		/// Pauses the process
+		/// </summary>
+		public abstract void Break();
+
+		/// <summary>
+		/// Lets the process run again
+		/// </summary>
+		public abstract void Run();
 	}
 
 	/// <summary>

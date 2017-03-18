@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Threading;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Output;
@@ -152,6 +153,45 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IMenuItemContext context) => debugger.Value.AttachProgram();
 			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanAttachProgram;
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StepIntoCurrentProcessCommand", Icon = DsImagesAttribute.StepInto, InputGestureText = "res:ShortCutKeyCtrlAltF11", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP_CURRENTPROCESS, Order = 0)]
+		sealed class StepIntoCurrentProcessDebugMainMenuCommand : DebugMainMenuCommand {
+			readonly Lazy<DebuggerSettings> debuggerSettings;
+
+			[ImportingConstructor]
+			public StepIntoCurrentProcessDebugMainMenuCommand(Lazy<Debugger> debugger, Lazy<DebuggerSettings> debuggerSettings)
+				: base(debugger, true) => this.debuggerSettings = debuggerSettings;
+
+			public override void Execute(IMenuItemContext context) => debugger.Value.StepIntoCurrentProcess();
+			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanStepIntoCurrentProcess;
+			public override bool IsVisible(IMenuItemContext context) => !debuggerSettings.Value.BreakAllProcesses && debugger.Value.IsDebugging;
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StepOverCurrentProcessCommand", Icon = DsImagesAttribute.StepOver, InputGestureText = "res:ShortCutKeyCtrlAltF10", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP_CURRENTPROCESS, Order = 10)]
+		sealed class StepOverCurrentProcessDebugMainMenuCommand : DebugMainMenuCommand {
+			readonly Lazy<DebuggerSettings> debuggerSettings;
+
+			[ImportingConstructor]
+			public StepOverCurrentProcessDebugMainMenuCommand(Lazy<Debugger> debugger, Lazy<DebuggerSettings> debuggerSettings)
+				: base(debugger, true) => this.debuggerSettings = debuggerSettings;
+
+			public override void Execute(IMenuItemContext context) => debugger.Value.StepOverCurrentProcess();
+			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanStepOverCurrentProcess;
+			public override bool IsVisible(IMenuItemContext context) => !debuggerSettings.Value.BreakAllProcesses && debugger.Value.IsDebugging;
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StepOutCurrentProcessCommand", Icon = DsImagesAttribute.StepOut, InputGestureText = "res:ShortCutKeyCtrlShiftAltF11", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP_CURRENTPROCESS, Order = 20)]
+		sealed class StepOutCurrentProcessDebugMainMenuCommand : DebugMainMenuCommand {
+			readonly Lazy<DebuggerSettings> debuggerSettings;
+
+			[ImportingConstructor]
+			public StepOutCurrentProcessDebugMainMenuCommand(Lazy<Debugger> debugger, Lazy<DebuggerSettings> debuggerSettings)
+				: base(debugger, true) => this.debuggerSettings = debuggerSettings;
+
+			public override void Execute(IMenuItemContext context) => debugger.Value.StepOutCurrentProcess();
+			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanStepOutCurrentProcess;
+			public override bool IsVisible(IMenuItemContext context) => !debuggerSettings.Value.BreakAllProcesses && debugger.Value.IsDebugging;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StepIntoCommand", Icon = DsImagesAttribute.StepInto, InputGestureText = "res:ShortCutKeyF11", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP, Order = 0)]

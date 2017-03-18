@@ -683,10 +683,18 @@ namespace dnSpy.Debugger.Impl {
 
 		void RunAll_DbgThread() {
 			DispatcherThread.VerifyAccess();
+			EngineInfo[] engineInfos;
+			lock (lockObj)
+				engineInfos = engines.ToArray();
+			RunEngines_DbgThread(engineInfos);
+		}
+
+		void RunEngines_DbgThread(EngineInfo[] engineInfos) {
+			DispatcherThread.VerifyAccess();
 
 			List<DbgException> exceptions = null;
 			lock (lockObj) {
-				foreach (var info in engines) {
+				foreach (var info in engineInfos) {
 					if (info.EngineState == EngineState.Paused && info.Exception != null) {
 						if (exceptions == null)
 							exceptions = new List<DbgException>();
@@ -709,9 +717,7 @@ namespace dnSpy.Debugger.Impl {
 				if (breakAllHelper != null)
 					return;
 
-				// Make a copy of it in the unlikely event that an engine gets disconnected
-				// when we call Run() inside the lock
-				foreach (var info in engines.ToArray()) {
+				foreach (var info in engineInfos) {
 					if (info.EngineState == EngineState.Paused) {
 						if (info.Process != null && !processes.Contains(info.Process))
 							processes.Add(info.Process);
@@ -733,34 +739,11 @@ namespace dnSpy.Debugger.Impl {
 
 		void Run_DbgThread(DbgEngine engine) {
 			DispatcherThread.VerifyAccess();
-
-			DbgException exception;
-			lock (lockObj) {
-				var info = GetEngineInfo_NoLock(engine);
-				Debug.Assert(info.EngineState == EngineState.Paused);
-				exception = info.Exception;
-				info.Exception = null;
-			}
-			exception?.Close(DispatcherThread);
-
-			bool raiseIsRunning;
-			DbgProcessImpl process;
-			lock (lockObj) {
-				var oldIsRunning = cachedIsRunning;
-
-				var info = GetEngineInfo_NoLock(engine);
-				process = info.Process;
-				info.EngineState = EngineState.Running;
-				Debug.Assert(info.Exception == null);
-				info.Engine.Run();
-
-				cachedIsRunning = CalculateIsRunning_NoLock();
-				raiseIsRunning = oldIsRunning != cachedIsRunning;
-			}
-			if (raiseIsRunning)
-				RaiseIsRunningChanged();
-			process?.UpdateState_DbgThread(CalculateProcessState(process));
-			RecheckAndUpdateCurrentProcess();
+			EngineInfo engineInfo;
+			lock (lockObj)
+				engineInfo = TryGetEngineInfo_NoLock(engine);
+			if (engineInfo != null)
+				RunEngines_DbgThread(new[] { engineInfo });
 		}
 
 		public override void StopDebuggingAll() {
@@ -827,6 +810,31 @@ namespace dnSpy.Debugger.Impl {
 						info.Engine.Terminate();
 				}
 			}
+		}
+
+		internal void Break(DbgProcessImpl process) {
+			lock (lockObj) {
+				// Make a copy of it in the unlikely event that an engine gets disconnected
+				// when we call Break() inside the lock
+				foreach (var info in engines.ToArray()) {
+					if (info.Process == process && info.EngineState == EngineState.Running)
+						info.Engine.Break();
+				}
+			}
+		}
+
+		internal void Run(DbgProcessImpl process) => ExecOnDbgThread(() => Run_DbgThread(process));
+		void Run_DbgThread(DbgProcessImpl process) {
+			DispatcherThread.VerifyAccess();
+			var engineInfos = new List<EngineInfo>();
+			lock (lockObj) {
+				foreach (var info in engines) {
+					if (info.Process == process && info.EngineState == EngineState.Paused)
+						engineInfos.Add(info);
+				}
+			}
+			if (engineInfos.Count != 0)
+				RunEngines_DbgThread(engineInfos.ToArray());
 		}
 
 		public override event EventHandler CurrentProcessChanged;

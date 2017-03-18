@@ -277,6 +277,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Break Process.
+        /// </summary>
+        public static string BreakProcessCommand {
+            get {
+                return ResourceManager.GetString("BreakProcessCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Break When Thrown.
         /// </summary>
         public static string BreakWhenExceptionThrownCommand {
@@ -696,6 +705,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ContinueDebuggingCommand {
             get {
                 return ResourceManager.GetString("ContinueDebuggingCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Continue Process.
+        /// </summary>
+        public static string ContinueProcessCommand {
+            get {
+                return ResourceManager.GetString("ContinueProcessCommand", resourceCulture);
             }
         }
         
@@ -2821,11 +2839,56 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Break Process.
+        /// </summary>
+        public static string Processes_BreakProcessToolTip {
+            get {
+                return ResourceManager.GetString("Processes_BreakProcessToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue Process.
+        /// </summary>
+        public static string Processes_ContinueProcessToolTip {
+            get {
+                return ResourceManager.GetString("Processes_ContinueProcessToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Detach Process.
         /// </summary>
         public static string Processes_DetachToolTip {
             get {
                 return ResourceManager.GetString("Processes_DetachToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step Into.
+        /// </summary>
+        public static string Processes_StepIntoProcessToolTip {
+            get {
+                return ResourceManager.GetString("Processes_StepIntoProcessToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step Out.
+        /// </summary>
+        public static string Processes_StepOutProcessToolTip {
+            get {
+                return ResourceManager.GetString("Processes_StepOutProcessToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step Over.
+        /// </summary>
+        public static string Processes_StepOverProcessToolTip {
+            get {
+                return ResourceManager.GetString("Processes_StepOverProcessToolTip", resourceCulture);
             }
         }
         
@@ -3037,6 +3100,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+F10.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltF10 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltF10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+F11.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltF11 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltF11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Alt+H.
         /// </summary>
         public static string ShortCutKeyCtrlAltH {
@@ -3141,6 +3222,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyCtrlShift_DIGIT {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlShift_DIGIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+Alt+F11.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftAltF11 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftAltF11", resourceCulture);
             }
         }
         
@@ -3514,6 +3604,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Step Into (Current Process).
+        /// </summary>
+        public static string StepIntoCurrentProcessCommand {
+            get {
+                return ResourceManager.GetString("StepIntoCurrentProcessCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Step Ou_t.
         /// </summary>
         public static string StepOutCommand {
@@ -3523,11 +3622,38 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Step Out (Current Process).
+        /// </summary>
+        public static string StepOutCurrentProcessCommand {
+            get {
+                return ResourceManager.GetString("StepOutCurrentProcessCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Step _Over.
         /// </summary>
         public static string StepOverCommand {
             get {
                 return ResourceManager.GetString("StepOverCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step Over (Current Process).
+        /// </summary>
+        public static string StepOverCurrentProcessCommand {
+            get {
+                return ResourceManager.GetString("StepOverCurrentProcessCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Steps only the current process.
+        /// </summary>
+        public static string StepsOnlyTheCurrentProcess {
+            get {
+                return ResourceManager.GetString("StepsOnlyTheCurrentProcess", resourceCulture);
             }
         }
         

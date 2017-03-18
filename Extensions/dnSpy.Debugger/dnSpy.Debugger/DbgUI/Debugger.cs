@@ -46,5 +46,11 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract void StepOver();
 		public abstract bool CanStepOut { get; }
 		public abstract void StepOut();
+		public abstract bool CanStepIntoCurrentProcess { get; }
+		public abstract void StepIntoCurrentProcess();
+		public abstract bool CanStepOverCurrentProcess { get; }
+		public abstract void StepOverCurrentProcess();
+		public abstract bool CanStepOutCurrentProcess { get; }
+		public abstract void StepOutCurrentProcess();
 	}
 }

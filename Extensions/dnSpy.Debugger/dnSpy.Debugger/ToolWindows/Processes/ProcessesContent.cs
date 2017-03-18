@@ -53,10 +53,20 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			public IProcessesVM VM { get; }
 			ProcessesOperations Operations { get; }
 
+			public string ContinueProcessToolTip => dnSpy_Debugger_Resources.Processes_ContinueProcessToolTip;
+			public string BreakProcessToolTip => dnSpy_Debugger_Resources.Processes_BreakProcessToolTip;
+			public string StepIntoProcessToolTip => $"{dnSpy_Debugger_Resources.Processes_StepIntoProcessToolTip} ({dnSpy_Debugger_Resources.StepsOnlyTheCurrentProcess})";
+			public string StepOverProcessToolTip => $"{dnSpy_Debugger_Resources.Processes_StepOverProcessToolTip} ({dnSpy_Debugger_Resources.StepsOnlyTheCurrentProcess})";
+			public string StepOutProcessToolTip => $"{dnSpy_Debugger_Resources.Processes_StepOutProcessToolTip} ({dnSpy_Debugger_Resources.StepsOnlyTheCurrentProcess})";
 			public string DetachToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_DetachToolTip, null);
 			public string TerminateToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_TerminateToolTip, null);
 			public string AttachToProcessToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_AttachToProcessToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlAltP);
 
+			public ICommand ContinueProcessCommand => new RelayCommand(a => Operations.ContinueProcess(), a => Operations.CanContinueProcess);
+			public ICommand BreakProcessCommand => new RelayCommand(a => Operations.BreakProcess(), a => Operations.CanBreakProcess);
+			public ICommand StepIntoProcessCommand => new RelayCommand(a => Operations.StepIntoProcess(), a => Operations.CanStepIntoProcess);
+			public ICommand StepOverProcessCommand => new RelayCommand(a => Operations.StepOverProcess(), a => Operations.CanStepOverProcess);
+			public ICommand StepOutProcessCommand => new RelayCommand(a => Operations.StepOutProcess(), a => Operations.CanStepOutProcess);
 			public ICommand DetachCommand => new RelayCommand(a => Operations.DetachProcess(), a => Operations.CanDetachProcess);
 			public ICommand TerminateCommand => new RelayCommand(a => Operations.TerminateProcess(), a => Operations.CanTerminateProcess);
 			public ICommand AttachToProcessCommand => new RelayCommand(a => Operations.AttachToProcess(), a => Operations.CanAttachToProcess);
