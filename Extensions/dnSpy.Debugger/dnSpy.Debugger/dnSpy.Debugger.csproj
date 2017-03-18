@@ -59,6 +59,7 @@
     <Compile Include="Exceptions\DefaultExceptionDefinitionsProvider.cs" />
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
+    <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointColumnConverter.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointContext.cs" />

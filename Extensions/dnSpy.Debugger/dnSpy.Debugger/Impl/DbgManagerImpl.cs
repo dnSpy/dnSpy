@@ -131,13 +131,14 @@ namespace dnSpy.Debugger.Impl {
 		sealed class EngineInfo {
 			public DbgEngine Engine { get; }
 			public DbgProcessImpl Process { get; set; }
-			public EngineState EngineState { get; set; } = EngineState.Starting;
+			public EngineState EngineState { get; set; }
 			public string[] DebugTags { get; }
 			public DbgObjectFactoryImpl ObjectFactory { get; set; }
 			public DbgException Exception { get; set; }
 			public EngineInfo(DbgEngine engine) {
 				Engine = engine;
 				DebugTags = (string[])engine.DebugTags.Clone();
+				EngineState = EngineState.Starting;
 			}
 		}
 
@@ -350,8 +351,10 @@ namespace dnSpy.Debugger.Impl {
 				RaiseMessage(new DbgMessageProcessCreatedEventArgs(process), ref pauseProgram);
 			RaiseMessage(new DbgMessageRuntimeCreatedEventArgs(runtime), ref pauseProgram);
 
-			if (pauseProgram)
+			if (pauseProgram) {
+				SetCurrentProcessIfCurrentIsNull(process);
 				BreakAllProcessesIfNeeded();
+			}
 			else
 				Run_DbgThread(engine);
 		}
@@ -435,6 +438,7 @@ namespace dnSpy.Debugger.Impl {
 
 			if (processToDispose != null) {
 				processToDispose.UpdateState_DbgThread(DbgProcessState.Terminated);
+				RecheckAndUpdateCurrentProcess();
 				ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(processToDispose, added: false));
 				int exitCode = processToDispose.GetExitCode();
 				RaiseMessage(new DbgMessageProcessExitedEventArgs(processToDispose, exitCode), ref pauseProgram);
@@ -554,6 +558,7 @@ namespace dnSpy.Debugger.Impl {
 			process?.UpdateState_DbgThread(processState);
 			if (raiseIsRunningChanged)
 				RaiseIsRunningChanged();
+			SetCurrentProcessIfCurrentIsNull(process);
 		}
 
 		void BreakCompleted_DbgThread(bool success) {
@@ -664,6 +669,7 @@ namespace dnSpy.Debugger.Impl {
 				}
 				breakAllHelper?.OnBreak_DbgThread(engine);
 				process?.UpdateState_DbgThread(processState);
+				SetCurrentProcessIfCurrentIsNull(process);
 				BreakAllProcessesIfNeeded();
 			}
 			else {
@@ -722,6 +728,7 @@ namespace dnSpy.Debugger.Impl {
 				RaiseIsRunningChanged();
 			foreach (var process in processes)
 				process.UpdateState_DbgThread(CalculateProcessState(process));
+			RecheckAndUpdateCurrentProcess();
 		}
 
 		void Run_DbgThread(DbgEngine engine) {
@@ -753,6 +760,7 @@ namespace dnSpy.Debugger.Impl {
 			if (raiseIsRunning)
 				RaiseIsRunningChanged();
 			process?.UpdateState_DbgThread(CalculateProcessState(process));
+			RecheckAndUpdateCurrentProcess();
 		}
 
 		public override void StopDebuggingAll() {
@@ -819,6 +827,61 @@ namespace dnSpy.Debugger.Impl {
 						info.Engine.Terminate();
 				}
 			}
+		}
+
+		public override event EventHandler CurrentProcessChanged;
+		public override DbgProcess CurrentProcess {
+			get {
+				lock (lockObj)
+					return currentProcess;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException(nameof(value));
+				var process = value as DbgProcessImpl;
+				if (process == null)
+					throw new ArgumentOutOfRangeException(nameof(value));
+				ExecOnDbgThread(() => SetCurrentProcess(process));
+			}
+		}
+		DbgProcess currentProcess;
+
+		void SetCurrentProcess(DbgProcessImpl process) {
+			DispatcherThread.VerifyAccess();
+			if (process == null || process.State != DbgProcessState.Paused)
+				return;
+			lock (lockObj) {
+				Debug.Assert(process != null || processes.All(a => a.State != DbgProcessState.Paused));
+				if (currentProcess == process)
+					return;
+				currentProcess = process;
+			}
+			CurrentProcessChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		void SetCurrentProcessIfCurrentIsNull(DbgProcessImpl process) {
+			DispatcherThread.VerifyAccess();
+			if (process == null || process.State != DbgProcessState.Paused)
+				return;
+			lock (lockObj) {
+				if (currentProcess != null)
+					return;
+				currentProcess = process;
+			}
+			CurrentProcessChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		void RecheckAndUpdateCurrentProcess() {
+			DispatcherThread.VerifyAccess();
+			lock (lockObj) {
+				if (currentProcess?.State == DbgProcessState.Paused)
+					return;
+				var newProcess = processes.FirstOrDefault(a => a.State == DbgProcessState.Paused);
+				if (currentProcess == newProcess)
+					return;
+				currentProcess = newProcess;
+			}
+			CurrentProcessChanged?.Invoke(this, EventArgs.Empty);
 		}
 	}
 }

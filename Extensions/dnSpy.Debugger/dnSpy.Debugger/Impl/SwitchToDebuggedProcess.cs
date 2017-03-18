@@ -27,14 +27,31 @@ namespace dnSpy.Debugger.Impl {
 	[ExportDbgManagerStartListener]
 	sealed class SwitchToDebuggedProcess : IDbgManagerStartListener {
 		bool ignoreSetForeground;
+		DbgProcess currentProcess;
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			dbgManager.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
 			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
+			dbgManager.CurrentProcessChanged += DbgManager_CurrentProcessChanged;
+			dbgManager.ProcessesChanged += DbgManager_ProcessesChanged;
 		}
 
-		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) => ignoreSetForeground = true;
+		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
+			if (!e.Added && e.Objects.Contains(currentProcess))
+				currentProcess = null;
+		}
+
+		void DbgManager_CurrentProcessChanged(object sender, EventArgs e) {
+			var newProcess = ((DbgManager)sender).CurrentProcess;
+			if (newProcess != null)
+				currentProcess = newProcess;
+		}
+
+		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
+			ignoreSetForeground = true;
+			currentProcess = null;
+		}
 
 		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
@@ -44,11 +61,14 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) {
+			var process = currentProcess;
+			currentProcess = null;
+
 			// Ignore it the first time because the OS will give the debugged process focus
 			if (ignoreSetForeground)
 				return;
-			var dbgManager = (DbgManager)sender;
-			var process = dbgManager.Processes.FirstOrDefault();
+			if (process == null)
+				process = ((DbgManager)sender).Processes.FirstOrDefault(a => a.State == DbgProcessState.Running);
 			// Fails if the process hasn't been created yet (eg. the engine hasn't connected to the process yet)
 			if (process == null)
 				return;

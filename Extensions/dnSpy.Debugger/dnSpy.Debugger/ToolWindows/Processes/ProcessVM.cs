@@ -27,8 +27,7 @@ using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	sealed class ProcessVM : ViewModelBase {
-		//TODO: init
-		internal bool IsSelectedProcess {
+		internal bool IsCurrentProcess {
 			get => isSelectedProcess;
 			set {
 				Context.UIDispatcher.VerifyAccess();
@@ -40,7 +39,18 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 		bool isSelectedProcess;
 
-		public ImageReference ImageReference => IsSelectedProcess ? DsImages.CurrentInstructionPointer : ImageReference.None;
+		internal DbgProcessState CachedState {
+			get => cachedState;
+			set {
+				if (cachedState == value)
+					return;
+				cachedState = value;
+				OnPropertyChanged(nameof(StateObject));
+			}
+		}
+		DbgProcessState cachedState;
+
+		public ImageReference ImageReference => IsCurrentProcess ? DsImages.CurrentInstructionPointer : ImageReference.None;
 		public object NameObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowName);
 		public object IdObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowId);
 		public object TitleObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowTitle);
@@ -105,6 +115,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			Process = process ?? throw new ArgumentNullException(nameof(process));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
+			CachedState = process.State;
 			process.PropertyChanged += DbgProcess_PropertyChanged;
 			process.IsRunningChanged += DbgProcess_IsRunningChanged;
 			process.DelayedIsRunningChanged += DbgProcess_DelayedIsRunningChanged;
@@ -142,6 +153,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		// random thread
 		void UI(Action action) => Context.UIDispatcher.UI(action);
 
+		// random thread
+		void UI(TimeSpan delay, Action action) => Context.UIDispatcher.UI(delay, action);
+
 		// DbgManager thread
 		void DbgProcess_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
 			UI(() => DbgProcess_PropertyChanged_UI(e.PropertyName));
@@ -163,7 +177,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				break;
 
 			case nameof(Process.State):
-				OnPropertyChanged(nameof(StateObject));
+				// Prevent flickering when stepping
+				UI(AntiFlickerConstants.AntiFlickerDelay, () => CachedState = Process.State);
 				break;
 
 			case nameof(Process.Debugging):

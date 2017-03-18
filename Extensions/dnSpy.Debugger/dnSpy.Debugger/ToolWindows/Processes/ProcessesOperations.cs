@@ -44,6 +44,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public abstract bool CanToggleUseHexadecimal { get; }
 		public abstract void ToggleUseHexadecimal();
 		public abstract bool UseHexadecimal { get; set; }
+		public abstract bool CanSetCurrentProcess { get; }
+		public abstract void SetCurrentProcess();
 	}
 
 	[Export(typeof(ProcessesOperations))]
@@ -75,7 +77,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteTitle(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteState(output, vm.Process);
+				formatter.WriteState(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteDebugging(output, vm.Process);
 				output.Write(BoxedTextColor.Text, "\t");
@@ -130,6 +132,14 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public override bool UseHexadecimal {
 			get => debuggerSettings.UseHexadecimal;
 			set => debuggerSettings.UseHexadecimal = value;
+		}
+
+		public override bool CanSetCurrentProcess => SelectedItems.Count == 1 && SelectedItems[0].Process.State == DbgProcessState.Paused;
+		public override void SetCurrentProcess() {
+			if (!CanSetCurrentProcess)
+				return;
+			var process = SelectedItems[0].Process;
+			process.DbgManager.CurrentProcess = process;
 		}
 	}
 }

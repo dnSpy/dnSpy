@@ -36,5 +36,18 @@ namespace dnSpy.Debugger.UI {
 		public void UI(Action action) =>
 			// Use Send so the windows are updated as fast as possible when adding new items
 			Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+
+		public void UI(TimeSpan delay, Action action) {
+			var timer = new DispatcherTimer(DispatcherPriority.Send, Dispatcher);
+			timer.Interval = delay;
+			EventHandler handler = null;
+			handler = (s, e) => {
+				timer.Stop();
+				timer.Tick -= handler;
+				action();
+			};
+			timer.Tick += handler;
+			timer.Start();
+		}
 	}
 }

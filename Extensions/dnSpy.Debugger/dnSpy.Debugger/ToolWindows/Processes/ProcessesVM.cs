@@ -114,6 +114,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			if (enable) {
 				dbgManager.Value.ProcessesChanged += DbgManager_ProcessesChanged;
 				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
+				dbgManager.Value.CurrentProcessChanged += DbgManager_CurrentProcessChanged;
 
 				var processes = dbgManager.Value.Processes;
 				if (processes.Length > 0)
@@ -122,6 +123,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			else {
 				dbgManager.Value.ProcessesChanged -= DbgManager_ProcessesChanged;
 				dbgManager.Value.DelayedIsRunningChanged -= DbgManager_DelayedIsRunningChanged;
+				dbgManager.Value.CurrentProcessChanged -= DbgManager_CurrentProcessChanged;
 
 				UI(() => RemoveAllProcesses_UI());
 			}
@@ -172,6 +174,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		// random thread
 		void UI(Action action) => processContext.UIDispatcher.UI(action);
 
+		// random thread
+		void UI(TimeSpan delay, Action action) => processContext.UIDispatcher.UI(delay, action);
+
 		// DbgManager thread
 		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => {
 			// If all processes are running and the window is hidden, hide it now
@@ -194,11 +199,26 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			}
 		}
 
+		// DbgManager thread
+		void DbgManager_CurrentProcessChanged(object sender, EventArgs e) => UI(AntiFlickerConstants.AntiFlickerDelay, () => UpdateCurrentProcess_UI());
+
+		// UI thread
+		void UpdateCurrentProcess_UI() {
+			processContext.UIDispatcher.VerifyAccess();
+			var currentProcess = dbgManager.Value.CurrentProcess;
+			foreach (var vm in AllItems)
+				vm.IsCurrentProcess = vm.Process == currentProcess;
+		}
+
 		// UI thread
 		void AddItems_UI(IList<DbgProcess> processes) {
 			processContext.UIDispatcher.VerifyAccess();
-			foreach (var p in processes)
-				AllItems.Add(new ProcessVM(p, processContext, processOrder++));
+			var currentProcess = dbgManager.Value.CurrentProcess;
+			foreach (var p in processes) {
+				var vm = new ProcessVM(p, processContext, processOrder++);
+				vm.IsCurrentProcess = vm.Process == currentProcess;
+				AllItems.Add(vm);
+			}
 		}
 
 		// UI thread

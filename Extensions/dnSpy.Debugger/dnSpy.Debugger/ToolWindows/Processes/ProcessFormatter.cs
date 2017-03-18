@@ -43,13 +43,13 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		internal static ProcessFormatter Create_DONT_USE(bool useHex) => new ProcessFormatter(useHex);
 
 		public void WriteImage(ITextColorWriter output, ProcessVM vm) {
-			if (vm.IsSelectedProcess)
+			if (vm.IsCurrentProcess)
 				output.Write(BoxedTextColor.Text, ">");
 		}
 
 		public void WriteName(ITextColorWriter output, DbgProcess process) => output.WriteFilename(process.Name);
 		public void WriteTitle(ITextColorWriter output, ProcessVM vm) => output.Write(BoxedTextColor.String, vm.Title);
-		public void WriteState(ITextColorWriter output, DbgProcess process) => output.Write(BoxedTextColor.EnumField, GetStateText(process.State));
+		public void WriteState(ITextColorWriter output, ProcessVM vm) => output.Write(BoxedTextColor.EnumField, GetStateText(vm.CachedState));
 		public void WriteDebugging(ITextColorWriter output, DbgProcess process) => output.Write(BoxedTextColor.Text, process.Debugging);
 		public void WritePath(ITextColorWriter output, DbgProcess process) => output.WriteFilename(process.Filename);
 

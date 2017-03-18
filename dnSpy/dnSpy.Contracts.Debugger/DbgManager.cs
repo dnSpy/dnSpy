@@ -139,5 +139,16 @@ namespace dnSpy.Contracts.Debugger {
 		/// true if <see cref="DetachAll"/> can be called without terminating any programs
 		/// </summary>
 		public abstract bool CanDetachWithoutTerminating { get; }
+
+		/// <summary>
+		/// The current process. This is null if no process is paused. Only paused processes
+		/// can be written to this property.
+		/// </summary>
+		public abstract DbgProcess CurrentProcess { get; set; }
+
+		/// <summary>
+		/// Raised when <see cref="CurrentProcess"/> is changed
+		/// </summary>
+		public abstract event EventHandler CurrentProcessChanged;
 	}
 }
