@@ -106,6 +106,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
 			process.PropertyChanged += DbgProcess_PropertyChanged;
+			process.IsRunningChanged += DbgProcess_IsRunningChanged;
+			process.DelayedIsRunningChanged += DbgProcess_DelayedIsRunningChanged;
 		}
 
 		// random thread
@@ -115,7 +117,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		string GetProcessTitle() => GetProcessState().Title;
 
 		// UI thread
-		internal void RefreshTitle_UI() {
+		void RefreshTitle_UI() {
 			Context.UIDispatcher.VerifyAccess();
 			Title = GetProcessTitle();
 		}
@@ -137,9 +139,12 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			OnPropertyChanged(nameof(IdObject));
 		}
 
+		// random thread
+		void UI(Action action) => Context.UIDispatcher.UI(action);
+
 		// DbgManager thread
 		void DbgProcess_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
-			Context.UIDispatcher.UI(() => DbgProcess_PropertyChanged_UI(e.PropertyName));
+			UI(() => DbgProcess_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
 		void DbgProcess_PropertyChanged_UI(string propertyName) {
@@ -176,10 +181,24 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			}
 		}
 
+		// DbgManager thread
+		void DbgProcess_IsRunningChanged(object sender, EventArgs e) => UI(() => refreshTitlesOnPause = true);
+		bool refreshTitlesOnPause;
+
+		// DbgManager thread
+		void DbgProcess_DelayedIsRunningChanged(object sender, EventArgs e) {
+			if (refreshTitlesOnPause && !Process.IsRunning) {
+				refreshTitlesOnPause = false;
+				UI(() => RefreshTitle_UI());
+			}
+		}
+
 		// UI thread
 		internal void Dispose() {
 			Context.UIDispatcher.VerifyAccess();
 			Process.PropertyChanged -= DbgProcess_PropertyChanged;
+			Process.IsRunningChanged -= DbgProcess_IsRunningChanged;
+			Process.DelayedIsRunningChanged -= DbgProcess_DelayedIsRunningChanged;
 		}
 	}
 }

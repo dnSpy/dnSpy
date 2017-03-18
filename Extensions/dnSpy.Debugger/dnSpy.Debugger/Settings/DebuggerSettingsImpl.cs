@@ -182,17 +182,37 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool ignoreBreakInstructions = false;
 
+		public override bool BreakAllProcesses {
+			get {
+				lock (lockObj)
+					return breakAllProcesses;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = breakAllProcesses != value;
+					breakAllProcesses = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(BreakAllProcesses));
+					OnModified();
+				}
+			}
+		}
+		bool breakAllProcesses = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
 			other.UseHexadecimal = UseHexadecimal;
 			other.SyntaxHighlight = SyntaxHighlight;
+			other.AutoOpenLocalsWindow = AutoOpenLocalsWindow;
+			other.UseMemoryModules = UseMemoryModules;
 			other.PropertyEvalAndFunctionCalls = PropertyEvalAndFunctionCalls;
 			other.UseStringConversionFunction = UseStringConversionFunction;
 			other.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
 			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
-			other.AutoOpenLocalsWindow = AutoOpenLocalsWindow;
-			other.UseMemoryModules = UseMemoryModules;
+			other.BreakAllProcesses = BreakAllProcesses;
 			return other;
 		}
 	}
@@ -212,12 +232,13 @@ namespace dnSpy.Debugger.Settings {
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			UseHexadecimal = sect.Attribute<bool?>(nameof(UseHexadecimal)) ?? UseHexadecimal;
 			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
+			AutoOpenLocalsWindow = sect.Attribute<bool?>(nameof(AutoOpenLocalsWindow)) ?? AutoOpenLocalsWindow;
+			UseMemoryModules = sect.Attribute<bool?>(nameof(UseMemoryModules)) ?? UseMemoryModules;
 			PropertyEvalAndFunctionCalls = sect.Attribute<bool?>(nameof(PropertyEvalAndFunctionCalls)) ?? PropertyEvalAndFunctionCalls;
 			UseStringConversionFunction = sect.Attribute<bool?>(nameof(UseStringConversionFunction)) ?? UseStringConversionFunction;
 			DisableManagedDebuggerDetection = sect.Attribute<bool?>(nameof(DisableManagedDebuggerDetection)) ?? DisableManagedDebuggerDetection;
 			IgnoreBreakInstructions = sect.Attribute<bool?>(nameof(IgnoreBreakInstructions)) ?? IgnoreBreakInstructions;
-			AutoOpenLocalsWindow = sect.Attribute<bool?>(nameof(AutoOpenLocalsWindow)) ?? AutoOpenLocalsWindow;
-			UseMemoryModules = sect.Attribute<bool?>(nameof(UseMemoryModules)) ?? UseMemoryModules;
+			BreakAllProcesses = sect.Attribute<bool?>(nameof(BreakAllProcesses)) ?? BreakAllProcesses;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -228,12 +249,13 @@ namespace dnSpy.Debugger.Settings {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UseHexadecimal), UseHexadecimal);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
+			sect.Attribute(nameof(AutoOpenLocalsWindow), AutoOpenLocalsWindow);
+			sect.Attribute(nameof(UseMemoryModules), UseMemoryModules);
 			sect.Attribute(nameof(PropertyEvalAndFunctionCalls), PropertyEvalAndFunctionCalls);
 			sect.Attribute(nameof(UseStringConversionFunction), UseStringConversionFunction);
 			sect.Attribute(nameof(DisableManagedDebuggerDetection), DisableManagedDebuggerDetection);
 			sect.Attribute(nameof(IgnoreBreakInstructions), IgnoreBreakInstructions);
-			sect.Attribute(nameof(AutoOpenLocalsWindow), AutoOpenLocalsWindow);
-			sect.Attribute(nameof(UseMemoryModules), UseMemoryModules);
+			sect.Attribute(nameof(BreakAllProcesses), BreakAllProcesses);
 		}
 	}
 }

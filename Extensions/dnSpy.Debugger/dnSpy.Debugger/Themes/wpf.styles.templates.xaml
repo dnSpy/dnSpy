@@ -38,6 +38,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <CheckBox Grid.Row="0" Margin="0 0 0 0" IsChecked="{Binding Settings.DisableManagedDebuggerDetection}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DisableManagedDebuggerDetection}" />
             <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding Settings.PropertyEvalAndFunctionCalls}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_PropertyEvalAndFunctionCalls}" />
@@ -45,7 +46,8 @@
             <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding Settings.IgnoreBreakInstructions}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_IgnoreBreakInstructions}" />
             <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding Settings.AutoOpenLocalsWindow}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_AutoOpenLocalsWindow}" />
             <CheckBox Grid.Row="5" Margin="0 5 0 0" IsChecked="{Binding Settings.UseMemoryModules}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_UseMemoryModules}" />
-            <CheckBox Grid.Row="6" Margin="0 5 0 0" IsChecked="{Binding Settings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlight}" />
+            <CheckBox Grid.Row="6" Margin="0 5 0 0" IsChecked="{Binding Settings.BreakAllProcesses}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_BreakAllProcesses}" />
+            <CheckBox Grid.Row="7" Margin="0 5 0 0" IsChecked="{Binding Settings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlight}" />
         </Grid>
     </DataTemplate>
 

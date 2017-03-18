@@ -1482,4 +1482,7 @@ Are you sure you want to expand it?</value>
   <data name="EnableBreakpointCommand3" xml:space="preserve">
     <value>Enable Breakpoint</value>
   </data>
+  <data name="DbgSettings_BreakAllProcesses" xml:space="preserve">
+    <value>Break all processes when one process breaks</value>
+  </data>
 </root>

@@ -59,7 +59,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		readonly DebuggerSettings debuggerSettings;
 		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		int processOrder;
-		bool refreshTitlesOnPause;
 
 		[ImportingConstructor]
 		ProcessesVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ProcessFormatterProvider processFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
@@ -101,7 +100,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 				RecreateFormatter_UI();
 				processContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
-				refreshTitlesOnPause = false;
 			}
 			else {
 				processContext.ClassificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
@@ -116,7 +114,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			if (enable) {
 				dbgManager.Value.ProcessesChanged += DbgManager_ProcessesChanged;
 				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
-				dbgManager.Value.IsRunningChanged += DbgManager_IsRunningChanged;
 
 				var processes = dbgManager.Value.Processes;
 				if (processes.Length > 0)
@@ -125,7 +122,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			else {
 				dbgManager.Value.ProcessesChanged -= DbgManager_ProcessesChanged;
 				dbgManager.Value.DelayedIsRunningChanged -= DbgManager_DelayedIsRunningChanged;
-				dbgManager.Value.IsRunningChanged -= DbgManager_IsRunningChanged;
 
 				UI(() => RemoveAllProcesses_UI());
 			}
@@ -150,13 +146,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				processContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				RefreshThemeFields_UI();
 			}
-		}
-
-		// UI thread
-		void RefreshTitles_UI() {
-			processContext.UIDispatcher.VerifyAccess();
-			foreach (var vm in AllItems)
-				vm.RefreshTitle_UI();
 		}
 
 		// UI thread
@@ -185,19 +174,10 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// DbgManager thread
 		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => {
-			refreshTitlesOnPause = true;
 			// If all processes are running and the window is hidden, hide it now
 			if (!IsVisible)
 				lazyToolWindowVMHelper.TryHideWindow();
 		});
-
-		// DbgManager thread
-		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
-			if (refreshTitlesOnPause && !((DbgManager)sender).IsRunning) {
-				refreshTitlesOnPause = false;
-				UI(() => RefreshTitles_UI());
-			}
-		}
 
 		// DbgManager thread
 		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {

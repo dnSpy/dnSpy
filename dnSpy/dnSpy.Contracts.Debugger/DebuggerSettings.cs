@@ -75,5 +75,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// true to ignore break instructions and <see cref="System.Diagnostics.Debugger.Break"/> method calls
 		/// </summary>
 		public abstract bool IgnoreBreakInstructions { get; set; }
+
+		/// <summary>
+		/// true to break all processes when one process breaks
+		/// </summary>
+		public abstract bool BreakAllProcesses { get; set; }
 	}
 }

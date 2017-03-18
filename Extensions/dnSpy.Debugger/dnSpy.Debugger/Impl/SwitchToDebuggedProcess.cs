@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Impl {
 
 		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
-			if (dbgManager.IsRunning)
+			if (dbgManager.IsRunning != false)
 				return;
 			ignoreSetForeground = false;
 		}

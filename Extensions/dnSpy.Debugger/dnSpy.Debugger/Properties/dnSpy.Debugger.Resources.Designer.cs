@@ -889,6 +889,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Break all processes when one process breaks.
+        /// </summary>
+        public static string DbgSettings_BreakAllProcesses {
+            get {
+                return ResourceManager.GetString("DbgSettings_BreakAllProcesses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Break at.
         /// </summary>
         public static string DbgSettings_BreakAt {

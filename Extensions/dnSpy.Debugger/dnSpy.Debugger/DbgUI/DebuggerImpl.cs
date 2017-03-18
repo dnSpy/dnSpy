@@ -76,8 +76,8 @@ namespace dnSpy.Debugger.DbgUI {
 			//TODO:
 		}
 
-		bool CanExecutePauseCommand => dbgManager.Value.IsDebugging && !dbgManager.Value.IsRunning;
-		bool CanExecuteRunningCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning;
+		bool CanExecutePauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != true;
+		bool CanExecuteRunningCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != false;
 		bool CanExecutePauseOrRunningCommand => dbgManager.Value.IsDebugging;
 
 		public override bool CanContinue => CanExecutePauseCommand;
@@ -165,6 +165,6 @@ namespace dnSpy.Debugger.DbgUI {
 				CommandManager.InvalidateRequerySuggested();
 			});
 		}
-		bool oldIsRunning;
+		bool? oldIsRunning;
 	}
 }

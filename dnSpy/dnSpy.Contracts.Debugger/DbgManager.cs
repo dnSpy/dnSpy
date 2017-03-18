@@ -71,10 +71,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract event EventHandler IsDebuggingChanged;
 
 		/// <summary>
-		/// true if the processes are running, false if they're paused.
+		/// true if all processes are running, false if they're all paused, and null
+		/// if some are running and some are paused.
 		/// This property is valid only if <see cref="IsDebugging"/> is true.
 		/// </summary>
-		public abstract bool IsRunning { get; }
+		public abstract bool? IsRunning { get; }
 
 		/// <summary>
 		/// Raised when <see cref="IsRunning"/> is changed, see also <see cref="DelayedIsRunningChanged"/>
@@ -82,7 +83,7 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract event EventHandler IsRunningChanged;
 
 		/// <summary>
-		/// Raised when the processes have been running for a little while, eg. 1 second.
+		/// Raised when all processes have been running for a little while, eg. 1 second.
 		/// </summary>
 		public abstract event EventHandler DelayedIsRunningChanged;
 
