@@ -38,8 +38,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditModuleName(), a => moduleBreakpointsContent.Value.Operations.CanEditModuleName), ModifierKeys.None, Key.F2);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditModuleName(), a => moduleBreakpointsContent.Value.Operations.CanEditModuleName), ModifierKeys.Control, Key.D1);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditOrder(), a => moduleBreakpointsContent.Value.Operations.CanEditOrder), ModifierKeys.Control, Key.D2);
-			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditAppDomainName(), a => moduleBreakpointsContent.Value.Operations.CanEditAppDomainName), ModifierKeys.Control, Key.D3);
-			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditProcessName(), a => moduleBreakpointsContent.Value.Operations.CanEditProcessName), ModifierKeys.Control, Key.D4);
+			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditProcessName(), a => moduleBreakpointsContent.Value.Operations.CanEditProcessName), ModifierKeys.Control, Key.D3);
+			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditAppDomainName(), a => moduleBreakpointsContent.Value.Operations.CanEditAppDomainName), ModifierKeys.Control, Key.D4);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.ToggleEnabled(), a => moduleBreakpointsContent.Value.Operations.CanToggleEnabled), ModifierKeys.None, Key.Space);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.RemoveModuleBreakpoints(), a => moduleBreakpointsContent.Value.Operations.CanRemoveModuleBreakpoints), ModifierKeys.None, Key.Delete);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.AddModuleBreakpoint(), a => moduleBreakpointsContent.Value.Operations.CanAddModuleBreakpoint), ModifierKeys.None, Key.Insert);
@@ -170,7 +170,19 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public override string GetInputGestureText(ModuleBreakpointsCtxMenuContext context) => string.Format(dnSpy_Debugger_Resources.ShortCutKeyCtrl_DIGIT, "2");
 	}
 
-	[ExportMenuItem(Header = "res:EditAppDomainNameCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS2, Order = 20)]
+	[ExportMenuItem(Header = "res:EditProcessNameCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS2, Order = 20)]
+	sealed class EditProcessNameBreakpointCtxMenuCommand : ModuleBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		EditProcessNameBreakpointCtxMenuCommand(Lazy<IModuleBreakpointsContent> moduleBreakpointesContent)
+			: base(moduleBreakpointesContent) {
+		}
+
+		public override void Execute(ModuleBreakpointsCtxMenuContext context) => context.Operations.EditProcessName();
+		public override bool IsEnabled(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanEditProcessName;
+		public override string GetInputGestureText(ModuleBreakpointsCtxMenuContext context) => string.Format(dnSpy_Debugger_Resources.ShortCutKeyCtrl_DIGIT, "3");
+	}
+
+	[ExportMenuItem(Header = "res:EditAppDomainNameCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS2, Order = 30)]
 	sealed class EditAppDomainNameBreakpointCtxMenuCommand : ModuleBreakpointsCtxMenuCommand {
 		[ImportingConstructor]
 		EditAppDomainNameBreakpointCtxMenuCommand(Lazy<IModuleBreakpointsContent> moduleBreakpointesContent)
@@ -179,18 +191,6 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		public override void Execute(ModuleBreakpointsCtxMenuContext context) => context.Operations.EditAppDomainName();
 		public override bool IsEnabled(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanEditAppDomainName;
-		public override string GetInputGestureText(ModuleBreakpointsCtxMenuContext context) => string.Format(dnSpy_Debugger_Resources.ShortCutKeyCtrl_DIGIT, "3");
-	}
-
-	[ExportMenuItem(Header = "res:EditProcessNameCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS2, Order = 30)]
-	sealed class RenameModuleBreakpointCtxMenuCommand : ModuleBreakpointsCtxMenuCommand {
-		[ImportingConstructor]
-		RenameModuleBreakpointCtxMenuCommand(Lazy<IModuleBreakpointsContent> moduleBreakpointesContent)
-			: base(moduleBreakpointesContent) {
-		}
-
-		public override void Execute(ModuleBreakpointsCtxMenuContext context) => context.Operations.EditProcessName();
-		public override bool IsEnabled(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanEditProcessName;
 		public override string GetInputGestureText(ModuleBreakpointsCtxMenuContext context) => string.Format(dnSpy_Debugger_Resources.ShortCutKeyCtrl_DIGIT, "4");
 	}
 }

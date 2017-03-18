@@ -32,8 +32,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	[Export(typeof(ITaggerProvider))]
 	[TagType(typeof(IClassificationTag))]
 	[ContentType(ContentTypes.ModuleBreakpointsWindowModuleName)]
-	[ContentType(ContentTypes.ModuleBreakpointsWindowAppDomainName)]
 	[ContentType(ContentTypes.ModuleBreakpointsWindowProcessName)]
+	[ContentType(ContentTypes.ModuleBreakpointsWindowAppDomainName)]
 	sealed class StringTaggerProvider : ITaggerProvider {
 		readonly IClassificationTag stringClassificationTag;
 		readonly DebuggerSettings debuggerSettings;

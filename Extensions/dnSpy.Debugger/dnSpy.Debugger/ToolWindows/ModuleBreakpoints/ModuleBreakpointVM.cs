@@ -59,22 +59,22 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public object IdObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowId);
 		public object ModuleNameObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleName);
 		public object OrderObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowOrder);
-		public object AppDomainNameObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleAppDomainName);
 		public object ProcessNameObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowProcessName);
+		public object AppDomainNameObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleAppDomainName);
 		internal int Order { get; }
 
 		public IEditableValue ModuleNameEditableValue { get; }
 		public IEditValueProvider ModuleNameEditValueProvider { get; }
 		public IEditableValue OrderEditableValue { get; }
 		public IEditValueProvider OrderEditValueProvider { get; }
-		public IEditableValue AppDomainNameEditableValue { get; }
-		public IEditValueProvider AppDomainNameEditValueProvider { get; }
 		public IEditableValue ProcessNameEditableValue { get; }
 		public IEditValueProvider ProcessNameEditValueProvider { get; }
+		public IEditableValue AppDomainNameEditableValue { get; }
+		public IEditValueProvider AppDomainNameEditValueProvider { get; }
 
 		DbgModuleBreakpointSettings settings;
 
-		public ModuleBreakpointVM(DbgModuleBreakpoint moduleBreakpoint, IModuleBreakpointContext context, int order, IEditValueProvider moduleNameEditValueProvider, IEditValueProvider orderEditValueProvider, IEditValueProvider appDomainNameEditValueProvider, IEditValueProvider processNameEditValueProvider) {
+		public ModuleBreakpointVM(DbgModuleBreakpoint moduleBreakpoint, IModuleBreakpointContext context, int order, IEditValueProvider moduleNameEditValueProvider, IEditValueProvider orderEditValueProvider, IEditValueProvider processNameEditValueProvider, IEditValueProvider appDomainNameEditValueProvider) {
 			ModuleBreakpoint = moduleBreakpoint ?? throw new ArgumentNullException(nameof(moduleBreakpoint));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
@@ -82,10 +82,10 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			ModuleNameEditableValue = new EditableValueImpl(() => ModuleBreakpoint.ModuleName, s => ModuleBreakpoint.ModuleName = ConvertEditedString(s));
 			OrderEditValueProvider = orderEditValueProvider ?? throw new ArgumentNullException(nameof(orderEditValueProvider));
 			OrderEditableValue = new EditableValueImpl(() => OrderToNumber(), s => WriteOrder(s));
-			AppDomainNameEditValueProvider = appDomainNameEditValueProvider ?? throw new ArgumentNullException(nameof(appDomainNameEditValueProvider));
-			AppDomainNameEditableValue = new EditableValueImpl(() => ModuleBreakpoint.AppDomainName, s => ModuleBreakpoint.AppDomainName = ConvertEditedString(s));
 			ProcessNameEditValueProvider = processNameEditValueProvider ?? throw new ArgumentNullException(nameof(processNameEditValueProvider));
 			ProcessNameEditableValue = new EditableValueImpl(() => ModuleBreakpoint.ProcessName, s => ModuleBreakpoint.ProcessName = ConvertEditedString(s));
+			AppDomainNameEditValueProvider = appDomainNameEditValueProvider ?? throw new ArgumentNullException(nameof(appDomainNameEditValueProvider));
+			AppDomainNameEditableValue = new EditableValueImpl(() => ModuleBreakpoint.AppDomainName, s => ModuleBreakpoint.AppDomainName = ConvertEditedString(s));
 			settings = ModuleBreakpoint.Settings;
 		}
 
@@ -120,8 +120,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			OnPropertyChanged(nameof(IdObject));
 			OnPropertyChanged(nameof(ModuleNameObject));
 			OnPropertyChanged(nameof(OrderObject));
-			OnPropertyChanged(nameof(AppDomainNameObject));
 			OnPropertyChanged(nameof(ProcessNameObject));
+			OnPropertyChanged(nameof(AppDomainNameObject));
 		}
 
 		// UI thread
@@ -139,10 +139,10 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				OnPropertyChanged(nameof(IsInMemory));
 			if (oldSettings.Order != newSettings.Order)
 				OnPropertyChanged(nameof(OrderObject));
-			if (oldSettings.AppDomainName != newSettings.AppDomainName)
-				OnPropertyChanged(nameof(AppDomainNameObject));
 			if (oldSettings.ProcessName != newSettings.ProcessName)
 				OnPropertyChanged(nameof(ProcessNameObject));
+			if (oldSettings.AppDomainName != newSettings.AppDomainName)
+				OnPropertyChanged(nameof(AppDomainNameObject));
 		}
 
 		// UI thread
@@ -150,8 +150,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			Context.UIDispatcher.VerifyAccess();
 			ModuleNameEditableValue.IsEditingValue = false;
 			OrderEditableValue.IsEditingValue = false;
-			AppDomainNameEditableValue.IsEditingValue = false;
 			ProcessNameEditableValue.IsEditingValue = false;
+			AppDomainNameEditableValue.IsEditingValue = false;
 		}
 
 		// UI thread

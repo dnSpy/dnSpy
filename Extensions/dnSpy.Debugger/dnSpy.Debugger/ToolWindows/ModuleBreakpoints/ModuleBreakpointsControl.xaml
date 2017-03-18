@@ -117,17 +117,17 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}" Width="150">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <ctrls:EditValueControl ReadOnlyContent="{Binding AppDomainNameObject, Mode=OneWay, Converter={StaticResource moduleBreakpointColumnConverter}}" EditableValue="{Binding AppDomainNameEditableValue}" EditValueProvider="{Binding AppDomainNameEditValueProvider}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrls:EditValueControl ReadOnlyContent="{Binding ProcessNameObject, Mode=OneWay, Converter={StaticResource moduleBreakpointColumnConverter}}" EditableValue="{Binding ProcessNameEditableValue}" EditValueProvider="{Binding ProcessNameEditValueProvider}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrls:EditValueControl ReadOnlyContent="{Binding AppDomainNameObject, Mode=OneWay, Converter={StaticResource moduleBreakpointColumnConverter}}" EditableValue="{Binding AppDomainNameEditableValue}" EditValueProvider="{Binding AppDomainNameEditValueProvider}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

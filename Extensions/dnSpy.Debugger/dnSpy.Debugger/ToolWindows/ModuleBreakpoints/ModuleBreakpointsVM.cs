@@ -76,16 +76,6 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 		IEditValueProvider orderEditValueProvider;
 
-		IEditValueProvider AppDomainNameEditValueProvider {
-			get {
-				moduleBreakpointContext.UIDispatcher.VerifyAccess();
-				if (appDomainNameEditValueProvider == null)
-					appDomainNameEditValueProvider = editValueProviderService.Create(ContentTypes.ModuleBreakpointsWindowAppDomainName, Array.Empty<string>());
-				return appDomainNameEditValueProvider;
-			}
-		}
-		IEditValueProvider appDomainNameEditValueProvider;
-
 		IEditValueProvider ProcessNameEditValueProvider {
 			get {
 				moduleBreakpointContext.UIDispatcher.VerifyAccess();
@@ -95,6 +85,16 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			}
 		}
 		IEditValueProvider processNameEditValueProvider;
+
+		IEditValueProvider AppDomainNameEditValueProvider {
+			get {
+				moduleBreakpointContext.UIDispatcher.VerifyAccess();
+				if (appDomainNameEditValueProvider == null)
+					appDomainNameEditValueProvider = editValueProviderService.Create(ContentTypes.ModuleBreakpointsWindowAppDomainName, Array.Empty<string>());
+				return appDomainNameEditValueProvider;
+			}
+		}
+		IEditValueProvider appDomainNameEditValueProvider;
 
 		readonly Lazy<DbgManager> dbgManager;
 		readonly ModuleBreakpointContext moduleBreakpointContext;
@@ -242,7 +242,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		void AddItems_UI(IList<DbgModuleBreakpoint> moduleBreakpoints) {
 			moduleBreakpointContext.UIDispatcher.VerifyAccess();
 			foreach (var bp in moduleBreakpoints) {
-				var vm = new ModuleBreakpointVM(bp, moduleBreakpointContext, moduleBreakpointOrder++, ModuleNameEditValueProvider, OrderEditValueProvider, AppDomainNameEditValueProvider, ProcessNameEditValueProvider);
+				var vm = new ModuleBreakpointVM(bp, moduleBreakpointContext, moduleBreakpointOrder++, ModuleNameEditValueProvider, OrderEditValueProvider, ProcessNameEditValueProvider, AppDomainNameEditValueProvider);
 				Debug.Assert(!bpToVM.ContainsKey(bp));
 				bpToVM[bp] = vm;
 				AllItems.Add(vm);

@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		internal void WriteDynamic(ITextColorWriter output, DbgModuleBreakpoint bp) => WriteBoolean(output, bp.IsDynamic);
 		internal void WriteInMemory(ITextColorWriter output, DbgModuleBreakpoint bp) => WriteBoolean(output, bp.IsInMemory);
 		internal void WriteOrder(ITextColorWriter output, DbgModuleBreakpoint bp) => WriteInt32Decimal(output, bp.Order);
-		internal void WriteAppDomainName(ITextColorWriter output, DbgModuleBreakpoint bp) => output.Write(BoxedTextColor.String, bp.AppDomainName ?? string.Empty);
 		internal void WriteProcessName(ITextColorWriter output, DbgModuleBreakpoint bp) => output.Write(BoxedTextColor.String, bp.ProcessName ?? string.Empty);
+		internal void WriteAppDomainName(ITextColorWriter output, DbgModuleBreakpoint bp) => output.Write(BoxedTextColor.String, bp.AppDomainName ?? string.Empty);
 	}
 }

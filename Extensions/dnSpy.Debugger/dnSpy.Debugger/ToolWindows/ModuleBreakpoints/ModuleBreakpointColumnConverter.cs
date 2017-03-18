@@ -39,10 +39,10 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				formatter.WriteModuleName(writer, obj.VM.ModuleBreakpoint);
 			else if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowOrder)
 				formatter.WriteOrder(writer, obj.VM.ModuleBreakpoint);
-			else if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleAppDomainName)
-				formatter.WriteAppDomainName(writer, obj.VM.ModuleBreakpoint);
 			else if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowProcessName)
 				formatter.WriteProcessName(writer, obj.VM.ModuleBreakpoint);
+			else if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleAppDomainName)
+				formatter.WriteAppDomainName(writer, obj.VM.ModuleBreakpoint);
 			else
 				return null;
 

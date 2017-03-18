@@ -44,10 +44,10 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public abstract void EditModuleName();
 		public abstract bool CanEditOrder { get; }
 		public abstract void EditOrder();
-		public abstract bool CanEditAppDomainName { get; }
-		public abstract void EditAppDomainName();
 		public abstract bool CanEditProcessName { get; }
 		public abstract void EditProcessName();
+		public abstract bool CanEditAppDomainName { get; }
+		public abstract void EditAppDomainName();
 		public abstract bool CanToggleEnabled { get; }
 		public abstract void ToggleEnabled();
 		public abstract bool CanEnableBreakpoints { get; }
@@ -91,9 +91,9 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteOrder(output, vm.ModuleBreakpoint);
 				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteAppDomainName(output, vm.ModuleBreakpoint);
-				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteProcessName(output, vm.ModuleBreakpoint);
+				output.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteAppDomainName(output, vm.ModuleBreakpoint);
 				output.WriteLine();
 			}
 			var s = output.ToString();
@@ -146,20 +146,20 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			SelectedItems[0].OrderEditableValue.IsEditingValue = true;
 		}
 
-		public override bool CanEditAppDomainName => SelectedItems.Count == 1 && !SelectedItems[0].AppDomainNameEditableValue.IsEditingValue;
-		public override void EditAppDomainName() {
-			if (!CanEditAppDomainName)
-				return;
-			SelectedItems[0].ClearEditingValueProperties();
-			SelectedItems[0].AppDomainNameEditableValue.IsEditingValue = true;
-		}
-
 		public override bool CanEditProcessName => SelectedItems.Count == 1 && !SelectedItems[0].ProcessNameEditableValue.IsEditingValue;
 		public override void EditProcessName() {
 			if (!CanEditProcessName)
 				return;
 			SelectedItems[0].ClearEditingValueProperties();
 			SelectedItems[0].ProcessNameEditableValue.IsEditingValue = true;
+		}
+
+		public override bool CanEditAppDomainName => SelectedItems.Count == 1 && !SelectedItems[0].AppDomainNameEditableValue.IsEditingValue;
+		public override void EditAppDomainName() {
+			if (!CanEditAppDomainName)
+				return;
+			SelectedItems[0].ClearEditingValueProperties();
+			SelectedItems[0].AppDomainNameEditableValue.IsEditingValue = true;
 		}
 
 		public override bool CanToggleEnabled => SelectedItems.Count > 0;
