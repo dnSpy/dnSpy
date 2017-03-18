@@ -181,7 +181,7 @@
     <value>_Refresh</value>
   </data>
   <data name="CallStackCommand" xml:space="preserve">
-    <value>Call _Stack</value>
+    <value>_Call Stack</value>
   </data>
   <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
     <value>The maximum number of stack frames supported by dnSpy has been exceeded.</value>
@@ -832,7 +832,7 @@ Are you sure you want to expand it?</value>
     <value>Save Module</value>
   </data>
   <data name="ModulesCommand" xml:space="preserve">
-    <value>Mod_ules</value>
+    <value>M_odules</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>You must break the process before dynamic modules can be loaded.</value>

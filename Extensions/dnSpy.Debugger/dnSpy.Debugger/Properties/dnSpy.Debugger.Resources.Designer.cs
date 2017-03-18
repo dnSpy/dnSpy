@@ -340,7 +340,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Call _Stack.
+        ///   Looks up a localized string similar to _Call Stack.
         /// </summary>
         public static string CallStackCommand {
             get {
@@ -2686,7 +2686,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mod_ules.
+        ///   Looks up a localized string similar to M_odules.
         /// </summary>
         public static string ModulesCommand {
             get {
