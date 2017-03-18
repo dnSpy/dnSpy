@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		// random thread
-		void DbgModuleBreakpoint(Action action) =>
+		void DbgThread(Action action) =>
 			dbgManager.Value.DispatcherThread.BeginInvoke(action);
 
 		// UI thread
@@ -154,18 +154,18 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				moduleBreakpointContext.ClassificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged -= DebuggerSettings_PropertyChanged;
 			}
-			DbgModuleBreakpoint(() => InitializeDebugger_DbgModuleBreakpoint(enable));
+			DbgThread(() => InitializeDebugger_DbgThread(enable));
 		}
 
 		// DbgManager thread
-		void InitializeDebugger_DbgModuleBreakpoint(bool enable) {
+		void InitializeDebugger_DbgThread(bool enable) {
 			dbgManager.Value.DispatcherThread.VerifyAccess();
 			if (enable) {
 				dbgModuleBreakpointsService.Value.BreakpointsChanged += DbgModuleBreakpointsService_BreakpointsChanged;
 				dbgModuleBreakpointsService.Value.BreakpointsModified += DbgModuleBreakpointsService_BreakpointsModified;
-				var moduleBreakpoints = dbgModuleBreakpointsService.Value.Breakpoints;
-				if (moduleBreakpoints.Length > 0)
-					UI(() => AddItems_UI(moduleBreakpoints));
+				var breakpoints = dbgModuleBreakpointsService.Value.Breakpoints;
+				if (breakpoints.Length > 0)
+					UI(() => AddItems_UI(breakpoints));
 			}
 			else {
 				dbgModuleBreakpointsService.Value.BreakpointsChanged -= DbgModuleBreakpointsService_BreakpointsChanged;
