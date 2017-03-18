@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
 using dnSpy.Debugger.Impl;
@@ -37,12 +38,14 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		readonly object lockObj;
 		readonly HashSet<DbgModuleBreakpointImpl> breakpoints;
 		readonly DbgDispatcher dbgDispatcher;
+		int moduleId;
 
 		[ImportingConstructor]
 		DbgModuleBreakpointsServiceImpl(DbgDispatcher dbgDispatcher, [ImportMany] IEnumerable<Lazy<IDbgModuleBreakpointsServiceListener>> dbgModuleBreakpointsServiceListener) {
 			lockObj = new object();
 			breakpoints = new HashSet<DbgModuleBreakpointImpl>();
 			this.dbgDispatcher = dbgDispatcher;
+			moduleId = -1;
 
 			foreach (var lz in dbgModuleBreakpointsServiceListener)
 				lz.Value.Initialize(this);
@@ -93,7 +96,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			var bps = new DbgModuleBreakpoint[settings.Length];
 			var bpImpls = new DbgModuleBreakpointImpl[settings.Length];
 			for (int i = 0; i < bps.Length; i++) {
-				var bp = new DbgModuleBreakpointImpl(this, settings[i]);
+				var bp = new DbgModuleBreakpointImpl(this, Interlocked.Increment(ref moduleId), settings[i]);
 				bps[i] = bp;
 				bpImpls[i] = bp;
 			}

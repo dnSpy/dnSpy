@@ -23,6 +23,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 	/// </summary>
 	public abstract class DbgModuleBreakpoint : DbgObject {
 		/// <summary>
+		/// Gets the unique module breakpoint id
+		/// </summary>
+		public abstract int Id { get; }
+
+		/// <summary>
 		/// Gets/sets the current settings
 		/// </summary>
 		public abstract DbgModuleBreakpointSettings Settings { get; set; }

@@ -24,6 +24,8 @@ using dnSpy.Debugger.Utilities;
 
 namespace dnSpy.Debugger.Breakpoints.Modules {
 	sealed class DbgModuleBreakpointImpl : DbgModuleBreakpoint {
+		public override int Id { get; }
+
 		public override DbgModuleBreakpointSettings Settings {
 			get {
 				lock (lockObj)
@@ -36,9 +38,10 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		readonly DbgModuleBreakpointsServiceImpl owner;
 		DbgModuleBreakpointSettings settings;
 
-		public DbgModuleBreakpointImpl(DbgModuleBreakpointsServiceImpl owner, DbgModuleBreakpointSettings settings) {
+		public DbgModuleBreakpointImpl(DbgModuleBreakpointsServiceImpl owner, int id, DbgModuleBreakpointSettings settings) {
 			lockObj = new object();
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
+			Id = id;
 			this.settings = settings;
 		}
 

@@ -83,6 +83,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string BreakpointsWindowFile = "File";
 
 		/// <summary>
+		/// Module Breakpoints window column: id
+		/// </summary>
+		public static readonly string ModuleBreakpointsWindowId = "Id";
+
+		/// <summary>
 		/// Module Breakpoints window column: Module Name
 		/// </summary>
 		public static readonly string ModuleBreakpointsWindowModuleName = "ModuleName";

@@ -77,6 +77,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				var formatter = vm.Context.Formatter;
 				formatter.WriteIsEnabled(output, vm.ModuleBreakpoint);
 				output.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteId(output, vm.ModuleBreakpoint);
+				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteModuleName(output, vm.ModuleBreakpoint);
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteDynamic(output, vm.ModuleBreakpoint);
