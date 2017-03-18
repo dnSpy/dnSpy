@@ -110,7 +110,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Group}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Category}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding GroupObject, Mode=OneWay, Converter={StaticResource exceptionColumnConverter}}" />

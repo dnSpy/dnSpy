@@ -1398,8 +1398,8 @@ Are you sure you want to expand it?</value>
   <data name="Column_BreakWhenThrown" xml:space="preserve">
     <value>Break When Thrown</value>
   </data>
-  <data name="Column_Group" xml:space="preserve">
-    <value>Group</value>
+  <data name="Column_Category" xml:space="preserve">
+    <value>Category</value>
   </data>
   <data name="Exception_Conditions_And" xml:space="preserve">
     <value>And</value>

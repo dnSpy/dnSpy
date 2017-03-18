@@ -385,6 +385,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Category.
+        /// </summary>
+        public static string Column_Category {
+            get {
+                return ResourceManager.GetString("Column_Category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Conditions.
         /// </summary>
         public static string Column_Conditions {
@@ -417,15 +426,6 @@ namespace dnSpy.Debugger.Properties {
         public static string Column_File {
             get {
                 return ResourceManager.GetString("Column_File", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Group.
-        /// </summary>
-        public static string Column_Group {
-            get {
-                return ResourceManager.GetString("Column_Group", resourceCulture);
             }
         }
         
