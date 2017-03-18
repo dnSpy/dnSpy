@@ -123,6 +123,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public override void RenameThread() {
 			if (!CanRenameThread)
 				return;
+			SelectedItems[0].ClearEditingValueProperties();
 			SelectedItems[0].NameEditableValue.IsEditingValue = true;
 		}
 

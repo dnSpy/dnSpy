@@ -130,6 +130,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public override void EditModuleName() {
 			if (!CanEditModuleName)
 				return;
+			SelectedItems[0].ClearEditingValueProperties();
 			SelectedItems[0].ModuleNameEditableValue.IsEditingValue = true;
 		}
 
@@ -137,6 +138,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public override void EditOrder() {
 			if (!CanEditOrder)
 				return;
+			SelectedItems[0].ClearEditingValueProperties();
 			SelectedItems[0].OrderEditableValue.IsEditingValue = true;
 		}
 
@@ -144,6 +146,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public override void EditAppDomainName() {
 			if (!CanEditAppDomainName)
 				return;
+			SelectedItems[0].ClearEditingValueProperties();
 			SelectedItems[0].AppDomainNameEditableValue.IsEditingValue = true;
 		}
 
@@ -151,6 +154,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public override void EditProcessName() {
 			if (!CanEditProcessName)
 				return;
+			SelectedItems[0].ClearEditingValueProperties();
 			SelectedItems[0].ProcessNameEditableValue.IsEditingValue = true;
 		}
 

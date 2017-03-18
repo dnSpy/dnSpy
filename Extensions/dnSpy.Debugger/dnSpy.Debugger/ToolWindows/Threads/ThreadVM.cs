@@ -335,6 +335,12 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// UI thread
+		internal void ClearEditingValueProperties() {
+			Context.UIDispatcher.VerifyAccess();
+			NameEditableValue.IsEditingValue = false;
+		}
+
+		// UI thread
 		internal void Dispose() {
 			Context.UIDispatcher.VerifyAccess();
 			if (disposed)
@@ -342,6 +348,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			disposed = true;
 			Thread.PropertyChanged -= DbgThread_PropertyChanged;
 			CloseThreadHandle_UI();
+			ClearEditingValueProperties();
 		}
 		bool disposed;
 	}

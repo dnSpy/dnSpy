@@ -146,6 +146,18 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		// UI thread
-		internal void Dispose() => Context.UIDispatcher.VerifyAccess();
+		internal void ClearEditingValueProperties() {
+			Context.UIDispatcher.VerifyAccess();
+			ModuleNameEditableValue.IsEditingValue = false;
+			OrderEditableValue.IsEditingValue = false;
+			AppDomainNameEditableValue.IsEditingValue = false;
+			ProcessNameEditableValue.IsEditingValue = false;
+		}
+
+		// UI thread
+		internal void Dispose() {
+			Context.UIDispatcher.VerifyAccess();
+			ClearEditingValueProperties();
+		}
 	}
 }

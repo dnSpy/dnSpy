@@ -125,8 +125,11 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 				CancelEdit(editableValue);
 				return;
 			}
-			if (!editableValue.IsEditingValue)
+			if (!editableValue.IsEditingValue) {
+				// Make sure it gets removed if it gets canceled by setting IsEditingValue to false
+				CancelEdit(editableValue);
 				return;
+			}
 
 			DisposeEditValue();
 			Debug.Assert(editValue == null);
