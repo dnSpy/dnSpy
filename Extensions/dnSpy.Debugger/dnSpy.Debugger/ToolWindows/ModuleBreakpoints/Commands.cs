@@ -125,6 +125,28 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public override bool IsEnabled(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanRemoveAllModuleBreakpoints;
 	}
 
+	[ExportMenuItem(Header = "res:EnableBreakpointCommand3", Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS1, Order = 30)]
+	sealed class EnableBreakpointBreakpointCtxMenuCommand : ModuleBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		EnableBreakpointBreakpointCtxMenuCommand(Lazy<IModuleBreakpointsContent> moduleBreakpointesContent)
+			: base(moduleBreakpointesContent) {
+		}
+
+		public override void Execute(ModuleBreakpointsCtxMenuContext context) => context.Operations.EnableBreakpoints();
+		public override bool IsVisible(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanEnableBreakpoints;
+	}
+
+	[ExportMenuItem(Header = "res:DisableBreakpointCommand3", Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS1, Order = 40)]
+	sealed class DisableBreakpointBreakpointCtxMenuCommand : ModuleBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		DisableBreakpointBreakpointCtxMenuCommand(Lazy<IModuleBreakpointsContent> moduleBreakpointesContent)
+			: base(moduleBreakpointesContent) {
+		}
+
+		public override void Execute(ModuleBreakpointsCtxMenuContext context) => context.Operations.DisableBreakpoints();
+		public override bool IsVisible(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanDisableBreakpoints;
+	}
+
 	[ExportMenuItem(Header = "res:EditModuleNameCommand", InputGestureText = "res:ShortCutKeyF2", Icon = DsImagesAttribute.Edit, Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS2, Order = 0)]
 	sealed class EditModuleNameBreakpointCtxMenuCommand : ModuleBreakpointsCtxMenuCommand {
 		[ImportingConstructor]

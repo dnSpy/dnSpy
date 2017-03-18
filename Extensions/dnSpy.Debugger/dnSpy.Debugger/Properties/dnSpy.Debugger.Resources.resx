@@ -1476,4 +1476,10 @@ Are you sure you want to expand it?</value>
   <data name="RemoveBreakpointCommand" xml:space="preserve">
     <value>Remove Breakpoint</value>
   </data>
+  <data name="DisableBreakpointCommand3" xml:space="preserve">
+    <value>Disable Breakpoint</value>
+  </data>
+  <data name="EnableBreakpointCommand3" xml:space="preserve">
+    <value>Enable Breakpoint</value>
+  </data>
 </root>

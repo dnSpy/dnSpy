@@ -50,6 +50,10 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public abstract void EditProcessName();
 		public abstract bool CanToggleEnabled { get; }
 		public abstract void ToggleEnabled();
+		public abstract bool CanEnableBreakpoints { get; }
+		public abstract void EnableBreakpoints();
+		public abstract bool CanDisableBreakpoints { get; }
+		public abstract void DisableBreakpoints();
 	}
 
 	[Export(typeof(ModuleBreakpointsOperations))]
@@ -163,14 +167,27 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			// Toggling everything seems to be less useful, it's more likely that you'd want
 			// to enable all selected module breakpoints or disable all of them.
 			bool allSet = SelectedItems.All(a => a.IsEnabled);
-			var newSettings = new DbgModuleBreakpointAndSettings[SelectedItems.Count];
-			for (int i = 0; i < newSettings.Length; i++) {
+			EnableDisableBreakpoints(enable: !allSet);
+		}
+
+		public override bool CanEnableBreakpoints => SelectedItems.Count != 0 && SelectedItems.Any(a => !a.IsEnabled);
+		public override void EnableBreakpoints() => EnableDisableBreakpoints(enable: true);
+
+		public override bool CanDisableBreakpoints => SelectedItems.Count != 0 && SelectedItems.Any(a => a.IsEnabled);
+		public override void DisableBreakpoints() => EnableDisableBreakpoints(enable: false);
+
+		void EnableDisableBreakpoints(bool enable) {
+			var newSettings = new List<DbgModuleBreakpointAndSettings>(SelectedItems.Count);
+			for (int i = 0; i < SelectedItems.Count; i++) {
 				var vm = SelectedItems[i];
 				var settings = vm.ModuleBreakpoint.Settings;
-				settings.IsEnabled = !allSet;
-				newSettings[i] = new DbgModuleBreakpointAndSettings(vm.ModuleBreakpoint, settings);
+				if (settings.IsEnabled == enable)
+					continue;
+				settings.IsEnabled = enable;
+				newSettings.Add(new DbgModuleBreakpointAndSettings(vm.ModuleBreakpoint, settings));
 			}
-			dbgModuleBreakpointsService.Value.Modify(newSettings);
+			if (newSettings.Count > 0)
+				dbgModuleBreakpointsService.Value.Modify(newSettings.ToArray());
 		}
 	}
 }

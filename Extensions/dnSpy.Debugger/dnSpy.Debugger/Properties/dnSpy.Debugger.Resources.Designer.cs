@@ -1519,6 +1519,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disable Breakpoint.
+        /// </summary>
+        public static string DisableBreakpointCommand3 {
+            get {
+                return ResourceManager.GetString("DisableBreakpointCommand3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Disable Breakpoints.
         /// </summary>
         public static string DisableBreakpointsCommand2 {
@@ -1614,6 +1623,15 @@ namespace dnSpy.Debugger.Properties {
         public static string EnableBreakpointCommand2 {
             get {
                 return ResourceManager.GetString("EnableBreakpointCommand2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Breakpoint.
+        /// </summary>
+        public static string EnableBreakpointCommand3 {
+            get {
+                return ResourceManager.GetString("EnableBreakpointCommand3", resourceCulture);
             }
         }
         
