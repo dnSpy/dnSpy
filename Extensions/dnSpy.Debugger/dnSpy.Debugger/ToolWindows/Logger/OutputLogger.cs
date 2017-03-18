@@ -151,7 +151,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			case DbgMessageKind.ExceptionThrown:
 				var ext = (DbgMessageExceptionThrownEventArgs)e;
 				var ex = ext.Exception;
-				if (ex.Id.Group == PredefinedExceptionGroups.MDA) {
+				if (ex.Id.Category == PredefinedExceptionCategories.MDA) {
 					if (outputLoggerSettings.ShowMDAMessages) {
 						var process = ex.Process;
 						var msg1 = string.Format(dnSpy_Debugger_Resources.DebugLogMDA, GetExceptionName(ex.Id), GetProcessFullPath(process));

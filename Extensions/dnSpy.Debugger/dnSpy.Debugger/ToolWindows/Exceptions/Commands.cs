@@ -141,8 +141,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 	}
 
 	static class Constants {
-		public const string EXCEPTIONGROUPS_GUID = "BD58CAFA-AEA4-4157-88FF-810933F73B42";
-		public const string GROUP_EXCEPTIONGROUPS = "0,7D584240-4999-4956-A4E4-744F7846746E";
+		public const string EXCEPTIONCATEGORIES_GUID = "BD58CAFA-AEA4-4157-88FF-810933F73B42";
+		public const string GROUP_EXCEPTIONCATEGORIES = "0,7D584240-4999-4956-A4E4-744F7846746E";
 	}
 
 	[Export(typeof(ExceptionsCommandContext))]
@@ -159,7 +159,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:ExceptionsCommand", Icon = DsImagesAttribute.ExceptionPublic, Guid = Constants.EXCEPTIONGROUPS_GUID, Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_OPTIONS, Order = 0)]
+	[ExportMenuItem(Header = "res:ExceptionsCommand", Icon = DsImagesAttribute.ExceptionPublic, Guid = Constants.EXCEPTIONCATEGORIES_GUID, Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_OPTIONS, Order = 0)]
 	sealed class ExceptionsContexMenuEntry : MenuItemBase<ExceptionsContexMenuEntry.Context> {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
@@ -183,7 +183,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.EXCEPTIONGROUPS_GUID, Group = Constants.GROUP_EXCEPTIONGROUPS, Order = 0)]
+	[ExportMenuItem(OwnerGuid = Constants.EXCEPTIONCATEGORIES_GUID, Group = Constants.GROUP_EXCEPTIONCATEGORIES, Order = 0)]
 	sealed class ExceptionsSubContexMenuEntry : MenuItemBase, IMenuItemProvider {
 		readonly ExceptionsCommandContext exceptionsCommandContext;
 
@@ -198,11 +198,11 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			if (ctx == null)
 				yield break;
 
-			var currentGroup = exceptionsCommandContext.VM.Value.SelectedGroup;
-			foreach (var group in exceptionsCommandContext.VM.Value.ExceptionGroupCollection) {
-				var attr = new ExportMenuItemAttribute { Header = UIUtilities.EscapeMenuItemHeader(group.DisplayName) };
-				bool isChecked = group == currentGroup;
-				var item = new DynamicCheckableMenuItem(ctx2 => exceptionsCommandContext.VM.Value.SelectedGroup = group, isChecked);
+			var currentCategory = exceptionsCommandContext.VM.Value.SelectedCategory;
+			foreach (var category in exceptionsCommandContext.VM.Value.ExceptionCategoryCollection) {
+				var attr = new ExportMenuItemAttribute { Header = UIUtilities.EscapeMenuItemHeader(category.DisplayName) };
+				bool isChecked = category == currentCategory;
+				var item = new DynamicCheckableMenuItem(ctx2 => exceptionsCommandContext.VM.Value.SelectedCategory = category, isChecked);
 				yield return new CreatedMenuItem(attr, item);
 			}
 		}

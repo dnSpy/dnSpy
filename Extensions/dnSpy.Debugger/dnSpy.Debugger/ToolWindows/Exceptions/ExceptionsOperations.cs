@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				var formatter = vm.Context.Formatter;
 				formatter.WriteName(output, debugWriter, vm);
 				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteGroup(output, vm);
+				formatter.WriteCategory(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteConditions(output, vm);
 				output.WriteLine();
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				SelectedItems.Add(vm);
 		}
 
-		public override bool CanAddException => dbgExceptionSettingsService.Value.GroupDefinitions.Count > 0;
+		public override bool CanAddException => dbgExceptionSettingsService.Value.CategoryDefinitions.Count > 0;
 		public override void AddException() => exceptionsVM.IsAddingExceptions = !exceptionsVM.IsAddingExceptions;
 
 		public override bool CanRemoveExceptions => SelectedItems.Count > 0;

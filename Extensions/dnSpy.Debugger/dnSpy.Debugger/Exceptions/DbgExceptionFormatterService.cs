@@ -48,8 +48,8 @@ namespace dnSpy.Debugger.Exceptions {
 			this.exceptionSettingsService = exceptionSettingsService;
 			var dict = new Dictionary<string, List<Lazy<DbgExceptionFormatter, IDbgExceptionFormatterMetadata>>>(StringComparer.Ordinal);
 			foreach (var lz in dbgExceptionFormatters.OrderBy(a => a.Metadata.Order)) {
-				if (!dict.TryGetValue(lz.Metadata.Group, out var list))
-					dict.Add(lz.Metadata.Group, list = new List<Lazy<DbgExceptionFormatter, IDbgExceptionFormatterMetadata>>());
+				if (!dict.TryGetValue(lz.Metadata.Category, out var list))
+					dict.Add(lz.Metadata.Category, list = new List<Lazy<DbgExceptionFormatter, IDbgExceptionFormatterMetadata>>());
 				list.Add(lz);
 			}
 			toFormatters = new Dictionary<string, Lazy<DbgExceptionFormatter, IDbgExceptionFormatterMetadata>[]>(dict.Count);
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public override void WriteName(IDebugOutputWriter writer, DbgExceptionDefinition definition, bool includeDescription) {
 			if (writer == null)
 				throw new ArgumentNullException(nameof(writer));
-			if (definition.Id.Group == null)
+			if (definition.Id.Category == null)
 				throw new ArgumentException();
 			WriteNameCore(writer, definition);
 			if (includeDescription && definition.Description != null) {
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void WriteNameCore(IDebugOutputWriter writer, DbgExceptionDefinition definition) {
-			if (!definition.Id.IsDefaultId && toFormatters.TryGetValue(definition.Id.Group, out var formatters)) {
+			if (!definition.Id.IsDefaultId && toFormatters.TryGetValue(definition.Id.Category, out var formatters)) {
 				foreach (var formatter in formatters) {
 					if (formatter.Value.WriteName(writer, definition))
 						return;
@@ -82,21 +82,21 @@ namespace dnSpy.Debugger.Exceptions {
 		void DefaultWriteName(IDebugOutputWriter output, DbgExceptionDefinition definition) {
 			switch (definition.Id.Kind) {
 			case DbgExceptionIdKind.DefaultId:
-				if (exceptionSettingsService.Value.TryGetGroupDefinition(definition.Id.Group, out var groupDef))
-					output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_Resources.AllRemainingExceptionsNotInList, groupDef.DisplayName));
+				if (exceptionSettingsService.Value.TryGetCategoryDefinition(definition.Id.Category, out var categoryDef))
+					output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_Resources.AllRemainingExceptionsNotInList, categoryDef.DisplayName));
 				else
 					WriteError(output);
 				break;
 
 			case DbgExceptionIdKind.Code:
-				DbgExceptionGroupDefinitionFlags flags;
-				if (exceptionSettingsService.Value.TryGetGroupDefinition(definition.Id.Group, out groupDef))
-					flags = groupDef.Flags;
+				DbgExceptionCategoryDefinitionFlags flags;
+				if (exceptionSettingsService.Value.TryGetCategoryDefinition(definition.Id.Category, out categoryDef))
+					flags = categoryDef.Flags;
 				else
-					flags = DbgExceptionGroupDefinitionFlags.None;
-				if ((flags & DbgExceptionGroupDefinitionFlags.DecimalCode) == 0)
+					flags = DbgExceptionCategoryDefinitionFlags.None;
+				if ((flags & DbgExceptionCategoryDefinitionFlags.DecimalCode) == 0)
 					output.Write(BoxedTextColor.Number, "0x" + definition.Id.Code.ToString("X8"));
-				else if ((flags & DbgExceptionGroupDefinitionFlags.UnsignedCode) != 0)
+				else if ((flags & DbgExceptionCategoryDefinitionFlags.UnsignedCode) != 0)
 					output.Write(BoxedTextColor.Number, ((uint)definition.Id.Code).ToString());
 				else
 					output.Write(BoxedTextColor.Number, definition.Id.Code.ToString());

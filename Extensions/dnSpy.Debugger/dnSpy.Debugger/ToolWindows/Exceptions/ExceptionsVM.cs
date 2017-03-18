@@ -43,8 +43,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		ObservableCollection<ExceptionVM> SelectedItems { get; }
 		bool ShowOnlyEnabledExceptions { get; set; }
 		void ResetSearchSettings();
-		IReadOnlyCollection<ExceptionGroupVM> ExceptionGroupCollection { get; }
-		ExceptionGroupVM SelectedGroup { get; set; }
+		IReadOnlyCollection<ExceptionCategoryVM> ExceptionCategoryCollection { get; }
+		ExceptionCategoryVM SelectedCategory { get; set; }
 		bool IsAddingExceptions { get; set; }
 	}
 
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			set => lazyToolWindowVMHelper.IsVisible = value;
 		}
 
-		public bool IsAddingExceptionsEnabled => dbgExceptionSettingsService.Value.GroupDefinitions.Count > 0;
+		public bool IsAddingExceptionsEnabled => dbgExceptionSettingsService.Value.CategoryDefinitions.Count > 0;
 		public bool IsAddingExceptions {
 			get => isAddingExceptions;
 			set {
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					return;
 				showOnlyEnabledExceptions = value;
 				OnPropertyChanged(nameof(ShowOnlyEnabledExceptions));
-				FilterTreeView_UI(filterText, showOnlyEnabledExceptions, selectedGroup);
+				FilterTreeView_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
 			}
 		}
 		bool showOnlyEnabledExceptions;
@@ -94,22 +94,22 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					return;
 				filterText = value;
 				OnPropertyChanged(nameof(FilterText));
-				FilterTreeView_UI(filterText, showOnlyEnabledExceptions, selectedGroup);
+				FilterTreeView_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
 			}
 		}
 		string filterText = string.Empty;
 
-		public ExceptionGroupVM SelectedGroup {
-			get => selectedGroup;
+		public ExceptionCategoryVM SelectedCategory {
+			get => selectedCategory;
 			set {
-				if (selectedGroup == value)
+				if (selectedCategory == value)
 					return;
-				selectedGroup = value;
-				OnPropertyChanged(nameof(SelectedGroup));
-				FilterTreeView_UI(filterText, showOnlyEnabledExceptions, selectedGroup);
+				selectedCategory = value;
+				OnPropertyChanged(nameof(SelectedCategory));
+				FilterTreeView_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
 			}
 		}
-		ExceptionGroupVM selectedGroup;
+		ExceptionCategoryVM selectedCategory;
 
 		public bool SomethingMatched => !nothingMatched;
 		public bool NothingMatched {
@@ -124,8 +124,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 		bool nothingMatched;
 
-		public IReadOnlyCollection<ExceptionGroupVM> ExceptionGroupCollection => exceptionGroups;
-		readonly ObservableCollection<ExceptionGroupVM> exceptionGroups;
+		public IReadOnlyCollection<ExceptionCategoryVM> ExceptionCategoryCollection => exceptionCategories;
+		readonly ObservableCollection<ExceptionCategoryVM> exceptionCategories;
 
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService;
@@ -142,7 +142,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			uiDispatcher.VerifyAccess();
 			AllItems = new BulkObservableCollection<ExceptionVM>();
 			SelectedItems = new ObservableCollection<ExceptionVM>();
-			exceptionGroups = new ObservableCollection<ExceptionGroupVM>();
+			exceptionCategories = new ObservableCollection<ExceptionCategoryVM>();
 			this.dbgManager = dbgManager;
 			this.dbgExceptionSettingsService = dbgExceptionSettingsService;
 			this.exceptionFormatterProvider = exceptionFormatterProvider;
@@ -176,8 +176,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		// UI thread
 		void InitializeDebugger_UI(bool enable) {
 			exceptionContext.UIDispatcher.VerifyAccess();
-			if (exceptionGroups.Count == 0)
-				InitializeExceptionGroups_UI();
+			if (exceptionCategories.Count == 0)
+				InitializeExceptionCategories_UI();
 			IsAddingExceptions = false;
 			ResetSearchSettings();
 			if (enable) {
@@ -194,14 +194,14 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		// UI thread
-		void InitializeExceptionGroups_UI() {
+		void InitializeExceptionCategories_UI() {
 			exceptionContext.UIDispatcher.VerifyAccess();
-			if (exceptionGroups.Count != 0)
+			if (exceptionCategories.Count != 0)
 				return;
-			foreach (var g in dbgExceptionSettingsService.Value.GroupDefinitions.Select(a => new ExceptionGroupVM(a)).OrderBy(a => a.ShortDisplayName, StringComparer.CurrentCultureIgnoreCase))
-				exceptionGroups.Add(g);
-			exceptionGroups.Insert(0, new ExceptionGroupVM(dnSpy_Debugger_Resources.Exceptions_AllGroups));
-			SelectedGroup = exceptionGroups[0];
+			foreach (var g in dbgExceptionSettingsService.Value.CategoryDefinitions.Select(a => new ExceptionCategoryVM(a)).OrderBy(a => a.ShortDisplayName, StringComparer.CurrentCultureIgnoreCase))
+				exceptionCategories.Add(g);
+			exceptionCategories.Insert(0, new ExceptionCategoryVM(dnSpy_Debugger_Resources.Exceptions_AllCategories));
+			SelectedCategory = exceptionCategories[0];
 		}
 
 		// DbgManager thread
@@ -347,26 +347,26 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		// UI thread
-		void FilterTreeView_UI(string filterText, bool showOnlyEnabledExceptions, ExceptionGroupVM selectedGroup) {
+		void FilterTreeView_UI(string filterText, bool showOnlyEnabledExceptions, ExceptionCategoryVM selectedCategory) {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			if (string.IsNullOrWhiteSpace(filterText))
 				filterText = string.Empty;
 			exceptionContext.SearchMatcher.SetSearchText(filterText);
 
-			var newList = new List<ExceptionVMCached>(GetFilteredItems_UI(selectedGroup, filterText, showOnlyEnabledExceptions));
+			var newList = new List<ExceptionVMCached>(GetFilteredItems_UI(selectedCategory, filterText, showOnlyEnabledExceptions));
 			newList.Sort(ExceptionVMCachedComparer.Instance);
 			AllItems.Reset(newList.Select(a => a.VM));
-			NothingMatched = AllItems.Count == 0 && !(filterText == string.Empty && !showOnlyEnabledExceptions && selectedGroup == exceptionGroups.FirstOrDefault());
+			NothingMatched = AllItems.Count == 0 && !(filterText == string.Empty && !showOnlyEnabledExceptions && selectedCategory == exceptionCategories.FirstOrDefault());
 		}
 
 		sealed class ExceptionVMCached {
 			public ExceptionVM VM { get; }
 			public string Name => name ?? (name = GetName_UI(VM));
-			public string Group => group ?? (group = GetGroup_UI(VM));
+			public string Category => category ?? (category = GetCategory_UI(VM));
 			public string Conditions => conditions ?? (conditions = GetConditions_UI(VM));
-			public string[] AllStrings => allStrings ?? (allStrings = new[] { Name, Group, Conditions });
+			public string[] AllStrings => allStrings ?? (allStrings = new[] { Name, Category, Conditions });
 			string name;
-			string group;
+			string category;
 			string conditions;
 			string[] allStrings;
 			public ExceptionVMCached(ExceptionVM vm) => VM = vm;
@@ -378,7 +378,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				if (x == y)
 					return 0;
 
-				var c = StringComparer.OrdinalIgnoreCase.Compare(x.Group, y.Group);
+				var c = StringComparer.OrdinalIgnoreCase.Compare(x.Category, y.Category);
 				if (c != 0)
 					return c;
 
@@ -391,18 +391,18 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					return 1;
 				}
 				else if (xid.IsDefaultId)
-					return StringComparer.OrdinalIgnoreCase.Compare(x.Group, y.Group);
+					return StringComparer.OrdinalIgnoreCase.Compare(x.Category, y.Category);
 
 				return StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 			}
 		}
 
 		// UI thread
-		IEnumerable<ExceptionVMCached> GetFilteredItems_UI(ExceptionGroupVM selectedGroup, string filterText, bool showOnlyEnabledExceptions) {
+		IEnumerable<ExceptionVMCached> GetFilteredItems_UI(ExceptionCategoryVM selectedCategory, string filterText, bool showOnlyEnabledExceptions) {
 			exceptionContext.UIDispatcher.VerifyAccess();
-			var groupName = selectedGroup?.Definition?.Name;
+			var category = selectedCategory?.Definition?.Name;
 			foreach (var item in realAllItems) {
-				if (groupName != null && item.Definition.Id.Group != groupName)
+				if (category != null && item.Definition.Id.Category != category)
 					continue;
 				var vmc = CreateCached_UI(item);
 				if (IsMatch_UI(vmc, filterText, showOnlyEnabledExceptions))
@@ -438,12 +438,12 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		// UI thread
-		static string GetGroup_UI(ExceptionVM vm) {
+		static string GetCategory_UI(ExceptionVM vm) {
 			Debug.Assert(vm.Context.UIDispatcher.CheckAccess());
 			var writer = vm.Context.TextClassifierTextColorWriter;
 			writer.Clear();
 			var formatter = vm.Context.Formatter;
-			formatter.WriteGroup(writer, vm);
+			formatter.WriteCategory(writer, vm);
 			return writer.Text;
 		}
 
@@ -462,8 +462,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			ShowOnlyEnabledExceptions = false;
 			FilterText = string.Empty;
-			if (exceptionGroups.Count > 0)
-				SelectedGroup = exceptionGroups[0];
+			if (exceptionCategories.Count > 0)
+				SelectedCategory = exceptionCategories[0];
 		}
 	}
 }

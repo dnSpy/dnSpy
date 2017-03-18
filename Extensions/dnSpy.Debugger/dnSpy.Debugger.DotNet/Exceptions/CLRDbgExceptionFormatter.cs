@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Exceptions {
-	[ExportDbgExceptionFormatter(PredefinedExceptionGroups.DotNet)]
+	[ExportDbgExceptionFormatter(PredefinedExceptionCategories.DotNet)]
 	sealed class CLRDbgExceptionFormatter : DbgExceptionFormatter {
 		public override bool WriteName(IDebugOutputWriter writer, DbgExceptionDefinition definition) {
 			var fullName = definition.Id.Name;

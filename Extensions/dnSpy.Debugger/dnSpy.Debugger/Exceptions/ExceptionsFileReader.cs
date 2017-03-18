@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.Exceptions;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionsFileReader {
-		public List<DbgExceptionGroupDefinition> GroupDefinitions { get; } = new List<DbgExceptionGroupDefinition>();
+		public List<DbgExceptionCategoryDefinition> CategoryDefinitions { get; } = new List<DbgExceptionCategoryDefinition>();
 		public List<DbgExceptionDefinition> ExceptionDefinitions { get; } = new List<DbgExceptionDefinition>();
 
 		public void Read(string filename) {
@@ -36,19 +36,19 @@ namespace dnSpy.Debugger.Exceptions {
 				var doc = XDocument.Load(filename, LoadOptions.None);
 				var root = doc.Root;
 				if (root.Name == "Exceptions") {
-					foreach (var groupDefElem in root.Elements("GroupDef")) {
-						var name = (string)groupDefElem.Attribute("Name");
-						var displayName = (string)groupDefElem.Attribute("DisplayName");
-						var shortDisplayName = (string)groupDefElem.Attribute("ShortDisplayName");
-						var flagsAttr = (string)groupDefElem.Attribute("Flags");
+					foreach (var categoryDefElem in root.Elements("CategoryDef")) {
+						var name = (string)categoryDefElem.Attribute("Name");
+						var displayName = (string)categoryDefElem.Attribute("DisplayName");
+						var shortDisplayName = (string)categoryDefElem.Attribute("ShortDisplayName");
+						var flagsAttr = (string)categoryDefElem.Attribute("Flags");
 						if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(displayName) || string.IsNullOrWhiteSpace(shortDisplayName))
 							continue;
-						var flags = ParseGroupFlags(flagsAttr);
-						GroupDefinitions.Add(new DbgExceptionGroupDefinition(flags, name, displayName, shortDisplayName));
+						var flags = ParseCategoryFlags(flagsAttr);
+						CategoryDefinitions.Add(new DbgExceptionCategoryDefinition(flags, name, displayName, shortDisplayName));
 					}
 					foreach (var exDefCollElem in root.Elements("ExceptionDefs")) {
-						var groupName = (string)exDefCollElem.Attribute("Group");
-						if (string.IsNullOrWhiteSpace(groupName))
+						var category = (string)exDefCollElem.Attribute("Category");
+						if (string.IsNullOrWhiteSpace(category))
 							continue;
 						foreach (var exDefElem in exDefCollElem.Elements("Exception")) {
 							var name = (string)exDefElem.Attribute("Name");
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Exceptions {
 							if (code == null) {
 								if (string.IsNullOrWhiteSpace(name))
 									continue;
-								id = new DbgExceptionId(groupName, name);
+								id = new DbgExceptionId(category, name);
 							}
 							else {
 								code = code.Trim();
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.Exceptions {
 										codeValue = (int)codeValueU;
 									}
 								}
-								id = new DbgExceptionId(groupName, code);
+								id = new DbgExceptionId(category, code);
 							}
 							ExceptionDefinitions.Add(new DbgExceptionDefinition(id, ParseExceptionFlags(flagsAttr), description));
 						}
@@ -95,14 +95,14 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		static readonly char[] flagsSeparators = new char[] { ',' };
-		static DbgExceptionGroupDefinitionFlags ParseGroupFlags(string flagsAttr) {
-			var flags = DbgExceptionGroupDefinitionFlags.None;
+		static DbgExceptionCategoryDefinitionFlags ParseCategoryFlags(string flagsAttr) {
+			var flags = DbgExceptionCategoryDefinitionFlags.None;
 			if (flagsAttr != null) {
 				foreach (var name in flagsAttr.Split(flagsSeparators, StringSplitOptions.RemoveEmptyEntries)) {
 					switch (name.Trim().ToLowerInvariant()) {
-					case "code":		flags |= DbgExceptionGroupDefinitionFlags.Code; break;
-					case "decimal":		flags |= DbgExceptionGroupDefinitionFlags.DecimalCode; break;
-					case "unsigned":	flags |= DbgExceptionGroupDefinitionFlags.UnsignedCode; break;
+					case "code":		flags |= DbgExceptionCategoryDefinitionFlags.Code; break;
+					case "decimal":		flags |= DbgExceptionCategoryDefinitionFlags.DecimalCode; break;
+					case "unsigned":	flags |= DbgExceptionCategoryDefinitionFlags.UnsignedCode; break;
 					}
 				}
 			}

@@ -88,29 +88,29 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				isVisible = value;
 				OnPropertyChanged(nameof(IsVisible));
 				if (isVisible) {
-					InitializeExceptionGroups();
+					InitializeExceptionCategories();
 					Reset();
 				}
 			}
 		}
 		bool isVisible;
 
-		public object SelectedGroup {
-			get => selectedGroup;
+		public object SelectedCategory {
+			get => selectedCategory;
 			set {
-				if (selectedGroup == value)
+				if (selectedCategory == value)
 					return;
-				selectedGroup = (ExceptionGroupVM)value;
-				OnPropertyChanged(nameof(SelectedGroup));
+				selectedCategory = (ExceptionCategoryVM)value;
+				OnPropertyChanged(nameof(SelectedCategory));
 				OnPropertyChanged(nameof(HasDescriptionText));
 				nameOrCodeVM.IsCode = IsExceptionCode;
 			}
 		}
-		ExceptionGroupVM selectedGroup;
+		ExceptionCategoryVM selectedCategory;
 
-		public object ExceptionGroupCollection => exceptionGroups;
-		readonly ObservableCollection<ExceptionGroupVM> exceptionGroups;
-		bool exceptionGroupsInitd;
+		public object ExceptionCategoryCollection => exceptionCategories;
+		readonly ObservableCollection<ExceptionCategoryVM> exceptionCategories;
+		bool exceptionCategoriesInitd;
 
 		public object NameCodeText => nameOrCodeVM;
 		readonly NameOrCodeVM nameOrCodeVM;
@@ -127,32 +127,32 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 		string descriptionText;
 
-		bool IsExceptionCode => selectedGroup != null && (selectedGroup.Definition.Flags & DbgExceptionGroupDefinitionFlags.Code) != 0;
+		bool IsExceptionCode => selectedCategory != null && (selectedCategory.Definition.Flags & DbgExceptionCategoryDefinitionFlags.Code) != 0;
 		public bool HasDescriptionText => IsExceptionCode;
 
-		sealed class ExceptionGroupVM {
+		sealed class ExceptionCategoryVM {
 			public string DisplayName => Definition.ShortDisplayName;
-			public DbgExceptionGroupDefinition Definition { get; }
-			public ExceptionGroupVM(DbgExceptionGroupDefinition definition) => Definition = definition;
+			public DbgExceptionCategoryDefinition Definition { get; }
+			public ExceptionCategoryVM(DbgExceptionCategoryDefinition definition) => Definition = definition;
 		}
 
 		public AddExceptionVM(Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) {
-			exceptionGroups = new ObservableCollection<ExceptionGroupVM>();
+			exceptionCategories = new ObservableCollection<ExceptionCategoryVM>();
 			this.dbgExceptionSettingsService = dbgExceptionSettingsService;
 			nameOrCodeVM = new NameOrCodeVM(a => HasErrorUpdated());
 		}
 
-		void InitializeExceptionGroups() {
-			if (exceptionGroupsInitd)
+		void InitializeExceptionCategories() {
+			if (exceptionCategoriesInitd)
 				return;
-			exceptionGroupsInitd = true;
-			foreach (var ex in dbgExceptionSettingsService.Value.GroupDefinitions.Select(a => new ExceptionGroupVM(a)).OrderBy(a => a.DisplayName, StringComparer.CurrentCultureIgnoreCase))
-				exceptionGroups.Add(ex);
-			SelectedGroup = exceptionGroups.FirstOrDefault();
+			exceptionCategoriesInitd = true;
+			foreach (var ex in dbgExceptionSettingsService.Value.CategoryDefinitions.Select(a => new ExceptionCategoryVM(a)).OrderBy(a => a.DisplayName, StringComparer.CurrentCultureIgnoreCase))
+				exceptionCategories.Add(ex);
+			SelectedCategory = exceptionCategories.FirstOrDefault();
 		}
 
 		void Reset() {
-			// Don't reset the selected group
+			// Don't reset the selected category
 
 			nameOrCodeVM.StringValue = string.Empty;
 			DescriptionText = string.Empty;
@@ -178,17 +178,17 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		DbgExceptionId? CreateId() {
 			if (nameOrCodeVM.HasError)
 				return null;
-			if (selectedGroup == null)
+			if (selectedCategory == null)
 				return null;
 			if (IsExceptionCode) {
 				if (!nameOrCodeVM.TryGetCode(out var code, out var error))
 					return null;
-				return new DbgExceptionId(selectedGroup.Definition.Name, code);
+				return new DbgExceptionId(selectedCategory.Definition.Name, code);
 			}
 			else {
 				if (!nameOrCodeVM.TryGetName(out var name, out var error))
 					return null;
-				return new DbgExceptionId(selectedGroup.Definition.Name, name);
+				return new DbgExceptionId(selectedCategory.Definition.Name, name);
 			}
 		}
 

@@ -103,17 +103,17 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public abstract DbgExceptionSettings GetSettings(DbgExceptionId id);
 
 		/// <summary>
-		/// Gets the group definition if it exists
+		/// Gets the category definition if it exists
 		/// </summary>
-		/// <param name="groupName">Group name, see <see cref="PredefinedExceptionGroups"/></param>
-		/// <param name="definition">Updated with the group definition if the method returns true</param>
+		/// <param name="category">Category, see <see cref="PredefinedExceptionCategories"/></param>
+		/// <param name="definition">Updated with the category definition if the method returns true</param>
 		/// <returns></returns>
-		public abstract bool TryGetGroupDefinition(string groupName, out DbgExceptionGroupDefinition definition);
+		public abstract bool TryGetCategoryDefinition(string category, out DbgExceptionCategoryDefinition definition);
 
 		/// <summary>
-		/// Gets all group definitions
+		/// Gets all category definitions
 		/// </summary>
-		public abstract ReadOnlyCollection<DbgExceptionGroupDefinition> GroupDefinitions { get; }
+		public abstract ReadOnlyCollection<DbgExceptionCategoryDefinition> CategoryDefinitions { get; }
 	}
 
 	/// <summary>
@@ -136,7 +136,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="definition">Exception definition</param>
 		/// <param name="settings">Exception settings</param>
 		public DbgExceptionSettingsInfo(DbgExceptionDefinition definition, DbgExceptionSettings settings) {
-			if (definition.Id.Group == null)
+			if (definition.Id.Category == null)
 				throw new ArgumentException();
 			if (settings.Conditions == null)
 				throw new ArgumentException();
@@ -165,7 +165,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="id">Exception id</param>
 		/// <param name="settings">Settings</param>
 		public DbgExceptionIdAndSettings(DbgExceptionId id, DbgExceptionSettings settings) {
-			if (id.Group == null)
+			if (id.Category == null)
 				throw new ArgumentException();
 			if (settings.Conditions == null)
 				throw new ArgumentException();

@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	public interface IDbgExceptionFormatterMetadata {
 		/// <summary>See <see cref="ExportDbgExceptionFormatterAttribute.Order"/></summary>
 		double Order { get; }
-		/// <summary>See <see cref="ExportDbgExceptionFormatterAttribute.Group"/></summary>
-		string Group { get; }
+		/// <summary>See <see cref="ExportDbgExceptionFormatterAttribute.Category"/></summary>
+		string Category { get; }
 	}
 
 	/// <summary>
@@ -52,18 +52,18 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="group">Group name, see <see cref="PredefinedExceptionGroups"/></param>
+		/// <param name="category">Category, see <see cref="PredefinedExceptionCategories"/></param>
 		/// <param name="order">Order</param>
-		public ExportDbgExceptionFormatterAttribute(string group, double order = double.MaxValue)
+		public ExportDbgExceptionFormatterAttribute(string category, double order = double.MaxValue)
 			: base(typeof(DbgExceptionFormatter)) {
-			Group = group ?? throw new ArgumentNullException(nameof(group));
+			Category = category ?? throw new ArgumentNullException(nameof(category));
 			Order = order;
 		}
 
 		/// <summary>
-		/// Group name, see <see cref="PredefinedExceptionGroups"/>
+		/// Category, see <see cref="PredefinedExceptionCategories"/>
 		/// </summary>
-		public string Group { get; }
+		public string Category { get; }
 
 		/// <summary>
 		/// Order

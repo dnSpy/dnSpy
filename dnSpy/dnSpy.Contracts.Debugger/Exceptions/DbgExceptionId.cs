@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// Exception ID
 	/// </summary>
 	public struct DbgExceptionId : IEquatable<DbgExceptionId> {
-		readonly string group;
+		readonly string category;
 		readonly string name;
 		readonly int code;
 		readonly Flags flags;
@@ -40,9 +40,9 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		public DbgExceptionIdKind Kind => (DbgExceptionIdKind)(flags & Flags.KindMask);
 
 		/// <summary>
-		/// Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/>
+		/// Exception category, same as <see cref="DbgExceptionCategoryDefinition.Name"/>
 		/// </summary>
-		public string Group => group;
+		public string Category => category;
 
 		/// <summary>
 		/// Name of exception (case insensitive). This property is only valid if <see cref="HasName"/> is true
@@ -72,9 +72,9 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Constructor for default ids
 		/// </summary>
-		/// <param name="group">Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/></param>
-		public DbgExceptionId(string group) {
-			this.group = group ?? throw new ArgumentNullException(nameof(group));
+		/// <param name="category">Exception category, same as <see cref="DbgExceptionCategoryDefinition.Name"/></param>
+		public DbgExceptionId(string category) {
+			this.category = category ?? throw new ArgumentNullException(nameof(category));
 			name = null;
 			code = 0;
 			flags = (Flags)DbgExceptionIdKind.DefaultId;
@@ -83,10 +83,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="group">Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/></param>
+		/// <param name="category">Exception category, same as <see cref="DbgExceptionCategoryDefinition.Name"/></param>
 		/// <param name="name">Name of exception, must not be null</param>
-		public DbgExceptionId(string group, string name) {
-			this.group = group ?? throw new ArgumentNullException(nameof(group));
+		public DbgExceptionId(string category, string name) {
+			this.category = category ?? throw new ArgumentNullException(nameof(category));
 			this.name = name ?? throw new ArgumentNullException(nameof(name));
 			code = 0;
 			flags = (Flags)DbgExceptionIdKind.Name;
@@ -95,10 +95,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="group">Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/></param>
+		/// <param name="category">Exception category, same as <see cref="DbgExceptionCategoryDefinition.Name"/></param>
 		/// <param name="code">Exception code</param>
-		public DbgExceptionId(string group, int code) {
-			this.group = group ?? throw new ArgumentNullException(nameof(group));
+		public DbgExceptionId(string category, int code) {
+			this.category = category ?? throw new ArgumentNullException(nameof(category));
 			name = null;
 			this.code = code;
 			flags = (Flags)DbgExceptionIdKind.Code;
@@ -107,10 +107,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="group">Exception group, same as <see cref="DbgExceptionGroupDefinition.Name"/></param>
+		/// <param name="category">Exception category, same as <see cref="DbgExceptionCategoryDefinition.Name"/></param>
 		/// <param name="code">Exception code</param>
-		public DbgExceptionId(string group, uint code)
-			: this(group, (int)code) {
+		public DbgExceptionId(string category, uint code)
+			: this(category, (int)code) {
 		}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 				if (!StringComparer.OrdinalIgnoreCase.Equals(name, other.name))
 					return false;
 			}
-			if (!StringComparer.Ordinal.Equals(group, other.group))
+			if (!StringComparer.Ordinal.Equals(category, other.category))
 				return false;
 			return true;
 		}
@@ -151,7 +151,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <returns></returns>
 		public override int GetHashCode() {
-			int hc = (int)flags ^ StringComparer.Ordinal.GetHashCode(group ?? string.Empty);
+			int hc = (int)flags ^ StringComparer.Ordinal.GetHashCode(category ?? string.Empty);
 			if (Kind == DbgExceptionIdKind.Code)
 				hc ^= code;
 			else
@@ -164,12 +164,12 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			if (group == null)
+			if (category == null)
 				return "<not-initialized>";
 			switch (Kind) {
-			case DbgExceptionIdKind.DefaultId:	return group + " - <<default>>";
+			case DbgExceptionIdKind.DefaultId:	return category + " - <<default>>";
 			case DbgExceptionIdKind.Code:		return "0x" + code.ToString("X8");
-			case DbgExceptionIdKind.Name:		return group + " - " + name;
+			case DbgExceptionIdKind.Name:		return category + " - " + name;
 			default:							return "???";
 			}
 		}

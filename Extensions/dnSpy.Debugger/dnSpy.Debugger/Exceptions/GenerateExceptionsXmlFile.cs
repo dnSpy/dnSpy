@@ -65,58 +65,58 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 			public override string ToString() => $"0x{Code:X8} {Name} {State}";
 		}
-		sealed class Group {
+		sealed class Category {
 			public string Name { get; }
 			public string DisplayName { get; }
 			public string ShortDisplayName { get; }
 			public ExceptionState State { get; }
 			public List<ExceptionInfo> Exceptions { get; } = new List<ExceptionInfo>();
 			public bool HasCode => (State & ExceptionState.EXCEPTION_CODE_SUPPORTED) != 0;
-			public Group(string name, string displayName, string shortDisplayName, ExceptionState state) {
+			public Category(string name, string displayName, string shortDisplayName, ExceptionState state) {
 				Name = name;
 				DisplayName = displayName;
 				ShortDisplayName = shortDisplayName;
 				State = state;
 			}
 		}
-		readonly List<Group> groups = new List<Group>();
+		readonly List<Category> categories = new List<Category>();
 		string Dump() {
-			Dump(@"{449EC4CC-30D2-4032-9256-EE18EB41B62B}", ".NET", PredefinedExceptionGroups.DotNet);
-			Dump(@"{6ECE07A9-0EDE-45C4-8296-818D8FC401D4}", "MDA", PredefinedExceptionGroups.MDA);
-			return CreateXml(groups);
+			Dump(@"{449EC4CC-30D2-4032-9256-EE18EB41B62B}", ".NET", PredefinedExceptionCategories.DotNet);
+			Dump(@"{6ECE07A9-0EDE-45C4-8296-818D8FC401D4}", "MDA", PredefinedExceptionCategories.MDA);
+			return CreateXml(categories);
 		}
-		static string CreateXml(List<Group> groups) {
+		static string CreateXml(List<Category> categories) {
 			var doc = new XDocument(new XElement("Exceptions"));
-			groups.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name));
-			foreach (var group in groups) {
-				if (group.HasCode)
-					group.Exceptions.Sort((a, b) => ((uint)a.Code).CompareTo((uint)b.Code));
+			categories.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name));
+			foreach (var category in categories) {
+				if (category.HasCode)
+					category.Exceptions.Sort((a, b) => ((uint)a.Code).CompareTo((uint)b.Code));
 				else
-					group.Exceptions.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name));
+					category.Exceptions.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name));
 			}
 			var root = doc.Root;
 			var sb = new StringBuilder();
-			foreach (var group in groups) {
-				var defElem = new XElement("GroupDef");
-				defElem.SetAttributeValue("Name", group.Name);
-				defElem.SetAttributeValue("DisplayName", group.DisplayName);
-				defElem.SetAttributeValue("ShortDisplayName", group.ShortDisplayName);
+			foreach (var category in categories) {
+				var defElem = new XElement("CategoryDef");
+				defElem.SetAttributeValue("Name", category.Name);
+				defElem.SetAttributeValue("DisplayName", category.DisplayName);
+				defElem.SetAttributeValue("ShortDisplayName", category.ShortDisplayName);
 				sb.Clear();
-				AppendFlags(sb, group.State, ExceptionState.EXCEPTION_CODE_SUPPORTED, "code");
-				if ((group.State & ExceptionState.EXCEPTION_CODE_SUPPORTED) != 0)
-					AppendFlags(sb, group.State, ExceptionState.EXCEPTION_CODE_DISPLAY_IN_HEX, "decimal", false);
+				AppendFlags(sb, category.State, ExceptionState.EXCEPTION_CODE_SUPPORTED, "code");
+				if ((category.State & ExceptionState.EXCEPTION_CODE_SUPPORTED) != 0)
+					AppendFlags(sb, category.State, ExceptionState.EXCEPTION_CODE_DISPLAY_IN_HEX, "decimal", false);
 				if (sb.Length > 0)
 					defElem.SetAttributeValue("Flags", sb.ToString());
 				root.Add(defElem);
 			}
-			foreach (var group in groups) {
+			foreach (var category in categories) {
 				var defElem = new XElement("ExceptionDefs");
-				defElem.SetAttributeValue("Group", group.Name);
+				defElem.SetAttributeValue("Category", category.Name);
 				root.Add(defElem);
-				foreach (var ex in group.Exceptions) {
+				foreach (var ex in category.Exceptions) {
 					var exElem = new XElement("Exception");
 					defElem.Add(exElem);
-					if (group.HasCode) {
+					if (category.HasCode) {
 						exElem.SetAttributeValue("Code", "0x" + ex.Code.ToString("X8"));
 						if (!string.IsNullOrWhiteSpace(ex.Name))
 							exElem.SetAttributeValue("Description", ex.Name);
@@ -144,20 +144,20 @@ namespace dnSpy.Debugger.Exceptions {
 				foreach (var subKeyName in key.GetSubKeyNames()) {
 					using (var subKey = key.OpenSubKey(subKeyName)) {
 						var exState = (ExceptionState)(int)subKey.GetValue("State");
-						var group = new Group(gropuName, subKeyName, shortDisplayName, exState);
-						groups.Add(group);
-						Dump(group, subKey);
+						var category = new Category(gropuName, subKeyName, shortDisplayName, exState);
+						categories.Add(category);
+						Dump(category, subKey);
 					}
 				}
 			}
 		}
-		int Dump(Group group, RegistryKey key) {
+		int Dump(Category category, RegistryKey key) {
 			var subKeyNames = key.GetSubKeyNames();
 			foreach (var subKeyName in subKeyNames) {
 				using (var subKey = key.OpenSubKey(subKeyName)) {
-					int count = Dump(group, subKey);
+					int count = Dump(category, subKey);
 					if (count == 0)
-						group.Exceptions.Add(new ExceptionInfo(subKeyName, (int)subKey.GetValue("Code"), (ExceptionState)(int)subKey.GetValue("State")));
+						category.Exceptions.Add(new ExceptionInfo(subKeyName, (int)subKey.GetValue("Code"), (ExceptionState)(int)subKey.GetValue("State")));
 				}
 			}
 			return subKeyNames.Length;

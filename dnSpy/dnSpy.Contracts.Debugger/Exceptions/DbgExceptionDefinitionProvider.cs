@@ -23,12 +23,12 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
-	/// Provides exception group definitions and exception definitions. Use <see cref="ExportDbgExceptionDefinitionProviderAttribute"/>
+	/// Provides exception category definitions and exception definitions. Use <see cref="ExportDbgExceptionDefinitionProviderAttribute"/>
 	/// to export an instance.
 	/// </summary>
 	public abstract class DbgExceptionDefinitionProvider {
 		/// <summary>
-		/// Gets exception files (*.ex.xml) that define exceptions and exception groups. If a relative filename
+		/// Gets exception files (*.ex.xml) that define exceptions and exception categories. If a relative filename
 		/// is returned, it's relative to the assembly of the called type.
 		/// There's no need to return files already in the debug directory.
 		/// </summary>
@@ -38,10 +38,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		}
 
 		/// <summary>
-		/// Returns all exception group definitions
+		/// Returns all exception category definitions
 		/// </summary>
 		/// <returns></returns>
-		public virtual IEnumerable<DbgExceptionGroupDefinition> CreateGroups() {
+		public virtual IEnumerable<DbgExceptionCategoryDefinition> CreateCategories() {
 			yield break;
 		}
 

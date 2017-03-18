@@ -37,8 +37,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		public void WriteName(ITextColorWriter output, IDebugOutputWriter debugOutputWriter, ExceptionVM vm) =>
 			vm.Context.ExceptionFormatterService.WriteName(debugOutputWriter, vm.Definition, includeDescription: true);
 
-		public void WriteGroup(ITextColorWriter output, ExceptionVM vm) {
-			if (vm.Context.ExceptionSettingsService.TryGetGroupDefinition(vm.Definition.Id.Group, out var def))
+		public void WriteCategory(ITextColorWriter output, ExceptionVM vm) {
+			if (vm.Context.ExceptionSettingsService.TryGetCategoryDefinition(vm.Definition.Id.Category, out var def))
 				output.Write(BoxedTextColor.Text, def.DisplayName);
 			else
 				WriteError(output);

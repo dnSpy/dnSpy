@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		public IExceptionContext Context { get; }
 		public DbgExceptionDefinition Definition { get; }
 		public object NameObject => new FormatterObject<ExceptionVM>(this, PredefinedTextClassifierTags.ExceptionSettingsWindowName);
-		public object GroupObject => new FormatterObject<ExceptionVM>(this, PredefinedTextClassifierTags.ExceptionSettingsWindowGroup);
+		public object CategoryObject => new FormatterObject<ExceptionVM>(this, PredefinedTextClassifierTags.ExceptionSettingsWindowCategory);
 		public object ConditionsObject => new FormatterObject<ExceptionVM>(this, PredefinedTextClassifierTags.ExceptionSettingsWindowConditions);
 		internal int Order { get; }
 
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		internal void RefreshThemeFields_UI() {
 			Context.UIDispatcher.VerifyAccess();
 			OnPropertyChanged(nameof(NameObject));
-			OnPropertyChanged(nameof(GroupObject));
+			OnPropertyChanged(nameof(CategoryObject));
 			OnPropertyChanged(nameof(ConditionsObject));
 		}
 

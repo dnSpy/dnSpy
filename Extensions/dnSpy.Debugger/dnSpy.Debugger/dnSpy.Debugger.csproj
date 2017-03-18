@@ -60,6 +60,7 @@
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
+    <Compile Include="ToolWindows\Exceptions\ExceptionCategoryVM.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointColumnConverter.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointContext.cs" />
@@ -129,7 +130,6 @@
       <DependentUpon>ExceptionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ToolWindows\Exceptions\ExceptionFormatter.cs" />
-    <Compile Include="ToolWindows\Exceptions\ExceptionGroupVM.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionsContent.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionsOperations.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionsToolWindowContent.cs" />

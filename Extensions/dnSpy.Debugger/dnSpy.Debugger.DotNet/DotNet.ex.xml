@@ -1,7 +1,7 @@
 <Exceptions>
-	<GroupDef Name="DotNet" DisplayName="Common Language Runtime Exceptions" ShortDisplayName=".NET" />
-	<GroupDef Name="MDA" DisplayName="Managed Debugging Assistants" ShortDisplayName="MDA" />
-	<ExceptionDefs Group="DotNet">
+	<CategoryDef Name="DotNet" DisplayName="Common Language Runtime Exceptions" ShortDisplayName=".NET" />
+	<CategoryDef Name="MDA" DisplayName="Managed Debugging Assistants" ShortDisplayName="MDA" />
+	<ExceptionDefs Category="DotNet">
 		<Exception Name="Microsoft.JScript.JScriptException" />
 		<Exception Name="System.AccessViolationException" Flags="stop2" />
 		<Exception Name="System.AggregateException" Flags="stop2" />
@@ -380,7 +380,7 @@
 		<Exception Name="System.Xml.Xsl.XsltCompileException" Flags="stop2" />
 		<Exception Name="System.Xml.Xsl.XsltException" Flags="stop2" />
 	</ExceptionDefs>
-	<ExceptionDefs Group="MDA">
+	<ExceptionDefs Category="MDA">
 		<Exception Name="AsynchronousThreadAbort" />
 		<Exception Name="BindingFailure" />
 		<Exception Name="CallbackOnCollectedDelegate" Flags="stop1" />

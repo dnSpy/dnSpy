@@ -30,7 +30,7 @@ using dnSpy.Contracts.Debugger.Exceptions;
 namespace dnSpy.Debugger.Exceptions {
 	[Export(typeof(DefaultExceptionDefinitionsProvider))]
 	sealed class DefaultExceptionDefinitionsProvider {
-		public ReadOnlyCollection<DbgExceptionGroupDefinition> GroupDefinitions { get; }
+		public ReadOnlyCollection<DbgExceptionCategoryDefinition> CategoryDefinitions { get; }
 		public ReadOnlyCollection<DbgExceptionDefinition> Definitions { get; }
 
 		[ImportingConstructor]
@@ -56,24 +56,24 @@ namespace dnSpy.Debugger.Exceptions {
 			foreach (var file in xmlFiles.Distinct(StringComparer.OrdinalIgnoreCase))
 				reader.Read(file);
 
-			var groupDefs = new Dictionary<string, DbgExceptionGroupDefinition>(StringComparer.Ordinal);
+			var categoryDefs = new Dictionary<string, DbgExceptionCategoryDefinition>(StringComparer.Ordinal);
 			foreach (var p in providers) {
-				foreach (var def in p.Value.CreateGroups()) {
-					if (!groupDefs.ContainsKey(def.Name))
-						groupDefs.Add(def.Name, def);
+				foreach (var def in p.Value.CreateCategories()) {
+					if (!categoryDefs.ContainsKey(def.Name))
+						categoryDefs.Add(def.Name, def);
 				}
 			}
-			// Groups from files have lower priority than anything from CreateGroups()
-			foreach (var def in reader.GroupDefinitions) {
-				if (!groupDefs.ContainsKey(def.Name))
-					groupDefs.Add(def.Name, def);
+			// Categories from files have lower priority than anything from CreateCategories()
+			foreach (var def in reader.CategoryDefinitions) {
+				if (!categoryDefs.ContainsKey(def.Name))
+					categoryDefs.Add(def.Name, def);
 			}
-			GroupDefinitions = new ReadOnlyCollection<DbgExceptionGroupDefinition>(groupDefs.Select(a => a.Value).ToArray());
+			CategoryDefinitions = new ReadOnlyCollection<DbgExceptionCategoryDefinition>(categoryDefs.Select(a => a.Value).ToArray());
 
 			var defs = new Dictionary<DbgExceptionId, DbgExceptionDefinition>();
 			foreach (var p in providers) {
 				foreach (var def in p.Value.Create()) {
-					bool b = groupDefs.ContainsKey(def.Id.Group);
+					bool b = categoryDefs.ContainsKey(def.Id.Category);
 					Debug.Assert(b);
 					if (!b)
 						continue;
@@ -83,15 +83,15 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 			// Exceptions from files have lower priority than anything from Create()
 			foreach (var def in reader.ExceptionDefinitions) {
-				bool b = groupDefs.ContainsKey(def.Id.Group);
+				bool b = categoryDefs.ContainsKey(def.Id.Category);
 				Debug.Assert(b);
 				if (!b)
 					continue;
 				if (!defs.ContainsKey(def.Id))
 					defs.Add(def.Id, def);
 			}
-			foreach (var group in GroupDefinitions) {
-				var id = new DbgExceptionId(group.Name);
+			foreach (var category in CategoryDefinitions) {
+				var id = new DbgExceptionId(category.Name);
 				if (!defs.ContainsKey(id))
 					defs.Add(id, new DbgExceptionDefinition(id, DbgExceptionDefinitionFlags.None));
 			}

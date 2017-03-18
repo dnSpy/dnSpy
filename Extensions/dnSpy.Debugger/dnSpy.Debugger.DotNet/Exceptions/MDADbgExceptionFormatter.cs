@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Exceptions {
-	[ExportDbgExceptionFormatter(PredefinedExceptionGroups.MDA)]
+	[ExportDbgExceptionFormatter(PredefinedExceptionCategories.MDA)]
 	sealed class MDADbgExceptionFormatter : DbgExceptionFormatter {
 		public override bool WriteName(IDebugOutputWriter writer, DbgExceptionDefinition definition) {
 			writer.Write(BoxedTextColor.Keyword, definition.Id.Name);

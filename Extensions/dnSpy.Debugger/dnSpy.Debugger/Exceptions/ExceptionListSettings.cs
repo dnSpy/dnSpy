@@ -80,12 +80,12 @@ namespace dnSpy.Debugger.Exceptions {
 			var exToAdd = new List<DbgExceptionSettingsInfo>();
 			var exToRemove = new List<DbgExceptionId>();
 			var exToUpdate = new List<DbgExceptionIdAndSettings>();
-			foreach (var groupSect in section.SectionsWithName("Group")) {
-				var group = groupSect.Attribute<string>("Name");
-				if (string.IsNullOrEmpty(group))
+			foreach (var categorySect in section.SectionsWithName("Category")) {
+				var category = categorySect.Attribute<string>("Name");
+				if (string.IsNullOrEmpty(category))
 					continue;
 
-				foreach (var exSect in groupSect.SectionsWithName("Exception")) {
+				foreach (var exSect in categorySect.SectionsWithName("Exception")) {
 					var diffType = exSect.Attribute<DiffType?>("DiffType");
 					if (diffType == null)
 						continue;
@@ -97,21 +97,21 @@ namespace dnSpy.Debugger.Exceptions {
 					DbgExceptionId id;
 					switch (idKind.Value) {
 					case DbgExceptionIdKind.DefaultId:
-						id = new DbgExceptionId(group);
+						id = new DbgExceptionId(category);
 						break;
 
 					case DbgExceptionIdKind.Code:
 						var code = exSect.Attribute<int?>("Code");
 						if (code == null)
 							continue;
-						id = new DbgExceptionId(group, code.Value);
+						id = new DbgExceptionId(category, code.Value);
 						break;
 
 					case DbgExceptionIdKind.Name:
 						var name = exSect.Attribute<string>("Name");
 						if (name == null)
 							continue;
-						id = new DbgExceptionId(group, name);
+						id = new DbgExceptionId(category, name);
 						break;
 
 					default:
@@ -193,15 +193,15 @@ namespace dnSpy.Debugger.Exceptions {
 
 			var dict = new Dictionary<string, List<(DiffType diffType, DbgExceptionDefinition def, DbgExceptionSettings settings)>>(StringComparer.Ordinal);
 			foreach (var t in GetDiff()) {
-				if (!dict.TryGetValue(t.def.Id.Group, out var list))
-					dict.Add(t.def.Id.Group, list = new List<(DiffType, DbgExceptionDefinition, DbgExceptionSettings)>());
+				if (!dict.TryGetValue(t.def.Id.Category, out var list))
+					dict.Add(t.def.Id.Category, list = new List<(DiffType, DbgExceptionDefinition, DbgExceptionSettings)>());
 				list.Add(t);
 			}
 
-			foreach (var group in dict.Keys.OrderBy(a => a, StringComparer.OrdinalIgnoreCase)) {
-				var groupSect = section.CreateSection("Group");
-				groupSect.Attribute("Name", group);
-				var list = dict[group];
+			foreach (var category in dict.Keys.OrderBy(a => a, StringComparer.OrdinalIgnoreCase)) {
+				var categorySect = section.CreateSection("Category");
+				categorySect.Attribute("Name", category);
+				var list = dict[category];
 				list.Sort((a, b) => {
 					if (a.def.Id.IsDefaultId != b.def.Id.IsDefaultId) {
 						if (a.def.Id.IsDefaultId)
@@ -224,7 +224,7 @@ namespace dnSpy.Debugger.Exceptions {
 					return StringComparer.OrdinalIgnoreCase.Compare(a.def.Id.Name, b.def.Id.Name);
 				});
 				foreach (var t in list) {
-					var exSect = groupSect.CreateSection("Exception");
+					var exSect = categorySect.CreateSection("Exception");
 					exSect.Attribute("IdKind", t.def.Id.Kind);
 					if (t.def.Id.HasName)
 						exSect.Attribute("Name", t.def.Id.Name);

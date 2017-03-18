@@ -103,13 +103,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				else
 					break;
 				var exObj = e2.CorThread?.CurrentException;
-				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionGroups.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread));
+				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread));
 				e.AddPauseReason(DebuggerPauseReason.Exception);
 				break;
 
 			case DebugCallbackKind.MDANotification:
 				var mdan = (MDANotificationDebugCallbackEventArgs)e;
-				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionGroups.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread));
+				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread));
 				e.AddPauseReason(DebuggerPauseReason.Exception);
 				break;
 

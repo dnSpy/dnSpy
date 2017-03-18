@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 			public override void Execute(string context) {
 				if (context == null)
 					return;
-				var id = new DbgExceptionId(PredefinedExceptionGroups.DotNet, context);
+				var id = new DbgExceptionId(PredefinedExceptionCategories.DotNet, context);
 				if (dbgExceptionSettingsService.Value.TryGetSettings(id, out var settings)) {
 					settings = new DbgExceptionSettings(settings.Flags | DbgExceptionDefinitionFlags.StopFirstChance, settings.Conditions);
 					dbgExceptionSettingsService.Value.Modify(id, settings);

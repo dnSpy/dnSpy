@@ -68,7 +68,7 @@
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RestoreSettingsCommand}" ToolTip="{Binding RestoreSettingsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.UndoCheckBoxList}"/>
                 </Button>
-                <ComboBox Margin="5 0 0 0" Width="100" ItemsSource="{Binding VM.ExceptionGroupCollection}" SelectedItem="{Binding VM.SelectedGroup}" DisplayMemberPath="ShortDisplayName" />
+                <ComboBox Margin="5 0 0 0" Width="100" ItemsSource="{Binding VM.ExceptionCategoryCollection}" SelectedItem="{Binding VM.SelectedCategory}" DisplayMemberPath="ShortDisplayName" />
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
                 </Button>
@@ -113,7 +113,7 @@
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Category}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding GroupObject, Mode=OneWay, Converter={StaticResource exceptionColumnConverter}}" />
+                                <ContentPresenter Content="{Binding CategoryObject, Mode=OneWay, Converter={StaticResource exceptionColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

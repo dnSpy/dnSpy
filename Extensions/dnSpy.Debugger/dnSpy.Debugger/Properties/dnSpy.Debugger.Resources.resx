@@ -1413,7 +1413,7 @@ Are you sure you want to expand it?</value>
   <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
     <value>Reset all search criteria so that all exceptions are shown</value>
   </data>
-  <data name="Exceptions_AllGroups" xml:space="preserve">
+  <data name="Exceptions_AllCategories" xml:space="preserve">
     <value>All</value>
   </data>
   <data name="EditConditionsCommand" xml:space="preserve">

@@ -33,7 +33,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Button Grid.Column="0" Margin="5 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.AddExceptionButton}" Command="{Binding SaveCommand}" MinWidth="75" Padding="5 0" />
-        <ComboBox Grid.Column="1" Margin="5 0 0 0" Width="100" ItemsSource="{Binding ExceptionGroupCollection}" SelectedItem="{Binding SelectedGroup}" DisplayMemberPath="DisplayName" />
+        <ComboBox Grid.Column="1" Margin="5 0 0 0" Width="100" ItemsSource="{Binding ExceptionCategoryCollection}" SelectedItem="{Binding SelectedCategory}" DisplayMemberPath="DisplayName" />
         <TextBox Grid.Column="2" Name="nameCodeTextBox" Margin="5 0 0 0" Text="{Binding NameCodeText.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox Grid.Column="3" Margin="5 0 0 0" Text="{Binding DescriptionText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding DescriptionTextToolTip}" IsEnabled="{Binding HasDescriptionText}" />
     </Grid>

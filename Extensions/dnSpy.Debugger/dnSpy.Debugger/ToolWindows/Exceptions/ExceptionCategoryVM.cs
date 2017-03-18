@@ -18,31 +18,24 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.Exceptions;
 
-namespace dnSpy.Contracts.Debugger.Exceptions {
-	/// <summary>
-	/// Exception group flags
-	/// </summary>
-	[Flags]
-	public enum DbgExceptionGroupDefinitionFlags {
-		/// <summary>
-		/// No bit is set
-		/// </summary>
-		None					= 0,
+namespace dnSpy.Debugger.ToolWindows.Exceptions {
+	sealed class ExceptionCategoryVM {
+		public string DisplayName { get; }
+		public string ShortDisplayName { get; }
+		public DbgExceptionCategoryDefinition? Definition { get; }
 
-		/// <summary>
-		/// Exceptions are integer codes instead of strings
-		/// </summary>
-		Code					= 0x00000001,
+		public ExceptionCategoryVM(string displayName) {
+			Definition = null;
+			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
+			ShortDisplayName = DisplayName;
+		}
 
-		/// <summary>
-		/// Exception code should be displayed in decimal and not in hexadecimal
-		/// </summary>
-		DecimalCode				= 0x00000002,
-
-		/// <summary>
-		/// Exception code is an unsigned integer
-		/// </summary>
-		UnsignedCode			= 0x00000004,
+		public ExceptionCategoryVM(DbgExceptionCategoryDefinition definition) {
+			Definition = definition;
+			DisplayName = definition.DisplayName;
+			ShortDisplayName = definition.ShortDisplayName;
+		}
 	}
 }

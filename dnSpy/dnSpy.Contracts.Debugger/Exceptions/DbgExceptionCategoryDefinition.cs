@@ -21,16 +21,16 @@ using System;
 
 namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
-	/// Exception group definition
+	/// Exception category definition
 	/// </summary>
-	public struct DbgExceptionGroupDefinition {
+	public struct DbgExceptionCategoryDefinition {
 		/// <summary>
 		/// Gets the flags
 		/// </summary>
-		public DbgExceptionGroupDefinitionFlags Flags { get; }
+		public DbgExceptionCategoryDefinitionFlags Flags { get; }
 
 		/// <summary>
-		/// Name of group, see also <see cref="PredefinedExceptionGroups"/>
+		/// Name, see also <see cref="PredefinedExceptionCategories"/>
 		/// </summary>
 		public string Name { get; }
 
@@ -48,10 +48,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// Constructor
 		/// </summary>
 		/// <param name="flags">Flags</param>
-		/// <param name="name">Name of group, see also <see cref="PredefinedExceptionGroups"/></param>
+		/// <param name="name">Name, see also <see cref="PredefinedExceptionCategories"/></param>
 		/// <param name="displayName">Localized name shown in the UI</param>
 		/// <param name="shortDisplayName">Shorter localized name shown in the UI</param>
-		public DbgExceptionGroupDefinition(DbgExceptionGroupDefinitionFlags flags, string name, string displayName, string shortDisplayName) {
+		public DbgExceptionCategoryDefinition(DbgExceptionCategoryDefinitionFlags flags, string name, string displayName, string shortDisplayName) {
 			Flags = flags;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));

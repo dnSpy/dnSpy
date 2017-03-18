@@ -2014,20 +2014,20 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string Exceptions_AllCategories {
+            get {
+                return ResourceManager.GetString("Exceptions_AllCategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;All Common Language Runtime Exceptions not in this list&gt;.
         /// </summary>
         public static string Exceptions_AllCLRExceptionsNotInList {
             get {
                 return ResourceManager.GetString("Exceptions_AllCLRExceptionsNotInList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to All.
-        /// </summary>
-        public static string Exceptions_AllGroups {
-            get {
-                return ResourceManager.GetString("Exceptions_AllGroups", resourceCulture);
             }
         }
         

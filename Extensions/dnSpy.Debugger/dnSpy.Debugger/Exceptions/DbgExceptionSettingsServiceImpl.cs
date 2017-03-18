@@ -149,7 +149,7 @@ namespace dnSpy.Debugger.Exceptions {
 				foreach (var s in settings) {
 					if (toExceptionInfo.ContainsKey(s.Definition.Id))
 						continue;
-					bool b = s.Definition.Id.Group != null && s.Settings.Conditions != null;
+					bool b = s.Definition.Id.Category != null && s.Settings.Conditions != null;
 					Debug.Assert(b);
 					if (!b)
 						continue;
@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public override bool TryGetDefinition(DbgExceptionId id, out DbgExceptionDefinition definition) {
-			if (id.Group == null)
+			if (id.Category == null)
 				throw new ArgumentException();
 			lock (lockObj) {
 				if (toExceptionInfo.TryGetValue(id, out var info)) {
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public override bool TryGetSettings(DbgExceptionId id, out DbgExceptionSettings settings) {
-			if (id.Group == null)
+			if (id.Category == null)
 				throw new ArgumentException();
 			lock (lockObj) {
 				if (toExceptionInfo.TryGetValue(id, out var info)) {
@@ -189,29 +189,29 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public override DbgExceptionSettings GetSettings(DbgExceptionId id) {
-			if (id.Group == null)
+			if (id.Category == null)
 				throw new ArgumentException();
 			lock (lockObj) {
 				if (toExceptionInfo.TryGetValue(id, out var info))
 					return info.Settings;
-				if (toExceptionInfo.TryGetValue(new DbgExceptionId(id.Group), out info))
+				if (toExceptionInfo.TryGetValue(new DbgExceptionId(id.Category), out info))
 					return info.Settings;
 			}
 			return new DbgExceptionSettings(DbgExceptionDefinitionFlags.None);
 		}
 
-		public override ReadOnlyCollection<DbgExceptionGroupDefinition> GroupDefinitions => defaultExceptionDefinitionsProvider.GroupDefinitions;
+		public override ReadOnlyCollection<DbgExceptionCategoryDefinition> CategoryDefinitions => defaultExceptionDefinitionsProvider.CategoryDefinitions;
 
-		public override bool TryGetGroupDefinition(string groupName, out DbgExceptionGroupDefinition definition) {
-			if (groupName == null)
-				throw new ArgumentNullException(nameof(groupName));
-			foreach (var group in GroupDefinitions) {
-				if (group.Name == groupName) {
-					definition = group;
+		public override bool TryGetCategoryDefinition(string category, out DbgExceptionCategoryDefinition definition) {
+			if (category == null)
+				throw new ArgumentNullException(nameof(category));
+			foreach (var categoryDef in CategoryDefinitions) {
+				if (categoryDef.Name == category) {
+					definition = categoryDef;
 					return true;
 				}
 			}
-			definition = default(DbgExceptionGroupDefinition);
+			definition = default(DbgExceptionCategoryDefinition);
 			return false;
 		}
 	}

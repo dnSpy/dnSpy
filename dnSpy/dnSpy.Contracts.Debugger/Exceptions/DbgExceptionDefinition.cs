@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="flags">Flags</param>
 		/// <param name="description">Description shown in the UI or null</param>
 		public DbgExceptionDefinition(DbgExceptionId id, DbgExceptionDefinitionFlags flags, string description) {
-			if (id.Group == null)
+			if (id.Category == null)
 				throw new ArgumentException();
 			Id = id;
 			Flags = flags;

@@ -153,9 +153,9 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string ExceptionSettingsWindowName = "Name";
 
 		/// <summary>
-		/// Exception Settings window column: Group
+		/// Exception Settings window column: Category
 		/// </summary>
-		public static readonly string ExceptionSettingsWindowGroup = "Group";
+		public static readonly string ExceptionSettingsWindowCategory = "Category";
 
 		/// <summary>
 		/// Exception Settings window column: Conditions

@@ -19,9 +19,9 @@
 
 namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
-	/// Predefined exception groups
+	/// Predefined exception categories
 	/// </summary>
-	public static class PredefinedExceptionGroups {
+	public static class PredefinedExceptionCategories {
 		/// <summary>
 		/// .NET
 		/// </summary>
