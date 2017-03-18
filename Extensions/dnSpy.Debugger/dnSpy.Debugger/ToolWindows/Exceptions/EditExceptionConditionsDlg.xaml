@@ -31,7 +31,7 @@
              Width="650" Height="300"
              Title="{x:Static p:dnSpy_Debugger_Resources.EditConditions_Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-             MinHeight="300" MinWidth="400">
+             MinHeight="100" MinWidth="300">
     <winlocal:WindowBase.Resources>
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
         <ui:BooleanToHiddenVisibilityConverter x:Key="BooleanToHiddenVisibilityConverter" />
