@@ -1455,8 +1455,8 @@ Are you sure you want to expand it?</value>
   <data name="Breakpoints_RemoveAllBreakpoints_ToolTip" xml:space="preserve">
     <value>Remove all breakpoints</value>
   </data>
-  <data name="Breakpoints_RemoveBreakpoints_ToolTip" xml:space="preserve">
-    <value>Remove breakpoints</value>
+  <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
+    <value>Remove breakpoint</value>
   </data>
   <data name="EditAppDomainNameCommand" xml:space="preserve">
     <value>Edit AppDomain Name</value>
@@ -1473,7 +1473,7 @@ Are you sure you want to expand it?</value>
   <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
     <value>Remove All Breakpoints</value>
   </data>
-  <data name="RemoveBreakpointsCommand" xml:space="preserve">
-    <value>Remove Breakpoints</value>
+  <data name="RemoveBreakpointCommand" xml:space="preserve">
+    <value>Remove Breakpoint</value>
   </data>
 </root>

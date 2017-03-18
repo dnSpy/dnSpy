@@ -103,10 +103,10 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public override bool IsEnabled(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanAddModuleBreakpoint;
 	}
 
-	[ExportMenuItem(Header = "res:RemoveBreakpointsCommand", InputGestureText = "res:ShortCutKeyDelete", Icon = DsImagesAttribute.RemoveCommand, Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS1, Order = 10)]
-	sealed class RemoveBreakpointsBreakpointCtxMenuCommand : ModuleBreakpointsCtxMenuCommand {
+	[ExportMenuItem(Header = "res:RemoveBreakpointCommand", InputGestureText = "res:ShortCutKeyDelete", Icon = DsImagesAttribute.RemoveCommand, Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS1, Order = 10)]
+	sealed class RemoveBreakpointBreakpointCtxMenuCommand : ModuleBreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		RemoveBreakpointsBreakpointCtxMenuCommand(Lazy<IModuleBreakpointsContent> moduleBreakpointesContent)
+		RemoveBreakpointBreakpointCtxMenuCommand(Lazy<IModuleBreakpointsContent> moduleBreakpointesContent)
 			: base(moduleBreakpointesContent) {
 		}
 

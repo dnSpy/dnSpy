@@ -49,7 +49,7 @@
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding AddModuleBreakpointCommand}" ToolTip="{Binding AddModuleBreakpointToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Add}"/>
                 </Button>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveModuleBreakpointsCommand}" ToolTip="{Binding RemoveModuleBreakpointsToolTip}">
+                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveModuleBreakpointsCommand}" ToolTip="{Binding RemoveModuleBreakpointToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.RemoveCommand}"/>
                 </Button>
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveAllModuleBreakpointsCommand}" ToolTip="{Binding RemoveAllModuleBreakpointsToolTip}">

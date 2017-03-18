@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			public ICommand RemoveAllModuleBreakpointsCommand => new RelayCommand(a => Operations.RemoveAllModuleBreakpoints(), a => Operations.CanRemoveAllModuleBreakpoints);
 
 			public string AddModuleBreakpointToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_AddBreakpoint_ToolTip, null);
-			public string RemoveModuleBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_RemoveBreakpoints_ToolTip, null);
+			public string RemoveModuleBreakpointToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_RemoveBreakpoint_ToolTip, null);
 			public string RemoveAllModuleBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_RemoveAllBreakpoints_ToolTip, null);
 
 			public ControlVM(IModuleBreakpointsVM vm, ModuleBreakpointsOperations operations) {

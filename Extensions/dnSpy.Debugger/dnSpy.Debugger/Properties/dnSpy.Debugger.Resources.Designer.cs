@@ -259,11 +259,11 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove breakpoints.
+        ///   Looks up a localized string similar to Remove breakpoint.
         /// </summary>
-        public static string Breakpoints_RemoveBreakpoints_ToolTip {
+        public static string Breakpoints_RemoveBreakpoint_ToolTip {
             get {
-                return ResourceManager.GetString("Breakpoints_RemoveBreakpoints_ToolTip", resourceCulture);
+                return ResourceManager.GetString("Breakpoints_RemoveBreakpoint_ToolTip", resourceCulture);
             }
         }
         
@@ -2839,11 +2839,11 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove Breakpoints.
+        ///   Looks up a localized string similar to Remove Breakpoint.
         /// </summary>
-        public static string RemoveBreakpointsCommand {
+        public static string RemoveBreakpointCommand {
             get {
-                return ResourceManager.GetString("RemoveBreakpointsCommand", resourceCulture);
+                return ResourceManager.GetString("RemoveBreakpointCommand", resourceCulture);
             }
         }
         
