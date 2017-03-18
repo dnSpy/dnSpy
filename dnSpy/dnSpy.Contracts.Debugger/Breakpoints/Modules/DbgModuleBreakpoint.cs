@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		}
 
 		/// <summary>
-		/// Name of module (case insensitive) or null if any name. Wildcards can be used
+		/// Name of module (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
 		public string ModuleName {
 			get => Settings.ModuleName;
@@ -93,7 +93,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		}
 
 		/// <summary>
-		/// App domain name (case insensitive) or null if any name. Wildcards can be used
+		/// App domain name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
 		public string AppDomainName {
 			get => Settings.AppDomainName;
@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		}
 
 		/// <summary>
-		/// Process name (case insensitive) or null if any name. Wildcards can be used
+		/// Process name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
 		public string ProcessName {
 			get => Settings.ProcessName;

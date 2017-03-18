@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		public bool IsEnabled { get; set; }
 
 		/// <summary>
-		/// Name of module (case insensitive) or null if any name. Wildcards can be used
+		/// Name of module (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
 		public string ModuleName { get; set; }
 
@@ -48,12 +48,12 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		public int? Order { get; set; }
 
 		/// <summary>
-		/// App domain name (case insensitive) or null if any name. Wildcards can be used
+		/// App domain name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
 		public string AppDomainName { get; set; }
 
 		/// <summary>
-		/// Process name (case insensitive) or null if any name. Wildcards can be used
+		/// Process name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
 		public string ProcessName { get; set; }
 	}

@@ -96,12 +96,18 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 				var bpSect = section.CreateSection("Breakpoint");
 				var bpSettings = bp.Settings;
 				bpSect.Attribute("IsEnabled", bpSettings.IsEnabled);
-				bpSect.Attribute("ModuleName", bpSettings.ModuleName);
-				bpSect.Attribute("IsDynamic", bpSettings.IsDynamic);
-				bpSect.Attribute("IsInMemory", bpSettings.IsInMemory);
-				bpSect.Attribute("Order", bpSettings.Order);
-				bpSect.Attribute("AppDomainName", bpSettings.AppDomainName);
-				bpSect.Attribute("ProcessName", bpSettings.ProcessName);
+				if (!string.IsNullOrEmpty(bpSettings.ModuleName))
+					bpSect.Attribute("ModuleName", bpSettings.ModuleName);
+				if (bpSettings.IsDynamic != null)
+					bpSect.Attribute("IsDynamic", bpSettings.IsDynamic);
+				if (bpSettings.IsInMemory != null)
+					bpSect.Attribute("IsInMemory", bpSettings.IsInMemory);
+				if (bpSettings.Order != null)
+					bpSect.Attribute("Order", bpSettings.Order);
+				if (!string.IsNullOrEmpty(bpSettings.AppDomainName))
+					bpSect.Attribute("AppDomainName", bpSettings.AppDomainName);
+				if (!string.IsNullOrEmpty(bpSettings.ProcessName))
+					bpSect.Attribute("ProcessName", bpSettings.ProcessName);
 			}
 		}
 		bool ignoreSave;
