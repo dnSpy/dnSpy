@@ -3073,6 +3073,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+Z.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltZ {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltZ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+C.
         /// </summary>
         public static string ShortCutKeyCtrlC {
@@ -3132,15 +3141,6 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyCtrlShift_DIGIT {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlShift_DIGIT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ctrl+Shift+Alt+P.
-        /// </summary>
-        public static string ShortCutKeyCtrlShiftAltP {
-            get {
-                return ResourceManager.GetString("ShortCutKeyCtrlShiftAltP", resourceCulture);
             }
         }
         

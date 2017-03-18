@@ -369,7 +369,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:ProcessesCommand", Icon = DsImagesAttribute.Process, InputGestureText = "res:ShortCutKeyCtrlShiftAltP", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_INFO, Order = 30)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:ProcessesCommand", Icon = DsImagesAttribute.Process, InputGestureText = "res:ShortCutKeyCtrlAltZ", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_INFO, Order = 30)]
 		sealed class ProcessesWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
 			public ProcessesWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
