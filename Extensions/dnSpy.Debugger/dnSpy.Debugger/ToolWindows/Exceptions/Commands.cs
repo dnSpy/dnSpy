@@ -39,6 +39,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		ExceptionsCommandsLoader(IWpfCommandService wpfCommandService, Lazy<IExceptionsContent> exceptionsContent) {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW);
 			cmds.Add(new RelayCommand(a => exceptionsContent.Value.Operations.Copy(), a => exceptionsContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.C);
+			cmds.Add(new RelayCommand(a => exceptionsContent.Value.Operations.Copy(), a => exceptionsContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.Insert);
 			cmds.Add(new RelayCommand(a => exceptionsContent.Value.Operations.AddException(), a => exceptionsContent.Value.Operations.CanAddException), ModifierKeys.None, Key.Insert);
 			cmds.Add(new RelayCommand(a => exceptionsContent.Value.Operations.RemoveExceptions(), a => exceptionsContent.Value.Operations.CanRemoveExceptions), ModifierKeys.None, Key.Delete);
 			cmds.Add(new RelayCommand(a => exceptionsContent.Value.Operations.EditConditions(), a => exceptionsContent.Value.Operations.CanEditConditions), ModifierKeys.None, Key.Enter);

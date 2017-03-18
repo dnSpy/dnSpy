@@ -34,6 +34,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		ProcessesCommandsLoader(IWpfCommandService wpfCommandService, Lazy<IProcessesContent> processesContent) {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_PROCESSES_LISTVIEW);
 			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.Copy(), a => processesContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.C);
+			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.Copy(), a => processesContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.Insert);
 			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.AttachToProcess(), a => processesContent.Value.Operations.CanAttachToProcess), ModifierKeys.Control | ModifierKeys.Alt, Key.P);
 			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.SetCurrentProcess(), a => processesContent.Value.Operations.CanSetCurrentProcess), ModifierKeys.None, Key.Enter);
 		}

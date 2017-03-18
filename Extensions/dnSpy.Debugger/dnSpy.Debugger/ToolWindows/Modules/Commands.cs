@@ -38,6 +38,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		ModulesCommandsLoader(IWpfCommandService wpfCommandService, Lazy<IModulesContent> modulesContent) {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW);
 			cmds.Add(new RelayCommand(a => modulesContent.Value.Operations.Copy(), a => modulesContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.C);
+			cmds.Add(new RelayCommand(a => modulesContent.Value.Operations.Copy(), a => modulesContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.Insert);
 			cmds.Add(new RelayCommand(a => modulesContent.Value.Operations.GoToModule(newTab: false), a => modulesContent.Value.Operations.CanGoToModule), ModifierKeys.None, Key.Enter);
 			cmds.Add(new RelayCommand(a => modulesContent.Value.Operations.GoToModule(newTab: true), a => modulesContent.Value.Operations.CanGoToModule), ModifierKeys.Control, Key.Enter);
 			cmds.Add(new RelayCommand(a => modulesContent.Value.Operations.GoToModule(newTab: true), a => modulesContent.Value.Operations.CanGoToModule), ModifierKeys.Shift, Key.Enter);

@@ -35,6 +35,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		ModuleBreakpointsCommandsLoader(IWpfCommandService wpfCommandService, Lazy<IModuleBreakpointsContent> moduleBreakpointsContent) {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_MODULEBREAKPOINTS_LISTVIEW);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.Copy(), a => moduleBreakpointsContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.C);
+			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.Copy(), a => moduleBreakpointsContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.Insert);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditModuleName(), a => moduleBreakpointsContent.Value.Operations.CanEditModuleName), ModifierKeys.None, Key.F2);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditModuleName(), a => moduleBreakpointsContent.Value.Operations.CanEditModuleName), ModifierKeys.Control, Key.D1);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditOrder(), a => moduleBreakpointsContent.Value.Operations.CanEditOrder), ModifierKeys.Control, Key.D2);

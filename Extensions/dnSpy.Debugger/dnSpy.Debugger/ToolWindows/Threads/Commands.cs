@@ -34,6 +34,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		ThreadsCommandsLoader(IWpfCommandService wpfCommandService, Lazy<IThreadsContent> threadsContent) {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW);
 			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.Copy(), a => threadsContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.C);
+			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.Copy(), a => threadsContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.Insert);
 			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.SwitchToThread(newTab: false), a => threadsContent.Value.Operations.CanSwitchToThread), ModifierKeys.None, Key.Enter);
 			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.SwitchToThread(newTab: true), a => threadsContent.Value.Operations.CanSwitchToThread), ModifierKeys.Control, Key.Enter);
 			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.SwitchToThread(newTab: true), a => threadsContent.Value.Operations.CanSwitchToThread), ModifierKeys.Shift, Key.Enter);
