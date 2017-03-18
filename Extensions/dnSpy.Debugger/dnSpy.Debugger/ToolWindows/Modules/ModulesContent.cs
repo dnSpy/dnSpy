@@ -78,8 +78,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(modulesControl.ListView);
-		public void OnClose() => modulesVM.IsEnabled = false;
-		public void OnShow() => modulesVM.IsEnabled = true;
+		public void OnClose() => modulesVM.IsOpen = false;
+		public void OnShow() => modulesVM.IsOpen = true;
 		public void OnHidden() => modulesVM.IsVisible = false;
 		public void OnVisible() => modulesVM.IsVisible = true;
 	}

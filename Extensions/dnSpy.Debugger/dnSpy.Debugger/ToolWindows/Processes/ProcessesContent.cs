@@ -85,8 +85,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(processesControl.ListView);
-		public void OnClose() => processesVM.IsEnabled = false;
-		public void OnShow() => processesVM.IsEnabled = true;
+		public void OnClose() => processesVM.IsOpen = false;
+		public void OnShow() => processesVM.IsOpen = true;
 		public void OnHidden() => processesVM.IsVisible = false;
 		public void OnVisible() => processesVM.IsVisible = true;
 	}

@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.ToolWindows {
 
 		// true if the tool window is open but not necessarily visible (could be hidden by
 		// another tool window)
-		public bool IsEnabled {
+		public bool IsOpen {
 			get => isEnabled;
 			set {
 				if (isEnabled == value)

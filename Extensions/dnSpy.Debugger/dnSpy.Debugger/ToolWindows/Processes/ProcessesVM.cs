@@ -32,7 +32,7 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	interface IProcessesVM {
-		bool IsEnabled { get; set; }
+		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		ObservableCollection<ProcessVM> AllItems { get; }
 		ObservableCollection<ProcessVM> SelectedItems { get; }
@@ -43,9 +43,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public ObservableCollection<ProcessVM> AllItems { get; }
 		public ObservableCollection<ProcessVM> SelectedItems { get; }
 
-		public bool IsEnabled {
-			get => lazyToolWindowVMHelper.IsEnabled;
-			set => lazyToolWindowVMHelper.IsEnabled = value;
+		public bool IsOpen {
+			get => lazyToolWindowVMHelper.IsOpen;
+			set => lazyToolWindowVMHelper.IsOpen = value;
 		}
 
 		public bool IsVisible {

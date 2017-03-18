@@ -34,7 +34,7 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
 	interface IThreadsVM {
-		bool IsEnabled { get; set; }
+		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		ObservableCollection<ThreadVM> AllItems { get; }
 		ObservableCollection<ThreadVM> SelectedItems { get; }
@@ -45,9 +45,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public ObservableCollection<ThreadVM> AllItems { get; }
 		public ObservableCollection<ThreadVM> SelectedItems { get; }
 
-		public bool IsEnabled {
-			get => lazyToolWindowVMHelper.IsEnabled;
-			set => lazyToolWindowVMHelper.IsEnabled = value;
+		public bool IsOpen {
+			get => lazyToolWindowVMHelper.IsOpen;
+			set => lazyToolWindowVMHelper.IsOpen = value;
 		}
 
 		public bool IsVisible {

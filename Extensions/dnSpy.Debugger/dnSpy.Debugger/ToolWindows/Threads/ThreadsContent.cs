@@ -75,8 +75,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(threadsControl.ListView);
-		public void OnClose() => threadsVM.IsEnabled = false;
-		public void OnShow() => threadsVM.IsEnabled = true;
+		public void OnClose() => threadsVM.IsOpen = false;
+		public void OnShow() => threadsVM.IsOpen = true;
 		public void OnHidden() => threadsVM.IsVisible = false;
 		public void OnVisible() => threadsVM.IsVisible = true;
 	}

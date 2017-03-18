@@ -112,8 +112,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		public void FocusSearchTextBox() => exceptionsControl.FocusSearchTextBox();
 		public void Focus() => UIUtilities.FocusSelector(exceptionsControl.ListView);
-		public void OnClose() => exceptionsVM.IsEnabled = false;
-		public void OnShow() => exceptionsVM.IsEnabled = true;
+		public void OnClose() => exceptionsVM.IsOpen = false;
+		public void OnShow() => exceptionsVM.IsOpen = true;
 		public void OnHidden() => exceptionsVM.IsVisible = false;
 		public void OnVisible() => exceptionsVM.IsVisible = true;
 	}

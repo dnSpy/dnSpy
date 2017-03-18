@@ -35,7 +35,7 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	interface IModuleBreakpointsVM {
-		bool IsEnabled { get; set; }
+		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		ObservableCollection<ModuleBreakpointVM> AllItems { get; }
 		ObservableCollection<ModuleBreakpointVM> SelectedItems { get; }
@@ -46,9 +46,9 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public ObservableCollection<ModuleBreakpointVM> AllItems { get; }
 		public ObservableCollection<ModuleBreakpointVM> SelectedItems { get; }
 
-		public bool IsEnabled {
-			get => lazyToolWindowVMHelper.IsEnabled;
-			set => lazyToolWindowVMHelper.IsEnabled = value;
+		public bool IsOpen {
+			get => lazyToolWindowVMHelper.IsOpen;
+			set => lazyToolWindowVMHelper.IsOpen = value;
 		}
 
 		public bool IsVisible {

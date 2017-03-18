@@ -32,7 +32,7 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Modules {
 	interface IModulesVM {
-		bool IsEnabled { get; set; }
+		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		ObservableCollection<ModuleVM> AllItems { get; }
 		ObservableCollection<ModuleVM> SelectedItems { get; }
@@ -43,9 +43,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public ObservableCollection<ModuleVM> AllItems { get; }
 		public ObservableCollection<ModuleVM> SelectedItems { get; }
 
-		public bool IsEnabled {
-			get => lazyToolWindowVMHelper.IsEnabled;
-			set => lazyToolWindowVMHelper.IsEnabled = value;
+		public bool IsOpen {
+			get => lazyToolWindowVMHelper.IsOpen;
+			set => lazyToolWindowVMHelper.IsOpen = value;
 		}
 
 		public bool IsVisible {

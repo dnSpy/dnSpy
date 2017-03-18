@@ -95,8 +95,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(moduleBreakpointsControl.ListView);
-		public void OnClose() => moduleBreakpointsVM.IsEnabled = false;
-		public void OnShow() => moduleBreakpointsVM.IsEnabled = true;
+		public void OnClose() => moduleBreakpointsVM.IsOpen = false;
+		public void OnShow() => moduleBreakpointsVM.IsOpen = true;
 		public void OnHidden() => moduleBreakpointsVM.IsVisible = false;
 		public void OnVisible() => moduleBreakpointsVM.IsVisible = true;
 	}

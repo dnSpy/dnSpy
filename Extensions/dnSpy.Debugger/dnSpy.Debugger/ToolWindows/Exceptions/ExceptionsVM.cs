@@ -37,7 +37,7 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Exceptions {
 	interface IExceptionsVM {
-		bool IsEnabled { get; set; }
+		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		BulkObservableCollection<ExceptionVM> AllItems { get; }
 		ObservableCollection<ExceptionVM> SelectedItems { get; }
@@ -53,9 +53,9 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		public BulkObservableCollection<ExceptionVM> AllItems { get; }
 		public ObservableCollection<ExceptionVM> SelectedItems { get; }
 
-		public bool IsEnabled {
-			get => lazyToolWindowVMHelper.IsEnabled;
-			set => lazyToolWindowVMHelper.IsEnabled = value;
+		public bool IsOpen {
+			get => lazyToolWindowVMHelper.IsOpen;
+			set => lazyToolWindowVMHelper.IsOpen = value;
 		}
 
 		public bool IsVisible {
