@@ -234,7 +234,7 @@ namespace dnSpy.Debugger.Impl {
 			return "Couldn't create a debug engine";
 		}
 
-		void ExecOnDbgThread(Action action) => DispatcherThread.BeginInvoke(action);
+		void DbgThread(Action action) => DispatcherThread.BeginInvoke(action);
 
 		bool IsOurEngine(DbgEngine engine) {
 			lock (lockObj) {
@@ -254,7 +254,7 @@ namespace dnSpy.Debugger.Impl {
 			var engine = sender as DbgEngine;
 			if (engine == null)
 				throw new ArgumentOutOfRangeException(nameof(sender));
-			ExecOnDbgThread(() => DbgEngine_Message_DbgThread(engine, e));
+			DbgThread(() => DbgEngine_Message_DbgThread(engine, e));
 		}
 
 		void DbgEngine_Message_DbgThread(DbgEngine engine, DbgEngineMessage e) {
@@ -487,7 +487,7 @@ namespace dnSpy.Debugger.Impl {
 					// Don't restart the programs in this thread since we're inside a ProcessesChanged callback.
 					// That will mess up notifying about eg. IsDebuggingChanged and other events that should be,
 					// but haven't yet been raised.
-					ExecOnDbgThread(() => {
+					DbgThread(() => {
 						if (success) {
 							foreach (var options in restartOptionsCopy)
 								Start(options);
@@ -679,7 +679,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void RunAll() =>
-			ExecOnDbgThread(() => RunAll_DbgThread());
+			DbgThread(() => RunAll_DbgThread());
 
 		void RunAll_DbgThread() {
 			DispatcherThread.VerifyAccess();
@@ -746,11 +746,11 @@ namespace dnSpy.Debugger.Impl {
 				RunEngines_DbgThread(new[] { engineInfo });
 		}
 
-		public override void StopDebuggingAll() {
+		public override void StopDebuggingAll() => DbgThread(() => StopDebuggingAll_DbgThread());
+		void StopDebuggingAll_DbgThread() {
+			DispatcherThread.VerifyAccess();
 			lock (lockObj) {
-				// Make a copy of it in the unlikely event that an engine gets disconnected
-				// when we call Terminate()/Detach() inside the lock
-				foreach (var info in engines.ToArray()) {
+				foreach (var info in engines) {
 					// Process could be null if it hasn't been connected yet
 					if (info.Process?.ShouldDetach ?? info.Engine.StartKind == DbgStartKind.Attach)
 						info.Engine.Detach();
@@ -760,20 +760,20 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		public override void TerminateAll() {
+		public override void TerminateAll() => DbgThread(() => TerminateAll_DbgThread());
+		void TerminateAll_DbgThread() {
+			DispatcherThread.VerifyAccess();
 			lock (lockObj) {
-				// Make a copy of it in the unlikely event that an engine gets disconnected
-				// when we call Terminate() inside the lock
-				foreach (var info in engines.ToArray())
+				foreach (var info in engines)
 					info.Engine.Terminate();
 			}
 		}
 
-		public override void DetachAll() {
+		public override void DetachAll() => DbgThread(() => DetachAll_DbgThread());
+		void DetachAll_DbgThread() {
+			DispatcherThread.VerifyAccess();
 			lock (lockObj) {
-				// Make a copy of it in the unlikely event that an engine gets disconnected
-				// when we call Detach() inside the lock
-				foreach (var info in engines.ToArray())
+				foreach (var info in engines)
 					info.Engine.Detach();
 			}
 		}
@@ -790,40 +790,39 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		internal void Detach(DbgProcessImpl process) {
+		internal void Detach(DbgProcessImpl process) => DbgThread(() => Detach_DbgThread(process));
+		void Detach_DbgThread(DbgProcessImpl process) {
+			DispatcherThread.VerifyAccess();
 			lock (lockObj) {
-				// Make a copy of it in the unlikely event that an engine gets disconnected
-				// when we call Detach() inside the lock
-				foreach (var info in engines.ToArray()) {
+				foreach (var info in engines) {
 					if (info.Process == process)
 						info.Engine.Detach();
 				}
 			}
 		}
 
-		internal void Terminate(DbgProcessImpl process) {
+		internal void Terminate(DbgProcessImpl process) => DbgThread(() => Terminate_DbgThread(process));
+		void Terminate_DbgThread(DbgProcessImpl process) {
+			DispatcherThread.VerifyAccess();
 			lock (lockObj) {
-				// Make a copy of it in the unlikely event that an engine gets disconnected
-				// when we call Terminate() inside the lock
-				foreach (var info in engines.ToArray()) {
+				foreach (var info in engines) {
 					if (info.Process == process)
 						info.Engine.Terminate();
 				}
 			}
 		}
 
-		internal void Break(DbgProcessImpl process) {
+		internal void Break(DbgProcessImpl process) => DbgThread(() => Break_DbgThread(process));
+		void Break_DbgThread(DbgProcessImpl process) {
 			lock (lockObj) {
-				// Make a copy of it in the unlikely event that an engine gets disconnected
-				// when we call Break() inside the lock
-				foreach (var info in engines.ToArray()) {
+				foreach (var info in engines) {
 					if (info.Process == process && info.EngineState == EngineState.Running)
 						info.Engine.Break();
 				}
 			}
 		}
 
-		internal void Run(DbgProcessImpl process) => ExecOnDbgThread(() => Run_DbgThread(process));
+		internal void Run(DbgProcessImpl process) => DbgThread(() => Run_DbgThread(process));
 		void Run_DbgThread(DbgProcessImpl process) {
 			DispatcherThread.VerifyAccess();
 			var engineInfos = new List<EngineInfo>();
@@ -849,7 +848,7 @@ namespace dnSpy.Debugger.Impl {
 				var process = value as DbgProcessImpl;
 				if (process == null)
 					throw new ArgumentOutOfRangeException(nameof(value));
-				ExecOnDbgThread(() => SetCurrentProcess(process));
+				DbgThread(() => SetCurrentProcess(process));
 			}
 		}
 		DbgProcess currentProcess;
