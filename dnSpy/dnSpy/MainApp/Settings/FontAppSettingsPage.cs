@@ -27,9 +27,9 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Media;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.MVVM;
@@ -227,9 +227,10 @@ namespace dnSpy.MainApp.Settings {
 			var vm = (FontFamilyVM)value;
 			if (!vm.IsMonospaced)
 				return new TextBlock { Text = vm.FontFamily.Source };
-			var tb = new TextBlock();
-			tb.Inlines.Add(new Bold(new Run(vm.FontFamily.Source)));
-			return tb;
+			return new TextBlock() {
+				Text = vm.FontFamily.Source,
+				FontWeight = FontWeights.Bold,
+			};
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
