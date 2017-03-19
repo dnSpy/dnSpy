@@ -709,6 +709,8 @@ namespace dnSpy.Contracts.Themes {
 		HexSearchControlMouseOverDropDownButtonGlyph,
 		HexSearchingTextBox,
 		HexSearchingTextBoxBorder,
+		EnvironmentCommandBarToolBarSeparator,
+		EnvironmentCommandBarToolBarSeparatorHighlight,
 
 		// Add new color types before this comment
 

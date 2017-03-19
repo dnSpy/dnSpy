@@ -42,7 +42,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
+            <StackPanel Grid.Column="0" Margin="0 3" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type img:DsImage}" BasedOn="{StaticResource {x:Type img:DsImage}}">
                         <Style.Triggers>
@@ -59,21 +59,24 @@
                 <CheckBox Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" IsChecked="{Binding VM.IsAddingExceptions}" ToolTip="{Binding AddExceptionToolTip}" IsEnabled="{Binding VM.IsAddingExceptionsEnabled}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Add}"/>
                 </CheckBox>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveExceptionsCommand}" ToolTip="{Binding RemoveExceptionsToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveExceptionsCommand}" ToolTip="{Binding RemoveExceptionsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.RemoveCommand}"/>
                 </Button>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding EditConditionsCommand}" ToolTip="{Binding EditConditionsToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding EditConditionsCommand}" ToolTip="{Binding EditConditionsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Edit}"/>
                 </Button>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RestoreSettingsCommand}" ToolTip="{Binding RestoreSettingsToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RestoreSettingsCommand}" ToolTip="{Binding RestoreSettingsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.UndoCheckBoxList}"/>
                 </Button>
-                <ComboBox Margin="5 0 0 0" Width="100" ItemsSource="{Binding VM.ExceptionCategoryCollection}" SelectedItem="{Binding VM.SelectedCategory}" DisplayMemberPath="ShortDisplayName" />
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <ComboBox Margin="0 0 0 0" Width="100" ItemsSource="{Binding VM.ExceptionCategoryCollection}" SelectedItem="{Binding VM.SelectedCategory}" DisplayMemberPath="ShortDisplayName" />
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
                 </Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
             </StackPanel>
-            <Label Grid.Column="1" Margin="5 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Search}" ToolTip="{Binding SearchToolTip}" />
+            <Label Grid.Column="1" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Search}" ToolTip="{Binding SearchToolTip}" />
             <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding VM.FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding SearchToolTip}" />
         </Grid>
         <local:AddExceptionControl Grid.Row="1" Margin="0 2" x:Name="addExceptionControl" Visibility="{Binding ElementName=thisControl, Path=DataContext.VM.IsAddingExceptions, Converter={StaticResource BooleanToVisibilityConverter}}" />

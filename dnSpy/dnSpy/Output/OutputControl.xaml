@@ -39,7 +39,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
+            <StackPanel Grid.Column="0" Margin="0 3" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type img:DsImage}" BasedOn="{StaticResource {x:Type img:DsImage}}">
                         <Style.Triggers>

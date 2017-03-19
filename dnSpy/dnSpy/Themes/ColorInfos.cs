@@ -1845,6 +1845,14 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FF0048B5",
 				BackgroundResourceKey = "HexSearchingTextBoxBorder",
 			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarToolBarSeparator, "Toolbar separator color #1") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "EnvironmentCommandBarToolBarSeparator",
+			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarToolBarSeparatorHighlight, "Toolbar separator color #2") {
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "EnvironmentCommandBarToolBarSeparatorHighlight",
+			},
 			new BrushColorInfo(ColorType.LineNumber, "Line number"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput1, "REPL line number #1 (input)"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput2, "REPL line number #2 (input)"),

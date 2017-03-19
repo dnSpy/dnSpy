@@ -35,7 +35,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True">
-            <StackPanel Grid.Column="0" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
+            <StackPanel Grid.Column="0" Margin="0 3" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type img:DsImage}" BasedOn="{StaticResource {x:Type img:DsImage}}">
                         <Style.Triggers>
@@ -45,31 +45,31 @@
                         </Style.Triggers>
                     </Style>
                 </StackPanel.Resources>
-                <Button Margin="5 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ContinueProcessCommand}" ToolTip="{Binding ContinueProcessToolTip}">
+                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ContinueProcessCommand}" ToolTip="{Binding ContinueProcessToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Run}"/>
                 </Button>
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding BreakProcessCommand}" ToolTip="{Binding BreakProcessToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding BreakProcessCommand}" ToolTip="{Binding BreakProcessToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Pause}"/>
                 </Button>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding StepIntoProcessCommand}" ToolTip="{Binding StepIntoProcessToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding StepIntoProcessCommand}" ToolTip="{Binding StepIntoProcessToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.StepInto}"/>
                 </Button>
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding StepOverProcessCommand}" ToolTip="{Binding StepOverProcessToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding StepOverProcessCommand}" ToolTip="{Binding StepOverProcessToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.StepOver}"/>
                 </Button>
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding StepOutProcessCommand}" ToolTip="{Binding StepOutProcessToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding StepOutProcessCommand}" ToolTip="{Binding StepOutProcessToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.StepOut}"/>
                 </Button>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding DetachCommand}" ToolTip="{Binding DetachToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding DetachCommand}" ToolTip="{Binding DetachToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Cancel}"/>
                 </Button>
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding TerminateCommand}" ToolTip="{Binding TerminateToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding TerminateCommand}" ToolTip="{Binding TerminateToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.TerminateProcess}"/>
                 </Button>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding AttachToProcessCommand}" ToolTip="{Binding AttachToProcessToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding AttachToProcessCommand}" ToolTip="{Binding AttachToProcessToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Process}"/>
                 </Button>
             </StackPanel>

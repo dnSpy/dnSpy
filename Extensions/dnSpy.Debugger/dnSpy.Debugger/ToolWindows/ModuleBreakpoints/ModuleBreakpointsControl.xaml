@@ -36,7 +36,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True">
-            <StackPanel Grid.Column="0" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
+            <StackPanel Grid.Column="0" Margin="0 3" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type img:DsImage}" BasedOn="{StaticResource {x:Type img:DsImage}}">
                         <Style.Triggers>
@@ -49,10 +49,10 @@
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding AddModuleBreakpointCommand}" ToolTip="{Binding AddModuleBreakpointToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Add}"/>
                 </Button>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveModuleBreakpointsCommand}" ToolTip="{Binding RemoveModuleBreakpointToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveModuleBreakpointsCommand}" ToolTip="{Binding RemoveModuleBreakpointToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.RemoveCommand}"/>
                 </Button>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveAllModuleBreakpointsCommand}" ToolTip="{Binding RemoveAllModuleBreakpointsToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveAllModuleBreakpointsCommand}" ToolTip="{Binding RemoveAllModuleBreakpointsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
                 </Button>
             </StackPanel>

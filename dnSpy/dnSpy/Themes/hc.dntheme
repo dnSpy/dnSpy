@@ -510,5 +510,7 @@
 		<color name="hexsearchcontrolmouseoverdropdownbuttonglyph" bg="#FFFFFFFF" />
 		<color name="hexsearchingtextbox" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="hexsearchingtextboxborder" bg="#FFFFFFFF" />
+		<color name="environmentcommandbartoolbarseparator" bg="#FFFFFFFF" />
+		<color name="environmentcommandbartoolbarseparatorhighlight" bg="#FFFFFFFF" />
 	</colors>
 </theme>

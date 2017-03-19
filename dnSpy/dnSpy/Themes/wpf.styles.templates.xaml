@@ -4,10 +4,7 @@
                     xmlns:shtv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
                     xmlns:ctrls="clr-namespace:dnSpy.Controls"
                     xmlns:ctrls2="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
-                    xmlns:tabs="clr-namespace:dnSpy.Tabs"
                     xmlns:tabssettings="clr-namespace:dnSpy.Documents.Tabs.Settings"
-                    xmlns:decompiler="clr-namespace:dnSpy.Decompiler"
-                    xmlns:mainapp="clr-namespace:dnSpy.MainApp"
                     xmlns:mainappsettings="clr-namespace:dnSpy.MainApp.Settings"
                     xmlns:tw="clr-namespace:dnSpy.ToolWindows"
                     xmlns:p="clr-namespace:dnSpy.Properties"
@@ -2786,21 +2783,31 @@
 
     <Style x:Key="{x:Static ToolBar.SeparatorStyleKey}"
            TargetType="{x:Type Separator}">
-        <Setter Property="Background"
-                Value="{DynamicResource ToolBarSeparatorFill}"/>
         <Setter Property="MinWidth"
-                Value="1"/>
+                Value="2"/>
         <Setter Property="MinHeight"
                 Value="1"/>
         <Setter Property="Margin"
-                Value="2,2,2,2"/>
+                Value="3 3 3 2"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1" />
+                            <ColumnDefinition Width="1" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource EnvironmentCommandBarToolBarSeparator}"
+                            BorderThickness="1"
                             SnapsToDevicePixels="true"/>
+                        <Border Grid.Column="1"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource EnvironmentCommandBarToolBarSeparatorHighlight}"
+                            BorderThickness="1"
+                            SnapsToDevicePixels="true"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
