@@ -26,4 +26,10 @@ namespace dnSpy.Output {
 		public override EditorOptionKey<bool> Key => DefaultOutputOptions.ShowTimestampsId;
 		public override bool Default => true;
 	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class TimestampDateTimeFormatEditorOptionDefinition : ViewOptionDefinition<string> {
+		public override EditorOptionKey<string> Key => DefaultOutputOptions.TimestampDateTimeFormatId;
+		public override string Default => DefaultOutputOptions.DefaultTimestampDateTimeFormat;
+	}
 }

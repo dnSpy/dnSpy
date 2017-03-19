@@ -28,8 +28,13 @@ namespace dnSpy.Output.Settings {
 		}
 
 		public bool ShowTimestamps {
-			get { return group.GetOptionValue(ContentType.TypeName, DefaultOutputOptions.ShowTimestampsId); }
-			set { group.SetOptionValue(ContentType.TypeName, DefaultOutputOptions.ShowTimestampsId, value); }
+			get => group.GetOptionValue(ContentType.TypeName, DefaultOutputOptions.ShowTimestampsId);
+			set => group.SetOptionValue(ContentType.TypeName, DefaultOutputOptions.ShowTimestampsId, value);
+		}
+
+		public string TimestampDateTimeFormat {
+			get => group.GetOptionValue(ContentType.TypeName, DefaultOutputOptions.TimestampDateTimeFormatId);
+			set => group.SetOptionValue(ContentType.TypeName, DefaultOutputOptions.TimestampDateTimeFormatId, value);
 		}
 	}
 }

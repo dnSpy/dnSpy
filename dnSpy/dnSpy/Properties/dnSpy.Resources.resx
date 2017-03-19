@@ -1707,4 +1707,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="ShortCutKeyAltR" xml:space="preserve">
     <value>Alt+R</value>
   </data>
+  <data name="TimestampDateTimeFormat" xml:space="preserve">
+    <value>Timestamp format</value>
+  </data>
 </root>

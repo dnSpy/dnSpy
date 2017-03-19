@@ -22,5 +22,6 @@ using dnSpy.Text.Settings;
 namespace dnSpy.Output.Settings {
 	interface IOutputWindowOptions : ICommonEditorOptions {
 		bool ShowTimestamps { get; set; }
+		string TimestampDateTimeFormat { get; set; }
 	}
 }

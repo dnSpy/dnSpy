@@ -4647,6 +4647,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Timestamp format.
+        /// </summary>
+        public static string TimestampDateTimeFormat {
+            get {
+                return ResourceManager.GetString("TimestampDateTimeFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Window Position.
         /// </summary>
         public static string ToolWindowWinPosButtonToolTip {
