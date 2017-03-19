@@ -111,7 +111,10 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			public void Dispose() => process?.Dispose();
 		}
 
-		public ProcessVM(DbgProcess process, IProcessContext context, int order) {
+		readonly ProcessesVM owner;
+
+		public ProcessVM(ProcessesVM owner, DbgProcess process, IProcessContext context, int order) {
+			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			Process = process ?? throw new ArgumentNullException(nameof(process));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
@@ -193,6 +196,15 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			default:
 				Debug.Fail($"Unknown process property: {propertyName}");
 				break;
+			}
+		}
+
+		internal void SelectProcess() {
+			Context.UIDispatcher.VerifyAccess();
+			var process = Process;
+			if (process.State == DbgProcessState.Paused && process.DbgManager.CurrentProcess != process) {
+				owner.DontDelaySetProcess();
+				process.DbgManager.CurrentProcess = process;
 			}
 		}
 

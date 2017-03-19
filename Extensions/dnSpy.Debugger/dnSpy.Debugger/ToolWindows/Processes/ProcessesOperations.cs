@@ -178,8 +178,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public override void SetCurrentProcess() {
 			if (!CanSetCurrentProcess)
 				return;
-			var process = SelectedItems[0].Process;
-			process.DbgManager.CurrentProcess = process;
+			SelectedItems[0].SelectProcess();
 		}
 	}
 }
