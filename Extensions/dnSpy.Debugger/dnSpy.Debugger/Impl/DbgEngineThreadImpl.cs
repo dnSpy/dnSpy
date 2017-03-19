@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public DbgEngineThreadImpl(DbgThreadImpl thread) => this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
 
-		public override void Remove() => thread.Remove();
+		public override void Remove(bool pause) => thread.Remove(pause);
 
 		DbgAppDomainImpl VerifyOptionalAppDomain(DbgAppDomain appDomain) {
 			if (appDomain == null)

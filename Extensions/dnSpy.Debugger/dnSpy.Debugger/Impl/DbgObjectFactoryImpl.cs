@@ -40,14 +40,14 @@ namespace dnSpy.Debugger.Impl {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 		}
 
-		public override DbgEngineAppDomain CreateAppDomain<T>(string name, int id, T data) {
+		public override DbgEngineAppDomain CreateAppDomain<T>(string name, int id, bool pause, T data) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
 			var appDomain = new DbgAppDomainImpl(runtime, name, id);
 			if (data != null)
 				appDomain.GetOrCreateData(() => data);
 			var engineAppDomain = new DbgEngineAppDomainImpl(appDomain);
-			owner.DispatcherThread.BeginInvoke(() => owner.AddAppDomain_DbgThread(runtime, appDomain));
+			owner.DispatcherThread.BeginInvoke(() => owner.AddAppDomain_DbgThread(runtime, appDomain, pause));
 			return engineAppDomain;
 		}
 
@@ -62,35 +62,35 @@ namespace dnSpy.Debugger.Impl {
 			return appDomainImpl;
 		}
 
-		public override DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, T data) {
+		public override DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, bool pause, T data) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
 			var module = new DbgModuleImpl(runtime, VerifyOptionalAppDomain(appDomain), isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version);
 			if (data != null)
 				module.GetOrCreateData(() => data);
 			var engineModule = new DbgEngineModuleImpl(module);
-			owner.DispatcherThread.BeginInvoke(() => owner.AddModule_DbgThread(runtime, module));
+			owner.DispatcherThread.BeginInvoke(() => owner.AddModule_DbgThread(runtime, module, pause));
 			return engineModule;
 		}
 
-		public override DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, T data) {
+		public override DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause, T data) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
 			var thread = new DbgThreadImpl(runtime, VerifyOptionalAppDomain(appDomain), kind, id, managedId, name, suspendedCount, state);
 			if (data != null)
 				thread.GetOrCreateData(() => data);
 			var engineThread = new DbgEngineThreadImpl(thread);
-			owner.DispatcherThread.BeginInvoke(() => owner.AddThread_DbgThread(runtime, thread));
+			owner.DispatcherThread.BeginInvoke(() => owner.AddThread_DbgThread(runtime, thread, pause));
 			return engineThread;
 		}
 
-		public override DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, T data) {
+		public override DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, bool pause, T data) {
 			if (id.IsDefaultId)
 				throw new ArgumentException();
 			var exception = new DbgExceptionImpl(runtime, id, flags, message, thread, module);
 			if (data != null)
 				exception.GetOrCreateData(() => data);
-			owner.DispatcherThread.BeginInvoke(() => owner.AddException_DbgThread(runtime, exception));
+			owner.DispatcherThread.BeginInvoke(() => owner.AddException_DbgThread(runtime, exception, pause));
 			return exception;
 		}
 

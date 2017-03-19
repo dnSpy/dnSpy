@@ -68,10 +68,19 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public int ProcessId { get; }
 
 		/// <summary>
+		/// true if the process should be paused, false if other code gets to decide if it should be paused
+		/// </summary>
+		public bool Pause { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="processId">Process id</param>
-		public DbgMessageConnected(int processId) => ProcessId = processId;
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		public DbgMessageConnected(int processId, bool pause = false) {
+			ProcessId = processId;
+			Pause = pause;
+		}
 
 		/// <summary>
 		/// Constructor
@@ -142,13 +151,20 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public DbgThread Thread { get; }
 
 		/// <summary>
+		/// true if the process should be paused, false if other code gets to decide if it should be paused
+		/// </summary>
+		public bool Pause { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="message">Message</param>
 		/// <param name="thread">Thread or null if it's not known</param>
-		public DbgMessageProgramMessage(string message, DbgThread thread) {
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		public DbgMessageProgramMessage(string message, DbgThread thread, bool pause = false) {
 			Message = message ?? throw new ArgumentNullException(nameof(message));
 			Thread = thread;
+			Pause = pause;
 		}
 	}
 }

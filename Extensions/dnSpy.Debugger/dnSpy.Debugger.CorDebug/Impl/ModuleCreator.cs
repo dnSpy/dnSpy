@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			bool isOptimized = CalculateIsOptimized(dnModule);
 			int order = dnModule.UniqueId;
 			InitializeExeFields(dnModule, filename, imageLayout, out var isExe, out var timestamp, out var version);
-			return objectFactory.CreateModule(appDomain, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version);
+			return objectFactory.CreateModule(appDomain, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, pause: false);
 		}
 
 		static DbgImageLayout CalculateImageLayout(DnModule dnModule) {

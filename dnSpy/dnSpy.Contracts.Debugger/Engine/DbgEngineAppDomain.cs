@@ -32,7 +32,8 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Removes the app domain and disposes of it. The engine has paused the program.
 		/// </summary>
-		public abstract void Remove();
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		public abstract void Remove(bool pause = false);
 
 		/// <summary>
 		/// Properties to update

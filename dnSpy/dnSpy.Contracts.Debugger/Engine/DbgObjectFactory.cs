@@ -51,9 +51,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// </summary>
 		/// <param name="name">New <see cref="DbgAppDomain.Name"/> value</param>
 		/// <param name="id">New <see cref="DbgAppDomain.Id"/> value</param>
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
 		/// <returns></returns>
-		public DbgEngineAppDomain CreateAppDomain(string name, int id) =>
-			CreateAppDomain<object>(name, id, null);
+		public DbgEngineAppDomain CreateAppDomain(string name, int id, bool pause) =>
+			CreateAppDomain<object>(name, id, pause, null);
 
 		/// <summary>
 		/// Creates an app domain. The engine has paused the program.
@@ -61,9 +62,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="name">New <see cref="DbgAppDomain.Name"/> value</param>
 		/// <param name="id">New <see cref="DbgAppDomain.Id"/> value</param>
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
 		/// <param name="data">Data to add to the <see cref="DbgAppDomain"/> or null if nothing gets added</param>
 		/// <returns></returns>
-		public abstract DbgEngineAppDomain CreateAppDomain<T>(string name, int id, T data) where T : class;
+		public abstract DbgEngineAppDomain CreateAppDomain<T>(string name, int id, bool pause, T data) where T : class;
 
 		/// <summary>
 		/// Creates a module. The engine has paused the program.
@@ -81,9 +83,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="order">New <see cref="DbgModule.Order"/> value</param>
 		/// <param name="timestamp">New <see cref="DbgModule.Timestamp"/> value</param>
 		/// <param name="version">New <see cref="DbgModule.Version"/> value</param>
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
 		/// <returns></returns>
-		public DbgEngineModule CreateModule(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) =>
-			CreateModule<object>(appDomain, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, null);
+		public DbgEngineModule CreateModule(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, bool pause) =>
+			CreateModule<object>(appDomain, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, pause, null);
 
 		/// <summary>
 		/// Creates a module. The engine has paused the program.
@@ -102,9 +105,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="order">New <see cref="DbgModule.Order"/> value</param>
 		/// <param name="timestamp">New <see cref="DbgModule.Timestamp"/> value</param>
 		/// <param name="version">New <see cref="DbgModule.Version"/> value</param>
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
 		/// <param name="data">Data to add to the <see cref="DbgModule"/> or null if nothing gets added</param>
 		/// <returns></returns>
-		public abstract DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, T data) where T : class;
+		public abstract DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, bool pause, T data) where T : class;
 
 		/// <summary>
 		/// Creates a thread. The engine has paused the program.
@@ -116,9 +120,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="name">New <see cref="DbgThread.Name"/> value</param>
 		/// <param name="suspendedCount">New <see cref="DbgThread.SuspendedCount"/> value</param>
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
 		/// <returns></returns>
-		public DbgEngineThread CreateThread(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) =>
-			CreateThread<object>(appDomain, kind, id, managedId, name, suspendedCount, state, null);
+		public DbgEngineThread CreateThread(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause) =>
+			CreateThread<object>(appDomain, kind, id, managedId, name, suspendedCount, state, pause, null);
 
 		/// <summary>
 		/// Creates a thread. The engine has paused the program.
@@ -131,9 +136,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="name">New <see cref="DbgThread.Name"/> value</param>
 		/// <param name="suspendedCount">New <see cref="DbgThread.SuspendedCount"/> value</param>
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
 		/// <param name="data">Data to add to the <see cref="DbgThread"/> or null if nothing gets added</param>
 		/// <returns></returns>
-		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, T data) where T : class;
+		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause, T data) where T : class;
 
 		/// <summary>
 		/// Creates an exception. The engine has paused the program.
@@ -143,9 +149,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="message">Exception message or null if it's not available</param>
 		/// <param name="thread">Thread where exception was thrown or null if it's unknown</param>
 		/// <param name="module">Module where exception was thrown or null if it's unknown</param>
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
 		/// <returns></returns>
-		public DbgException CreateException(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module) =>
-			CreateException<object>(id, flags, message, thread, module, null);
+		public DbgException CreateException(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, bool pause) =>
+			CreateException<object>(id, flags, message, thread, module, pause, null);
 
 		/// <summary>
 		/// Creates an exception. The engine has paused the program.
@@ -156,8 +163,9 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="message">Exception message or null if it's not available</param>
 		/// <param name="thread">Thread where exception was thrown or null if it's unknown</param>
 		/// <param name="module">Module where exception was thrown or null if it's unknown</param>
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
 		/// <param name="data">Data to add to the <see cref="DbgException"/> or null if nothing gets added</param>
 		/// <returns></returns>
-		public abstract DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, T data) where T : class;
+		public abstract DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, bool pause, T data) where T : class;
 	}
 }

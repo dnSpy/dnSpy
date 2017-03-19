@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
 				hProcess_debuggee = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
-				SendMessage(new DbgMessageConnected(cp.CorProcess.ProcessId));
+				SendMessage(new DbgMessageConnected(cp.CorProcess.ProcessId, pause: false));
 				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
@@ -103,13 +103,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				else
 					break;
 				var exObj = e2.CorThread?.CurrentException;
-				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread));
+				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread), pause: false);
 				e.AddPauseReason(DebuggerPauseReason.Exception);
 				break;
 
 			case DebugCallbackKind.MDANotification:
 				var mdan = (MDANotificationDebugCallbackEventArgs)e;
-				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread));
+				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread), pause: false);
 				e.AddPauseReason(DebuggerPauseReason.Exception);
 				break;
 
@@ -213,7 +213,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			Debug.Assert(objectFactory != null);
 			if (e.Added) {
 				e.ShouldPause = true;
-				var engineAppDomain = objectFactory.CreateAppDomain(e.AppDomain.Name, e.AppDomain.Id);
+				var engineAppDomain = objectFactory.CreateAppDomain(e.AppDomain.Name, e.AppDomain.Id, pause: false);
 				lock (lockObj)
 					toEngineAppDomain.Add(e.AppDomain, engineAppDomain);
 			}
