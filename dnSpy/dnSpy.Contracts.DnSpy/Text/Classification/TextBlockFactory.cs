@@ -95,16 +95,7 @@ namespace dnSpy.Contracts.Text.Classification {
 				throw new ArgumentNullException(nameof(orderedPropsAndSpans));
 
 			var textBlock = new TextBlock();
-			int textOffset = 0;
 			bool filterOutNewlines = (flags & Flags.FilterOutNewlines) != 0;
-			foreach (var tag in orderedPropsAndSpans) {
-				if (textOffset < tag.Span.Start)
-					textBlock.Inlines.Add(CreateRun(ToString(text.Substring(textOffset, tag.Span.Start - textOffset), filterOutNewlines), defaultProperties, null, flags));
-				textBlock.Inlines.Add(CreateRun(ToString(text.Substring(tag.Span.Start, tag.Span.Length), filterOutNewlines), defaultProperties, tag.Properties, flags));
-				textOffset = tag.Span.End;
-			}
-			if (textOffset < text.Length)
-				textBlock.Inlines.Add(CreateRun(ToString(text.Substring(textOffset), filterOutNewlines), defaultProperties, null, flags));
 
 			if (!defaultProperties.BackgroundBrushEmpty)
 				textBlock.Background = defaultProperties.BackgroundBrush;
@@ -126,8 +117,46 @@ namespace dnSpy.Contracts.Text.Classification {
 			if ((flags & Flags.DisableWordWrap) == 0)
 				textBlock.TextWrapping = TextWrapping.Wrap;
 
+			propsAndSpansList.Clear();
+			propsAndSpansList.AddRange(orderedPropsAndSpans);
+			if (propsAndSpansList.Count == 0)
+				textBlock.Text = text;
+			else if (propsAndSpansList.Count == 1 && propsAndSpansList[0].Span == new Span(0, text.Length)) {
+				var properties = propsAndSpansList[0].Properties;
+				if (!properties.BackgroundBrushEmpty)
+					textBlock.Background = properties.BackgroundBrush;
+				if (!properties.ForegroundBrushEmpty)
+					textBlock.Foreground = properties.ForegroundBrush;
+				if (!properties.BoldEmpty)
+					textBlock.FontWeight = properties.Bold ? FontWeights.Bold : FontWeights.Normal;
+				if (!properties.ItalicEmpty)
+					textBlock.FontStyle = properties.Italic ? FontStyles.Italic : FontStyles.Normal;
+				if (!properties.FontRenderingEmSizeEmpty && (flags & Flags.DisableFontSize) == 0)
+					textBlock.FontSize = properties.FontRenderingEmSize;
+				if (!properties.TextDecorationsEmpty)
+					textBlock.TextDecorations = properties.TextDecorations;
+				if (!properties.TextEffectsEmpty)
+					textBlock.TextEffects = properties.TextEffects;
+				if (!properties.TypefaceEmpty && !IsSameTypeFace(defaultProperties, properties))
+					textBlock.FontFamily = properties.Typeface.FontFamily;
+				textBlock.Text = text;
+			}
+			else {
+				int textOffset = 0;
+				foreach (var tag in propsAndSpansList) {
+					if (textOffset < tag.Span.Start)
+						textBlock.Inlines.Add(CreateRun(ToString(text.Substring(textOffset, tag.Span.Start - textOffset), filterOutNewlines), defaultProperties, null, flags));
+					textBlock.Inlines.Add(CreateRun(ToString(text.Substring(tag.Span.Start, tag.Span.Length), filterOutNewlines), defaultProperties, tag.Properties, flags));
+					textOffset = tag.Span.End;
+				}
+				if (textOffset < text.Length)
+					textBlock.Inlines.Add(CreateRun(ToString(text.Substring(textOffset), filterOutNewlines), defaultProperties, null, flags));
+			}
+
+			propsAndSpansList.Clear();
 			return textBlock;
 		}
+		static readonly List<TextRunPropertiesAndSpan> propsAndSpansList = new List<TextRunPropertiesAndSpan>();
 
 		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties properties, Flags flags) {
 			var run = new DOC.Run(text);
