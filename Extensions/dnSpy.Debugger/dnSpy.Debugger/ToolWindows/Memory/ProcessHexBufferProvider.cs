@@ -50,9 +50,8 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 	struct HexBufferInfoCreatedEventArgs {
 		public IHexBufferInfo HexBufferInfo { get; }
-		public HexBufferInfoCreatedEventArgs(IHexBufferInfo hexBufferInfo) {
+		public HexBufferInfoCreatedEventArgs(IHexBufferInfo hexBufferInfo) =>
 			HexBufferInfo = hexBufferInfo ?? throw new ArgumentNullException(nameof(hexBufferInfo));
-		}
 	}
 
 	/// <summary>
@@ -178,7 +177,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			foreach (var listener in processHexBufferProviderListeners)
 				listener.Value.Initialize(this);
 
-			dbgManager.DispatcherThread.Invoke(() => {
+			dbgManager.DispatcherThread.BeginInvoke(() => {
 				dbgManager.ProcessesChanged += DbgManager_ProcessesChanged;
 				InitializeProcesses_DbgManager(dbgManager.Processes, added: true);
 			});

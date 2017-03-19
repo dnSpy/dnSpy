@@ -101,14 +101,23 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 				addedModules.Clear();
 
 				process = newProcess;
-				if (newProcess != null) {
-					var runtimes = newProcess.DbgManager.DispatcherThread.Invoke(() => {
-						Debug.Assert(process == newProcess);
-						newProcess.RuntimesChanged += Process_RuntimesChanged;
-						return newProcess.Runtimes;
-					});
-					Process_RuntimesChanged_UI(runtimes, added: true);
-				}
+				if (newProcess != null)
+					newProcess.DbgManager.DispatcherThread.BeginInvoke(() => OnNewProcess_DbgThread(newProcess));
+			}
+
+			// DbgThread
+			void OnNewProcess_DbgThread(DbgProcess newProcess) {
+				newProcess.DbgManager.DispatcherThread.VerifyAccess();
+				if (process != newProcess)
+					return;
+				newProcess.RuntimesChanged += Process_RuntimesChanged;
+				var runtimes = newProcess.Runtimes;
+				UI(() => {
+					if (process != newProcess)
+						newProcess.RuntimesChanged -= Process_RuntimesChanged;
+					else
+						Process_RuntimesChanged_UI(runtimes, added: true);
+				});
 			}
 
 			// DbgThread

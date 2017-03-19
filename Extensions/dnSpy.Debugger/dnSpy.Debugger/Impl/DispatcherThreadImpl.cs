@@ -40,11 +40,5 @@ namespace dnSpy.Debugger.Impl {
 				return;
 			Dispatcher.BeginInvoke(execPriority, action);
 		}
-
-		public override T Invoke<T>(Func<T> func) {
-			if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
-				throw new InvalidOperationException("Shutdown has started");
-			return (T)Dispatcher.Invoke(execPriority, func);
-		}
 	}
 }

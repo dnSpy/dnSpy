@@ -194,34 +194,7 @@ namespace dnSpy.Debugger.Impl {
 				foreach (var lz in dbgEngineProviders) {
 					var engine = lz.Value.Create(this, options);
 					if (engine != null) {
-						DispatcherThread.Invoke(() => {
-							bool raiseIsDebuggingChanged, raiseIsRunningChanged;
-							string[] addedDebugTags;
-							lock (lockObj) {
-								var oldIsRunning = cachedIsRunning;
-								raiseIsDebuggingChanged = engines.Count == 0;
-								var engineInfo = new EngineInfo(engine);
-								if (engine.StartKind == DbgStartKind.Start)
-									restartOptions.Add(clonedOptions);
-								engines.Add(engineInfo);
-								addedDebugTags = debugTags.Add(engineInfo.DebugTags);
-								cachedIsRunning = CalculateIsRunning_NoLock();
-								raiseIsRunningChanged = oldIsRunning != cachedIsRunning;
-								if (raiseIsDebuggingChanged) {
-									Debug.Assert(debuggingContext == null);
-									debuggingContext = new DbgDebuggingContextImpl();
-								}
-							}
-							if (raiseIsDebuggingChanged)
-								IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
-							if (raiseIsRunningChanged)
-								RaiseIsRunningChanged();
-							if (addedDebugTags.Length > 0)
-								DebugTagsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<string>(addedDebugTags, added: true));
-						});
-
-						engine.Message += DbgEngine_Message;
-						engine.Start(options);
+						DbgThread(() => Start_DbgThread(engine, options, clonedOptions));
 						return null;
 					}
 				}
@@ -232,6 +205,36 @@ namespace dnSpy.Debugger.Impl {
 			Debug.Fail("Couldn't create a debug engine");
 			// Doesn't need to be localized, should be considered a bug if this is ever reached
 			return "Couldn't create a debug engine";
+		}
+
+		void Start_DbgThread(DbgEngine engine, StartDebuggingOptions options, StartDebuggingOptions clonedOptions) {
+			DispatcherThread.VerifyAccess();
+			bool raiseIsDebuggingChanged, raiseIsRunningChanged;
+			string[] addedDebugTags;
+			lock (lockObj) {
+				var oldIsRunning = cachedIsRunning;
+				raiseIsDebuggingChanged = engines.Count == 0;
+				var engineInfo = new EngineInfo(engine);
+				if (engine.StartKind == DbgStartKind.Start)
+					restartOptions.Add(clonedOptions);
+				engines.Add(engineInfo);
+				addedDebugTags = debugTags.Add(engineInfo.DebugTags);
+				cachedIsRunning = CalculateIsRunning_NoLock();
+				raiseIsRunningChanged = oldIsRunning != cachedIsRunning;
+				if (raiseIsDebuggingChanged) {
+					Debug.Assert(debuggingContext == null);
+					debuggingContext = new DbgDebuggingContextImpl();
+				}
+			}
+			if (raiseIsDebuggingChanged)
+				IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
+			if (raiseIsRunningChanged)
+				RaiseIsRunningChanged();
+			if (addedDebugTags.Length > 0)
+				DebugTagsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<string>(addedDebugTags, added: true));
+
+			engine.Message += DbgEngine_Message;
+			engine.Start(options);
 		}
 
 		void DbgThread(Action action) => DispatcherThread.BeginInvoke(action);
