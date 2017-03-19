@@ -187,13 +187,13 @@
     <value>Сброс ядра выполнения.</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>Очистить экран (Ctrl+L)</value>
+    <value>Очистить экран</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>Вперед по истории (Alt+Down Arrow)</value>
+    <value>History Next</value>
   </data>
   <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>Назад по истории (Alt+Up Arrow)</value>
+    <value>History Previous</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
     <value>Сброс</value>
@@ -277,13 +277,13 @@
     <value>_Перенос слов</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
-    <value>Переключить перенос слов (Ctrl+E, Ctrl+W)</value>
+    <value>Toggle Word Wrap</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>Все файлы</value>
   </data>
   <data name="Repl_Save_ToolTip" xml:space="preserve">
-    <value>Сохранить (Ctrl+S)</value>
+    <value>Сохранить</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
     <value>Текстовые файлы</value>

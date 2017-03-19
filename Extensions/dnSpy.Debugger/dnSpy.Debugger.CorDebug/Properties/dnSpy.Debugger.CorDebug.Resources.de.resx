@@ -188,10 +188,40 @@ Fehler: {1}</value>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Debugger ({0})</value>
   </data>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>Hintergrund</value>
+  </data>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>Beendet</value>
+  </data>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>Beenden angefordert</value>
+  </data>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>Ausgesetzt</value>
+  </data>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>Anhalten angefordert</value>
+  </data>
+  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
+    <value>ThreadPool</value>
+  </data>
+  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
+    <value>UnsafePoint</value>
+  </data>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>Nicht gestartet</value>
+  </data>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>WaitSleepJoin</value>
+  </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
     <value>Verwende dnSpy-x86.exe zum Debuggen von 32-Bit Applikationen.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
     <value>Verwende dnSpy.exe zum Debuggen von 64-Bit Applikationen.</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;keine Ausnahmemeldung&gt;"</value>
   </data>
 </root>

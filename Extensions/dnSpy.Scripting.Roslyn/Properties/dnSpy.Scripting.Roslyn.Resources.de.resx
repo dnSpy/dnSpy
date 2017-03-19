@@ -187,13 +187,13 @@
     <value>Ausführungsmodul zurücksetzen.</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>Leeren des Bildschirms (Strg+L)</value>
+    <value>Leere den Bildschirm</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>Verlauf weiter (Alt+Pfeil unten)</value>
+    <value>History Next</value>
   </data>
   <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>Verlauf zurück (Alt+Pfeil oben)</value>
+    <value>History Previous</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
     <value>Zurücksetzen</value>
@@ -277,13 +277,13 @@
     <value>_Zeilenumbruch</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
-    <value>Zeilenumbruch umschalten (Strg+E, Strg+W)</value>
+    <value>Toggle Word Wrap</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>Alle Dateien</value>
   </data>
   <data name="Repl_Save_ToolTip" xml:space="preserve">
-    <value>Speichern (Strg+S)</value>
+    <value>Speichern</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
     <value>Text-Dateien</value>

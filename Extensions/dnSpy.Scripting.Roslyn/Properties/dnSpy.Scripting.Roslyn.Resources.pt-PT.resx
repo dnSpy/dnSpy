@@ -187,13 +187,13 @@
     <value>Redefinindo o motor de execução.</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>Limpar ecrã (Ctrl + L)</value>
+    <value>Limpar Ecrã</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>Histórico seguinte (Alt + seta para baixo)</value>
+    <value>History Next</value>
   </data>
   <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>Histórico anterior (Alt + seta para cima)</value>
+    <value>History Previous</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
     <value>Reset</value>
@@ -277,13 +277,13 @@
     <value>Word Wrap</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
-    <value>Ativar/desativar Wrapping (CTRL + W, CTRL + E)</value>
+    <value>Toggle Word Wrap</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>Todos os Ficheiros</value>
   </data>
   <data name="Repl_Save_ToolTip" xml:space="preserve">
-    <value>Guardar (Ctrl + S)</value>
+    <value>Guardar</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
     <value>Ficheiros de Texto</value>

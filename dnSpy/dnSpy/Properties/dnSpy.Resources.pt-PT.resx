@@ -367,10 +367,10 @@
     <value>Mover para Grupo de Guias Anterior</value>
   </data>
   <data name="NavigateBackCommand" xml:space="preserve">
-    <value>Navegar para Trás (Backspace)</value>
+    <value>Navigate Backward</value>
   </data>
   <data name="NavigateForwardCommand" xml:space="preserve">
-    <value>Navegar para Frente (Alt + Right)</value>
+    <value>Navigate Forward</value>
   </data>
   <data name="NewDataIsNotAnImage" xml:space="preserve">
     <value>Os novos dados não são uma imagem.</value>
@@ -475,7 +475,7 @@
     <value>Abrir Lista</value>
   </data>
   <data name="OpenToolBarToolTip" xml:space="preserve">
-    <value>Abrir (Ctrl + O)</value>
+    <value>Open</value>
   </data>
   <data name="OptionsTitle" xml:space="preserve">
     <value>Opções</value>
@@ -517,7 +517,7 @@
     <value>_Procurar Assemblies</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Procurar Assemblies ({0})</value>
+    <value>Search Assemblies</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Pesquisando...</value>
@@ -895,13 +895,13 @@
     <value>Output</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Limpar Tudo (CTRL + L)</value>
+    <value>Clear All</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
     <value>Mostrar saída de:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Ativar/desativar Wrapping (CTRL + W, CTRL + E)</value>
+    <value>Toggle Word Wrap</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt + 2</value>
@@ -910,7 +910,7 @@
     <value>Output</value>
   </data>
   <data name="Output_Save_ToolTip" xml:space="preserve">
-    <value>Guardar (CTRL + S)</value>
+    <value>Guardar</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
     <value>Apagar Tudo</value>
@@ -1063,31 +1063,31 @@
     <value>Margem Superior %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
-    <value>Localizar próxima (F3)</value>
+    <value>Find next</value>
   </data>
   <data name="Search_FindPreviousToolTip" xml:space="preserve">
-    <value>Localizar anterior (Shift + F3)</value>
+    <value>Find previous</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Coincidir maiusculas/minúsculas (Alt + C)</value>
+    <value>Match case</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Coincidir palavra inteira (Alt + W)</value>
+    <value>Match whole word</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Substituir todos (Alt + A)</value>
+    <value>Replace all</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Substituir próximo (Alt + R)</value>
+    <value>Replace next</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Usar Expressões Regulares (Alt + E)</value>
+    <value>Use Regular Expressions</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
     <value>Alternar modos de 'localizar e substituir'</value>
   </data>
   <data name="Search_CloseToolTip" xml:space="preserve">
-    <value>Fechar (Esc)</value>
+    <value>Fechar</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
     <value>Pesquisa Incremental</value>
@@ -1502,8 +1502,8 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   <data name="TextEditor" xml:space="preserve">
     <value>Editor de texto</value>
   </data>
-  <data name="Search_BigEndian" xml:space="preserve">
-    <value>Endian grande (Alt + B)</value>
+  <data name="Search_BigEndianToolTip" xml:space="preserve">
+    <value>Big endian</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt + 8</value>
@@ -1666,5 +1666,44 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
     <value>Colorize the text</value>
+  </data>
+  <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
+    <value>Alt+Right Arrow</value>
+  </data>
+  <data name="ShortCutKeyBackspace" xml:space="preserve">
+    <value>Backspace</value>
+  </data>
+  <data name="ShortCutKeyCtrlS" xml:space="preserve">
+    <value>CTRL + S</value>
+  </data>
+  <data name="ShortCutKeyAltA" xml:space="preserve">
+    <value>Alt+A</value>
+  </data>
+  <data name="ShortCutKeyAltB" xml:space="preserve">
+    <value>Alt+B</value>
+  </data>
+  <data name="ShortCutKeyAltC" xml:space="preserve">
+    <value>Alt+C</value>
+  </data>
+  <data name="ShortCutKeyAltE" xml:space="preserve">
+    <value>Alt+E</value>
+  </data>
+  <data name="ShortCutKeyAltW" xml:space="preserve">
+    <value>Alt+W</value>
+  </data>
+  <data name="ShortCutKeyEsc" xml:space="preserve">
+    <value>ESC</value>
+  </data>
+  <data name="ShortCutKeyShiftF3" xml:space="preserve">
+    <value>Shift+F3</value>
+  </data>
+  <data name="ShortCutKeyF3" xml:space="preserve">
+    <value>F3</value>
+  </data>
+  <data name="ShortCutKeyAltR" xml:space="preserve">
+    <value>Alt+R</value>
+  </data>
+  <data name="TimestampDateTimeFormat" xml:space="preserve">
+    <value>Timestamp format</value>
   </data>
 </root>

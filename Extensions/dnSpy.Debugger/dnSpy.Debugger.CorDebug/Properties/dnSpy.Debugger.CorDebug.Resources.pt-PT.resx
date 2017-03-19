@@ -188,10 +188,40 @@ Erro: {1}</value>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Debugger ({0})</value>
   </data>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>Segundo plano</value>
+  </data>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>Parado</value>
+  </data>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>StopRequested</value>
+  </data>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>Suspenso</value>
+  </data>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>SuspendRequested</value>
+  </data>
+  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
+    <value>ThreadPool</value>
+  </data>
+  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
+    <value>UnsafePoint</value>
+  </data>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>Unstarted</value>
+  </data>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>WaitSleepJoin</value>
+  </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
     <value>Utilize dnSpy-x86.exe para depurar aplicativos de 32 bits.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
     <value>Utilize dnSpy.exe para depurar aplicativos de 64 bits.</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;Nenhuma mensagem de exceção&gt;"</value>
   </data>
 </root>
