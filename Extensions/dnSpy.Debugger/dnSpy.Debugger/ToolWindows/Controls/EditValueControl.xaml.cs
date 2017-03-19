@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 		}
 
 		void DisposeEditValue() {
-			oldKeyboardFocus = null;
+			RestoreOldKeyboardFocus();
 			if (editValue == null)
 				return;
 			editValue.EditCompleted -= EditValue_EditCompleted;
@@ -186,16 +186,21 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 			editValue = null;
 		}
 
-		void EditValue_EditCompleted(object sender, EditCompletedEventArgs e) {
-			if (editValue != sender)
+		void RestoreOldKeyboardFocus() {
+			if (editValue == null)
 				return;
-
 			// Don't give back focus if the user canceled it by clicking somewhere with the mouse.
 			// Only do it if the user pressed Esc or Enter
 			if (editValue.IsKeyboardFocused && oldKeyboardFocus?.Target is IInputElement elem)
 				elem.Focus();
 			oldKeyboardFocus = null;
+		}
 
+		void EditValue_EditCompleted(object sender, EditCompletedEventArgs e) {
+			if (editValue != sender)
+				return;
+
+			RestoreOldKeyboardFocus();
 			RemoveEditControl();
 			var editableValue = EditableValue;
 			if (editableValue == null)
