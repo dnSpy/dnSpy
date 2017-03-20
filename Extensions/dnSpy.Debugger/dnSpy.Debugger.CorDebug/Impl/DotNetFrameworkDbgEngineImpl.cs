@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
@@ -29,13 +30,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetFramework;
 		public override string Debugging => "CLR";
 
-		public override string RuntimeName {
+		public override DbgEngineRuntimeInfo RuntimeInfo {
 			get {
-				Debug.Assert(runtimeName != null);
-				return runtimeName;
+				Debug.Assert(runtimeInfo != null);
+				return runtimeInfo;
 			}
 		}
-		string runtimeName;
+		DbgEngineRuntimeInfo runtimeInfo;
 
 		public DotNetFrameworkDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind)
 			: base(clrDacProvider, dbgManager, startKind) {
@@ -45,6 +46,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			new DesktopCLRTypeDebugInfo();
 
 		protected override void OnDebugProcess(DnDebugger dnDebugger) =>
-			runtimeName = "CLR " + dnDebugger.DebuggeeVersion;
+			runtimeInfo = new DbgEngineRuntimeInfo("CLR " + dnDebugger.DebuggeeVersion, new DotNetFrameworkRuntimeId(dnDebugger.DebuggeeVersion));
+	}
+
+	sealed class DotNetFrameworkRuntimeId : RuntimeId {
+		readonly string version;
+		public DotNetFrameworkRuntimeId(string version) => this.version = version;
+		public override bool Equals(object obj) => obj is DotNetFrameworkRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
+		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(version);
 	}
 }

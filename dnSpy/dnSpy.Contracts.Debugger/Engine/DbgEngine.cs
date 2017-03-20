@@ -30,10 +30,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgStartKind StartKind { get; }
 
 		/// <summary>
-		/// Name returned by <see cref="DbgRuntime.Name"/>. This property is called after the engine
-		/// has connected and just before the <see cref="DbgRuntime"/> instance is created.
+		/// Contains properties used to create a <see cref="DbgRuntime"/>. This property is called
+		/// after the engine has connected and just before the <see cref="DbgRuntime"/> instance is
+		/// created.
 		/// </summary>
-		public abstract string RuntimeName { get; }
+		public abstract DbgEngineRuntimeInfo RuntimeInfo { get; }
 
 		/// <summary>
 		/// Gets all debug tags, see <see cref="PredefinedDebugTags"/>

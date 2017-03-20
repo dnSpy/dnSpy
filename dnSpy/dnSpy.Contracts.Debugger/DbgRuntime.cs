@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgProcess Process { get; }
 
 		/// <summary>
+		/// Gets the process unique runtime id. There must be exactly one such id per process.
+		/// </summary>
+		public abstract RuntimeId Id { get; }
+
+		/// <summary>
 		/// Gets the runtime name
 		/// </summary>
 		public abstract string Name { get; }

@@ -25,6 +25,7 @@ using dnSpy.Contracts.Debugger.Engine;
 namespace dnSpy.Debugger.Impl {
 	sealed class DbgRuntimeImpl : DbgRuntime {
 		public override DbgProcess Process { get; }
+		public override RuntimeId Id { get; }
 		public override string Name { get; }
 
 		public override event EventHandler<DbgCollectionChangedEventArgs<DbgAppDomain>> AppDomainsChanged;
@@ -65,7 +66,9 @@ namespace dnSpy.Debugger.Impl {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			Process = process ?? throw new ArgumentNullException(nameof(process));
 			Engine = engine ?? throw new ArgumentNullException(nameof(engine));
-			Name = engine.RuntimeName;
+			var info = engine.RuntimeInfo;
+			Id = info.Id;
+			Name = info.Name;
 			appDomains = new List<DbgAppDomain>();
 			modules = new List<DbgModule>();
 			threads = new List<DbgThread>();

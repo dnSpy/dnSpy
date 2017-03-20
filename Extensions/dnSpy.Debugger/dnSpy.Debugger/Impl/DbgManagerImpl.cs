@@ -31,6 +31,8 @@ using dnSpy.Debugger.Exceptions;
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgManager))]
 	sealed partial class DbgManagerImpl : DbgManager, IIsRunningProvider {
+		static int currentProcessId = Process.GetCurrentProcess().Id;
+
 		public override event EventHandler<DbgMessageEventArgs> Message;
 		void RaiseMessage(DbgMessageEventArgs e, ref bool pauseProgram) {
 			DispatcherThread.VerifyAccess();
@@ -150,6 +152,7 @@ namespace dnSpy.Debugger.Impl {
 		readonly Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>[] dbgEngineProviders;
 		readonly Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>[] dbgManagerStartListeners;
 		readonly List<StartDebuggingOptions> restartOptions;
+		readonly HashSet<ProcessKey> debuggedRuntimes;
 		int hasNotifiedStartListenersCounter;
 
 		[ImportingConstructor]
@@ -162,6 +165,7 @@ namespace dnSpy.Debugger.Impl {
 			processes = new List<DbgProcessImpl>();
 			debugTags = new TagsCollection();
 			restartOptions = new List<StartDebuggingOptions>();
+			debuggedRuntimes = new HashSet<ProcessKey>();
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgManagerStartListeners = dbgManagerStartListeners.OrderBy(a => a.Metadata.Order).ToArray();
 			new DelayedIsRunningHelper(this, Dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
@@ -344,6 +348,8 @@ namespace dnSpy.Debugger.Impl {
 				// Compare it before notifying the helper since it could clear it
 				pauseProgram = breakAllHelper != null || e.Pause;
 				breakAllHelper?.OnConnected_DbgThread_NoLock(info);
+				bool b = debuggedRuntimes.Add(new ProcessKey(e.ProcessId, runtime.Id));
+				Debug.Assert(b);
 			}
 			// Call OnConnected() before we add the runtime to the process so the engine can add
 			// data to the runtime before RuntimesChanged is raised.
@@ -418,6 +424,9 @@ namespace dnSpy.Debugger.Impl {
 					var pinfo = process.Remove_DbgThread(engine);
 					runtime = pinfo.runtime;
 					Debug.Assert(runtime != null);
+
+					bool b = debuggedRuntimes.Remove(new ProcessKey(process.Id, runtime.Id));
+					Debug.Assert(b);
 
 					if (!pinfo.hasMoreRuntimes) {
 						bool disposeProcess;
@@ -892,6 +901,15 @@ namespace dnSpy.Debugger.Impl {
 				currentProcess = newProcess;
 			}
 			CurrentProcessChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		public override bool CanDebugRuntime(int pid, RuntimeId rid) {
+			if (rid == null)
+				throw new ArgumentNullException(nameof(rid));
+			if (pid == currentProcessId)
+				return false;
+			lock (lockObj)
+				return !debuggedRuntimes.Contains(new ProcessKey(pid, rid));
 		}
 	}
 }

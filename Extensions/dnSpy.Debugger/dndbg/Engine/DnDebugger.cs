@@ -177,6 +177,11 @@ namespace dndbg.Engine {
 		public string DebuggeeVersion { get; }
 
 		/// <summary>
+		/// Other version, used by .NET Core
+		/// </summary>
+		public string OtherVersion { get; }
+
+		/// <summary>
 		/// Path to the CLR dll (clr.dll, mscorwks.dll, mscorsvr.dll, coreclr.dll)
 		/// </summary>
 		public string CLRPath { get; }
@@ -188,13 +193,14 @@ namespace dndbg.Engine {
 
 		readonly int debuggerManagedThreadId;
 
-		DnDebugger(ICorDebug corDebug, DebugOptions debugOptions, IDebugMessageDispatcher debugMessageDispatcher, string clrPath, string debuggeeVersion) {
+		DnDebugger(ICorDebug corDebug, DebugOptions debugOptions, IDebugMessageDispatcher debugMessageDispatcher, string clrPath, string debuggeeVersion, string otherVersion) {
 			debuggerManagedThreadId = Thread.CurrentThread.ManagedThreadId;
 			processes = new DebuggerCollection<ICorDebugProcess, DnProcess>(CreateDnProcess);
 			this.debugMessageDispatcher = debugMessageDispatcher ?? throw new ArgumentNullException(nameof(debugMessageDispatcher));
 			this.corDebug = corDebug;
 			this.debugOptions = debugOptions ?? new DebugOptions();
 			DebuggeeVersion = debuggeeVersion ?? string.Empty;
+			OtherVersion = otherVersion ?? string.Empty;
 			CLRPath = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
 			RuntimeDirectory = Path.GetDirectoryName(clrPath);
 
@@ -1154,7 +1160,7 @@ namespace dndbg.Engine {
 			var corDebug = CreateCorDebug(debuggeeVersion, out string clrPath);
 			if (corDebug == null)
 				throw new Exception("Could not create an ICorDebug instance");
-			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, clrPath, debuggeeVersion);
+			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, clrPath, debuggeeVersion, null);
 			if (options.BreakProcessKind != BreakProcessKind.None)
 				new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename);
 			dbg.CreateProcess(options);
@@ -1163,8 +1169,8 @@ namespace dndbg.Engine {
 
 		static DnDebugger CreateDnDebuggerCoreCLR(DebugProcessOptions options) {
 			var clrType = (CoreCLRTypeDebugInfo)options.CLRTypeDebugInfo;
-			var dbg2 = CoreCLRHelper.CreateDnDebugger(options, clrType, () => false, (cd, coreclrFilename, pid) => {
-				var dbg = new DnDebugger(cd, options.DebugOptions, options.DebugMessageDispatcher, coreclrFilename, null);
+			var dbg2 = CoreCLRHelper.CreateDnDebugger(options, clrType, () => false, (cd, coreclrFilename, pid, version) => {
+				var dbg = new DnDebugger(cd, options.DebugOptions, options.DebugMessageDispatcher, coreclrFilename, null, version);
 				if (options.BreakProcessKind != BreakProcessKind.None)
 					new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename);
 				cd.DebugActiveProcess((int)pid, 0, out var comProcess);
@@ -1209,10 +1215,10 @@ namespace dndbg.Engine {
 			string filename;
 			using (var process = Process.GetProcessById(options.ProcessId))
 				filename = process.MainModule.FileName;
-			var corDebug = CreateCorDebug(options, out string debuggeeVersion, out string clrPath);
+			var corDebug = CreateCorDebug(options, out string debuggeeVersion, out string clrPath, out string otherVersion);
 			if (corDebug == null)
 				throw new Exception("An ICorDebug instance couldn't be created");
-			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, clrPath, debuggeeVersion);
+			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, clrPath, debuggeeVersion, otherVersion);
 			corDebug.DebugActiveProcess(options.ProcessId, 0, out var comProcess);
 			var dnProcess = dbg.TryAdd(comProcess);
 			if (dnProcess != null)
@@ -1220,17 +1226,18 @@ namespace dndbg.Engine {
 			return dbg;
 		}
 
-		static ICorDebug CreateCorDebug(AttachProcessOptions options, out string debuggeeVersion, out string clrPath) {
+		static ICorDebug CreateCorDebug(AttachProcessOptions options, out string debuggeeVersion, out string clrPath, out string otherVersion) {
 			switch (options.CLRTypeAttachInfo.CLRType) {
-			case CLRType.Desktop:	return CreateCorDebugDesktop(options, out debuggeeVersion, out clrPath);
-			case CLRType.CoreCLR:	return CreateCorDebugCoreCLR(options, out debuggeeVersion, out clrPath);
+			case CLRType.Desktop:	return CreateCorDebugDesktop(options, out debuggeeVersion, out clrPath, out otherVersion);
+			case CLRType.CoreCLR:	return CreateCorDebugCoreCLR(options, out debuggeeVersion, out clrPath, out otherVersion);
 			default:
 				Debug.Fail("Invalid CLRType");
 				throw new InvalidOperationException();
 			}
 		}
 
-		static ICorDebug CreateCorDebugDesktop(AttachProcessOptions options, out string debuggeeVersion, out string clrPath) {
+		static ICorDebug CreateCorDebugDesktop(AttachProcessOptions options, out string debuggeeVersion, out string clrPath, out string otherVersion) {
+			otherVersion = null;
 			var clrType = (DesktopCLRTypeAttachInfo)options.CLRTypeAttachInfo;
 			debuggeeVersion = clrType.DebuggeeVersion;
 			ICLRRuntimeInfo rtInfo = null;
@@ -1252,10 +1259,10 @@ namespace dndbg.Engine {
 			return (ICorDebug)rtInfo.GetInterface(ref clsid, ref riid);
 		}
 
-		static ICorDebug CreateCorDebugCoreCLR(AttachProcessOptions options, out string debuggeeVersion, out string clrPath) {
+		static ICorDebug CreateCorDebugCoreCLR(AttachProcessOptions options, out string debuggeeVersion, out string clrPath, out string otherVersion) {
 			debuggeeVersion = null;
 			var clrType = (CoreCLRTypeAttachInfo)options.CLRTypeAttachInfo;
-			return CoreCLRHelper.CreateCorDebug(clrType, out clrPath);
+			return CoreCLRHelper.CreateCorDebug(clrType, out clrPath, out otherVersion);
 		}
 
 		static IEnumerable<(string versionString, ICLRRuntimeInfo rtInfo)> GetCLRRuntimeInfos(Process process) {

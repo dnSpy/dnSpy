@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
@@ -29,8 +30,15 @@ using dnSpy.Debugger.CorDebug.Properties;
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DotNetCoreDbgEngineImpl : DbgEngineImpl {
 		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetCore;
-		public override string RuntimeName => "CoreCLR";
 		public override string Debugging => "CoreCLR";
+
+		public override DbgEngineRuntimeInfo RuntimeInfo {
+			get {
+				Debug.Assert(runtimeInfo != null);
+				return runtimeInfo;
+			}
+		}
+		DbgEngineRuntimeInfo runtimeInfo;
 
 		public DotNetCoreDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind)
 			: base(clrDacProvider, dbgManager, startKind) {
@@ -58,5 +66,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 			return new CoreCLRTypeDebugInfo(dbgShimFilename, hostFilename, hostCommandLine);
 		}
+
+		protected override void OnDebugProcess(DnDebugger dnDebugger) =>
+			runtimeInfo = new DbgEngineRuntimeInfo("CoreCLR", new DotNetCoreRuntimeId(dnDebugger.OtherVersion));
+	}
+
+	sealed class DotNetCoreRuntimeId : RuntimeId {
+		readonly string version;
+		public DotNetCoreRuntimeId(string version) => this.version = version;
+		public override bool Equals(object obj) => obj is DotNetCoreRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
+		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(version);
 	}
 }

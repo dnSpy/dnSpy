@@ -64,6 +64,7 @@
     <Compile Include="Engine\DbgEngineMessageKind.cs" />
     <Compile Include="Engine\DbgEngineModule.cs" />
     <Compile Include="Engine\DbgEngineProvider.cs" />
+    <Compile Include="Engine\DbgEngineRuntimeInfo.cs" />
     <Compile Include="Engine\DbgEngineThread.cs" />
     <Compile Include="Engine\DbgObjectFactory.cs" />
     <Compile Include="Exceptions\DbgException.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="PredefinedDebugTags.cs" />
     <Compile Include="PredefinedThreadKinds.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RuntimeId.cs" />
     <Compile Include="StartDebuggingOptions.cs" />
     <Compile Include="Text\IDebugOutputWriter.cs" />
     <Compile Include="Text\StringBuilderDebugOutputWriter.cs" />

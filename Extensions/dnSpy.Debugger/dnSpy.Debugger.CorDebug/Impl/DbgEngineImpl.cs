@@ -314,7 +314,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		protected virtual void OnDebugProcess(DnDebugger dnDebugger) { }
+		protected abstract void OnDebugProcess(DnDebugger dnDebugger);
 
 		static string GetIncompatiblePlatformErrorMessage() {
 			if (IntPtr.Size == 4)

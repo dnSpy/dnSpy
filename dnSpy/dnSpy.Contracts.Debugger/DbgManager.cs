@@ -150,5 +150,13 @@ namespace dnSpy.Contracts.Debugger {
 		/// Raised when <see cref="CurrentProcess"/> is changed
 		/// </summary>
 		public abstract event EventHandler CurrentProcessChanged;
+
+		/// <summary>
+		/// Returns true if the runtime can be debugged
+		/// </summary>
+		/// <param name="pid">Process id</param>
+		/// <param name="rid">Runtime id</param>
+		/// <returns></returns>
+		public abstract bool CanDebugRuntime(int pid, RuntimeId rid);
 	}
 }

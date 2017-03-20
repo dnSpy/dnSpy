@@ -191,8 +191,9 @@ namespace dndbg.Engine {
 			return null;
 		}
 
-		public static ICorDebug CreateCorDebug(CoreCLRTypeAttachInfo info, out string coreclrFilename) {
+		public static ICorDebug CreateCorDebug(CoreCLRTypeAttachInfo info, out string coreclrFilename, out string otherVersion) {
 			coreclrFilename = info.CoreCLRFilename;
+			otherVersion = info.Version;
 			var dbgShimState = GetOrCreateDbgShimState(null, info.DbgShimFilename);
 			if (dbgShimState == null)
 				return null;
@@ -201,7 +202,7 @@ namespace dndbg.Engine {
 			return obj as ICorDebug;
 		}
 
-		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, Func<bool> keepWaiting, Func<ICorDebug, string, uint, DnDebugger> createDnDebugger) {
+		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, Func<bool> keepWaiting, Func<ICorDebug, string, uint, string, DnDebugger> createDnDebugger) {
 			var dbgShimState = GetOrCreateDbgShimState(info.HostFilename, info.DbgShimFilename);
 			if (dbgShimState == null)
 				throw new Exception(string.Format("Could not load dbgshim.dll: '{0}' . Make sure you use the {1}-bit version", info.DbgShimFilename, IntPtr.Size * 8));
@@ -260,7 +261,7 @@ namespace dndbg.Engine {
 				var corDebug = obj as ICorDebug;
 				if (corDebug == null)
 					throw new Exception(string.Format("Could not create a ICorDebug: hr=0x{0:X8}", hr));
-				var dbg = createDnDebugger(corDebug, coreclrFilename, pi.dwProcessId);
+				var dbg = createDnDebugger(corDebug, coreclrFilename, pi.dwProcessId, version);
 				for (uint i = 0; i < dwArrayLength; i++)
 					NativeMethods.SetEvent(pha[i]);
 				calledSetEvent = true;
