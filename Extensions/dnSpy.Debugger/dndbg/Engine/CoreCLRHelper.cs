@@ -218,7 +218,7 @@ namespace dndbg.Engine {
 				dwCreationFlags |= ProcessCreationFlags.CREATE_SUSPENDED;
 				var si = new STARTUPINFO();
 				si.cb = (uint)(4 * 1 + IntPtr.Size * 3 + 4 * 8 + 2 * 2 + IntPtr.Size * 4);
-				var cmdline = " " + (info.HostCommandLine ?? string.Empty) + " \"" + options.Filename + "\" " + (options.CommandLine ?? string.Empty);
+				var cmdline = "\"" + info.HostFilename + "\" " + info.HostCommandLine + " \"" + options.Filename + "\"" + (string.IsNullOrEmpty(options.CommandLine) ? string.Empty : " " + options.CommandLine);
 				bool b = NativeMethods.CreateProcess(info.HostFilename ?? string.Empty, cmdline, IntPtr.Zero, IntPtr.Zero,
 							options.InheritHandles, dwCreationFlags, IntPtr.Zero, options.CurrentDirectory,
 							ref si, out pi);
