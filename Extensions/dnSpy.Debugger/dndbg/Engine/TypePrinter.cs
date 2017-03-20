@@ -1547,7 +1547,7 @@ namespace dndbg.Engine {
 
 			case CorDebugInternalFrameType.STUBFRAME_NONE:
 			default:
-				OutputWrite(string.Format("Internal Frame {0}", ConvertNumberToString((int)frame.InternalFrameType)), TypeColor.InternalFrame);
+				OutputWrite(string.Format("Internal Frame ({0})", ConvertNumberToString((int)frame.InternalFrameType)), TypeColor.InternalFrame);
 				break;
 			}
 			OutputWrite("]", TypeColor.Punctuation);

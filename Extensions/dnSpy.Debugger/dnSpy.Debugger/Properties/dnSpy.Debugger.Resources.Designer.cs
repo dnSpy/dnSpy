@@ -1402,7 +1402,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; ({1}: {2}): Loaded &apos;{3}&apos;..
+        ///   Looks up a localized string similar to Loaded &apos;{0}&apos;..
         /// </summary>
         public static string DebugLogLoadModule {
             get {
@@ -1420,7 +1420,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; ({1}: {2}): Unloaded &apos;{3}&apos;..
+        ///   Looks up a localized string similar to Unloaded &apos;{0}&apos;..
         /// </summary>
         public static string DebugLogUnloadModule {
             get {

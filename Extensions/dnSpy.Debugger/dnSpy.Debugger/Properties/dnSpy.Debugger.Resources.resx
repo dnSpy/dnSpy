@@ -1267,13 +1267,13 @@ Are you sure you want to expand it?</value>
     <value>The thread 0x{0:x} has exited with code {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): Loaded '{3}'.</value>
+    <value>Loaded '{0}'.</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
     <value>Managed Debugging Assistant '{0}' has detected a problem in '{1}'.</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): Unloaded '{3}'.</value>
+    <value>Unloaded '{0}'.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;no exception message&gt;"</value>

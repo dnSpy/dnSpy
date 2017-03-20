@@ -118,11 +118,8 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (outputLoggerSettings.ShowModuleLoadMessages) {
 					var em = (DbgMessageModuleLoadedEventArgs)e;
 					var module = em.Module;
-					var msg = string.Format(dnSpy_Debugger_Resources.DebugLogLoadModule,
-								GetProcessName(module.Process),
-								module.Runtime.Name,
-								module.AppDomain?.Name ?? "???",
-								module.Filename);
+					var msg = GetProcessName(module.Process) + " (" + GetRuntimeAppDomainName(module) + "): " +
+							string.Format(dnSpy_Debugger_Resources.DebugLogLoadModule, module.Filename);
 					UI(() => WriteLine_UI(BoxedTextColor.DebugLogLoadModule, msg));
 				}
 				break;
@@ -131,11 +128,8 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (outputLoggerSettings.ShowModuleUnloadMessages) {
 					var eu = (DbgMessageModuleUnloadedEventArgs)e;
 					var module = eu.Module;
-					var msg = string.Format(dnSpy_Debugger_Resources.DebugLogUnloadModule,
-								GetProcessName(module.Process),
-								module.Runtime.Name,
-								module.AppDomain?.Name ?? "???",
-								module.Filename);
+					var msg = GetProcessName(module.Process) + " (" + GetRuntimeAppDomainName(module) + "): " +
+							string.Format(dnSpy_Debugger_Resources.DebugLogUnloadModule, module.Filename);
 					UI(() => WriteLine_UI(BoxedTextColor.DebugLogUnloadModule, msg));
 				}
 				break;
@@ -204,6 +198,14 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			default:
 				break;
 			}
+		}
+
+		string GetRuntimeAppDomainName(DbgModule module) {
+			var runtime = module.Runtime;
+			var appDomain = module.AppDomain;
+			if (appDomain == null)
+				return runtime.Name;
+			return runtime.Name + ": " + appDomain.Name;
 		}
 
 		string GetExceptionName(DbgExceptionId id) => dbgExceptionFormatterService.Value.ToString(id);
