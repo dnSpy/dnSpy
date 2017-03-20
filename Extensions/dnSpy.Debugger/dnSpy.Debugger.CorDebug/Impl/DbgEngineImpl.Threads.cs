@@ -149,7 +149,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				return PredefinedThreadKinds.GC;
 			if (info.IsFinalizer)
 				return PredefinedThreadKinds.Finalizer;
-			if (info.IsThreadpoolWorker)
+			const DAC.ClrDacThreadFlags threadPoolBits = DAC.ClrDacThreadFlags.IsThreadpoolCompletionPort |
+				DAC.ClrDacThreadFlags.IsThreadpoolGate | DAC.ClrDacThreadFlags.IsThreadpoolTimer |
+				DAC.ClrDacThreadFlags.IsThreadpoolWait | DAC.ClrDacThreadFlags.IsThreadpoolWorker;
+			if ((info.Flags & threadPoolBits) != 0)
 				return PredefinedThreadKinds.ThreadPool;
 			return PredefinedThreadKinds.WorkerThread;
 		}
