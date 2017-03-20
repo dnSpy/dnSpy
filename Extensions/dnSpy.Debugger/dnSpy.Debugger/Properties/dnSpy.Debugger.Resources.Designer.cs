@@ -214,6 +214,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search for a process.
+        /// </summary>
+        public static string AttachToProcess_Search_ToolTip {
+            get {
+                return ResourceManager.GetString("AttachToProcess_Search_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attach to _Process....
         /// </summary>
         public static string AttachToProcessCommand {

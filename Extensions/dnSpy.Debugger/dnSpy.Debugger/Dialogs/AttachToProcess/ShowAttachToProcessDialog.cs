@@ -17,25 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using dnSpy.Contracts.Debugger;
 
-namespace dnSpy.Debugger.ToolWindows {
-	sealed class FormatterObject<TVM> where TVM : class {
-		public TVM VM { get; }
+namespace dnSpy.Debugger.Dialogs.AttachToProcess {
+	abstract class ShowAttachToProcessDialog {
+		/// <summary>
+		/// Shows the dialog box and returns the selected processes or an empty list
+		/// </summary>
+		/// <returns></returns>
+		public abstract StartDebuggingOptions[] Show();
 
 		/// <summary>
-		/// See <see cref="Contracts.Text.Classification.PredefinedTextClassifierTags"/>
+		/// Shows the dialog box and attaches to the selected processes
 		/// </summary>
-		public string Tag { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="vm">VM</param>
-		/// <param name="tag">See <see cref="Contracts.Text.Classification.PredefinedTextClassifierTags"/></param>
-		public FormatterObject(TVM vm, string tag) {
-			VM = vm ?? throw new ArgumentNullException(nameof(vm));
-			Tag = tag ?? throw new ArgumentNullException(nameof(tag));
-		}
+		public abstract void Attach();
 	}
 }

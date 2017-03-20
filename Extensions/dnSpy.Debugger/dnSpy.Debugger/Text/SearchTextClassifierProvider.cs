@@ -24,7 +24,7 @@ using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Debugger.ToolWindows.Text {
+namespace dnSpy.Debugger.Text {
 	abstract class SearchTextClassifierProviderBase : ITextClassifierProvider {
 		readonly IClassificationType listFindMatchHighlightClassificationType;
 

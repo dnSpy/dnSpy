@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace dnSpy.Debugger.ToolWindows {
+namespace dnSpy.Debugger.UI {
 	sealed class BulkObservableCollection<T> : List<T>, INotifyCollectionChanged {
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 

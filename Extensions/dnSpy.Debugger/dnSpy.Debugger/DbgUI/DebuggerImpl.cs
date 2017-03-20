@@ -26,6 +26,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.DbgUI {
@@ -36,15 +37,17 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly IAppWindow appWindow;
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider;
+		readonly Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog;
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(IMessageBoxService messageBoxService, IAppWindow appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider) {
+		DebuggerImpl(IMessageBoxService messageBoxService, IAppWindow appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog) {
 			this.messageBoxService = messageBoxService;
 			this.appWindow = appWindow;
 			this.dbgManager = dbgManager;
 			this.startDebuggingOptionsProvider = startDebuggingOptionsProvider;
+			this.showAttachToProcessDialog = showAttachToProcessDialog;
 		}
 
 		public override bool CanStartWithoutDebugging => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename() != null;
@@ -72,9 +75,7 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		public override bool CanAttachProgram => true;
-		public override void AttachProgram() {
-			//TODO:
-		}
+		public override void AttachProgram() => showAttachToProcessDialog.Value.Attach();
 
 		bool CanExecuteCurrentProcessPauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.CurrentProcess?.State == DbgProcessState.Paused;
 		bool CanExecutePauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != true;

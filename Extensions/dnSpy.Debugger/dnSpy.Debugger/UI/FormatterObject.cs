@@ -17,19 +17,25 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Debugger.Text;
-using Microsoft.VisualStudio.Utilities;
+using System;
 
-namespace dnSpy.Debugger.ToolWindows.Exceptions {
-	[Export(typeof(ITextClassifierProvider))]
-	[ContentType(ContentTypes.ExceptionSettingsWindow)]
-	sealed class SearchTextClassifierProvider : SearchTextClassifierProviderBase {
-		[ImportingConstructor]
-		SearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService)
-			: base(themeClassificationTypeService) {
+namespace dnSpy.Debugger.UI {
+	sealed class FormatterObject<TVM> where TVM : class {
+		public TVM VM { get; }
+
+		/// <summary>
+		/// See <see cref="Contracts.Text.Classification.PredefinedTextClassifierTags"/>
+		/// </summary>
+		public string Tag { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="vm">VM</param>
+		/// <param name="tag">See <see cref="Contracts.Text.Classification.PredefinedTextClassifierTags"/></param>
+		public FormatterObject(TVM vm, string tag) {
+			VM = vm ?? throw new ArgumentNullException(nameof(vm));
+			Tag = tag ?? throw new ArgumentNullException(nameof(tag));
 		}
 	}
 }

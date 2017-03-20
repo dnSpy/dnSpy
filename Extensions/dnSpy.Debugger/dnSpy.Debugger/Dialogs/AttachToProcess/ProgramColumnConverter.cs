@@ -22,33 +22,36 @@ using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
 
-namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
-	sealed class ModuleBreakpointColumnConverter : IValueConverter {
+namespace dnSpy.Debugger.Dialogs.AttachToProcess {
+	sealed class ProgramColumnConverter : IValueConverter {
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-			var obj = value as FormatterObject<ModuleBreakpointVM>;
+			var obj = value as FormatterObject<ProgramVM>;
 			if (obj == null)
 				return null;
 
 			var writer = obj.VM.Context.TextClassifierTextColorWriter;
 			writer.Clear();
 			var formatter = obj.VM.Context.Formatter;
-			if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowId)
-				formatter.WriteId(writer, obj.VM.ModuleBreakpoint);
-			else if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleName)
-				formatter.WriteModuleName(writer, obj.VM.ModuleBreakpoint);
-			else if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowOrder)
-				formatter.WriteOrder(writer, obj.VM.ModuleBreakpoint);
-			else if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowProcessName)
-				formatter.WriteProcessName(writer, obj.VM.ModuleBreakpoint);
-			else if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleAppDomainName)
-				formatter.WriteAppDomainName(writer, obj.VM.ModuleBreakpoint);
+			if (obj.Tag == PredefinedTextClassifierTags.AttachToProcessWindowProcess)
+				formatter.WriteProcess(writer, obj.VM);
+			else if (obj.Tag == PredefinedTextClassifierTags.AttachToProcessWindowPid)
+				formatter.WritePid(writer, obj.VM);
+			else if (obj.Tag == PredefinedTextClassifierTags.AttachToProcessWindowTitle)
+				formatter.WriteTitle(writer, obj.VM);
+			else if (obj.Tag == PredefinedTextClassifierTags.AttachToProcessWindowType)
+				formatter.WriteType(writer, obj.VM);
+			else if (obj.Tag == PredefinedTextClassifierTags.AttachToProcessWindowMachine)
+				formatter.WriteMachine(writer, obj.VM);
+			else if (obj.Tag == PredefinedTextClassifierTags.AttachToProcessWindowFullPath)
+				formatter.WritePath(writer, obj.VM);
 			else
 				return null;
 
-			var context = new TextClassifierContext(writer.Text, obj.Tag, obj.VM.Context.SyntaxHighlight, writer.Colors);
-			return obj.VM.Context.TextElementProvider.CreateTextElement(obj.VM.Context.ClassificationFormatMap, context, ContentTypes.ModuleBreakpointsWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			var context = new SearchTextClassifierContext(obj.VM.Context.SearchMatcher, writer.Text, obj.Tag, obj.VM.Context.SyntaxHighlight, writer.Colors);
+			return obj.VM.Context.TextElementProvider.CreateTextElement(obj.VM.Context.ClassificationFormatMap, context, ContentTypes.AttachToProcessWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();

@@ -28,6 +28,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Text;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Exceptions {
 	abstract class ExceptionsOperations {

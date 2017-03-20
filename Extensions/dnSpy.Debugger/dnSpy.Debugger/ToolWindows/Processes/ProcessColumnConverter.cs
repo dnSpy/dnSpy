@@ -22,6 +22,7 @@ using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	sealed class ProcessColumnConverter : IValueConverter {

@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.Dialogs.AttachToProcess;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	abstract class ProcessesOperations {
@@ -64,6 +65,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		readonly IProcessesVM processesVM;
 		readonly DebuggerSettings debuggerSettings;
 		readonly Lazy<DbgManager> dbgManager;
+		readonly Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog;
 
 		ObservableCollection<ProcessVM> AllItems => processesVM.AllItems;
 		ObservableCollection<ProcessVM> SelectedItems => processesVM.SelectedItems;
@@ -71,10 +73,11 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		IEnumerable<ProcessVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		ProcessesOperationsImpl(IProcessesVM processesVM, DebuggerSettings debuggerSettings, Lazy<DbgManager> dbgManager) {
+		ProcessesOperationsImpl(IProcessesVM processesVM, DebuggerSettings debuggerSettings, Lazy<DbgManager> dbgManager, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog) {
 			this.processesVM = processesVM;
 			this.debuggerSettings = debuggerSettings;
 			this.dbgManager = dbgManager;
+			this.showAttachToProcessDialog = showAttachToProcessDialog;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -153,9 +156,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		public override bool CanAttachToProcess => true;
-		public override void AttachToProcess() {
-			//TODO:
-		}
+		public override void AttachToProcess() => showAttachToProcessDialog.Value.Attach();
 
 		public override bool CanToggleDetachWhenDebuggingStopped => SelectedItems.Count != 0;
 		public override void ToggleDetachWhenDebuggingStopped() => DetachWhenDebuggingStopped = !DetachWhenDebuggingStopped;

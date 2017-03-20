@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Debugger.ToolWindows.Text {
+namespace dnSpy.Debugger.Text {
 	sealed class SearchMatcher {
 		string[] searchParts;
 		readonly List<Span> spans;

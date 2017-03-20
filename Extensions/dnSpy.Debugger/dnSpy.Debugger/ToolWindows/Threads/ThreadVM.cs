@@ -27,6 +27,7 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.ToolWindows.Controls;
+using dnSpy.Debugger.UI;
 using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {

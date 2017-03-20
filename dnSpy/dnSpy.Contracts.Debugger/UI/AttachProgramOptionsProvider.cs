@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Debugger.UI {
 	/// </summary>
 	public abstract class AttachProgramOptionsProvider {
 		/// <summary>
-		/// Creates new <see cref="AttachProgramOptions"/> instances
+		/// Creates new <see cref="AttachProgramOptions"/> instances. This method is called in a background thread.
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>

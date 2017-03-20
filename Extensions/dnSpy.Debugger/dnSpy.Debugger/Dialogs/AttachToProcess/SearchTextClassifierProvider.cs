@@ -17,15 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Text;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Debugger.ToolWindows.Text {
-	sealed class SearchTextClassifierContext : TextClassifierContext {
-		public SearchMatcher SearchMatcher { get; }
-		public SearchTextClassifierContext(SearchMatcher searchMatcher, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
-			: base(text, tag, colorize, colors) => SearchMatcher = searchMatcher ?? throw new ArgumentNullException(nameof(searchMatcher));
+namespace dnSpy.Debugger.Dialogs.AttachToProcess {
+	[Export(typeof(ITextClassifierProvider))]
+	[ContentType(ContentTypes.AttachToProcessWindow)]
+	sealed class SearchTextClassifierProvider : SearchTextClassifierProviderBase {
+		[ImportingConstructor]
+		SearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService)
+			: base(themeClassificationTypeService) {
+		}
 	}
 }

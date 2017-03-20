@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Text classifier tags
@@ -113,14 +115,9 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string CallStackWindowName = "Name";
 
 		/// <summary>
-		/// Attach to Process window column: FullPath
+		/// Attach to Process window column: Process
 		/// </summary>
-		public static readonly string AttachToProcessWindowFullPath = "FullPath";
-
-		/// <summary>
-		/// Attach to Process window column: Filename
-		/// </summary>
-		public static readonly string AttachToProcessWindowFilename = "Filename";
+		public static readonly string AttachToProcessWindowProcess = "Process";
 
 		/// <summary>
 		/// Attach to Process window column: PID
@@ -128,9 +125,9 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string AttachToProcessWindowPid = "PID";
 
 		/// <summary>
-		/// Attach to Process window column: CLRVersion
+		/// Attach to Process window column: Title
 		/// </summary>
-		public static readonly string AttachToProcessWindowClrVersion = "CLRVersion";
+		public static readonly string AttachToProcessWindowTitle = "Title";
 
 		/// <summary>
 		/// Attach to Process window column: Type
@@ -143,9 +140,21 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string AttachToProcessWindowMachine = "Machine";
 
 		/// <summary>
-		/// Attach to Process window column: Title
+		/// Attach to Process window column: Path
 		/// </summary>
-		public static readonly string AttachToProcessWindowTitle = "Title";
+		public static readonly string AttachToProcessWindowFullPath = "Path";
+
+		/// <summary>
+		/// Don't use
+		/// </summary>
+		[Obsolete("Not used", error: true)]
+		public static readonly string AttachToProcessWindowFilename = "Filename";
+
+		/// <summary>
+		/// Don't use
+		/// </summary>
+		[Obsolete("Not used", error: true)]
+		public static readonly string AttachToProcessWindowClrVersion = "CLRVersion";
 
 		/// <summary>
 		/// Exception Settings window column: Break When Thrown

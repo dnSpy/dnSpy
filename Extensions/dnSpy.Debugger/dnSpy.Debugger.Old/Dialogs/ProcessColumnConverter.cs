@@ -44,14 +44,14 @@ namespace dnSpy.Debugger.Dialogs {
 				HorizontalAlignment? horizAlign = null;
 				if (tag == PredefinedTextClassifierTags.AttachToProcessWindowFullPath)
 					printer.WriteFullPath(vm);
-				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowFilename)
-					printer.WriteFilename(vm);
+				//else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowFilename)
+				//	printer.WriteFilename(vm);
 				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowPid) {
 					printer.WritePID(vm);
 					horizAlign = HorizontalAlignment.Right;
 				}
-				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowClrVersion)
-					printer.WriteCLRVersion(vm);
+				//else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowClrVersion)
+				//	printer.WriteCLRVersion(vm);
 				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowType)
 					printer.WriteType(vm);
 				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowMachine)

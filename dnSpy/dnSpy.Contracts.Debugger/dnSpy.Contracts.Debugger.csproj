@@ -95,7 +95,6 @@
     <Compile Include="UI\GenericDebugEngineGuidProvider.cs" />
     <Compile Include="UI\PredefinedArchitectureNames.cs" />
     <Compile Include="UI\PredefinedGenericDebugEngineGuids.cs" />
-    <Compile Include="UI\PredefinedRuntimeTypes.cs" />
     <Compile Include="UI\PredefinedStartDebuggingOptionsPageDisplayOrders.cs" />
     <Compile Include="UI\StartDebuggingOptionsPage.cs" />
     <Compile Include="UI\StartDebuggingOptionsPageContext.cs" />

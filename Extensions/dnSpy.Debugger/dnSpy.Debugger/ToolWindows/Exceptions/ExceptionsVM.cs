@@ -31,7 +31,7 @@ using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Exceptions;
 using dnSpy.Debugger.Properties;
-using dnSpy.Debugger.ToolWindows.Text;
+using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					return;
 				showOnlyEnabledExceptions = value;
 				OnPropertyChanged(nameof(ShowOnlyEnabledExceptions));
-				FilterTreeView_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
+				FilterList_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
 			}
 		}
 		bool showOnlyEnabledExceptions;
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					return;
 				filterText = value;
 				OnPropertyChanged(nameof(FilterText));
-				FilterTreeView_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
+				FilterList_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
 			}
 		}
 		string filterText = string.Empty;
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					return;
 				selectedCategory = value;
 				OnPropertyChanged(nameof(SelectedCategory));
-				FilterTreeView_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
+				FilterList_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
 			}
 		}
 		ExceptionCategoryVM selectedCategory;
@@ -347,7 +347,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		// UI thread
-		void FilterTreeView_UI(string filterText, bool showOnlyEnabledExceptions, ExceptionCategoryVM selectedCategory) {
+		void FilterList_UI(string filterText, bool showOnlyEnabledExceptions, ExceptionCategoryVM selectedCategory) {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			if (string.IsNullOrWhiteSpace(filterText))
 				filterText = string.Empty;

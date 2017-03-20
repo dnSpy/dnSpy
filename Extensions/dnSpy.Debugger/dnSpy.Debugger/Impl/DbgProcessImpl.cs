@@ -27,6 +27,7 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.Native;
+using dnSpy.Debugger.Utilities;
 using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Impl {
@@ -128,7 +129,7 @@ namespace dnSpy.Debugger.Impl {
 			if (hProcess.IsInvalid)
 				throw new InvalidOperationException($"Couldn't open process {pid}");
 
-			Bitness = GetBitness(hProcess.DangerousGetHandle());
+			Bitness = ProcessUtilities.GetBitness(hProcess.DangerousGetHandle());
 			Machine = GetMachine(Bitness);
 			Filename = GetProcessFilename(pid) ?? string.Empty;
 			Name = Path.GetFileName(Filename);
@@ -160,20 +161,6 @@ namespace dnSpy.Debugger.Impl {
 			catch {
 			}
 			return string.Empty;
-		}
-
-		static int GetBitness(IntPtr hProcess) {
-			if (!Environment.Is64BitOperatingSystem) {
-				Debug.Assert(IntPtr.Size == 4);
-				return IntPtr.Size * 8;
-			}
-			if (NativeMethods.IsWow64Process(hProcess, out bool isWow64Process)) {
-				if (isWow64Process)
-					return 32;
-				return 64;
-			}
-			Debug.Fail("IsWow64Process failed");
-			return IntPtr.Size * 8;
 		}
 
 		static DbgMachine GetMachine(int bitness) {

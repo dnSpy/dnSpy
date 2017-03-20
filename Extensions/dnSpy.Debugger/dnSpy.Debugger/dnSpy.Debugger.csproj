@@ -48,6 +48,20 @@
     <Compile Include="DbgUI\StartDebuggingOptionsMru.cs" />
     <Compile Include="DbgUI\StartDebuggingOptionsProvider.cs" />
     <Compile Include="DbgUI\ToolbarButtonCommands.cs" />
+    <Compile Include="Dialogs\AttachToProcess\AttachProgramOptionsAggregator.cs" />
+    <Compile Include="Dialogs\AttachToProcess\AttachProgramOptionsAggregatorImpl.cs" />
+    <Compile Include="Dialogs\AttachToProcess\AttachToProcessContext.cs" />
+    <Compile Include="Dialogs\AttachToProcess\AttachToProcessDlg.xaml.cs">
+      <DependentUpon>AttachToProcessDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AttachToProcess\AttachToProcessVM.cs" />
+    <Compile Include="Dialogs\AttachToProcess\ProcessProvider.cs" />
+    <Compile Include="Dialogs\AttachToProcess\ProgramColumnConverter.cs" />
+    <Compile Include="Dialogs\AttachToProcess\ProgramFormatter.cs" />
+    <Compile Include="Dialogs\AttachToProcess\ProgramVM.cs" />
+    <Compile Include="Dialogs\AttachToProcess\SearchTextClassifierProvider.cs" />
+    <Compile Include="Dialogs\AttachToProcess\ShowAttachToProcessDialog.cs" />
+    <Compile Include="Dialogs\AttachToProcess\ShowAttachToProcessDialogImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DebugProgramDlg.xaml.cs">
       <DependentUpon>DebugProgramDlg.xaml</DependentUpon>
     </Compile>
@@ -60,6 +74,9 @@
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
     <Compile Include="Impl\DbgManagerImpl.ProcessKey.cs" />
+    <Compile Include="Text\SearchMatcher.cs" />
+    <Compile Include="Text\SearchTextClassifierContext.cs" />
+    <Compile Include="Text\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionCategoryVM.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
@@ -75,6 +92,9 @@
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointsVM.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointVM.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\TextViewTaggers.cs" />
+    <Compile Include="UI\BulkObservableCollection.cs" />
+    <Compile Include="UI\FormatterObject.cs" />
+    <Compile Include="Utilities\ProcessUtilities.cs" />
     <Compile Include="Utilities\WildcardsUtils.cs" />
     <None Include="Exceptions\GenerateExceptionsXmlFile.cs" />
     <Compile Include="Impl\DbgAppDomainImpl.cs" />
@@ -109,7 +129,6 @@
     <Compile Include="Settings\DebuggerSettingsImpl.cs" />
     <Compile Include="Text\DebugOutputWriterImpl.cs" />
     <Compile Include="TheExtension.cs" />
-    <Compile Include="ToolWindows\BulkObservableCollection.cs" />
     <Compile Include="ToolWindows\Controls\EditValueControl.xaml.cs">
       <DependentUpon>EditValueControl.xaml</DependentUpon>
     </Compile>
@@ -137,7 +156,6 @@
     <Compile Include="ToolWindows\Exceptions\ExceptionsVM.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionVM.cs" />
     <Compile Include="ToolWindows\Exceptions\SearchTextClassifierProvider.cs" />
-    <Compile Include="ToolWindows\FormatterObject.cs" />
     <Compile Include="ToolWindows\FormatterUtils.cs" />
     <Compile Include="ToolWindows\LazyToolWindowVMHelper.cs" />
     <Compile Include="ToolWindows\Logger\Commands.cs" />
@@ -185,9 +203,6 @@
     <Compile Include="ToolWindows\Processes\ProcessFormatter.cs" />
     <Compile Include="ToolWindows\Processes\ProcessVM.cs" />
     <Compile Include="ToolWindows\SimpleProcessReader.cs" />
-    <Compile Include="ToolWindows\Text\SearchMatcher.cs" />
-    <Compile Include="ToolWindows\Text\SearchTextClassifierContext.cs" />
-    <Compile Include="ToolWindows\Text\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\Threads\Commands.cs" />
     <Compile Include="ToolWindows\Threads\DefaultThreadCategoryProvider.cs" />
     <Compile Include="ToolWindows\Threads\TextViewTaggers.cs" />
@@ -255,6 +270,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Dialogs\AttachToProcess\AttachToProcessDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\DebugProgram\DebugProgramDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

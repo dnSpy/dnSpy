@@ -17,24 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.UI {
-	/// <summary>
-	/// Predefined runtime types, see <see cref="AttachProgramOptions.RuntimeType"/>
-	/// </summary>
-	public static class PredefinedRuntimeTypes {
-		/// <summary>
-		/// .NET Framework
-		/// </summary>
-		public static readonly string DotNetFramework = "CLR";
+using System;
+using System.Collections.Generic;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
-		/// <summary>
-		/// .NET Core
-		/// </summary>
-		public static readonly string DotNetCore = "CoreCLR";
-
-		/// <summary>
-		/// Mono
-		/// </summary>
-		public static readonly string DotNetMono = "MonoCLR";
+namespace dnSpy.Debugger.Text {
+	sealed class SearchTextClassifierContext : TextClassifierContext {
+		public SearchMatcher SearchMatcher { get; }
+		public SearchTextClassifierContext(SearchMatcher searchMatcher, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+			: base(text, tag, colorize, colors) => SearchMatcher = searchMatcher ?? throw new ArgumentNullException(nameof(searchMatcher));
 	}
 }

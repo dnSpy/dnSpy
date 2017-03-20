@@ -24,6 +24,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	sealed class ProcessVM : ViewModelBase {

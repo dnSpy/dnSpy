@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Exceptions {
 	sealed class ExceptionVM : ViewModelBase {

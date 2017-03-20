@@ -24,6 +24,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.ToolWindows.Controls;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	sealed class ModuleBreakpointVM : ViewModelBase {

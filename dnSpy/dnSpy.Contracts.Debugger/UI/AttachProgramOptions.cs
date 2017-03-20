@@ -23,17 +23,17 @@ namespace dnSpy.Contracts.Debugger.UI {
 	/// </summary>
 	public abstract class AttachProgramOptions {
 		/// <summary>
-		/// Process Id
+		/// Process id
 		/// </summary>
-		public abstract int Id { get; }
+		public abstract int ProcessId { get; }
 
 		/// <summary>
-		/// Runtime type, see <see cref="PredefinedRuntimeTypes"/>
+		/// Runtime id
 		/// </summary>
-		public abstract string RuntimeType { get; }
+		public abstract RuntimeId RuntimeId { get; }
 
 		/// <summary>
-		/// Runtime name, eg. "v4.0.30319"
+		/// Runtime name, eg. "CLR v4.0.30319"
 		/// </summary>
 		public abstract string RuntimeName { get; }
 

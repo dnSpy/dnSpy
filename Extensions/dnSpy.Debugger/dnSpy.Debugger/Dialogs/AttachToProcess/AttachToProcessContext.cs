@@ -17,48 +17,35 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Debugger.Exceptions;
 using dnSpy.Debugger.Text;
-using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
-namespace dnSpy.Debugger.ToolWindows.Exceptions {
-	interface IExceptionContext {
-		UIDispatcher UIDispatcher { get; }
+namespace dnSpy.Debugger.Dialogs.AttachToProcess {
+	interface IAttachToProcessContext {
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		IDebugOutputWriter DebugOutputWriter { get; }
-		ExceptionFormatter Formatter { get; }
+		ProgramFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
-		DbgExceptionSettingsService ExceptionSettingsService { get; }
-		DbgExceptionFormatterService ExceptionFormatterService { get; }
 		SearchMatcher SearchMatcher { get; }
 	}
 
-	sealed class ExceptionContext : IExceptionContext {
-		public UIDispatcher UIDispatcher { get; }
+	sealed class AttachToProcessContext : IAttachToProcessContext {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public IDebugOutputWriter DebugOutputWriter { get; }
-		public ExceptionFormatter Formatter { get; set; }
+		public ProgramFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
-		public DbgExceptionSettingsService ExceptionSettingsService { get; }
-		public DbgExceptionFormatterService ExceptionFormatterService { get; }
 		public SearchMatcher SearchMatcher { get; }
 
-		public ExceptionContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, DbgExceptionSettingsService exceptionSettingsService, DbgExceptionFormatterService exceptionFormatterService, SearchMatcher searchMatcher) {
-			UIDispatcher = uiDispatcher;
+		public AttachToProcessContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
 			DebugOutputWriter = new DebugOutputWriterImpl(TextClassifierTextColorWriter);
-			ExceptionSettingsService = exceptionSettingsService;
-			ExceptionFormatterService = exceptionFormatterService;
 			SearchMatcher = searchMatcher;
 		}
 	}

@@ -17,19 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Debugger.Text;
-using Microsoft.VisualStudio.Utilities;
+using System;
+using System.Diagnostics;
+using dnSpy.Debugger.Native;
 
-namespace dnSpy.Debugger.ToolWindows.Exceptions {
-	[Export(typeof(ITextClassifierProvider))]
-	[ContentType(ContentTypes.ExceptionSettingsWindow)]
-	sealed class SearchTextClassifierProvider : SearchTextClassifierProviderBase {
-		[ImportingConstructor]
-		SearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService)
-			: base(themeClassificationTypeService) {
+namespace dnSpy.Debugger.Utilities {
+	static class ProcessUtilities {
+		public static int GetBitness(IntPtr hProcess) {
+			if (!Environment.Is64BitOperatingSystem) {
+				Debug.Assert(IntPtr.Size == 4);
+				return IntPtr.Size * 8;
+			}
+			if (NativeMethods.IsWow64Process(hProcess, out bool isWow64Process)) {
+				if (isWow64Process)
+					return 32;
+				return 64;
+			}
+			Debug.Fail("IsWow64Process failed");
+			return IntPtr.Size * 8;
 		}
 	}
 }

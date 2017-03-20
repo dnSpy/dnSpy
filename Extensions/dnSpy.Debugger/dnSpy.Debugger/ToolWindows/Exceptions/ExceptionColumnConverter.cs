@@ -22,7 +22,8 @@ using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Debugger.ToolWindows.Text;
+using dnSpy.Debugger.Text;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Exceptions {
 	sealed class ExceptionColumnConverter : IValueConverter {
