@@ -40,7 +40,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			var appDomain = TryGetEngineAppDomain(thread.AppDomainOrNull)?.AppDomain;
 			var id = thread.VolatileThreadId;
 
-			if (isCreateThread && !IsNewCreatedThread(thread))
+			// If it was created, it could already have a new name so always try to read it
+			if (isCreateThread)
 				forceReadName = true;
 
 			var managedId = oldProperties?.ManagedId;
@@ -60,11 +61,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			var kind = GetThreadKind(thread, managedId);
 			return new ThreadProperties(appDomain, kind, id, managedId, name, suspendedCount, userState);
 		}
-
-		// If we attached to the process, we don't know whether this thread is a new thread
-		// that got created after we attached to the process or if the CLR debugger is still
-		// notifying us of existing threads.
-		bool IsNewCreatedThread(DnThread thread) => StartKind != DbgStartKind.Attach;
 
 		static CorValue TryGetThreadObject(DnThread thread) {
 			var threadObj = thread.CorThread.Object?.NeuterCheckDereferencedValue;
