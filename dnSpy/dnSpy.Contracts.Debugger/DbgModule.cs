@@ -92,7 +92,7 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract bool IsInMemory { get; }
 
 		/// <summary>
-		/// true if it's an optimized module, false if it's an unoptimized module, and null if it's not known
+		/// true if it's an optimized module, false if it's an unoptimized module, and null if it's a native module.
 		/// </summary>
 		public abstract bool? IsOptimized { get; }
 

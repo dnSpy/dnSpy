@@ -81,11 +81,11 @@ namespace dnSpy.Debugger.ToolWindows {
 			return output;
 		}
 
-		public static T WriteYesNoError<T>(this T output, bool? value) where T : ITextColorWriter {
+		public static T WriteYesNoOrNA<T>(this T output, bool? value) where T : ITextColorWriter {
 			if (value != null)
 				output.WriteYesNo(value.Value);
 			else
-				output.Write(BoxedTextColor.Error, "???");
+				output.Write(BoxedTextColor.Text, "N/A");
 			return output;
 		}
 
