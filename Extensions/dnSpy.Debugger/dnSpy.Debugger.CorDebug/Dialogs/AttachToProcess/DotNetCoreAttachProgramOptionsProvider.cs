@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -31,7 +30,7 @@ using dnSpy.Debugger.CorDebug.Impl;
 using dnSpy.Debugger.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.CorDebug.Dialogs.AttachToProcess {
-	[Export(typeof(AttachProgramOptionsProviderFactory))]
+	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetCore_CorDebug)]
 	sealed class DotNetCoreAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
 		public override AttachProgramOptionsProvider Create() => new DotNetCoreAttachProgramOptionsProvider();
 	}

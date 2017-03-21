@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Text;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach;
@@ -29,7 +28,7 @@ using dnSpy.Debugger.CorDebug.Native;
 using DEMH = dndbg.COM.MetaHost;
 
 namespace dnSpy.Debugger.CorDebug.Dialogs.AttachToProcess {
-	[Export(typeof(AttachProgramOptionsProviderFactory))]
+	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetFramework_CorDebug)]
 	sealed class DotNetFrameworkAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
 		public override AttachProgramOptionsProvider Create() => new DotNetFrameworkAttachProgramOptionsProvider();
 	}

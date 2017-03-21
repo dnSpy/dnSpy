@@ -44,6 +44,7 @@
     <Compile Include="Attach\AttachProgramOptionsProvider.cs" />
     <Compile Include="Attach\AttachProgramOptionsProviderFactory.cs" />
     <Compile Include="Attach\PredefinedArchitectureNames.cs" />
+    <Compile Include="Attach\PredefinedAttachProgramOptionsProviderNames.cs" />
     <Compile Include="Breakpoints\Modules\DbgBreakpointModule.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpoint.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointSettings.cs" />

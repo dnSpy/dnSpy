@@ -30,10 +30,10 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 	[Export(typeof(AttachProgramOptionsAggregatorFactory))]
 	sealed class AttachProgramOptionsAggregatorFactoryImpl : AttachProgramOptionsAggregatorFactory {
 		readonly UIDispatcher uiDispatcher;
-		readonly Lazy<AttachProgramOptionsProviderFactory>[] attachProgramOptionsProviderFactories;
+		readonly Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories;
 
 		[ImportingConstructor]
-		AttachProgramOptionsAggregatorFactoryImpl(UIDispatcher uiDispatcher, [ImportMany] IEnumerable<Lazy<AttachProgramOptionsProviderFactory>> attachProgramOptionsProviderFactories) {
+		AttachProgramOptionsAggregatorFactoryImpl(UIDispatcher uiDispatcher, [ImportMany] IEnumerable<Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>> attachProgramOptionsProviderFactories) {
 			this.uiDispatcher = uiDispatcher;
 			this.attachProgramOptionsProviderFactories = attachProgramOptionsProviderFactories.ToArray();
 		}
@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		readonly object locKObj;
 		readonly List<AttachProgramOptions> pendingOptions;
 		readonly UIDispatcher uiDispatcher;
-		readonly Lazy<AttachProgramOptionsProviderFactory>[] attachProgramOptionsProviderFactories;
+		readonly Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories;
 		readonly List<ProviderInfo> providerInfos;
 		CancellationTokenSource cancellationTokenSource;
 
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			public void Start() => Thread.Start();
 		}
 
-		public AttachProgramOptionsAggregatorImpl(UIDispatcher uiDispatcher, Lazy<AttachProgramOptionsProviderFactory>[] attachProgramOptionsProviderFactories) {
+		public AttachProgramOptionsAggregatorImpl(UIDispatcher uiDispatcher, Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories) {
 			this.uiDispatcher = uiDispatcher;
 			this.attachProgramOptionsProviderFactories = attachProgramOptionsProviderFactories ?? throw new ArgumentNullException(nameof(attachProgramOptionsProviderFactories));
 			locKObj = new object();
@@ -165,7 +165,12 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 					return;
 				started = true;
 				var providerContext = new AttachProgramOptionsProviderContext(cancellationTokenSource.Token);
-				providerInfos.AddRange(attachProgramOptionsProviderFactories.Select(a => a.Value.Create()).Where(a => a != null).Select(a => new ProviderInfo(this, providerContext, a)));
+				foreach (var lz in attachProgramOptionsProviderFactories) {
+					var provider = lz.Value.Create();
+					if (provider == null)
+						continue;
+					providerInfos.Add(new ProviderInfo(this, providerContext, provider));
+				}
 				if (providerInfos.Count == 0)
 					completed = true;
 				else {

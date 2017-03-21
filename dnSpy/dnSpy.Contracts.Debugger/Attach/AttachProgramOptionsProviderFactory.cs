@@ -17,9 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.ComponentModel.Composition;
+
 namespace dnSpy.Contracts.Debugger.Attach {
 	/// <summary>
-	/// Creates <see cref="AttachProgramOptionsProvider"/> instances
+	/// Creates <see cref="AttachProgramOptionsProvider"/> instances. Use <see cref="ExportAttachProgramOptionsProviderFactoryAttribute"/>
+	/// to export an instance.
 	/// </summary>
 	public abstract class AttachProgramOptionsProviderFactory {
 		/// <summary>
@@ -27,5 +31,29 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// </summary>
 		/// <returns></returns>
 		public abstract AttachProgramOptionsProvider Create();
+	}
+
+	/// <summary>Metadata</summary>
+	public interface IAttachProgramOptionsProviderFactoryMetadata {
+		/// <summary>See <see cref="ExportAttachProgramOptionsProviderFactoryAttribute.Name"/></summary>
+		string Name { get; }
+	}
+
+	/// <summary>
+	/// Exports an <see cref="AttachProgramOptionsProviderFactory"/> instance
+	/// </summary>
+	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class ExportAttachProgramOptionsProviderFactoryAttribute : ExportAttribute, IAttachProgramOptionsProviderFactoryMetadata {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="name">Name, see <see cref="PredefinedAttachProgramOptionsProviderNames"/></param>
+		public ExportAttachProgramOptionsProviderFactoryAttribute(string name)
+			: base(typeof(AttachProgramOptionsProviderFactory)) => Name = name ?? throw new ArgumentNullException(nameof(name));
+
+		/// <summary>
+		/// Name, see <see cref="PredefinedAttachProgramOptionsProviderNames"/>
+		/// </summary>
+		public string Name { get; }
 	}
 }
