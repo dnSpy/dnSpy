@@ -36,6 +36,8 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Attach\AttachableProcessesServiceImpl.cs" />
+    <Compile Include="Attach\AttachableProcessImpl.cs" />
     <Compile Include="Attach\AttachableProcessInfo.cs" />
     <Compile Include="Attach\ProcessProvider.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointImpl.cs" />

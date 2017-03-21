@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public override event EventHandler<AttachProgramOptionsAddedEventArgs> AttachProgramOptionsAdded;
 		public override event EventHandler Completed;
 
-		readonly object locKObj;
+		readonly object lockObj;
 		readonly List<AttachProgramOptions> pendingOptions;
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories;
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public AttachProgramOptionsAggregatorImpl(UIDispatcher uiDispatcher, Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories) {
 			this.uiDispatcher = uiDispatcher;
 			this.attachProgramOptionsProviderFactories = attachProgramOptionsProviderFactories ?? throw new ArgumentNullException(nameof(attachProgramOptionsProviderFactories));
-			locKObj = new object();
+			lockObj = new object();
 			pendingOptions = new List<AttachProgramOptions>();
 			providerInfos = new List<ProviderInfo>(attachProgramOptionsProviderFactories.Length);
 			cancellationTokenSource = new CancellationTokenSource();
@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			bool start;
-			lock (locKObj) {
+			lock (lockObj) {
 				if (disposed)
 					return;
 				pendingOptions.Add(options);
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		bool emptyQueueCalled;
 
 		void EnumeratorCompleted(ProviderInfo info, bool success) {
-			lock (locKObj) {
+			lock (lockObj) {
 				if (disposed)
 					return;
 				checkDone = true;
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			uiDispatcher.VerifyAccess();
 			AttachProgramOptions[] newOptions;
 			bool completed;
-			lock (locKObj) {
+			lock (lockObj) {
 				Debug.Assert(emptyQueueCalled);
 				newOptions = pendingOptions.ToArray();
 				pendingOptions.Clear();
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 
 		public override void Start() {
 			bool completed;
-			lock (locKObj) {
+			lock (lockObj) {
 				if (started)
 					throw new InvalidOperationException();
 				if (disposed)
@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		bool started;
 
 		public override void Dispose() {
-			lock (locKObj) {
+			lock (lockObj) {
 				if (disposed)
 					return;
 				disposed = true;
