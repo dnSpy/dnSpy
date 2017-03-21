@@ -20,10 +20,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace dnSpy.Debugger.Dialogs.AttachToProcess {
+namespace dnSpy.Debugger.Attach {
 	/// <summary>
 	/// Calling <see cref="Process.GetProcessById(int)"/> is slow. This class caches the processes to speed
-	/// up creating new <see cref="ProgramVM"/>s.
+	/// up creating new <see cref="AttachableProcessInfo"/>s.
 	/// </summary>
 	sealed class ProcessProvider {
 		readonly Dictionary<int, Process> toProcess;

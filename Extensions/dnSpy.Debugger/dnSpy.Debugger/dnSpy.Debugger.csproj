@@ -36,6 +36,8 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Attach\AttachableProcessInfo.cs" />
+    <Compile Include="Attach\ProcessProvider.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointImpl.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsServiceImpl.cs" />
     <Compile Include="Breakpoints\Modules\ModuleBreakpointHitChecker.cs" />
@@ -55,7 +57,6 @@
       <DependentUpon>AttachToProcessDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\AttachToProcess\AttachToProcessVM.cs" />
-    <Compile Include="Dialogs\AttachToProcess\ProcessProvider.cs" />
     <Compile Include="Dialogs\AttachToProcess\ProgramColumnConverter.cs" />
     <Compile Include="Dialogs\AttachToProcess\ProgramFormatter.cs" />
     <Compile Include="Dialogs\AttachToProcess\ProgramVM.cs" />
