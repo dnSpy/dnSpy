@@ -17,18 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-
-namespace dnSpy.Contracts.Debugger.UI {
+namespace dnSpy.Contracts.Debugger.Attach {
 	/// <summary>
-	/// Creates <see cref="StartDebuggingOptionsPage"/> instances. See also <see cref="GenericDebugEngineGuidProvider"/>
+	/// Creates <see cref="AttachProgramOptionsProvider"/> instances
 	/// </summary>
-	public abstract class StartDebuggingOptionsPageProvider {
+	public abstract class AttachProgramOptionsProviderFactory {
 		/// <summary>
-		/// Creates new <see cref="StartDebuggingOptionsPage"/> instances
+		/// Creates a new <see cref="AttachProgramOptionsProvider"/> or returns null
 		/// </summary>
-		/// <param name="context">Context</param>
 		/// <returns></returns>
-		public abstract IEnumerable<StartDebuggingOptionsPage> Create(StartDebuggingOptionsPageContext context);
+		public abstract AttachProgramOptionsProvider Create();
 	}
 }

@@ -17,21 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Contracts.Debugger.UI {
+namespace dnSpy.Contracts.Debugger.Attach {
 	/// <summary>
-	/// Predefined generic debug engine guids
+	/// Predefined architecture names, see <see cref="AttachProgramOptions.Architecture"/>
 	/// </summary>
-	public static class PredefinedGenericDebugEngineGuids {
+	public static class PredefinedArchitectureNames {
 		/// <summary>
-		/// .NET Framework or compatible framework (eg. Mono)
+		/// x86 (32-bit)
 		/// </summary>
-		public static readonly Guid DotNetFramework = new Guid("0F99555D-5523-4AAE-BD4C-0451B9D50126");
+		public static readonly string X86 = "x86";
 
 		/// <summary>
-		/// .NET Core
+		/// x64 (64-bit)
 		/// </summary>
-		public static readonly Guid DotNetCore = new Guid("7D294510-4730-433B-85C1-61EC0B4F6C3C");
+		public static readonly string X64 = "x64";
 	}
 }

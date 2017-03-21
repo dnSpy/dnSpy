@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 
-namespace dnSpy.Contracts.Debugger.UI {
+namespace dnSpy.Contracts.Debugger.StartDebugging {
 	/// <summary>
 	/// Detects the debug engine that should be shown by default when showing the options.
 	/// Use <see cref="ExportGenericDebugEngineGuidProviderAttribute"/> to export an instance.

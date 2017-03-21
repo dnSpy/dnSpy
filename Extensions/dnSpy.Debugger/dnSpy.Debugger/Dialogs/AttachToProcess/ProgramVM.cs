@@ -19,7 +19,7 @@
 
 using System;
 using System.IO;
-using dnSpy.Contracts.Debugger.UI;
+using dnSpy.Contracts.Debugger.Attach;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.UI;

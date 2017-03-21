@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.UI;
+using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {

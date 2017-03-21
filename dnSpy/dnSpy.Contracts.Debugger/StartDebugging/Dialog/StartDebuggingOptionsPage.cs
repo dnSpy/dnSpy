@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel;
 
-namespace dnSpy.Contracts.Debugger.UI {
+namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 	/// <summary>
 	/// A page shown in the 'debug an application' dialog box. It provides a UI object
 	/// and creates a <see cref="StartDebuggingOptions"/> instance that is used to start

@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Debugger.UI;
+using dnSpy.Contracts.Debugger.Attach;
 
 namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 	abstract class AttachProgramOptionsAggregatorFactory {

@@ -17,15 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.UI {
+using System;
+
+namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 	/// <summary>
-	/// Creates <see cref="AttachProgramOptionsProvider"/> instances
+	/// Passed to a <see cref="StartDebuggingOptionsPageProvider"/> instance
 	/// </summary>
-	public abstract class AttachProgramOptionsProviderFactory {
+	public sealed class StartDebuggingOptionsPageContext {
 		/// <summary>
-		/// Creates a new <see cref="AttachProgramOptionsProvider"/> or returns null
+		/// Filename of the current selected file or an empty string
 		/// </summary>
-		/// <returns></returns>
-		public abstract AttachProgramOptionsProvider Create();
+		public string CurrentFilename { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="currentFilename">Filename of the current selected file or an empty string</param>
+		public StartDebuggingOptionsPageContext(string currentFilename) => CurrentFilename = currentFilename ?? throw new ArgumentNullException(nameof(currentFilename));
 	}
 }

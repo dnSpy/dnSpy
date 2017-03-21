@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace dnSpy.Contracts.Debugger.UI {
+namespace dnSpy.Contracts.Debugger.Attach {
 	/// <summary>
 	/// Creates <see cref="AttachProgramOptions"/>
 	/// </summary>

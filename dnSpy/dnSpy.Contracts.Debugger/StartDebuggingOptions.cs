@@ -17,7 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.UI;
+using dnSpy.Contracts.Debugger.Attach;
+using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>

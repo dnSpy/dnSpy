@@ -40,6 +40,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Attach\AttachProgramOptions.cs" />
+    <Compile Include="Attach\AttachProgramOptionsProvider.cs" />
+    <Compile Include="Attach\AttachProgramOptionsProviderFactory.cs" />
+    <Compile Include="Attach\PredefinedArchitectureNames.cs" />
     <Compile Include="Breakpoints\Modules\DbgBreakpointModule.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpoint.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointSettings.cs" />
@@ -86,19 +90,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeId.cs" />
     <Compile Include="StartDebuggingOptions.cs" />
+    <Compile Include="StartDebugging\Dialog\PredefinedStartDebuggingOptionsPageDisplayOrders.cs" />
+    <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPage.cs" />
+    <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPageContext.cs" />
+    <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPageProvider.cs" />
+    <Compile Include="StartDebugging\GenericDebugEngineGuidProvider.cs" />
+    <Compile Include="StartDebugging\PredefinedGenericDebugEngineGuids.cs" />
     <Compile Include="Text\IDebugOutputWriter.cs" />
     <Compile Include="Text\StringBuilderDebugOutputWriter.cs" />
     <Compile Include="ThreadCategoryProvider.cs" />
-    <Compile Include="UI\AttachProgramOptions.cs" />
-    <Compile Include="UI\AttachProgramOptionsProvider.cs" />
-    <Compile Include="UI\AttachProgramOptionsProviderFactory.cs" />
-    <Compile Include="UI\GenericDebugEngineGuidProvider.cs" />
-    <Compile Include="UI\PredefinedArchitectureNames.cs" />
-    <Compile Include="UI\PredefinedGenericDebugEngineGuids.cs" />
-    <Compile Include="UI\PredefinedStartDebuggingOptionsPageDisplayOrders.cs" />
-    <Compile Include="UI\StartDebuggingOptionsPage.cs" />
-    <Compile Include="UI\StartDebuggingOptionsPageContext.cs" />
-    <Compile Include="UI\StartDebuggingOptionsPageProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">

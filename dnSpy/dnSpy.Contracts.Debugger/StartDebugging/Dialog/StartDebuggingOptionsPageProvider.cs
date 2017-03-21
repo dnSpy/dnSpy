@@ -17,24 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.UI {
+using System.Collections.Generic;
+
+namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 	/// <summary>
-	/// Predefined options page display order constants
+	/// Creates <see cref="StartDebuggingOptionsPage"/> instances. See also <see cref="GenericDebugEngineGuidProvider"/>
 	/// </summary>
-	public static class PredefinedStartDebuggingOptionsPageDisplayOrders {
+	public abstract class StartDebuggingOptionsPageProvider {
 		/// <summary>
-		/// .NET Framework debug engine
+		/// Creates new <see cref="StartDebuggingOptionsPage"/> instances
 		/// </summary>
-		public static readonly double DotNetFramework = 100000;
-
-		/// <summary>
-		/// .NET Core debug engine
-		/// </summary>
-		public static readonly double DotNetCore = 101000;
-
-		/// <summary>
-		/// Mono debug engine
-		/// </summary>
-		public static readonly double DotNetMono = 102000;
+		/// <param name="context">Context</param>
+		/// <returns></returns>
+		public abstract IEnumerable<StartDebuggingOptionsPage> Create(StartDebuggingOptionsPageContext context);
 	}
 }

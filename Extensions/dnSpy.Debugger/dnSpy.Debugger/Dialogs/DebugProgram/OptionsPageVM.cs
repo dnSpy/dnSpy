@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using dnSpy.Contracts.Debugger.UI;
+using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 
 namespace dnSpy.Debugger.Dialogs.DebugProgram {
 	sealed class OptionsPageVM {

@@ -23,7 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using dnSpy.Contracts.Debugger.UI;
+using dnSpy.Contracts.Debugger.Attach;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.Dialogs.AttachToProcess {

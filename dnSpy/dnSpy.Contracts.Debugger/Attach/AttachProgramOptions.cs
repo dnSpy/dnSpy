@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.UI {
+namespace dnSpy.Contracts.Debugger.Attach {
 	/// <summary>
 	/// Options shown in the 'attach to process' dialog box and created by <see cref="AttachProgramOptionsProvider.Create(AttachProgramOptionsProviderContext)"/>
 	/// </summary>

@@ -17,22 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Contracts.Debugger.UI {
+namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 	/// <summary>
-	/// Passed to a <see cref="StartDebuggingOptionsPageProvider"/> instance
+	/// Predefined options page display order constants
 	/// </summary>
-	public sealed class StartDebuggingOptionsPageContext {
+	public static class PredefinedStartDebuggingOptionsPageDisplayOrders {
 		/// <summary>
-		/// Filename of the current selected file or an empty string
+		/// .NET Framework debug engine
 		/// </summary>
-		public string CurrentFilename { get; }
+		public static readonly double DotNetFramework = 100000;
 
 		/// <summary>
-		/// Constructor
+		/// .NET Core debug engine
 		/// </summary>
-		/// <param name="currentFilename">Filename of the current selected file or an empty string</param>
-		public StartDebuggingOptionsPageContext(string currentFilename) => CurrentFilename = currentFilename ?? throw new ArgumentNullException(nameof(currentFilename));
+		public static readonly double DotNetCore = 101000;
+
+		/// <summary>
+		/// Mono debug engine
+		/// </summary>
+		public static readonly double DotNetMono = 102000;
 	}
 }
