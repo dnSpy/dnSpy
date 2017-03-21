@@ -191,14 +191,25 @@ namespace dndbg.Engine {
 			return null;
 		}
 
-		public static ICorDebug CreateCorDebug(CoreCLRTypeAttachInfo info, out string coreclrFilename, out string otherVersion) {
+		public static ICorDebug CreateCorDebug(int pid, CoreCLRTypeAttachInfo info, out string coreclrFilename, out string otherVersion) {
 			coreclrFilename = info.CoreCLRFilename;
 			otherVersion = info.Version;
+
+			if (coreclrFilename == null || otherVersion == null) {
+				var infos = GetCoreCLRInfos(pid, runtimePath: null, dbgshimPath: info.DbgShimFilename);
+				if (infos.Length != 0) {
+					coreclrFilename = coreclrFilename ?? infos[0].CoreCLRTypeInfo.CoreCLRFilename;
+					otherVersion = otherVersion ?? infos[0].CoreCLRTypeInfo.Version;
+				}
+				else
+					throw new ArgumentException("Couldn't find a CoreCLR process");
+			}
+
 			var dbgShimState = GetOrCreateDbgShimState(null, info.DbgShimFilename);
 			if (dbgShimState == null)
 				return null;
 
-			int hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion.CorDebugVersion_4_0, info.Version, out object obj);
+			int hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion.CorDebugVersion_4_0, otherVersion, out object obj);
 			return obj as ICorDebug;
 		}
 

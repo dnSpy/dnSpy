@@ -18,19 +18,25 @@
 */
 
 using System;
-using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 
-namespace dnSpy.Debugger.CorDebug.Impl {
-	static class NativeMethods {
-		[DllImport("kernel32", SetLastError = true)]
-		public static extern bool GetExitCodeProcess(IntPtr hProcess, out int lpExitCode);
+namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
+	/// <summary>
+	/// Debugging options base class shared by .NET Framework code and .NET Core code
+	/// </summary>
+	abstract class CorDebugAttachDebuggingOptions : StartDebuggingOptions {
+		/// <summary>
+		/// Gets the process id
+		/// </summary>
+		public int ProcessId { get; set; }
 
-		[DllImport("kernel32", SetLastError = true)]
-		public static extern SafeProcessHandle OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
-		public const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
-
-		[DllImport("kernel32", SetLastError = true)]
-		public static extern bool CloseHandle(IntPtr hObject);
+		/// <summary>
+		/// Copies this instance to <paramref name="other"/>
+		/// </summary>
+		/// <param name="other">Destination</param>
+		protected void CopyTo(CorDebugAttachDebuggingOptions other) {
+			if (other == null)
+				throw new ArgumentNullException(nameof(other));
+			other.ProcessId = ProcessId;
+		}
 	}
 }

@@ -45,6 +45,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) =>
 			new DesktopCLRTypeDebugInfo();
 
+		protected override CLRTypeAttachInfo CreateAttachInfo(CorDebugAttachDebuggingOptions options) =>
+			new DesktopCLRTypeAttachInfo(((DotNetFrameworkAttachDebuggingOptions)options).DebuggeeVersion);
+
 		protected override void OnDebugProcess(DnDebugger dnDebugger) =>
 			runtimeInfo = new DbgEngineRuntimeInfo("CLR " + dnDebugger.DebuggeeVersion, new DotNetFrameworkRuntimeId(dnDebugger.DebuggeeVersion));
 	}

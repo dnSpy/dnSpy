@@ -21,7 +21,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace dnSpy.Debugger.CorDebug.Impl {
+namespace dnSpy.Debugger.CorDebug.Utilities {
 	static class DotNetCoreHelpers {
 		public const string DotNetExeName = "dotnet.exe";
 

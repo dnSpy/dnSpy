@@ -224,4 +224,15 @@ Error: {1}</value>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;no exception message&gt;"</value>
   </data>
+  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
+    <value>Could not start debugger.
+
+Error: {0}</value>
+  </data>
+  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
+    <value>Could not attach to process {0}</value>
+  </data>
+  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
+    <value>Some other process is already debugging process {0}</value>
+  </data>
 </root>

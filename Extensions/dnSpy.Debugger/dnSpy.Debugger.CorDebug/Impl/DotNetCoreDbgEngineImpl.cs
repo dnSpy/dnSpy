@@ -26,6 +26,7 @@ using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.CorDebug.DAC;
 using dnSpy.Debugger.CorDebug.Properties;
+using dnSpy.Debugger.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DotNetCoreDbgEngineImpl : DbgEngineImpl {
@@ -40,19 +41,24 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 		DbgEngineRuntimeInfo runtimeInfo;
 
+		int Bitness => IntPtr.Size * 8;
+
 		public DotNetCoreDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind)
 			: base(clrDacProvider, dbgManager, startKind) {
 		}
 
-		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) {
-			var dncOptions = (DotNetCoreStartDebuggingOptions)options;
-
-			var dbgShimFilename = DotNetCoreHelpers.GetDebugShimFilename(IntPtr.Size * 8);
+		string GetDbgShimAndVerify() {
+			var dbgShimFilename = DotNetCoreHelpers.GetDebugShimFilename(Bitness);
 			if (!File.Exists(dbgShimFilename))
 				throw new Exception("Couldn't find dbgshim.dll");
+			return dbgShimFilename;
+		}
+
+		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) {
+			var dncOptions = (DotNetCoreStartDebuggingOptions)options;
 			string hostFilename, hostCommandLine;
 			if (string.IsNullOrWhiteSpace(dncOptions.Host)) {
-				hostFilename = DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
+				hostFilename = DotNetCoreHelpers.GetPathToDotNetExeHost(Bitness);
 				if (!File.Exists(hostFilename))
 					throw new Exception(string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotFindDotNetCoreHost, DotNetCoreHelpers.DotNetExeName));
 				if (string.IsNullOrWhiteSpace(dncOptions.HostArguments))
@@ -64,7 +70,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				hostFilename = dncOptions.Host;
 				hostCommandLine = dncOptions.HostArguments ?? string.Empty;
 			}
-			return new CoreCLRTypeDebugInfo(dbgShimFilename, hostFilename, hostCommandLine);
+			return new CoreCLRTypeDebugInfo(GetDbgShimAndVerify(), hostFilename, hostCommandLine);
+		}
+
+		protected override CLRTypeAttachInfo CreateAttachInfo(CorDebugAttachDebuggingOptions options) {
+			var dncOptions = (DotNetCoreAttachDebuggingOptions)options;
+			return new CoreCLRTypeAttachInfo(dncOptions.ClrModuleVersion, GetDbgShimAndVerify(), dncOptions.CoreCLRFilename);
 		}
 
 		protected override void OnDebugProcess(DnDebugger dnDebugger) =>

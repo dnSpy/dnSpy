@@ -33,19 +33,21 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		DbgEngineProviderImpl(Lazy<ClrDacProvider> clrDacProvider) => this.clrDacProvider = clrDacProvider;
 
 		public override DbgEngine Create(DbgManager dbgManager, StartDebuggingOptions options) {
-			if (options is DotNetFrameworkStartDebuggingOptions dnfOptions)
-				return StartDotNetFramework(dbgManager, dnfOptions);
+			switch (options) {
+			case DotNetFrameworkStartDebuggingOptions _:
+				return new DotNetFrameworkDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Start);
 
-			if (options is DotNetCoreStartDebuggingOptions dncOptions)
-				return StartDotNetCore(dbgManager, dncOptions);
+			case DotNetCoreStartDebuggingOptions _:
+				return new DotNetCoreDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Start);
+
+			case DotNetFrameworkAttachDebuggingOptions _:
+				return new DotNetFrameworkDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Attach);
+
+			case DotNetCoreAttachDebuggingOptions _:
+				return new DotNetCoreDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Attach);
+			}
 
 			return null;
 		}
-
-		DbgEngine StartDotNetFramework(DbgManager dbgManager, DotNetFrameworkStartDebuggingOptions dnfOptions) =>
-			new DotNetFrameworkDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Start);
-
-		DbgEngine StartDotNetCore(DbgManager dbgManager, DotNetCoreStartDebuggingOptions dncOptions) =>
-			new DotNetCoreDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Start);
 	}
 }

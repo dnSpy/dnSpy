@@ -205,6 +205,15 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not attach to process {0}.
+        /// </summary>
+        public static string Error_CouldNotAttachToProcess {
+            get {
+                return ResourceManager.GetString("Error_CouldNotAttachToProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Couldn&apos;t find .NET Core host &apos;{0}&apos;.
         /// </summary>
         public static string Error_CouldNotFindDotNetCoreHost {
@@ -219,6 +228,17 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         public static string Error_CouldNotStartDebugger {
             get {
                 return ResourceManager.GetString("Error_CouldNotStartDebugger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not start debugger.
+        ///
+        ///Error: {0}.
+        /// </summary>
+        public static string Error_CouldNotStartDebugger2 {
+            get {
+                return ResourceManager.GetString("Error_CouldNotStartDebugger2", resourceCulture);
             }
         }
         
@@ -257,6 +277,15 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         public static string Error_MissingFilename {
             get {
                 return ResourceManager.GetString("Error_MissingFilename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some other process is already debugging process {0}.
+        /// </summary>
+        public static string Error_ProcessIsAlreadyBeingDebugged {
+            get {
+                return ResourceManager.GetString("Error_ProcessIsAlreadyBeingDebugged", resourceCulture);
             }
         }
         

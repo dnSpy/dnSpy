@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			switch (e.Kind) {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
-				hProcess_debuggee = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
+				hProcess_debuggee = Native.NativeMethods.OpenProcess(Native.NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
 				SendMessage(new DbgMessageConnected(cp.CorProcess.ProcessId, pause: false));
 				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
@@ -162,7 +162,16 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return engineModule?.Module;
 		}
 
-		void UnregisterEventsAndCloseProcessHandle() {
+		void HookDnDebuggerEvents() {
+			dnDebugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
+			dnDebugger.OnProcessStateChanged += DnDebugger_OnProcessStateChanged;
+			dnDebugger.OnNameChanged += DnDebugger_OnNameChanged;
+			dnDebugger.OnThreadAdded += DnDebugger_OnThreadAdded;
+			dnDebugger.OnAppDomainAdded += DnDebugger_OnAppDomainAdded;
+			dnDebugger.OnModuleAdded += DnDebugger_OnModuleAdded;
+		}
+
+		void UnhookDnDebuggerEventsAndCloseProcessHandle() {
 			if (dnDebugger != null) {
 				dnDebugger.DebugCallbackEvent -= DnDebugger_DebugCallbackEvent;
 				dnDebugger.OnProcessStateChanged -= DnDebugger_OnProcessStateChanged;
@@ -178,11 +187,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			Debug.Assert(sender != null && sender == dnDebugger);
 
 			if (dnDebugger.ProcessState == DebuggerProcessState.Terminated) {
-				if (hProcess_debuggee == null || hProcess_debuggee.IsClosed || hProcess_debuggee.IsInvalid || !NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode))
+				if (hProcess_debuggee == null || hProcess_debuggee.IsClosed || hProcess_debuggee.IsInvalid || !Native.NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode))
 					exitCode = -1;
 				clrDac = NullClrDac.Instance;
 				ClrDacTerminated?.Invoke(this, EventArgs.Empty);
-				UnregisterEventsAndCloseProcessHandle();
+				UnhookDnDebuggerEventsAndCloseProcessHandle();
 
 				SendMessage(new DbgMessageDisconnected(exitCode));
 				return;
@@ -264,10 +273,17 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		void SendMessage(DbgEngineMessage message) => Message?.Invoke(this, message);
 
-		protected abstract CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options);
+		public override void Start(StartDebuggingOptions options) => CorDebugThread(() => {
+			if (StartKind == DbgStartKind.Start)
+				StartCore((CorDebugStartDebuggingOptions)options);
+			else if (StartKind == DbgStartKind.Attach)
+				AttachCore((CorDebugAttachDebuggingOptions)options);
+			else
+				throw new InvalidOperationException();
+		});
 
-		public override void Start(StartDebuggingOptions options) =>
-			CorDebugThread(() => StartCore((CorDebugStartDebuggingOptions)options));
+		protected abstract CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options);
+		protected abstract CLRTypeAttachInfo CreateAttachInfo(CorDebugAttachDebuggingOptions options);
 
 		void StartCore(CorDebugStartDebuggingOptions options) {
 			Dispatcher.VerifyAccess();
@@ -287,13 +303,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				OnDebugProcess(dnDebugger);
 				if (options.DisableManagedDebuggerDetection)
 					DisableSystemDebuggerDetection.Initialize(dnDebugger);
-
-				dnDebugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
-				dnDebugger.OnProcessStateChanged += DnDebugger_OnProcessStateChanged;
-				dnDebugger.OnNameChanged += DnDebugger_OnNameChanged;
-				dnDebugger.OnThreadAdded += DnDebugger_OnThreadAdded;
-				dnDebugger.OnAppDomainAdded += DnDebugger_OnAppDomainAdded;
-				dnDebugger.OnModuleAdded += DnDebugger_OnModuleAdded;
+				HookDnDebuggerEvents();
 				return;
 			}
 			catch (Exception ex) {
@@ -314,13 +324,51 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		protected abstract void OnDebugProcess(DnDebugger dnDebugger);
-
 		static string GetIncompatiblePlatformErrorMessage() {
 			if (IntPtr.Size == 4)
 				return dnSpy_Debugger_CorDebug_Resources.UseDnSpyExeToDebug64;
 			return dnSpy_Debugger_CorDebug_Resources.UseDnSpy64ExeToDebug32;
 		}
+
+		void AttachCore(CorDebugAttachDebuggingOptions options) {
+			Dispatcher.VerifyAccess();
+			try {
+				if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
+					throw new InvalidOperationException("Dispatcher has shut down");
+				var dbgOptions = new AttachProcessOptions(CreateAttachInfo(options)) {
+					DebugMessageDispatcher = new WpfDebugMessageDispatcher(Dispatcher),
+					ProcessId = options.ProcessId,
+				};
+
+				dnDebugger = DnDebugger.Attach(dbgOptions);
+				if (dnDebugger.Processes.Length == 0)
+					throw new ErrorException(string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotAttachToProcess, $"PID={options.ProcessId.ToString()}"));
+				OnDebugProcess(dnDebugger);
+				HookDnDebuggerEvents();
+				return;
+			}
+			catch (Exception ex) {
+				string errMsg;
+				if (ex is ErrorException errEx)
+					errMsg = errEx.Message;
+				else if (ex is ArgumentException) {
+					// .NET Core throws ArgumentException if it can't attach to it (.NET Framework throws a COM exception with the correct error message)
+					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebugger2,
+						string.Format(dnSpy_Debugger_CorDebug_Resources.Error_ProcessIsAlreadyBeingDebugged, options.ProcessId.ToString()));
+				}
+				else
+					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebugger2, ex.Message);
+
+				SendMessage(new DbgMessageConnected(errMsg));
+				return;
+			}
+		}
+
+		sealed class ErrorException : Exception {
+			public ErrorException(string msg) : base(msg) { }
+		}
+
+		protected abstract void OnDebugProcess(DnDebugger dnDebugger);
 
 		protected abstract CorDebugRuntimeKind CorDebugRuntimeKind { get; }
 
@@ -332,7 +380,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		protected override void CloseCore() {
-			UnregisterEventsAndCloseProcessHandle();
+			UnhookDnDebuggerEventsAndCloseProcessHandle();
 			debuggerThread.Terminate();
 			lock (lockObj) {
 				toEngineAppDomain.Clear();

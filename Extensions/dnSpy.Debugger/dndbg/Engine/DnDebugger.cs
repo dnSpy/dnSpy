@@ -1245,6 +1245,8 @@ namespace dndbg.Engine {
 				foreach (var t in GetCLRRuntimeInfos(process)) {
 					if (string.IsNullOrEmpty(clrType.DebuggeeVersion) || t.versionString == clrType.DebuggeeVersion) {
 						rtInfo = t.rtInfo;
+						if (string.IsNullOrEmpty(debuggeeVersion))
+							debuggeeVersion = t.versionString;
 						break;
 					}
 				}
@@ -1262,7 +1264,7 @@ namespace dndbg.Engine {
 		static ICorDebug CreateCorDebugCoreCLR(AttachProcessOptions options, out string debuggeeVersion, out string clrPath, out string otherVersion) {
 			debuggeeVersion = null;
 			var clrType = (CoreCLRTypeAttachInfo)options.CLRTypeAttachInfo;
-			return CoreCLRHelper.CreateCorDebug(clrType, out clrPath, out otherVersion);
+			return CoreCLRHelper.CreateCorDebug(options.ProcessId, clrType, out clrPath, out otherVersion);
 		}
 
 		static IEnumerable<(string versionString, ICLRRuntimeInfo rtInfo)> GetCLRRuntimeInfos(Process process) {

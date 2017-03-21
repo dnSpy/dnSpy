@@ -52,6 +52,9 @@
     <Compile Include="DAC\ClrDacThreadInfo.cs" />
     <Compile Include="DAC\IClrDacDebugger.cs" />
     <Compile Include="DAC\NullClrDac.cs" />
+    <Compile Include="Dialogs\AttachToProcess\DebuggableProcesses.cs" />
+    <Compile Include="Dialogs\AttachToProcess\DotNetCoreAttachProgramOptionsProvider.cs" />
+    <Compile Include="Dialogs\AttachToProcess\DotNetFrameworkAttachProgramOptionsProvider.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetCoreStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetFrameworkStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetStartDebuggingOptionsPage.cs" />
@@ -65,13 +68,12 @@
     <Compile Include="Impl\DebuggerThread.cs" />
     <Compile Include="Impl\DnThreadUtils.cs" />
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
-    <Compile Include="Impl\DotNetCoreHelpers.cs" />
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
     <Compile Include="Impl\EvalReflectionUtils.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />
-    <Compile Include="Impl\NativeMethods.cs" />
     <Compile Include="Impl\ThreadProperties.cs" />
     <Compile Include="Impl\WpfDebugMessageDispatcher.cs" />
+    <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Properties\dnSpy.Debugger.CorDebug.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -79,6 +81,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TheExtension.cs" />
+    <Compile Include="Utilities\DotNetCoreHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet.CorDebug\dnSpy.Contracts.Debugger.DotNet.CorDebug.csproj">
