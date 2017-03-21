@@ -166,7 +166,7 @@
     <value>Modul .cctor oder Einstiegspunkt</value>
   </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Couldn't find .NET Core host '{0}'</value>
+    <value>.NET Core host '{0}' nicht gefunden</value>
   </data>
   <data name="Error_CouldNotStartDebugger" xml:space="preserve">
     <value>Konnte Debugger nicht starten. {0}</value>
@@ -223,5 +223,16 @@ Fehler: {1}</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;keine Ausnahmemeldung&gt;"</value>
+  </data>
+  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
+    <value>Konnte Debugger nicht starten.
+
+Fehler: {0}</value>
+  </data>
+  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
+    <value>Could not attach to process {0}</value>
+  </data>
+  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
+    <value>Some other process is already debugging process {0}</value>
   </data>
 </root>

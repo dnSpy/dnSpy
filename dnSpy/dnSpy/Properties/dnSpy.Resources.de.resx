@@ -367,10 +367,10 @@
     <value>Gehe zu _vorheriger Registergruppen</value>
   </data>
   <data name="NavigateBackCommand" xml:space="preserve">
-    <value>Navigate Backward</value>
+    <value>Rückwärts navigieren</value>
   </data>
   <data name="NavigateForwardCommand" xml:space="preserve">
-    <value>Navigate Forward</value>
+    <value>Vorwärts navigieren</value>
   </data>
   <data name="NewDataIsNotAnImage" xml:space="preserve">
     <value>Die neuen Daten sind kein Bild.</value>
@@ -475,7 +475,7 @@
     <value>Liste öffnen</value>
   </data>
   <data name="OpenToolBarToolTip" xml:space="preserve">
-    <value>Open</value>
+    <value>Öffnen</value>
   </data>
   <data name="OptionsTitle" xml:space="preserve">
     <value>Optionen</value>
@@ -517,7 +517,7 @@
     <value>Assemblies _suchen</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Search Assemblies</value>
+    <value>Assemblies suchen</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Suche...</value>
@@ -897,13 +897,13 @@
     <value>Ausgabe</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Clear All</value>
+    <value>Alle löschen</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
     <value>Ausgabe anzeigen von:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap</value>
+    <value>Zeilenumbruch umschalten</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
@@ -1065,25 +1065,25 @@
     <value>Oberer Abstand %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
-    <value>Find next</value>
+    <value>Weitersuchen</value>
   </data>
   <data name="Search_FindPreviousToolTip" xml:space="preserve">
-    <value>Find previous</value>
+    <value>Vorheriges suchen</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Match case</value>
+    <value>Groß-/Kleinschreibung beachten</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Match whole word</value>
+    <value>Nur ganzes Wort suchen</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Replace all</value>
+    <value>Alle ersetzen</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Replace next</value>
+    <value>Nächstes ersetzen</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Use Regular Expressions</value>
+    <value>Reguläre Ausdrücke verwenden</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
     <value>Umschalter zwischen den Modi "Suchen" und "Ersetzen"</value>
@@ -1323,10 +1323,10 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Bytes pro Zeile</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
-    <value>Leere Byte</value>
+    <value>Byte leeren</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>Leere ausgewählte Bytes</value>
+    <value>Ausgewählte Bytes leeren</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
     <value>C#-Array kopieren</value>
@@ -1507,7 +1507,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Text Editor</value>
   </data>
   <data name="Search_BigEndianToolTip" xml:space="preserve">
-    <value>Big endian</value>
+    <value>Big Endian</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
@@ -1672,10 +1672,10 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Den Text einfärben</value>
   </data>
   <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
-    <value>Alt+Right Arrow</value>
+    <value>Alt+Pfeil rechts</value>
   </data>
   <data name="ShortCutKeyBackspace" xml:space="preserve">
-    <value>Backspace</value>
+    <value>Rücktaste</value>
   </data>
   <data name="ShortCutKeyCtrlS" xml:space="preserve">
     <value>Strg+S</value>
@@ -1699,7 +1699,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Esc</value>
   </data>
   <data name="ShortCutKeyShiftF3" xml:space="preserve">
-    <value>Shift+F3</value>
+    <value>Umschalt+F3</value>
   </data>
   <data name="ShortCutKeyF3" xml:space="preserve">
     <value>F3</value>
@@ -1708,6 +1708,6 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Alt+R</value>
   </data>
   <data name="TimestampDateTimeFormat" xml:space="preserve">
-    <value>Timestamp format</value>
+    <value>Zeitstempel Format</value>
   </data>
 </root>

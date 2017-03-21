@@ -160,7 +160,7 @@
     <value>Verwende dnSpy-x86.exe beim Anhängen an 32-bit Prozesse</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
-    <value>Brea_k All</value>
+    <value>Alle unter_brechen</value>
   </data>
   <data name="BreakpointsCommand" xml:space="preserve">
     <value>_Haltepunkte</value>
@@ -181,7 +181,7 @@
     <value>Aktualisie_ren</value>
   </data>
   <data name="CallStackCommand" xml:space="preserve">
-    <value>_Call Stack</value>
+    <value>_Aufrufliste</value>
   </data>
   <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
     <value>Die von dnSpy maximal unterstützte Anzahl von Stack-Rahmen wurde überschritten.</value>
@@ -262,7 +262,7 @@
     <value>Zustand</value>
   </data>
   <data name="Column_ThreadSuspendedCount" xml:space="preserve">
-    <value>Suspended Count</value>
+    <value>Angehaltene Anzahl</value>
   </data>
   <data name="Column_Timestamp" xml:space="preserve">
     <value>Zeitstempel</value>
@@ -301,7 +301,7 @@
     <value>Host Ar_gumente</value>
   </data>
   <data name="DbgAsm_Title" xml:space="preserve">
-    <value>Debug Program</value>
+    <value>Programm debuggen</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Arbeitsverzeichnis</value>
@@ -391,7 +391,7 @@
     <value>_Debugge Assembly</value>
   </data>
   <data name="StartDebugging2" xml:space="preserve">
-    <value>_Start Debugging...</value>
+    <value>Debugging _starten...</value>
   </data>
   <data name="DebugCoreCLRAssemblyCommand" xml:space="preserve">
     <value>CoreCLR Assembl_y debuggen...</value>
@@ -496,7 +496,7 @@
     <value>_Löschen</value>
   </data>
   <data name="DetachAllCommand" xml:space="preserve">
-    <value>Detach A_ll</value>
+    <value>A_lle trennen</value>
   </data>
   <data name="DisableAllBreakpointsCommand" xml:space="preserve">
     <value>Alle Haltepunkte _deaktivieren</value>
@@ -558,7 +558,7 @@ HR: 0x{0:X8}
 Error: 0x{1:X8}</value>
   </data>
   <data name="Error_CouldNotBreakProcess" xml:space="preserve">
-    <value>Konnte Prozess nicht unterbrechen. Fehler: 0x{0:X8}</value>
+    <value>Konnte Prozess nicht anhalten. Fehler: 0x{0:X8}</value>
   </data>
   <data name="Error_CouldNotDetachProcess" xml:space="preserve">
     <value>Konnte Prozess nicht abhängen. Fehler: 0x{0:X8}</value>
@@ -655,7 +655,7 @@ HResult: 0x{3:X8}</value>
     <value>Suchen</value>
   </data>
   <data name="Exceptions_Search_ToolTip" xml:space="preserve">
-    <value>Search for an exception</value>
+    <value>Nach einer Ausnahme suchen</value>
   </data>
   <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
     <value>Nur aktivierte Ausnahmen anzeigen</value>
@@ -693,7 +693,7 @@ Wenn es einen Behandler für die Ausnahme gibt, könnte das Programm sicher fort
     <value>Lade dynamische Module</value>
   </data>
   <data name="LocalsAddWatchCommand" xml:space="preserve">
-    <value>Überwachung hinzufügen</value>
+    <value>_Überwachung hinzufügen</value>
   </data>
   <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
     <value>Kinder _zuklappen</value>
@@ -832,10 +832,10 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Modul speichern</value>
   </data>
   <data name="ModulesCommand" xml:space="preserve">
-    <value>M_odules</value>
+    <value>M_odule</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
-    <value>Sie müssen den Prozess unterbrechen um dynamische Module laden zu können.</value>
+    <value>Sie müssen den Prozess anhalten um dynamische Module laden zu können.</value>
   </data>
   <data name="Module_NoAddress" xml:space="preserve">
     <value>&lt;keine Adresse&gt;</value>
@@ -916,7 +916,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Strg+Umschalt+{0}</value>
   </data>
   <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
-    <value>Ctrl+Alt+Break</value>
+    <value>Strg+Alt+Pause</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>Strg+C</value>
@@ -1027,13 +1027,13 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Läuft...</value>
   </data>
   <data name="StepIntoCommand" xml:space="preserve">
-    <value>Einzelschritt</value>
+    <value>_Einzelschritt</value>
   </data>
   <data name="StepOutCommand" xml:space="preserve">
     <value>Ausführen bis _Rücksprung</value>
   </data>
   <data name="StepOverCommand" xml:space="preserve">
-    <value>Prozedurschritt</value>
+    <value>_Prozedurschritt</value>
   </data>
   <data name="StopDebuggingCommand" xml:space="preserve">
     <value>D_ebuggen beenden</value>
@@ -1126,7 +1126,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Haltepunkte aktivieren bzw. deaktivieren</value>
   </data>
   <data name="ToolBarBreakAllToolTip" xml:space="preserve">
-    <value>Break All</value>
+    <value>Alle unterbrechen</value>
   </data>
   <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
     <value>Weiter</value>
@@ -1135,28 +1135,28 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Weiter</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
-    <value>Debug a Program</value>
+    <value>Ein Programm debuggen</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
-    <value>Restart</value>
+    <value>Neu starten</value>
   </data>
   <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
-    <value>Show Next Statement</value>
+    <value>Nächste Anweisung anzeigen</value>
   </data>
   <data name="ToolBarStartDebuggingButton" xml:space="preserve">
     <value>Starten</value>
   </data>
   <data name="ToolBarStepIntoToolTip" xml:space="preserve">
-    <value>Step Into</value>
+    <value>Einzelschritt</value>
   </data>
   <data name="ToolBarStepOutToolTip" xml:space="preserve">
-    <value>Step Out</value>
+    <value>Ausführen bis Rücksprung</value>
   </data>
   <data name="ToolBarStepOverToolTip" xml:space="preserve">
-    <value>Step Over</value>
+    <value>Prozedurschritt</value>
   </data>
   <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
-    <value>Stop Debugging</value>
+    <value>Debuggen beenden</value>
   </data>
   <data name="UnknownExceptionType" xml:space="preserve">
     <value>&lt;Unbekannter Ausnahmetyp&gt;</value>
@@ -1267,13 +1267,13 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Der Thread 0x{0:x} hat mit Code {1} (0x{1:x}) geendet.</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): '{3}' geladen.</value>
+    <value>Loaded '{0}'.</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
     <value>Managed Debugging Assistant '{0}' hat ein Problem in '{1}' festgestellt.</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): '{3}' entladen.</value>
+    <value>Unloaded '{0}'.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;keine Ausnahmemeldung&gt;"</value>
@@ -1300,46 +1300,46 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Hex-Editor (Fenster "Speicher")</value>
   </data>
   <data name="DbgAsm_DebugEngine" xml:space="preserve">
-    <value>_Debug engine</value>
+    <value>_Debug Engine</value>
   </data>
   <data name="DebugWindows" xml:space="preserve">
-    <value>_Windows</value>
+    <value>_Fenster</value>
   </data>
   <data name="OutputCommand" xml:space="preserve">
     <value>Ausga_be</value>
   </data>
   <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
-    <value>Ctrl+Alt+W, {0}</value>
+    <value>Strg+Alt+W, {0}</value>
   </data>
   <data name="TerminateAllCommand" xml:space="preserve">
-    <value>Ter_minate All</value>
+    <value>Alle beenden</value>
   </data>
   <data name="WatchCommand" xml:space="preserve">
-    <value>_Watch</value>
+    <value>_Überwachen</value>
   </data>
   <data name="Window_Watch_10_MenuItem" xml:space="preserve">
-    <value>Watch 1_0</value>
+    <value>Überwachen 1_0</value>
   </data>
   <data name="Window_Watch_N" xml:space="preserve">
-    <value>Watch {0}</value>
+    <value>Überwachen {0}</value>
   </data>
   <data name="Window_Watch_N_MenuItem" xml:space="preserve">
-    <value>Watch _{0}</value>
+    <value>Überwachen _{0}</value>
   </data>
   <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
-    <value>Watch {0}</value>
+    <value>Überwachen {0}</value>
   </data>
   <data name="Options" xml:space="preserve">
     <value>_Optionen...</value>
   </data>
   <data name="ShortCutKeyCtrlAltZ" xml:space="preserve">
-    <value>Ctrl+Alt+Z</value>
+    <value>Strg+Alt+Z</value>
   </data>
   <data name="ProcessesCommand" xml:space="preserve">
-    <value>_Processes</value>
+    <value>_Prozesse</value>
   </data>
   <data name="Window_Processes" xml:space="preserve">
-    <value>Processes</value>
+    <value>Prozesse</value>
   </data>
   <data name="Column_Debugging" xml:space="preserve">
     <value>Debuggen</value>
@@ -1354,46 +1354,46 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Titel</value>
   </data>
   <data name="Process_Paused" xml:space="preserve">
-    <value>Break</value>
+    <value>Anhalten</value>
   </data>
   <data name="Process_Running" xml:space="preserve">
-    <value>Running</value>
+    <value>Ausführen</value>
   </data>
   <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
     <value>An den Prozess anhängen</value>
   </data>
   <data name="Processes_DetachToolTip" xml:space="preserve">
-    <value>Detach Process</value>
+    <value>Prozess abtrennen</value>
   </data>
   <data name="Processes_TerminateToolTip" xml:space="preserve">
-    <value>Terminate Process</value>
+    <value>Prozess beenden</value>
   </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Strg+F</value>
   </data>
   <data name="DetachProcessCommand" xml:space="preserve">
-    <value>_Detach Process</value>
+    <value>Prozess _abtrennen</value>
   </data>
   <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
-    <value>Detach _When Debugging Stopped</value>
+    <value>Na_ch Beenden des Debuggings trennen</value>
   </data>
   <data name="TerminateProcessCommand" xml:space="preserve">
-    <value>Ter_minate Process</value>
+    <value>Prozess _beenden</value>
   </data>
   <data name="ProcessCommand" xml:space="preserve">
     <value>Prozess</value>
   </data>
   <data name="Column_ProcessName" xml:space="preserve">
-    <value>Process Name</value>
+    <value>Prozessname</value>
   </data>
   <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
-    <value>&lt;All {0} not in this list&gt;</value>
+    <value>&lt;Alle {0} nicht in dieser Liste&gt;</value>
   </data>
   <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
-    <value>Edit conditions</value>
+    <value>Bedingungen bearbeiten</value>
   </data>
   <data name="Column_Conditions" xml:space="preserve">
-    <value>Conditions</value>
+    <value>Bedingungen</value>
   </data>
   <data name="Column_BreakWhenThrown" xml:space="preserve">
     <value>Unterbrechen wenn ausgelöst</value>
@@ -1402,129 +1402,132 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Kategorie</value>
   </data>
   <data name="Exception_Conditions_And" xml:space="preserve">
-    <value>And</value>
+    <value>Und</value>
   </data>
   <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
-    <value>Module name equals</value>
+    <value>Modulname gleich</value>
   </data>
   <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
-    <value>Module name not equals</value>
+    <value>Modulname ungleich</value>
   </data>
   <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all exceptions are shown</value>
+    <value>Suche löschen</value>
   </data>
   <data name="Exceptions_AllCategories" xml:space="preserve">
     <value>Alle</value>
   </data>
   <data name="EditConditionsCommand" xml:space="preserve">
-    <value>Edit Conditions...</value>
+    <value>Bedingungen bearbeiten...</value>
   </data>
   <data name="ExceptionsCommand" xml:space="preserve">
-    <value>Exceptions</value>
+    <value>Ausnahmen</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
     <value>_Schnellsuche</value>
   </data>
   <data name="Exceptions_NoMatch" xml:space="preserve">
-    <value>No exception types match your search filter.</value>
+    <value>Keine Ausnahmetypen stimmen mit dem Suchfilter überein.</value>
   </data>
   <data name="AddExceptionButton" xml:space="preserve">
-    <value>Add</value>
+    <value>Hinzufügen</value>
   </data>
   <data name="ExceptionDescription" xml:space="preserve">
-    <value>Exception description</value>
+    <value>Ausnahmebeschreibung</value>
   </data>
   <data name="Exception_Error_NameCanNotBeEmpty" xml:space="preserve">
-    <value>Name can't be empty</value>
+    <value>Name darf nicht leer sein</value>
   </data>
   <data name="EditConditions_Title" xml:space="preserve">
-    <value>Edit Conditions</value>
+    <value>Bedingungen bearbeiten</value>
   </data>
   <data name="Button_AddCondition" xml:space="preserve">
-    <value>_Add Condition</value>
+    <value>Bedingung _hinzufügen</value>
   </data>
   <data name="ModuleBreakpointsCommand" xml:space="preserve">
-    <value>Mod_ule Breakpoints</value>
+    <value>Mod_ulhaltepunkte</value>
   </data>
   <data name="Window_ModuleBreakpoints" xml:space="preserve">
-    <value>Module Breakpoints</value>
+    <value>Modulhaltepunkte</value>
   </data>
   <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
-    <value>Add breakpoint</value>
+    <value>Haltepunkt hinzufügen</value>
   </data>
   <data name="Breakpoints_RemoveAllBreakpoints_ToolTip" xml:space="preserve">
-    <value>Remove all breakpoints</value>
+    <value>Alle Haltepunkte löschen</value>
   </data>
   <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
-    <value>Remove breakpoint</value>
+    <value>Haltenpunkt löschen</value>
   </data>
   <data name="EditAppDomainNameCommand" xml:space="preserve">
-    <value>Edit AppDomain Name</value>
+    <value>AppDomain-Name bearbeiten</value>
   </data>
   <data name="EditModuleNameCommand" xml:space="preserve">
-    <value>Edit Module Name</value>
+    <value>Modulname bearbeiten</value>
   </data>
   <data name="EditOrderCommand" xml:space="preserve">
-    <value>Edit Module Load Order</value>
+    <value>Modulladereihenfolge bearbeiten</value>
   </data>
   <data name="EditProcessNameCommand" xml:space="preserve">
-    <value>Edit Process Name</value>
+    <value>Prozessname bearbeiten</value>
   </data>
   <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
-    <value>Remove All Breakpoints</value>
+    <value>Alle Haltepunkte löschen</value>
   </data>
   <data name="RemoveBreakpointCommand" xml:space="preserve">
-    <value>Remove Breakpoint</value>
+    <value>Haltenpunkt löschen</value>
   </data>
   <data name="DisableBreakpointCommand3" xml:space="preserve">
-    <value>Disable Breakpoint</value>
+    <value>Haltepunkt deaktivieren</value>
   </data>
   <data name="EnableBreakpointCommand3" xml:space="preserve">
-    <value>Enable Breakpoint</value>
+    <value>Haltepunkt aktivieren</value>
   </data>
   <data name="DbgSettings_BreakAllProcesses" xml:space="preserve">
-    <value>Break all processes when one process breaks</value>
+    <value>Alle Prozesse anhalten, wenn ein Prozess anhält</value>
   </data>
   <data name="ShortCutKeyCtrlAltF10" xml:space="preserve">
-    <value>Ctrl+Alt+F10</value>
+    <value>Strg+Alt+F10</value>
   </data>
   <data name="ShortCutKeyCtrlAltF11" xml:space="preserve">
-    <value>Ctrl+Alt+F11</value>
+    <value>Strg+Alt+F11</value>
   </data>
   <data name="ShortCutKeyCtrlShiftAltF11" xml:space="preserve">
-    <value>Ctrl+Shift+Alt+F11</value>
+    <value>Strg+Umschalt+Alt+F11</value>
   </data>
   <data name="StepIntoCurrentProcessCommand" xml:space="preserve">
-    <value>Step Into (Current Process)</value>
+    <value>Einzelschritt (aktueller Prozess)</value>
   </data>
   <data name="StepOutCurrentProcessCommand" xml:space="preserve">
-    <value>Step Out (Current Process)</value>
+    <value>Ausführen bis Rücksprung (aktueller Prozess)</value>
   </data>
   <data name="StepOverCurrentProcessCommand" xml:space="preserve">
-    <value>Step Over (Current Process)</value>
+    <value>Prozedurschritt (aktueller Prozess)</value>
   </data>
   <data name="Processes_BreakProcessToolTip" xml:space="preserve">
-    <value>Break Process</value>
+    <value>Prozess anhalten</value>
   </data>
   <data name="Processes_ContinueProcessToolTip" xml:space="preserve">
-    <value>Continue Process</value>
+    <value>Prozess fortsetzen</value>
   </data>
   <data name="Processes_StepIntoProcessToolTip" xml:space="preserve">
-    <value>Step Into</value>
+    <value>Einzelschritt</value>
   </data>
   <data name="Processes_StepOutProcessToolTip" xml:space="preserve">
-    <value>Step Out</value>
+    <value>Ausführen bis Rücksprung</value>
   </data>
   <data name="Processes_StepOverProcessToolTip" xml:space="preserve">
-    <value>Step Over</value>
+    <value>Prozedurschritt</value>
   </data>
   <data name="StepsOnlyTheCurrentProcess" xml:space="preserve">
-    <value>Steps only the current process</value>
+    <value>Nur den aktuellen Prozess durchlaufen</value>
   </data>
   <data name="BreakProcessCommand" xml:space="preserve">
-    <value>_Break Process</value>
+    <value>Prozess an_halten</value>
   </data>
   <data name="ContinueProcessCommand" xml:space="preserve">
-    <value>_Continue Process</value>
+    <value>Prozess _fortsetzen</value>
+  </data>
+  <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
+    <value>Search for a process</value>
   </data>
 </root>

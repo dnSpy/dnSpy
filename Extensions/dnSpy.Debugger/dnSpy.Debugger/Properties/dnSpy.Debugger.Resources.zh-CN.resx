@@ -1267,13 +1267,13 @@ HResult: 0x{3:X8}</value>
     <value>线程 0x{0:x} 已退出，返回值为 {1} (0x{1:x})。</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): Loaded '{3}'.</value>
+    <value>Loaded '{0}'.</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
     <value>Managed Debugging Assistant '{0}' has detected a problem in '{1}'.</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): Unloaded '{3}'.</value>
+    <value>Unloaded '{0}'.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;no exception message&gt;"</value>
@@ -1526,5 +1526,8 @@ HResult: 0x{3:X8}</value>
   </data>
   <data name="ContinueProcessCommand" xml:space="preserve">
     <value>_Continue Process</value>
+  </data>
+  <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
+    <value>Search for a process</value>
   </data>
 </root>

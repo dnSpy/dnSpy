@@ -1035,10 +1035,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Code in einer anderen Assembly könnte auf diesen Typ verweisen. Sind Sie sicher, dass Sie den Typ löschen möchten?</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
-    <value>There is an unsaved file. Do you want to save it before exiting?</value>
+    <value>Es gibt eine nicht gespeicherte Datei. Möchten Sie sie vor dem Beenden speichern?</value>
   </data>
   <data name="AskExitUnsavedFiles" xml:space="preserve">
-    <value>There are {0} unsaved files. Do you want to save them before exiting?</value>
+    <value>Es gibt {0} nicht gespeicherte Dateien. Möchten Sie sie vor dem Beenden speichern?</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
     <value>Sind Sie sicher, dass Sie neue Assemblys laden und alle Änderungen verwerfen möchten?</value>
@@ -2495,6 +2495,6 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Alle fehlenden Dateien schließen</value>
   </data>
   <data name="CompileDiagnostics_Header_Severity" xml:space="preserve">
-    <value>Severity</value>
+    <value>Warnstufe</value>
   </data>
 </root>

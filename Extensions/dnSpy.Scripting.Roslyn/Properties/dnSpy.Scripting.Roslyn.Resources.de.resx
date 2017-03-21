@@ -190,10 +190,10 @@
     <value>Leere den Bildschirm</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>History Next</value>
+    <value>Verlauf vorwärts</value>
   </data>
   <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>History Previous</value>
+    <value>Verlauf rückwärts</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
     <value>Zurücksetzen</value>
@@ -277,7 +277,7 @@
     <value>_Zeilenumbruch</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap</value>
+    <value>Zeilenumbruch umschalten</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>Alle Dateien</value>
