@@ -121,7 +121,7 @@ namespace dnSpy.Contracts.Text.Classification {
 			propsAndSpansList.AddRange(orderedPropsAndSpans);
 			if (propsAndSpansList.Count == 0)
 				textBlock.Text = text;
-			else if (propsAndSpansList.Count == 1 && propsAndSpansList[0].Span == new Span(0, text.Length)) {
+			else if (CanUseOnlyTextBlock(propsAndSpansList, text)) {
 				var properties = propsAndSpansList[0].Properties;
 				if (!properties.BackgroundBrushEmpty)
 					textBlock.Background = properties.BackgroundBrush;
@@ -157,6 +157,18 @@ namespace dnSpy.Contracts.Text.Classification {
 			return textBlock;
 		}
 		static readonly List<TextRunPropertiesAndSpan> propsAndSpansList = new List<TextRunPropertiesAndSpan>();
+
+		static bool CanUseOnlyTextBlock(List<TextRunPropertiesAndSpan> list, string text) {
+			if (list.Count != 1)
+				return false;
+			var ps = list[0];
+			if (ps.Span != new Span(0, text.Length))
+				return false;
+			var props = ps.Properties;
+			// Don't use just a TextBlock if bg is used since the bg applies to the whole TextBlock,
+			// not the text shown in the TextBlock.
+			return props.BackgroundBrushEmpty;
+		}
 
 		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties properties, Flags flags) {
 			var run = new DOC.Run(text);
