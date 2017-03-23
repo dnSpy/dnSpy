@@ -114,15 +114,15 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 
 		void RemoveAggregator() {
 			uiDispatcher.VerifyAccess();
-			if (attachProgramOptionsAggregator == null)
-				return;
 			processProvider?.Dispose();
 			processProvider = null;
-			attachProgramOptionsAggregator.AttachProgramOptionsAdded -= AttachProgramOptionsAggregator_AttachProgramOptionsAdded;
-			attachProgramOptionsAggregator.Completed -= AttachProgramOptionsAggregator_Completed;
-			attachProgramOptionsAggregator.Dispose();
-			attachProgramOptionsAggregator = null;
-			OnPropertyChanged(nameof(IsRefreshing));
+			if (attachProgramOptionsAggregator != null) {
+				attachProgramOptionsAggregator.AttachProgramOptionsAdded -= AttachProgramOptionsAggregator_AttachProgramOptionsAdded;
+				attachProgramOptionsAggregator.Completed -= AttachProgramOptionsAggregator_Completed;
+				attachProgramOptionsAggregator.Dispose();
+				attachProgramOptionsAggregator = null;
+				OnPropertyChanged(nameof(IsRefreshing));
+			}
 		}
 
 		void AttachProgramOptionsAggregator_AttachProgramOptionsAdded(object sender, AttachProgramOptionsAddedEventArgs e) {
@@ -165,7 +165,10 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				var c = StringComparer.CurrentCultureIgnoreCase.Compare(x.Name, y.Name);
 				if (c != 0)
 					return c;
-				return x.Id - y.Id;
+				c = x.Id - y.Id;
+				if (c != 0)
+					return c;
+				return StringComparer.CurrentCultureIgnoreCase.Compare(x.RuntimeName, y.RuntimeName);
 			}
 		}
 
