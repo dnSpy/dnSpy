@@ -39,7 +39,6 @@
     <Compile Include="Attach\AttachableProcessesServiceImpl.cs" />
     <Compile Include="Attach\AttachableProcessImpl.cs" />
     <Compile Include="Attach\AttachableProcessInfo.cs" />
-    <Compile Include="Attach\ProcessProvider.cs" />
     <Compile Include="Breakpoints\Modules\BreakpointsSerializer.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointImpl.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsServiceImpl.cs" />
@@ -99,6 +98,7 @@
     <Compile Include="ToolWindows\ModuleBreakpoints\TextViewTaggers.cs" />
     <Compile Include="UI\BulkObservableCollection.cs" />
     <Compile Include="UI\FormatterObject.cs" />
+    <Compile Include="Utilities\ProcessProvider.cs" />
     <Compile Include="Utilities\ProcessUtilities.cs" />
     <Compile Include="Utilities\WildcardsUtils.cs" />
     <None Include="Exceptions\GenerateExceptionsXmlFile.cs" />

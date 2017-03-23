@@ -30,6 +30,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.UI;
+using dnSpy.Debugger.Utilities;
 
 namespace dnSpy.Debugger.ToolWindows.Memory {
 	static class Constants {
@@ -81,19 +82,21 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 				yield break;
 
 			var currentPid = processHexBufferProvider.GetProcessId(ctx.Buffer);
-			foreach (var pid in processHexBufferProvider.ProcessIds.OrderBy(a => a)) {
-				var attr = new ExportMenuItemAttribute { Header = UIUtilities.EscapeMenuItemHeader(GetProcessHeader(pid)) };
-				bool isChecked = pid == currentPid;
-				var item = new DynamicCheckableMenuItem(ctx2 => processHexBufferProvider.SetProcessStream(ctx.Buffer, pid), isChecked);
-				yield return new CreatedMenuItem(attr, item);
+			using (var processProvider = new ProcessProvider()) {
+				foreach (var pid in processHexBufferProvider.ProcessIds.OrderBy(a => a)) {
+					var attr = new ExportMenuItemAttribute { Header = UIUtilities.EscapeMenuItemHeader(GetProcessHeader(processProvider.GetProcess(pid), pid)) };
+					bool isChecked = pid == currentPid;
+					var item = new DynamicCheckableMenuItem(ctx2 => processHexBufferProvider.SetProcessStream(ctx.Buffer, pid), isChecked);
+					yield return new CreatedMenuItem(attr, item);
+				}
 			}
 		}
 
-		string GetProcessHeader(int pid) {
+		string GetProcessHeader(Process process, int pid) {
 			try {
-				using (var p = Process.GetProcessById(pid)) {
-					var title = Filter(p.MainWindowTitle, 200);
-					var name = p.MainModule.ModuleName;
+				if (process != null) {
+					var title = Filter(process.MainWindowTitle, 200);
+					var name = process.MainModule.ModuleName;
 					if (string.IsNullOrWhiteSpace(title))
 						return $"{pid} {name}";
 					return $"{pid} {name} - {title}";

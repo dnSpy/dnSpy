@@ -23,6 +23,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Attach;
 using dnSpy.Debugger.UI;
+using dnSpy.Debugger.Utilities;
 
 namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 	sealed class ProgramVM : ViewModelBase {

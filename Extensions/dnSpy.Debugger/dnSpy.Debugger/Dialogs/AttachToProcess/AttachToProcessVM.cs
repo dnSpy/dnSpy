@@ -27,10 +27,10 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Debugger.Attach;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
+using dnSpy.Debugger.Utilities;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Dialogs.AttachToProcess {

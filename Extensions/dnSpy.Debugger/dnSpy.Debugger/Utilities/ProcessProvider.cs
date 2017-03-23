@@ -17,15 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace dnSpy.Debugger.Attach {
+namespace dnSpy.Debugger.Utilities {
 	/// <summary>
 	/// Calling <see cref="Process.GetProcessById(int)"/> is slow. This class caches the processes to speed
-	/// up creating new <see cref="AttachableProcessInfo"/>s.
+	/// up code that must get multiple processes.
 	/// </summary>
-	sealed class ProcessProvider {
+	sealed class ProcessProvider : IDisposable {
 		readonly Dictionary<int, Process> toProcess;
 		bool processesInitd;
 
