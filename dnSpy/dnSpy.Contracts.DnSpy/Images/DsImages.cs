@@ -33,6 +33,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference AssemblyError { get; } = new ImageReference(assembly, DsImageStrings.AssemblyError);
 		public static ImageReference AssemblyExe { get; } = new ImageReference(assembly, DsImageStrings.AssemblyExe);
 		public static ImageReference AutoSizeOptimize { get; } = new ImageReference(assembly, DsImageStrings.AutoSizeOptimize);
+		public static ImageReference AutosWindow { get; } = new ImageReference(assembly, DsImageStrings.AutosWindow);
 		public static ImageReference Backwards { get; } = new ImageReference(assembly, DsImageStrings.Backwards);
 		public static ImageReference Binary { get; } = new ImageReference(assembly, DsImageStrings.Binary);
 		public static ImageReference BinaryFile { get; } = new ImageReference(assembly, DsImageStrings.BinaryFile);

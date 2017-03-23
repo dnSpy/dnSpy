@@ -30,6 +30,7 @@ namespace dnSpy.Contracts.Images {
 		public const string AssemblyError = Prefix + DsImageStrings.AssemblyError;
 		public const string AssemblyExe = Prefix + DsImageStrings.AssemblyExe;
 		public const string AutoSizeOptimize = Prefix + DsImageStrings.AutoSizeOptimize;
+		public const string AutosWindow = Prefix + DsImageStrings.AutosWindow;
 		public const string Backwards = Prefix + DsImageStrings.Backwards;
 		public const string Binary = Prefix + DsImageStrings.Binary;
 		public const string BinaryFile = Prefix + DsImageStrings.BinaryFile;

@@ -29,6 +29,7 @@ namespace dnSpy.Contracts.Images {
 		public const string AssemblyError = nameof(AssemblyError);
 		public const string AssemblyExe = nameof(AssemblyExe);
 		public const string AutoSizeOptimize = nameof(AutoSizeOptimize);
+		public const string AutosWindow = nameof(AutosWindow);
 		public const string Backwards = nameof(Backwards);
 		public const string Binary = nameof(Binary);
 		public const string BinaryFile = nameof(BinaryFile);

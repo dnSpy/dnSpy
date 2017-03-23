@@ -268,11 +268,17 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: App Menu: Debug \ Windows, Group: Values</summary>
 		public const string GROUP_APP_MENU_DEBUG_WINDOWS_VALUES = "3000,BC7F81CF-49A1-4F59-B789-56EEDAA375BE";
 
+		/// <summary>Group: App Menu: Debug \ Windows \ Watch, Group: Watch N</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_WATCH_SUB = "0,2248FFD3-0377-4434-B293-378DDD605DF3";
+
 		/// <summary>Group: App Menu: Debug \ Windows, Group: Info</summary>
 		public const string GROUP_APP_MENU_DEBUG_WINDOWS_INFO = "6000,2721D995-74E5-4AA8-9E32-FBB2EDCE768F";
 
 		/// <summary>Group: App Menu: Debug \ Windows, Group: Memory</summary>
 		public const string GROUP_APP_MENU_DEBUG_WINDOWS_MEMORY = "7000,246D698C-04F2-4998-88FB-46853D62E290";
+
+		/// <summary>Group: App Menu: Debug \ Windows \ Memory, Group: Memory N</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_MEMORY_SUB = "0,3B088B70-F2D6-4388-8B5D-397372CEAC9F";
 
 		/// <summary>Group: App Menu: Window, Group: Window</summary>
 		public const string GROUP_APP_MENU_WINDOW_WINDOW = "0,27A8834B-D6BF-4267-803D-15DECAFAEA05";

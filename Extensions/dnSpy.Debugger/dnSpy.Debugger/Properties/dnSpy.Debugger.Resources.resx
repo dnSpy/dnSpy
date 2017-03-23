@@ -1530,4 +1530,10 @@ Are you sure you want to expand it?</value>
   <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
     <value>Search for a process</value>
   </data>
+  <data name="AutosCommand" xml:space="preserve">
+    <value>_Autos</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
+    <value>Ctrl+Alt+V, A</value>
+  </data>
 </root>

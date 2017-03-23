@@ -350,7 +350,7 @@ namespace dnSpy.Debugger.DbgUI {
 			public override bool IsVisible(IMenuItemContext context) => debugger.Value.IsDebugging;
 		}
 
-		[ExportMenuItem(OwnerGuid = Constants.WATCH_GUID, Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_VALUES, Order = 0)]
+		[ExportMenuItem(OwnerGuid = Constants.WATCH_GUID, Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_WATCH_SUB, Order = 0)]
 		sealed class SubMenuWatchWindowCommand : MenuItemBase, IMenuItemProvider {
 			static SubMenuWatchWindowCommand() {
 				subCmds = Array.Empty<Tuple<IMenuItem, string, string>>();//TODO:
@@ -374,6 +374,14 @@ namespace dnSpy.Debugger.DbgUI {
 						attr.InputGestureText = info.Item3;
 					yield return new CreatedMenuItem(attr, info.Item1);
 				}
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:AutosCommand", Icon = DsImagesAttribute.AutosWindow, InputGestureText = "res:ShortCutKeyCtrlAltV_A", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_VALUES, Order = 10)]
+		sealed class AutosWindowCommand : DebugToolWindowMainMenuCommand {
+			[ImportingConstructor]
+			public AutosWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
+				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, true) {
 			}
 		}
 
@@ -444,7 +452,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_MEMORY, Order = 0)]
+		[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_MEMORY_SUB, Order = 0)]
 		sealed class SubMenuMemoryWindowCommand : MenuItemBase, IMenuItemProvider {
 			readonly (IMenuItem menuItem, string headerText, string inputGestureText)[] subCmds;
 

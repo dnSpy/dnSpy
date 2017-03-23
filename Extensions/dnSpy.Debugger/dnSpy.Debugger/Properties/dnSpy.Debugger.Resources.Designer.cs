@@ -232,6 +232,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Autos.
+        /// </summary>
+        public static string AutosCommand {
+            get {
+                return ResourceManager.GetString("AutosCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hex Editor (Memory Window).
         /// </summary>
         public static string BgImgDisplayName_DebuggerMemory {
@@ -3150,6 +3159,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyCtrlAltU {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlAltU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+V, A.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltV_A {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltV_A", resourceCulture);
             }
         }
         
