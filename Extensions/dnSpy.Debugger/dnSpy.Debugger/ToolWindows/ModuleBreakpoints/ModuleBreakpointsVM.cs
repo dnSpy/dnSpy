@@ -29,6 +29,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Text;
 using dnSpy.Debugger.ToolWindows.Controls;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
@@ -37,13 +38,14 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	interface IModuleBreakpointsVM {
 		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
-		ObservableCollection<ModuleBreakpointVM> AllItems { get; }
+		BulkObservableCollection<ModuleBreakpointVM> AllItems { get; }
 		ObservableCollection<ModuleBreakpointVM> SelectedItems { get; }
+		void ResetSearchSettings();
 	}
 
 	[Export(typeof(IModuleBreakpointsVM))]
 	sealed class ModuleBreakpointsVM : ViewModelBase, IModuleBreakpointsVM, ILazyToolWindowVM {
-		public ObservableCollection<ModuleBreakpointVM> AllItems { get; }
+		public BulkObservableCollection<ModuleBreakpointVM> AllItems { get; }
 		public ObservableCollection<ModuleBreakpointVM> SelectedItems { get; }
 
 		public bool IsOpen {
@@ -55,6 +57,31 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			get => lazyToolWindowVMHelper.IsVisible;
 			set => lazyToolWindowVMHelper.IsVisible = value;
 		}
+
+		public string FilterText {
+			get => filterText;
+			set {
+				if (filterText == value)
+					return;
+				filterText = value;
+				OnPropertyChanged(nameof(FilterText));
+				FilterList_UI(filterText);
+			}
+		}
+		string filterText = string.Empty;
+
+		public bool SomethingMatched => !nothingMatched;
+		public bool NothingMatched {
+			get => nothingMatched;
+			set {
+				if (nothingMatched == value)
+					return;
+				nothingMatched = value;
+				OnPropertyChanged(nameof(NothingMatched));
+				OnPropertyChanged(nameof(SomethingMatched));
+			}
+		}
+		bool nothingMatched;
 
 		IEditValueProvider ModuleNameEditValueProvider {
 			get {
@@ -104,12 +131,14 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		readonly Lazy<DbgModuleBreakpointsService> dbgModuleBreakpointsService;
 		readonly Dictionary<DbgModuleBreakpoint, ModuleBreakpointVM> bpToVM;
+		readonly List<ModuleBreakpointVM> realAllItems;
 		int moduleBreakpointOrder;
 
 		[ImportingConstructor]
 		ModuleBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ModuleBreakpointFormatterProvider moduleBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, EditValueProviderService editValueProviderService, Lazy<DbgModuleBreakpointsService> dbgModuleBreakpointsService) {
 			uiDispatcher.VerifyAccess();
-			AllItems = new ObservableCollection<ModuleBreakpointVM>();
+			realAllItems = new List<ModuleBreakpointVM>();
+			AllItems = new BulkObservableCollection<ModuleBreakpointVM>();
 			SelectedItems = new ObservableCollection<ModuleBreakpointVM>();
 			bpToVM = new Dictionary<DbgModuleBreakpoint, ModuleBreakpointVM>();
 			this.dbgManager = dbgManager;
@@ -119,7 +148,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			this.editValueProviderService = editValueProviderService;
 			this.dbgModuleBreakpointsService = dbgModuleBreakpointsService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			moduleBreakpointContext = new ModuleBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider) {
+			moduleBreakpointContext = new ModuleBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher()) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = moduleBreakpointFormatterProvider.Create(),
 			};
@@ -144,6 +173,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		// UI thread
 		void InitializeDebugger_UI(bool enable) {
 			moduleBreakpointContext.UIDispatcher.VerifyAccess();
+			ResetSearchSettings();
 			if (enable) {
 				moduleBreakpointContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -196,7 +226,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		// UI thread
 		void RefreshThemeFields_UI() {
 			moduleBreakpointContext.UIDispatcher.VerifyAccess();
-			foreach (var vm in AllItems)
+			foreach (var vm in realAllItems)
 				vm.RefreshThemeFields_UI();
 		}
 
@@ -216,11 +246,12 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				UI(() => AddItems_UI(e.Objects));
 			else {
 				UI(() => {
-					var coll = AllItems;
+					var coll = realAllItems;
 					for (int i = coll.Count - 1; i >= 0; i--) {
 						if (e.Objects.Contains(coll[i].ModuleBreakpoint))
 							RemoveModuleBreakpointAt_UI(i);
 					}
+					InitializeNothingMatched();
 				});
 			}
 		}
@@ -245,28 +276,146 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				var vm = new ModuleBreakpointVM(bp, moduleBreakpointContext, moduleBreakpointOrder++, ModuleNameEditValueProvider, OrderEditValueProvider, ProcessNameEditValueProvider, AppDomainNameEditValueProvider);
 				Debug.Assert(!bpToVM.ContainsKey(bp));
 				bpToVM[bp] = vm;
-				AllItems.Add(vm);
+				realAllItems.Add(vm);
+				if (IsMatch_UI(vm, filterText)) {
+					int insertionIndex = GetInsertionIndex_UI(vm);
+					AllItems.Insert(insertionIndex, vm);
+				}
 			}
+			if (NothingMatched && AllItems.Count != 0)
+				NothingMatched = false;
+		}
+
+		// UI thread
+		int GetInsertionIndex_UI(ModuleBreakpointVM vm) {
+			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
+			var comparer = ModuleBreakpointVMComparer.Instance;
+			var list = AllItems;
+			int lo = 0, hi = list.Count - 1;
+			while (lo <= hi) {
+				int index = (lo + hi) / 2;
+
+				int c = comparer.Compare(vm, list[index]);
+				if (c < 0)
+					hi = index - 1;
+				else if (c > 0)
+					lo = index + 1;
+				else
+					return index;
+			}
+			return hi + 1;
+		}
+
+		// UI thread
+		void FilterList_UI(string filterText) {
+			moduleBreakpointContext.UIDispatcher.VerifyAccess();
+			if (string.IsNullOrWhiteSpace(filterText))
+				filterText = string.Empty;
+			moduleBreakpointContext.SearchMatcher.SetSearchText(filterText);
+
+			var newList = new List<ModuleBreakpointVM>(GetFilteredItems_UI(filterText));
+			newList.Sort(ModuleBreakpointVMComparer.Instance);
+			AllItems.Reset(newList);
+			InitializeNothingMatched(filterText);
+		}
+
+		void InitializeNothingMatched() => InitializeNothingMatched(filterText);
+		void InitializeNothingMatched(string filterText) =>
+			NothingMatched = AllItems.Count == 0 && !string.IsNullOrWhiteSpace(filterText);
+
+		sealed class ModuleBreakpointVMComparer : IComparer<ModuleBreakpointVM> {
+			public static readonly IComparer<ModuleBreakpointVM> Instance = new ModuleBreakpointVMComparer();
+			public int Compare(ModuleBreakpointVM x, ModuleBreakpointVM y) => x.Order - y.Order;
+		}
+
+		// UI thread
+		IEnumerable<ModuleBreakpointVM> GetFilteredItems_UI(string filterText) {
+			moduleBreakpointContext.UIDispatcher.VerifyAccess();
+			foreach (var vm in realAllItems) {
+				if (IsMatch_UI(vm, filterText))
+					yield return vm;
+			}
+		}
+
+		// UI thread
+		bool IsMatch_UI(ModuleBreakpointVM vm, string filterText) {
+			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
+			// Common case check, we don't need to allocate any strings
+			if (filterText == string.Empty)
+				return true;
+			var allStrings = new string[] {
+				GetId_UI(vm),
+				GetModuleName_UI(vm),
+				GetOrder_UI(vm),
+				GetProcessName_UI(vm),
+				GetAppDomainName_UI(vm),
+			};
+			sbOutput.Reset();
+			return moduleBreakpointContext.SearchMatcher.IsMatchAll(allStrings);
+		}
+		readonly StringBuilderTextColorOutput sbOutput = new StringBuilderTextColorOutput();
+
+		// UI thread
+		string GetId_UI(ModuleBreakpointVM vm) {
+			sbOutput.Reset();
+			moduleBreakpointContext.Formatter.WriteId(sbOutput, vm.ModuleBreakpoint);
+			return sbOutput.ToString();
+		}
+
+		// UI thread
+		string GetModuleName_UI(ModuleBreakpointVM vm) {
+			sbOutput.Reset();
+			moduleBreakpointContext.Formatter.WriteModuleName(sbOutput, vm.ModuleBreakpoint);
+			return sbOutput.ToString();
+		}
+
+		// UI thread
+		string GetOrder_UI(ModuleBreakpointVM vm) {
+			sbOutput.Reset();
+			moduleBreakpointContext.Formatter.WriteOrder(sbOutput, vm.ModuleBreakpoint);
+			return sbOutput.ToString();
+		}
+
+		// UI thread
+		string GetProcessName_UI(ModuleBreakpointVM vm) {
+			sbOutput.Reset();
+			moduleBreakpointContext.Formatter.WriteProcessName(sbOutput, vm.ModuleBreakpoint);
+			return sbOutput.ToString();
+		}
+
+		// UI thread
+		string GetAppDomainName_UI(ModuleBreakpointVM vm) {
+			sbOutput.Reset();
+			moduleBreakpointContext.Formatter.WriteAppDomainName(sbOutput, vm.ModuleBreakpoint);
+			return sbOutput.ToString();
 		}
 
 		// UI thread
 		void RemoveModuleBreakpointAt_UI(int i) {
 			moduleBreakpointContext.UIDispatcher.VerifyAccess();
-			Debug.Assert(0 <= i && i < AllItems.Count);
-			var vm = AllItems[i];
+			Debug.Assert(0 <= i && i < realAllItems.Count);
+			var vm = realAllItems[i];
 			bool b = bpToVM.Remove(vm.ModuleBreakpoint);
 			Debug.Assert(b);
 			vm.Dispose();
-			AllItems.RemoveAt(i);
+			realAllItems.RemoveAt(i);
+			AllItems.Remove(vm);
 		}
 
 		// UI thread
 		void RemoveAllModuleBreakpoints_UI() {
 			moduleBreakpointContext.UIDispatcher.VerifyAccess();
-			var coll = AllItems;
+			AllItems.Reset(Array.Empty<ModuleBreakpointVM>());
+			var coll = realAllItems;
 			for (int i = coll.Count - 1; i >= 0; i--)
 				RemoveModuleBreakpointAt_UI(i);
 			Debug.Assert(bpToVM.Count == 0);
+		}
+
+		// UI thread
+		public void ResetSearchSettings() {
+			moduleBreakpointContext.UIDispatcher.VerifyAccess();
+			FilterText = string.Empty;
 		}
 	}
 }

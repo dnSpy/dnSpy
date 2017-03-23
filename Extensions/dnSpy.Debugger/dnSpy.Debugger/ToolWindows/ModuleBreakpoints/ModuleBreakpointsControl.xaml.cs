@@ -20,13 +20,26 @@
 using System;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	sealed partial class ModuleBreakpointsControl : UserControl {
 		public ListView ListView => listView;
+		public TextBox SearchTextBox => searchTextBox;
 
-		public ModuleBreakpointsControl() => InitializeComponent();
+		public ModuleBreakpointsControl() {
+			InitializeComponent();
+			SearchTextBox.GotKeyboardFocus += SearchTextBox_GotKeyboardFocus;
+		}
+
+		void SearchTextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
+			Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SearchTextBox.SelectAll()));
+
+		public void FocusSearchTextBox() {
+			SearchTextBox.Focus();
+			SearchTextBox.SelectAll();
+		}
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))

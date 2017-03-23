@@ -43,6 +43,10 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.EditAppDomainName(), a => moduleBreakpointsContent.Value.Operations.CanEditAppDomainName), ModifierKeys.Control, Key.D4);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.RemoveModuleBreakpoints(), a => moduleBreakpointsContent.Value.Operations.CanRemoveModuleBreakpoints), ModifierKeys.None, Key.Delete);
 			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.Operations.AddModuleBreakpoint(), a => moduleBreakpointsContent.Value.Operations.CanAddModuleBreakpoint), ModifierKeys.None, Key.Insert);
+
+			cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_MODULEBREAKPOINTS_CONTROL);
+			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.F);
+			cmds.Add(new RelayCommand(a => moduleBreakpointsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.E);
 		}
 	}
 
@@ -114,15 +118,15 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public override bool IsEnabled(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanRemoveModuleBreakpoints;
 	}
 
-	[ExportMenuItem(Header = "res:RemoveAllBreakpointsCommand", Icon = DsImagesAttribute.ClearWindowContent, Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS1, Order = 20)]
+	[ExportMenuItem(Header = "res:RemoveAllBreakpointsCommand", Icon = DsImagesAttribute.ClearBreakpointGroup, Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS1, Order = 20)]
 	sealed class RemoveAllBreakpointsBreakpointCtxMenuCommand : ModuleBreakpointsCtxMenuCommand {
 		[ImportingConstructor]
 		RemoveAllBreakpointsBreakpointCtxMenuCommand(Lazy<IModuleBreakpointsContent> moduleBreakpointesContent)
 			: base(moduleBreakpointesContent) {
 		}
 
-		public override void Execute(ModuleBreakpointsCtxMenuContext context) => context.Operations.RemoveAllModuleBreakpoints();
-		public override bool IsEnabled(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanRemoveAllModuleBreakpoints;
+		public override void Execute(ModuleBreakpointsCtxMenuContext context) => context.Operations.RemoveMatchingModuleBreakpoints();
+		public override bool IsEnabled(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanRemoveMatchingModuleBreakpoints;
 	}
 
 	[ExportMenuItem(Header = "res:EnableBreakpointCommand3", Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_CMDS1, Order = 30)]

@@ -32,6 +32,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Breakpoints.Modules;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	abstract class ModuleBreakpointsOperations {
@@ -43,8 +44,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public abstract void AddModuleBreakpoint();
 		public abstract bool CanRemoveModuleBreakpoints { get; }
 		public abstract void RemoveModuleBreakpoints();
-		public abstract bool CanRemoveAllModuleBreakpoints { get; }
-		public abstract void RemoveAllModuleBreakpoints();
+		public abstract bool CanRemoveMatchingModuleBreakpoints { get; }
+		public abstract void RemoveMatchingModuleBreakpoints();
 		public abstract bool CanEditModuleName { get; }
 		public abstract void EditModuleName();
 		public abstract bool CanEditOrder { get; }
@@ -55,6 +56,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public abstract void EditAppDomainName();
 		public abstract bool CanToggleEnabled { get; }
 		public abstract void ToggleEnabled();
+		public abstract bool CanToggleMatchingBreakpoints { get; }
+		public abstract void ToggleMatchingBreakpoints();
 		public abstract bool CanEnableBreakpoints { get; }
 		public abstract void EnableBreakpoints();
 		public abstract bool CanDisableBreakpoints { get; }
@@ -66,6 +69,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public abstract void ExportMatchingBreakpoints();
 		public abstract bool CanImportBreakpoints { get; }
 		public abstract void ImportBreakpoints();
+		public abstract bool CanResetSearchSettings { get; }
+		public abstract void ResetSearchSettings();
 	}
 
 	[Export(typeof(ModuleBreakpointsOperations))]
@@ -78,7 +83,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		readonly IPickFilename pickFilename;
 		readonly IMessageBoxService messageBoxService;
 
-		ObservableCollection<ModuleBreakpointVM> AllItems => moduleBreakpointsVM.AllItems;
+		BulkObservableCollection<ModuleBreakpointVM> AllItems => moduleBreakpointsVM.AllItems;
 		ObservableCollection<ModuleBreakpointVM> SelectedItems => moduleBreakpointsVM.SelectedItems;
 		//TODO: This should be view order
 		IEnumerable<ModuleBreakpointVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
@@ -149,8 +154,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			dbgModuleBreakpointsService.Value.Remove(bps);
 		}
 
-		public override bool CanRemoveAllModuleBreakpoints => true;
-		public override void RemoveAllModuleBreakpoints() => dbgModuleBreakpointsService.Value.Clear();
+		public override bool CanRemoveMatchingModuleBreakpoints => AllItems.Count > 0;
+		public override void RemoveMatchingModuleBreakpoints() => dbgModuleBreakpointsService.Value.Remove(AllItems.Select(a => a.ModuleBreakpoint).ToArray());
 
 		public override bool CanEditModuleName => SelectedItems.Count == 1 && !SelectedItems[0].ModuleNameEditableValue.IsEditingValue;
 		public override void EditModuleName() {
@@ -185,23 +190,28 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		public override bool CanToggleEnabled => SelectedItems.Count > 0 && !IsEditingValues;
-		public override void ToggleEnabled() {
-			// Toggling everything seems to be less useful, it's more likely that you'd want
-			// to enable all selected module breakpoints or disable all of them.
-			bool allSet = SelectedItems.All(a => a.IsEnabled);
-			EnableDisableBreakpoints(enable: !allSet);
-		}
+		public override void ToggleEnabled() => ToggleBreakpoints(SelectedItems);
+
+		public override bool CanToggleMatchingBreakpoints => AllItems.Count > 0;
+		public override void ToggleMatchingBreakpoints() => ToggleBreakpoints(AllItems);
 
 		public override bool CanEnableBreakpoints => SelectedItems.Count != 0 && SelectedItems.Any(a => !a.IsEnabled);
-		public override void EnableBreakpoints() => EnableDisableBreakpoints(enable: true);
+		public override void EnableBreakpoints() => EnableDisableBreakpoints(SelectedItems, enable: true);
 
 		public override bool CanDisableBreakpoints => SelectedItems.Count != 0 && SelectedItems.Any(a => a.IsEnabled);
-		public override void DisableBreakpoints() => EnableDisableBreakpoints(enable: false);
+		public override void DisableBreakpoints() => EnableDisableBreakpoints(SelectedItems, enable: false);
 
-		void EnableDisableBreakpoints(bool enable) {
-			var newSettings = new List<DbgModuleBreakpointAndSettings>(SelectedItems.Count);
-			for (int i = 0; i < SelectedItems.Count; i++) {
-				var vm = SelectedItems[i];
+		void ToggleBreakpoints(IList<ModuleBreakpointVM> breakpoints) {
+			// Toggling everything seems to be less useful, it's more likely that you'd want
+			// to enable all selected module breakpoints or disable all of them.
+			bool allSet = breakpoints.All(a => a.IsEnabled);
+			EnableDisableBreakpoints(breakpoints, enable: !allSet);
+		}
+
+		void EnableDisableBreakpoints(IList<ModuleBreakpointVM> breakpoints, bool enable) {
+			var newSettings = new List<DbgModuleBreakpointAndSettings>(breakpoints.Count);
+			for (int i = 0; i < breakpoints.Count; i++) {
+				var vm = breakpoints[i];
 				var settings = vm.ModuleBreakpoint.Settings;
 				if (settings.IsEnabled == enable)
 					continue;
@@ -260,5 +270,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			var breakpoints = new BreakpointsSerializer(settingsService).Load();
 			dbgModuleBreakpointsService.Value.Add(breakpoints);
 		}
+
+		public override bool CanResetSearchSettings => true;
+		public override void ResetSearchSettings() => moduleBreakpointsVM.ResetSearchSettings();
 	}
 }

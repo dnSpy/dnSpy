@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		void OnVisible();
 		void OnHidden();
 		void Focus();
+		void FocusSearchTextBox();
 		ListView ListView { get; }
 		ModuleBreakpointsOperations Operations { get; }
 	}
@@ -52,17 +53,22 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			public IModuleBreakpointsVM VM { get; }
 			ModuleBreakpointsOperations Operations { get; }
 
-			public ICommand AddModuleBreakpointCommand => new RelayCommand(a => Operations.AddModuleBreakpoint(), a => Operations.CanAddModuleBreakpoint);
-			public ICommand RemoveModuleBreakpointsCommand => new RelayCommand(a => Operations.RemoveModuleBreakpoints(), a => Operations.CanRemoveModuleBreakpoints);
-			public ICommand RemoveAllModuleBreakpointsCommand => new RelayCommand(a => Operations.RemoveAllModuleBreakpoints(), a => Operations.CanRemoveAllModuleBreakpoints);
-			public ICommand ExportMatchingBreakpointsCommand => new RelayCommand(a => Operations.ExportMatchingBreakpoints(), a => Operations.CanExportMatchingBreakpoints);
-			public ICommand ImportBreakpointsCommand => new RelayCommand(a => Operations.ImportBreakpoints(), a => Operations.CanImportBreakpoints);
-
 			public string AddModuleBreakpointToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_AddBreakpoint_ToolTip, null);
 			public string RemoveModuleBreakpointToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_RemoveBreakpoint_ToolTip, null);
-			public string RemoveAllModuleBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_RemoveAllBreakpoints_ToolTip, null);
+			public string RemoveMatchingBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_RemoveMatchingBreakpoints_ToolTip, null);
+			public string ToggleMatchingBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_ToggleMatchingBreakpoints_ToolTip, null);
 			public string ExportMatchingBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_ExportMatchingBreakpoints_ToolTip, null);
 			public string ImportBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_ImportBreakpoints_ToolTip, null);
+			public string SearchToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_Search_ToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlF);
+			public string ResetSearchSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_ResetSearchSettings_ToolTip, null);
+
+			public ICommand AddModuleBreakpointCommand => new RelayCommand(a => Operations.AddModuleBreakpoint(), a => Operations.CanAddModuleBreakpoint);
+			public ICommand RemoveModuleBreakpointsCommand => new RelayCommand(a => Operations.RemoveModuleBreakpoints(), a => Operations.CanRemoveModuleBreakpoints);
+			public ICommand RemoveMatchingBreakpointsCommand => new RelayCommand(a => Operations.RemoveMatchingModuleBreakpoints(), a => Operations.CanRemoveMatchingModuleBreakpoints);
+			public ICommand ToggleMatchingBreakpointsCommand => new RelayCommand(a => Operations.ToggleMatchingBreakpoints(), a => Operations.CanToggleMatchingBreakpoints);
+			public ICommand ExportMatchingBreakpointsCommand => new RelayCommand(a => Operations.ExportMatchingBreakpoints(), a => Operations.CanExportMatchingBreakpoints);
+			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);
+			public ICommand ImportBreakpointsCommand => new RelayCommand(a => Operations.ImportBreakpoints(), a => Operations.CanImportBreakpoints);
 
 			public ControlVM(IModuleBreakpointsVM vm, ModuleBreakpointsOperations operations) {
 				VM = vm;
@@ -97,6 +103,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			}
 		}
 
+		public void FocusSearchTextBox() => moduleBreakpointsControl.FocusSearchTextBox();
 		public void Focus() => UIUtilities.FocusSelector(moduleBreakpointsControl.ListView);
 		public void OnClose() => moduleBreakpointsVM.IsOpen = false;
 		public void OnShow() => moduleBreakpointsVM.IsOpen = true;

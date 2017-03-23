@@ -268,7 +268,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Export all breakpoints.
+        ///   Looks up a localized string similar to Export all breakpoints matching the current search criteria.
         /// </summary>
         public static string Breakpoints_ExportMatchingBreakpoints_ToolTip {
             get {
@@ -282,6 +282,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Breakpoints_ImportBreakpoints_ToolTip {
             get {
                 return ResourceManager.GetString("Breakpoints_ImportBreakpoints_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No breakpoints match your search filter..
+        /// </summary>
+        public static string Breakpoints_NoMatch {
+            get {
+                return ResourceManager.GetString("Breakpoints_NoMatch", resourceCulture);
             }
         }
         
@@ -300,6 +309,51 @@ namespace dnSpy.Debugger.Properties {
         public static string Breakpoints_RemoveBreakpoint_ToolTip {
             get {
                 return ResourceManager.GetString("Breakpoints_RemoveBreakpoint_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove all breakpoints matching the current search criteria.
+        /// </summary>
+        public static string Breakpoints_RemoveMatchingBreakpoints_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_RemoveMatchingBreakpoints_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all search criteria so that all breakpoints are shown.
+        /// </summary>
+        public static string Breakpoints_ResetSearchSettings_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_ResetSearchSettings_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Breakpoints_Search {
+            get {
+                return ResourceManager.GetString("Breakpoints_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search for a breakpoint.
+        /// </summary>
+        public static string Breakpoints_Search_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_Search_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable or disable all breakpoints matching the current search criteria.
+        /// </summary>
+        public static string Breakpoints_ToggleMatchingBreakpoints_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_ToggleMatchingBreakpoints_ToolTip", resourceCulture);
             }
         }
         

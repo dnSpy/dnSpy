@@ -64,6 +64,11 @@ namespace dnSpy.Contracts.Text {
 		public void Write(TextColor color, string text) => sb.Append(text);
 
 		/// <summary>
+		/// Resets this instance
+		/// </summary>
+		public void Reset() => sb.Clear();
+
+		/// <summary>
 		/// Gets all the text
 		/// </summary>
 		/// <returns></returns>

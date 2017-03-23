@@ -235,6 +235,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 							if (index >= 0)
 								RemoveExceptionAt_UI(index);
 						}
+						InitializeNothingMatched();
 					}
 				});
 			}
@@ -356,8 +357,12 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			var newList = new List<ExceptionVMCached>(GetFilteredItems_UI(selectedCategory, filterText, showOnlyEnabledExceptions));
 			newList.Sort(ExceptionVMCachedComparer.Instance);
 			AllItems.Reset(newList.Select(a => a.VM));
-			NothingMatched = AllItems.Count == 0 && !(filterText == string.Empty && !showOnlyEnabledExceptions && selectedCategory == exceptionCategories.FirstOrDefault());
+			InitializeNothingMatched(filterText, showOnlyEnabledExceptions, selectedCategory);
 		}
+
+		void InitializeNothingMatched() => InitializeNothingMatched(filterText, showOnlyEnabledExceptions, selectedCategory);
+		void InitializeNothingMatched(string filterText, bool showOnlyEnabledExceptions, ExceptionCategoryVM selectedCategory) =>
+			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && !showOnlyEnabledExceptions && selectedCategory == exceptionCategories.FirstOrDefault());
 
 		sealed class ExceptionVMCached {
 			public ExceptionVM VM { get; }

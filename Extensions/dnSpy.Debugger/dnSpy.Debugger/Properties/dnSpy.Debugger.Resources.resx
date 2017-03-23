@@ -1537,12 +1537,30 @@ Are you sure you want to expand it?</value>
     <value>Ctrl+Alt+V, A</value>
   </data>
   <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
-    <value>Export all breakpoints</value>
+    <value>Export all breakpoints matching the current search criteria</value>
   </data>
   <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
     <value>Import breakpoints from a file</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
     <value>_Export Selected...</value>
+  </data>
+  <data name="Breakpoints_NoMatch" xml:space="preserve">
+    <value>No breakpoints match your search filter.</value>
+  </data>
+  <data name="Breakpoints_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Breakpoints_Search_ToolTip" xml:space="preserve">
+    <value>Search for a breakpoint</value>
+  </data>
+  <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Remove all breakpoints matching the current search criteria</value>
+  </data>
+  <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all breakpoints are shown</value>
+  </data>
+  <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Enable or disable all breakpoints matching the current search criteria</value>
   </data>
 </root>

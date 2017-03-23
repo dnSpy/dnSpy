@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -29,6 +30,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		ModuleBreakpointFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
+		SearchMatcher SearchMatcher { get; }
 	}
 
 	sealed class ModuleBreakpointContext : IModuleBreakpointContext {
@@ -38,12 +40,14 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public ModuleBreakpointFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
+		public SearchMatcher SearchMatcher { get; }
 
-		public ModuleBreakpointContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
+		public ModuleBreakpointContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
+			SearchMatcher = searchMatcher;
 		}
 	}
 }

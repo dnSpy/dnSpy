@@ -28,6 +28,7 @@
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Debugger.UI"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
+             Name="thisControl"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -36,6 +37,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="0 3" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type img:DsImage}" BasedOn="{StaticResource {x:Type img:DsImage}}">
@@ -52,8 +58,12 @@
                 <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveModuleBreakpointsCommand}" ToolTip="{Binding RemoveModuleBreakpointToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.RemoveCommand}"/>
                 </Button>
-                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveAllModuleBreakpointsCommand}" ToolTip="{Binding RemoveAllModuleBreakpointsToolTip}">
-                    <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveMatchingBreakpointsCommand}" ToolTip="{Binding RemoveMatchingBreakpointsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.ClearBreakpointGroup}"/>
+                </Button>
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ToggleMatchingBreakpointsCommand}" ToolTip="{Binding ToggleMatchingBreakpointsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.ToggleAllBreakpoints}"/>
                 </Button>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ExportMatchingBreakpointsCommand}" ToolTip="{Binding ExportMatchingBreakpointsToolTip}">
@@ -62,10 +72,18 @@
                 <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ImportBreakpointsCommand}" ToolTip="{Binding ImportBreakpointsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Import}"/>
                 </Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
+                </Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
             </StackPanel>
+            <Label Grid.Column="1" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.Breakpoints_Search}" ToolTip="{Binding SearchToolTip}" />
+            <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding VM.FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding SearchToolTip}" />
         </Grid>
         <ListView
             Grid.Row="1"
+            Visibility="{Binding VM.SomethingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
             Name="listView"
             MouseDoubleClick="listView_MouseDoubleClick"
             VirtualizingStackPanel.IsVirtualizing="True"
@@ -141,5 +159,16 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Grid Grid.Row="1" Visibility="{Binding VM.NothingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
+              mvvm:InitDataTemplateAP.Initialize="True"
+              Background="{DynamicResource GridViewBackground}"
+              img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label Content="{x:Static p:dnSpy_Debugger_Resources.Breakpoints_NoMatch}"/>
+                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>
