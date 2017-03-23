@@ -17,42 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Settings {
 	/// <summary>
 	/// Adds/removes settings
 	/// </summary>
-	public interface ISettingsService {
+	public interface ISettingsService2 : ISettingsService {
 		/// <summary>
-		/// Gets all sections
+		/// Reads settings from a file. All current settings are removed
 		/// </summary>
-		ISettingsSection[] Sections { get; }
+		/// <param name="filename">Filename of saved settings</param>
+		void Open(string filename);
 
 		/// <summary>
-		/// Gets an existing section or creates a new one if one doesn't exist
+		/// Saves current settings
 		/// </summary>
-		/// <param name="guid">Guid of section</param>
-		/// <returns></returns>
-		ISettingsSection GetOrCreateSection(Guid guid);
-
-		/// <summary>
-		/// Removes a section
-		/// </summary>
-		/// <param name="guid">Guid of section</param>
-		void RemoveSection(Guid guid);
-
-		/// <summary>
-		/// Removes a section
-		/// </summary>
-		/// <param name="section">Section</param>
-		void RemoveSection(ISettingsSection section);
-
-		/// <summary>
-		/// Removes an existing section and re-creates it
-		/// </summary>
-		/// <param name="guid">Guid of section</param>
-		/// <returns></returns>
-		ISettingsSection RecreateSection(Guid guid);
+		/// <param name="filename">Filename</param>
+		void Save(string filename);
 	}
 }

@@ -778,6 +778,8 @@
     <Compile Include="Settings\SettingsSection.cs" />
     <Compile Include="Settings\SettingsSectionProvider.cs" />
     <Compile Include="Settings\SettingsService.cs" />
+    <Compile Include="Settings\SettingsService2.cs" />
+    <Compile Include="Settings\SettingsServiceFactory.cs" />
     <Compile Include="Settings\XmlSettingsConstants.cs" />
     <Compile Include="Settings\XmlSettingsReader.cs" />
     <Compile Include="Settings\XmlSettingsWriter.cs" />

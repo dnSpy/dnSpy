@@ -26,15 +26,20 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Settings {
 	[Export, Export(typeof(ISettingsService))]
-	sealed class SettingsService : ISettingsService {
+	class SettingsService : ISettingsService {
 		readonly object lockObj;
 		readonly Dictionary<string, ISettingsSection> sections;
 
 		public ISettingsSection[] Sections => sections.Values.ToArray();
 
-		SettingsService() {
+		protected SettingsService() {
 			lockObj = new object();
 			sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
+		}
+
+		protected void Reset() {
+			lock (lockObj)
+				sections.Clear();
 		}
 
 		public ISettingsSection GetOrCreateSection(Guid guid) {
