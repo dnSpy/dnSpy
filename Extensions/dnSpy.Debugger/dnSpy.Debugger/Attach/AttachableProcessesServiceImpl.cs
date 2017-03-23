@@ -89,8 +89,8 @@ namespace dnSpy.Debugger.Attach {
 			readonly object lockObj;
 			readonly List<AttachableProcessImpl> result;
 			readonly Lazy<DbgManager> dbgManager;
-			readonly ProcessProvider processProvider;
-			readonly Regex[] processNameRegexes;
+			ProcessProvider processProvider;
+			Regex[] processNameRegexes;
 
 			public Helper(Lazy<DbgManager> dbgManager, Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories, string[] processNames, string[] providerNames, CancellationToken cancellationToken) {
 				if (attachProgramOptionsProviderFactories == null)
@@ -146,8 +146,11 @@ namespace dnSpy.Debugger.Attach {
 				AttachableProcess[] attachableProcesses;
 				lock (lockObj) {
 					wasCanceled |= canceled;
-					if (thrownException == null)
-						thrownException = ex;
+					if (ex != null) {
+						if (thrownExceptions == null)
+							thrownExceptions = new List<Exception>();
+						thrownExceptions.Add(ex);
+					}
 					bool b = providerInfos.Remove(info);
 					Debug.Assert(b);
 					if (providerInfos.Count == 0) {
@@ -158,17 +161,21 @@ namespace dnSpy.Debugger.Attach {
 						attachableProcesses = null;
 				}
 				if (attachableProcesses != null) {
-					if (thrownException != null)
-						taskCompletionSource.SetException(thrownException);
+					if (thrownExceptions != null)
+						taskCompletionSource.SetException(thrownExceptions);
 					else if (wasCanceled)
 						taskCompletionSource.SetCanceled();
 					else
 						taskCompletionSource.SetResult(attachableProcesses);
-					thrownException = null;
+					thrownExceptions?.Clear();
+					thrownExceptions = null;
+					processProvider.Dispose();
+					processProvider = null;
+					processNameRegexes = null;
 				}
 			}
 			bool wasCanceled;
-			Exception thrownException;
+			List<Exception> thrownExceptions;
 		}
 	}
 }
