@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
@@ -42,8 +41,6 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 	}
 
 	sealed class ModuleBreakpointsListSettings {
-		static readonly Guid SETTINGS_GUID = new Guid("A7C5956E-593B-4B04-A237-F837CF17E44E");
-
 		readonly DbgDispatcher dbgDispatcher;
 		readonly ISettingsService settingsService;
 		readonly DbgModuleBreakpointsService dbgModuleBreakpointsService;
@@ -60,26 +57,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		void Load() {
 			dbgDispatcher.VerifyAccess();
 			ignoreSave = true;
-
-			var section = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			var settings = new List<DbgModuleBreakpointSettings>();
-			foreach (var bpSect in section.SectionsWithName("Breakpoint")) {
-				var isEnabled = bpSect.Attribute<bool?>("IsEnabled");
-				if (isEnabled == null)
-					continue;
-				var bpSettings = new DbgModuleBreakpointSettings {
-					IsEnabled = isEnabled.Value,
-					ModuleName = bpSect.Attribute<string>("ModuleName"),
-					IsDynamic = bpSect.Attribute<bool?>("IsDynamic"),
-					IsInMemory = bpSect.Attribute<bool?>("IsInMemory"),
-					Order = bpSect.Attribute<int?>("Order"),
-					AppDomainName = bpSect.Attribute<string>("AppDomainName"),
-					ProcessName = bpSect.Attribute<string>("ProcessName")
-				};
-				settings.Add(bpSettings);
-			}
-
-			dbgModuleBreakpointsService.Add(settings.ToArray());
+			dbgModuleBreakpointsService.Add(new BreakpointsSerializer(settingsService).Load());
 			dbgDispatcher.Dbg(() => ignoreSave = false);
 		}
 
@@ -90,25 +68,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			dbgDispatcher.VerifyAccess();
 			if (ignoreSave)
 				return;
-
-			var section = settingsService.RecreateSection(SETTINGS_GUID);
-			foreach (var bp in dbgModuleBreakpointsService.Breakpoints) {
-				var bpSect = section.CreateSection("Breakpoint");
-				var bpSettings = bp.Settings;
-				bpSect.Attribute("IsEnabled", bpSettings.IsEnabled);
-				if (!string.IsNullOrEmpty(bpSettings.ModuleName))
-					bpSect.Attribute("ModuleName", bpSettings.ModuleName);
-				if (bpSettings.IsDynamic != null)
-					bpSect.Attribute("IsDynamic", bpSettings.IsDynamic);
-				if (bpSettings.IsInMemory != null)
-					bpSect.Attribute("IsInMemory", bpSettings.IsInMemory);
-				if (bpSettings.Order != null)
-					bpSect.Attribute("Order", bpSettings.Order);
-				if (!string.IsNullOrEmpty(bpSettings.AppDomainName))
-					bpSect.Attribute("AppDomainName", bpSettings.AppDomainName);
-				if (!string.IsNullOrEmpty(bpSettings.ProcessName))
-					bpSect.Attribute("ProcessName", bpSettings.ProcessName);
-			}
+			new BreakpointsSerializer(settingsService).Save(dbgModuleBreakpointsService.Breakpoints);
 		}
 		bool ignoreSave;
 	}

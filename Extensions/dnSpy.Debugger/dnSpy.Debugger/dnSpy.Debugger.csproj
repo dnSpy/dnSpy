@@ -40,6 +40,7 @@
     <Compile Include="Attach\AttachableProcessImpl.cs" />
     <Compile Include="Attach\AttachableProcessInfo.cs" />
     <Compile Include="Attach\ProcessProvider.cs" />
+    <Compile Include="Breakpoints\Modules\BreakpointsSerializer.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointImpl.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsServiceImpl.cs" />
     <Compile Include="Breakpoints\Modules\ModuleBreakpointHitChecker.cs" />
