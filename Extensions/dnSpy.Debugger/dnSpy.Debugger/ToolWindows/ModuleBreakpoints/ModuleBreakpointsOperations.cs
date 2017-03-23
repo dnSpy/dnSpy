@@ -21,12 +21,17 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
+using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.Breakpoints.Modules;
 
 namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	abstract class ModuleBreakpointsOperations {
@@ -55,6 +60,12 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public abstract bool CanDisableBreakpoints { get; }
 		public abstract void DisableBreakpoints();
 		public abstract bool IsEditingValues { get; }
+		public abstract bool CanExportSelectedBreakpoints { get; }
+		public abstract void ExportSelectedBreakpoints();
+		public abstract bool CanExportMatchingBreakpoints { get; }
+		public abstract void ExportMatchingBreakpoints();
+		public abstract bool CanImportBreakpoints { get; }
+		public abstract void ImportBreakpoints();
 	}
 
 	[Export(typeof(ModuleBreakpointsOperations))]
@@ -62,17 +73,27 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		readonly IModuleBreakpointsVM moduleBreakpointsVM;
 		readonly DebuggerSettings debuggerSettings;
 		readonly Lazy<DbgModuleBreakpointsService> dbgModuleBreakpointsService;
+		readonly Lazy<ISettingsServiceFactory> settingsServiceFactory;
+		readonly IPickSaveFilename pickSaveFilename;
+		readonly IPickFilename pickFilename;
+		readonly IMessageBoxService messageBoxService;
 
 		ObservableCollection<ModuleBreakpointVM> AllItems => moduleBreakpointsVM.AllItems;
 		ObservableCollection<ModuleBreakpointVM> SelectedItems => moduleBreakpointsVM.SelectedItems;
 		//TODO: This should be view order
 		IEnumerable<ModuleBreakpointVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
+		//TODO: This should be view order
+		IEnumerable<ModuleBreakpointVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		ModuleBreakpointsOperationsImpl(IModuleBreakpointsVM moduleBreakpointsVM, DebuggerSettings debuggerSettings, Lazy<DbgModuleBreakpointsService> dbgModuleBreakpointsService) {
+		ModuleBreakpointsOperationsImpl(IModuleBreakpointsVM moduleBreakpointsVM, DebuggerSettings debuggerSettings, Lazy<DbgModuleBreakpointsService> dbgModuleBreakpointsService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickSaveFilename pickSaveFilename, IPickFilename pickFilename, IMessageBoxService messageBoxService) {
 			this.moduleBreakpointsVM = moduleBreakpointsVM;
 			this.debuggerSettings = debuggerSettings;
 			this.dbgModuleBreakpointsService = dbgModuleBreakpointsService;
+			this.settingsServiceFactory = settingsServiceFactory;
+			this.pickSaveFilename = pickSaveFilename;
+			this.pickFilename = pickFilename;
+			this.messageBoxService = messageBoxService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -199,6 +220,45 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				}
 				return false;
 			}
+		}
+
+		public override bool CanExportSelectedBreakpoints => SelectedItems.Count > 0;
+		public override void ExportSelectedBreakpoints() => SaveBreakpoints(SortedSelectedItems);
+
+		public override bool CanExportMatchingBreakpoints => AllItems.Count > 0;
+		public override void ExportMatchingBreakpoints() => SaveBreakpoints(SortedAllItems);
+
+		void SaveBreakpoints(IEnumerable<ModuleBreakpointVM> vms) {
+			if (!vms.Any())
+				return;
+			var filename = pickSaveFilename.GetFilename(null, "xml", PickFilenameConstants.XmlFilenameFilter);
+			if (filename == null)
+				return;
+			var settingsService = settingsServiceFactory.Value.Create();
+			new BreakpointsSerializer(settingsService).Save(vms.Select(a => a.ModuleBreakpoint));
+			try {
+				settingsService.Save(filename);
+			}
+			catch (Exception ex) {
+				messageBoxService.Show(ex);
+			}
+		}
+
+		public override bool CanImportBreakpoints => true;
+		public override void ImportBreakpoints() {
+			var filename = pickFilename.GetFilename(null, "xml", PickFilenameConstants.XmlFilenameFilter);
+			if (!File.Exists(filename))
+				return;
+			var settingsService = settingsServiceFactory.Value.Create();
+			try {
+				settingsService.Open(filename);
+			}
+			catch (Exception ex) {
+				messageBoxService.Show(ex);
+				return;
+			}
+			var breakpoints = new BreakpointsSerializer(settingsService).Load();
+			dbgModuleBreakpointsService.Value.Add(breakpoints);
 		}
 	}
 }

@@ -55,10 +55,14 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			public ICommand AddModuleBreakpointCommand => new RelayCommand(a => Operations.AddModuleBreakpoint(), a => Operations.CanAddModuleBreakpoint);
 			public ICommand RemoveModuleBreakpointsCommand => new RelayCommand(a => Operations.RemoveModuleBreakpoints(), a => Operations.CanRemoveModuleBreakpoints);
 			public ICommand RemoveAllModuleBreakpointsCommand => new RelayCommand(a => Operations.RemoveAllModuleBreakpoints(), a => Operations.CanRemoveAllModuleBreakpoints);
+			public ICommand ExportMatchingBreakpointsCommand => new RelayCommand(a => Operations.ExportMatchingBreakpoints(), a => Operations.CanExportMatchingBreakpoints);
+			public ICommand ImportBreakpointsCommand => new RelayCommand(a => Operations.ImportBreakpoints(), a => Operations.CanImportBreakpoints);
 
 			public string AddModuleBreakpointToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_AddBreakpoint_ToolTip, null);
 			public string RemoveModuleBreakpointToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_RemoveBreakpoint_ToolTip, null);
 			public string RemoveAllModuleBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_RemoveAllBreakpoints_ToolTip, null);
+			public string ExportMatchingBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_ExportMatchingBreakpoints_ToolTip, null);
+			public string ImportBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_ImportBreakpoints_ToolTip, null);
 
 			public ControlVM(IModuleBreakpointsVM vm, ModuleBreakpointsOperations operations) {
 				VM = vm;

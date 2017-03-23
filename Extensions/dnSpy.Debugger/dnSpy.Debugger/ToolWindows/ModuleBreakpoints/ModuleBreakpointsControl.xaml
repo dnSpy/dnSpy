@@ -55,6 +55,13 @@
                 <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveAllModuleBreakpointsCommand}" ToolTip="{Binding RemoveAllModuleBreakpointsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
                 </Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ExportMatchingBreakpointsCommand}" ToolTip="{Binding ExportMatchingBreakpointsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.Open}"/>
+                </Button>
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ImportBreakpointsCommand}" ToolTip="{Binding ImportBreakpointsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.Import}"/>
+                </Button>
             </StackPanel>
         </Grid>
         <ListView

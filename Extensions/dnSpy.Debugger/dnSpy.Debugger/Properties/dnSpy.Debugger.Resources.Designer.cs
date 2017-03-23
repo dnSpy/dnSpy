@@ -268,6 +268,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export all breakpoints.
+        /// </summary>
+        public static string Breakpoints_ExportMatchingBreakpoints_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_ExportMatchingBreakpoints_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import breakpoints from a file.
+        /// </summary>
+        public static string Breakpoints_ImportBreakpoints_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_ImportBreakpoints_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove all breakpoints.
         /// </summary>
         public static string Breakpoints_RemoveAllBreakpoints_ToolTip {
@@ -2165,6 +2183,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ExceptionThrownMessage {
             get {
                 return ResourceManager.GetString("ExceptionThrownMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Export Selected....
+        /// </summary>
+        public static string ExportSelectedCommand {
+            get {
+                return ResourceManager.GetString("ExportSelectedCommand", resourceCulture);
             }
         }
         

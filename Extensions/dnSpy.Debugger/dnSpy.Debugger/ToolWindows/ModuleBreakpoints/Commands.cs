@@ -193,4 +193,15 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public override bool IsEnabled(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanEditAppDomainName;
 		public override string GetInputGestureText(ModuleBreakpointsCtxMenuContext context) => string.Format(dnSpy_Debugger_Resources.ShortCutKeyCtrl_DIGIT, "4");
 	}
+
+	[ExportMenuItem(Header = "res:ExportSelectedCommand", Icon = DsImagesAttribute.Open, Group = MenuConstants.GROUP_CTX_DBG_MODULEBPS_EXPORT, Order = 0)]
+	sealed class ExportSelectedBreakpointCtxMenuCommand : ModuleBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		ExportSelectedBreakpointCtxMenuCommand(Lazy<IModuleBreakpointsContent> moduleBreakpointesContent)
+			: base(moduleBreakpointesContent) {
+		}
+
+		public override void Execute(ModuleBreakpointsCtxMenuContext context) => context.Operations.ExportSelectedBreakpoints();
+		public override bool IsEnabled(ModuleBreakpointsCtxMenuContext context) => context.Operations.CanExportSelectedBreakpoints;
+	}
 }

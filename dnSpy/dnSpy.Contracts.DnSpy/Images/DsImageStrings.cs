@@ -120,6 +120,7 @@ namespace dnSpy.Contracts.Images {
 		public const string GoToNextInList = nameof(GoToNextInList);
 		public const string GoToSourceCode = nameof(GoToSourceCode);
 		public const string Image = nameof(Image);
+		public const string Import = nameof(Import);
 		public const string IntellisenseKeyword = nameof(IntellisenseKeyword);
 		public const string InterfaceInternal = nameof(InterfaceInternal);
 		public const string InterfacePrivate = nameof(InterfacePrivate);
@@ -158,6 +159,7 @@ namespace dnSpy.Contracts.Images {
 		public const string NewWindow = nameof(NewWindow);
 		public const string NuGet = nameof(NuGet);
 		public const string OneLevelUp = nameof(OneLevelUp);
+		public const string Open = nameof(Open);
 		public const string OpenFolder = nameof(OpenFolder);
 		public const string OperatorInternal = nameof(OperatorInternal);
 		public const string OperatorPrivate = nameof(OperatorPrivate);

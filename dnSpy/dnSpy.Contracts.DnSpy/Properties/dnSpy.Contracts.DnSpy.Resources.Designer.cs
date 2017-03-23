@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All files.
+        ///   Looks up a localized string similar to All Files.
         /// </summary>
         public static string AllFiles {
             get {
@@ -158,6 +158,15 @@ namespace dnSpy.Contracts.Properties {
         public static string Files_StrongNameKeyFiles {
             get {
                 return ResourceManager.GetString("Files_StrongNameKeyFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XML Files.
+        /// </summary>
+        public static string Files_XmlFiles {
+            get {
+                return ResourceManager.GetString("Files_XmlFiles", resourceCulture);
             }
         }
         

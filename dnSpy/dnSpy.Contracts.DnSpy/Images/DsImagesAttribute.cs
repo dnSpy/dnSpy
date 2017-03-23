@@ -121,6 +121,7 @@ namespace dnSpy.Contracts.Images {
 		public const string GoToNextInList = Prefix + DsImageStrings.GoToNextInList;
 		public const string GoToSourceCode = Prefix + DsImageStrings.GoToSourceCode;
 		public const string Image = Prefix + DsImageStrings.Image;
+		public const string Import = Prefix + DsImageStrings.Import;
 		public const string IntellisenseKeyword = Prefix + DsImageStrings.IntellisenseKeyword;
 		public const string InterfaceInternal = Prefix + DsImageStrings.InterfaceInternal;
 		public const string InterfacePrivate = Prefix + DsImageStrings.InterfacePrivate;
@@ -159,6 +160,7 @@ namespace dnSpy.Contracts.Images {
 		public const string NewWindow = Prefix + DsImageStrings.NewWindow;
 		public const string NuGet = Prefix + DsImageStrings.NuGet;
 		public const string OneLevelUp = Prefix + DsImageStrings.OneLevelUp;
+		public const string Open = Prefix + DsImageStrings.Open;
 		public const string OpenFolder = Prefix + DsImageStrings.OpenFolder;
 		public const string OperatorInternal = Prefix + DsImageStrings.OperatorInternal;
 		public const string OperatorPrivate = Prefix + DsImageStrings.OperatorPrivate;

@@ -1536,4 +1536,13 @@ Are you sure you want to expand it?</value>
   <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
     <value>Ctrl+Alt+V, A</value>
   </data>
+  <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Export all breakpoints</value>
+  </data>
+  <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
+    <value>Import breakpoints from a file</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>_Export Selected...</value>
+  </data>
 </root>

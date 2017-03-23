@@ -124,6 +124,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference GoToNextInList { get; } = new ImageReference(assembly, DsImageStrings.GoToNextInList);
 		public static ImageReference GoToSourceCode { get; } = new ImageReference(assembly, DsImageStrings.GoToSourceCode);
 		public static ImageReference Image { get; } = new ImageReference(assembly, DsImageStrings.Image);
+		public static ImageReference Import { get; } = new ImageReference(assembly, DsImageStrings.Import);
 		public static ImageReference IntellisenseKeyword { get; } = new ImageReference(assembly, DsImageStrings.IntellisenseKeyword);
 		public static ImageReference InterfaceInternal { get; } = new ImageReference(assembly, DsImageStrings.InterfaceInternal);
 		public static ImageReference InterfacePrivate { get; } = new ImageReference(assembly, DsImageStrings.InterfacePrivate);
@@ -162,6 +163,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference NewWindow { get; } = new ImageReference(assembly, DsImageStrings.NewWindow);
 		public static ImageReference NuGet { get; } = new ImageReference(assembly, DsImageStrings.NuGet);
 		public static ImageReference OneLevelUp { get; } = new ImageReference(assembly, DsImageStrings.OneLevelUp);
+		public static ImageReference Open { get; } = new ImageReference(assembly, DsImageStrings.Open);
 		public static ImageReference OpenFolder { get; } = new ImageReference(assembly, DsImageStrings.OpenFolder);
 		public static ImageReference OperatorInternal { get; } = new ImageReference(assembly, DsImageStrings.OperatorInternal);
 		public static ImageReference OperatorPrivate { get; } = new ImageReference(assembly, DsImageStrings.OperatorPrivate);
