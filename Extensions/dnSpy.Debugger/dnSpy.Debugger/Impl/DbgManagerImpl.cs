@@ -672,6 +672,7 @@ namespace dnSpy.Debugger.Impl {
 				DbgProcessImpl process;
 				lock (lockObj) {
 					var info = GetEngineInfo_NoLock(engine);
+					pauseProgram |= info.EngineState == EngineState.Paused;
 					info.EngineState = EngineState.Paused;
 					Debug.Assert(info.Exception == null);
 					info.Exception?.Close(DispatcherThread);
