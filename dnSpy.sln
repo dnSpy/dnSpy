@@ -83,6 +83,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Diagnostics.Runti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.DotNet", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet\dnSpy.Debugger.DotNet.csproj", "{8EA4B210-37BE-478F-AB0E-8C8C3E016114}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Debugger.DotNet", "dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj", "{2376E072-101F-4900-8770-79C6DFFBD0FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -501,6 +503,18 @@ Global
 		{8EA4B210-37BE-478F-AB0E-8C8C3E016114}.Release|x64.Build.0 = Release|Any CPU
 		{8EA4B210-37BE-478F-AB0E-8C8C3E016114}.Release|x86.ActiveCfg = Release|Any CPU
 		{8EA4B210-37BE-478F-AB0E-8C8C3E016114}.Release|x86.Build.0 = Release|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Debug|x64.Build.0 = Debug|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Debug|x86.Build.0 = Debug|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Release|x64.ActiveCfg = Release|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Release|x64.Build.0 = Release|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Release|x86.ActiveCfg = Release|Any CPU
+		{2376E072-101F-4900-8770-79C6DFFBD0FB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -543,5 +557,6 @@ Global
 		{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{A82126CA-23AA-41F1-8586-A5938D44D0A7} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
 		{8EA4B210-37BE-478F-AB0E-8C8C3E016114} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
+		{2376E072-101F-4900-8770-79C6DFFBD0FB} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 	EndGlobalSection
 EndGlobal

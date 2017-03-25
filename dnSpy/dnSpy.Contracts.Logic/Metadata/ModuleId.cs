@@ -183,12 +183,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) {
-			var other = obj as ModuleId?;
-			if (other != null)
-				return Equals(other.Value);
-			return false;
-		}
+		public override bool Equals(object obj) => obj is ModuleId other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()

@@ -21,7 +21,6 @@ using System;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.PE;
-using dnSpy.Contracts.Debugger.Attach;
 using dnSpy.Contracts.Debugger.StartDebugging;
 
 namespace dnSpy.Debugger.DotNet.Dialogs.DebugProgram {

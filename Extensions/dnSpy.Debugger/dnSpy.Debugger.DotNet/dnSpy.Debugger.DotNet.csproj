@@ -45,6 +45,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Breakpoints\Code\DbgDotNetEngineCodeBreakpointFactoryImpl.cs" />
+    <Compile Include="Breakpoints\Code\DbgDotNetEngineCodeBreakpointImpl.cs" />
+    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializerImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />
@@ -66,6 +69,10 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
+      <Project>{2376e072-101f-4900-8770-79c6dffbd0fb}</Project>
+      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
       <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>
       <Name>dnSpy.Contracts.Debugger</Name>

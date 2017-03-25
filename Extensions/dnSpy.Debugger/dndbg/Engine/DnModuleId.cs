@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// NOTE: dnSpy.Contracts.Decompiler.ModuleId is a copy of this struct. Keep them in sync.
+// NOTE: dnSpy.Contracts.Metadata.ModuleId is a copy of this struct. Keep them in sync.
 
 using System;
 using System.Diagnostics;
@@ -170,21 +170,17 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(DnModuleId other) => (ModuleNameOnly || other.ModuleNameOnly || AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName)) &&
-					ModuleNameComparer.Equals(ModuleName, other.ModuleName) &&
-					(flags & Flags.CompareMask) == (other.flags & Flags.CompareMask);
+		public bool Equals(DnModuleId other) =>
+			(ModuleNameOnly || other.ModuleNameOnly || AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName)) &&
+			ModuleNameComparer.Equals(ModuleName, other.ModuleName) &&
+			(flags & Flags.CompareMask) == (other.flags & Flags.CompareMask);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) {
-			var other = obj as DnModuleId?;
-			if (other != null)
-				return Equals(other.Value);
-			return false;
-		}
+		public override bool Equals(object obj) => obj is DnModuleId other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()
