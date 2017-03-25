@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 
 		readonly ISettingsService settingsService;
 
-		public BreakpointsSerializer(ISettingsService settingsService) => this.settingsService = settingsService;
+		public BreakpointsSerializer(ISettingsService settingsService) => this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 
 		public DbgModuleBreakpointSettings[] Load() {
 			var section = settingsService.GetOrCreateSection(SETTINGS_GUID);
