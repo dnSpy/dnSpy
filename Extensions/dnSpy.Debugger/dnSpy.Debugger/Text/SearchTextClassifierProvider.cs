@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Text {
 			var searchContext = context as SearchTextClassifierContext;
 			if (searchContext == null)
 				yield break;
-			foreach (var span in searchContext.SearchMatcher.GetMatchSpans(searchContext.Text))
+			foreach (var span in searchContext.SearchMatcher.GetMatchSpans(searchContext.Tag, searchContext.Text))
 				yield return new TextClassificationTag(span, listFindMatchHighlightClassificationType);
 		}
 	}

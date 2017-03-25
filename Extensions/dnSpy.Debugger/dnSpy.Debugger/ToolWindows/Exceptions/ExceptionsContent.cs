@@ -23,6 +23,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.MVVM;
@@ -63,21 +64,30 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			public string RestoreSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_RestoreSettings_ToolTip, null);
 			public string ResetSearchSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_ResetSearchSettings_ToolTip, null);
 			public string SearchToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_Search_ToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlF);
+			public string SearchHelpToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.SearchHelp_ToolTip, null);
 
 			public ICommand AddExceptionCommand => new RelayCommand(a => Operations.AddException(), a => Operations.CanAddException);
 			public ICommand RemoveExceptionsCommand => new RelayCommand(a => Operations.RemoveExceptions(), a => Operations.CanRemoveExceptions);
 			public ICommand EditConditionsCommand => new RelayCommand(a => Operations.EditConditions(), a => Operations.CanEditConditions);
 			public ICommand RestoreSettingsCommand => new RelayCommand(a => Operations.RestoreSettings(), a => Operations.CanRestoreSettings);
 			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);
+			public ICommand SearchHelpCommand => new RelayCommand(a => SearchHelp());
 
-			public ControlVM(IExceptionsVM vm, ExceptionsOperations operations) {
+			readonly IMessageBoxService messageBoxService;
+			readonly DependencyObject control;
+
+			public ControlVM(IExceptionsVM vm, ExceptionsOperations operations, IMessageBoxService messageBoxService, DependencyObject control) {
 				VM = vm;
 				Operations = operations;
+				this.messageBoxService = messageBoxService;
+				this.control = control;
 			}
+
+			void SearchHelp() => messageBoxService.Show(VM.GetSearchHelpText(), ownerWindow: Window.GetWindow(control));
 		}
 
 		[ImportingConstructor]
-		ExceptionsContent(IWpfCommandService wpfCommandService, IExceptionsVM exceptionsVM, ExceptionsOperations exceptionsOperations, Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) {
+		ExceptionsContent(IWpfCommandService wpfCommandService, IExceptionsVM exceptionsVM, ExceptionsOperations exceptionsOperations, Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService, IMessageBoxService messageBoxService) {
 			Operations = exceptionsOperations;
 			exceptionsControl = new ExceptionsControl();
 			var addVM = new AddExceptionVM(dbgExceptionSettingsService);
@@ -86,7 +96,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			exceptionsControl.addExceptionControl.InputBindings.Add(new KeyBinding(addVM.SaveCommand, Key.Enter, ModifierKeys.None));
 			exceptionsControl.addExceptionControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => exceptionsVM.IsAddingExceptions = false), Key.Escape, ModifierKeys.None));
 			this.exceptionsVM = exceptionsVM;
-			exceptionsControl.DataContext = new ControlVM(exceptionsVM, exceptionsOperations);
+			exceptionsControl.DataContext = new ControlVM(exceptionsVM, exceptionsOperations, messageBoxService, exceptionsControl);
 			exceptionsControl.ExceptionsListViewDoubleClick += ExceptionsControl_ExceptionsListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL, exceptionsControl);

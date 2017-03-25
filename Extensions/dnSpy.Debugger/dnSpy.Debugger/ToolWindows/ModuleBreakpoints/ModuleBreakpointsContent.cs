@@ -21,6 +21,7 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
@@ -61,6 +62,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			public string ImportBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_ImportBreakpoints_ToolTip, null);
 			public string SearchToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_Search_ToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlF);
 			public string ResetSearchSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_ResetSearchSettings_ToolTip, null);
+			public string SearchHelpToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.SearchHelp_ToolTip, null);
 
 			public ICommand AddModuleBreakpointCommand => new RelayCommand(a => Operations.AddModuleBreakpoint(), a => Operations.CanAddModuleBreakpoint);
 			public ICommand RemoveModuleBreakpointsCommand => new RelayCommand(a => Operations.RemoveModuleBreakpoints(), a => Operations.CanRemoveModuleBreakpoints);
@@ -69,19 +71,27 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			public ICommand ExportMatchingBreakpointsCommand => new RelayCommand(a => Operations.ExportMatchingBreakpoints(), a => Operations.CanExportMatchingBreakpoints);
 			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);
 			public ICommand ImportBreakpointsCommand => new RelayCommand(a => Operations.ImportBreakpoints(), a => Operations.CanImportBreakpoints);
+			public ICommand SearchHelpCommand => new RelayCommand(a => SearchHelp());
 
-			public ControlVM(IModuleBreakpointsVM vm, ModuleBreakpointsOperations operations) {
+			readonly IMessageBoxService messageBoxService;
+			readonly DependencyObject control;
+
+			public ControlVM(IModuleBreakpointsVM vm, ModuleBreakpointsOperations operations, IMessageBoxService messageBoxService, DependencyObject control) {
 				VM = vm;
 				Operations = operations;
+				this.messageBoxService = messageBoxService;
+				this.control = control;
 			}
+
+			void SearchHelp() => messageBoxService.Show(VM.GetSearchHelpText(), ownerWindow: Window.GetWindow(control));
 		}
 
 		[ImportingConstructor]
-		ModuleBreakpointsContent(IWpfCommandService wpfCommandService, IModuleBreakpointsVM moduleBreakpointsVM, ModuleBreakpointsOperations moduleBreakpointsOperations) {
+		ModuleBreakpointsContent(IWpfCommandService wpfCommandService, IModuleBreakpointsVM moduleBreakpointsVM, ModuleBreakpointsOperations moduleBreakpointsOperations, IMessageBoxService messageBoxService) {
 			Operations = moduleBreakpointsOperations;
 			moduleBreakpointsControl = new ModuleBreakpointsControl();
 			this.moduleBreakpointsVM = moduleBreakpointsVM;
-			moduleBreakpointsControl.DataContext = new ControlVM(moduleBreakpointsVM, moduleBreakpointsOperations);
+			moduleBreakpointsControl.DataContext = new ControlVM(moduleBreakpointsVM, moduleBreakpointsOperations, messageBoxService, moduleBreakpointsControl);
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULEBREAKPOINTS_CONTROL, moduleBreakpointsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULEBREAKPOINTS_LISTVIEW, moduleBreakpointsControl.ListView);

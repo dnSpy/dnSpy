@@ -77,6 +77,8 @@
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
     <Compile Include="Impl\DbgManagerImpl.ProcessKey.cs" />
+    <Compile Include="Text\SearchColumnCommandParser.cs" />
+    <Compile Include="Text\SearchColumnDefinition.cs" />
     <Compile Include="Text\SearchMatcher.cs" />
     <Compile Include="Text\SearchTextClassifierContext.cs" />
     <Compile Include="Text\SearchTextClassifierProvider.cs" />

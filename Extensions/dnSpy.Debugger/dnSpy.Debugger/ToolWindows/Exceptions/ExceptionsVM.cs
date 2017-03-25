@@ -46,6 +46,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		IReadOnlyCollection<ExceptionCategoryVM> ExceptionCategoryCollection { get; }
 		ExceptionCategoryVM SelectedCategory { get; set; }
 		bool IsAddingExceptions { get; set; }
+		string GetSearchHelpText();
 	}
 
 	[Export(typeof(IExceptionsVM))]
@@ -151,10 +152,22 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			toVM = new Dictionary<DbgExceptionId, ExceptionVM>();
 			realAllItems = new List<ExceptionVM>();
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			exceptionContext = new ExceptionContext(uiDispatcher, classificationFormatMap, textElementProvider, exceptionSettingsService, exceptionFormatterService, new SearchMatcher()) {
+			exceptionContext = new ExceptionContext(uiDispatcher, classificationFormatMap, textElementProvider, exceptionSettingsService, exceptionFormatterService, new SearchMatcher(searchColumnDefinitions)) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = exceptionFormatterProvider.Create(),
 			};
+		}
+		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
+		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ExceptionSettingsWindowName, "n", dnSpy_Debugger_Resources.Column_BreakWhenThrown),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ExceptionSettingsWindowCategory, "cat", dnSpy_Debugger_Resources.Column_Category),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ExceptionSettingsWindowConditions, "c", dnSpy_Debugger_Resources.Column_Conditions),
+		};
+
+		// UI thread
+		public string GetSearchHelpText() {
+			exceptionContext.UIDispatcher.VerifyAccess();
+			return exceptionContext.SearchMatcher.GetHelpText();
 		}
 
 		// random thread
@@ -369,7 +382,10 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			public string Name => name ?? (name = GetName_UI(VM));
 			public string Category => category ?? (category = GetCategory_UI(VM));
 			public string Conditions => conditions ?? (conditions = GetConditions_UI(VM));
+
+			// The order must match searchColumnDefinitions
 			public string[] AllStrings => allStrings ?? (allStrings = new[] { Name, Category, Conditions });
+
 			string name;
 			string category;
 			string conditions;

@@ -199,6 +199,7 @@ namespace dnSpy.Contracts.Images {
 		public const string SplitScreenHorizontally = Prefix + DsImageStrings.SplitScreenHorizontally;
 		public const string SplitScreenVertically = Prefix + DsImageStrings.SplitScreenVertically;
 		public const string StatusError = Prefix + DsImageStrings.StatusError;
+		public const string StatusHelp = Prefix + DsImageStrings.StatusHelp;
 		public const string StatusHidden = Prefix + DsImageStrings.StatusHidden;
 		public const string StatusInformation = Prefix + DsImageStrings.StatusInformation;
 		public const string StatusWarning = Prefix + DsImageStrings.StatusWarning;

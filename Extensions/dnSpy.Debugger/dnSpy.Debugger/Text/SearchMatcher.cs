@@ -19,47 +19,88 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using dnSpy.Debugger.Properties;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Debugger.Text {
 	sealed class SearchMatcher {
-		string[] searchParts;
+		const StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase;
 		readonly List<Span> spans;
+		readonly SearchColumnDefinition[] definitions;
+		readonly SearchColumnCommandParser parser;
+		SearchCommand[] searchCommands;
 
-		public SearchMatcher() {
-			searchParts = Array.Empty<string>();
+		public SearchMatcher(SearchColumnDefinition[] definitions) {
+			this.definitions = definitions ?? throw new ArgumentNullException(nameof(definitions));
 			spans = new List<Span>();
+			parser = new SearchColumnCommandParser(definitions);
+			searchCommands = Array.Empty<SearchCommand>();
 		}
-		static readonly char[] searchSeparators = new char[] { ' ', '\t', '\r', '\n' };
 
-		public void SetSearchText(string searchText) => searchParts = (searchText ?? string.Empty).Split(searchSeparators, StringSplitOptions.RemoveEmptyEntries);
+		public string GetHelpText() {
+			var sb = new StringBuilder();
+			foreach (var def in definitions) {
+				sb.Append("-" + def.ShortOptionName);
+				sb.Append(" <text> ");
+				sb.Append(string.Format(dnSpy_Debugger_Resources.Search_SearchColumnHelpText, def.LocalizedName));
+				sb.AppendLine();
+			}
+			return sb.ToString();
+		}
 
-		public bool IsMatchAll(string[] text) {
-			foreach (var part in searchParts) {
-				bool match = false;
-				foreach (var t in text) {
-					if (t.IndexOf(part, StringComparison.CurrentCultureIgnoreCase) >= 0) {
-						match = true;
-						break;
+		public void SetSearchText(string searchText) => searchCommands = parser.GetSearchCommands(searchText);
+
+		public bool IsMatchAll(string[] columnText) {
+			if (columnText.Length != definitions.Length)
+				throw new InvalidOperationException();
+			foreach (var cmd in searchCommands) {
+				if (cmd.ColumnId == null) {
+					bool match = false;
+					foreach (var text in columnText) {
+						if (text.IndexOf(cmd.SearchText, stringComparison) >= 0) {
+							match = true;
+							break;
+						}
 					}
+					if (!match)
+						return false;
 				}
-				if (!match)
-					return false;
+				else {
+					int index = GetColumnIndex(cmd.ColumnId);
+					Debug.Assert(index >= 0);
+					if (index < 0 || columnText[index].IndexOf(cmd.SearchText, stringComparison) < 0)
+						return false;
+				}
 			}
 			return true;
 		}
 
-		public List<Span> GetMatchSpans(string text) {
+		int GetColumnIndex(string id) {
+			for (int i = 0; i < definitions.Length; i++) {
+				if (definitions[i].Id == id)
+					return i;
+			}
+			return -1;
+		}
+
+		public List<Span> GetMatchSpans(string columnId, string text) {
 			spans.Clear();
-			if (searchParts.Length == 0 || string.IsNullOrEmpty(text))
+			if (searchCommands.Length == 0 || string.IsNullOrEmpty(text))
 				return spans;
 
-			foreach (var part in searchParts) {
+			foreach (var cmd in searchCommands) {
+				if (cmd.ColumnId != null && cmd.ColumnId != columnId)
+					continue;
+				int searchLength = cmd.SearchText.Length;
+				if (searchLength == 0)
+					continue;
 				for (int index = 0; index < text.Length;) {
-					index = text.IndexOf(part, index, StringComparison.CurrentCultureIgnoreCase);
+					index = text.IndexOf(cmd.SearchText, index, stringComparison);
 					if (index < 0)
 						break;
-					spans.Add(new Span(index, part.Length));
+					spans.Add(new Span(index, searchLength));
 					// "aa" should match "aaa" at index 0 and 1
 					index++;
 				}

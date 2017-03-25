@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.MVVM;
@@ -58,22 +59,31 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 			public string SearchToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Modules_Search_ToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlF);
 			public string ResetSearchSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Modules_ResetSearchSettings_ToolTip, null);
+			public string SearchHelpToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.SearchHelp_ToolTip, null);
 
 			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);
+			public ICommand SearchHelpCommand => new RelayCommand(a => SearchHelp());
 
-			public ControlVM(IModulesVM vm, ModulesOperations operations) {
+			readonly IMessageBoxService messageBoxService;
+			readonly DependencyObject control;
+
+			public ControlVM(IModulesVM vm, ModulesOperations operations, IMessageBoxService messageBoxService, DependencyObject control) {
 				VM = vm;
 				Operations = operations;
+				this.messageBoxService = messageBoxService;
+				this.control = control;
 			}
+
+			void SearchHelp() => messageBoxService.Show(VM.GetSearchHelpText(), ownerWindow: Window.GetWindow(control));
 		}
 
 		[ImportingConstructor]
-		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, ModulesOperations modulesOperations, IDocumentTabService documentTabService) {
+		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, ModulesOperations modulesOperations, IDocumentTabService documentTabService, IMessageBoxService messageBoxService) {
 			Operations = modulesOperations;
 			modulesControl = new ModulesControl();
 			this.modulesVM = modulesVM;
 			this.documentTabService = documentTabService;
-			modulesControl.DataContext = new ControlVM(modulesVM, modulesOperations);
+			modulesControl.DataContext = new ControlVM(modulesVM, modulesOperations, messageBoxService, modulesControl);
 			modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);

@@ -25,6 +25,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Properties;
@@ -40,8 +41,10 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public ObservableCollection<ProgramVM> SelectedItems { get; }
 
 		public string SearchToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.AttachToProcess_Search_ToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlF);
+		public ICommand SearchHelpCommand => new RelayCommand(a => searchHelp());
 
 		public ICommand RefreshCommand => new RelayCommand(a => Refresh(), a => CanRefresh);
+		public string SearchHelpToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.SearchHelp_ToolTip, null);
 
 		public string Title {
 			get {
@@ -71,10 +74,11 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		readonly DbgManager dbgManager;
 		readonly AttachProgramOptionsAggregatorFactory attachProgramOptionsAggregatorFactory;
 		readonly AttachToProcessContext attachToProcessContext;
+		readonly Action searchHelp;
 		AttachProgramOptionsAggregator attachProgramOptionsAggregator;
 		ProcessProvider processProvider;
 
-		public AttachToProcessVM(UIDispatcher uiDispatcher, DbgManager dbgManager, DebuggerSettings debuggerSettings, ProgramFormatterProvider programFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, AttachProgramOptionsAggregatorFactory attachProgramOptionsAggregatorFactory) {
+		public AttachToProcessVM(UIDispatcher uiDispatcher, DbgManager dbgManager, DebuggerSettings debuggerSettings, ProgramFormatterProvider programFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, AttachProgramOptionsAggregatorFactory attachProgramOptionsAggregatorFactory, Action searchHelp) {
 			realAllItems = new ObservableCollection<ProgramVM>();
 			AllItems = new BulkObservableCollection<ProgramVM>();
 			SelectedItems = new ObservableCollection<ProgramVM>();
@@ -83,13 +87,25 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			this.attachProgramOptionsAggregatorFactory = attachProgramOptionsAggregatorFactory ?? throw new ArgumentNullException(nameof(attachProgramOptionsAggregatorFactory));
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			attachToProcessContext = new AttachToProcessContext(classificationFormatMap, textElementProvider, new SearchMatcher());
+			attachToProcessContext = new AttachToProcessContext(classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions));
+			this.searchHelp = searchHelp ?? throw new ArgumentNullException(nameof(searchHelp));
 
 			attachToProcessContext.Formatter = programFormatterProvider.Create();
 			attachToProcessContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 
 			RefreshCore();
 		}
+		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
+		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
+			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowProcess, "p", dnSpy_Debugger_Resources.Column_Process),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowPid, "i", dnSpy_Debugger_Resources.Column_ProcessID),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowTitle, "t", dnSpy_Debugger_Resources.Column_ProcessTitle),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowType, "T", dnSpy_Debugger_Resources.Column_ProcessType),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowMachine, "a", dnSpy_Debugger_Resources.Column_ProcessArchitecture),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowFullPath, "f", dnSpy_Debugger_Resources.Column_ProcessFilename),
+		};
+
+		public string GetSearchHelpText() => attachToProcessContext.SearchMatcher.GetHelpText();
 
 		public bool IsRefreshing => !CanRefresh;
 		bool CanRefresh => attachProgramOptionsAggregator == null;
@@ -206,15 +222,60 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 
 		bool IsMatch(ProgramVM vm, string filterText) {
 			Debug.Assert(uiDispatcher.CheckAccess());
+			// The order must match searchColumnDefinitions
 			var allStrings = new string[] {
-				vm.Id.ToString(),
-				vm.RuntimeName,
-				vm.Name,
-				vm.Title,
-				vm.Filename,
-				vm.Architecture,
+				GetProcess_UI(vm),
+				GetPid_UI(vm),
+				GetTitle_UI(vm),
+				GetType_UI(vm),
+				GetMachine_UI(vm),
+				GetPath_UI(vm),
 			};
+			sbOutput.Reset();
 			return attachToProcessContext.SearchMatcher.IsMatchAll(allStrings);
+		}
+		readonly StringBuilderTextColorOutput sbOutput = new StringBuilderTextColorOutput();
+
+		string GetProcess_UI(ProgramVM vm) {
+			Debug.Assert(uiDispatcher.CheckAccess());
+			sbOutput.Reset();
+			attachToProcessContext.Formatter.WriteProcess(sbOutput, vm);
+			return sbOutput.ToString();
+		}
+
+		string GetPid_UI(ProgramVM vm) {
+			Debug.Assert(uiDispatcher.CheckAccess());
+			sbOutput.Reset();
+			attachToProcessContext.Formatter.WritePid(sbOutput, vm);
+			return sbOutput.ToString();
+		}
+
+		string GetTitle_UI(ProgramVM vm) {
+			Debug.Assert(uiDispatcher.CheckAccess());
+			sbOutput.Reset();
+			attachToProcessContext.Formatter.WriteTitle(sbOutput, vm);
+			return sbOutput.ToString();
+		}
+
+		string GetType_UI(ProgramVM vm) {
+			Debug.Assert(uiDispatcher.CheckAccess());
+			sbOutput.Reset();
+			attachToProcessContext.Formatter.WriteType(sbOutput, vm);
+			return sbOutput.ToString();
+		}
+
+		string GetMachine_UI(ProgramVM vm) {
+			Debug.Assert(uiDispatcher.CheckAccess());
+			sbOutput.Reset();
+			attachToProcessContext.Formatter.WriteMachine(sbOutput, vm);
+			return sbOutput.ToString();
+		}
+
+		string GetPath_UI(ProgramVM vm) {
+			Debug.Assert(uiDispatcher.CheckAccess());
+			sbOutput.Reset();
+			attachToProcessContext.Formatter.WritePath(sbOutput, vm);
+			return sbOutput.ToString();
 		}
 
 		internal void Dispose() {

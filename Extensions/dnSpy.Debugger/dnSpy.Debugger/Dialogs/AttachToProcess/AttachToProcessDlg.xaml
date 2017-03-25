@@ -23,6 +23,7 @@
              xmlns:local="clr-namespace:dnSpy.Debugger.Dialogs.AttachToProcess"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Debugger.UI"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              Height="500" Width="1000"
@@ -40,13 +41,19 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0" Margin="5 5 5 0">
+        <Grid Grid.Column="0" Margin="5 5 5 0" mvvm:InitDataTemplateAP.Initialize="True" img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Search}" ToolTip="{Binding SearchToolTip}" />
             <TextBox Grid.Column="1" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding SearchToolTip}" />
+            <StackPanel Grid.Column="2" Margin="2 3 0 3" Orientation="Horizontal">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding SearchHelpCommand}" ToolTip="{Binding SearchHelpToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.StatusHelp}"/>
+                </Button>
+            </StackPanel>
         </Grid>
         <ListView
             Grid.Row="1"

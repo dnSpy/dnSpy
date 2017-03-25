@@ -1581,4 +1581,10 @@ Are you sure you want to expand it?</value>
   <data name="Modules_Process" xml:space="preserve">
     <value>Process</value>
   </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="Search_SearchColumnHelpText" xml:space="preserve">
+    <value>Search column: {0}</value>
+  </data>
 </root>

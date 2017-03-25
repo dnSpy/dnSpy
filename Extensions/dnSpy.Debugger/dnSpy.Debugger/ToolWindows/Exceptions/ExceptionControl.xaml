@@ -36,13 +36,14 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True">
+        <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Margin="0 3" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
+            <StackPanel Grid.Column="0" Margin="0 3" Orientation="Horizontal">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type img:DsImage}" BasedOn="{StaticResource {x:Type img:DsImage}}">
                         <Style.Triggers>
@@ -78,6 +79,11 @@
             </StackPanel>
             <Label Grid.Column="1" Margin="0 0 0 0" VerticalAlignment="Center" Content="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Search}" ToolTip="{Binding SearchToolTip}" />
             <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding VM.FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding SearchToolTip}" />
+            <StackPanel Grid.Column="3" Margin="2 3 0 3" Orientation="Horizontal">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding SearchHelpCommand}" ToolTip="{Binding SearchHelpToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.StatusHelp}"/>
+                </Button>
+            </StackPanel>
         </Grid>
         <local:AddExceptionControl Grid.Row="1" Margin="0 2" x:Name="addExceptionControl" Visibility="{Binding ElementName=thisControl, Path=DataContext.VM.IsAddingExceptions, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <ListView

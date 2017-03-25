@@ -29,6 +29,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.Text;
 using dnSpy.Debugger.ToolWindows.Controls;
 using dnSpy.Debugger.UI;
@@ -41,6 +42,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		BulkObservableCollection<ModuleBreakpointVM> AllItems { get; }
 		ObservableCollection<ModuleBreakpointVM> SelectedItems { get; }
 		void ResetSearchSettings();
+		string GetSearchHelpText();
 	}
 
 	[Export(typeof(IModuleBreakpointsVM))]
@@ -148,10 +150,24 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			this.editValueProviderService = editValueProviderService;
 			this.dbgModuleBreakpointsService = dbgModuleBreakpointsService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			moduleBreakpointContext = new ModuleBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher()) {
+			moduleBreakpointContext = new ModuleBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions)) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = moduleBreakpointFormatterProvider.Create(),
 			};
+		}
+		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
+		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowId, "i", dnSpy_Debugger_Resources.Column_ID),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleName, "n", dnSpy_Debugger_Resources.Column_Name),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowOrder, "o", dnSpy_Debugger_Resources.Column_Order),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowProcessName, "p", dnSpy_Debugger_Resources.Column_Process),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleAppDomainName, "ad", dnSpy_Debugger_Resources.Column_AppDomain),
+		};
+
+		// UI thread
+		public string GetSearchHelpText() {
+			moduleBreakpointContext.UIDispatcher.VerifyAccess();
+			return moduleBreakpointContext.SearchMatcher.GetHelpText();
 		}
 
 		// random thread
@@ -343,6 +359,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			// Common case check, we don't need to allocate any strings
 			if (filterText == string.Empty)
 				return true;
+			// The order must match searchColumnDefinitions
 			var allStrings = new string[] {
 				GetId_UI(vm),
 				GetModuleName_UI(vm),

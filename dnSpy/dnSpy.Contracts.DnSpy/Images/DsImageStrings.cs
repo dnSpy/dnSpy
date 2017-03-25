@@ -198,6 +198,7 @@ namespace dnSpy.Contracts.Images {
 		public const string SplitScreenHorizontally = nameof(SplitScreenHorizontally);
 		public const string SplitScreenVertically = nameof(SplitScreenVertically);
 		public const string StatusError = nameof(StatusError);
+		public const string StatusHelp = nameof(StatusHelp);
 		public const string StatusHidden = nameof(StatusHidden);
 		public const string StatusInformation = nameof(StatusInformation);
 		public const string StatusWarning = nameof(StatusWarning);

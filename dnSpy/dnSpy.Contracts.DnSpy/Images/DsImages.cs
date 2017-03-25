@@ -202,6 +202,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference SplitScreenHorizontally { get; } = new ImageReference(assembly, DsImageStrings.SplitScreenHorizontally);
 		public static ImageReference SplitScreenVertically { get; } = new ImageReference(assembly, DsImageStrings.SplitScreenVertically);
 		public static ImageReference StatusError { get; } = new ImageReference(assembly, DsImageStrings.StatusError);
+		public static ImageReference StatusHelp { get; } = new ImageReference(assembly, DsImageStrings.StatusHelp);
 		public static ImageReference StatusHidden { get; } = new ImageReference(assembly, DsImageStrings.StatusHidden);
 		public static ImageReference StatusInformation { get; } = new ImageReference(assembly, DsImageStrings.StatusInformation);
 		public static ImageReference StatusWarning { get; } = new ImageReference(assembly, DsImageStrings.StatusWarning);

@@ -3154,6 +3154,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search column: {0}.
+        /// </summary>
+        public static string Search_SearchColumnHelpText {
+            get {
+                return ResourceManager.GetString("Search_SearchColumnHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        public static string SearchHelp_ToolTip {
+            get {
+                return ResourceManager.GetString("SearchHelp_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select _All.
         /// </summary>
         public static string SelectAllCommand {

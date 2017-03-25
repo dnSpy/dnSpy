@@ -41,6 +41,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		BulkObservableCollection<ModuleVM> AllItems { get; }
 		ObservableCollection<ModuleVM> SelectedItems { get; }
 		void ResetSearchSettings();
+		string GetSearchHelpText();
 	}
 
 	[Export(typeof(IModulesVM))]
@@ -139,10 +140,30 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			this.debuggerSettings = debuggerSettings;
 			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			moduleContext = new ModuleContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher()) {
+			moduleContext = new ModuleContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions)) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = moduleFormatterProvider.Create(),
 			};
+		}
+		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
+		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowName, "n", dnSpy_Debugger_Resources.Column_Name),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowOptimized, "opt", dnSpy_Debugger_Resources.Column_OptimizedModule),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowDynamic, "dyn", dnSpy_Debugger_Resources.Column_DynamicModule),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowInMemory, "mem", dnSpy_Debugger_Resources.Column_InMemoryModule),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowOrder, "o", dnSpy_Debugger_Resources.Column_Order),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowVersion, "v", dnSpy_Debugger_Resources.Column_Version),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowTimestamp, "ts", dnSpy_Debugger_Resources.Column_Timestamp),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowAddress, "a", dnSpy_Debugger_Resources.Column_Address),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowProcess, "p", dnSpy_Debugger_Resources.Column_Process),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowAppDomain, "ad", dnSpy_Debugger_Resources.Column_AppDomain),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowPath, "f", dnSpy_Debugger_Resources.Column_Path),
+		};
+
+		// UI thread
+		public string GetSearchHelpText() {
+			moduleContext.UIDispatcher.VerifyAccess();
+			return moduleContext.SearchMatcher.GetHelpText();
 		}
 
 		// random thread
@@ -490,9 +511,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			// Common case check, we don't need to allocate any strings
 			if (filterText == string.Empty)
 				return true;
+			// The order must match searchColumnDefinitions
 			var allStrings = new string[] {
 				GetName_UI(vm),
-				GetPath_UI(vm),
 				GetOptimized_UI(vm),
 				GetDynamic_UI(vm),
 				GetInMemory_UI(vm),
@@ -502,6 +523,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				GetAddress_UI(vm),
 				GetProcess_UI(vm),
 				GetAppDomain_UI(vm),
+				GetPath_UI(vm),
 			};
 			sbOutput.Reset();
 			return moduleContext.SearchMatcher.IsMatchAll(allStrings);

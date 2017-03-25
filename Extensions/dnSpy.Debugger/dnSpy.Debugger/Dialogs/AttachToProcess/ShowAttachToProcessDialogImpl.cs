@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Text.Classification;
@@ -37,9 +38,10 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<DebuggerSettings> debuggerSettings;
 		readonly Lazy<ProgramFormatterProvider> programFormatterProvider;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		ShowAttachToProcessDialogImpl(IAppWindow appWindow, Lazy<UIDispatcher> uiDispatcher, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<AttachProgramOptionsAggregatorFactory> attachProgramOptionsAggregatorFactory, Lazy<DbgManager> dbgManager, Lazy<DebuggerSettings> debuggerSettings, Lazy<ProgramFormatterProvider> programFormatterProvider) {
+		ShowAttachToProcessDialogImpl(IAppWindow appWindow, Lazy<UIDispatcher> uiDispatcher, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<AttachProgramOptionsAggregatorFactory> attachProgramOptionsAggregatorFactory, Lazy<DbgManager> dbgManager, Lazy<DebuggerSettings> debuggerSettings, Lazy<ProgramFormatterProvider> programFormatterProvider, IMessageBoxService messageBoxService) {
 			this.appWindow = appWindow;
 			this.uiDispatcher = uiDispatcher;
 			this.classificationFormatMapService = classificationFormatMapService;
@@ -48,13 +50,14 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			this.dbgManager = dbgManager;
 			this.debuggerSettings = debuggerSettings;
 			this.programFormatterProvider = programFormatterProvider;
+			this.messageBoxService = messageBoxService;
 		}
 
 		public override StartDebuggingOptions[] Show() {
 			AttachToProcessVM vm = null;
 			try {
 				var dlg = new AttachToProcessDlg();
-				vm = new AttachToProcessVM(uiDispatcher.Value, dbgManager.Value, debuggerSettings.Value, programFormatterProvider.Value, classificationFormatMapService, textElementProvider, attachProgramOptionsAggregatorFactory.Value);
+				vm = new AttachToProcessVM(uiDispatcher.Value, dbgManager.Value, debuggerSettings.Value, programFormatterProvider.Value, classificationFormatMapService, textElementProvider, attachProgramOptionsAggregatorFactory.Value, () => SearchHelp(vm, dlg));
 				dlg.DataContext = vm;
 				dlg.Owner = appWindow.MainWindow;
 				var res = dlg.ShowDialog();
@@ -66,6 +69,8 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				vm?.Dispose();
 			}
 		}
+
+		void SearchHelp(AttachToProcessVM vm, DependencyObject control) => messageBoxService.Show(vm.GetSearchHelpText(), ownerWindow: Window.GetWindow(control));
 
 		public override void Attach() {
 			var options = Show();
