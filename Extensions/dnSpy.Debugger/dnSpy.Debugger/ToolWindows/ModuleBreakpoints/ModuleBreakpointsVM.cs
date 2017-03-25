@@ -357,6 +357,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		// UI thread
 		string GetId_UI(ModuleBreakpointVM vm) {
+			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
 			sbOutput.Reset();
 			moduleBreakpointContext.Formatter.WriteId(sbOutput, vm.ModuleBreakpoint);
 			return sbOutput.ToString();
@@ -364,6 +365,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		// UI thread
 		string GetModuleName_UI(ModuleBreakpointVM vm) {
+			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
 			sbOutput.Reset();
 			moduleBreakpointContext.Formatter.WriteModuleName(sbOutput, vm.ModuleBreakpoint);
 			return sbOutput.ToString();
@@ -371,6 +373,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		// UI thread
 		string GetOrder_UI(ModuleBreakpointVM vm) {
+			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
 			sbOutput.Reset();
 			moduleBreakpointContext.Formatter.WriteOrder(sbOutput, vm.ModuleBreakpoint);
 			return sbOutput.ToString();
@@ -378,6 +381,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		// UI thread
 		string GetProcessName_UI(ModuleBreakpointVM vm) {
+			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
 			sbOutput.Reset();
 			moduleBreakpointContext.Formatter.WriteProcessName(sbOutput, vm.ModuleBreakpoint);
 			return sbOutput.ToString();
@@ -385,6 +389,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		// UI thread
 		string GetAppDomainName_UI(ModuleBreakpointVM vm) {
+			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
 			sbOutput.Reset();
 			moduleBreakpointContext.Formatter.WriteAppDomainName(sbOutput, vm.ModuleBreakpoint);
 			return sbOutput.ToString();

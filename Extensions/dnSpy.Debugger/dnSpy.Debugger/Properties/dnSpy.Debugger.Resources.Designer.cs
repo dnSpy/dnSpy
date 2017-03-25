@@ -2812,6 +2812,60 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string Modules_AllProcesses {
+            get {
+                return ResourceManager.GetString("Modules_AllProcesses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No modules match your search filter..
+        /// </summary>
+        public static string Modules_NoMatch {
+            get {
+                return ResourceManager.GetString("Modules_NoMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Process.
+        /// </summary>
+        public static string Modules_Process {
+            get {
+                return ResourceManager.GetString("Modules_Process", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all search criteria so that all modules are shown.
+        /// </summary>
+        public static string Modules_ResetSearchSettings_ToolTip {
+            get {
+                return ResourceManager.GetString("Modules_ResetSearchSettings_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Modules_Search {
+            get {
+                return ResourceManager.GetString("Modules_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search for a module.
+        /// </summary>
+        public static string Modules_Search_ToolTip {
+            get {
+                return ResourceManager.GetString("Modules_Search_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save Modules.
         /// </summary>
         public static string ModuleSaveModulesTitle {

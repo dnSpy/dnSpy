@@ -96,6 +96,7 @@
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointVM.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\TextViewTaggers.cs" />
+    <Compile Include="ToolWindows\Modules\SearchTextClassifierProvider.cs" />
     <Compile Include="UI\BulkObservableCollection.cs" />
     <Compile Include="UI\FormatterObject.cs" />
     <Compile Include="Utilities\ProcessProvider.cs" />

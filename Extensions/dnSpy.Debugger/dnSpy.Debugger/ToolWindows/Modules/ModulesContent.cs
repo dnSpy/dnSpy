@@ -24,7 +24,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.ToolWindows.Modules {
 	interface IModulesContent : IUIObjectProvider {
@@ -33,6 +35,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		void OnVisible();
 		void OnHidden();
 		void Focus();
+		void FocusSearchTextBox();
 		ListView ListView { get; }
 		ModulesOperations Operations { get; }
 	}
@@ -52,6 +55,11 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		sealed class ControlVM {
 			public IModulesVM VM { get; }
 			ModulesOperations Operations { get; }
+
+			public string SearchToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Modules_Search_ToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlF);
+			public string ResetSearchSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Modules_ResetSearchSettings_ToolTip, null);
+
+			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);
 
 			public ControlVM(IModulesVM vm, ModulesOperations operations) {
 				VM = vm;
@@ -77,6 +85,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			//TODO:
 		}
 
+		public void FocusSearchTextBox() => modulesControl.FocusSearchTextBox();
 		public void Focus() => UIUtilities.FocusSelector(modulesControl.ListView);
 		public void OnClose() => modulesVM.IsOpen = false;
 		public void OnShow() => modulesVM.IsOpen = true;

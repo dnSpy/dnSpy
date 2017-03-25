@@ -30,6 +30,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.ToolWindows.Memory;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Modules {
 	abstract class ModulesOperations {
@@ -57,6 +58,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public abstract int GetSaveModuleCount();
 		public abstract bool CanSave { get; }
 		public abstract void Save();
+		public abstract bool CanResetSearchSettings { get; }
+		public abstract void ResetSearchSettings();
 	}
 
 	[Export(typeof(ModulesOperations))]
@@ -66,7 +69,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		readonly Lazy<ModulesSaver> modulesSaver;
 		readonly Lazy<MemoryWindowService> memoryWindowService;
 
-		ObservableCollection<ModuleVM> AllItems => modulesVM.AllItems;
+		BulkObservableCollection<ModuleVM> AllItems => modulesVM.AllItems;
 		ObservableCollection<ModuleVM> SelectedItems => modulesVM.SelectedItems;
 		//TODO: This should be view order
 		IEnumerable<ModuleVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
@@ -212,5 +215,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public override bool CanSave => GetModulesToSave().Length != 0;
 		public override void Save() => modulesSaver.Value.Save(GetModulesToSave());
 		ModuleVM[] GetModulesToSave() => modulesSaver.Value.FilterModules(SelectedItems);
+
+		public override bool CanResetSearchSettings => true;
+		public override void ResetSearchSettings() => modulesVM.ResetSearchSettings();
 	}
 }

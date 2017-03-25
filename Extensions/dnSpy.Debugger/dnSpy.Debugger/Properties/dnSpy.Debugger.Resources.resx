@@ -1563,4 +1563,22 @@ Are you sure you want to expand it?</value>
   <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
     <value>Enable or disable all breakpoints matching the current search criteria</value>
   </data>
+  <data name="Modules_AllProcesses" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Modules_NoMatch" xml:space="preserve">
+    <value>No modules match your search filter.</value>
+  </data>
+  <data name="Modules_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Modules_Search_ToolTip" xml:space="preserve">
+    <value>Search for a module</value>
+  </data>
+  <data name="Modules_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all modules are shown</value>
+  </data>
+  <data name="Modules_Process" xml:space="preserve">
+    <value>Process</value>
+  </data>
 </root>

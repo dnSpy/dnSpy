@@ -47,6 +47,10 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				var windowIndex = i;
 				cmds.Add(new RelayCommand(a => modulesContent.Value.Operations.ShowInMemoryWindow(windowIndex), a => modulesContent.Value.Operations.CanShowInMemoryWindow), ModifierKeys.Control, Key.D0 + (i + 1) % 10);
 			}
+
+			cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL);
+			cmds.Add(new RelayCommand(a => modulesContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.F);
+			cmds.Add(new RelayCommand(a => modulesContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.E);
 		}
 	}
 

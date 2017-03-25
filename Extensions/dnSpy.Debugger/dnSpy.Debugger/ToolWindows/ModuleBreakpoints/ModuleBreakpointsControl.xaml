@@ -78,7 +78,7 @@
                 </Button>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
             </StackPanel>
-            <Label Grid.Column="1" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.Breakpoints_Search}" ToolTip="{Binding SearchToolTip}" />
+            <Label Grid.Column="1" Margin="0 0 0 0" VerticalAlignment="Center" Content="{x:Static p:dnSpy_Debugger_Resources.Breakpoints_Search}" ToolTip="{Binding SearchToolTip}" />
             <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding VM.FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding SearchToolTip}" />
         </Grid>
         <ListView
