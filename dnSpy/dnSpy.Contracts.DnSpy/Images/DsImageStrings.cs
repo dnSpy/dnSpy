@@ -25,6 +25,10 @@ namespace dnSpy.Contracts.Images {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public const string Add = nameof(Add);
 		public const string AddReference = nameof(AddReference);
+		public const string AdvancedBreakpointDisabled = nameof(AdvancedBreakpointDisabled);
+		public const string AdvancedBreakpointEnabled = nameof(AdvancedBreakpointEnabled);
+		public const string AdvancedTracepointDisabled = nameof(AdvancedTracepointDisabled);
+		public const string AdvancedTracepointEnabled = nameof(AdvancedTracepointEnabled);
 		public const string Assembly = nameof(Assembly);
 		public const string AssemblyError = nameof(AssemblyError);
 		public const string AssemblyExe = nameof(AssemblyExe);
@@ -33,12 +37,16 @@ namespace dnSpy.Contracts.Images {
 		public const string Backwards = nameof(Backwards);
 		public const string Binary = nameof(Binary);
 		public const string BinaryFile = nameof(BinaryFile);
+		public const string BoundBreakpoint = nameof(BoundBreakpoint);
 		public const string Branch = nameof(Branch);
 		public const string BreakpointDisabled = nameof(BreakpointDisabled);
 		public const string BreakpointEnabled = nameof(BreakpointEnabled);
+		public const string BreakpointError = nameof(BreakpointError);
 		public const string BreakpointsWindow = nameof(BreakpointsWindow);
+		public const string BreakpointWarning = nameof(BreakpointWarning);
 		public const string BuildSolution = nameof(BuildSolution);
 		public const string CallReturnInstructionPointer = nameof(CallReturnInstructionPointer);
+		public const string CallReturnInstructionPointerAlert = nameof(CallReturnInstructionPointerAlert);
 		public const string CallStackWindow = nameof(CallStackWindow);
 		public const string Cancel = nameof(Cancel);
 		public const string CheckDot = nameof(CheckDot);
@@ -64,6 +72,8 @@ namespace dnSpy.Contracts.Images {
 		public const string CSInteractiveWindow = nameof(CSInteractiveWindow);
 		public const string CSProjectNode = nameof(CSProjectNode);
 		public const string CurrentInstructionPointer = nameof(CurrentInstructionPointer);
+		public const string CurrentInstructionPointerPaused = nameof(CurrentInstructionPointerPaused);
+		public const string CurrentInstructionPointerStopped = nameof(CurrentInstructionPointerStopped);
 		public const string Cursor = nameof(Cursor);
 		public const string Cut = nameof(Cut);
 		public const string DelegateInternal = nameof(DelegateInternal);
@@ -71,11 +81,13 @@ namespace dnSpy.Contracts.Images {
 		public const string DelegateProtected = nameof(DelegateProtected);
 		public const string DelegatePublic = nameof(DelegatePublic);
 		public const string DelegateShortcut = nameof(DelegateShortcut);
+		public const string DeleteBreakpoint = nameof(DeleteBreakpoint);
 		public const string Dialog = nameof(Dialog);
 		public const string DisableAllBreakpoints = nameof(DisableAllBreakpoints);
 		public const string DisassemblyWindow = nameof(DisassemblyWindow);
 		public const string DownloadNoColor = nameof(DownloadNoColor);
 		public const string DraggedCurrentInstructionPointer = nameof(DraggedCurrentInstructionPointer);
+		public const string DraggedInstructionPointerPaused = nameof(DraggedInstructionPointerPaused);
 		public const string Edit = nameof(Edit);
 		public const string Editor = nameof(Editor);
 		public const string EnableAllBreakpoints = nameof(EnableAllBreakpoints);
@@ -226,6 +238,10 @@ namespace dnSpy.Contracts.Images {
 		public const string ToolstripPanelLeft = nameof(ToolstripPanelLeft);
 		public const string ToolstripPanelRight = nameof(ToolstripPanelRight);
 		public const string ToolstripPanelTop = nameof(ToolstripPanelTop);
+		public const string TracepointDisabled = nameof(TracepointDisabled);
+		public const string TracepointEnabled = nameof(TracepointEnabled);
+		public const string TracepointError = nameof(TracepointError);
+		public const string TracePointWarning = nameof(TracePointWarning);
 		public const string Type = nameof(Type);
 		public const string Undo = nameof(Undo);
 		public const string UndoCheckBoxList = nameof(UndoCheckBoxList);
