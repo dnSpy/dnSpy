@@ -147,7 +147,7 @@ namespace dndbg.Engine {
 		/// <param name="moduleNameOnly">true if <paramref name="asmFullName"/> is ignored</param>
 		/// <returns></returns>
 		public static DnModuleId Create(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) =>
-			new DnModuleId(asmFullName, moduleName, isDynamic, isInMemory, false);
+			new DnModuleId(asmFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
 
 		/// <summary>
 		/// operator==()

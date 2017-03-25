@@ -90,7 +90,6 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		}
 
 		public override void Remove() => owner.Remove(this);
-
 		protected override void CloseCore() { }
 	}
 }

@@ -150,7 +150,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// <param name="moduleNameOnly">true if <paramref name="asmFullName"/> is ignored</param>
 		/// <returns></returns>
 		public static ModuleId Create(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) =>
-			new ModuleId(asmFullName, moduleName, isDynamic, isInMemory, false);
+			new ModuleId(asmFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
 
 		/// <summary>
 		/// operator==()
