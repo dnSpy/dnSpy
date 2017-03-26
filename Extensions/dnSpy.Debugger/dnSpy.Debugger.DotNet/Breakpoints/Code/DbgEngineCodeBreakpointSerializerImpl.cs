@@ -22,7 +22,7 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	[ExportDbgEngineCodeBreakpointSerializer(typeof(DbgDotNetEngineCodeBreakpointImpl))]
+	[ExportDbgEngineCodeBreakpointSerializer(PredefinedDbgEngineCodeBreakpointTypes.DotNet)]
 	sealed class DbgEngineCodeBreakpointSerializerImpl : DbgEngineCodeBreakpointSerializer {
 		public override void Serialize(ISettingsSection section, DbgEngineCodeBreakpoint breakpoint) {
 			var bp = (DbgDotNetEngineCodeBreakpointImpl)breakpoint;

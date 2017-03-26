@@ -22,5 +22,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// Contains engine-specific information about a code breakpoint
 	/// </summary>
 	public abstract class DbgEngineCodeBreakpoint : DbgObject {
+		/// <summary>
+		/// Unique type, see <see cref="PredefinedDbgEngineCodeBreakpointTypes"/>. There should
+		/// be a 1-1 correspondence between this string and the derived type.
+		/// </summary>
+		public abstract string Type { get; }
 	}
 }

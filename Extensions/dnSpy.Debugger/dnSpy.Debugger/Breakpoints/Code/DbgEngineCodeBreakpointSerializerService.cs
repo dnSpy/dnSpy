@@ -39,20 +39,10 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		DbgEngineCodeBreakpointSerializerServiceImpl([ImportMany] IEnumerable<Lazy<DbgEngineCodeBreakpointSerializer, IDbgEngineCodeBreakpointSerializerMetadata>> dbgEngineCodeBreakpointSerializers) =>
 			this.dbgEngineCodeBreakpointSerializers = dbgEngineCodeBreakpointSerializers.ToArray();
 
-		Lazy<DbgEngineCodeBreakpointSerializer, IDbgEngineCodeBreakpointSerializerMetadata> TryGetSerializer(Type type) {
+		Lazy<DbgEngineCodeBreakpointSerializer, IDbgEngineCodeBreakpointSerializerMetadata> TryGetSerializer(string type) {
 			foreach (var lz in dbgEngineCodeBreakpointSerializers) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0)
 					return lz;
-			}
-			return null;
-		}
-
-		Lazy<DbgEngineCodeBreakpointSerializer, IDbgEngineCodeBreakpointSerializerMetadata> TryGetSerializer(string typeFullName) {
-			foreach (var lz in dbgEngineCodeBreakpointSerializers) {
-				foreach (var t in lz.Metadata.Types) {
-					if (t.FullName == typeFullName)
-						return lz;
-				}
 			}
 			return null;
 		}
@@ -63,15 +53,13 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			if (breakpoint == null)
 				throw new ArgumentNullException(nameof(breakpoint));
 
-			var bpType = breakpoint.GetType();
+			var bpType = breakpoint.Type;
 			var serializer = TryGetSerializer(bpType);
 			Debug.Assert(serializer != null);
 			if (serializer == null)
 				return;
 
-			// The assembly name isn't included since it won't be possible to move the class to some other assembly.
-			// The type's full name should be enough since most assemblies use different namespaces.
-			section.Attribute("__BPT", bpType.FullName);
+			section.Attribute("__BPT", bpType);
 			serializer.Value.Serialize(section, breakpoint);
 		}
 

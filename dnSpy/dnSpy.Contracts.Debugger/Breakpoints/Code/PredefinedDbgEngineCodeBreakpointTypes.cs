@@ -17,23 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
-using dnSpy.Contracts.Metadata;
-
-namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	sealed class DbgDotNetEngineCodeBreakpointImpl : DbgDotNetEngineCodeBreakpoint {
-		public override string Type => PredefinedDbgEngineCodeBreakpointTypes.DotNet;
-		public override ModuleId Module { get; }
-		public override uint Token { get; }
-		public override uint Offset { get; }
-
-		public DbgDotNetEngineCodeBreakpointImpl(ModuleId module, uint token, uint offset) {
-			Module = module;
-			Token = token;
-			Offset = offset;
-		}
-
-		protected override void CloseCore() { }
+namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
+	/// <summary>
+	/// Predefined <see cref="DbgEngineCodeBreakpoint"/> types
+	/// </summary>
+	public static class PredefinedDbgEngineCodeBreakpointTypes {
+		/// <summary>
+		/// .NET code breakpoint with a module, token, and IL offset
+		/// </summary>
+		public const string DotNet = nameof(DotNet);
 	}
 }

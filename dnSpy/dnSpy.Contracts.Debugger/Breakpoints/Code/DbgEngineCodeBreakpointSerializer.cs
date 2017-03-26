@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>Metadata</summary>
 	public interface IDbgEngineCodeBreakpointSerializerMetadata {
 		/// <summary>See <see cref="ExportDbgEngineCodeBreakpointSerializerAttribute.Types"/></summary>
-		Type[] Types { get; }
+		string[] Types { get; }
 	}
 
 	/// <summary>
@@ -56,20 +56,20 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="type">Type of supported <see cref="DbgEngineCodeBreakpoint"/></param>
-		public ExportDbgEngineCodeBreakpointSerializerAttribute(Type type)
+		/// <param name="type">Type (compared against <see cref="DbgEngineCodeBreakpoint.Type"/>), see <see cref="PredefinedDbgEngineCodeBreakpointTypes"/></param>
+		public ExportDbgEngineCodeBreakpointSerializerAttribute(string type)
 			: base(typeof(DbgEngineCodeBreakpointSerializer)) => Types = new[] { type ?? throw new ArgumentNullException(nameof(type)) };
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="types">Types of supported <see cref="DbgEngineCodeBreakpoint"/>s</param>
-		public ExportDbgEngineCodeBreakpointSerializerAttribute(Type[] types)
+		/// <param name="types">Types (compared against <see cref="DbgEngineCodeBreakpoint.Type"/>), see <see cref="PredefinedDbgEngineCodeBreakpointTypes"/></param>
+		public ExportDbgEngineCodeBreakpointSerializerAttribute(string[] types)
 			: base(typeof(DbgEngineCodeBreakpointSerializer)) => Types = types ?? throw new ArgumentNullException(nameof(types));
 
 		/// <summary>
 		/// Types of supported <see cref="DbgEngineCodeBreakpoint"/>s
 		/// </summary>
-		public Type[] Types { get; }
+		public string[] Types { get; }
 	}
 }

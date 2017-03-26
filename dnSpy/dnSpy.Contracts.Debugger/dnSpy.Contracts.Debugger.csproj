@@ -52,6 +52,7 @@
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsService.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpoint.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializer.cs" />
+    <Compile Include="Breakpoints\Code\PredefinedDbgEngineCodeBreakpointTypes.cs" />
     <Compile Include="Breakpoints\Modules\DbgBreakpointModule.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpoint.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointSettings.cs" />
