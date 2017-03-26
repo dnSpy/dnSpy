@@ -276,11 +276,11 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		void DbgModuleBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) {
 			dbgManager.Value.DispatcherThread.VerifyAccess();
 			UI(() => {
-				foreach (var bp in e.Breakpoints) {
-					bool b = bpToVM.TryGetValue(bp, out var vm);
+				foreach (var info in e.Breakpoints) {
+					bool b = bpToVM.TryGetValue(info.Breakpoint, out var vm);
 					Debug.Assert(b);
 					if (b)
-						vm.UpdateSettings_UI(bp.Settings);
+						vm.UpdateSettings_UI(info.Breakpoint.Settings);
 				}
 			});
 		}
