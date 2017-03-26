@@ -299,7 +299,7 @@ namespace dnSpy.Debugger.DbgUI {
 		sealed class BreakpointsWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
 			public BreakpointsWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
-				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, null) {
+				: base(toolWindowService, ToolWindows.CodeBreakpoints.CodeBreakpointsToolWindowContent.THE_GUID, debugger, null) {
 			}
 		}
 

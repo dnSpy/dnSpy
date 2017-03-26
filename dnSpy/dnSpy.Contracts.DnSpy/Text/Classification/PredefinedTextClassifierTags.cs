@@ -67,22 +67,56 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// Breakpoints window column: Name
 		/// </summary>
+		[Obsolete("Use code breakpoints constants instead", true)]
 		public static readonly string BreakpointsWindowName = "Name";
 
 		/// <summary>
 		/// Breakpoints window column: Assembly
 		/// </summary>
+		[Obsolete("Use code breakpoints constants instead", true)]
 		public static readonly string BreakpointsWindowAssembly = "Assembly";
 
 		/// <summary>
 		/// Breakpoints window column: Module
 		/// </summary>
+		[Obsolete("Use code breakpoints constants instead", true)]
 		public static readonly string BreakpointsWindowModule = "Module";
 
 		/// <summary>
 		/// Breakpoints window column: File
 		/// </summary>
+		[Obsolete("Use code breakpoints constants instead", true)]
 		public static readonly string BreakpointsWindowFile = "File";
+
+		/// <summary>
+		/// Code breakpoints window column: Name
+		/// </summary>
+		public static readonly string CodeBreakpointsWindowName = "Name";
+
+		/// <summary>
+		/// Code breakpoints window column: Condition
+		/// </summary>
+		public static readonly string CodeBreakpointsWindowCondition = "Condition";
+
+		/// <summary>
+		/// Code breakpoints window column: Hit Count
+		/// </summary>
+		public static readonly string CodeBreakpointsWindowHitCount = "HitCount";
+
+		/// <summary>
+		/// Code breakpoints window column: Filter
+		/// </summary>
+		public static readonly string CodeBreakpointsWindowFilter = "Filter";
+
+		/// <summary>
+		/// Code breakpoints window column: When Hit
+		/// </summary>
+		public static readonly string CodeBreakpointsWindowWhenHit = "WhenHit";
+
+		/// <summary>
+		/// Code breakpoints window column: Module
+		/// </summary>
+		public static readonly string CodeBreakpointsWindowModule = "Module";
 
 		/// <summary>
 		/// Module Breakpoints window column: id

@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Content types
@@ -191,7 +193,13 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Breakpoints window
 		/// </summary>
+		[Obsolete("Use " + nameof(CodeBreakpointsWindow), true)]
 		public const string BreakpointsWindow = nameof(BreakpointsWindow);
+
+		/// <summary>
+		/// Code breakpoints window
+		/// </summary>
+		public const string CodeBreakpointsWindow = nameof(CodeBreakpointsWindow);
 
 		/// <summary>
 		/// Module breakpoints window

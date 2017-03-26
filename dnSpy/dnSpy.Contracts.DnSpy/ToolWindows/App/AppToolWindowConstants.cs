@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.ToolWindows.App {
 	/// <summary>
 	/// Constants
@@ -32,7 +34,11 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_LOCALS = 20000;
 
 		/// <summary>Order of debugger breakpoints tool window</summary>
+		[Obsolete("Use " + nameof(DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CODEBREAKPOINTS), true)]
 		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_BREAKPOINTS = 20001;
+
+		/// <summary>Order of debugger breakpoints tool window</summary>
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CODEBREAKPOINTS = 20001;
 
 		/// <summary>Order of debugger module breakpoints tool window</summary>
 		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MODULEBREAKPOINTS = 20002;

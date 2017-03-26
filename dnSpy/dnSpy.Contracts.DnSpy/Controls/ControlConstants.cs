@@ -47,10 +47,18 @@ namespace dnSpy.Contracts.Controls {
 		public static readonly Guid GUID_SEARCH_LISTBOX = new Guid("651FC97F-A9A7-4649-97AC-FC942168E6E2");
 
 		/// <summary>Guid of debugger breakpoints control</summary>
+		[Obsolete("Use " + nameof(GUID_DEBUGGER_CODEBREAKPOINTS_CONTROL), true)]
 		public static readonly Guid GUID_DEBUGGER_BREAKPOINTS_CONTROL = new Guid("00EC8F82-086C-4305-A07D-CC43CB035905");
 
 		/// <summary>Guid of debugger breakpoints <see cref="ListView"/></summary>
+		[Obsolete("Use " + nameof(GUID_DEBUGGER_CODEBREAKPOINTS_LISTVIEW), true)]
 		public static readonly Guid GUID_DEBUGGER_BREAKPOINTS_LISTVIEW = new Guid("E178917C-199C-4A99-95F9-9724806E528F");
+
+		/// <summary>Guid of debugger breakpoints control</summary>
+		public static readonly Guid GUID_DEBUGGER_CODEBREAKPOINTS_CONTROL = new Guid("00EC8F82-086C-4305-A07D-CC43CB035905");
+
+		/// <summary>Guid of debugger breakpoints <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_CODEBREAKPOINTS_LISTVIEW = new Guid("E178917C-199C-4A99-95F9-9724806E528F");
 
 		/// <summary>Guid of debugger module breakpoints control</summary>
 		public static readonly Guid GUID_DEBUGGER_MODULEBREAKPOINTS_CONTROL = new Guid("D64862B4-6282-4579-BE84-41B1D629F980");

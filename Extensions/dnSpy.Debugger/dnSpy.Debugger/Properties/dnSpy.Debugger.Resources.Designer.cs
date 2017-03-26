@@ -277,6 +277,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go To Disassembly.
+        /// </summary>
+        public static string Breakpoints_GoToDisassembly_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_GoToDisassembly_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go To Source Code.
+        /// </summary>
+        public static string Breakpoints_GoToSourceCode_ToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_GoToSourceCode_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import breakpoints from a file.
         /// </summary>
         public static string Breakpoints_ImportBreakpoints_ToolTip {
@@ -493,6 +511,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Condition.
+        /// </summary>
+        public static string Column_Condition {
+            get {
+                return ResourceManager.GetString("Column_Condition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Conditions.
         /// </summary>
         public static string Column_Conditions {
@@ -525,6 +552,24 @@ namespace dnSpy.Debugger.Properties {
         public static string Column_File {
             get {
                 return ResourceManager.GetString("Column_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter.
+        /// </summary>
+        public static string Column_Filter {
+            get {
+                return ResourceManager.GetString("Column_Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hit Count.
+        /// </summary>
+        public static string Column_HitCount {
+            get {
+                return ResourceManager.GetString("Column_HitCount", resourceCulture);
             }
         }
         
@@ -786,6 +831,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Column_Version {
             get {
                 return ResourceManager.GetString("Column_Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When Hit.
+        /// </summary>
+        public static string Column_WhenHit {
+            get {
+                return ResourceManager.GetString("Column_WhenHit", resourceCulture);
             }
         }
         
@@ -2336,6 +2390,15 @@ namespace dnSpy.Debugger.Properties {
         public static string GoToModuleCommand {
             get {
                 return ResourceManager.GetString("GoToModuleCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go To Source Code.
+        /// </summary>
+        public static string GoToSourceCodeCommand {
+            get {
+                return ResourceManager.GetString("GoToSourceCodeCommand", resourceCulture);
             }
         }
         

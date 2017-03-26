@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		void Initialize(DbgCodeBreakpointsService dbgCodeBreakpointsService);
 	}
 
+	[Export(typeof(DbgCodeBreakpointsService))]
 	sealed class DbgCodeBreakpointsServiceImpl : DbgCodeBreakpointsService {
 		readonly object lockObj;
 		readonly HashSet<DbgCodeBreakpointImpl> breakpoints;

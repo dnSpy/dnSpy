@@ -34,7 +34,16 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 		DbgCodeBreakpointSettings settings;
 
-		public override bool IsEnabled { get; set; }
+		public override bool IsEnabled {
+			get => Settings.IsEnabled;
+			set {
+				var settings = Settings;
+				if (settings.IsEnabled == value)
+					return;
+				settings.IsEnabled = value;
+				Settings = settings;
+			}
+		}
 
 		public override DbgCodeBreakpointCondition? Condition {
 			get => Settings.Condition;

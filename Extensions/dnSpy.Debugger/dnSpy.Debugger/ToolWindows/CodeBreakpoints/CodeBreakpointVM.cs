@@ -1,0 +1,83 @@
+﻿/*
+    Copyright (C) 2014-2017 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.UI;
+
+namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
+	sealed class CodeBreakpointVM : ViewModelBase {
+		public bool IsEnabled {
+			get => settings.IsEnabled;
+			set {
+				if (settings.IsEnabled == value)
+					return;
+				CodeBreakpoint.IsEnabled = value;
+			}
+		}
+
+		public ImageReference ImageReference => ImageReference.None;//TODO:
+
+		public ICodeBreakpointContext Context { get; }
+		public DbgCodeBreakpoint CodeBreakpoint { get; }
+		public object NameObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowName);
+		public object ConditionObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowCondition);
+		public object HitCountObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowHitCount);
+		public object FilterObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowFilter);
+		public object WhenHitObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowWhenHit);
+		public object ModuleObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowModule);
+		internal int Order { get; }
+
+		DbgCodeBreakpointSettings settings;
+
+		public CodeBreakpointVM(DbgCodeBreakpoint codeBreakpoint, ICodeBreakpointContext context, int order) {
+			CodeBreakpoint = codeBreakpoint ?? throw new ArgumentNullException(nameof(codeBreakpoint));
+			Context = context ?? throw new ArgumentNullException(nameof(context));
+			Order = order;
+			settings = CodeBreakpoint.Settings;
+		}
+
+		// UI thread
+		internal void RefreshThemeFields_UI() {
+			Context.UIDispatcher.VerifyAccess();
+			OnPropertyChanged(nameof(NameObject));
+			OnPropertyChanged(nameof(ConditionObject));
+			OnPropertyChanged(nameof(HitCountObject));
+			OnPropertyChanged(nameof(FilterObject));
+			OnPropertyChanged(nameof(WhenHitObject));
+			OnPropertyChanged(nameof(ModuleObject));
+		}
+
+		// UI thread
+		internal void UpdateSettings_UI(DbgCodeBreakpointSettings newSettings) {
+			Context.UIDispatcher.VerifyAccess();
+			var oldSettings = settings;
+			settings = newSettings;
+			if (oldSettings.IsEnabled != newSettings.IsEnabled)
+				OnPropertyChanged(nameof(IsEnabled));
+			//TODO: Add more checks
+		}
+
+		// UI thread
+		internal void Dispose() => Context.UIDispatcher.VerifyAccess();
+	}
+}

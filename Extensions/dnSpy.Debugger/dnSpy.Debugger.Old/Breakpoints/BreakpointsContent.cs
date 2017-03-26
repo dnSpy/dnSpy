@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		BreakpointsContentCommandLoader(IWpfCommandService wpfCommandService, CopyBreakpointCtxMenuCommand copyCmd, DeleteBreakpointCtxMenuCommand deleteCmd, GoToSourceBreakpointCtxMenuCommand gotoSrcCmd, GoToSourceNewTabBreakpointCtxMenuCommand gotoSrcNewTabCmd, ToggleEnableBreakpointCtxMenuCommand toggleBpCmd) {
-			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_BREAKPOINTS_LISTVIEW);
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_CODEBREAKPOINTS_LISTVIEW);
 			cmds.Add(ApplicationCommands.Copy, new BreakpointCtxMenuCommandProxy(copyCmd));
 			cmds.Add(ApplicationCommands.Delete, new BreakpointCtxMenuCommandProxy(deleteCmd));
 			cmds.Add(new BreakpointCtxMenuCommandProxy(gotoSrcCmd), ModifierKeys.None, Key.Enter);
@@ -86,8 +86,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			vmBreakpoints = breakpointsVM;
 			this.moduleIdProvider = moduleIdProvider;
 
-			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_BREAKPOINTS_CONTROL, breakpointsControl);
-			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_BREAKPOINTS_LISTVIEW, breakpointsControl.ListView);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CODEBREAKPOINTS_CONTROL, breakpointsControl);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CODEBREAKPOINTS_LISTVIEW, breakpointsControl.ListView);
 		}
 
 		void BreakpointsControl_BreakpointsListViewDoubleClick(object sender, EventArgs e) {

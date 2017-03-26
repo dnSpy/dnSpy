@@ -42,19 +42,19 @@ namespace dnSpy.Debugger.Breakpoints {
 			var writer = Cache.GetWriter();
 			try {
 				var printer = new BreakpointPrinter(writer, vm.Context.UseHexadecimal, vm.Context.Decompiler);
-				if (tag == PredefinedTextClassifierTags.BreakpointsWindowName)
-					printer.WriteName(vm);
-				else if (tag == PredefinedTextClassifierTags.BreakpointsWindowAssembly)
-					printer.WriteAssembly(vm);
-				else if (tag == PredefinedTextClassifierTags.BreakpointsWindowModule)
-					printer.WriteModule(vm);
-				else if (tag == PredefinedTextClassifierTags.BreakpointsWindowFile)
-					printer.WriteFile(vm);
-				else
-					return null;
+				//if (tag == PredefinedTextClassifierTags.BreakpointsWindowName)
+				//	printer.WriteName(vm);
+				//else if (tag == PredefinedTextClassifierTags.BreakpointsWindowAssembly)
+				//	printer.WriteAssembly(vm);
+				//else if (tag == PredefinedTextClassifierTags.BreakpointsWindowModule)
+				//	printer.WriteModule(vm);
+				//else if (tag == PredefinedTextClassifierTags.BreakpointsWindowFile)
+				//	printer.WriteFile(vm);
+				//else
+				//	return null;
 
 				var context = new TextClassifierContext(writer.Text, tag, vm.Context.SyntaxHighlight, writer.Colors);
-				return vm.Context.TextElementProvider.CreateTextElement(vm.Context.ClassificationFormatMap, context, ContentTypes.BreakpointsWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+				return vm.Context.TextElementProvider.CreateTextElement(vm.Context.ClassificationFormatMap, context, ContentTypes.CodeBreakpointsWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
 			}
 			finally {
 				Cache.FreeWriter(writer);

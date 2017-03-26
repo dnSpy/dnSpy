@@ -465,13 +465,31 @@ namespace dnSpy.Contracts.Menus {
 		public const string GROUP_CTX_DOCUMENTS_OTHER = "11000,15776535-8A1D-4255-8C3D-331163324C7C";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Copy</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_CODEBPS_COPY), true)]
 		public const string GROUP_CTX_DBG_BPS_COPY = "0,FB604477-5E55-4B55-91A4-0E06762FED83";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Code</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_CODEBPS_CODE), true)]
 		public const string GROUP_CTX_DBG_BPS_CODE = "1000,5918522A-B51A-430D-8351-561FF0618AB3";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Options</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_CODEBPS_OPTS), true)]
 		public const string GROUP_CTX_DBG_BPS_OPTS = "10000,E326374F-8D4F-4CC4-B454-BB3F2C585299";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Copy</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_COPY = "0,FB604477-5E55-4B55-91A4-0E06762FED83";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Code</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_CODE = "1000,5918522A-B51A-430D-8351-561FF0618AB3";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Commands</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_CMDS1 = "2000,3F86C3D0-9FCF-4DF8-93D7-2C1D202DC22D";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Export</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_EXPORT = "4000,51A2286D-423B-447D-82B7-4A8AAE9D1203";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Options</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_OPTS = "10000,E326374F-8D4F-4CC4-B454-BB3F2C585299";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Module Breakpoints, Group: Copy</summary>
 		public const string GROUP_CTX_DBG_MODULEBPS_COPY = "0,648E5B4C-BADE-4226-9B18-EE983438728E";

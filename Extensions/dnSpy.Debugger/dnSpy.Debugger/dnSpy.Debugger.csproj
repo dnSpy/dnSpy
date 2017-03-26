@@ -88,6 +88,19 @@
     <Compile Include="Text\SearchTextClassifierContext.cs" />
     <Compile Include="Text\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointColumnConverter.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointContext.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointFormatter.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointsContent.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointsControl.xaml.cs">
+      <DependentUpon>CodeBreakpointsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointsOperations.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointsToolWindowContent.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointsVM.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointVM.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\Commands.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionCategoryVM.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointColumnConverter.cs" />
@@ -294,6 +307,10 @@
     <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ToolWindows\CodeBreakpoints\CodeBreakpointsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ToolWindows\Controls\EditValueControl.xaml">
       <SubType>Designer</SubType>

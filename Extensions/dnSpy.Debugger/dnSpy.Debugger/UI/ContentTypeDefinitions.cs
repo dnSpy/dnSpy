@@ -25,9 +25,9 @@ namespace dnSpy.Debugger.UI {
 	static class ContentTypeDefinitions {
 #pragma warning disable 0169
 		[Export]
-		[Name(ContentTypes.BreakpointsWindow)]
+		[Name(ContentTypes.CodeBreakpointsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition BreakpointsWindow;
+		static readonly ContentTypeDefinition CodeBreakpointsWindow;
 
 		[Export]
 		[Name(ContentTypes.ModuleBreakpointsWindow)]

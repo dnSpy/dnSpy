@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		BreakpointsToolWindowContentProvider(Lazy<IBreakpointsContent> breakpointsContent) => this.breakpointsContent = breakpointsContent;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
-			get { yield return new ToolWindowContentInfo(BreakpointsToolWindowContent.THE_GUID, BreakpointsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_BREAKPOINTS, false); }
+			get { yield return new ToolWindowContentInfo(BreakpointsToolWindowContent.THE_GUID, BreakpointsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CODEBREAKPOINTS, false); }
 		}
 
 		public ToolWindowContent GetOrCreate(Guid guid) => guid == BreakpointsToolWindowContent.THE_GUID ? BreakpointsToolWindowContent : null;

@@ -1587,4 +1587,25 @@ Are you sure you want to expand it?</value>
   <data name="Search_SearchColumnHelpText" xml:space="preserve">
     <value>Search column: {0}</value>
   </data>
+  <data name="Column_Condition" xml:space="preserve">
+    <value>Condition</value>
+  </data>
+  <data name="Column_Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Column_HitCount" xml:space="preserve">
+    <value>Hit Count</value>
+  </data>
+  <data name="Column_WhenHit" xml:space="preserve">
+    <value>When Hit</value>
+  </data>
+  <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
+    <value>Go To Disassembly</value>
+  </data>
+  <data name="Breakpoints_GoToSourceCode_ToolTip" xml:space="preserve">
+    <value>Go To Source Code</value>
+  </data>
+  <data name="GoToSourceCodeCommand" xml:space="preserve">
+    <value>Go To Source Code</value>
+  </data>
 </root>
