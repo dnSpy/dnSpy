@@ -72,12 +72,6 @@ namespace dnSpy.Contracts.Controls {
 				var h = Height;
 				WindowDpi = GetDpi(hwndSource.Handle) ?? wpfDpi;
 
-				// For some reason, we can't initialize the non-fit-to-size property, so always force
-				// manual mode. When we're here, we should already have a valid Width and Height
-				Debug.Assert(h > 0 && !double.IsNaN(h));
-				Debug.Assert(w > 0 && !double.IsNaN(w));
-				SizeToContent = SizeToContent.Manual;
-
 				if (!wpfSupportsPerMonitorDpi) {
 					double scale = DisableDpiScalingAtStartup ? 1 : WpfPixelScaleFactor;
 					Width = w * scale;
