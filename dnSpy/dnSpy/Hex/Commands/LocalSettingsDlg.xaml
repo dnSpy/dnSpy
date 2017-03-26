@@ -76,7 +76,7 @@
             <CheckBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Margin="10 5 0 0" IsChecked="{Binding UseRelativePositions}" Content="{x:Static p:dnSpy_Resources.LocalHexSettings_UseRelOffsets}" ToolTip="{x:Static p:dnSpy_Resources.LocalHexSettings_UseRelOffsets_ToolTip}" />
         </Grid>
 
-        <Grid Grid.Row="1" Margin="0 5 5 0">
+        <Grid Grid.Row="1" Margin="0 5 5 5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
