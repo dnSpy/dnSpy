@@ -74,6 +74,11 @@
     <Compile Include="Dialogs\AttachToProcess\SearchTextClassifierProvider.cs" />
     <Compile Include="Dialogs\AttachToProcess\ShowAttachToProcessDialog.cs" />
     <Compile Include="Dialogs\AttachToProcess\ShowAttachToProcessDialogImpl.cs" />
+    <Compile Include="Dialogs\CodeBreakpoints\ShowCodeBreakpointSettingsDlg.xaml.cs">
+      <DependentUpon>ShowCodeBreakpointSettingsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\CodeBreakpoints\ShowCodeBreakpointSettingsService.cs" />
+    <Compile Include="Dialogs\CodeBreakpoints\ShowCodeBreakpointSettingsVM.cs" />
     <Compile Include="Dialogs\DebugProgram\DebugProgramDlg.xaml.cs">
       <DependentUpon>DebugProgramDlg.xaml</DependentUpon>
     </Compile>
@@ -301,6 +306,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Dialogs\AttachToProcess\AttachToProcessDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\CodeBreakpoints\ShowCodeBreakpointSettingsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

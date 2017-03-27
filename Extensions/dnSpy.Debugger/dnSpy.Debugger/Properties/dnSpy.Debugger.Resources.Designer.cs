@@ -259,11 +259,29 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Is true.
+        /// </summary>
+        public static string Breakpoint_Condition_IsTrue {
+            get {
+                return ResourceManager.GetString("Breakpoint_Condition_IsTrue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (no condition).
         /// </summary>
         public static string Breakpoint_Condition_NoCondition {
             get {
                 return ResourceManager.GetString("Breakpoint_Condition_NoCondition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When changed.
+        /// </summary>
+        public static string Breakpoint_Condition_WhenChanged {
+            get {
+                return ResourceManager.GetString("Breakpoint_Condition_WhenChanged", resourceCulture);
             }
         }
         
@@ -318,6 +336,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo {
             get {
                 return ResourceManager.GetString("Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is a multiple of.
+        /// </summary>
+        public static string Breakpoint_HitCount_IsAMultipleOf {
+            get {
+                return ResourceManager.GetString("Breakpoint_HitCount_IsAMultipleOf", resourceCulture);
             }
         }
         
@@ -1803,6 +1830,51 @@ namespace dnSpy.Debugger.Properties {
         public static string EditAppDomainNameCommand {
             get {
                 return ResourceManager.GetString("EditAppDomainNameCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conditional Expression.
+        /// </summary>
+        public static string EditBreakpointSettings_ConditionalExpression {
+            get {
+                return ResourceManager.GetString("EditBreakpointSettings_ConditionalExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter.
+        /// </summary>
+        public static string EditBreakpointSettings_Filter {
+            get {
+                return ResourceManager.GetString("EditBreakpointSettings_Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hit Count.
+        /// </summary>
+        public static string EditBreakpointSettings_HitCount {
+            get {
+                return ResourceManager.GetString("EditBreakpointSettings_HitCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Breakpoint Settings.
+        /// </summary>
+        public static string EditBreakpointSettings_Title {
+            get {
+                return ResourceManager.GetString("EditBreakpointSettings_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print Message.
+        /// </summary>
+        public static string EditBreakpointSettings_Trace {
+            get {
+                return ResourceManager.GetString("EditBreakpointSettings_Trace", resourceCulture);
             }
         }
         
@@ -3343,6 +3415,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Settings.
+        /// </summary>
+        public static string SettingsCommand {
+            get {
+                return ResourceManager.GetString("SettingsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alt+Num *.
         /// </summary>
         public static string ShortCutAltAsterisk {
@@ -3366,6 +3447,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyAlt6 {
             get {
                 return ResourceManager.GetString("ShortCutKeyAlt6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt+Enter.
+        /// </summary>
+        public static string ShortCutKeyAltEnter {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltEnter", resourceCulture);
             }
         }
         

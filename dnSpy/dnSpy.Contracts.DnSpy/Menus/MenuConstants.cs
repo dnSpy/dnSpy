@@ -482,6 +482,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Code</summary>
 		public const string GROUP_CTX_DBG_CODEBPS_CODE = "1000,5918522A-B51A-430D-8351-561FF0618AB3";
 
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Settings</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_SETTINGS = "1500,466C6110-9CD4-4D64-B532-8DCFC61C01EC";
+
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Commands</summary>
 		public const string GROUP_CTX_DBG_CODEBPS_CMDS1 = "2000,3F86C3D0-9FCF-4DF8-93D7-2C1D202DC22D";
 

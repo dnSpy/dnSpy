@@ -32,6 +32,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Breakpoints.Code;
+using dnSpy.Debugger.Dialogs.CodeBreakpoints;
 using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
 
@@ -65,6 +66,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public abstract void GoToSourceCode();
 		public abstract bool CanGoToDisassembly { get; }
 		public abstract void GoToDisassembly();
+		public abstract bool CanEditSettings { get; }
+		public abstract void EditSettings();
 		public abstract bool ShowTokens { get; set; }
 		public abstract bool ShowModuleNames { get; set; }
 		public abstract bool ShowParameterTypes { get; set; }
@@ -86,6 +89,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		readonly IPickSaveFilename pickSaveFilename;
 		readonly IPickFilename pickFilename;
 		readonly IMessageBoxService messageBoxService;
+		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
 
 		BulkObservableCollection<CodeBreakpointVM> AllItems => codeBreakpointsVM.AllItems;
 		ObservableCollection<CodeBreakpointVM> SelectedItems => codeBreakpointsVM.SelectedItems;
@@ -95,7 +99,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		IEnumerable<CodeBreakpointVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgEngineCodeBreakpointSerializerService> dbgEngineCodeBreakpointSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickSaveFilename pickSaveFilename, IPickFilename pickFilename, IMessageBoxService messageBoxService) {
+		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgEngineCodeBreakpointSerializerService> dbgEngineCodeBreakpointSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickSaveFilename pickSaveFilename, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService) {
 			this.codeBreakpointsVM = codeBreakpointsVM;
 			this.debuggerSettings = debuggerSettings;
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
@@ -105,6 +109,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			this.pickSaveFilename = pickSaveFilename;
 			this.pickFilename = pickFilename;
 			this.messageBoxService = messageBoxService;
+			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -238,6 +243,17 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			if (!CanGoToDisassembly)
 				return;
 			//TODO:
+		}
+
+		public override bool CanEditSettings => SelectedItems.Count == 1;
+		public override void EditSettings() {
+			if (!CanEditSettings)
+				return;
+			var bp = SelectedItems[0].CodeBreakpoint;
+			var newSettings = showCodeBreakpointSettingsService.Value.Show(bp.Settings);
+			if (newSettings == null)
+				return;
+			bp.Settings = newSettings.Value;
 		}
 
 		public override bool ShowTokens {
