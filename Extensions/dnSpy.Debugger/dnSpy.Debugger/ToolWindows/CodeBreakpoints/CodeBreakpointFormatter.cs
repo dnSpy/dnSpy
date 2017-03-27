@@ -18,7 +18,6 @@
 */
 
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text;
 
@@ -35,10 +34,10 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		internal static CodeBreakpointFormatter Create_DONT_USE() => new CodeBreakpointFormatter();
 
 		internal void WriteName(IDebugOutputWriter output, CodeBreakpointVM vm) => vm.EngineBreakpointFormatter.WriteName(output);
-		internal void WriteCondition(ITextColorWriter output, DbgCodeBreakpoint bp) { }//TODO:
-		internal void WriteHitCount(ITextColorWriter output, DbgCodeBreakpoint bp) { }//TODO:
-		internal void WriteFilter(ITextColorWriter output, DbgCodeBreakpoint bp) { }//TODO:
-		internal void WriteWhenHit(ITextColorWriter output, DbgCodeBreakpoint bp) { }//TODO:
+		internal void WriteCondition(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Condition);
+		internal void WriteHitCount(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.HitCount);
+		internal void WriteFilter(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Filter);
+		internal void WriteWhenHit(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Trace);
 		internal void WriteModule(IDebugOutputWriter output, CodeBreakpointVM vm) => vm.EngineBreakpointFormatter.WriteModule(output);
 	}
 }

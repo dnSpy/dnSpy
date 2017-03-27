@@ -259,6 +259,96 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (no condition).
+        /// </summary>
+        public static string Breakpoint_Condition_NoCondition {
+            get {
+                return ResourceManager.GetString("Breakpoint_Condition_NoCondition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to when &apos;{0}&apos; has changed.
+        /// </summary>
+        public static string Breakpoint_Condition_WhenConditionHasChanged {
+            get {
+                return ResourceManager.GetString("Breakpoint_Condition_WhenConditionHasChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to when &apos;{0}&apos; is true.
+        /// </summary>
+        public static string Breakpoint_Condition_WhenConditionIsTrue {
+            get {
+                return ResourceManager.GetString("Breakpoint_Condition_WhenConditionIsTrue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (none).
+        /// </summary>
+        public static string Breakpoint_Filter_NoFilter {
+            get {
+                return ResourceManager.GetString("Breakpoint_Filter_NoFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to when hit count is a multiple of {0}.
+        /// </summary>
+        public static string Breakpoint_HitCount_HitCountIsAMultipleOf {
+            get {
+                return ResourceManager.GetString("Breakpoint_HitCount_HitCountIsAMultipleOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to when hit count is equal to {0}.
+        /// </summary>
+        public static string Breakpoint_HitCount_HitCountIsEqualTo {
+            get {
+                return ResourceManager.GetString("Breakpoint_HitCount_HitCountIsEqualTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to when hit count is greater than or equal to {0}.
+        /// </summary>
+        public static string Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo {
+            get {
+                return ResourceManager.GetString("Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to break always.
+        /// </summary>
+        public static string Breakpoint_HitCount_NoHitCount {
+            get {
+                return ResourceManager.GetString("Breakpoint_HitCount_NoHitCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Break.
+        /// </summary>
+        public static string Breakpoint_Tracepoint_NoTraceMessage {
+            get {
+                return ResourceManager.GetString("Breakpoint_Tracepoint_NoTraceMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print message &apos;{0}&apos;.
+        /// </summary>
+        public static string Breakpoint_Tracepoint_PrintMessage {
+            get {
+                return ResourceManager.GetString("Breakpoint_Tracepoint_PrintMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add breakpoint.
         /// </summary>
         public static string Breakpoints_AddBreakpoint_ToolTip {

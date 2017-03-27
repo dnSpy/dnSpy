@@ -38,13 +38,13 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowName)
 				formatter.WriteName(obj.VM.Context.DebugOutputWriter, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowCondition)
-				formatter.WriteCondition(writer, obj.VM.CodeBreakpoint);
+				formatter.WriteCondition(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowHitCount)
-				formatter.WriteHitCount(writer, obj.VM.CodeBreakpoint);
+				formatter.WriteHitCount(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowFilter)
-				formatter.WriteFilter(writer, obj.VM.CodeBreakpoint);
+				formatter.WriteFilter(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowWhenHit)
-				formatter.WriteWhenHit(writer, obj.VM.CodeBreakpoint);
+				formatter.WriteWhenHit(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowModule)
 				formatter.WriteModule(obj.VM.Context.DebugOutputWriter, obj.VM);
 			else

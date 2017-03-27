@@ -115,13 +115,13 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				var formatter = vm.Context.Formatter;
 				formatter.WriteName(debugWriter, vm);
 				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteCondition(output, vm.CodeBreakpoint);
+				formatter.WriteCondition(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteHitCount(output, vm.CodeBreakpoint);
+				formatter.WriteHitCount(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteFilter(output, vm.CodeBreakpoint);
+				formatter.WriteFilter(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteWhenHit(output, vm.CodeBreakpoint);
+				formatter.WriteWhenHit(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteModule(debugWriter, vm);
 				output.WriteLine();

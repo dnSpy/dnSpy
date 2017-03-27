@@ -19,6 +19,7 @@
 
 using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
@@ -31,6 +32,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		IDebugOutputWriter DebugOutputWriter { get; }
 		CodeBreakpointFormatter Formatter { get; }
+		BreakpointConditionsFormatter BreakpointConditionsFormatter { get; }
 		bool SyntaxHighlight { get; }
 		SearchMatcher SearchMatcher { get; }
 	}
@@ -42,15 +44,17 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public IDebugOutputWriter DebugOutputWriter { get; }
 		public CodeBreakpointFormatter Formatter { get; set; }
+		public BreakpointConditionsFormatter BreakpointConditionsFormatter { get; }
 		public bool SyntaxHighlight { get; set; }
 		public SearchMatcher SearchMatcher { get; }
 
-		public CodeBreakpointContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
+		public CodeBreakpointContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, BreakpointConditionsFormatter breakpointConditionsFormatter, SearchMatcher searchMatcher) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
 			DebugOutputWriter = new DebugOutputWriterImpl(TextClassifierTextColorWriter);
+			BreakpointConditionsFormatter = breakpointConditionsFormatter;
 			SearchMatcher = searchMatcher;
 		}
 	}

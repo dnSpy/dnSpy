@@ -1608,4 +1608,34 @@ Are you sure you want to expand it?</value>
   <data name="GoToSourceCodeCommand" xml:space="preserve">
     <value>Go To Source Code</value>
   </data>
+  <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
+    <value>(no condition)</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged" xml:space="preserve">
+    <value>when '{0}' has changed</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
+    <value>when '{0}' is true</value>
+  </data>
+  <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
+    <value>when hit count is a multiple of {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
+    <value>when hit count is equal to {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
+    <value>when hit count is greater than or equal to {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
+    <value>break always</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
+    <value>Break</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
+    <value>Print message '{0}'</value>
+  </data>
 </root>
