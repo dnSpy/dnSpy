@@ -198,7 +198,8 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			uiDispatcher.VerifyAccess();
 			if (added) {
 				foreach (var p in processes) {
-					const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ | NativeMethods.PROCESS_VM_WRITE;
+					const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ |
+						NativeMethods.PROCESS_VM_WRITE | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
 					var processHandle = NativeMethods.OpenProcess(dwDesiredAccess, false, p.Id);
 					Debug.Assert(!processHandle.IsInvalid);
 					var stream = CreateHexBufferStream_UI(processHandle.DangerousGetHandle());

@@ -124,7 +124,8 @@ namespace dnSpy.Debugger.Impl {
 			Id = pid;
 			ShouldDetach = shouldDetach;
 
-			const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ | NativeMethods.PROCESS_VM_WRITE;
+			const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ |
+				NativeMethods.PROCESS_VM_WRITE | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
 			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, pid);
 			if (hProcess.IsInvalid)
 				throw new InvalidOperationException($"Couldn't open process {pid}");

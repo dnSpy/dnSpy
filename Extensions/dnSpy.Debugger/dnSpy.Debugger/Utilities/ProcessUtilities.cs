@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using dnSpy.Debugger.Native;
 
 namespace dnSpy.Debugger.Utilities {
@@ -33,7 +34,7 @@ namespace dnSpy.Debugger.Utilities {
 					return 32;
 				return 64;
 			}
-			Debug.Fail("IsWow64Process failed");
+			Debug.Fail($"IsWow64Process failed: 0x{Marshal.GetLastWin32Error():X8}");
 			return IntPtr.Size * 8;
 		}
 	}

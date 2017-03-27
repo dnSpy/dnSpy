@@ -78,12 +78,6 @@ namespace dnSpy.Hex {
 		public static extern uint GetProcessId(IntPtr hThread);
 
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
-		const uint STANDARD_RIGHTS_REQUIRED = 0x000F0000;
-		const uint SYNCHRONIZE = 0x00100000;
-		public const uint PROCESS_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0xFFFF;
-
-		[DllImport("kernel32", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);
 

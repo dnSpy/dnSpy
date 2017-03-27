@@ -28,6 +28,7 @@ namespace dnSpy.Debugger.Native {
 		public const int PROCESS_VM_OPERATION = 0x0008;
 		public const int PROCESS_VM_READ = 0x0010;
 		public const int PROCESS_VM_WRITE = 0x0020;
+		public const int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		public static extern SafeAccessTokenHandle OpenThread(int dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
