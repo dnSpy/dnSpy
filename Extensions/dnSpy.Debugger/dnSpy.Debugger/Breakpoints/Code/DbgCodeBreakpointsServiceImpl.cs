@@ -73,7 +73,10 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					Debug.Assert(breakpoints.Contains(bpImpl));
 					if (!breakpoints.Contains(bpImpl))
 						continue;
-					bps.Add(new DbgCodeBreakpointAndOldSettings(bpImpl, bpImpl.Settings));
+					var currentSettings = bpImpl.Settings;
+					if (currentSettings == info.Settings)
+						continue;
+					bps.Add(new DbgCodeBreakpointAndOldSettings(bpImpl, currentSettings));
 					bpImpl.WriteSettings(info.Settings);
 				}
 			}

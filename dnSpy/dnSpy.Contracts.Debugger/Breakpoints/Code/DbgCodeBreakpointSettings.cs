@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Code breakpoint settings
 	/// </summary>
-	public struct DbgCodeBreakpointSettings {
+	public struct DbgCodeBreakpointSettings : IEquatable<DbgCodeBreakpointSettings> {
 		/// <summary>
 		/// true if the breakpoint is enabled
 		/// </summary>
@@ -48,6 +48,41 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// Trace message
 		/// </summary>
 		public DbgCodeBreakpointTrace? Trace { get; set; }
+
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+		public static bool operator ==(DbgCodeBreakpointSettings left, DbgCodeBreakpointSettings right) => left.Equals(right);
+		public static bool operator !=(DbgCodeBreakpointSettings left, DbgCodeBreakpointSettings right) => !left.Equals(right);
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+
+		/// <summary>
+		/// Compares this instance to <paramref name="other"/>
+		/// </summary>
+		/// <param name="other">Other instance</param>
+		/// <returns></returns>
+		public bool Equals(DbgCodeBreakpointSettings other) =>
+			IsEnabled == other.IsEnabled &&
+			Condition == other.Condition &&
+			HitCount == other.HitCount &&
+			Filter == other.Filter &&
+			Trace == other.Trace;
+
+		/// <summary>
+		/// Compares this instance to <paramref name="obj"/>
+		/// </summary>
+		/// <param name="obj">Other instance</param>
+		/// <returns></returns>
+		public override bool Equals(object obj) => obj is DbgCodeBreakpointSettings other && Equals(other);
+
+		/// <summary>
+		/// Gets the hash code
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode() =>
+			(IsEnabled ? 1 : 0) ^
+			Condition.GetValueOrDefault().GetHashCode() ^
+			HitCount.GetValueOrDefault().GetHashCode() ^
+			Filter.GetValueOrDefault().GetHashCode() ^
+			Trace.GetValueOrDefault().GetHashCode();
 	}
 
 	/// <summary>

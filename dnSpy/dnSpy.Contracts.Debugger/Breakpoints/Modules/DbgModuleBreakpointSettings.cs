@@ -17,11 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 	/// <summary>
 	/// Module breakpoint settings
 	/// </summary>
-	public struct DbgModuleBreakpointSettings {
+	public struct DbgModuleBreakpointSettings : IEquatable<DbgModuleBreakpointSettings> {
 		/// <summary>
 		/// true if the breakpoint is enabled
 		/// </summary>
@@ -56,5 +58,44 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// Process name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
 		public string ProcessName { get; set; }
+
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+		public static bool operator ==(DbgModuleBreakpointSettings left, DbgModuleBreakpointSettings right) => left.Equals(right);
+		public static bool operator !=(DbgModuleBreakpointSettings left, DbgModuleBreakpointSettings right) => !left.Equals(right);
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+
+		/// <summary>
+		/// Compares this instance to <paramref name="other"/>
+		/// </summary>
+		/// <param name="other">Other instance</param>
+		/// <returns></returns>
+		public bool Equals(DbgModuleBreakpointSettings other) =>
+			IsEnabled == other.IsEnabled &&
+			ModuleName == other.ModuleName &&
+			IsDynamic == other.IsDynamic &&
+			IsInMemory == other.IsInMemory &&
+			Order == other.Order &&
+			AppDomainName == other.AppDomainName &&
+			ProcessName == other.ProcessName;
+
+		/// <summary>
+		/// Compares this instance to <paramref name="obj"/>
+		/// </summary>
+		/// <param name="obj">Other instance</param>
+		/// <returns></returns>
+		public override bool Equals(object obj) => obj is DbgModuleBreakpointSettings other && Equals(other);
+
+		/// <summary>
+		/// Gets the hash code
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode() =>
+			(IsEnabled ? 1 : 0) ^
+			(ModuleName ?? string.Empty).GetHashCode() ^
+			((IsDynamic ?? false) ? 2 : 0) ^
+			((IsInMemory ?? false) ? 4 : 0) ^
+			(Order ?? 0) ^
+			(AppDomainName ?? string.Empty).GetHashCode() ^
+			(ProcessName ?? string.Empty).GetHashCode();
 	}
 }

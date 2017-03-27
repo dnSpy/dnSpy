@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 
 		void ModifyCore(DbgModuleBreakpointAndSettings[] settings) {
 			dbgDispatcher.VerifyAccess();
-			var bps = new List<DbgCodeBreakpointAndOldSettings>(settings.Length);
+			var bps = new List<DbgModuleBreakpointAndOldSettings>(settings.Length);
 			lock (lockObj) {
 				foreach (var info in settings) {
 					var bpImpl = info.Breakpoint as DbgModuleBreakpointImpl;
@@ -71,12 +71,15 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 					Debug.Assert(breakpoints.Contains(bpImpl));
 					if (!breakpoints.Contains(bpImpl))
 						continue;
-					bps.Add(new DbgCodeBreakpointAndOldSettings(bpImpl, bpImpl.Settings));
+					var currentSettings = bpImpl.Settings;
+					if (currentSettings == info.Settings)
+						continue;
+					bps.Add(new DbgModuleBreakpointAndOldSettings(bpImpl, currentSettings));
 					bpImpl.WriteSettings(info.Settings);
 				}
 			}
 			if (bps.Count > 0)
-				BreakpointsModified?.Invoke(this, new DbgBreakpointsModifiedEventArgs(new ReadOnlyCollection<DbgCodeBreakpointAndOldSettings>(bps)));
+				BreakpointsModified?.Invoke(this, new DbgBreakpointsModifiedEventArgs(new ReadOnlyCollection<DbgModuleBreakpointAndOldSettings>(bps)));
 		}
 
 		public override event EventHandler<DbgBreakpointsModifiedEventArgs> BreakpointsModified;

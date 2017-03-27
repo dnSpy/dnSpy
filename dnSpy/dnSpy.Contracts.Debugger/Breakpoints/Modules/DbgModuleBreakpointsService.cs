@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 	/// <summary>
 	/// Breakpoint and old settings
 	/// </summary>
-	public struct DbgCodeBreakpointAndOldSettings {
+	public struct DbgModuleBreakpointAndOldSettings {
 		/// <summary>
 		/// Gets the breakpoint
 		/// </summary>
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// </summary>
 		/// <param name="breakpoint">Breakpoint</param>
 		/// <param name="oldSettings">Old settings</param>
-		public DbgCodeBreakpointAndOldSettings(DbgModuleBreakpoint breakpoint, DbgModuleBreakpointSettings oldSettings) {
+		public DbgModuleBreakpointAndOldSettings(DbgModuleBreakpoint breakpoint, DbgModuleBreakpointSettings oldSettings) {
 			Breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));
 			OldSettings = oldSettings;
 		}
@@ -132,13 +132,13 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <summary>
 		/// Gets the breakpoints
 		/// </summary>
-		public ReadOnlyCollection<DbgCodeBreakpointAndOldSettings> Breakpoints { get; }
+		public ReadOnlyCollection<DbgModuleBreakpointAndOldSettings> Breakpoints { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="breakpoints">Breakpoints and old settings</param>
-		public DbgBreakpointsModifiedEventArgs(ReadOnlyCollection<DbgCodeBreakpointAndOldSettings> breakpoints) =>
+		public DbgBreakpointsModifiedEventArgs(ReadOnlyCollection<DbgModuleBreakpointAndOldSettings> breakpoints) =>
 			Breakpoints = breakpoints ?? throw new ArgumentNullException(nameof(breakpoints));
 	}
 
