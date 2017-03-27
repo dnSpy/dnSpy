@@ -1657,15 +1657,15 @@ Are you sure you want to expand it?</value>
     <value>Is a multiple of</value>
   </data>
   <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
-    <value>Conditional Expression</value>
+    <value>Conditional _Expression</value>
   </data>
   <data name="EditBreakpointSettings_Filter" xml:space="preserve">
-    <value>Filter</value>
+    <value>_Filter</value>
   </data>
   <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
-    <value>Hit Count</value>
+    <value>_Hit Count</value>
   </data>
   <data name="EditBreakpointSettings_Trace" xml:space="preserve">
-    <value>Print Message</value>
+    <value>_Log Message</value>
   </data>
 </root>

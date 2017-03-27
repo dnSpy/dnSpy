@@ -1834,7 +1834,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Conditional Expression.
+        ///   Looks up a localized string similar to Conditional _Expression.
         /// </summary>
         public static string EditBreakpointSettings_ConditionalExpression {
             get {
@@ -1843,7 +1843,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filter.
+        ///   Looks up a localized string similar to _Filter.
         /// </summary>
         public static string EditBreakpointSettings_Filter {
             get {
@@ -1852,7 +1852,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hit Count.
+        ///   Looks up a localized string similar to _Hit Count.
         /// </summary>
         public static string EditBreakpointSettings_HitCount {
             get {
@@ -1870,7 +1870,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Print Message.
+        ///   Looks up a localized string similar to _Log Message.
         /// </summary>
         public static string EditBreakpointSettings_Trace {
             get {
