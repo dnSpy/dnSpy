@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
@@ -28,6 +29,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		IDebugOutputWriter DebugOutputWriter { get; }
 		CodeBreakpointFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		SearchMatcher SearchMatcher { get; }
@@ -38,6 +40,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		public IDebugOutputWriter DebugOutputWriter { get; }
 		public CodeBreakpointFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public SearchMatcher SearchMatcher { get; }
@@ -47,6 +50,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
+			DebugOutputWriter = new DebugOutputWriterImpl(TextClassifierTextColorWriter);
 			SearchMatcher = searchMatcher;
 		}
 	}

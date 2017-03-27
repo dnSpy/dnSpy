@@ -18,10 +18,13 @@
 */
 
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
@@ -35,7 +38,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			}
 		}
 
-		public ImageReference ImageReference => ImageReference.None;//TODO:
+		public ImageReference ImageReference => BreakpointImageUtilities.GetImage(imageType);
 
 		public ICodeBreakpointContext Context { get; }
 		public DbgCodeBreakpoint CodeBreakpoint { get; }
@@ -48,12 +51,34 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		internal int Order { get; }
 
 		DbgCodeBreakpointSettings settings;
+		BreakpointImageType imageType;
 
-		public CodeBreakpointVM(DbgCodeBreakpoint codeBreakpoint, ICodeBreakpointContext context, int order) {
+		internal DbgEngineCodeBreakpointFormatter EngineBreakpointFormatter { get; }
+
+		public CodeBreakpointVM(DbgCodeBreakpoint codeBreakpoint, DbgEngineCodeBreakpointFormatter dbgEngineCodeBreakpointFormatter, ICodeBreakpointContext context, int order) {
 			CodeBreakpoint = codeBreakpoint ?? throw new ArgumentNullException(nameof(codeBreakpoint));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
+			EngineBreakpointFormatter = dbgEngineCodeBreakpointFormatter ?? throw new ArgumentNullException(nameof(dbgEngineCodeBreakpointFormatter));
 			settings = CodeBreakpoint.Settings;
+			imageType = BreakpointImageUtilities.GetImageType(ref settings);
+			dbgEngineCodeBreakpointFormatter.PropertyChanged += DbgEngineCodeBreakpointFormatter_PropertyChanged;
+		}
+
+		void DbgEngineCodeBreakpointFormatter_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+			case DbgEngineCodeBreakpointFormatter.NameProperty:
+				OnPropertyChanged(nameof(NameObject));
+				break;
+
+			case DbgEngineCodeBreakpointFormatter.ModuleProperty:
+				OnPropertyChanged(nameof(ModuleObject));
+				break;
+
+			default:
+				Debug.Fail($"Unknown property: {e.PropertyName}");
+				break;
+			}
 		}
 
 		// UI thread
@@ -68,16 +93,37 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// UI thread
+		internal void RefreshNameColumn_UI() {
+			Context.UIDispatcher.VerifyAccess();
+			OnPropertyChanged(nameof(NameObject));
+		}
+
+		// UI thread
 		internal void UpdateSettings_UI(DbgCodeBreakpointSettings newSettings) {
 			Context.UIDispatcher.VerifyAccess();
 			var oldSettings = settings;
 			settings = newSettings;
 			if (oldSettings.IsEnabled != newSettings.IsEnabled)
 				OnPropertyChanged(nameof(IsEnabled));
-			//TODO: Add more checks
+			var newImageType = BreakpointImageUtilities.GetImageType(ref settings);
+			if (newImageType != imageType) {
+				imageType = newImageType;
+				OnPropertyChanged(nameof(ImageReference));
+			}
+			if (oldSettings.Condition != newSettings.Condition)
+				OnPropertyChanged(nameof(ConditionObject));
+			if (oldSettings.HitCount != newSettings.HitCount)
+				OnPropertyChanged(nameof(HitCountObject));
+			if (oldSettings.Filter != newSettings.Filter)
+				OnPropertyChanged(nameof(FilterObject));
+			if (oldSettings.Trace != newSettings.Trace)
+				OnPropertyChanged(nameof(WhenHitObject));
 		}
 
 		// UI thread
-		internal void Dispose() => Context.UIDispatcher.VerifyAccess();
+		internal void Dispose() {
+			Context.UIDispatcher.VerifyAccess();
+			EngineBreakpointFormatter.PropertyChanged -= DbgEngineCodeBreakpointFormatter_PropertyChanged;
+		}
 	}
 }

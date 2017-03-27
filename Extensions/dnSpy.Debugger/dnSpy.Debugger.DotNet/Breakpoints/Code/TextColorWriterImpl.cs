@@ -17,25 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
-using dnSpy.Contracts.Metadata;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	sealed class DbgDotNetEngineCodeBreakpointImpl : DbgDotNetEngineCodeBreakpoint {
-		public override string Type => PredefinedDbgEngineCodeBreakpointTypes.DotNet;
-		public override ModuleId Module { get; }
-		public override uint Token { get; }
-		public override uint Offset { get; }
-
-		internal DbgEngineCodeBreakpointFormatter Formatter { get; set; }
-
-		public DbgDotNetEngineCodeBreakpointImpl(ModuleId module, uint token, uint offset) {
-			Module = module;
-			Token = token;
-			Offset = offset;
-		}
-
-		protected override void CloseCore() { }
+	sealed class TextColorWriterImpl : ITextColorWriter {
+		readonly IDebugOutputWriter output;
+		public TextColorWriterImpl(IDebugOutputWriter output) => this.output = output;
+		public void Write(object color, string text) => output.Write(color, text);
+		public void Write(TextColor color, string text) => output.Write(color, text);
 	}
 }

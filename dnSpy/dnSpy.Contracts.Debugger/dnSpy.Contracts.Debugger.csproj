@@ -47,10 +47,13 @@
     <Compile Include="Attach\AttachProgramOptionsProviderFactory.cs" />
     <Compile Include="Attach\PredefinedArchitectureNames.cs" />
     <Compile Include="Attach\PredefinedAttachProgramOptionsProviderNames.cs" />
+    <Compile Include="Breakpoints\Code\CodeBreakpointDisplaySettings.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpoint.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointSettings.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsService.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpoint.cs" />
+    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatter.cs" />
+    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterProvider.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializer.cs" />
     <Compile Include="Breakpoints\Code\PredefinedDbgEngineCodeBreakpointTypes.cs" />
     <Compile Include="Breakpoints\Modules\DbgBreakpointModule.cs" />

@@ -3604,6 +3604,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Declaring Types.
+        /// </summary>
+        public static string ShowDeclaringTypesCommand {
+            get {
+                return ResourceManager.GetString("ShowDeclaringTypesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Exception Messages.
         /// </summary>
         public static string ShowExceptionMessages {
@@ -3681,15 +3690,6 @@ namespace dnSpy.Debugger.Properties {
         public static string ShowNextStatementCommand {
             get {
                 return ResourceManager.GetString("ShowNextStatementCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show Owner Types.
-        /// </summary>
-        public static string ShowOwnerTypesCommand {
-            get {
-                return ResourceManager.GetString("ShowOwnerTypesCommand", resourceCulture);
             }
         }
         

@@ -993,8 +993,8 @@ Are you sure you want to expand it?</value>
   <data name="ShowNextStatementCommand" xml:space="preserve">
     <value>S_how Next Statement</value>
   </data>
-  <data name="ShowOwnerTypesCommand" xml:space="preserve">
-    <value>Show Owner Types</value>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>Show Declaring Types</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
     <value>Show _Parameter Names</value>

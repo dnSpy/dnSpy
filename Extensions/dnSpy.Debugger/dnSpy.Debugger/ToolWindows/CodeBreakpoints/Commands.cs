@@ -167,4 +167,92 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ExportSelectedBreakpoints();
 		public override bool IsEnabled(CodeBreakpointsCtxMenuContext context) => context.Operations.CanExportSelectedBreakpoints;
 	}
+
+	[ExportMenuItem(Header = "res:ShowTokensCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 0)]
+	sealed class ShowTokensBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		ShowTokensBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+			: base(codeBreakpointesContent) {
+		}
+
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowTokens = !context.Operations.ShowTokens;
+		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowTokens;
+	}
+
+	[ExportMenuItem(Header = "res:ShowModuleNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 10)]
+	sealed class ShowModuleNamesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		ShowModuleNamesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+			: base(codeBreakpointesContent) {
+		}
+
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowModuleNames = !context.Operations.ShowModuleNames;
+		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowModuleNames;
+	}
+
+	[ExportMenuItem(Header = "res:ShowParameterTypesCommand2", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 20)]
+	sealed class ShowParameterTypesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		ShowParameterTypesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+			: base(codeBreakpointesContent) {
+		}
+
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowParameterTypes = !context.Operations.ShowParameterTypes;
+		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowParameterTypes;
+	}
+
+	[ExportMenuItem(Header = "res:ShowParameterNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 30)]
+	sealed class ShowParameterNamesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		ShowParameterNamesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+			: base(codeBreakpointesContent) {
+		}
+
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowParameterNames = !context.Operations.ShowParameterNames;
+		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowParameterNames;
+	}
+
+	[ExportMenuItem(Header = "res:ShowDeclaringTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 40)]
+	sealed class ShowDeclaringTypesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		ShowDeclaringTypesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+			: base(codeBreakpointesContent) {
+		}
+
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowDeclaringTypes = !context.Operations.ShowDeclaringTypes;
+		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowDeclaringTypes;
+	}
+
+	[ExportMenuItem(Header = "res:ShowNamespacesCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 50)]
+	sealed class ShowNamespacesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		ShowNamespacesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+			: base(codeBreakpointesContent) {
+		}
+
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowNamespaces = !context.Operations.ShowNamespaces;
+		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowNamespaces;
+	}
+
+	[ExportMenuItem(Header = "res:ShowReturnTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 60)]
+	sealed class ShowReturnTypesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		ShowReturnTypesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+			: base(codeBreakpointesContent) {
+		}
+
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowReturnTypes = !context.Operations.ShowReturnTypes;
+		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowReturnTypes;
+	}
+
+	[ExportMenuItem(Header = "res:ShowTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 70)]
+	sealed class ShowTypeKeywordsBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		ShowTypeKeywordsBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+			: base(codeBreakpointesContent) {
+		}
+
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowTypeKeywords = !context.Operations.ShowTypeKeywords;
+		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowTypeKeywords;
+	}
 }

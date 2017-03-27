@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			writer.Clear();
 			var formatter = obj.VM.Context.Formatter;
 			if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowName)
-				formatter.WriteName(writer, obj.VM.CodeBreakpoint);
+				formatter.WriteName(obj.VM.Context.DebugOutputWriter, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowCondition)
 				formatter.WriteCondition(writer, obj.VM.CodeBreakpoint);
 			else if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowHitCount)
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			else if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowWhenHit)
 				formatter.WriteWhenHit(writer, obj.VM.CodeBreakpoint);
 			else if (obj.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowModule)
-				formatter.WriteModule(writer, obj.VM.CodeBreakpoint);
+				formatter.WriteModule(obj.VM.Context.DebugOutputWriter, obj.VM);
 			else
 				return null;
 

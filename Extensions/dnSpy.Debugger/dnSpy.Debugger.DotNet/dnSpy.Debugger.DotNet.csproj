@@ -45,9 +45,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Breakpoints\Code\BreakpointFormatterService.cs" />
     <Compile Include="Breakpoints\Code\DbgDotNetEngineCodeBreakpointFactoryImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgDotNetEngineCodeBreakpointImpl.cs" />
+    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterImpl.cs" />
+    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializerImpl.cs" />
+    <Compile Include="Breakpoints\Code\ModuleLoader.cs" />
+    <Compile Include="Breakpoints\Code\TextColorWriterImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />

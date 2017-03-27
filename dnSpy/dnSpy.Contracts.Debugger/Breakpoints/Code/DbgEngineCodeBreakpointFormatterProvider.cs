@@ -19,53 +19,45 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
-	/// <see cref="DbgEngineCodeBreakpoint"/> serializer. Use <see cref="ExportDbgEngineCodeBreakpointSerializerAttribute"/>
+	/// Creates <see cref="DbgEngineCodeBreakpoint"/> formatters. Use <see cref="ExportDbgEngineCodeBreakpointFormatterProviderAttribute"/>
 	/// to export an instance.
 	/// </summary>
-	public abstract class DbgEngineCodeBreakpointSerializer {
+	public abstract class DbgEngineCodeBreakpointFormatterProvider {
 		/// <summary>
-		/// Serializes <paramref name="breakpoint"/>
+		/// Returns a formatter or null
 		/// </summary>
-		/// <param name="section">Destination section</param>
 		/// <param name="breakpoint">Breakpoint</param>
-		public abstract void Serialize(ISettingsSection section, DbgEngineCodeBreakpoint breakpoint);
-
-		/// <summary>
-		/// Deserializes a breakpoint or returns null if it failed
-		/// </summary>
-		/// <param name="section">Serialized section</param>
 		/// <returns></returns>
-		public abstract DbgEngineCodeBreakpoint Deserialize(ISettingsSection section);
+		public abstract DbgEngineCodeBreakpointFormatter Create(DbgEngineCodeBreakpoint breakpoint);
 	}
 
 	/// <summary>Metadata</summary>
-	public interface IDbgEngineCodeBreakpointSerializerMetadata {
-		/// <summary>See <see cref="ExportDbgEngineCodeBreakpointSerializerAttribute.Types"/></summary>
+	public interface IDbgEngineCodeBreakpointFormatterProviderMetadata {
+		/// <summary>See <see cref="ExportDbgEngineCodeBreakpointFormatterProviderAttribute.Types"/></summary>
 		string[] Types { get; }
 	}
 
 	/// <summary>
-	/// Exports a <see cref="DbgEngineCodeBreakpointSerializer"/> instance
+	/// Exports a <see cref="DbgEngineCodeBreakpointFormatterProvider"/> instance
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportDbgEngineCodeBreakpointSerializerAttribute : ExportAttribute, IDbgEngineCodeBreakpointSerializerMetadata {
+	public sealed class ExportDbgEngineCodeBreakpointFormatterProviderAttribute : ExportAttribute, IDbgEngineCodeBreakpointFormatterProviderMetadata {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="type">Type (compared against <see cref="DbgEngineCodeBreakpoint.Type"/>), see <see cref="PredefinedDbgEngineCodeBreakpointTypes"/></param>
-		public ExportDbgEngineCodeBreakpointSerializerAttribute(string type)
-			: base(typeof(DbgEngineCodeBreakpointSerializer)) => Types = new[] { type ?? throw new ArgumentNullException(nameof(type)) };
+		public ExportDbgEngineCodeBreakpointFormatterProviderAttribute(string type)
+			: base(typeof(DbgEngineCodeBreakpointFormatterProvider)) => Types = new[] { type ?? throw new ArgumentNullException(nameof(type)) };
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="types">Types (compared against <see cref="DbgEngineCodeBreakpoint.Type"/>), see <see cref="PredefinedDbgEngineCodeBreakpointTypes"/></param>
-		public ExportDbgEngineCodeBreakpointSerializerAttribute(string[] types)
-			: base(typeof(DbgEngineCodeBreakpointSerializer)) => Types = types ?? throw new ArgumentNullException(nameof(types));
+		public ExportDbgEngineCodeBreakpointFormatterProviderAttribute(string[] types)
+			: base(typeof(DbgEngineCodeBreakpointFormatterProvider)) => Types = types ?? throw new ArgumentNullException(nameof(types));
 
 		/// <summary>
 		/// Types (compared against <see cref="DbgEngineCodeBreakpoint.Type"/>), see <see cref="PredefinedDbgEngineCodeBreakpointTypes"/>

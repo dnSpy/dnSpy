@@ -18,24 +18,11 @@
 */
 
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
-using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	sealed class DbgDotNetEngineCodeBreakpointImpl : DbgDotNetEngineCodeBreakpoint {
-		public override string Type => PredefinedDbgEngineCodeBreakpointTypes.DotNet;
-		public override ModuleId Module { get; }
-		public override uint Token { get; }
-		public override uint Offset { get; }
-
-		internal DbgEngineCodeBreakpointFormatter Formatter { get; set; }
-
-		public DbgDotNetEngineCodeBreakpointImpl(ModuleId module, uint token, uint offset) {
-			Module = module;
-			Token = token;
-			Offset = offset;
-		}
-
-		protected override void CloseCore() { }
+	[ExportDbgEngineCodeBreakpointFormatterProvider(PredefinedDbgEngineCodeBreakpointTypes.DotNet)]
+	sealed class DbgEngineCodeBreakpointFormatterProviderImpl : DbgEngineCodeBreakpointFormatterProvider {
+		public override DbgEngineCodeBreakpointFormatter Create(DbgEngineCodeBreakpoint breakpoint) =>
+			(breakpoint as DbgDotNetEngineCodeBreakpointImpl)?.Formatter;
 	}
 }

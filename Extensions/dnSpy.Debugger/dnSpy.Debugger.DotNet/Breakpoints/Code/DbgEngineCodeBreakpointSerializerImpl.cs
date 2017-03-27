@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Settings;
@@ -24,6 +26,12 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 	[ExportDbgEngineCodeBreakpointSerializer(PredefinedDbgEngineCodeBreakpointTypes.DotNet)]
 	sealed class DbgEngineCodeBreakpointSerializerImpl : DbgEngineCodeBreakpointSerializer {
+		readonly Lazy<DbgDotNetEngineCodeBreakpointFactory2> dbgDotNetEngineCodeBreakpointFactory;
+
+		[ImportingConstructor]
+		DbgEngineCodeBreakpointSerializerImpl(Lazy<DbgDotNetEngineCodeBreakpointFactory2> dbgDotNetEngineCodeBreakpointFactory) =>
+			this.dbgDotNetEngineCodeBreakpointFactory = dbgDotNetEngineCodeBreakpointFactory;
+
 		public override void Serialize(ISettingsSection section, DbgEngineCodeBreakpoint breakpoint) {
 			var bp = (DbgDotNetEngineCodeBreakpointImpl)breakpoint;
 			section.Attribute("Token", bp.Token);
@@ -49,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 			if (token == null || offset == null || assemblyFullName == null || moduleName == null)
 				return null;
 			var moduleId = new ModuleId(assemblyFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
-			return new DbgDotNetEngineCodeBreakpointImpl(moduleId, token.Value, offset.Value);
+			return dbgDotNetEngineCodeBreakpointFactory.Value.CreateDotNet(moduleId, token.Value, offset.Value);
 		}
 	}
 }

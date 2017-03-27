@@ -39,10 +39,13 @@
     <Compile Include="Attach\AttachableProcessesServiceImpl.cs" />
     <Compile Include="Attach\AttachableProcessImpl.cs" />
     <Compile Include="Attach\AttachableProcessInfo.cs" />
+    <Compile Include="Breakpoints\Code\BreakpointImageUtilities.cs" />
     <Compile Include="Breakpoints\Code\BreakpointsSerializer.cs" />
+    <Compile Include="Breakpoints\Code\CodeBreakpointDisplaySettingsBase.cs" />
     <Compile Include="Breakpoints\Code\CodeBreakpointsListSettings.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsServiceImpl.cs" />
+    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterService.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializerService.cs" />
     <Compile Include="Breakpoints\Modules\BreakpointsSerializer.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointImpl.cs" />

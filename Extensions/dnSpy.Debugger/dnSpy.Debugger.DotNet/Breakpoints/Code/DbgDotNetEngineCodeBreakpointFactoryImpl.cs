@@ -24,17 +24,30 @@ using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
+	abstract class DbgDotNetEngineCodeBreakpointFactory2 : DbgDotNetEngineCodeBreakpointFactory {
+		public abstract DbgDotNetEngineCodeBreakpoint CreateDotNet(ModuleId module, uint token, uint offset);
+	}
+
 	[Export(typeof(DbgDotNetEngineCodeBreakpointFactory))]
-	sealed class DbgDotNetEngineCodeBreakpointFactoryImpl : DbgDotNetEngineCodeBreakpointFactory {
+	[Export(typeof(DbgDotNetEngineCodeBreakpointFactory2))]
+	sealed class DbgDotNetEngineCodeBreakpointFactoryImpl : DbgDotNetEngineCodeBreakpointFactory2 {
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
+		readonly BreakpointFormatterService breakpointFormatterService;
 
 		[ImportingConstructor]
-		DbgDotNetEngineCodeBreakpointFactoryImpl(Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) =>
+		DbgDotNetEngineCodeBreakpointFactoryImpl(Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, BreakpointFormatterService breakpointFormatterService) {
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
+			this.breakpointFormatterService = breakpointFormatterService;
+		}
 
-		public override DbgCodeBreakpoint Create(ModuleId module, uint token, uint offset, DbgCodeBreakpointSettings bpSettings) {
+		public override DbgCodeBreakpoint Create(ModuleId module, uint token, uint offset, DbgCodeBreakpointSettings bpSettings) =>
+			dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(CreateDotNet(module, token, offset), bpSettings));
+
+		public override DbgDotNetEngineCodeBreakpoint CreateDotNet(ModuleId module, uint token, uint offset) {
 			var dnbp = new DbgDotNetEngineCodeBreakpointImpl(module, token, offset);
-			return dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(dnbp, bpSettings));
+			var formatter = breakpointFormatterService.Create(dnbp);
+			dnbp.Formatter = formatter;
+			return dnbp;
 		}
 	}
 }

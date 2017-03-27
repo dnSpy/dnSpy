@@ -19,6 +19,7 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
@@ -33,11 +34,11 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 
 		internal static CodeBreakpointFormatter Create_DONT_USE() => new CodeBreakpointFormatter();
 
-		internal void WriteName(ITextColorWriter output, DbgCodeBreakpoint bp) { }//TODO:
+		internal void WriteName(IDebugOutputWriter output, CodeBreakpointVM vm) => vm.EngineBreakpointFormatter.WriteName(output);
 		internal void WriteCondition(ITextColorWriter output, DbgCodeBreakpoint bp) { }//TODO:
 		internal void WriteHitCount(ITextColorWriter output, DbgCodeBreakpoint bp) { }//TODO:
 		internal void WriteFilter(ITextColorWriter output, DbgCodeBreakpoint bp) { }//TODO:
 		internal void WriteWhenHit(ITextColorWriter output, DbgCodeBreakpoint bp) { }//TODO:
-		internal void WriteModule(ITextColorWriter output, DbgCodeBreakpoint bp) { }//TODO:
+		internal void WriteModule(IDebugOutputWriter output, CodeBreakpointVM vm) => vm.EngineBreakpointFormatter.WriteModule(output);
 	}
 }
