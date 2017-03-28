@@ -203,12 +203,14 @@ namespace dnSpy.AsmEditor.Module {
 					savedState.AssemblyFileNode = node.Context.DocumentTreeView.CreateAssembly(asmFile);
 				}
 
-				Debug.Assert(savedState.AssemblyFileNode.Document.Children.Count == 1);
-				savedState.AssemblyFileNode.Document.Children.Remove(node.Document);
-				Debug.Assert(savedState.AssemblyFileNode.Document.Children.Count == 0);
-				savedState.AssemblyFileNode.TreeNode.EnsureChildrenLoaded();
-				Debug.Assert(savedState.AssemblyFileNode.TreeNode.Children.Count == 0);
-				savedState.AssemblyFileNode.Document.Children.Add(node.Document);
+				lock (savedState.AssemblyFileNode.Document.Children.SyncRoot) {
+					Debug.Assert(savedState.AssemblyFileNode.Document.Children.Count == 1);
+					savedState.AssemblyFileNode.Document.Children.Remove(node.Document);
+					Debug.Assert(savedState.AssemblyFileNode.Document.Children.Count == 0);
+					savedState.AssemblyFileNode.TreeNode.EnsureChildrenLoaded();
+					Debug.Assert(savedState.AssemblyFileNode.TreeNode.Children.Count == 0);
+					savedState.AssemblyFileNode.Document.Children.Add(node.Document);
+				}
 
 				int index = node.Context.DocumentTreeView.TreeView.Root.DataChildren.ToList().IndexOf(node);
 				b = index >= 0;
@@ -660,17 +662,19 @@ namespace dnSpy.AsmEditor.Module {
 				throw new InvalidOperationException();
 
 			var children = asmNode.TreeNode.DataChildren.ToArray();
-			bool b = removeIndex < children.Length && children[removeIndex] == modNode &&
-				removeIndex < asmNode.Document.AssemblyDef.Modules.Count &&
-				asmNode.Document.AssemblyDef.Modules[removeIndex] == modNode.Document.ModuleDef &&
-				removeIndexDocument < asmNode.Document.Children.Count &&
-				asmNode.Document.Children[removeIndexDocument] == modNode.Document;
-			Debug.Assert(b);
-			if (!b)
-				throw new InvalidOperationException();
-			asmNode.Document.AssemblyDef.Modules.RemoveAt(removeIndex);
-			asmNode.Document.Children.RemoveAt(removeIndexDocument);
-			asmNode.TreeNode.Children.RemoveAt(removeIndex);
+			lock (asmNode.Document.Children.SyncRoot) {
+				bool b = removeIndex < children.Length && children[removeIndex] == modNode &&
+					removeIndex < asmNode.Document.AssemblyDef.Modules.Count &&
+					asmNode.Document.AssemblyDef.Modules[removeIndex] == modNode.Document.ModuleDef &&
+					removeIndexDocument < asmNode.Document.Children.Count &&
+					asmNode.Document.Children[removeIndexDocument] == modNode.Document;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+				asmNode.Document.AssemblyDef.Modules.RemoveAt(removeIndex);
+				asmNode.Document.Children.RemoveAt(removeIndexDocument);
+				asmNode.TreeNode.Children.RemoveAt(removeIndex);
+			}
 			undoCommandService.Value.MarkAsModified(undoCommandService.Value.GetUndoObject(asmNode.Document));
 		}
 

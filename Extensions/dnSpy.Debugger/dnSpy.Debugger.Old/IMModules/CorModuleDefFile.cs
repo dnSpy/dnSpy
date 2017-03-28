@@ -66,8 +66,8 @@ namespace dnSpy.Debugger.IMModules {
 			return file;
 		}
 
-		protected override List<IDsDocument> CreateChildren() {
-			var list = new List<IDsDocument>();
+		protected override TList<IDsDocument> CreateChildren() {
+			var list = new TList<IDsDocument>();
 			if (files != null) {
 				list.AddRange(files);
 				files = null;

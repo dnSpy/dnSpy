@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Documents {
 		/// Gets any children. Eg. if it's a .NET assembly, the children would be modules of the
 		/// assembly.
 		/// </summary>
-		List<IDsDocument> Children { get; }
+		TList<IDsDocument> Children { get; }
 
 		/// <summary>
 		/// true if <see cref="Children"/> has been initialized

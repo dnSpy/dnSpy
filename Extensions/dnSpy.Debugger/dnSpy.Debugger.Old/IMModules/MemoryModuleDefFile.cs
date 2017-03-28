@@ -81,8 +81,8 @@ namespace dnSpy.Debugger.IMModules {
 
 		public static IDsDocumentNameKey CreateKey(DnProcess process, ulong address) => new MyKey(process, address);
 
-		protected override List<IDsDocument> CreateChildren() {
-			var list = new List<IDsDocument>();
+		protected override TList<IDsDocument> CreateChildren() {
+			var list = new TList<IDsDocument>();
 			if (files != null) {
 				list.AddRange(files);
 				files = null;
