@@ -55,13 +55,13 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Writes the name shown in the Name column
 		/// </summary>
-		/// <param name="output"></param>
+		/// <param name="output">Output</param>
 		public abstract void WriteName(IDebugOutputWriter output);
 
 		/// <summary>
 		/// Writes the module shown in the Module column
 		/// </summary>
-		/// <param name="output"></param>
+		/// <param name="output">Output</param>
 		public abstract void WriteModule(IDebugOutputWriter output);
 	}
 }

@@ -24,6 +24,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
@@ -36,16 +37,16 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 		readonly Lazy<IDecompilerService> decompilerService;
 		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
-		readonly Lazy<ModuleLoader> moduleLoader;
+		readonly Lazy<DbgMetadataService> dbgMetadataService;
 
 		internal IDecompiler MethodDecompiler => decompilerService.Value.Decompiler;
 
 		[ImportingConstructor]
-		BreakpointFormatterServiceImpl(IAppWindow appWindow, Lazy<IDecompilerService> decompilerService, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<ModuleLoader> moduleLoader) {
+		BreakpointFormatterServiceImpl(IAppWindow appWindow, Lazy<IDecompilerService> decompilerService, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgMetadataService> dbgMetadataService) {
 			this.decompilerService = decompilerService;
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
-			this.moduleLoader = moduleLoader;
+			this.dbgMetadataService = dbgMetadataService;
 			appWindow.MainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 				decompilerService.Value.DecompilerChanged += DecompilerService_DecompilerChanged;
 			}));
@@ -62,9 +63,8 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 			new DbgEngineCodeBreakpointFormatterImpl(this, codeBreakpointDisplaySettings, breakpoint);
 
 		internal MethodDef GetMethodDef(DbgDotNetEngineCodeBreakpoint breakpoint) {
-			const bool canLoadDynFile = false;
-			var file = moduleLoader.Value.LoadModule(breakpoint.Module, canLoadDynFile, diskFileOk: true, isAutoLoaded: true);
-			return file?.ModuleDef?.ResolveToken(breakpoint.Token) as MethodDef;
+			var module = dbgMetadataService.Value.TryGetModule(breakpoint.Module, DbgLoadModuleOptions.AutoLoaded);
+			return module?.ResolveToken(breakpoint.Token) as MethodDef;
 		}
 	}
 }

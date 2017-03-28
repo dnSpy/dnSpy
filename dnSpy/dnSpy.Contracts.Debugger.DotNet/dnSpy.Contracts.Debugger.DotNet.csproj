@@ -42,6 +42,9 @@
   <ItemGroup>
     <Compile Include="Breakpoints\Code\DbgDotNetEngineCodeBreakpoint.cs" />
     <Compile Include="Breakpoints\Code\DbgDotNetEngineCodeBreakpointFactory.cs" />
+    <Compile Include="Metadata\DbgDocumentInfoProvider.cs" />
+    <Compile Include="Metadata\DbgMetadataService.cs" />
+    <Compile Include="Metadata\DbgModuleIdProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -56,9 +59,17 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
+      <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
       <Project>{C92217E8-A68E-4F8D-9B98-D7328E89DAF1}</Project>
       <Name>dnSpy.Contracts.Debugger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
+      <Project>{CB6F6372-9479-41E2-83A8-07854326BCA8}</Project>
+      <Name>dnSpy.Contracts.DnSpy</Name>
     </ProjectReference>
     <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
       <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>

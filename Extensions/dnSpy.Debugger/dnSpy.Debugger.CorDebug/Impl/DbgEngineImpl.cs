@@ -29,6 +29,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Exceptions;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.CorDebug.DAC;
 using dnSpy.Debugger.CorDebug.Properties;
 
@@ -249,12 +250,19 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
+		sealed class DbgModuleData {
+			public ModuleId ModuleId { get; }
+			public DbgModuleData(ModuleId moduleId) => ModuleId = moduleId;
+		}
+
 		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {
 			Debug.Assert(objectFactory != null);
 			if (e.Added) {
 				e.ShouldPause = true;
 				var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
-				var engineModule = ModuleCreator.CreateModule(objectFactory, appDomain, e.Module);
+				var moduleId = new ModuleId(e.Module.Assembly.FullName, e.Module.Name, isDynamic: e.Module.IsDynamic, isInMemory: e.Module.IsInMemory, nameOnly: false);
+				var moduleData = new DbgModuleData(moduleId);
+				var engineModule = ModuleCreator.CreateModule(objectFactory, appDomain, e.Module, moduleData);
 				lock (lockObj)
 					toEngineModule.Add(e.Module, engineModule);
 			}
@@ -269,6 +277,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					engineModule.Remove();
 				}
 			}
+		}
+
+		internal static ModuleId? TryGetModuleId(DbgModule module) {
+			if (module.TryGetData(out DbgModuleData data))
+				return data.ModuleId;
+			return null;
 		}
 
 		void SendMessage(DbgEngineMessage message) => Message?.Invoke(this, message);

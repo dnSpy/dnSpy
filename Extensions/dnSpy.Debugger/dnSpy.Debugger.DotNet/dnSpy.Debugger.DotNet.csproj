@@ -51,12 +51,15 @@
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializerImpl.cs" />
-    <Compile Include="Breakpoints\Code\ModuleLoader.cs" />
     <Compile Include="Breakpoints\Code\TextColorWriterImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />
     <Compile Include="Exceptions\MDADbgExceptionFormatter.cs" />
+    <Compile Include="Metadata\DbgInMemoryModuleService.cs" />
+    <Compile Include="Metadata\DbgMetadataServiceImpl.cs" />
+    <Compile Include="Metadata\DbgModuleIdProviderService.cs" />
+    <Compile Include="Metadata\DsDocumentProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\dnSpy.Debugger.DotNet.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
