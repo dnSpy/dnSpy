@@ -559,9 +559,8 @@ done:
 
 		void UnregisterEvents() {
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
-			if (editorFormatMap != null) { 
+			if (editorFormatMap != null)
 				editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
-			}
 		}
 
 		void WpfTextView_Closed(object sender, EventArgs e) {
