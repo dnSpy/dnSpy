@@ -993,8 +993,8 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="ShowNextStatementCommand" xml:space="preserve">
     <value>Nächste Anweisung a_nzeigen</value>
   </data>
-  <data name="ShowOwnerTypesCommand" xml:space="preserve">
-    <value>Besitzertyp anzeigen</value>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>Deklarierenten Typ anzeigen</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
     <value>Parameter_namen anzeigen</value>
@@ -1267,13 +1267,13 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Der Thread 0x{0:x} hat mit Code {1} (0x{1:x}) geendet.</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
-    <value>Loaded '{0}'.</value>
+    <value>'{0}' geladen.</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
     <value>Managed Debugging Assistant '{0}' hat ein Problem in '{1}' festgestellt.</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>Unloaded '{0}'.</value>
+    <value>'{0}' entladen.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;keine Ausnahmemeldung&gt;"</value>
@@ -1528,6 +1528,144 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Prozess _fortsetzen</value>
   </data>
   <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
-    <value>Search for a process</value>
+    <value>Nach einem Prozess suchen</value>
+  </data>
+  <data name="AutosCommand" xml:space="preserve">
+    <value>_Auto</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
+    <value>Strg+Alt+V, A</value>
+  </data>
+  <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Alle Haltepunkte exportieren, die mit den aktuellen Suchkriterien übereinstimmen</value>
+  </data>
+  <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
+    <value>Haltepunkte aus einer Datei importieren</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>Auswahl _exportieren...</value>
+  </data>
+  <data name="Breakpoints_NoMatch" xml:space="preserve">
+    <value>Keine Haltepunkte stimmen mit dem Suchtext überein.</value>
+  </data>
+  <data name="Breakpoints_Search" xml:space="preserve">
+    <value>Suchen</value>
+  </data>
+  <data name="Breakpoints_Search_ToolTip" xml:space="preserve">
+    <value>Text eingeben, der in allen Haltepunkten gesucht werden soll</value>
+  </data>
+  <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Alle Haltepunkte löschen, die mit den aktuellen Suchkriterien übereinstimmen</value>
+  </data>
+  <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Alle Suchkriterien zurücksetzen, sodass alle Haltepunkte angezeigt werden</value>
+  </data>
+  <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Alle Haltepunkte aktivieren bzw. deaktivieren, die mit den aktuellen Suchkriterien übereinstimmen</value>
+  </data>
+  <data name="Modules_AllProcesses" xml:space="preserve">
+    <value>Alle</value>
+  </data>
+  <data name="Modules_NoMatch" xml:space="preserve">
+    <value>Keine Module stimmen mit dem Suchtext überein.</value>
+  </data>
+  <data name="Modules_Search" xml:space="preserve">
+    <value>Suchen</value>
+  </data>
+  <data name="Modules_Search_ToolTip" xml:space="preserve">
+    <value>Geben Sie Text ein, der in allen Modulen gesucht werden soll</value>
+  </data>
+  <data name="Modules_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Setzen Sie alle Suchkriterien zurück, sodass alle Module angezeigt werden</value>
+  </data>
+  <data name="Modules_Process" xml:space="preserve">
+    <value>Prozess</value>
+  </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>Hilfe</value>
+  </data>
+  <data name="Search_SearchColumnHelpText" xml:space="preserve">
+    <value>Suchspalte: {0}</value>
+  </data>
+  <data name="Column_Condition" xml:space="preserve">
+    <value>Bedingung</value>
+  </data>
+  <data name="Column_Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Column_HitCount" xml:space="preserve">
+    <value>Trefferanzahl</value>
+  </data>
+  <data name="Column_WhenHit" xml:space="preserve">
+    <value>Bei Treffer</value>
+  </data>
+  <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
+    <value>Gehe zu Disassembly</value>
+  </data>
+  <data name="Breakpoints_GoToSourceCode_ToolTip" xml:space="preserve">
+    <value>Gehe zu Quellcode</value>
+  </data>
+  <data name="GoToSourceCodeCommand" xml:space="preserve">
+    <value>Gehe zu Quellcode</value>
+  </data>
+  <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
+    <value>(keine Bedingung)</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged" xml:space="preserve">
+    <value>wenn '{0}' hat sich geändert</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
+    <value>wenn '{0}' ist true</value>
+  </data>
+  <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
+    <value>(keine)</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
+    <value>wenn Trefferzähler ist ein Vielfaches von {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
+    <value>wenn Trefferzähler ist gleich {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
+    <value>wenn Trefferzähler größer als oder gleich {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
+    <value>Immer halten</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
+    <value>Anhalten</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
+    <value>Meldung '{0}' drucken</value>
+  </data>
+  <data name="ShortCutKeyAltEnter" xml:space="preserve">
+    <value>Alt+Eingabe</value>
+  </data>
+  <data name="SettingsCommand" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="EditBreakpointSettings_Title" xml:space="preserve">
+    <value>Haltepunkteinstellungen</value>
+  </data>
+  <data name="Breakpoint_Condition_IsTrue" xml:space="preserve">
+    <value>Trifft zu</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenChanged" xml:space="preserve">
+    <value>Bei Änderung</value>
+  </data>
+  <data name="Breakpoint_HitCount_IsAMultipleOf" xml:space="preserve">
+    <value>Ist ein Mehrfaches von</value>
+  </data>
+  <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
+    <value>Bedingter _Ausdruck</value>
+  </data>
+  <data name="EditBreakpointSettings_Filter" xml:space="preserve">
+    <value>_Filter</value>
+  </data>
+  <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
+    <value>_Trefferanzahl</value>
+  </data>
+  <data name="EditBreakpointSettings_Trace" xml:space="preserve">
+    <value>_Meldung im Ausgabefenster protokollieren</value>
   </data>
 </root>

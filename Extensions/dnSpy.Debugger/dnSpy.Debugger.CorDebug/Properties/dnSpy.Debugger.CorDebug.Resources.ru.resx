@@ -166,7 +166,7 @@
     <value>.cctor модуля или точка входа</value>
   </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Couldn't find .NET Core host '{0}'</value>
+    <value>Не найден .NET Core хост '{0}'</value>
   </data>
   <data name="Error_CouldNotStartDebugger" xml:space="preserve">
     <value>Не могу запустить дебаггер. {0}</value>
@@ -186,7 +186,7 @@
     <value>Файл отсутствует</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Debugger ({0})</value>
+    <value>Отладчик ({0})</value>
   </data>
   <data name="Thread_UserState_Background" xml:space="preserve">
     <value>Фоновый</value>
@@ -230,9 +230,9 @@
 Ошибка: {0}</value>
   </data>
   <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Could not attach to process {0}</value>
+    <value>Не получается присоединиться к процессу {0}</value>
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Some other process is already debugging process {0}</value>
+    <value>Другой процесс уже отлаживает процесс {0}</value>
   </data>
 </root>

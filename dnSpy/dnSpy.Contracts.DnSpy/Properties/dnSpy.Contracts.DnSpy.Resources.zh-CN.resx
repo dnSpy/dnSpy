@@ -152,6 +152,9 @@
   <data name="Files_StrongNameKeyFiles" xml:space="preserve">
     <value>强名称密钥文件</value>
   </data>
+  <data name="Files_XmlFiles" xml:space="preserve">
+    <value>XML Files</value>
+  </data>
   <data name="InvalidGuid" xml:space="preserve">
     <value>GUID 无效</value>
   </data>

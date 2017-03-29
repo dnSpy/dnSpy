@@ -1034,10 +1034,10 @@
     <value>Этот тип может использоваться в какой-нибудь сборке. Вы уверены, что хотите удалить тип?</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
-    <value>There is an unsaved file. Do you want to save it before exiting?</value>
+    <value>Есть несохраненный файл. Вы хотите сохранить его перед выходом?</value>
   </data>
   <data name="AskExitUnsavedFiles" xml:space="preserve">
-    <value>There are {0} unsaved files. Do you want to save them before exiting?</value>
+    <value>Есть несохраненные файлы {0}. Вы хотите сохранить их перед выходом?</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
     <value>Вы уверены, что вы хотите загрузить новые сборки и потерять все изменения?</value>
@@ -1793,7 +1793,7 @@
     <value>Сохранить в_се...</value>
   </data>
   <data name="SaveAllToolBarToolTip" xml:space="preserve">
-    <value>Save All</value>
+    <value>Сохранить все</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
     <value>Сохранить _модуль...</value>
@@ -2493,6 +2493,6 @@
     <value>Закрыть все отсутствующие файлы</value>
   </data>
   <data name="CompileDiagnostics_Header_Severity" xml:space="preserve">
-    <value>Severity</value>
+    <value>Серьезность</value>
   </data>
 </root>

@@ -150,6 +150,9 @@
   <data name="Files_StrongNameKeyFiles" xml:space="preserve">
     <value>Ficheiros de Chave de Nome Forte</value>
   </data>
+  <data name="Files_XmlFiles" xml:space="preserve">
+    <value>XML Files</value>
+  </data>
   <data name="InvalidGuid" xml:space="preserve">
     <value>GUID Inválido</value>
   </data>

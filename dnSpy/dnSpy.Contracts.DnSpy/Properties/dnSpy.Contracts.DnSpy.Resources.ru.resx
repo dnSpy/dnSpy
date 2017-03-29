@@ -152,6 +152,9 @@
   <data name="Files_StrongNameKeyFiles" xml:space="preserve">
     <value>Файлы ключей строгого имени</value>
   </data>
+  <data name="Files_XmlFiles" xml:space="preserve">
+    <value>XML-файлы</value>
+  </data>
   <data name="InvalidGuid" xml:space="preserve">
     <value>Недопустимый GUID</value>
   </data>

@@ -120,4 +120,16 @@
   <data name="BreakWhenExceptionThrownCommand" xml:space="preserve">
     <value>Unterbrechen wenn ausgelöst</value>
   </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_Abbrechen</value>
+  </data>
+  <data name="CancelLoadingModulesMessage" xml:space="preserve">
+    <value>Cancel loading modules?</value>
+  </data>
+  <data name="LoadModule_InfoText" xml:space="preserve">
+    <value>Lade Modul. Dies kann bei großen Modulen etwas dauern.</value>
+  </data>
+  <data name="LoadModule_Title" xml:space="preserve">
+    <value>Lade dynamische Module</value>
+  </data>
 </root>

@@ -121,7 +121,7 @@
     <value>Все файлы</value>
   </data>
   <data name="BAMLFile" xml:space="preserve">
-    <value>Файл BAML</value>
+    <value>BAML Файл</value>
   </data>
   <data name="BamlOptionDlgTab" xml:space="preserve">
     <value>Декомпилятор BAML</value>

@@ -367,10 +367,10 @@
     <value>Переместить в _предыдущую группу вкладок</value>
   </data>
   <data name="NavigateBackCommand" xml:space="preserve">
-    <value>Navigate Backward</value>
+    <value>Переход назад</value>
   </data>
   <data name="NavigateForwardCommand" xml:space="preserve">
-    <value>Navigate Forward</value>
+    <value>Переход вперед</value>
   </data>
   <data name="NewDataIsNotAnImage" xml:space="preserve">
     <value>Новые данные не являются картинкой.</value>
@@ -475,7 +475,7 @@
     <value>Открыть список</value>
   </data>
   <data name="OpenToolBarToolTip" xml:space="preserve">
-    <value>Open</value>
+    <value>Открыть</value>
   </data>
   <data name="OptionsTitle" xml:space="preserve">
     <value>Настройки</value>
@@ -517,7 +517,7 @@
     <value>_Искать в сборках</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Search Assemblies</value>
+    <value>Поиск сборок</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Поиск...</value>
@@ -897,13 +897,13 @@
     <value>Вывод</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Clear All</value>
+    <value>Очистить всё</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
     <value>_Показать вывод из:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap</value>
+    <value>Переключение Переноса Слов</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
@@ -1065,25 +1065,25 @@
     <value>Верхний отступ, %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
-    <value>Find next</value>
+    <value>Найти далее</value>
   </data>
   <data name="Search_FindPreviousToolTip" xml:space="preserve">
-    <value>Find previous</value>
+    <value>Найти предыдущее</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Match case</value>
+    <value>Учитывать регистр</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Match whole word</value>
+    <value>Слово целиком</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Replace all</value>
+    <value>Заменить все</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Replace next</value>
+    <value>Заменить следующий</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Use Regular Expressions</value>
+    <value>Использовать регулярные выражения</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
     <value>Переключите для переключения между режимами поиска и замены</value>
@@ -1506,7 +1506,7 @@
     <value>Текстовый редактор</value>
   </data>
   <data name="Search_BigEndianToolTip" xml:space="preserve">
-    <value>Big endian</value>
+    <value>Обратный порядок байтов</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
@@ -1671,7 +1671,7 @@
     <value>Раскрасить текст</value>
   </data>
   <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
-    <value>Alt+Right Arrow</value>
+    <value>Alt+Стрелка Вправо</value>
   </data>
   <data name="ShortCutKeyBackspace" xml:space="preserve">
     <value>Backspace</value>
@@ -1707,6 +1707,6 @@
     <value>Alt+R</value>
   </data>
   <data name="TimestampDateTimeFormat" xml:space="preserve">
-    <value>Timestamp format</value>
+    <value>Формат отметки времени</value>
   </data>
 </root>

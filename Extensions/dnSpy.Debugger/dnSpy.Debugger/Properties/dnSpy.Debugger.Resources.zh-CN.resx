@@ -993,8 +993,8 @@ HResult: 0x{3:X8}</value>
   <data name="ShowNextStatementCommand" xml:space="preserve">
     <value>显示下一语句(_H)</value>
   </data>
-  <data name="ShowOwnerTypesCommand" xml:space="preserve">
-    <value>显示所有者类型</value>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>Show Declaring Types</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
     <value>显示参数名称(_P)</value>
@@ -1529,5 +1529,143 @@ HResult: 0x{3:X8}</value>
   </data>
   <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
     <value>Search for a process</value>
+  </data>
+  <data name="AutosCommand" xml:space="preserve">
+    <value>_Autos</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
+    <value>Ctrl+Alt+V, A</value>
+  </data>
+  <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Export all breakpoints matching the current search criteria</value>
+  </data>
+  <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
+    <value>Import breakpoints from a file</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>_Export Selected...</value>
+  </data>
+  <data name="Breakpoints_NoMatch" xml:space="preserve">
+    <value>No breakpoints match your search filter.</value>
+  </data>
+  <data name="Breakpoints_Search" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="Breakpoints_Search_ToolTip" xml:space="preserve">
+    <value>Search for a breakpoint</value>
+  </data>
+  <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Remove all breakpoints matching the current search criteria</value>
+  </data>
+  <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all breakpoints are shown</value>
+  </data>
+  <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Enable or disable all breakpoints matching the current search criteria</value>
+  </data>
+  <data name="Modules_AllProcesses" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Modules_NoMatch" xml:space="preserve">
+    <value>No modules match your search filter.</value>
+  </data>
+  <data name="Modules_Search" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="Modules_Search_ToolTip" xml:space="preserve">
+    <value>Search for a module</value>
+  </data>
+  <data name="Modules_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all modules are shown</value>
+  </data>
+  <data name="Modules_Process" xml:space="preserve">
+    <value>进程</value>
+  </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="Search_SearchColumnHelpText" xml:space="preserve">
+    <value>Search column: {0}</value>
+  </data>
+  <data name="Column_Condition" xml:space="preserve">
+    <value>Condition</value>
+  </data>
+  <data name="Column_Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Column_HitCount" xml:space="preserve">
+    <value>Hit Count</value>
+  </data>
+  <data name="Column_WhenHit" xml:space="preserve">
+    <value>When Hit</value>
+  </data>
+  <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
+    <value>转到反汇编</value>
+  </data>
+  <data name="Breakpoints_GoToSourceCode_ToolTip" xml:space="preserve">
+    <value>Go To Source Code</value>
+  </data>
+  <data name="GoToSourceCodeCommand" xml:space="preserve">
+    <value>Go To Source Code</value>
+  </data>
+  <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
+    <value>(no condition)</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged" xml:space="preserve">
+    <value>when '{0}' has changed</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
+    <value>when '{0}' is true</value>
+  </data>
+  <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
+    <value>when hit count is a multiple of {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
+    <value>when hit count is equal to {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
+    <value>when hit count is greater than or equal to {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
+    <value>break always</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
+    <value>Break</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
+    <value>Print message '{0}'</value>
+  </data>
+  <data name="ShortCutKeyAltEnter" xml:space="preserve">
+    <value>Alt+Enter</value>
+  </data>
+  <data name="SettingsCommand" xml:space="preserve">
+    <value>_Settings</value>
+  </data>
+  <data name="EditBreakpointSettings_Title" xml:space="preserve">
+    <value>Breakpoint Settings</value>
+  </data>
+  <data name="Breakpoint_Condition_IsTrue" xml:space="preserve">
+    <value>Is true</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenChanged" xml:space="preserve">
+    <value>When changed</value>
+  </data>
+  <data name="Breakpoint_HitCount_IsAMultipleOf" xml:space="preserve">
+    <value>Is a multiple of</value>
+  </data>
+  <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
+    <value>Conditional _Expression</value>
+  </data>
+  <data name="EditBreakpointSettings_Filter" xml:space="preserve">
+    <value>_Filter</value>
+  </data>
+  <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
+    <value>_Hit Count</value>
+  </data>
+  <data name="EditBreakpointSettings_Trace" xml:space="preserve">
+    <value>_Log Message</value>
   </data>
 </root>

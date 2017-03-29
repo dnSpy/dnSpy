@@ -230,9 +230,9 @@ Fehler: {1}</value>
 Fehler: {0}</value>
   </data>
   <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Could not attach to process {0}</value>
+    <value>Anfügen an den Prozess {0} nicht möglich.</value>
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Some other process is already debugging process {0}</value>
+    <value>Es wurde bereits ein Debugger an den Prozess {0} angefügt.</value>
   </data>
 </root>
