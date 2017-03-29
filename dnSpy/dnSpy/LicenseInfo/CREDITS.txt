@@ -32,6 +32,7 @@ Russian:
 	Igor Besedin
 	Konctantin
 	Daniil Yarancev
+	Kibnet Philosoff
 
 Portuguese:
 
