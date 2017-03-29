@@ -21,21 +21,24 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
-using dnSpy.Contracts.Debugger.DotNet.Metadata;
+using dnlib.DotNet;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	abstract class DsDocumentProvider {
-		public abstract IEnumerable<DsDocumentInfo> DocumentInfos { get; }
+		public abstract IAssemblyResolver AssemblyResolver { get; }
+		public abstract IEnumerable<IDsDocument> Documents { get; }
+		public abstract IEnumerable<DocumentInfo> DocumentInfos { get; }
+		public abstract IDsDocument Find(IDsDocumentNameKey key);
+		public abstract IDsDocument GetOrAdd(IDsDocument document);
 	}
 
-	struct DsDocumentInfo {
+	struct DocumentInfo {
 		public IDsDocument Document { get; }
 		public ModuleId Id { get; }
 		public bool IsActive { get; }
-		public DsDocumentInfo(IDsDocument document, ModuleId id, bool isActive) {
+		public DocumentInfo(IDsDocument document, ModuleId id, bool isActive) {
 			Document = document ?? throw new ArgumentNullException(nameof(document));
 			Id = id;
 			IsActive = isActive;
@@ -45,15 +48,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	[Export(typeof(DsDocumentProvider))]
 	sealed class DsDocumentProviderImpl : DsDocumentProvider {
 		readonly IDsDocumentService documentService;
-		readonly Lazy<DbgDocumentInfoProvider>[] dbgDocumentInfoProviders;
 
 		[ImportingConstructor]
-		DsDocumentProviderImpl(IDsDocumentService documentService, [ImportMany] IEnumerable<Lazy<DbgDocumentInfoProvider>> dbgDocumentInfoProviders) {
-			this.documentService = documentService;
-			this.dbgDocumentInfoProviders = dbgDocumentInfoProviders.ToArray();
-		}
+		DsDocumentProviderImpl(IDsDocumentService documentService) => this.documentService = documentService;
 
-		HashSet<IDsDocument> Documents {
+		public override IAssemblyResolver AssemblyResolver => documentService.AssemblyResolver;
+
+		public override IEnumerable<IDsDocument> Documents {
 			get {
 				var hash = new HashSet<IDsDocument>();
 				foreach (var d in documentService.GetDocuments()) {
@@ -66,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		public override IEnumerable<DsDocumentInfo> DocumentInfos {
+		public override IEnumerable<DocumentInfo> DocumentInfos {
 			get {
 				foreach (var doc in Documents) {
 					var info = GetDocumentInfo(doc);
@@ -76,16 +77,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		DsDocumentInfo? GetDocumentInfo(IDsDocument doc) {
-			foreach (var lz in dbgDocumentInfoProviders) {
-				var info = lz.Value.TryGetFileInfo(doc);
-				if (info != null)
-					return new DsDocumentInfo(doc, info.Value.Id, info.Value.IsActive);
-			}
+		DocumentInfo? GetDocumentInfo(IDsDocument doc) {
+			var dnDoc = doc as DsDotNetDocumentBase;
+			if (dnDoc is IModuleIdHolder idHolder)
+				return new DocumentInfo(doc, idHolder.ModuleId, dnDoc.IsActive);
 			var mod = doc.ModuleDef;
 			if (mod != null && File.Exists(mod.Location))
-				return new DsDocumentInfo(doc, ModuleId.CreateFromFile(mod), isActive: true);
+				return new DocumentInfo(doc, ModuleId.CreateFromFile(mod), isActive: dnDoc?.IsActive ?? true);
 			return null;
 		}
+
+		public override IDsDocument Find(IDsDocumentNameKey key) => documentService.Find(key);
+		public override IDsDocument GetOrAdd(IDsDocument document) => documentService.GetOrAdd(document);
 	}
 }

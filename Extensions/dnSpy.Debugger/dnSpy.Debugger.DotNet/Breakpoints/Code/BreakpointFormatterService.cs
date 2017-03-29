@@ -19,13 +19,12 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Windows.Threading;
 using dnlib.DotNet;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Debugger.DotNet.UI;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 	abstract class BreakpointFormatterService {
@@ -42,14 +41,12 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 		internal IDecompiler MethodDecompiler => decompilerService.Value.Decompiler;
 
 		[ImportingConstructor]
-		BreakpointFormatterServiceImpl(IAppWindow appWindow, Lazy<IDecompilerService> decompilerService, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgMetadataService> dbgMetadataService) {
+		BreakpointFormatterServiceImpl(UIDispatcher uiDispatcher, Lazy<IDecompilerService> decompilerService, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgMetadataService> dbgMetadataService) {
 			this.decompilerService = decompilerService;
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgMetadataService = dbgMetadataService;
-			appWindow.MainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				decompilerService.Value.DecompilerChanged += DecompilerService_DecompilerChanged;
-			}));
+			uiDispatcher.UI(() => decompilerService.Value.DecompilerChanged += DecompilerService_DecompilerChanged);
 		}
 
 		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {

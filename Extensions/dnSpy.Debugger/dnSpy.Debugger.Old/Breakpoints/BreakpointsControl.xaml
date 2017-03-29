@@ -56,7 +56,7 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <CheckBox Grid.Column="0" Focusable="False" IsChecked="{Binding IsEnabled}" />
-                                    <!-- Using just an DsImage doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
+                                    <!-- Using just a DsImage doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
                                          so use this weird way of showing an image. -->
                                     <ContentPresenter Grid.Column="1" Margin="5 0 0 0" Content="{Binding ImageReference, Mode=OneWay}">
                                         <ContentPresenter.ContentTemplate>

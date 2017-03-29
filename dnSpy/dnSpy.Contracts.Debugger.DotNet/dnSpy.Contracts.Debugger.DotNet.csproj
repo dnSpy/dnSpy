@@ -42,7 +42,10 @@
   <ItemGroup>
     <Compile Include="Breakpoints\Code\DbgDotNetEngineCodeBreakpoint.cs" />
     <Compile Include="Breakpoints\Code\DbgDotNetEngineCodeBreakpointFactory.cs" />
-    <Compile Include="Metadata\DbgDocumentInfoProvider.cs" />
+    <Compile Include="Metadata\DbgAssemblyInfoProvider.cs" />
+    <Compile Include="Metadata\DbgAssemblyInfoProviderFactory.cs" />
+    <Compile Include="Metadata\DbgDynamicModuleProvider.cs" />
+    <Compile Include="Metadata\DbgDynamicModuleProviderFactory.cs" />
     <Compile Include="Metadata\DbgMetadataService.cs" />
     <Compile Include="Metadata\DbgModuleIdProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

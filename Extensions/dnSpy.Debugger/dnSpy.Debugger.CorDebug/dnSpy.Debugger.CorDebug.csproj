@@ -73,7 +73,10 @@
     <Compile Include="Impl\ModuleCreator.cs" />
     <Compile Include="Impl\ThreadProperties.cs" />
     <Compile Include="Impl\WpfDebugMessageDispatcher.cs" />
+    <Compile Include="Metadata\DbgAssemblyInfoProviderImpl.cs" />
+    <Compile Include="Metadata\DbgDynamicModuleProviderImpl.cs" />
     <Compile Include="Metadata\DbgModuleIdProviderImpl.cs" />
+    <Compile Include="Metadata\LastValidRids.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Properties\dnSpy.Debugger.CorDebug.Resources.Designer.cs">
       <AutoGen>True</AutoGen>

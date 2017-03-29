@@ -68,5 +68,41 @@ namespace dnSpy.Debugger.DotNet.Properties {
                 return ResourceManager.GetString("BreakWhenExceptionThrownCommand", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Cancel.
+        /// </summary>
+        public static string Button_Cancel {
+            get {
+                return ResourceManager.GetString("Button_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel loading modules?.
+        /// </summary>
+        public static string CancelLoadingModulesMessage {
+            get {
+                return ResourceManager.GetString("CancelLoadingModulesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading the module. This could take a while if it&apos;s a big module..
+        /// </summary>
+        public static string LoadModule_InfoText {
+            get {
+                return ResourceManager.GetString("LoadModule_InfoText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading Dynamic Modules.
+        /// </summary>
+        public static string LoadModule_Title {
+            get {
+                return ResourceManager.GetString("LoadModule_Title", resourceCulture);
+            }
+        }
     }
 }

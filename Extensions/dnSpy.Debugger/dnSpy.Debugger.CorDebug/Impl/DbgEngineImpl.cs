@@ -24,9 +24,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using dndbg.COM.CorDebug;
+using dndbg.DotNet;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
+using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
@@ -56,6 +58,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly Dictionary<DnAppDomain, DbgEngineAppDomain> toEngineAppDomain;
 		readonly Dictionary<DnModule, DbgEngineModule> toEngineModule;
 		readonly Dictionary<DnThread, DbgEngineThread> toEngineThread;
+		readonly Dictionary<DnAssembly, List<DnModule>> toAssemblyModules;
 
 		protected DbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind) {
 			StartKind = startKind;
@@ -63,6 +66,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			toEngineAppDomain = new Dictionary<DnAppDomain, DbgEngineAppDomain>();
 			toEngineModule = new Dictionary<DnModule, DbgEngineModule>();
 			toEngineThread = new Dictionary<DnThread, DbgEngineThread>();
+			toAssemblyModules = new Dictionary<DnAssembly, List<DnModule>>();
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			this.clrDacProvider = clrDacProvider ?? throw new ArgumentNullException(nameof(clrDacProvider));
 			clrDac = NullClrDac.Instance;
@@ -70,7 +74,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			debuggerThread.CallDispatcherRun();
 		}
 
-		void CorDebugThread(Action action) {
+		internal event EventHandler<ClassLoadedEventArgs> ClassLoaded;
+
+		internal void VerifyCorDebugThread() => Dispatcher.VerifyAccess();
+		internal T InvokeCorDebugThread<T>(Func<T> action) => Dispatcher.Invoke(action, DispatcherPriority.Send);
+		internal void CorDebugThread(Action action) {
 			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
 				Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
 		}
@@ -127,6 +135,21 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					SendMessage(new DbgMessageProgramMessage(msg, thread));
 				}
 				break;
+
+			case DebugCallbackKind.LoadClass:
+				var lcArgs = (LoadClassDebugCallbackEventArgs)e;
+				var cls = lcArgs.CorClass;
+				Debug.Assert(cls != null);
+				if (cls != null) {
+					var dnModule = dbg.TryGetModule(lcArgs.CorAppDomain, cls);
+					if (dnModule?.CorModuleDef != null && dnModule.IsDynamic) {
+						var module = TryGetModule(dnModule);
+						Debug.Assert(module != null);
+						if (module != null)
+							ClassLoaded?.Invoke(this, new ClassLoadedEventArgs(module, cls.Token));
+					}
+				}
+				break;
 			}
 		}
 
@@ -161,6 +184,16 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			lock (lockObj)
 				toEngineModule.TryGetValue(module, out engineModule);
 			return engineModule?.Module;
+		}
+
+		DbgModule TryGetModule(DnModule dnModule) {
+			if (dnModule == null)
+				return null;
+			lock (lockObj) {
+				if (toEngineModule.TryGetValue(dnModule, out var engineModule))
+					return engineModule.Module;
+			}
+			return null;
 		}
 
 		void HookDnDebuggerEvents() {
@@ -251,8 +284,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		sealed class DbgModuleData {
+			public DnModule DnModule { get; }
 			public ModuleId ModuleId { get; }
-			public DbgModuleData(ModuleId moduleId) => ModuleId = moduleId;
+			public DbgModuleData(DnModule dnModule, ModuleId moduleId) {
+				DnModule = dnModule;
+				ModuleId = moduleId;
+			}
 		}
 
 		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {
@@ -261,14 +298,23 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				e.ShouldPause = true;
 				var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
 				var moduleId = new ModuleId(e.Module.Assembly.FullName, e.Module.Name, isDynamic: e.Module.IsDynamic, isInMemory: e.Module.IsInMemory, nameOnly: false);
-				var moduleData = new DbgModuleData(moduleId);
+				var moduleData = new DbgModuleData(e.Module, moduleId);
 				var engineModule = ModuleCreator.CreateModule(objectFactory, appDomain, e.Module, moduleData);
-				lock (lockObj)
+				lock (lockObj) {
+					if (!toAssemblyModules.TryGetValue(e.Module.Assembly, out var modules))
+						toAssemblyModules.Add(e.Module.Assembly, modules = new List<DnModule>());
+					modules.Add(e.Module);
 					toEngineModule.Add(e.Module, engineModule);
+				}
 			}
 			else {
 				DbgEngineModule engineModule;
 				lock (lockObj) {
+					if (toAssemblyModules.TryGetValue(e.Module.Assembly, out var modules)) {
+						modules.Remove(e.Module);
+						if (modules.Count == 0)
+							toAssemblyModules.Remove(e.Module.Assembly);
+					}
 					if (toEngineModule.TryGetValue(e.Module, out engineModule))
 						toEngineModule.Remove(e.Module);
 				}
@@ -277,6 +323,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					engineModule.Remove();
 				}
 			}
+		}
+
+		internal CorModuleDef GetDynamicMetadata_EngineThread(DbgModule module) {
+			Dispatcher.VerifyAccess();
+			if (module == null)
+				throw new ArgumentNullException(nameof(module));
+			if (!module.TryGetData(out DbgModuleData data))
+				return null;
+			return data.DnModule.GetOrCreateCorModuleDef();
 		}
 
 		internal static ModuleId? TryGetModuleId(DbgModule module) {
@@ -386,11 +441,39 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		protected abstract CorDebugRuntimeKind CorDebugRuntimeKind { get; }
 
+		sealed class RuntimeData {
+			public DbgEngineImpl Engine { get; }
+			public RuntimeData(DbgEngineImpl engine) => Engine = engine;
+		}
+
+		internal static DbgEngineImpl TryGetEngine(DbgRuntime runtime) {
+			if (runtime.TryGetData(out RuntimeData data))
+				return data.Engine;
+			return null;
+		}
+
+		internal DbgModule[] GetAssemblyModules(DbgModule module) {
+			if (!module.TryGetData(out DbgModuleData data))
+				return Array.Empty<DbgModule>();
+			lock (lockObj) {
+				toAssemblyModules.TryGetValue(data.DnModule.Assembly, out var modules);
+				if (modules == null || modules.Count == 0)
+					return Array.Empty<DbgModule>();
+				var res = new List<DbgModule>(modules.Count);
+				foreach (var dnModule in modules) {
+					if (toEngineModule.TryGetValue(dnModule, out var engineModule))
+						res.Add(engineModule.Module);
+				}
+				return res.ToArray();
+			}
+		}
+
 		public override void OnConnected(DbgObjectFactory objectFactory, DbgRuntime runtime) {
 			Debug.Assert(objectFactory.Runtime == runtime);
 			Debug.Assert(Array.IndexOf(objectFactory.Process.Runtimes, runtime) < 0);
 			this.objectFactory = objectFactory;
 			CorDebugRuntime.Add(new CorDebugRuntimeImpl(runtime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory));
+			runtime.GetOrCreateData(() => new RuntimeData(this));
 		}
 
 		protected override void CloseCore() {
