@@ -1256,5 +1256,95 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.ListFindMatchHighlight"/>
 		/// </summary>
 		public const string ListFindMatchHighlight = nameof(ListFindMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointStatement"/>
+		/// </summary>
+		public const string AdvancedBreakpointStatement = nameof(AdvancedBreakpointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string AdvancedBreakpointStatementMarker = nameof(AdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedBreakpointStatementMarker = nameof(SelectedAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedBreakpointStatement"/>
+		/// </summary>
+		public const string DisabledAdvancedBreakpointStatement = nameof(DisabledAdvancedBreakpointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string DisabledAdvancedBreakpointStatementMarker = nameof(DisabledAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledAdvancedBreakpointStatementMarker = nameof(SelectedDisabledAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointStatement"/>
+		/// </summary>
+		public const string TracepointStatement = nameof(TracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointStatementMarker"/>
+		/// </summary>
+		public const string TracepointStatementMarker = nameof(TracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedTracepointStatementMarker = nameof(SelectedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledTracepointStatement"/>
+		/// </summary>
+		public const string DisabledTracepointStatement = nameof(DisabledTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledTracepointStatementMarker"/>
+		/// </summary>
+		public const string DisabledTracepointStatementMarker = nameof(DisabledTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledTracepointStatementMarker = nameof(SelectedDisabledTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointStatement"/>
+		/// </summary>
+		public const string AdvancedTracepointStatement = nameof(AdvancedTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string AdvancedTracepointStatementMarker = nameof(AdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedTracepointStatementMarker = nameof(SelectedAdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedTracepointStatement"/>
+		/// </summary>
+		public const string DisabledAdvancedTracepointStatement = nameof(DisabledAdvancedTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string DisabledAdvancedTracepointStatementMarker = nameof(DisabledAdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledAdvancedTracepointStatementMarker = nameof(SelectedDisabledAdvancedTracepointStatementMarker);
 	}
 }

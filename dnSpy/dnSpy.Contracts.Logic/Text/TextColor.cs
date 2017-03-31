@@ -272,6 +272,24 @@ namespace dnSpy.Contracts.Text {
 		HexToolTipServiceField1,
 		HexToolTipServiceCurrentField,
 		ListFindMatchHighlight,
+		AdvancedBreakpointStatement,
+		AdvancedBreakpointStatementMarker,
+		SelectedAdvancedBreakpointStatementMarker,
+		DisabledAdvancedBreakpointStatement,
+		DisabledAdvancedBreakpointStatementMarker,
+		SelectedDisabledAdvancedBreakpointStatementMarker,
+		TracepointStatement,
+		TracepointStatementMarker,
+		SelectedTracepointStatementMarker,
+		DisabledTracepointStatement,
+		DisabledTracepointStatementMarker,
+		SelectedDisabledTracepointStatementMarker,
+		AdvancedTracepointStatement,
+		AdvancedTracepointStatementMarker,
+		SelectedAdvancedTracepointStatementMarker,
+		DisabledAdvancedTracepointStatement,
+		DisabledAdvancedTracepointStatementMarker,
+		SelectedDisabledAdvancedTracepointStatementMarker,
 
 		/// <summary>
 		/// Must be last
@@ -530,6 +548,24 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HexToolTipServiceField1 = TextColor.HexToolTipServiceField1;
 		public static readonly object HexToolTipServiceCurrentField = TextColor.HexToolTipServiceCurrentField;
 		public static readonly object ListFindMatchHighlight = TextColor.ListFindMatchHighlight;
+		public static readonly object AdvancedBreakpointStatement = TextColor.AdvancedBreakpointStatement;
+		public static readonly object AdvancedBreakpointStatementMarker = TextColor.AdvancedBreakpointStatementMarker;
+		public static readonly object SelectedAdvancedBreakpointStatementMarker = TextColor.SelectedAdvancedBreakpointStatementMarker;
+		public static readonly object DisabledAdvancedBreakpointStatement = TextColor.DisabledAdvancedBreakpointStatement;
+		public static readonly object DisabledAdvancedBreakpointStatementMarker = TextColor.DisabledAdvancedBreakpointStatementMarker;
+		public static readonly object SelectedDisabledAdvancedBreakpointStatementMarker = TextColor.SelectedDisabledAdvancedBreakpointStatementMarker;
+		public static readonly object TracepointStatement = TextColor.TracepointStatement;
+		public static readonly object TracepointStatementMarker = TextColor.TracepointStatementMarker;
+		public static readonly object SelectedTracepointStatementMarker = TextColor.SelectedTracepointStatementMarker;
+		public static readonly object DisabledTracepointStatement = TextColor.DisabledTracepointStatement;
+		public static readonly object DisabledTracepointStatementMarker = TextColor.DisabledTracepointStatementMarker;
+		public static readonly object SelectedDisabledTracepointStatementMarker = TextColor.SelectedDisabledTracepointStatementMarker;
+		public static readonly object AdvancedTracepointStatement = TextColor.AdvancedTracepointStatement;
+		public static readonly object AdvancedTracepointStatementMarker = TextColor.AdvancedTracepointStatementMarker;
+		public static readonly object SelectedAdvancedTracepointStatementMarker = TextColor.SelectedAdvancedTracepointStatementMarker;
+		public static readonly object DisabledAdvancedTracepointStatement = TextColor.DisabledAdvancedTracepointStatement;
+		public static readonly object DisabledAdvancedTracepointStatementMarker = TextColor.DisabledAdvancedTracepointStatementMarker;
+		public static readonly object SelectedDisabledAdvancedTracepointStatementMarker = TextColor.SelectedDisabledAdvancedTracepointStatementMarker;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -790,6 +826,24 @@ namespace dnSpy.Contracts.Text {
 			HexToolTipServiceField1,
 			HexToolTipServiceCurrentField,
 			ListFindMatchHighlight,
+			AdvancedBreakpointStatement,
+			AdvancedBreakpointStatementMarker,
+			SelectedAdvancedBreakpointStatementMarker,
+			DisabledAdvancedBreakpointStatement,
+			DisabledAdvancedBreakpointStatementMarker,
+			SelectedDisabledAdvancedBreakpointStatementMarker,
+			TracepointStatement,
+			TracepointStatementMarker,
+			SelectedTracepointStatementMarker,
+			DisabledTracepointStatement,
+			DisabledTracepointStatementMarker,
+			SelectedDisabledTracepointStatementMarker,
+			AdvancedTracepointStatement,
+			AdvancedTracepointStatementMarker,
+			SelectedAdvancedTracepointStatementMarker,
+			DisabledAdvancedTracepointStatement,
+			DisabledAdvancedTracepointStatementMarker,
+			SelectedDisabledAdvancedTracepointStatementMarker,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

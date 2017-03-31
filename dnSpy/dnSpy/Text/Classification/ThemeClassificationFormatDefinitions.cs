@@ -847,6 +847,96 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition DisabledBreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedBreakpointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledAdvancedBreakpointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedDisabledAdvancedBreakpointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedDisabledAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledTracepointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledTracepointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedDisabledTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedDisabledTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledAdvancedTracepointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledAdvancedTracepointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledAdvancedTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledAdvancedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedDisabledAdvancedTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedDisabledAdvancedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CurrentLine)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition CurrentLineClassificationTypeDefinition;
@@ -2702,6 +2792,168 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class DisabledBreakpointStatementMarker : ThemeMarkerFormatDefinition {
 			DisabledBreakpointStatementMarker() : base(TextColor.DisabledBreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedBreakpointStatement : ThemeClassificationFormatDefinition {
+			AdvancedBreakpointStatement() : base(TextColor.AdvancedBreakpointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedBreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedBreakpointStatementMarker() : base(TextColor.AdvancedBreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedBreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedBreakpointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedBreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedBreakpointStatementMarker() : base(TextColor.SelectedAdvancedBreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledAdvancedBreakpointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class DisabledAdvancedBreakpointStatement : ThemeClassificationFormatDefinition {
+			DisabledAdvancedBreakpointStatement() : base(TextColor.DisabledAdvancedBreakpointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledAdvancedBreakpointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class DisabledAdvancedBreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			DisabledAdvancedBreakpointStatementMarker() : base(TextColor.DisabledAdvancedBreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedDisabledAdvancedBreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedDisabledAdvancedBreakpointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedDisabledAdvancedBreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedDisabledAdvancedBreakpointStatementMarker() : base(TextColor.SelectedDisabledAdvancedBreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class TracepointStatement : ThemeClassificationFormatDefinition {
+			TracepointStatement() : base(TextColor.TracepointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class TracepointStatementMarker : ThemeMarkerFormatDefinition {
+			TracepointStatementMarker() : base(TextColor.TracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedTracepointStatementMarker() : base(TextColor.SelectedTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledTracepointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledTracepointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class DisabledTracepointStatement : ThemeClassificationFormatDefinition {
+			DisabledTracepointStatement() : base(TextColor.DisabledTracepointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class DisabledTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			DisabledTracepointStatementMarker() : base(TextColor.DisabledTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedDisabledTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedDisabledTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedDisabledTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedDisabledTracepointStatementMarker() : base(TextColor.SelectedDisabledTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedTracepointStatement : ThemeClassificationFormatDefinition {
+			AdvancedTracepointStatement() : base(TextColor.AdvancedTracepointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedTracepointStatementMarker() : base(TextColor.AdvancedTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedTracepointStatementMarker() : base(TextColor.SelectedAdvancedTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledAdvancedTracepointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledAdvancedTracepointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class DisabledAdvancedTracepointStatement : ThemeClassificationFormatDefinition {
+			DisabledAdvancedTracepointStatement() : base(TextColor.DisabledAdvancedTracepointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledAdvancedTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledAdvancedTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class DisabledAdvancedTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			DisabledAdvancedTracepointStatementMarker() : base(TextColor.DisabledAdvancedTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedDisabledAdvancedTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedDisabledAdvancedTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedDisabledAdvancedTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedDisabledAdvancedTracepointStatementMarker() : base(TextColor.SelectedDisabledAdvancedTracepointStatementMarker) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

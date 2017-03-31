@@ -48,6 +48,9 @@
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsServiceImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterService.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializerService.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\BreakpointInfo.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\BreakpointMarker.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\BreakpointModuleLocationProviderService.cs" />
     <Compile Include="Breakpoints\Modules\BreakpointsSerializer.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointImpl.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsServiceImpl.cs" />

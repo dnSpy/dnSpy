@@ -38,6 +38,36 @@ namespace dnSpy.Contracts.Text.Editor {
 		public const int EnabledBreakpoint = 2500;
 
 		/// <summary>
+		/// (Debugger) Z-index of advanced disabled breakpoints
+		/// </summary>
+		public const int DisabledAdvancedBreakpoint = 2600;
+
+		/// <summary>
+		/// (Debugger) Z-index of advanced enabled breakpoints
+		/// </summary>
+		public const int EnabledAdvancedBreakpoint = 2610;
+
+		/// <summary>
+		/// (Debugger) Z-index of disabled tracepionts
+		/// </summary>
+		public const int DisabledTracepoint = 2620;
+
+		/// <summary>
+		/// (Debugger) Z-index of enabled tracepoints
+		/// </summary>
+		public const int EnabledTracepoint = 2630;
+
+		/// <summary>
+		/// (Debugger) Z-index of advanced disabled tracepoints
+		/// </summary>
+		public const int DisabledAdvancedTracepoint = 2640;
+
+		/// <summary>
+		/// (Debugger) Z-index of advanced enabled tracepoints
+		/// </summary>
+		public const int EnabledAdvancedTracepoint = 2650;
+
+		/// <summary>
 		/// (Debugger) Z-index of current statement
 		/// </summary>
 		public const int CurrentStatement = 3000;

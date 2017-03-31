@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			}
 		}
 
-		public ImageReference ImageReference => BreakpointImageUtilities.GetImage(imageType);
+		public ImageReference ImageReference => BreakpointImageUtilities.GetImage(breakpointKind);
 
 		public ICodeBreakpointContext Context { get; }
 		public DbgCodeBreakpoint CodeBreakpoint { get; }
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		internal int Order { get; }
 
 		DbgCodeBreakpointSettings settings;
-		BreakpointImageType imageType;
+		BreakpointKind breakpointKind;
 
 		internal DbgEngineCodeBreakpointFormatter EngineBreakpointFormatter { get; }
 
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			Order = order;
 			EngineBreakpointFormatter = dbgEngineCodeBreakpointFormatter ?? throw new ArgumentNullException(nameof(dbgEngineCodeBreakpointFormatter));
 			settings = CodeBreakpoint.Settings;
-			imageType = BreakpointImageUtilities.GetImageType(ref settings);
+			breakpointKind = BreakpointImageUtilities.GetBreakpointKind(ref settings);
 			dbgEngineCodeBreakpointFormatter.PropertyChanged += DbgEngineCodeBreakpointFormatter_PropertyChanged;
 		}
 
@@ -105,9 +105,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			settings = newSettings;
 			if (oldSettings.IsEnabled != newSettings.IsEnabled)
 				OnPropertyChanged(nameof(IsEnabled));
-			var newImageType = BreakpointImageUtilities.GetImageType(ref settings);
-			if (newImageType != imageType) {
-				imageType = newImageType;
+			var newBreakpointKind = BreakpointImageUtilities.GetBreakpointKind(ref settings);
+			if (newBreakpointKind != breakpointKind) {
+				breakpointKind = newBreakpointKind;
 				OnPropertyChanged(nameof(ImageReference));
 			}
 			if (oldSettings.Condition != newSettings.Condition)

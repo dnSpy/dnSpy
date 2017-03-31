@@ -1256,5 +1256,95 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.ListFindMatchHighlight"/>
 		/// </summary>
 		public const string ListFindMatchHighlight = "Theme-" + nameof(ListFindMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointStatement"/>
+		/// </summary>
+		public const string AdvancedBreakpointStatement = "Theme-" + nameof(AdvancedBreakpointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string AdvancedBreakpointStatementMarker = "Theme-" + nameof(AdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedBreakpointStatementMarker = "Theme-" + nameof(SelectedAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedBreakpointStatement"/>
+		/// </summary>
+		public const string DisabledAdvancedBreakpointStatement = "Theme-" + nameof(DisabledAdvancedBreakpointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string DisabledAdvancedBreakpointStatementMarker = "Theme-" + nameof(DisabledAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledAdvancedBreakpointStatementMarker = "Theme-" + nameof(SelectedDisabledAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointStatement"/>
+		/// </summary>
+		public const string TracepointStatement = "Theme-" + nameof(TracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointStatementMarker"/>
+		/// </summary>
+		public const string TracepointStatementMarker = "Theme-" + nameof(TracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedTracepointStatementMarker = "Theme-" + nameof(SelectedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledTracepointStatement"/>
+		/// </summary>
+		public const string DisabledTracepointStatement = "Theme-" + nameof(DisabledTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledTracepointStatementMarker"/>
+		/// </summary>
+		public const string DisabledTracepointStatementMarker = "Theme-" + nameof(DisabledTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledTracepointStatementMarker = "Theme-" + nameof(SelectedDisabledTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointStatement"/>
+		/// </summary>
+		public const string AdvancedTracepointStatement = "Theme-" + nameof(AdvancedTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string AdvancedTracepointStatementMarker = "Theme-" + nameof(AdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedTracepointStatementMarker = "Theme-" + nameof(SelectedAdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedTracepointStatement"/>
+		/// </summary>
+		public const string DisabledAdvancedTracepointStatement = "Theme-" + nameof(DisabledAdvancedTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string DisabledAdvancedTracepointStatementMarker = "Theme-" + nameof(DisabledAdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledAdvancedTracepointStatementMarker = "Theme-" + nameof(SelectedDisabledAdvancedTracepointStatementMarker);
 	}
 }

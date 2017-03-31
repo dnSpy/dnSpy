@@ -141,6 +141,8 @@ namespace dnSpy.Text.Editor {
 			var hash = new HashSet<IGlyphTextMarkerImpl>();
 			foreach (var m in markers)
 				hash.Add((IGlyphTextMarkerImpl)m);
+			if (hash.Count == 0)
+				return;
 			foreach (var m in hash)
 				glyphTextMarkers.Remove(m);
 			MarkersRemoved?.Invoke(this, new GlyphTextMarkersRemovedEventArgs(hash));

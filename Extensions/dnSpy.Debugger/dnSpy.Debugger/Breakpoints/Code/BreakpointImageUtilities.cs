@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
-	enum BreakpointImageType {
+	enum BreakpointKind {
 		BreakpointDisabled,
 		BreakpointEnabled,
 		AdvancedBreakpointDisabled,
@@ -31,38 +31,45 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		TracepointEnabled,
 		AdvancedTracepointDisabled,
 		AdvancedTracepointEnabled,
+
+		Last,
 	}
 
 	static class BreakpointImageUtilities {
 		static bool IsAdvanced(ref DbgCodeBreakpointSettings settings) =>
 			settings.Condition != null || settings.HitCount != null || settings.Filter != null;
 
-		public static BreakpointImageType GetImageType(ref DbgCodeBreakpointSettings settings) {
+		public static BreakpointKind GetBreakpointKind(DbgCodeBreakpoint breakpoint) {
+			var settings = breakpoint.Settings;
+			return GetBreakpointKind(ref settings);
+		}
+
+		public static BreakpointKind GetBreakpointKind(ref DbgCodeBreakpointSettings settings) {
 			bool isAdvanced = IsAdvanced(ref settings);
 			if (settings.Trace == null) {
 				if (isAdvanced)
-					return settings.IsEnabled ? BreakpointImageType.AdvancedBreakpointEnabled : BreakpointImageType.AdvancedBreakpointDisabled;
-				return settings.IsEnabled ? BreakpointImageType.BreakpointEnabled : BreakpointImageType.BreakpointDisabled;
+					return settings.IsEnabled ? BreakpointKind.AdvancedBreakpointEnabled : BreakpointKind.AdvancedBreakpointDisabled;
+				return settings.IsEnabled ? BreakpointKind.BreakpointEnabled : BreakpointKind.BreakpointDisabled;
 			}
 			else {
 				if (isAdvanced)
-					return settings.IsEnabled ? BreakpointImageType.AdvancedTracepointEnabled : BreakpointImageType.AdvancedTracepointDisabled;
-				return settings.IsEnabled ? BreakpointImageType.TracepointEnabled : BreakpointImageType.TracepointDisabled;
+					return settings.IsEnabled ? BreakpointKind.AdvancedTracepointEnabled : BreakpointKind.AdvancedTracepointDisabled;
+				return settings.IsEnabled ? BreakpointKind.TracepointEnabled : BreakpointKind.TracepointDisabled;
 			}
 		}
 
-		public static ImageReference GetImage(ref DbgCodeBreakpointSettings settings) => GetImage(GetImageType(ref settings));
+		public static ImageReference GetImage(ref DbgCodeBreakpointSettings settings) => GetImage(GetBreakpointKind(ref settings));
 
-		public static ImageReference GetImage(BreakpointImageType type) {
+		public static ImageReference GetImage(BreakpointKind type) {
 			switch (type) {
-			case BreakpointImageType.BreakpointDisabled:			return DsImages.BreakpointDisabled;
-			case BreakpointImageType.BreakpointEnabled:				return DsImages.BreakpointEnabled;
-			case BreakpointImageType.AdvancedBreakpointDisabled:	return DsImages.AdvancedBreakpointDisabled;
-			case BreakpointImageType.AdvancedBreakpointEnabled:		return DsImages.AdvancedBreakpointEnabled;
-			case BreakpointImageType.TracepointDisabled:			return DsImages.TracepointDisabled;
-			case BreakpointImageType.TracepointEnabled:				return DsImages.TracepointEnabled;
-			case BreakpointImageType.AdvancedTracepointDisabled:	return DsImages.AdvancedTracepointDisabled;
-			case BreakpointImageType.AdvancedTracepointEnabled:		return DsImages.AdvancedTracepointEnabled;
+			case BreakpointKind.BreakpointDisabled:			return DsImages.BreakpointDisabled;
+			case BreakpointKind.BreakpointEnabled:			return DsImages.BreakpointEnabled;
+			case BreakpointKind.AdvancedBreakpointDisabled:	return DsImages.AdvancedBreakpointDisabled;
+			case BreakpointKind.AdvancedBreakpointEnabled:	return DsImages.AdvancedBreakpointEnabled;
+			case BreakpointKind.TracepointDisabled:			return DsImages.TracepointDisabled;
+			case BreakpointKind.TracepointEnabled:			return DsImages.TracepointEnabled;
+			case BreakpointKind.AdvancedTracepointDisabled:	return DsImages.AdvancedTracepointDisabled;
+			case BreakpointKind.AdvancedTracepointEnabled:	return DsImages.AdvancedTracepointEnabled;
 			default: throw new InvalidOperationException();
 			}
 		}

@@ -12,8 +12,26 @@
 		<color name="activestatementmarker" bg="#FFB4E4B4" />
 		<color name="breakpointstatement" fg="#FFFFFFFF" />
 		<color name="breakpointstatementmarker" bg="#FF963A46" />
-		<color name="selectedbreakpointstatementmarker" bg="#FF963A46" fg="#FFFFFFFF" />
-		<color name="disabledbreakpointstatementmarker" fg="#FF963A46" />
+		<color name="selectedbreakpointstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
+		<color name="disabledbreakpointstatementmarker" fg="#FF800000" />
+		<color name="advancedbreakpointstatement" fg="#FFFFFFFF" />
+		<color name="advancedbreakpointstatementmarker" bg="#FF963A46" />
+		<color name="selectedadvancedbreakpointstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
+		<color name="disabledadvancedbreakpointstatement" fg="#FF800000" />
+		<color name="disabledadvancedbreakpointstatementmarker" bg="#FFFFFFFF" />
+		<color name="selecteddisabledadvancedbreakpointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="tracepointstatement" fg="#FF800000" />
+		<color name="tracepointstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedtracepointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="disabledtracepointstatement" fg="#FF800000" />
+		<color name="disabledtracepointstatementmarker" bg="#FFFFFFFF" />
+		<color name="selecteddisabledtracepointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="advancedtracepointstatement" fg="#FF800000" />
+		<color name="advancedtracepointstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedadvancedtracepointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="disabledadvancedtracepointstatement" fg="#FF800000" />
+		<color name="disabledadvancedtracepointstatementmarker" bg="#FFFFFFFF" />
+		<color name="selecteddisabledadvancedtracepointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
 		<color name="xmldoctooltipheader" italics="true" bold="true" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="repllinenumberinput1" fg="#FFFFFFFF" />
