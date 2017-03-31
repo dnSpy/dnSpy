@@ -104,12 +104,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			if (formatValue == null)
 				formatValue = string.Empty;
 			var defaultColor = BoxedTextColor.Comment;
-			var pattern = "'{0}'";
-			int index = formatString.IndexOf(pattern);
-			if (index < 0) {
-				pattern = "{0}";
-				index = formatString.IndexOf(pattern);
-			}
+			const string pattern = "{0}";
+			var index = formatString.IndexOf(pattern);
 			if (index < 0) {
 				Debug.Fail("Couldn't find the sub string");
 				output.Write(defaultColor, string.Format(formatString, formatValue));
