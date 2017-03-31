@@ -118,9 +118,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			var peImage = new PEImage(data, GetImageLayout(module), true);
 			var mod = ModuleDefMD.Load(peImage);
-			mod.Location = module.IsInMemory ? string.Empty : module.Name;
+			mod.Location = module.IsInMemory ? string.Empty : module.Filename;
 			bool autoUpdateMemory = false;
-			if (GacInfo.IsGacPath(module.Name))
+			if (GacInfo.IsGacPath(mod.Location))
 				autoUpdateMemory = false;   // GAC files are not likely to decrypt methods in memory
 			return new MemoryModuleDefDocument(owner, module.Process, module.Address, data, module.IsInMemory, mod, loadSyms, autoUpdateMemory);
 		}
