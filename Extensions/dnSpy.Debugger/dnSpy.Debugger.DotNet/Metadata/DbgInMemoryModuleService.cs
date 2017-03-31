@@ -258,6 +258,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (module.Process.State != DbgProcessState.Paused)
 				return null;
 
+			// Can happen if the breakpoints window just opened and a dynamic assembly is requested.
+			if (uiDispatcher.IsProcessingDisabled())
+				return null;
+
 			lock (lockObj) {
 				doc = FindDynamicModule(module);
 				if (doc != null)

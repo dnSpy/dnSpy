@@ -19,12 +19,20 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 
 namespace dnSpy.Debugger.DotNet.UI {
 	[Export(typeof(UIDispatcher))]
 	sealed class UIDispatcher {
+		static readonly FieldInfo _disableProcessingCountFieldInfo;
+		static UIDispatcher() {
+			_disableProcessingCountFieldInfo = typeof(Dispatcher).GetField("_disableProcessingCount", BindingFlags.NonPublic | BindingFlags.Instance);
+			Debug.Assert(_disableProcessingCountFieldInfo != null);
+		}
+
 		Dispatcher Dispatcher { get; }
 
 		[ImportingConstructor]
@@ -32,6 +40,12 @@ namespace dnSpy.Debugger.DotNet.UI {
 
 		public void VerifyAccess() => Dispatcher.VerifyAccess();
 		public bool CheckAccess() => Dispatcher.CheckAccess();
+
+		public bool IsProcessingDisabled() {
+			if (_disableProcessingCountFieldInfo == null)
+				return false;
+			return (int)_disableProcessingCountFieldInfo.GetValue(Dispatcher) > 0;
+		}
 
 		public void Invoke(Action action) =>
 			Dispatcher.Invoke(DispatcherPriority.Background, action);
