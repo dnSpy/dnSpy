@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.Exceptions {
 				break;
 
 			case DbgExceptionIdKind.Name:
-				output.Write(BoxedTextColor.Text, definition.Id.Name);
+				output.Write(BoxedTextColor.Keyword, definition.Id.Name);
 				break;
 
 			default:

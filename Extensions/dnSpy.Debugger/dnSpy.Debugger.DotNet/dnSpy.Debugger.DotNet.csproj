@@ -57,7 +57,6 @@
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />
-    <Compile Include="Exceptions\MDADbgExceptionFormatter.cs" />
     <Compile Include="Metadata\ClassLoader.cs" />
     <Compile Include="Metadata\Commands.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProviderService.cs" />
