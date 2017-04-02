@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public abstract bool ShowDeclaringTypes { get; set; }
 		public abstract bool ShowReturnTypes { get; set; }
 		public abstract bool ShowNamespaces { get; set; }
-		public abstract bool ShowTypeKeywords { get; set; }
+		public abstract bool ShowIntrinsicTypeKeywords { get; set; }
 	}
 
 	[Export(typeof(CodeBreakpointsOperations))]
@@ -291,9 +291,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			set => codeBreakpointDisplaySettings.ShowNamespaces = value;
 		}
 
-		public override bool ShowTypeKeywords {
-			get => codeBreakpointDisplaySettings.ShowTypeKeywords;
-			set => codeBreakpointDisplaySettings.ShowTypeKeywords = value;
+		public override bool ShowIntrinsicTypeKeywords {
+			get => codeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords;
+			set => codeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords = value;
 		}
 	}
 }

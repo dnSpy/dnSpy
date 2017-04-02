@@ -221,7 +221,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			case nameof(CodeBreakpointDisplaySettings.ShowDeclaringTypes):
 			case nameof(CodeBreakpointDisplaySettings.ShowReturnTypes):
 			case nameof(CodeBreakpointDisplaySettings.ShowNamespaces):
-			case nameof(CodeBreakpointDisplaySettings.ShowTypeKeywords):
+			case nameof(CodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords):
 				RefreshNameColumn_UI();
 				break;
 

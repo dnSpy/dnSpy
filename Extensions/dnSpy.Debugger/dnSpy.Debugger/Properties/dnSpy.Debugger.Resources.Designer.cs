@@ -3955,6 +3955,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Intrinsic Type Keywords.
+        /// </summary>
+        public static string ShowIntrinsicTypeKeywordsCommand {
+            get {
+                return ResourceManager.GetString("ShowIntrinsicTypeKeywordsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MDA Messages.
         /// </summary>
         public static string ShowMDAMessages {
@@ -4095,15 +4104,6 @@ namespace dnSpy.Debugger.Properties {
         public static string ShowTokensCommand {
             get {
                 return ResourceManager.GetString("ShowTokensCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show Type Keywords.
-        /// </summary>
-        public static string ShowTypeKeywordsCommand {
-            get {
-                return ResourceManager.GetString("ShowTypeKeywordsCommand", resourceCulture);
             }
         }
         

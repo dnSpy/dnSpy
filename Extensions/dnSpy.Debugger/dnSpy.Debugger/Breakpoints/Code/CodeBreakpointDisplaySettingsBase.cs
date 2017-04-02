@@ -163,24 +163,24 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 		bool showNamespaces = false;
 
-		public override bool ShowTypeKeywords {
+		public override bool ShowIntrinsicTypeKeywords {
 			get {
 				lock (lockObj)
-					return showTypeKeywords;
+					return showIntrinsicTypeKeywords;
 			}
 			set {
 				bool modified;
 				lock (lockObj) {
-					modified = showTypeKeywords != value;
-					showTypeKeywords = value;
+					modified = showIntrinsicTypeKeywords != value;
+					showIntrinsicTypeKeywords = value;
 				}
 				if (modified) {
-					OnPropertyChanged(nameof(ShowTypeKeywords));
+					OnPropertyChanged(nameof(ShowIntrinsicTypeKeywords));
 					OnModified();
 				}
 			}
 		}
-		bool showTypeKeywords = true;
+		bool showIntrinsicTypeKeywords = true;
 	}
 
 	[Export(typeof(CodeBreakpointDisplaySettings))]
@@ -202,7 +202,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			ShowDeclaringTypes = sect.Attribute<bool?>(nameof(ShowDeclaringTypes)) ?? ShowDeclaringTypes;
 			ShowReturnTypes = sect.Attribute<bool?>(nameof(ShowReturnTypes)) ?? ShowReturnTypes;
 			ShowNamespaces = sect.Attribute<bool?>(nameof(ShowNamespaces)) ?? ShowNamespaces;
-			ShowTypeKeywords = sect.Attribute<bool?>(nameof(ShowTypeKeywords)) ?? ShowTypeKeywords;
+			ShowIntrinsicTypeKeywords = sect.Attribute<bool?>(nameof(ShowIntrinsicTypeKeywords)) ?? ShowIntrinsicTypeKeywords;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -218,7 +218,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			sect.Attribute(nameof(ShowDeclaringTypes), ShowDeclaringTypes);
 			sect.Attribute(nameof(ShowReturnTypes), ShowReturnTypes);
 			sect.Attribute(nameof(ShowNamespaces), ShowNamespaces);
-			sect.Attribute(nameof(ShowTypeKeywords), ShowTypeKeywords);
+			sect.Attribute(nameof(ShowIntrinsicTypeKeywords), ShowIntrinsicTypeKeywords);
 		}
 	}
 }

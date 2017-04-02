@@ -1011,8 +1011,8 @@ Are you sure you want to expand it?</value>
   <data name="ShowTokensCommand" xml:space="preserve">
     <value>Show Tokens</value>
   </data>
-  <data name="ShowTypeKeywordsCommand" xml:space="preserve">
-    <value>Show Type Keywords</value>
+  <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
+    <value>Show Intrinsic Type Keywords</value>
   </data>
   <data name="StartWithoutDebuggingCommand" xml:space="preserve">
     <value>Start Wit_hout Debugging</value>

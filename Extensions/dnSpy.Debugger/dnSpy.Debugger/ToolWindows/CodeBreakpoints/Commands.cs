@@ -257,14 +257,14 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowReturnTypes;
 	}
 
-	[ExportMenuItem(Header = "res:ShowTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 70)]
+	[ExportMenuItem(Header = "res:ShowIntrinsicTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 70)]
 	sealed class ShowTypeKeywordsBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
 		[ImportingConstructor]
 		ShowTypeKeywordsBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
-		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowTypeKeywords = !context.Operations.ShowTypeKeywords;
-		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowTypeKeywords;
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowIntrinsicTypeKeywords = !context.Operations.ShowIntrinsicTypeKeywords;
+		public override bool IsChecked(CodeBreakpointsCtxMenuContext context) => context.Operations.ShowIntrinsicTypeKeywords;
 	}
 }

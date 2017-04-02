@@ -71,8 +71,8 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public abstract bool ShowNamespaces { get; set; }
 
 		/// <summary>
-		/// Show type keywords (int instead of Int32)
+		/// Show intrinsic type keywords (eg. int instead of Int32)
 		/// </summary>
-		public abstract bool ShowTypeKeywords { get; set; }
+		public abstract bool ShowIntrinsicTypeKeywords { get; set; }
 	}
 }

@@ -77,13 +77,13 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 
 		SimplePrinterFlags GetPrinterFlags() {
 			SimplePrinterFlags flags = 0;
-			if (codeBreakpointDisplaySettings.ShowModuleNames)		flags |= SimplePrinterFlags.ShowModuleNames;
-			if (codeBreakpointDisplaySettings.ShowParameterTypes)	flags |= SimplePrinterFlags.ShowParameterTypes;
-			if (codeBreakpointDisplaySettings.ShowParameterNames)	flags |= SimplePrinterFlags.ShowParameterNames;
-			if (codeBreakpointDisplaySettings.ShowDeclaringTypes)	flags |= SimplePrinterFlags.ShowOwnerTypes;
-			if (codeBreakpointDisplaySettings.ShowReturnTypes)		flags |= SimplePrinterFlags.ShowReturnTypes;
-			if (codeBreakpointDisplaySettings.ShowNamespaces)		flags |= SimplePrinterFlags.ShowNamespaces;
-			if (codeBreakpointDisplaySettings.ShowTypeKeywords)		flags |= SimplePrinterFlags.ShowTypeKeywords;
+			if (codeBreakpointDisplaySettings.ShowModuleNames)				flags |= SimplePrinterFlags.ShowModuleNames;
+			if (codeBreakpointDisplaySettings.ShowParameterTypes)			flags |= SimplePrinterFlags.ShowParameterTypes;
+			if (codeBreakpointDisplaySettings.ShowParameterNames)			flags |= SimplePrinterFlags.ShowParameterNames;
+			if (codeBreakpointDisplaySettings.ShowDeclaringTypes)			flags |= SimplePrinterFlags.ShowOwnerTypes;
+			if (codeBreakpointDisplaySettings.ShowReturnTypes)				flags |= SimplePrinterFlags.ShowReturnTypes;
+			if (codeBreakpointDisplaySettings.ShowNamespaces)				flags |= SimplePrinterFlags.ShowNamespaces;
+			if (codeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords)	flags |= SimplePrinterFlags.ShowTypeKeywords;
 			return flags;
 		}
 
