@@ -48,6 +48,10 @@
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsServiceImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterService.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializerService.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphPopupControl.xaml.cs">
+      <DependentUpon>BreakpointGlyphPopupControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphPopupVM.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphTextMarkerHandler.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointInfo.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointMarker.cs" />
@@ -309,6 +313,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Breakpoints\Code\TextEditor\BreakpointGlyphPopupControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\AttachToProcess\AttachToProcessDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

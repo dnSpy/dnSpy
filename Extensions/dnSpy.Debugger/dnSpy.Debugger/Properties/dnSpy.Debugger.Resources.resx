@@ -1698,4 +1698,13 @@ Are you sure you want to expand it?</value>
   <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
     <value>Log message '{0}', to Output window</value>
   </data>
+  <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
+    <value>Disable breakpoint</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
+    <value>Enable breakpoint</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
+    <value>Settings...</value>
+  </data>
 </root>

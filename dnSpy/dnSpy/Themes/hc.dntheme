@@ -530,5 +530,8 @@
 		<color name="hexsearchingtextboxborder" bg="#FFFFFFFF" />
 		<color name="environmentcommandbartoolbarseparator" bg="#FFFFFFFF" />
 		<color name="environmentcommandbartoolbarseparatorhighlight" bg="#FFFFFFFF" />
+		<color name="debuggerbreakpointglyphmargincontrolborder" bg="#FFFFFFFF" />
+		<color name="debuggerbreakpointglyphmargincontrolbackground" bg="#FF000000" />
+		<color name="debuggerbreakpointglyphmargincontrolhoverbackground" bg="#FF800080" />
 	</colors>
 </theme>

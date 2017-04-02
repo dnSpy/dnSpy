@@ -28,6 +28,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Debugger.Dialogs.CodeBreakpoints;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.Text;
 using Microsoft.VisualStudio.Text;
@@ -45,18 +46,20 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 	sealed class BreakpointGlyphTextMarkerHandlerImpl : BreakpointGlyphTextMarkerHandler {
 		public override IGlyphTextMarkerHandlerMouseProcessor MouseProcessor => null;
 
+		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
 		readonly BreakpointConditionsFormatter breakpointConditionsFormatter;
 		readonly IEnumerable<Lazy<BreakpointGlyphFormatter, IBreakpointGlyphFormatterMetadata>> breakpointGlyphFormatters;
 
 		[ImportingConstructor]
-		BreakpointGlyphTextMarkerHandlerImpl(BreakpointConditionsFormatter breakpointConditionsFormatter, [ImportMany] IEnumerable<Lazy<BreakpointGlyphFormatter, IBreakpointGlyphFormatterMetadata>> breakpointGlyphFormatters) {
+		BreakpointGlyphTextMarkerHandlerImpl(Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, BreakpointConditionsFormatter breakpointConditionsFormatter, [ImportMany] IEnumerable<Lazy<BreakpointGlyphFormatter, IBreakpointGlyphFormatterMetadata>> breakpointGlyphFormatters) {
+			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
 			this.breakpointConditionsFormatter = breakpointConditionsFormatter;
 			this.breakpointGlyphFormatters = breakpointGlyphFormatters.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public override FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
-			//TODO:
-			return null;
+			var vm = new BreakpointGlyphPopupVM(showCodeBreakpointSettingsService.Value, (DbgCodeBreakpoint)marker.Tag);
+			return new BreakpointGlyphPopupControl(vm, context.Margin.VisualElement);
 		}
 
 		public override GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {

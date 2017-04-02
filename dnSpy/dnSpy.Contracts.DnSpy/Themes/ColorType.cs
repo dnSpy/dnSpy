@@ -729,6 +729,9 @@ namespace dnSpy.Contracts.Themes {
 		HexSearchingTextBoxBorder,
 		EnvironmentCommandBarToolBarSeparator,
 		EnvironmentCommandBarToolBarSeparatorHighlight,
+		DebuggerBreakpointGlyphMarginControlBorder,
+		DebuggerBreakpointGlyphMarginControlBackground,
+		DebuggerBreakpointGlyphMarginControlHoverBackground,
 
 		// Add new color types before this comment
 

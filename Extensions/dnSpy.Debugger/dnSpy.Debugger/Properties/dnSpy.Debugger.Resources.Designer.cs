@@ -466,6 +466,33 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disable breakpoint.
+        /// </summary>
+        public static string Breakpoints_GlyphMargin_DisableBreakpoint {
+            get {
+                return ResourceManager.GetString("Breakpoints_GlyphMargin_DisableBreakpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable breakpoint.
+        /// </summary>
+        public static string Breakpoints_GlyphMargin_EnableBreakpoint {
+            get {
+                return ResourceManager.GetString("Breakpoints_GlyphMargin_EnableBreakpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings....
+        /// </summary>
+        public static string Breakpoints_GlyphMargin_ShowSettingsToolTip {
+            get {
+                return ResourceManager.GetString("Breakpoints_GlyphMargin_ShowSettingsToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Go To Disassembly.
         /// </summary>
         public static string Breakpoints_GoToDisassembly_ToolTip {

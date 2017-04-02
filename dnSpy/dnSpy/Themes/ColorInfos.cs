@@ -1853,6 +1853,18 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FFF5F5F5",
 				BackgroundResourceKey = "EnvironmentCommandBarToolBarSeparatorHighlight",
 			},
+			new BrushColorInfo(ColorType.DebuggerBreakpointGlyphMarginControlBorder, "Breakpoint glyph margin control") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "DebuggerBreakpointGlyphMarginControlBorder",
+			},
+			new BrushColorInfo(ColorType.DebuggerBreakpointGlyphMarginControlBackground, "Breakpoint glyph margin control") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "DebuggerBreakpointGlyphMarginControlBackground",
+			},
+			new BrushColorInfo(ColorType.DebuggerBreakpointGlyphMarginControlHoverBackground, "Breakpoint glyph margin control") {
+				DefaultBackground = "#FF52B0EF",
+				BackgroundResourceKey = "DebuggerBreakpointGlyphMarginControlHoverBackground",
+			},
 			new BrushColorInfo(ColorType.LineNumber, "Line number"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput1, "REPL line number #1 (input)"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput2, "REPL line number #2 (input)"),
