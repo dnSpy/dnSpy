@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 	[ExportBreakpointModuleLocationProvider]
 	sealed class BreakpointModuleLocationProviderImpl : BreakpointModuleLocationProvider {
 		public override GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint) {
-			if (breakpoint.EngineBreakpoint is DbgDotNetEngineCodeBreakpoint dnbp)
+			if (breakpoint.Location is DbgDotNetBreakpointLocation dnbp)
 				return new GlyphTextMethodMarkerLocationInfo(new ModuleTokenId(dnbp.Module, dnbp.Token), dnbp.Offset);
 			return null;
 		}

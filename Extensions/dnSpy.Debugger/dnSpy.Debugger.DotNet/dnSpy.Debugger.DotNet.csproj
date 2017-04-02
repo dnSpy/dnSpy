@@ -46,11 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Breakpoints\Code\BreakpointFormatterService.cs" />
-    <Compile Include="Breakpoints\Code\DbgDotNetEngineCodeBreakpointFactoryImpl.cs" />
-    <Compile Include="Breakpoints\Code\DbgDotNetEngineCodeBreakpointImpl.cs" />
-    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterImpl.cs" />
-    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterProviderImpl.cs" />
-    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializerImpl.cs" />
+    <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterImpl.cs" />
+    <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterProviderImpl.cs" />
+    <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializerImpl.cs" />
+    <Compile Include="Breakpoints\Code\DbgDotNetBreakpointLocationFactory2.cs" />
+    <Compile Include="Breakpoints\Code\DbgDotNetBreakpointLocationImpl.cs" />
     <Compile Include="Breakpoints\Code\TextColorWriterImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphFormatterImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointModuleLocationProvider.cs" />

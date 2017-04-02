@@ -27,11 +27,11 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		static readonly Guid SETTINGS_GUID = new Guid("FBC6039C-8A7A-49DC-9C32-52C1B73DE0A3");
 
 		readonly ISettingsService settingsService;
-		readonly DbgEngineCodeBreakpointSerializerService dbgEngineCodeBreakpointSerializerService;
+		readonly DbgBreakpointLocationSerializerService dbgBreakpointLocationSerializerService;
 
-		public BreakpointsSerializer(ISettingsService settingsService, DbgEngineCodeBreakpointSerializerService dbgEngineCodeBreakpointSerializerService) {
+		public BreakpointsSerializer(ISettingsService settingsService, DbgBreakpointLocationSerializerService dbgBreakpointLocationSerializerService) {
 			this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-			this.dbgEngineCodeBreakpointSerializerService = dbgEngineCodeBreakpointSerializerService ?? throw new ArgumentNullException(nameof(dbgEngineCodeBreakpointSerializerService));
+			this.dbgBreakpointLocationSerializerService = dbgBreakpointLocationSerializerService ?? throw new ArgumentNullException(nameof(dbgBreakpointLocationSerializerService));
 		}
 
 		public DbgCodeBreakpointInfo[] Load() {
@@ -41,8 +41,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				var isEnabled = bpSect.Attribute<bool?>("IsEnabled");
 				if (isEnabled == null)
 					continue;
-				var engineBreakpoint = dbgEngineCodeBreakpointSerializerService.Deserialize(bpSect.TryGetSection("EBP"));
-				if (engineBreakpoint == null)
+				var breakpointLocation = dbgBreakpointLocationSerializerService.Deserialize(bpSect.TryGetSection("BPL"));
+				if (breakpointLocation == null)
 					continue;
 				var bpSettings = new DbgCodeBreakpointSettings {
 					IsEnabled = isEnabled.Value,
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					Filter = LoadFilter(bpSect.TryGetSection("Filter")),
 					Trace = LoadTrace(bpSect.TryGetSection("Trace")),
 				};
-				settings.Add(new DbgCodeBreakpointInfo(engineBreakpoint, bpSettings));
+				settings.Add(new DbgCodeBreakpointInfo(breakpointLocation, bpSettings));
 			}
 			return settings.ToArray();
 		}
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				var bpSect = section.CreateSection("Breakpoint");
 				var bpSettings = bp.Settings;
 				bpSect.Attribute("IsEnabled", bpSettings.IsEnabled);
-				dbgEngineCodeBreakpointSerializerService.Serialize(bpSect.CreateSection("EBP"), bp.EngineBreakpoint);
+				dbgBreakpointLocationSerializerService.Serialize(bpSect.CreateSection("BPL"), bp.Location);
 				if (bpSettings.Condition != null)
 					Save(bpSect.CreateSection("Condition"), bpSettings.Condition.Value);
 				if (bpSettings.HitCount != null)

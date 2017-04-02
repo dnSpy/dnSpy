@@ -29,29 +29,29 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	sealed class CodeBreakpointsListSettingsListener : IDbgCodeBreakpointsServiceListener {
 		readonly DbgDispatcher dbgDispatcher;
 		readonly ISettingsService settingsService;
-		readonly DbgEngineCodeBreakpointSerializerService dbgEngineCodeBreakpointSerializerService;
+		readonly DbgBreakpointLocationSerializerService dbgBreakpointLocationSerializerService;
 
 		[ImportingConstructor]
-		CodeBreakpointsListSettingsListener(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgEngineCodeBreakpointSerializerService dbgEngineCodeBreakpointSerializerService) {
+		CodeBreakpointsListSettingsListener(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgBreakpointLocationSerializerService dbgBreakpointLocationSerializerService) {
 			this.dbgDispatcher = dbgDispatcher;
 			this.settingsService = settingsService;
-			this.dbgEngineCodeBreakpointSerializerService = dbgEngineCodeBreakpointSerializerService;
+			this.dbgBreakpointLocationSerializerService = dbgBreakpointLocationSerializerService;
 		}
 
 		void IDbgCodeBreakpointsServiceListener.Initialize(DbgCodeBreakpointsService dbgCodeBreakpointsService) =>
-			new CodeBreakpointsListSettings(dbgDispatcher, settingsService, dbgEngineCodeBreakpointSerializerService, dbgCodeBreakpointsService);
+			new CodeBreakpointsListSettings(dbgDispatcher, settingsService, dbgBreakpointLocationSerializerService, dbgCodeBreakpointsService);
 	}
 
 	sealed class CodeBreakpointsListSettings {
 		readonly DbgDispatcher dbgDispatcher;
 		readonly ISettingsService settingsService;
-		readonly DbgEngineCodeBreakpointSerializerService dbgEngineCodeBreakpointSerializerService;
+		readonly DbgBreakpointLocationSerializerService dbgBreakpointLocationSerializerService;
 		readonly DbgCodeBreakpointsService dbgCodeBreakpointsService;
 
-		public CodeBreakpointsListSettings(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgEngineCodeBreakpointSerializerService dbgEngineCodeBreakpointSerializerService, DbgCodeBreakpointsService dbgCodeBreakpointsService) {
+		public CodeBreakpointsListSettings(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgBreakpointLocationSerializerService dbgBreakpointLocationSerializerService, DbgCodeBreakpointsService dbgCodeBreakpointsService) {
 			this.dbgDispatcher = dbgDispatcher ?? throw new ArgumentNullException(nameof(dbgDispatcher));
 			this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-			this.dbgEngineCodeBreakpointSerializerService = dbgEngineCodeBreakpointSerializerService ?? throw new ArgumentNullException(nameof(dbgEngineCodeBreakpointSerializerService));
+			this.dbgBreakpointLocationSerializerService = dbgBreakpointLocationSerializerService ?? throw new ArgumentNullException(nameof(dbgBreakpointLocationSerializerService));
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService ?? throw new ArgumentNullException(nameof(dbgCodeBreakpointsService));
 			dbgCodeBreakpointsService.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 			dbgCodeBreakpointsService.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		void Load() {
 			dbgDispatcher.VerifyAccess();
 			ignoreSave = true;
-			dbgCodeBreakpointsService.Add(new BreakpointsSerializer(settingsService, dbgEngineCodeBreakpointSerializerService).Load());
+			dbgCodeBreakpointsService.Add(new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService).Load());
 			dbgDispatcher.Dbg(() => ignoreSave = false);
 		}
 
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			dbgDispatcher.VerifyAccess();
 			if (ignoreSave)
 				return;
-			new BreakpointsSerializer(settingsService, dbgEngineCodeBreakpointSerializerService).Save(dbgCodeBreakpointsService.Breakpoints);
+			new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService).Save(dbgCodeBreakpointsService.Breakpoints);
 		}
 		bool ignoreSave;
 	}

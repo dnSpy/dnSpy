@@ -19,11 +19,11 @@
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
-	/// Predefined <see cref="DbgEngineCodeBreakpoint"/> types
+	/// Predefined <see cref="DbgBreakpointLocation"/> types
 	/// </summary>
-	public static class PredefinedDbgEngineCodeBreakpointTypes {
+	public static class PredefinedDbgBreakpointLocationTypes {
 		/// <summary>
-		/// .NET code breakpoint with a module, token, and IL offset
+		/// .NET code breakpoint location with a module, token, and IL offset
 		/// </summary>
 		public const string DotNet = nameof(DotNet);
 	}

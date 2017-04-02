@@ -92,13 +92,13 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
 		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
-		readonly Lazy<DbgEngineCodeBreakpointFormatterService> dbgEngineCodeBreakpointFormatterService;
+		readonly Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService;
 		readonly Dictionary<DbgCodeBreakpoint, CodeBreakpointVM> bpToVM;
 		readonly List<CodeBreakpointVM> realAllItems;
 		int codeBreakpointOrder;
 
 		[ImportingConstructor]
-		CodeBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, UIDispatcher uiDispatcher, CodeBreakpointFormatterProvider codeBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgEngineCodeBreakpointFormatterService> dbgEngineCodeBreakpointFormatterService, BreakpointConditionsFormatter breakpointConditionsFormatter) {
+		CodeBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, UIDispatcher uiDispatcher, CodeBreakpointFormatterProvider codeBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService, BreakpointConditionsFormatter breakpointConditionsFormatter) {
 			uiDispatcher.VerifyAccess();
 			sbOutput = new StringBuilderTextColorOutput();
 			debugOutputWriter = new DebugOutputWriterImpl(sbOutput);
@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
 			lazyToolWindowVMHelper = new LazyToolWindowVMHelper(this, uiDispatcher);
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
-			this.dbgEngineCodeBreakpointFormatterService = dbgEngineCodeBreakpointFormatterService;
+			this.dbgBreakpointLocationFormatterService = dbgBreakpointLocationFormatterService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			codeBreakpointContext = new CodeBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, breakpointConditionsFormatter, new SearchMatcher(searchColumnDefinitions)) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
@@ -288,7 +288,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		void AddItems_UI(IList<DbgCodeBreakpoint> codeBreakpoints) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			foreach (var bp in codeBreakpoints) {
-				var vm = new CodeBreakpointVM(bp, dbgEngineCodeBreakpointFormatterService.Value.GetFormatter(bp.EngineBreakpoint), codeBreakpointContext, codeBreakpointOrder++);
+				var vm = new CodeBreakpointVM(bp, dbgBreakpointLocationFormatterService.Value.GetFormatter(bp.Location), codeBreakpointContext, codeBreakpointOrder++);
 				Debug.Assert(!bpToVM.ContainsKey(bp));
 				bpToVM[bp] = vm;
 				realAllItems.Add(vm);

@@ -53,25 +53,25 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		DbgCodeBreakpointSettings settings;
 		BreakpointKind breakpointKind;
 
-		internal DbgEngineCodeBreakpointFormatter EngineBreakpointFormatter { get; }
+		internal DbgBreakpointLocationFormatter BreakpointLocationFormatter { get; }
 
-		public CodeBreakpointVM(DbgCodeBreakpoint codeBreakpoint, DbgEngineCodeBreakpointFormatter dbgEngineCodeBreakpointFormatter, ICodeBreakpointContext context, int order) {
+		public CodeBreakpointVM(DbgCodeBreakpoint codeBreakpoint, DbgBreakpointLocationFormatter dbgBreakpointLocationFormatter, ICodeBreakpointContext context, int order) {
 			CodeBreakpoint = codeBreakpoint ?? throw new ArgumentNullException(nameof(codeBreakpoint));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
-			EngineBreakpointFormatter = dbgEngineCodeBreakpointFormatter ?? throw new ArgumentNullException(nameof(dbgEngineCodeBreakpointFormatter));
+			BreakpointLocationFormatter = dbgBreakpointLocationFormatter ?? throw new ArgumentNullException(nameof(dbgBreakpointLocationFormatter));
 			settings = CodeBreakpoint.Settings;
 			breakpointKind = BreakpointImageUtilities.GetBreakpointKind(ref settings);
-			dbgEngineCodeBreakpointFormatter.PropertyChanged += DbgEngineCodeBreakpointFormatter_PropertyChanged;
+			dbgBreakpointLocationFormatter.PropertyChanged += DbgBreakpointLocationFormatter_PropertyChanged;
 		}
 
-		void DbgEngineCodeBreakpointFormatter_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DbgBreakpointLocationFormatter_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
-			case DbgEngineCodeBreakpointFormatter.NameProperty:
+			case DbgBreakpointLocationFormatter.NameProperty:
 				OnPropertyChanged(nameof(NameObject));
 				break;
 
-			case DbgEngineCodeBreakpointFormatter.ModuleProperty:
+			case DbgBreakpointLocationFormatter.ModuleProperty:
 				OnPropertyChanged(nameof(ModuleObject));
 				break;
 
@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		// UI thread
 		internal void Dispose() {
 			Context.UIDispatcher.VerifyAccess();
-			EngineBreakpointFormatter.PropertyChanged -= DbgEngineCodeBreakpointFormatter_PropertyChanged;
+			BreakpointLocationFormatter.PropertyChanged -= DbgBreakpointLocationFormatter_PropertyChanged;
 		}
 	}
 }

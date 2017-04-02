@@ -24,18 +24,18 @@ using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	abstract class DbgDotNetEngineCodeBreakpointFactory2 : DbgDotNetEngineCodeBreakpointFactory {
-		public abstract DbgDotNetEngineCodeBreakpoint CreateDotNet(ModuleId module, uint token, uint offset);
+	abstract class DbgDotNetBreakpointLocationFactory2 : DbgDotNetBreakpointLocationFactory {
+		public abstract DbgDotNetBreakpointLocation CreateDotNet(ModuleId module, uint token, uint offset);
 	}
 
-	[Export(typeof(DbgDotNetEngineCodeBreakpointFactory))]
-	[Export(typeof(DbgDotNetEngineCodeBreakpointFactory2))]
-	sealed class DbgDotNetEngineCodeBreakpointFactoryImpl : DbgDotNetEngineCodeBreakpointFactory2 {
+	[Export(typeof(DbgDotNetBreakpointLocationFactory))]
+	[Export(typeof(DbgDotNetBreakpointLocationFactory2))]
+	sealed class DbgDotNetBreakpointLocationFactoryImpl : DbgDotNetBreakpointLocationFactory2 {
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly BreakpointFormatterService breakpointFormatterService;
 
 		[ImportingConstructor]
-		DbgDotNetEngineCodeBreakpointFactoryImpl(Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, BreakpointFormatterService breakpointFormatterService) {
+		DbgDotNetBreakpointLocationFactoryImpl(Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, BreakpointFormatterService breakpointFormatterService) {
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.breakpointFormatterService = breakpointFormatterService;
 		}
@@ -43,8 +43,8 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 		public override DbgCodeBreakpoint Create(ModuleId module, uint token, uint offset, DbgCodeBreakpointSettings bpSettings) =>
 			dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(CreateDotNet(module, token, offset), bpSettings));
 
-		public override DbgDotNetEngineCodeBreakpoint CreateDotNet(ModuleId module, uint token, uint offset) {
-			var dnbp = new DbgDotNetEngineCodeBreakpointImpl(module, token, offset);
+		public override DbgDotNetBreakpointLocation CreateDotNet(ModuleId module, uint token, uint offset) {
+			var dnbp = new DbgDotNetBreakpointLocationImpl(module, token, offset);
 			var formatter = breakpointFormatterService.Create(dnbp);
 			dnbp.Formatter = formatter;
 			return dnbp;

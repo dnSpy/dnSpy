@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 	/// <summary>
 	/// Creates breakpoints and tracepoints
 	/// </summary>
-	public abstract class DbgDotNetEngineCodeBreakpointFactory {
+	public abstract class DbgDotNetBreakpointLocationFactory {
 		/// <summary>
 		/// Creates an enabled breakpoint
 		/// </summary>

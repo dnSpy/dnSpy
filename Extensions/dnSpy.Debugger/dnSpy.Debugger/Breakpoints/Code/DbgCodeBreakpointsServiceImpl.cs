@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			var bps = new DbgCodeBreakpoint[breakpoints.Length];
 			var bpImpls = new DbgCodeBreakpointImpl[breakpoints.Length];
 			for (int i = 0; i < bps.Length; i++) {
-				var bp = new DbgCodeBreakpointImpl(this, Interlocked.Increment(ref breakpointId), breakpoints[i].EngineBreakpoint, breakpoints[i].Settings);
+				var bp = new DbgCodeBreakpointImpl(this, Interlocked.Increment(ref breakpointId), breakpoints[i].BreakpointLocation, breakpoints[i].Settings);
 				bps[i] = bp;
 				bpImpls[i] = bp;
 			}

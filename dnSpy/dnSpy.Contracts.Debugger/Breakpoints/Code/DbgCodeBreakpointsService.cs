@@ -158,9 +158,9 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// </summary>
 	public struct DbgCodeBreakpointInfo {
 		/// <summary>
-		/// Engine breakpoint
+		/// Breakpoint location
 		/// </summary>
-		public DbgEngineCodeBreakpoint EngineBreakpoint { get; }
+		public DbgBreakpointLocation BreakpointLocation { get; }
 
 		/// <summary>
 		/// Breakpoint settings
@@ -170,10 +170,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="engineBreakpoint">Engine breakpoint</param>
+		/// <param name="breakpointLocation">Breakpoint location</param>
 		/// <param name="settings">Breakpoint settings</param>
-		public DbgCodeBreakpointInfo(DbgEngineCodeBreakpoint engineBreakpoint, DbgCodeBreakpointSettings settings) {
-			EngineBreakpoint = engineBreakpoint ?? throw new ArgumentNullException(nameof(engineBreakpoint));
+		public DbgCodeBreakpointInfo(DbgBreakpointLocation breakpointLocation, DbgCodeBreakpointSettings settings) {
+			BreakpointLocation = breakpointLocation ?? throw new ArgumentNullException(nameof(breakpointLocation));
 			Settings = settings;
 		}
 	}

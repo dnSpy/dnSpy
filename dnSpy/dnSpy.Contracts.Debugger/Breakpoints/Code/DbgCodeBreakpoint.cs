@@ -58,9 +58,9 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public abstract DbgCodeBreakpointTrace? Trace { get; set; }
 
 		/// <summary>
-		/// Gets the engine breakpoint
+		/// Gets the breakpoint location
 		/// </summary>
-		public abstract DbgEngineCodeBreakpoint EngineBreakpoint { get; }
+		public abstract DbgBreakpointLocation Location { get; }
 
 		/// <summary>
 		/// Removes the breakpoint

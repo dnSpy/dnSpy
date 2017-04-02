@@ -24,16 +24,16 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	[ExportDbgEngineCodeBreakpointSerializer(PredefinedDbgEngineCodeBreakpointTypes.DotNet)]
-	sealed class DbgEngineCodeBreakpointSerializerImpl : DbgEngineCodeBreakpointSerializer {
-		readonly Lazy<DbgDotNetEngineCodeBreakpointFactory2> dbgDotNetEngineCodeBreakpointFactory;
+	[ExportDbgBreakpointLocationSerializer(PredefinedDbgBreakpointLocationTypes.DotNet)]
+	sealed class DbgBreakpointLocationSerializerImpl : DbgBreakpointLocationSerializer {
+		readonly Lazy<DbgDotNetBreakpointLocationFactory2> dbgDotNetBreakpointLocationFactory;
 
 		[ImportingConstructor]
-		DbgEngineCodeBreakpointSerializerImpl(Lazy<DbgDotNetEngineCodeBreakpointFactory2> dbgDotNetEngineCodeBreakpointFactory) =>
-			this.dbgDotNetEngineCodeBreakpointFactory = dbgDotNetEngineCodeBreakpointFactory;
+		DbgBreakpointLocationSerializerImpl(Lazy<DbgDotNetBreakpointLocationFactory2> dbgDotNetBreakpointLocationFactory) =>
+			this.dbgDotNetBreakpointLocationFactory = dbgDotNetBreakpointLocationFactory;
 
-		public override void Serialize(ISettingsSection section, DbgEngineCodeBreakpoint breakpoint) {
-			var bp = (DbgDotNetEngineCodeBreakpointImpl)breakpoint;
+		public override void Serialize(ISettingsSection section, DbgBreakpointLocation breakpoint) {
+			var bp = (DbgDotNetBreakpointLocationImpl)breakpoint;
 			section.Attribute("Token", bp.Token);
 			section.Attribute("Offset", bp.Offset);
 			section.Attribute("AssemblyFullName", bp.Module.AssemblyFullName);
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 				section.Attribute("ModuleNameOnly", bp.Module.ModuleNameOnly);
 		}
 
-		public override DbgEngineCodeBreakpoint Deserialize(ISettingsSection section) {
+		public override DbgBreakpointLocation Deserialize(ISettingsSection section) {
 			var token = section.Attribute<uint?>("Token");
 			var offset = section.Attribute<uint?>("Offset");
 			var assemblyFullName = section.Attribute<string>("AssemblyFullName");
@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 			if (token == null || offset == null || assemblyFullName == null || moduleName == null)
 				return null;
 			var moduleId = new ModuleId(assemblyFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
-			return dbgDotNetEngineCodeBreakpointFactory.Value.CreateDotNet(moduleId, token.Value, offset.Value);
+			return dbgDotNetBreakpointLocationFactory.Value.CreateDotNet(moduleId, token.Value, offset.Value);
 		}
 	}
 }

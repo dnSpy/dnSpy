@@ -25,36 +25,36 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
-	abstract class DbgEngineCodeBreakpointFormatterService {
-		public abstract DbgEngineCodeBreakpointFormatter GetFormatter(DbgEngineCodeBreakpoint breakpoint);
+	abstract class DbgBreakpointLocationFormatterService {
+		public abstract DbgBreakpointLocationFormatter GetFormatter(DbgBreakpointLocation breakpoint);
 	}
 
-	[Export(typeof(DbgEngineCodeBreakpointFormatterService))]
-	sealed class DbgEngineCodeBreakpointFormatterServiceImpl : DbgEngineCodeBreakpointFormatterService {
-		readonly Lazy<DbgEngineCodeBreakpointFormatterProvider, IDbgEngineCodeBreakpointFormatterProviderMetadata>[] dbgEngineCodeBreakpointFormatterProviders;
+	[Export(typeof(DbgBreakpointLocationFormatterService))]
+	sealed class DbgBreakpointLocationFormatterServiceImpl : DbgBreakpointLocationFormatterService {
+		readonly Lazy<DbgBreakpointLocationFormatterProvider, IDbgBreakpointLocationFormatterProviderMetadata>[] dbgBreakpointLocationFormatterProviders;
 
 		[ImportingConstructor]
-		DbgEngineCodeBreakpointFormatterServiceImpl([ImportMany] IEnumerable<Lazy<DbgEngineCodeBreakpointFormatterProvider, IDbgEngineCodeBreakpointFormatterProviderMetadata>> dbgEngineCodeBreakpointFormatterProviders) =>
-			this.dbgEngineCodeBreakpointFormatterProviders = dbgEngineCodeBreakpointFormatterProviders.ToArray();
+		DbgBreakpointLocationFormatterServiceImpl([ImportMany] IEnumerable<Lazy<DbgBreakpointLocationFormatterProvider, IDbgBreakpointLocationFormatterProviderMetadata>> dbgBreakpointLocationFormatterProviders) =>
+			this.dbgBreakpointLocationFormatterProviders = dbgBreakpointLocationFormatterProviders.ToArray();
 
-		public override DbgEngineCodeBreakpointFormatter GetFormatter(DbgEngineCodeBreakpoint breakpoint) {
+		public override DbgBreakpointLocationFormatter GetFormatter(DbgBreakpointLocation breakpoint) {
 			if (breakpoint == null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			var type = breakpoint.Type;
-			foreach (var lz in dbgEngineCodeBreakpointFormatterProviders) {
+			foreach (var lz in dbgBreakpointLocationFormatterProviders) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0) {
 					var formatter = lz.Value.Create(breakpoint);
 					if (formatter != null)
 						return formatter;
 				}
 			}
-			return NullDbgEngineCodeBreakpointFormatter.Instance;
+			return NullDbgBreakpointLocationFormatter.Instance;
 		}
 	}
 
-	sealed class NullDbgEngineCodeBreakpointFormatter : DbgEngineCodeBreakpointFormatter {
-		public static readonly NullDbgEngineCodeBreakpointFormatter Instance = new NullDbgEngineCodeBreakpointFormatter();
-		NullDbgEngineCodeBreakpointFormatter() { }
+	sealed class NullDbgBreakpointLocationFormatter : DbgBreakpointLocationFormatter {
+		public static readonly NullDbgBreakpointLocationFormatter Instance = new NullDbgBreakpointLocationFormatter();
+		NullDbgBreakpointLocationFormatter() { }
 		public override void WriteName(IDebugOutputWriter output) { }
 		public override void WriteModule(IDebugOutputWriter output) { }
 	}

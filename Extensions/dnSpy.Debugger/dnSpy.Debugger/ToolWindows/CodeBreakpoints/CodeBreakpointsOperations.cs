@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		readonly DebuggerSettings debuggerSettings;
 		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
-		readonly Lazy<DbgEngineCodeBreakpointSerializerService> dbgEngineCodeBreakpointSerializerService;
+		readonly Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService;
 		readonly Lazy<ISettingsServiceFactory> settingsServiceFactory;
 		readonly IPickSaveFilename pickSaveFilename;
 		readonly IPickFilename pickFilename;
@@ -99,12 +99,12 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		IEnumerable<CodeBreakpointVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgEngineCodeBreakpointSerializerService> dbgEngineCodeBreakpointSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickSaveFilename pickSaveFilename, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService) {
+		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickSaveFilename pickSaveFilename, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService) {
 			this.codeBreakpointsVM = codeBreakpointsVM;
 			this.debuggerSettings = debuggerSettings;
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
-			this.dbgEngineCodeBreakpointSerializerService = dbgEngineCodeBreakpointSerializerService;
+			this.dbgBreakpointLocationSerializerService = dbgBreakpointLocationSerializerService;
 			this.settingsServiceFactory = settingsServiceFactory;
 			this.pickSaveFilename = pickSaveFilename;
 			this.pickFilename = pickFilename;
@@ -202,7 +202,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			if (filename == null)
 				return;
 			var settingsService = settingsServiceFactory.Value.Create();
-			new BreakpointsSerializer(settingsService, dbgEngineCodeBreakpointSerializerService.Value).Save(vms.Select(a => a.CodeBreakpoint));
+			new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService.Value).Save(vms.Select(a => a.CodeBreakpoint));
 			try {
 				settingsService.Save(filename);
 			}
@@ -224,7 +224,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				messageBoxService.Show(ex);
 				return;
 			}
-			var breakpoints = new BreakpointsSerializer(settingsService, dbgEngineCodeBreakpointSerializerService.Value).Load();
+			var breakpoints = new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService.Value).Load();
 			dbgCodeBreakpointsService.Value.Add(breakpoints);
 		}
 

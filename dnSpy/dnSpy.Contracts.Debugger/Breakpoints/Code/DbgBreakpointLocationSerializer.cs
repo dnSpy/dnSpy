@@ -23,52 +23,52 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
-	/// <see cref="DbgEngineCodeBreakpoint"/> serializer. Use <see cref="ExportDbgEngineCodeBreakpointSerializerAttribute"/>
+	/// <see cref="DbgBreakpointLocation"/> serializer. Use <see cref="ExportDbgBreakpointLocationSerializerAttribute"/>
 	/// to export an instance.
 	/// </summary>
-	public abstract class DbgEngineCodeBreakpointSerializer {
+	public abstract class DbgBreakpointLocationSerializer {
 		/// <summary>
 		/// Serializes <paramref name="breakpoint"/>
 		/// </summary>
 		/// <param name="section">Destination section</param>
 		/// <param name="breakpoint">Breakpoint</param>
-		public abstract void Serialize(ISettingsSection section, DbgEngineCodeBreakpoint breakpoint);
+		public abstract void Serialize(ISettingsSection section, DbgBreakpointLocation breakpoint);
 
 		/// <summary>
 		/// Deserializes a breakpoint or returns null if it failed
 		/// </summary>
 		/// <param name="section">Serialized section</param>
 		/// <returns></returns>
-		public abstract DbgEngineCodeBreakpoint Deserialize(ISettingsSection section);
+		public abstract DbgBreakpointLocation Deserialize(ISettingsSection section);
 	}
 
 	/// <summary>Metadata</summary>
-	public interface IDbgEngineCodeBreakpointSerializerMetadata {
-		/// <summary>See <see cref="ExportDbgEngineCodeBreakpointSerializerAttribute.Types"/></summary>
+	public interface IDbgBreakpointLocationSerializerMetadata {
+		/// <summary>See <see cref="ExportDbgBreakpointLocationSerializerAttribute.Types"/></summary>
 		string[] Types { get; }
 	}
 
 	/// <summary>
-	/// Exports a <see cref="DbgEngineCodeBreakpointSerializer"/> instance
+	/// Exports a <see cref="DbgBreakpointLocationSerializer"/> instance
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportDbgEngineCodeBreakpointSerializerAttribute : ExportAttribute, IDbgEngineCodeBreakpointSerializerMetadata {
+	public sealed class ExportDbgBreakpointLocationSerializerAttribute : ExportAttribute, IDbgBreakpointLocationSerializerMetadata {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="type">Type (compared against <see cref="DbgEngineCodeBreakpoint.Type"/>), see <see cref="PredefinedDbgEngineCodeBreakpointTypes"/></param>
-		public ExportDbgEngineCodeBreakpointSerializerAttribute(string type)
-			: base(typeof(DbgEngineCodeBreakpointSerializer)) => Types = new[] { type ?? throw new ArgumentNullException(nameof(type)) };
+		/// <param name="type">Type (compared against <see cref="DbgBreakpointLocation.Type"/>), see <see cref="PredefinedDbgBreakpointLocationTypes"/></param>
+		public ExportDbgBreakpointLocationSerializerAttribute(string type)
+			: base(typeof(DbgBreakpointLocationSerializer)) => Types = new[] { type ?? throw new ArgumentNullException(nameof(type)) };
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="types">Types (compared against <see cref="DbgEngineCodeBreakpoint.Type"/>), see <see cref="PredefinedDbgEngineCodeBreakpointTypes"/></param>
-		public ExportDbgEngineCodeBreakpointSerializerAttribute(string[] types)
-			: base(typeof(DbgEngineCodeBreakpointSerializer)) => Types = types ?? throw new ArgumentNullException(nameof(types));
+		/// <param name="types">Types (compared against <see cref="DbgBreakpointLocation.Type"/>), see <see cref="PredefinedDbgBreakpointLocationTypes"/></param>
+		public ExportDbgBreakpointLocationSerializerAttribute(string[] types)
+			: base(typeof(DbgBreakpointLocationSerializer)) => Types = types ?? throw new ArgumentNullException(nameof(types));
 
 		/// <summary>
-		/// Types (compared against <see cref="DbgEngineCodeBreakpoint.Type"/>), see <see cref="PredefinedDbgEngineCodeBreakpointTypes"/>
+		/// Types (compared against <see cref="DbgBreakpointLocation.Type"/>), see <see cref="PredefinedDbgBreakpointLocationTypes"/>
 		/// </summary>
 		public string[] Types { get; }
 	}

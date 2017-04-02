@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 namespace dnSpy.Debugger.Breakpoints.Code {
 	sealed class DbgCodeBreakpointImpl : DbgCodeBreakpoint {
 		public override int Id { get; }
-		public override DbgEngineCodeBreakpoint EngineBreakpoint { get; }
+		public override DbgBreakpointLocation Location { get; }
 
 		public override DbgCodeBreakpointSettings Settings {
 			get {
@@ -84,11 +84,11 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		readonly object lockObj;
 		readonly DbgCodeBreakpointsServiceImpl owner;
 
-		public DbgCodeBreakpointImpl(DbgCodeBreakpointsServiceImpl owner, int id, DbgEngineCodeBreakpoint engineBreakpoint, DbgCodeBreakpointSettings settings) {
+		public DbgCodeBreakpointImpl(DbgCodeBreakpointsServiceImpl owner, int id, DbgBreakpointLocation breakpointLocation, DbgCodeBreakpointSettings settings) {
 			lockObj = new object();
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			Id = id;
-			EngineBreakpoint = engineBreakpoint ?? throw new ArgumentNullException(nameof(engineBreakpoint));
+			Location = breakpointLocation ?? throw new ArgumentNullException(nameof(breakpointLocation));
 			this.settings = settings;
 		}
 
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		protected override void CloseCore() {
 			owner.DbgDispatcher.VerifyAccess();
-			EngineBreakpoint.Close(owner.DbgDispatcher.DispatcherThread);
+			Location.Close(owner.DbgDispatcher.DispatcherThread);
 		}
 	}
 }

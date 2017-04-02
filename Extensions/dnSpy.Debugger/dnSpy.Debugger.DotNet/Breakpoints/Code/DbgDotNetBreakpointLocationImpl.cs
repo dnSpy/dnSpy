@@ -17,15 +17,25 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
-	/// <summary>
-	/// Contains engine-specific information about a code breakpoint
-	/// </summary>
-	public abstract class DbgEngineCodeBreakpoint : DbgObject {
-		/// <summary>
-		/// Unique type, see <see cref="PredefinedDbgEngineCodeBreakpointTypes"/>. There should
-		/// be a 1-1 correspondence between this string and the derived type.
-		/// </summary>
-		public abstract string Type { get; }
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
+using dnSpy.Contracts.Metadata;
+
+namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
+	sealed class DbgDotNetBreakpointLocationImpl : DbgDotNetBreakpointLocation {
+		public override string Type => PredefinedDbgBreakpointLocationTypes.DotNet;
+		public override ModuleId Module { get; }
+		public override uint Token { get; }
+		public override uint Offset { get; }
+
+		internal DbgBreakpointLocationFormatter Formatter { get; set; }
+
+		public DbgDotNetBreakpointLocationImpl(ModuleId module, uint token, uint offset) {
+			Module = module;
+			Token = token;
+			Offset = offset;
+		}
+
+		protected override void CloseCore() { }
 	}
 }

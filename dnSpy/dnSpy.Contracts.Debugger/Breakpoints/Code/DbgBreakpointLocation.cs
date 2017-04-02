@@ -17,28 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Metadata;
-
-namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
+namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
-	/// .NET code breakpoint. It contains a weak module reference, a method token and
-	/// an IL offset.
+	/// Contains engine-specific information about a code breakpoint
 	/// </summary>
-	public abstract class DbgDotNetEngineCodeBreakpoint : DbgEngineCodeBreakpoint {
+	public abstract class DbgBreakpointLocation : DbgObject {
 		/// <summary>
-		/// Gets the module
+		/// Unique type, see <see cref="PredefinedDbgBreakpointLocationTypes"/>. There should
+		/// be a 1-1 correspondence between this string and the derived type.
 		/// </summary>
-		public abstract ModuleId Module { get; }
-
-		/// <summary>
-		/// Gets the token of a method within the module
-		/// </summary>
-		public abstract uint Token { get; }
-
-		/// <summary>
-		/// Gets the IL offset of the breakpoint within the method body
-		/// </summary>
-		public abstract uint Offset { get; }
+		public abstract string Type { get; }
 	}
 }

@@ -41,13 +41,13 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 		BreakpointGlyphFormatterImpl(IDecompilerService decompilerService) => this.decompilerService = decompilerService;
 
 		public override bool WriteLocation(IDebugOutputWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
-			if (breakpoint.EngineBreakpoint is DbgDotNetEngineCodeBreakpointImpl location)
+			if (breakpoint.Location is DbgDotNetBreakpointLocationImpl location)
 				return WriteLocation(output, textView, span, location);
 
 			return false;
 		}
 
-		bool WriteLocation(IDebugOutputWriter output, ITextView textView, SnapshotSpan span, DbgDotNetEngineCodeBreakpointImpl location) {
+		bool WriteLocation(IDebugOutputWriter output, ITextView textView, SnapshotSpan span, DbgDotNetBreakpointLocationImpl location) {
 			var line = span.Start.GetContainingLine();
 			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_Resources.GlyphToolTip_line_0_character_1,
 				(line.LineNumber + 1).ToString(CultureInfo.CurrentUICulture),

@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Formats some columns in the code breakpoints window
 	/// </summary>
-	public abstract class DbgEngineCodeBreakpointFormatter : INotifyPropertyChanged {
+	public abstract class DbgBreakpointLocationFormatter : INotifyPropertyChanged {
 		/// <summary>
 		/// Name of the Name property
 		/// </summary>

@@ -25,12 +25,12 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	sealed class DbgEngineCodeBreakpointFormatterImpl : DbgEngineCodeBreakpointFormatter {
-		readonly DbgDotNetEngineCodeBreakpoint breakpoint;
+	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
+		readonly DbgDotNetBreakpointLocation breakpoint;
 		readonly BreakpointFormatterServiceImpl owner;
 		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
 
-		public DbgEngineCodeBreakpointFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetEngineCodeBreakpoint breakpoint) {
+		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetBreakpointLocation breakpoint) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings ?? throw new ArgumentNullException(nameof(codeBreakpointDisplaySettings));
 			this.breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));

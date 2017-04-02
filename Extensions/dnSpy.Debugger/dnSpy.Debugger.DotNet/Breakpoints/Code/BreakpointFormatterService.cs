@@ -28,7 +28,7 @@ using dnSpy.Debugger.DotNet.UI;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 	abstract class BreakpointFormatterService {
-		public abstract DbgEngineCodeBreakpointFormatter Create(DbgDotNetEngineCodeBreakpoint breakpoint);
+		public abstract DbgBreakpointLocationFormatter Create(DbgDotNetBreakpointLocation breakpoint);
 	}
 
 	[Export(typeof(BreakpointFormatterService))]
@@ -51,15 +51,15 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 
 		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
 			foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
-				var formatter = (bp.EngineBreakpoint as DbgDotNetEngineCodeBreakpointImpl)?.Formatter as DbgEngineCodeBreakpointFormatterImpl;
+				var formatter = (bp.Location as DbgDotNetBreakpointLocationImpl)?.Formatter as DbgBreakpointLocationFormatterImpl;
 				formatter?.RefreshName();
 			}
 		}
 
-		public override DbgEngineCodeBreakpointFormatter Create(DbgDotNetEngineCodeBreakpoint breakpoint) =>
-			new DbgEngineCodeBreakpointFormatterImpl(this, codeBreakpointDisplaySettings, breakpoint);
+		public override DbgBreakpointLocationFormatter Create(DbgDotNetBreakpointLocation breakpoint) =>
+			new DbgBreakpointLocationFormatterImpl(this, codeBreakpointDisplaySettings, breakpoint);
 
-		internal MethodDef GetMethodDef(DbgDotNetEngineCodeBreakpoint breakpoint) {
+		internal MethodDef GetMethodDef(DbgDotNetBreakpointLocation breakpoint) {
 			var module = dbgMetadataService.Value.TryGetModule(breakpoint.Module, DbgLoadModuleOptions.AutoLoaded);
 			return module?.ResolveToken(breakpoint.Token) as MethodDef;
 		}

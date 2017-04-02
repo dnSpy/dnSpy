@@ -26,28 +26,28 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
-	abstract class DbgEngineCodeBreakpointSerializerService {
-		public abstract void Serialize(ISettingsSection section, DbgEngineCodeBreakpoint breakpoint);
-		public abstract DbgEngineCodeBreakpoint Deserialize(ISettingsSection section);
+	abstract class DbgBreakpointLocationSerializerService {
+		public abstract void Serialize(ISettingsSection section, DbgBreakpointLocation breakpoint);
+		public abstract DbgBreakpointLocation Deserialize(ISettingsSection section);
 	}
 
-	[Export(typeof(DbgEngineCodeBreakpointSerializerService))]
-	sealed class DbgEngineCodeBreakpointSerializerServiceImpl : DbgEngineCodeBreakpointSerializerService {
-		readonly Lazy<DbgEngineCodeBreakpointSerializer, IDbgEngineCodeBreakpointSerializerMetadata>[] dbgEngineCodeBreakpointSerializers;
+	[Export(typeof(DbgBreakpointLocationSerializerService))]
+	sealed class DbgBreakpointLocationSerializerServiceImpl : DbgBreakpointLocationSerializerService {
+		readonly Lazy<DbgBreakpointLocationSerializer, IDbgBreakpointLocationSerializerMetadata>[] dbgBreakpointLocationSerializers;
 
 		[ImportingConstructor]
-		DbgEngineCodeBreakpointSerializerServiceImpl([ImportMany] IEnumerable<Lazy<DbgEngineCodeBreakpointSerializer, IDbgEngineCodeBreakpointSerializerMetadata>> dbgEngineCodeBreakpointSerializers) =>
-			this.dbgEngineCodeBreakpointSerializers = dbgEngineCodeBreakpointSerializers.ToArray();
+		DbgBreakpointLocationSerializerServiceImpl([ImportMany] IEnumerable<Lazy<DbgBreakpointLocationSerializer, IDbgBreakpointLocationSerializerMetadata>> dbgBreakpointLocationSerializers) =>
+			this.dbgBreakpointLocationSerializers = dbgBreakpointLocationSerializers.ToArray();
 
-		Lazy<DbgEngineCodeBreakpointSerializer, IDbgEngineCodeBreakpointSerializerMetadata> TryGetSerializer(string type) {
-			foreach (var lz in dbgEngineCodeBreakpointSerializers) {
+		Lazy<DbgBreakpointLocationSerializer, IDbgBreakpointLocationSerializerMetadata> TryGetSerializer(string type) {
+			foreach (var lz in dbgBreakpointLocationSerializers) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0)
 					return lz;
 			}
 			return null;
 		}
 
-		public override void Serialize(ISettingsSection section, DbgEngineCodeBreakpoint breakpoint) {
+		public override void Serialize(ISettingsSection section, DbgBreakpointLocation breakpoint) {
 			if (section == null)
 				throw new ArgumentNullException(nameof(section));
 			if (breakpoint == null)
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			serializer.Value.Serialize(section, breakpoint);
 		}
 
-		public override DbgEngineCodeBreakpoint Deserialize(ISettingsSection section) {
+		public override DbgBreakpointLocation Deserialize(ISettingsSection section) {
 			if (section == null)
 				return null;
 

@@ -44,10 +44,10 @@
     <Compile Include="Breakpoints\Code\BreakpointsSerializer.cs" />
     <Compile Include="Breakpoints\Code\CodeBreakpointDisplaySettingsBase.cs" />
     <Compile Include="Breakpoints\Code\CodeBreakpointsListSettings.cs" />
+    <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterService.cs" />
+    <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializerService.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsServiceImpl.cs" />
-    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterService.cs" />
-    <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializerService.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphPopupControl.xaml.cs">
       <DependentUpon>BreakpointGlyphPopupControl.xaml</DependentUpon>
     </Compile>
