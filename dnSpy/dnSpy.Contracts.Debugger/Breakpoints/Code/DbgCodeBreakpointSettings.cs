@@ -289,10 +289,19 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public string Message { get; }
 
 		/// <summary>
+		/// true to continue execution (trace) or false to break (breakpoint)
+		/// </summary>
+		public bool Continue { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="message">Message</param>
-		public DbgCodeBreakpointTrace(string message) => Message = message ?? throw new ArgumentNullException(nameof(message));
+		/// <param name="continue">true to continue execution (tracepoint) or false to break (breakpoint)</param>
+		public DbgCodeBreakpointTrace(string message, bool @continue) {
+			Message = message ?? throw new ArgumentNullException(nameof(message));
+			Continue = @continue;
+		}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointTrace left, DbgCodeBreakpointTrace right) => left.Equals(right);
@@ -304,7 +313,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(DbgCodeBreakpointTrace other) => StringComparer.Ordinal.Equals(Message, other.Message);
+		public bool Equals(DbgCodeBreakpointTrace other) => Continue == other.Continue && StringComparer.Ordinal.Equals(Message, other.Message);
 
 		/// <summary>
 		/// Compares this instance to <paramref name="obj"/>
@@ -317,12 +326,12 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// Gets the hash code
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Message ?? string.Empty);
+		public override int GetHashCode() => (Continue ? -1 : 0) ^ StringComparer.Ordinal.GetHashCode(Message ?? string.Empty);
 
 		/// <summary>
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => Message;
+		public override string ToString() => $"{(Continue ? "Continue" : "Break")}: {Message}";
 	}
 }

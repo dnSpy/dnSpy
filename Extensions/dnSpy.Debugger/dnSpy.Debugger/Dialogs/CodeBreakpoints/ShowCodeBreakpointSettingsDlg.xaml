@@ -64,6 +64,7 @@
             <TextBox Grid.Row="2" Grid.Column="2" IsEnabled="{Binding EnableFilter}" Margin="5 5 0 0" Text="{Binding Filter_Text, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
             <CheckBox Grid.Row="3" Grid.Column="0" IsChecked="{Binding EnableTrace}" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.EditBreakpointSettings_Trace}" />
+            <CheckBox Grid.Row="3" Grid.Column="1" IsEnabled="{Binding EnableTrace}" IsChecked="{Binding Trace_Continue}" Margin="5 5 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.EditBreakpointSettings_TraceContinue}" />
             <TextBox Grid.Row="3" Grid.Column="2" IsEnabled="{Binding EnableTrace}" Margin="5 5 0 0" Text="{Binding Trace_Text, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 

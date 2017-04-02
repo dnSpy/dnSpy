@@ -118,6 +118,17 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 		string trace_Text;
 
+		public bool Trace_Continue {
+			get => trace_Continue;
+			set {
+				if (trace_Continue == value)
+					return;
+				trace_Continue = value;
+				OnPropertyChanged(nameof(Trace_Continue));
+			}
+		}
+		bool trace_Continue;
+
 		public bool IsEnabled {
 			get => isEnabled;
 			set {
@@ -183,10 +194,12 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 			if (trace == null) {
 				EnableTrace = false;
 				Trace_Text = string.Empty;
+				Trace_Continue = true;
 			}
 			else {
 				EnableTrace = true;
 				Trace_Text = trace.Value.Message ?? string.Empty;
+				Trace_Continue = trace.Value.Continue;
 			}
 		}
 
@@ -219,7 +232,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		DbgCodeBreakpointTrace? GetTrace() {
 			if (!EnableTrace)
 				return null;
-			return new DbgCodeBreakpointTrace(Trace_Text ?? string.Empty);
+			return new DbgCodeBreakpointTrace(Trace_Text ?? string.Empty, Trace_Continue);
 		}
 
 		public override bool HasError => EnableHitCount && HitCount_Text.HasError;

@@ -104,6 +104,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				output.WriteLine();
 				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Actions);
 
+				if (!breakpoint.Trace.Value.Continue) {
+					output.WriteLine();
+					output.Write(BoxedTextColor.Text, INDENTATION);
+					output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Breakpoints_GlyphMargin_BreakWhenBreakpointHit);
+				}
+
 				output.WriteLine();
 				output.Write(BoxedTextColor.Text, INDENTATION);
 				breakpointConditionsFormatter.WriteToolTip(output, breakpoint.Trace.Value);

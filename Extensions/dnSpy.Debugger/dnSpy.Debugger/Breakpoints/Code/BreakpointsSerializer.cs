@@ -89,9 +89,10 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			if (section == null)
 				return null;
 			var message = section.Attribute<string>("Message");
+			var @continue = section.Attribute<bool?>("Continue") ?? true;
 			if (message == null)
 				return null;
-			return new DbgCodeBreakpointTrace(message);
+			return new DbgCodeBreakpointTrace(message, @continue);
 		}
 
 		public void Save(IEnumerable<DbgCodeBreakpoint> breakpoints) {
@@ -123,6 +124,11 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		void Save(ISettingsSection section, DbgCodeBreakpointFilter settings) => section.Attribute("Filter", settings.Filter);
-		void Save(ISettingsSection section, DbgCodeBreakpointTrace settings) => section.Attribute("Message", settings.Message);
+
+		void Save(ISettingsSection section, DbgCodeBreakpointTrace settings) {
+			section.Attribute("Message", settings.Message);
+			if (!settings.Continue)
+				section.Attribute("Continue", settings.Continue);
+		}
 	}
 }

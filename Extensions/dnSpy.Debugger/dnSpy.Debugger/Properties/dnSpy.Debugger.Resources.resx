@@ -1707,4 +1707,10 @@ Are you sure you want to expand it?</value>
   <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
     <value>Settings...</value>
   </data>
+  <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
+    <value>Break</value>
+  </data>
+  <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
+    <value>Continue execution</value>
+  </data>
 </root>

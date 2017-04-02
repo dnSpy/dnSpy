@@ -466,6 +466,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Break.
+        /// </summary>
+        public static string Breakpoints_GlyphMargin_BreakWhenBreakpointHit {
+            get {
+                return ResourceManager.GetString("Breakpoints_GlyphMargin_BreakWhenBreakpointHit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disable breakpoint.
         /// </summary>
         public static string Breakpoints_GlyphMargin_DisableBreakpoint {
@@ -1974,6 +1983,15 @@ namespace dnSpy.Debugger.Properties {
         public static string EditBreakpointSettings_Trace {
             get {
                 return ResourceManager.GetString("EditBreakpointSettings_Trace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue execution.
+        /// </summary>
+        public static string EditBreakpointSettings_TraceContinue {
+            get {
+                return ResourceManager.GetString("EditBreakpointSettings_TraceContinue", resourceCulture);
             }
         }
         

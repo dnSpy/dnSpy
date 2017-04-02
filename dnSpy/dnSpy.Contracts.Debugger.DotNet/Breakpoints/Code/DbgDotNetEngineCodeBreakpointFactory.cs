@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 		/// <param name="message">Message</param>
 		/// <returns></returns>
 		public DbgCodeBreakpoint CreateTracepoint(ModuleId module, uint token, uint offset, string message) =>
-			Create(module, token, offset, new DbgCodeBreakpointSettings { IsEnabled = true, Trace = new DbgCodeBreakpointTrace(message) });
+			Create(module, token, offset, new DbgCodeBreakpointSettings { IsEnabled = true, Trace = new DbgCodeBreakpointTrace(message, @continue: true) });
 
 		/// <summary>
 		/// Creates a breakpoint or a tracepoint

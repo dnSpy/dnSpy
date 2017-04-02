@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		public static BreakpointKind GetBreakpointKind(ref DbgCodeBreakpointSettings settings) {
 			bool isAdvanced = IsAdvanced(ref settings);
-			if (settings.Trace == null) {
+			if (settings.Trace == null || !settings.Trace.Value.Continue) {
 				if (isAdvanced)
 					return settings.IsEnabled ? BreakpointKind.AdvancedBreakpointEnabled : BreakpointKind.AdvancedBreakpointDisabled;
 				return settings.IsEnabled ? BreakpointKind.BreakpointEnabled : BreakpointKind.BreakpointDisabled;
