@@ -23,10 +23,11 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
+using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 	abstract class BreakpointModuleLocationProviderService {
-		public abstract ModuleLocation? GetLocation(DbgCodeBreakpoint breakpoint);
+		public abstract GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint);
 	}
 
 	[Export(typeof(BreakpointModuleLocationProviderService))]
@@ -37,7 +38,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		BreakpointModuleLocationProviderServiceImpl([ImportMany] IEnumerable<Lazy<BreakpointModuleLocationProvider, IBreakpointModuleLocationProviderMetadata>> breakpointModuleLocationProviders) =>
 			this.breakpointModuleLocationProviders = breakpointModuleLocationProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
-		public override ModuleLocation? GetLocation(DbgCodeBreakpoint breakpoint) {
+		public override GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint) {
 			if (breakpoint == null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			foreach (var lz in breakpointModuleLocationProviders) {

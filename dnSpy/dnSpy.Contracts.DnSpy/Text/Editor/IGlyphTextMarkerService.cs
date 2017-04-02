@@ -29,6 +29,37 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
+	/// Text marker location base class
+	/// </summary>
+	public abstract class GlyphTextMarkerLocationInfo {
+	}
+
+	/// <summary>
+	/// Method text marker location info
+	/// </summary>
+	public sealed class GlyphTextMethodMarkerLocationInfo : GlyphTextMarkerLocationInfo {
+		/// <summary>
+		/// Method token
+		/// </summary>
+		public ModuleTokenId TokenId { get; }
+
+		/// <summary>
+		/// Method offset
+		/// </summary>
+		public uint ILOffset { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="tokenId">Method token</param>
+		/// <param name="ilOffset">Method offset</param>
+		public GlyphTextMethodMarkerLocationInfo(ModuleTokenId tokenId, uint ilOffset) {
+			TokenId = tokenId;
+			ILOffset = ilOffset;
+		}
+	}
+
+	/// <summary>
 	/// Marks text and shows a glyph in the glyph margin
 	/// </summary>
 	public interface IGlyphTextMarkerService {
@@ -70,6 +101,21 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="textViewFilter">Filters out non-supported text views</param>
 		/// <returns></returns>
 		IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag = null, IGlyphTextMarkerHandler handler = null, Func<ITextView, bool> textViewFilter = null);
+
+		/// <summary>
+		/// Adds a marker
+		/// </summary>
+		/// <param name="location">Location</param>
+		/// <param name="glyphImage">Image shown in the glyph margin or null if none</param>
+		/// <param name="markerTypeName">Name of a <see cref="MarkerFormatDefinition"/> (or an <see cref="EditorFormatDefinition"/>) or null. It should have a background color and an optional foreground color for the border</param>
+		/// <param name="selectedMarkerTypeName">Name of a <see cref="MarkerFormatDefinition"/> or null. It's used whenever the caret is inside the text marker.</param>
+		/// <param name="classificationType">Classification type or null. Only the foreground color is needed. If it has a background color, it will hide the text markers shown in the text marker layer (eg. search result, highlighted reference)</param>
+		/// <param name="zIndex">Z-index of <paramref name="glyphImage"/> and <paramref name="markerTypeName"/>, eg. <see cref="GlyphTextMarkerServiceZIndexes.EnabledBreakpoint"/></param>
+		/// <param name="tag">User data</param>
+		/// <param name="handler">Glyph handler or null</param>
+		/// <param name="textViewFilter">Filters out non-supported text views</param>
+		/// <returns></returns>
+		IGlyphTextMarker AddMarker(GlyphTextMarkerLocationInfo location, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag = null, IGlyphTextMarkerHandler handler = null, Func<ITextView, bool> textViewFilter = null);
 
 		/// <summary>
 		/// Removes a marker

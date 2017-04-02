@@ -92,6 +92,17 @@ namespace dnSpy.Text.Editor {
 			return marker;
 		}
 
+		public IGlyphTextMarker AddMarker(GlyphTextMarkerLocationInfo location, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
+			if (location == null)
+				throw new ArgumentNullException(nameof(location));
+			switch (location) {
+			case GlyphTextMethodMarkerLocationInfo methodLoc:
+				return AddMarker(methodLoc.TokenId, methodLoc.ILOffset, glyphImage, markerTypeName, selectedMarkerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
 		sealed class GlyphTextMethodMarker : IGlyphTextMethodMarkerImpl {
 			public ImageReference? GlyphImageReference { get; }
 			public string MarkerTypeName { get; }

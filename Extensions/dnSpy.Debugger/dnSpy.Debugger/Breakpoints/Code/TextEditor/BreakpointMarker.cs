@@ -86,10 +86,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 
 		sealed class BreakpointData {
-			public ModuleLocation? Location { get; }
-			public IGlyphTextMethodMarker Marker { get; set; }
+			public GlyphTextMarkerLocationInfo Location { get; }
+			public IGlyphTextMarker Marker { get; set; }
 			public BreakpointInfo Info { get; set; }
-			public BreakpointData(ModuleLocation location) => Location = location;
+			public BreakpointData(GlyphTextMarkerLocationInfo location) => Location = location ?? throw new ArgumentNullException(nameof(location));
 		}
 
 		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
@@ -112,9 +112,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (!e.Added)
 				throw new InvalidOperationException();
 			foreach (var bp in e.Objects) {
-				var modLoc = breakpointModuleLocationProviderService.GetLocation(bp);
-				if (modLoc != null) {
-					bp.GetOrCreateData(() => new BreakpointData(modLoc.Value));
+				var location = breakpointModuleLocationProviderService.GetLocation(bp);
+				if (location != null) {
+					bp.GetOrCreateData(() => new BreakpointData(location));
 					UpdateMarker(bp);
 					continue;
 				}
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		void OnBreakpointsModified_UI(DbgBreakpointsModifiedEventArgs e) {
 			uiDispatcher.VerifyAccess();
 			var bps = new List<DbgCodeBreakpoint>(e.Breakpoints.Count);
-			var removedMarkers = new List<IGlyphTextMethodMarker>(e.Breakpoints.Count);
+			var removedMarkers = new List<IGlyphTextMarker>(e.Breakpoints.Count);
 			foreach (var info in e.Breakpoints) {
 				if (!info.Breakpoint.TryGetData(out BreakpointData data))
 					continue;
@@ -160,10 +160,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (data.Marker != null)
 				glyphTextMarkerService.Value.Remove(data.Marker);
 
-			if (data.Location is ModuleLocation loc)
-				data.Marker = glyphTextMarkerService.Value.AddMarker(new ModuleTokenId(loc.Module, loc.Token), loc.Offset, info.ImageReference, info.MarkerTypeName, info.SelectedMarkerTypeName, info.ClassificationType, info.ZIndex, null, null/*TODO:*/, textViewFilter);
-			else
-				throw new InvalidOperationException();
+			data.Marker = glyphTextMarkerService.Value.AddMarker(data.Location, info.ImageReference, info.MarkerTypeName, info.SelectedMarkerTypeName, info.ClassificationType, info.ZIndex, null, null/*TODO:*/, textViewFilter);
 		}
 		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);
 	}

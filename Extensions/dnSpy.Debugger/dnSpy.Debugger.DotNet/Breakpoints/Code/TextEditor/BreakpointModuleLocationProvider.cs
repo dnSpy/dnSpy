@@ -20,13 +20,15 @@
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
+using dnSpy.Contracts.Metadata;
+using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 	[ExportBreakpointModuleLocationProvider]
 	sealed class BreakpointModuleLocationProviderImpl : BreakpointModuleLocationProvider {
-		public override ModuleLocation? GetLocation(DbgCodeBreakpoint breakpoint) {
+		public override GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint) {
 			if (breakpoint.EngineBreakpoint is DbgDotNetEngineCodeBreakpoint dnbp)
-				return new ModuleLocation(dnbp.Module, dnbp.Token, dnbp.Offset);
+				return new GlyphTextMethodMarkerLocationInfo(new ModuleTokenId(dnbp.Module, dnbp.Token), dnbp.Offset);
 			return null;
 		}
 	}

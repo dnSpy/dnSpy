@@ -19,10 +19,11 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 	/// <summary>
-	/// Creates <see cref="ModuleLocation"/>s. Use <see cref="ExportBreakpointModuleLocationProviderAttribute"/>
+	/// Creates <see cref="GlyphTextMarkerLocationInfo"/>s. Use <see cref="ExportBreakpointModuleLocationProviderAttribute"/>
 	/// to export an instance.
 	/// </summary>
 	public abstract class BreakpointModuleLocationProvider {
@@ -31,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 		/// </summary>
 		/// <param name="breakpoint">Breakpoint</param>
 		/// <returns></returns>
-		public abstract ModuleLocation? GetLocation(DbgCodeBreakpoint breakpoint);
+		public abstract GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint);
 	}
 
 	/// <summary>Metadata</summary>
