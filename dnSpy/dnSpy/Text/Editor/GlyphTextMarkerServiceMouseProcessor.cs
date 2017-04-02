@@ -30,6 +30,7 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Utilities;
@@ -67,7 +68,7 @@ namespace dnSpy.Text.Editor {
 		}
 	}
 
-	sealed class GlyphTextMarkerServiceMouseProcessor : MouseProcessorBase, IGlyphTextMarkerListener, IMarginContextMenuHandler {
+	sealed class GlyphTextMarkerServiceMouseProcessor : MouseProcessorBase, IGlyphTextMarkerListener, IMarginContextMenuHandler, IGlyphTextMarkerSpanProvider {
 		readonly GlyphTextViewMarkerService glyphTextViewMarkerService;
 		readonly IWpfTextViewHost wpfTextViewHost;
 		readonly IWpfTextViewMargin margin;
@@ -100,6 +101,8 @@ namespace dnSpy.Text.Editor {
 			glyphTextViewMarkerService.AddGlyphTextMarkerListener(this);
 		}
 
+		SnapshotSpan IGlyphTextMarkerSpanProvider.GetSpan(IGlyphTextMarker marker) => glyphTextViewMarkerService.GetSpan(marker);
+
 		IWpfTextViewLine GetLine(MouseEventArgs e) => GetLine(e.GetPosition(margin.VisualElement));
 		IWpfTextViewLine GetLine(Point point) {
 			if (point.X < 0 || point.X >= margin.MarginSize)
@@ -117,10 +120,12 @@ namespace dnSpy.Text.Editor {
 			public IWpfTextView TextView => Host.TextView;
 			public IWpfTextViewMargin Margin { get; }
 			public IWpfTextViewLine Line { get; }
-			public GlyphTextMarkerHandlerContext(IWpfTextViewHost host, IWpfTextViewMargin margin, IWpfTextViewLine line) {
+			public IGlyphTextMarkerSpanProvider SpanProvider { get; }
+			public GlyphTextMarkerHandlerContext(IWpfTextViewHost host, IWpfTextViewMargin margin, IWpfTextViewLine line, IGlyphTextMarkerSpanProvider spanProvider) {
 				Host = host;
 				Margin = margin;
 				Line = line;
+				SpanProvider = spanProvider;
 			}
 		}
 
@@ -130,11 +135,13 @@ namespace dnSpy.Text.Editor {
 			public IWpfTextViewMargin Margin { get; }
 			public IWpfTextViewLine Line { get; }
 			public IGlyphTextMarker[] Markers { get; }
-			public GlyphTextMarkerMouseProcessorContext(IWpfTextViewHost host, IWpfTextViewMargin margin, IWpfTextViewLine line, IGlyphTextMarker[] markers) {
+			public IGlyphTextMarkerSpanProvider SpanProvider { get; }
+			public GlyphTextMarkerMouseProcessorContext(IWpfTextViewHost host, IWpfTextViewMargin margin, IWpfTextViewLine line, IGlyphTextMarker[] markers, IGlyphTextMarkerSpanProvider spanProvider) {
 				Host = host;
 				Margin = margin;
 				Line = line;
 				Markers = markers;
+				SpanProvider = spanProvider;
 			}
 		}
 
@@ -146,7 +153,7 @@ namespace dnSpy.Text.Editor {
 			var markers = glyphTextViewMarkerService.GetSortedGlyphTextMarkers(line);
 
 			if (markers.Length > 0) {
-				var glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+				var glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				foreach (var marker in markers) {
 					foreach (var o in marker.Handler.GetContextMenuObjects(glyphTextMarkerHandlerContext, marker, marginRelativePoint))
 						yield return o;
@@ -154,7 +161,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
-				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
+				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers, this);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
 					foreach (var o in processor.GetContextMenuObjects(context, marginRelativePoint))
 						yield return o;
@@ -175,14 +182,14 @@ namespace dnSpy.Text.Editor {
 				if (marker.Handler.MouseProcessor == null)
 					continue;
 				if (glyphTextMarkerHandlerContext == null)
-					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				marker.Handler.MouseProcessor.OnMouseDown(glyphTextMarkerHandlerContext, marker, e);
 				if (e.Handled)
 					return;
 			}
 
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
-				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
+				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers, this);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
 					processor.OnMouseDown(context, e);
 					if (e.Handled)
@@ -204,14 +211,14 @@ namespace dnSpy.Text.Editor {
 				if (marker.Handler.MouseProcessor == null)
 					continue;
 				if (glyphTextMarkerHandlerContext == null)
-					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				marker.Handler.MouseProcessor.OnMouseUp(glyphTextMarkerHandlerContext, marker, e);
 				if (e.Handled)
 					return;
 			}
 
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
-				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
+				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers, this);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
 					processor.OnMouseUp(context, e);
 					if (e.Handled)
@@ -233,14 +240,14 @@ namespace dnSpy.Text.Editor {
 				if (marker.Handler.MouseProcessor == null)
 					continue;
 				if (glyphTextMarkerHandlerContext == null)
-					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				marker.Handler.MouseProcessor.OnMouseLeftButtonDown(glyphTextMarkerHandlerContext, marker, e);
 				if (e.Handled)
 					return;
 			}
 
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
-				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
+				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers, this);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
 					processor.OnMouseLeftButtonDown(context, e);
 					if (e.Handled)
@@ -262,14 +269,14 @@ namespace dnSpy.Text.Editor {
 				if (marker.Handler.MouseProcessor == null)
 					continue;
 				if (glyphTextMarkerHandlerContext == null)
-					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				marker.Handler.MouseProcessor.OnMouseLeftButtonUp(glyphTextMarkerHandlerContext, marker, e);
 				if (e.Handled)
 					return;
 			}
 
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
-				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
+				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers, this);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
 					processor.OnMouseLeftButtonUp(context, e);
 					if (e.Handled)
@@ -291,14 +298,14 @@ namespace dnSpy.Text.Editor {
 				if (marker.Handler.MouseProcessor == null)
 					continue;
 				if (glyphTextMarkerHandlerContext == null)
-					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				marker.Handler.MouseProcessor.OnMouseRightButtonDown(glyphTextMarkerHandlerContext, marker, e);
 				if (e.Handled)
 					return;
 			}
 
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
-				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
+				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers, this);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
 					processor.OnMouseRightButtonDown(context, e);
 					if (e.Handled)
@@ -320,14 +327,14 @@ namespace dnSpy.Text.Editor {
 				if (marker.Handler.MouseProcessor == null)
 					continue;
 				if (glyphTextMarkerHandlerContext == null)
-					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				marker.Handler.MouseProcessor.OnMouseRightButtonUp(glyphTextMarkerHandlerContext, marker, e);
 				if (e.Handled)
 					return;
 			}
 
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
-				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
+				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers, this);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
 					processor.OnMouseRightButtonUp(context, e);
 					if (e.Handled)
@@ -349,14 +356,14 @@ namespace dnSpy.Text.Editor {
 				if (marker.Handler.MouseProcessor == null)
 					continue;
 				if (glyphTextMarkerHandlerContext == null)
-					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				marker.Handler.MouseProcessor.OnMouseMove(glyphTextMarkerHandlerContext, marker, e);
 				if (e.Handled)
 					return;
 			}
 
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
-				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
+				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers, this);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
 					processor.OnMouseMove(context, e);
 					if (e.Handled)
@@ -372,7 +379,7 @@ namespace dnSpy.Text.Editor {
 					return;
 
 				var markers = glyphTextViewMarkerService.GetSortedGlyphTextMarkers(line);
-				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
+				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers, this);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
 					processor.OnMouseEnter(context, e);
 					if (e.Handled)
@@ -389,7 +396,7 @@ namespace dnSpy.Text.Editor {
 					return;
 
 				var markers = glyphTextViewMarkerService.GetSortedGlyphTextMarkers(line);
-				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
+				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers, this);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
 					processor.OnMouseLeave(context, e);
 					if (e.Handled)
@@ -456,7 +463,7 @@ namespace dnSpy.Text.Editor {
 			IGlyphTextMarkerHandlerContext glyphTextMarkerHandlerContext = null;
 			foreach (var marker in glyphTextViewMarkerService.GetSortedGlyphTextMarkers(line)) {
 				if (glyphTextMarkerHandlerContext == null)
-					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				var toolTipInfo = marker.Handler.GetToolTipContent(glyphTextMarkerHandlerContext, marker);
 				if (toolTipInfo != null) {
 					Debug.Assert(toolTip == null);
@@ -492,7 +499,7 @@ namespace dnSpy.Text.Editor {
 			IGlyphTextMarkerHandlerContext glyphTextMarkerHandlerContext = null;
 			foreach (var marker in glyphTextViewMarkerService.GetSortedGlyphTextMarkers(line)) {
 				if (glyphTextMarkerHandlerContext == null)
-					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				var popupContent = marker.Handler.GetPopupContent(glyphTextMarkerHandlerContext, marker);
 				if (popupContent != null) {
 					AddPopupContent(line, marker, popupContent);
@@ -547,7 +554,7 @@ namespace dnSpy.Text.Editor {
 			if (line == null)
 				return;
 			Debug.Assert(line.IsVisible());
-			var context = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
+			var context = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 			var popupContent = marker.Handler.GetPopupContent(context, marker);
 			if (popupContent != null)
 				AddPopupContent(line, marker, popupContent);

@@ -23,9 +23,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
-using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Debugger.UI;
@@ -51,15 +49,17 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		readonly Lazy<IGlyphTextMarkerService> glyphTextMarkerService;
 		readonly Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService;
 		readonly BreakpointModuleLocationProviderService breakpointModuleLocationProviderService;
+		readonly BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler;
 		IClassificationType classificationTypeEnabledBreakpoint;
 		BreakpointInfo[] breakpointInfos;
 
 		[ImportingConstructor]
-		BreakpointMarker(UIDispatcher uiDispatcher, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService, BreakpointModuleLocationProviderService breakpointModuleLocationProviderService) {
+		BreakpointMarker(UIDispatcher uiDispatcher, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService, BreakpointModuleLocationProviderService breakpointModuleLocationProviderService, BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler) {
 			this.uiDispatcher = uiDispatcher;
 			this.glyphTextMarkerService = glyphTextMarkerService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
 			this.breakpointModuleLocationProviderService = breakpointModuleLocationProviderService;
+			this.breakpointGlyphTextMarkerHandler = breakpointGlyphTextMarkerHandler;
 			UI(() => Initialize_UI());
 		}
 
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (data.Marker != null)
 				glyphTextMarkerService.Value.Remove(data.Marker);
 
-			data.Marker = glyphTextMarkerService.Value.AddMarker(data.Location, info.ImageReference, info.MarkerTypeName, info.SelectedMarkerTypeName, info.ClassificationType, info.ZIndex, null, null/*TODO:*/, textViewFilter);
+			data.Marker = glyphTextMarkerService.Value.AddMarker(data.Location, info.ImageReference, info.MarkerTypeName, info.SelectedMarkerTypeName, info.ClassificationType, info.ZIndex, bp, breakpointGlyphTextMarkerHandler, textViewFilter);
 		}
 		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);
 	}

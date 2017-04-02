@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
 
@@ -97,6 +98,18 @@ namespace dnSpy.Contracts.Text.Editor {
 	}
 
 	/// <summary>
+	/// Returns spans of markers
+	/// </summary>
+	public interface IGlyphTextMarkerSpanProvider {
+		/// <summary>
+		/// Gets the snapshot span of a marker
+		/// </summary>
+		/// <param name="marker">Marker</param>
+		/// <returns></returns>
+		SnapshotSpan GetSpan(IGlyphTextMarker marker);
+	}
+
+	/// <summary>
 	/// <see cref="IGlyphTextMarkerHandler"/> context
 	/// </summary>
 	public interface IGlyphTextMarkerHandlerContext {
@@ -119,6 +132,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Gets the line
 		/// </summary>
 		IWpfTextViewLine Line { get; }
+
+		/// <summary>
+		/// Gets the span provider
+		/// </summary>
+		IGlyphTextMarkerSpanProvider SpanProvider { get; }
 	}
 
 	/// <summary>

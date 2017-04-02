@@ -88,6 +88,24 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IL offset 0x{0}.
+        /// </summary>
+        public static string GlyphToolTip_IL_offset_0 {
+            get {
+                return ResourceManager.GetString("GlyphToolTip_IL_offset_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to line {0} character {1}.
+        /// </summary>
+        public static string GlyphToolTip_line_0_character_1 {
+            get {
+                return ResourceManager.GetString("GlyphToolTip_line_0_character_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading the module. This could take a while if it&apos;s a big module..
         /// </summary>
         public static string LoadModule_InfoText {

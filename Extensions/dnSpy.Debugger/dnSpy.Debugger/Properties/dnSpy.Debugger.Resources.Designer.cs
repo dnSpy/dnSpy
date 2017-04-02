@@ -259,6 +259,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Conditional expression:.
+        /// </summary>
+        public static string Breakpoint_Condition_ConditionalExpression {
+            get {
+                return ResourceManager.GetString("Breakpoint_Condition_ConditionalExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Is true.
         /// </summary>
         public static string Breakpoint_Condition_IsTrue {
@@ -295,11 +304,38 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; has changed.
+        /// </summary>
+        public static string Breakpoint_Condition_WhenConditionHasChanged2 {
+            get {
+                return ResourceManager.GetString("Breakpoint_Condition_WhenConditionHasChanged2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to when &apos;{0}&apos; is true.
         /// </summary>
         public static string Breakpoint_Condition_WhenConditionIsTrue {
             get {
                 return ResourceManager.GetString("Breakpoint_Condition_WhenConditionIsTrue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is true.
+        /// </summary>
+        public static string Breakpoint_Condition_WhenConditionIsTrue2 {
+            get {
+                return ResourceManager.GetString("Breakpoint_Condition_WhenConditionIsTrue2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter: &apos;{0}&apos;.
+        /// </summary>
+        public static string Breakpoint_Filter_Filter {
+            get {
+                return ResourceManager.GetString("Breakpoint_Filter_Filter", resourceCulture);
             }
         }
         
@@ -322,6 +358,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hit count is a multiple of {0}.
+        /// </summary>
+        public static string Breakpoint_HitCount_HitCountIsAMultipleOf2 {
+            get {
+                return ResourceManager.GetString("Breakpoint_HitCount_HitCountIsAMultipleOf2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to when hit count is equal to {0}.
         /// </summary>
         public static string Breakpoint_HitCount_HitCountIsEqualTo {
@@ -331,11 +376,29 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hit count is equal to {0}.
+        /// </summary>
+        public static string Breakpoint_HitCount_HitCountIsEqualTo2 {
+            get {
+                return ResourceManager.GetString("Breakpoint_HitCount_HitCountIsEqualTo2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to when hit count is greater than or equal to {0}.
         /// </summary>
         public static string Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo {
             get {
                 return ResourceManager.GetString("Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hit count is greater than or equal to {0}.
+        /// </summary>
+        public static string Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2 {
+            get {
+                return ResourceManager.GetString("Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2", resourceCulture);
             }
         }
         
@@ -372,6 +435,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Breakpoint_Tracepoint_PrintMessage {
             get {
                 return ResourceManager.GetString("Breakpoint_Tracepoint_PrintMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log message &apos;{0}&apos;, to Output window.
+        /// </summary>
+        public static string Breakpoint_Tracepoint_PrintMessage2 {
+            get {
+                return ResourceManager.GetString("Breakpoint_Tracepoint_PrintMessage2", resourceCulture);
             }
         }
         
@@ -2480,6 +2552,24 @@ namespace dnSpy.Debugger.Properties {
         public static string FreezeThreadCommand {
             get {
                 return ResourceManager.GetString("FreezeThreadCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Actions:.
+        /// </summary>
+        public static string GlyphToolTip_Actions {
+            get {
+                return ResourceManager.GetString("GlyphToolTip_Actions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conditions:.
+        /// </summary>
+        public static string GlyphToolTip_Conditions {
+            get {
+                return ResourceManager.GetString("GlyphToolTip_Conditions", resourceCulture);
             }
         }
         

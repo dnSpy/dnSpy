@@ -166,6 +166,12 @@ namespace dnSpy.Text.Editor {
 				return removed > 0;
 			}
 
+			public Span? GetSpan(IGlyphTextMarkerImpl marker) {
+				if (inDocMarkers.TryGetValue(marker, out var span))
+					return span;
+				return null;
+			}
+
 			public void Dispose() {
 				allMarkers.Clear();
 				inDocMarkers.Clear();
@@ -770,6 +776,19 @@ namespace dnSpy.Text.Editor {
 			}
 
 			return Array.Empty<IGlyphTextMarkerImpl>();
+		}
+
+		internal SnapshotSpan GetSpan(IGlyphTextMarker marker) {
+			if (marker == null)
+				throw new ArgumentNullException(nameof(marker));
+			var impl = marker as IGlyphTextMarkerImpl;
+			if (impl == null)
+				throw new ArgumentException();
+			var span = markerAndSpanCollection.GetSpan(impl) ?? new Span(0, 0);
+			var snapshot = TextView.TextSnapshot;
+			if (span.End <= snapshot.Length)
+				return new SnapshotSpan(snapshot, span);
+			return new SnapshotSpan(snapshot, 0, 0);
 		}
 
 		internal IWpfTextViewLine GetVisibleLine(IGlyphTextMarkerImpl marker) {

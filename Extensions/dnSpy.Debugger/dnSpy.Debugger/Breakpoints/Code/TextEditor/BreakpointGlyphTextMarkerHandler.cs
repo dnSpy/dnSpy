@@ -1,0 +1,127 @@
+﻿/*
+    Copyright (C) 2014-2017 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows;
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
+using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
+using dnSpy.Debugger.Properties;
+using dnSpy.Debugger.Text;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+
+namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
+	abstract class BreakpointGlyphTextMarkerHandler : IGlyphTextMarkerHandler {
+		public abstract IGlyphTextMarkerHandlerMouseProcessor MouseProcessor { get; }
+		public abstract IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint);
+		public abstract GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+		public abstract FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+	}
+
+	[Export(typeof(BreakpointGlyphTextMarkerHandler))]
+	sealed class BreakpointGlyphTextMarkerHandlerImpl : BreakpointGlyphTextMarkerHandler {
+		public override IGlyphTextMarkerHandlerMouseProcessor MouseProcessor => null;
+
+		readonly BreakpointConditionsFormatter breakpointConditionsFormatter;
+		readonly IEnumerable<Lazy<BreakpointGlyphFormatter, IBreakpointGlyphFormatterMetadata>> breakpointGlyphFormatters;
+
+		[ImportingConstructor]
+		BreakpointGlyphTextMarkerHandlerImpl(BreakpointConditionsFormatter breakpointConditionsFormatter, [ImportMany] IEnumerable<Lazy<BreakpointGlyphFormatter, IBreakpointGlyphFormatterMetadata>> breakpointGlyphFormatters) {
+			this.breakpointConditionsFormatter = breakpointConditionsFormatter;
+			this.breakpointGlyphFormatters = breakpointGlyphFormatters.OrderBy(a => a.Metadata.Order).ToArray();
+		}
+
+		public override FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
+			//TODO:
+			return null;
+		}
+
+		public override GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
+			var bp = (DbgCodeBreakpoint)marker.Tag;
+			return new GlyphTextMarkerToolTip(GetToolTipContent(bp, context.TextView, context.SpanProvider.GetSpan(marker)));
+		}
+
+		string GetToolTipContent(DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
+			var output = new StringBuilderTextColorOutput();
+
+			output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Location);
+			output.Write(BoxedTextColor.Text, ": ");
+			WriteLocation(output, breakpoint, textView, span);
+
+			const string INDENTATION = "    ";
+			if (breakpoint.Condition != null || breakpoint.HitCount != null || breakpoint.Filter != null) {
+				output.WriteLine();
+				output.WriteLine();
+				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Conditions);
+
+				if (breakpoint.Condition != null) {
+					output.WriteLine();
+					output.Write(BoxedTextColor.Text, INDENTATION);
+					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.Condition.Value);
+				}
+
+				if (breakpoint.HitCount != null) {
+					output.WriteLine();
+					output.Write(BoxedTextColor.Text, INDENTATION);
+					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.HitCount.Value);
+				}
+
+				if (breakpoint.Filter != null) {
+					output.WriteLine();
+					output.Write(BoxedTextColor.Text, INDENTATION);
+					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.Filter.Value);
+				}
+			}
+
+			if (breakpoint.Trace != null) {
+				output.WriteLine();
+				output.WriteLine();
+				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Actions);
+
+				output.WriteLine();
+				output.Write(BoxedTextColor.Text, INDENTATION);
+				breakpointConditionsFormatter.WriteToolTip(output, breakpoint.Trace.Value);
+			}
+
+			return output.ToString();
+		}
+
+		void WriteLocation(ITextColorWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
+			var debugOutput = new DebugOutputWriterImpl(output);
+			foreach (var lz in breakpointGlyphFormatters) {
+				if (lz.Value.WriteLocation(debugOutput, breakpoint, textView, span))
+					return;
+			}
+			Debug.Fail("Missing BP location writer");
+			output.Write(BoxedTextColor.Error, "???");
+		}
+
+		public override IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint) {
+			var bp = (DbgCodeBreakpoint)marker.Tag;
+			yield return new GuidObject(MenuConstants.GUIDOBJ_BREAKPOINT_GUID, bp);
+		}
+	}
+}

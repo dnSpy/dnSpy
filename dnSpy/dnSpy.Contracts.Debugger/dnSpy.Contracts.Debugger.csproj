@@ -56,6 +56,7 @@
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointFormatterProvider.cs" />
     <Compile Include="Breakpoints\Code\DbgEngineCodeBreakpointSerializer.cs" />
     <Compile Include="Breakpoints\Code\PredefinedDbgEngineCodeBreakpointTypes.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphFormatter.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointModuleLocationProvider.cs" />
     <Compile Include="Breakpoints\Modules\DbgBreakpointModule.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpoint.cs" />

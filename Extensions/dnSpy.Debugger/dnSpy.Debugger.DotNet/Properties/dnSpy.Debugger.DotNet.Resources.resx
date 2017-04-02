@@ -126,6 +126,12 @@
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
     <value>Cancel loading modules?</value>
   </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL offset 0x{0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>line {0} character {1}</value>
+  </data>
   <data name="LoadModule_InfoText" xml:space="preserve">
     <value>Loading the module. This could take a while if it's a big module.</value>
   </data>

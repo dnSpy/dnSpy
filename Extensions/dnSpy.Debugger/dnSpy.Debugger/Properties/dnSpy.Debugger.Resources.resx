@@ -1668,4 +1668,34 @@ Are you sure you want to expand it?</value>
   <data name="EditBreakpointSettings_Trace" xml:space="preserve">
     <value>_Log Message</value>
   </data>
+  <data name="GlyphToolTip_Actions" xml:space="preserve">
+    <value>Actions:</value>
+  </data>
+  <data name="GlyphToolTip_Conditions" xml:space="preserve">
+    <value>Conditions:</value>
+  </data>
+  <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
+    <value>Conditional expression:</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
+    <value>'{0}' has changed</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
+    <value>'{0}' is true</value>
+  </data>
+  <data name="Breakpoint_Filter_Filter" xml:space="preserve">
+    <value>Filter: '{0}'</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
+    <value>Hit count is a multiple of {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
+    <value>Hit count is equal to {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
+    <value>Hit count is greater than or equal to {0}</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
+    <value>Log message '{0}', to Output window</value>
+  </data>
 </root>
