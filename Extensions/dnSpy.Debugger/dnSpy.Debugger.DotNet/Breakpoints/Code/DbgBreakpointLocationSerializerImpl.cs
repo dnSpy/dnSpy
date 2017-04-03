@@ -19,7 +19,9 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Settings;
 
@@ -27,23 +29,32 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 	[ExportDbgBreakpointLocationSerializer(PredefinedDbgBreakpointLocationTypes.DotNet)]
 	sealed class DbgBreakpointLocationSerializerImpl : DbgBreakpointLocationSerializer {
 		readonly Lazy<DbgDotNetBreakpointLocationFactory2> dbgDotNetBreakpointLocationFactory;
+		readonly Lazy<DbgMetadataService> dbgMetadataService;
 
 		[ImportingConstructor]
-		DbgBreakpointLocationSerializerImpl(Lazy<DbgDotNetBreakpointLocationFactory2> dbgDotNetBreakpointLocationFactory) =>
+		DbgBreakpointLocationSerializerImpl(Lazy<DbgDotNetBreakpointLocationFactory2> dbgDotNetBreakpointLocationFactory, Lazy<DbgMetadataService> dbgMetadataService) {
 			this.dbgDotNetBreakpointLocationFactory = dbgDotNetBreakpointLocationFactory;
+			this.dbgMetadataService = dbgMetadataService;
+		}
 
-		public override void Serialize(ISettingsSection section, DbgBreakpointLocation breakpoint) {
-			var bp = (DbgDotNetBreakpointLocationImpl)breakpoint;
-			section.Attribute("Token", bp.Token);
-			section.Attribute("Offset", bp.Offset);
-			section.Attribute("AssemblyFullName", bp.Module.AssemblyFullName);
-			section.Attribute("ModuleName", bp.Module.ModuleName);
-			if (bp.Module.IsDynamic)
-				section.Attribute("IsDynamic", bp.Module.IsDynamic);
-			if (bp.Module.IsInMemory)
-				section.Attribute("IsInMemory", bp.Module.IsInMemory);
-			if (bp.Module.ModuleNameOnly)
-				section.Attribute("ModuleNameOnly", bp.Module.ModuleNameOnly);
+		public override void Serialize(ISettingsSection section, DbgBreakpointLocation location) {
+			var loc = (DbgDotNetBreakpointLocationImpl)location;
+			section.Attribute("Token", loc.Token);
+			section.Attribute("Offset", loc.Offset);
+			section.Attribute("AssemblyFullName", loc.Module.AssemblyFullName);
+			section.Attribute("ModuleName", loc.Module.ModuleName);
+			if (loc.Module.IsDynamic)
+				section.Attribute("IsDynamic", loc.Module.IsDynamic);
+			if (loc.Module.IsInMemory)
+				section.Attribute("IsInMemory", loc.Module.IsInMemory);
+			if (loc.Module.ModuleNameOnly)
+				section.Attribute("ModuleNameOnly", loc.Module.ModuleNameOnly);
+
+			if (!loc.Module.IsInMemory && !loc.Module.IsDynamic) {
+				var s = GetMethodAsString(loc.Module, loc.Token);
+				if (s != null)
+					section.Attribute("Method", s);
+			}
 		}
 
 		public override DbgBreakpointLocation Deserialize(ISettingsSection section) {
@@ -57,7 +68,19 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 			if (token == null || offset == null || assemblyFullName == null || moduleName == null)
 				return null;
 			var moduleId = new ModuleId(assemblyFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
+
+			if (!isInMemory && !isDynamic) {
+				var s = section.Attribute<string>("Method");
+				if (!string.IsNullOrEmpty(s) && s != GetMethodAsString(moduleId, token.Value))
+					return null;
+			}
+
 			return dbgDotNetBreakpointLocationFactory.Value.CreateDotNet(moduleId, token.Value, offset.Value);
+		}
+
+		string GetMethodAsString(ModuleId moduleId, uint token) {
+			var module = dbgMetadataService.Value.TryGetModule(moduleId, DbgLoadModuleOptions.AutoLoaded);
+			return (module?.ResolveToken(token) as MethodDef)?.ToString();
 		}
 	}
 }

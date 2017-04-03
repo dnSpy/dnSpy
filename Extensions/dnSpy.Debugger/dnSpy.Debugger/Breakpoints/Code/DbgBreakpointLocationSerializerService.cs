@@ -27,7 +27,7 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class DbgBreakpointLocationSerializerService {
-		public abstract void Serialize(ISettingsSection section, DbgBreakpointLocation breakpoint);
+		public abstract void Serialize(ISettingsSection section, DbgBreakpointLocation location);
 		public abstract DbgBreakpointLocation Deserialize(ISettingsSection section);
 	}
 
@@ -47,20 +47,20 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return null;
 		}
 
-		public override void Serialize(ISettingsSection section, DbgBreakpointLocation breakpoint) {
+		public override void Serialize(ISettingsSection section, DbgBreakpointLocation location) {
 			if (section == null)
 				throw new ArgumentNullException(nameof(section));
-			if (breakpoint == null)
-				throw new ArgumentNullException(nameof(breakpoint));
+			if (location == null)
+				throw new ArgumentNullException(nameof(location));
 
-			var bpType = breakpoint.Type;
+			var bpType = location.Type;
 			var serializer = TryGetSerializer(bpType);
 			Debug.Assert(serializer != null);
 			if (serializer == null)
 				return;
 
 			section.Attribute("__BPT", bpType);
-			serializer.Value.Serialize(section, breakpoint);
+			serializer.Value.Serialize(section, location);
 		}
 
 		public override DbgBreakpointLocation Deserialize(ISettingsSection section) {

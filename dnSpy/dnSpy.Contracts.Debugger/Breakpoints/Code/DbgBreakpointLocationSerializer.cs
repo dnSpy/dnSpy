@@ -28,11 +28,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// </summary>
 	public abstract class DbgBreakpointLocationSerializer {
 		/// <summary>
-		/// Serializes <paramref name="breakpoint"/>
+		/// Serializes <paramref name="location"/>
 		/// </summary>
 		/// <param name="section">Destination section</param>
-		/// <param name="breakpoint">Breakpoint</param>
-		public abstract void Serialize(ISettingsSection section, DbgBreakpointLocation breakpoint);
+		/// <param name="location">Breakpoint location</param>
+		public abstract void Serialize(ISettingsSection section, DbgBreakpointLocation location);
 
 		/// <summary>
 		/// Deserializes a breakpoint or returns null if it failed
