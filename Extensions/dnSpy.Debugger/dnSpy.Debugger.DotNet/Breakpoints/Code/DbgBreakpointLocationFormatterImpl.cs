@@ -26,14 +26,14 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
-		readonly DbgDotNetBreakpointLocation breakpoint;
+		readonly DbgDotNetBreakpointLocation location;
 		readonly BreakpointFormatterServiceImpl owner;
 		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
 
-		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetBreakpointLocation breakpoint) {
+		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetBreakpointLocation location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings ?? throw new ArgumentNullException(nameof(codeBreakpointDisplaySettings));
-			this.breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));
+			this.location = location ?? throw new ArgumentNullException(nameof(location));
 		}
 
 		internal void RefreshName() => RaiseNameChanged();
@@ -54,17 +54,17 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 		public override void WriteName(IDebugOutputWriter output) {
 			bool printedToken = false;
 			if (codeBreakpointDisplaySettings.ShowTokens) {
-				WriteToken(output, breakpoint.Token);
+				WriteToken(output, location.Token);
 				WriteSpace(output);
 				printedToken = true;
 			}
 
-			var method = owner.GetMethodDef(breakpoint);
+			var method = owner.GetMethodDef(location);
 			if (method == null) {
 				if (printedToken)
 					output.Write(BoxedTextColor.Error, "???");
 				else
-					WriteToken(output, breakpoint.Token);
+					WriteToken(output, location.Token);
 			}
 			else
 				owner.MethodDecompiler.Write(new TextColorWriterImpl(output), method, GetPrinterFlags());
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 			WriteSpace(output);
 			output.Write(BoxedTextColor.Operator, "+");
 			WriteSpace(output);
-			WriteILOffset(output, breakpoint.Offset);
+			WriteILOffset(output, location.Offset);
 		}
 
 		SimplePrinterFlags GetPrinterFlags() {
@@ -88,6 +88,6 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 		}
 
 		public override void WriteModule(IDebugOutputWriter output) =>
-			new TextColorWriterImpl(output).WriteFilename(breakpoint.Module.ModuleName);
+			new TextColorWriterImpl(output).WriteFilename(location.Module.ModuleName);
 	}
 }

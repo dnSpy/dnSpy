@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			for (int i = 0; i < methodStatements.Count; i++) {
 				var statement = methodStatements[i];
 				var moduleId = moduleIdProvider.Create(statement.Method.Module);
-				locations[i] = dbgDotNetBreakpointLocationFactory.Value.CreateDotNet(moduleId, statement.Method.MDToken.Raw, statement.Statement.BinSpan.Start);
+				locations[i] = dbgDotNetBreakpointLocationFactory.Value.CreateLocation(moduleId, statement.Method.MDToken.Raw, statement.Statement.BinSpan.Start);
 			}
 			return new DbgTextViewBreakpointLocationResult(locations, span);
 		}

@@ -19,7 +19,7 @@
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
-	/// Contains engine-specific information about a code breakpoint
+	/// Breakpoint location
 	/// </summary>
 	public abstract class DbgBreakpointLocation : DbgObject {
 		/// <summary>

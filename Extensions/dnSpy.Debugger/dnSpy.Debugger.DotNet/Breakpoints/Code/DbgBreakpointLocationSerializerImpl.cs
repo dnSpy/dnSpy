@@ -75,11 +75,11 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 					return null;
 			}
 
-			return dbgDotNetBreakpointLocationFactory.Value.CreateDotNet(moduleId, token.Value, offset.Value);
+			return dbgDotNetBreakpointLocationFactory.Value.CreateLocation(moduleId, token.Value, offset.Value);
 		}
 
 		string GetMethodAsString(ModuleId moduleId, uint token) {
-			var module = dbgMetadataService.Value.TryGetModule(moduleId, DbgLoadModuleOptions.AutoLoaded);
+			var module = dbgMetadataService.Value.TryGetMetadata(moduleId, DbgLoadModuleOptions.AutoLoaded);
 			return (module?.ResolveToken(token) as MethodDef)?.ToString();
 		}
 	}

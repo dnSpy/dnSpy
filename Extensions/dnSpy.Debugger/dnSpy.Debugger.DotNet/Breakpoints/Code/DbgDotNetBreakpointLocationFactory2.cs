@@ -25,7 +25,7 @@ using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 	abstract class DbgDotNetBreakpointLocationFactory2 : DbgDotNetBreakpointLocationFactory {
-		public abstract DbgDotNetBreakpointLocation CreateDotNet(ModuleId module, uint token, uint offset);
+		public abstract DbgDotNetBreakpointLocation CreateLocation(ModuleId module, uint token, uint offset);
 	}
 
 	[Export(typeof(DbgDotNetBreakpointLocationFactory))]
@@ -41,9 +41,9 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 		}
 
 		public override DbgCodeBreakpoint Create(ModuleId module, uint token, uint offset, DbgCodeBreakpointSettings bpSettings) =>
-			dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(CreateDotNet(module, token, offset), bpSettings));
+			dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(CreateLocation(module, token, offset), bpSettings));
 
-		public override DbgDotNetBreakpointLocation CreateDotNet(ModuleId module, uint token, uint offset) {
+		public override DbgDotNetBreakpointLocation CreateLocation(ModuleId module, uint token, uint offset) {
 			var dnbp = new DbgDotNetBreakpointLocationImpl(module, token, offset);
 			var formatter = breakpointFormatterService.Create(dnbp);
 			dnbp.Formatter = formatter;

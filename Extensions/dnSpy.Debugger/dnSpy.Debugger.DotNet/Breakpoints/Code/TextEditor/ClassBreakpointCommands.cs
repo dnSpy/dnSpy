@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			var existing = new HashSet<DbgDotNetBreakpointLocation>(dbgCodeBreakpointsService.Value.Breakpoints.Select(a => a.Location).OfType<DbgDotNetBreakpointLocation>());
 			foreach (var method in methods) {
 				var moduleId = moduleIdProvider.Value.Create(method.Module);
-				var location = dbgDotNetBreakpointLocationFactory.Value.CreateDotNet(moduleId, method.MDToken.Raw, 0);
+				var location = dbgDotNetBreakpointLocationFactory.Value.CreateLocation(moduleId, method.MDToken.Raw, 0);
 				if (existing.Contains(location))
 					continue;
 				existing.Add(location);

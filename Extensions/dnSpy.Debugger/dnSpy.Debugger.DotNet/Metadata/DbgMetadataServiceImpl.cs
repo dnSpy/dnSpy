@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			this.debuggerSettings = debuggerSettings;
 		}
 
-		public override ModuleDef TryGetModule(DbgModule module, DbgLoadModuleOptions options) {
+		public override ModuleDef TryGetMetadata(DbgModule module, DbgLoadModuleOptions options) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			var id = dbgModuleIdProviderService.GetModuleId(module);
 			if (id != null)
-				return TryGetModule(id.Value, options);
+				return TryGetMetadata(id.Value, options);
 
 			return null;
 		}
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return foundModule;
 		}
 
-		public override ModuleDef TryGetModule(ModuleId moduleId, DbgLoadModuleOptions options) {
+		public override ModuleDef TryGetMetadata(ModuleId moduleId, DbgLoadModuleOptions options) {
 			var mod = LoadNonDiskFile(moduleId, options) ?? LoadExisting(moduleId);
 			if (mod != null)
 				return mod;

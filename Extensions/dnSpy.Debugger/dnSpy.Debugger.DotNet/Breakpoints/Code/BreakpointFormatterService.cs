@@ -28,7 +28,7 @@ using dnSpy.Debugger.DotNet.UI;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 	abstract class BreakpointFormatterService {
-		public abstract DbgBreakpointLocationFormatter Create(DbgDotNetBreakpointLocation breakpoint);
+		public abstract DbgBreakpointLocationFormatter Create(DbgDotNetBreakpointLocation location);
 	}
 
 	[Export(typeof(BreakpointFormatterService))]
@@ -56,12 +56,12 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 			}
 		}
 
-		public override DbgBreakpointLocationFormatter Create(DbgDotNetBreakpointLocation breakpoint) =>
-			new DbgBreakpointLocationFormatterImpl(this, codeBreakpointDisplaySettings, breakpoint);
+		public override DbgBreakpointLocationFormatter Create(DbgDotNetBreakpointLocation location) =>
+			new DbgBreakpointLocationFormatterImpl(this, codeBreakpointDisplaySettings, location);
 
-		internal MethodDef GetMethodDef(DbgDotNetBreakpointLocation breakpoint) {
-			var module = dbgMetadataService.Value.TryGetModule(breakpoint.Module, DbgLoadModuleOptions.AutoLoaded);
-			return module?.ResolveToken(breakpoint.Token) as MethodDef;
+		internal MethodDef GetMethodDef(DbgDotNetBreakpointLocation location) {
+			var module = dbgMetadataService.Value.TryGetMetadata(location.Module, DbgLoadModuleOptions.AutoLoaded);
+			return module?.ResolveToken(location.Token) as MethodDef;
 		}
 	}
 }
