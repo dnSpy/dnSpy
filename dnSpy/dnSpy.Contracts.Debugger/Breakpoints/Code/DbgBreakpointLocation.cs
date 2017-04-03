@@ -27,5 +27,18 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// be a 1-1 correspondence between this string and the derived type.
 		/// </summary>
 		public abstract string Type { get; }
+
+		/// <summary>
+		/// Compares this instance to <paramref name="obj"/>
+		/// </summary>
+		/// <param name="obj">Object</param>
+		/// <returns></returns>
+		public abstract override bool Equals(object obj);
+
+		/// <summary>
+		/// Gets the hash code
+		/// </summary>
+		/// <returns></returns>
+		public abstract override int GetHashCode();
 	}
 }

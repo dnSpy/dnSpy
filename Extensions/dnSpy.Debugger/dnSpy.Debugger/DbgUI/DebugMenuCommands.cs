@@ -234,9 +234,8 @@ namespace dnSpy.Debugger.DbgUI {
 				: base(debugger, null) {
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
-			}
+			public override void Execute(IMenuItemContext context) => debugger.Value.ToggleCreateBreakpoint();
+			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanToggleCreateBreakpoint;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:DeleteAllBreakpointsCommand", Icon = DsImagesAttribute.ClearBreakpointGroup, InputGestureText = "res:ShortCutKeyCtrlShiftF9", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 10)]

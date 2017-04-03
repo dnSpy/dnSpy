@@ -54,6 +54,7 @@
     <Compile Include="Breakpoints\Code\TextColorWriterImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphFormatterImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointModuleLocationProvider.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\DbgTextViewBreakpointLocationProviderImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />

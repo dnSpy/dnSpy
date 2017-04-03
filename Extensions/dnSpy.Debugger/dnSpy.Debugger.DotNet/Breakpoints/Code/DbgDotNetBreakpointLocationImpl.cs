@@ -37,5 +37,13 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 		}
 
 		protected override void CloseCore() { }
+
+		public override bool Equals(object obj) =>
+			obj is DbgDotNetBreakpointLocationImpl other &&
+			Module == other.Module &&
+			Token == other.Token &&
+			Offset == other.Offset;
+
+		public override int GetHashCode() => Module.GetHashCode() ^ (int)Token ^ (int)Offset;
 	}
 }

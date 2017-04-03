@@ -26,6 +26,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.Properties;
 
@@ -38,16 +39,18 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider;
 		readonly Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog;
+		readonly Lazy<TextViewBreakpointService> textViewBreakpointService;
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(IMessageBoxService messageBoxService, IAppWindow appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog) {
+		DebuggerImpl(IMessageBoxService messageBoxService, IAppWindow appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService) {
 			this.messageBoxService = messageBoxService;
 			this.appWindow = appWindow;
 			this.dbgManager = dbgManager;
 			this.startDebuggingOptionsProvider = startDebuggingOptionsProvider;
 			this.showAttachToProcessDialog = showAttachToProcessDialog;
+			this.textViewBreakpointService = textViewBreakpointService;
 		}
 
 		public override bool CanStartWithoutDebugging => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename() != null;
@@ -136,6 +139,9 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void StepOutCurrentProcess() {
 			//TODO:
 		}
+
+		public override bool CanToggleCreateBreakpoint => textViewBreakpointService.Value.CanToggleCreateBreakpoint;
+		public override void ToggleCreateBreakpoint() => textViewBreakpointService.Value.ToggleCreateBreakpoint();
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;

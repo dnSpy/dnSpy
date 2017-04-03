@@ -52,5 +52,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract void StepOverCurrentProcess();
 		public abstract bool CanStepOutCurrentProcess { get; }
 		public abstract void StepOutCurrentProcess();
+		public abstract bool CanToggleCreateBreakpoint { get; }
+		public abstract void ToggleCreateBreakpoint();
 	}
 }

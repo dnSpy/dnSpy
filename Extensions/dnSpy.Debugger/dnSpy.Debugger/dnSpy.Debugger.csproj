@@ -59,6 +59,8 @@
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointModuleLocationProviderService.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\GlyphMarginCommands.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\GlyphMarginOperations.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\GlyphTextMarkerMouseProcessor.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\TextViewBreakpointService.cs" />
     <Compile Include="Breakpoints\Modules\BreakpointsSerializer.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointImpl.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsServiceImpl.cs" />
