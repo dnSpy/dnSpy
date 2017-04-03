@@ -29,10 +29,6 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Impl;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
-	interface IDbgCodeBreakpointsServiceListener {
-		void Initialize(DbgCodeBreakpointsService dbgCodeBreakpointsService);
-	}
-
 	[Export(typeof(DbgCodeBreakpointsService))]
 	sealed class DbgCodeBreakpointsServiceImpl : DbgCodeBreakpointsService {
 		readonly object lockObj;

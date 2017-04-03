@@ -177,4 +177,15 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Settings = settings;
 		}
 	}
+
+	/// <summary>
+	/// Export an instance to get created when <see cref="DbgCodeBreakpointsService"/> gets created
+	/// </summary>
+	public interface IDbgCodeBreakpointsServiceListener {
+		/// <summary>
+		/// Called once by <see cref="DbgCodeBreakpointsService"/>
+		/// </summary>
+		/// <param name="dbgCodeBreakpointsService">Breakpoints service</param>
+		void Initialize(DbgCodeBreakpointsService dbgCodeBreakpointsService);
+	}
 }
