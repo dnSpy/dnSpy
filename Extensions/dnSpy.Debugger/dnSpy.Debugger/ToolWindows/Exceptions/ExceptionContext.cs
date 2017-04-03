@@ -18,7 +18,6 @@
 */
 
 using dnSpy.Contracts.Debugger.Exceptions;
-using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Exceptions;
 using dnSpy.Debugger.Text;
@@ -31,7 +30,6 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		IDebugOutputWriter DebugOutputWriter { get; }
 		ExceptionFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		DbgExceptionSettingsService ExceptionSettingsService { get; }
@@ -44,7 +42,6 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		public IDebugOutputWriter DebugOutputWriter { get; }
 		public ExceptionFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public DbgExceptionSettingsService ExceptionSettingsService { get; }
@@ -56,7 +53,6 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
-			DebugOutputWriter = new DebugOutputWriterImpl(TextClassifierTextColorWriter);
 			ExceptionSettingsService = exceptionSettingsService;
 			ExceptionFormatterService = exceptionFormatterService;
 			SearchMatcher = searchMatcher;

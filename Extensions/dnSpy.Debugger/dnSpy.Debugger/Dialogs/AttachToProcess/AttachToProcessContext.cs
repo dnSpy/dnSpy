@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -36,7 +35,6 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		public IDebugOutputWriter DebugOutputWriter { get; }
 		public ProgramFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public SearchMatcher SearchMatcher { get; }
@@ -45,7 +43,6 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
-			DebugOutputWriter = new DebugOutputWriterImpl(TextClassifierTextColorWriter);
 			SearchMatcher = searchMatcher;
 		}
 	}

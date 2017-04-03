@@ -175,7 +175,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\DebuggerAppSettingsPage.cs" />
     <Compile Include="Settings\DebuggerSettingsImpl.cs" />
-    <Compile Include="Text\DebugOutputWriterImpl.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="ToolWindows\Controls\EditValueControl.xaml.cs">
       <DependentUpon>EditValueControl.xaml</DependentUpon>

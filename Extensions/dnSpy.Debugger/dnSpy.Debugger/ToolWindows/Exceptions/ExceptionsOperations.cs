@@ -27,7 +27,6 @@ using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Text;
-using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Exceptions {
@@ -71,10 +70,9 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
 			var output = new StringBuilderTextColorOutput();
-			var debugWriter = new DebugOutputWriterImpl(output);
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteName(output, debugWriter, vm);
+				formatter.WriteName(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteCategory(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");

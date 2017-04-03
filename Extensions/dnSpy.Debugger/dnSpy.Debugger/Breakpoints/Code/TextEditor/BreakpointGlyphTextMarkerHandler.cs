@@ -30,7 +30,6 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Debugger.Dialogs.CodeBreakpoints;
 using dnSpy.Debugger.Properties;
-using dnSpy.Debugger.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -119,9 +118,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 
 		void WriteLocation(ITextColorWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
-			var debugOutput = new DebugOutputWriterImpl(output);
 			foreach (var lz in breakpointGlyphFormatters) {
-				if (lz.Value.WriteLocation(debugOutput, breakpoint, textView, span))
+				if (lz.Value.WriteLocation(output, breakpoint, textView, span))
 					return;
 			}
 			Debug.Fail("Missing BP location writer");

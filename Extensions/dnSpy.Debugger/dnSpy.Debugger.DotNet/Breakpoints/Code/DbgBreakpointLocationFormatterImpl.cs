@@ -20,7 +20,6 @@
 using System;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
@@ -38,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 
 		internal void RefreshName() => RaiseNameChanged();
 
-		void WriteILOffset(IDebugOutputWriter output, uint offset) {
+		void WriteILOffset(ITextColorWriter output, uint offset) {
 			// Offsets are always in hex
 			if (offset <= ushort.MaxValue)
 				output.Write(BoxedTextColor.Number, "0x" + offset.ToString("X4"));
@@ -46,16 +45,14 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 				output.Write(BoxedTextColor.Number, "0x" + offset.ToString("X8"));
 		}
 
-		void WriteToken(IDebugOutputWriter output, uint token) =>
+		void WriteToken(ITextColorWriter output, uint token) =>
 			output.Write(BoxedTextColor.Number, "0x" + token.ToString("X8"));
 
-		void WriteSpace(IDebugOutputWriter output) => output.Write(BoxedTextColor.Text, " ");
-
-		public override void WriteName(IDebugOutputWriter output) {
+		public override void WriteName(ITextColorWriter output) {
 			bool printedToken = false;
 			if (codeBreakpointDisplaySettings.ShowTokens) {
 				WriteToken(output, location.Token);
-				WriteSpace(output);
+				output.WriteSpace();
 				printedToken = true;
 			}
 
@@ -67,11 +64,11 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 					WriteToken(output, location.Token);
 			}
 			else
-				owner.MethodDecompiler.Write(new TextColorWriterImpl(output), method, GetPrinterFlags());
+				owner.MethodDecompiler.Write(output, method, GetPrinterFlags());
 
-			WriteSpace(output);
+			output.WriteSpace();
 			output.Write(BoxedTextColor.Operator, "+");
-			WriteSpace(output);
+			output.WriteSpace();
 			WriteILOffset(output, location.Offset);
 		}
 
@@ -87,7 +84,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 			return flags;
 		}
 
-		public override void WriteModule(IDebugOutputWriter output) =>
-			new TextColorWriterImpl(output).WriteFilename(location.Module.ModuleName);
+		public override void WriteModule(ITextColorWriter output) =>
+			output.WriteFilename(location.Module.ModuleName);
 	}
 }

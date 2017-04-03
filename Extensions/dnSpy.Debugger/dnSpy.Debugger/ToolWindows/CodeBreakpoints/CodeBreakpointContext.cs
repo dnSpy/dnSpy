@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Text;
@@ -30,7 +29,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		IDebugOutputWriter DebugOutputWriter { get; }
 		CodeBreakpointFormatter Formatter { get; }
 		BreakpointConditionsFormatter BreakpointConditionsFormatter { get; }
 		bool SyntaxHighlight { get; }
@@ -42,7 +40,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		public IDebugOutputWriter DebugOutputWriter { get; }
 		public CodeBreakpointFormatter Formatter { get; set; }
 		public BreakpointConditionsFormatter BreakpointConditionsFormatter { get; }
 		public bool SyntaxHighlight { get; set; }
@@ -53,7 +50,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
-			DebugOutputWriter = new DebugOutputWriterImpl(TextClassifierTextColorWriter);
 			BreakpointConditionsFormatter = breakpointConditionsFormatter;
 			SearchMatcher = searchMatcher;
 		}

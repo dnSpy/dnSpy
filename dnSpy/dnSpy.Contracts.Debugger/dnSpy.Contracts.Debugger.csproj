@@ -111,8 +111,6 @@
     <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPageProvider.cs" />
     <Compile Include="StartDebugging\GenericDebugEngineGuidProvider.cs" />
     <Compile Include="StartDebugging\PredefinedGenericDebugEngineGuids.cs" />
-    <Compile Include="Text\IDebugOutputWriter.cs" />
-    <Compile Include="Text\StringBuilderDebugOutputWriter.cs" />
     <Compile Include="ThreadCategoryProvider.cs" />
   </ItemGroup>
   <ItemGroup>

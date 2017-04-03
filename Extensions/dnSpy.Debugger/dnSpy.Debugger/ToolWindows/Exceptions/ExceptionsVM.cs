@@ -454,7 +454,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			var writer = vm.Context.TextClassifierTextColorWriter;
 			writer.Clear();
 			var formatter = vm.Context.Formatter;
-			formatter.WriteName(writer, vm.Context.DebugOutputWriter, vm);
+			formatter.WriteName(writer, vm);
 			return writer.Text;
 		}
 

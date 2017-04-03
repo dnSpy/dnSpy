@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			writer.Clear();
 			var formatter = obj.VM.Context.Formatter;
 			if (obj.Tag == PredefinedTextClassifierTags.ExceptionSettingsWindowName)
-				formatter.WriteName(writer, obj.VM.Context.DebugOutputWriter, obj.VM);
+				formatter.WriteName(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.ExceptionSettingsWindowCategory)
 				formatter.WriteCategory(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.ExceptionSettingsWindowConditions)

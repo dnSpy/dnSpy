@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class DbgBreakpointLocationFormatterService {
@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	sealed class NullDbgBreakpointLocationFormatter : DbgBreakpointLocationFormatter {
 		public static readonly NullDbgBreakpointLocationFormatter Instance = new NullDbgBreakpointLocationFormatter();
 		NullDbgBreakpointLocationFormatter() { }
-		public override void WriteName(IDebugOutputWriter output) { }
-		public override void WriteModule(IDebugOutputWriter output) { }
+		public override void WriteName(ITextColorWriter output) { }
+		public override void WriteModule(ITextColorWriter output) { }
 	}
 }

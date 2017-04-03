@@ -19,7 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="writer">Writer</param>
 		/// <param name="definition">Exception definition</param>
 		/// <returns></returns>
-		public virtual bool WriteName(IDebugOutputWriter writer, DbgExceptionDefinition definition) => false;
+		public virtual bool WriteName(ITextColorWriter writer, DbgExceptionDefinition definition) => false;
 	}
 
 	/// <summary>Metadata</summary>

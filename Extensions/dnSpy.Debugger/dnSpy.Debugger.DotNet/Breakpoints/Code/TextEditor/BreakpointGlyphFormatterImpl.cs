@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.Globalization;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
-using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -40,19 +39,19 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 		[ImportingConstructor]
 		BreakpointGlyphFormatterImpl(IDecompilerService decompilerService) => this.decompilerService = decompilerService;
 
-		public override bool WriteLocation(IDebugOutputWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
+		public override bool WriteLocation(ITextColorWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
 			if (breakpoint.Location is DbgDotNetBreakpointLocationImpl location)
 				return WriteLocation(output, textView, span, location);
 
 			return false;
 		}
 
-		bool WriteLocation(IDebugOutputWriter output, ITextView textView, SnapshotSpan span, DbgDotNetBreakpointLocationImpl location) {
+		bool WriteLocation(ITextColorWriter output, ITextView textView, SnapshotSpan span, DbgDotNetBreakpointLocationImpl location) {
 			var line = span.Start.GetContainingLine();
 			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_Resources.GlyphToolTip_line_0_character_1,
 				(line.LineNumber + 1).ToString(CultureInfo.CurrentUICulture),
 				(span.Start - line.Start + 1).ToString(CultureInfo.CurrentUICulture)));
-			output.Write(BoxedTextColor.Text, " ");
+			output.WriteSpace();
 			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_Resources.GlyphToolTip_IL_offset_0, location.Offset.ToString("X4")));
 
 			var documentViewer = textView.TextBuffer.TryGetDocumentViewer();
@@ -62,18 +61,11 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			if (statement != null) {
 				output.Write(BoxedTextColor.Text, " ('");
 				var decompiler = (documentViewer?.DocumentTab.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
-				decompiler.Write(new TextColorWriterImpl(output), statement.Value.Method, SimplePrinterFlags.Default);
+				decompiler.Write(output, statement.Value.Method, SimplePrinterFlags.Default);
 				output.Write(BoxedTextColor.Text, "')");
 			}
 
 			return true;
-		}
-
-		sealed class TextColorWriterImpl : ITextColorWriter {
-			readonly IDebugOutputWriter output;
-			public TextColorWriterImpl(IDebugOutputWriter output) => this.output = output;
-			public void Write(object color, string text) => output.Write(color, text);
-			public void Write(TextColor color, string text) => output.Write(color.Box(), text);
 		}
 	}
 }

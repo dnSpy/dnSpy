@@ -18,13 +18,12 @@
 */
 
 using dnSpy.Contracts.Debugger.Exceptions;
-using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Exceptions {
 	[ExportDbgExceptionFormatter(PredefinedExceptionCategories.DotNet)]
 	sealed class CLRDbgExceptionFormatter : DbgExceptionFormatter {
-		public override bool WriteName(IDebugOutputWriter writer, DbgExceptionDefinition definition) {
+		public override bool WriteName(ITextColorWriter writer, DbgExceptionDefinition definition) {
 			var fullName = definition.Id.Name;
 			if (!string.IsNullOrEmpty(fullName)) {
 				var nsParts = fullName.Split(nsSeps);

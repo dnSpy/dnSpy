@@ -18,7 +18,7 @@
 */
 
 using System.ComponentModel;
-using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
@@ -56,12 +56,12 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// Writes the name shown in the Name column
 		/// </summary>
 		/// <param name="output">Output</param>
-		public abstract void WriteName(IDebugOutputWriter output);
+		public abstract void WriteName(ITextColorWriter output);
 
 		/// <summary>
 		/// Writes the module shown in the Module column
 		/// </summary>
 		/// <param name="output">Output</param>
-		public abstract void WriteModule(IDebugOutputWriter output);
+		public abstract void WriteModule(ITextColorWriter output);
 	}
 }

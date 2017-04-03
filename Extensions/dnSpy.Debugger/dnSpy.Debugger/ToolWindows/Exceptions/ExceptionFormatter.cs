@@ -19,7 +19,6 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.Exceptions;
-using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Properties;
@@ -34,8 +33,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		ExceptionFormatter() { }
 		internal static ExceptionFormatter Create_DONT_USE() => new ExceptionFormatter();
 
-		public void WriteName(ITextColorWriter output, IDebugOutputWriter debugOutputWriter, ExceptionVM vm) =>
-			vm.Context.ExceptionFormatterService.WriteName(debugOutputWriter, vm.Definition, includeDescription: true);
+		public void WriteName(ITextColorWriter output, ExceptionVM vm) =>
+			vm.Context.ExceptionFormatterService.WriteName(output, vm.Definition, includeDescription: true);
 
 		public void WriteCategory(ITextColorWriter output, ExceptionVM vm) {
 			if (vm.Context.ExceptionSettingsService.TryGetCategoryDefinition(vm.Definition.Id.Category, out var def))
@@ -73,7 +72,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		void WriteQuotedString(ITextColorWriter output, string text, string s) {
 			output.Write(BoxedTextColor.Text, text);
-			output.Write(BoxedTextColor.Text, " ");
+			output.WriteSpace();
 			output.Write(BoxedTextColor.String, SimpleTypeConverter.ToString(s, true));
 		}
 	}

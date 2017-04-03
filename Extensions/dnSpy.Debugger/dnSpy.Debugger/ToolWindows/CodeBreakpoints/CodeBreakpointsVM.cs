@@ -101,7 +101,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		CodeBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, UIDispatcher uiDispatcher, CodeBreakpointFormatterProvider codeBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService, BreakpointConditionsFormatter breakpointConditionsFormatter) {
 			uiDispatcher.VerifyAccess();
 			sbOutput = new StringBuilderTextColorOutput();
-			debugOutputWriter = new DebugOutputWriterImpl(sbOutput);
 			realAllItems = new List<CodeBreakpointVM>();
 			AllItems = new BulkObservableCollection<CodeBreakpointVM>();
 			SelectedItems = new ObservableCollection<CodeBreakpointVM>();
@@ -371,13 +370,12 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			return codeBreakpointContext.SearchMatcher.IsMatchAll(allStrings);
 		}
 		readonly StringBuilderTextColorOutput sbOutput;
-		readonly DebugOutputWriterImpl debugOutputWriter;
 
 		// UI thread
 		string GetName_UI(CodeBreakpointVM vm) {
 			Debug.Assert(codeBreakpointContext.UIDispatcher.CheckAccess());
 			sbOutput.Reset();
-			codeBreakpointContext.Formatter.WriteName(debugOutputWriter, vm);
+			codeBreakpointContext.Formatter.WriteName(sbOutput, vm);
 			return sbOutput.ToString();
 		}
 
@@ -417,7 +415,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		string GetModule_UI(CodeBreakpointVM vm) {
 			Debug.Assert(codeBreakpointContext.UIDispatcher.CheckAccess());
 			sbOutput.Reset();
-			codeBreakpointContext.Formatter.WriteModule(debugOutputWriter, vm);
+			codeBreakpointContext.Formatter.WriteModule(sbOutput, vm);
 			return sbOutput.ToString();
 		}
 
