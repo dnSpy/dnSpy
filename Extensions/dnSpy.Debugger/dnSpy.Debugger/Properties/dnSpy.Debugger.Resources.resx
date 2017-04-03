@@ -1713,4 +1713,10 @@ Are you sure you want to expand it?</value>
   <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
     <value>Continue execution</value>
   </data>
+  <data name="ExportCommand" xml:space="preserve">
+    <value>E_xport...</value>
+  </data>
+  <data name="SettingsCommand2" xml:space="preserve">
+    <value>_Settings...</value>
+  </data>
 </root>

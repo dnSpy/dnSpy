@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
@@ -24,6 +25,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 	abstract class ShowCodeBreakpointSettingsService {
 		public abstract DbgCodeBreakpointSettings? Show(DbgCodeBreakpointSettings settings);
+		public abstract void Edit(DbgCodeBreakpoint breakpoint);
 	}
 
 	[Export(typeof(ShowCodeBreakpointSettingsService))]
@@ -42,6 +44,14 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 			if (res != true)
 				return null;
 			return vm.GetSettings();
+		}
+
+		public override void Edit(DbgCodeBreakpoint breakpoint) {
+			if (breakpoint == null)
+				throw new ArgumentNullException(nameof(breakpoint));
+			var newSettings = Show(breakpoint.Settings);
+			if (newSettings != null)
+				breakpoint.Settings = newSettings.Value;
 		}
 	}
 }

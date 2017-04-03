@@ -47,6 +47,7 @@
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterService.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializerService.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointImpl.cs" />
+    <Compile Include="Breakpoints\Code\DbgCodeBreakpointSerializerService.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsServiceImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphPopupControl.xaml.cs">
       <DependentUpon>BreakpointGlyphPopupControl.xaml</DependentUpon>
@@ -56,6 +57,8 @@
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointInfo.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointMarker.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointModuleLocationProviderService.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\GlyphMarginCommands.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\GlyphMarginOperations.cs" />
     <Compile Include="Breakpoints\Modules\BreakpointsSerializer.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointImpl.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsServiceImpl.cs" />

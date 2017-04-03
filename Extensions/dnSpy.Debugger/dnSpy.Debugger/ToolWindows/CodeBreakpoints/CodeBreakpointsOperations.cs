@@ -86,10 +86,10 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService;
 		readonly Lazy<ISettingsServiceFactory> settingsServiceFactory;
-		readonly IPickSaveFilename pickSaveFilename;
 		readonly IPickFilename pickFilename;
 		readonly IMessageBoxService messageBoxService;
 		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
+		readonly Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService;
 
 		BulkObservableCollection<CodeBreakpointVM> AllItems => codeBreakpointsVM.AllItems;
 		ObservableCollection<CodeBreakpointVM> SelectedItems => codeBreakpointsVM.SelectedItems;
@@ -99,17 +99,17 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		IEnumerable<CodeBreakpointVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickSaveFilename pickSaveFilename, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService) {
+		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService) {
 			this.codeBreakpointsVM = codeBreakpointsVM;
 			this.debuggerSettings = debuggerSettings;
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgBreakpointLocationSerializerService = dbgBreakpointLocationSerializerService;
 			this.settingsServiceFactory = settingsServiceFactory;
-			this.pickSaveFilename = pickSaveFilename;
 			this.pickFilename = pickFilename;
 			this.messageBoxService = messageBoxService;
 			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
+			this.dbgCodeBreakpointSerializerService = dbgCodeBreakpointSerializerService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -198,17 +198,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		void SaveBreakpoints(IEnumerable<CodeBreakpointVM> vms) {
 			if (!vms.Any())
 				return;
-			var filename = pickSaveFilename.GetFilename(null, "xml", PickFilenameConstants.XmlFilenameFilter);
-			if (filename == null)
-				return;
-			var settingsService = settingsServiceFactory.Value.Create();
-			new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService.Value).Save(vms.Select(a => a.CodeBreakpoint));
-			try {
-				settingsService.Save(filename);
-			}
-			catch (Exception ex) {
-				messageBoxService.Show(ex);
-			}
+			dbgCodeBreakpointSerializerService.Value.Save(vms.Select(a => a.CodeBreakpoint).ToArray());
 		}
 
 		public override bool CanImportBreakpoints => true;
@@ -249,11 +239,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public override void EditSettings() {
 			if (!CanEditSettings)
 				return;
-			var bp = SelectedItems[0].CodeBreakpoint;
-			var newSettings = showCodeBreakpointSettingsService.Value.Show(bp.Settings);
-			if (newSettings == null)
-				return;
-			bp.Settings = newSettings.Value;
+			showCodeBreakpointSettingsService.Value.Edit(SelectedItems[0].CodeBreakpoint);
 		}
 
 		public override bool ShowTokens {

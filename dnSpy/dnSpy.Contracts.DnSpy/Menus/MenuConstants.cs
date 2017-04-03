@@ -615,6 +615,16 @@ namespace dnSpy.Contracts.Menus {
 		public const string GROUP_CTX_CODEEDITOR_FIND= "6000,CDE742E8-31DA-4D96-A641-73A36CCF0DC0";
 
 		/// <summary>Group: Glyph margin, Type: Debugger, Group: Breakpoints</summary>
+		[Obsolete("Use " + nameof(GROUP_GLYPHMARGIN_DEBUG_CODEBPS_SETTINGS), true)]
 		public const string GROUP_GLYPHMARGIN_DEBUG_BPS = "10000,423F4513-1EAF-43FD-BD46-FDCFB6DFAA04";
+
+		/// <summary>Group: Glyph margin, Type: Debugger/Breakpoints, Group: Settings</summary>
+		public const string GROUP_GLYPHMARGIN_DEBUG_CODEBPS_SETTINGS = "0,FB70F59F-7507-43C1-AD7B-BCBDD60375F6";
+
+		/// <summary>Group: Glyph margin, Type: Debugger/Breakpoints, Group: Edit</summary>
+		public const string GROUP_GLYPHMARGIN_DEBUG_CODEBPS_EDIT = "5000,B31BDBFD-3C44-4D14-92E8-85141167696F";
+
+		/// <summary>Group: Glyph margin, Type: Debugger/Breakpoints, Group: Breakpoints</summary>
+		public const string GROUP_GLYPHMARGIN_DEBUG_CODEBPS_EXPORT = "10000,EEC8041B-DC23-4E50-BEBC-BB71AB36631D";
 	}
 }

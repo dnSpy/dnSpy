@@ -2574,6 +2574,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to E_xport....
+        /// </summary>
+        public static string ExportCommand {
+            get {
+                return ResourceManager.GetString("ExportCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Export Selected....
         /// </summary>
         public static string ExportSelectedCommand {
@@ -3555,6 +3564,15 @@ namespace dnSpy.Debugger.Properties {
         public static string SettingsCommand {
             get {
                 return ResourceManager.GetString("SettingsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Settings....
+        /// </summary>
+        public static string SettingsCommand2 {
+            get {
+                return ResourceManager.GetString("SettingsCommand2", resourceCulture);
             }
         }
         

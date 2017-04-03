@@ -45,9 +45,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		bool CanShowSettings => true;
 		void ShowSettings() {
 			BeforeExecuteCommand?.Invoke(this, EventArgs.Empty);
-			var newSettings = showCodeBreakpointSettingsService.Show(breakpoint.Settings);
-			if (newSettings != null)
-				breakpoint.Settings = newSettings.Value;
+			showCodeBreakpointSettingsService.Edit(breakpoint);
 		}
 
 		bool CanToggleBreakpoint => true;
