@@ -61,6 +61,24 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Class Breakpoint.
+        /// </summary>
+        public static string AddClassBreakpointCommand {
+            get {
+                return ResourceManager.GetString("AddClassBreakpointCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Method Breakpoint.
+        /// </summary>
+        public static string AddMethodBreakpointCommand {
+            get {
+                return ResourceManager.GetString("AddMethodBreakpointCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Break When Thrown.
         /// </summary>
         public static string BreakWhenExceptionThrownCommand {
