@@ -541,24 +541,7 @@ namespace dnSpy.Text.Editor {
 				UpdateToolTipLine();
 		}
 
-		void IGlyphTextMarkerListener.OnAdded(IEnumerable<IGlyphTextMarkerImpl> markers) {
-			// Auto show the marker's popup content when it gets added, eg. the user presses
-			// F9 and the breakpoint settings toolbar is auto shown.
-
-			if (!wpfTextViewHost.TextView.HasAggregateFocus)
-				return;
-			var marker = markers.LastOrDefault();
-			if (marker == null)
-				return;
-			var line = glyphTextViewMarkerService.GetVisibleLine(marker);
-			if (line == null)
-				return;
-			Debug.Assert(line.IsVisible());
-			var context = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
-			var popupContent = marker.Handler.GetPopupContent(context, marker);
-			if (popupContent != null)
-				AddPopupContent(line, marker, popupContent);
-		}
+		void IGlyphTextMarkerListener.OnAdded(IEnumerable<IGlyphTextMarkerImpl> markers) { }
 
 		void IGlyphTextMarkerListener.OnRemoved(IEnumerable<IGlyphTextMarkerImpl> markers) {
 			bool refresh = false;
