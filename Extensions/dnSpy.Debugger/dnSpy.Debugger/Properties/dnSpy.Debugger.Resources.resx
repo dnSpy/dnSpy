@@ -1719,4 +1719,7 @@ Are you sure you want to expand it?</value>
   <data name="SettingsCommand2" xml:space="preserve">
     <value>_Settings...</value>
   </data>
+  <data name="StartDebuggingCommand" xml:space="preserve">
+    <value>Start Debugging</value>
+  </data>
 </root>

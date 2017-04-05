@@ -57,9 +57,11 @@ namespace dnSpy.Debugger.DbgUI {
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 		}
 
-		public override bool CanStartWithoutDebugging => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename() != null;
+		public override string GetCurrentExecutableFilename() => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
+
+		public override bool CanStartWithoutDebugging => GetCurrentExecutableFilename() != null;
 		public override void StartWithoutDebugging() {
-			var filename = startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
+			var filename = GetCurrentExecutableFilename();
 			if (!File.Exists(filename))
 				return;
 			try {
@@ -151,9 +153,11 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public override bool CanToggleCreateBreakpoint => textViewBreakpointService.Value.CanToggleCreateBreakpoint;
 		public override void ToggleCreateBreakpoint() => textViewBreakpointService.Value.ToggleCreateBreakpoint();
+		public override ToggleCreateBreakpointKind GetToggleCreateBreakpointKind() => textViewBreakpointService.Value.GetToggleCreateBreakpointKind();
 
 		public override bool CanToggleEnableBreakpoint => textViewBreakpointService.Value.CanToggleEnableBreakpoint;
 		public override void ToggleEnableBreakpoint() => textViewBreakpointService.Value.ToggleEnableBreakpoint();
+		public override ToggleEnableBreakpointKind GetToggleEnableBreakpointKind() => textViewBreakpointService.Value.GetToggleEnableBreakpointKind();
 
 		public override bool CanDeleteAllBreakpoints => dbgCodeBreakpointsService.Value.Breakpoints.Length > 0;
 		public override void DeleteAllBreakpointsAskUser() {

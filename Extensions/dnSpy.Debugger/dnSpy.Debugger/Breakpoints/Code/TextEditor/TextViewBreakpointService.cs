@@ -33,8 +33,23 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		public abstract void ToggleCreateBreakpoint(ITextView textView, VirtualSnapshotPoint position);
 		public abstract bool CanToggleCreateBreakpoint { get; }
 		public abstract void ToggleCreateBreakpoint();
+		public abstract ToggleCreateBreakpointKind GetToggleCreateBreakpointKind();
 		public abstract bool CanToggleEnableBreakpoint { get; }
 		public abstract void ToggleEnableBreakpoint();
+		public abstract ToggleEnableBreakpointKind GetToggleEnableBreakpointKind();
+	}
+
+	enum ToggleCreateBreakpointKind {
+		None,
+		Add,
+		Delete,
+		Enable,
+	}
+
+	enum ToggleEnableBreakpointKind {
+		None,
+		Enable,
+		Disable,
 	}
 
 	[Export(typeof(TextViewBreakpointService))]
@@ -102,43 +117,84 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 
 		public override void ToggleCreateBreakpoint(ITextView textView, VirtualSnapshotPoint position) =>
-			ToggleCreateBreakpoint(GetTab(textView), position);
+			ToggleCreateBreakpoint(GetToggleCreateBreakpointInfo(GetTab(textView), position));
 
-		public override bool CanToggleCreateBreakpoint => GetTextView() != null;
-		public override void ToggleCreateBreakpoint() => ToggleCreateBreakpoint(documentTabService.Value.ActiveTab, null);
+		public override bool CanToggleCreateBreakpoint => GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null).kind != ToggleCreateBreakpointKind.None;
+		public override void ToggleCreateBreakpoint() => ToggleCreateBreakpoint(GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null));
+		public override ToggleCreateBreakpointKind GetToggleCreateBreakpointKind() => GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null).kind;
 
-		void ToggleCreateBreakpoint(IDocumentTab tab, VirtualSnapshotPoint? position) {
+		(ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgBreakpointLocation[] locations) GetToggleCreateBreakpointInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
 			var locations = GetLocations(tab, position);
 			var bps = locations == null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locations.Value);
 			if (bps.Length != 0) {
 				if (bps.All(a => a.IsEnabled))
-					dbgCodeBreakpointsService.Value.Remove(bps);
-				else {
-					dbgCodeBreakpointsService.Value.Modify(bps.Select(a => {
-						var newSettings = a.Settings;
-						newSettings.IsEnabled = true;
-						return new DbgCodeBreakpointAndSettings(a, newSettings);
-					}).ToArray());
-				}
+					return (ToggleCreateBreakpointKind.Delete, bps, Array.Empty<DbgBreakpointLocation>());
+				return (ToggleCreateBreakpointKind.Enable, bps, Array.Empty<DbgBreakpointLocation>());
 			}
 			else {
 				if (locations == null || locations.Value.Locations.Length == 0)
-					return;
-				dbgCodeBreakpointsService.Value.Add(locations.Value.Locations.Select(a => new DbgCodeBreakpointInfo(a, new DbgCodeBreakpointSettings() { IsEnabled = true })).ToArray());
+					return (ToggleCreateBreakpointKind.None, Array.Empty<DbgCodeBreakpoint>(), Array.Empty<DbgBreakpointLocation>());
+				return (ToggleCreateBreakpointKind.Add, Array.Empty<DbgCodeBreakpoint>(), locations.Value.Locations);
 			}
 		}
 
-		public override bool CanToggleEnableBreakpoint => GetTextView() != null;
-		public override void ToggleEnableBreakpoint() {
-			var bps = GetBreakpoints();
-			if (bps.Length == 0)
+		void ToggleCreateBreakpoint((ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgBreakpointLocation[] locations) info) {
+			switch (info.kind) {
+			case ToggleCreateBreakpointKind.Add:
+				dbgCodeBreakpointsService.Value.Add(info.locations.Select(a => new DbgCodeBreakpointInfo(a, new DbgCodeBreakpointSettings() { IsEnabled = true })).ToArray());
+				break;
+
+			case ToggleCreateBreakpointKind.Delete:
+				dbgCodeBreakpointsService.Value.Remove(info.breakpoints);
+				break;
+
+			case ToggleCreateBreakpointKind.Enable:
+				dbgCodeBreakpointsService.Value.Modify(info.breakpoints.Select(a => {
+					var newSettings = a.Settings;
+					newSettings.IsEnabled = true;
+					return new DbgCodeBreakpointAndSettings(a, newSettings);
+				}).ToArray());
+				break;
+
+			case ToggleCreateBreakpointKind.None:
+			default:
 				return;
-			bool newIsEnabled = !bps.All(a => a.IsEnabled);
-			dbgCodeBreakpointsService.Value.Modify(bps.Select(a => {
+			}
+		}
+
+		public override bool CanToggleEnableBreakpoint => GetToggleEnableBreakpointInfo().kind != ToggleEnableBreakpointKind.None;
+		public override void ToggleEnableBreakpoint() {
+			var info = GetToggleEnableBreakpointInfo();
+			bool newIsEnabled;
+			switch (info.kind) {
+			case ToggleEnableBreakpointKind.Enable:
+				newIsEnabled = true;
+				break;
+
+			case ToggleEnableBreakpointKind.Disable:
+				newIsEnabled = false;
+				break;
+
+			case ToggleEnableBreakpointKind.None:
+			default:
+				return;
+			}
+			dbgCodeBreakpointsService.Value.Modify(info.breakpoints.Select(a => {
 				var newSettings = a.Settings;
 				newSettings.IsEnabled = newIsEnabled;
 				return new DbgCodeBreakpointAndSettings(a, newSettings);
 			}).ToArray());
+		}
+
+		public override ToggleEnableBreakpointKind GetToggleEnableBreakpointKind() => GetToggleEnableBreakpointInfo().kind;
+
+		(ToggleEnableBreakpointKind kind, DbgCodeBreakpoint[] breakpoints) GetToggleEnableBreakpointInfo() {
+			var bps = GetBreakpoints();
+			if (bps.Length == 0)
+				return (ToggleEnableBreakpointKind.None, Array.Empty<DbgCodeBreakpoint>());
+			bool newIsEnabled = !bps.All(a => a.IsEnabled);
+			var kind = newIsEnabled ? ToggleEnableBreakpointKind.Enable : ToggleEnableBreakpointKind.Disable;
+			return (kind, bps);
 		}
 	}
 }

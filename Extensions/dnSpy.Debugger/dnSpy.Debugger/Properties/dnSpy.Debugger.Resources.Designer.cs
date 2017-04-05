@@ -4135,6 +4135,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start Debugging.
+        /// </summary>
+        public static string StartDebuggingCommand {
+            get {
+                return ResourceManager.GetString("StartDebuggingCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start Wit_hout Debugging.
         /// </summary>
         public static string StartWithoutDebuggingCommand {

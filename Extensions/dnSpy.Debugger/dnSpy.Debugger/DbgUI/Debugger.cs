@@ -17,11 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Debugger.Breakpoints.Code.TextEditor;
+
 namespace dnSpy.Debugger.DbgUI {
 	abstract class Debugger {
 		public abstract bool IsDebugging { get; }
 		public abstract bool CanStartWithoutDebugging { get; }
 		public abstract void StartWithoutDebugging();
+		public abstract string GetCurrentExecutableFilename();
 		public abstract bool CanDebugProgram { get; }
 		public abstract void DebugProgram();
 		public abstract bool CanAttachProgram { get; }
@@ -56,8 +59,10 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract void StepOutCurrentProcess();
 		public abstract bool CanToggleCreateBreakpoint { get; }
 		public abstract void ToggleCreateBreakpoint();
+		public abstract ToggleCreateBreakpointKind GetToggleCreateBreakpointKind();
 		public abstract bool CanToggleEnableBreakpoint { get; }
 		public abstract void ToggleEnableBreakpoint();
+		public abstract ToggleEnableBreakpointKind GetToggleEnableBreakpointKind();
 		public abstract bool CanDeleteAllBreakpoints { get; }
 		public abstract void DeleteAllBreakpointsAskUser();
 		public abstract bool CanEnableAllBreakpoints { get; }
