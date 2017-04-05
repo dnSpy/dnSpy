@@ -245,9 +245,8 @@ namespace dnSpy.Debugger.DbgUI {
 				: base(debugger, null) {
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
-			}
+			public override void Execute(IMenuItemContext context) => debugger.Value.DeleteAllBreakpointsAskUser();
+			public override bool IsVisible(IMenuItemContext context) => debugger.Value.CanDeleteAllBreakpoints;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:EnableAllBreakpointsCommand", Icon = DsImagesAttribute.EnableAllBreakpoints, Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 20)]
@@ -257,13 +256,8 @@ namespace dnSpy.Debugger.DbgUI {
 				: base(debugger, null) {
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return true;//TODO:
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
-			}
+			public override void Execute(IMenuItemContext context) => debugger.Value.EnableAllBreakpoints();
+			public override bool IsVisible(IMenuItemContext context) => debugger.Value.CanEnableAllBreakpoints;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:DisableAllBreakpointsCommand", Icon = DsImagesAttribute.DisableAllBreakpoints, Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 30)]
@@ -273,13 +267,8 @@ namespace dnSpy.Debugger.DbgUI {
 				: base(debugger, null) {
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return true;//TODO:
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
-			}
+			public override void Execute(IMenuItemContext context) => debugger.Value.DisableAllBreakpoints();
+			public override bool IsVisible(IMenuItemContext context) => debugger.Value.CanDisableAllBreakpoints;
 		}
 
 		abstract class DebugToolWindowMainMenuCommand : DebugMainMenuCommand {

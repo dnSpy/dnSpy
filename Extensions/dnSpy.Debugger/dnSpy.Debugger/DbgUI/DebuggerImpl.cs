@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -154,12 +155,25 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool CanToggleEnableBreakpoint => textViewBreakpointService.Value.CanToggleEnableBreakpoint;
 		public override void ToggleEnableBreakpoint() => textViewBreakpointService.Value.ToggleEnableBreakpoint();
 
-		public override bool CanClearAllBreakpoints => true;
-		public override void ClearAllBreakpointsAskUser() {
+		public override bool CanDeleteAllBreakpoints => dbgCodeBreakpointsService.Value.Breakpoints.Length > 0;
+		public override void DeleteAllBreakpointsAskUser() {
 			var res = messageBoxService.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), dnSpy_Debugger_Resources.AskDeleteAllBreakpoints, MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res != null && res != MsgBoxButton.Yes)
 				return;
 			dbgCodeBreakpointsService.Value.Clear();
+		}
+
+		public override bool CanEnableAllBreakpoints => dbgCodeBreakpointsService.Value.Breakpoints.Any(a => !a.IsEnabled);
+		public override void EnableAllBreakpoints() => EnableAllBreakpoints(true);
+		public override bool CanDisableAllBreakpoints => dbgCodeBreakpointsService.Value.Breakpoints.Any(a => a.IsEnabled);
+		public override void DisableAllBreakpoints() => EnableAllBreakpoints(false);
+
+		void EnableAllBreakpoints(bool enable) {
+			dbgCodeBreakpointsService.Value.Modify(dbgCodeBreakpointsService.Value.Breakpoints.Where(a => a.IsEnabled != enable).Select(a => {
+				var s = a.Settings;
+				s.IsEnabled = enable;
+				return new DbgCodeBreakpointAndSettings(a, s);
+			}).ToArray());
 		}
 
 		public override bool CanContinueOrDegbugProgram => CanContinue || CanDebugProgram;

@@ -58,8 +58,12 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract void ToggleCreateBreakpoint();
 		public abstract bool CanToggleEnableBreakpoint { get; }
 		public abstract void ToggleEnableBreakpoint();
-		public abstract bool CanClearAllBreakpoints { get; }
-		public abstract void ClearAllBreakpointsAskUser();
+		public abstract bool CanDeleteAllBreakpoints { get; }
+		public abstract void DeleteAllBreakpointsAskUser();
+		public abstract bool CanEnableAllBreakpoints { get; }
+		public abstract void EnableAllBreakpoints();
+		public abstract bool CanDisableAllBreakpoints { get; }
+		public abstract void DisableAllBreakpoints();
 
 		public abstract bool CanContinueOrDegbugProgram { get; }
 		public abstract void ContinueOrDegbugProgram();

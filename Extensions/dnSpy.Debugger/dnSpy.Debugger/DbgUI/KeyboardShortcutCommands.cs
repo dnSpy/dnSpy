@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DbgUI {
 		[ImportingConstructor]
 		KeyboardShortcutCommands(IWpfCommandService wpfCommandService, Lazy<Debugger> debugger) {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
-			cmds.Add(new RelayCommand(a => debugger.Value.ClearAllBreakpointsAskUser(), a => debugger.Value.CanClearAllBreakpoints), ModifierKeys.Control | ModifierKeys.Shift, Key.F9);
+			cmds.Add(new RelayCommand(a => debugger.Value.DeleteAllBreakpointsAskUser(), a => debugger.Value.CanDeleteAllBreakpoints), ModifierKeys.Control | ModifierKeys.Shift, Key.F9);
 			cmds.Add(new RelayCommand(a => debugger.Value.ToggleCreateBreakpoint(), a => debugger.Value.CanToggleCreateBreakpoint), ModifierKeys.None, Key.F9);
 			cmds.Add(new RelayCommand(a => debugger.Value.ToggleEnableBreakpoint(), a => debugger.Value.CanToggleEnableBreakpoint), ModifierKeys.Control, Key.F9);
 
