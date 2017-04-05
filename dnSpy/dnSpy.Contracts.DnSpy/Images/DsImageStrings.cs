@@ -241,7 +241,7 @@ namespace dnSpy.Contracts.Images {
 		public const string TracepointDisabled = nameof(TracepointDisabled);
 		public const string TracepointEnabled = nameof(TracepointEnabled);
 		public const string TracepointError = nameof(TracepointError);
-		public const string TracePointWarning = nameof(TracePointWarning);
+		public const string TracepointWarning = nameof(TracepointWarning);
 		public const string Type = nameof(Type);
 		public const string Undo = nameof(Undo);
 		public const string UndoCheckBoxList = nameof(UndoCheckBoxList);

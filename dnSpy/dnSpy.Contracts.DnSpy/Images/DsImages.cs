@@ -245,7 +245,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference TracepointDisabled { get; } = new ImageReference(assembly, DsImageStrings.TracepointDisabled);
 		public static ImageReference TracepointEnabled { get; } = new ImageReference(assembly, DsImageStrings.TracepointEnabled);
 		public static ImageReference TracepointError { get; } = new ImageReference(assembly, DsImageStrings.TracepointError);
-		public static ImageReference TracePointWarning { get; } = new ImageReference(assembly, DsImageStrings.TracePointWarning);
+		public static ImageReference TracepointWarning { get; } = new ImageReference(assembly, DsImageStrings.TracepointWarning);
 		public static ImageReference Type { get; } = new ImageReference(assembly, DsImageStrings.Type);
 		public static ImageReference Undo { get; } = new ImageReference(assembly, DsImageStrings.Undo);
 		public static ImageReference UndoCheckBoxList { get; } = new ImageReference(assembly, DsImageStrings.UndoCheckBoxList);

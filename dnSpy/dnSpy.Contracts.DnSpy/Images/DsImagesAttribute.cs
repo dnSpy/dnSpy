@@ -242,7 +242,7 @@ namespace dnSpy.Contracts.Images {
 		public const string TracepointDisabled = Prefix + DsImageStrings.TracepointDisabled;
 		public const string TracepointEnabled = Prefix + DsImageStrings.TracepointEnabled;
 		public const string TracepointError = Prefix + DsImageStrings.TracepointError;
-		public const string TracePointWarning = Prefix + DsImageStrings.TracePointWarning;
+		public const string TracepointWarning = Prefix + DsImageStrings.TracepointWarning;
 		public const string Type = Prefix + DsImageStrings.Type;
 		public const string Undo = Prefix + DsImageStrings.Undo;
 		public const string UndoCheckBoxList = Prefix + DsImageStrings.UndoCheckBoxList;
