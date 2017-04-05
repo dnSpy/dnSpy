@@ -421,6 +421,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Break and print message &apos;{0}&apos;.
+        /// </summary>
+        public static string Breakpoint_Tracepoint_BreakPrintMessage {
+            get {
+                return ResourceManager.GetString("Breakpoint_Tracepoint_BreakPrintMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Break.
         /// </summary>
         public static string Breakpoint_Tracepoint_NoTraceMessage {

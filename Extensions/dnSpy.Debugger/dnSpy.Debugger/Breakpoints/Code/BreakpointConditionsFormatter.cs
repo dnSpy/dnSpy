@@ -101,8 +101,10 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				throw new ArgumentNullException(nameof(output));
 			if (trace == null)
 				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_NoTraceMessage);
-			else
+			else if (trace.Value.Continue)
 				WriteArgumentAndText(output, BoxedTextColor.String, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_PrintMessage, trace.Value.Message);
+			else
+				WriteArgumentAndText(output, BoxedTextColor.String, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_BreakPrintMessage, trace.Value.Message);
 		}
 
 		void WriteArgumentAndText(ITextColorWriter output, object valueColor, string formatString, string formatValue) =>

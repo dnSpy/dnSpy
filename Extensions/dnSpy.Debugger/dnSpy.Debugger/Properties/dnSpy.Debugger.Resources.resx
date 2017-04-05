@@ -1722,4 +1722,7 @@ Are you sure you want to expand it?</value>
   <data name="StartDebuggingCommand" xml:space="preserve">
     <value>Start Debugging</value>
   </data>
+  <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
+    <value>Break and print message '{0}'</value>
+  </data>
 </root>
