@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
@@ -55,14 +56,14 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgCodeBreakpoint>> BreakpointsChanged;
 
 		/// <summary>
-		/// Adds a breakpoint
+		/// Adds a breakpoint. If the breakpoint already exists, null is returned.
 		/// </summary>
 		/// <param name="breakpoint">Breakpoint info</param>
 		/// <returns></returns>
-		public DbgCodeBreakpoint Add(DbgCodeBreakpointInfo breakpoint) => Add(new[] { breakpoint })[0];
+		public DbgCodeBreakpoint Add(DbgCodeBreakpointInfo breakpoint) => Add(new[] { breakpoint }).FirstOrDefault();
 
 		/// <summary>
-		/// Adds breakpoints
+		/// Adds breakpoints. Duplicate breakpoints are ignored.
 		/// </summary>
 		/// <param name="breakpoints">Breakpoints</param>
 		/// <returns></returns>
@@ -160,7 +161,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Breakpoint location
 		/// </summary>
-		public DbgBreakpointLocation BreakpointLocation { get; }
+		public DbgBreakpointLocation Location { get; }
 
 		/// <summary>
 		/// Breakpoint settings
@@ -170,10 +171,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="breakpointLocation">Breakpoint location</param>
+		/// <param name="location">Breakpoint location</param>
 		/// <param name="settings">Breakpoint settings</param>
-		public DbgCodeBreakpointInfo(DbgBreakpointLocation breakpointLocation, DbgCodeBreakpointSettings settings) {
-			BreakpointLocation = breakpointLocation ?? throw new ArgumentNullException(nameof(breakpointLocation));
+		public DbgCodeBreakpointInfo(DbgBreakpointLocation location, DbgCodeBreakpointSettings settings) {
+			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Settings = settings;
 		}
 	}

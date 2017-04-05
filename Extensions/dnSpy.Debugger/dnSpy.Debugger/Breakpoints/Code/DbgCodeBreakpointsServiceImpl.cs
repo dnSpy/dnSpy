@@ -23,7 +23,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Impl;
@@ -33,6 +32,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	sealed class DbgCodeBreakpointsServiceImpl : DbgCodeBreakpointsService {
 		readonly object lockObj;
 		readonly HashSet<DbgCodeBreakpointImpl> breakpoints;
+		readonly Dictionary<DbgBreakpointLocation, DbgCodeBreakpointImpl> locationToBreakpoint;
 		readonly DbgDispatcher dbgDispatcher;
 		int breakpointId;
 
@@ -42,8 +42,9 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		DbgCodeBreakpointsServiceImpl(DbgDispatcher dbgDispatcher, [ImportMany] IEnumerable<Lazy<IDbgCodeBreakpointsServiceListener>> dbgCodeBreakpointsServiceListener) {
 			lockObj = new object();
 			breakpoints = new HashSet<DbgCodeBreakpointImpl>();
+			locationToBreakpoint = new Dictionary<DbgBreakpointLocation, DbgCodeBreakpointImpl>();
 			this.dbgDispatcher = dbgDispatcher;
-			breakpointId = -1;
+			breakpointId = 0;
 
 			foreach (var lz in dbgCodeBreakpointsServiceListener)
 				lz.Value.Initialize(this);
@@ -93,29 +94,49 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		public override DbgCodeBreakpoint[] Add(DbgCodeBreakpointInfo[] breakpoints) {
 			if (breakpoints == null)
 				throw new ArgumentNullException(nameof(breakpoints));
-			// Return a copy since the caller could modify the array
-			var bps = new DbgCodeBreakpoint[breakpoints.Length];
-			var bpImpls = new DbgCodeBreakpointImpl[breakpoints.Length];
-			for (int i = 0; i < bps.Length; i++) {
-				var bp = new DbgCodeBreakpointImpl(this, Interlocked.Increment(ref breakpointId), breakpoints[i].BreakpointLocation, breakpoints[i].Settings);
-				bps[i] = bp;
-				bpImpls[i] = bp;
+			var bpImpls = new List<DbgCodeBreakpointImpl>(breakpoints.Length);
+			List<DbgObject> objsToClose = null;
+			lock (lockObj) {
+				for (int i = 0; i < breakpoints.Length; i++) {
+					var location = breakpoints[i].Location;
+					if (locationToBreakpoint.ContainsKey(location)) {
+						if (objsToClose == null)
+							objsToClose = new List<DbgObject>();
+						objsToClose.Add(location);
+					}
+					else {
+						var bp = new DbgCodeBreakpointImpl(this, breakpointId++, location, breakpoints[i].Settings);
+						bpImpls.Add(bp);
+					}
+				}
+				Dbg(() => AddCore(bpImpls, objsToClose));
 			}
-			Dbg(() => AddCore(bpImpls));
-			return bps;
+			return bpImpls.ToArray();
 		}
 
-		void AddCore(DbgCodeBreakpointImpl[] breakpoints) {
+		void AddCore(List<DbgCodeBreakpointImpl> breakpoints, List<DbgObject> objsToClose) {
 			dbgDispatcher.VerifyAccess();
-			var added = new List<DbgCodeBreakpoint>(breakpoints.Length);
+			var added = new List<DbgCodeBreakpoint>(breakpoints.Count);
 			lock (lockObj) {
 				foreach (var bp in breakpoints) {
 					Debug.Assert(!this.breakpoints.Contains(bp));
 					if (this.breakpoints.Contains(bp))
 						continue;
-					added.Add(bp);
-					this.breakpoints.Add(bp);
+					if (locationToBreakpoint.ContainsKey(bp.Location)) {
+						if (objsToClose == null)
+							objsToClose = new List<DbgObject>();
+						objsToClose.Add(bp);
+					}
+					else {
+						added.Add(bp);
+						this.breakpoints.Add(bp);
+						locationToBreakpoint.Add(bp.Location, bp);
+					}
 				}
+			}
+			if (objsToClose != null) {
+				foreach (var obj in objsToClose)
+					obj.Close(dbgDispatcher.DispatcherThread);
 			}
 			if (added.Count > 0)
 				BreakpointsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgCodeBreakpoint>(added, added: true));
@@ -141,6 +162,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 						continue;
 					removed.Add(bpImpl);
 					this.breakpoints.Remove(bpImpl);
+					bool b = locationToBreakpoint.Remove(bpImpl.Location);
+					Debug.Assert(b);
 				}
 			}
 			if (removed.Count > 0) {
@@ -157,6 +180,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			lock (lockObj) {
 				removed = breakpoints.ToArray();
 				breakpoints.Clear();
+				locationToBreakpoint.Clear();
 			}
 			if (removed.Length > 0) {
 				BreakpointsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgCodeBreakpoint>(removed, added: false));

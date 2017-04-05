@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 	/// </summary>
 	public abstract class DbgDotNetBreakpointLocationFactory {
 		/// <summary>
-		/// Creates an enabled breakpoint
+		/// Creates an enabled breakpoint. If there's already a breakpoint at the location, null is returned.
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of a method within the module</param>
@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 			Create(module, token, offset, new DbgCodeBreakpointSettings { IsEnabled = true });
 
 		/// <summary>
-		/// Creates an enabled tracepoint
+		/// Creates an enabled tracepoint. If there's already a breakpoint at the location, null is returned.
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of a method within the module</param>
