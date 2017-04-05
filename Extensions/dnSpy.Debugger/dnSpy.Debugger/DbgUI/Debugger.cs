@@ -40,6 +40,8 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract void Restart();
 		public abstract bool CanShowNextStatement { get; }
 		public abstract void ShowNextStatement();
+		public abstract bool CanSetNextStatement { get; }
+		public abstract void SetNextStatement();
 		public abstract bool CanStepInto { get; }
 		public abstract void StepInto();
 		public abstract bool CanStepOver { get; }
@@ -54,5 +56,16 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract void StepOutCurrentProcess();
 		public abstract bool CanToggleCreateBreakpoint { get; }
 		public abstract void ToggleCreateBreakpoint();
+		public abstract bool CanToggleEnableBreakpoint { get; }
+		public abstract void ToggleEnableBreakpoint();
+		public abstract bool CanClearAllBreakpoints { get; }
+		public abstract void ClearAllBreakpointsAskUser();
+
+		public abstract bool CanContinueOrDegbugProgram { get; }
+		public abstract void ContinueOrDegbugProgram();
+		public abstract bool CanStepIntoOrDegbugProgram { get; }
+		public abstract void StepIntoOrDegbugProgram();
+		public abstract bool CanStepOverOrDegbugProgram { get; }
+		public abstract void StepOverOrDegbugProgram();
 	}
 }

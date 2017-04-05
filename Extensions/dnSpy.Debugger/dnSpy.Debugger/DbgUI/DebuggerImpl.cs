@@ -26,6 +26,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.Properties;
@@ -40,17 +41,19 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider;
 		readonly Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog;
 		readonly Lazy<TextViewBreakpointService> textViewBreakpointService;
+		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(IMessageBoxService messageBoxService, IAppWindow appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService) {
+		DebuggerImpl(IMessageBoxService messageBoxService, IAppWindow appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) {
 			this.messageBoxService = messageBoxService;
 			this.appWindow = appWindow;
 			this.dbgManager = dbgManager;
 			this.startDebuggingOptionsProvider = startDebuggingOptionsProvider;
 			this.showAttachToProcessDialog = showAttachToProcessDialog;
 			this.textViewBreakpointService = textViewBreakpointService;
+			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 		}
 
 		public override bool CanStartWithoutDebugging => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename() != null;
@@ -110,6 +113,11 @@ namespace dnSpy.Debugger.DbgUI {
 			//TODO:
 		}
 
+		public override bool CanSetNextStatement => CanExecutePauseCommand;
+		public override void SetNextStatement() {
+			//TODO:
+		}
+
 		public override bool CanStepInto => CanExecutePauseCommand;
 		public override void StepInto() {
 			//TODO:
@@ -142,6 +150,41 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public override bool CanToggleCreateBreakpoint => textViewBreakpointService.Value.CanToggleCreateBreakpoint;
 		public override void ToggleCreateBreakpoint() => textViewBreakpointService.Value.ToggleCreateBreakpoint();
+
+		public override bool CanToggleEnableBreakpoint => textViewBreakpointService.Value.CanToggleEnableBreakpoint;
+		public override void ToggleEnableBreakpoint() => textViewBreakpointService.Value.ToggleEnableBreakpoint();
+
+		public override bool CanClearAllBreakpoints => true;
+		public override void ClearAllBreakpointsAskUser() {
+			var res = messageBoxService.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), dnSpy_Debugger_Resources.AskDeleteAllBreakpoints, MsgBoxButton.Yes | MsgBoxButton.No);
+			if (res != null && res != MsgBoxButton.Yes)
+				return;
+			dbgCodeBreakpointsService.Value.Clear();
+		}
+
+		public override bool CanContinueOrDegbugProgram => CanContinue || CanDebugProgram;
+		public override void ContinueOrDegbugProgram() {
+			if (CanContinue)
+				Continue();
+			else if (CanDebugProgram)
+				DebugProgram();
+		}
+
+		public override bool CanStepIntoOrDegbugProgram => CanStepInto || CanDebugProgram;
+		public override void StepIntoOrDegbugProgram() {
+			if (CanStepInto)
+				StepInto();
+			else if (CanDebugProgram)
+				DebugProgram();
+		}
+
+		public override bool CanStepOverOrDegbugProgram => CanStepOver || CanDebugProgram;
+		public override void StepOverOrDegbugProgram() {
+			if (CanStepOver)
+				StepOver();
+			else if (CanDebugProgram)
+				DebugProgram();
+		}
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
