@@ -278,6 +278,18 @@ namespace dnSpy.Contracts.Text {
 		DisabledAdvancedBreakpointStatement,
 		DisabledAdvancedBreakpointStatementMarker,
 		SelectedDisabledAdvancedBreakpointStatementMarker,
+		BreakpointWarningStatement,
+		BreakpointWarningStatementMarker,
+		SelectedBreakpointWarningStatementMarker,
+		BreakpointErrorStatement,
+		BreakpointErrorStatementMarker,
+		SelectedBreakpointErrorStatementMarker,
+		AdvancedBreakpointWarningStatement,
+		AdvancedBreakpointWarningStatementMarker,
+		SelectedAdvancedBreakpointWarningStatementMarker,
+		AdvancedBreakpointErrorStatement,
+		AdvancedBreakpointErrorStatementMarker,
+		SelectedAdvancedBreakpointErrorStatementMarker,
 		TracepointStatement,
 		TracepointStatementMarker,
 		SelectedTracepointStatementMarker,
@@ -290,6 +302,18 @@ namespace dnSpy.Contracts.Text {
 		DisabledAdvancedTracepointStatement,
 		DisabledAdvancedTracepointStatementMarker,
 		SelectedDisabledAdvancedTracepointStatementMarker,
+		TracepointWarningStatement,
+		TracepointWarningStatementMarker,
+		SelectedTracepointWarningStatementMarker,
+		TracepointErrorStatement,
+		TracepointErrorStatementMarker,
+		SelectedTracepointErrorStatementMarker,
+		AdvancedTracepointWarningStatement,
+		AdvancedTracepointWarningStatementMarker,
+		SelectedAdvancedTracepointWarningStatementMarker,
+		AdvancedTracepointErrorStatement,
+		AdvancedTracepointErrorStatementMarker,
+		SelectedAdvancedTracepointErrorStatementMarker,
 
 		/// <summary>
 		/// Must be last
@@ -554,6 +578,18 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object DisabledAdvancedBreakpointStatement = TextColor.DisabledAdvancedBreakpointStatement;
 		public static readonly object DisabledAdvancedBreakpointStatementMarker = TextColor.DisabledAdvancedBreakpointStatementMarker;
 		public static readonly object SelectedDisabledAdvancedBreakpointStatementMarker = TextColor.SelectedDisabledAdvancedBreakpointStatementMarker;
+		public static readonly object BreakpointWarningStatement = TextColor.BreakpointWarningStatement;
+		public static readonly object BreakpointWarningStatementMarker = TextColor.BreakpointWarningStatementMarker;
+		public static readonly object SelectedBreakpointWarningStatementMarker = TextColor.SelectedBreakpointWarningStatementMarker;
+		public static readonly object BreakpointErrorStatement = TextColor.BreakpointErrorStatement;
+		public static readonly object BreakpointErrorStatementMarker = TextColor.BreakpointErrorStatementMarker;
+		public static readonly object SelectedBreakpointErrorStatementMarker = TextColor.SelectedBreakpointErrorStatementMarker;
+		public static readonly object AdvancedBreakpointWarningStatement = TextColor.AdvancedBreakpointWarningStatement;
+		public static readonly object AdvancedBreakpointWarningStatementMarker = TextColor.AdvancedBreakpointWarningStatementMarker;
+		public static readonly object SelectedAdvancedBreakpointWarningStatementMarker = TextColor.SelectedAdvancedBreakpointWarningStatementMarker;
+		public static readonly object AdvancedBreakpointErrorStatement = TextColor.AdvancedBreakpointErrorStatement;
+		public static readonly object AdvancedBreakpointErrorStatementMarker = TextColor.AdvancedBreakpointErrorStatementMarker;
+		public static readonly object SelectedAdvancedBreakpointErrorStatementMarker = TextColor.SelectedAdvancedBreakpointErrorStatementMarker;
 		public static readonly object TracepointStatement = TextColor.TracepointStatement;
 		public static readonly object TracepointStatementMarker = TextColor.TracepointStatementMarker;
 		public static readonly object SelectedTracepointStatementMarker = TextColor.SelectedTracepointStatementMarker;
@@ -566,6 +602,18 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object DisabledAdvancedTracepointStatement = TextColor.DisabledAdvancedTracepointStatement;
 		public static readonly object DisabledAdvancedTracepointStatementMarker = TextColor.DisabledAdvancedTracepointStatementMarker;
 		public static readonly object SelectedDisabledAdvancedTracepointStatementMarker = TextColor.SelectedDisabledAdvancedTracepointStatementMarker;
+		public static readonly object TracepointWarningStatement = TextColor.TracepointWarningStatement;
+		public static readonly object TracepointWarningStatementMarker = TextColor.TracepointWarningStatementMarker;
+		public static readonly object SelectedTracepointWarningStatementMarker = TextColor.SelectedTracepointWarningStatementMarker;
+		public static readonly object TracepointErrorStatement = TextColor.TracepointErrorStatement;
+		public static readonly object TracepointErrorStatementMarker = TextColor.TracepointErrorStatementMarker;
+		public static readonly object SelectedTracepointErrorStatementMarker = TextColor.SelectedTracepointErrorStatementMarker;
+		public static readonly object AdvancedTracepointWarningStatement = TextColor.AdvancedTracepointWarningStatement;
+		public static readonly object AdvancedTracepointWarningStatementMarker = TextColor.AdvancedTracepointWarningStatementMarker;
+		public static readonly object SelectedAdvancedTracepointWarningStatementMarker = TextColor.SelectedAdvancedTracepointWarningStatementMarker;
+		public static readonly object AdvancedTracepointErrorStatement = TextColor.AdvancedTracepointErrorStatement;
+		public static readonly object AdvancedTracepointErrorStatementMarker = TextColor.AdvancedTracepointErrorStatementMarker;
+		public static readonly object SelectedAdvancedTracepointErrorStatementMarker = TextColor.SelectedAdvancedTracepointErrorStatementMarker;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -832,6 +880,18 @@ namespace dnSpy.Contracts.Text {
 			DisabledAdvancedBreakpointStatement,
 			DisabledAdvancedBreakpointStatementMarker,
 			SelectedDisabledAdvancedBreakpointStatementMarker,
+			BreakpointWarningStatement,
+			BreakpointWarningStatementMarker,
+			SelectedBreakpointWarningStatementMarker,
+			BreakpointErrorStatement,
+			BreakpointErrorStatementMarker,
+			SelectedBreakpointErrorStatementMarker,
+			AdvancedBreakpointWarningStatement,
+			AdvancedBreakpointWarningStatementMarker,
+			SelectedAdvancedBreakpointWarningStatementMarker,
+			AdvancedBreakpointErrorStatement,
+			AdvancedBreakpointErrorStatementMarker,
+			SelectedAdvancedBreakpointErrorStatementMarker,
 			TracepointStatement,
 			TracepointStatementMarker,
 			SelectedTracepointStatementMarker,
@@ -844,6 +904,18 @@ namespace dnSpy.Contracts.Text {
 			DisabledAdvancedTracepointStatement,
 			DisabledAdvancedTracepointStatementMarker,
 			SelectedDisabledAdvancedTracepointStatementMarker,
+			TracepointWarningStatement,
+			TracepointWarningStatementMarker,
+			SelectedTracepointWarningStatementMarker,
+			TracepointErrorStatement,
+			TracepointErrorStatementMarker,
+			SelectedTracepointErrorStatementMarker,
+			AdvancedTracepointWarningStatement,
+			AdvancedTracepointWarningStatementMarker,
+			SelectedAdvancedTracepointWarningStatementMarker,
+			AdvancedTracepointErrorStatement,
+			AdvancedTracepointErrorStatementMarker,
+			SelectedAdvancedTracepointErrorStatementMarker,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

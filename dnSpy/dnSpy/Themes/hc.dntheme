@@ -20,6 +20,18 @@
 		<color name="disabledadvancedbreakpointstatement" fg="#FF800000" />
 		<color name="disabledadvancedbreakpointstatementmarker" bg="#FFFFFFFF" />
 		<color name="selecteddisabledadvancedbreakpointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="breakpointwarningstatement" fg="#FFFFFFFF" />
+		<color name="breakpointwarningstatementmarker" bg="#FF963A46" />
+		<color name="selectedbreakpointwarningstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
+		<color name="breakpointerrorstatement" fg="#FFFFDBA3" />
+		<color name="breakpointerrorstatementmarker" bg="#FF963A46" />
+		<color name="selectedbreakpointerrorstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
+		<color name="advancedbreakpointwarningstatement" fg="#FFFFFFFF" />
+		<color name="advancedbreakpointwarningstatementmarker" bg="#FF963A46" />
+		<color name="selectedadvancedbreakpointwarningstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
+		<color name="advancedbreakpointerrorstatement" fg="#FFFFDBA3" />
+		<color name="advancedbreakpointerrorstatementmarker" bg="#FF963A46" />
+		<color name="selectedadvancedbreakpointerrorstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
 		<color name="tracepointstatement" fg="#FF800000" />
 		<color name="tracepointstatementmarker" bg="#FFFFFFFF" />
 		<color name="selectedtracepointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
@@ -32,6 +44,18 @@
 		<color name="disabledadvancedtracepointstatement" fg="#FF800000" />
 		<color name="disabledadvancedtracepointstatementmarker" bg="#FFFFFFFF" />
 		<color name="selecteddisabledadvancedtracepointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="tracepointwarningstatement" fg="#FF800000" />
+		<color name="tracepointwarningstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedtracepointwarningstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="tracepointerrorstatement" fg="#FF800000" />
+		<color name="tracepointerrorstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedtracepointerrorstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="advancedtracepointwarningstatement" fg="#FF800000" />
+		<color name="advancedtracepointwarningstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedadvancedtracepointwarningstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="advancedtracepointerrorstatement" fg="#FF800000" />
+		<color name="advancedtracepointerrorstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedadvancedtracepointerrorstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
 		<color name="xmldoctooltipheader" italics="true" bold="true" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="repllinenumberinput1" fg="#FFFFFFFF" />

@@ -118,6 +118,18 @@
 		<color name="disabledadvancedbreakpointstatement" fg="#FF800000" />
 		<color name="disabledadvancedbreakpointstatementmarker" bg="#FFFFFFFF" />
 		<color name="selecteddisabledadvancedbreakpointstatementmarker" bg="#FFFFFFFF" fg="#FF888888" />
+		<color name="breakpointwarningstatement" fg="#FFFFFFFF" />
+		<color name="breakpointwarningstatementmarker" bg="#FF8C2F2F" />
+		<color name="selectedbreakpointwarningstatementmarker" bg="#FF8C2F2F" fg="#FF888888" />
+		<color name="breakpointerrorstatement" fg="#FFFFDBA3" />
+		<color name="breakpointerrorstatementmarker" bg="#FF8C2F2F" />
+		<color name="selectedbreakpointerrorstatementmarker" bg="#FF8C2F2F" fg="#FF888888" />
+		<color name="advancedbreakpointwarningstatement" fg="#FFFFFFFF" />
+		<color name="advancedbreakpointwarningstatementmarker" bg="#FF8C2F2F" />
+		<color name="selectedadvancedbreakpointwarningstatementmarker" bg="#FF8C2F2F" fg="#FF888888" />
+		<color name="advancedbreakpointerrorstatement" fg="#FFFFDBA3" />
+		<color name="advancedbreakpointerrorstatementmarker" bg="#FF8C2F2F" />
+		<color name="selectedadvancedbreakpointerrorstatementmarker" bg="#FF8C2F2F" fg="#FF888888" />
 		<color name="tracepointstatement" fg="#FFD7BA7D" />
 		<color name="tracepointstatementmarker" bg="#FF000000" />
 		<color name="selectedtracepointstatementmarker" bg="#FF000000" fg="#FF888888" />
@@ -130,6 +142,18 @@
 		<color name="disabledadvancedtracepointstatement" fg="#FFD85050" />
 		<color name="disabledadvancedtracepointstatementmarker" bg="#FF000000" />
 		<color name="selecteddisabledadvancedtracepointstatementmarker" bg="#FF000000" fg="#FF888888" />
+		<color name="tracepointwarningstatement" fg="#FF95DB7D" />
+		<color name="tracepointwarningstatementmarker" bg="#FF000000" />
+		<color name="selectedtracepointwarningstatementmarker" bg="#FF000000" fg="#FF888888" />
+		<color name="tracepointerrorstatement" fg="#FFD85050" />
+		<color name="tracepointerrorstatementmarker" bg="#FF000000" />
+		<color name="selectedtracepointerrorstatementmarker" bg="#FF000000" fg="#FF888888" />
+		<color name="advancedtracepointwarningstatement" fg="#FF95DB7D" />
+		<color name="advancedtracepointwarningstatementmarker" bg="#FF000000" />
+		<color name="selectedadvancedtracepointwarningstatementmarker" bg="#FF000000" fg="#FF888888" />
+		<color name="advancedtracepointerrorstatement" fg="#FF95DB7D" />
+		<color name="advancedtracepointerrorstatementmarker" bg="#FF000000" />
+		<color name="selectedadvancedtracepointerrorstatementmarker" bg="#FF000000" fg="#FF888888" />
 		<color name="currentline" fg="#464646" />
 		<color name="currentlinenofocus" fg="#464646" />
 		<color name="hextext" fg="#DCDCDC" bg="#1E1E1E" />

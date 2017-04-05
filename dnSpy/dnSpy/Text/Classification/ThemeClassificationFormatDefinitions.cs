@@ -877,6 +877,66 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition SelectedDisabledAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BreakpointWarningStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BreakpointWarningStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BreakpointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BreakpointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedBreakpointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedBreakpointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BreakpointErrorStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BreakpointErrorStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BreakpointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BreakpointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedBreakpointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedBreakpointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointWarningStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointWarningStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedBreakpointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedBreakpointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointErrorStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointErrorStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedBreakpointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedBreakpointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.TracepointStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition TracepointStatementClassificationTypeDefinition;
@@ -935,6 +995,66 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.SelectedDisabledAdvancedTracepointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition SelectedDisabledAdvancedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointWarningStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointWarningStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedTracepointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedTracepointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointErrorStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointErrorStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedTracepointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedTracepointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointWarningStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointWarningStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedTracepointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedTracepointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointErrorStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointErrorStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedTracepointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedTracepointErrorStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CurrentLine)]
@@ -2849,6 +2969,114 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointWarningStatement)]
+		[Name(ThemeClassificationTypeNameKeys.BreakpointWarningStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class BreakpointWarningStatement : ThemeClassificationFormatDefinition {
+			BreakpointWarningStatement() : base(TextColor.BreakpointWarningStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.BreakpointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BreakpointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			BreakpointWarningStatementMarker() : base(TextColor.BreakpointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedBreakpointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedBreakpointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedBreakpointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedBreakpointWarningStatementMarker() : base(TextColor.SelectedBreakpointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointErrorStatement)]
+		[Name(ThemeClassificationTypeNameKeys.BreakpointErrorStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class BreakpointErrorStatement : ThemeClassificationFormatDefinition {
+			BreakpointErrorStatement() : base(TextColor.BreakpointErrorStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.BreakpointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BreakpointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			BreakpointErrorStatementMarker() : base(TextColor.BreakpointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedBreakpointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedBreakpointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedBreakpointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedBreakpointErrorStatementMarker() : base(TextColor.SelectedBreakpointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointWarningStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointWarningStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedBreakpointWarningStatement : ThemeClassificationFormatDefinition {
+			AdvancedBreakpointWarningStatement() : base(TextColor.AdvancedBreakpointWarningStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedBreakpointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedBreakpointWarningStatementMarker() : base(TextColor.AdvancedBreakpointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedBreakpointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedBreakpointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedBreakpointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedBreakpointWarningStatementMarker() : base(TextColor.SelectedAdvancedBreakpointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointErrorStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointErrorStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedBreakpointErrorStatement : ThemeClassificationFormatDefinition {
+			AdvancedBreakpointErrorStatement() : base(TextColor.AdvancedBreakpointErrorStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedBreakpointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedBreakpointErrorStatementMarker() : base(TextColor.AdvancedBreakpointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedBreakpointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedBreakpointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedBreakpointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedBreakpointErrorStatementMarker() : base(TextColor.SelectedAdvancedBreakpointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointStatement)]
 		[Name(ThemeClassificationTypeNameKeys.TracepointStatement)]
 		[UserVisible(true)]
@@ -2954,6 +3182,114 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class SelectedDisabledAdvancedTracepointStatementMarker : ThemeMarkerFormatDefinition {
 			SelectedDisabledAdvancedTracepointStatementMarker() : base(TextColor.SelectedDisabledAdvancedTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointWarningStatement)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointWarningStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class TracepointWarningStatement : ThemeClassificationFormatDefinition {
+			TracepointWarningStatement() : base(TextColor.TracepointWarningStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class TracepointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			TracepointWarningStatementMarker() : base(TextColor.TracepointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedTracepointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedTracepointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedTracepointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedTracepointWarningStatementMarker() : base(TextColor.SelectedTracepointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointErrorStatement)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointErrorStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class TracepointErrorStatement : ThemeClassificationFormatDefinition {
+			TracepointErrorStatement() : base(TextColor.TracepointErrorStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class TracepointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			TracepointErrorStatementMarker() : base(TextColor.TracepointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedTracepointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedTracepointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedTracepointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedTracepointErrorStatementMarker() : base(TextColor.SelectedTracepointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointWarningStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointWarningStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedTracepointWarningStatement : ThemeClassificationFormatDefinition {
+			AdvancedTracepointWarningStatement() : base(TextColor.AdvancedTracepointWarningStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedTracepointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedTracepointWarningStatementMarker() : base(TextColor.AdvancedTracepointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedTracepointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedTracepointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedTracepointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedTracepointWarningStatementMarker() : base(TextColor.SelectedAdvancedTracepointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointErrorStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointErrorStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedTracepointErrorStatement : ThemeClassificationFormatDefinition {
+			AdvancedTracepointErrorStatement() : base(TextColor.AdvancedTracepointErrorStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedTracepointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedTracepointErrorStatementMarker() : base(TextColor.AdvancedTracepointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedTracepointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedTracepointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedTracepointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedTracepointErrorStatementMarker() : base(TextColor.SelectedAdvancedTracepointErrorStatementMarker) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

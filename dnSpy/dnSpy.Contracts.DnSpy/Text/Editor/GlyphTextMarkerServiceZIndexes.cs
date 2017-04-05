@@ -33,39 +33,79 @@ namespace dnSpy.Contracts.Text.Editor {
 		public const int DisabledBreakpoint = 2000;
 
 		/// <summary>
+		/// (Debugger) Z-index of advanced disabled breakpoints
+		/// </summary>
+		public const int DisabledAdvancedBreakpoint = 2010;
+
+		/// <summary>
 		/// (Debugger) Z-index of enabled breakpoints
 		/// </summary>
 		public const int EnabledBreakpoint = 2500;
 
 		/// <summary>
-		/// (Debugger) Z-index of advanced disabled breakpoints
-		/// </summary>
-		public const int DisabledAdvancedBreakpoint = 2600;
-
-		/// <summary>
 		/// (Debugger) Z-index of advanced enabled breakpoints
 		/// </summary>
-		public const int EnabledAdvancedBreakpoint = 2610;
+		public const int EnabledAdvancedBreakpoint = 2530;
+
+		/// <summary>
+		/// (Debugger) Z-index of breakpoints with warnings
+		/// </summary>
+		public const int BreakpointWarning = 2540;
+
+		/// <summary>
+		/// (Debugger) Z-index of breakpoints with errors
+		/// </summary>
+		public const int BreakpointError = 2550;
+
+		/// <summary>
+		/// (Debugger) Z-index of advanced breakpoints with warnings
+		/// </summary>
+		public const int AdvancedBreakpointWarning = 2560;
+
+		/// <summary>
+		/// (Debugger) Z-index of advanced breakpoints with errors
+		/// </summary>
+		public const int AdvancedBreakpointError = 2570;
 
 		/// <summary>
 		/// (Debugger) Z-index of disabled tracepionts
 		/// </summary>
-		public const int DisabledTracepoint = 2620;
-
-		/// <summary>
-		/// (Debugger) Z-index of enabled tracepoints
-		/// </summary>
-		public const int EnabledTracepoint = 2630;
+		public const int DisabledTracepoint = 2600;
 
 		/// <summary>
 		/// (Debugger) Z-index of advanced disabled tracepoints
 		/// </summary>
-		public const int DisabledAdvancedTracepoint = 2640;
+		public const int DisabledAdvancedTracepoint = 2610;
+
+		/// <summary>
+		/// (Debugger) Z-index of enabled tracepoints
+		/// </summary>
+		public const int EnabledTracepoint = 2620;
 
 		/// <summary>
 		/// (Debugger) Z-index of advanced enabled tracepoints
 		/// </summary>
-		public const int EnabledAdvancedTracepoint = 2650;
+		public const int EnabledAdvancedTracepoint = 2630;
+
+		/// <summary>
+		/// (Debugger) Z-index of tracepoints with warnings
+		/// </summary>
+		public const int TracepointWarning = 2640;
+
+		/// <summary>
+		/// (Debugger) Z-index of tracepoints with errors
+		/// </summary>
+		public const int TracepointError = 2650;
+
+		/// <summary>
+		/// (Debugger) Z-index of advanced tracepoints with warnings
+		/// </summary>
+		public const int AdvancedTracepointWarning = 2660;
+
+		/// <summary>
+		/// (Debugger) Z-index of advanced tracepoints with errors
+		/// </summary>
+		public const int AdvancedTracepointError = 2670;
 
 		/// <summary>
 		/// (Debugger) Z-index of current statement
