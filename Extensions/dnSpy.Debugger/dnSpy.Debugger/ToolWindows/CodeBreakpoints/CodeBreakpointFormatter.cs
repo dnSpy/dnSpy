@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
 
@@ -31,6 +32,21 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		CodeBreakpointFormatter() { }
 
 		internal static CodeBreakpointFormatter Create_DONT_USE() => new CodeBreakpointFormatter();
+
+		public const char LabelsSeparatorChar = ',';
+		static readonly string LabelsSeparatorString = LabelsSeparatorChar.ToString();
+
+		internal void WriteLabels(ITextColorWriter output, CodeBreakpointVM vm) {
+			bool needSep = false;
+			foreach (var label in vm.CodeBreakpoint.Labels ?? Array.Empty<string>()) {
+				if (needSep) {
+					output.Write(BoxedTextColor.Text, LabelsSeparatorString);
+					output.WriteSpace();
+				}
+				needSep = true;
+				output.Write(BoxedTextColor.Text, label);
+			}
+		}
 
 		internal void WriteName(ITextColorWriter output, CodeBreakpointVM vm) => vm.BreakpointLocationFormatter.WriteName(output);
 		internal void WriteCondition(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Condition);

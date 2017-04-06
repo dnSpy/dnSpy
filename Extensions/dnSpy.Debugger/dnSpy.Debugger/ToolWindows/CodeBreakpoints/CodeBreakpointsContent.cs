@@ -100,11 +100,27 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CODEBREAKPOINTS_CONTROL, codeBreakpointsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CODEBREAKPOINTS_LISTVIEW, codeBreakpointsControl.ListView);
+
+			codeBreakpointsControl.ListView.PreviewKeyDown += ListView_PreviewKeyDown;
 		}
 
 		void CodeBreakpointsControl_CodeBreakpointsListViewDoubleClick(object sender, EventArgs e) {
 			if (Operations.CanGoToSourceCode)
 				Operations.GoToSourceCode();
+		}
+
+		void ListView_PreviewKeyDown(object sender, KeyEventArgs e) {
+			if (!e.Handled) {
+				// Use a KeyDown handler. If we add this as a key command to the listview, the textview
+				// (used when editing eg. labels) won't see the space.
+				if (e.Key == Key.Space && e.KeyboardDevice.Modifiers == ModifierKeys.None) {
+					if (Operations.CanToggleEnabled) {
+						Operations.ToggleEnabled();
+						e.Handled = true;
+						return;
+					}
+				}
+			}
 		}
 
 		public void FocusSearchTextBox() => codeBreakpointsControl.FocusSearchTextBox();

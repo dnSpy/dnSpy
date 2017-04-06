@@ -32,6 +32,7 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.Text;
+using dnSpy.Debugger.ToolWindows.Controls;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -85,6 +86,16 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 		bool nothingMatched;
 
+		IEditValueProvider LabelsEditValueProvider {
+			get {
+				codeBreakpointContext.UIDispatcher.VerifyAccess();
+				if (labelsEditValueProvider == null)
+					labelsEditValueProvider = editValueProviderService.Create(ContentTypes.CodeBreakpointsWindowLabels, Array.Empty<string>());
+				return labelsEditValueProvider;
+			}
+		}
+		IEditValueProvider labelsEditValueProvider;
+
 		readonly Lazy<DbgManager> dbgManager;
 		readonly CodeBreakpointContext codeBreakpointContext;
 		readonly CodeBreakpointFormatterProvider codeBreakpointFormatterProvider;
@@ -93,12 +104,13 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService;
+		readonly EditValueProviderService editValueProviderService;
 		readonly Dictionary<DbgCodeBreakpoint, CodeBreakpointVM> bpToVM;
 		readonly List<CodeBreakpointVM> realAllItems;
 		int codeBreakpointOrder;
 
 		[ImportingConstructor]
-		CodeBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, UIDispatcher uiDispatcher, CodeBreakpointFormatterProvider codeBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService, BreakpointConditionsFormatter breakpointConditionsFormatter) {
+		CodeBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, UIDispatcher uiDispatcher, CodeBreakpointFormatterProvider codeBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService, BreakpointConditionsFormatter breakpointConditionsFormatter, EditValueProviderService editValueProviderService) {
 			uiDispatcher.VerifyAccess();
 			sbOutput = new StringBuilderTextColorOutput();
 			realAllItems = new List<CodeBreakpointVM>();
@@ -112,6 +124,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			lazyToolWindowVMHelper = new LazyToolWindowVMHelper(this, uiDispatcher);
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgBreakpointLocationFormatterService = dbgBreakpointLocationFormatterService;
+			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			codeBreakpointContext = new CodeBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, breakpointConditionsFormatter, new SearchMatcher(searchColumnDefinitions)) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
@@ -121,6 +134,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
 		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.CodeBreakpointsWindowName, "n", dnSpy_Debugger_Resources.Column_Name),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.CodeBreakpointsWindowLabels, "l", dnSpy_Debugger_Resources.Column_Labels),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.CodeBreakpointsWindowCondition, "c", dnSpy_Debugger_Resources.Column_Condition),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.CodeBreakpointsWindowHitCount, "h", dnSpy_Debugger_Resources.Column_HitCount),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.CodeBreakpointsWindowFilter, "f", dnSpy_Debugger_Resources.Column_Filter),
@@ -305,7 +319,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		void AddItems_UI(IList<DbgCodeBreakpoint> codeBreakpoints) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			foreach (var bp in codeBreakpoints) {
-				var vm = new CodeBreakpointVM(bp, dbgBreakpointLocationFormatterService.Value.GetFormatter(bp.Location), codeBreakpointContext, codeBreakpointOrder++);
+				var vm = new CodeBreakpointVM(bp, dbgBreakpointLocationFormatterService.Value.GetFormatter(bp.Location), codeBreakpointContext, codeBreakpointOrder++, LabelsEditValueProvider);
 				Debug.Assert(!bpToVM.ContainsKey(bp));
 				bpToVM[bp] = vm;
 				realAllItems.Add(vm);
@@ -378,6 +392,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			// The order must match searchColumnDefinitions
 			var allStrings = new string[] {
 				GetName_UI(vm),
+				GetLabels_UI(vm),
 				GetCondition_UI(vm),
 				GetHitCount_UI(vm),
 				GetFilter_UI(vm),
@@ -394,6 +409,14 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			Debug.Assert(codeBreakpointContext.UIDispatcher.CheckAccess());
 			sbOutput.Reset();
 			codeBreakpointContext.Formatter.WriteName(sbOutput, vm);
+			return sbOutput.ToString();
+		}
+
+		// UI thread
+		string GetLabels_UI(CodeBreakpointVM vm) {
+			Debug.Assert(codeBreakpointContext.UIDispatcher.CheckAccess());
+			sbOutput.Reset();
+			codeBreakpointContext.Formatter.WriteLabels(sbOutput, vm);
 			return sbOutput.ToString();
 		}
 

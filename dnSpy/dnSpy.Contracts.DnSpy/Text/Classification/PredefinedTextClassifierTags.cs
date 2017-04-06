@@ -94,6 +94,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string CodeBreakpointsWindowName = "Name";
 
 		/// <summary>
+		/// Code breakpoints window column: Labels
+		/// </summary>
+		public static readonly string CodeBreakpointsWindowLabels = "Labels";
+
+		/// <summary>
 		/// Code breakpoints window column: Condition
 		/// </summary>
 		public static readonly string CodeBreakpointsWindowCondition = "Condition";

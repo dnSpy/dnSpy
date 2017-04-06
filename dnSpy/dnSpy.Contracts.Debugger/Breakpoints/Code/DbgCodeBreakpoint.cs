@@ -60,6 +60,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public abstract DbgCodeBreakpointTrace? Trace { get; set; }
 
 		/// <summary>
+		/// Labels
+		/// </summary>
+		public abstract string[] Labels { get; set; }
+
+		/// <summary>
 		/// Gets the breakpoint location
 		/// </summary>
 		public abstract DbgBreakpointLocation Location { get; }

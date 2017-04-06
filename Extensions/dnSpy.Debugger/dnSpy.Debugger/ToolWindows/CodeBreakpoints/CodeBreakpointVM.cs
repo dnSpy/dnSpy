@@ -20,11 +20,14 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Breakpoints.Code;
+using dnSpy.Debugger.ToolWindows.Controls;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
@@ -46,6 +49,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public ICodeBreakpointContext Context { get; }
 		public DbgCodeBreakpoint CodeBreakpoint { get; }
 		public object NameObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowName);
+		public object LabelsObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowLabels);
 		public object ConditionObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowCondition);
 		public object HitCountObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowHitCount);
 		public object FilterObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowFilter);
@@ -53,19 +57,30 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public object ModuleObject => new FormatterObject<CodeBreakpointVM>(this, PredefinedTextClassifierTags.CodeBreakpointsWindowModule);
 		internal int Order { get; }
 
+		public IEditableValue LabelsEditableValue { get; }
+		public IEditValueProvider LabelsEditValueProvider { get; }
+
 		DbgCodeBreakpointSettings settings;
 		BreakpointKind breakpointKind;
 
 		internal DbgBreakpointLocationFormatter BreakpointLocationFormatter { get; }
 
-		public CodeBreakpointVM(DbgCodeBreakpoint codeBreakpoint, DbgBreakpointLocationFormatter dbgBreakpointLocationFormatter, ICodeBreakpointContext context, int order) {
+		public CodeBreakpointVM(DbgCodeBreakpoint codeBreakpoint, DbgBreakpointLocationFormatter dbgBreakpointLocationFormatter, ICodeBreakpointContext context, int order, IEditValueProvider labelsEditValueProvider) {
 			CodeBreakpoint = codeBreakpoint ?? throw new ArgumentNullException(nameof(codeBreakpoint));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
+			LabelsEditValueProvider = labelsEditValueProvider ?? throw new ArgumentNullException(nameof(labelsEditValueProvider));
+			LabelsEditableValue = new EditableValueImpl(() => GetLablesString(), s => CodeBreakpoint.Labels = s.Split(new[] { CodeBreakpointFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray());
 			BreakpointLocationFormatter = dbgBreakpointLocationFormatter ?? throw new ArgumentNullException(nameof(dbgBreakpointLocationFormatter));
 			settings = CodeBreakpoint.Settings;
 			breakpointKind = BreakpointImageUtilities.GetBreakpointKind(CodeBreakpoint);
 			BreakpointLocationFormatter.PropertyChanged += DbgBreakpointLocationFormatter_PropertyChanged;
+		}
+
+		string GetLablesString() {
+			var output = new StringBuilderTextColorOutput();
+			Context.Formatter.WriteLabels(output, this);
+			return output.ToString();
 		}
 
 		// random thread
@@ -97,6 +112,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		internal void RefreshThemeFields_UI() {
 			Context.UIDispatcher.VerifyAccess();
 			OnPropertyChanged(nameof(NameObject));
+			OnPropertyChanged(nameof(LabelsObject));
 			OnPropertyChanged(nameof(ConditionObject));
 			OnPropertyChanged(nameof(HitCountObject));
 			OnPropertyChanged(nameof(FilterObject));
@@ -118,6 +134,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			if (oldSettings.IsEnabled != newSettings.IsEnabled)
 				OnPropertyChanged(nameof(IsEnabled));
 			UpdateImageAndMessage_UI();
+			if (!LabelsEquals(oldSettings.Labels, newSettings.Labels))
+				OnPropertyChanged(nameof(LabelsObject));
 			if (oldSettings.Condition != newSettings.Condition)
 				OnPropertyChanged(nameof(ConditionObject));
 			if (oldSettings.HitCount != newSettings.HitCount)
@@ -126,6 +144,22 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				OnPropertyChanged(nameof(FilterObject));
 			if (oldSettings.Trace != newSettings.Trace)
 				OnPropertyChanged(nameof(WhenHitObject));
+		}
+
+		static bool LabelsEquals(string[] a, string[] b) {
+			if (a == null)
+				a = Array.Empty<string>();
+			if (b == null)
+				b = Array.Empty<string>();
+			if (a == b)
+				return true;
+			if (a.Length != b.Length)
+				return false;
+			for (int i = 0; i < a.Length; i++) {
+				if (!StringComparer.Ordinal.Equals(a[i], b[i]))
+					return false;
+			}
+			return true;
 		}
 
 		// UI thread
@@ -146,9 +180,24 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// UI thread
+		internal void ClearEditingValueProperties() {
+			Context.UIDispatcher.VerifyAccess();
+			LabelsEditableValue.IsEditingValue = false;
+		}
+
+		// UI thread
 		internal void Dispose() {
 			Context.UIDispatcher.VerifyAccess();
 			BreakpointLocationFormatter.PropertyChanged -= DbgBreakpointLocationFormatter_PropertyChanged;
+			ClearEditingValueProperties();
+		}
+
+		// UI thread
+		internal bool IsEditingValues {
+			get {
+				Context.UIDispatcher.VerifyAccess();
+				return LabelsEditableValue.IsEditingValue;
+			}
 		}
 	}
 }

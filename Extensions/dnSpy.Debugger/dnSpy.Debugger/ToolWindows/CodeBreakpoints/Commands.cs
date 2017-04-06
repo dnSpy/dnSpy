@@ -36,9 +36,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.Copy(), a => codeBreakpointsContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.C);
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.Copy(), a => codeBreakpointsContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.Insert);
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.RemoveCodeBreakpoints(), a => codeBreakpointsContent.Value.Operations.CanRemoveCodeBreakpoints), ModifierKeys.None, Key.Delete);
-			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.ToggleEnabled(), a => codeBreakpointsContent.Value.Operations.CanToggleEnabled), ModifierKeys.None, Key.Space);
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.GoToSourceCode(), a => codeBreakpointsContent.Value.Operations.CanGoToSourceCode), ModifierKeys.None, Key.Enter);
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.EditSettings(), a => codeBreakpointsContent.Value.Operations.CanEditSettings), ModifierKeys.Alt, Key.Enter);
+			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.EditLabels(), a => codeBreakpointsContent.Value.Operations.CanEditLabels), ModifierKeys.None, Key.F2);
 
 			cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_CODEBREAKPOINTS_CONTROL);
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.F);
@@ -123,6 +123,17 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 
 		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.EditSettings();
 		public override bool IsEnabled(CodeBreakpointsCtxMenuContext context) => context.Operations.CanEditSettings;
+	}
+
+	[ExportMenuItem(Header = "res:EditLabelsCommand", InputGestureText = "res:ShortCutKeyF2", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_SETTINGS, Order = 10)]
+	sealed class EditLabelsBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		EditLabelsBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+			: base(codeBreakpointesContent) {
+		}
+
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.EditLabels();
+		public override bool IsEnabled(CodeBreakpointsCtxMenuContext context) => context.Operations.CanEditLabels;
 	}
 
 	[ExportMenuItem(Header = "res:RemoveBreakpointCommand", InputGestureText = "res:ShortCutKeyDelete", Icon = DsImagesAttribute.Cancel, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CMDS1, Order = 0)]

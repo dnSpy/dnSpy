@@ -1737,4 +1737,10 @@ Are you sure you want to expand it?</value>
   <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
     <value>Could not create the breakpoint.</value>
   </data>
+  <data name="Column_Labels" xml:space="preserve">
+    <value>Labels</value>
+  </data>
+  <data name="EditLabelsCommand" xml:space="preserve">
+    <value>Edit Labels</value>
+  </data>
 </root>

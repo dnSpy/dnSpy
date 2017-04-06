@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Settings;
 
@@ -50,6 +51,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					HitCount = LoadHitCount(bpSect.TryGetSection("HitCount")),
 					Filter = LoadFilter(bpSect.TryGetSection("Filter")),
 					Trace = LoadTrace(bpSect.TryGetSection("Trace")),
+					Labels = LoadLabels(bpSect),
 				};
 				settings.Add(new DbgCodeBreakpointInfo(breakpointLocation, bpSettings));
 			}
@@ -95,6 +97,11 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return new DbgCodeBreakpointTrace(message, @continue);
 		}
 
+		string[] LoadLabels(ISettingsSection section) {
+			var labels = section.Attribute<string>("Labels") ?? string.Empty;
+			return labels.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray();
+		}
+
 		public void Save(IEnumerable<DbgCodeBreakpoint> breakpoints) {
 			var section = settingsService.RecreateSection(SETTINGS_GUID);
 			foreach (var bp in breakpoints) {
@@ -110,6 +117,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					Save(bpSect.CreateSection("Filter"), bpSettings.Filter.Value);
 				if (bpSettings.Trace != null)
 					Save(bpSect.CreateSection("Trace"), bpSettings.Trace.Value);
+				if (bpSettings.Labels != null && bpSettings.Labels.Length != 0)
+					SaveLabels(bpSect, bpSettings.Labels);
 			}
 		}
 
@@ -129,6 +138,12 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			section.Attribute("Message", settings.Message);
 			if (!settings.Continue)
 				section.Attribute("Continue", settings.Continue);
+		}
+
+		void SaveLabels(ISettingsSection section, string[] labels) {
+			if (labels == null || labels.Length == 0)
+				return;
+			section.Attribute("Labels", string.Join(", ", labels));
 		}
 	}
 }

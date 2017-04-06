@@ -45,6 +45,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public abstract void RemoveCodeBreakpoints();
 		public abstract bool CanRemoveMatchingCodeBreakpoints { get; }
 		public abstract void RemoveMatchingCodeBreakpoints();
+		public abstract bool IsEditingValues { get; }
 		public abstract bool CanToggleEnabled { get; }
 		public abstract void ToggleEnabled();
 		public abstract bool CanToggleMatchingBreakpoints { get; }
@@ -67,6 +68,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public abstract void GoToDisassembly();
 		public abstract bool CanEditSettings { get; }
 		public abstract void EditSettings();
+		public abstract bool CanEditLabels { get; }
+		public abstract void EditLabels();
 		public abstract bool ShowTokens { get; set; }
 		public abstract bool ShowModuleNames { get; set; }
 		public abstract bool ShowParameterTypes { get; set; }
@@ -118,6 +121,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				var formatter = vm.Context.Formatter;
 				formatter.WriteName(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteLabels(output, vm);
+				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteCondition(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteHitCount(output, vm);
@@ -154,7 +159,17 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public override bool CanRemoveMatchingCodeBreakpoints => AllItems.Count > 0;
 		public override void RemoveMatchingCodeBreakpoints() => dbgCodeBreakpointsService.Value.Remove(AllItems.Select(a => a.CodeBreakpoint).ToArray());
 
-		public override bool CanToggleEnabled => SelectedItems.Count > 0;
+		public override bool IsEditingValues {
+			get {
+				foreach (var vm in SelectedItems) {
+					if (vm.IsEditingValues)
+						return true;
+				}
+				return false;
+			}
+		}
+
+		public override bool CanToggleEnabled => SelectedItems.Count > 0 && !IsEditingValues;
 		public override void ToggleEnabled() => ToggleBreakpoints(SelectedItems);
 
 		public override bool CanToggleMatchingBreakpoints => AllItems.Count > 0;
@@ -238,6 +253,14 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			if (!CanEditSettings)
 				return;
 			showCodeBreakpointSettingsService.Value.Edit(SelectedItems[0].CodeBreakpoint);
+		}
+
+		public override bool CanEditLabels => SelectedItems.Count == 1 && !SelectedItems[0].LabelsEditableValue.IsEditingValue;
+		public override void EditLabels() {
+			if (!CanEditLabels)
+				return;
+			SelectedItems[0].ClearEditingValueProperties();
+			SelectedItems[0].LabelsEditableValue.IsEditingValue = true;
 		}
 
 		public override bool ShowTokens {

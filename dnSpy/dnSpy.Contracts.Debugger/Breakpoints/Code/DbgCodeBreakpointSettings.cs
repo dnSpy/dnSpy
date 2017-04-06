@@ -49,6 +49,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		public DbgCodeBreakpointTrace? Trace { get; set; }
 
+		/// <summary>
+		/// Labels
+		/// </summary>
+		public string[] Labels { get; set; }
+
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointSettings left, DbgCodeBreakpointSettings right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointSettings left, DbgCodeBreakpointSettings right) => !left.Equals(right);
@@ -64,7 +69,31 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Condition == other.Condition &&
 			HitCount == other.HitCount &&
 			Filter == other.Filter &&
-			Trace == other.Trace;
+			Trace == other.Trace &&
+			LabelsEquals(Labels, other.Labels);
+
+		static bool LabelsEquals(string[] a, string[] b) {
+			if (a == null)
+				a = Array.Empty<string>();
+			if (b == null)
+				b = Array.Empty<string>();
+			if (a == b)
+				return true;
+			if (a.Length != b.Length)
+				return false;
+			for (int i = 0; i < a.Length; i++) {
+				if (!StringComparer.Ordinal.Equals(a[i], b[i]))
+					return false;
+			}
+			return true;
+		}
+
+		static int LabelsGetHashCode(string[] a) {
+			int hc = 0;
+			foreach (var s in a ?? Array.Empty<string>())
+				hc ^= StringComparer.Ordinal.GetHashCode(s ?? string.Empty);
+			return hc;
+		}
 
 		/// <summary>
 		/// Compares this instance to <paramref name="obj"/>
@@ -82,7 +111,8 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Condition.GetValueOrDefault().GetHashCode() ^
 			HitCount.GetValueOrDefault().GetHashCode() ^
 			Filter.GetValueOrDefault().GetHashCode() ^
-			Trace.GetValueOrDefault().GetHashCode();
+			Trace.GetValueOrDefault().GetHashCode() ^
+			LabelsGetHashCode(Labels);
 	}
 
 	/// <summary>

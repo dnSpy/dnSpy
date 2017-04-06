@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.ToolWindows.CodeBreakpoints"
+             xmlns:ctrls="clr-namespace:dnSpy.Debugger.ToolWindows.Controls"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Debugger.UI"
@@ -130,6 +131,13 @@
                                     </ContentPresenter>
                                     <ContentPresenter Grid.Column="2" Margin="5 0 0 0" Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource codeBreakpointColumnConverter}}" />
                                 </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Labels}">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrls:EditValueControl ReadOnlyContent="{Binding LabelsObject, Mode=OneWay, Converter={StaticResource codeBreakpointColumnConverter}}" EditableValue="{Binding LabelsEditableValue}" EditValueProvider="{Binding LabelsEditValueProvider}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

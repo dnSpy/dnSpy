@@ -30,6 +30,11 @@ namespace dnSpy.Debugger.UI {
 		static readonly ContentTypeDefinition CodeBreakpointsWindow;
 
 		[Export]
+		[Name(ContentTypes.CodeBreakpointsWindowLabels)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition CodeBreakpointsWindowLabels;
+
+		[Export]
 		[Name(ContentTypes.ModuleBreakpointsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition ModuleBreakpointsWindow;

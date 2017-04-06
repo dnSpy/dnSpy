@@ -862,6 +862,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Labels.
+        /// </summary>
+        public static string Column_Labels {
+            get {
+                return ResourceManager.GetString("Column_Labels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module.
         /// </summary>
         public static string Column_Module {
@@ -2055,6 +2064,15 @@ namespace dnSpy.Debugger.Properties {
         public static string EditConditionsCommand {
             get {
                 return ResourceManager.GetString("EditConditionsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Labels.
+        /// </summary>
+        public static string EditLabelsCommand {
+            get {
+                return ResourceManager.GetString("EditLabelsCommand", resourceCulture);
             }
         }
         

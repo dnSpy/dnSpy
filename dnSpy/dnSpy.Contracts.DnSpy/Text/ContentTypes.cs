@@ -202,6 +202,11 @@ namespace dnSpy.Contracts.Text {
 		public const string CodeBreakpointsWindow = nameof(CodeBreakpointsWindow);
 
 		/// <summary>
+		/// Code breakpoints window: labels column
+		/// </summary>
+		public const string CodeBreakpointsWindowLabels = nameof(CodeBreakpointsWindowLabels);
+
+		/// <summary>
 		/// Module breakpoints window
 		/// </summary>
 		public const string ModuleBreakpointsWindow = nameof(ModuleBreakpointsWindow);

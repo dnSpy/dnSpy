@@ -86,6 +86,15 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
+		public override string[] Labels {
+			get => Settings.Labels;
+			set {
+				var settings = Settings;
+				settings.Labels = value;
+				Settings = settings;
+			}
+		}
+
 		public override event EventHandler<DbgCollectionChangedEventArgs<DbgBoundCodeBreakpoint>> BoundBreakpointsChanged;
 		public override DbgBoundCodeBreakpoint[] BoundBreakpoints {
 			get {
@@ -124,6 +133,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			bool raiseBoundBreakpointsMessageChanged;
 			lock (lockObj) {
 				settings = newSettings;
+				if (settings.Labels == null)
+					settings.Labels = Array.Empty<string>();
 				var oldMessage = boundBreakpointsMessage;
 				boundBreakpointsMessage = CalculateBoundBreakpointsMessage_NoLock();
 				raiseBoundBreakpointsMessageChanged = oldMessage != boundBreakpointsMessage;
