@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Exceptions;
 
 namespace dnSpy.Contracts.Debugger.Engine {
@@ -167,5 +169,95 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="data">Data to add to the <see cref="DbgException"/> or null if nothing gets added</param>
 		/// <returns></returns>
 		public abstract DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, bool pause, T data) where T : class;
+
+		/// <summary>
+		/// Value used when the bound breakpoint's address isn't known
+		/// </summary>
+		public const ulong BoundBreakpointNoAddress = ulong.MaxValue;
+
+		/// <summary>
+		/// Creates a bound breakpoint. This method returns null if there was no breakpoint matching <paramref name="location"/>
+		/// </summary>
+		/// <param name="location">Breakpoint location</param>
+		/// <param name="module">Module or null if none</param>
+		/// <param name="address">Address or <see cref="BoundBreakpointNoAddress"/> if unknown</param>
+		/// <param name="message">Warning/error message or null if none</param>
+		/// <returns></returns>
+		public DbgEngineBoundCodeBreakpoint Create(DbgBreakpointLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message) =>
+			Create(new[] { new DbgBoundCodeBreakpointInfo<object>(location, module, address, message, null) }).FirstOrDefault();
+
+		/// <summary>
+		/// Creates a bound breakpoint. This method returns null if there was no breakpoint matching <paramref name="location"/>
+		/// </summary>
+		/// <typeparam name="T">Type of data</typeparam>
+		/// <param name="location">Breakpoint location</param>
+		/// <param name="module">Module or null if none</param>
+		/// <param name="address">Address or <see cref="BoundBreakpointNoAddress"/> if unknown</param>
+		/// <param name="message">Warning/error message or null if none</param>
+		/// <param name="data">Data to add to the <see cref="DbgEngineBoundCodeBreakpoint"/> or null if nothing gets added</param>
+		/// <returns></returns>
+		public DbgEngineBoundCodeBreakpoint Create<T>(DbgBreakpointLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T data) where T : class =>
+			Create(new[] { new DbgBoundCodeBreakpointInfo<T>(location, module, address, message, data) }).FirstOrDefault();
+
+		/// <summary>
+		/// Creates bound breakpoints. Locations that don't match an existing breakpoint are ignored, and all user data
+		/// are disposed if they implement <see cref="IDisposable"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of data</typeparam>
+		/// <param name="infos">Bound breakpoints to create</param>
+		/// <returns></returns>
+		public abstract DbgEngineBoundCodeBreakpoint[] Create<T>(DbgBoundCodeBreakpointInfo<T>[] infos) where T : class;
+	}
+
+	/// <summary>
+	/// Bound breakpoint info
+	/// </summary>
+	/// <typeparam name="T">Type of data</typeparam>
+	public struct DbgBoundCodeBreakpointInfo<T> where T : class {
+		/// <summary>
+		/// Value used when the bound breakpoint's address isn't known
+		/// </summary>
+		public const ulong NoAddress = DbgObjectFactory.BoundBreakpointNoAddress;
+
+		/// <summary>
+		/// Gets the location
+		/// </summary>
+		public DbgBreakpointLocation Location { get; }
+
+		/// <summary>
+		/// Gets the module or null if none
+		/// </summary>
+		public DbgModule Module { get; }
+
+		/// <summary>
+		/// Gets the address or <see cref="NoAddress"/> if it's not known
+		/// </summary>
+		public ulong Address { get; }
+
+		/// <summary>
+		/// Gets the warning/error message or null if none
+		/// </summary>
+		public DbgEngineBoundCodeBreakpointMessage Message { get; }
+
+		/// <summary>
+		/// Gets the data to add to the <see cref="DbgEngineBoundCodeBreakpoint"/> or null if nothing gets added
+		/// </summary>
+		public T Data { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="location">Location</param>
+		/// <param name="module">Module or null if none</param>
+		/// <param name="address">Address or <see cref="NoAddress"/> if it's not known</param>
+		/// <param name="message">Warning/error message or null if none</param>
+		/// <param name="data">Data to add to the <see cref="DbgEngineBoundCodeBreakpoint"/> or null if nothing gets added</param>
+		public DbgBoundCodeBreakpointInfo(DbgBreakpointLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T data) {
+			Location = location ?? throw new ArgumentNullException(nameof(location));
+			Module = module;
+			Address = address;
+			Message = message;
+			Data = data;
+		}
 	}
 }

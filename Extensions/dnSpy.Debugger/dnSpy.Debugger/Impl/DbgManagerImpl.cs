@@ -26,6 +26,7 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Exceptions;
+using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Exceptions;
 
 namespace dnSpy.Debugger.Impl {
@@ -133,6 +134,7 @@ namespace dnSpy.Debugger.Impl {
 		sealed class EngineInfo {
 			public DbgEngine Engine { get; }
 			public DbgProcessImpl Process { get; set; }
+			public DbgRuntimeImpl Runtime { get; set; }
 			public EngineState EngineState { get; set; }
 			public string[] DebugTags { get; }
 			public DbgObjectFactoryImpl ObjectFactory { get; set; }
@@ -148,6 +150,8 @@ namespace dnSpy.Debugger.Impl {
 		readonly DbgDispatcher dbgDispatcher;
 		readonly DebuggerSettings debuggerSettings;
 		readonly ExceptionConditionsChecker exceptionConditionsChecker;
+		readonly Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService;
+		readonly BoundBreakpointsManager boundBreakpointsManager;
 		readonly List<EngineInfo> engines;
 		readonly Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>[] dbgEngineProviders;
 		readonly Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>[] dbgManagerStartListeners;
@@ -156,11 +160,13 @@ namespace dnSpy.Debugger.Impl {
 		int hasNotifiedStartListenersCounter;
 
 		[ImportingConstructor]
-		DbgManagerImpl(DbgDispatcher dbgDispatcher, DebuggerSettings debuggerSettings, ExceptionConditionsChecker exceptionConditionsChecker, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners) {
+		DbgManagerImpl(DbgDispatcher dbgDispatcher, DebuggerSettings debuggerSettings, ExceptionConditionsChecker exceptionConditionsChecker, Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners) {
 			lockObj = new object();
 			this.dbgDispatcher = dbgDispatcher;
 			this.debuggerSettings = debuggerSettings;
 			this.exceptionConditionsChecker = exceptionConditionsChecker;
+			this.boundCodeBreakpointsService = boundCodeBreakpointsService;
+			boundBreakpointsManager = new BoundBreakpointsManager(this);
 			engines = new List<EngineInfo>();
 			processes = new List<DbgProcessImpl>();
 			debugTags = new TagsCollection();
@@ -187,6 +193,7 @@ namespace dnSpy.Debugger.Impl {
 			lock (dbgManagerStartListeners) {
 				if (hasNotifiedStartListenersCounter == 0) {
 					hasNotifiedStartListenersCounter++;
+					boundBreakpointsManager.Initialize();
 					foreach (var lz in dbgManagerStartListeners)
 						lz.Value.OnStart(this);
 					hasNotifiedStartListenersCounter++;
@@ -335,13 +342,14 @@ namespace dnSpy.Debugger.Impl {
 
 			var process = GetOrCreateProcess_DbgThread(e.ProcessId, engine.StartKind, out var createdProcess);
 			var runtime = new DbgRuntimeImpl(this, process, engine);
-			var objectFactory = new DbgObjectFactoryImpl(this, runtime, engine);
+			var objectFactory = new DbgObjectFactoryImpl(this, runtime, engine, boundCodeBreakpointsService);
 
 			DbgProcessState processState;
 			bool pauseProgram;
 			lock (lockObj) {
 				var info = GetEngineInfo_NoLock(engine);
 				info.Process = process;
+				info.Runtime = runtime;
 				info.ObjectFactory = objectFactory;
 				info.EngineState = EngineState.Paused;
 				processState = CalculateProcessState(info.Process);
@@ -438,6 +446,9 @@ namespace dnSpy.Debugger.Impl {
 
 				breakAllHelper?.OnDisconnected_DbgThread_NoLock(engine);
 			}
+
+			if (runtime != null)
+				boundBreakpointsManager.RemoveAllBoundBreakpoints_DbgThread(runtime);
 
 			foreach (var obj in objectsToClose)
 				obj.Close(DispatcherThread);
@@ -607,6 +618,7 @@ namespace dnSpy.Debugger.Impl {
 			if (!IsOurEngine(runtime.Engine))
 				return;
 			runtime.Add_DbgThread(module);
+			boundBreakpointsManager.AddBoundBreakpoints_DbgThread(new[] { module });
 			var e = new DbgMessageModuleLoadedEventArgs(module);
 			OnConditionalBreak_DbgThread(runtime.Engine, e, pauseDefaultValue: pause);
 		}
@@ -635,6 +647,7 @@ namespace dnSpy.Debugger.Impl {
 			Debug.Assert(IsOurEngine(runtime.Engine));
 			if (!IsOurEngine(runtime.Engine))
 				return;
+			boundBreakpointsManager.RemoveBoundBreakpoints_DbgThread(new[] { module });
 			var e = new DbgMessageModuleUnloadedEventArgs(module);
 			OnConditionalBreak_DbgThread(runtime.Engine, e, pauseDefaultValue: pause);
 		}

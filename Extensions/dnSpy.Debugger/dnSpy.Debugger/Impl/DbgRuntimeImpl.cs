@@ -163,6 +163,11 @@ namespace dnSpy.Debugger.Impl {
 			thread.Close(DispatcherThread);
 		}
 
+		internal void Remove_DbgThread(DbgEngineBoundCodeBreakpointImpl[] breakpoints) {
+			DispatcherThread.VerifyAccess();
+			owner.RemoveBoundCodeBreakpoints_DbgThread(this, breakpoints);
+		}
+
 		internal void Freeze(DbgThreadImpl thread) => Engine.Freeze(thread);
 		internal void Thaw(DbgThreadImpl thread) => Engine.Thaw(thread);
 

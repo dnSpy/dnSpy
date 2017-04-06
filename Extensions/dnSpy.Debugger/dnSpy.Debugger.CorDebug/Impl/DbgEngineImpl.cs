@@ -297,7 +297,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			if (e.Added) {
 				e.ShouldPause = true;
 				var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
-				var moduleId = new ModuleId(e.Module.Assembly.FullName, e.Module.Name, isDynamic: e.Module.IsDynamic, isInMemory: e.Module.IsInMemory, nameOnly: false);
+				var moduleId = e.Module.DnModuleId.ToModuleId();
 				var moduleData = new DbgModuleData(e.Module, moduleId);
 				var engineModule = ModuleCreator.CreateModule(objectFactory, appDomain, e.Module, moduleData);
 				lock (lockObj) {
@@ -420,7 +420,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				string errMsg;
 				if (ex is ErrorException errEx)
 					errMsg = errEx.Message;
-				else if (ex is ArgumentException) {
+				else if (CorDebugRuntimeKind == CorDebugRuntimeKind.DotNetCore && ex is ArgumentException) {
 					// .NET Core throws ArgumentException if it can't attach to it (.NET Framework throws a COM exception with the correct error message)
 					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebugger2,
 						string.Format(dnSpy_Debugger_CorDebug_Resources.Error_ProcessIsAlreadyBeingDebugged, options.ProcessId.ToString()));

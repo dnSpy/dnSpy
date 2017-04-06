@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
@@ -31,6 +32,13 @@ namespace dndbg.Engine {
 		}
 	}
 
+	enum DnCodeBreakpointError {
+		None,
+		OtherError,
+		FunctionNotFound,
+		CouldNotCreateBreakpoint,
+	}
+
 	abstract class DnCodeBreakpoint : DnBreakpoint {
 		public DnModuleId Module { get; }
 		public uint Token { get; }
@@ -39,11 +47,16 @@ namespace dndbg.Engine {
 		readonly List<ModuleCodeBreakpoint> rawBps = new List<ModuleCodeBreakpoint>();
 		readonly CorCode code;
 
+		internal event EventHandler ErrorChanged;
+		internal DnCodeBreakpointError Error => error;
+		DnCodeBreakpointError error;
+
 		internal DnCodeBreakpoint(DnModuleId module, uint token, uint offset) {
 			Module = module;
 			Token = token;
 			Offset = offset;
 			code = null;
+			error = DnCodeBreakpointError.OtherError;
 		}
 
 		internal DnCodeBreakpoint(CorCode code, uint offset) {
@@ -52,6 +65,7 @@ namespace dndbg.Engine {
 			Token = func?.Token ?? 0;
 			Offset = offset;
 			this.code = code;
+			error = DnCodeBreakpointError.OtherError;
 		}
 
 		static DnModuleId GetModule(CorCode code) =>
@@ -62,36 +76,44 @@ namespace dndbg.Engine {
 				bp.FunctionBreakpoint.IsActive = IsEnabled;
 		}
 
-		internal bool AddBreakpoint(DnModule module) {
+		internal void AddBreakpoint(DnModule module) {
+			var newError = AddBreakpointCore(module);
+			if (newError != error) {
+				error = newError;
+				ErrorChanged?.Invoke(this, EventArgs.Empty);
+			}
+		}
+
+		DnCodeBreakpointError AddBreakpointCore(DnModule module) {
 			foreach (var bp in rawBps) {
 				if (bp.Module == module)
-					return true;
+					return DnCodeBreakpointError.None;
 			}
 
 			var c = code;
 			if (c == null) {
 				var func = module.CorModule.GetFunctionFromToken(Token);
 				if (func == null)
-					return false;
+					return DnCodeBreakpointError.FunctionNotFound;
 
 				c = GetCode(func);
 			}
 			else {
 				if (GetModule(code) != module.DnModuleId)
-					return false;
+					return DnCodeBreakpointError.OtherError;
 			}
 			if (c == null)
-				return false;
+				return DnCodeBreakpointError.FunctionNotFound;
 
 			var funcBp = c.CreateBreakpoint(Offset);
 			if (funcBp == null)
-				return false;
+				return DnCodeBreakpointError.CouldNotCreateBreakpoint;
 
 			var modIlBp = new ModuleCodeBreakpoint(module, funcBp);
 			rawBps.Add(modIlBp);
 			funcBp.IsActive = IsEnabled;
 
-			return true;
+			return DnCodeBreakpointError.None;
 		}
 
 		internal abstract CorCode GetCode(CorFunction func);

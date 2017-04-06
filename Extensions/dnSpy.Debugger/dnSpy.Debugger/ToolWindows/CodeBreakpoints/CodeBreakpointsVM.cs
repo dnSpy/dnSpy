@@ -175,6 +175,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			if (enable) {
 				dbgCodeBreakpointsService.Value.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
+				dbgCodeBreakpointsService.Value.BoundBreakpointsMessageChanged += DbgCodeBreakpointsService_BoundBreakpointsMessageChanged;
 				var breakpoints = dbgCodeBreakpointsService.Value.Breakpoints;
 				if (breakpoints.Length > 0)
 					UI(() => AddItems_UI(breakpoints));
@@ -182,6 +183,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			else {
 				dbgCodeBreakpointsService.Value.BreakpointsChanged -= DbgCodeBreakpointsService_BreakpointsChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified -= DbgCodeBreakpointsService_BreakpointsModified;
+				dbgCodeBreakpointsService.Value.BoundBreakpointsMessageChanged -= DbgCodeBreakpointsService_BoundBreakpointsMessageChanged;
 				UI(() => RemoveAllCodeBreakpoints_UI());
 			}
 		}
@@ -281,6 +283,22 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 						vm.UpdateSettings_UI(info.Breakpoint.Settings);
 				}
 			});
+		}
+
+		// DbgManager thread
+		void DbgCodeBreakpointsService_BoundBreakpointsMessageChanged(object sender, BoundBreakpointsMessageChangedEventArgs e) =>
+			UI(() => OnBoundBreakpointsMessageChanged_UI(e.Breakpoints));
+
+		// UI thread
+		void OnBoundBreakpointsMessageChanged_UI(ReadOnlyCollection<DbgCodeBreakpoint> breakpoints) {
+			codeBreakpointContext.UIDispatcher.VerifyAccess();
+			foreach (var bp in breakpoints) {
+				bool b = bpToVM.TryGetValue(bp, out var vm);
+				Debug.Assert(b);
+				if (!b)
+					continue;
+				vm.UpdateImageAndMessage_UI();
+			}
 		}
 
 		// UI thread

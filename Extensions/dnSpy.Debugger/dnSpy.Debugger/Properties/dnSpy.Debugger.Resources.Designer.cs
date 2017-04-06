@@ -457,11 +457,38 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not create the breakpoint..
+        /// </summary>
+        public static string BreakpointMessage_CouldNotCreateBreakpoint {
+            get {
+                return ResourceManager.GetString("BreakpointMessage_CouldNotCreateBreakpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The function cannot be found: {0}.
+        /// </summary>
+        public static string BreakpointMessage_TheFunctionCanNotBeFound {
+            get {
+                return ResourceManager.GetString("BreakpointMessage_TheFunctionCanNotBeFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add breakpoint.
         /// </summary>
         public static string Breakpoints_AddBreakpoint_ToolTip {
             get {
                 return ResourceManager.GetString("Breakpoints_AddBreakpoint_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The breakpoint will not currently be hit. {0}.
+        /// </summary>
+        public static string Breakpoints_BreakpointWillNotBeHit {
+            get {
+                return ResourceManager.GetString("Breakpoints_BreakpointWillNotBeHit", resourceCulture);
             }
         }
         
@@ -534,6 +561,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Breakpoints_ImportBreakpoints_ToolTip {
             get {
                 return ResourceManager.GetString("Breakpoints_ImportBreakpoints_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The module hasn&apos;t been loaded or no symbols have been loaded for this module..
+        /// </summary>
+        public static string Breakpoints_ModuleNotLoaded {
+            get {
+                return ResourceManager.GetString("Breakpoints_ModuleNotLoaded", resourceCulture);
             }
         }
         

@@ -69,6 +69,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		string GetToolTipContent(DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
 			var output = new StringBuilderTextColorOutput();
 
+			var msg = breakpoint.BoundBreakpointsMessage;
+			if (msg.Severity != DbgBoundCodeBreakpointSeverity.None) {
+				output.Write(BoxedTextColor.Error, msg.Message);
+				output.WriteLine();
+				output.WriteLine();
+			}
+
 			output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Location);
 			output.Write(BoxedTextColor.Text, ": ");
 			WriteLocation(output, breakpoint, textView, span);

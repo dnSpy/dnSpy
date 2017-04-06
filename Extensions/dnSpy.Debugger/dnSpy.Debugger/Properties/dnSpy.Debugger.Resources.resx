@@ -1725,4 +1725,16 @@ Are you sure you want to expand it?</value>
   <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
     <value>Break and print message '{0}'</value>
   </data>
+  <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
+    <value>The function cannot be found: {0}</value>
+  </data>
+  <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
+    <value>The breakpoint will not currently be hit. {0}</value>
+  </data>
+  <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
+    <value>The module hasn't been loaded or no symbols have been loaded for this module.</value>
+  </data>
+  <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
+    <value>Could not create the breakpoint.</value>
+  </data>
 </root>

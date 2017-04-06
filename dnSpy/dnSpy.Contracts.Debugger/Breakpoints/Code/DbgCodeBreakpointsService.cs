@@ -85,6 +85,28 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// Removes all code breakpoints
 		/// </summary>
 		public abstract void Clear();
+
+		/// <summary>
+		/// Raised when <see cref="DbgCodeBreakpoint.BoundBreakpointsMessage"/> is changed
+		/// </summary>
+		public abstract event EventHandler<BoundBreakpointsMessageChangedEventArgs> BoundBreakpointsMessageChanged;
+	}
+
+	/// <summary>
+	/// <see cref="DbgCodeBreakpoint.BoundBreakpointsMessage"/> changed event args
+	/// </summary>
+	public struct BoundBreakpointsMessageChangedEventArgs {
+		/// <summary>
+		/// Gets all breakpoints
+		/// </summary>
+		public ReadOnlyCollection<DbgCodeBreakpoint> Breakpoints { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="breakpoints">Breakpoints</param>
+		public BoundBreakpointsMessageChangedEventArgs(ReadOnlyCollection<DbgCodeBreakpoint> breakpoints) =>
+			Breakpoints = breakpoints ?? throw new ArgumentNullException(nameof(breakpoints));
 	}
 
 	/// <summary>

@@ -888,10 +888,12 @@ namespace dndbg.Engine {
 					if (module != null) {
 						if (module.CorModuleDef != null)
 							module.CorModuleDef.LoadClass(cls.Token);
-						foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.DnModuleId))
-							bp.AddBreakpoint(module);
-						foreach (var bp in nativeCodeBreakpointList.GetBreakpoints(module.DnModuleId))
-							bp.AddBreakpoint(module);
+						if (module.IsDynamic) {
+							foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.DnModuleId))
+								bp.AddBreakpoint(module);
+							foreach (var bp in nativeCodeBreakpointList.GetBreakpoints(module.DnModuleId))
+								bp.AddBreakpoint(module);
+						}
 					}
 				}
 				break;
@@ -1523,6 +1525,12 @@ namespace dndbg.Engine {
 
 		public void RemoveBreakpoint(DnBreakpoint bp) {
 			DebugVerifyThread();
+			if (bp is DnILCodeBreakpoint ilbp) {
+				ilCodeBreakpointList.Remove(ilbp.Module, ilbp);
+				ilbp.OnRemoved();
+				return;
+			}
+
 			if (bp is DnDebugEventBreakpoint debp) {
 				debugEventBreakpointList.Remove(debp);
 				debp.OnRemoved();
@@ -1532,12 +1540,6 @@ namespace dndbg.Engine {
 			if (bp is DnAnyDebugEventBreakpoint adebp) {
 				anyDebugEventBreakpointList.Remove(adebp);
 				adebp.OnRemoved();
-				return;
-			}
-
-			if (bp is DnILCodeBreakpoint ilbp) {
-				ilCodeBreakpointList.Remove(ilbp.Module, ilbp);
-				ilbp.OnRemoved();
 				return;
 			}
 

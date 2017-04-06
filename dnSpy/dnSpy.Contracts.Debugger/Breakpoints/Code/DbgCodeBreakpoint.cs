@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Code breakpoint
@@ -61,6 +63,26 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// Gets the breakpoint location
 		/// </summary>
 		public abstract DbgBreakpointLocation Location { get; }
+
+		/// <summary>
+		/// Gets all bound breakpoints
+		/// </summary>
+		public abstract DbgBoundCodeBreakpoint[] BoundBreakpoints { get; }
+
+		/// <summary>
+		/// Raised when <see cref="BoundBreakpoints"/> is changed
+		/// </summary>
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgBoundCodeBreakpoint>> BoundBreakpointsChanged;
+
+		/// <summary>
+		/// Gets the bound breakpoints warning/error message
+		/// </summary>
+		public abstract DbgBoundCodeBreakpointMessage BoundBreakpointsMessage { get; }
+
+		/// <summary>
+		/// Raised when <see cref="BoundBreakpointsMessage"/> is changed
+		/// </summary>
+		public abstract event EventHandler BoundBreakpointsMessageChanged;
 
 		/// <summary>
 		/// Removes the breakpoint

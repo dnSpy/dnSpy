@@ -18,10 +18,14 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Exceptions;
+using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Exceptions;
 
 namespace dnSpy.Debugger.Impl {
@@ -32,12 +36,14 @@ namespace dnSpy.Debugger.Impl {
 		readonly DbgManagerImpl owner;
 		readonly DbgRuntimeImpl runtime;
 		readonly DbgEngine engine;
+		readonly Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService;
 		bool disposed;
 
-		public DbgObjectFactoryImpl(DbgManagerImpl owner, DbgRuntimeImpl runtime, DbgEngine engine) {
+		public DbgObjectFactoryImpl(DbgManagerImpl owner, DbgRuntimeImpl runtime, DbgEngine engine, Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
+			this.boundCodeBreakpointsService = boundCodeBreakpointsService ?? throw new ArgumentNullException(nameof(boundCodeBreakpointsService));
 		}
 
 		public override DbgEngineAppDomain CreateAppDomain<T>(string name, int id, bool pause, T data) {
@@ -92,6 +98,54 @@ namespace dnSpy.Debugger.Impl {
 				exception.GetOrCreateData(() => data);
 			owner.DispatcherThread.BeginInvoke(() => owner.AddException_DbgThread(runtime, exception, pause));
 			return exception;
+		}
+
+		public override DbgEngineBoundCodeBreakpoint[] Create<T>(DbgBoundCodeBreakpointInfo<T>[] infos) {
+			if (infos == null)
+				throw new ArgumentNullException(nameof(infos));
+			if (infos.Length == 0)
+				return Array.Empty<DbgEngineBoundCodeBreakpoint>();
+			var bps = new List<DbgEngineBoundCodeBreakpoint>(infos.Length);
+			var bpImpls = new List<DbgEngineBoundCodeBreakpointImpl>(infos.Length);
+			List<IDisposable> dataToDispose = null;
+
+			var allBreakpoints = boundCodeBreakpointsService.Value.Breakpoints;
+			var dict = new Dictionary<DbgBreakpointLocation, DbgCodeBreakpoint>(allBreakpoints.Length);
+			foreach (var bp in allBreakpoints) {
+				Debug.Assert(!dict.ContainsKey(bp.Location));
+				dict[bp.Location] = bp;
+			}
+
+			for (int i = 0; i < infos.Length; i++) {
+				var info = infos[i];
+				if (!dict.TryGetValue(info.Location, out var breakpoint)) {
+					if (info.Data is IDisposable id) {
+						if (dataToDispose == null)
+							dataToDispose = new List<IDisposable>();
+						dataToDispose.Add(id);
+					}
+				}
+				else {
+					var bp = new DbgBoundCodeBreakpointImpl(runtime, breakpoint, info.Module, info.Address, info.Message.ToDbgBoundCodeBreakpointMessage());
+					var data = info.Data;
+					if (data != null)
+						bp.GetOrCreateData(() => data);
+					var ebp = new DbgEngineBoundCodeBreakpointImpl(bp);
+					bps.Add(ebp);
+					bpImpls.Add(ebp);
+				}
+			}
+			if (bpImpls.Count > 0 || dataToDispose != null) {
+				owner.DispatcherThread.BeginInvoke(() => {
+					if (dataToDispose != null) {
+						foreach (var id in dataToDispose)
+							id.Dispose();
+					}
+					if (bpImpls.Count > 0)
+						owner.AddBoundCodeBreakpoints_DbgThread(runtime, bpImpls.ToArray());
+				});
+			}
+			return bps.ToArray();
 		}
 
 		internal void Dispose() => disposed = true;

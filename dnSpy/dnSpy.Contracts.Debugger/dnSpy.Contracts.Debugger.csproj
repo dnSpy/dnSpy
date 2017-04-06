@@ -48,6 +48,7 @@
     <Compile Include="Attach\PredefinedArchitectureNames.cs" />
     <Compile Include="Attach\PredefinedAttachProgramOptionsProviderNames.cs" />
     <Compile Include="Breakpoints\Code\CodeBreakpointDisplaySettings.cs" />
+    <Compile Include="Breakpoints\Code\DbgBoundCodeBreakpoint.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocation.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatter.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterProvider.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="DispatcherThread.cs" />
     <Compile Include="Engine\DbgEngine.cs" />
     <Compile Include="Engine\DbgEngineAppDomain.cs" />
+    <Compile Include="Engine\DbgEngineBoundCodeBreakpoint.cs" />
     <Compile Include="Engine\DbgEngineMessage.cs" />
     <Compile Include="Engine\DbgEngineMessageKind.cs" />
     <Compile Include="Engine\DbgEngineModule.cs" />

@@ -38,6 +38,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			}
 		}
 
+		public string ErrorToolTip => errorToolTip;
+		string errorToolTip;
+
 		public ImageReference ImageReference => BreakpointImageUtilities.GetImage(breakpointKind);
 
 		public ICodeBreakpointContext Context { get; }
@@ -61,12 +64,21 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			Order = order;
 			BreakpointLocationFormatter = dbgBreakpointLocationFormatter ?? throw new ArgumentNullException(nameof(dbgBreakpointLocationFormatter));
 			settings = CodeBreakpoint.Settings;
-			breakpointKind = BreakpointImageUtilities.GetBreakpointKind(ref settings);
-			dbgBreakpointLocationFormatter.PropertyChanged += DbgBreakpointLocationFormatter_PropertyChanged;
+			breakpointKind = BreakpointImageUtilities.GetBreakpointKind(CodeBreakpoint);
+			BreakpointLocationFormatter.PropertyChanged += DbgBreakpointLocationFormatter_PropertyChanged;
 		}
 
-		void DbgBreakpointLocationFormatter_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			switch (e.PropertyName) {
+		// random thread
+		void UI(Action action) => Context.UIDispatcher.UI(action);
+
+		// random thread
+		void DbgBreakpointLocationFormatter_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+			UI(() => DbgBreakpointLocationFormatter_PropertyChanged_UI(e.PropertyName));
+
+		// UI thread
+		void DbgBreakpointLocationFormatter_PropertyChanged_UI(string propertyName) {
+			Context.UIDispatcher.VerifyAccess();
+			switch (propertyName) {
 			case DbgBreakpointLocationFormatter.NameProperty:
 				OnPropertyChanged(nameof(NameObject));
 				break;
@@ -76,7 +88,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				break;
 
 			default:
-				Debug.Fail($"Unknown property: {e.PropertyName}");
+				Debug.Fail($"Unknown property: {propertyName}");
 				break;
 			}
 		}
@@ -105,11 +117,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			settings = newSettings;
 			if (oldSettings.IsEnabled != newSettings.IsEnabled)
 				OnPropertyChanged(nameof(IsEnabled));
-			var newBreakpointKind = BreakpointImageUtilities.GetBreakpointKind(ref settings);
-			if (newBreakpointKind != breakpointKind) {
-				breakpointKind = newBreakpointKind;
-				OnPropertyChanged(nameof(ImageReference));
-			}
+			UpdateImageAndMessage_UI();
 			if (oldSettings.Condition != newSettings.Condition)
 				OnPropertyChanged(nameof(ConditionObject));
 			if (oldSettings.HitCount != newSettings.HitCount)
@@ -118,6 +126,23 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				OnPropertyChanged(nameof(FilterObject));
 			if (oldSettings.Trace != newSettings.Trace)
 				OnPropertyChanged(nameof(WhenHitObject));
+		}
+
+		// UI thread
+		internal void UpdateImageAndMessage_UI() {
+			Context.UIDispatcher.VerifyAccess();
+			var newBreakpointKind = BreakpointImageUtilities.GetBreakpointKind(CodeBreakpoint);
+			if (newBreakpointKind != breakpointKind) {
+				breakpointKind = newBreakpointKind;
+				OnPropertyChanged(nameof(ImageReference));
+			}
+
+			var msg = CodeBreakpoint.BoundBreakpointsMessage;
+			var newErrorToolTip = msg.Severity == DbgBoundCodeBreakpointSeverity.None ? null : msg.Message;
+			if (errorToolTip != newErrorToolTip) {
+				errorToolTip = newErrorToolTip;
+				OnPropertyChanged(nameof(ErrorToolTip));
+			}
 		}
 
 		// UI thread

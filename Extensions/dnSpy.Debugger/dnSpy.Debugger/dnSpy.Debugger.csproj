@@ -39,6 +39,7 @@
     <Compile Include="Attach\AttachableProcessesServiceImpl.cs" />
     <Compile Include="Attach\AttachableProcessImpl.cs" />
     <Compile Include="Attach\AttachableProcessInfo.cs" />
+    <Compile Include="Breakpoints\Code\BoundCodeBreakpointsService.cs" />
     <Compile Include="Breakpoints\Code\BreakpointConditionsFormatter.cs" />
     <Compile Include="Breakpoints\Code\BreakpointImageUtilities.cs" />
     <Compile Include="Breakpoints\Code\BreakpointsSerializer.cs" />
@@ -105,6 +106,10 @@
     <Compile Include="Exceptions\DefaultExceptionDefinitionsProvider.cs" />
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
+    <Compile Include="Impl\DbgBoundCodeBreakpointImpl.cs" />
+    <Compile Include="Impl\DbgEngineBoundCodeBreakpointImpl.cs" />
+    <Compile Include="Impl\DbgEngineBoundCodeBreakpointMessageExtensions.cs" />
+    <Compile Include="Impl\DbgManagerImpl.BoundBreakpointsManager.cs" />
     <Compile Include="Impl\DbgManagerImpl.ProcessKey.cs" />
     <Compile Include="Text\SearchColumnCommandParser.cs" />
     <Compile Include="Text\SearchColumnDefinition.cs" />

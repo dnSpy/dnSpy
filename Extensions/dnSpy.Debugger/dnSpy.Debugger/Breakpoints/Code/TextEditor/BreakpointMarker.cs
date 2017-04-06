@@ -73,17 +73,29 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				new BreakpointInfo(BreakpointKind.BreakpointEnabled,			ThemeClassificationTypeNameKeys.BreakpointStatementMarker,					ThemeClassificationTypeNameKeys.SelectedBreakpointStatementMarker,					classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatement),					GlyphTextMarkerServiceZIndexes.EnabledBreakpoint),
 				new BreakpointInfo(BreakpointKind.AdvancedBreakpointDisabled,	ThemeClassificationTypeNameKeys.DisabledAdvancedBreakpointStatementMarker,	ThemeClassificationTypeNameKeys.SelectedDisabledAdvancedBreakpointStatementMarker,	classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatement),	GlyphTextMarkerServiceZIndexes.DisabledAdvancedBreakpoint),
 				new BreakpointInfo(BreakpointKind.AdvancedBreakpointEnabled,	ThemeClassificationTypeNameKeys.AdvancedBreakpointStatementMarker,			ThemeClassificationTypeNameKeys.SelectedAdvancedBreakpointStatementMarker,			classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.AdvancedBreakpointStatement),			GlyphTextMarkerServiceZIndexes.EnabledAdvancedBreakpoint),
+				new BreakpointInfo(BreakpointKind.BreakpointWarning,			ThemeClassificationTypeNameKeys.BreakpointWarningStatementMarker,			ThemeClassificationTypeNameKeys.SelectedBreakpointWarningStatementMarker,			classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.BreakpointWarningStatement),				GlyphTextMarkerServiceZIndexes.BreakpointWarning),
+				new BreakpointInfo(BreakpointKind.BreakpointError,				ThemeClassificationTypeNameKeys.BreakpointErrorStatementMarker,				ThemeClassificationTypeNameKeys.SelectedBreakpointErrorStatementMarker,				classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.BreakpointErrorStatement),				GlyphTextMarkerServiceZIndexes.BreakpointError),
+				new BreakpointInfo(BreakpointKind.AdvancedBreakpointWarning,	ThemeClassificationTypeNameKeys.AdvancedBreakpointWarningStatementMarker,	ThemeClassificationTypeNameKeys.SelectedAdvancedBreakpointWarningStatementMarker,	classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.AdvancedBreakpointWarningStatement),		GlyphTextMarkerServiceZIndexes.AdvancedBreakpointWarning),
+				new BreakpointInfo(BreakpointKind.AdvancedBreakpointError,		ThemeClassificationTypeNameKeys.AdvancedBreakpointErrorStatementMarker,		ThemeClassificationTypeNameKeys.SelectedAdvancedBreakpointErrorStatementMarker,		classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.AdvancedBreakpointErrorStatement),		GlyphTextMarkerServiceZIndexes.AdvancedBreakpointError),
 				new BreakpointInfo(BreakpointKind.TracepointDisabled,			ThemeClassificationTypeNameKeys.DisabledTracepointStatementMarker,			ThemeClassificationTypeNameKeys.SelectedDisabledTracepointStatementMarker,			classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.DisabledTracepointStatement),			GlyphTextMarkerServiceZIndexes.DisabledTracepoint),
 				new BreakpointInfo(BreakpointKind.TracepointEnabled,			ThemeClassificationTypeNameKeys.TracepointStatementMarker,					ThemeClassificationTypeNameKeys.SelectedTracepointStatementMarker,					classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.TracepointStatement),					GlyphTextMarkerServiceZIndexes.EnabledTracepoint),
 				new BreakpointInfo(BreakpointKind.AdvancedTracepointDisabled,	ThemeClassificationTypeNameKeys.DisabledAdvancedTracepointStatementMarker,	ThemeClassificationTypeNameKeys.SelectedDisabledAdvancedTracepointStatementMarker,	classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.DisabledAdvancedTracepointStatement),	GlyphTextMarkerServiceZIndexes.DisabledAdvancedTracepoint),
 				new BreakpointInfo(BreakpointKind.AdvancedTracepointEnabled,	ThemeClassificationTypeNameKeys.AdvancedTracepointStatementMarker,			ThemeClassificationTypeNameKeys.SelectedAdvancedTracepointStatementMarker,			classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.AdvancedTracepointStatement),			GlyphTextMarkerServiceZIndexes.EnabledAdvancedTracepoint),
+				new BreakpointInfo(BreakpointKind.TracepointWarning,			ThemeClassificationTypeNameKeys.TracepointWarningStatementMarker,			ThemeClassificationTypeNameKeys.SelectedTracepointWarningStatementMarker,			classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.TracepointWarningStatement),				GlyphTextMarkerServiceZIndexes.TracepointWarning),
+				new BreakpointInfo(BreakpointKind.TracepointError,				ThemeClassificationTypeNameKeys.TracepointErrorStatementMarker,				ThemeClassificationTypeNameKeys.SelectedTracepointErrorStatementMarker,				classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.TracepointErrorStatement),				GlyphTextMarkerServiceZIndexes.TracepointError),
+				new BreakpointInfo(BreakpointKind.AdvancedTracepointWarning,	ThemeClassificationTypeNameKeys.AdvancedTracepointWarningStatementMarker,	ThemeClassificationTypeNameKeys.SelectedAdvancedTracepointWarningStatementMarker,	classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.AdvancedTracepointWarningStatement),		GlyphTextMarkerServiceZIndexes.AdvancedTracepointWarning),
+				new BreakpointInfo(BreakpointKind.AdvancedTracepointError,		ThemeClassificationTypeNameKeys.AdvancedTracepointErrorStatementMarker,		ThemeClassificationTypeNameKeys.SelectedAdvancedTracepointErrorStatementMarker,		classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.AdvancedTracepointErrorStatement),		GlyphTextMarkerServiceZIndexes.AdvancedTracepointError),
 			};
 		}
 
 		void IDbgCodeBreakpointsServiceListener.Initialize(DbgCodeBreakpointsService dbgCodeBreakpointsService) {
 			dbgCodeBreakpointsService.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 			dbgCodeBreakpointsService.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
+			dbgCodeBreakpointsService.BoundBreakpointsMessageChanged += DbgCodeBreakpointsService_BoundBreakpointsMessageChanged;
 		}
+
+		void DbgCodeBreakpointsService_BoundBreakpointsMessageChanged(object sender, BoundBreakpointsMessageChangedEventArgs e) =>
+			UI(() => OnBreakpointsModified_UI(e.Breakpoints));
 
 		sealed class BreakpointData {
 			public GlyphTextMarkerLocationInfo Location { get; }
@@ -127,19 +139,20 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 
 		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) =>
-			UI(() => OnBreakpointsModified_UI(e));
+			UI(() => OnBreakpointsModified_UI(e.Breakpoints.Select(a => a.Breakpoint).ToArray()));
 
-		void OnBreakpointsModified_UI(DbgBreakpointsModifiedEventArgs e) {
+		void OnBreakpointsModified_UI(IList<DbgCodeBreakpoint> breakpoints) {
 			uiDispatcher.VerifyAccess();
-			var bps = new List<DbgCodeBreakpoint>(e.Breakpoints.Count);
-			var removedMarkers = new List<IGlyphTextMarker>(e.Breakpoints.Count);
-			foreach (var info in e.Breakpoints) {
-				if (!info.Breakpoint.TryGetData(out BreakpointData data))
+			var bps = new List<DbgCodeBreakpoint>(breakpoints.Count);
+			var removedMarkers = new List<IGlyphTextMarker>(breakpoints.Count);
+			for (int i = 0; i < breakpoints.Count; i++) {
+				var bp = breakpoints[i];
+				if (!bp.TryGetData(out BreakpointData data))
 					continue;
-				bps.Add(info.Breakpoint);
+				bps.Add(bp);
 				if (data.Marker == null)
 					continue;
-				if (data.Info == breakpointInfos[(int)BreakpointImageUtilities.GetBreakpointKind(info.Breakpoint)])
+				if (data.Info == breakpointInfos[(int)BreakpointImageUtilities.GetBreakpointKind(bp)])
 					continue;
 				removedMarkers.Add(data.Marker);
 				data.Marker = null;
@@ -154,7 +167,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				return;
 
 			var info = breakpointInfos[(int)BreakpointImageUtilities.GetBreakpointKind(bp)];
-			if (data.Info == info)
+			if (data.Info == info && data.Marker != null)
 				return;
 			data.Info = info;
 			if (data.Marker != null)

@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
 namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
@@ -116,6 +117,22 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// </summary>
 		/// <param name="thread">Thread</param>
 		public abstract void Thaw(DbgThread thread);
+
+		/// <summary>
+		/// Removes all breakpoints. There's no guarantee that this method will be called to delete all bound breakpoints.
+		/// To always get notified when a bound breakpoint gets deleted, add custom data that implements <see cref="IDisposable"/>
+		/// when creating the bound breakpoint, see eg. <see cref="DbgObjectFactory.Create{T}(DbgBoundCodeBreakpointInfo{T}[])"/>
+		/// </summary>
+		/// <param name="modules">Modules</param>
+		/// <param name="boundBreakpoints">Bound breakpoints</param>
+		public abstract void RemoveBreakpoints(DbgModule[] modules, DbgBoundCodeBreakpoint[] boundBreakpoints);
+
+		/// <summary>
+		/// Adds all breakpoints
+		/// </summary>
+		/// <param name="modules">Modules</param>
+		/// <param name="locations">Breakpoint locations. The engine can ignore non-supported locations.</param>
+		public abstract void AddBreakpoints(DbgModule[] modules, DbgBreakpointLocation[] locations);
 	}
 
 	/// <summary>

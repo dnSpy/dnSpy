@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Images;
 
@@ -27,38 +28,54 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		BreakpointEnabled,
 		AdvancedBreakpointDisabled,
 		AdvancedBreakpointEnabled,
+		BreakpointWarning,
+		BreakpointError,
+		AdvancedBreakpointWarning,
+		AdvancedBreakpointError,
 		TracepointDisabled,
 		TracepointEnabled,
 		AdvancedTracepointDisabled,
 		AdvancedTracepointEnabled,
+		TracepointWarning,
+		TracepointError,
+		AdvancedTracepointWarning,
+		AdvancedTracepointError,
 
 		Last,
 	}
 
 	static class BreakpointImageUtilities {
-		static bool IsAdvanced(ref DbgCodeBreakpointSettings settings) =>
-			settings.Condition != null || settings.HitCount != null || settings.Filter != null;
-
 		public static BreakpointKind GetBreakpointKind(DbgCodeBreakpoint breakpoint) {
 			var settings = breakpoint.Settings;
-			return GetBreakpointKind(ref settings);
-		}
-
-		public static BreakpointKind GetBreakpointKind(ref DbgCodeBreakpointSettings settings) {
-			bool isAdvanced = IsAdvanced(ref settings);
+			bool isAdvanced = settings.Condition != null || settings.HitCount != null || settings.Filter != null;
+			var msg = breakpoint.BoundBreakpointsMessage;
 			if (settings.Trace == null || !settings.Trace.Value.Continue) {
+				switch (msg.Severity) {
+				case DbgBoundCodeBreakpointSeverity.None:		break;
+				case DbgBoundCodeBreakpointSeverity.Warning:	return isAdvanced ? BreakpointKind.AdvancedBreakpointWarning : BreakpointKind.BreakpointWarning;
+				case DbgBoundCodeBreakpointSeverity.Error:		return isAdvanced ? BreakpointKind.AdvancedBreakpointError : BreakpointKind.BreakpointError;
+				default:
+					Debug.Fail($"Unknown severity: {msg.Severity}");
+					break;
+				}
 				if (isAdvanced)
 					return settings.IsEnabled ? BreakpointKind.AdvancedBreakpointEnabled : BreakpointKind.AdvancedBreakpointDisabled;
 				return settings.IsEnabled ? BreakpointKind.BreakpointEnabled : BreakpointKind.BreakpointDisabled;
 			}
 			else {
+				switch (msg.Severity) {
+				case DbgBoundCodeBreakpointSeverity.None:		break;
+				case DbgBoundCodeBreakpointSeverity.Warning:	return isAdvanced ? BreakpointKind.AdvancedTracepointWarning : BreakpointKind.TracepointWarning;
+				case DbgBoundCodeBreakpointSeverity.Error:		return isAdvanced ? BreakpointKind.AdvancedTracepointError : BreakpointKind.TracepointError;
+				default:
+					Debug.Fail($"Unknown severity: {msg.Severity}");
+					break;
+				}
 				if (isAdvanced)
 					return settings.IsEnabled ? BreakpointKind.AdvancedTracepointEnabled : BreakpointKind.AdvancedTracepointDisabled;
 				return settings.IsEnabled ? BreakpointKind.TracepointEnabled : BreakpointKind.TracepointDisabled;
 			}
 		}
-
-		public static ImageReference GetImage(ref DbgCodeBreakpointSettings settings) => GetImage(GetBreakpointKind(ref settings));
 
 		public static ImageReference GetImage(BreakpointKind type) {
 			switch (type) {
@@ -66,10 +83,18 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			case BreakpointKind.BreakpointEnabled:			return DsImages.BreakpointEnabled;
 			case BreakpointKind.AdvancedBreakpointDisabled:	return DsImages.AdvancedBreakpointDisabled;
 			case BreakpointKind.AdvancedBreakpointEnabled:	return DsImages.AdvancedBreakpointEnabled;
+			case BreakpointKind.BreakpointWarning:			return DsImages.BreakpointWarning;
+			case BreakpointKind.BreakpointError:			return DsImages.BreakpointError;
+			case BreakpointKind.AdvancedBreakpointWarning:	return DsImages.BreakpointWarning;
+			case BreakpointKind.AdvancedBreakpointError:	return DsImages.BreakpointError;
 			case BreakpointKind.TracepointDisabled:			return DsImages.TracepointDisabled;
 			case BreakpointKind.TracepointEnabled:			return DsImages.TracepointEnabled;
 			case BreakpointKind.AdvancedTracepointDisabled:	return DsImages.AdvancedTracepointDisabled;
 			case BreakpointKind.AdvancedTracepointEnabled:	return DsImages.AdvancedTracepointEnabled;
+			case BreakpointKind.TracepointWarning:			return DsImages.TracepointWarning;
+			case BreakpointKind.TracepointError:			return DsImages.TracepointError;
+			case BreakpointKind.AdvancedTracepointWarning:	return DsImages.TracepointWarning;
+			case BreakpointKind.AdvancedTracepointError:	return DsImages.TracepointError;
 			default: throw new InvalidOperationException();
 			}
 		}
