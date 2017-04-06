@@ -190,10 +190,10 @@
     <value>Limpar Ecrã</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>History Next</value>
+    <value>Histórico Seguinte</value>
   </data>
   <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>History Previous</value>
+    <value>Histórico Anterior</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
     <value>Reset</value>
@@ -277,7 +277,7 @@
     <value>Word Wrap</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap</value>
+    <value>Ativar/desativar Wrapping</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>Todos os Ficheiros</value>

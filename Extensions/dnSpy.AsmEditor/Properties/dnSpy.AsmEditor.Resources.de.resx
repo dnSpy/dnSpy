@@ -530,13 +530,13 @@
     <value>Verfolge Debug Daten</value>
   </data>
   <data name="HexNode_Cor20_Header" xml:space="preserve">
-    <value>Cor20 Kopf</value>
+    <value>Cor20 Header</value>
   </data>
   <data name="HexNode_DOSHeader" xml:space="preserve">
-    <value>DOS Kopf</value>
+    <value>DOS-Header</value>
   </data>
   <data name="HexNode_FileHeader" xml:space="preserve">
-    <value>Dateikopf</value>
+    <value>Datei-Header</value>
   </data>
   <data name="HexNode_OptHeader32" xml:space="preserve">
     <value>Optionaler Header (32-bit)</value>
@@ -1602,7 +1602,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Cod_etyp</value>
   </data>
   <data name="MethodBody_HeaderOffset" xml:space="preserve">
-    <value>Kopfversatz</value>
+    <value>Header O_ffset</value>
   </data>
   <data name="MethodBody_HeaderRVA" xml:space="preserve">
     <value>Kopf _RVA</value>
@@ -1865,7 +1865,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Verwenden Sie den MaxStack Wert von der Methode anstelle der Berechnung eines neuen MaxStack-Wert. Erforderlich, wenn die Methoden noch obfuskiert sind</value>
   </data>
   <data name="SaveModule_MetadataHeaderOptions" xml:space="preserve">
-    <value>Metadaten Kopfoptionen</value>
+    <value>Metadaten-Header Optionen</value>
   </data>
   <data name="SaveModule_MiscOptions" xml:space="preserve">
     <value>Sonstige Optionen</value>
@@ -2204,7 +2204,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>_Verfolge Debug Daten</value>
   </data>
   <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
-    <value>_Kopfversion</value>
+    <value>_Header Version</value>
   </data>
   <data name="Module_Metadata_VersionString" xml:space="preserve">
     <value>_Versionszeichenfolge</value>

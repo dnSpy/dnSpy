@@ -901,7 +901,7 @@
     <value>Mostrar saída de:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap</value>
+    <value>Ativar/desativar Wrapping</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt + 2</value>

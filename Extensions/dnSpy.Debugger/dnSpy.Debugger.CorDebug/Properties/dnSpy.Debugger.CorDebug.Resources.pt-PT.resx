@@ -166,7 +166,7 @@
     <value>Módulo .cctor ou Ponto de Entrada</value>
   </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Couldn't find .NET Core host '{0}'</value>
+    <value>Não foi possível encontrar o .NET Core host '{0}'</value>
   </data>
   <data name="Error_CouldNotStartDebugger" xml:space="preserve">
     <value>Não foi possível iniciar o depurador. {0}</value>
@@ -186,7 +186,7 @@ Erro: {1}</value>
     <value>Nome do ficheiro em falta</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Debugger ({0})</value>
+    <value>Depurador ({0})</value>
   </data>
   <data name="Thread_UserState_Background" xml:space="preserve">
     <value>Segundo plano</value>
@@ -233,6 +233,6 @@ Erro: {0}</value>
     <value>Could not attach to process {0}</value>
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Some other process is already debugging process {0}</value>
+    <value>Algum outro processo já estiver depurando o processo {0}</value>
   </data>
 </root>

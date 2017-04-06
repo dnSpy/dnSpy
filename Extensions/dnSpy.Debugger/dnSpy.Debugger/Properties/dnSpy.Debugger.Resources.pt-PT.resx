@@ -1007,8 +1007,8 @@ Tem certeza que deseja expandi-la?</value>
   <data name="ShowTokensCommand" xml:space="preserve">
     <value>Mostrar Tokens</value>
   </data>
-  <data name="ShowTypeKeywordsCommand" xml:space="preserve">
-    <value>Show Type Keywords</value>
+  <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
+    <value>Show Intrinsic Type Keywords</value>
   </data>
   <data name="StartWithoutDebuggingCommand" xml:space="preserve">
     <value>Iniciar Sem Depuração</value>
@@ -1663,5 +1663,80 @@ Tem certeza que deseja expandi-la?</value>
   </data>
   <data name="EditBreakpointSettings_Trace" xml:space="preserve">
     <value>_Log Message</value>
+  </data>
+  <data name="GlyphToolTip_Actions" xml:space="preserve">
+    <value>Actions:</value>
+  </data>
+  <data name="GlyphToolTip_Conditions" xml:space="preserve">
+    <value>Conditions:</value>
+  </data>
+  <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
+    <value>Conditional expression:</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
+    <value>'{0}' has changed</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
+    <value>'{0}' is true</value>
+  </data>
+  <data name="Breakpoint_Filter_Filter" xml:space="preserve">
+    <value>Filter: '{0}'</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
+    <value>Hit count is a multiple of {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
+    <value>Hit count is equal to {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
+    <value>Hit count is greater than or equal to {0}</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
+    <value>Log message '{0}', to Output window</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
+    <value>Disable breakpoint</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
+    <value>Enable breakpoint</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
+    <value>Definições...</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
+    <value>Break</value>
+  </data>
+  <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
+    <value>Continue execution</value>
+  </data>
+  <data name="ExportCommand" xml:space="preserve">
+    <value>E_xport...</value>
+  </data>
+  <data name="SettingsCommand2" xml:space="preserve">
+    <value>_Settings...</value>
+  </data>
+  <data name="StartDebuggingCommand" xml:space="preserve">
+    <value>Start Debugging</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
+    <value>Break and print message '{0}'</value>
+  </data>
+  <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
+    <value>The function cannot be found: {0}</value>
+  </data>
+  <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
+    <value>The breakpoint will not currently be hit. {0}</value>
+  </data>
+  <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
+    <value>The module hasn't been loaded or no symbols have been loaded for this module.</value>
+  </data>
+  <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
+    <value>Could not create the breakpoint.</value>
+  </data>
+  <data name="Column_Labels" xml:space="preserve">
+    <value>Labels</value>
+  </data>
+  <data name="EditLabelsCommand" xml:space="preserve">
+    <value>Edit Labels</value>
   </data>
 </root>

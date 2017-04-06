@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddClassBreakpointCommand" xml:space="preserve">
+    <value>Добавить точку останова класса</value>
+  </data>
+  <data name="AddMethodBreakpointCommand" xml:space="preserve">
+    <value>Добавить точку останова метода</value>
+  </data>
   <data name="BreakWhenExceptionThrownCommand" xml:space="preserve">
     <value>Остановить при появлении исключения</value>
   </data>
@@ -124,12 +130,21 @@
     <value>_Отмена</value>
   </data>
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
-    <value>Cancel loading modules?</value>
+    <value>Отменить загрузку модулей?</value>
+  </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>Смещение IL 0x{0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>линия {0} символ {1}</value>
   </data>
   <data name="LoadModule_InfoText" xml:space="preserve">
     <value>Загрузка модуля. Это может занять некоторое время.</value>
   </data>
   <data name="LoadModule_Title" xml:space="preserve">
     <value>Загрузка динамических модулей</value>
+  </data>
+  <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
+    <value>Перегрузить тела всех методов</value>
   </data>
 </root>

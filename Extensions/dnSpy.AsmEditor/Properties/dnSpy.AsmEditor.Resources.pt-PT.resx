@@ -1035,10 +1035,10 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Pode haver código em um assembly que faz referência a este tipo. Tem certeza que deseja excluir o tipo?</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
-    <value>There is an unsaved file. Do you want to save it before exiting?</value>
+    <value>Há ficheiros não salvos. Deseja guardar antes de sair?</value>
   </data>
   <data name="AskExitUnsavedFiles" xml:space="preserve">
-    <value>There are {0} unsaved files. Do you want to save them before exiting?</value>
+    <value>Há {0} ficheiros não salvos. Deseja guardar antes de sair?</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
     <value>Tem certeza de que deseja carregar novos assemblies e perder todas as alterações?</value>
@@ -1794,7 +1794,7 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Guardar Tudo...</value>
   </data>
   <data name="SaveAllToolBarToolTip" xml:space="preserve">
-    <value>Save All</value>
+    <value>Guardar Tudo</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
     <value>Guardar Módulo...</value>
@@ -2498,6 +2498,6 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
     <value>Fechar Todos os Ficheiros em Falta</value>
   </data>
   <data name="CompileDiagnostics_Header_Severity" xml:space="preserve">
-    <value>Severity</value>
+    <value>Gravidade</value>
   </data>
 </root>

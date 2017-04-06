@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddClassBreakpointCommand" xml:space="preserve">
+    <value>Adicionar Interrupção de Classe</value>
+  </data>
+  <data name="AddMethodBreakpointCommand" xml:space="preserve">
+    <value>Adicionar interrupção de Método</value>
+  </data>
   <data name="BreakWhenExceptionThrownCommand" xml:space="preserve">
     <value>Break When Thrown</value>
   </data>
@@ -126,10 +132,19 @@
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
     <value>Cancel loading modules?</value>
   </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>Offset IL 0x{0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>linha {0} caráter {1}</value>
+  </data>
   <data name="LoadModule_InfoText" xml:space="preserve">
     <value>Carregando o módulo. Se é um módulo grande, isso pode demorar um pouco.</value>
   </data>
   <data name="LoadModule_Title" xml:space="preserve">
     <value>Carregando Módulos Dinâmicos</value>
+  </data>
+  <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
+    <value>Recarregar todos os corpos de método</value>
   </data>
 </root>
