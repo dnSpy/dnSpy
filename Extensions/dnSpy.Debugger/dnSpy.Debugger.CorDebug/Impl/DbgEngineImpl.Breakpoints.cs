@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			var dict = CreateDotNetLocationDictionary(locations);
 			var createdBreakpoints = new List<DbgBoundCodeBreakpointInfo<BoundBreakpointData>>();
 			foreach (var module in modules) {
-				if (!module.TryGetData(out DbgModuleData data))
+				if (!TryGetModuleData(module, out var data))
 					continue;
 				if (!dict.TryGetValue(data.ModuleId, out var moduleLocations))
 					continue;
@@ -140,7 +140,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			var dict = CreateBoundBreakpointsDictionary(boundBreakpoints);
 			var bpsToRemove = new List<BoundBreakpointData>();
 			foreach (var module in modules) {
-				if (!module.TryGetData(out DbgModuleData data))
+				if (!TryGetModuleData(module, out var data))
 					continue;
 				if (!dict.TryGetValue(data.ModuleId, out var bpDataList))
 					continue;

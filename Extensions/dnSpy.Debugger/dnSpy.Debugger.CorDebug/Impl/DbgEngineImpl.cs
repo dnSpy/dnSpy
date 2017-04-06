@@ -284,12 +284,21 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		sealed class DbgModuleData {
+			public DbgEngineImpl Engine { get; }
 			public DnModule DnModule { get; }
 			public ModuleId ModuleId { get; }
-			public DbgModuleData(DnModule dnModule, ModuleId moduleId) {
+			public DbgModuleData(DbgEngineImpl engine, DnModule dnModule, ModuleId moduleId) {
+				Engine = engine;
 				DnModule = dnModule;
 				ModuleId = moduleId;
 			}
+		}
+
+		bool TryGetModuleData(DbgModule module, out DbgModuleData data) {
+			if (module.TryGetData(out data) && data.Engine == this)
+				return true;
+			data = null;
+			return false;
 		}
 
 		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {
@@ -298,7 +307,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				e.ShouldPause = true;
 				var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
 				var moduleId = e.Module.DnModuleId.ToModuleId();
-				var moduleData = new DbgModuleData(e.Module, moduleId);
+				var moduleData = new DbgModuleData(this, e.Module, moduleId);
 				var engineModule = ModuleCreator.CreateModule(objectFactory, appDomain, e.Module, moduleData);
 				lock (lockObj) {
 					if (!toAssemblyModules.TryGetValue(e.Module.Assembly, out var modules))
@@ -329,7 +338,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			Dispatcher.VerifyAccess();
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
-			if (!module.TryGetData(out DbgModuleData data))
+			if (!TryGetModuleData(module, out var data))
 				return null;
 			return data.DnModule.GetOrCreateCorModuleDef();
 		}
@@ -453,7 +462,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		internal DbgModule[] GetAssemblyModules(DbgModule module) {
-			if (!module.TryGetData(out DbgModuleData data))
+			if (!TryGetModuleData(module, out var data))
 				return Array.Empty<DbgModule>();
 			lock (lockObj) {
 				toAssemblyModules.TryGetValue(data.DnModule.Assembly, out var modules);
