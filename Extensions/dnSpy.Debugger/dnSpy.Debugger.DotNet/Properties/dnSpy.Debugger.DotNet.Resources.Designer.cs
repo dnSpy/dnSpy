@@ -140,5 +140,14 @@ namespace dnSpy.Debugger.DotNet.Properties {
                 return ResourceManager.GetString("LoadModule_Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reload All Method Bodies.
+        /// </summary>
+        public static string ReloadAllMethodBodiesCommand {
+            get {
+                return ResourceManager.GetString("ReloadAllMethodBodiesCommand", resourceCulture);
+            }
+        }
     }
 }

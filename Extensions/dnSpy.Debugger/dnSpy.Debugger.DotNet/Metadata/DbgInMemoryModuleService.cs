@@ -49,6 +49,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		readonly DbgAssemblyInfoProviderService dbgAssemblyInfoProviderService;
 		readonly DbgDynamicModuleProviderService dbgDynamicModuleProviderService;
 		readonly ClassLoaderFactory classLoaderFactory;
+		readonly Lazy<DbgModuleMemoryRefreshedNotifier2> dbgModuleMemoryRefreshedNotifier;
 
 		bool UseDebugSymbols => true;
 
@@ -73,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		[ImportingConstructor]
-		DbgInMemoryModuleServiceImpl(UIDispatcher uiDispatcher, Lazy<IDocumentTreeView> documentTreeView, Lazy<IDocumentTabService> documentTabService, Lazy<IMethodAnnotations> methodAnnotations, DsDocumentProvider documentProvider, DbgAssemblyInfoProviderService dbgAssemblyInfoProviderService, DbgDynamicModuleProviderService dbgDynamicModuleProviderService, ClassLoaderFactory classLoaderFactory) {
+		DbgInMemoryModuleServiceImpl(UIDispatcher uiDispatcher, Lazy<IDocumentTreeView> documentTreeView, Lazy<IDocumentTabService> documentTabService, Lazy<IMethodAnnotations> methodAnnotations, DsDocumentProvider documentProvider, DbgAssemblyInfoProviderService dbgAssemblyInfoProviderService, DbgDynamicModuleProviderService dbgDynamicModuleProviderService, ClassLoaderFactory classLoaderFactory, Lazy<DbgModuleMemoryRefreshedNotifier2> dbgModuleMemoryRefreshedNotifier) {
 			lockObj = new object();
 			this.uiDispatcher = uiDispatcher;
 			this.documentTreeView = documentTreeView;
@@ -83,6 +84,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			this.dbgAssemblyInfoProviderService = dbgAssemblyInfoProviderService;
 			this.dbgDynamicModuleProviderService = dbgDynamicModuleProviderService;
 			this.classLoaderFactory = classLoaderFactory;
+			this.dbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier;
 		}
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.ProcessesChanged += DbgManager_ProcessesChanged;
@@ -420,6 +422,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			uiDispatcher.VerifyAccess();
 			if (document.TryUpdateMemory())
 				RefreshBodies(document);
+
+			// Always reset all breakpoints. If we set breakpoints (and fail) and later the module
+			// gets decrypted and we then open the in-memory copy, TryUpdateMemory() will return
+			// false ("no changes"), but the breakpoints will still need to be refreshed.
+			var modules = GetModules(document.Process, document.Address);
+			if (modules.Length > 0)
+				dbgModuleMemoryRefreshedNotifier.Value.RaiseModulesRefreshed(modules);
 		}
 
 		void RefreshBodies(MemoryModuleDefDocument document) {
@@ -441,5 +450,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 			documentTabService.Value.RefreshModifiedDocument(document);
 		}
+
+		static DbgModule[] GetModules(DbgProcess process, ulong address) =>
+			process.Runtimes.SelectMany(a => a.Modules).Where(a => a.HasAddress && a.Address == address).ToArray();
 	}
 }

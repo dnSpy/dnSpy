@@ -71,6 +71,7 @@
     <Compile Include="DbgManager.cs" />
     <Compile Include="DbgMessageEventArgs.cs" />
     <Compile Include="DbgModule.cs" />
+    <Compile Include="DbgModuleMemoryRefreshedNotifier.cs" />
     <Compile Include="DbgObject.cs" />
     <Compile Include="DbgProcess.cs" />
     <Compile Include="DbgRuntime.cs" />

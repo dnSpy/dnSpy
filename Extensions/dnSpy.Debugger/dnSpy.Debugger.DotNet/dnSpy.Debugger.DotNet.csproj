@@ -66,6 +66,7 @@
     <Compile Include="Metadata\DbgInMemoryModuleService.cs" />
     <Compile Include="Metadata\DbgMetadataServiceImpl.cs" />
     <Compile Include="Metadata\DbgModuleIdProviderService.cs" />
+    <Compile Include="Metadata\DbgModuleMemoryRefreshedNotifierImpl.cs" />
     <Compile Include="Metadata\DsDocumentProvider.cs" />
     <Compile Include="Metadata\DynamicModuleDefDocument.cs" />
     <Compile Include="Metadata\IModuleIdHolder.cs" />

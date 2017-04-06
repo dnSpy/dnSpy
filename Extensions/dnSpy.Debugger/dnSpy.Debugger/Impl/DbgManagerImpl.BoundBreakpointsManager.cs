@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Impl {
 	sealed partial class DbgManagerImpl {
 		sealed class BoundBreakpointsManager {
 			readonly DbgManagerImpl owner;
-			internal BoundCodeBreakpointsService BoundCodeBreakpointsService => owner.boundCodeBreakpointsService.Value;
+			BoundCodeBreakpointsService BoundCodeBreakpointsService => owner.boundCodeBreakpointsService.Value;
 			DispatcherThread DispatcherThread => owner.DispatcherThread;
 
 			public BoundBreakpointsManager(DbgManagerImpl owner) => this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
@@ -208,6 +208,13 @@ namespace dnSpy.Debugger.Impl {
 				var boundBreakpoints = breakpoints.SelectMany(a => a.BoundBreakpoints).ToArray();
 				foreach (var kv in GetEngineModules(modules))
 					kv.Key.RemoveBreakpoints(kv.Value.ToArray(), boundBreakpoints);
+			}
+
+			internal void ReAddBreakpoints_DbgThread(DbgModule[] modules) {
+				DispatcherThread.VerifyAccess();
+				var breakpoints = BoundCodeBreakpointsService.Breakpoints;
+				RemoveBoundBreakpoints_DbgThread(modules, breakpoints);
+				AddBoundBreakpoints_DbgThread(modules, breakpoints);
 			}
 		}
 

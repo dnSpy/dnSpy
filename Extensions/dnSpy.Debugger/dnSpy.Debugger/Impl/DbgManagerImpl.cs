@@ -155,12 +155,13 @@ namespace dnSpy.Debugger.Impl {
 		readonly List<EngineInfo> engines;
 		readonly Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>[] dbgEngineProviders;
 		readonly Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>[] dbgManagerStartListeners;
+		readonly Lazy<DbgModuleMemoryRefreshedNotifier>[] dbgModuleMemoryRefreshedNotifiers;
 		readonly List<StartDebuggingOptions> restartOptions;
 		readonly HashSet<ProcessKey> debuggedRuntimes;
 		int hasNotifiedStartListenersCounter;
 
 		[ImportingConstructor]
-		DbgManagerImpl(DbgDispatcher dbgDispatcher, DebuggerSettings debuggerSettings, ExceptionConditionsChecker exceptionConditionsChecker, Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners) {
+		DbgManagerImpl(DbgDispatcher dbgDispatcher, DebuggerSettings debuggerSettings, ExceptionConditionsChecker exceptionConditionsChecker, Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners, [ImportMany] IEnumerable<Lazy<DbgModuleMemoryRefreshedNotifier>> dbgModuleMemoryRefreshedNotifiers) {
 			lockObj = new object();
 			this.dbgDispatcher = dbgDispatcher;
 			this.debuggerSettings = debuggerSettings;
@@ -174,6 +175,7 @@ namespace dnSpy.Debugger.Impl {
 			debuggedRuntimes = new HashSet<ProcessKey>();
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgManagerStartListeners = dbgManagerStartListeners.OrderBy(a => a.Metadata.Order).ToArray();
+			this.dbgModuleMemoryRefreshedNotifiers = dbgModuleMemoryRefreshedNotifiers.ToArray();
 			new DelayedIsRunningHelper(this, Dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}
 
@@ -194,6 +196,8 @@ namespace dnSpy.Debugger.Impl {
 				if (hasNotifiedStartListenersCounter == 0) {
 					hasNotifiedStartListenersCounter++;
 					boundBreakpointsManager.Initialize();
+					foreach (var lz in dbgModuleMemoryRefreshedNotifiers)
+						lz.Value.ModulesRefreshed += DbgModuleMemoryRefreshedNotifier_ModulesRefreshed;
 					foreach (var lz in dbgManagerStartListeners)
 						lz.Value.OnStart(this);
 					hasNotifiedStartListenersCounter++;
@@ -925,5 +929,8 @@ namespace dnSpy.Debugger.Impl {
 			lock (lockObj)
 				return !debuggedRuntimes.Contains(new ProcessKey(pid, rid));
 		}
+
+		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed(object sender, ModulesRefreshedEventArgs e) =>
+			DbgThread(() => boundBreakpointsManager.ReAddBreakpoints_DbgThread(e.Modules));
 	}
 }
