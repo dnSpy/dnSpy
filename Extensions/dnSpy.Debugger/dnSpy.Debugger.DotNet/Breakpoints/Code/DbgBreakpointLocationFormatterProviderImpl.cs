@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 	[ExportDbgBreakpointLocationFormatterProvider(PredefinedDbgBreakpointLocationTypes.DotNet)]
 	sealed class DbgBreakpointLocationFormatterProviderImpl : DbgBreakpointLocationFormatterProvider {
-		public override DbgBreakpointLocationFormatter Create(DbgBreakpointLocation breakpoint) =>
-			(breakpoint as DbgDotNetBreakpointLocationImpl)?.Formatter;
+		public override DbgBreakpointLocationFormatter Create(DbgBreakpointLocation location) =>
+			(location as DbgDotNetBreakpointLocationImpl)?.Formatter;
 	}
 }

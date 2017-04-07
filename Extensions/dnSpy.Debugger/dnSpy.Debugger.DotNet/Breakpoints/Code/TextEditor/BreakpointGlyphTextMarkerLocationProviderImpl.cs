@@ -24,8 +24,8 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
-	[ExportBreakpointModuleLocationProvider]
-	sealed class BreakpointModuleLocationProviderImpl : BreakpointModuleLocationProvider {
+	[ExportBreakpointGlyphTextMarkerLocationProvider]
+	sealed class BreakpointGlyphTextMarkerLocationProviderImpl : BreakpointGlyphTextMarkerLocationProvider {
 		public override GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint) {
 			if (breakpoint.Location is DbgDotNetBreakpointLocation dnbp)
 				return new GlyphTextMethodMarkerLocationInfo(new ModuleTokenId(dnbp.Module, dnbp.Token), dnbp.Offset);

@@ -55,9 +55,9 @@
     </Compile>
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphPopupVM.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphTextMarkerHandler.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphTextMarkerLocationProviderService.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointInfo.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointMarker.cs" />
-    <Compile Include="Breakpoints\Code\TextEditor\BreakpointModuleLocationProviderService.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\GlyphMarginCommands.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\GlyphMarginOperations.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\GlyphTextMarkerMouseProcessor.cs" />

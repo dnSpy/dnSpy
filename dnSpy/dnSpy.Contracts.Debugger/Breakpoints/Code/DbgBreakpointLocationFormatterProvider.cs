@@ -29,9 +29,9 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Returns a formatter or null
 		/// </summary>
-		/// <param name="breakpoint">Breakpoint</param>
+		/// <param name="location">Breakpoint location</param>
 		/// <returns></returns>
-		public abstract DbgBreakpointLocationFormatter Create(DbgBreakpointLocation breakpoint);
+		public abstract DbgBreakpointLocationFormatter Create(DbgBreakpointLocation location);
 	}
 
 	/// <summary>Metadata</summary>

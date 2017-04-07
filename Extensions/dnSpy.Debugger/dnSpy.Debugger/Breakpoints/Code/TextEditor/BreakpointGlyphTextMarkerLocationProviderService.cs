@@ -26,22 +26,22 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
-	abstract class BreakpointModuleLocationProviderService {
+	abstract class BreakpointGlyphTextMarkerLocationProviderService {
 		public abstract GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint);
 	}
 
-	[Export(typeof(BreakpointModuleLocationProviderService))]
-	sealed class BreakpointModuleLocationProviderServiceImpl : BreakpointModuleLocationProviderService {
-		readonly Lazy<BreakpointModuleLocationProvider, IBreakpointModuleLocationProviderMetadata>[] breakpointModuleLocationProviders;
+	[Export(typeof(BreakpointGlyphTextMarkerLocationProviderService))]
+	sealed class BreakpointGlyphTextMarkerLocationProviderServiceImpl : BreakpointGlyphTextMarkerLocationProviderService {
+		readonly Lazy<BreakpointGlyphTextMarkerLocationProvider, IBreakpointGlyphTextMarkerLocationProviderMetadata>[] breakpointGlyphTextMarkerLocationProviders;
 
 		[ImportingConstructor]
-		BreakpointModuleLocationProviderServiceImpl([ImportMany] IEnumerable<Lazy<BreakpointModuleLocationProvider, IBreakpointModuleLocationProviderMetadata>> breakpointModuleLocationProviders) =>
-			this.breakpointModuleLocationProviders = breakpointModuleLocationProviders.OrderBy(a => a.Metadata.Order).ToArray();
+		BreakpointGlyphTextMarkerLocationProviderServiceImpl([ImportMany] IEnumerable<Lazy<BreakpointGlyphTextMarkerLocationProvider, IBreakpointGlyphTextMarkerLocationProviderMetadata>> breakpointGlyphTextMarkerLocationProviders) =>
+			this.breakpointGlyphTextMarkerLocationProviders = breakpointGlyphTextMarkerLocationProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
 		public override GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint) {
 			if (breakpoint == null)
 				throw new ArgumentNullException(nameof(breakpoint));
-			foreach (var lz in breakpointModuleLocationProviders) {
+			foreach (var lz in breakpointGlyphTextMarkerLocationProviders) {
 				var loc = lz.Value.GetLocation(breakpoint);
 				if (loc != null)
 					return loc;

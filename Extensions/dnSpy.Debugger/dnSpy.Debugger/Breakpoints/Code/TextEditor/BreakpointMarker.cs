@@ -48,17 +48,17 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<IGlyphTextMarkerService> glyphTextMarkerService;
 		readonly Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService;
-		readonly BreakpointModuleLocationProviderService breakpointModuleLocationProviderService;
+		readonly BreakpointGlyphTextMarkerLocationProviderService breakpointGlyphTextMarkerLocationProviderService;
 		readonly BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler;
 		IClassificationType classificationTypeEnabledBreakpoint;
 		BreakpointInfo[] breakpointInfos;
 
 		[ImportingConstructor]
-		BreakpointMarker(UIDispatcher uiDispatcher, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService, BreakpointModuleLocationProviderService breakpointModuleLocationProviderService, BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler) {
+		BreakpointMarker(UIDispatcher uiDispatcher, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService, BreakpointGlyphTextMarkerLocationProviderService breakpointGlyphTextMarkerLocationProviderService, BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler) {
 			this.uiDispatcher = uiDispatcher;
 			this.glyphTextMarkerService = glyphTextMarkerService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
-			this.breakpointModuleLocationProviderService = breakpointModuleLocationProviderService;
+			this.breakpointGlyphTextMarkerLocationProviderService = breakpointGlyphTextMarkerLocationProviderService;
 			this.breakpointGlyphTextMarkerHandler = breakpointGlyphTextMarkerHandler;
 			UI(() => Initialize_UI());
 		}
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (!e.Added)
 				throw new InvalidOperationException();
 			foreach (var bp in e.Objects) {
-				var location = breakpointModuleLocationProviderService.GetLocation(bp);
+				var location = breakpointGlyphTextMarkerLocationProviderService.GetLocation(bp);
 				if (location != null) {
 					bp.GetOrCreateData(() => new BreakpointData(location));
 					UpdateMarker(bp);

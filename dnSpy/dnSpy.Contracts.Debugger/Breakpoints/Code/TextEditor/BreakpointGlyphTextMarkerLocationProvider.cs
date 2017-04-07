@@ -23,10 +23,10 @@ using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 	/// <summary>
-	/// Creates <see cref="GlyphTextMarkerLocationInfo"/>s. Use <see cref="ExportBreakpointModuleLocationProviderAttribute"/>
+	/// Creates <see cref="GlyphTextMarkerLocationInfo"/>s. Use <see cref="ExportBreakpointGlyphTextMarkerLocationProviderAttribute"/>
 	/// to export an instance.
 	/// </summary>
-	public abstract class BreakpointModuleLocationProvider {
+	public abstract class BreakpointGlyphTextMarkerLocationProvider {
 		/// <summary>
 		/// Gets the location of the breakpoint or null
 		/// </summary>
@@ -36,22 +36,22 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 	}
 
 	/// <summary>Metadata</summary>
-	public interface IBreakpointModuleLocationProviderMetadata {
-		/// <summary>See <see cref="ExportBreakpointModuleLocationProviderAttribute.Order"/></summary>
+	public interface IBreakpointGlyphTextMarkerLocationProviderMetadata {
+		/// <summary>See <see cref="ExportBreakpointGlyphTextMarkerLocationProviderAttribute.Order"/></summary>
 		double Order { get; }
 	}
 
 	/// <summary>
-	/// Exports a <see cref="BreakpointModuleLocationProvider"/> instance
+	/// Exports a <see cref="BreakpointGlyphTextMarkerLocationProvider"/> instance
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportBreakpointModuleLocationProviderAttribute : ExportAttribute, IBreakpointModuleLocationProviderMetadata {
+	public sealed class ExportBreakpointGlyphTextMarkerLocationProviderAttribute : ExportAttribute, IBreakpointGlyphTextMarkerLocationProviderMetadata {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="order">Order</param>
-		public ExportBreakpointModuleLocationProviderAttribute(double order = double.MaxValue)
-			: base(typeof(BreakpointModuleLocationProvider)) => Order = order;
+		public ExportBreakpointGlyphTextMarkerLocationProviderAttribute(double order = double.MaxValue)
+			: base(typeof(BreakpointGlyphTextMarkerLocationProvider)) => Order = order;
 
 		/// <summary>
 		/// Order

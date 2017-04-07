@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public abstract void Serialize(ISettingsSection section, DbgBreakpointLocation location);
 
 		/// <summary>
-		/// Deserializes a breakpoint or returns null if it failed
+		/// Deserializes a breakpoint location or returns null if it failed
 		/// </summary>
 		/// <param name="section">Serialized section</param>
 		/// <returns></returns>
