@@ -321,6 +321,11 @@ namespace dnSpy.Debugger.Impl {
 			return info;
 		}
 
+		DbgRuntime GetRuntime(DbgEngine engine) {
+			lock (lockObj)
+				return GetEngineInfo_NoLock(engine).Runtime;
+		}
+
 		DbgProcessImpl GetOrCreateProcess_DbgThread(int pid, DbgStartKind startKind, out bool createdProcess) {
 			DispatcherThread.VerifyAccess();
 			DbgProcessImpl process;
@@ -610,13 +615,13 @@ namespace dnSpy.Debugger.Impl {
 
 		void OnProgramMessage_DbgThread(DbgEngine engine, DbgMessageProgramMessage e) {
 			DispatcherThread.VerifyAccess();
-			var ep = new DbgMessageProgramMessageEventArgs(e.Message);
+			var ep = new DbgMessageProgramMessageEventArgs(e.Message, GetRuntime(engine), e.Thread);
 			OnConditionalBreak_DbgThread(engine, ep, pauseDefaultValue: e.Pause);
 		}
 
 		void OnBreakpoint_DbgThread(DbgEngine engine, DbgMessageBreakpoint e) {
 			DispatcherThread.VerifyAccess();
-			var eb = new DbgMessageBoundBreakpointEventArgs(e.BoundBreakpoint, e.AppDomain, e.Thread);
+			var eb = new DbgMessageBoundBreakpointEventArgs(e.BoundBreakpoint, e.Thread);
 			OnConditionalBreak_DbgThread(engine, eb, pauseDefaultValue: e.Pause);
 		}
 

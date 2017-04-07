@@ -49,14 +49,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		void SendILCodeBreakpointHitMessage_CorDebug(DnILCodeBreakpoint breakpoint, DbgAppDomain appDomain, DbgThread thread) {
+		void SendILCodeBreakpointHitMessage_CorDebug(DnILCodeBreakpoint breakpoint, DbgThread thread) {
 			Dispatcher.VerifyAccess();
 			var bpData = (BoundBreakpointData)breakpoint.Tag;
 			Debug.Assert(bpData != null);
 			if (bpData != null)
-				SendMessage(new DbgMessageBreakpoint(bpData.EngineBoundCodeBreakpoint.BoundCodeBreakpoint, appDomain, thread, pause: false));
+				SendMessage(new DbgMessageBreakpoint(bpData.EngineBoundCodeBreakpoint.BoundCodeBreakpoint, thread, pause: false));
 			else
-				SendMessage(new DbgMessageBreak());
+				SendMessage(new DbgMessageBreak(thread));
 		}
 
 		void RemoveBreakpoint(BoundBreakpointData bpData) {

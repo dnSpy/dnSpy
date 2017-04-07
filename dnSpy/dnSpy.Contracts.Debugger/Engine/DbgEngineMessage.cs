@@ -121,9 +121,14 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.Break;
 
 		/// <summary>
+		/// Gets the thread or null if it's not known
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
-		public DbgMessageBreak() { }
+		public DbgMessageBreak(DbgThread thread) => Thread = thread;
 
 		/// <summary>
 		/// Constructor
@@ -184,11 +189,6 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public DbgBoundCodeBreakpoint BoundBreakpoint { get; }
 
 		/// <summary>
-		/// Gets the AppDomain or null if it's not known
-		/// </summary>
-		public DbgAppDomain AppDomain { get; }
-
-		/// <summary>
 		/// Gets the thread or null if it's not known
 		/// </summary>
 		public DbgThread Thread { get; }
@@ -202,12 +202,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Constructor
 		/// </summary>
 		/// <param name="boundBreakpoint">Breakpoint</param>
-		/// <param name="appDomain">AppDomain or null if it's not known</param>
 		/// <param name="thread">Thread or null if it's not known</param>
 		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
-		public DbgMessageBreakpoint(DbgBoundCodeBreakpoint boundBreakpoint, DbgAppDomain appDomain, DbgThread thread, bool pause = false) {
+		public DbgMessageBreakpoint(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, bool pause = false) {
 			BoundBreakpoint = boundBreakpoint ?? throw new ArgumentNullException(nameof(boundBreakpoint));
-			AppDomain = appDomain;
 			Thread = thread;
 			Pause = pause;
 		}

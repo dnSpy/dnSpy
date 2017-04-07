@@ -161,22 +161,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return null;
 		}
 
-		DbgAppDomain TryGetAppDomain(CorAppDomain appDomain) {
-			if (appDomain == null)
-				return null;
-			var dnAppDomain = dnDebugger.Processes.FirstOrDefault()?.AppDomains.FirstOrDefault(a => a.CorAppDomain == appDomain);
-			if (dnAppDomain == null)
-				return null;
-			DbgEngineAppDomain engineAppDomain;
-			lock (lockObj)
-				toEngineAppDomain.TryGetValue(dnAppDomain, out engineAppDomain);
-			return engineAppDomain?.AppDomain;
-		}
-
 		DbgThread TryGetThread(CorThread thread) {
 			if (thread == null)
 				return null;
 			var dnThread = dnDebugger.Processes.FirstOrDefault()?.Threads.FirstOrDefault(a => a.CorThread == thread);
+			return TryGetThread(dnThread);
+		}
+
+		DbgThread TryGetThread(DnThread dnThread) {
 			if (dnThread == null)
 				return null;
 			DbgEngineThread engineThread;
@@ -259,7 +251,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 						case DebuggerPauseReason.ILCodeBreakpoint:
 							var ilbp = (ILCodeBreakpointPauseState)pauseState;
-							SendILCodeBreakpointHitMessage_CorDebug(ilbp.Breakpoint, TryGetAppDomain(ilbp.CorAppDomain), TryGetThread(ilbp.CorThread));
+							SendILCodeBreakpointHitMessage_CorDebug(ilbp.Breakpoint, TryGetThread(ilbp.CorThread));
 							break;
 
 						case DebuggerPauseReason.NativeCodeBreakpoint:
@@ -269,12 +261,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 						case DebuggerPauseReason.Step:
 						case DebuggerPauseReason.Eval:
 							//TODO:
-							SendMessage(new DbgMessageBreak());
+							SendMessage(new DbgMessageBreak(TryGetThread(debuggerState.Thread)));
 							break;
 
 						default:
 							Debug.Fail($"Unknown reason: {pauseState.Reason}");
-							SendMessage(new DbgMessageBreak());
+							SendMessage(new DbgMessageBreak(TryGetThread(debuggerState.Thread)));
 							break;
 						}
 					}
@@ -561,11 +553,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					SendMessage(new DbgMessageBreak($"Couldn't break the process, hr=0x{hr:X8}"));
 				else {
 					Debug.Assert(dnDebugger.ProcessState == DebuggerProcessState.Paused);
-					SendMessage(new DbgMessageBreak());
+					SendMessage(new DbgMessageBreak(TryGetThread(dnDebugger.Current.Thread)));
 				}
 			}
 			else
-				SendMessage(new DbgMessageBreak());
+				SendMessage(new DbgMessageBreak(TryGetThread(dnDebugger.Current.Thread)));
 		}
 
 		public override void Run() => CorDebugThread(RunCore);
