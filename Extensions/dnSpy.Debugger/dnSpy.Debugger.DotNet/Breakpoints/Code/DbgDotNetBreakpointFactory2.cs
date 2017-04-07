@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
 using dnSpy.Contracts.Metadata;
@@ -40,8 +41,8 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 			this.breakpointFormatterService = breakpointFormatterService;
 		}
 
-		public override DbgCodeBreakpoint Create(ModuleId module, uint token, uint offset, DbgCodeBreakpointSettings bpSettings) =>
-			dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(CreateLocation(module, token, offset), bpSettings));
+		public override DbgCodeBreakpoint[] Create(DbgDotNetBreakpointInfo[] breakpoints) =>
+			dbgCodeBreakpointsService.Value.Add(breakpoints.Select(a => new DbgCodeBreakpointInfo(CreateLocation(a.Module, a.Token, a.Offset), a.Settings)).ToArray());
 
 		public override DbgDotNetBreakpointLocation CreateLocation(ModuleId module, uint token, uint offset) {
 			var dnbp = new DbgDotNetBreakpointLocationImpl(module, token, offset);
