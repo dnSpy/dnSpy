@@ -24,18 +24,18 @@ using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	abstract class DbgDotNetBreakpointLocationFactory2 : DbgDotNetBreakpointLocationFactory {
+	abstract class DbgDotNetBreakpointFactory2 : DbgDotNetBreakpointFactory {
 		public abstract DbgDotNetBreakpointLocation CreateLocation(ModuleId module, uint token, uint offset);
 	}
 
-	[Export(typeof(DbgDotNetBreakpointLocationFactory))]
-	[Export(typeof(DbgDotNetBreakpointLocationFactory2))]
-	sealed class DbgDotNetBreakpointLocationFactoryImpl : DbgDotNetBreakpointLocationFactory2 {
+	[Export(typeof(DbgDotNetBreakpointFactory))]
+	[Export(typeof(DbgDotNetBreakpointFactory2))]
+	sealed class DbgDotNetBreakpointFactoryImpl : DbgDotNetBreakpointFactory2 {
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly BreakpointFormatterService breakpointFormatterService;
 
 		[ImportingConstructor]
-		DbgDotNetBreakpointLocationFactoryImpl(Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, BreakpointFormatterService breakpointFormatterService) {
+		DbgDotNetBreakpointFactoryImpl(Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, BreakpointFormatterService breakpointFormatterService) {
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.breakpointFormatterService = breakpointFormatterService;
 		}

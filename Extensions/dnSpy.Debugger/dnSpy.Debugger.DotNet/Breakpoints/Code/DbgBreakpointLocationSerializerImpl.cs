@@ -28,12 +28,12 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 	[ExportDbgBreakpointLocationSerializer(PredefinedDbgBreakpointLocationTypes.DotNet)]
 	sealed class DbgBreakpointLocationSerializerImpl : DbgBreakpointLocationSerializer {
-		readonly Lazy<DbgDotNetBreakpointLocationFactory2> dbgDotNetBreakpointLocationFactory;
+		readonly Lazy<DbgDotNetBreakpointFactory2> dbgDotNetBreakpointFactory;
 		readonly Lazy<DbgMetadataService> dbgMetadataService;
 
 		[ImportingConstructor]
-		DbgBreakpointLocationSerializerImpl(Lazy<DbgDotNetBreakpointLocationFactory2> dbgDotNetBreakpointLocationFactory, Lazy<DbgMetadataService> dbgMetadataService) {
-			this.dbgDotNetBreakpointLocationFactory = dbgDotNetBreakpointLocationFactory;
+		DbgBreakpointLocationSerializerImpl(Lazy<DbgDotNetBreakpointFactory2> dbgDotNetBreakpointFactory, Lazy<DbgMetadataService> dbgMetadataService) {
+			this.dbgDotNetBreakpointFactory = dbgDotNetBreakpointFactory;
 			this.dbgMetadataService = dbgMetadataService;
 		}
 
@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 					return null;
 			}
 
-			return dbgDotNetBreakpointLocationFactory.Value.CreateLocation(moduleId, token.Value, offset.Value);
+			return dbgDotNetBreakpointFactory.Value.CreateLocation(moduleId, token.Value, offset.Value);
 		}
 
 		string GetMethodAsString(ModuleId moduleId, uint token) {

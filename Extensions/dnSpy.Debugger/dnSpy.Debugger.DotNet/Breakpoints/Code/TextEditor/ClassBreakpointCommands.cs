@@ -35,13 +35,13 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 	sealed class MethodBreakpointsService {
 		readonly Lazy<IModuleIdProvider> moduleIdProvider;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
-		readonly Lazy<DbgDotNetBreakpointLocationFactory2> dbgDotNetBreakpointLocationFactory;
+		readonly Lazy<DbgDotNetBreakpointFactory2> dbgDotNetBreakpointFactory;
 
 		[ImportingConstructor]
-		MethodBreakpointsService(Lazy<IModuleIdProvider> moduleIdProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgDotNetBreakpointLocationFactory2> dbgDotNetBreakpointLocationFactory) {
+		MethodBreakpointsService(Lazy<IModuleIdProvider> moduleIdProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgDotNetBreakpointFactory2> dbgDotNetBreakpointFactory) {
 			this.moduleIdProvider = moduleIdProvider;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
-			this.dbgDotNetBreakpointLocationFactory = dbgDotNetBreakpointLocationFactory;
+			this.dbgDotNetBreakpointFactory = dbgDotNetBreakpointFactory;
 		}
 
 		public void Add(MethodDef[] methods) {
@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			var existing = new HashSet<DbgDotNetBreakpointLocation>(dbgCodeBreakpointsService.Value.Breakpoints.Select(a => a.Location).OfType<DbgDotNetBreakpointLocation>());
 			foreach (var method in methods) {
 				var moduleId = moduleIdProvider.Value.Create(method.Module);
-				var location = dbgDotNetBreakpointLocationFactory.Value.CreateLocation(moduleId, method.MDToken.Raw, 0);
+				var location = dbgDotNetBreakpointFactory.Value.CreateLocation(moduleId, method.MDToken.Raw, 0);
 				if (existing.Contains(location))
 					continue;
 				existing.Add(location);

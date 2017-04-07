@@ -40,8 +40,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Breakpoints\Code\DbgDotNetBreakpointFactory.cs" />
     <Compile Include="Breakpoints\Code\DbgDotNetBreakpointLocation.cs" />
-    <Compile Include="Breakpoints\Code\DbgDotNetBreakpointLocationFactory.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProvider.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProviderFactory.cs" />
     <Compile Include="Metadata\DbgDynamicModuleProvider.cs" />
