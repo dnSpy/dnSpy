@@ -64,6 +64,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_SortMethods,
 				Name = DecompilerOptionConstants.SortMembers_NAME,
 			};
+			yield return new DecompilerOption<bool>(DecompilerOptionConstants.ShowPdbInfo_GUID,
+						() => ilSettings.ShowPdbInfo, a => ilSettings.ShowPdbInfo = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_ShowPdbInfo,
+				Name = DecompilerOptionConstants.ShowPdbInfo_NAME,
+			};
 		}
 
 		protected override bool EqualsCore(object obj) =>

@@ -95,6 +95,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			disOpts.ShowTokenAndRvaComments = langSettings.Settings.ShowTokenAndRvaComments;
 			disOpts.ShowILBytes = langSettings.Settings.ShowILBytes;
 			disOpts.SortMembers = langSettings.Settings.SortMembers;
+			disOpts.ShowPdbInfo = langSettings.Settings.ShowPdbInfo;
 			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
 		}
 

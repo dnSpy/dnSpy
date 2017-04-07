@@ -305,6 +305,15 @@ namespace dnSpy.Decompiler.ILSpy.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show line numbers and filenames if available.
+        /// </summary>
+        public static string DecompilerSettings_ShowPdbInfo {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_ShowPdbInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show tokens, RVAs and file offsets.
         /// </summary>
         public static string DecompilerSettings_ShowTokensRvasOffsets {

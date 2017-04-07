@@ -83,6 +83,18 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		}
 		bool sortMembers = true;
 
+		public bool ShowPdbInfo {
+			get { return showPdbInfo; }
+			set {
+				if (showPdbInfo != value) {
+					showPdbInfo = value;
+					OnPropertyChanged(nameof(ShowPdbInfo));
+					OnModified();
+				}
+			}
+		}
+		bool showPdbInfo = false;
+
 		public ILSettings Clone() => CopyTo(new ILSettings());
 
 		public ILSettings CopyTo(ILSettings other) {
@@ -91,6 +103,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			other.ShowTokenAndRvaComments = ShowTokenAndRvaComments;
 			other.ShowILBytes = ShowILBytes;
 			other.SortMembers = SortMembers;
+			other.ShowPdbInfo = ShowPdbInfo;
 			return other;
 		}
 
@@ -101,7 +114,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				ShowXmlDocumentation == other.ShowXmlDocumentation &&
 				ShowTokenAndRvaComments == other.ShowTokenAndRvaComments &&
 				ShowILBytes == other.ShowILBytes &&
-				SortMembers == other.SortMembers;
+				SortMembers == other.SortMembers &&
+				ShowPdbInfo == other.ShowPdbInfo;
 		}
 
 		public override int GetHashCode() {
@@ -112,6 +126,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			if (ShowTokenAndRvaComments) h ^= 0x20000000;
 			if (ShowILBytes) h ^= 0x10000000;
 			if (SortMembers) h ^= 0x08000000;
+			if (ShowPdbInfo) h ^= 0x04000000;
 
 			return (int)h;
 		}
