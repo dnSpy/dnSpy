@@ -102,7 +102,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// No warning or error, the breakpoint will break when hit
 		/// </summary>
-		NoError,
+		None,
 
 		/// <summary>
 		/// Custom warning message
@@ -149,7 +149,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public static DbgEngineBoundCodeBreakpointMessage CreateNoError() =>
-			new DbgEngineBoundCodeBreakpointMessage(DbgEngineBoundCodeBreakpointMessageKind.NoError, Array.Empty<string>());
+			new DbgEngineBoundCodeBreakpointMessage(DbgEngineBoundCodeBreakpointMessageKind.None, Array.Empty<string>());
 
 		/// <summary>
 		/// Creates a custom warning message

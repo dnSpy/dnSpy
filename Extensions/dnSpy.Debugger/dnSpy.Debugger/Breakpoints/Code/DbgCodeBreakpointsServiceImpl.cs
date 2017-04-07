@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					bps.Add(new DbgCodeBreakpointAndOldSettings(bpImpl, currentSettings));
 					if (bpImpl.WriteSettings_DbgThread(info.Settings)) {
 						if (updatedBreakpoints == null)
-							updatedBreakpoints = new List<DbgCodeBreakpointImpl>(breakpoints.Count);
+							updatedBreakpoints = new List<DbgCodeBreakpointImpl>(settings.Length);
 						updatedBreakpoints.Add(bpImpl);
 					}
 				}

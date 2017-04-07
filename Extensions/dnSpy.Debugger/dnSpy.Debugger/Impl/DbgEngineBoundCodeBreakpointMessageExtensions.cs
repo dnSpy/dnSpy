@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.Impl {
 		public static DbgBoundCodeBreakpointMessage ToDbgBoundCodeBreakpointMessage(this DbgEngineBoundCodeBreakpointMessage message) {
 			if (message.Arguments != null) {
 				switch (message.Kind) {
-				case DbgEngineBoundCodeBreakpointMessageKind.NoError:
+				case DbgEngineBoundCodeBreakpointMessageKind.None:
 					return DbgBoundCodeBreakpointMessage.None;
 
 				case DbgEngineBoundCodeBreakpointMessageKind.CustomWarning:
