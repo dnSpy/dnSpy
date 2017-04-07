@@ -83,6 +83,7 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 			};
 			// This also disables: line compressor, current line highlighter
 			rolesHash.Remove(PredefinedTextViewRoles.Document);
+			rolesHash.Remove(PredefinedTextViewRoles.Zoomable);
 			foreach (var s in extraTextViewRoles)
 				rolesHash.Add(s);
 			var roles = textEditorFactoryService.CreateTextViewRoleSet(rolesHash);
