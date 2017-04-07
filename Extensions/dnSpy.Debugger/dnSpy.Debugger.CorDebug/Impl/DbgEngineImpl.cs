@@ -254,10 +254,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 							SendILCodeBreakpointHitMessage_CorDebug(ilbp.Breakpoint, TryGetThread(ilbp.CorThread));
 							break;
 
+						case DebuggerPauseReason.Break:
+							var bs = (BreakPauseState)pauseState;
+							SendMessage(new DbgMessageProgramBreak(TryGetThread(bs.CorThread)));
+							break;
+
 						case DebuggerPauseReason.NativeCodeBreakpoint:
 						case DebuggerPauseReason.DebugEventBreakpoint:
 						case DebuggerPauseReason.AnyDebugEventBreakpoint:
-						case DebuggerPauseReason.Break:
 						case DebuggerPauseReason.Step:
 						case DebuggerPauseReason.Eval:
 							//TODO:
@@ -413,7 +417,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					CommandLine = options.CommandLine,
 					BreakProcessKind = options.BreakProcessKind.ToDndbg(),
 				};
-				dbgOptions.DebugOptions.IgnoreBreakInstructions = options.IgnoreBreakInstructions;
+				dbgOptions.DebugOptions.IgnoreBreakInstructions = false;
 
 				dnDebugger = DnDebugger.DebugProcess(dbgOptions);
 				OnDebugProcess(dnDebugger);

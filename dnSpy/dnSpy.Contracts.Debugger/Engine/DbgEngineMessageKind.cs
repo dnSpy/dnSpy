@@ -51,5 +51,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// A breakpoint has been hit. The engine has paused the program.
 		/// </summary>
 		Breakpoint,
+
+		/// <summary>
+		/// The program paused itself by executing a break instruction or method
+		/// </summary>
+		ProgramBreak,
 	}
 }

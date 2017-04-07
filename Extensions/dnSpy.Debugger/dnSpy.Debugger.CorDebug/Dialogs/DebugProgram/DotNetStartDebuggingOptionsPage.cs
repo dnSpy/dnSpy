@@ -93,17 +93,6 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			set => BreakProcessKindVM.SelectedItem = value;
 		}
 
-		public bool IgnoreBreakInstructions {
-			get => ignoreBreakInstructions;
-			set {
-				if (ignoreBreakInstructions != value) {
-					ignoreBreakInstructions = value;
-					OnPropertyChanged(nameof(IgnoreBreakInstructions));
-				}
-			}
-		}
-		bool ignoreBreakInstructions;
-
 		public bool DisableManagedDebuggerDetection {
 			get => disableManagedDebuggerDetection;
 			set {
@@ -168,13 +157,11 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			// Must be init'd after Filename since it also overwrites this property
 			WorkingDirectory = options.WorkingDirectory;
 			BreakProcessKind = options.BreakProcessKind;
-			IgnoreBreakInstructions = options.IgnoreBreakInstructions;
 			DisableManagedDebuggerDetection = options.DisableManagedDebuggerDetection;
 		}
 
 		protected T InitializeDefault<T>(T options) where T : CorDebugStartDebuggingOptions {
 			options.BreakProcessKind = BreakProcessKind.None;
-			options.IgnoreBreakInstructions = debuggerSettings.IgnoreBreakInstructions;
 			options.DisableManagedDebuggerDetection = debuggerSettings.DisableManagedDebuggerDetection;
 			return options;
 		}
@@ -184,7 +171,6 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			options.CommandLine = CommandLine;
 			options.WorkingDirectory = WorkingDirectory;
 			options.BreakProcessKind = BreakProcessKind;
-			options.IgnoreBreakInstructions = IgnoreBreakInstructions;
 			options.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
 			return options;
 		}

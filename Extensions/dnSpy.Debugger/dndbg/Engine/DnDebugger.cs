@@ -1121,8 +1121,10 @@ namespace dndbg.Engine {
 				}
 			}
 
-			if (e.Kind == DebugCallbackKind.Break && !debugOptions.IgnoreBreakInstructions)
-				e.AddPauseReason(DebuggerPauseReason.Break);
+			if (e.Kind == DebugCallbackKind.Break && !debugOptions.IgnoreBreakInstructions) {
+				var b = (BreakDebugCallbackEventArgs)e;
+				e.AddPauseState(new BreakPauseState(b.CorAppDomain, b.CorThread));
+			}
 
 			//TODO: DebugCallbackType.BreakpointSetError
 		}

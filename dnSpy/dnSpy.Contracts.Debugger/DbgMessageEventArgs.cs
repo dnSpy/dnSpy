@@ -90,6 +90,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// A bound breakpoint was hit (<see cref="DbgMessageBoundBreakpointEventArgs"/>)
 		/// </summary>
 		BoundBreakpoint,
+
+		/// <summary>
+		/// The program paused itself by executing a break instruction or method (<see cref="DbgMessageProgramBreakEventArgs"/>)
+		/// </summary>
+		ProgramBreak,
 	}
 
 	/// <summary>
@@ -473,6 +478,36 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="thread">Thread or null if it's unknown</param>
 		public DbgMessageBoundBreakpointEventArgs(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) {
 			BoundBreakpoint = boundBreakpoint ?? throw new ArgumentNullException(nameof(boundBreakpoint));
+			Thread = thread;
+		}
+	}
+
+	/// <summary>
+	/// The program paused itself by executing a break instruction or method (<see cref="DbgMessageKind.ProgramBreak"/>)
+	/// </summary>
+	public sealed class DbgMessageProgramBreakEventArgs : DbgMessageEventArgs {
+		/// <summary>
+		/// Returns <see cref="DbgMessageKind.ProgramBreak"/>
+		/// </summary>
+		public override DbgMessageKind Kind => DbgMessageKind.ProgramBreak;
+
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public DbgRuntime Runtime { get; }
+
+		/// <summary>
+		/// Gets the thread or null if it's unknown
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="runtime">Runtime</param>
+		/// <param name="thread">Thread or null if it's unknown</param>
+		public DbgMessageProgramBreakEventArgs(DbgRuntime runtime, DbgThread thread) {
+			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Thread = thread;
 		}
 	}

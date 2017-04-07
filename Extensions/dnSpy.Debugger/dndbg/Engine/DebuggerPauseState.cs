@@ -128,4 +128,16 @@ namespace dndbg.Engine {
 		public StepPauseState(CorDebugStepReason stepReason)
 			: base(DebuggerPauseReason.Step) => StepReason = stepReason;
 	}
+
+	sealed class BreakPauseState : DebuggerPauseState {
+		public DnNativeCodeBreakpoint Breakpoint { get; }
+		public CorAppDomain CorAppDomain { get; }
+		public CorThread CorThread { get; }
+
+		public BreakPauseState(CorAppDomain corAppDomain, CorThread corThread)
+			: base(DebuggerPauseReason.Break) {
+			CorAppDomain = corAppDomain;
+			CorThread = corThread;
+		}
+	}
 }

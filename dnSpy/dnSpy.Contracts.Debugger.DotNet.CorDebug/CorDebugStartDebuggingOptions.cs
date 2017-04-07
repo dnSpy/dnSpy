@@ -45,11 +45,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		public BreakProcessKind BreakProcessKind { get; set; } = BreakProcessKind.None;
 
 		/// <summary>
-		/// true to ignore the break instruction and <see cref="System.Diagnostics.Debugger.Break"/> method calls
-		/// </summary>
-		public bool IgnoreBreakInstructions { get; set; }
-
-		/// <summary>
 		/// true to disable detection of managed debuggers
 		/// </summary>
 		public bool DisableManagedDebuggerDetection { get; set; }
@@ -65,7 +60,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 			other.CommandLine = CommandLine;
 			other.WorkingDirectory = WorkingDirectory;
 			other.BreakProcessKind = BreakProcessKind;
-			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
 			other.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
 		}
 	}

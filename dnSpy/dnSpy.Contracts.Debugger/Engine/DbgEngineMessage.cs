@@ -210,4 +210,34 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			Pause = pause;
 		}
 	}
+
+	/// <summary>
+	/// <see cref="DbgEngineMessageKind.ProgramBreak"/> event
+	/// </summary>
+	public sealed class DbgMessageProgramBreak : DbgEngineMessage {
+		/// <summary>
+		/// Returns <see cref="DbgEngineMessageKind.ProgramBreak"/>
+		/// </summary>
+		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.ProgramBreak;
+
+		/// <summary>
+		/// Gets the thread or null if it's not known
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// true if the process should be paused, false if other code gets to decide if it should be paused
+		/// </summary>
+		public bool Pause { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="thread">Thread or null if it's not known</param>
+		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		public DbgMessageProgramBreak(DbgThread thread, bool pause = false) {
+			Thread = thread;
+			Pause = pause;
+		}
+	}
 }
