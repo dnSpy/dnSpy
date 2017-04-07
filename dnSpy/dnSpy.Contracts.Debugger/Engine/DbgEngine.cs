@@ -125,14 +125,19 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// </summary>
 		/// <param name="modules">Modules</param>
 		/// <param name="boundBreakpoints">Bound breakpoints</param>
-		public abstract void RemoveBreakpoints(DbgModule[] modules, DbgBoundCodeBreakpoint[] boundBreakpoints);
+		/// <param name="includeNonModuleBreakpoints">If false, remove breakpoints that exist in <paramref name="modules"/>, and if true,
+		/// remove breakpoints that exist in <paramref name="modules"/> and all breakpoints not in a <see cref="DbgModule"/></param>
+		public abstract void RemoveBreakpoints(DbgModule[] modules, DbgBoundCodeBreakpoint[] boundBreakpoints, bool includeNonModuleBreakpoints);
 
 		/// <summary>
-		/// Adds all breakpoints
+		/// Adds all breakpoints. To get notified when a bound breakpoint gets deleted, add custom data that implements
+		/// <see cref="IDisposable"/> when creating the bound breakpoint, see eg. <see cref="DbgObjectFactory.Create{T}(DbgBoundCodeBreakpointInfo{T}[])"/>
 		/// </summary>
 		/// <param name="modules">Modules</param>
 		/// <param name="locations">Breakpoint locations. The engine can ignore non-supported locations.</param>
-		public abstract void AddBreakpoints(DbgModule[] modules, DbgBreakpointLocation[] locations);
+		/// <param name="includeNonModuleBreakpoints">If false, add breakpoints that exist in <paramref name="modules"/>, and if true,
+		/// add breakpoints that exist in <paramref name="modules"/> and all breakpoints not in a <see cref="DbgModule"/></param>
+		public abstract void AddBreakpoints(DbgModule[] modules, DbgBreakpointLocation[] locations, bool includeNonModuleBreakpoints);
 	}
 
 	/// <summary>

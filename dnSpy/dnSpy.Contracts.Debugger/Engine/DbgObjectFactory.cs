@@ -176,7 +176,9 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public const ulong BoundBreakpointNoAddress = ulong.MaxValue;
 
 		/// <summary>
-		/// Creates a bound breakpoint. This method returns null if there was no breakpoint matching <paramref name="location"/>
+		/// Creates a bound breakpoint. This method returns null if there was no breakpoint matching <paramref name="location"/>.
+		/// 
+		/// To get notified when a bound breakpoint gets deleted, add custom data that implements <see cref="IDisposable"/>.
 		/// </summary>
 		/// <param name="location">Breakpoint location</param>
 		/// <param name="module">Module or null if none</param>
@@ -187,7 +189,9 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			Create(new[] { new DbgBoundCodeBreakpointInfo<object>(location, module, address, message, null) }).FirstOrDefault();
 
 		/// <summary>
-		/// Creates a bound breakpoint. This method returns null if there was no breakpoint matching <paramref name="location"/>
+		/// Creates a bound breakpoint. This method returns null if there was no breakpoint matching <paramref name="location"/>.
+		/// 
+		/// To get notified when a bound breakpoint gets deleted, add custom data that implements <see cref="IDisposable"/>.
 		/// </summary>
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="location">Breakpoint location</param>
@@ -202,6 +206,8 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Creates bound breakpoints. Locations that don't match an existing breakpoint are ignored, and all user data
 		/// are disposed if they implement <see cref="IDisposable"/>.
+		/// 
+		/// To get notified when a bound breakpoint gets deleted, add custom data that implements <see cref="IDisposable"/>.
 		/// </summary>
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="infos">Bound breakpoints to create</param>
@@ -240,7 +246,8 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public DbgEngineBoundCodeBreakpointMessage Message { get; }
 
 		/// <summary>
-		/// Gets the data to add to the <see cref="DbgEngineBoundCodeBreakpoint"/> or null if nothing gets added
+		/// Gets the data to add to the <see cref="DbgEngineBoundCodeBreakpoint"/> or null if nothing gets added.
+		/// If the data implements <see cref="IDisposable"/>, it gets disposed when the bound breakpoint gets deleted.
 		/// </summary>
 		public T Data { get; }
 
@@ -251,7 +258,8 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="module">Module or null if none</param>
 		/// <param name="address">Address or <see cref="NoAddress"/> if it's not known</param>
 		/// <param name="message">Warning/error message or null if none</param>
-		/// <param name="data">Data to add to the <see cref="DbgEngineBoundCodeBreakpoint"/> or null if nothing gets added</param>
+		/// <param name="data">Data to add to the <see cref="DbgBoundCodeBreakpoint"/> or null if nothing gets added.
+		/// If the data implements <see cref="IDisposable"/>, it gets disposed when the bound breakpoint gets deleted.</param>
 		public DbgBoundCodeBreakpointInfo(DbgBreakpointLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T data) {
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Module = module;

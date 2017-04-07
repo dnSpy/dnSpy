@@ -372,6 +372,8 @@ namespace dnSpy.Debugger.Impl {
 				RaiseMessage(new DbgMessageProcessCreatedEventArgs(process), ref pauseProgram);
 			RaiseMessage(new DbgMessageRuntimeCreatedEventArgs(runtime), ref pauseProgram);
 
+			boundBreakpointsManager.InitializeBoundBreakpoints_DbgThread(engine);
+
 			if (pauseProgram) {
 				SetCurrentProcessIfCurrentIsNull(process);
 				BreakAllProcessesIfNeeded();

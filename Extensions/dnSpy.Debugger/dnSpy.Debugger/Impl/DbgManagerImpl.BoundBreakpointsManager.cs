@@ -124,27 +124,48 @@ namespace dnSpy.Debugger.Impl {
 					AddBoundBreakpoints_DbgThread(newEnabledBreakpoints);
 			}
 
-			List<DbgModule> GetAllModules() {
-				var modules = new List<DbgModule>();
-				lock (owner.lockObj) {
-					foreach (var info in owner.engines)
-						modules.AddRange(info.Runtime?.Modules ?? Array.Empty<DbgModule>());
-				}
-				return modules;
+			// Initializes non-module breakpoints. Called right after the engine has connected to the process
+			internal void InitializeBoundBreakpoints_DbgThread(DbgEngine engine) {
+				DispatcherThread.VerifyAccess();
+				var locations = BoundCodeBreakpointsService.Breakpoints.Where(a => a.IsEnabled).Select(a => a.Location).ToArray();
+				if (locations.Length == 0)
+					return;
+				engine.AddBreakpoints(Array.Empty<DbgModule>(), locations, includeNonModuleBreakpoints: true);
 			}
 
 			void AddBoundBreakpoints_DbgThread(IList<DbgCodeBreakpoint> breakpoints) {
 				DispatcherThread.VerifyAccess();
 				if (!owner.IsDebugging)
 					return;
-				AddBoundBreakpoints_DbgThread(GetAllModules(), breakpoints);
+				var locations = breakpoints.Where(a => a.IsEnabled).Select(a => a.Location).ToArray();
+				if (locations.Length == 0)
+					return;
+				foreach (var info in GetStartedEngines_DbgThread())
+					info.engine.AddBreakpoints(info.modules, locations, includeNonModuleBreakpoints: true);
 			}
 
 			void RemoveBoundBreakpoints_DbgThread(IList<DbgCodeBreakpoint> breakpoints) {
 				DispatcherThread.VerifyAccess();
 				if (!owner.IsDebugging)
 					return;
-				RemoveBoundBreakpoints_DbgThread(GetAllModules(), breakpoints);
+				if (breakpoints.Count == 0)
+					return;
+				var boundBreakpoints = breakpoints.SelectMany(a => a.BoundBreakpoints).ToArray();
+				foreach (var info in GetStartedEngines_DbgThread())
+					info.engine.RemoveBreakpoints(info.modules, boundBreakpoints, includeNonModuleBreakpoints: true);
+			}
+
+			List<(DbgEngine engine, DbgModule[] modules)> GetStartedEngines_DbgThread() {
+				DispatcherThread.VerifyAccess();
+				lock (owner.lockObj) {
+					var list = new List<(DbgEngine, DbgModule[])>(owner.engines.Count);
+					foreach (var info in owner.engines) {
+						if (info.EngineState == EngineState.Starting)
+							continue;
+						list.Add((info.Engine, info.Runtime?.Modules ?? Array.Empty<DbgModule>()));
+					}
+					return list;
+				}
 			}
 
 			internal void AddBoundBreakpoints_DbgThread(IList<DbgModule> modules) {
@@ -197,7 +218,7 @@ namespace dnSpy.Debugger.Impl {
 				foreach (var kv in GetEngineModules(modules)) {
 					var engine = kv.Key;
 					var engineModules = kv.Value;
-					engine.AddBreakpoints(engineModules.ToArray(), locations);
+					engine.AddBreakpoints(engineModules.ToArray(), locations, includeNonModuleBreakpoints: false);
 				}
 			}
 
@@ -207,7 +228,7 @@ namespace dnSpy.Debugger.Impl {
 					return;
 				var boundBreakpoints = breakpoints.SelectMany(a => a.BoundBreakpoints).ToArray();
 				foreach (var kv in GetEngineModules(modules))
-					kv.Key.RemoveBreakpoints(kv.Value.ToArray(), boundBreakpoints);
+					kv.Key.RemoveBreakpoints(kv.Value.ToArray(), boundBreakpoints, includeNonModuleBreakpoints: false);
 			}
 
 			internal void ReAddBreakpoints_DbgThread(DbgModule[] modules) {

@@ -122,10 +122,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				e.AddPauseReason(DebuggerPauseReason.Exception);
 				break;
 
-			case DebugCallbackKind.ExitProcess:
-				// Handled in DnDebugger_OnProcessStateChanged()
-				break;
-
 			case DebugCallbackKind.LogMessage:
 				var lmsgArgs = (LogMessageDebugCallbackEventArgs)e;
 				var msg = lmsgArgs.Message;

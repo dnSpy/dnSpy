@@ -81,8 +81,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return dict;
 		}
 
-		public override void AddBreakpoints(DbgModule[] modules, DbgBreakpointLocation[] locations) => CorDebugThread(() => AddBreakpointsCore(modules, locations));
-		void AddBreakpointsCore(DbgModule[] modules, DbgBreakpointLocation[] locations) {
+		public override void AddBreakpoints(DbgModule[] modules, DbgBreakpointLocation[] locations, bool includeNonModuleBreakpoints) =>
+			CorDebugThread(() => AddBreakpointsCore(modules, locations, includeNonModuleBreakpoints));
+		void AddBreakpointsCore(DbgModule[] modules, DbgBreakpointLocation[] locations, bool includeNonModuleBreakpoints) {
 			Dispatcher.VerifyAccess();
 
 			var dict = CreateDotNetLocationDictionary(locations);
@@ -136,7 +137,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return dict;
 		}
 
-		public override void RemoveBreakpoints(DbgModule[] modules, DbgBoundCodeBreakpoint[] boundBreakpoints) {
+		public override void RemoveBreakpoints(DbgModule[] modules, DbgBoundCodeBreakpoint[] boundBreakpoints, bool includeNonModuleBreakpoints) {
 			var dict = CreateBoundBreakpointsDictionary(boundBreakpoints);
 			var bpsToRemove = new List<BoundBreakpointData>();
 			foreach (var module in modules) {
