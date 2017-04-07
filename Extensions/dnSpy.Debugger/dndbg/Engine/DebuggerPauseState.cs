@@ -104,9 +104,15 @@ namespace dndbg.Engine {
 
 	sealed class ILCodeBreakpointPauseState : DebuggerPauseState {
 		public DnILCodeBreakpoint Breakpoint { get; }
+		public CorAppDomain CorAppDomain { get; }
+		public CorThread CorThread { get; }
 
-		public ILCodeBreakpointPauseState(DnILCodeBreakpoint bp)
-			: base(DebuggerPauseReason.ILCodeBreakpoint) => Breakpoint = bp;
+		public ILCodeBreakpointPauseState(DnILCodeBreakpoint bp, CorAppDomain corAppDomain, CorThread corThread)
+			: base(DebuggerPauseReason.ILCodeBreakpoint) {
+			Breakpoint = bp;
+			CorAppDomain = corAppDomain;
+			CorThread = corThread;
+		}
 	}
 
 	sealed class NativeCodeBreakpointPauseState : DebuggerPauseState {

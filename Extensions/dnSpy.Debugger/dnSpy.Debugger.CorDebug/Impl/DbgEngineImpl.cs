@@ -113,13 +113,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					break;
 				var exObj = e2.CorThread?.CurrentException;
 				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread), pause: false);
-				e.AddPauseReason(DebuggerPauseReason.Exception);
+				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
 			case DebugCallbackKind.MDANotification:
 				var mdan = (MDANotificationDebugCallbackEventArgs)e;
 				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread), pause: false);
-				e.AddPauseReason(DebuggerPauseReason.Exception);
+				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
 			case DebugCallbackKind.LogMessage:
@@ -146,6 +146,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					}
 				}
 				break;
+
+			case DebugCallbackKind.BreakpointSetError:
+				//TODO:
+				break;
 			}
 		}
 
@@ -155,6 +159,18 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			if (EvalReflectionUtils.ReadExceptionMessage(exObj, out var message))
 				return message ?? dnSpy_Debugger_CorDebug_Resources.ExceptionMessageIsNull;
 			return null;
+		}
+
+		DbgAppDomain TryGetAppDomain(CorAppDomain appDomain) {
+			if (appDomain == null)
+				return null;
+			var dnAppDomain = dnDebugger.Processes.FirstOrDefault()?.AppDomains.FirstOrDefault(a => a.CorAppDomain == appDomain);
+			if (dnAppDomain == null)
+				return null;
+			DbgEngineAppDomain engineAppDomain;
+			lock (lockObj)
+				toEngineAppDomain.TryGetValue(dnAppDomain, out engineAppDomain);
+			return engineAppDomain?.AppDomain;
 		}
 
 		DbgThread TryGetThread(CorThread thread) {
@@ -229,6 +245,40 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			else if (dnDebugger.ProcessState == DebuggerProcessState.Paused) {
 				ClrDacPaused?.Invoke(this, EventArgs.Empty);
 				UpdateThreadProperties_CorDebug();
+
+				foreach (var debuggerState in dnDebugger.DebuggerStates) {
+					foreach (var pauseState in debuggerState.PauseStates) {
+						switch (pauseState.Reason) {
+						case DebuggerPauseReason.Other:
+							// We use this reason when we pause the process, DbgManager already knows that we're paused
+							continue;
+
+						case DebuggerPauseReason.UserBreak:
+							// BreakCore() sends the Break message
+							continue;
+
+						case DebuggerPauseReason.ILCodeBreakpoint:
+							var ilbp = (ILCodeBreakpointPauseState)pauseState;
+							SendILCodeBreakpointHitMessage_CorDebug(ilbp.Breakpoint, TryGetAppDomain(ilbp.CorAppDomain), TryGetThread(ilbp.CorThread));
+							break;
+
+						case DebuggerPauseReason.NativeCodeBreakpoint:
+						case DebuggerPauseReason.DebugEventBreakpoint:
+						case DebuggerPauseReason.AnyDebugEventBreakpoint:
+						case DebuggerPauseReason.Break:
+						case DebuggerPauseReason.Step:
+						case DebuggerPauseReason.Eval:
+							//TODO:
+							SendMessage(new DbgMessageBreak());
+							break;
+
+						default:
+							Debug.Fail($"Unknown reason: {pauseState.Reason}");
+							SendMessage(new DbgMessageBreak());
+							break;
+						}
+					}
+				}
 			}
 		}
 

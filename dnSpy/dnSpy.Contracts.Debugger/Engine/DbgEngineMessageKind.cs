@@ -37,7 +37,8 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		Disconnected,
 
 		/// <summary>
-		/// The debugged executable is paused due to a call to <see cref="DbgEngine.Break"/>
+		/// The debugged executable is paused due to a call to <see cref="DbgEngine.Break"/> or
+		/// due to some other engine event.
 		/// </summary>
 		Break,
 
@@ -45,5 +46,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Log message written by the debugged program. The engine has paused the program.
 		/// </summary>
 		ProgramMessage,
+
+		/// <summary>
+		/// A breakpoint has been hit. The engine has paused the program.
+		/// </summary>
+		Breakpoint,
 	}
 }

@@ -1108,7 +1108,7 @@ namespace dndbg.Engine {
 						continue;
 
 					if (bp.IsEnabled && bp.Condition(new ILCodeBreakpointConditionContext(this, bp)))
-						e.AddPauseState(new ILCodeBreakpointPauseState(bp));
+						e.AddPauseState(new ILCodeBreakpointPauseState(bp, bpArgs.CorAppDomain, bpArgs.CorThread));
 					break;
 				}
 				foreach (var bp in nativeCodeBreakpointList.GetBreakpoints()) {

@@ -49,16 +49,26 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
+		void SendILCodeBreakpointHitMessage_CorDebug(DnILCodeBreakpoint breakpoint, DbgAppDomain appDomain, DbgThread thread) {
+			Dispatcher.VerifyAccess();
+			var bpData = (BoundBreakpointData)breakpoint.Tag;
+			Debug.Assert(bpData != null);
+			if (bpData != null)
+				SendMessage(new DbgMessageBreakpoint(bpData.EngineBoundCodeBreakpoint.BoundCodeBreakpoint, appDomain, thread, pause: false));
+			else
+				SendMessage(new DbgMessageBreak());
+		}
+
 		void RemoveBreakpoint(BoundBreakpointData bpData) {
 			lock (lockObj) {
 				pendingBreakpointsToRemove.Add(bpData.Breakpoint);
 				if (pendingBreakpointsToRemove.Count == 1)
-					CorDebugThread(() => RemoveBreakpoints_DbgThread());
+					CorDebugThread(() => RemoveBreakpoints_CorDebug());
 			}
 		}
 		readonly List<DnBreakpoint> pendingBreakpointsToRemove = new List<DnBreakpoint>();
 
-		void RemoveBreakpoints_DbgThread() {
+		void RemoveBreakpoints_CorDebug() {
 			Dispatcher.VerifyAccess();
 			DnBreakpoint[] breakpointsToRemove;
 			lock (lockObj) {
@@ -105,6 +115,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			foreach (var ebp in boundBreakpoints) {
 				var bpData = ebp.BoundCodeBreakpoint.GetData<BoundBreakpointData>();
 				bpData.EngineBoundCodeBreakpoint = ebp;
+				bpData.Breakpoint.Tag = bpData;
 			}
 		}
 

@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Exceptions;
 
 namespace dnSpy.Contracts.Debugger {
@@ -84,6 +85,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// Message from the debugged program (<see cref="DbgMessageProgramMessageEventArgs"/>)
 		/// </summary>
 		ProgramMessage,
+
+		/// <summary>
+		/// A bound breakpoint was hit (<see cref="DbgMessageBoundBreakpointEventArgs"/>)
+		/// </summary>
+		BoundBreakpoint,
 	}
 
 	/// <summary>
@@ -424,5 +430,42 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="message">Message</param>
 		public DbgMessageProgramMessageEventArgs(string message) =>
 			Message = message ?? throw new ArgumentNullException(nameof(message));
+	}
+
+	/// <summary>
+	/// A bound breakpoint was hit (<see cref="DbgMessageKind.BoundBreakpoint"/>)
+	/// </summary>
+	public sealed class DbgMessageBoundBreakpointEventArgs : DbgMessageEventArgs {
+		/// <summary>
+		/// Returns <see cref="DbgMessageKind.BoundBreakpoint"/>
+		/// </summary>
+		public override DbgMessageKind Kind => DbgMessageKind.BoundBreakpoint;
+
+		/// <summary>
+		/// Gets the bound breakpoint
+		/// </summary>
+		public DbgBoundCodeBreakpoint BoundBreakpoint { get; }
+
+		/// <summary>
+		/// Gets the AppDomain or null if it's unknown
+		/// </summary>
+		public DbgAppDomain AppDomain { get; }
+
+		/// <summary>
+		/// Gets the thread or null if it's unknown
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="boundBreakpoint">Bound breakpoint</param>
+		/// <param name="appDomain">AppDomain or null if it's unknown</param>
+		/// <param name="thread">Thread or null if it's unknown</param>
+		public DbgMessageBoundBreakpointEventArgs(DbgBoundCodeBreakpoint boundBreakpoint, DbgAppDomain appDomain, DbgThread thread) {
+			BoundBreakpoint = boundBreakpoint ?? throw new ArgumentNullException(nameof(boundBreakpoint));
+			AppDomain = appDomain;
+			Thread = thread;
+		}
 	}
 }

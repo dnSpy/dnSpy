@@ -296,6 +296,10 @@ namespace dnSpy.Debugger.Impl {
 				OnProgramMessage_DbgThread(engine, (DbgMessageProgramMessage)e);
 				break;
 
+			case DbgEngineMessageKind.Breakpoint:
+				OnBreakpoint_DbgThread(engine, (DbgMessageBreakpoint)e);
+				break;
+
 			default:
 				Debug.Fail($"Unknown message: {e.MessageKind}");
 				break;
@@ -588,6 +592,8 @@ namespace dnSpy.Debugger.Impl {
 			if (raiseIsRunningChanged)
 				RaiseIsRunningChanged();
 			SetCurrentProcessIfCurrentIsNull(process);
+			if (e.ErrorMessage == null)
+				BreakAllProcessesIfNeeded();
 		}
 
 		void BreakCompleted_DbgThread(bool success) {
@@ -606,6 +612,12 @@ namespace dnSpy.Debugger.Impl {
 			DispatcherThread.VerifyAccess();
 			var ep = new DbgMessageProgramMessageEventArgs(e.Message);
 			OnConditionalBreak_DbgThread(engine, ep, pauseDefaultValue: e.Pause);
+		}
+
+		void OnBreakpoint_DbgThread(DbgEngine engine, DbgMessageBreakpoint e) {
+			DispatcherThread.VerifyAccess();
+			var eb = new DbgMessageBoundBreakpointEventArgs(e.BoundBreakpoint, e.AppDomain, e.Thread);
+			OnConditionalBreak_DbgThread(engine, eb, pauseDefaultValue: e.Pause);
 		}
 
 		internal void AddAppDomain_DbgThread(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, bool pause) {
