@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
 using dnSpy.Contracts.Decompiler;
@@ -56,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 				printedToken = true;
 			}
 
-			var method = owner.GetMethodDef(location);
+			var method = owner.GetDefinition<MethodDef>(location.Module, location.Token);
 			if (method == null) {
 				if (printedToken)
 					output.Write(BoxedTextColor.Error, "???");

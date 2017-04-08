@@ -80,6 +80,18 @@
     <Compile Include="BackgroundImage\WpfHexViewCreationListenerImpl.cs" />
     <Compile Include="BackgroundImage\WpfTextViewCreationListener.cs" />
     <Compile Include="Bookmarks\BookmarkImageUtilities.cs" />
+    <Compile Include="Bookmarks\DotNet\BookmarkFormatterService.cs" />
+    <Compile Include="Bookmarks\DotNet\BookmarkLocationFormatterProviderImpl.cs" />
+    <Compile Include="Bookmarks\DotNet\BookmarkLocationSerializerImpl.cs" />
+    <Compile Include="Bookmarks\DotNet\DotNetBookmarkFactoryImpl.cs" />
+    <Compile Include="Bookmarks\DotNet\DotNetBookmarkLocationFormatter.cs" />
+    <Compile Include="Bookmarks\DotNet\DotNetMethodBodyBookmarkLocationImpl.cs" />
+    <Compile Include="Bookmarks\DotNet\DotNetTokenBookmarkLocationImpl.cs" />
+    <Compile Include="Bookmarks\DotNet\IDotNetBookmarkLocation.cs" />
+    <Compile Include="Bookmarks\DotNet\TextEditor\BookmarkGlyphTextMarkerLocationProviderImpl.cs" />
+    <Compile Include="Bookmarks\DotNet\TextEditor\DeleteBookmarksInRemovedModules.cs" />
+    <Compile Include="Bookmarks\DotNet\TextEditor\TextViewDotNetMethodBodyBookmarkLocationProvider.cs" />
+    <Compile Include="Bookmarks\DotNet\TextEditor\TextViewDotNetTokenBookmarkLocationProvider.cs" />
     <Compile Include="Bookmarks\Impl\BookmarkDisplaySettingsBase.cs" />
     <Compile Include="Bookmarks\Impl\BookmarkImpl.cs" />
     <Compile Include="Bookmarks\Impl\BookmarkLocationFormatterService.cs" />
@@ -1178,6 +1190,14 @@
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
+      <Project>{2376e072-101f-4900-8770-79c6dffbd0fb}</Project>
+      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
+      <Project>{C92217E8-A68E-4F8D-9B98-D7328E89DAF1}</Project>
+      <Name>dnSpy.Contracts.Debugger</Name>
     </ProjectReference>
     <ProjectReference Include="..\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
       <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>

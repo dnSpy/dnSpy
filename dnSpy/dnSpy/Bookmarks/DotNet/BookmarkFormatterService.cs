@@ -19,45 +19,47 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
+using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
-using dnSpy.Debugger.DotNet.UI;
 
-namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	abstract class BreakpointFormatterService {
-		public abstract DbgBreakpointLocationFormatter Create(DbgDotNetBreakpointLocation location);
+namespace dnSpy.Bookmarks.DotNet {
+	abstract class BookmarkFormatterService {
+		public abstract BookmarkLocationFormatter Create(DotNetMethodBodyBookmarkLocationImpl location);
+		public abstract BookmarkLocationFormatter Create(DotNetTokenBookmarkLocationImpl location);
 	}
 
-	[Export(typeof(BreakpointFormatterService))]
-	sealed class BreakpointFormatterServiceImpl : BreakpointFormatterService {
+	[Export(typeof(BookmarkFormatterService))]
+	sealed class BookmarkFormatterServiceImpl : BookmarkFormatterService {
 		readonly Lazy<IDecompilerService> decompilerService;
-		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
-		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
+		readonly BookmarkDisplaySettings bookmarkDisplaySettings;
+		readonly Lazy<BookmarksService> bookmarksService;
 		readonly Lazy<DbgMetadataService> dbgMetadataService;
 
 		internal IDecompiler MethodDecompiler => decompilerService.Value.Decompiler;
 
 		[ImportingConstructor]
-		BreakpointFormatterServiceImpl(UIDispatcher uiDispatcher, Lazy<IDecompilerService> decompilerService, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgMetadataService> dbgMetadataService) {
+		BookmarkFormatterServiceImpl(UIDispatcher uiDispatcher, Lazy<IDecompilerService> decompilerService, BookmarkDisplaySettings bookmarkDisplaySettings, Lazy<BookmarksService> bookmarksService, Lazy<DbgMetadataService> dbgMetadataService) {
 			this.decompilerService = decompilerService;
-			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
-			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
+			this.bookmarkDisplaySettings = bookmarkDisplaySettings;
+			this.bookmarksService = bookmarksService;
 			this.dbgMetadataService = dbgMetadataService;
 			uiDispatcher.UI(() => decompilerService.Value.DecompilerChanged += DecompilerService_DecompilerChanged);
 		}
 
 		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
-			foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
-				var formatter = (bp.Location as DbgDotNetBreakpointLocationImpl)?.Formatter as DbgBreakpointLocationFormatterImpl;
-				formatter?.RefreshName();
+			foreach (var bm in bookmarksService.Value.Bookmarks) {
+				if (bm.Location is IDotNetBookmarkLocation location)
+					(location.Formatter as DotNetBookmarkLocationFormatter)?.RefreshLocation();
 			}
 		}
 
-		public override DbgBreakpointLocationFormatter Create(DbgDotNetBreakpointLocation location) =>
-			new DbgBreakpointLocationFormatterImpl(this, codeBreakpointDisplaySettings, location);
+		public override BookmarkLocationFormatter Create(DotNetMethodBodyBookmarkLocationImpl location) =>
+			new DotNetMethodBodyBookmarkLocationFormatterImpl(this, bookmarkDisplaySettings, location);
+
+		public override BookmarkLocationFormatter Create(DotNetTokenBookmarkLocationImpl location) =>
+			new DotNetTokenBookmarkLocationFormatterImpl(this, bookmarkDisplaySettings, location);
 
 		internal TDef GetDefinition<TDef>(ModuleId module, uint token) where TDef : class {
 			var md = dbgMetadataService.Value.TryGetMetadata(module, DbgLoadModuleOptions.AutoLoaded);
