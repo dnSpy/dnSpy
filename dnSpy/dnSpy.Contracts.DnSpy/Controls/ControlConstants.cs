@@ -46,6 +46,12 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>Guid of search <see cref="ListBox"/></summary>
 		public static readonly Guid GUID_SEARCH_LISTBOX = new Guid("651FC97F-A9A7-4649-97AC-FC942168E6E2");
 
+		/// <summary>Guid of bookmarks control</summary>
+		public static readonly Guid GUID_BOOKMARKS_CONTROL = new Guid("0222FABA-6344-4DAE-966F-3FA5EA19598F");
+
+		/// <summary>Guid of bookmarks <see cref="ListView"/></summary>
+		public static readonly Guid GUID_BOOKMARKS_LISTVIEW = new Guid("2A3AE539-9666-486C-98AC-AA5679DD9F54");
+
 		/// <summary>Guid of debugger breakpoints control</summary>
 		[Obsolete("Use " + nameof(GUID_DEBUGGER_CODEBREAKPOINTS_CONTROL), true)]
 		public static readonly Guid GUID_DEBUGGER_BREAKPOINTS_CONTROL = new Guid("00EC8F82-086C-4305-A07D-CC43CB035905");

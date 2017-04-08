@@ -191,6 +191,21 @@ namespace dnSpy.Contracts.Text {
 		public const string DocListDialog = nameof(DocListDialog);
 
 		/// <summary>
+		/// Bookmarks window
+		/// </summary>
+		public const string BookmarksWindow = nameof(BookmarksWindow);
+
+		/// <summary>
+		/// Bookmarks window: name column
+		/// </summary>
+		public const string BookmarksWindowName = nameof(BookmarksWindowName);
+
+		/// <summary>
+		/// Bookmarks window: labels column
+		/// </summary>
+		public const string BookmarksWindowLabels = nameof(BookmarksWindowLabels);
+
+		/// <summary>
 		/// Breakpoints window
 		/// </summary>
 		[Obsolete("Use " + nameof(CodeBreakpointsWindow), true)]

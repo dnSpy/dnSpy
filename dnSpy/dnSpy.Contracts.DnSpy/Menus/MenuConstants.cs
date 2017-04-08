@@ -62,6 +62,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Guid of app menu: Debug \ Windows</summary>
 		public const string APP_MENU_DEBUG_WINDOWS_GUID = "7F95892B-975D-4217-A497-2EB0504489F4";
 
+		/// <summary>Guid of app menu: View \ Bookmarks</summary>
+		public const string APP_MENU_VIEW_BOOKMARKS_GUID = "69DBE925-ED20-43D5-B1EF-EBAB0BAE9E9A";
+
 		/// <summary>Guid of glyph margin</summary>
 		public const string GLYPHMARGIN_GUID = "53F9F2FF-5AF8-4FC6-B849-74AB88EFB367";
 
@@ -236,6 +239,12 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: App Menu: View, Group: Options dlg</summary>
 		public const string GROUP_APP_MENU_VIEW_OPTSDLG = "1000000,AAA7FF98-47CD-4ABF-8824-EE20A283EEB3";
+
+		/// <summary>Group: App Menu: View \ Bookmarks, Group: Windows</summary>
+		public const string GROUP_APP_MENU_BOOKMARKS_WINDOWS = "0,73401CB5-1573-4868-96C9-6141EF39F44F";
+
+		/// <summary>Group: App Menu: View \ Bookmarks, Group: Commands</summary>
+		public const string GROUP_APP_MENU_BOOKMARKS_COMMANDS = "1000,F6008A3C-8EBF-459F-8446-6D96D02060DC";
 
 		/// <summary>Group: App Menu: Themes, Group: Themes</summary>
 		public const string GROUP_APP_MENU_THEMES_THEMES = "0,AAE0CE90-DB6E-4E8D-9E1B-9BF7ABBDBB32";

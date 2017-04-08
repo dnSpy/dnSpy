@@ -17,22 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dnSpy.Contracts.Settings;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Settings {
-	sealed class SettingsService2 : SettingsService, ISettingsService2 {
-		public void Open(string filename) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			Reset();
-			new XmlSettingsReader(this, filename).Read();
-		}
+namespace dnSpy.Bookmarks.UI {
+	static class ContentTypeDefinitions {
+#pragma warning disable 0169
+		[Export]
+		[Name(ContentTypes.BookmarksWindow)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition BookmarksWindow;
 
-		public void Save(string filename) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			new XmlSettingsWriter(this, filename).Write();
-		}
+		[Export]
+		[Name(ContentTypes.BookmarksWindowName)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition BookmarksWindowName;
+
+		[Export]
+		[Name(ContentTypes.BookmarksWindowLabels)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition BookmarksWindowLabels;
+#pragma warning restore 0169
 	}
 }

@@ -26,9 +26,9 @@ namespace dnSpy.Contracts.Bookmarks {
 	/// </summary>
 	public abstract class BookmarkLocationFormatter : INotifyPropertyChanged {
 		/// <summary>
-		/// Name of the Name property
+		/// Name of the Location property
 		/// </summary>
-		public const string NameProperty = nameof(NameProperty);
+		public const string LocationProperty = nameof(LocationProperty);
 
 		/// <summary>
 		/// Name of the Module property
@@ -43,9 +43,9 @@ namespace dnSpy.Contracts.Bookmarks {
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		/// <summary>
-		/// Called when the name needs to be reformatted
+		/// Called when the location needs to be reformatted
 		/// </summary>
-		protected void RaiseNameChanged() => OnPropertyChanged(NameProperty);
+		protected void RaiseLocationChanged() => OnPropertyChanged(LocationProperty);
 
 		/// <summary>
 		/// Called when the module needs to be reformatted
@@ -53,10 +53,10 @@ namespace dnSpy.Contracts.Bookmarks {
 		protected void RaiseModuleChanged() => OnPropertyChanged(ModuleProperty);
 
 		/// <summary>
-		/// Writes the name shown in the Name column
+		/// Writes the location shown in the Location column
 		/// </summary>
 		/// <param name="output">Output</param>
-		public abstract void WriteName(ITextColorWriter output);
+		public abstract void WriteLocation(ITextColorWriter output);
 
 		/// <summary>
 		/// Writes the module shown in the Module column

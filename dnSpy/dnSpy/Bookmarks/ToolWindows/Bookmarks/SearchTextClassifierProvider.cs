@@ -17,22 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dnSpy.Contracts.Settings;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.ToolWindows.Search;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Settings {
-	sealed class SettingsService2 : SettingsService, ISettingsService2 {
-		public void Open(string filename) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			Reset();
-			new XmlSettingsReader(this, filename).Read();
-		}
-
-		public void Save(string filename) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			new XmlSettingsWriter(this, filename).Write();
+namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
+	[Export(typeof(ITextClassifierProvider))]
+	[ContentType(ContentTypes.BookmarksWindow)]
+	sealed class SearchTextClassifierProvider : SearchTextClassifierProviderBase {
+		[ImportingConstructor]
+		SearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService)
+			: base(themeClassificationTypeService) {
 		}
 	}
 }

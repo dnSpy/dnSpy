@@ -523,6 +523,195 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export all bookmarks matching the current search criteria.
+        /// </summary>
+        public static string Bookmarks_ExportMatchingBookmarks_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_ExportMatchingBookmarks_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the caret to the selected bookmark..
+        /// </summary>
+        public static string Bookmarks_GoToLocation_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_GoToLocation_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the caret to the next bookmark..
+        /// </summary>
+        public static string Bookmarks_GoToNextBookmark_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_GoToNextBookmark_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the caret to the next bookmark in the current file..
+        /// </summary>
+        public static string Bookmarks_GoToNextBookmarkInFile_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_GoToNextBookmarkInFile_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the caret to the next bookmark with the same label..
+        /// </summary>
+        public static string Bookmarks_GoToNextBookmarkSameLabel_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_GoToNextBookmarkSameLabel_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the caret to the previous bookmark..
+        /// </summary>
+        public static string Bookmarks_GoToPreviousBookmark_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_GoToPreviousBookmark_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the caret to the previous bookmark in the current file..
+        /// </summary>
+        public static string Bookmarks_GoToPreviousBookmarkInFile_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_GoToPreviousBookmarkInFile_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the caret to the previous bookmark with the same label..
+        /// </summary>
+        public static string Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import bookmarks from a file.
+        /// </summary>
+        public static string Bookmarks_ImportBookmarks_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_ImportBookmarks_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No bookmarks match your search filter..
+        /// </summary>
+        public static string Bookmarks_NoMatch {
+            get {
+                return ResourceManager.GetString("Bookmarks_NoMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove bookmark.
+        /// </summary>
+        public static string Bookmarks_RemoveBookmark_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_RemoveBookmark_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove all bookmarks matching the current search criteria.
+        /// </summary>
+        public static string Bookmarks_RemoveMatchingBookmarks_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_RemoveMatchingBookmarks_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all search criteria so that all bookmarks are shown.
+        /// </summary>
+        public static string Bookmarks_ResetSearchSettings_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_ResetSearchSettings_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Bookmarks_Search {
+            get {
+                return ResourceManager.GetString("Bookmarks_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search for a bookmark.
+        /// </summary>
+        public static string Bookmarks_Search_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_Search_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle a bookmark on the current line..
+        /// </summary>
+        public static string Bookmarks_ToggleCreateBookmark_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_ToggleCreateBookmark_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable or disable all bookmarks matching the current search criteria.
+        /// </summary>
+        public static string Bookmarks_ToggleMatchingBookmarks_ToolTip {
+            get {
+                return ResourceManager.GetString("Bookmarks_ToggleMatchingBookmarks_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Boo_kmarks.
+        /// </summary>
+        public static string BookmarksCommand {
+            get {
+                return ResourceManager.GetString("BookmarksCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bookmarks.
+        /// </summary>
+        public static string BookmarksOptDlgTab {
+            get {
+                return ResourceManager.GetString("BookmarksOptDlgTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Syntax highlight.
+        /// </summary>
+        public static string BookmarksSettings_SyntaxHighlight {
+            get {
+                return ResourceManager.GetString("BookmarksSettings_SyntaxHighlight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Bookmark Window.
+        /// </summary>
+        public static string BookmarksWindowCommand {
+            get {
+                return ResourceManager.GetString("BookmarksWindowCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Cancel.
         /// </summary>
         public static string Button_Cancel {
@@ -726,6 +915,42 @@ namespace dnSpy.Properties {
         public static string CollapseTreeViewNodesCommand {
             get {
                 return ResourceManager.GetString("CollapseTreeViewNodesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Labels.
+        /// </summary>
+        public static string Column_Labels {
+            get {
+                return ResourceManager.GetString("Column_Labels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location.
+        /// </summary>
+        public static string Column_Location {
+            get {
+                return ResourceManager.GetString("Column_Location", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module.
+        /// </summary>
+        public static string Column_Module {
+            get {
+                return ResourceManager.GetString("Column_Module", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string Column_Name {
+            get {
+                return ResourceManager.GetString("Column_Name", resourceCulture);
             }
         }
         
@@ -3153,6 +3378,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        public static string SearchHelp_ToolTip {
+            get {
+                return ResourceManager.GetString("SearchHelp_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Searching....
         /// </summary>
         public static string Searching {
@@ -4751,6 +4985,15 @@ namespace dnSpy.Properties {
         public static string ValueMustBeWithinRange {
             get {
                 return ResourceManager.GetString("ValueMustBeWithinRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bookmarks.
+        /// </summary>
+        public static string Window_Bookmarks {
+            get {
+                return ResourceManager.GetString("Window_Bookmarks", resourceCulture);
             }
         }
         

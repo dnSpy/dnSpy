@@ -18,21 +18,24 @@
 */
 
 using System;
-using dnSpy.Contracts.Settings;
 
-namespace dnSpy.Settings {
-	sealed class SettingsService2 : SettingsService, ISettingsService2 {
-		public void Open(string filename) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			Reset();
-			new XmlSettingsReader(this, filename).Read();
-		}
+namespace dnSpy.Bookmarks.UI {
+	sealed class FormatterObject<TVM> where TVM : class {
+		public TVM VM { get; }
 
-		public void Save(string filename) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			new XmlSettingsWriter(this, filename).Write();
+		/// <summary>
+		/// See <see cref="Contracts.Text.Classification.PredefinedTextClassifierTags"/>
+		/// </summary>
+		public string Tag { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="vm">VM</param>
+		/// <param name="tag">See <see cref="Contracts.Text.Classification.PredefinedTextClassifierTags"/></param>
+		public FormatterObject(TVM vm, string tag) {
+			VM = vm ?? throw new ArgumentNullException(nameof(vm));
+			Tag = tag ?? throw new ArgumentNullException(nameof(tag));
 		}
 	}
 }

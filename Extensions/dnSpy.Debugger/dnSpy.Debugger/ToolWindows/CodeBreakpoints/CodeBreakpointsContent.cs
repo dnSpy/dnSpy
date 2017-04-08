@@ -55,7 +55,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			public ICodeBreakpointsVM VM { get; }
 			CodeBreakpointsOperations Operations { get; }
 
-			public string AddCodeBreakpointToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_AddBreakpoint_ToolTip, null);
 			public string RemoveCodeBreakpointToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_RemoveBreakpoint_ToolTip, null);
 			public string RemoveMatchingBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_RemoveMatchingBreakpoints_ToolTip, null);
 			public string ToggleMatchingBreakpointsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Breakpoints_ToggleMatchingBreakpoints_ToolTip, null);

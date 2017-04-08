@@ -19,6 +19,7 @@
                     xmlns:docvwrsettings="clr-namespace:dnSpy.Documents.Tabs.DocViewer.Settings"
                     xmlns:outputsettings="clr-namespace:dnSpy.Output.Settings"
                     xmlns:hexedsettings="clr-namespace:dnSpy.Hex.HexEditor"
+                    xmlns:bm="clr-namespace:dnSpy.Bookmarks.Settings"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--
@@ -6666,6 +6667,22 @@
                     <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding ZoomControl}" Content="{x:Static p:dnSpy_Resources.TextEditorZoomControl}" />
                 </Grid>
             </GroupBox>
+        </Grid>
+    </DataTemplate>
+
+    <Style x:Key="BookmarksTableGridViewScrollViewerStyle"
+           BasedOn="{StaticResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
+           TargetType="{x:Type ScrollViewer}">
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    </Style>
+
+    <DataTemplate DataType="{x:Type bm:BookmarksAppSettingsPage}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" Margin="0 0 0 0" IsChecked="{Binding Settings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Resources.BookmarksSettings_SyntaxHighlight}" />
         </Grid>
     </DataTemplate>
 

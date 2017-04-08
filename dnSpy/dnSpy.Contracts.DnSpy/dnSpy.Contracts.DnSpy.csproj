@@ -81,6 +81,7 @@
     <Compile Include="Bookmarks\BookmarkLocationSerializer.cs" />
     <Compile Include="Bookmarks\BookmarkSettings.cs" />
     <Compile Include="Bookmarks\BookmarksService.cs" />
+    <Compile Include="Bookmarks\BookmarksSettings.cs" />
     <Compile Include="Bookmarks\CollectionChangedEventArgs.cs" />
     <Compile Include="Bookmarks\PredefinedBookmarkLocationTypes.cs" />
     <Compile Include="Bookmarks\TextEditor\BookmarkGlyphTextMarkerLocationProvider.cs" />

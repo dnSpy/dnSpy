@@ -17,22 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dnSpy.Contracts.Settings;
-
-namespace dnSpy.Settings {
-	sealed class SettingsService2 : SettingsService, ISettingsService2 {
-		public void Open(string filename) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			Reset();
-			new XmlSettingsReader(this, filename).Read();
-		}
-
-		public void Save(string filename) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			new XmlSettingsWriter(this, filename).Write();
-		}
-	}
+namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
+	//TODO:
 }

@@ -65,6 +65,26 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string TabsDialogPath = "Path";
 
 		/// <summary>
+		/// Bookmarks window column: Name
+		/// </summary>
+		public static readonly string BookmarksWindowName = "Name";
+
+		/// <summary>
+		/// Bookmarks window column: Labels
+		/// </summary>
+		public static readonly string BookmarksWindowLabels = "Labels";
+
+		/// <summary>
+		/// Bookmarks window column: Location
+		/// </summary>
+		public static readonly string BookmarksWindowLocation = "Location";
+
+		/// <summary>
+		/// Bookmarks window column: Module
+		/// </summary>
+		public static readonly string BookmarksWindowModule = "Module";
+
+		/// <summary>
 		/// Breakpoints window column: Name
 		/// </summary>
 		[Obsolete("Use code breakpoints constants instead", true)]

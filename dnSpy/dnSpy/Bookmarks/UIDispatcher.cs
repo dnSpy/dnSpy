@@ -25,7 +25,7 @@ using dnSpy.Contracts.App;
 namespace dnSpy.Bookmarks {
 	[Export(typeof(UIDispatcher))]
 	sealed class UIDispatcher {
-		Dispatcher Dispatcher { get; }
+		public Dispatcher Dispatcher { get; }
 
 		[ImportingConstructor]
 		UIDispatcher(IAppWindow appWindow) => Dispatcher = appWindow.MainWindow.Dispatcher;

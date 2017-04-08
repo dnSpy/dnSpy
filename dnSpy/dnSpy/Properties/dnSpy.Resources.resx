@@ -1710,4 +1710,85 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="TimestampDateTimeFormat" xml:space="preserve">
     <value>Timestamp format</value>
   </data>
+  <data name="Window_Bookmarks" xml:space="preserve">
+    <value>Bookmarks</value>
+  </data>
+  <data name="BookmarksOptDlgTab" xml:space="preserve">
+    <value>Bookmarks</value>
+  </data>
+  <data name="BookmarksSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Syntax highlight</value>
+  </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="Column_Labels" xml:space="preserve">
+    <value>Labels</value>
+  </data>
+  <data name="Column_Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="Column_Module" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Bookmarks_NoMatch" xml:space="preserve">
+    <value>No bookmarks match your search filter.</value>
+  </data>
+  <data name="Bookmarks_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="BookmarksCommand" xml:space="preserve">
+    <value>Boo_kmarks</value>
+  </data>
+  <data name="BookmarksWindowCommand" xml:space="preserve">
+    <value>_Bookmark Window</value>
+  </data>
+  <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
+    <value>Export all bookmarks matching the current search criteria</value>
+  </data>
+  <data name="Bookmarks_GoToLocation_ToolTip" xml:space="preserve">
+    <value>Move the caret to the selected bookmark.</value>
+  </data>
+  <data name="Bookmarks_GoToNextBookmarkInFile_ToolTip" xml:space="preserve">
+    <value>Move the caret to the next bookmark in the current file.</value>
+  </data>
+  <data name="Bookmarks_GoToNextBookmarkSameLabel_ToolTip" xml:space="preserve">
+    <value>Move the caret to the next bookmark with the same label.</value>
+  </data>
+  <data name="Bookmarks_GoToNextBookmark_ToolTip" xml:space="preserve">
+    <value>Move the caret to the next bookmark.</value>
+  </data>
+  <data name="Bookmarks_GoToPreviousBookmarkInFile_ToolTip" xml:space="preserve">
+    <value>Move the caret to the previous bookmark in the current file.</value>
+  </data>
+  <data name="Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip" xml:space="preserve">
+    <value>Move the caret to the previous bookmark with the same label.</value>
+  </data>
+  <data name="Bookmarks_GoToPreviousBookmark_ToolTip" xml:space="preserve">
+    <value>Move the caret to the previous bookmark.</value>
+  </data>
+  <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
+    <value>Import bookmarks from a file</value>
+  </data>
+  <data name="Bookmarks_RemoveBookmark_ToolTip" xml:space="preserve">
+    <value>Remove bookmark</value>
+  </data>
+  <data name="Bookmarks_RemoveMatchingBookmarks_ToolTip" xml:space="preserve">
+    <value>Remove all bookmarks matching the current search criteria</value>
+  </data>
+  <data name="Bookmarks_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all bookmarks are shown</value>
+  </data>
+  <data name="Bookmarks_Search_ToolTip" xml:space="preserve">
+    <value>Search for a bookmark</value>
+  </data>
+  <data name="Bookmarks_ToggleCreateBookmark_ToolTip" xml:space="preserve">
+    <value>Toggle a bookmark on the current line.</value>
+  </data>
+  <data name="Bookmarks_ToggleMatchingBookmarks_ToolTip" xml:space="preserve">
+    <value>Enable or disable all bookmarks matching the current search criteria</value>
+  </data>
 </root>

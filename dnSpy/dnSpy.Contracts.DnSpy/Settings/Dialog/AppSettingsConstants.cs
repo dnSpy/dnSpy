@@ -94,6 +94,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_BACKGROUNDIMAGE = 10000;
 
 		/// <summary>
+		/// Order of bookmarks settings page
+		/// </summary>
+		public const double ORDER_BOOKMARKS = 11000;
+
+		/// <summary>
 		/// Order of <see cref="IDsDocumentService"/>'s <see cref="IAppSettingsModifiedListener"/> instance
 		/// </summary>
 		public const double ORDER_LISTENER_DOCUMENTMANAGER = double.MinValue;	// It must be first since it disables mmap'd I/O

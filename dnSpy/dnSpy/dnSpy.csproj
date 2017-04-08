@@ -88,12 +88,32 @@
     <Compile Include="Bookmarks\Impl\BookmarksListSettings.cs" />
     <Compile Include="Bookmarks\Impl\BookmarksSerializer.cs" />
     <Compile Include="Bookmarks\Impl\BookmarksServiceImpl.cs" />
+    <Compile Include="Bookmarks\Settings\BookmarksAppSettingsPage.cs" />
+    <Compile Include="Bookmarks\Settings\BookmarksSettingsImpl.cs" />
     <Compile Include="Bookmarks\TextEditor\BookmarkGlyphTextMarkerHandler.cs" />
     <Compile Include="Bookmarks\TextEditor\BookmarkGlyphTextMarkerLocationProviderService.cs" />
     <Compile Include="Bookmarks\TextEditor\BookmarkInfo.cs" />
     <Compile Include="Bookmarks\TextEditor\BookmarkMarker.cs" />
     <Compile Include="Bookmarks\TextEditor\TextViewBookmarkService.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\AppMenuCommands.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkColumnConverter.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkContext.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkFormatter.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarksContent.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarksControl.xaml.cs">
+      <DependentUpon>BookmarksControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarksOperations.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarksToolWindowContent.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarksVM.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkVM.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\Commands.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\SearchTextClassifierProvider.cs" />
+    <Compile Include="Bookmarks\ToolWindows\LazyToolWindowVMHelper.cs" />
     <Compile Include="Bookmarks\UIDispatcher.cs" />
+    <Compile Include="Bookmarks\UI\BulkObservableCollection.cs" />
+    <Compile Include="Bookmarks\UI\ContentTypeDefinitions.cs" />
+    <Compile Include="Bookmarks\UI\FormatterObject.cs" />
     <Compile Include="Commands\CommandService.cs" />
     <Compile Include="Commands\DefaultCommandInfoProvider.cs" />
     <Compile Include="Commands\KeyShortcutCollection.cs" />
@@ -1215,6 +1235,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Bookmarks\ToolWindows\Bookmarks\BookmarksControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Documents\Tabs\Dialogs\ExportToProjectDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
