@@ -50,7 +50,6 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		readonly Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService;
 		readonly BreakpointGlyphTextMarkerLocationProviderService breakpointGlyphTextMarkerLocationProviderService;
 		readonly BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler;
-		IClassificationType classificationTypeEnabledBreakpoint;
 		BreakpointInfo[] breakpointInfos;
 
 		[ImportingConstructor]
@@ -67,7 +66,6 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 
 		void Initialize_UI() {
 			uiDispatcher.VerifyAccess();
-			classificationTypeEnabledBreakpoint = classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatement);
 			breakpointInfos = new BreakpointInfo[(int)BreakpointKind.Last] {
 				new BreakpointInfo(BreakpointKind.BreakpointDisabled,			ThemeClassificationTypeNameKeys.DisabledBreakpointStatementMarker,			null,																				null,																																GlyphTextMarkerServiceZIndexes.DisabledBreakpoint),
 				new BreakpointInfo(BreakpointKind.BreakpointEnabled,			ThemeClassificationTypeNameKeys.BreakpointStatementMarker,					ThemeClassificationTypeNameKeys.SelectedBreakpointStatementMarker,					classificationTypeRegistryService.Value.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatement),					GlyphTextMarkerServiceZIndexes.EnabledBreakpoint),

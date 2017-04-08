@@ -117,13 +117,13 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		readonly object lockObj;
 		readonly DbgCodeBreakpointsServiceImpl owner;
 
-		public DbgCodeBreakpointImpl(DbgCodeBreakpointsServiceImpl owner, int id, DbgBreakpointLocation breakpointLocation, DbgCodeBreakpointSettings settings, bool isDebugging) {
+		public DbgCodeBreakpointImpl(DbgCodeBreakpointsServiceImpl owner, int id, DbgBreakpointLocation location, DbgCodeBreakpointSettings settings, bool isDebugging) {
 			lockObj = new object();
 			boundCodeBreakpoints = new List<DbgBoundCodeBreakpoint>();
 			this.isDebugging = isDebugging;
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			Id = id;
-			Location = breakpointLocation ?? throw new ArgumentNullException(nameof(breakpointLocation));
+			Location = location ?? throw new ArgumentNullException(nameof(location));
 			this.settings = settings;
 			boundBreakpointsMessage = CalculateBoundBreakpointsMessage_NoLock();
 		}

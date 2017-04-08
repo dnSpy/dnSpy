@@ -26,7 +26,7 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class DbgBreakpointLocationFormatterService {
-		public abstract DbgBreakpointLocationFormatter GetFormatter(DbgBreakpointLocation breakpoint);
+		public abstract DbgBreakpointLocationFormatter GetFormatter(DbgBreakpointLocation location);
 	}
 
 	[Export(typeof(DbgBreakpointLocationFormatterService))]
@@ -37,13 +37,13 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		DbgBreakpointLocationFormatterServiceImpl([ImportMany] IEnumerable<Lazy<DbgBreakpointLocationFormatterProvider, IDbgBreakpointLocationFormatterProviderMetadata>> dbgBreakpointLocationFormatterProviders) =>
 			this.dbgBreakpointLocationFormatterProviders = dbgBreakpointLocationFormatterProviders.ToArray();
 
-		public override DbgBreakpointLocationFormatter GetFormatter(DbgBreakpointLocation breakpoint) {
-			if (breakpoint == null)
-				throw new ArgumentNullException(nameof(breakpoint));
-			var type = breakpoint.Type;
+		public override DbgBreakpointLocationFormatter GetFormatter(DbgBreakpointLocation location) {
+			if (location == null)
+				throw new ArgumentNullException(nameof(location));
+			var type = location.Type;
 			foreach (var lz in dbgBreakpointLocationFormatterProviders) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0) {
-					var formatter = lz.Value.Create(breakpoint);
+					var formatter = lz.Value.Create(location);
 					if (formatter != null)
 						return formatter;
 				}

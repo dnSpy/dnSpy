@@ -1,0 +1,82 @@
+﻿/*
+    Copyright (C) 2014-2017 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using dnSpy.Contracts.Bookmarks;
+using dnSpy.Contracts.Settings;
+
+namespace dnSpy.Bookmarks.Impl {
+	struct BookmarksSerializer {
+		static readonly Guid SETTINGS_GUID = new Guid("EAA1BE38-7A55-44AF-AD93-5B7EE2327EDD");
+
+		readonly ISettingsService settingsService;
+		readonly BookmarkLocationSerializerService bookmarkLocationSerializerService;
+
+		public BookmarksSerializer(ISettingsService settingsService, BookmarkLocationSerializerService bookmarkLocationSerializerService) {
+			this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+			this.bookmarkLocationSerializerService = bookmarkLocationSerializerService ?? throw new ArgumentNullException(nameof(bookmarkLocationSerializerService));
+		}
+
+		public BookmarkInfo[] Load() {
+			var section = settingsService.GetOrCreateSection(SETTINGS_GUID);
+			var settings = new List<BookmarkInfo>();
+			foreach (var bmSect in section.SectionsWithName("Bookmark")) {
+				var isEnabled = bmSect.Attribute<bool?>("IsEnabled");
+				if (isEnabled == null)
+					continue;
+				var location = bookmarkLocationSerializerService.Deserialize(bmSect.TryGetSection("BML"));
+				if (location == null)
+					continue;
+				var bmSettings = new BookmarkSettings {
+					IsEnabled = isEnabled.Value,
+					Name = bmSect.Attribute<string>("Name") ?? string.Empty,
+					Labels = LoadLabels(bmSect),
+				};
+				settings.Add(new BookmarkInfo(location, bmSettings));
+			}
+			return settings.ToArray();
+		}
+
+		string[] LoadLabels(ISettingsSection section) {
+			var labels = section.Attribute<string>("Labels") ?? string.Empty;
+			return labels.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray();
+		}
+
+		public void Save(IEnumerable<Bookmark> bookmarks) {
+			var section = settingsService.RecreateSection(SETTINGS_GUID);
+			foreach (var bm in bookmarks) {
+				var bmSect = section.CreateSection("Bookmark");
+				var bmSettings = bm.Settings;
+				bmSect.Attribute("IsEnabled", bmSettings.IsEnabled);
+				bookmarkLocationSerializerService.Serialize(bmSect.CreateSection("BML"), bm.Location);
+				bmSect.Attribute("Name", bm.Name ?? string.Empty);
+				if (bmSettings.Labels != null && bmSettings.Labels.Length != 0)
+					SaveLabels(bmSect, bmSettings.Labels);
+			}
+		}
+
+		void SaveLabels(ISettingsSection section, string[] labels) {
+			if (labels == null || labels.Length == 0)
+				return;
+			section.Attribute("Labels", string.Join(", ", labels));
+		}
+	}
+}

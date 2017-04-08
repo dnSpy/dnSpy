@@ -42,8 +42,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				var isEnabled = bpSect.Attribute<bool?>("IsEnabled");
 				if (isEnabled == null)
 					continue;
-				var breakpointLocation = dbgBreakpointLocationSerializerService.Deserialize(bpSect.TryGetSection("BPL"));
-				if (breakpointLocation == null)
+				var location = dbgBreakpointLocationSerializerService.Deserialize(bpSect.TryGetSection("BPL"));
+				if (location == null)
 					continue;
 				var bpSettings = new DbgCodeBreakpointSettings {
 					IsEnabled = isEnabled.Value,
@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					Trace = LoadTrace(bpSect.TryGetSection("Trace")),
 					Labels = LoadLabels(bpSect),
 				};
-				settings.Add(new DbgCodeBreakpointInfo(breakpointLocation, bpSettings));
+				settings.Add(new DbgCodeBreakpointInfo(location, bpSettings));
 			}
 			return settings.ToArray();
 		}
