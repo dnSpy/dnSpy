@@ -1791,4 +1791,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="Bookmarks_ToggleMatchingBookmarks_ToolTip" xml:space="preserve">
     <value>Enable or disable all bookmarks matching the current search criteria</value>
   </data>
+  <data name="BookmarkDefaultName" xml:space="preserve">
+    <value>Bookmark{0}</value>
+  </data>
 </root>

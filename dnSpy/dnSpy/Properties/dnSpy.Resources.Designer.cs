@@ -523,6 +523,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bookmark{0}.
+        /// </summary>
+        public static string BookmarkDefaultName {
+            get {
+                return ResourceManager.GetString("BookmarkDefaultName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export all bookmarks matching the current search criteria.
         /// </summary>
         public static string Bookmarks_ExportMatchingBookmarks_ToolTip {

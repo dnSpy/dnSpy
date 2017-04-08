@@ -19,6 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Bookmarks;
+using dnSpy.Properties;
 
 namespace dnSpy.Bookmarks.Impl {
 	sealed class BookmarkImpl : Bookmark {
@@ -72,6 +73,8 @@ namespace dnSpy.Bookmarks.Impl {
 			Id = id;
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			this.settings = settings;
+			if (this.settings.Name == null)
+				this.settings.Name = string.Format(dnSpy_Resources.BookmarkDefaultName, id.ToString());
 		}
 
 		internal void WriteSettings_BMThread(BookmarkSettings newSettings) {
