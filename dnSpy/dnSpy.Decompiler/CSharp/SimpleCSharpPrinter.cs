@@ -447,9 +447,10 @@ namespace dnSpy.Decompiler.CSharp {
 
 			var fd = field.ResolveFieldDef();
 			if (!isEnumOwner || (fd != null && !fd.IsLiteral)) {
-				if (isToolTip)
+				if (isToolTip) {
 					OutputWrite(string.Format("({0})", fd != null && fd.IsLiteral ? dnSpy_Decompiler_Resources.ToolTip_Constant : dnSpy_Decompiler_Resources.ToolTip_Field), BoxedTextColor.Text);
-				WriteSpace();
+					WriteSpace();
+				}
 				Write(sig.Type, null, null, null);
 				WriteSpace();
 			}
