@@ -23,7 +23,12 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public static class GlyphTextMarkerServiceZIndexes {
 		/// <summary>
-		/// Z-index of bookmarks
+		/// Z-index of disabled bookmarks
+		/// </summary>
+		public const int DisabledBookmark = 990;
+
+		/// <summary>
+		/// Z-index of enabled bookmarks
 		/// </summary>
 		public const int Bookmark = 1000;
 

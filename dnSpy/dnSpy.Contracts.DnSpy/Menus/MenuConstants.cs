@@ -186,6 +186,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Breakpoint</summary>
 		public static readonly string GUIDOBJ_BREAKPOINT_GUID = "A229BFE6-0445-4B5C-9D4B-E590995B9D93";
 
+		/// <summary>Bookmark</summary>
+		public static readonly string GUIDOBJ_BOOKMARK_GUID = "71BD1A39-50A8-43C2-B88A-8986D0C674B4";
+
 		/// <summary>Group: App Menu: File, Group: Save</summary>
 		public const string GROUP_APP_MENU_FILE_SAVE = "0,557C4B2D-5966-41AF-BFCA-D0A36DB5D6D8";
 
