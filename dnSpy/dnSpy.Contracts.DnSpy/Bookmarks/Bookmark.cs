@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		public abstract bool IsEnabled { get; set; }
 
 		/// <summary>
-		/// Name of bookmark
+		/// Name of the bookmark
 		/// </summary>
 		public abstract string Name { get; set; }
 

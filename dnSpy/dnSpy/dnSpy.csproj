@@ -121,6 +121,7 @@
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkVM.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\Commands.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\SearchTextClassifierProvider.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\TextViewTaggers.cs" />
     <Compile Include="Bookmarks\ToolWindows\LazyToolWindowVMHelper.cs" />
     <Compile Include="Bookmarks\UIDispatcher.cs" />
     <Compile Include="Bookmarks\UI\BulkObservableCollection.cs" />

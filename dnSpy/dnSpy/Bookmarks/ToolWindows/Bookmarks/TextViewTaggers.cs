@@ -20,43 +20,43 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Debugger.ToolWindows.Threads {
+namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 	[Export(typeof(ITaggerProvider))]
 	[TagType(typeof(IClassificationTag))]
-	[ContentType(ContentTypes.ThreadsWindowName)]
-	sealed class ThreadNameTaggerProvider : ITaggerProvider {
+	[ContentType(ContentTypes.BookmarksWindowName)]
+	sealed class BookmarkNameTaggerProvider : ITaggerProvider {
 		readonly IClassificationTag nameClassificationTag;
-		readonly DebuggerSettings debuggerSettings;
+		readonly BookmarksSettings bookmarksSettings;
 
 		[ImportingConstructor]
-		ThreadNameTaggerProvider(IClassificationTypeRegistryService classificationTypeRegistryService, DebuggerSettings debuggerSettings) {
-			nameClassificationTag = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThreadFormatter.NameColorClassificationTypeName));
-			this.debuggerSettings = debuggerSettings;
+		BookmarkNameTaggerProvider(IClassificationTypeRegistryService classificationTypeRegistryService, BookmarksSettings bookmarksSettings) {
+			nameClassificationTag = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(BookmarkFormatter.NameColorClassificationTypeName));
+			this.bookmarksSettings = bookmarksSettings;
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
-			new ThreadTagger(nameClassificationTag, debuggerSettings) as ITagger<T>;
+			new BookmarkTagger(nameClassificationTag, bookmarksSettings) as ITagger<T>;
 	}
 
-	sealed class ThreadTagger : ITagger<IClassificationTag> {
+	sealed class BookmarkTagger : ITagger<IClassificationTag> {
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
 		readonly IClassificationTag nameClassificationTag;
-		readonly DebuggerSettings debuggerSettings;
+		readonly BookmarksSettings bookmarksSettings;
 
-		public ThreadTagger(IClassificationTag nameClassificationTag, DebuggerSettings debuggerSettings) {
+		public BookmarkTagger(IClassificationTag nameClassificationTag, BookmarksSettings bookmarksSettings) {
 			this.nameClassificationTag = nameClassificationTag;
-			this.debuggerSettings = debuggerSettings;
+			this.bookmarksSettings = bookmarksSettings;
 		}
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-			if (!debuggerSettings.SyntaxHighlight)
+			if (!bookmarksSettings.SyntaxHighlight)
 				yield break;
 			foreach (var span in spans)
 				yield return new TagSpan<IClassificationTag>(span, nameClassificationTag);

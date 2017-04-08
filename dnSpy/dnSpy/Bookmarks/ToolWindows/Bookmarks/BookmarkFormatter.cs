@@ -48,7 +48,11 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			}
 		}
 
-		internal void WriteName(ITextColorWriter output, BookmarkVM vm) => output.Write(BoxedTextColor.String, vm.Bookmark.Name ?? string.Empty);
+		internal void WriteName(ITextColorWriter output, BookmarkVM vm) => output.Write(NameColor, vm.Bookmark.Name ?? string.Empty);
+		// Make sure these fields are in sync
+		static readonly object NameColor = BoxedTextColor.String;
+		internal const string NameColorClassificationTypeName = Contracts.Text.Classification.ThemeClassificationTypeNames.String;
+
 		internal void WriteLocation(ITextColorWriter output, BookmarkVM vm) => vm.BookmarkLocationFormatter.WriteLocation(output);
 		internal void WriteModule(ITextColorWriter output, BookmarkVM vm) => vm.BookmarkLocationFormatter.WriteModule(output);
 	}
