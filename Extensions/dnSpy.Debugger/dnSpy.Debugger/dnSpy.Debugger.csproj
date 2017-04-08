@@ -264,7 +264,6 @@
     <Compile Include="UI\BooleanToHiddenVisibilityConverter.cs" />
     <Compile Include="UI\ContentTypeDefinitions.cs" />
     <Compile Include="UI\DynamicCheckableMenuItem.cs" />
-    <Compile Include="UI\ListBoxSelectedItemsAP.cs" />
     <Compile Include="UI\UIDispatcher.cs" />
   </ItemGroup>
   <ItemGroup>

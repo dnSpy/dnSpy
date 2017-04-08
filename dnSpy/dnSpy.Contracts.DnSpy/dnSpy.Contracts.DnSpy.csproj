@@ -135,6 +135,7 @@
     <Compile Include="Controls\ToolWindows\EditValueProviderService.cs" />
     <Compile Include="Controls\ToolWindows\IEditableValue.cs" />
     <Compile Include="Controls\ToolWindows\IEditValue.cs" />
+    <Compile Include="Controls\ToolWindows\ListBoxSelectedItemsAP.cs" />
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Decompiler\IDecompilerService.cs" />
     <Compile Include="Decompiler\IMethodDebugService.cs" />

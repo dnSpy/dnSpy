@@ -25,7 +25,8 @@
              mc:Ignorable="d" 
              xmlns:winlocal="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
-             xmlns:ui="clr-namespace:dnSpy.Debugger.UI"
+             xmlns:ui="clr-namespace:dnSpy.Contracts.Controls.ToolWindows;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:lui="clr-namespace:dnSpy.Debugger.UI"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              Width="650" Height="300"
@@ -34,7 +35,7 @@
              MinHeight="100" MinWidth="300">
     <winlocal:WindowBase.Resources>
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
-        <ui:BooleanToHiddenVisibilityConverter x:Key="BooleanToHiddenVisibilityConverter" />
+        <lui:BooleanToHiddenVisibilityConverter x:Key="BooleanToHiddenVisibilityConverter" />
     </winlocal:WindowBase.Resources>
     <Grid>
         <Grid.RowDefinitions>

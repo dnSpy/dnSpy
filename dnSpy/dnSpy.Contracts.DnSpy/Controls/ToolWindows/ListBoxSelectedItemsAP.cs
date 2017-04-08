@@ -24,8 +24,9 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace dnSpy.Debugger.UI {
-	sealed class ListBoxSelectedItemsAP {
+namespace dnSpy.Contracts.Controls.ToolWindows {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+	public sealed class ListBoxSelectedItemsAP {
 		public static readonly DependencyProperty SelectedItemsVMProperty = DependencyProperty.RegisterAttached(
 			"SelectedItemsVM", typeof(IList), typeof(ListBoxSelectedItemsAP), new UIPropertyMetadata(null, SelectedItemsVMPropertyChangedCallback));
 		static readonly DependencyProperty InstanceProperty = DependencyProperty.RegisterAttached(
@@ -142,4 +143,5 @@ namespace dnSpy.Debugger.UI {
 			}
 		}
 	}
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 }
