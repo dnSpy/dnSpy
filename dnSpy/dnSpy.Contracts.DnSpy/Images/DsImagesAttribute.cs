@@ -38,6 +38,10 @@ namespace dnSpy.Contracts.Images {
 		public const string Backwards = Prefix + DsImageStrings.Backwards;
 		public const string Binary = Prefix + DsImageStrings.Binary;
 		public const string BinaryFile = Prefix + DsImageStrings.BinaryFile;
+		public const string Bookmark = Prefix + DsImageStrings.Bookmark;
+		public const string BookmarkDisabled = Prefix + DsImageStrings.BookmarkDisabled;
+		public const string BookmarkGroupDisabled = Prefix + DsImageStrings.BookmarkGroupDisabled;
+		public const string BookmarkMainMenuItem = Prefix + DsImageStrings.BookmarkMainMenuItem;
 		public const string BoundBreakpoint = Prefix + DsImageStrings.BoundBreakpoint;
 		public const string Branch = Prefix + DsImageStrings.Branch;
 		public const string BreakpointDisabled = Prefix + DsImageStrings.BreakpointDisabled;
@@ -56,6 +60,7 @@ namespace dnSpy.Contracts.Images {
 		public const string ClassProtected = Prefix + DsImageStrings.ClassProtected;
 		public const string ClassPublic = Prefix + DsImageStrings.ClassPublic;
 		public const string ClassShortcut = Prefix + DsImageStrings.ClassShortcut;
+		public const string ClearBookmark = Prefix + DsImageStrings.ClearBookmark;
 		public const string ClearBreakpointGroup = Prefix + DsImageStrings.ClearBreakpointGroup;
 		public const string ClearWindowContent = Prefix + DsImageStrings.ClearWindowContent;
 		public const string CloseAll = Prefix + DsImageStrings.CloseAll;
@@ -170,6 +175,9 @@ namespace dnSpy.Contracts.Images {
 		public const string NewMethod = Prefix + DsImageStrings.NewMethod;
 		public const string NewProperty = Prefix + DsImageStrings.NewProperty;
 		public const string NewWindow = Prefix + DsImageStrings.NewWindow;
+		public const string NextBookmark = Prefix + DsImageStrings.NextBookmark;
+		public const string NextBookmarkInFile = Prefix + DsImageStrings.NextBookmarkInFile;
+		public const string NextBookmarkInFolder = Prefix + DsImageStrings.NextBookmarkInFolder;
 		public const string NuGet = Prefix + DsImageStrings.NuGet;
 		public const string OneLevelUp = Prefix + DsImageStrings.OneLevelUp;
 		public const string Open = Prefix + DsImageStrings.Open;
@@ -184,6 +192,9 @@ namespace dnSpy.Contracts.Images {
 		public const string Parameter = Prefix + DsImageStrings.Parameter;
 		public const string Paste = Prefix + DsImageStrings.Paste;
 		public const string Pause = Prefix + DsImageStrings.Pause;
+		public const string PreviousBookmark = Prefix + DsImageStrings.PreviousBookmark;
+		public const string PreviousBookmarkInFile = Prefix + DsImageStrings.PreviousBookmarkInFile;
+		public const string PreviousBookmarkInFolder = Prefix + DsImageStrings.PreviousBookmarkInFolder;
 		public const string Process = Prefix + DsImageStrings.Process;
 		public const string Property = Prefix + DsImageStrings.Property;
 		public const string PropertyInternal = Prefix + DsImageStrings.PropertyInternal;

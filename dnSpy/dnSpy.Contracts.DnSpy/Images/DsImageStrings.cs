@@ -37,6 +37,10 @@ namespace dnSpy.Contracts.Images {
 		public const string Backwards = nameof(Backwards);
 		public const string Binary = nameof(Binary);
 		public const string BinaryFile = nameof(BinaryFile);
+		public const string Bookmark = nameof(Bookmark);
+		public const string BookmarkDisabled = nameof(BookmarkDisabled);
+		public const string BookmarkGroupDisabled = nameof(BookmarkGroupDisabled);
+		public const string BookmarkMainMenuItem = nameof(BookmarkMainMenuItem);
 		public const string BoundBreakpoint = nameof(BoundBreakpoint);
 		public const string Branch = nameof(Branch);
 		public const string BreakpointDisabled = nameof(BreakpointDisabled);
@@ -55,6 +59,7 @@ namespace dnSpy.Contracts.Images {
 		public const string ClassProtected = nameof(ClassProtected);
 		public const string ClassPublic = nameof(ClassPublic);
 		public const string ClassShortcut = nameof(ClassShortcut);
+		public const string ClearBookmark = nameof(ClearBookmark);
 		public const string ClearBreakpointGroup = nameof(ClearBreakpointGroup);
 		public const string ClearWindowContent = nameof(ClearWindowContent);
 		public const string CloseAll = nameof(CloseAll);
@@ -169,6 +174,9 @@ namespace dnSpy.Contracts.Images {
 		public const string NewMethod = nameof(NewMethod);
 		public const string NewProperty = nameof(NewProperty);
 		public const string NewWindow = nameof(NewWindow);
+		public const string NextBookmark = nameof(NextBookmark);
+		public const string NextBookmarkInFile = nameof(NextBookmarkInFile);
+		public const string NextBookmarkInFolder = nameof(NextBookmarkInFolder);
 		public const string NuGet = nameof(NuGet);
 		public const string OneLevelUp = nameof(OneLevelUp);
 		public const string Open = nameof(Open);
@@ -183,6 +191,9 @@ namespace dnSpy.Contracts.Images {
 		public const string Parameter = nameof(Parameter);
 		public const string Paste = nameof(Paste);
 		public const string Pause = nameof(Pause);
+		public const string PreviousBookmark = nameof(PreviousBookmark);
+		public const string PreviousBookmarkInFile = nameof(PreviousBookmarkInFile);
+		public const string PreviousBookmarkInFolder = nameof(PreviousBookmarkInFolder);
 		public const string Process = nameof(Process);
 		public const string Property = nameof(Property);
 		public const string PropertyInternal = nameof(PropertyInternal);

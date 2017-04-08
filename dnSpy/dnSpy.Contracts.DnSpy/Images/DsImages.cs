@@ -41,6 +41,10 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference Backwards { get; } = new ImageReference(assembly, DsImageStrings.Backwards);
 		public static ImageReference Binary { get; } = new ImageReference(assembly, DsImageStrings.Binary);
 		public static ImageReference BinaryFile { get; } = new ImageReference(assembly, DsImageStrings.BinaryFile);
+		public static ImageReference Bookmark { get; } = new ImageReference(assembly, DsImageStrings.Bookmark);
+		public static ImageReference BookmarkDisabled { get; } = new ImageReference(assembly, DsImageStrings.BookmarkDisabled);
+		public static ImageReference BookmarkGroupDisabled { get; } = new ImageReference(assembly, DsImageStrings.BookmarkGroupDisabled);
+		public static ImageReference BookmarkMainMenuItem { get; } = new ImageReference(assembly, DsImageStrings.BookmarkMainMenuItem);
 		public static ImageReference BoundBreakpoint { get; } = new ImageReference(assembly, DsImageStrings.BoundBreakpoint);
 		public static ImageReference Branch { get; } = new ImageReference(assembly, DsImageStrings.Branch);
 		public static ImageReference BreakpointDisabled { get; } = new ImageReference(assembly, DsImageStrings.BreakpointDisabled);
@@ -59,6 +63,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference ClassProtected { get; } = new ImageReference(assembly, DsImageStrings.ClassProtected);
 		public static ImageReference ClassPublic { get; } = new ImageReference(assembly, DsImageStrings.ClassPublic);
 		public static ImageReference ClassShortcut { get; } = new ImageReference(assembly, DsImageStrings.ClassShortcut);
+		public static ImageReference ClearBookmark { get; } = new ImageReference(assembly, DsImageStrings.ClearBookmark);
 		public static ImageReference ClearBreakpointGroup { get; } = new ImageReference(assembly, DsImageStrings.ClearBreakpointGroup);
 		public static ImageReference ClearWindowContent { get; } = new ImageReference(assembly, DsImageStrings.ClearWindowContent);
 		public static ImageReference CloseAll { get; } = new ImageReference(assembly, DsImageStrings.CloseAll);
@@ -173,6 +178,9 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference NewMethod { get; } = new ImageReference(assembly, DsImageStrings.NewMethod);
 		public static ImageReference NewProperty { get; } = new ImageReference(assembly, DsImageStrings.NewProperty);
 		public static ImageReference NewWindow { get; } = new ImageReference(assembly, DsImageStrings.NewWindow);
+		public static ImageReference NextBookmark { get; } = new ImageReference(assembly, DsImageStrings.NextBookmark);
+		public static ImageReference NextBookmarkInFile { get; } = new ImageReference(assembly, DsImageStrings.NextBookmarkInFile);
+		public static ImageReference NextBookmarkInFolder { get; } = new ImageReference(assembly, DsImageStrings.NextBookmarkInFolder);
 		public static ImageReference NuGet { get; } = new ImageReference(assembly, DsImageStrings.NuGet);
 		public static ImageReference OneLevelUp { get; } = new ImageReference(assembly, DsImageStrings.OneLevelUp);
 		public static ImageReference Open { get; } = new ImageReference(assembly, DsImageStrings.Open);
@@ -187,6 +195,9 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference Parameter { get; } = new ImageReference(assembly, DsImageStrings.Parameter);
 		public static ImageReference Paste { get; } = new ImageReference(assembly, DsImageStrings.Paste);
 		public static ImageReference Pause { get; } = new ImageReference(assembly, DsImageStrings.Pause);
+		public static ImageReference PreviousBookmark { get; } = new ImageReference(assembly, DsImageStrings.PreviousBookmark);
+		public static ImageReference PreviousBookmarkInFile { get; } = new ImageReference(assembly, DsImageStrings.PreviousBookmarkInFile);
+		public static ImageReference PreviousBookmarkInFolder { get; } = new ImageReference(assembly, DsImageStrings.PreviousBookmarkInFolder);
 		public static ImageReference Process { get; } = new ImageReference(assembly, DsImageStrings.Process);
 		public static ImageReference Property { get; } = new ImageReference(assembly, DsImageStrings.Property);
 		public static ImageReference PropertyInternal { get; } = new ImageReference(assembly, DsImageStrings.PropertyInternal);
