@@ -26,6 +26,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Bookmarks.Impl;
+using dnSpy.Bookmarks.TextEditor;
 using dnSpy.Bookmarks.UI;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Bookmarks;
@@ -100,6 +101,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		readonly IPickFilename pickFilename;
 		readonly IMessageBoxService messageBoxService;
 		readonly Lazy<BookmarkSerializerService> bookmarkSerializerService;
+		readonly Lazy<TextViewBookmarkService> textViewBookmarkService;
 
 		BulkObservableCollection<BookmarkVM> AllItems => bookmarksVM.AllItems;
 		ObservableCollection<BookmarkVM> SelectedItems => bookmarksVM.SelectedItems;
@@ -109,7 +111,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		IEnumerable<BookmarkVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		BookmarksOperationsImpl(IBookmarksVM bookmarksVM, BookmarkDisplaySettings bookmarkDisplaySettings, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkLocationSerializerService> bookmarkLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<BookmarkSerializerService> bookmarkSerializerService) {
+		BookmarksOperationsImpl(IBookmarksVM bookmarksVM, BookmarkDisplaySettings bookmarkDisplaySettings, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkLocationSerializerService> bookmarkLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<BookmarkSerializerService> bookmarkSerializerService, Lazy<TextViewBookmarkService> textViewBookmarkService) {
 			this.bookmarksVM = bookmarksVM;
 			this.bookmarkDisplaySettings = bookmarkDisplaySettings;
 			this.bookmarksService = bookmarksService;
@@ -118,6 +120,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			this.pickFilename = pickFilename;
 			this.messageBoxService = messageBoxService;
 			this.bookmarkSerializerService = bookmarkSerializerService;
+			this.textViewBookmarkService = textViewBookmarkService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -169,10 +172,8 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			}
 		}
 
-		public override bool CanToggleCreateBookmark => true;
-		public override void ToggleCreateBookmark() {
-			//TODO:
-		}
+		public override bool CanToggleCreateBookmark => textViewBookmarkService.Value.CanToggleCreateBookmark;
+		public override void ToggleCreateBookmark() => textViewBookmarkService.Value.ToggleCreateBookmark();
 
 		public override bool CanGoToPreviousBookmark => true;//TODO:
 		public override void GoToPreviousBookmark() {
