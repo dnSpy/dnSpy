@@ -40,6 +40,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			ShowTokenAndRvaComments = sect.Attribute<bool?>(nameof(ShowTokenAndRvaComments)) ?? ShowTokenAndRvaComments;
 			ShowILBytes = sect.Attribute<bool?>(nameof(ShowILBytes)) ?? ShowILBytes;
 			SortMembers = sect.Attribute<bool?>(nameof(SortMembers)) ?? SortMembers;
+			ShowPdbInfo = sect.Attribute<bool?>(nameof(ShowPdbInfo)) ?? ShowPdbInfo;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -54,6 +55,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			sect.Attribute(nameof(ShowTokenAndRvaComments), ShowTokenAndRvaComments);
 			sect.Attribute(nameof(ShowILBytes), ShowILBytes);
 			sect.Attribute(nameof(SortMembers), SortMembers);
+			sect.Attribute(nameof(ShowPdbInfo), ShowPdbInfo);
 		}
 	}
 }
