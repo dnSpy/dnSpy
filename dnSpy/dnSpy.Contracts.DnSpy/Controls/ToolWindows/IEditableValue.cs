@@ -20,8 +20,11 @@
 using System;
 using System.ComponentModel;
 
-namespace dnSpy.Debugger.ToolWindows.Controls {
-	interface IEditableValue : INotifyPropertyChanged {
+namespace dnSpy.Contracts.Controls.ToolWindows {
+	/// <summary>
+	/// Implemented by data that can be edited
+	/// </summary>
+	public interface IEditableValue : INotifyPropertyChanged {
 		/// <summary>
 		/// true if the value can be edited, false if it's read-only
 		/// </summary>

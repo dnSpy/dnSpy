@@ -23,7 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.ToolWindows.CodeBreakpoints"
-             xmlns:ctrls="clr-namespace:dnSpy.Debugger.ToolWindows.Controls"
+             xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls.ToolWindows;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Debugger.UI"

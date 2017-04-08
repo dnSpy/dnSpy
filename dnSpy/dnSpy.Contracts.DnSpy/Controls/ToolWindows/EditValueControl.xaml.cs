@@ -25,8 +25,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace dnSpy.Debugger.ToolWindows.Controls {
-	sealed partial class EditValueControl : UserControl {
+namespace dnSpy.Contracts.Controls.ToolWindows {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+	public sealed partial class EditValueControl : UserControl {
 		public static readonly DependencyProperty ReadOnlyContentProperty =
 			DependencyProperty.Register(nameof(ReadOnlyContent), typeof(object), typeof(EditValueControl),
 			new FrameworkPropertyMetadata(null));
@@ -217,4 +218,5 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 			editableValue.Text = e.NewText;
 		}
 	}
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 }

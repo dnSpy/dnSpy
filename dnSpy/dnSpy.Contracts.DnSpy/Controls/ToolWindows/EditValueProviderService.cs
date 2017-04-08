@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Debugger.ToolWindows.Controls {
+namespace dnSpy.Contracts.Controls.ToolWindows {
 	abstract class EditValueProviderService {
 		public abstract IEditValueProvider Create(string contentType, string[] extraTextViewRoles);
 	}

@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
 using dnSpy.Contracts.MVVM;
@@ -31,7 +32,6 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.Text;
-using dnSpy.Debugger.ToolWindows.Controls;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 

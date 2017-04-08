@@ -19,8 +19,11 @@
 
 using System;
 
-namespace dnSpy.Debugger.ToolWindows.Controls {
-	interface IEditValueProvider {
+namespace dnSpy.Contracts.Controls.ToolWindows {
+	/// <summary>
+	/// Creates <see cref="IEditValue"/>s
+	/// </summary>
+	public interface IEditValueProvider {
 		/// <summary>
 		/// Creates a <see cref="IEditValue"/>. This is called by the control when the user has
 		/// started the edit operation.
@@ -30,7 +33,10 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 		IEditValue Create(string text);
 	}
 
-	interface IEditValue : IDisposable {
+	/// <summary>
+	/// Edits a value
+	/// </summary>
+	public interface IEditValue : IDisposable {
 		/// <summary>
 		/// Gets the UI object (text control)
 		/// </summary>
@@ -47,7 +53,10 @@ namespace dnSpy.Debugger.ToolWindows.Controls {
 		event EventHandler<EditCompletedEventArgs> EditCompleted;
 	}
 
-	sealed class EditCompletedEventArgs : EventArgs {
+	/// <summary>
+	/// <see cref="IEditValue.EditCompleted"/> event args
+	/// </summary>
+	public sealed class EditCompletedEventArgs : EventArgs {
 		/// <summary>
 		/// Gets the new text or null if it was canceled
 		/// </summary>

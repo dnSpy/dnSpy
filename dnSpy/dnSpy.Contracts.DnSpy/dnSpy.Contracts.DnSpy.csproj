@@ -129,6 +129,12 @@
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="Controls\MetroWindowCreatedEventArgs.cs" />
     <Compile Include="Controls\TextControl.cs" />
+    <Compile Include="Controls\ToolWindows\EditValueControl.xaml.cs">
+      <DependentUpon>EditValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ToolWindows\EditValueProviderService.cs" />
+    <Compile Include="Controls\ToolWindows\IEditableValue.cs" />
+    <Compile Include="Controls\ToolWindows\IEditValue.cs" />
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Decompiler\IDecompilerService.cs" />
     <Compile Include="Decompiler\IMethodDebugService.cs" />
@@ -954,6 +960,10 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\ToolWindows\EditValueControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MVVM\Dialogs\ProgressDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

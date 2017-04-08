@@ -20,13 +20,13 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
-using dnSpy.Debugger.ToolWindows.Controls;
 using dnSpy.Debugger.UI;
 using Microsoft.Win32.SafeHandles;
 

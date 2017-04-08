@@ -26,7 +26,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
@@ -83,7 +82,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	[Export(typeof(CodeBreakpointsOperations))]
 	sealed class CodeBreakpointsOperationsImpl : CodeBreakpointsOperations {
 		readonly ICodeBreakpointsVM codeBreakpointsVM;
-		readonly DebuggerSettings debuggerSettings;
 		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService;
@@ -101,9 +99,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		IEnumerable<CodeBreakpointVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService) {
+		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService) {
 			this.codeBreakpointsVM = codeBreakpointsVM;
-			this.debuggerSettings = debuggerSettings;
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgBreakpointLocationSerializerService = dbgBreakpointLocationSerializerService;
