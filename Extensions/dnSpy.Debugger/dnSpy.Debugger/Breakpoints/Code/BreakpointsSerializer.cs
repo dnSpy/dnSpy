@@ -102,9 +102,9 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return labels.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray();
 		}
 
-		public void Save(IEnumerable<DbgCodeBreakpoint> breakpoints) {
+		public void Save(DbgCodeBreakpoint[] breakpoints) {
 			var section = settingsService.RecreateSection(SETTINGS_GUID);
-			foreach (var bp in breakpoints) {
+			foreach (var bp in breakpoints.OrderBy(a => a.Id)) {
 				var bpSect = section.CreateSection("Breakpoint");
 				var bpSettings = bp.Settings;
 				bpSect.Attribute("IsEnabled", bpSettings.IsEnabled);

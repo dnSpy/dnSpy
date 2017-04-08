@@ -60,9 +60,9 @@ namespace dnSpy.Bookmarks.Impl {
 			return labels.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray();
 		}
 
-		public void Save(IEnumerable<Bookmark> bookmarks) {
+		public void Save(Bookmark[] bookmarks) {
 			var section = settingsService.RecreateSection(SETTINGS_GUID);
-			foreach (var bm in bookmarks) {
+			foreach (var bm in bookmarks.OrderBy(a => a.Id)) {
 				var bmSect = section.CreateSection("Bookmark");
 				var bmSettings = bm.Settings;
 				bmSect.Attribute("IsEnabled", bmSettings.IsEnabled);

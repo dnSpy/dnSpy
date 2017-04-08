@@ -245,7 +245,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			if (filename == null)
 				return;
 			var settingsService = settingsServiceFactory.Value.Create();
-			new BreakpointsSerializer(settingsService).Save(vms.Select(a => a.ModuleBreakpoint));
+			new BreakpointsSerializer(settingsService).Save(vms.Select(a => a.ModuleBreakpoint).ToArray());
 			try {
 				settingsService.Save(filename);
 			}

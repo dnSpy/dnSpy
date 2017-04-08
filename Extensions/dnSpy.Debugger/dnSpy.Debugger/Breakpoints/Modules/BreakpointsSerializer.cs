@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
 using dnSpy.Contracts.Settings;
 
@@ -51,9 +52,9 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			return settings.ToArray();
 		}
 
-		public void Save(IEnumerable<DbgModuleBreakpoint> breakpoints) {
+		public void Save(DbgModuleBreakpoint[] breakpoints) {
 			var section = settingsService.RecreateSection(SETTINGS_GUID);
-			foreach (var bp in breakpoints) {
+			foreach (var bp in breakpoints.OrderBy(a => a.Id)) {
 				var bpSect = section.CreateSection("Breakpoint");
 				var bpSettings = bp.Settings;
 				bpSect.Attribute("IsEnabled", bpSettings.IsEnabled);
