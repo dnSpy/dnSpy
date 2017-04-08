@@ -20,7 +20,7 @@
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Debugger.Text;
+using dnSpy.Contracts.ToolWindows.Search;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {

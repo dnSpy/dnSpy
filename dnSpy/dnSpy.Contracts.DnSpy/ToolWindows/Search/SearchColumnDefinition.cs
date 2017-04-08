@@ -19,7 +19,7 @@
 
 using System;
 
-namespace dnSpy.Debugger.Text {
+namespace dnSpy.Contracts.ToolWindows.Search {
 	/// <summary>
 	/// Defines a column that can be searched
 	/// </summary>

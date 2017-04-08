@@ -179,6 +179,9 @@
   <data name="SaveResources" xml:space="preserve">
     <value>Save Resources</value>
   </data>
+  <data name="Search_SearchColumnHelpText" xml:space="preserve">
+    <value>Search column: {0}</value>
+  </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>Value must be type {0}.
 Error: {1}</value>

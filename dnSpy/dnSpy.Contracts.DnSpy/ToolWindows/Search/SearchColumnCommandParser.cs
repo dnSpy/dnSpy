@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace dnSpy.Debugger.Text {
+namespace dnSpy.Contracts.ToolWindows.Search {
 	sealed class SearchColumnCommandParser {
 		readonly SearchColumnDefinition[] definitions;
 		readonly List<Token> tokens;

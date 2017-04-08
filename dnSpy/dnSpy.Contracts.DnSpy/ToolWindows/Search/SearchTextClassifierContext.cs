@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 
-namespace dnSpy.Debugger.Text {
+namespace dnSpy.Contracts.ToolWindows.Search {
 	sealed class SearchTextClassifierContext : TextClassifierContext {
 		public SearchMatcher SearchMatcher { get; }
 		public SearchTextClassifierContext(SearchMatcher searchMatcher, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)

@@ -19,8 +19,8 @@
 
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Debugger.Exceptions;
-using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 

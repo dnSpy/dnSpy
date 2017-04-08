@@ -21,10 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using dnSpy.Debugger.Properties;
+using dnSpy.Contracts.Properties;
 using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Debugger.Text {
+namespace dnSpy.Contracts.ToolWindows.Search {
 	sealed class SearchMatcher {
 		const StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase;
 		readonly List<Span> spans;
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Text {
 			foreach (var def in definitions) {
 				sb.Append("-" + def.ShortOptionName);
 				sb.Append(" <text> ");
-				sb.Append(string.Format(dnSpy_Debugger_Resources.Search_SearchColumnHelpText, def.LocalizedName));
+				sb.Append(string.Format(dnSpy_Contracts_DnSpy_Resources.Search_SearchColumnHelpText, def.LocalizedName));
 				sb.AppendLine();
 			}
 			return sb.ToString();

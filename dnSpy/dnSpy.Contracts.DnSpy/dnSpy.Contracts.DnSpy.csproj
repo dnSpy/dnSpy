@@ -890,6 +890,11 @@
     <Compile Include="ToolWindows\IToolWindowGroupService.cs" />
     <Compile Include="ToolWindows\IToolWindowService.cs" />
     <Compile Include="ToolWindows\IToolWindowServiceProvider.cs" />
+    <Compile Include="ToolWindows\Search\SearchColumnCommandParser.cs" />
+    <Compile Include="ToolWindows\Search\SearchColumnDefinition.cs" />
+    <Compile Include="ToolWindows\Search\SearchMatcher.cs" />
+    <Compile Include="ToolWindows\Search\SearchTextClassifierContext.cs" />
+    <Compile Include="ToolWindows\Search\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\ToolWindowContent.cs" />
     <Compile Include="ToolWindows\ToolWindowContentVisibilityEvent.cs" />
     <Compile Include="ToolWindows\ToolWindowGroupCollectionChangedEventArgs.cs" />

@@ -111,11 +111,6 @@
     <Compile Include="Impl\DbgEngineBoundCodeBreakpointMessageExtensions.cs" />
     <Compile Include="Impl\DbgManagerImpl.BoundBreakpointsManager.cs" />
     <Compile Include="Impl\DbgManagerImpl.ProcessKey.cs" />
-    <Compile Include="Text\SearchColumnCommandParser.cs" />
-    <Compile Include="Text\SearchColumnDefinition.cs" />
-    <Compile Include="Text\SearchMatcher.cs" />
-    <Compile Include="Text\SearchTextClassifierContext.cs" />
-    <Compile Include="Text\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointColumnConverter.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointContext.cs" />

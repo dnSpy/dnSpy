@@ -30,9 +30,9 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Properties;
-using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 

@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Debugger.Text;
+using dnSpy.Contracts.ToolWindows.Search;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Dialogs.AttachToProcess {

@@ -243,6 +243,15 @@ namespace dnSpy.Contracts.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search column: {0}.
+        /// </summary>
+        public static string Search_SearchColumnHelpText {
+            get {
+                return ResourceManager.GetString("Search_SearchColumnHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value must be type {0}.
         ///Error: {1}.
         /// </summary>
