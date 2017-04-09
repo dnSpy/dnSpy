@@ -198,6 +198,9 @@
   <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
     <value>Mostrar bytes de instruções IL </value>
   </data>
+  <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
+    <value>Show line numbers and filenames if available</value>
+  </data>
   <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
     <value>Mostrar tokens, RVAs e offsets de ficheiros</value>
   </data>

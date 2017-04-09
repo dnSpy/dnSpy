@@ -1739,4 +1739,28 @@ Tem certeza que deseja expandi-la?</value>
   <data name="EditLabelsCommand" xml:space="preserve">
     <value>Edit Labels</value>
   </data>
+  <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
+    <value>Freeze Threads</value>
+  </data>
+  <data name="Threads_NoMatch" xml:space="preserve">
+    <value>No threads match your search filter.</value>
+  </data>
+  <data name="Threads_Process" xml:space="preserve">
+    <value>Processo</value>
+  </data>
+  <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all threads are shown</value>
+  </data>
+  <data name="Threads_Search" xml:space="preserve">
+    <value>Pesquisa</value>
+  </data>
+  <data name="Threads_Search_ToolTip" xml:space="preserve">
+    <value>Search for a thread</value>
+  </data>
+  <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
+    <value>Thaw Threads</value>
+  </data>
+  <data name="Threads_AllProcesses" xml:space="preserve">
+    <value>Todas</value>
+  </data>
 </root>

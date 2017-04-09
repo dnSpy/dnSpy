@@ -179,6 +179,9 @@
   <data name="SaveResources" xml:space="preserve">
     <value>Ressourcen speichern</value>
   </data>
+  <data name="Search_SearchColumnHelpText" xml:space="preserve">
+    <value>Suchspalte: {0}</value>
+  </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>Wert muss den Typ {0} haben.
 Fehler: {1}</value>

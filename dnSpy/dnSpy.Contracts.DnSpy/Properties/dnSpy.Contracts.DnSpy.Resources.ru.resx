@@ -179,6 +179,9 @@
   <data name="SaveResources" xml:space="preserve">
     <value>Сохранить ресурсы</value>
   </data>
+  <data name="Search_SearchColumnHelpText" xml:space="preserve">
+    <value>Столбец Поиска: {0}</value>
+  </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>Значение должно быть типа {0}.
 Ошибка: {1}</value>

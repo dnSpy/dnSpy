@@ -1012,7 +1012,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Tokens zeigen</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>Show Intrinsic Type Keywords</value>
+    <value>Intrinsische Typschlüsselwörter anzeigen</value>
   </data>
   <data name="StartWithoutDebuggingCommand" xml:space="preserve">
     <value>Starten ohne Debugging</value>
@@ -1669,40 +1669,40 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>_Meldung im Ausgabefenster protokollieren</value>
   </data>
   <data name="GlyphToolTip_Actions" xml:space="preserve">
-    <value>Actions:</value>
+    <value>Aktionen:</value>
   </data>
   <data name="GlyphToolTip_Conditions" xml:space="preserve">
-    <value>Conditions:</value>
+    <value>Bedingungen:</value>
   </data>
   <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
-    <value>Conditional expression:</value>
+    <value>Bedingter Ausdruck:</value>
   </data>
   <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
-    <value>'{0}' has changed</value>
+    <value>'{0}' hat sich geändert</value>
   </data>
   <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
-    <value>'{0}' is true</value>
+    <value>'{0}' ist true</value>
   </data>
   <data name="Breakpoint_Filter_Filter" xml:space="preserve">
     <value>Filter: '{0}'</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
-    <value>Hit count is a multiple of {0}</value>
+    <value>Trefferzähler ist ein Vielfaches von {0}</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
-    <value>Hit count is equal to {0}</value>
+    <value>Trefferzähler ist gleich {0}</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
-    <value>Hit count is greater than or equal to {0}</value>
+    <value>Trefferzähler größer als oder gleich {0}</value>
   </data>
   <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
-    <value>Log message '{0}', to Output window</value>
+    <value>Meldung '{0}' im Ausgabefenster protokollieren</value>
   </data>
   <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
-    <value>Disable breakpoint</value>
+    <value>Haltepunkt deaktivieren</value>
   </data>
   <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
-    <value>Enable breakpoint</value>
+    <value>Haltepunkt aktivieren</value>
   </data>
   <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
     <value>Einstellungen...</value>
@@ -1711,36 +1711,60 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Anhalten</value>
   </data>
   <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
-    <value>Continue execution</value>
+    <value>Ausführung fortsetzen</value>
   </data>
   <data name="ExportCommand" xml:space="preserve">
-    <value>E_xport...</value>
+    <value>E_xportieren...</value>
   </data>
   <data name="SettingsCommand2" xml:space="preserve">
-    <value>_Settings...</value>
+    <value>Ei_nstellungen...</value>
   </data>
   <data name="StartDebuggingCommand" xml:space="preserve">
-    <value>Start Debugging</value>
+    <value>Debugging starten</value>
   </data>
   <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
-    <value>Break and print message '{0}'</value>
+    <value>Anhalten und Meldung '{0}' drucken</value>
   </data>
   <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
-    <value>The function cannot be found: {0}</value>
+    <value>Die Funktion kann nicht gefunden werden: {0}</value>
   </data>
   <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
-    <value>The breakpoint will not currently be hit. {0}</value>
+    <value>Der Haltepunkt wird momentan nicht erreicht. {0}</value>
   </data>
   <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
-    <value>The module hasn't been loaded or no symbols have been loaded for this module.</value>
+    <value>Das Modul wurde nicht geladen oder keine Symbole wurden für dieses Modul geladen.</value>
   </data>
   <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
-    <value>Could not create the breakpoint.</value>
+    <value>Der Haltepunkt konnte nicht erstellt werden.</value>
   </data>
   <data name="Column_Labels" xml:space="preserve">
-    <value>Labels</value>
+    <value>Bezeichnungen</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
-    <value>Edit Labels</value>
+    <value>Bezeichnungen bearbeiten</value>
+  </data>
+  <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
+    <value>Freeze Threads</value>
+  </data>
+  <data name="Threads_NoMatch" xml:space="preserve">
+    <value>No threads match your search filter.</value>
+  </data>
+  <data name="Threads_Process" xml:space="preserve">
+    <value>Prozess</value>
+  </data>
+  <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all threads are shown</value>
+  </data>
+  <data name="Threads_Search" xml:space="preserve">
+    <value>Suchen</value>
+  </data>
+  <data name="Threads_Search_ToolTip" xml:space="preserve">
+    <value>Search for a thread</value>
+  </data>
+  <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
+    <value>Thaw Threads</value>
+  </data>
+  <data name="Threads_AllProcesses" xml:space="preserve">
+    <value>Alle</value>
   </data>
 </root>
