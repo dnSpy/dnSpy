@@ -35,86 +35,37 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <summary>
 		/// true if the breakpoint is enabled
 		/// </summary>
-		public bool IsEnabled {
-			get => Settings.IsEnabled;
-			set {
-				var settings = Settings;
-				settings.IsEnabled = value;
-				Settings = settings;
-			}
-		}
+		public abstract bool IsEnabled { get; set; }
 
 		/// <summary>
 		/// Name of module (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public string ModuleName {
-			get => Settings.ModuleName;
-			set {
-				var settings = Settings;
-				settings.ModuleName = value;
-				Settings = settings;
-			}
-		}
+		public abstract string ModuleName { get; set; }
 
 		/// <summary>
 		/// true if dynamic, false if not dynamic, and null if any value
 		/// </summary>
-		public bool? IsDynamic {
-			get => Settings.IsDynamic;
-			set {
-				var settings = Settings;
-				settings.IsDynamic = value;
-				Settings = settings;
-			}
-		}
+		public abstract bool? IsDynamic { get; set; }
 
 		/// <summary>
 		/// true if in-memory, false if not in-memory, and null if any value
 		/// </summary>
-		public bool? IsInMemory {
-			get => Settings.IsInMemory;
-			set {
-				var settings = Settings;
-				settings.IsInMemory = value;
-				Settings = settings;
-			}
-		}
+		public abstract bool? IsInMemory { get; set; }
 
 		/// <summary>
 		/// Order or null if any value
 		/// </summary>
-		public int? Order {
-			get => Settings.Order;
-			set {
-				var settings = Settings;
-				settings.Order = value;
-				Settings = settings;
-			}
-		}
+		public abstract int? Order { get; set; }
 
 		/// <summary>
 		/// App domain name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public string AppDomainName {
-			get => Settings.AppDomainName;
-			set {
-				var settings = Settings;
-				settings.AppDomainName = value;
-				Settings = settings;
-			}
-		}
+		public abstract string AppDomainName { get; set; }
 
 		/// <summary>
 		/// Process name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public string ProcessName {
-			get => Settings.ProcessName;
-			set {
-				var settings = Settings;
-				settings.ProcessName = value;
-				Settings = settings;
-			}
-		}
+		public abstract string ProcessName { get; set; }
 
 		/// <summary>
 		/// Removes this breakpoint from the module breakpoints list

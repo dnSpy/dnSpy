@@ -34,6 +34,69 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			set => owner.Modify(this, value);
 		}
 
+		public override bool IsEnabled {
+			get => Settings.IsEnabled;
+			set {
+				var settings = Settings;
+				settings.IsEnabled = value;
+				Settings = settings;
+			}
+		}
+
+		public override string ModuleName {
+			get => Settings.ModuleName;
+			set {
+				var settings = Settings;
+				settings.ModuleName = value;
+				Settings = settings;
+			}
+		}
+
+		public override bool? IsDynamic {
+			get => Settings.IsDynamic;
+			set {
+				var settings = Settings;
+				settings.IsDynamic = value;
+				Settings = settings;
+			}
+		}
+
+		public override bool? IsInMemory {
+			get => Settings.IsInMemory;
+			set {
+				var settings = Settings;
+				settings.IsInMemory = value;
+				Settings = settings;
+			}
+		}
+
+		public override int? Order {
+			get => Settings.Order;
+			set {
+				var settings = Settings;
+				settings.Order = value;
+				Settings = settings;
+			}
+		}
+
+		public override string AppDomainName {
+			get => Settings.AppDomainName;
+			set {
+				var settings = Settings;
+				settings.AppDomainName = value;
+				Settings = settings;
+			}
+		}
+
+		public override string ProcessName {
+			get => Settings.ProcessName;
+			set {
+				var settings = Settings;
+				settings.ProcessName = value;
+				Settings = settings;
+			}
+		}
+
 		readonly object lockObj;
 		readonly DbgModuleBreakpointsServiceImpl owner;
 		DbgModuleBreakpointSettings settings;
