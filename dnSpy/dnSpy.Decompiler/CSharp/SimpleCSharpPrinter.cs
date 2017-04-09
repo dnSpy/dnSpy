@@ -288,7 +288,7 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 
 			if (member is ITypeDefOrRef tdr) {
-				Write(tdr);
+				Write(tdr, ShowModuleNames);
 				return;
 			}
 
@@ -451,9 +451,12 @@ namespace dnSpy.Decompiler.CSharp {
 					OutputWrite(string.Format("({0})", fd != null && fd.IsLiteral ? dnSpy_Decompiler_Resources.ToolTip_Constant : dnSpy_Decompiler_Resources.ToolTip_Field), BoxedTextColor.Text);
 					WriteSpace();
 				}
+				WriteModuleName(fd?.Module);
 				Write(sig.Type, null, null, null);
 				WriteSpace();
 			}
+			else
+				WriteModuleName(fd?.Module);
 			if (ShowOwnerTypes) {
 				Write(field.DeclaringType);
 				WritePeriod();
@@ -609,6 +612,7 @@ namespace dnSpy.Decompiler.CSharp {
 				return;
 			}
 
+			WriteModuleName(evt.Module);
 			Write(evt.EventType);
 			WriteSpace();
 			if (ShowOwnerTypes) {
@@ -665,6 +669,8 @@ namespace dnSpy.Decompiler.CSharp {
 				WriteMethodParameterList(info, "(", ")");
 				return;
 			}
+			else
+				WriteModuleName(td?.Module);
 
 			if (td == null) {
 				Write(type);
@@ -687,7 +693,7 @@ namespace dnSpy.Decompiler.CSharp {
 			WriteType(type, true, false);
 		}
 
-		void Write(ITypeDefOrRef type) {
+		void Write(ITypeDefOrRef type, bool showModuleNames = false) {
 			if (type == null) {
 				WriteError();
 				return;
@@ -711,6 +717,8 @@ namespace dnSpy.Decompiler.CSharp {
 				if (keyword != null)
 					OutputWrite(keyword, BoxedTextColor.Keyword);
 				else {
+					if (showModuleNames)
+						WriteModuleName(type.ResolveTypeDef()?.Module);
 					WriteNamespace(type.Namespace);
 					WriteIdentifier(RemoveGenericTick(type.Name), CSharpMetadataTextColorProvider.Instance.GetColor(type));
 				}
@@ -1028,6 +1036,17 @@ namespace dnSpy.Decompiler.CSharp {
 				return;
 
 			Write(info.ModuleDef);
+			OutputWrite("!", BoxedTextColor.Operator);
+			return;
+		}
+
+		void WriteModuleName(ModuleDef module) {
+			if (module == null)
+				return;
+			if (!ShowModuleNames)
+				return;
+
+			Write(module);
 			OutputWrite("!", BoxedTextColor.Operator);
 			return;
 		}
