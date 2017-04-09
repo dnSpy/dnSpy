@@ -18,11 +18,8 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using dnSpy.Contracts.Bookmarks;
-using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.ToolWindows.App;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -80,30 +77,9 @@ namespace dnSpy.Bookmarks.TextEditor.DocViewer {
 		}
 
 		public override void ShowBookmarkWindow() => toolWindowService.Show(ToolWindows.Bookmarks.BookmarksToolWindowContent.THE_GUID);
-
-		public override void ClearAllBookmarksInDocument() {
-			//TODO:
-		}
-
+		public override void ClearAllBookmarksInDocument() => textViewBookmarkService.ClearAllBookmarksInDocument();
 		public override void ClearBookmarks() => bookmarksService.Value.Clear();
-
-		public override void EnableAllBookmarks() {
-			var bookmarks = bookmarksService.Value.Bookmarks;
-			bool enable = !bookmarks.All(a => a.IsEnabled);
-
-			var newSettings = new List<BookmarkAndSettings>(bookmarks.Length);
-			for (int i = 0; i < bookmarks.Length; i++) {
-				var bm = bookmarks[i];
-				var settings = bm.Settings;
-				if (settings.IsEnabled == enable)
-					continue;
-				settings.IsEnabled = enable;
-				newSettings.Add(new BookmarkAndSettings(bm, settings));
-			}
-			if (newSettings.Count > 0)
-				bookmarksService.Value.Modify(newSettings.ToArray());
-		}
-
+		public override void EnableAllBookmarks() => textViewBookmarkService.EnableAllBookmarks();
 		public override void EnableBookmark() => textViewBookmarkService.ToggleEnableBookmark(textView);
 		public override void ToggleBookmark() => textViewBookmarkService.ToggleCreateBookmark(textView);
 

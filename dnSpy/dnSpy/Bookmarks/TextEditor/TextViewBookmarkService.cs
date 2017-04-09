@@ -38,6 +38,19 @@ namespace dnSpy.Bookmarks.TextEditor {
 		public abstract void ToggleEnableBookmark(ITextView textView);
 		public abstract void ToggleEnableBookmark();
 		public abstract ToggleEnableBookmarkKind GetToggleEnableBookmarkKind();
+		public abstract bool CanClearBookmarks { get; }
+		public abstract void ClearBookmarks();
+		public abstract EnableAllBookmarksKind GetEnableAllBookmarksKind();
+		public abstract bool CanEnableAllBookmarks { get; }
+		public abstract void EnableAllBookmarks();
+		public abstract bool CanClearAllBookmarksInDocument { get; }
+		public abstract void ClearAllBookmarksInDocument();
+	}
+
+	enum EnableAllBookmarksKind {
+		None,
+		Enable,
+		Disable,
 	}
 
 	enum ToggleCreateBookmarkKind {
@@ -185,6 +198,43 @@ namespace dnSpy.Bookmarks.TextEditor {
 			bool newIsEnabled = !bms.All(a => a.IsEnabled);
 			var kind = newIsEnabled ? ToggleEnableBookmarkKind.Enable : ToggleEnableBookmarkKind.Disable;
 			return (kind, bms);
+		}
+
+		public override bool CanClearBookmarks => bookmarksService.Value.Bookmarks.Length > 0;
+		public override void ClearBookmarks() => bookmarksService.Value.Clear();
+
+		EnableAllBookmarksKind GetEnableAllBookmarksKind(Bookmark[] bookmarks) {
+			if (bookmarks.Length == 0)
+				return EnableAllBookmarksKind.None;
+			if (bookmarks.All(a => a.IsEnabled))
+				return EnableAllBookmarksKind.Disable;
+			return EnableAllBookmarksKind.Enable;
+		}
+		public override EnableAllBookmarksKind GetEnableAllBookmarksKind() => GetEnableAllBookmarksKind(bookmarksService.Value.Bookmarks);
+		public override bool CanEnableAllBookmarks => GetEnableAllBookmarksKind() != EnableAllBookmarksKind.None;
+		public override void EnableAllBookmarks() {
+			var bookmarks = bookmarksService.Value.Bookmarks;
+			var kind = GetEnableAllBookmarksKind(bookmarks);
+			if (kind == EnableAllBookmarksKind.None)
+				return;
+			bool enable = kind == EnableAllBookmarksKind.Enable;
+
+			var newSettings = new List<BookmarkAndSettings>(bookmarks.Length);
+			for (int i = 0; i < bookmarks.Length; i++) {
+				var bm = bookmarks[i];
+				var settings = bm.Settings;
+				if (settings.IsEnabled == enable)
+					continue;
+				settings.IsEnabled = enable;
+				newSettings.Add(new BookmarkAndSettings(bm, settings));
+			}
+			if (newSettings.Count > 0)
+				bookmarksService.Value.Modify(newSettings.ToArray());
+		}
+
+		public override bool CanClearAllBookmarksInDocument => true;//TODO:
+		public override void ClearAllBookmarksInDocument() {
+			//TODO:
 		}
 	}
 }

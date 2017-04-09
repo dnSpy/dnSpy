@@ -243,8 +243,14 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: App Menu: View \ Bookmarks, Group: Windows</summary>
 		public const string GROUP_APP_MENU_BOOKMARKS_WINDOWS = "0,73401CB5-1573-4868-96C9-6141EF39F44F";
 
-		/// <summary>Group: App Menu: View \ Bookmarks, Group: Commands</summary>
-		public const string GROUP_APP_MENU_BOOKMARKS_COMMANDS = "1000,F6008A3C-8EBF-459F-8446-6D96D02060DC";
+		/// <summary>Group: App Menu: View \ Bookmarks, Group: Commands #1</summary>
+		public const string GROUP_APP_MENU_BOOKMARKS_COMMANDS1 = "1000,F6008A3C-8EBF-459F-8446-6D96D02060DC";
+
+		/// <summary>Group: App Menu: View \ Bookmarks, Group: Commands #2</summary>
+		public const string GROUP_APP_MENU_BOOKMARKS_COMMANDS2 = "2000,10E117AF-68CF-47ED-AEA9-80CDDEDA3C16";
+
+		/// <summary>Group: App Menu: View \ Bookmarks, Group: Commands #3</summary>
+		public const string GROUP_APP_MENU_BOOKMARKS_COMMANDS3 = "3000,2E6C9563-FF9F-433B-B03A-A5CFA4228A78";
 
 		/// <summary>Group: App Menu: Themes, Group: Themes</summary>
 		public const string GROUP_APP_MENU_THEMES_THEMES = "0,AAE0CE90-DB6E-4E8D-9E1B-9BF7ABBDBB32";

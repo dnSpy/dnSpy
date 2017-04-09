@@ -80,6 +80,8 @@
     <Compile Include="BackgroundImage\WpfHexViewCreationListenerImpl.cs" />
     <Compile Include="BackgroundImage\WpfTextViewCreationListener.cs" />
     <Compile Include="Bookmarks\BookmarkImageUtilities.cs" />
+    <Compile Include="Bookmarks\Commands\AppMenuCommands.cs" />
+    <Compile Include="Bookmarks\Commands\MainMenuOperations.cs" />
     <Compile Include="Bookmarks\DotNet\BookmarkFormatterService.cs" />
     <Compile Include="Bookmarks\DotNet\BookmarkLocationFormatterProviderImpl.cs" />
     <Compile Include="Bookmarks\DotNet\BookmarkLocationSerializerImpl.cs" />
@@ -111,7 +113,6 @@
     <Compile Include="Bookmarks\TextEditor\DocViewer\DocumentViewerCommandTargetFilter.cs" />
     <Compile Include="Bookmarks\TextEditor\DocViewer\DocumentViewerCommandTargetFilterProvider.cs" />
     <Compile Include="Bookmarks\TextEditor\TextViewBookmarkService.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\AppMenuCommands.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkColumnConverter.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkContext.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkFormatter.cs" />

@@ -820,11 +820,29 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear All Bookmarks In Document.
+        /// </summary>
+        public static string ClearAllBookmarksInDocumentCommand {
+            get {
+                return ResourceManager.GetString("ClearAllBookmarksInDocumentCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear Al_l.
         /// </summary>
         public static string ClearAllCommand {
             get {
                 return ResourceManager.GetString("ClearAllCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Clear Bookmarks.
+        /// </summary>
+        public static string ClearBookmarksCommand {
+            get {
+                return ResourceManager.GetString("ClearBookmarksCommand", resourceCulture);
             }
         }
         
@@ -1162,6 +1180,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disable _All Bookmarks.
+        /// </summary>
+        public static string DisableAllBookmarksCommand {
+            get {
+                return ResourceManager.GetString("DisableAllBookmarksCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disable Bookmark.
         /// </summary>
         public static string DisableBookmarkCommand3 {
@@ -1293,6 +1320,24 @@ namespace dnSpy.Properties {
         public static string EmptyTabTitle {
             get {
                 return ResourceManager.GetString("EmptyTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable _All Bookmarks.
+        /// </summary>
+        public static string EnableAllBookmarksCommand {
+            get {
+                return ResourceManager.GetString("EnableAllBookmarksCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Bookmark.
+        /// </summary>
+        public static string EnableBookmarkCommand {
+            get {
+                return ResourceManager.GetString("EnableBookmarkCommand", resourceCulture);
             }
         }
         
@@ -1812,6 +1857,33 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Next _Bookmark.
+        /// </summary>
+        public static string GoToNextBookmarkCommand {
+            get {
+                return ResourceManager.GetString("GoToNextBookmarkCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to N_ext Bookmark In Document.
+        /// </summary>
+        public static string GoToNextBookmarkInDocumentCommand {
+            get {
+                return ResourceManager.GetString("GoToNextBookmarkInDocumentCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next Bookmark With Same Label.
+        /// </summary>
+        public static string GoToNextBookmarkWithSameLabelCommand {
+            get {
+                return ResourceManager.GetString("GoToNextBookmarkWithSameLabelCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to O_ffset.
         /// </summary>
         public static string GoToOffset_Offset_Label {
@@ -1835,6 +1907,33 @@ namespace dnSpy.Properties {
         public static string GoToOffsetCommand {
             get {
                 return ResourceManager.GetString("GoToOffsetCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Previous Bookmark.
+        /// </summary>
+        public static string GoToPreviousBookmarkCommand {
+            get {
+                return ResourceManager.GetString("GoToPreviousBookmarkCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to P_revious Bookmark In Document.
+        /// </summary>
+        public static string GoToPreviousBookmarkInDocumentCommand {
+            get {
+                return ResourceManager.GetString("GoToPreviousBookmarkInDocumentCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous Bookmark With Same Label.
+        /// </summary>
+        public static string GoToPreviousBookmarkWithSameLabelCommand {
+            get {
+                return ResourceManager.GetString("GoToPreviousBookmarkWithSameLabelCommand", resourceCulture);
             }
         }
         
@@ -4287,6 +4386,42 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+K, Ctrl+K.
+        /// </summary>
+        public static string ShortCutKeyCtrlK_CtrlK {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlK_CtrlK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+K, Ctrl+L.
+        /// </summary>
+        public static string ShortCutKeyCtrlK_CtrlL {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlK_CtrlL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+K, Ctrl+N.
+        /// </summary>
+        public static string ShortCutKeyCtrlK_CtrlN {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlK_CtrlN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+K, Ctrl+P.
+        /// </summary>
+        public static string ShortCutKeyCtrlK_CtrlP {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlK_CtrlP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+K, Ctrl+W.
         /// </summary>
         public static string ShortCutKeyCtrlK_CtrlW {
@@ -5102,6 +5237,15 @@ namespace dnSpy.Properties {
         public static string TimestampDateTimeFormat {
             get {
                 return ResourceManager.GetString("TimestampDateTimeFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Toggle Bookmark.
+        /// </summary>
+        public static string ToggleBookmarkCommand {
+            get {
+                return ResourceManager.GetString("ToggleBookmarkCommand", resourceCulture);
             }
         }
         
