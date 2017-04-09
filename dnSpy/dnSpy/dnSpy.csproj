@@ -106,6 +106,10 @@
     <Compile Include="Bookmarks\TextEditor\BookmarkGlyphTextMarkerLocationProviderService.cs" />
     <Compile Include="Bookmarks\TextEditor\BookmarkInfo.cs" />
     <Compile Include="Bookmarks\TextEditor\BookmarkMarker.cs" />
+    <Compile Include="Bookmarks\TextEditor\DocViewer\DocumentViewerBookmarksOperations.cs" />
+    <Compile Include="Bookmarks\TextEditor\DocViewer\DocumentViewerCommandInfoProvider.cs" />
+    <Compile Include="Bookmarks\TextEditor\DocViewer\DocumentViewerCommandTargetFilter.cs" />
+    <Compile Include="Bookmarks\TextEditor\DocViewer\DocumentViewerCommandTargetFilterProvider.cs" />
     <Compile Include="Bookmarks\TextEditor\TextViewBookmarkService.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\AppMenuCommands.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkColumnConverter.cs" />

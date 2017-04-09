@@ -1860,4 +1860,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="ShowTokensCommand" xml:space="preserve">
     <value>Show Tokens</value>
   </data>
+  <data name="ShortCutKeyCtrlK_CtrlW" xml:space="preserve">
+    <value>Ctrl+K, Ctrl+W</value>
+  </data>
 </root>

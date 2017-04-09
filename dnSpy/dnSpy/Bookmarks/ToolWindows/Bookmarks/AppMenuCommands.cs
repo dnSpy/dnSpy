@@ -29,7 +29,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			public override void Execute(IMenuItemContext context) { }
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_BOOKMARKS_GUID, Header = "res:BookmarksWindowCommand", Icon = DsImagesAttribute.BookmarkMainMenuItem, Group = MenuConstants.GROUP_APP_MENU_BOOKMARKS_WINDOWS, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_BOOKMARKS_GUID, Header = "res:BookmarksWindowCommand", Icon = DsImagesAttribute.BookmarkMainMenuItem, InputGestureText = "res:ShortCutKeyCtrlK_CtrlW", Group = MenuConstants.GROUP_APP_MENU_BOOKMARKS_WINDOWS, Order = 0)]
 		sealed class BookmarksWindowCommand : MenuItemBase {
 			readonly IDsToolWindowService toolWindowService;
 			[ImportingConstructor]

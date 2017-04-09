@@ -88,6 +88,8 @@
     <Compile Include="Bookmarks\PredefinedBookmarkLocationTypes.cs" />
     <Compile Include="Bookmarks\TextEditor\BookmarkGlyphTextMarkerLocationProvider.cs" />
     <Compile Include="Bookmarks\TextEditor\TextViewBookmarkLocationProvider.cs" />
+    <Compile Include="Command\BookmarkIds.cs" />
+    <Compile Include="Command\BookmarkIdsExtensions.cs" />
     <Compile Include="Command\CommandConstants.cs" />
     <Compile Include="Command\CommandInfo.cs" />
     <Compile Include="Command\CommandInfoProviderOrder.cs" />

@@ -4287,6 +4287,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+K, Ctrl+W.
+        /// </summary>
+        public static string ShortCutKeyCtrlK_CtrlW {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlK_CtrlW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+K, Ctrl+8.
         /// </summary>
         public static string ShortCutKeyCtrlKCtrl8 {

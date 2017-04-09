@@ -30,11 +30,12 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Bookmarks.TextEditor {
 	abstract class TextViewBookmarkService {
-		public abstract void ToggleCreateBookmark(ITextView textView, VirtualSnapshotPoint position);
+		public abstract void ToggleCreateBookmark(ITextView textView);
 		public abstract bool CanToggleCreateBookmark { get; }
 		public abstract void ToggleCreateBookmark();
 		public abstract ToggleCreateBookmarkKind GetToggleCreateBookmarkKind();
 		public abstract bool CanToggleEnableBookmark { get; }
+		public abstract void ToggleEnableBookmark(ITextView textView);
 		public abstract void ToggleEnableBookmark();
 		public abstract ToggleEnableBookmarkKind GetToggleEnableBookmarkKind();
 	}
@@ -43,7 +44,6 @@ namespace dnSpy.Bookmarks.TextEditor {
 		None,
 		Add,
 		Delete,
-		Enable,
 	}
 
 	enum ToggleEnableBookmarkKind {
@@ -68,7 +68,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
 		ITextView GetTextView(IDocumentTab tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
 
-		TextViewBookmarkLocationResult? GetLocations(IDocumentTab tab, VirtualSnapshotPoint? position) {
+		TextViewBookmarkLocationResult? GetLocation(IDocumentTab tab, VirtualSnapshotPoint? position) {
 			var textView = GetTextView(tab);
 			if (textView == null)
 				return null;
@@ -98,8 +98,8 @@ namespace dnSpy.Bookmarks.TextEditor {
 			return list.ToArray();
 		}
 
-		Bookmark[] GetBookmarks() {
-			if (GetLocations(documentTabService.Value.ActiveTab, null) is TextViewBookmarkLocationResult locRes)
+		Bookmark[] GetBookmarks(IDocumentTab tab, VirtualSnapshotPoint? position) {
+			if (GetLocation(tab, position) is TextViewBookmarkLocationResult locRes)
 				return GetBookmarks(locRes);
 			return Array.Empty<Bookmark>();
 		}
@@ -115,21 +115,18 @@ namespace dnSpy.Bookmarks.TextEditor {
 			return null;
 		}
 
-		public override void ToggleCreateBookmark(ITextView textView, VirtualSnapshotPoint position) =>
-			ToggleCreateBookmark(GetToggleCreateBookmarkInfo(GetTab(textView), position));
+		public override void ToggleCreateBookmark(ITextView textView) =>
+			ToggleCreateBookmark(GetToggleCreateBookmarkInfo(GetTab(textView), textView.Caret.Position.VirtualBufferPosition));
 
 		public override bool CanToggleCreateBookmark => GetToggleCreateBookmarkInfo(documentTabService.Value.ActiveTab, null).kind != ToggleCreateBookmarkKind.None;
 		public override void ToggleCreateBookmark() => ToggleCreateBookmark(GetToggleCreateBookmarkInfo(documentTabService.Value.ActiveTab, null));
 		public override ToggleCreateBookmarkKind GetToggleCreateBookmarkKind() => GetToggleCreateBookmarkInfo(documentTabService.Value.ActiveTab, null).kind;
 
 		(ToggleCreateBookmarkKind kind, Bookmark[] bookmarks, BookmarkLocation location) GetToggleCreateBookmarkInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
-			var locRes = GetLocations(tab, position);
+			var locRes = GetLocation(tab, position);
 			var bms = locRes == null ? Array.Empty<Bookmark>() : GetBookmarks(locRes.Value);
-			if (bms.Length != 0) {
-				if (bms.All(a => a.IsEnabled))
-					return (ToggleCreateBookmarkKind.Delete, bms, null);
-				return (ToggleCreateBookmarkKind.Enable, bms, null);
-			}
+			if (bms.Length != 0)
+				return (ToggleCreateBookmarkKind.Delete, bms, null);
 			else {
 				if (locRes == null || locRes.Value.Location == null)
 					return (ToggleCreateBookmarkKind.None, Array.Empty<Bookmark>(), null);
@@ -147,23 +144,17 @@ namespace dnSpy.Bookmarks.TextEditor {
 				bookmarksService.Value.Remove(info.bookmarks);
 				break;
 
-			case ToggleCreateBookmarkKind.Enable:
-				bookmarksService.Value.Modify(info.bookmarks.Select(a => {
-					var newSettings = a.Settings;
-					newSettings.IsEnabled = true;
-					return new BookmarkAndSettings(a, newSettings);
-				}).ToArray());
-				break;
-
 			case ToggleCreateBookmarkKind.None:
 			default:
 				return;
 			}
 		}
 
-		public override bool CanToggleEnableBookmark => GetToggleEnableBookmarkInfo().kind != ToggleEnableBookmarkKind.None;
-		public override void ToggleEnableBookmark() {
-			var info = GetToggleEnableBookmarkInfo();
+		public override bool CanToggleEnableBookmark => GetToggleEnableBookmarkInfo(documentTabService.Value.ActiveTab, null).kind != ToggleEnableBookmarkKind.None;
+		public override void ToggleEnableBookmark(ITextView textView) => ToggleEnableBookmark(GetTab(textView), textView.Caret.Position.VirtualBufferPosition);
+		public override void ToggleEnableBookmark() => ToggleEnableBookmark(documentTabService.Value.ActiveTab, null);
+		void ToggleEnableBookmark(IDocumentTab tab, VirtualSnapshotPoint? position) {
+			var info = GetToggleEnableBookmarkInfo(tab, position);
 			bool newIsEnabled;
 			switch (info.kind) {
 			case ToggleEnableBookmarkKind.Enable:
@@ -185,10 +176,10 @@ namespace dnSpy.Bookmarks.TextEditor {
 			}).ToArray());
 		}
 
-		public override ToggleEnableBookmarkKind GetToggleEnableBookmarkKind() => GetToggleEnableBookmarkInfo().kind;
+		public override ToggleEnableBookmarkKind GetToggleEnableBookmarkKind() => GetToggleEnableBookmarkInfo(documentTabService.Value.ActiveTab, null).kind;
 
-		(ToggleEnableBookmarkKind kind, Bookmark[] bookmarks) GetToggleEnableBookmarkInfo() {
-			var bms = GetBookmarks();
+		(ToggleEnableBookmarkKind kind, Bookmark[] bookmarks) GetToggleEnableBookmarkInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
+			var bms = GetBookmarks(tab, position);
 			if (bms.Length == 0)
 				return (ToggleEnableBookmarkKind.None, Array.Empty<Bookmark>());
 			bool newIsEnabled = !bms.All(a => a.IsEnabled);

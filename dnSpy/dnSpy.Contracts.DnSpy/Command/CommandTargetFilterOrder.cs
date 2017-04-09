@@ -46,6 +46,9 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>Edit Code</summary>
 		public const double EditCode = TextEditor - 3000;
 
+		/// <summary>Document viewer</summary>
+		public const double Bookmarks = TextEditor - 4000;
+
 		/// <summary>Intellisense session stack</summary>
 		public const double IntellisenseSessionStack = TextEditor - 4000;
 

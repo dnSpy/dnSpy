@@ -34,6 +34,9 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>Document viewer</summary>
 		public const double DocumentViewer = TextEditor - 3000;
 
+		/// <summary>Document viewer</summary>
+		public const double Bookmarks = TextEditor - 4000;
+
 		/// <summary>REPL editor</summary>
 		public const double REPL = TextEditor - 3000;
 
