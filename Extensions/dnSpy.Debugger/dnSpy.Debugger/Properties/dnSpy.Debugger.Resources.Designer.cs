@@ -4522,6 +4522,78 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string Threads_AllProcesses {
+            get {
+                return ResourceManager.GetString("Threads_AllProcesses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Freeze Threads.
+        /// </summary>
+        public static string Threads_FreezeThreads_ToolTip {
+            get {
+                return ResourceManager.GetString("Threads_FreezeThreads_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No threads match your search filter..
+        /// </summary>
+        public static string Threads_NoMatch {
+            get {
+                return ResourceManager.GetString("Threads_NoMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Process.
+        /// </summary>
+        public static string Threads_Process {
+            get {
+                return ResourceManager.GetString("Threads_Process", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all search criteria so that all threads are shown.
+        /// </summary>
+        public static string Threads_ResetSearchSettings_ToolTip {
+            get {
+                return ResourceManager.GetString("Threads_ResetSearchSettings_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Threads_Search {
+            get {
+                return ResourceManager.GetString("Threads_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search for a thread.
+        /// </summary>
+        public static string Threads_Search_ToolTip {
+            get {
+                return ResourceManager.GetString("Threads_Search_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thaw Threads.
+        /// </summary>
+        public static string Threads_ThawThreads_ToolTip {
+            get {
+                return ResourceManager.GetString("Threads_ThawThreads_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to T_hreads.
         /// </summary>
         public static string ThreadsCommand {

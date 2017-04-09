@@ -142,7 +142,7 @@
               img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Label Content="{x:Static p:dnSpy_Debugger_Resources.Exceptions_NoMatch}"/>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
                 </Button>
             </StackPanel>

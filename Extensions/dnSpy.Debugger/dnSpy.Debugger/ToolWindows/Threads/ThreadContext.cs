@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -29,6 +30,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		ThreadFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
+		SearchMatcher SearchMatcher { get; }
 	}
 
 	sealed class ThreadContext : IThreadContext {
@@ -38,12 +40,14 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public ThreadFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
+		public SearchMatcher SearchMatcher { get; }
 
-		public ThreadContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
+		public ThreadContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
+			SearchMatcher = searchMatcher;
 		}
 	}
 }

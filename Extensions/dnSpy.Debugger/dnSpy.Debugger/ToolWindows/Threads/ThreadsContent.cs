@@ -22,8 +22,11 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
 	interface IThreadsContent : IUIObjectProvider {
@@ -32,6 +35,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		void OnVisible();
 		void OnHidden();
 		void Focus();
+		void FocusSearchTextBox();
 		ListView ListView { get; }
 		ThreadsOperations Operations { get; }
 	}
@@ -51,18 +55,36 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			public IThreadsVM VM { get; }
 			ThreadsOperations Operations { get; }
 
-			public ControlVM(IThreadsVM vm, ThreadsOperations operations) {
+			public string FreezeThreadsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Threads_FreezeThreads_ToolTip, null);
+			public string ThawThreadsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Threads_ThawThreads_ToolTip, null);
+			public string SearchToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Threads_Search_ToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlF);
+			public string ResetSearchSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Threads_ResetSearchSettings_ToolTip, null);
+			public string SearchHelpToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.SearchHelp_ToolTip, null);
+
+			public ICommand FreezeThreadsCommand => new RelayCommand(a => Operations.FreezeThread(), a => Operations.CanFreezeThread);
+			public ICommand ThawThreadsCommand => new RelayCommand(a => Operations.ThawThread(), a => Operations.CanThawThread);
+			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);
+			public ICommand SearchHelpCommand => new RelayCommand(a => SearchHelp());
+
+			readonly IMessageBoxService messageBoxService;
+			readonly DependencyObject control;
+
+			public ControlVM(IThreadsVM vm, ThreadsOperations operations, IMessageBoxService messageBoxService, DependencyObject control) {
 				VM = vm;
 				Operations = operations;
+				this.messageBoxService = messageBoxService;
+				this.control = control;
 			}
+
+			void SearchHelp() => messageBoxService.Show(VM.GetSearchHelpText(), ownerWindow: Window.GetWindow(control));
 		}
 
 		[ImportingConstructor]
-		ThreadsContent(IWpfCommandService wpfCommandService, IThreadsVM threadsVM, ThreadsOperations threadsOperations) {
+		ThreadsContent(IWpfCommandService wpfCommandService, IThreadsVM threadsVM, ThreadsOperations threadsOperations, IMessageBoxService messageBoxService) {
 			Operations = threadsOperations;
 			threadsControl = new ThreadsControl();
 			this.threadsVM = threadsVM;
-			threadsControl.DataContext = new ControlVM(threadsVM, threadsOperations);
+			threadsControl.DataContext = new ControlVM(threadsVM, threadsOperations, messageBoxService, threadsControl);
 			threadsControl.ThreadsListViewDoubleClick += ThreadsControl_ThreadsListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_THREADS_CONTROL, threadsControl);
@@ -74,6 +96,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			//TODO:
 		}
 
+		public void FocusSearchTextBox() => threadsControl.FocusSearchTextBox();
 		public void Focus() => UIUtilities.FocusSelector(threadsControl.ListView);
 		public void OnClose() => threadsVM.IsOpen = false;
 		public void OnShow() => threadsVM.IsOpen = true;

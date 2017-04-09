@@ -31,7 +31,53 @@
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="0 3" Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type img:DsImage}" BasedOn="{StaticResource {x:Type img:DsImage}}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
+                                <Setter Property="Opacity" Value="0.30" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Resources>
+                <Label Margin="0 0 0 0" VerticalAlignment="Center" Content="{x:Static p:dnSpy_Debugger_Resources.Threads_Process}" />
+                <ComboBox Margin="0 0 0 0" Width="150" ItemsSource="{Binding VM.ProcessCollection}" SelectedItem="{Binding VM.SelectedProcess}" DisplayMemberPath="Name" />
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding FreezeThreadsCommand}" ToolTip="{Binding FreezeThreadsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.Pause}"/>
+                </Button>
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ThawThreadsCommand}" ToolTip="{Binding ThawThreadsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.Run}"/>
+                </Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
+                </Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+            </StackPanel>
+            <Label Grid.Column="1" Margin="0 0 0 0" VerticalAlignment="Center" Content="{x:Static p:dnSpy_Debugger_Resources.Threads_Search}" ToolTip="{Binding SearchToolTip}" />
+            <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding VM.FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding SearchToolTip}" />
+            <StackPanel Grid.Column="3" Margin="2 3 0 3" Orientation="Horizontal">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding SearchHelpCommand}" ToolTip="{Binding SearchHelpToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.StatusHelp}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
         <ListView
+            Grid.Row="1"
+            Visibility="{Binding VM.SomethingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
             Name="listView"
             MouseDoubleClick="listView_MouseDoubleClick"
             VirtualizingStackPanel.IsVirtualizing="True"
@@ -159,5 +205,16 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Grid Grid.Row="1" Visibility="{Binding VM.NothingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
+              mvvm:InitDataTemplateAP.Initialize="True"
+              Background="{DynamicResource GridViewBackground}"
+              img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label Content="{x:Static p:dnSpy_Debugger_Resources.Threads_NoMatch}"/>
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

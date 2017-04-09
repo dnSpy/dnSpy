@@ -25,6 +25,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
 	abstract class ThreadsOperations {
@@ -43,21 +44,23 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public abstract void FreezeThread();
 		public abstract bool CanThawThread { get; }
 		public abstract void ThawThread();
+		public abstract bool CanResetSearchSettings { get; }
+		public abstract void ResetSearchSettings();
 	}
 
 	[Export(typeof(ThreadsOperations))]
 	sealed class ThreadsOperationsImpl : ThreadsOperations {
-		readonly IThreadsVM threadesVM;
+		readonly IThreadsVM threadsVM;
 		readonly DebuggerSettings debuggerSettings;
 
-		ObservableCollection<ThreadVM> AllItems => threadesVM.AllItems;
-		ObservableCollection<ThreadVM> SelectedItems => threadesVM.SelectedItems;
+		BulkObservableCollection<ThreadVM> AllItems => threadsVM.AllItems;
+		ObservableCollection<ThreadVM> SelectedItems => threadsVM.SelectedItems;
 		//TODO: This should be view order
 		IEnumerable<ThreadVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		ThreadsOperationsImpl(IThreadsVM threadesVM, DebuggerSettings debuggerSettings) {
-			this.threadesVM = threadesVM;
+		ThreadsOperationsImpl(IThreadsVM threadsVM, DebuggerSettings debuggerSettings) {
+			this.threadsVM = threadsVM;
 			this.debuggerSettings = debuggerSettings;
 		}
 
@@ -142,5 +145,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 					vm.Thread.Thaw();
 			}
 		}
+
+		public override bool CanResetSearchSettings => true;
+		public override void ResetSearchSettings() => threadsVM.ResetSearchSettings();
 	}
 }

@@ -39,6 +39,10 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.SwitchToThread(newTab: true), a => threadsContent.Value.Operations.CanSwitchToThread), ModifierKeys.Control, Key.Enter);
 			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.SwitchToThread(newTab: true), a => threadsContent.Value.Operations.CanSwitchToThread), ModifierKeys.Shift, Key.Enter);
 			cmds.Add(new RelayCommand(a => threadsContent.Value.Operations.RenameThread(), a => threadsContent.Value.Operations.CanRenameThread), ModifierKeys.None, Key.F2);
+
+			cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_THREADS_CONTROL);
+			cmds.Add(new RelayCommand(a => threadsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.F);
+			cmds.Add(new RelayCommand(a => threadsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.E);
 		}
 	}
 
@@ -91,8 +95,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_HEXOPTS, Order = 0)]
 	sealed class UseHexadecimalThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
-		UseHexadecimalThreadsCtxMenuCommand(Lazy<IThreadsContent> threadesContent)
-			: base(threadesContent) {
+		UseHexadecimalThreadsCtxMenuCommand(Lazy<IThreadsContent> threadsContent)
+			: base(threadsContent) {
 		}
 
 		public override void Execute(ThreadsCtxMenuContext context) => context.Operations.ToggleUseHexadecimal();
@@ -103,8 +107,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	[Export, ExportMenuItem(Header = "res:SwitchToThreadCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
 	sealed class SwitchToThreadThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
-		SwitchToThreadThreadsCtxMenuCommand(Lazy<IThreadsContent> threadesContent)
-			: base(threadesContent) {
+		SwitchToThreadThreadsCtxMenuCommand(Lazy<IThreadsContent> threadsContent)
+			: base(threadsContent) {
 		}
 
 		public override void Execute(ThreadsCtxMenuContext context) => context.Operations.SwitchToThread(newTab: false);
@@ -114,8 +118,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	[ExportMenuItem(Header = "res:SwitchToThreadNewTabCommand", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
 	sealed class SwitchToThreadNewTabThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
-		SwitchToThreadNewTabThreadsCtxMenuCommand(Lazy<IThreadsContent> threadesContent)
-			: base(threadesContent) {
+		SwitchToThreadNewTabThreadsCtxMenuCommand(Lazy<IThreadsContent> threadsContent)
+			: base(threadsContent) {
 		}
 
 		public override void Execute(ThreadsCtxMenuContext context) => context.Operations.SwitchToThread(newTab: true);
@@ -125,8 +129,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	[ExportMenuItem(Header = "res:RenameThreadCommand", InputGestureText = "res:ShortCutKeyF2", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 20)]
 	sealed class RenameThreadCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
-		RenameThreadCtxMenuCommand(Lazy<IThreadsContent> threadesContent)
-			: base(threadesContent) {
+		RenameThreadCtxMenuCommand(Lazy<IThreadsContent> threadsContent)
+			: base(threadsContent) {
 		}
 
 		public override void Execute(ThreadsCtxMenuContext context) => context.Operations.RenameThread();
@@ -136,8 +140,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	[ExportMenuItem(Header = "res:FreezeThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 30)]
 	sealed class FreezeThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
-		FreezeThreadsCtxMenuCommand(Lazy<IThreadsContent> threadesContent)
-			: base(threadesContent) {
+		FreezeThreadsCtxMenuCommand(Lazy<IThreadsContent> threadsContent)
+			: base(threadsContent) {
 		}
 
 		public override void Execute(ThreadsCtxMenuContext context) => context.Operations.FreezeThread();
@@ -147,8 +151,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	[ExportMenuItem(Header = "res:ThawThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 40)]
 	sealed class ThawThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
-		ThawThreadsCtxMenuCommand(Lazy<IThreadsContent> threadesContent)
-			: base(threadesContent) {
+		ThawThreadsCtxMenuCommand(Lazy<IThreadsContent> threadsContent)
+			: base(threadsContent) {
 		}
 
 		public override void Execute(ThreadsCtxMenuContext context) => context.Operations.ThawThread();

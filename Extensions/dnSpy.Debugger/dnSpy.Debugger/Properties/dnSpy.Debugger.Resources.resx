@@ -1743,4 +1743,28 @@ Are you sure you want to expand it?</value>
   <data name="EditLabelsCommand" xml:space="preserve">
     <value>Edit Labels</value>
   </data>
+  <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
+    <value>Freeze Threads</value>
+  </data>
+  <data name="Threads_NoMatch" xml:space="preserve">
+    <value>No threads match your search filter.</value>
+  </data>
+  <data name="Threads_Process" xml:space="preserve">
+    <value>Process</value>
+  </data>
+  <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all threads are shown</value>
+  </data>
+  <data name="Threads_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Threads_Search_ToolTip" xml:space="preserve">
+    <value>Search for a thread</value>
+  </data>
+  <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
+    <value>Thaw Threads</value>
+  </data>
+  <data name="Threads_AllProcesses" xml:space="preserve">
+    <value>All</value>
+  </data>
 </root>

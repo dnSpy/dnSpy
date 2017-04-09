@@ -59,41 +59,20 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			set => lazyToolWindowVMHelper.IsVisible = value;
 		}
 
-		sealed class ProcessVM : ViewModelBase {
-			public string Name { get; private set; }
-			public DbgProcess Process { get; }
-			public ProcessVM(string name) => Name = name ?? throw new ArgumentNullException(nameof(name));
-			public ProcessVM(DbgProcess process, bool useHex) {
-				Process = process ?? throw new ArgumentNullException(nameof(process));
-				Name = GetProcessName(process, useHex);
-			}
-			static string GetProcessName(DbgProcess process, bool useHex) =>
-				"[" + (useHex ? "0x" + process.Id.ToString("X") : process.Id.ToString()) + "]" + (string.IsNullOrEmpty(process.Name) ? string.Empty : " " + process.Name);
-			public void UpdateName(bool useHex) {
-				if (Process != null) {
-					var newName = GetProcessName(Process, useHex);
-					if (Name != newName) {
-						Name = newName;
-						OnPropertyChanged(nameof(Name));
-					}
-				}
-			}
-		}
-
 		public object ProcessCollection => processes;
-		readonly ObservableCollection<ProcessVM> processes;
+		readonly ObservableCollection<SimpleProcessVM> processes;
 
 		public object SelectedProcess {
 			get => selectedProcess;
 			set {
 				if (selectedProcess != value) {
-					selectedProcess = (ProcessVM)value;
+					selectedProcess = (SimpleProcessVM)value;
 					OnPropertyChanged(nameof(SelectedProcess));
 					FilterList_UI(filterText, selectedProcess);
 				}
 			}
 		}
-		ProcessVM selectedProcess;
+		SimpleProcessVM selectedProcess;
 
 		public string FilterText {
 			get => filterText;
@@ -134,7 +113,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			realAllItems = new List<ModuleVM>();
 			AllItems = new BulkObservableCollection<ModuleVM>();
 			SelectedItems = new ObservableCollection<ModuleVM>();
-			processes = new ObservableCollection<ProcessVM>();
+			processes = new ObservableCollection<SimpleProcessVM>();
 			this.dbgManager = dbgManager;
 			this.moduleFormatterProvider = moduleFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
@@ -207,7 +186,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			moduleContext.UIDispatcher.VerifyAccess();
 			if (processes.Count != 0)
 				return;
-			processes.Add(new ProcessVM(dnSpy_Debugger_Resources.Modules_AllProcesses));
+			processes.Add(new SimpleProcessVM(dnSpy_Debugger_Resources.Modules_AllProcesses));
 			SelectedProcess = processes[0];
 		}
 
@@ -473,7 +452,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		void FilterList_UI(string filterText, ProcessVM selectedProcess) {
+		void FilterList_UI(string filterText, SimpleProcessVM selectedProcess) {
 			moduleContext.UIDispatcher.VerifyAccess();
 			if (string.IsNullOrWhiteSpace(filterText))
 				filterText = string.Empty;
@@ -486,7 +465,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText, selectedProcess);
-		void InitializeNothingMatched(string filterText, ProcessVM selectedProcess) =>
+		void InitializeNothingMatched(string filterText, SimpleProcessVM selectedProcess) =>
 			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process == null);
 
 		sealed class ModuleVMComparer : IComparer<ModuleVM> {
@@ -495,7 +474,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		IEnumerable<ModuleVM> GetFilteredItems_UI(string filterText, ProcessVM selectedProcess) {
+		IEnumerable<ModuleVM> GetFilteredItems_UI(string filterText, SimpleProcessVM selectedProcess) {
 			moduleContext.UIDispatcher.VerifyAccess();
 			foreach (var vm in realAllItems) {
 				if (IsMatch_UI(vm, filterText, selectedProcess))
@@ -504,7 +483,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		bool IsMatch_UI(ModuleVM vm, string filterText, ProcessVM selectedProcess) {
+		bool IsMatch_UI(ModuleVM vm, string filterText, SimpleProcessVM selectedProcess) {
 			Debug.Assert(moduleContext.UIDispatcher.CheckAccess());
 			if (selectedProcess?.Process != null && selectedProcess.Process != vm.Module.Process)
 				return false;
@@ -653,7 +632,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		void AddItems_UI(IList<DbgProcess> newProcesses) {
 			moduleContext.UIDispatcher.VerifyAccess();
 			foreach (var p in newProcesses) {
-				var vm = new ProcessVM(p, debuggerSettings.UseHexadecimal);
+				var vm = new SimpleProcessVM(p, debuggerSettings.UseHexadecimal);
 				int insertionIndex = GetInsertionIndex_UI(vm);
 				processes.Insert(insertionIndex, vm);
 			}
@@ -673,9 +652,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		int GetInsertionIndex_UI(ProcessVM vm) {
+		int GetInsertionIndex_UI(SimpleProcessVM vm) {
 			Debug.Assert(moduleContext.UIDispatcher.CheckAccess());
-			var comparer = ProcessVMComparer.Instance;
+			var comparer = SimpleProcessVMComparer.Instance;
 			var list = processes;
 			int lo = 0, hi = list.Count - 1;
 			while (lo <= hi) {
@@ -692,10 +671,10 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			return hi + 1;
 		}
 
-		sealed class ProcessVMComparer : IComparer<ProcessVM> {
-			public static readonly ProcessVMComparer Instance = new ProcessVMComparer();
-			ProcessVMComparer() { }
-			public int Compare(ProcessVM x, ProcessVM y) {
+		sealed class SimpleProcessVMComparer : IComparer<SimpleProcessVM> {
+			public static readonly SimpleProcessVMComparer Instance = new SimpleProcessVMComparer();
+			SimpleProcessVMComparer() { }
+			public int Compare(SimpleProcessVM x, SimpleProcessVM y) {
 				bool x1 = x.Process == null;
 				bool y1 = y.Process == null;
 				if (x1 != y1) {

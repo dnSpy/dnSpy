@@ -50,7 +50,6 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public ModulesOperations Operations { get; }
 
 		readonly ModulesControl modulesControl;
-		readonly IDocumentTabService documentTabService;
 		readonly IModulesVM modulesVM;
 
 		sealed class ControlVM {
@@ -78,11 +77,10 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		[ImportingConstructor]
-		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, ModulesOperations modulesOperations, IDocumentTabService documentTabService, IMessageBoxService messageBoxService) {
+		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, ModulesOperations modulesOperations, IMessageBoxService messageBoxService) {
 			Operations = modulesOperations;
 			modulesControl = new ModulesControl();
 			this.modulesVM = modulesVM;
-			this.documentTabService = documentTabService;
 			modulesControl.DataContext = new ControlVM(modulesVM, modulesOperations, messageBoxService, modulesControl);
 			modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
 

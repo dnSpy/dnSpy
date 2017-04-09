@@ -22,6 +22,7 @@ using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
@@ -59,7 +60,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			else
 				return null;
 
-			var context = new TextClassifierContext(writer.Text, obj.Tag, obj.VM.Context.SyntaxHighlight, writer.Colors);
+			var context = new SearchTextClassifierContext(obj.VM.Context.SearchMatcher, writer.Text, obj.Tag, obj.VM.Context.SyntaxHighlight, writer.Colors);
 			return obj.VM.Context.TextElementProvider.CreateTextElement(obj.VM.Context.ClassificationFormatMap, context, ContentTypes.ThreadsWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
 		}
 
