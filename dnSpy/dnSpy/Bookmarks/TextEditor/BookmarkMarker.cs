@@ -60,7 +60,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 		void Initialize_UI() {
 			uiDispatcher.VerifyAccess();
 			bookmarkInfos = new BookmarkInfo[(int)BookmarkKind.Last] {
-				new BookmarkInfo(BookmarkKind.BookmarkDisabled, null, null, null, GlyphTextMarkerServiceZIndexes.Bookmark),
+				new BookmarkInfo(BookmarkKind.BookmarkDisabled, null, null, null, GlyphTextMarkerServiceZIndexes.DisabledBookmark),
 				new BookmarkInfo(BookmarkKind.BookmarkEnabled, null, null, null, GlyphTextMarkerServiceZIndexes.Bookmark),
 			};
 		}
