@@ -476,6 +476,24 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Document, Group: Other</summary>
 		public const string GROUP_CTX_DOCUMENTS_OTHER = "11000,15776535-8A1D-4255-8C3D-331163324C7C";
 
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Copy</summary>
+		public const string GROUP_CTX_BOOKMARKS_COPY = "0,1633C2A1-5A65-41FF-B83D-E6B0E1B565EC";
+
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Code</summary>
+		public const string GROUP_CTX_BOOKMARKS_CODE = "1000,3932F616-AD0B-4310-A4DE-678AF7E9C149";
+
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Settings</summary>
+		public const string GROUP_CTX_BOOKMARKS_SETTINGS = "2000,12AFA15C-7D72-41FB-A65C-92367D8091A2";
+
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Commands</summary>
+		public const string GROUP_CTX_BOOKMARKS_CMDS1 = "3000,4287B6E2-256F-4A8A-9041-EA7BE393C18A";
+
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Export</summary>
+		public const string GROUP_CTX_BOOKMARKS_EXPORT = "5000,565EDE0D-4139-486E-A486-CD6B3657E5FF";
+
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Options</summary>
+		public const string GROUP_CTX_BOOKMARKS_OPTS = "10000,1D7EEE8F-CD29-4F4E-A4A8-6906680B0601";
+
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Copy</summary>
 		[Obsolete("Use " + nameof(GROUP_CTX_DBG_CODEBPS_COPY), true)]
 		public const string GROUP_CTX_DBG_BPS_COPY = "0,FB604477-5E55-4B55-91A4-0E06762FED83";

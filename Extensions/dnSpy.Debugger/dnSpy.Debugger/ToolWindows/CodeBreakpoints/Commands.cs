@@ -51,13 +51,13 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public CodeBreakpointsCtxMenuContext(CodeBreakpointsOperations operations) => Operations = operations;
 	}
 
-	abstract class CodeBreakpointsCtxMenuCommand : MenuItemBase<CodeBreakpointsCtxMenuContext> {
+	abstract class BreakpointsCtxMenuCommand : MenuItemBase<CodeBreakpointsCtxMenuContext> {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
 		protected readonly Lazy<ICodeBreakpointsContent> codeBreakpointsContent;
 
-		protected CodeBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointsContent) => this.codeBreakpointsContent = codeBreakpointsContent;
+		protected BreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointsContent) => this.codeBreakpointsContent = codeBreakpointsContent;
 
 		protected sealed override CodeBreakpointsCtxMenuContext CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
@@ -71,9 +71,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_COPY, Order = 0)]
-	sealed class CopyCodeBreakpointsCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class CopyBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		CopyCodeBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointsContent)
+		CopyBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointsContent)
 			: base(codeBreakpointsContent) {
 		}
 
@@ -82,9 +82,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_COPY, Order = 10)]
-	sealed class SelectAllCodeBreakpointsCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class SelectAllBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		SelectAllCodeBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointsContent)
+		SelectAllBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointsContent)
 			: base(codeBreakpointsContent) {
 		}
 
@@ -93,9 +93,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:GoToSourceCodeCommand", Icon = DsImagesAttribute.GoToSourceCode, InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CODE, Order = 0)]
-	sealed class GoToSourceCodeBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class GoToSourceCodeBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		GoToSourceCodeBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		GoToSourceCodeBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -104,9 +104,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:GoToDisassemblyCommand", Icon = DsImagesAttribute.DisassemblyWindow, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CODE, Order = 10)]
-	sealed class GoToDisassemblyBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class GoToDisassemblyBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		GoToDisassemblyBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		GoToDisassemblyBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -115,9 +115,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:SettingsCommand", InputGestureText = "res:ShortCutKeyAltEnter", Icon = DsImagesAttribute.Settings, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_SETTINGS, Order = 0)]
-	sealed class EditSettingsBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class EditSettingsBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		EditSettingsBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		EditSettingsBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -126,9 +126,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:EditLabelsCommand", InputGestureText = "res:ShortCutKeyF2", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_SETTINGS, Order = 10)]
-	sealed class EditLabelsBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class EditLabelsBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		EditLabelsBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		EditLabelsBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -137,9 +137,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:RemoveBreakpointCommand", InputGestureText = "res:ShortCutKeyDelete", Icon = DsImagesAttribute.Cancel, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CMDS1, Order = 0)]
-	sealed class RemoveBreakpointBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class RemoveBreakpointBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		RemoveBreakpointBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		RemoveBreakpointBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -148,9 +148,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:RemoveAllBreakpointsCommand", Icon = DsImagesAttribute.ClearBreakpointGroup, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CMDS1, Order = 10)]
-	sealed class RemoveAllBreakpointsBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class RemoveAllBreakpointsBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		RemoveAllBreakpointsBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		RemoveAllBreakpointsBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -159,9 +159,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:EnableBreakpointCommand3", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CMDS1, Order = 20)]
-	sealed class EnableBreakpointBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class EnableBreakpointBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		EnableBreakpointBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		EnableBreakpointBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -170,9 +170,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:DisableBreakpointCommand3", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CMDS1, Order = 30)]
-	sealed class DisableBreakpointBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class DisableBreakpointBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		DisableBreakpointBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		DisableBreakpointBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -181,9 +181,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:ExportSelectedCommand", Icon = DsImagesAttribute.Open, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_EXPORT, Order = 0)]
-	sealed class ExportSelectedBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class ExportSelectedBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		ExportSelectedBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		ExportSelectedBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -192,9 +192,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:ShowTokensCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 0)]
-	sealed class ShowTokensBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class ShowTokensBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		ShowTokensBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		ShowTokensBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -203,9 +203,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:ShowModuleNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 10)]
-	sealed class ShowModuleNamesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class ShowModuleNamesBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		ShowModuleNamesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		ShowModuleNamesBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -214,9 +214,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:ShowParameterTypesCommand2", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 20)]
-	sealed class ShowParameterTypesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class ShowParameterTypesBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		ShowParameterTypesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		ShowParameterTypesBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -225,9 +225,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:ShowParameterNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 30)]
-	sealed class ShowParameterNamesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class ShowParameterNamesBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		ShowParameterNamesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		ShowParameterNamesBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -236,9 +236,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:ShowDeclaringTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 40)]
-	sealed class ShowDeclaringTypesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class ShowDeclaringTypesBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		ShowDeclaringTypesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		ShowDeclaringTypesBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -247,9 +247,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:ShowNamespacesCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 50)]
-	sealed class ShowNamespacesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class ShowNamespacesBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		ShowNamespacesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		ShowNamespacesBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -258,9 +258,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:ShowReturnTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 60)]
-	sealed class ShowReturnTypesBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class ShowReturnTypesBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		ShowReturnTypesBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		ShowReturnTypesBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 
@@ -269,9 +269,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	}
 
 	[ExportMenuItem(Header = "res:ShowIntrinsicTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_OPTS, Order = 70)]
-	sealed class ShowTypeKeywordsBreakpointCtxMenuCommand : CodeBreakpointsCtxMenuCommand {
+	sealed class ShowTypeKeywordsBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
-		ShowTypeKeywordsBreakpointCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+		ShowTypeKeywordsBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
 			: base(codeBreakpointesContent) {
 		}
 

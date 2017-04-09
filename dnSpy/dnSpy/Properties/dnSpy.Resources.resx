@@ -1794,4 +1794,70 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="BookmarkDefaultName" xml:space="preserve">
     <value>Bookmark{0}</value>
   </data>
+  <data name="EditNameCommand" xml:space="preserve">
+    <value>Edit Name</value>
+  </data>
+  <data name="GoToBookmarkCommand" xml:space="preserve">
+    <value>Go To Bookmark</value>
+  </data>
+  <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="DisableBookmarkCommand3" xml:space="preserve">
+    <value>Disable Bookmark</value>
+  </data>
+  <data name="EditLabelsCommand" xml:space="preserve">
+    <value>Edit Labels</value>
+  </data>
+  <data name="EnableBookmarkCommand3" xml:space="preserve">
+    <value>Enable Bookmark</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>_Export Selected...</value>
+  </data>
+  <data name="RemoveAllBookmarksCommand" xml:space="preserve">
+    <value>Remove All Bookmarks</value>
+  </data>
+  <data name="RemoveBookmarkCommand" xml:space="preserve">
+    <value>Remove Bookmark</value>
+  </data>
+  <data name="SelectAllCommand" xml:space="preserve">
+    <value>Select _All</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="ShortCutKeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>Show Declaring Types</value>
+  </data>
+  <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
+    <value>Show Intrinsic Type Keywords</value>
+  </data>
+  <data name="ShowModuleNamesCommand" xml:space="preserve">
+    <value>Show _Module Names</value>
+  </data>
+  <data name="ShowNamespacesCommand" xml:space="preserve">
+    <value>Show Namespaces</value>
+  </data>
+  <data name="ShowParameterNamesCommand" xml:space="preserve">
+    <value>Show _Parameter Names</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>Show Parameter Types</value>
+  </data>
+  <data name="ShowReturnTypesCommand" xml:space="preserve">
+    <value>Show Return Types</value>
+  </data>
+  <data name="ShowTokensCommand" xml:space="preserve">
+    <value>Show Tokens</value>
+  </data>
 </root>
