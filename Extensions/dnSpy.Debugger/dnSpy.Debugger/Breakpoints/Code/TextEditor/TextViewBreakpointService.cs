@@ -124,17 +124,17 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		public override ToggleCreateBreakpointKind GetToggleCreateBreakpointKind() => GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null).kind;
 
 		(ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgBreakpointLocation[] locations) GetToggleCreateBreakpointInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
-			var locations = GetLocations(tab, position);
-			var bps = locations == null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locations.Value);
+			var locRes = GetLocations(tab, position);
+			var bps = locRes == null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locRes.Value);
 			if (bps.Length != 0) {
 				if (bps.All(a => a.IsEnabled))
 					return (ToggleCreateBreakpointKind.Delete, bps, Array.Empty<DbgBreakpointLocation>());
 				return (ToggleCreateBreakpointKind.Enable, bps, Array.Empty<DbgBreakpointLocation>());
 			}
 			else {
-				if (locations == null || locations.Value.Locations.Length == 0)
+				if (locRes == null || locRes.Value.Locations.Length == 0)
 					return (ToggleCreateBreakpointKind.None, Array.Empty<DbgCodeBreakpoint>(), Array.Empty<DbgBreakpointLocation>());
-				return (ToggleCreateBreakpointKind.Add, Array.Empty<DbgCodeBreakpoint>(), locations.Value.Locations);
+				return (ToggleCreateBreakpointKind.Add, Array.Empty<DbgCodeBreakpoint>(), locRes.Value.Locations);
 			}
 		}
 

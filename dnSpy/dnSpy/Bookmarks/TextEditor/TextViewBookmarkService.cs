@@ -123,17 +123,17 @@ namespace dnSpy.Bookmarks.TextEditor {
 		public override ToggleCreateBookmarkKind GetToggleCreateBookmarkKind() => GetToggleCreateBookmarkInfo(documentTabService.Value.ActiveTab, null).kind;
 
 		(ToggleCreateBookmarkKind kind, Bookmark[] bookmarks, BookmarkLocation location) GetToggleCreateBookmarkInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
-			var locations = GetLocations(tab, position);
-			var bms = locations == null ? Array.Empty<Bookmark>() : GetBookmarks(locations.Value);
+			var locRes = GetLocations(tab, position);
+			var bms = locRes == null ? Array.Empty<Bookmark>() : GetBookmarks(locRes.Value);
 			if (bms.Length != 0) {
 				if (bms.All(a => a.IsEnabled))
 					return (ToggleCreateBookmarkKind.Delete, bms, null);
 				return (ToggleCreateBookmarkKind.Enable, bms, null);
 			}
 			else {
-				if (locations == null || locations.Value.Location == null)
+				if (locRes == null || locRes.Value.Location == null)
 					return (ToggleCreateBookmarkKind.None, Array.Empty<Bookmark>(), null);
-				return (ToggleCreateBookmarkKind.Add, Array.Empty<Bookmark>(), locations.Value.Location);
+				return (ToggleCreateBookmarkKind.Add, Array.Empty<Bookmark>(), locRes.Value.Location);
 			}
 		}
 

@@ -54,7 +54,7 @@ namespace dnSpy.Text.Editor {
 		readonly GlyphTextViewMarkerGlyphTagger glyphTextViewMarkerGlyphTagTagger;
 		readonly GlyphTextViewMarkerGlyphTextMarkerTagger glyphTextViewMarkerGlyphTextMarkerTagTagger;
 		readonly GlyphTextViewMarkerClassificationTagger glyphTextViewMarkerClassificationTagTagger;
-		IMethodOffsetSpanMap methodOffsetSpanMap;
+		IDotNetSpanMap dotNetSpanMap;
 		readonly MarkerAndSpanCollection markerAndSpanCollection;
 		readonly IEditorFormatMap editorFormatMap;
 		readonly List<MarkerElement> markerElements;
@@ -97,19 +97,31 @@ namespace dnSpy.Text.Editor {
 				this.owner = owner;
 			}
 
-			public void UpdateSpans(IMethodOffsetSpanMap map) {
+			public void UpdateSpans(IDotNetSpanMap map) {
 				inDocMarkers.Clear();
 				SelectedMarkersInDocumentCount = 0;
 				if (map != null) {
 					var allMarkers = this.allMarkers;
 					for (int i = 0; i < allMarkers.Count; i++) {
-						if (allMarkers[i] is IGlyphTextMethodMarkerImpl methodMarker) {
-							var span = map.ToSpan(methodMarker.Method, methodMarker.ILOffset);
+						Span? span;
+						switch (allMarkers[i]) {
+						case IGlyphTextMethodMarkerImpl methodMarker:
+							span = map.ToSpan(methodMarker.Method.Module, methodMarker.Method.Token, methodMarker.ILOffset);
 							if (span != null) {
 								inDocMarkers.Add(methodMarker, span.Value);
 								if (methodMarker.SelectedMarkerTypeName != null)
 									SelectedMarkersInDocumentCount++;
 							}
+							break;
+
+						case IGlyphTextDotNetTokenMarkerImpl tokenMarker:
+							span = map.ToSpan(tokenMarker.Module, tokenMarker.Token);
+							if (span != null) {
+								inDocMarkers.Add(tokenMarker, span.Value);
+								if (tokenMarker.SelectedMarkerTypeName != null)
+									SelectedMarkersInDocumentCount++;
+							}
+							break;
 						}
 					}
 				}
@@ -571,11 +583,12 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void IGlyphTextViewMarkerService.SetMethodOffsetSpanMap(IMethodOffsetSpanMap map) {
-			if (methodOffsetSpanMap == map)
+			if (dotNetSpanMap == map)
 				return;
-			methodOffsetSpanMap = map;
+			dotNetSpanMap = map as IDotNetSpanMap;
+			Debug.Assert((map == null) == (dotNetSpanMap == null));
 			if (markerAndSpanCollection.Count != 0) {
-				markerAndSpanCollection.UpdateSpans(methodOffsetSpanMap);
+				markerAndSpanCollection.UpdateSpans(dotNetSpanMap);
 				InvalidateEverything();
 			}
 		}
@@ -591,15 +604,7 @@ namespace dnSpy.Text.Editor {
 		void Refresh(IGlyphTextMarkerImpl marker) {
 			if (!marker.TextViewFilter(TextView))
 				return;
-			if (marker is IGlyphTextMethodMarkerImpl methodMarker) {
-				Refresh(methodMarker);
-				return;
-			}
 
-			Debug.Fail("Unknown marker type: " + marker.GetType());
-		}
-
-		void Refresh(IGlyphTextMethodMarkerImpl marker) {
 			var span = GetSnapshotSpan(marker);
 			if (span == null)
 				return;
@@ -618,17 +623,16 @@ namespace dnSpy.Text.Editor {
 		}
 
 		SnapshotSpan? GetSnapshotSpan(IGlyphTextMarker marker) {
+			Span? span;
 			if (marker is IGlyphTextMethodMarker methodMarker)
-				return GetSnapshotSpan(methodMarker);
-
-			Debug.Fail("Unknown marker type: " + marker.GetType());
-			return null;
-		}
-
-		SnapshotSpan? GetSnapshotSpan(IGlyphTextMethodMarker marker) {
-			if (methodOffsetSpanMap == null)
+				span = dotNetSpanMap?.ToSpan(methodMarker.Method.Module, methodMarker.Method.Token, methodMarker.ILOffset);
+			else if (marker is IGlyphTextDotNetTokenMarker tokenMarker)
+				span = dotNetSpanMap?.ToSpan(tokenMarker.Module, tokenMarker.Token);
+			else {
+				Debug.Fail("Unknown marker type: " + marker.GetType());
 				return null;
-			var span = methodOffsetSpanMap.ToSpan(marker.Method, marker.ILOffset);
+			}
+
 			if (span == null)
 				return null;
 			var snapshot = TextView.TextSnapshot;
@@ -795,14 +799,6 @@ namespace dnSpy.Text.Editor {
 			if (marker == null)
 				throw new ArgumentNullException(nameof(marker));
 
-			if (marker is IGlyphTextMethodMarkerImpl methodMarker)
-				return GetVisibleLine(methodMarker);
-
-			Debug.Fail("Unknown marker type: " + marker.GetType());
-			return null;
-		}
-
-		IWpfTextViewLine GetVisibleLine(IGlyphTextMethodMarkerImpl marker) {
 			var span = GetSnapshotSpan(marker);
 			if (span == null)
 				return null;

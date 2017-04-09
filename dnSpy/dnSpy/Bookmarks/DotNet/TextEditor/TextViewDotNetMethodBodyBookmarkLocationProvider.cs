@@ -45,7 +45,10 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			if (methodDebugService == null)
 				return null;
-			var methodStatements = methodDebugService.FindByTextPosition(position.Position, sameMethod: false);
+			// A bookmark should be set on the current line if possible, and the current position
+			// isn't necessarily at the start of the line.
+			var startPos = position.Position.GetContainingLine().Start;
+			var methodStatements = methodDebugService.FindByTextPosition(startPos, sameMethod: false);
 			if (methodStatements.Count == 0)
 				return null;
 			var textSpan = methodStatements[0].Statement.TextSpan;

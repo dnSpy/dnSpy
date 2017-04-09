@@ -37,11 +37,16 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Method text marker location info
 	/// </summary>
-	public sealed class GlyphTextMethodMarkerLocationInfo : GlyphTextMarkerLocationInfo {
+	public sealed class DotNetMethodBodyGlyphTextMarkerLocationInfo : GlyphTextMarkerLocationInfo {
 		/// <summary>
-		/// Method token
+		/// Module
 		/// </summary>
-		public ModuleTokenId TokenId { get; }
+		public ModuleId Module { get; }
+
+		/// <summary>
+		/// Token of method
+		/// </summary>
+		public uint Token { get; }
 
 		/// <summary>
 		/// Method offset
@@ -51,11 +56,60 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="tokenId">Method token</param>
+		/// <param name="module">Module</param>
+		/// <param name="token">Token of method</param>
 		/// <param name="ilOffset">Method offset</param>
-		public GlyphTextMethodMarkerLocationInfo(ModuleTokenId tokenId, uint ilOffset) {
-			TokenId = tokenId;
+		public DotNetMethodBodyGlyphTextMarkerLocationInfo(ModuleId module, uint token, uint ilOffset) {
+			Module = module;
+			Token = token;
 			ILOffset = ilOffset;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="token">Token of method</param>
+		/// <param name="ilOffset">Method offset</param>
+		public DotNetMethodBodyGlyphTextMarkerLocationInfo(ModuleId module, int token, uint ilOffset) {
+			Module = module;
+			Token = (uint)token;
+			ILOffset = ilOffset;
+		}
+	}
+
+	/// <summary>
+	/// Method text marker location info
+	/// </summary>
+	public sealed class DotNetTokenGlyphTextMarkerLocationInfo : GlyphTextMarkerLocationInfo {
+		/// <summary>
+		/// Module
+		/// </summary>
+		public ModuleId Module { get; }
+
+		/// <summary>
+		/// Token of definition (type, method, field, property, event)
+		/// </summary>
+		public uint Token { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="token">Token of definition (type, method, field, property, event)</param>
+		public DotNetTokenGlyphTextMarkerLocationInfo(ModuleId module, uint token) {
+			Module = module;
+			Token = token;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="token">Token of definition (type, method, field, property, event)</param>
+		public DotNetTokenGlyphTextMarkerLocationInfo(ModuleId module, int token) {
+			Module = module;
+			Token = (uint)token;
 		}
 	}
 
@@ -84,6 +138,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="handler">Glyph handler or null</param>
 		/// <param name="textViewFilter">Filters out non-supported text views</param>
 		/// <returns></returns>
+		[Obsolete("Use a " + nameof(IModuleIdProvider) + " and call the other overload", true)]
 		IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag = null, IGlyphTextMarkerHandler handler = null, Func<ITextView, bool> textViewFilter = null);
 
 		/// <summary>
@@ -181,6 +236,21 @@ namespace dnSpy.Contracts.Text.Editor {
 	}
 
 	/// <summary>
+	/// A method marker created by <see cref="IGlyphTextMarkerService"/>
+	/// </summary>
+	public interface IGlyphTextDotNetTokenMarker : IGlyphTextMarker {
+		/// <summary>
+		/// Gets the module
+		/// </summary>
+		ModuleId Module { get; }
+
+		/// <summary>
+		/// Gets the token
+		/// </summary>
+		uint Token { get; }
+	}
+
+	/// <summary>
 	/// Converts method IL offsets to <see cref="Span"/>s
 	/// </summary>
 	public interface IMethodOffsetSpanMap {
@@ -190,7 +260,30 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="method">Method token</param>
 		/// <param name="ilOffset">IL offset</param>
 		/// <returns></returns>
+		[Obsolete("Use the method in " + nameof(IDotNetSpanMap), true)]
 		Span? ToSpan(ModuleTokenId method, uint ilOffset);
+	}
+
+	/// <summary>
+	/// Converts .NET tokens to spans
+	/// </summary>
+	public interface IDotNetSpanMap : IMethodOffsetSpanMap {
+		/// <summary>
+		/// Converts a method offset to a <see cref="Span"/> or returns null if the IL offset isn't present in the document
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="token">Token of method</param>
+		/// <param name="ilOffset">IL offset</param>
+		/// <returns></returns>
+		Span? ToSpan(ModuleId module, uint token, uint ilOffset);
+
+		/// <summary>
+		/// Converts a .NET module + token to a <see cref="Span"/> or returns null if the definition isn't present in the document
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="token">Token of definition (type, method, field, property, event)</param>
+		/// <returns></returns>
+		Span? ToSpan(ModuleId module, uint token);
 	}
 
 	/// <summary>

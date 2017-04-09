@@ -238,6 +238,7 @@
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerCommandTargetFilterProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerContentFactory.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerControl.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerDotNetSpanMap.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerHighlightReferencesTagger.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerMouseProcessor.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerOutput.cs" />
@@ -251,7 +252,6 @@
     <Compile Include="Documents\Tabs\DocViewer\LineSeparatorCollection.cs" />
     <Compile Include="Documents\Tabs\DocViewer\LineSeparatorDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\LineSeparatorViewTagger.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\MethodDebugInfoMethodOffsetSpanMap.cs" />
     <Compile Include="Documents\Tabs\DocViewer\OpCodeReferenceHandler.cs" />
     <Compile Include="Documents\Tabs\DocViewer\Settings\AdvancedAppSettingsPage.cs" />
     <Compile Include="Documents\Tabs\DocViewer\Settings\AppSettingsPageContainer.cs" />

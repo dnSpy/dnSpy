@@ -43,9 +43,9 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 			if (documentViewer == null)
 				return null;
 
-			int startPos = position.Position.Position;
-			if (position.IsInVirtualSpace)
-				startPos++;
+			// A bookmark should be set on the current line if possible, and the current position
+			// isn't necessarily at the start of the line.
+			int startPos = position.Position.GetContainingLine().Start.Position;
 			foreach (var data in documentViewer.ReferenceCollection.FindFrom(startPos)) {
 				if (!data.Data.IsDefinition)
 					continue;
@@ -53,8 +53,6 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 				if (def == null)
 					continue;
 				var span = data.Span;
-				if (span.End == startPos)
-					continue;
 
 				var snapshot = textView.TextSnapshot;
 				if (span.End > snapshot.Length)

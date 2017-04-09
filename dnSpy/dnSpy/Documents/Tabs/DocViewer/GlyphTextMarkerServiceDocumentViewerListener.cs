@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		void IDocumentViewerListener.OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.GotNewContent)
-				glyphTextMarkerService.SetMethodOffsetSpanMap(e.DocumentViewer.TextView, new MethodDebugInfoMethodOffsetSpanMap(moduleIdProvider, e.DocumentViewer.Content.MethodDebugInfos));
+				glyphTextMarkerService.SetMethodOffsetSpanMap(e.DocumentViewer.TextView, new DocumentViewerDotNetSpanMap(moduleIdProvider, e.DocumentViewer.Content.MethodDebugInfos, e.DocumentViewer.ReferenceCollection));
 		}
 	}
 }

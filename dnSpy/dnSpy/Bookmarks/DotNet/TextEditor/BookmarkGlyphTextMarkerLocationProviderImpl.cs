@@ -20,7 +20,6 @@
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Bookmarks.DotNet;
 using dnSpy.Contracts.Bookmarks.TextEditor;
-using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Bookmarks.DotNet.TextEditor {
@@ -28,10 +27,9 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 	sealed class BookmarkGlyphTextMarkerLocationProviderImpl : BookmarkGlyphTextMarkerLocationProvider {
 		public override GlyphTextMarkerLocationInfo GetLocation(Bookmark bookmark) {
 			if (bookmark.Location is DotNetMethodBodyBookmarkLocation bodyLoc)
-				return new GlyphTextMethodMarkerLocationInfo(new ModuleTokenId(bodyLoc.Module, bodyLoc.Token), bodyLoc.Offset);
-			if (bookmark.Location is DotNetTokenBookmarkLocation tokenLoc) {
-				//TODO:
-			}
+				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(bodyLoc.Module, bodyLoc.Token, bodyLoc.Offset);
+			if (bookmark.Location is DotNetTokenBookmarkLocation tokenLoc)
+				return new DotNetTokenGlyphTextMarkerLocationInfo(tokenLoc.Module, tokenLoc.Token);
 			return null;
 		}
 	}
