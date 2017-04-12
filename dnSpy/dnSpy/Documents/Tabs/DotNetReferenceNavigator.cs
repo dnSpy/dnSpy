@@ -161,7 +161,10 @@ namespace dnSpy.Documents.Tabs {
 		static bool MoveCaretTo(IDocumentViewer documentViewer, IMemberDef def) {
 			if (documentViewer == null)
 				return false;
-			documentViewer.MoveCaretToReference(def);
+			var data = documentViewer.ReferenceCollection.FirstOrNull(a => a.Data.IsDefinition && a.Data.Reference == def);
+			if (data == null)
+				return false;
+			documentViewer.MoveCaretToPosition(data.Value.Span.Start);
 			return true;
 		}
 	}

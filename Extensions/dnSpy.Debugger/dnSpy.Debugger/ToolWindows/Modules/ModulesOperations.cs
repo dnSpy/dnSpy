@@ -26,14 +26,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.References;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Modules;
-using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.ToolWindows.Memory;
 using dnSpy.Debugger.UI;
 
