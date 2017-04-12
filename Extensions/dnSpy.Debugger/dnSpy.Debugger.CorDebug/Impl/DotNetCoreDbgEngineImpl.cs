@@ -45,8 +45,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		int Bitness => IntPtr.Size * 8;
 
-		public DotNetCoreDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind)
-			: base(clrDacProvider, dbgManager, startKind) {
+		public DotNetCoreDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgStartKind startKind)
+			: base(clrDacProvider, dbgManager, dbgModuleMemoryRefreshedNotifier, startKind) {
 		}
 
 		string GetDbgShimAndVerify() {

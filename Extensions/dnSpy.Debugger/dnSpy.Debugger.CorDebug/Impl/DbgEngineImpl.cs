@@ -52,6 +52,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		ClrDac clrDac;
 		bool clrDacInitd;
 		readonly DbgManager dbgManager;
+		readonly DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier;
 		DnDebugger dnDebugger;
 		SafeHandle hProcess_debuggee;
 		DbgObjectFactory objectFactory;
@@ -60,7 +61,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly Dictionary<DnThread, DbgEngineThread> toEngineThread;
 		readonly Dictionary<DnAssembly, List<DnModule>> toAssemblyModules;
 
-		protected DbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind) {
+		protected DbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgStartKind startKind) {
 			StartKind = startKind;
 			lockObj = new object();
 			toEngineAppDomain = new Dictionary<DnAppDomain, DbgEngineAppDomain>();
@@ -68,6 +69,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			toEngineThread = new Dictionary<DnThread, DbgEngineThread>();
 			toAssemblyModules = new Dictionary<DnAssembly, List<DnModule>>();
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
+			this.dbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier ?? throw new ArgumentNullException(nameof(dbgModuleMemoryRefreshedNotifier));
 			this.clrDacProvider = clrDacProvider ?? throw new ArgumentNullException(nameof(clrDacProvider));
 			clrDac = NullClrDac.Instance;
 			debuggerThread = new DebuggerThread("CorDebug");
@@ -138,11 +140,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				Debug.Assert(cls != null);
 				if (cls != null) {
 					var dnModule = dbg.TryGetModule(lcArgs.CorAppDomain, cls);
-					if (dnModule?.CorModuleDef != null && dnModule.IsDynamic) {
-						var module = TryGetModule(dnModule);
-						Debug.Assert(module != null);
-						if (module != null)
-							ClassLoaded?.Invoke(this, new ClassLoadedEventArgs(module, cls.Token));
+					if (dnModule.IsDynamic) {
+						UpdateDynamicModuleIds(dnModule);
+						if (dnModule?.CorModuleDef != null) {
+							var module = TryGetModule(dnModule);
+							Debug.Assert(module != null);
+							if (module != null)
+								ClassLoaded?.Invoke(this, new ClassLoadedEventArgs(module, cls.Token));
+						}
 					}
 				}
 				break;
@@ -328,11 +333,18 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		sealed class DbgModuleData {
 			public DbgEngineImpl Engine { get; }
 			public DnModule DnModule { get; }
-			public ModuleId ModuleId { get; }
+			public ModuleId ModuleId { get; private set; }
+			public bool HasUpdatedModuleId { get; private set; }
 			public DbgModuleData(DbgEngineImpl engine, DnModule dnModule, ModuleId moduleId) {
 				Engine = engine;
 				DnModule = dnModule;
 				ModuleId = moduleId;
+			}
+			public void UpdateModuleId(ModuleId moduleId) {
+				if (!moduleId.IsDynamic)
+					throw new InvalidOperationException();
+				ModuleId = moduleId;
+				HasUpdatedModuleId = true;
 			}
 		}
 
@@ -341,6 +353,49 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				return true;
 			data = null;
 			return false;
+		}
+
+		// When a dynamic assembly is created with option Run, a module gets created and its
+		// metadata name is "RefEmit_InMemoryManifestModule". Shortly thereafter, its name
+		// gets changed to the name the user chose.
+		// This name is also saved in ModuleIds, and used when setting breakpoints...
+		// There's code that caches ModuleIds, but they don't cache it if IsDynamic is true.
+		// This method updates the ModuleId and resets breakpoints in the module.
+		void UpdateDynamicModuleIds(DnModule dnModule) {
+			Dispatcher.VerifyAccess();
+			if (!dnModule.IsDynamic)
+				return;
+			var module = TryGetModule(dnModule);
+			if (module == null || !TryGetModuleData(module, out var data) || data.HasUpdatedModuleId)
+				return;
+			List<DbgModule> updatedModules = null;
+			lock (lockObj) {
+				if (toAssemblyModules.TryGetValue(dnModule.Assembly, out var modules)) {
+					for (int i = 0; i < modules.Count; i++) {
+						dnModule = modules[i];
+						if (!dnModule.IsDynamic)
+							continue;
+						if (!toEngineModule.TryGetValue(dnModule, out var em))
+							continue;
+						if (!TryGetModuleData(em.Module, out data))
+							continue;
+						dnModule.CorModule.ClearCachedDnlibName();
+						var moduleId = dnModule.DnModuleId.ToModuleId();
+						if (data.ModuleId == moduleId)
+							continue;
+						data.UpdateModuleId(moduleId);
+						if (dnModule.CorModuleDef != null) {
+							//TODO: This doesn't update the treeview node
+							dnModule.CorModuleDef.Name = moduleId.ModuleName;
+						}
+						if (updatedModules == null)
+							updatedModules = new List<DbgModule>();
+						updatedModules.Add(em.Module);
+					}
+				}
+			}
+			if (updatedModules != null)
+				dbgModuleMemoryRefreshedNotifier.RaiseModulesRefreshed(updatedModules.ToArray());
 		}
 
 		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {

@@ -79,6 +79,8 @@ namespace dndbg.Engine {
 		}
 		string dnlibName;
 
+		internal void ClearCachedDnlibName() => dnlibName = null;
+
 		internal UTF8String CalculateDnlibName(CorModule module) {
 			var mdi = GetMetaDataInterface<IMetaDataImport>();
 			uint token = new MDToken(Table.Module, 1).Raw;

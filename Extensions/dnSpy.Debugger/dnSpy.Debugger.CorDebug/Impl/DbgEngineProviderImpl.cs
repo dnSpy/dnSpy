@@ -28,23 +28,27 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 	[ExportDbgEngineProvider]
 	sealed class DbgEngineProviderImpl : DbgEngineProvider {
 		readonly Lazy<ClrDacProvider> clrDacProvider;
+		readonly Lazy<DbgModuleMemoryRefreshedNotifier2> dbgModuleMemoryRefreshedNotifier;
 
 		[ImportingConstructor]
-		DbgEngineProviderImpl(Lazy<ClrDacProvider> clrDacProvider) => this.clrDacProvider = clrDacProvider;
+		DbgEngineProviderImpl(Lazy<ClrDacProvider> clrDacProvider, Lazy<DbgModuleMemoryRefreshedNotifier2> dbgModuleMemoryRefreshedNotifier) {
+			this.clrDacProvider = clrDacProvider;
+			this.dbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier;
+		}
 
 		public override DbgEngine Create(DbgManager dbgManager, StartDebuggingOptions options) {
 			switch (options) {
 			case DotNetFrameworkStartDebuggingOptions _:
-				return new DotNetFrameworkDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Start);
+				return new DotNetFrameworkDbgEngineImpl(clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Start);
 
 			case DotNetCoreStartDebuggingOptions _:
-				return new DotNetCoreDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Start);
+				return new DotNetCoreDbgEngineImpl(clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Start);
 
 			case DotNetFrameworkAttachDebuggingOptions _:
-				return new DotNetFrameworkDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Attach);
+				return new DotNetFrameworkDbgEngineImpl(clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Attach);
 
 			case DotNetCoreAttachDebuggingOptions _:
-				return new DotNetCoreDbgEngineImpl(clrDacProvider.Value, dbgManager, DbgStartKind.Attach);
+				return new DotNetCoreDbgEngineImpl(clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Attach);
 			}
 
 			return null;

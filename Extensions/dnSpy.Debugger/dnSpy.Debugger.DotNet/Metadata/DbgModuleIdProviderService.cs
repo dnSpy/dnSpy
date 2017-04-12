@@ -53,6 +53,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public override ModuleId? GetModuleId(DbgModule module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
+			// Don't cache dynamic modules. The reason is that their ModuleIds could change,
+			// see CorDebug's DbgEngineImpl.UpdateDynamicModuleIds()
+			if (module.IsDynamic)
+				return GetModuleIdCore(module);
 			return module.GetOrCreateData(() => new CachedModuleId(GetModuleIdCore(module))).Id;
 		}
 

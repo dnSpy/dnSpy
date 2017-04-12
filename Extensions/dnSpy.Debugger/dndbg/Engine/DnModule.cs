@@ -124,7 +124,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public DnAssembly Assembly { get; }
 
-		public DnModuleId DnModuleId { get; }
+		public DnModuleId DnModuleId => CorModule.DnModuleId;
 
 		/// <summary>
 		/// Gets the JIT compiler flags. This is a cached value and never gets updated
@@ -137,7 +137,6 @@ namespace dndbg.Engine {
 			UniqueId = uniqueId;
 			UniqueIdProcess = uniqueIdProcess;
 			UniqueIdAppDomain = uniqueIdAppDomain;
-			DnModuleId = CorModule.DnModuleId;
 		}
 
 		internal void InitializeCachedValues() =>

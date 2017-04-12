@@ -40,8 +40,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 		DbgEngineRuntimeInfo runtimeInfo;
 
-		public DotNetFrameworkDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgStartKind startKind)
-			: base(clrDacProvider, dbgManager, startKind) {
+		public DotNetFrameworkDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgStartKind startKind)
+			: base(clrDacProvider, dbgManager, dbgModuleMemoryRefreshedNotifier, startKind) {
 		}
 
 		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) =>
