@@ -18,9 +18,11 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
+using dnlib.DotNet;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
@@ -56,16 +58,8 @@ namespace dnSpy.Debugger.DotNet.Modules {
 		}
 
 		bool GoToCore(DbgLoadModuleReference moduleRef, ReadOnlyCollection<object> options) {
-			var module = moduleRef.Module;
-			if (module.IsDynamic && !module.Runtime.IsClosed && module.Process.IsRunning) {
-				messageBoxService.Value.Show(dnSpy_Debugger_DotNet_Resources.Module_BreakProcessBeforeLoadingDynamicModules);
-				return false;
-			}
-
-			var loadOptions = DbgLoadModuleOptions.AutoLoaded;
-			if (moduleRef.UseMemory)
-				loadOptions |= DbgLoadModuleOptions.ForceMemory;
-			var md = dbgMetadataService.Value.TryGetMetadata(moduleRef.Module, loadOptions);
+			bool canShowMessageBox = true;
+			var md = LoadModule(moduleRef.Module, moduleRef.UseMemory, ref canShowMessageBox);
 			if (md == null)
 				return false;
 
@@ -73,6 +67,36 @@ namespace dnSpy.Debugger.DotNet.Modules {
 			bool newTab = options.Any(a => StringComparer.Ordinal.Equals(PredefinedReferenceNavigatorOptions.NewTab, a));
 			uiDispatcher.UIBackground(() => documentTabService.FollowReference(md, newTab));
 			return true;
+		}
+
+		ModuleDef LoadModule(DbgModule module, bool useMemory, ref bool canShowMessageBox) {
+			if (!module.IsDotNetModule())
+				return null;
+
+			if (module.IsDynamic && !module.Runtime.IsClosed && module.Process.IsRunning) {
+				if (canShowMessageBox) {
+					canShowMessageBox = false;
+					messageBoxService.Value.Show(dnSpy_Debugger_DotNet_Resources.Module_BreakProcessBeforeLoadingDynamicModules);
+				}
+				return null;
+			}
+
+			var loadOptions = DbgLoadModuleOptions.AutoLoaded;
+			if (useMemory)
+				loadOptions |= DbgLoadModuleOptions.ForceMemory;
+			return dbgMetadataService.Value.TryGetMetadata(module, loadOptions);
+		}
+
+		public override DbgModule[] Load(DbgModule[] modules, bool useMemory) {
+			var loaded = new List<DbgModule>();
+			bool canShowMessageBox = true;
+			foreach (var module in modules) {
+				if (!module.IsDotNetModule())
+					continue;
+				LoadModule(module, useMemory, ref canShowMessageBox);
+				loaded.Add(module);
+			}
+			return loaded.ToArray();
 		}
 	}
 }

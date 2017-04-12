@@ -32,6 +32,7 @@ using dnSpy.Contracts.Debugger.References;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.Modules;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.ToolWindows.Memory;
 using dnSpy.Debugger.UI;
@@ -73,6 +74,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		readonly Lazy<ModulesSaver> modulesSaver;
 		readonly Lazy<MemoryWindowService> memoryWindowService;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
+		readonly Lazy<IModuleLoader> moduleLoader;
 
 		BulkObservableCollection<ModuleVM> AllItems => modulesVM.AllItems;
 		ObservableCollection<ModuleVM> SelectedItems => modulesVM.SelectedItems;
@@ -80,12 +82,13 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		IEnumerable<ModuleVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		ModulesOperationsImpl(IModulesVM modulesVM, DebuggerSettings debuggerSettings, Lazy<ModulesSaver> modulesSaver, Lazy<MemoryWindowService> memoryWindowService, Lazy<ReferenceNavigatorService> referenceNavigatorService) {
+		ModulesOperationsImpl(IModulesVM modulesVM, DebuggerSettings debuggerSettings, Lazy<ModulesSaver> modulesSaver, Lazy<MemoryWindowService> memoryWindowService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<IModuleLoader> moduleLoader) {
 			this.modulesVM = modulesVM;
 			this.debuggerSettings = debuggerSettings;
 			this.modulesSaver = modulesSaver;
 			this.memoryWindowService = memoryWindowService;
 			this.referenceNavigatorService = referenceNavigatorService;
+			this.moduleLoader = moduleLoader;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -146,7 +149,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public override int LoadModulesCount => SelectedItems.Count;
 		public override bool CanLoadModules => SelectedItems.Count > 1;
 		public override void LoadModules() {
-			//TODO:
+			if (CanLoadModules)
+				moduleLoader.Value.LoadModules(SelectedItems.Select(a => a.Module).ToArray(), useMemory: false);
 		}
 
 		public override bool CanShowInMemoryWindow => GetShowInMemoryWindowModule() != null;

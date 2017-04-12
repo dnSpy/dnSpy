@@ -36,6 +36,14 @@ namespace dnSpy.Contracts.Debugger.References {
 		/// <param name="options">Options, eg. <see cref="PredefinedReferenceNavigatorOptions"/></param>
 		/// <returns></returns>
 		public abstract bool GoTo(DbgLoadModuleReference moduleRef, ReadOnlyCollection<object> options);
+
+		/// <summary>
+		/// Loads modules in the treeview. Returns an array of modules that got loaded.
+		/// </summary>
+		/// <param name="modules">Modules to load. Unsupported modules can be ignored.</param>
+		/// <param name="useMemory">true if the modules should be read from memory and not from files on disk</param>
+		/// <returns></returns>
+		public abstract DbgModule[] Load(DbgModule[] modules, bool useMemory);
 	}
 
 	/// <summary>Metadata</summary>

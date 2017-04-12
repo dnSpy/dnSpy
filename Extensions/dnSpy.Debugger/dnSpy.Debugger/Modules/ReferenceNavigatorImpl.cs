@@ -23,17 +23,27 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.References;
 using dnSpy.Contracts.Documents;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.Modules {
+	interface IModuleLoader {
+		void LoadModules(DbgModule[] modules, bool useMemory);
+	}
+
 	[ExportReferenceNavigator]
-	sealed class ReferenceNavigatorImpl : ReferenceNavigator {
+	[Export(typeof(IModuleLoader))]
+	sealed class ReferenceNavigatorImpl : ReferenceNavigator, IModuleLoader {
+		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<DbgLoadModuleReferenceHandler, IDbgLoadModuleReferenceHandlerMetadata>[] dbgLoadModuleReferenceHandlers;
 
 		[ImportingConstructor]
-		ReferenceNavigatorImpl([ImportMany] IEnumerable<Lazy<DbgLoadModuleReferenceHandler, IDbgLoadModuleReferenceHandlerMetadata>> dbgLoadModuleReferenceHandlers) =>
+		ReferenceNavigatorImpl(UIDispatcher uiDispatcher, [ImportMany] IEnumerable<Lazy<DbgLoadModuleReferenceHandler, IDbgLoadModuleReferenceHandlerMetadata>> dbgLoadModuleReferenceHandlers) {
+			this.uiDispatcher = uiDispatcher;
 			this.dbgLoadModuleReferenceHandlers = dbgLoadModuleReferenceHandlers.OrderBy(a => a.Metadata.Order).ToArray();
+		}
 
 		public override bool GoTo(object reference, ReadOnlyCollection<object> options) {
 			if (reference is DbgLoadModuleReference moduleRef) {
@@ -50,6 +60,21 @@ namespace dnSpy.Debugger.Modules {
 					return;
 			}
 			Debug.Fail($"No handler for module {moduleRef.Module.Name}");
+		}
+
+		void IModuleLoader.LoadModules(DbgModule[] modules, bool useMemory) {
+			uiDispatcher.VerifyAccess();
+			if (modules == null)
+				throw new ArgumentNullException(nameof(modules));
+			var hash = new HashSet<DbgModule>(modules);
+			foreach (var lz in dbgLoadModuleReferenceHandlers) {
+				if (hash.Count == 0)
+					break;
+				var loaded = lz.Value.Load(hash.ToArray(), useMemory);
+				foreach (var module in loaded)
+					hash.Remove(module);
+			}
+			Debug.Assert(hash.Count == 0);
 		}
 	}
 }
