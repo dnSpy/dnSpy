@@ -74,6 +74,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			BreakpointLocationFormatter = dbgBreakpointLocationFormatter ?? throw new ArgumentNullException(nameof(dbgBreakpointLocationFormatter));
 			settings = CodeBreakpoint.Settings;
 			breakpointKind = BreakpointImageUtilities.GetBreakpointKind(CodeBreakpoint);
+			errorToolTip = CodeBreakpoint.BoundBreakpointsMessage.Severity == DbgBoundCodeBreakpointSeverity.None ? null : CodeBreakpoint.BoundBreakpointsMessage.Message;
 			BreakpointLocationFormatter.PropertyChanged += DbgBreakpointLocationFormatter_PropertyChanged;
 		}
 
