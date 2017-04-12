@@ -1306,15 +1306,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit Name.
-        /// </summary>
-        public static string EditNameCommand {
-            get {
-                return ResourceManager.GetString("EditNameCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;empty&gt;.
         /// </summary>
         public static string EmptyTabTitle {
@@ -3383,6 +3374,15 @@ namespace dnSpy.Properties {
         public static string RemoveBookmarkCommand {
             get {
                 return ResourceManager.GetString("RemoveBookmarkCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename.
+        /// </summary>
+        public static string RenameCommand {
+            get {
+                return ResourceManager.GetString("RenameCommand", resourceCulture);
             }
         }
         

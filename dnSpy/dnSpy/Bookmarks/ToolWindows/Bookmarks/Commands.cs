@@ -105,7 +105,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		public override bool IsEnabled(BookmarksCtxMenuContext context) => context.Operations.CanGoToLocation;
 	}
 
-	[ExportMenuItem(Header = "res:EditNameCommand", Icon = DsImagesAttribute.Edit, InputGestureText = "res:ShortCutKeyF2", Group = MenuConstants.GROUP_CTX_BOOKMARKS_SETTINGS, Order = 0)]
+	[ExportMenuItem(Header = "res:RenameCommand", Icon = DsImagesAttribute.Edit, InputGestureText = "res:ShortCutKeyF2", Group = MenuConstants.GROUP_CTX_BOOKMARKS_SETTINGS, Order = 0)]
 	sealed class EditNameBookmarksCtxMenuCommand : BookmarksCtxMenuCommand {
 		[ImportingConstructor]
 		EditNameBookmarksCtxMenuCommand(Lazy<IBookmarksContent> bookmarkesContent)

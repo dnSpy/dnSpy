@@ -1794,8 +1794,8 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="BookmarkDefaultName" xml:space="preserve">
     <value>Bookmark{0}</value>
   </data>
-  <data name="EditNameCommand" xml:space="preserve">
-    <value>Edit Name</value>
+  <data name="RenameCommand" xml:space="preserve">
+    <value>Rename</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
     <value>Go To Bookmark</value>
