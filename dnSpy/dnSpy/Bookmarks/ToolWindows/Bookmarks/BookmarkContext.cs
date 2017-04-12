@@ -19,6 +19,7 @@
 
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolWindows.Search;
+using dnSpy.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {

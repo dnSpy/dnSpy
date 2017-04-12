@@ -18,23 +18,24 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
-using System.Windows.Threading;
-using dnSpy.Contracts.App;
+using System.Linq;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.Tabs;
 
-namespace dnSpy.Bookmarks {
-	[Export(typeof(UIDispatcher))]
-	sealed class UIDispatcher {
-		public Dispatcher Dispatcher { get; }
+namespace dnSpy.Documents.Tabs {
+	[ExportReferenceNavigator(Order = double.PositiveInfinity)]
+	sealed class DocTabReferenceNavigator : ReferenceNavigator {
+		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		UIDispatcher(IAppWindow appWindow) => Dispatcher = appWindow.MainWindow.Dispatcher;
+		DocTabReferenceNavigator(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
-		public void VerifyAccess() => Dispatcher.VerifyAccess();
-		public bool CheckAccess() => Dispatcher.CheckAccess();
-
-		public void UI(Action action) =>
-			// Use Send so the windows are updated as fast as possible when adding new items
-			Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+		public override bool GoTo(object reference, ReadOnlyCollection<object> options) {
+			bool newTab = options.Any(a => StringComparer.Ordinal.Equals(PredefinedReferenceNavigatorOptions.NewTab, a));
+			documentTabService.FollowReference(reference, newTab: newTab);
+			return true;
+		}
 	}
 }

@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Settings;
+using dnSpy.UI;
 
 namespace dnSpy.Bookmarks.Impl {
 	[Export(typeof(IBookmarksServiceListener))]

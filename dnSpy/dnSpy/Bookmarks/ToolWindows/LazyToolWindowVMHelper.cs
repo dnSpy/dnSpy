@@ -20,6 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Threading;
+using dnSpy.UI;
 
 namespace dnSpy.Bookmarks.ToolWindows {
 	interface ILazyToolWindowVM {

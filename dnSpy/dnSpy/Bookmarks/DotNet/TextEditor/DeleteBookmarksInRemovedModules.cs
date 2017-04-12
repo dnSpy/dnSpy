@@ -26,6 +26,7 @@ using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Metadata;
+using dnSpy.UI;
 
 namespace dnSpy.Bookmarks.DotNet.TextEditor {
 	[Export(typeof(IBookmarksServiceListener))]

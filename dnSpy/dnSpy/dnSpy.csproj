@@ -128,7 +128,6 @@
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\SearchTextClassifierProvider.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\TextViewTaggers.cs" />
     <Compile Include="Bookmarks\ToolWindows\LazyToolWindowVMHelper.cs" />
-    <Compile Include="Bookmarks\UIDispatcher.cs" />
     <Compile Include="Bookmarks\UI\BulkObservableCollection.cs" />
     <Compile Include="Bookmarks\UI\ContentTypeDefinitions.cs" />
     <Compile Include="Bookmarks\UI\FormatterObject.cs" />
@@ -171,6 +170,7 @@
     <Compile Include="Documents\DsDocumentServiceSettings.cs" />
     <Compile Include="Documents\IDsDocumentLoader.cs" />
     <Compile Include="Documents\MethodAnnotations.cs" />
+    <Compile Include="Documents\ReferenceNavigatorServiceImpl.cs" />
     <Compile Include="Documents\Tabs\AppCommandLineArgsHandler.cs" />
     <Compile Include="Documents\Tabs\AsyncShowResult.cs" />
     <Compile Include="Documents\Tabs\Commands.cs" />
@@ -214,6 +214,7 @@
     <Compile Include="Documents\Tabs\Dialogs\TabsVM.cs" />
     <Compile Include="Documents\Tabs\Dialogs\TabsVMSettings.cs" />
     <Compile Include="Documents\Tabs\Dialogs\TabVM.cs" />
+    <Compile Include="Documents\Tabs\DocTabReferenceNavigator.cs" />
     <Compile Include="Documents\Tabs\DocumentList.cs" />
     <Compile Include="Documents\Tabs\DocumentListLoader.cs" />
     <Compile Include="Documents\Tabs\DocumentListService.cs" />
@@ -1172,6 +1173,7 @@
     <Compile Include="TreeView\TreeNodeImpl.cs" />
     <Compile Include="TreeView\TreeViewImpl.cs" />
     <Compile Include="TreeView\TreeViewService.cs" />
+    <Compile Include="UI\UIDispatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.Resources.resx">

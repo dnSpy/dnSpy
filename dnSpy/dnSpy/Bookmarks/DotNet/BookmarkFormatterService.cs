@@ -23,6 +23,7 @@ using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
+using dnSpy.UI;
 
 namespace dnSpy.Bookmarks.DotNet {
 	abstract class BookmarkFormatterService {

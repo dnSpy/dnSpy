@@ -24,6 +24,7 @@ using System.Linq;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.UI;
 
 namespace dnSpy.Bookmarks.TextEditor {
 	[ExportDocumentViewerListener]

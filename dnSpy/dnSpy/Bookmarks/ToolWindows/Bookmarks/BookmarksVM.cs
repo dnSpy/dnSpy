@@ -33,6 +33,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Properties;
+using dnSpy.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {

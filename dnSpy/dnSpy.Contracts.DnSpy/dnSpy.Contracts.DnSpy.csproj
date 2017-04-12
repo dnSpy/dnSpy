@@ -161,6 +161,7 @@
     <Compile Include="Documents\IMethodAnnotations.cs" />
     <Compile Include="Documents\NotifyDocumentCollectionChangedEventArgs.cs" />
     <Compile Include="Documents\NotifyDocumentCollectionType.cs" />
+    <Compile Include="Documents\ReferenceNavigator.cs" />
     <Compile Include="Documents\Tabs\AsyncDocumentTabContent.cs" />
     <Compile Include="Documents\Tabs\DefaultDocumentTabContentProviderConstants.cs" />
     <Compile Include="Documents\Tabs\DocumentModifiedEventArgs.cs" />
