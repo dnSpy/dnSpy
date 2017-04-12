@@ -551,7 +551,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			Dispatcher.VerifyAccess();
 			if (!HasConnected_DebugThread)
 				return;
-			if (dnDebugger.ProcessState == DebuggerProcessState.Starting || dnDebugger.ProcessState == DebuggerProcessState.Running) {
+
+			// If we haven't gotten the CreateProcess event yet, wait for it.
+			if (dnDebugger.ProcessState == DebuggerProcessState.Starting)
+				return;
+
+			if (dnDebugger.ProcessState == DebuggerProcessState.Running) {
 				int hr = dnDebugger.TryBreakProcesses();
 				if (hr < 0)
 					SendMessage(new DbgMessageBreak($"Couldn't break the process, hr=0x{hr:X8}"));

@@ -1056,17 +1056,6 @@ namespace dndbg.Engine {
 
 			case DebugCallbackKind.MDANotification:
 				var mdanArgs = (MDANotificationDebugCallbackEventArgs)e;
-#if DEBUG
-				{
-					var mda = mdanArgs.CorMDA;
-					Debug.WriteLine(string.Format("MDA error **************************"));
-					Debug.WriteLine(string.Format("Name : {0}", mda.Name));
-					Debug.WriteLine(string.Format("Flags: {0}", mda.Flags));
-					Debug.WriteLine(string.Format("OSTID: {0}", mda.OSThreadId));
-					Debug.WriteLine(string.Format("Desc : {0}", mda.Description));
-					Debug.WriteLine(string.Format("XML  : {0}", mda.XML));
-				}
-#endif
 				InitializeCurrentDebuggerState(e, mdanArgs.Controller as ICorDebugProcess, mdanArgs.Controller as ICorDebugAppDomain, mdanArgs.Thread);
 				break;
 
@@ -1555,7 +1544,11 @@ namespace dndbg.Engine {
 		public int TryBreakProcesses() => TryBreakProcesses(true);
 
 		int TryBreakProcesses(bool callProcessStopped) {
-			if (ProcessStateInternal != DebuggerProcessState.Starting && ProcessStateInternal != DebuggerProcessState.Running)
+			// At least with .NET Core, we'll get a DebuggerError (hr=0x80004005 (unspecified error))
+			// if we try to break the process before the CreateProcess event.
+			if (ProcessStateInternal == DebuggerProcessState.Starting)
+				return -1;
+			if (ProcessStateInternal != DebuggerProcessState.Running)
 				return -1;
 
 			int errorHR = 0;
