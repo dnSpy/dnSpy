@@ -2937,7 +2937,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Search (Ctrl+E or Ctrl+F).
+        ///   Looks up a localized string similar to Search.
         /// </summary>
         public static string OpenGAC_Search_ToolTip {
             get {

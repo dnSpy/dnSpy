@@ -754,7 +754,7 @@
     <value>_Light</value>
   </data>
   <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
-    <value>Search (Ctrl+E or Ctrl+F)</value>
+    <value>Search</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
     <value>Language</value>

@@ -41,6 +41,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 
+		public string OpenGAC_Search_ToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.OpenGAC_Search_ToolTip, dnSpy_Resources.ShortCutKeyCtrlF);
+
 		readonly ObservableCollection<GACFileVM> gacFileList;
 		readonly ListCollectionView collectionView;
 

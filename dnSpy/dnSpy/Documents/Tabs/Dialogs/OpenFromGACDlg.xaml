@@ -90,7 +90,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBox Grid.Row="0" Name="searchBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{x:Static p:dnSpy_Resources.OpenGAC_Search_ToolTip}" />
+                <TextBox Grid.Row="0" Name="searchBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding OpenGAC_Search_ToolTip}" />
                 <CheckBox Grid.Row="1" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Resources.OpenGAC_ShowDupes_CheckBox}" IsChecked="{Binding ShowDuplicates}" />
                 <TextBlock Grid.Row="2" Margin="10 5 0 0"><Bold><Run Text="{x:Static p:dnSpy_Resources.OpenGAC_Name_Label}"/></Bold></TextBlock>
                 <TextBlock Grid.Row="3" Margin="15 1 0 0" Text="{Binding ElementName=listView, Path=SelectedItem.Name}" TextWrapping="Wrap" />
