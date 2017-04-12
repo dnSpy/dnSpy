@@ -74,7 +74,9 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			BookmarkLocationFormatter.PropertyChanged += BookmarkLocationFormatter_PropertyChanged;
 		}
 
+		// UI thread
 		string GetLablesString() {
+			Context.UIDispatcher.VerifyAccess();
 			var output = new StringBuilderTextColorOutput();
 			Context.Formatter.WriteLabels(output, this);
 			return output.ToString();

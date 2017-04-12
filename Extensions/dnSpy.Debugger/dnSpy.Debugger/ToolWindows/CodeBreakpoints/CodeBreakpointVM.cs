@@ -78,7 +78,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			BreakpointLocationFormatter.PropertyChanged += DbgBreakpointLocationFormatter_PropertyChanged;
 		}
 
+		// UI thread
 		string GetLablesString() {
+			Context.UIDispatcher.VerifyAccess();
 			var output = new StringBuilderTextColorOutput();
 			Context.Formatter.WriteLabels(output, this);
 			return output.ToString();
