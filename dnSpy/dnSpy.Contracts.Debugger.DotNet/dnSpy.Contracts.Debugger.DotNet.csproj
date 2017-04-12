@@ -48,7 +48,10 @@
     <Compile Include="Metadata\DbgDynamicModuleProviderFactory.cs" />
     <Compile Include="Metadata\DbgMetadataService.cs" />
     <Compile Include="Metadata\DbgModuleIdProvider.cs" />
+    <Compile Include="Modules\DbgModuleDotNetExtensions.cs" />
+    <Compile Include="PredefinedDotNetDbgRuntimeTags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtimes\DbgRuntimeDotNetExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">

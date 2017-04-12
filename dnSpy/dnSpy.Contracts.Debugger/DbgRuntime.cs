@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
@@ -38,6 +39,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets the runtime name
 		/// </summary>
 		public abstract string Name { get; }
+
+		/// <summary>
+		/// Gets all runtime tags
+		/// </summary>
+		public abstract ReadOnlyCollection<string> Tags { get; }
 
 		/// <summary>
 		/// Gets all app domains

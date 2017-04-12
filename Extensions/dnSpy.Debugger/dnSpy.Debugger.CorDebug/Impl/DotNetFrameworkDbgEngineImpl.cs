@@ -18,9 +18,11 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.CorDebug.DAC;
@@ -49,7 +51,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			new DesktopCLRTypeAttachInfo(((DotNetFrameworkAttachDebuggingOptions)options).DebuggeeVersion);
 
 		protected override void OnDebugProcess(DnDebugger dnDebugger) =>
-			runtimeInfo = new DbgEngineRuntimeInfo("CLR " + dnDebugger.DebuggeeVersion, new DotNetFrameworkRuntimeId(dnDebugger.DebuggeeVersion));
+			runtimeInfo = new DbgEngineRuntimeInfo("CLR " + dnDebugger.DebuggeeVersion, new DotNetFrameworkRuntimeId(dnDebugger.DebuggeeVersion), runtimeTags);
+		static readonly ReadOnlyCollection<string> runtimeTags = new ReadOnlyCollection<string>(new[] {
+			PredefinedDotNetDbgRuntimeTags.DotNet,
+			PredefinedDotNetDbgRuntimeTags.DotNetFramework,
+		});
 	}
 
 	sealed class DotNetFrameworkRuntimeId : RuntimeId {

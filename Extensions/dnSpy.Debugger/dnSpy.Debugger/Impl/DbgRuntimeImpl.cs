@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 
@@ -27,6 +28,7 @@ namespace dnSpy.Debugger.Impl {
 		public override DbgProcess Process { get; }
 		public override RuntimeId Id { get; }
 		public override string Name { get; }
+		public override ReadOnlyCollection<string> Tags { get; }
 
 		public override event EventHandler<DbgCollectionChangedEventArgs<DbgAppDomain>> AppDomainsChanged;
 		public override DbgAppDomain[] AppDomains {
@@ -69,6 +71,7 @@ namespace dnSpy.Debugger.Impl {
 			var info = engine.RuntimeInfo;
 			Id = info.Id;
 			Name = info.Name;
+			Tags = info.Tags;
 			appDomains = new List<DbgAppDomain>();
 			modules = new List<DbgModule>();
 			threads = new List<DbgThread>();

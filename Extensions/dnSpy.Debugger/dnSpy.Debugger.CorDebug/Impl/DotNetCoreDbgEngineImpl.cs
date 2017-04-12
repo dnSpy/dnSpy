@@ -18,10 +18,12 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.CorDebug.DAC;
@@ -79,7 +81,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		protected override void OnDebugProcess(DnDebugger dnDebugger) =>
-			runtimeInfo = new DbgEngineRuntimeInfo("CoreCLR", new DotNetCoreRuntimeId(dnDebugger.OtherVersion));
+			runtimeInfo = new DbgEngineRuntimeInfo("CoreCLR", new DotNetCoreRuntimeId(dnDebugger.OtherVersion), runtimeTags);
+		static readonly ReadOnlyCollection<string> runtimeTags = new ReadOnlyCollection<string>(new[] {
+			PredefinedDotNetDbgRuntimeTags.DotNet,
+			PredefinedDotNetDbgRuntimeTags.DotNetCore,
+		});
 	}
 
 	sealed class DotNetCoreRuntimeId : RuntimeId {
