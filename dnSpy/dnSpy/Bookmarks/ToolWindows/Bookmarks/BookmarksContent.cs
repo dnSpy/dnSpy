@@ -87,7 +87,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			public ICommand ExportMatchingBookmarksCommand => new RelayCommand(a => Operations.ExportMatchingBookmarks(), a => Operations.CanExportMatchingBookmarks);
 			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);
 			public ICommand ImportBookmarksCommand => new RelayCommand(a => Operations.ImportBookmarks(), a => Operations.CanImportBookmarks);
-			public ICommand GoToLocationCommand => new RelayCommand(a => Operations.GoToLocation(), a => Operations.CanGoToLocation);
+			public ICommand GoToLocationCommand => new RelayCommand(a => Operations.GoToLocation(false), a => Operations.CanGoToLocation);
 			public ICommand SearchHelpCommand => new RelayCommand(a => SearchHelp());
 
 			readonly IMessageBoxService messageBoxService;
@@ -118,8 +118,9 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		}
 
 		void BookmarksControl_BookmarksListViewDoubleClick(object sender, EventArgs e) {
+			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
 			if (Operations.CanGoToLocation)
-				Operations.GoToLocation();
+				Operations.GoToLocation(newTab);
 		}
 
 		void ListView_PreviewKeyDown(object sender, KeyEventArgs e) {

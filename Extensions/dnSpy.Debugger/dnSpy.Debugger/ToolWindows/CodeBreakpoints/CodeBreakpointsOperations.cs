@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public abstract bool CanResetSearchSettings { get; }
 		public abstract void ResetSearchSettings();
 		public abstract bool CanGoToSourceCode { get; }
-		public abstract void GoToSourceCode();
+		public abstract void GoToSourceCode(bool newTab);
 		public abstract bool CanGoToDisassembly { get; }
 		public abstract void GoToDisassembly();
 		public abstract bool CanEditSettings { get; }
@@ -235,10 +235,11 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public override void ResetSearchSettings() => codeBreakpointsVM.ResetSearchSettings();
 
 		public override bool CanGoToSourceCode => SelectedItems.Count == 1;
-		public override void GoToSourceCode() {
+		public override void GoToSourceCode(bool newTab) {
 			if (!CanGoToSourceCode)
 				return;
-			referenceNavigatorService.Value.GoTo(SelectedItems[0].CodeBreakpoint.Location);
+			var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
+			referenceNavigatorService.Value.GoTo(SelectedItems[0].CodeBreakpoint.Location, options);
 		}
 
 		public override bool CanGoToDisassembly => false;

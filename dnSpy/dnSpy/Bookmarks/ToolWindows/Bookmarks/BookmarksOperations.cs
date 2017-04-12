@@ -77,7 +77,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		public abstract bool CanResetSearchSettings { get; }
 		public abstract void ResetSearchSettings();
 		public abstract bool CanGoToLocation { get; }
-		public abstract void GoToLocation();
+		public abstract void GoToLocation(bool newTab);
 		public abstract bool CanEditName { get; }
 		public abstract void EditName();
 		public abstract bool CanEditLabels { get; }
@@ -274,10 +274,11 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		public override void ResetSearchSettings() => bookmarksVM.ResetSearchSettings();
 
 		public override bool CanGoToLocation => SelectedItems.Count == 1;
-		public override void GoToLocation() {
+		public override void GoToLocation(bool newTab) {
 			if (!CanGoToLocation)
 				return;
-			referenceNavigatorService.Value.GoTo(SelectedItems[0].Bookmark.Location);
+			var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
+			referenceNavigatorService.Value.GoTo(SelectedItems[0].Bookmark.Location, options);
 		}
 
 		public override bool CanEditName => SelectedItems.Count == 1 && !SelectedItems[0].NameEditableValue.IsEditingValue;

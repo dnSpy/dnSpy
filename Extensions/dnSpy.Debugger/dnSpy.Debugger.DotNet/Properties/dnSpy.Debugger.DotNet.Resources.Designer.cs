@@ -142,6 +142,15 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must break the process before dynamic modules can be loaded..
+        /// </summary>
+        public static string Module_BreakProcessBeforeLoadingDynamicModules {
+            get {
+                return ResourceManager.GetString("Module_BreakProcessBeforeLoadingDynamicModules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reload All Method Bodies.
         /// </summary>
         public static string ReloadAllMethodBodiesCommand {

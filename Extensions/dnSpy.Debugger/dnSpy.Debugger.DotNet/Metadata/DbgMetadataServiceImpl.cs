@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 
-			if (UseMemoryModules || module.IsDynamic || module.IsInMemory)
+			if (UseMemoryModules || module.IsDynamic || module.IsInMemory || (options & DbgLoadModuleOptions.ForceMemory) != 0)
 				return dbgInMemoryModuleService.LoadModule(module);
 
 			var mod = dbgInMemoryModuleService.FindModule(module);
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		ModuleDef LoadNonDiskFile(ModuleId moduleId, DbgLoadModuleOptions options) {
-			if (UseMemoryModules || moduleId.IsDynamic || moduleId.IsInMemory) {
+			if (UseMemoryModules || moduleId.IsDynamic || moduleId.IsInMemory || (options & DbgLoadModuleOptions.ForceMemory) != 0) {
 				var module = dbgModuleIdProviderService.GetModule(moduleId);
 				if (module != null)
 					return dbgInMemoryModuleService.LoadModule(module);

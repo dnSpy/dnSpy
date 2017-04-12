@@ -144,6 +144,9 @@
   <data name="LoadModule_Title" xml:space="preserve">
     <value>Loading Dynamic Modules</value>
   </data>
+  <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
+    <value>You must break the process before dynamic modules can be loaded.</value>
+  </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
     <value>Reload All Method Bodies</value>
   </data>

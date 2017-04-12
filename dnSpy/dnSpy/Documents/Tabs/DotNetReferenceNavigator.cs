@@ -46,17 +46,19 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public override bool GoTo(object reference, ReadOnlyCollection<object> options) {
-			if (reference is DotNetMethodBodyReference bodyRef) {
+			switch (reference) {
+			case DotNetMethodBodyReference bodyRef:
 				GoTo(bodyRef, options);
 				// Always return true even if GoTo() fails (eg. module not found). Otherwise an empty
 				// page will be shown when the default handler tries to show the reference.
 				return true;
-			}
-			if (reference is DotNetTokenReference tokenRef) {
+
+			case DotNetTokenReference tokenRef:
 				GoTo(tokenRef, options);
 				// Always return true, see comment above
 				return true;
 			}
+
 			return false;
 		}
 

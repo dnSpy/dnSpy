@@ -26,9 +26,13 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.References;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.ToolWindows.Memory;
 using dnSpy.Debugger.UI;
 
@@ -40,11 +44,11 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public abstract void SelectAll();
 		public abstract bool CanGoToModule { get; }
 		public abstract void GoToModule(bool newTab);
+		public abstract bool CanOpenModuleFromMemory { get; }
+		public abstract void OpenModuleFromMemory(bool newTab);
 		public abstract int LoadModulesCount { get; }
 		public abstract bool CanLoadModules { get; }
 		public abstract void LoadModules();
-		public abstract bool CanOpenModuleFromMemory { get; }
-		public abstract void OpenModuleFromMemory(bool newTab);
 		public abstract bool CanShowInMemoryWindow { get; }
 		public abstract void ShowInMemoryWindow(int windowIndex);
 		public abstract void ShowInMemoryWindow();
@@ -68,6 +72,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		readonly DebuggerSettings debuggerSettings;
 		readonly Lazy<ModulesSaver> modulesSaver;
 		readonly Lazy<MemoryWindowService> memoryWindowService;
+		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 
 		BulkObservableCollection<ModuleVM> AllItems => modulesVM.AllItems;
 		ObservableCollection<ModuleVM> SelectedItems => modulesVM.SelectedItems;
@@ -75,11 +80,12 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		IEnumerable<ModuleVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		ModulesOperationsImpl(IModulesVM modulesVM, DebuggerSettings debuggerSettings, Lazy<ModulesSaver> modulesSaver, Lazy<MemoryWindowService> memoryWindowService) {
+		ModulesOperationsImpl(IModulesVM modulesVM, DebuggerSettings debuggerSettings, Lazy<ModulesSaver> modulesSaver, Lazy<MemoryWindowService> memoryWindowService, Lazy<ReferenceNavigatorService> referenceNavigatorService) {
 			this.modulesVM = modulesVM;
 			this.debuggerSettings = debuggerSettings;
 			this.modulesSaver = modulesSaver;
 			this.memoryWindowService = memoryWindowService;
+			this.referenceNavigatorService = referenceNavigatorService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -127,18 +133,19 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		public override bool CanGoToModule => SelectedItems.Count == 1;
-		public override void GoToModule(bool newTab) {
-			//TODO:
+		public override void GoToModule(bool newTab) => GoToModule(SelectedItems[0].Module, newTab, useMemory: false);
+
+		public override bool CanOpenModuleFromMemory => SelectedItems.Count == 1 && !SelectedItems[0].Module.IsDynamic && !SelectedItems[0].Module.IsInMemory;
+		public override void OpenModuleFromMemory(bool newTab) => GoToModule(SelectedItems[0].Module, newTab, useMemory: true);
+
+		void GoToModule(DbgModule module, bool newTab, bool useMemory) {
+			var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
+			referenceNavigatorService.Value.GoTo(new DbgLoadModuleReference(module, useMemory), options);
 		}
 
 		public override int LoadModulesCount => SelectedItems.Count;
 		public override bool CanLoadModules => SelectedItems.Count > 1;
 		public override void LoadModules() {
-			//TODO:
-		}
-
-		public override bool CanOpenModuleFromMemory => SelectedItems.Count == 1 && !SelectedItems[0].Module.IsDynamic && !SelectedItems[0].Module.IsInMemory;
-		public override void OpenModuleFromMemory(bool newTab) {
 			//TODO:
 		}
 

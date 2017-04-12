@@ -24,7 +24,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Properties;
@@ -90,7 +89,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		void ModulesControl_ModulesListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			//TODO:
+			if (Operations.CanGoToModule)
+				Operations.GoToModule(newTab);
 		}
 
 		public void FocusSearchTextBox() => modulesControl.FocusSearchTextBox();

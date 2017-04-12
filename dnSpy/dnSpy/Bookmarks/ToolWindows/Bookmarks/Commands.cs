@@ -37,7 +37,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			cmds.Add(new RelayCommand(a => bookmarksContent.Value.Operations.Copy(), a => bookmarksContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.C);
 			cmds.Add(new RelayCommand(a => bookmarksContent.Value.Operations.Copy(), a => bookmarksContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.Insert);
 			cmds.Add(new RelayCommand(a => bookmarksContent.Value.Operations.RemoveBookmarks(), a => bookmarksContent.Value.Operations.CanRemoveBookmarks), ModifierKeys.None, Key.Delete);
-			cmds.Add(new RelayCommand(a => bookmarksContent.Value.Operations.GoToLocation(), a => bookmarksContent.Value.Operations.CanGoToLocation), ModifierKeys.None, Key.Enter);
+			cmds.Add(new RelayCommand(a => bookmarksContent.Value.Operations.GoToLocation(false), a => bookmarksContent.Value.Operations.CanGoToLocation), ModifierKeys.None, Key.Enter);
 			cmds.Add(new RelayCommand(a => bookmarksContent.Value.Operations.EditName(), a => bookmarksContent.Value.Operations.CanEditName), ModifierKeys.None, Key.F2);
 			cmds.Add(new RelayCommand(a => bookmarksContent.Value.Operations.EditName(), a => bookmarksContent.Value.Operations.CanEditName), ModifierKeys.Control, Key.D1);
 			cmds.Add(new RelayCommand(a => bookmarksContent.Value.Operations.EditLabels(), a => bookmarksContent.Value.Operations.CanEditLabels), ModifierKeys.Control, Key.D2);
@@ -101,7 +101,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			: base(bookmarkesContent) {
 		}
 
-		public override void Execute(BookmarksCtxMenuContext context) => context.Operations.GoToLocation();
+		public override void Execute(BookmarksCtxMenuContext context) => context.Operations.GoToLocation(false);
 		public override bool IsEnabled(BookmarksCtxMenuContext context) => context.Operations.CanGoToLocation;
 	}
 

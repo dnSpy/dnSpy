@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.Copy(), a => codeBreakpointsContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.C);
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.Copy(), a => codeBreakpointsContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.Insert);
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.RemoveCodeBreakpoints(), a => codeBreakpointsContent.Value.Operations.CanRemoveCodeBreakpoints), ModifierKeys.None, Key.Delete);
-			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.GoToSourceCode(), a => codeBreakpointsContent.Value.Operations.CanGoToSourceCode), ModifierKeys.None, Key.Enter);
+			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.GoToSourceCode(false), a => codeBreakpointsContent.Value.Operations.CanGoToSourceCode), ModifierKeys.None, Key.Enter);
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.EditSettings(), a => codeBreakpointsContent.Value.Operations.CanEditSettings), ModifierKeys.Alt, Key.Enter);
 			cmds.Add(new RelayCommand(a => codeBreakpointsContent.Value.Operations.EditLabels(), a => codeBreakpointsContent.Value.Operations.CanEditLabels), ModifierKeys.None, Key.F2);
 
@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			: base(codeBreakpointesContent) {
 		}
 
-		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.GoToSourceCode();
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.GoToSourceCode(false);
 		public override bool IsEnabled(CodeBreakpointsCtxMenuContext context) => context.Operations.CanGoToSourceCode;
 	}
 

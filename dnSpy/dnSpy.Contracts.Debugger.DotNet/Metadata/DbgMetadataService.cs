@@ -57,5 +57,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 		/// The module load was caused by a non-user action
 		/// </summary>
 		AutoLoaded				= 0x00000001,
+
+		/// <summary>
+		/// Always load the module from the process' address space instead of from the module's file on disk
+		/// </summary>
+		ForceMemory				= 0x00000002,
 	}
 }

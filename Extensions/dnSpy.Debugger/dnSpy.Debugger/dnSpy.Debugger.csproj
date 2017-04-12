@@ -111,6 +111,7 @@
     <Compile Include="Impl\DbgEngineBoundCodeBreakpointMessageExtensions.cs" />
     <Compile Include="Impl\DbgManagerImpl.BoundBreakpointsManager.cs" />
     <Compile Include="Impl\DbgManagerImpl.ProcessKey.cs" />
+    <Compile Include="Modules\ReferenceNavigatorImpl.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointColumnConverter.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointContext.cs" />

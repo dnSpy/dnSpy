@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			public ICommand ExportMatchingBreakpointsCommand => new RelayCommand(a => Operations.ExportMatchingBreakpoints(), a => Operations.CanExportMatchingBreakpoints);
 			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);
 			public ICommand ImportBreakpointsCommand => new RelayCommand(a => Operations.ImportBreakpoints(), a => Operations.CanImportBreakpoints);
-			public ICommand GoToSourceCodeCommand => new RelayCommand(a => Operations.GoToSourceCode(), a => Operations.CanGoToSourceCode);
+			public ICommand GoToSourceCodeCommand => new RelayCommand(a => Operations.GoToSourceCode(false), a => Operations.CanGoToSourceCode);
 			public ICommand GoToDisassemblyCommand => new RelayCommand(a => Operations.GoToDisassembly(), a => Operations.CanGoToDisassembly);
 			public ICommand SearchHelpCommand => new RelayCommand(a => SearchHelp());
 
@@ -104,8 +104,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		void CodeBreakpointsControl_CodeBreakpointsListViewDoubleClick(object sender, EventArgs e) {
+			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
 			if (Operations.CanGoToSourceCode)
-				Operations.GoToSourceCode();
+				Operations.GoToSourceCode(newTab);
 		}
 
 		void ListView_PreviewKeyDown(object sender, KeyEventArgs e) {
