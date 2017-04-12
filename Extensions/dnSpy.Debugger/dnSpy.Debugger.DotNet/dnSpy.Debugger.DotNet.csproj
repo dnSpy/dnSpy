@@ -51,6 +51,7 @@
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializerImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgDotNetBreakpointFactory2.cs" />
     <Compile Include="Breakpoints\Code\DbgDotNetBreakpointLocationImpl.cs" />
+    <Compile Include="Breakpoints\Code\DotNetReferenceConverter.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphFormatterImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphTextMarkerLocationProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\ClassBreakpointCommands.cs" />

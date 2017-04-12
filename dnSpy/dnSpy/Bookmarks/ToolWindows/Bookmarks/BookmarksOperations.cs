@@ -30,6 +30,7 @@ using dnSpy.Bookmarks.TextEditor;
 using dnSpy.Bookmarks.UI;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Bookmarks;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
@@ -102,6 +103,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		readonly IMessageBoxService messageBoxService;
 		readonly Lazy<BookmarkSerializerService> bookmarkSerializerService;
 		readonly Lazy<TextViewBookmarkService> textViewBookmarkService;
+		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 
 		BulkObservableCollection<BookmarkVM> AllItems => bookmarksVM.AllItems;
 		ObservableCollection<BookmarkVM> SelectedItems => bookmarksVM.SelectedItems;
@@ -111,7 +113,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		IEnumerable<BookmarkVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		BookmarksOperationsImpl(IBookmarksVM bookmarksVM, BookmarkDisplaySettings bookmarkDisplaySettings, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkLocationSerializerService> bookmarkLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<BookmarkSerializerService> bookmarkSerializerService, Lazy<TextViewBookmarkService> textViewBookmarkService) {
+		BookmarksOperationsImpl(IBookmarksVM bookmarksVM, BookmarkDisplaySettings bookmarkDisplaySettings, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkLocationSerializerService> bookmarkLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<BookmarkSerializerService> bookmarkSerializerService, Lazy<TextViewBookmarkService> textViewBookmarkService, Lazy<ReferenceNavigatorService> referenceNavigatorService) {
 			this.bookmarksVM = bookmarksVM;
 			this.bookmarkDisplaySettings = bookmarkDisplaySettings;
 			this.bookmarksService = bookmarksService;
@@ -121,6 +123,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			this.messageBoxService = messageBoxService;
 			this.bookmarkSerializerService = bookmarkSerializerService;
 			this.textViewBookmarkService = textViewBookmarkService;
+			this.referenceNavigatorService = referenceNavigatorService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -274,7 +277,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		public override void GoToLocation() {
 			if (!CanGoToLocation)
 				return;
-			//TODO:
+			referenceNavigatorService.Value.GoTo(SelectedItems[0].Bookmark.Location);
 		}
 
 		public override bool CanEditName => SelectedItems.Count == 1 && !SelectedItems[0].NameEditableValue.IsEditingValue;

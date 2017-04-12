@@ -146,6 +146,7 @@
     <Compile Include="Decompiler\IMethodDebugService.cs" />
     <Compile Include="Documents\AnnotationsImpl.cs" />
     <Compile Include="Documents\DocumentConstants.cs" />
+    <Compile Include="Documents\DotNetReferences.cs" />
     <Compile Include="Documents\DsDocument.cs" />
     <Compile Include="Documents\DsDocumentInfo.cs" />
     <Compile Include="Documents\FilenameKey.cs" />

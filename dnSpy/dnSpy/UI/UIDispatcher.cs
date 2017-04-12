@@ -36,5 +36,8 @@ namespace dnSpy.UI {
 		public void UI(Action action) =>
 			// Use Send so the windows are updated as fast as possible when adding new items
 			Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+
+		public void UIBackground(Action action) =>
+			Dispatcher.BeginInvoke(DispatcherPriority.Background, action);
 	}
 }

@@ -88,6 +88,7 @@
     <Compile Include="Bookmarks\DotNet\DotNetBookmarkFactoryImpl.cs" />
     <Compile Include="Bookmarks\DotNet\DotNetBookmarkLocationFormatter.cs" />
     <Compile Include="Bookmarks\DotNet\DotNetMethodBodyBookmarkLocationImpl.cs" />
+    <Compile Include="Bookmarks\DotNet\DotNetReferenceConverter.cs" />
     <Compile Include="Bookmarks\DotNet\DotNetTokenBookmarkLocationImpl.cs" />
     <Compile Include="Bookmarks\DotNet\IDotNetBookmarkLocation.cs" />
     <Compile Include="Bookmarks\DotNet\TextEditor\BookmarkGlyphTextMarkerLocationProviderImpl.cs" />
@@ -286,6 +287,7 @@
     <Compile Include="Documents\Tabs\DocViewer\XmlParser.cs" />
     <Compile Include="Documents\Tabs\DocViewer\XmlParser.DocumentViewerToolTipProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\XmlParser.XamlAttributeParser.cs" />
+    <Compile Include="Documents\Tabs\DotNetReferenceNavigator.cs" />
     <Compile Include="Documents\Tabs\DsDocumentInfoSerializer.cs" />
     <Compile Include="Documents\Tabs\EntryPointCommands.cs" />
     <Compile Include="Documents\Tabs\GoToTokenCommand.cs" />
