@@ -754,7 +754,7 @@
     <value>浅色(_L)</value>
   </data>
   <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
-    <value>搜索 (Ctrl+E 或 Ctrl+F)</value>
+    <value>搜索</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
     <value>语言</value>
@@ -1793,8 +1793,8 @@
   <data name="BookmarkDefaultName" xml:space="preserve">
     <value>Bookmark{0}</value>
   </data>
-  <data name="EditNameCommand" xml:space="preserve">
-    <value>Edit Name</value>
+  <data name="RenameCommand" xml:space="preserve">
+    <value>重命名</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
     <value>Go To Bookmark</value>

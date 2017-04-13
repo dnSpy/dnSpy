@@ -754,7 +754,7 @@
     <value>Claro</value>
   </data>
   <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
-    <value>Busca (Ctrl + E ou Ctrl + F)</value>
+    <value>Pesquisa</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
     <value>Línguagem</value>
@@ -1790,8 +1790,8 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   <data name="BookmarkDefaultName" xml:space="preserve">
     <value>Bookmark{0}</value>
   </data>
-  <data name="EditNameCommand" xml:space="preserve">
-    <value>Edit Name</value>
+  <data name="RenameCommand" xml:space="preserve">
+    <value>Renomear</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
     <value>Go To Bookmark</value>
@@ -1857,7 +1857,7 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Mostrar Tokens</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlW" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+W</value>
+    <value>CTRL + K, CTRL + W</value>
   </data>
   <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
     <value>Clear All Bookmarks In Document</value>
@@ -1893,16 +1893,16 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Previous Bookmark With Same Label</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+K</value>
+    <value>CTRL + K, CTRL + K</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlL" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+L</value>
+    <value>CTRL + K, CTRL + L</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlN" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+N</value>
+    <value>CTRL + K, CTRL + N</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlP" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+P</value>
+    <value>CTRL + K, CTRL + P</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
     <value>_Toggle Bookmark</value>

@@ -144,6 +144,9 @@
   <data name="LoadModule_Title" xml:space="preserve">
     <value>Carregando Módulos Dinâmicos</value>
   </data>
+  <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
+    <value>Você deve quebrar o processo antes que módulos dinâmicos possam ser carregados.</value>
+  </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
     <value>Recarregar todos os corpos de método</value>
   </data>

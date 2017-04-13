@@ -1305,7 +1305,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Output</value>
   </data>
   <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
-    <value>Ctrl+Alt+W, {0}</value>
+    <value>CTRL + Alt + W, {0}</value>
   </data>
   <data name="TerminateAllCommand" xml:space="preserve">
     <value>Ter_minate All</value>
@@ -1329,7 +1329,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Opções...</value>
   </data>
   <data name="ShortCutKeyCtrlAltZ" xml:space="preserve">
-    <value>Ctrl+Alt+Z</value>
+    <value>CTRL + Alt + Z</value>
   </data>
   <data name="ProcessesCommand" xml:space="preserve">
     <value>_Processes</value>
@@ -1482,13 +1482,13 @@ Tem certeza que deseja expandi-la?</value>
     <value>Break all processes when one process breaks</value>
   </data>
   <data name="ShortCutKeyCtrlAltF10" xml:space="preserve">
-    <value>Ctrl+Alt+F10</value>
+    <value>CTRL + Alt + F10</value>
   </data>
   <data name="ShortCutKeyCtrlAltF11" xml:space="preserve">
-    <value>Ctrl+Alt+F11</value>
+    <value>CTRL + Alt + F11</value>
   </data>
   <data name="ShortCutKeyCtrlShiftAltF11" xml:space="preserve">
-    <value>Ctrl+Shift+Alt+F11</value>
+    <value>CTRL + Shift + Alt + F11</value>
   </data>
   <data name="StepIntoCurrentProcessCommand" xml:space="preserve">
     <value>Step Into (Current Process)</value>
@@ -1530,7 +1530,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>_Autos</value>
   </data>
   <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
-    <value>Ctrl+Alt+V, A</value>
+    <value>CTRL + Alt + V, A</value>
   </data>
   <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
     <value>Export all breakpoints matching the current search criteria</value>

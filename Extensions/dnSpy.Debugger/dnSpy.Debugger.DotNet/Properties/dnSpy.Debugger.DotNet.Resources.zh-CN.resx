@@ -144,6 +144,9 @@
   <data name="LoadModule_Title" xml:space="preserve">
     <value>加载动态模块中</value>
   </data>
+  <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
+    <value>加载动态模块前您必须先中断此进程。</value>
+  </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
     <value>重新加载所有方法体</value>
   </data>

@@ -144,6 +144,9 @@
   <data name="LoadModule_Title" xml:space="preserve">
     <value>Загрузка динамических модулей</value>
   </data>
+  <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
+    <value>Перед загрузкой динамических модулей необходимо остановить процесс.</value>
+  </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
     <value>Перегрузить тела всех методов</value>
   </data>

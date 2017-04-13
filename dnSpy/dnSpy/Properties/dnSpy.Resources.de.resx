@@ -754,7 +754,7 @@
     <value>_Hell</value>
   </data>
   <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
-    <value>Suche (Strg+E or Strg+F)</value>
+    <value>Suchen</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
     <value>Sprache</value>
@@ -1711,10 +1711,10 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Zeitstempel Format</value>
   </data>
   <data name="Window_Bookmarks" xml:space="preserve">
-    <value>Bookmarks</value>
+    <value>Lesezeichen</value>
   </data>
   <data name="BookmarksOptDlgTab" xml:space="preserve">
-    <value>Bookmarks</value>
+    <value>Lesezeichen</value>
   </data>
   <data name="BookmarksSettings_SyntaxHighlight" xml:space="preserve">
     <value>Syntax hervorheben</value>
@@ -1735,91 +1735,91 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Name</value>
   </data>
   <data name="Bookmarks_NoMatch" xml:space="preserve">
-    <value>No bookmarks match your search filter.</value>
+    <value>Keine Lesezeichen stimmen mit dem Suchtext überein.</value>
   </data>
   <data name="Bookmarks_Search" xml:space="preserve">
     <value>Suchen</value>
   </data>
   <data name="BookmarksCommand" xml:space="preserve">
-    <value>Boo_kmarks</value>
+    <value>Leze_zeichen</value>
   </data>
   <data name="BookmarksWindowCommand" xml:space="preserve">
-    <value>_Bookmark Window</value>
+    <value>Lese_zeichenfenster</value>
   </data>
   <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Export all bookmarks matching the current search criteria</value>
+    <value>Alle Lesezeichen exportieren, die mit den aktuellen Suchkriterien übereinstimmen</value>
   </data>
   <data name="Bookmarks_GoToLocation_ToolTip" xml:space="preserve">
-    <value>Move the caret to the selected bookmark.</value>
+    <value>Einfügemarke zum ausgewählten Lesezeichen verschieben.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark in the current file.</value>
+    <value>Einfügemarke zum nächsten Lesezeichen im aktuellen Dokument verschieben.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark with the same label.</value>
+    <value>Einfügemarke zum nächsten Lesezeichen mit selber Bezeichnung verschieben.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmark_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark.</value>
+    <value>Einfügemarke zum nächsten Lesezeichen verschieben.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark in the current file.</value>
+    <value>Einfügemarke zum vorherigen Lesezeichen im aktuellen Dokument verschieben.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark with the same label.</value>
+    <value>Einfügemarke zum vorherigen Lesezeichen mit selber Bezeichnung verschieben.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmark_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark.</value>
+    <value>Einfügemarke zum vorherigen Lesezeichen verschieben.</value>
   </data>
   <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
-    <value>Import bookmarks from a file</value>
+    <value>Lesezeichen aus einer Datei importieren</value>
   </data>
   <data name="Bookmarks_RemoveBookmark_ToolTip" xml:space="preserve">
-    <value>Remove bookmark</value>
+    <value>Lesezeichen löschen</value>
   </data>
   <data name="Bookmarks_RemoveMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Remove all bookmarks matching the current search criteria</value>
+    <value>Alle Lesezeichen löschen, die mit den aktuellen Suchkriterien übereinstimmen</value>
   </data>
   <data name="Bookmarks_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all bookmarks are shown</value>
+    <value>Alle Suchkriterien zurücksetzen, sodass alle Lesezeichen angezeigt werden</value>
   </data>
   <data name="Bookmarks_Search_ToolTip" xml:space="preserve">
-    <value>Search for a bookmark</value>
+    <value>Text eingeben, der in allen Lesezeichen gesucht werden soll</value>
   </data>
   <data name="Bookmarks_ToggleCreateBookmark_ToolTip" xml:space="preserve">
-    <value>Toggle a bookmark on the current line.</value>
+    <value>Lesezeichen für die aktuelle Zeile umschalten.</value>
   </data>
   <data name="Bookmarks_ToggleMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Enable or disable all bookmarks matching the current search criteria</value>
+    <value>Alle Lesezeichen aktivieren bzw. deaktivieren, die mit den aktuellen Suchkriterien übereinstimmen</value>
   </data>
   <data name="BookmarkDefaultName" xml:space="preserve">
-    <value>Bookmark{0}</value>
+    <value>Lesezeichen{0}</value>
   </data>
-  <data name="EditNameCommand" xml:space="preserve">
-    <value>Edit Name</value>
+  <data name="RenameCommand" xml:space="preserve">
+    <value>Umbenennen</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
-    <value>Go To Bookmark</value>
+    <value>Gehe zu Lesezeichen</value>
   </data>
   <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
     <value>Strg+{0}</value>
   </data>
   <data name="DisableBookmarkCommand3" xml:space="preserve">
-    <value>Disable Bookmark</value>
+    <value>Lesezeichen deaktivieren</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
     <value>Bezeichnungen bearbeiten</value>
   </data>
   <data name="EnableBookmarkCommand3" xml:space="preserve">
-    <value>Enable Bookmark</value>
+    <value>Lesezeichen aktivieren</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
     <value>Auswahl _exportieren...</value>
   </data>
   <data name="RemoveAllBookmarksCommand" xml:space="preserve">
-    <value>Remove All Bookmarks</value>
+    <value>Alle Lesezeichen löschen</value>
   </data>
   <data name="RemoveBookmarkCommand" xml:space="preserve">
-    <value>Remove Bookmark</value>
+    <value>Lesezeichen löschen</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
     <value>_Alles auswählen</value>
@@ -1861,54 +1861,54 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Tokens zeigen</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlW" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+W</value>
+    <value>Strg+K, Strg+W</value>
   </data>
   <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
-    <value>Clear All Bookmarks In Document</value>
+    <value>Alle Lesezeichen im Dokument löschen</value>
   </data>
   <data name="ClearBookmarksCommand" xml:space="preserve">
-    <value>_Clear Bookmarks</value>
+    <value>Lesezeichen _entfernen</value>
   </data>
   <data name="DisableAllBookmarksCommand" xml:space="preserve">
-    <value>Disable _All Bookmarks</value>
+    <value>Alle Le_sezeichen deaktivieren</value>
   </data>
   <data name="EnableAllBookmarksCommand" xml:space="preserve">
-    <value>Enable _All Bookmarks</value>
+    <value>Alle Le_sezeichen aktivieren</value>
   </data>
   <data name="EnableBookmarkCommand" xml:space="preserve">
-    <value>Enable Bookmark</value>
+    <value>Lesezeichen aktivieren</value>
   </data>
   <data name="GoToNextBookmarkCommand" xml:space="preserve">
-    <value>Next _Bookmark</value>
+    <value>N_ächstes Lesezeichen</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
-    <value>N_ext Bookmark In Document</value>
+    <value>Nä_chstes Lesezeichen im Dokument</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Next Bookmark With Same Label</value>
+    <value>Näc_hstes Lesezeichen mit selber Bezeichnung</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
-    <value>_Previous Bookmark</value>
+    <value>V_orheriges Lesezeichen</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
-    <value>P_revious Bookmark In Document</value>
+    <value>Vo_rheriges Lesezeichen im Dokument</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Previous Bookmark With Same Label</value>
+    <value>Vor_heriges Lesezeichen mit selber Bezeichnung</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+K</value>
+    <value>Strg+K, Strg+K</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlL" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+L</value>
+    <value>Strg+K, Strg+L</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlN" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+N</value>
+    <value>Strg+K, Strg+N</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlP" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+P</value>
+    <value>Strg+K, Strg+P</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
-    <value>_Toggle Bookmark</value>
+    <value>Lesezeichen _umschalten</value>
   </data>
 </root>
