@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Bookmarks;
+using dnSpy.Contracts.Bookmarks.Navigator;
 using dnSpy.Contracts.ToolWindows.App;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -33,18 +34,20 @@ namespace dnSpy.Bookmarks.TextEditor.DocViewer {
 		readonly IDsToolWindowService toolWindowService;
 		readonly TextViewBookmarkService textViewBookmarkService;
 		readonly Lazy<BookmarksService> bookmarksService;
+		readonly Lazy<BookmarkNavigator> bookmarkNavigator;
 
 		[ImportingConstructor]
-		DocumentViewerBookmarksOperationsProviderImpl(IDsToolWindowService toolWindowService, TextViewBookmarkService textViewBookmarkService, Lazy<BookmarksService> bookmarksService) {
+		DocumentViewerBookmarksOperationsProviderImpl(IDsToolWindowService toolWindowService, TextViewBookmarkService textViewBookmarkService, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkNavigator> bookmarkNavigator) {
 			this.toolWindowService = toolWindowService;
 			this.textViewBookmarkService = textViewBookmarkService;
 			this.bookmarksService = bookmarksService;
+			this.bookmarkNavigator = bookmarkNavigator;
 		}
 
 		public override DocumentViewerBookmarksOperations Create(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			return textView.Properties.GetOrCreateSingletonProperty(() => new DocumentViewerBookmarksOperationsImpl(textView, toolWindowService, textViewBookmarkService, bookmarksService));
+			return textView.Properties.GetOrCreateSingletonProperty(() => new DocumentViewerBookmarksOperationsImpl(textView, toolWindowService, textViewBookmarkService, bookmarksService, bookmarkNavigator));
 		}
 	}
 
@@ -55,12 +58,12 @@ namespace dnSpy.Bookmarks.TextEditor.DocViewer {
 		public abstract void EnableAllBookmarks();
 		public abstract void EnableBookmark();
 		public abstract void ToggleBookmark();
-		public abstract void NextBookmark();
-		public abstract void PreviousBookmark();
-		public abstract void NextBookmarkInDocument();
-		public abstract void PreviousBookmarkInDocument();
-		public abstract void NextBookmarkWithSameLabel();
-		public abstract void PreviousBookmarkWithSameLabel();
+		public abstract void SelectNextBookmark();
+		public abstract void SelectPreviousBookmark();
+		public abstract void SelectNextBookmarkInDocument();
+		public abstract void SelectPreviousBookmarkInDocument();
+		public abstract void SelectNextBookmarkWithSameLabel();
+		public abstract void SelectPreviousBookmarkWithSameLabel();
 	}
 
 	sealed class DocumentViewerBookmarksOperationsImpl : DocumentViewerBookmarksOperations {
@@ -68,12 +71,14 @@ namespace dnSpy.Bookmarks.TextEditor.DocViewer {
 		readonly IDsToolWindowService toolWindowService;
 		readonly TextViewBookmarkService textViewBookmarkService;
 		readonly Lazy<BookmarksService> bookmarksService;
+		readonly Lazy<BookmarkNavigator> bookmarkNavigator;
 
-		public DocumentViewerBookmarksOperationsImpl(ITextView textView, IDsToolWindowService toolWindowService, TextViewBookmarkService textViewBookmarkService, Lazy<BookmarksService> bookmarksService) {
+		public DocumentViewerBookmarksOperationsImpl(ITextView textView, IDsToolWindowService toolWindowService, TextViewBookmarkService textViewBookmarkService, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkNavigator> bookmarkNavigator) {
 			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			this.toolWindowService = toolWindowService ?? throw new ArgumentNullException(nameof(toolWindowService));
 			this.textViewBookmarkService = textViewBookmarkService ?? throw new ArgumentNullException(nameof(textViewBookmarkService));
 			this.bookmarksService = bookmarksService ?? throw new ArgumentNullException(nameof(bookmarksService));
+			this.bookmarkNavigator = bookmarkNavigator ?? throw new ArgumentNullException(nameof(bookmarkNavigator));
 		}
 
 		public override void ShowBookmarkWindow() => toolWindowService.Show(ToolWindows.Bookmarks.BookmarksToolWindowContent.THE_GUID);
@@ -82,29 +87,11 @@ namespace dnSpy.Bookmarks.TextEditor.DocViewer {
 		public override void EnableAllBookmarks() => textViewBookmarkService.EnableAllBookmarks();
 		public override void EnableBookmark() => textViewBookmarkService.ToggleEnableBookmark(textView);
 		public override void ToggleBookmark() => textViewBookmarkService.ToggleCreateBookmark(textView);
-
-		public override void NextBookmark() {
-			//TODO:
-		}
-
-		public override void PreviousBookmark() {
-			//TODO:
-		}
-
-		public override void NextBookmarkInDocument() {
-			//TODO:
-		}
-
-		public override void PreviousBookmarkInDocument() {
-			//TODO:
-		}
-
-		public override void NextBookmarkWithSameLabel() {
-			//TODO:
-		}
-
-		public override void PreviousBookmarkWithSameLabel() {
-			//TODO:
-		}
+		public override void SelectNextBookmark() => bookmarkNavigator.Value.SelectNextBookmark();
+		public override void SelectPreviousBookmark() => bookmarkNavigator.Value.SelectPreviousBookmark();
+		public override void SelectNextBookmarkInDocument() => bookmarkNavigator.Value.SelectNextBookmarkInDocument();
+		public override void SelectPreviousBookmarkInDocument() => bookmarkNavigator.Value.SelectPreviousBookmarkInDocument();
+		public override void SelectNextBookmarkWithSameLabel() => bookmarkNavigator.Value.SelectNextBookmarkWithSameLabel();
+		public override void SelectPreviousBookmarkWithSameLabel() => bookmarkNavigator.Value.SelectPreviousBookmarkWithSameLabel();
 	}
 }

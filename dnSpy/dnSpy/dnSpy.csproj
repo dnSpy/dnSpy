@@ -103,6 +103,8 @@
     <Compile Include="Bookmarks\Impl\BookmarksListSettings.cs" />
     <Compile Include="Bookmarks\Impl\BookmarksSerializer.cs" />
     <Compile Include="Bookmarks\Impl\BookmarksServiceImpl.cs" />
+    <Compile Include="Bookmarks\Navigator\BookmarkNavigatorImpl.cs" />
+    <Compile Include="Bookmarks\Navigator\ViewBookmarkProvider.cs" />
     <Compile Include="Bookmarks\Settings\BookmarksAppSettingsPage.cs" />
     <Compile Include="Bookmarks\Settings\BookmarksSettingsImpl.cs" />
     <Compile Include="Bookmarks\TextEditor\BookmarkGlyphTextMarkerHandler.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\Commands.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\SearchTextClassifierProvider.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\TextViewTaggers.cs" />
+    <Compile Include="Bookmarks\ToolWindows\Bookmarks\ViewBookmarkProviderImpl.cs" />
     <Compile Include="Bookmarks\ToolWindows\LazyToolWindowVMHelper.cs" />
     <Compile Include="Bookmarks\UI\BulkObservableCollection.cs" />
     <Compile Include="Bookmarks\UI\ContentTypeDefinitions.cs" />

@@ -30,6 +30,7 @@ using dnSpy.Bookmarks.TextEditor;
 using dnSpy.Bookmarks.UI;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Bookmarks;
+using dnSpy.Contracts.Bookmarks.Navigator;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
@@ -48,18 +49,18 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		public abstract bool IsEditingValues { get; }
 		public abstract bool CanToggleCreateBookmark { get; }
 		public abstract void ToggleCreateBookmark();
-		public abstract bool CanGoToPreviousBookmark { get; }
-		public abstract void GoToPreviousBookmark();
-		public abstract bool CanGoToNextBookmark { get; }
-		public abstract void GoToNextBookmark();
-		public abstract bool CanGoToPreviousBookmarkSameLabel { get; }
-		public abstract void GoToPreviousBookmarkSameLabel();
-		public abstract bool CanGoToNextBookmarkSameLabel { get; }
-		public abstract void GoToNextBookmarkSameLabel();
-		public abstract bool CanGoToPreviousBookmarkInFile { get; }
-		public abstract void GoToPreviousBookmarkInFile();
-		public abstract bool CanGoToNextBookmarkInFile { get; }
-		public abstract void GoToNextBookmarkInFile();
+		public abstract bool CanSelectPreviousBookmark { get; }
+		public abstract void SelectPreviousBookmark();
+		public abstract bool CanSelectNextBookmark { get; }
+		public abstract void SelectNextBookmark();
+		public abstract bool CanSelectPreviousBookmarkWithSameLabel { get; }
+		public abstract void SelectPreviousBookmarkWithSameLabel();
+		public abstract bool CanSelectNextBookmarkWithSameLabel { get; }
+		public abstract void SelectNextBookmarkWithSameLabel();
+		public abstract bool CanSelectPreviousBookmarkInDocument { get; }
+		public abstract void SelectPreviousBookmarkInDocument();
+		public abstract bool CanSelectNextBookmarkInDocument { get; }
+		public abstract void SelectNextBookmarkInDocument();
 		public abstract bool CanToggleEnabled { get; }
 		public abstract void ToggleEnabled();
 		public abstract bool CanToggleMatchingBookmarks { get; }
@@ -104,6 +105,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		readonly Lazy<BookmarkSerializerService> bookmarkSerializerService;
 		readonly Lazy<TextViewBookmarkService> textViewBookmarkService;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
+		readonly Lazy<BookmarkNavigator> bookmarkNavigator;
 
 		BulkObservableCollection<BookmarkVM> AllItems => bookmarksVM.AllItems;
 		ObservableCollection<BookmarkVM> SelectedItems => bookmarksVM.SelectedItems;
@@ -113,7 +115,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		IEnumerable<BookmarkVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		BookmarksOperationsImpl(IBookmarksVM bookmarksVM, BookmarkDisplaySettings bookmarkDisplaySettings, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkLocationSerializerService> bookmarkLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<BookmarkSerializerService> bookmarkSerializerService, Lazy<TextViewBookmarkService> textViewBookmarkService, Lazy<ReferenceNavigatorService> referenceNavigatorService) {
+		BookmarksOperationsImpl(IBookmarksVM bookmarksVM, BookmarkDisplaySettings bookmarkDisplaySettings, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkLocationSerializerService> bookmarkLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<BookmarkSerializerService> bookmarkSerializerService, Lazy<TextViewBookmarkService> textViewBookmarkService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<BookmarkNavigator> bookmarkNavigator) {
 			this.bookmarksVM = bookmarksVM;
 			this.bookmarkDisplaySettings = bookmarkDisplaySettings;
 			this.bookmarksService = bookmarksService;
@@ -124,6 +126,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			this.bookmarkSerializerService = bookmarkSerializerService;
 			this.textViewBookmarkService = textViewBookmarkService;
 			this.referenceNavigatorService = referenceNavigatorService;
+			this.bookmarkNavigator = bookmarkNavigator;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -178,35 +181,23 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		public override bool CanToggleCreateBookmark => textViewBookmarkService.Value.CanToggleCreateBookmark;
 		public override void ToggleCreateBookmark() => textViewBookmarkService.Value.ToggleCreateBookmark();
 
-		public override bool CanGoToPreviousBookmark => true;//TODO:
-		public override void GoToPreviousBookmark() {
-			//TODO:
-		}
+		public override bool CanSelectPreviousBookmark => bookmarkNavigator.Value.CanSelectPreviousBookmark;
+		public override void SelectPreviousBookmark() => bookmarkNavigator.Value.SelectPreviousBookmark();
 
-		public override bool CanGoToNextBookmark => true;//TODO:
-		public override void GoToNextBookmark() {
-			//TODO:
-		}
+		public override bool CanSelectNextBookmark => bookmarkNavigator.Value.CanSelectNextBookmark;
+		public override void SelectNextBookmark() => bookmarkNavigator.Value.SelectNextBookmark();
 
-		public override bool CanGoToPreviousBookmarkSameLabel => true;//TODO:
-		public override void GoToPreviousBookmarkSameLabel() {
-			//TODO:
-		}
+		public override bool CanSelectPreviousBookmarkWithSameLabel => bookmarkNavigator.Value.CanSelectPreviousBookmarkWithSameLabel;
+		public override void SelectPreviousBookmarkWithSameLabel() => bookmarkNavigator.Value.SelectPreviousBookmarkWithSameLabel();
 
-		public override bool CanGoToNextBookmarkSameLabel => true;//TODO:
-		public override void GoToNextBookmarkSameLabel() {
-			//TODO:
-		}
+		public override bool CanSelectNextBookmarkWithSameLabel => bookmarkNavigator.Value.CanSelectNextBookmarkWithSameLabel;
+		public override void SelectNextBookmarkWithSameLabel() => bookmarkNavigator.Value.SelectNextBookmarkWithSameLabel();
 
-		public override bool CanGoToPreviousBookmarkInFile => true;//TODO:
-		public override void GoToPreviousBookmarkInFile() {
-			//TODO:
-		}
+		public override bool CanSelectPreviousBookmarkInDocument => bookmarkNavigator.Value.CanSelectPreviousBookmarkInDocument;
+		public override void SelectPreviousBookmarkInDocument() => bookmarkNavigator.Value.SelectPreviousBookmarkInDocument();
 
-		public override bool CanGoToNextBookmarkInFile => true;//TODO:
-		public override void GoToNextBookmarkInFile() {
-			//TODO:
-		}
+		public override bool CanSelectNextBookmarkInDocument => bookmarkNavigator.Value.CanSelectNextBookmarkInDocument;
+		public override void SelectNextBookmarkInDocument() => bookmarkNavigator.Value.SelectNextBookmarkInDocument();
 
 		public override bool CanToggleEnabled => SelectedItems.Count > 0 && !IsEditingValues;
 		public override void ToggleEnabled() => ToggleBookmarks(SelectedItems);
@@ -278,7 +269,9 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			if (!CanGoToLocation)
 				return;
 			var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
-			referenceNavigatorService.Value.GoTo(SelectedItems[0].Bookmark.Location, options);
+			var bookmark = SelectedItems[0].Bookmark;
+			bookmarkNavigator.Value.ActiveBookmark = bookmark;
+			referenceNavigatorService.Value.GoTo(bookmark.Location, options);
 		}
 
 		public override bool CanEditName => SelectedItems.Count == 1 && !SelectedItems[0].NameEditableValue.IsEditingValue;

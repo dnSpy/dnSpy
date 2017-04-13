@@ -40,6 +40,17 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			}
 		}
 
+		public bool IsActive {
+			get => isActive;
+			set {
+				if (isActive == value)
+					return;
+				isActive = value;
+				OnPropertyChanged(nameof(NameObject));
+			}
+		}
+		bool isActive;
+
 		public ImageReference ImageReference => BookmarkImageUtilities.GetImage(bookmarkKind);
 
 		public IBookmarkContext Context { get; }

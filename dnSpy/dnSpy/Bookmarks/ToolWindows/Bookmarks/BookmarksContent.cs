@@ -74,12 +74,12 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			public string SearchHelpToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.SearchHelp_ToolTip, null);
 
 			public ICommand ToggleCreateBookmarkCommand => new RelayCommand(a => Operations.ToggleCreateBookmark(), a => Operations.CanToggleCreateBookmark);
-			public ICommand GoToPreviousBookmarkCommand => new RelayCommand(a => Operations.GoToPreviousBookmark(), a => Operations.CanGoToPreviousBookmark);
-			public ICommand GoToNextBookmarkCommand => new RelayCommand(a => Operations.GoToNextBookmark(), a => Operations.CanGoToNextBookmark);
-			public ICommand GoToPreviousBookmarkSameLabelCommand => new RelayCommand(a => Operations.GoToPreviousBookmarkSameLabel(), a => Operations.CanGoToPreviousBookmarkSameLabel);
-			public ICommand GoToNextBookmarkSameLabelCommand => new RelayCommand(a => Operations.GoToNextBookmarkSameLabel(), a => Operations.CanGoToNextBookmarkSameLabel);
-			public ICommand GoToPreviousBookmarkInFileCommand => new RelayCommand(a => Operations.GoToPreviousBookmarkInFile(), a => Operations.CanGoToPreviousBookmarkInFile);
-			public ICommand GoToNextBookmarkInFileCommand => new RelayCommand(a => Operations.GoToNextBookmarkInFile(), a => Operations.CanGoToNextBookmarkInFile);
+			public ICommand GoToPreviousBookmarkCommand => new RelayCommand(a => Operations.SelectPreviousBookmark(), a => Operations.CanSelectPreviousBookmark);
+			public ICommand GoToNextBookmarkCommand => new RelayCommand(a => Operations.SelectNextBookmark(), a => Operations.CanSelectNextBookmark);
+			public ICommand GoToPreviousBookmarkSameLabelCommand => new RelayCommand(a => Operations.SelectPreviousBookmarkWithSameLabel(), a => Operations.CanSelectPreviousBookmarkWithSameLabel);
+			public ICommand GoToNextBookmarkSameLabelCommand => new RelayCommand(a => Operations.SelectNextBookmarkWithSameLabel(), a => Operations.CanSelectNextBookmarkWithSameLabel);
+			public ICommand GoToPreviousBookmarkInFileCommand => new RelayCommand(a => Operations.SelectPreviousBookmarkInDocument(), a => Operations.CanSelectPreviousBookmarkInDocument);
+			public ICommand GoToNextBookmarkInFileCommand => new RelayCommand(a => Operations.SelectNextBookmarkInDocument(), a => Operations.CanSelectNextBookmarkInDocument);
 
 			public ICommand RemoveBookmarksCommand => new RelayCommand(a => Operations.RemoveBookmarks(), a => Operations.CanRemoveBookmarks);
 			public ICommand RemoveMatchingBookmarksCommand => new RelayCommand(a => Operations.RemoveMatchingBookmarks(), a => Operations.CanRemoveMatchingBookmarks);

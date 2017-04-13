@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Bookmarks;
+using dnSpy.Contracts.Bookmarks.Navigator;
 using dnSpy.Contracts.Bookmarks.TextEditor;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -69,12 +70,14 @@ namespace dnSpy.Bookmarks.TextEditor {
 	sealed class TextViewBookmarkServiceImpl : TextViewBookmarkService {
 		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<BookmarksService> bookmarksService;
+		readonly Lazy<BookmarkNavigator> bookmarkNavigator;
 		readonly Lazy<TextViewBookmarkLocationProvider>[] textViewBookmarkLocationProviders;
 
 		[ImportingConstructor]
-		TextViewBookmarkServiceImpl(Lazy<IDocumentTabService> documentTabService, Lazy<BookmarksService> bookmarksService, [ImportMany] IEnumerable<Lazy<TextViewBookmarkLocationProvider>> textViewBookmarkLocationProviders) {
+		TextViewBookmarkServiceImpl(Lazy<IDocumentTabService> documentTabService, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkNavigator> bookmarkNavigator, [ImportMany] IEnumerable<Lazy<TextViewBookmarkLocationProvider>> textViewBookmarkLocationProviders) {
 			this.documentTabService = documentTabService;
 			this.bookmarksService = bookmarksService;
+			this.bookmarkNavigator = bookmarkNavigator;
 			this.textViewBookmarkLocationProviders = textViewBookmarkLocationProviders.ToArray();
 		}
 
@@ -150,7 +153,9 @@ namespace dnSpy.Bookmarks.TextEditor {
 		void ToggleCreateBookmark((ToggleCreateBookmarkKind kind, Bookmark[] bookmarks, BookmarkLocation location) info) {
 			switch (info.kind) {
 			case ToggleCreateBookmarkKind.Add:
-				bookmarksService.Value.Add(new Contracts.Bookmarks.BookmarkInfo(info.location, new BookmarkSettings() { IsEnabled = true }));
+				var bookmark = bookmarksService.Value.Add(new Contracts.Bookmarks.BookmarkInfo(info.location, new BookmarkSettings() { IsEnabled = true }));
+				if (bookmark != null)
+					bookmarkNavigator.Value.ActiveBookmark = bookmark;
 				break;
 
 			case ToggleCreateBookmarkKind.Delete:

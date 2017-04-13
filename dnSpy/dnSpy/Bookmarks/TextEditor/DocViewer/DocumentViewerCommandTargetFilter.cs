@@ -85,27 +85,27 @@ namespace dnSpy.Bookmarks.TextEditor.DocViewer {
 					return CommandTargetStatus.Handled;
 
 				case BookmarkIds.NextBookmark:
-					documentViewerBookmarksOperations.NextBookmark();
+					documentViewerBookmarksOperations.SelectNextBookmark();
 					return CommandTargetStatus.Handled;
 
 				case BookmarkIds.PreviousBookmark:
-					documentViewerBookmarksOperations.PreviousBookmark();
+					documentViewerBookmarksOperations.SelectPreviousBookmark();
 					return CommandTargetStatus.Handled;
 
 				case BookmarkIds.NextBookmarkInDocument:
-					documentViewerBookmarksOperations.NextBookmarkInDocument();
+					documentViewerBookmarksOperations.SelectNextBookmarkInDocument();
 					return CommandTargetStatus.Handled;
 
 				case BookmarkIds.PreviousBookmarkInDocument:
-					documentViewerBookmarksOperations.PreviousBookmarkInDocument();
+					documentViewerBookmarksOperations.SelectPreviousBookmarkInDocument();
 					return CommandTargetStatus.Handled;
 
 				case BookmarkIds.NextBookmarkWithSameLabel:
-					documentViewerBookmarksOperations.NextBookmarkWithSameLabel();
+					documentViewerBookmarksOperations.SelectNextBookmarkWithSameLabel();
 					return CommandTargetStatus.Handled;
 
 				case BookmarkIds.PreviousBookmarkWithSameLabel:
-					documentViewerBookmarksOperations.PreviousBookmarkWithSameLabel();
+					documentViewerBookmarksOperations.SelectPreviousBookmarkWithSameLabel();
 					return CommandTargetStatus.Handled;
 
 				default:

@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Bookmarks.TextEditor;
+using dnSpy.Contracts.Bookmarks.Navigator;
 
 namespace dnSpy.Bookmarks.Commands {
 	abstract class MainMenuOperations {
@@ -34,27 +35,30 @@ namespace dnSpy.Bookmarks.Commands {
 		public abstract void ClearBookmarks();
 		public abstract bool CanClearAllBookmarksInDocument { get; }
 		public abstract void ClearAllBookmarksInDocument();
-		public abstract bool CanGoToPreviousBookmark { get; }
-		public abstract void GoToPreviousBookmark();
-		public abstract bool CanGoToNextBookmark { get; }
-		public abstract void GoToNextBookmark();
-		public abstract bool CanGoToPreviousBookmarkWithSameLabel { get; }
-		public abstract void GoToPreviousBookmarkWithSameLabel();
-		public abstract bool CanGoToNextBookmarkWithSameLabel { get; }
-		public abstract void GoToNextBookmarkWithSameLabel();
-		public abstract bool CanGoToPreviousBookmarkInDocument { get; }
-		public abstract void GoToPreviousBookmarkInDocument();
-		public abstract bool CanGoToNextBookmarkInDocument { get; }
-		public abstract void GoToNextBookmarkInDocument();
+		public abstract bool CanSelectPreviousBookmark { get; }
+		public abstract void SelectPreviousBookmark();
+		public abstract bool CanSelectNextBookmark { get; }
+		public abstract void SelectNextBookmark();
+		public abstract bool CanSelectPreviousBookmarkWithSameLabel { get; }
+		public abstract void SelectPreviousBookmarkWithSameLabel();
+		public abstract bool CanSelectNextBookmarkWithSameLabel { get; }
+		public abstract void SelectNextBookmarkWithSameLabel();
+		public abstract bool CanSelectPreviousBookmarkInDocument { get; }
+		public abstract void SelectPreviousBookmarkInDocument();
+		public abstract bool CanSelectNextBookmarkInDocument { get; }
+		public abstract void SelectNextBookmarkInDocument();
 	}
 
 	[Export(typeof(MainMenuOperations))]
 	sealed class MainMenuOperationsImpl : MainMenuOperations {
 		readonly Lazy<TextViewBookmarkService> textViewBookmarkService;
+		readonly Lazy<BookmarkNavigator> bookmarkNavigator;
 
 		[ImportingConstructor]
-		MainMenuOperationsImpl(Lazy<TextViewBookmarkService> textViewBookmarkService) =>
+		MainMenuOperationsImpl(Lazy<TextViewBookmarkService> textViewBookmarkService, Lazy<BookmarkNavigator> bookmarkNavigator) {
 			this.textViewBookmarkService = textViewBookmarkService;
+			this.bookmarkNavigator = bookmarkNavigator;
+		}
 
 		public override bool CanToggleBookmark => textViewBookmarkService.Value.CanToggleCreateBookmark;
 		public override void ToggleBookmark() => textViewBookmarkService.Value.ToggleCreateBookmark();
@@ -72,34 +76,22 @@ namespace dnSpy.Bookmarks.Commands {
 		public override bool CanClearAllBookmarksInDocument => textViewBookmarkService.Value.CanClearAllBookmarksInDocument;
 		public override void ClearAllBookmarksInDocument() => textViewBookmarkService.Value.ClearAllBookmarksInDocument();
 
-		public override bool CanGoToPreviousBookmark => true;//TODO:
-		public override void GoToPreviousBookmark() {
-			//TODO:
-		}
+		public override bool CanSelectPreviousBookmark => bookmarkNavigator.Value.CanSelectPreviousBookmark;
+		public override void SelectPreviousBookmark() => bookmarkNavigator.Value.SelectPreviousBookmark();
 
-		public override bool CanGoToNextBookmark => true;//TODO:
-		public override void GoToNextBookmark() {
-			//TODO:
-		}
+		public override bool CanSelectNextBookmark => bookmarkNavigator.Value.CanSelectNextBookmark;
+		public override void SelectNextBookmark() => bookmarkNavigator.Value.SelectNextBookmark();
 
-		public override bool CanGoToPreviousBookmarkWithSameLabel => true;//TODO:
-		public override void GoToPreviousBookmarkWithSameLabel() {
-			//TODO:
-		}
+		public override bool CanSelectPreviousBookmarkWithSameLabel => bookmarkNavigator.Value.CanSelectPreviousBookmarkWithSameLabel;
+		public override void SelectPreviousBookmarkWithSameLabel() => bookmarkNavigator.Value.SelectPreviousBookmarkWithSameLabel();
 
-		public override bool CanGoToNextBookmarkWithSameLabel => true;//TODO:
-		public override void GoToNextBookmarkWithSameLabel() {
-			//TODO:
-		}
+		public override bool CanSelectNextBookmarkWithSameLabel => bookmarkNavigator.Value.CanSelectNextBookmarkWithSameLabel;
+		public override void SelectNextBookmarkWithSameLabel() => bookmarkNavigator.Value.SelectNextBookmarkWithSameLabel();
 
-		public override bool CanGoToPreviousBookmarkInDocument => true;//TODO:
-		public override void GoToPreviousBookmarkInDocument() {
-			//TODO:
-		}
+		public override bool CanSelectPreviousBookmarkInDocument => bookmarkNavigator.Value.CanSelectPreviousBookmarkInDocument;
+		public override void SelectPreviousBookmarkInDocument() => bookmarkNavigator.Value.SelectPreviousBookmarkInDocument();
 
-		public override bool CanGoToNextBookmarkInDocument => true;//TODO:
-		public override void GoToNextBookmarkInDocument() {
-			//TODO:
-		}
+		public override bool CanSelectNextBookmarkInDocument => bookmarkNavigator.Value.CanSelectNextBookmarkInDocument;
+		public override void SelectNextBookmarkInDocument() => bookmarkNavigator.Value.SelectNextBookmarkInDocument();
 	}
 }

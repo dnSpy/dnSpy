@@ -44,6 +44,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		ObservableCollection<BookmarkVM> SelectedItems { get; }
 		void ResetSearchSettings();
 		string GetSearchHelpText();
+		event EventHandler OnShowChanged;
 	}
 
 	[Export(typeof(IBookmarksVM))]
@@ -105,6 +106,8 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			}
 		}
 		IEditValueProvider labelsEditValueProvider;
+
+		public event EventHandler OnShowChanged;
 
 		readonly UIDispatcher uiDispatcher;
 		readonly BookmarkContext bookmarkContext;
@@ -205,6 +208,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 				bookmarksService.Value.BookmarksModified -= BookmarksService_BookmarksModified;
 				UI(() => RemoveAllBookmarks_UI());
 			}
+			UI(() => OnShowChanged?.Invoke(this, EventArgs.Empty));
 		}
 
 		// UI thread

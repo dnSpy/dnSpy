@@ -80,8 +80,8 @@ namespace dnSpy.Bookmarks.Commands {
 			readonly Lazy<MainMenuOperations> mainMenuOperations;
 			[ImportingConstructor]
 			public GoToPreviousBookmarkCommand(Lazy<MainMenuOperations> mainMenuOperations) => this.mainMenuOperations = mainMenuOperations;
-			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.GoToPreviousBookmark();
-			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanGoToPreviousBookmark;
+			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.SelectPreviousBookmark();
+			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanSelectPreviousBookmark;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_BOOKMARKS_GUID, Header = "res:GoToNextBookmarkCommand", Icon = DsImagesAttribute.NextBookmark, InputGestureText = "res:ShortCutKeyCtrlK_CtrlN", Group = MenuConstants.GROUP_APP_MENU_BOOKMARKS_COMMANDS1, Order = 40)]
@@ -89,8 +89,8 @@ namespace dnSpy.Bookmarks.Commands {
 			readonly Lazy<MainMenuOperations> mainMenuOperations;
 			[ImportingConstructor]
 			public GoToNextBookmarkCommand(Lazy<MainMenuOperations> mainMenuOperations) => this.mainMenuOperations = mainMenuOperations;
-			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.GoToNextBookmark();
-			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanGoToNextBookmark;
+			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.SelectNextBookmark();
+			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanSelectNextBookmark;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_BOOKMARKS_GUID, Header = "res:ClearBookmarksCommand", Icon = DsImagesAttribute.ClearBookmark, InputGestureText = "res:ShortCutKeyCtrlK_CtrlL", Group = MenuConstants.GROUP_APP_MENU_BOOKMARKS_COMMANDS1, Order = 50)]
@@ -107,8 +107,8 @@ namespace dnSpy.Bookmarks.Commands {
 			readonly Lazy<MainMenuOperations> mainMenuOperations;
 			[ImportingConstructor]
 			public GoToPreviousBookmarkWithSameLabelCommand(Lazy<MainMenuOperations> mainMenuOperations) => this.mainMenuOperations = mainMenuOperations;
-			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.GoToPreviousBookmarkWithSameLabel();
-			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanGoToPreviousBookmarkWithSameLabel;
+			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.SelectPreviousBookmarkWithSameLabel();
+			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanSelectPreviousBookmarkWithSameLabel;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_BOOKMARKS_GUID, Header = "res:GoToNextBookmarkWithSameLabelCommand", Icon = DsImagesAttribute.NextBookmarkInFolder, Group = MenuConstants.GROUP_APP_MENU_BOOKMARKS_COMMANDS2, Order = 10)]
@@ -116,8 +116,8 @@ namespace dnSpy.Bookmarks.Commands {
 			readonly Lazy<MainMenuOperations> mainMenuOperations;
 			[ImportingConstructor]
 			public GoToNextBookmarkWithSameLabelCommand(Lazy<MainMenuOperations> mainMenuOperations) => this.mainMenuOperations = mainMenuOperations;
-			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.GoToNextBookmarkWithSameLabel();
-			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanGoToNextBookmarkWithSameLabel;
+			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.SelectNextBookmarkWithSameLabel();
+			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanSelectNextBookmarkWithSameLabel;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_BOOKMARKS_GUID, Header = "res:GoToPreviousBookmarkInDocumentCommand", Icon = DsImagesAttribute.PreviousBookmarkInFile, Group = MenuConstants.GROUP_APP_MENU_BOOKMARKS_COMMANDS3, Order = 0)]
@@ -125,8 +125,8 @@ namespace dnSpy.Bookmarks.Commands {
 			readonly Lazy<MainMenuOperations> mainMenuOperations;
 			[ImportingConstructor]
 			public GoToPreviousBookmarkInDocumentCommand(Lazy<MainMenuOperations> mainMenuOperations) => this.mainMenuOperations = mainMenuOperations;
-			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.GoToPreviousBookmarkInDocument();
-			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanGoToPreviousBookmarkInDocument;
+			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.SelectPreviousBookmarkInDocument();
+			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanSelectPreviousBookmarkInDocument;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_BOOKMARKS_GUID, Header = "res:GoToNextBookmarkInDocumentCommand", Icon = DsImagesAttribute.NextBookmarkInFile, Group = MenuConstants.GROUP_APP_MENU_BOOKMARKS_COMMANDS3, Order = 10)]
@@ -134,8 +134,8 @@ namespace dnSpy.Bookmarks.Commands {
 			readonly Lazy<MainMenuOperations> mainMenuOperations;
 			[ImportingConstructor]
 			public GoToNextBookmarkInDocumentCommand(Lazy<MainMenuOperations> mainMenuOperations) => this.mainMenuOperations = mainMenuOperations;
-			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.GoToNextBookmarkInDocument();
-			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanGoToNextBookmarkInDocument;
+			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.SelectNextBookmarkInDocument();
+			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanSelectNextBookmarkInDocument;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_BOOKMARKS_GUID, Header = "res:ClearAllBookmarksInDocumentCommand", Group = MenuConstants.GROUP_APP_MENU_BOOKMARKS_COMMANDS3, Order = 20)]
