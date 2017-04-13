@@ -85,6 +85,8 @@
     <Compile Include="Bookmarks\CollectionChangedEventArgs.cs" />
     <Compile Include="Bookmarks\DotNet\DotNetBookmarkFactory.cs" />
     <Compile Include="Bookmarks\DotNet\DotNetBookmarkLocation.cs" />
+    <Compile Include="Bookmarks\Navigator\BookmarkDocument.cs" />
+    <Compile Include="Bookmarks\Navigator\BookmarkDocumentProvider.cs" />
     <Compile Include="Bookmarks\Navigator\BookmarkNavigator.cs" />
     <Compile Include="Bookmarks\PredefinedBookmarkLocationTypes.cs" />
     <Compile Include="Bookmarks\TextEditor\BookmarkGlyphTextMarkerLocationProvider.cs" />

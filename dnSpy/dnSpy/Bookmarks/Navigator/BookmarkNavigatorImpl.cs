@@ -18,9 +18,13 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Bookmarks.Navigator;
+using dnSpy.Contracts.Documents;
 using dnSpy.UI;
 
 namespace dnSpy.Bookmarks.Navigator {
@@ -30,6 +34,7 @@ namespace dnSpy.Bookmarks.Navigator {
 			get => activeBookmark;
 			set {
 				uiDispatcher.VerifyAccess();
+				currentLabels = null;
 				if (activeBookmark == value)
 					return;
 				var newBookmark = value;
@@ -46,11 +51,16 @@ namespace dnSpy.Bookmarks.Navigator {
 
 		readonly UIDispatcher uiDispatcher;
 		readonly ViewBookmarkProvider viewBookmarkProvider;
+		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
+		readonly Lazy<BookmarkDocumentProvider, IBookmarkDocumentProviderMetadata>[] bookmarkDocumentProviders;
+		string[] currentLabels;
 
 		[ImportingConstructor]
-		BookmarkNavigatorImpl(UIDispatcher uiDispatcher, ViewBookmarkProvider viewBookmarkProvider) {
+		BookmarkNavigatorImpl(UIDispatcher uiDispatcher, ViewBookmarkProvider viewBookmarkProvider, Lazy<ReferenceNavigatorService> referenceNavigatorService, [ImportMany] IEnumerable<Lazy<BookmarkDocumentProvider, IBookmarkDocumentProviderMetadata>> bookmarkDocumentProviders) {
 			this.uiDispatcher = uiDispatcher;
 			this.viewBookmarkProvider = viewBookmarkProvider;
+			this.referenceNavigatorService = referenceNavigatorService;
+			this.bookmarkDocumentProviders = bookmarkDocumentProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			activeBookmark = viewBookmarkProvider.DefaultBookmark;
 			viewBookmarkProvider.BookmarksViewOrderChanged += ViewBookmarkProvider_BookmarksViewOrderChanged;
 			UI(() => viewBookmarkProvider.SetActiveBookmark(activeBookmark));
@@ -66,39 +76,104 @@ namespace dnSpy.Bookmarks.Navigator {
 		}
 
 		public override bool CanSelectPreviousBookmark => true;
-		public override void SelectPreviousBookmark() {
-			uiDispatcher.VerifyAccess();
-			//TODO:
-		}
+		public override void SelectPreviousBookmark() => SelectAndGoTo(GetNextBookmark(-1));
 
 		public override bool CanSelectNextBookmark => true;
-		public override void SelectNextBookmark() {
-			uiDispatcher.VerifyAccess();
-			//TODO:
-		}
+		public override void SelectNextBookmark() => SelectAndGoTo(GetNextBookmark(1));
 
 		public override bool CanSelectPreviousBookmarkInDocument => true;
-		public override void SelectPreviousBookmarkInDocument() {
-			uiDispatcher.VerifyAccess();
-			//TODO:
-		}
+		public override void SelectPreviousBookmarkInDocument() => SelectAndGoTo(GetNextBookmarkInDocument(-1));
 
 		public override bool CanSelectNextBookmarkInDocument => true;
-		public override void SelectNextBookmarkInDocument() {
-			uiDispatcher.VerifyAccess();
-			//TODO:
-		}
+		public override void SelectNextBookmarkInDocument() => SelectAndGoTo(GetNextBookmarkInDocument(1));
 
 		public override bool CanSelectPreviousBookmarkWithSameLabel => true;
-		public override void SelectPreviousBookmarkWithSameLabel() {
-			uiDispatcher.VerifyAccess();
-			//TODO:
-		}
+		public override void SelectPreviousBookmarkWithSameLabel() => SelectAndGoTo(GetNextBookmarkWithSameLabel(-1), keepLabels: true);
 
 		public override bool CanSelectNextBookmarkWithSameLabel => true;
-		public override void SelectNextBookmarkWithSameLabel() {
+		public override void SelectNextBookmarkWithSameLabel() => SelectAndGoTo(GetNextBookmarkWithSameLabel(1), keepLabels: true);
+
+		Bookmark GetNextBookmark(int increment) {
 			uiDispatcher.VerifyAccess();
-			//TODO:
+			foreach (var bm in GetBookmarks(increment))
+				return bm;
+			return null;
+		}
+
+		Bookmark GetNextBookmarkInDocument(int increment) {
+			uiDispatcher.VerifyAccess();
+			var currentDocument = GetDocument(activeBookmark);
+			foreach (var bm in GetBookmarks(increment)) {
+				if (currentDocument == null)
+					return bm;
+				var doc = GetDocument(bm);
+				if (currentDocument.Equals(doc))
+					return bm;
+			}
+			return null;
+		}
+
+		BookmarkDocument GetDocument(Bookmark bookmark) {
+			uiDispatcher.VerifyAccess();
+			if (bookmark == null)
+				return null;
+			foreach (var lz in bookmarkDocumentProviders) {
+				var doc = lz.Value.GetDocument(bookmark);
+				if (doc != null)
+					return doc;
+			}
+			return null;
+		}
+
+		Bookmark GetNextBookmarkWithSameLabel(int increment) {
+			uiDispatcher.VerifyAccess();
+			if (currentLabels == null)
+				currentLabels = activeBookmark?.Labels ?? Array.Empty<string>();
+			foreach (var bm in GetBookmarks(increment)) {
+				if (SameLabel(currentLabels, bm.Labels))
+					return bm;
+			}
+			return null;
+		}
+
+		static bool SameLabel(string[] validLabels, string[] labels) {
+			if (labels == null)
+				labels = Array.Empty<string>();
+			if (validLabels.Length == 0)
+				return labels.Length == 0;
+			foreach (var label in labels) {
+				if (Array.IndexOf(validLabels, label) >= 0)
+					return true;
+			}
+			return false;
+		}
+
+		IEnumerable<Bookmark> GetBookmarks(int increment) {
+			uiDispatcher.VerifyAccess();
+			Debug.Assert(increment == 1 || increment == -1);
+			var bookmarks = viewBookmarkProvider.BookmarksViewOrder;
+			int currentIndex = bookmarks.IndexOf(activeBookmark);
+			Debug.Assert(currentIndex >= 0);
+			if (currentIndex < 0)
+				yield break;
+			currentIndex += increment;
+			for (int i = 0; i < bookmarks.Count; i++, currentIndex += increment) {
+				var bm = bookmarks[(currentIndex + bookmarks.Count) % bookmarks.Count];
+				if (!bm.IsEnabled)
+					continue;
+				yield return bm;
+			}
+		}
+
+		void SelectAndGoTo(Bookmark bookmark, bool keepLabels = false) {
+			uiDispatcher.VerifyAccess();
+			if (bookmark == null)
+				return;
+			var currentLabelsTmp = currentLabels;
+			ActiveBookmark = bookmark;
+			if (keepLabels)
+				currentLabels = currentLabelsTmp;
+			referenceNavigatorService.Value.GoTo(bookmark.Location);
 		}
 	}
 }

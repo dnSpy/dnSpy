@@ -91,6 +91,7 @@
     <Compile Include="Bookmarks\DotNet\DotNetReferenceConverter.cs" />
     <Compile Include="Bookmarks\DotNet\DotNetTokenBookmarkLocationImpl.cs" />
     <Compile Include="Bookmarks\DotNet\IDotNetBookmarkLocation.cs" />
+    <Compile Include="Bookmarks\DotNet\TextEditor\BookmarkDocumentProviderImpl.cs" />
     <Compile Include="Bookmarks\DotNet\TextEditor\BookmarkGlyphTextMarkerLocationProviderImpl.cs" />
     <Compile Include="Bookmarks\DotNet\TextEditor\DeleteBookmarksInRemovedModules.cs" />
     <Compile Include="Bookmarks\DotNet\TextEditor\TextViewDotNetMethodBodyBookmarkLocationProvider.cs" />
