@@ -1924,6 +1924,8 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.AdvancedTracepointErrorStatement, "AdvancedTracepointErrorStatement"),
 			new BrushColorInfo(ColorType.AdvancedTracepointErrorStatementMarker, "AdvancedTracepointErrorStatementMarker"),
 			new BrushColorInfo(ColorType.SelectedAdvancedTracepointErrorStatementMarker, "SelectedAdvancedTracepointErrorStatementMarker"),
+			new BrushColorInfo(ColorType.BookmarkName, "BookmarkName"),
+			new BrushColorInfo(ColorType.ActiveBookmarkName, "ActiveBookmarkName"),
 			new BrushColorInfo(ColorType.BraceMatching, "Brace matching"),
 			new BrushColorInfo(ColorType.LineSeparator, "Line separator"),
 			new BrushColorInfo(ColorType.FindMatchHighlightMarker, "Find Match Highlight"),

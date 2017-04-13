@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -37,7 +38,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 
 		[ImportingConstructor]
 		BookmarkNameTaggerProvider(IClassificationTypeRegistryService classificationTypeRegistryService, BookmarksSettings bookmarksSettings) {
-			nameClassificationTag = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(BookmarkFormatter.NameColorClassificationTypeName));
+			nameClassificationTag = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BookmarkName));
 			this.bookmarksSettings = bookmarksSettings;
 		}
 

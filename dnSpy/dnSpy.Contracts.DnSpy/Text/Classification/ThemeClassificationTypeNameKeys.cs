@@ -1466,5 +1466,15 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.SelectedAdvancedTracepointErrorStatementMarker"/>
 		/// </summary>
 		public const string SelectedAdvancedTracepointErrorStatementMarker = nameof(SelectedAdvancedTracepointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.BookmarkName"/>
+		/// </summary>
+		public const string BookmarkName = nameof(BookmarkName);
+
+		/// <summary>
+		/// <see cref="TextColor.ActiveBookmarkName"/>
+		/// </summary>
+		public const string ActiveBookmarkName = nameof(ActiveBookmarkName);
 	}
 }

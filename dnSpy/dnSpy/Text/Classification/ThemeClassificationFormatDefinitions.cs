@@ -1057,6 +1057,16 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition SelectedAdvancedTracepointErrorStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BookmarkName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BookmarkNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ActiveBookmarkName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ActiveBookmarkNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CurrentLine)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition CurrentLineClassificationTypeDefinition;
@@ -3290,6 +3300,24 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class SelectedAdvancedTracepointErrorStatementMarker : ThemeMarkerFormatDefinition {
 			SelectedAdvancedTracepointErrorStatementMarker() : base(TextColor.SelectedAdvancedTracepointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BookmarkName)]
+		[Name(ThemeClassificationTypeNameKeys.BookmarkName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BookmarkName : ThemeClassificationFormatDefinition {
+			BookmarkName() : base(TextColor.BookmarkName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ActiveBookmarkName)]
+		[Name(ThemeClassificationTypeNameKeys.ActiveBookmarkName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class ActiveBookmarkName : ThemeClassificationFormatDefinition {
+			ActiveBookmarkName() : base(TextColor.ActiveBookmarkName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

@@ -56,6 +56,8 @@
 		<color name="advancedtracepointerrorstatement" fg="#FF800000" />
 		<color name="advancedtracepointerrorstatementmarker" bg="#FFFFFFFF" />
 		<color name="selectedadvancedtracepointerrorstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="bookmarkname" fg="#FFFFFFFF" />
+		<color name="activebookmarkname" fg="#FFFFFFFF" bold="true" />
 		<color name="xmldoctooltipheader" italics="true" bold="true" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="repllinenumberinput1" fg="#FFFFFFFF" />

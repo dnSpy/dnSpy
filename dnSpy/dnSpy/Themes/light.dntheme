@@ -154,6 +154,8 @@
 		<color name="advancedtracepointerrorstatement" fg="#FF800000" />
 		<color name="advancedtracepointerrorstatementmarker" bg="#FFFFFFFF" />
 		<color name="selectedadvancedtracepointerrorstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="bookmarkname" fg="#A31515" />
+		<color name="activebookmarkname" fg="#A31515" bold="true" />
 		<color name="currentline" fg="#EAEAF2" />
 		<color name="currentlinenofocus" fg="#EAEAF2" />
 		<color name="hextext" fg="Black" bg="White" />
