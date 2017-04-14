@@ -71,13 +71,16 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
 			LabelsEditValueProvider = labelsEditValueProvider ?? throw new ArgumentNullException(nameof(labelsEditValueProvider));
-			LabelsEditableValue = new EditableValueImpl(() => GetLablesString(), s => CodeBreakpoint.Labels = new ReadOnlyCollection<string>(s.Split(new[] { CodeBreakpointFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray()));
+			LabelsEditableValue = new EditableValueImpl(() => GetLablesString(), s => CodeBreakpoint.Labels = CreateLabelsCollection(s));
 			BreakpointLocationFormatter = dbgBreakpointLocationFormatter ?? throw new ArgumentNullException(nameof(dbgBreakpointLocationFormatter));
 			settings = CodeBreakpoint.Settings;
 			breakpointKind = BreakpointImageUtilities.GetBreakpointKind(CodeBreakpoint);
 			errorToolTip = CodeBreakpoint.BoundBreakpointsMessage.Severity == DbgBoundCodeBreakpointSeverity.None ? null : CodeBreakpoint.BoundBreakpointsMessage.Message;
 			BreakpointLocationFormatter.PropertyChanged += DbgBreakpointLocationFormatter_PropertyChanged;
 		}
+
+		static ReadOnlyCollection<string> CreateLabelsCollection(string s) =>
+			new ReadOnlyCollection<string>(s.Split(new[] { CodeBreakpointFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray());
 
 		// UI thread
 		string GetLablesString() {

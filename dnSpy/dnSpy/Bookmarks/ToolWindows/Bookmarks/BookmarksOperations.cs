@@ -35,6 +35,7 @@ using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
+using dnSpy.Properties;
 
 namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 	abstract class BookmarksOperations {
@@ -282,12 +283,26 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			SelectedItems[0].NameEditableValue.IsEditingValue = true;
 		}
 
-		public override bool CanEditLabels => SelectedItems.Count == 1 && !SelectedItems[0].LabelsEditableValue.IsEditingValue;
+		public override bool CanEditLabels => (SelectedItems.Count == 1 && !SelectedItems[0].LabelsEditableValue.IsEditingValue) || SelectedItems.Count > 1;
 		public override void EditLabels() {
 			if (!CanEditLabels)
 				return;
-			SelectedItems[0].ClearEditingValueProperties();
-			SelectedItems[0].LabelsEditableValue.IsEditingValue = true;
+			foreach (var vm in bookmarksVM.AllItems)
+				vm.ClearEditingValueProperties();
+			if (SelectedItems.Count == 1)
+				SelectedItems[0].LabelsEditableValue.IsEditingValue = true;
+			else {
+				var newLabels = messageBoxService.Ask<string>(dnSpy_Resources.EditLabelsMsgBoxLabel, SelectedItems[0].GetLablesString(), dnSpy_Resources.EditLabelsTitle);
+				if (newLabels != null) {
+					var labelsColl = BookmarkVM.CreateLabelsCollection(newLabels);
+					bookmarksService.Value.Modify(SelectedItems.Select(a => {
+						var bm = a.Bookmark;
+						var settings = bm.Settings;
+						settings.Labels = labelsColl;
+						return new BookmarkAndSettings(bm, settings);
+					}).ToArray());
+				}
+			}
 		}
 
 		public override bool ShowTokens {

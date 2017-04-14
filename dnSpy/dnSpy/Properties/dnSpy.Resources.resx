@@ -1911,4 +1911,10 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
     <value>_Toggle Bookmark</value>
   </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Labels</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Edit Labels</value>
+  </data>
 </root>

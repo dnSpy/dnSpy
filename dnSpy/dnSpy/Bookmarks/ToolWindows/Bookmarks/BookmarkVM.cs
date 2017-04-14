@@ -79,15 +79,18 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			NameEditValueProvider = nameEditValueProvider ?? throw new ArgumentNullException(nameof(nameEditValueProvider));
 			NameEditableValue = new EditableValueImpl(() => Bookmark.Name, s => Bookmark.Name = s);
 			LabelsEditValueProvider = labelsEditValueProvider ?? throw new ArgumentNullException(nameof(labelsEditValueProvider));
-			LabelsEditableValue = new EditableValueImpl(() => GetLablesString(), s => Bookmark.Labels = new ReadOnlyCollection<string>(s.Split(new[] { BookmarkFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray()));
+			LabelsEditableValue = new EditableValueImpl(() => GetLablesString(), s => Bookmark.Labels = CreateLabelsCollection(s));
 			BookmarkLocationFormatter = bookmarkLocationFormatter ?? throw new ArgumentNullException(nameof(bookmarkLocationFormatter));
 			settings = Bookmark.Settings;
 			bookmarkKind = BookmarkImageUtilities.GetBookmarkKind(Bookmark);
 			BookmarkLocationFormatter.PropertyChanged += BookmarkLocationFormatter_PropertyChanged;
 		}
 
+		internal static ReadOnlyCollection<string> CreateLabelsCollection(string s) =>
+			new ReadOnlyCollection<string>(s.Split(new[] { BookmarkFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray());
+
 		// UI thread
-		string GetLablesString() {
+		internal string GetLablesString() {
 			Context.UIDispatcher.VerifyAccess();
 			var output = new StringBuilderTextColorOutput();
 			Context.Formatter.WriteLabels(output, this);
