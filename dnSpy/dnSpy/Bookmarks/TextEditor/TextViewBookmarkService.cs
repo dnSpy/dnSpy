@@ -23,9 +23,11 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Bookmarks.Navigator;
 using dnSpy.Contracts.Bookmarks;
+using dnSpy.Contracts.Bookmarks.Navigator;
 using dnSpy.Contracts.Bookmarks.TextEditor;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.UI;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -68,17 +70,21 @@ namespace dnSpy.Bookmarks.TextEditor {
 
 	[Export(typeof(TextViewBookmarkService))]
 	sealed class TextViewBookmarkServiceImpl : TextViewBookmarkService {
+		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<BookmarksService> bookmarksService;
 		readonly Lazy<BookmarkNavigator2> bookmarkNavigator;
 		readonly Lazy<TextViewBookmarkLocationProvider>[] textViewBookmarkLocationProviders;
+		readonly Lazy<BookmarkDocumentProvider, IBookmarkDocumentProviderMetadata>[] bookmarkDocumentProviders;
 
 		[ImportingConstructor]
-		TextViewBookmarkServiceImpl(Lazy<IDocumentTabService> documentTabService, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkNavigator2> bookmarkNavigator, [ImportMany] IEnumerable<Lazy<TextViewBookmarkLocationProvider>> textViewBookmarkLocationProviders) {
+		TextViewBookmarkServiceImpl(UIDispatcher uiDispatcher, Lazy<IDocumentTabService> documentTabService, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkNavigator2> bookmarkNavigator, [ImportMany] IEnumerable<Lazy<TextViewBookmarkLocationProvider>> textViewBookmarkLocationProviders, [ImportMany] IEnumerable<Lazy<BookmarkDocumentProvider, IBookmarkDocumentProviderMetadata>> bookmarkDocumentProviders) {
+			this.uiDispatcher = uiDispatcher;
 			this.documentTabService = documentTabService;
 			this.bookmarksService = bookmarksService;
 			this.bookmarkNavigator = bookmarkNavigator;
 			this.textViewBookmarkLocationProviders = textViewBookmarkLocationProviders.ToArray();
+			this.bookmarkDocumentProviders = bookmarkDocumentProviders.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
@@ -237,9 +243,24 @@ namespace dnSpy.Bookmarks.TextEditor {
 				bookmarksService.Value.Modify(newSettings.ToArray());
 		}
 
-		public override bool CanClearAllBookmarksInDocument => true;//TODO:
+		public override bool CanClearAllBookmarksInDocument => true;
 		public override void ClearAllBookmarksInDocument() {
-			//TODO:
+			var currentDoc = GetDocument(bookmarkNavigator.Value.ActiveBookmark);
+			if (currentDoc == null)
+				return;
+			bookmarksService.Value.Remove(bookmarksService.Value.Bookmarks.Where(a => currentDoc.Equals(GetDocument(a))).ToArray());
+		}
+
+		BookmarkDocument GetDocument(Bookmark bookmark) {
+			uiDispatcher.VerifyAccess();
+			if (bookmark == null)
+				return null;
+			foreach (var lz in bookmarkDocumentProviders) {
+				var doc = lz.Value.GetDocument(bookmark);
+				if (doc != null)
+					return doc;
+			}
+			return null;
 		}
 	}
 }
