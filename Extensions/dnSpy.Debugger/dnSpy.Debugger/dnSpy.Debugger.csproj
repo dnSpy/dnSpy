@@ -104,6 +104,7 @@
     <Compile Include="Exceptions\DbgExceptionImpl.cs" />
     <Compile Include="Exceptions\DbgExceptionSettingsServiceImpl.cs" />
     <Compile Include="Exceptions\DefaultExceptionDefinitionsProvider.cs" />
+    <Compile Include="Exceptions\ExceptionConditionsChecker.cs" />
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
     <Compile Include="Impl\DbgBoundCodeBreakpointImpl.cs" />
@@ -168,7 +169,6 @@
     <Compile Include="Impl\DebuggerThread.cs" />
     <Compile Include="Impl\DelayedIsRunningHelper.cs" />
     <Compile Include="Impl\DispatcherThreadImpl.cs" />
-    <Compile Include="Impl\ExceptionConditionsChecker.cs" />
     <Compile Include="Impl\SwitchToDebuggedProcess.cs" />
     <Compile Include="Native\Memset.cs" />
     <Compile Include="Native\NativeMethods.cs" />

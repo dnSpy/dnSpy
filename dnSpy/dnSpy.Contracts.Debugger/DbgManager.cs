@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DispatcherThread DispatcherThread { get; }
 
 		/// <summary>
-		/// Raised in the debugger thread when there's a new message, eg. a process was created, a thread has exited, etc.
+		/// Raised on the debugger thread when there's a new message, eg. a process was created, a thread has exited, etc.
 		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
 		/// </summary>
 		public abstract event EventHandler<DbgMessageEventArgs> Message;

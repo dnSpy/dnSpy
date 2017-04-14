@@ -150,7 +150,6 @@ namespace dnSpy.Debugger.Impl {
 		readonly object lockObj;
 		readonly DbgDispatcher dbgDispatcher;
 		readonly DebuggerSettings debuggerSettings;
-		readonly ExceptionConditionsChecker exceptionConditionsChecker;
 		readonly Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService;
 		readonly BoundBreakpointsManager boundBreakpointsManager;
 		readonly List<EngineInfo> engines;
@@ -162,11 +161,10 @@ namespace dnSpy.Debugger.Impl {
 		int hasNotifiedStartListenersCounter;
 
 		[ImportingConstructor]
-		DbgManagerImpl(DbgDispatcher dbgDispatcher, DebuggerSettings debuggerSettings, ExceptionConditionsChecker exceptionConditionsChecker, Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners, [ImportMany] IEnumerable<Lazy<DbgModuleMemoryRefreshedNotifier>> dbgModuleMemoryRefreshedNotifiers) {
+		DbgManagerImpl(DbgDispatcher dbgDispatcher, DebuggerSettings debuggerSettings, Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners, [ImportMany] IEnumerable<Lazy<DbgModuleMemoryRefreshedNotifier>> dbgModuleMemoryRefreshedNotifiers) {
 			lockObj = new object();
 			this.dbgDispatcher = dbgDispatcher;
 			this.debuggerSettings = debuggerSettings;
-			this.exceptionConditionsChecker = exceptionConditionsChecker;
 			this.boundCodeBreakpointsService = boundCodeBreakpointsService;
 			boundBreakpointsManager = new BoundBreakpointsManager(this);
 			engines = new List<EngineInfo>();
@@ -703,7 +701,7 @@ namespace dnSpy.Debugger.Impl {
 			if (!IsOurEngine(runtime.Engine))
 				return;
 			var e = new DbgMessageExceptionThrownEventArgs(exception);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, exception, exceptionConditionsChecker.ShouldBreak(exception) || pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, exception, pause);
 		}
 
 		void OnConditionalBreak_DbgThread(DbgEngine engine, DbgMessageEventArgs e, DbgExceptionImpl exception = null, bool pauseDefaultValue = false) {

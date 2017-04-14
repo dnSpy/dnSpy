@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// This class gets created the first time <see cref="DbgManager.Start(StartDebuggingOptions)"/>
+	/// All classes implementing this interface get created the first time <see cref="DbgManager.Start(StartDebuggingOptions)"/>
 	/// gets called. Use <see cref="ExportDbgManagerStartListenerAttribute"/> to export an instance.
 	/// </summary>
 	public interface IDbgManagerStartListener {

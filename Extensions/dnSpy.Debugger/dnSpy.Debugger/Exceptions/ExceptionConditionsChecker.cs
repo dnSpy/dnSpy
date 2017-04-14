@@ -21,26 +21,27 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Debugger.Utilities;
 
-namespace dnSpy.Debugger.Impl {
-	abstract class ExceptionConditionsChecker {
-		public abstract bool ShouldBreak(DbgException exception);
-	}
-
-	[Export(typeof(ExceptionConditionsChecker))]
-	sealed class ExceptionConditionsCheckerImpl : ExceptionConditionsChecker {
+namespace dnSpy.Debugger.Exceptions {
+	[ExportDbgManagerStartListener]
+	sealed class ExceptionConditionsChecker : IDbgManagerStartListener {
 		readonly Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService;
 
 		[ImportingConstructor]
-		ExceptionConditionsCheckerImpl(Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) =>
+		ExceptionConditionsChecker(Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) =>
 			this.dbgExceptionSettingsService = dbgExceptionSettingsService;
 
-		public override bool ShouldBreak(DbgException exception) {
-			if (exception == null)
-				throw new ArgumentNullException(nameof(exception));
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.Message += DbgManager_Message;
 
+		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
+			if (e.Kind == DbgMessageKind.ExceptionThrown)
+				e.Pause = ShouldBreak(((DbgMessageExceptionThrownEventArgs)e).Exception);
+		}
+
+		bool ShouldBreak(DbgException exception) {
 			// Always break if it's an unhandled exception
 			if (exception.IsUnhandled)
 				return true;
