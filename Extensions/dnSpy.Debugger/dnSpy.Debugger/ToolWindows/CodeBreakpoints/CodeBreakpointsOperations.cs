@@ -249,11 +249,11 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			//TODO:
 		}
 
-		public override bool CanEditSettings => SelectedItems.Count == 1;
+		public override bool CanEditSettings => SelectedItems.Count > 0;
 		public override void EditSettings() {
 			if (!CanEditSettings)
 				return;
-			showCodeBreakpointSettingsService.Value.Edit(SelectedItems[0].CodeBreakpoint);
+			showCodeBreakpointSettingsService.Value.Edit(SelectedItems.Select(a => a.CodeBreakpoint).ToArray());
 		}
 
 		public override bool CanEditLabels => SelectedItems.Count == 1 && !SelectedItems[0].LabelsEditableValue.IsEditingValue;

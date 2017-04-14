@@ -19,21 +19,27 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
 namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 	abstract class ShowCodeBreakpointSettingsService {
 		public abstract DbgCodeBreakpointSettings? Show(DbgCodeBreakpointSettings settings);
-		public abstract void Edit(DbgCodeBreakpoint breakpoint);
+		public void Edit(DbgCodeBreakpoint breakpoint) => Edit(new[] { breakpoint ?? throw new ArgumentNullException(nameof(breakpoint)) });
+		public abstract void Edit(DbgCodeBreakpoint[] breakpoints);
 	}
 
 	[Export(typeof(ShowCodeBreakpointSettingsService))]
 	sealed class ShowCodeBreakpointSettingsServiceImpl : ShowCodeBreakpointSettingsService {
 		readonly IAppWindow appWindow;
+		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 
 		[ImportingConstructor]
-		ShowCodeBreakpointSettingsServiceImpl(IAppWindow appWindow) => this.appWindow = appWindow;
+		ShowCodeBreakpointSettingsServiceImpl(IAppWindow appWindow, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) {
+			this.appWindow = appWindow;
+			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
+		}
 
 		public override DbgCodeBreakpointSettings? Show(DbgCodeBreakpointSettings settings) {
 			var dlg = new ShowCodeBreakpointSettingsDlg();
@@ -46,12 +52,14 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 			return vm.GetSettings();
 		}
 
-		public override void Edit(DbgCodeBreakpoint breakpoint) {
-			if (breakpoint == null)
-				throw new ArgumentNullException(nameof(breakpoint));
-			var newSettings = Show(breakpoint.Settings);
+		public override void Edit(DbgCodeBreakpoint[] breakpoints) {
+			if (breakpoints == null)
+				throw new ArgumentNullException(nameof(breakpoints));
+			if (breakpoints.Length == 0)
+				return;
+			var newSettings = Show(breakpoints[0].Settings);
 			if (newSettings != null)
-				breakpoint.Settings = newSettings.Value;
+				dbgCodeBreakpointsService.Value.Modify(breakpoints.Select(a => new DbgCodeBreakpointAndSettings(a, newSettings.Value)).ToArray());
 		}
 	}
 }
