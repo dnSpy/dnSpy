@@ -147,7 +147,7 @@ namespace dnSpy.Bookmarks.Navigator {
 			Debug.Assert(increment == 1 || increment == -1);
 			var bookmarks = viewBookmarkProvider.BookmarksViewOrder;
 			int currentIndex = bookmarks.IndexOf(activeBookmark);
-			Debug.Assert(currentIndex >= 0);
+			// If this is true, there are no visible bookmarks in the UI or there are no bookmarks
 			if (currentIndex < 0)
 				yield break;
 			currentIndex += increment;

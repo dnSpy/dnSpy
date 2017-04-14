@@ -52,12 +52,14 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		void Initialize_UI() {
 			uiDispatcher.VerifyAccess();
 			bookmarksVM.Value.OnShowChanged += BookmarksVM_OnShowChanged;
+			bookmarksVM.Value.AllItemsFiltered += BookmarksVM_AllItemsFiltered;
 			bookmarksService.BookmarksChanged += BookmarksService_BookmarksChanged;
 			BookmarksVM_OnShowChanged();
 		}
 
 		void BookmarksVM_OnShowChanged(object sender, EventArgs e) => BookmarksVM_OnShowChanged();
 		void BookmarksVM_OnShowChanged() => UpdateBookmarks_UI();
+		void BookmarksVM_AllItemsFiltered(object sender, EventArgs e) => UpdateBookmarks_UI();
 
 		void BookmarksService_BookmarksChanged(object sender, CollectionChangedEventArgs<Bookmark> e) =>
 			// Add an extra UI() so it's guaranteed to be called after BookmarksVM's handler

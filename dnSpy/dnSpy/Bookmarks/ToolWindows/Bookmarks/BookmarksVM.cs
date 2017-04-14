@@ -45,6 +45,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		void ResetSearchSettings();
 		string GetSearchHelpText();
 		event EventHandler OnShowChanged;
+		event EventHandler AllItemsFiltered;
 	}
 
 	[Export(typeof(IBookmarksVM))]
@@ -108,6 +109,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		IEditValueProvider labelsEditValueProvider;
 
 		public event EventHandler OnShowChanged;
+		public event EventHandler AllItemsFiltered;
 
 		readonly UIDispatcher uiDispatcher;
 		readonly BookmarkContext bookmarkContext;
@@ -356,6 +358,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			newList.Sort(BookmarkVMComparer.Instance);
 			AllItems.Reset(newList);
 			InitializeNothingMatched(filterText);
+			AllItemsFiltered?.Invoke(this, EventArgs.Empty);
 		}
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText);
