@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
 			LabelsEditValueProvider = labelsEditValueProvider ?? throw new ArgumentNullException(nameof(labelsEditValueProvider));
-			LabelsEditableValue = new EditableValueImpl(() => GetLablesString(), s => CodeBreakpoint.Labels = CreateLabelsCollection(s));
+			LabelsEditableValue = new EditableValueImpl(() => GetLabelsString(), s => CodeBreakpoint.Labels = CreateLabelsCollection(s));
 			BreakpointLocationFormatter = dbgBreakpointLocationFormatter ?? throw new ArgumentNullException(nameof(dbgBreakpointLocationFormatter));
 			settings = CodeBreakpoint.Settings;
 			breakpointKind = BreakpointImageUtilities.GetBreakpointKind(CodeBreakpoint);
@@ -79,11 +79,11 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			BreakpointLocationFormatter.PropertyChanged += DbgBreakpointLocationFormatter_PropertyChanged;
 		}
 
-		static ReadOnlyCollection<string> CreateLabelsCollection(string s) =>
+		internal static ReadOnlyCollection<string> CreateLabelsCollection(string s) =>
 			new ReadOnlyCollection<string>(s.Split(new[] { CodeBreakpointFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray());
 
 		// UI thread
-		string GetLablesString() {
+		internal string GetLabelsString() {
 			Context.UIDispatcher.VerifyAccess();
 			var output = new StringBuilderTextColorOutput();
 			Context.Formatter.WriteLabels(output, this);

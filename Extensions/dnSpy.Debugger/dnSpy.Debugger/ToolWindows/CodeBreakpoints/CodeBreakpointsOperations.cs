@@ -33,6 +33,7 @@ using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Dialogs.CodeBreakpoints;
+using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
@@ -256,12 +257,26 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			showCodeBreakpointSettingsService.Value.Edit(SelectedItems.Select(a => a.CodeBreakpoint).ToArray());
 		}
 
-		public override bool CanEditLabels => SelectedItems.Count == 1 && !SelectedItems[0].LabelsEditableValue.IsEditingValue;
+		public override bool CanEditLabels => (SelectedItems.Count == 1 && !SelectedItems[0].LabelsEditableValue.IsEditingValue) || SelectedItems.Count > 1;
 		public override void EditLabels() {
 			if (!CanEditLabels)
 				return;
-			SelectedItems[0].ClearEditingValueProperties();
-			SelectedItems[0].LabelsEditableValue.IsEditingValue = true;
+			foreach (var vm in codeBreakpointsVM.AllItems)
+				vm.ClearEditingValueProperties();
+			if (SelectedItems.Count == 1)
+				SelectedItems[0].LabelsEditableValue.IsEditingValue = true;
+			else {
+				var newLabels = messageBoxService.Ask<string>(dnSpy_Debugger_Resources.EditLabelsMsgBoxLabel, SelectedItems[0].GetLabelsString(), dnSpy_Debugger_Resources.EditLabelsTitle);
+				if (newLabels != null) {
+					var labelsColl = CodeBreakpointVM.CreateLabelsCollection(newLabels);
+					dbgCodeBreakpointsService.Value.Modify(SelectedItems.Select(a => {
+						var bm = a.CodeBreakpoint;
+						var settings = bm.Settings;
+						settings.Labels = labelsColl;
+						return new DbgCodeBreakpointAndSettings(bm, settings);
+					}).ToArray());
+				}
+			}
 		}
 
 		public override bool ShowTokens {

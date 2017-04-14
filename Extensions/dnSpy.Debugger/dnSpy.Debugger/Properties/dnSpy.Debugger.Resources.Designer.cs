@@ -2077,6 +2077,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Labels.
+        /// </summary>
+        public static string EditLabelsMsgBoxLabel {
+            get {
+                return ResourceManager.GetString("EditLabelsMsgBoxLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Labels.
+        /// </summary>
+        public static string EditLabelsTitle {
+            get {
+                return ResourceManager.GetString("EditLabelsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Module Name.
         /// </summary>
         public static string EditModuleNameCommand {

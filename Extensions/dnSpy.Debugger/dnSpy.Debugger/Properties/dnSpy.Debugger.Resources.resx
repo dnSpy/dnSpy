@@ -1767,4 +1767,10 @@ Are you sure you want to expand it?</value>
   <data name="Threads_AllProcesses" xml:space="preserve">
     <value>All</value>
   </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Labels</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Edit Labels</value>
+  </data>
 </root>

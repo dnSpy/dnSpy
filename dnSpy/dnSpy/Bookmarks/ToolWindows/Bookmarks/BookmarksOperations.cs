@@ -292,7 +292,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			if (SelectedItems.Count == 1)
 				SelectedItems[0].LabelsEditableValue.IsEditingValue = true;
 			else {
-				var newLabels = messageBoxService.Ask<string>(dnSpy_Resources.EditLabelsMsgBoxLabel, SelectedItems[0].GetLablesString(), dnSpy_Resources.EditLabelsTitle);
+				var newLabels = messageBoxService.Ask<string>(dnSpy_Resources.EditLabelsMsgBoxLabel, SelectedItems[0].GetLabelsString(), dnSpy_Resources.EditLabelsTitle);
 				if (newLabels != null) {
 					var labelsColl = BookmarkVM.CreateLabelsCollection(newLabels);
 					bookmarksService.Value.Modify(SelectedItems.Select(a => {
