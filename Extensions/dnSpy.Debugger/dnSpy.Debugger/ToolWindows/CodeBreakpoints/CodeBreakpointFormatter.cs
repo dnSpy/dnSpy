@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
 
@@ -38,7 +39,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 
 		internal void WriteLabels(ITextColorWriter output, CodeBreakpointVM vm) {
 			bool needSep = false;
-			foreach (var label in vm.CodeBreakpoint.Labels ?? Array.Empty<string>()) {
+			foreach (var label in vm.CodeBreakpoint.Labels ?? emptyLabels) {
 				if (needSep) {
 					output.Write(BoxedTextColor.Text, LabelsSeparatorString);
 					output.WriteSpace();
@@ -47,6 +48,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				output.Write(BoxedTextColor.Text, label);
 			}
 		}
+		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
 		internal void WriteName(ITextColorWriter output, CodeBreakpointVM vm) => vm.BreakpointLocationFormatter.WriteName(output);
 		internal void WriteCondition(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Condition);

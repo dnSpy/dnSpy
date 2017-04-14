@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -70,7 +71,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
 			LabelsEditValueProvider = labelsEditValueProvider ?? throw new ArgumentNullException(nameof(labelsEditValueProvider));
-			LabelsEditableValue = new EditableValueImpl(() => GetLablesString(), s => CodeBreakpoint.Labels = s.Split(new[] { CodeBreakpointFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray());
+			LabelsEditableValue = new EditableValueImpl(() => GetLablesString(), s => CodeBreakpoint.Labels = new ReadOnlyCollection<string>(s.Split(new[] { CodeBreakpointFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray()));
 			BreakpointLocationFormatter = dbgBreakpointLocationFormatter ?? throw new ArgumentNullException(nameof(dbgBreakpointLocationFormatter));
 			settings = CodeBreakpoint.Settings;
 			breakpointKind = BreakpointImageUtilities.GetBreakpointKind(CodeBreakpoint);
@@ -149,21 +150,22 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				OnPropertyChanged(nameof(WhenHitObject));
 		}
 
-		static bool LabelsEquals(string[] a, string[] b) {
+		static bool LabelsEquals(ReadOnlyCollection<string> a, ReadOnlyCollection<string> b) {
 			if (a == null)
-				a = Array.Empty<string>();
+				a = emptyLabels;
 			if (b == null)
-				b = Array.Empty<string>();
+				b = emptyLabels;
 			if (a == b)
 				return true;
-			if (a.Length != b.Length)
+			if (a.Count != b.Count)
 				return false;
-			for (int i = 0; i < a.Length; i++) {
+			for (int i = 0; i < a.Count; i++) {
 				if (!StringComparer.Ordinal.Equals(a[i], b[i]))
 					return false;
 			}
 			return true;
 		}
+		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
 		// UI thread
 		internal void UpdateImageAndMessage_UI() {

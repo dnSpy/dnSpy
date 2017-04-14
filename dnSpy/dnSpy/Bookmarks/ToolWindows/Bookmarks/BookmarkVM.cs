@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -78,7 +79,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			NameEditValueProvider = nameEditValueProvider ?? throw new ArgumentNullException(nameof(nameEditValueProvider));
 			NameEditableValue = new EditableValueImpl(() => Bookmark.Name, s => Bookmark.Name = s);
 			LabelsEditValueProvider = labelsEditValueProvider ?? throw new ArgumentNullException(nameof(labelsEditValueProvider));
-			LabelsEditableValue = new EditableValueImpl(() => GetLablesString(), s => Bookmark.Labels = s.Split(new[] { BookmarkFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray());
+			LabelsEditableValue = new EditableValueImpl(() => GetLablesString(), s => Bookmark.Labels = new ReadOnlyCollection<string>(s.Split(new[] { BookmarkFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray()));
 			BookmarkLocationFormatter = bookmarkLocationFormatter ?? throw new ArgumentNullException(nameof(bookmarkLocationFormatter));
 			settings = Bookmark.Settings;
 			bookmarkKind = BookmarkImageUtilities.GetBookmarkKind(Bookmark);
@@ -151,21 +152,22 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 				OnPropertyChanged(nameof(LabelsObject));
 		}
 
-		static bool LabelsEquals(string[] a, string[] b) {
+		static bool LabelsEquals(ReadOnlyCollection<string> a, ReadOnlyCollection<string> b) {
 			if (a == null)
-				a = Array.Empty<string>();
+				a = emptyLabels;
 			if (b == null)
-				b = Array.Empty<string>();
+				b = emptyLabels;
 			if (a == b)
 				return true;
-			if (a.Length != b.Length)
+			if (a.Count != b.Count)
 				return false;
-			for (int i = 0; i < a.Length; i++) {
+			for (int i = 0; i < a.Count; i++) {
 				if (!StringComparer.Ordinal.Equals(a[i], b[i]))
 					return false;
 			}
 			return true;
 		}
+		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
 		// UI thread
 		internal void ClearEditingValueProperties() {

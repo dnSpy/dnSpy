@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Properties;
 
@@ -55,7 +56,7 @@ namespace dnSpy.Bookmarks.Impl {
 			}
 		}
 
-		public override string[] Labels {
+		public override ReadOnlyCollection<string> Labels {
 			get => Settings.Labels;
 			set {
 				var settings = Settings;
@@ -84,9 +85,10 @@ namespace dnSpy.Bookmarks.Impl {
 				if (settings.Name == null)
 					settings.Name = string.Empty;
 				if (settings.Labels == null)
-					settings.Labels = Array.Empty<string>();
+					settings.Labels = emptyLabels;
 			}
 		}
+		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
 		public override void Remove() => owner.Remove(this);
 

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Contracts.Bookmarks {
 	/// <summary>
@@ -37,7 +38,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// <summary>
 		/// Labels
 		/// </summary>
-		public string[] Labels { get; set; }
+		public ReadOnlyCollection<string> Labels { get; set; }
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(BookmarkSettings left, BookmarkSettings right) => left.Equals(right);
@@ -54,25 +55,26 @@ namespace dnSpy.Contracts.Bookmarks {
 			StringComparer.Ordinal.Equals(Name ?? string.Empty, other.Name ?? string.Empty) &&
 			LabelsEquals(Labels, other.Labels);
 
-		static bool LabelsEquals(string[] a, string[] b) {
+		static bool LabelsEquals(ReadOnlyCollection<string> a, ReadOnlyCollection<string> b) {
 			if (a == null)
-				a = Array.Empty<string>();
+				a = emptyLabels;
 			if (b == null)
-				b = Array.Empty<string>();
+				b = emptyLabels;
 			if (a == b)
 				return true;
-			if (a.Length != b.Length)
+			if (a.Count != b.Count)
 				return false;
-			for (int i = 0; i < a.Length; i++) {
+			for (int i = 0; i < a.Count; i++) {
 				if (!StringComparer.Ordinal.Equals(a[i], b[i]))
 					return false;
 			}
 			return true;
 		}
+		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
-		static int LabelsGetHashCode(string[] a) {
+		static int LabelsGetHashCode(ReadOnlyCollection<string> a) {
 			int hc = 0;
-			foreach (var s in a ?? Array.Empty<string>())
+			foreach (var s in a ?? emptyLabels)
 				hc ^= StringComparer.Ordinal.GetHashCode(s ?? string.Empty);
 			return hc;
 		}

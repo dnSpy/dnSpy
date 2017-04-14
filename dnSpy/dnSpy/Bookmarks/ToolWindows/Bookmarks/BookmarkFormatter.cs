@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
 
@@ -38,7 +39,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 
 		internal void WriteLabels(ITextColorWriter output, BookmarkVM vm) {
 			bool needSep = false;
-			foreach (var label in vm.Bookmark.Labels ?? Array.Empty<string>()) {
+			foreach (var label in vm.Bookmark.Labels ?? emptyLabels) {
 				if (needSep) {
 					output.Write(BoxedTextColor.Text, LabelsSeparatorString);
 					output.WriteSpace();
@@ -47,6 +48,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 				output.Write(BoxedTextColor.Text, label);
 			}
 		}
+		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
 		internal void WriteName(ITextColorWriter output, BookmarkVM vm) {
 			var color = vm.IsActive ? BoxedTextColor.ActiveBookmarkName : BoxedTextColor.BookmarkName;

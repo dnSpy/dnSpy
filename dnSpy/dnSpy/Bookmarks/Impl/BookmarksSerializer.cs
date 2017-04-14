@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Settings;
@@ -48,7 +49,7 @@ namespace dnSpy.Bookmarks.Impl {
 				var bmSettings = new BookmarkSettings {
 					IsEnabled = isEnabled.Value,
 					Name = bmSect.Attribute<string>("Name") ?? string.Empty,
-					Labels = LoadLabels(bmSect),
+					Labels = new ReadOnlyCollection<string>(LoadLabels(bmSect)),
 				};
 				settings.Add(new BookmarkInfo(location, bmSettings));
 			}
@@ -68,8 +69,8 @@ namespace dnSpy.Bookmarks.Impl {
 				bmSect.Attribute("IsEnabled", bmSettings.IsEnabled);
 				bookmarkLocationSerializerService.Serialize(bmSect.CreateSection("BML"), bm.Location);
 				bmSect.Attribute("Name", bm.Name ?? string.Empty);
-				if (bmSettings.Labels != null && bmSettings.Labels.Length != 0)
-					SaveLabels(bmSect, bmSettings.Labels);
+				if (bmSettings.Labels != null && bmSettings.Labels.Count != 0)
+					SaveLabels(bmSect, bmSettings.Labels.ToArray());
 			}
 		}
 

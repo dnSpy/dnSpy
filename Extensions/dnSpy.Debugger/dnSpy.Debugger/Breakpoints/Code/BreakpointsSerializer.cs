@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Settings;
@@ -51,7 +52,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					HitCount = LoadHitCount(bpSect.TryGetSection("HitCount")),
 					Filter = LoadFilter(bpSect.TryGetSection("Filter")),
 					Trace = LoadTrace(bpSect.TryGetSection("Trace")),
-					Labels = LoadLabels(bpSect),
+					Labels = new ReadOnlyCollection<string>(LoadLabels(bpSect)),
 				};
 				settings.Add(new DbgCodeBreakpointInfo(location, bpSettings));
 			}
@@ -117,8 +118,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					Save(bpSect.CreateSection("Filter"), bpSettings.Filter.Value);
 				if (bpSettings.Trace != null)
 					Save(bpSect.CreateSection("Trace"), bpSettings.Trace.Value);
-				if (bpSettings.Labels != null && bpSettings.Labels.Length != 0)
-					SaveLabels(bpSect, bpSettings.Labels);
+				if (bpSettings.Labels != null && bpSettings.Labels.Count != 0)
+					SaveLabels(bpSect, bpSettings.Labels.ToArray());
 			}
 		}
 

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace dnSpy.Bookmarks.Navigator {
 		readonly ViewBookmarkProvider viewBookmarkProvider;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 		readonly Lazy<BookmarkDocumentProvider, IBookmarkDocumentProviderMetadata>[] bookmarkDocumentProviders;
-		string[] currentLabels;
+		ReadOnlyCollection<string> currentLabels;
 
 		[ImportingConstructor]
 		BookmarkNavigatorImpl(UIDispatcher uiDispatcher, ViewBookmarkProvider viewBookmarkProvider, Lazy<ReferenceNavigatorService> referenceNavigatorService, [ImportMany] IEnumerable<Lazy<BookmarkDocumentProvider, IBookmarkDocumentProviderMetadata>> bookmarkDocumentProviders) {
@@ -122,21 +123,22 @@ namespace dnSpy.Bookmarks.Navigator {
 		Bookmark GetNextBookmarkWithSameLabel(int increment) {
 			uiDispatcher.VerifyAccess();
 			if (currentLabels == null)
-				currentLabels = activeBookmark?.Labels ?? Array.Empty<string>();
+				currentLabels = activeBookmark?.Labels ?? emptyLabels;
 			foreach (var bm in GetBookmarks(increment)) {
 				if (SameLabel(currentLabels, bm.Labels))
 					return bm;
 			}
 			return null;
 		}
+		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
-		static bool SameLabel(string[] validLabels, string[] labels) {
+		static bool SameLabel(ReadOnlyCollection<string> validLabels, ReadOnlyCollection<string> labels) {
 			if (labels == null)
-				labels = Array.Empty<string>();
-			if (validLabels.Length == 0)
-				return labels.Length == 0;
+				labels = emptyLabels;
+			if (validLabels.Count == 0)
+				return labels.Count == 0;
 			foreach (var label in labels) {
-				if (Array.IndexOf(validLabels, label) >= 0)
+				if (validLabels.Contains(label))
 					return true;
 			}
 			return false;

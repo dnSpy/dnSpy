@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
@@ -86,7 +87,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		public override string[] Labels {
+		public override ReadOnlyCollection<string> Labels {
 			get => Settings.Labels;
 			set {
 				var settings = Settings;
@@ -134,13 +135,14 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			lock (lockObj) {
 				settings = newSettings;
 				if (settings.Labels == null)
-					settings.Labels = Array.Empty<string>();
+					settings.Labels = emptyLabels;
 				var oldMessage = boundBreakpointsMessage;
 				boundBreakpointsMessage = CalculateBoundBreakpointsMessage_NoLock();
 				raiseBoundBreakpointsMessageChanged = oldMessage != boundBreakpointsMessage;
 			}
 			return raiseBoundBreakpointsMessageChanged;
 		}
+		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
 		internal bool WriteIsDebugging_DbgThread(bool isDebugging) {
 			owner.DbgDispatcher.VerifyAccess();

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
@@ -62,7 +63,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Labels
 		/// </summary>
-		public abstract string[] Labels { get; set; }
+		public abstract ReadOnlyCollection<string> Labels { get; set; }
 
 		/// <summary>
 		/// Gets the breakpoint location

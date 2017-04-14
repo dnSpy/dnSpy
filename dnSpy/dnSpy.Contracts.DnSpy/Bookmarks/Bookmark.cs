@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
+
 namespace dnSpy.Contracts.Bookmarks {
 	/// <summary>
 	/// Bookmark
@@ -45,7 +47,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// <summary>
 		/// Labels
 		/// </summary>
-		public abstract string[] Labels { get; set; }
+		public abstract ReadOnlyCollection<string> Labels { get; set; }
 
 		/// <summary>
 		/// Gets the bookmark location
