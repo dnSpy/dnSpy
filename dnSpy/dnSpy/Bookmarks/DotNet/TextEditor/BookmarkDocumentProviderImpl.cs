@@ -23,7 +23,6 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Bookmarks.DotNet;
 using dnSpy.Contracts.Bookmarks.Navigator;
-using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Metadata;

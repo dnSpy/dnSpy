@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using dnSpy.Bookmarks.Navigator;
 using dnSpy.Contracts.Bookmarks;
-using dnSpy.Contracts.Bookmarks.Navigator;
 using dnSpy.Contracts.Bookmarks.TextEditor;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -70,11 +70,11 @@ namespace dnSpy.Bookmarks.TextEditor {
 	sealed class TextViewBookmarkServiceImpl : TextViewBookmarkService {
 		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<BookmarksService> bookmarksService;
-		readonly Lazy<BookmarkNavigator> bookmarkNavigator;
+		readonly Lazy<BookmarkNavigator2> bookmarkNavigator;
 		readonly Lazy<TextViewBookmarkLocationProvider>[] textViewBookmarkLocationProviders;
 
 		[ImportingConstructor]
-		TextViewBookmarkServiceImpl(Lazy<IDocumentTabService> documentTabService, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkNavigator> bookmarkNavigator, [ImportMany] IEnumerable<Lazy<TextViewBookmarkLocationProvider>> textViewBookmarkLocationProviders) {
+		TextViewBookmarkServiceImpl(Lazy<IDocumentTabService> documentTabService, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkNavigator2> bookmarkNavigator, [ImportMany] IEnumerable<Lazy<TextViewBookmarkLocationProvider>> textViewBookmarkLocationProviders) {
 			this.documentTabService = documentTabService;
 			this.bookmarksService = bookmarksService;
 			this.bookmarkNavigator = bookmarkNavigator;
@@ -155,7 +155,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			case ToggleCreateBookmarkKind.Add:
 				var bookmark = bookmarksService.Value.Add(new Contracts.Bookmarks.BookmarkInfo(info.location, new BookmarkSettings() { IsEnabled = true }));
 				if (bookmark != null)
-					bookmarkNavigator.Value.ActiveBookmark = bookmark;
+					bookmarkNavigator.Value.SetActiveBookmarkNoCheck(bookmark);
 				break;
 
 			case ToggleCreateBookmarkKind.Delete:

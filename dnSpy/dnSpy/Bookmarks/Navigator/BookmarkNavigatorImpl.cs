@@ -28,22 +28,16 @@ using dnSpy.Contracts.Documents;
 using dnSpy.UI;
 
 namespace dnSpy.Bookmarks.Navigator {
+	abstract class BookmarkNavigator2 : BookmarkNavigator {
+		public abstract void SetActiveBookmarkNoCheck(Bookmark bookmark);
+	}
+
 	[Export(typeof(BookmarkNavigator))]
-	sealed class BookmarkNavigatorImpl : BookmarkNavigator {
+	[Export(typeof(BookmarkNavigator2))]
+	sealed class BookmarkNavigatorImpl : BookmarkNavigator2 {
 		public override Bookmark ActiveBookmark {
 			get => activeBookmark;
-			set {
-				uiDispatcher.VerifyAccess();
-				currentLabels = null;
-				if (activeBookmark == value)
-					return;
-				var newBookmark = value;
-				if (!viewBookmarkProvider.BookmarksViewOrder.Contains(newBookmark))
-					newBookmark = viewBookmarkProvider.DefaultBookmark;
-				activeBookmark = newBookmark;
-				viewBookmarkProvider.SetActiveBookmark(activeBookmark);
-				ActiveBookmarkChanged?.Invoke(this, EventArgs.Empty);
-			}
+			set => SetActiveBookmark(value, verifyBookmark: true);
 		}
 		Bookmark activeBookmark;
 
@@ -174,6 +168,21 @@ namespace dnSpy.Bookmarks.Navigator {
 			if (keepLabels)
 				currentLabels = currentLabelsTmp;
 			referenceNavigatorService.Value.GoTo(bookmark.Location);
+		}
+
+		public override void SetActiveBookmarkNoCheck(Bookmark bookmark) => SetActiveBookmark(bookmark, verifyBookmark: false);
+
+		void SetActiveBookmark(Bookmark bookmark, bool verifyBookmark) {
+			uiDispatcher.VerifyAccess();
+			currentLabels = null;
+			if (activeBookmark == bookmark)
+				return;
+			var newBookmark = bookmark;
+			if (newBookmark == null || (verifyBookmark && !viewBookmarkProvider.BookmarksViewOrder.Contains(newBookmark)))
+				newBookmark = viewBookmarkProvider.DefaultBookmark;
+			activeBookmark = newBookmark;
+			viewBookmarkProvider.SetActiveBookmark(activeBookmark);
+			ActiveBookmarkChanged?.Invoke(this, EventArgs.Empty);
 		}
 	}
 }
