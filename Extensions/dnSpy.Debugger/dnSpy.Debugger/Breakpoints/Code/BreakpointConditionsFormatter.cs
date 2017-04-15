@@ -27,7 +27,7 @@ using dnSpy.Debugger.Properties;
 namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class BreakpointConditionsFormatter {
 		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointCondition? condition);
-		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointHitCount? hitCount);
+		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointHitCount? hitCount, int? currentHitCount);
 		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointFilter? filter);
 		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointTrace? trace);
 
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		public override void Write(ITextColorWriter output, DbgCodeBreakpointHitCount? hitCount) {
+		public override void Write(ITextColorWriter output, DbgCodeBreakpointHitCount? hitCount, int? currentHitCount) {
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
 			if (hitCount == null)
@@ -84,6 +84,12 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					Debug.Fail($"Unknown kind: {hitCount.Value.Kind}");
 					break;
 				}
+			}
+			if (currentHitCount != null) {
+				output.WriteSpace();
+				output.Write(BoxedTextColor.Punctuation, "(");
+				WriteArgumentAndText(output, BoxedTextColor.Text, BoxedTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_CurrentHitCountValue, currentHitCount.Value.ToString());
+				output.Write(BoxedTextColor.Punctuation, ")");
 			}
 		}
 

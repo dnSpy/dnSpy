@@ -134,6 +134,12 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// UI thread
+		internal void OnHitCountChanged_UI() {
+			Context.UIDispatcher.VerifyAccess();
+			OnPropertyChanged(nameof(HitCountObject));
+		}
+
+		// UI thread
 		internal void UpdateSettings_UI(DbgCodeBreakpointSettings newSettings) {
 			Context.UIDispatcher.VerifyAccess();
 			var oldSettings = settings;

@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		int codeBreakpointOrder;
 
 		[ImportingConstructor]
-		CodeBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, UIDispatcher uiDispatcher, CodeBreakpointFormatterProvider codeBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService, BreakpointConditionsFormatter breakpointConditionsFormatter, EditValueProviderService editValueProviderService) {
+		CodeBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, UIDispatcher uiDispatcher, CodeBreakpointFormatterProvider codeBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService, BreakpointConditionsFormatter breakpointConditionsFormatter, EditValueProviderService editValueProviderService, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService) {
 			uiDispatcher.VerifyAccess();
 			sbOutput = new StringBuilderTextColorOutput();
 			realAllItems = new List<CodeBreakpointVM>();
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			this.dbgBreakpointLocationFormatterService = dbgBreakpointLocationFormatterService;
 			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			codeBreakpointContext = new CodeBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, breakpointConditionsFormatter, new SearchMatcher(searchColumnDefinitions)) {
+			codeBreakpointContext = new CodeBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, breakpointConditionsFormatter, dbgCodeBreakpointHitCountService, new SearchMatcher(searchColumnDefinitions)) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = codeBreakpointFormatterProvider.Create(),
 			};
@@ -141,6 +141,30 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.CodeBreakpointsWindowWhenHit, "w", dnSpy_Debugger_Resources.Column_WhenHit),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.CodeBreakpointsWindowModule, "m", dnSpy_Debugger_Resources.Column_Module),
 		};
+
+		// DbgManager thread
+		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) =>
+			UI(() => DbgManager_IsDebuggingChanged_UI());
+
+		// UI thread
+		void DbgManager_IsDebuggingChanged_UI() {
+			codeBreakpointContext.UIDispatcher.VerifyAccess();
+			foreach (var vm in realAllItems)
+				vm.OnHitCountChanged_UI();
+		}
+
+		// DbgManager thread
+		void DbgCodeBreakpointHitCountService_HitCountChanged(object sender, DbgHitCountChangedEventArgs e) =>
+			UI(() => DbgCodeBreakpointHitCountService_HitCountChanged_UI(e));
+
+		// UI thread
+		void DbgCodeBreakpointHitCountService_HitCountChanged_UI(DbgHitCountChangedEventArgs e) {
+			codeBreakpointContext.UIDispatcher.VerifyAccess();
+			foreach (var info in e.Breakpoints) {
+				if (bpToVM.TryGetValue(info.Breakpoint, out var vm))
+					vm.OnHitCountChanged_UI();
+			}
+		}
 
 		// UI thread
 		public string GetSearchHelpText() {
@@ -190,6 +214,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				dbgCodeBreakpointsService.Value.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
 				dbgCodeBreakpointsService.Value.BoundBreakpointsMessageChanged += DbgCodeBreakpointsService_BoundBreakpointsMessageChanged;
+				dbgManager.Value.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
+				codeBreakpointContext.DbgCodeBreakpointHitCountService.HitCountChanged += DbgCodeBreakpointHitCountService_HitCountChanged;
 				var breakpoints = dbgCodeBreakpointsService.Value.Breakpoints;
 				if (breakpoints.Length > 0)
 					UI(() => AddItems_UI(breakpoints));
@@ -198,6 +224,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				dbgCodeBreakpointsService.Value.BreakpointsChanged -= DbgCodeBreakpointsService_BreakpointsChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified -= DbgCodeBreakpointsService_BreakpointsModified;
 				dbgCodeBreakpointsService.Value.BoundBreakpointsMessageChanged -= DbgCodeBreakpointsService_BoundBreakpointsMessageChanged;
+				dbgManager.Value.IsDebuggingChanged -= DbgManager_IsDebuggingChanged;
+				codeBreakpointContext.DbgCodeBreakpointHitCountService.HitCountChanged -= DbgCodeBreakpointHitCountService_HitCountChanged;
 				UI(() => RemoveAllCodeBreakpoints_UI());
 			}
 		}

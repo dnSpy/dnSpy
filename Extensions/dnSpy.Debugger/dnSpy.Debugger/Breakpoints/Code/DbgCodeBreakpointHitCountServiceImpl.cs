@@ -28,10 +28,12 @@ using dnSpy.Debugger.Impl;
 namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class DbgCodeBreakpointHitCountService2 : DbgCodeBreakpointHitCountService {
 		public abstract int Hit_DbgThread(DbgCodeBreakpoint breakpoint);
+		public abstract int? GetHitCountIfDebugging(DbgCodeBreakpoint breakpoint);
 	}
 
 	[Export(typeof(DbgCodeBreakpointHitCountService))]
 	[Export(typeof(DbgCodeBreakpointHitCountService2))]
+	[ExportDbgManagerStartListener]
 	sealed class DbgCodeBreakpointHitCountServiceImpl : DbgCodeBreakpointHitCountService2, IDbgManagerStartListener {
 		public override event EventHandler<DbgHitCountChangedEventArgs> HitCountChanged;
 
@@ -39,6 +41,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		readonly DbgDispatcher dbgDispatcher;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		Dictionary<DbgCodeBreakpoint, int> bpToHitCount;
+		DbgManager dbgManager;
 
 		[ImportingConstructor]
 		DbgCodeBreakpointHitCountServiceImpl(DbgDispatcher dbgDispatcher, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) {
@@ -48,7 +51,11 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			bpToHitCount = new Dictionary<DbgCodeBreakpoint, int>();
 		}
 
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
+			lock (lockObj)
+				this.dbgManager = dbgManager;
+			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
+		}
 
 		void Dbg(Action action) => dbgDispatcher.DispatcherThread.BeginInvoke(action);
 
@@ -69,6 +76,18 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 						bpToHitCount.Remove(bp);
 				}
 			}
+		}
+
+		public override int? GetHitCountIfDebugging(DbgCodeBreakpoint breakpoint) {
+			if (breakpoint == null)
+				throw new ArgumentNullException(nameof(breakpoint));
+			lock (lockObj) {
+				if (dbgManager?.IsDebugging != true)
+					return null;
+				if (bpToHitCount.TryGetValue(breakpoint, out var hitCount))
+					return hitCount;
+			}
+			return 0;
 		}
 
 		public override int GetHitCount(DbgCodeBreakpoint breakpoint) {

@@ -1773,4 +1773,7 @@ Are you sure you want to expand it?</value>
   <data name="EditLabelsTitle" xml:space="preserve">
     <value>Edit Labels</value>
   </data>
+  <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
+    <value>currently {0}</value>
+  </data>
 </root>

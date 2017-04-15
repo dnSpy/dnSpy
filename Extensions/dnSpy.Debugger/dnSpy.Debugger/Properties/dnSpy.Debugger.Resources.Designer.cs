@@ -349,6 +349,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to currently {0}.
+        /// </summary>
+        public static string Breakpoint_HitCount_CurrentHitCountValue {
+            get {
+                return ResourceManager.GetString("Breakpoint_HitCount_CurrentHitCountValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to when hit count is a multiple of {0}.
         /// </summary>
         public static string Breakpoint_HitCount_HitCountIsAMultipleOf {
