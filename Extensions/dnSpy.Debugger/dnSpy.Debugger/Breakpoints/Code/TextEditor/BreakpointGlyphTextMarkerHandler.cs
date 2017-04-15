@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				if (breakpoint.HitCount != null) {
 					output.WriteLine();
 					output.Write(BoxedTextColor.Text, INDENTATION);
-					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.HitCount.Value, dbgCodeBreakpointHitCountService.GetHitCountIfDebugging(breakpoint));
+					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.HitCount.Value, dbgCodeBreakpointHitCountService.GetHitCount(breakpoint));
 				}
 
 				if (breakpoint.Filter != null) {

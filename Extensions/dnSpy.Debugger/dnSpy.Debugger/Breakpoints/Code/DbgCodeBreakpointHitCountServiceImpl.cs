@@ -28,7 +28,6 @@ using dnSpy.Debugger.Impl;
 namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class DbgCodeBreakpointHitCountService2 : DbgCodeBreakpointHitCountService {
 		public abstract int Hit_DbgThread(DbgCodeBreakpoint breakpoint);
-		public abstract int? GetHitCountIfDebugging(DbgCodeBreakpoint breakpoint);
 	}
 
 	[Export(typeof(DbgCodeBreakpointHitCountService))]
@@ -78,22 +77,12 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		public override int? GetHitCountIfDebugging(DbgCodeBreakpoint breakpoint) {
+		public override int? GetHitCount(DbgCodeBreakpoint breakpoint) {
 			if (breakpoint == null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			lock (lockObj) {
 				if (dbgManager?.IsDebugging != true)
 					return null;
-				if (bpToHitCount.TryGetValue(breakpoint, out var hitCount))
-					return hitCount;
-			}
-			return 0;
-		}
-
-		public override int GetHitCount(DbgCodeBreakpoint breakpoint) {
-			if (breakpoint == null)
-				throw new ArgumentNullException(nameof(breakpoint));
-			lock (lockObj) {
 				if (bpToHitCount.TryGetValue(breakpoint, out var hitCount))
 					return hitCount;
 			}

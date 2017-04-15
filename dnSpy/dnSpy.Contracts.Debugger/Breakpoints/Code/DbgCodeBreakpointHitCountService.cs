@@ -31,11 +31,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public abstract event EventHandler<DbgHitCountChangedEventArgs> HitCountChanged;
 
 		/// <summary>
-		/// Gets the hit count
+		/// Gets the hit count or null if we're not debugging
 		/// </summary>
 		/// <param name="breakpoint">Breakpoint</param>
 		/// <returns></returns>
-		public abstract int GetHitCount(DbgCodeBreakpoint breakpoint);
+		public abstract int? GetHitCount(DbgCodeBreakpoint breakpoint);
 
 		/// <summary>
 		/// Resets the hit count
