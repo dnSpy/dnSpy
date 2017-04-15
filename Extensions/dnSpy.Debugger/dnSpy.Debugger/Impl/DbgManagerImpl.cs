@@ -431,10 +431,12 @@ namespace dnSpy.Debugger.Impl {
 					if (info.Exception != null)
 						objectsToClose.Add(info.Exception);
 					engines.Remove(info);
+					raiseIsDebuggingChanged = engines.Count == 0;
 					info.ObjectFactory?.Dispose();
 				}
+				else
+					raiseIsDebuggingChanged = false;
 				process = info?.Process;
-				raiseIsDebuggingChanged = engines.Count == 0;
 				if (raiseIsDebuggingChanged) {
 					Debug.Assert(debuggingContext != null);
 					debuggingContextToClose = debuggingContext;

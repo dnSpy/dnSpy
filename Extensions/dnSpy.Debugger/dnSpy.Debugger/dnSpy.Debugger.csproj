@@ -53,6 +53,7 @@
     <Compile Include="Breakpoints\Code\CondChecker\TracepointMessageCreator.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterService.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializerService.cs" />
+    <Compile Include="Breakpoints\Code\DbgCodeBreakpointHitCountServiceImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointSerializerService.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsServiceImpl.cs" />
