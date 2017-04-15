@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointTrace? trace);
 
 		public abstract void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointCondition condition);
-		public abstract void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointHitCount hitCount);
+		public abstract void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointHitCount hitCount, int? currentHitCount);
 		public abstract void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointFilter filter);
 		public abstract void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointTrace trace);
 	}
@@ -85,6 +85,10 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					break;
 				}
 			}
+			WriteCurrentHitCountValue(output, currentHitCount);
+		}
+
+		void WriteCurrentHitCountValue(ITextColorWriter output, int? currentHitCount) {
 			if (currentHitCount != null) {
 				output.WriteSpace();
 				output.Write(BoxedTextColor.Punctuation, "(");
@@ -155,7 +159,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		public override void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointHitCount hitCount) {
+		public override void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointHitCount hitCount, int? currentHitCount) {
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
 			var defaultColor = BoxedTextColor.Text;
@@ -176,6 +180,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				Debug.Fail($"Unknown kind: {hitCount.Kind}");
 				break;
 			}
+			WriteCurrentHitCountValue(output, currentHitCount);
 		}
 
 		public override void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointFilter filter) {

@@ -47,12 +47,14 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 
 		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
 		readonly BreakpointConditionsFormatter breakpointConditionsFormatter;
+		readonly DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService;
 		readonly IEnumerable<Lazy<BreakpointGlyphFormatter, IBreakpointGlyphFormatterMetadata>> breakpointGlyphFormatters;
 
 		[ImportingConstructor]
-		BreakpointGlyphTextMarkerHandlerImpl(Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, BreakpointConditionsFormatter breakpointConditionsFormatter, [ImportMany] IEnumerable<Lazy<BreakpointGlyphFormatter, IBreakpointGlyphFormatterMetadata>> breakpointGlyphFormatters) {
+		BreakpointGlyphTextMarkerHandlerImpl(Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, BreakpointConditionsFormatter breakpointConditionsFormatter, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService, [ImportMany] IEnumerable<Lazy<BreakpointGlyphFormatter, IBreakpointGlyphFormatterMetadata>> breakpointGlyphFormatters) {
 			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
 			this.breakpointConditionsFormatter = breakpointConditionsFormatter;
+			this.dbgCodeBreakpointHitCountService = dbgCodeBreakpointHitCountService;
 			this.breakpointGlyphFormatters = breakpointGlyphFormatters.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
@@ -95,7 +97,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				if (breakpoint.HitCount != null) {
 					output.WriteLine();
 					output.Write(BoxedTextColor.Text, INDENTATION);
-					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.HitCount.Value);
+					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.HitCount.Value, dbgCodeBreakpointHitCountService.GetHitCountIfDebugging(breakpoint));
 				}
 
 				if (breakpoint.Filter != null) {
