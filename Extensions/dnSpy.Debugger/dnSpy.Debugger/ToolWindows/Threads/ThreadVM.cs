@@ -109,30 +109,6 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 		string categoryText;
 
-		public string Name {
-			get {
-				if (userName != null)
-					return userName;
-
-				var threadName = Thread.Name;
-				if (threadName != null)
-					return threadName;
-
-				if (Thread.Kind == PredefinedThreadKinds.Main)
-					return dnSpy_Debugger_Resources.ThreadType_Main;
-
-				return null;
-			}
-			private set {
-				if (userName == value)
-					return;
-				userName = value;
-				Thread.GetOrCreateData<ThreadState>().UserName = userName;
-				OnPropertyChanged(nameof(NameObject));
-			}
-		}
-		string userName;
-
 		public ThreadPriority Priority {
 			get {
 				if (hThread == null)
@@ -155,10 +131,6 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 		ulong? affinityMask;
 
-		sealed class ThreadState {
-			public string UserName { get; set; }
-		}
-
 		public IEditableValue NameEditableValue { get; }
 		public IEditValueProvider NameEditValueProvider { get; }
 
@@ -171,11 +143,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
 			NameEditValueProvider = nameEditValueProvider ?? throw new ArgumentNullException(nameof(nameEditValueProvider));
-			NameEditableValue = new EditableValueImpl(() => Name, s => Name = s);
+			NameEditableValue = new EditableValueImpl(() => Thread.HasName() ? Thread.UIName : string.Empty, s => Thread.UIName = s);
 			this.threadCategoryService = threadCategoryService ?? throw new ArgumentNullException(nameof(threadCategoryService));
 			initializeThreadCategory = true;
-			if (thread.TryGetData<ThreadState>(out var threadState))
-				userName = threadState.UserName;
 			thread.PropertyChanged += DbgThread_PropertyChanged;
 		}
 
@@ -300,6 +270,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				break;
 
 			case nameof(DbgThread.Name):
+				break;
+
+			case nameof(DbgThread.UIName):
 				OnPropertyChanged(nameof(NameObject));
 				break;
 

@@ -593,7 +593,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		string GetName_UI(ThreadVM vm) {
 			Debug.Assert(threadContext.UIDispatcher.CheckAccess());
 			sbOutput.Reset();
-			threadContext.Formatter.WriteName(sbOutput, vm);
+			threadContext.Formatter.WriteName(sbOutput, vm.Thread);
 			return sbOutput.ToString();
 		}
 

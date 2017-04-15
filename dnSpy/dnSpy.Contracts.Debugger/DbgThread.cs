@@ -67,6 +67,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract string Name { get; }
 
 		/// <summary>
+		/// Gets the thread name shown in the UI
+		/// </summary>
+		public abstract string UIName { get; set; }
+
+		/// <summary>
 		/// Gets the suspended count. It's 0 if the thread isn't suspended, and greater than zero if it's suspended.
 		/// </summary>
 		public abstract int SuspendedCount { get; }
@@ -75,6 +80,12 @@ namespace dnSpy.Contracts.Debugger {
 		/// Thread state
 		/// </summary>
 		public abstract ReadOnlyCollection<DbgStateInfo> State { get; }
+
+		/// <summary>
+		/// Returns true if the thread has a name
+		/// </summary>
+		/// <returns></returns>
+		public abstract bool HasName();
 
 		/// <summary>
 		/// Freezes the thread

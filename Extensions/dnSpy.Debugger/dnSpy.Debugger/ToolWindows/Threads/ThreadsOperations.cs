@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteCategoryText(output, vm);
 				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteName(output, vm);
+				formatter.WriteName(output, vm.Thread);
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteLocation(output, vm.Thread);
 				output.Write(BoxedTextColor.Text, "\t");

@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Debugger.Native;
+using dnSpy.Debugger.Properties;
 using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Impl {
@@ -32,6 +33,15 @@ namespace dnSpy.Debugger.Impl {
 		public override int Id => id;
 		public override string Name => name;
 		public override int SuspendedCount => suspendedCount;
+
+		public override string UIName {
+			get {
+				lock (lockObj)
+					return GetUINameNoDefaultName_NoLock() ?? dnSpy_Debugger_Resources.Thread_NoName;
+			}
+			set => DispatcherThread.BeginInvoke(() => WriteUIName_DbgThread(value));
+		}
+		string userName;
 
 		public override ReadOnlyCollection<DbgStateInfo> State {
 			get {
@@ -92,10 +102,17 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void UpdateKind_DbgThread(string kind) {
 			DispatcherThread.VerifyAccess();
-			if (this.kind != kind) {
+			bool raiseEvent, raiseUINameEvent;
+			lock (lockObj) {
+				var oldUIName = GetUINameNoDefaultName_NoLock();
+				raiseEvent = this.kind != kind;
 				this.kind = kind;
-				OnPropertyChanged(nameof(Kind));
+				raiseUINameEvent = oldUIName != GetUINameNoDefaultName_NoLock();
 			}
+			if (raiseEvent)
+				OnPropertyChanged(nameof(Kind));
+			if (raiseUINameEvent)
+				OnPropertyChanged(nameof(UIName));
 		}
 
 		internal void UpdateId_DbgThread(int id) {
@@ -119,10 +136,17 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void UpdateName_DbgThread(string name) {
 			DispatcherThread.VerifyAccess();
-			if (this.name != name) {
+			bool raiseEvent, raiseUINameEvent;
+			lock (lockObj) {
+				var oldUIName = GetUINameNoDefaultName_NoLock();
+				raiseEvent = this.name != name;
 				this.name = name;
-				OnPropertyChanged(nameof(Name));
+				raiseUINameEvent = oldUIName != GetUINameNoDefaultName_NoLock();
 			}
+			if (raiseEvent)
+				OnPropertyChanged(nameof(Name));
+			if (raiseUINameEvent)
+				OnPropertyChanged(nameof(UIName));
 		}
 
 		internal void UpdateSuspendedCount_DbgThread(int suspendedCount) {
@@ -170,6 +194,35 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Freeze() => runtime.Freeze(this);
 		public override void Thaw() => runtime.Thaw(this);
+
+		public override bool HasName() {
+			lock (lockObj)
+				return GetUINameNoDefaultName_NoLock() != null;
+		}
+
+		void WriteUIName_DbgThread(string newUserName) {
+			DispatcherThread.VerifyAccess();
+			lock (lockObj) {
+				if (newUserName == userName)
+					return;
+				userName = newUserName;
+			}
+			OnPropertyChanged(nameof(UIName));
+		}
+
+		string GetUINameNoDefaultName_NoLock() {
+			if (userName != null)
+				return userName;
+
+			var threadName = name;
+			if (threadName != null)
+				return threadName;
+
+			if (kind == PredefinedThreadKinds.Main)
+				return dnSpy_Debugger_Resources.ThreadType_Main;
+
+			return null;
+		}
 
 		protected override void CloseCore() {
 			DispatcherThread.VerifyAccess();

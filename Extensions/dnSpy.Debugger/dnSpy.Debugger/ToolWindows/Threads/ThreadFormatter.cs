@@ -79,12 +79,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 
-		public void WriteName(ITextColorWriter output, ThreadVM vm) {
-			var name = vm.Name;
-			if (name == null)
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Thread_NoName);
-			else
-				output.Write(NameColor, FormatterUtils.FilterName(name, maxThreadName));
+		public void WriteName(ITextColorWriter output, DbgThread thread) {
+			var color = thread.HasName() ? NameColor : BoxedTextColor.Text;
+			output.Write(color, FormatterUtils.FilterName(thread.UIName, maxThreadName));
 		}
 		// Make sure these fields are in sync
 		static readonly object NameColor = BoxedTextColor.String;

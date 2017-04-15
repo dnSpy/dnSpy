@@ -194,18 +194,11 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		void WriteThreadName() {
-			var name = GetThreadName();
+			var name = thread?.UIName;
 			if (name == null)
 				WriteError();
 			else
 				Write(name);
-		}
-
-		string GetThreadName() {
-			if (thread == null)
-				return null;
-			//TODO: Should be identical to the name shown in the threads window
-			return thread.Name;
 		}
 
 		void WriteExpressionValue(string exprString) {
