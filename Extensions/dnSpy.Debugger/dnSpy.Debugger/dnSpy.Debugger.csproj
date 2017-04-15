@@ -45,6 +45,11 @@
     <Compile Include="Breakpoints\Code\BreakpointsSerializer.cs" />
     <Compile Include="Breakpoints\Code\CodeBreakpointDisplaySettingsBase.cs" />
     <Compile Include="Breakpoints\Code\CodeBreakpointsListSettings.cs" />
+    <Compile Include="Breakpoints\Code\CondChecker\BreakpointBreakChecker.cs" />
+    <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointConditionChecker.cs" />
+    <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointFilterChecker.cs" />
+    <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointHitCountChecker.cs" />
+    <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointTraceMessagePrinter.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterService.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializerService.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointImpl.cs" />
