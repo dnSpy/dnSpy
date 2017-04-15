@@ -31,23 +31,21 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 	[Export(typeof(DbgCodeBreakpointTraceMessagePrinter))]
 	sealed class DbgCodeBreakpointTraceMessagePrinterImpl : DbgCodeBreakpointTraceMessagePrinter {
+		readonly TracepointMessageCreator tracepointMessageCreator;
 		readonly Lazy<ITracepointMessageListener>[] tracepointMessageListeners;
 
 		[ImportingConstructor]
-		DbgCodeBreakpointTraceMessagePrinterImpl([ImportMany] IEnumerable<Lazy<ITracepointMessageListener>> tracepointMessageListeners) =>
+		DbgCodeBreakpointTraceMessagePrinterImpl(TracepointMessageCreator tracepointMessageCreator, [ImportMany] IEnumerable<Lazy<ITracepointMessageListener>> tracepointMessageListeners) {
+			this.tracepointMessageCreator = tracepointMessageCreator;
 			this.tracepointMessageListeners = tracepointMessageListeners.ToArray();
+		}
 
 		public override void Print(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace) {
 			if (tracepointMessageListeners.Length != 0) {
-				var message = CreateTracepointMessage(boundBreakpoint, thread, trace);
+				var message = tracepointMessageCreator.Create(boundBreakpoint, thread, trace);
 				foreach (var lz in tracepointMessageListeners)
 					lz.Value.Message(message);
 			}
-		}
-
-		string CreateTracepointMessage(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace) {
-			//TODO:
-			return trace.Message;
 		}
 	}
 }
