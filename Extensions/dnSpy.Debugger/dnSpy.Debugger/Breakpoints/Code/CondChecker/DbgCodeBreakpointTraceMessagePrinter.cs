@@ -17,7 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
@@ -28,8 +31,23 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 	[Export(typeof(DbgCodeBreakpointTraceMessagePrinter))]
 	sealed class DbgCodeBreakpointTraceMessagePrinterImpl : DbgCodeBreakpointTraceMessagePrinter {
+		readonly Lazy<ITracepointMessageListener>[] tracepointMessageListeners;
+
+		[ImportingConstructor]
+		DbgCodeBreakpointTraceMessagePrinterImpl(IEnumerable<Lazy<ITracepointMessageListener>> tracepointMessageListeners) =>
+			this.tracepointMessageListeners = tracepointMessageListeners.ToArray();
+
 		public override void Print(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace) {
+			if (tracepointMessageListeners.Length != 0) {
+				var message = CreateTracepointMessage(boundBreakpoint, thread, trace);
+				foreach (var lz in tracepointMessageListeners)
+					lz.Value.Message(message);
+			}
+		}
+
+		string CreateTracepointMessage(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace) {
 			//TODO:
+			return trace.Message;
 		}
 	}
 }
