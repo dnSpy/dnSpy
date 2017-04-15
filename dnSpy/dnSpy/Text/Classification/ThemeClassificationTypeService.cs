@@ -321,6 +321,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SelectedAdvancedTracepointErrorStatementMarker),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BookmarkName),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ActiveBookmarkName),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugLogTrace),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

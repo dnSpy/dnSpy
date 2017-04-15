@@ -316,6 +316,7 @@ namespace dnSpy.Contracts.Text {
 		SelectedAdvancedTracepointErrorStatementMarker,
 		BookmarkName,
 		ActiveBookmarkName,
+		DebugLogTrace,
 
 		/// <summary>
 		/// Must be last
@@ -618,6 +619,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object SelectedAdvancedTracepointErrorStatementMarker = TextColor.SelectedAdvancedTracepointErrorStatementMarker;
 		public static readonly object BookmarkName = TextColor.BookmarkName;
 		public static readonly object ActiveBookmarkName = TextColor.ActiveBookmarkName;
+		public static readonly object DebugLogTrace = TextColor.DebugLogTrace;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -922,6 +924,7 @@ namespace dnSpy.Contracts.Text {
 			SelectedAdvancedTracepointErrorStatementMarker,
 			BookmarkName,
 			ActiveBookmarkName,
+			DebugLogTrace,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

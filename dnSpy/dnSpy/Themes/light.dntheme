@@ -289,5 +289,6 @@
 		<color name="hextooltipservicefield1" bg="#FFDDCCAF" fg="#FFA09480" />
 		<color name="hextooltipservicecurrentfield" bg="#FFB8DB95" fg="#FF74895F" />
 		<color name="listfindmatchhighlight" bg="#FFF4A721" />
+		<color name="debuglogtrace" fg="#FF0000CC" />
 	</colors>
 </theme>

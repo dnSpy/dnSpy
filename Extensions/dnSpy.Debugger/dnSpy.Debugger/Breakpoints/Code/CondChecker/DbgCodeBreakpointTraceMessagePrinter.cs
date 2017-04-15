@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		readonly Lazy<ITracepointMessageListener>[] tracepointMessageListeners;
 
 		[ImportingConstructor]
-		DbgCodeBreakpointTraceMessagePrinterImpl(IEnumerable<Lazy<ITracepointMessageListener>> tracepointMessageListeners) =>
+		DbgCodeBreakpointTraceMessagePrinterImpl([ImportMany] IEnumerable<Lazy<ITracepointMessageListener>> tracepointMessageListeners) =>
 			this.tracepointMessageListeners = tracepointMessageListeners.ToArray();
 
 		public override void Print(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace) {

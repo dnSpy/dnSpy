@@ -314,6 +314,7 @@ namespace dnSpy.Contracts.Themes {
 		SelectedAdvancedTracepointErrorStatementMarker,
 		BookmarkName,
 		ActiveBookmarkName,
+		DebugLogTrace,
 
 		// Must be last in this group
 		LastNR,

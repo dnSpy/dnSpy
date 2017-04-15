@@ -752,6 +752,11 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition DebugLogTimestampClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogTrace)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugLogTraceClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.LineNumber)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition LineNumberClassificationTypeDefinition;
@@ -2751,6 +2756,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class DebugLogTimestamp : ThemeClassificationFormatDefinition {
 			DebugLogTimestamp() : base(TextColor.DebugLogTimestamp) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogTrace)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogTrace)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class DebugLogTrace : ThemeClassificationFormatDefinition {
+			DebugLogTrace() : base(TextColor.DebugLogTrace) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

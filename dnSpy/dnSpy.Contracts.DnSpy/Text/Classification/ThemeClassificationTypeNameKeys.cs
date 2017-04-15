@@ -1476,5 +1476,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.ActiveBookmarkName"/>
 		/// </summary>
 		public const string ActiveBookmarkName = nameof(ActiveBookmarkName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugLogTrace"/>
+		/// </summary>
+		public const string DebugLogTrace = nameof(DebugLogTrace);
 	}
 }

@@ -24,6 +24,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Exceptions;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
@@ -40,8 +41,10 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		void IOutputServiceListener2.Initialize(IOutputService outputService) => ((IOutputServiceListener2)outputLogger).Initialize(outputService);
 	}
 
-	[ExportDbgManagerStartListener, Export(typeof(OutputLogger))]
-	sealed class OutputLogger : IOutputServiceListener2, IDbgManagerStartListener {
+	[ExportDbgManagerStartListener]
+	[Export(typeof(OutputLogger))]
+	[Export(typeof(ITracepointMessageListener))]
+	sealed class OutputLogger : IOutputServiceListener2, IDbgManagerStartListener, ITracepointMessageListener {
 		public static readonly Guid GUID_OUTPUT_LOGGER_DEBUG = new Guid("7B6E802A-B58C-4689-877E-3358FCDCEFAC");
 
 		readonly UIDispatcher uiDispatcher;
@@ -103,6 +106,9 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				Initialize_UI();
 			textPane.Write(color, text);
 		}
+
+		void ITracepointMessageListener.Message(string message) =>
+			UI(() => WriteLine_UI(BoxedTextColor.DebugLogTrace, message));
 
 		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
 			switch (e.Kind) {
