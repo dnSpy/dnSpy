@@ -712,15 +712,17 @@ namespace dnSpy.Debugger.Impl {
 			bool pauseProgram = pauseDefaultValue;
 			RaiseMessage_DbgThread(e, ref pauseProgram);
 			if (!pauseProgram) {
-				lock (lockObj)
+				lock (lockObj) {
 					pauseProgram |= breakAllHelper != null;
+					if (!pauseProgram)
+						pauseProgram |= GetEngineInfo_NoLock(engine).EngineState == EngineState.Paused;
+				}
 			}
 			if (pauseProgram) {
 				DbgProcessState processState;
 				DbgProcessImpl process;
 				lock (lockObj) {
 					var info = GetEngineInfo_NoLock(engine);
-					pauseProgram |= info.EngineState == EngineState.Paused;
 					info.EngineState = EngineState.Paused;
 					Debug.Assert(info.Exception == null);
 					info.Exception?.Close(DispatcherThread);
