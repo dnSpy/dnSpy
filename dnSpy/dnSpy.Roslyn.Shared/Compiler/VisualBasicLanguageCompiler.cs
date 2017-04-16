@@ -58,7 +58,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override string ContentType => ContentTypes.VisualBasicRoslyn;
 		protected override string LanguageName => LanguageNames.VisualBasic;
 		protected override CompilationOptions CompilationOptions => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-		protected override ParseOptions ParseOptions => new VisualBasicParseOptions();
+		protected override ParseOptions ParseOptions => new VisualBasicParseOptions(languageVersion: LanguageVersion.Latest);
 		protected override string FileExtension => ".vb";
 		protected override string AppearanceCategory => AppearanceCategoryConstants.TextEditor;
 		public override IEnumerable<string> RequiredAssemblyReferences => requiredAssemblyReferences;

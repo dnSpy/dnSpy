@@ -63,7 +63,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 
 		protected override bool IsCompleteSubmission(string text) =>
 			SyntaxFactory.IsCompleteSubmission(SyntaxFactory.ParseSyntaxTree(text, parseOptions));
-		static readonly VisualBasicParseOptions parseOptions = new VisualBasicParseOptions(kind: SourceCodeKind.Script);
+		static readonly VisualBasicParseOptions parseOptions = new VisualBasicParseOptions(languageVersion: LanguageVersion.Latest, kind: SourceCodeKind.Script);
 
 		protected override SyntaxTree CreateSyntaxTree(string code, CancellationToken cancellationToken) =>
 			SyntaxFactory.ParseSyntaxTree(code, parseOptions, cancellationToken: cancellationToken);

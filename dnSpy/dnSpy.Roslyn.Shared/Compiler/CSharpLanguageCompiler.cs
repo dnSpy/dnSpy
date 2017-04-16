@@ -58,7 +58,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override string ContentType => ContentTypes.CSharpRoslyn;
 		protected override string LanguageName => LanguageNames.CSharp;
 		protected override CompilationOptions CompilationOptions => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
-		protected override ParseOptions ParseOptions => new CSharpParseOptions();
+		protected override ParseOptions ParseOptions => new CSharpParseOptions(languageVersion: LanguageVersion.Latest);
 		protected override string FileExtension => ".cs";
 		protected override string AppearanceCategory => AppearanceCategoryConstants.TextEditor;
 		public override IEnumerable<string> RequiredAssemblyReferences => Array.Empty<string>();
