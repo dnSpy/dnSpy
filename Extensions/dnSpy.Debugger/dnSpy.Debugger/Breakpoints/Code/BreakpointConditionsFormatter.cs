@@ -90,9 +90,9 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		void WriteCurrentHitCountValue(ITextColorWriter output, int? currentHitCount) {
 			if (currentHitCount != null) {
-				output.WriteSpace();
+				output.Write(BoxedTextColor.Comment, " ");
 				output.Write(BoxedTextColor.Punctuation, "(");
-				WriteArgumentAndText(output, BoxedTextColor.Text, BoxedTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_CurrentHitCountValue, currentHitCount.Value.ToString());
+				WriteArgumentAndText(output, BoxedTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_CurrentHitCountValue, currentHitCount.Value.ToString());
 				output.Write(BoxedTextColor.Punctuation, ")");
 			}
 		}
