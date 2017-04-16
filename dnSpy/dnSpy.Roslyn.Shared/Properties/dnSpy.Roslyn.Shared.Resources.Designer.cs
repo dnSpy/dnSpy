@@ -133,6 +133,24 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Compiled expression threw an exception.
+        /// </summary>
+        internal static string FilterExpressionEvaluator_CompiledExpressionThrewAnException {
+            get {
+                return ResourceManager.GetString("FilterExpressionEvaluator_CompiledExpressionThrewAnException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expression is invalid.
+        /// </summary>
+        internal static string FilterExpressionEvaluator_InvalidExpression {
+            get {
+                return ResourceManager.GetString("FilterExpressionEvaluator_InvalidExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Interfaces.
         /// </summary>
         internal static string InterfacesToolTip {

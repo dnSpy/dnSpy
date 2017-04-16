@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				dbgFilterEEVariableProvider.Initialize(boundBreakpoint.Process, thread);
 				var res = dbgFilterExpressionEvaluator.Value.Evaluate(expr, dbgFilterEEVariableProvider);
 				if (res.HasError)
-					return false;
+					return false;//TODO: Notify user too, but only at most once per breakpoint
 				return res.Result;
 			}
 			finally {
