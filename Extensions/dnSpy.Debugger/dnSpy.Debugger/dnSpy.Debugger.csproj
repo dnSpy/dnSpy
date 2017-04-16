@@ -58,6 +58,7 @@
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointSerializerService.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsServiceImpl.cs" />
     <Compile Include="Breakpoints\Code\ITracepointMessageListener.cs" />
+    <Compile Include="Breakpoints\Code\ResetHitCount.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphPopupControl.xaml.cs">
       <DependentUpon>BreakpointGlyphPopupControl.xaml</DependentUpon>
     </Compile>
