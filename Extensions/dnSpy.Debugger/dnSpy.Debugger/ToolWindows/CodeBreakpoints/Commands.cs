@@ -136,6 +136,17 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public override bool IsEnabled(CodeBreakpointsCtxMenuContext context) => context.Operations.CanEditLabels;
 	}
 
+	[ExportMenuItem(Header = "res:ResetBreakpointHitCountCommand", Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_SETTINGS, Order = 20)]
+	sealed class ResetHitCountBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
+		[ImportingConstructor]
+		ResetHitCountBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)
+			: base(codeBreakpointesContent) {
+		}
+
+		public override void Execute(CodeBreakpointsCtxMenuContext context) => context.Operations.ResetHitCount();
+		public override bool IsEnabled(CodeBreakpointsCtxMenuContext context) => context.Operations.CanResetHitCount;
+	}
+
 	[ExportMenuItem(Header = "res:RemoveBreakpointCommand", InputGestureText = "res:ShortCutKeyDelete", Icon = DsImagesAttribute.Cancel, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CMDS1, Order = 0)]
 	sealed class RemoveBreakpointBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]

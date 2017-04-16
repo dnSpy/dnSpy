@@ -3568,6 +3568,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset Hit Count.
+        /// </summary>
+        public static string ResetBreakpointHitCountCommand {
+            get {
+                return ResourceManager.GetString("ResetBreakpointHitCountCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Restart.
         /// </summary>
         public static string RestartCommand {

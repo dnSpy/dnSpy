@@ -71,6 +71,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public abstract void EditSettings();
 		public abstract bool CanEditLabels { get; }
 		public abstract void EditLabels();
+		public abstract bool CanResetHitCount { get; }
+		public abstract void ResetHitCount();
 		public abstract bool ShowTokens { get; set; }
 		public abstract bool ShowModuleNames { get; set; }
 		public abstract bool ShowParameterTypes { get; set; }
@@ -93,6 +95,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
 		readonly Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
+		readonly Lazy<DbgCodeBreakpointHitCountService> dbgCodeBreakpointHitCountService;
 
 		BulkObservableCollection<CodeBreakpointVM> AllItems => codeBreakpointsVM.AllItems;
 		ObservableCollection<CodeBreakpointVM> SelectedItems => codeBreakpointsVM.SelectedItems;
@@ -102,7 +105,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		IEnumerable<CodeBreakpointVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<ReferenceNavigatorService> referenceNavigatorService) {
+		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCodeBreakpointHitCountService> dbgCodeBreakpointHitCountService) {
 			this.codeBreakpointsVM = codeBreakpointsVM;
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
@@ -113,6 +116,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
 			this.dbgCodeBreakpointSerializerService = dbgCodeBreakpointSerializerService;
 			this.referenceNavigatorService = referenceNavigatorService;
+			this.dbgCodeBreakpointHitCountService = dbgCodeBreakpointHitCountService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -277,6 +281,13 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 					}).ToArray());
 				}
 			}
+		}
+
+		public override bool CanResetHitCount => SelectedItems.Count > 0;
+		public override void ResetHitCount() {
+			if (!CanResetHitCount)
+				return;
+			dbgCodeBreakpointHitCountService.Value.Reset(SelectedItems.Select(a => a.CodeBreakpoint).ToArray());
 		}
 
 		public override bool ShowTokens {

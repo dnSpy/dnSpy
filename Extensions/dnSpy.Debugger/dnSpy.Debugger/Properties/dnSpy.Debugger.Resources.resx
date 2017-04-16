@@ -1776,4 +1776,7 @@ Are you sure you want to expand it?</value>
   <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
     <value>currently {0}</value>
   </data>
+  <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
+    <value>Reset Hit Count</value>
+  </data>
 </root>
