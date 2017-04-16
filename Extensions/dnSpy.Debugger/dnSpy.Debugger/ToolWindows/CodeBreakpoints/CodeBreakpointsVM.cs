@@ -23,6 +23,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
+using System.Timers;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
@@ -143,14 +145,52 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		};
 
 		// DbgManager thread
-		void DbgCodeBreakpointHitCountService_HitCountChanged(object sender, DbgHitCountChangedEventArgs e) =>
-			UI(() => DbgCodeBreakpointHitCountService_HitCountChanged_UI(e));
+		void DbgCodeBreakpointHitCountService_HitCountChanged(object sender, DbgHitCountChangedEventArgs e) {
+			bool start;
+			lock (pendingHitCountChanged) {
+				start = pendingHitCountChanged.Count == 0 && e.Breakpoints.Count != 0;
+				foreach (var info in e.Breakpoints)
+					pendingHitCountChanged.Add(info.Breakpoint);
+				if (start) {
+					StopPendingHitCountChangedTimer_NoLock();
+					pendingHitCountChangedTimer = new Timer(HITCOUNT_CHANGED_DELAY_MS);
+					pendingHitCountChangedTimer.Elapsed += PendingHitCountChangedTimer_Elapsed;
+					pendingHitCountChangedTimer.Start();
+				}
+			}
+		}
+		const double HITCOUNT_CHANGED_DELAY_MS = 250;
+		readonly HashSet<DbgCodeBreakpoint> pendingHitCountChanged = new HashSet<DbgCodeBreakpoint>();
+		Timer pendingHitCountChangedTimer;
+
+		void StopPendingHitCountChangedTimer_NoLock() {
+			pendingHitCountChangedTimer?.Stop();
+			pendingHitCountChangedTimer?.Dispose();
+			pendingHitCountChangedTimer = null;
+		}
+
+		void StopAndClearPendingHitCountChangedTimer() {
+			lock (pendingHitCountChanged) {
+				pendingHitCountChanged.Clear();
+				StopPendingHitCountChangedTimer_NoLock();
+			}
+		}
+
+		void PendingHitCountChangedTimer_Elapsed(object sender, ElapsedEventArgs e) =>
+			UI(() => DbgCodeBreakpointHitCountService_HitCountChanged_UI());
 
 		// UI thread
-		void DbgCodeBreakpointHitCountService_HitCountChanged_UI(DbgHitCountChangedEventArgs e) {
+		void DbgCodeBreakpointHitCountService_HitCountChanged_UI() {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
-			foreach (var info in e.Breakpoints) {
-				if (bpToVM.TryGetValue(info.Breakpoint, out var vm))
+			DbgCodeBreakpoint[] breakpoints;
+			lock (pendingHitCountChanged) {
+				StopPendingHitCountChangedTimer_NoLock();
+				breakpoints = pendingHitCountChanged.ToArray();
+				pendingHitCountChanged.Clear();
+			}
+			foreach (var bp in breakpoints) {
+				// Could fail if the breakpoint has been removed
+				if (bpToVM.TryGetValue(bp, out var vm))
 					vm.OnHitCountChanged_UI();
 			}
 		}
@@ -180,6 +220,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		// UI thread
 		void InitializeDebugger_UI(bool enable) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
+			StopAndClearPendingHitCountChangedTimer();
 			ResetSearchSettings();
 			if (enable) {
 				codeBreakpointContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
