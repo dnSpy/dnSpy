@@ -57,6 +57,8 @@
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointHitCountService.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointSettings.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsService.cs" />
+    <Compile Include="Breakpoints\Code\FilterExpressionEvaluator\DbgFilterEEVariableProvider.cs" />
+    <Compile Include="Breakpoints\Code\FilterExpressionEvaluator\DbgFilterExpressionEvaluator.cs" />
     <Compile Include="Breakpoints\Code\PredefinedDbgBreakpointLocationTypes.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphFormatter.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphTextMarkerLocationProvider.cs" />
