@@ -81,6 +81,7 @@ namespace dnSpy.Text.Editor {
 			public int SelectedMarkersInDocumentCount {
 				get { return selectedMarkersInDocumentCount; }
 				set {
+					Debug.Assert(value >= 0);
 					if (selectedMarkersInDocumentCount == value)
 						return;
 					var oldValue = selectedMarkersInDocumentCount;
@@ -152,9 +153,10 @@ namespace dnSpy.Text.Editor {
 				for (int i = 0; i < allMarkers.Count; i++) {
 					if (allMarkers[i] == marker) {
 						allMarkers.RemoveAt(i);
-						inDocMarkers.Remove(marker);
-						if (marker.SelectedMarkerTypeName != null)
-							SelectedMarkersInDocumentCount--;
+						if (inDocMarkers.Remove(marker)) {
+							if (marker.SelectedMarkerTypeName != null)
+								SelectedMarkersInDocumentCount--;
+						}
 						return true;
 					}
 				}
@@ -167,9 +169,10 @@ namespace dnSpy.Text.Editor {
 					var marker = allMarkers[i];
 					if (markers.Contains(marker)) {
 						allMarkers.RemoveAt(i);
-						inDocMarkers.Remove(marker);
-						if (marker.SelectedMarkerTypeName != null)
-							SelectedMarkersInDocumentCount--;
+						if (inDocMarkers.Remove(marker)) {
+							if (marker.SelectedMarkerTypeName != null)
+								SelectedMarkersInDocumentCount--;
+						}
 						removed++;
 						if (removed >= markers.Count)
 							break;
