@@ -143,17 +143,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		};
 
 		// DbgManager thread
-		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) =>
-			UI(() => DbgManager_IsDebuggingChanged_UI());
-
-		// UI thread
-		void DbgManager_IsDebuggingChanged_UI() {
-			codeBreakpointContext.UIDispatcher.VerifyAccess();
-			foreach (var vm in realAllItems)
-				vm.OnHitCountChanged_UI();
-		}
-
-		// DbgManager thread
 		void DbgCodeBreakpointHitCountService_HitCountChanged(object sender, DbgHitCountChangedEventArgs e) =>
 			UI(() => DbgCodeBreakpointHitCountService_HitCountChanged_UI(e));
 
@@ -214,7 +203,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				dbgCodeBreakpointsService.Value.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
 				dbgCodeBreakpointsService.Value.BoundBreakpointsMessageChanged += DbgCodeBreakpointsService_BoundBreakpointsMessageChanged;
-				dbgManager.Value.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 				codeBreakpointContext.DbgCodeBreakpointHitCountService.HitCountChanged += DbgCodeBreakpointHitCountService_HitCountChanged;
 				var breakpoints = dbgCodeBreakpointsService.Value.Breakpoints;
 				if (breakpoints.Length > 0)
@@ -224,7 +212,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				dbgCodeBreakpointsService.Value.BreakpointsChanged -= DbgCodeBreakpointsService_BreakpointsChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified -= DbgCodeBreakpointsService_BreakpointsModified;
 				dbgCodeBreakpointsService.Value.BoundBreakpointsMessageChanged -= DbgCodeBreakpointsService_BoundBreakpointsMessageChanged;
-				dbgManager.Value.IsDebuggingChanged -= DbgManager_IsDebuggingChanged;
 				codeBreakpointContext.DbgCodeBreakpointHitCountService.HitCountChanged -= DbgCodeBreakpointHitCountService_HitCountChanged;
 				UI(() => RemoveAllCodeBreakpoints_UI());
 			}

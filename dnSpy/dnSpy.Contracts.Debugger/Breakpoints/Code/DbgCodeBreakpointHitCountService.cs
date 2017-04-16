@@ -60,16 +60,16 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public DbgCodeBreakpoint Breakpoint { get; }
 
 		/// <summary>
-		/// Gets the current hit count
+		/// Gets the current hit count. It's null if we're not debugging
 		/// </summary>
-		public int HitCount { get; }
+		public int? HitCount { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="breakpoint">Breakpoint</param>
-		/// <param name="hitCount">Current hit count</param>
-		public DbgCodeBreakpointAndHitCount(DbgCodeBreakpoint breakpoint, int hitCount) {
+		/// <param name="hitCount">Current hit count or null if we're not debugging</param>
+		public DbgCodeBreakpointAndHitCount(DbgCodeBreakpoint breakpoint, int? hitCount) {
 			Breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));
 			HitCount = hitCount;
 		}

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Impl;
@@ -60,12 +61,19 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
-			if (dbgManager.IsDebugging)
+			DbgCodeBreakpointAndHitCount[] infos;
+			if (dbgManager.IsDebugging) {
 				dbgCodeBreakpointsService.Value.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
-			else
+				infos = dbgCodeBreakpointsService.Value.Breakpoints.Select(a => new DbgCodeBreakpointAndHitCount(a, 0)).ToArray();
+			}
+			else {
 				dbgCodeBreakpointsService.Value.BreakpointsChanged -= DbgCodeBreakpointsService_BreakpointsChanged;
+				infos = dbgCodeBreakpointsService.Value.Breakpoints.Select(a => new DbgCodeBreakpointAndHitCount(a, null)).ToArray();
+			}
 			lock (lockObj)
 				bpToHitCount = new Dictionary<DbgCodeBreakpoint, int>();
+			if (infos.Length > 0)
+				HitCountChanged?.Invoke(this, new DbgHitCountChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpointAndHitCount>(infos)));
 		}
 
 		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
@@ -114,11 +122,12 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			dbgDispatcher.VerifyAccess();
 			List<DbgCodeBreakpointAndHitCount> updated = null;
 			lock (lockObj) {
+				var defaultHitCount = dbgManager?.IsDebugging == true ? 0 : (int?)null;
 				foreach (var bp in breakpoints) {
 					if (bpToHitCount.Remove(bp)) {
 						if (updated == null)
 							updated = new List<DbgCodeBreakpointAndHitCount>();
-						updated.Add(new DbgCodeBreakpointAndHitCount(bp, 0));
+						updated.Add(new DbgCodeBreakpointAndHitCount(bp, defaultHitCount));
 					}
 				}
 			}
