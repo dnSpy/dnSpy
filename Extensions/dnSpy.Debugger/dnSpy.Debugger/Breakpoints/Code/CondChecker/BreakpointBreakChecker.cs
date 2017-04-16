@@ -25,13 +25,15 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	[ExportDbgManagerStartListener]
 	sealed class BreakpointBreakChecker : IDbgManagerStartListener {
+		readonly Lazy<DbgCodeBreakpointHitCountService2> dbgCodeBreakpointHitCountService;
 		readonly Lazy<DbgCodeBreakpointFilterChecker> dbgCodeBreakpointFilterChecker;
 		readonly Lazy<DbgCodeBreakpointHitCountChecker> dbgCodeBreakpointHitCountChecker;
 		readonly Lazy<DbgCodeBreakpointConditionChecker> dbgCodeBreakpointConditionChecker;
 		readonly Lazy<DbgCodeBreakpointTraceMessagePrinter> dbgCodeBreakpointTraceMessagePrinter;
 
 		[ImportingConstructor]
-		BreakpointBreakChecker(Lazy<DbgCodeBreakpointFilterChecker> dbgCodeBreakpointFilterChecker, Lazy<DbgCodeBreakpointHitCountChecker> dbgCodeBreakpointHitCountChecker, Lazy<DbgCodeBreakpointConditionChecker> dbgCodeBreakpointConditionChecker, Lazy<DbgCodeBreakpointTraceMessagePrinter> dbgCodeBreakpointTraceMessagePrinter) {
+		BreakpointBreakChecker(Lazy<DbgCodeBreakpointHitCountService2> dbgCodeBreakpointHitCountService, Lazy<DbgCodeBreakpointFilterChecker> dbgCodeBreakpointFilterChecker, Lazy<DbgCodeBreakpointHitCountChecker> dbgCodeBreakpointHitCountChecker, Lazy<DbgCodeBreakpointConditionChecker> dbgCodeBreakpointConditionChecker, Lazy<DbgCodeBreakpointTraceMessagePrinter> dbgCodeBreakpointTraceMessagePrinter) {
+			this.dbgCodeBreakpointHitCountService = dbgCodeBreakpointHitCountService;
 			this.dbgCodeBreakpointFilterChecker = dbgCodeBreakpointFilterChecker;
 			this.dbgCodeBreakpointHitCountChecker = dbgCodeBreakpointHitCountChecker;
 			this.dbgCodeBreakpointConditionChecker = dbgCodeBreakpointConditionChecker;
@@ -64,8 +66,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					return false;
 			}
 
+			// This counts as a hit, even if there's no 'hit count' option
+			int currentHitCount = dbgCodeBreakpointHitCountService.Value.Hit_DbgThread(boundBreakpoint.Breakpoint);
 			if (settings.HitCount is DbgCodeBreakpointHitCount hitCount) {
-				if (!dbgCodeBreakpointHitCountChecker.Value.ShouldBreak(boundBreakpoint, thread, hitCount))
+				if (!dbgCodeBreakpointHitCountChecker.Value.ShouldBreak(boundBreakpoint, thread, hitCount, currentHitCount))
 					return false;
 			}
 
@@ -78,7 +82,6 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				dbgCodeBreakpointTraceMessagePrinter.Value.Print(boundBreakpoint, thread, trace);
 				return !trace.Continue;
 			}
-
 			return true;
 		}
 	}
