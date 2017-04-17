@@ -38,6 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AppMenus.cs" />
+    <Compile Include="BaseVMComparer.cs" />
     <Compile Include="Breakpoints\Breakpoint.cs" />
     <Compile Include="Breakpoints\BreakpointColumnConverter.cs" />
     <Compile Include="Breakpoints\BreakpointContext.cs" />
@@ -139,6 +140,8 @@
     <Compile Include="IMModules\MemoryModuleDefFile.cs" />
     <Compile Include="IMModules\TreeViewUpdater.cs" />
     <Compile Include="IModuleIdHolder.cs" />
+    <Compile Include="ListViewExt.cs" />
+    <Compile Include="ListViewSorter.cs" />
     <Compile Include="Locals\AskUser.cs" />
     <Compile Include="Locals\Commands.cs" />
     <Compile Include="Locals\EditValueControl.xaml.cs">
@@ -153,6 +156,7 @@
     <Compile Include="Locals\LocalsToolWindowContent.cs" />
     <Compile Include="Locals\LocalsVM.cs" />
     <Compile Include="Locals\MethodLocalProvider.cs" />
+    <Compile Include="Locals\ValueComparer.cs" />
     <Compile Include="Locals\ValueContext.cs" />
     <Compile Include="Locals\ValuePrinter.cs" />
     <Compile Include="Locals\ValueStringParser.cs" />
@@ -181,6 +185,7 @@
     <Compile Include="ModuleLoader.cs" />
     <Compile Include="Modules\Commands.cs" />
     <Compile Include="Modules\ModuleColumnConverter.cs" />
+    <Compile Include="Modules\ModuleComparer.cs" />
     <Compile Include="Modules\ModulePrinter.cs" />
     <Compile Include="Modules\ModulesContent.cs" />
     <Compile Include="Modules\ModulesControl.xaml.cs">
@@ -267,6 +272,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
+    <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>

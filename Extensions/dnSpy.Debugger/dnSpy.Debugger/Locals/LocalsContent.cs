@@ -42,6 +42,7 @@ namespace dnSpy.Debugger.Locals {
 		public ListView ListView => localsControl.ListView;
 		public ILocalsVM LocalsVM => vmLocals;
 
+		readonly ListViewSorter<ValueVM> sorter;
 		readonly LocalsControl localsControl;
 		readonly ILocalsVM vmLocals;
 
@@ -49,10 +50,16 @@ namespace dnSpy.Debugger.Locals {
 		LocalsContent(IWpfCommandService wpfCommandService, ILocalsVM localsVM) {
 			localsControl = new LocalsControl();
 			vmLocals = localsVM;
+			sorter = ListViewSorter<ValueVM>.Create(localsControl.ListView, new ValueComparer());
 			localsControl.DataContext = vmLocals;
+			localsControl.ListView.AddColumnHeaderClickHandler(LocalsListView_ColumnHeaderClick);
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_CONTROL, localsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW, localsControl.ListView);
+		}
+
+		void LocalsListView_ColumnHeaderClick(ListView listView, string propertyName) {
+			sorter.SortBy(propertyName);
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(localsControl.ListView);
