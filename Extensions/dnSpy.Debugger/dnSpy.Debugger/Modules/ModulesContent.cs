@@ -46,6 +46,7 @@ namespace dnSpy.Debugger.Modules {
 		public ListView ListView => modulesControl.ListView;
 		public IModulesVM ModulesVM => vmModules;
 
+		readonly ListViewSorter<ModuleVM> sorter;
 		readonly ModulesControl modulesControl;
 		readonly IModulesVM vmModules;
 		readonly IDocumentTabService documentTabService;
@@ -56,14 +57,20 @@ namespace dnSpy.Debugger.Modules {
 		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService) {
 			modulesControl = new ModulesControl();
 			vmModules = modulesVM;
+			sorter = ListViewSorter<ModuleVM>.Create(modulesControl.ListView, new ModuleComparer());
 			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
 			this.inMemoryModuleService = inMemoryModuleService;
 			modulesControl.DataContext = vmModules;
 			modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
+			modulesControl.ListView.AddColumnHeaderClickHandler(ModulesListView_ColumnHeaderClick);
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW, modulesControl.ListView);
+		}
+
+		void ModulesListView_ColumnHeaderClick(ListView listView, string propertyName) {
+			sorter.SortBy(propertyName);
 		}
 
 		void ModulesControl_ModulesListViewDoubleClick(object sender, EventArgs e) {

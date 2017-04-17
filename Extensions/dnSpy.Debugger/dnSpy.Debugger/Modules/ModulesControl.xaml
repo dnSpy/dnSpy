@@ -26,6 +26,7 @@
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
+             xmlns:dbg="clr-namespace:dnSpy.Debugger"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
     <Grid>
@@ -62,77 +63,77 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}" dbg:ListViewExt.ModelProperty="NameObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=Name}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_OptimizedModule}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_OptimizedModule}" dbg:ListViewExt.ModelProperty="OptimizedObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding OptimizedObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=Optimized}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_DynamicModule}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_DynamicModule}" dbg:ListViewExt.ModelProperty="DynamicObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding DynamicObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=Dynamic}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_InMemoryModule}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_InMemoryModule}" dbg:ListViewExt.ModelProperty="InMemoryObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding InMemoryObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=InMemory}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Order}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Order}" dbg:ListViewExt.ModelProperty="OrderObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding OrderObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=Order}" HorizontalAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Version}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Version}" dbg:ListViewExt.ModelProperty="VersionObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding VersionObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=Version}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Timestamp}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Timestamp}" dbg:ListViewExt.ModelProperty="TimestampObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding TimestampObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=Timestamp}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Address}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Address}" dbg:ListViewExt.ModelProperty="AddressObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding AddressObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=Address}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}" dbg:ListViewExt.ModelProperty="ProcessObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ProcessObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=Process}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}" dbg:ListViewExt.ModelProperty="AppDomainObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding AppDomainObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=AppDomain}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Path}">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Path}" dbg:ListViewExt.ModelProperty="PathObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding PathObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}, ConverterParameter=Path}" />
