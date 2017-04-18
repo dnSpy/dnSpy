@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Timers;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Impl;
@@ -54,12 +55,21 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			lock (lockObj)
 				this.dbgManager = dbgManager;
+			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 		}
 
 		void Dbg(Action action) => dbgDispatcher.DispatcherThread.BeginInvoke(action);
 
+		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
+			var dbgManager = (DbgManager)sender;
+			// Make sure it gets updated immediately without a delay
+			if (dbgManager.IsRunning == false)
+				FlushPendingHitCountChanged_DbgThread();
+		}
+
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
+			StopAndClearPendingHitCountChangedTimer();
 			var dbgManager = (DbgManager)sender;
 			DbgCodeBreakpointAndHitCount[] infos;
 			if (dbgManager.IsDebugging) {
@@ -88,12 +98,15 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		public override int? GetHitCount(DbgCodeBreakpoint breakpoint) {
 			if (breakpoint == null)
 				throw new ArgumentNullException(nameof(breakpoint));
-			lock (lockObj) {
-				if (dbgManager?.IsDebugging != true)
-					return null;
-				if (bpToHitCount.TryGetValue(breakpoint, out var hitCount))
-					return hitCount;
-			}
+			lock (lockObj)
+				return GetHitCount_NoLock_DbgThread(breakpoint);
+		}
+
+		int? GetHitCount_NoLock_DbgThread(DbgCodeBreakpoint breakpoint) {
+			if (dbgManager?.IsDebugging != true)
+				return null;
+			if (bpToHitCount.TryGetValue(breakpoint, out var hitCount))
+				return hitCount;
 			return 0;
 		}
 
@@ -108,8 +121,58 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				hitCount++;
 				bpToHitCount[breakpoint] = hitCount;
 			}
-			HitCountChanged?.Invoke(this, new DbgHitCountChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpointAndHitCount>(new[] { new DbgCodeBreakpointAndHitCount(breakpoint, hitCount) })));
+
+			bool start;
+			lock (lockObj) {
+				start = dbgManager.IsRunning == false || pendingHitCountChanged.Count == 0;
+				pendingHitCountChanged.Add(breakpoint);
+				if (start) {
+					StopPendingHitCountChangedTimer_NoLock();
+					if (dbgManager.IsRunning == false)
+						Dbg(() => FlushPendingHitCountChanged_DbgThread());
+					else {
+						pendingHitCountChangedTimer = new Timer(HITCOUNT_CHANGED_DELAY_MS);
+						pendingHitCountChangedTimer.Elapsed += PendingHitCountChangedTimer_Elapsed;
+						pendingHitCountChangedTimer.Start();
+					}
+				}
+			}
+
 			return hitCount;
+		}
+		const double HITCOUNT_CHANGED_DELAY_MS = 250;
+		readonly HashSet<DbgCodeBreakpoint> pendingHitCountChanged = new HashSet<DbgCodeBreakpoint>();
+		Timer pendingHitCountChangedTimer;
+
+		void StopPendingHitCountChangedTimer_NoLock() {
+			pendingHitCountChangedTimer?.Stop();
+			pendingHitCountChangedTimer?.Dispose();
+			pendingHitCountChangedTimer = null;
+		}
+
+		void StopAndClearPendingHitCountChangedTimer() {
+			lock (lockObj) {
+				pendingHitCountChanged.Clear();
+				StopPendingHitCountChangedTimer_NoLock();
+			}
+		}
+
+		void PendingHitCountChangedTimer_Elapsed(object sender, ElapsedEventArgs e) {
+			lock (lockObj)
+				pendingHitCountChangedTimer?.Stop();
+			Dbg(() => FlushPendingHitCountChanged_DbgThread());
+		}
+
+		void FlushPendingHitCountChanged_DbgThread() {
+			dbgDispatcher.VerifyAccess();
+			DbgCodeBreakpointAndHitCount[] breakpoints;
+			lock (lockObj) {
+				StopPendingHitCountChangedTimer_NoLock();
+				breakpoints = pendingHitCountChanged.Where(a => !a.IsClosed).Select(a => new DbgCodeBreakpointAndHitCount(a, GetHitCount_NoLock_DbgThread(a))).ToArray();
+				pendingHitCountChanged.Clear();
+			}
+			if (breakpoints.Length > 0)
+				HitCountChanged?.Invoke(this, new DbgHitCountChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpointAndHitCount>(breakpoints)));
 		}
 
 		public override void Reset(DbgCodeBreakpoint[] breakpoints) {
@@ -121,7 +184,9 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		void Reset_DbgThread(DbgCodeBreakpoint[] breakpoints) {
 			dbgDispatcher.VerifyAccess();
 			List<DbgCodeBreakpointAndHitCount> updated = null;
+			bool raisePendingEvent;
 			lock (lockObj) {
+				raisePendingEvent = pendingHitCountChanged.Count != 0;
 				var defaultHitCount = dbgManager?.IsDebugging == true ? 0 : (int?)null;
 				foreach (var bp in breakpoints) {
 					if (bpToHitCount.Remove(bp)) {
@@ -131,6 +196,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					}
 				}
 			}
+			if (raisePendingEvent)
+				FlushPendingHitCountChanged_DbgThread();
 			if (updated != null)
 				HitCountChanged?.Invoke(this, new DbgHitCountChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpointAndHitCount>(updated)));
 		}
