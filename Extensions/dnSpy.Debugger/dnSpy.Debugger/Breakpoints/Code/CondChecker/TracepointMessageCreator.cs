@@ -102,6 +102,25 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 							textPos += 2;
 							break;
 						}
+						else {
+							bool ok = true;
+							switch (c) {
+							case 'a': Write('\a'); break;
+							case 'b': Write('\b'); break;
+							case 'f': Write('\f'); break;
+							case 'n': Write('\n'); break;
+							case 'r': Write('\r'); break;
+							case 't': Write('\t'); break;
+							case 'v': Write('\v'); break;
+							default:
+								ok = false;
+								break;
+							}
+							if (ok) {
+								textPos += 2;
+								break;
+							}
+						}
 					}
 					goto default;
 
