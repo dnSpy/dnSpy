@@ -177,12 +177,11 @@ namespace dnSpy.Bookmarks.Navigator {
 		void SetActiveBookmark(Bookmark bookmark, bool verifyBookmark) {
 			uiDispatcher.VerifyAccess();
 			currentLabels = null;
+			if (bookmark == null || (verifyBookmark && !viewBookmarkProvider.BookmarksViewOrder.Contains(bookmark)))
+				bookmark = viewBookmarkProvider.DefaultBookmark;
 			if (activeBookmark == bookmark)
 				return;
-			var newBookmark = bookmark;
-			if (newBookmark == null || (verifyBookmark && !viewBookmarkProvider.BookmarksViewOrder.Contains(newBookmark)))
-				newBookmark = viewBookmarkProvider.DefaultBookmark;
-			activeBookmark = newBookmark;
+			activeBookmark = bookmark;
 			viewBookmarkProvider.SetActiveBookmark(activeBookmark);
 			ActiveBookmarkChanged?.Invoke(this, EventArgs.Empty);
 		}
