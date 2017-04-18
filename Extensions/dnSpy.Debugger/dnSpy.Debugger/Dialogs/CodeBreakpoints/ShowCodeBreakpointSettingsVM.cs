@@ -19,13 +19,16 @@
 
 using System;
 using System.Text;
+using System.Timers;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Debugger.Breakpoints.Code.CondChecker;
 using dnSpy.Debugger.Properties;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
-	sealed class ShowCodeBreakpointSettingsVM : ViewModelBase {
+	sealed class ShowCodeBreakpointSettingsVM : ViewModelBase, IDisposable {
 		public ICommand TracepointMessageHelpCommand => new RelayCommand(a => ShowTracepointMessageHelp());
 		public ICommand FilterExpressionHelpCommand => new RelayCommand(a => ShowFilterExpressionHelp());
 
@@ -87,6 +90,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 					return;
 				enableFilter = value;
 				OnPropertyChanged(nameof(EnableFilter));
+				UpdateFilterAndError();
 			}
 		}
 		bool enableFilter;
@@ -98,6 +102,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 					return;
 				filter_Text = value;
 				OnPropertyChanged(nameof(Filter_Text));
+				StartVerifyFilterTimer();
 			}
 		}
 		string filter_Text;
@@ -146,13 +151,19 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 		bool isEnabled;
 
+		readonly UIDispatcher uiDispatcher;
+		readonly Lazy<DbgFilterExpressionEvaluatorService> dbgFilterExpressionEvaluatorService;
 		readonly Action<string> showMessage;
 
-		public ShowCodeBreakpointSettingsVM(DbgCodeBreakpointSettings settings, Action<string> showMessage) {
+		public ShowCodeBreakpointSettingsVM(DbgCodeBreakpointSettings settings, UIDispatcher uiDispatcher, Lazy<DbgFilterExpressionEvaluatorService> dbgFilterExpressionEvaluatorService, Action<string> showMessage) {
+			this.uiDispatcher = uiDispatcher ?? throw new ArgumentNullException(nameof(uiDispatcher));
+			this.dbgFilterExpressionEvaluatorService = dbgFilterExpressionEvaluatorService ?? throw new ArgumentNullException(nameof(dbgFilterExpressionEvaluatorService));
 			this.showMessage = showMessage ?? throw new ArgumentNullException(nameof(showMessage));
-			HitCount_Text = new Int32VM(a => HasErrorUpdated()) { UseDecimal = true };
+			HitCount_Text = new Int32VM(a => HasErrorUpdated()) { UseDecimal = true, Min = 1 };
 			Initialize(settings);
 		}
+
+		void UI(Action action) => uiDispatcher.UI(action);
 
 		void Initialize(DbgCodeBreakpointSettings settings) {
 			IsEnabled = settings.IsEnabled;
@@ -179,7 +190,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 			if (hitCount == null) {
 				EnableHitCount = false;
 				HitCount_Items.SelectedIndex = 0;
-				HitCount_Text.Value = 0;
+				HitCount_Text.Value = 1;
 			}
 			else {
 				EnableHitCount = true;
@@ -284,6 +295,56 @@ $TNAME");
 			showMessage(sb.ToString());
 		}
 
-		public override bool HasError => EnableHitCount && HitCount_Text.HasError;
+		protected override string Verify(string columnName) {
+			if (columnName == nameof(Filter_Text))
+				return EnableFilter ? lastFilterError : null;
+			return base.Verify(columnName);
+		}
+
+		void VerifyFilterExpression() {
+			var newFilterError = dbgFilterExpressionEvaluatorService.Value.IsValidExpression(Filter_Text ?? string.Empty);
+			bool updateHasError = lastFilterError != newFilterError;
+			lastFilterError = newFilterError;
+			if (updateHasError)
+				UpdateFilterAndError();
+		}
+
+		void UpdateFilterAndError() {
+			OnPropertyChanged(nameof(HasFilterExpressionError));
+			OnPropertyChanged(nameof(FilterExpressionError));
+			OnPropertyChanged(nameof(Filter_Text));
+			HasErrorUpdated();
+		}
+
+		public bool HasFilterExpressionError => EnableFilter && lastFilterError != null;
+		public string FilterExpressionError => EnableFilter ? lastFilterError : null;
+		string lastFilterError;
+
+		void StartVerifyFilterTimer() {
+			if (verifyFilterTimer != null)
+				return;
+			verifyFilterTimer = new Timer(1000);
+			verifyFilterTimer.Elapsed += VerifyFilterTimer_Elapsed;
+			verifyFilterTimer.Start();
+		}
+		Timer verifyFilterTimer;
+
+		void StopVerifyFilterTimer() {
+			verifyFilterTimer?.Stop();
+			verifyFilterTimer?.Dispose();
+			verifyFilterTimer = null;
+		}
+
+		void VerifyFilterTimer_Elapsed(object sender, ElapsedEventArgs e) => UI(VerifyFilterTimer_Elapsed_UI);
+		void VerifyFilterTimer_Elapsed_UI() {
+			StopVerifyFilterTimer();
+			VerifyFilterExpression();
+		}
+
+		public void Dispose() => StopVerifyFilterTimer();
+
+		public override bool HasError =>
+			(EnableHitCount && HitCount_Text.HasError) ||
+			(EnableFilter && !string.IsNullOrEmpty(Verify(nameof(Filter_Text))));
 	}
 }

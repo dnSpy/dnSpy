@@ -22,6 +22,8 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Debugger.Breakpoints.Code.CondChecker;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 	abstract class ShowCodeBreakpointSettingsService {
@@ -33,25 +35,30 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 	[Export(typeof(ShowCodeBreakpointSettingsService))]
 	sealed class ShowCodeBreakpointSettingsServiceImpl : ShowCodeBreakpointSettingsService {
 		readonly IAppWindow appWindow;
+		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
+		readonly Lazy<DbgFilterExpressionEvaluatorService> dbgFilterExpressionEvaluatorService;
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		ShowCodeBreakpointSettingsServiceImpl(IAppWindow appWindow, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, IMessageBoxService messageBoxService) {
+		ShowCodeBreakpointSettingsServiceImpl(IAppWindow appWindow, UIDispatcher uiDispatcher, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgFilterExpressionEvaluatorService> dbgFilterExpressionEvaluatorService, IMessageBoxService messageBoxService) {
 			this.appWindow = appWindow;
+			this.uiDispatcher = uiDispatcher;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
+			this.dbgFilterExpressionEvaluatorService = dbgFilterExpressionEvaluatorService;
 			this.messageBoxService = messageBoxService;
 		}
 
 		public override DbgCodeBreakpointSettings? Show(DbgCodeBreakpointSettings settings) {
 			var dlg = new ShowCodeBreakpointSettingsDlg();
-			var vm = new ShowCodeBreakpointSettingsVM(settings, s => messageBoxService.Show(s, ownerWindow: dlg));
-			dlg.DataContext = vm;
-			dlg.Owner = appWindow.MainWindow;
-			var res = dlg.ShowDialog();
-			if (res != true)
-				return null;
-			return vm.GetSettings();
+			using (var vm = new ShowCodeBreakpointSettingsVM(settings, uiDispatcher, dbgFilterExpressionEvaluatorService, s => messageBoxService.Show(s, ownerWindow: dlg))) {
+				dlg.DataContext = vm;
+				dlg.Owner = appWindow.MainWindow;
+				var res = dlg.ShowDialog();
+				if (res != true)
+					return null;
+				return vm.GetSettings();
+			}
 		}
 
 		public override void Edit(DbgCodeBreakpoint[] breakpoints) {

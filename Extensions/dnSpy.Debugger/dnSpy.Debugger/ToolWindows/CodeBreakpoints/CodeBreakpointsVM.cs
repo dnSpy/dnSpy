@@ -180,8 +180,11 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			}
 		}
 
-		void PendingHitCountChangedTimer_Elapsed(object sender, ElapsedEventArgs e) =>
+		void PendingHitCountChangedTimer_Elapsed(object sender, ElapsedEventArgs e) {
+			lock (pendingHitCountChanged)
+				pendingHitCountChangedTimer?.Stop();
 			UI(() => DbgCodeBreakpointHitCountService_HitCountChanged_UI());
+		}
 
 		void FlushPendingHitCountChanged() {
 			bool start;

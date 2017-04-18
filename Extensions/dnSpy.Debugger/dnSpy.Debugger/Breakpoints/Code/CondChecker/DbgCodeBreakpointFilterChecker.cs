@@ -33,13 +33,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 	[Export(typeof(DbgCodeBreakpointFilterChecker))]
 	sealed class DbgCodeBreakpointFilterCheckerImpl : DbgCodeBreakpointFilterChecker {
-		readonly Lazy<DbgFilterExpressionEvaluator, IDbgFilterExpressionEvaluatorMetadata> dbgFilterExpressionEvaluator;
+		readonly DbgFilterExpressionEvaluatorService dbgFilterExpressionEvaluatorService;
 		readonly DbgFilterEEVariableProviderImpl dbgFilterEEVariableProvider;
 
 		[ImportingConstructor]
-		DbgCodeBreakpointFilterCheckerImpl([ImportMany] IEnumerable<Lazy<DbgFilterExpressionEvaluator, IDbgFilterExpressionEvaluatorMetadata>> dbgFilterExpressionEvaluators) {
+		DbgCodeBreakpointFilterCheckerImpl(DbgFilterExpressionEvaluatorService dbgFilterExpressionEvaluatorService) {
+			this.dbgFilterExpressionEvaluatorService = dbgFilterExpressionEvaluatorService;
 			dbgFilterEEVariableProvider = new DbgFilterEEVariableProviderImpl();
-			dbgFilterExpressionEvaluator = dbgFilterExpressionEvaluators.OrderBy(a => a.Metadata.Order).FirstOrDefault();
 		}
 
 		sealed class DbgFilterEEVariableProviderImpl : DbgFilterEEVariableProvider {
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		public override bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointFilter filter) {
 			// If there's no FEE, assume expression matches everything
-			if (dbgFilterExpressionEvaluator == null)
+			if (!dbgFilterExpressionEvaluatorService.HasExpressionEvaluator)
 				return true;
 
 			var expr = filter.Filter;
@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 			try {
 				dbgFilterEEVariableProvider.Initialize(boundBreakpoint.Process, thread);
-				var res = dbgFilterExpressionEvaluator.Value.Evaluate(expr, dbgFilterEEVariableProvider);
+				var res = dbgFilterExpressionEvaluatorService.Evaluate(expr, dbgFilterEEVariableProvider);
 				if (res.HasError)
 					return false;//TODO: Notify user too, but only at most once per breakpoint
 				return res.Result;

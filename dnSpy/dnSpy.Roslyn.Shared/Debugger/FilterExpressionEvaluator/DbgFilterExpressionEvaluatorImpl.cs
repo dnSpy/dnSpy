@@ -159,6 +159,7 @@ namespace System {
 			var filterExprClass = CSharpSyntaxTree.ParseText(@"
 static class " + FilterExpressionClassName + @" {
 	public static bool " + EvalMethodName + @"(string MachineName, int ProcessId, string ProcessName, int ThreadId, string ThreadName) =>
+#line 1
 " + expr + @";
 }
 ", parseOptions);
