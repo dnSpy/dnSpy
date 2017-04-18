@@ -67,6 +67,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				new KeywordInfo("CALLERMODULE2", WriteCallerModule2),
 				new KeywordInfo("CALLERMODULE1", WriteCallerModule1),
 				new KeywordInfo("CALLERMODULE", WriteCallerModule1),
+				new KeywordInfo("CALLEROFFSET5", WriteCallerOffset5),
+				new KeywordInfo("CALLEROFFSET4", WriteCallerOffset4),
+				new KeywordInfo("CALLEROFFSET3", WriteCallerOffset3),
+				new KeywordInfo("CALLEROFFSET2", WriteCallerOffset2),
+				new KeywordInfo("CALLEROFFSET1", WriteCallerOffset1),
+				new KeywordInfo("CALLEROFFSET", WriteCallerOffset1),
 				new KeywordInfo("CALLERTOKEN5", WriteCallerToken5),
 				new KeywordInfo("CALLERTOKEN4", WriteCallerToken4),
 				new KeywordInfo("CALLERTOKEN3", WriteCallerToken3),
@@ -279,6 +285,31 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		void WriteCallerModule5() {
 			//TODO: Write module of caller #5
+			WriteError();
+		}
+
+		void WriteCallerOffset1() {
+			//TODO: Write caller #1 method offset
+			WriteError();
+		}
+
+		void WriteCallerOffset2() {
+			//TODO: Write caller #2 method offset
+			WriteError();
+		}
+
+		void WriteCallerOffset3() {
+			//TODO: Write caller #3 method offset
+			WriteError();
+		}
+
+		void WriteCallerOffset4() {
+			//TODO: Write caller #4 method offset
+			WriteError();
+		}
+
+		void WriteCallerOffset5() {
+			//TODO: Write caller #5 method offset
 			WriteError();
 		}
 
