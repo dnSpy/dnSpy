@@ -1779,4 +1779,25 @@ Are you sure you want to expand it?</value>
   <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
     <value>Reset Hit Count</value>
   </data>
+  <data name="HelpToolTip" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="FilterExpression_AllVariables" xml:space="preserve">
+    <value>Variables that can be used:</value>
+  </data>
+  <data name="FilterExpression_Example" xml:space="preserve">
+    <value>Example: {0}</value>
+  </data>
+  <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
+    <value>Escape sequences: {0}</value>
+  </data>
+  <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
+    <value>Use {xxx} to evaluate expression xxx</value>
+  </data>
+  <data name="TracepointMessage_Example" xml:space="preserve">
+    <value>Example: {0}</value>
+  </data>
+  <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
+    <value>The following keywords can be used:</value>
+  </data>
 </root>

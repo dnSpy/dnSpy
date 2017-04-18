@@ -17,12 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Text;
+using System.Windows.Input;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 	sealed class ShowCodeBreakpointSettingsVM : ViewModelBase {
+		public ICommand TracepointMessageHelpCommand => new RelayCommand(a => ShowTracepointMessageHelp());
+		public ICommand FilterExpressionHelpCommand => new RelayCommand(a => ShowFilterExpressionHelp());
+
 		public bool EnableConditionalExpression {
 			get => enableConditionalExpression;
 			set {
@@ -140,7 +147,10 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 		bool isEnabled;
 
-		public ShowCodeBreakpointSettingsVM(DbgCodeBreakpointSettings settings) {
+		readonly IMessageBoxService messageBoxService;
+
+		public ShowCodeBreakpointSettingsVM(DbgCodeBreakpointSettings settings, IMessageBoxService messageBoxService) {
+			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
 			HitCount_Text = new Int32VM(a => HasErrorUpdated()) { UseDecimal = true };
 			Initialize(settings);
 		}
@@ -233,6 +243,46 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 			if (!EnableTrace)
 				return null;
 			return new DbgCodeBreakpointTrace(Trace_Text ?? string.Empty, Trace_Continue);
+		}
+
+		void ShowFilterExpressionHelp() {
+			var sb = new StringBuilder();
+			sb.AppendLine(string.Format(dnSpy_Debugger_Resources.FilterExpression_Example, @"ProcessId == 0x1234 && ThreadName == ""Main Thread"""));
+			sb.AppendLine();
+			sb.AppendLine(dnSpy_Debugger_Resources.FilterExpression_AllVariables);
+			sb.Append(@"
+MachineName
+ProcessId
+ProcessName
+ThreadId
+ThreadName");
+			messageBoxService.Show(sb.ToString());
+		}
+
+		void ShowTracepointMessageHelp() {
+			var sb = new StringBuilder();
+			sb.AppendLine(string.Format(dnSpy_Debugger_Resources.TracepointMessage_Example, @"$CALLERTOKEN: string: {s}"));
+			sb.AppendLine();
+			sb.AppendLine(dnSpy_Debugger_Resources.TracepointMessage_EvaluateMessage);
+			sb.AppendLine();
+			sb.AppendLine(string.Format(dnSpy_Debugger_Resources.TracepointMessage_EscapeSequences, @"\\ \$ \{ \a \b \f \n \r \t \v"));
+			sb.AppendLine();
+			sb.AppendLine(dnSpy_Debugger_Resources.TracepointMessage_ValidKeywords);
+			sb.Append(@"
+$ADDRESS
+$ADID
+$BPADDR
+$CALLER $CALLER1 $CALLER2 $CALLER3 $CALLER4 $CALLER5
+$CALLERMODULE $CALLERMODULE1 $CALLERMODULE2 $CALLERMODULE3 $CALLERMODULE4 $CALLERMODULE5
+$CALLERTOKEN $CALLERTOKEN1 $CALLERTOKEN2 $CALLERTOKEN3 $CALLERTOKEN4 $CALLERTOKEN5
+$CALLSTACK $CALLSTACK5 $CALLSTACK10
+$FUNCTION $FUNCTION1 $FUNCTION2 $FUNCTION3 $FUNCTION4 $FUNCTION5
+$MID
+$PID
+$PNAME
+$TID
+$TNAME");
+			messageBoxService.Show(sb.ToString());
 		}
 
 		public override bool HasError => EnableHitCount && HitCount_Text.HasError;

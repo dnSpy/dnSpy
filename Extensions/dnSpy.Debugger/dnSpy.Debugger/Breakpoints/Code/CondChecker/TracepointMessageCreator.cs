@@ -51,6 +51,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			output = new StringBuilder();
 			keywords = new KeywordInfo[] {
 				// NOTE: order is important, first match is picked
+				// NOTE: When updating this table, also update the help message created by ShowCodeBreakpointSettingsVM
 				new KeywordInfo("ADDRESS", WriteAddress),
 				new KeywordInfo("ADID", WriteAppDomainId),
 				new KeywordInfo("BPADDR", WriteBreakpointAddress),
@@ -140,6 +141,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 							case 'r': Write('\r'); break;
 							case 't': Write('\t'); break;
 							case 'v': Write('\v'); break;
+							// If you add more cases, update help message in ShowCodeBreakpointSettingsVM
 							default:
 								ok = false;
 								break;

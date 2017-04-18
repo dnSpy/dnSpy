@@ -25,6 +25,7 @@
              mc:Ignorable="d" 
              xmlns:winlocal="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              Width="600"
              Title="{x:Static p:dnSpy_Debugger_Resources.EditBreakpointSettings_Title}"
@@ -40,7 +41,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="5 5 5 0">
+        <Grid Grid.Row="0" Margin="5 5 5 0" img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -51,6 +52,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding EnableConditionalExpression}" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.EditBreakpointSettings_ConditionalExpression}" />
             <ComboBox Grid.Row="0" Grid.Column="1" IsEnabled="{Binding EnableConditionalExpression}" Margin="5 0 0 0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" DisplayMemberPath="Name" ItemsSource="{Binding ConditionalExpression_Items.Items}" SelectedIndex="{Binding ConditionalExpression_Items.SelectedIndex}" />
@@ -62,10 +64,16 @@
 
             <CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding EnableFilter}" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.EditBreakpointSettings_Filter}" />
             <TextBox Grid.Row="2" Grid.Column="2" IsEnabled="{Binding EnableFilter}" Margin="5 5 0 0" Text="{Binding Filter_Text, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="2" Grid.Column="3" Margin="5 0 0 0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding FilterExpressionHelpCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.HelpToolTip}">
+                <img:DsImage ImageReference="{x:Static img:DsImages.StatusHelp}"/>
+            </Button>
 
             <CheckBox Grid.Row="3" Grid.Column="0" IsChecked="{Binding EnableTrace}" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.EditBreakpointSettings_Trace}" />
             <CheckBox Grid.Row="3" Grid.Column="1" IsEnabled="{Binding EnableTrace}" IsChecked="{Binding Trace_Continue}" Margin="5 5 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.EditBreakpointSettings_TraceContinue}" />
             <TextBox Grid.Row="3" Grid.Column="2" IsEnabled="{Binding EnableTrace}" Margin="5 5 0 0" Text="{Binding Trace_Text, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="3" Grid.Column="3" Margin="5 0 0 0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding TracepointMessageHelpCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.HelpToolTip}">
+                <img:DsImage ImageReference="{x:Static img:DsImages.StatusHelp}"/>
+            </Button>
         </Grid>
 
         <Grid Grid.Row="1" Margin="5">

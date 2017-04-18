@@ -2682,6 +2682,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Variables that can be used:.
+        /// </summary>
+        public static string FilterExpression_AllVariables {
+            get {
+                return ResourceManager.GetString("FilterExpression_AllVariables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Example: {0}.
+        /// </summary>
+        public static string FilterExpression_Example {
+            get {
+                return ResourceManager.GetString("FilterExpression_Example", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Find.
         /// </summary>
         public static string FindCommand {
@@ -2795,6 +2813,15 @@ namespace dnSpy.Debugger.Properties {
         public static string GoToSourceCodeCommand {
             get {
                 return ResourceManager.GetString("GoToSourceCodeCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        public static string HelpToolTip {
+            get {
+                return ResourceManager.GetString("HelpToolTip", resourceCulture);
             }
         }
         
@@ -4797,6 +4824,42 @@ namespace dnSpy.Debugger.Properties {
         public static string ToolBarStopDebuggingToolTip {
             get {
                 return ResourceManager.GetString("ToolBarStopDebuggingToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Escape sequences: {0}.
+        /// </summary>
+        public static string TracepointMessage_EscapeSequences {
+            get {
+                return ResourceManager.GetString("TracepointMessage_EscapeSequences", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use {xxx} to evaluate expression xxx.
+        /// </summary>
+        public static string TracepointMessage_EvaluateMessage {
+            get {
+                return ResourceManager.GetString("TracepointMessage_EvaluateMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Example: {0}.
+        /// </summary>
+        public static string TracepointMessage_Example {
+            get {
+                return ResourceManager.GetString("TracepointMessage_Example", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following keywords can be used:.
+        /// </summary>
+        public static string TracepointMessage_ValidKeywords {
+            get {
+                return ResourceManager.GetString("TracepointMessage_ValidKeywords", resourceCulture);
             }
         }
         

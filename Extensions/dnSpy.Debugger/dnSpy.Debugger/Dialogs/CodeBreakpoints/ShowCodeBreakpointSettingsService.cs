@@ -34,16 +34,18 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 	sealed class ShowCodeBreakpointSettingsServiceImpl : ShowCodeBreakpointSettingsService {
 		readonly IAppWindow appWindow;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		ShowCodeBreakpointSettingsServiceImpl(IAppWindow appWindow, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) {
+		ShowCodeBreakpointSettingsServiceImpl(IAppWindow appWindow, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, IMessageBoxService messageBoxService) {
 			this.appWindow = appWindow;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
+			this.messageBoxService = messageBoxService;
 		}
 
 		public override DbgCodeBreakpointSettings? Show(DbgCodeBreakpointSettings settings) {
 			var dlg = new ShowCodeBreakpointSettingsDlg();
-			var vm = new ShowCodeBreakpointSettingsVM(settings);
+			var vm = new ShowCodeBreakpointSettingsVM(settings, messageBoxService);
 			dlg.DataContext = vm;
 			dlg.Owner = appWindow.MainWindow;
 			var res = dlg.ShowDialog();
