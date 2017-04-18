@@ -22,14 +22,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:dnSpy.MainApp"
         xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
         xmlns:p="clr-namespace:dnSpy.Properties"
         mc:Ignorable="d"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-        SizeToContent="Height"
+        SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
-        Title="dnSpy" Width="400">
+        Title="dnSpy" MinWidth="400" MaxWidth="1000">
     <Grid>
         <Grid.Resources>
             <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
