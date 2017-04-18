@@ -133,7 +133,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Compiled expression threw an exception.
+        ///   Looks up a localized string similar to Compiled expression threw an exception: {0}.
         /// </summary>
         internal static string FilterExpressionEvaluator_CompiledExpressionThrewAnException {
             get {

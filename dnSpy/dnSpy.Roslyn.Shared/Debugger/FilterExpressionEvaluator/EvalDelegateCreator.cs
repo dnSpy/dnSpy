@@ -285,6 +285,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 		static bool IsBoolean_StringString(MethodSig sig) {
 			if (sig.RetType.ElementType != ElementType.Boolean)
 				return false;
+			if (sig.GenParamCount != 0)
+				return false;
+			if (sig.ParamsAfterSentinel != null)
+				return false;
 			if (sig.Params.Count != 2)
 				return false;
 			if (sig.Params[0].ElementType != ElementType.String)

@@ -142,7 +142,7 @@
     <value>Fields</value>
   </data>
   <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
-    <value>Compiled expression threw an exception</value>
+    <value>Compiled expression threw an exception: {0}</value>
   </data>
   <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
     <value>Expression is invalid</value>
