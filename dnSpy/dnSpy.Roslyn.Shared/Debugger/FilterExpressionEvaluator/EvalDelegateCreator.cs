@@ -71,6 +71,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 			this.evalMethodName = evalMethodName;
 		}
 
+		static readonly Type[] evalDelegateParamTypes = new Type[] { typeof(string), typeof(int), typeof(string), typeof(int), typeof(string) };
 		public EvalDelegate CreateDelegate() {
 			var type = module.Find(evalClassName, isReflectionName: true);
 			Debug.Assert(type != null);
@@ -83,24 +84,49 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 			if (body.HasExceptionHandlers)
 				return null;
 
-			var dm = new SRE.DynamicMethod("compiled filter expr", typeof(bool), Import(method.MethodSig.Params), typeof(FilterExpressionMethods), skipVisibility: false);
+			Debug.Assert(method.MethodSig.Params.Count == evalDelegateParamTypes.Length);
+			if (method.MethodSig.Params.Count != evalDelegateParamTypes.Length)
+				return null;
+			var dm = new SRE.DynamicMethod("compiled filter expr", typeof(bool), evalDelegateParamTypes, typeof(FilterExpressionMethods), skipVisibility: false);
 			var ilg = dm.GetILGenerator();
-			var labelsDict = CreateLabelsDictionary(body.Instructions, ilg);
 
-			var localsDict = new Dictionary<Local, SRE.LocalBuilder>();
-			foreach (var local in body.Variables) {
-				var lb = ilg.DeclareLocal(Import(local.Type), local.Type.IsPinned);
-				if (local.Index != lb.LocalIndex)
-					return null;
-				if (local.Name != null)
-					lb.SetLocalSymInfo(local.Name);
-				localsDict.Add(local, lb);
+			var labelsDict = new Dictionary<Instruction, SRE.Label>();
+			var instrs = body.Instructions;
+			for (int i = 0; i < instrs.Count; i++) {
+				var instr = instrs[i];
+				switch (instr.Operand) {
+				case Instruction targetInstr:
+					if (!labelsDict.ContainsKey(targetInstr))
+						labelsDict.Add(targetInstr, ilg.DefineLabel());
+					break;
+
+				case IList<Instruction> targetInstrs:
+					foreach (var targetInstr in targetInstrs) {
+						if (!labelsDict.ContainsKey(targetInstr))
+							labelsDict.Add(targetInstr, ilg.DefineLabel());
+					}
+					break;
+				}
+			}
+
+			Dictionary<Local, SRE.LocalBuilder> localsDict = null;
+			if (body.Variables.Count > 0) {
+				localsDict = new Dictionary<Local, SRE.LocalBuilder>(body.Variables.Count);
+				foreach (var local in body.Variables) {
+					var lb = ilg.DeclareLocal(Import(local.Type), local.Type.IsPinned);
+					if (local.Index != lb.LocalIndex)
+						return null;
+					if (local.Name != null)
+						lb.SetLocalSymInfo(local.Name);
+					localsDict.Add(local, lb);
+				}
 			}
 
 			foreach (var instr in body.Instructions) {
 				if (labelsDict.TryGetValue(instr, out var label))
 					ilg.MarkLabel(label);
-				var sreOpCode = GetOpCode(instr.OpCode);
+				if (!toReflectionOpCode.TryGetValue(instr.OpCode, out var sreOpCode))
+					return null;
 				switch (instr.OpCode.OperandType) {
 				case OperandType.InlineBrTarget:
 				case OperandType.ShortInlineBrTarget:
@@ -149,31 +175,38 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 
 				case OperandType.InlineVar:
 				case OperandType.ShortInlineVar:
-					if (IsArgOpCode(instr.OpCode)) {
-						var p = (Parameter)instr.Operand;
-						switch (instr.OpCode.Code) {
-						case Code.Ldarg:
-						case Code.Ldarga:
-						case Code.Starg:
-							if (p.Index > ushort.MaxValue)
-								goto default;
-							ilg.Emit(sreOpCode, (short)p.Index);
-							break;
-
-						case Code.Ldarg_S:
-						case Code.Ldarga_S:
-						case Code.Starg_S:
-							if (p.Index > byte.MaxValue)
-								goto default;
-							ilg.Emit(sreOpCode, (byte)p.Index);
-							break;
-
-						default:
+					Parameter p;
+					switch (instr.OpCode.Code) {
+					case Code.Ldarg:
+					case Code.Ldarga:
+					case Code.Starg:
+						p = (Parameter)instr.Operand;
+						if (p.Index > ushort.MaxValue)
 							return null;
-						}
-					}
-					else
+						ilg.Emit(sreOpCode, (short)p.Index);
+						break;
+
+					case Code.Ldarg_S:
+					case Code.Ldarga_S:
+					case Code.Starg_S:
+						p = (Parameter)instr.Operand;
+						if (p.Index > byte.MaxValue)
+							return null;
+						ilg.Emit(sreOpCode, (byte)p.Index);
+						break;
+
+					case Code.Ldloc:
+					case Code.Ldloca:
+					case Code.Stloc:
+					case Code.Ldloc_S:
+					case Code.Ldloca_S:
+					case Code.Stloc_S:
 						ilg.Emit(sreOpCode, localsDict[(Local)instr.Operand]);
+						break;
+
+					default:
+						return null;
+					}
 					break;
 
 				case OperandType.InlineMethod:
@@ -195,60 +228,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 			}
 
 			return (EvalDelegate)dm.CreateDelegate(typeof(EvalDelegate));
-		}
-
-		static bool IsArgOpCode(OpCode opCode) {
-			switch (opCode.Code) {
-			case Code.Ldarg:
-			case Code.Ldarga:
-			case Code.Starg:
-			case Code.Ldarg_S:
-			case Code.Ldarga_S:
-			case Code.Starg_S:
-				return true;
-			case Code.Ldloc:
-			case Code.Ldloca:
-			case Code.Stloc:
-			case Code.Ldloc_S:
-			case Code.Ldloca_S:
-			case Code.Stloc_S:
-				return false;
-			default:
-				return false;
-			}
-		}
-
-		SRE.OpCode GetOpCode(OpCode opCode) {
-			if (toReflectionOpCode.TryGetValue(opCode, out var sreOpCode))
-				return sreOpCode;
-			throw new EvalDelegateCreatorException();
-		}
-
-		static Dictionary<Instruction, SRE.Label> CreateLabelsDictionary(IList<Instruction> instructions, SRE.ILGenerator ilg) {
-			var dict = new Dictionary<Instruction, SRE.Label>();
-			foreach (var instr in instructions) {
-				switch (instr.Operand) {
-				case Instruction targetInstr:
-					if (!dict.ContainsKey(targetInstr))
-						dict.Add(targetInstr, ilg.DefineLabel());
-					break;
-
-				case IList<Instruction> targetInstrs:
-					foreach (var targetInstr in targetInstrs) {
-						if (!dict.ContainsKey(targetInstr))
-							dict.Add(targetInstr, ilg.DefineLabel());
-					}
-					break;
-				}
-			}
-			return dict;
-		}
-
-		Type[] Import(IList<TypeSig> types) {
-			var importedTypes = new Type[types.Count];
-			for (int i = 0; i < importedTypes.Length; i++)
-				importedTypes[i] = Import(types[i]);
-			return importedTypes;
 		}
 
 		Type Import(TypeSig typeSig) {
