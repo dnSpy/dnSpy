@@ -20,7 +20,6 @@
 using System;
 using System.Text;
 using System.Windows.Input;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.Properties;
@@ -147,10 +146,10 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 		bool isEnabled;
 
-		readonly IMessageBoxService messageBoxService;
+		readonly Action<string> showMessage;
 
-		public ShowCodeBreakpointSettingsVM(DbgCodeBreakpointSettings settings, IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
+		public ShowCodeBreakpointSettingsVM(DbgCodeBreakpointSettings settings, Action<string> showMessage) {
+			this.showMessage = showMessage ?? throw new ArgumentNullException(nameof(showMessage));
 			HitCount_Text = new Int32VM(a => HasErrorUpdated()) { UseDecimal = true };
 			Initialize(settings);
 		}
@@ -256,7 +255,7 @@ ProcessId
 ProcessName
 ThreadId
 ThreadName");
-			messageBoxService.Show(sb.ToString());
+			showMessage(sb.ToString());
 		}
 
 		void ShowTracepointMessageHelp() {
@@ -282,7 +281,7 @@ $PID
 $PNAME
 $TID
 $TNAME");
-			messageBoxService.Show(sb.ToString());
+			showMessage(sb.ToString());
 		}
 
 		public override bool HasError => EnableHitCount && HitCount_Text.HasError;

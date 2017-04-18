@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 
 		public override DbgCodeBreakpointSettings? Show(DbgCodeBreakpointSettings settings) {
 			var dlg = new ShowCodeBreakpointSettingsDlg();
-			var vm = new ShowCodeBreakpointSettingsVM(settings, messageBoxService);
+			var vm = new ShowCodeBreakpointSettingsVM(settings, s => messageBoxService.Show(s, ownerWindow: dlg));
 			dlg.DataContext = vm;
 			dlg.Owner = appWindow.MainWindow;
 			var res = dlg.ShowDialog();
