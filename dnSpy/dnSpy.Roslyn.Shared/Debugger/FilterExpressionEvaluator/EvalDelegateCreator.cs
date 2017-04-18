@@ -83,7 +83,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 			if (body.HasExceptionHandlers)
 				return null;
 
-			var dm = new SRE.DynamicMethod("compiled filter expr", typeof(bool), Import(method.MethodSig.Params));
+			var dm = new SRE.DynamicMethod("compiled filter expr", typeof(bool), Import(method.MethodSig.Params), typeof(FilterExpressionMethods), skipVisibility: false);
 			var ilg = dm.GetILGenerator();
 			var labelsDict = CreateLabelsDictionary(body.Instructions, ilg);
 
@@ -279,8 +279,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 			}
 			throw new EvalDelegateCreatorException();
 		}
-		static readonly SR.MethodInfo SystemString_op_Equality = typeof(string).GetMethod("op_Equality");
-		static readonly SR.MethodInfo SystemString_op_Inequality = typeof(string).GetMethod("op_Inequality");
+		static readonly SR.MethodInfo SystemString_op_Equality = typeof(FilterExpressionMethods).GetMethod("StringEquals");
+		static readonly SR.MethodInfo SystemString_op_Inequality = typeof(FilterExpressionMethods).GetMethod("StringNotEquals");
 
 		static bool IsBoolean_StringString(MethodSig sig) {
 			if (sig.RetType.ElementType != ElementType.Boolean)
@@ -299,5 +299,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 		}
 
 		public void Dispose() => module.Dispose();
+	}
+
+	static class FilterExpressionMethods {
+		public static bool StringEquals(string a, string b) => StringComparer.OrdinalIgnoreCase.Equals(a, b);
+		public static bool StringNotEquals(string a, string b) => !StringComparer.OrdinalIgnoreCase.Equals(a, b);
 	}
 }
