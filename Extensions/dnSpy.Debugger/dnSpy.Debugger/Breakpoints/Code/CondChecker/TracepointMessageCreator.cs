@@ -53,12 +53,19 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				// NOTE: order is important, first match is picked
 				new KeywordInfo("ADDRESS", WriteAddress),
 				new KeywordInfo("ADID", WriteAppDomainId),
+				new KeywordInfo("BPADDR", WriteBreakpointAddress),
 				new KeywordInfo("CALLER5", WriteCaller5),
 				new KeywordInfo("CALLER4", WriteCaller4),
 				new KeywordInfo("CALLER3", WriteCaller3),
 				new KeywordInfo("CALLER2", WriteCaller2),
 				new KeywordInfo("CALLER1", WriteCaller1),
 				new KeywordInfo("CALLER", WriteCaller1),
+				new KeywordInfo("CALLERMODULE5", WriteCallerModule5),
+				new KeywordInfo("CALLERMODULE4", WriteCallerModule4),
+				new KeywordInfo("CALLERMODULE3", WriteCallerModule3),
+				new KeywordInfo("CALLERMODULE2", WriteCallerModule2),
+				new KeywordInfo("CALLERMODULE1", WriteCallerModule1),
+				new KeywordInfo("CALLERMODULE", WriteCallerModule1),
 				new KeywordInfo("CALLERTOKEN5", WriteCallerToken5),
 				new KeywordInfo("CALLERTOKEN4", WriteCallerToken4),
 				new KeywordInfo("CALLERTOKEN3", WriteCallerToken3),
@@ -198,6 +205,11 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				WriteError();
 		}
 
+		void WriteBreakpointAddress() {
+			Write("0x");
+			Write(boundBreakpoint.Address.ToString("X"));
+		}
+
 		void WriteAddress() {
 			//TODO:
 			WriteError();
@@ -240,6 +252,31 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		void WriteCallStack10() {
 			//TODO: At most 10 frames
+			WriteError();
+		}
+
+		void WriteCallerModule1() {
+			//TODO: Write module of caller #1
+			WriteError();
+		}
+
+		void WriteCallerModule2() {
+			//TODO: Write module of caller #2
+			WriteError();
+		}
+
+		void WriteCallerModule3() {
+			//TODO: Write module of caller #3
+			WriteError();
+		}
+
+		void WriteCallerModule4() {
+			//TODO: Write module of caller #4
+			WriteError();
+		}
+
+		void WriteCallerModule5() {
+			//TODO: Write module of caller #5
 			WriteError();
 		}
 
