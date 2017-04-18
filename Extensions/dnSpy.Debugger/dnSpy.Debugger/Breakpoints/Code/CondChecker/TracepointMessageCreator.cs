@@ -50,10 +50,31 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		TracepointMessageCreatorImpl() {
 			output = new StringBuilder();
 			keywords = new KeywordInfo[] {
+				// NOTE: order is important, first match is picked
 				new KeywordInfo("ADDRESS", WriteAddress),
-				new KeywordInfo("CALLER", WriteCaller),
+				new KeywordInfo("ADID", WriteAppDomainId),
+				new KeywordInfo("CALLER5", WriteCaller5),
+				new KeywordInfo("CALLER4", WriteCaller4),
+				new KeywordInfo("CALLER3", WriteCaller3),
+				new KeywordInfo("CALLER2", WriteCaller2),
+				new KeywordInfo("CALLER1", WriteCaller1),
+				new KeywordInfo("CALLER", WriteCaller1),
+				new KeywordInfo("CALLERTOKEN5", WriteCallerToken5),
+				new KeywordInfo("CALLERTOKEN4", WriteCallerToken4),
+				new KeywordInfo("CALLERTOKEN3", WriteCallerToken3),
+				new KeywordInfo("CALLERTOKEN2", WriteCallerToken2),
+				new KeywordInfo("CALLERTOKEN1", WriteCallerToken1),
+				new KeywordInfo("CALLERTOKEN", WriteCallerToken1),
+				new KeywordInfo("CALLSTACK10", WriteCallStack10),
+				new KeywordInfo("CALLSTACK5", WriteCallStack5),
 				new KeywordInfo("CALLSTACK", WriteCallStack),
-				new KeywordInfo("FUNCTION", WriteFunction),
+				new KeywordInfo("FUNCTION5", WriteFunction5),
+				new KeywordInfo("FUNCTION4", WriteFunction4),
+				new KeywordInfo("FUNCTION3", WriteFunction3),
+				new KeywordInfo("FUNCTION2", WriteFunction2),
+				new KeywordInfo("FUNCTION1", WriteFunction1),
+				new KeywordInfo("FUNCTION", WriteFunction1),
+				new KeywordInfo("MID", WriteManagedId),
 				new KeywordInfo("PID", WriteProcessId),
 				new KeywordInfo("PNAME", WriteProcessName),
 				new KeywordInfo("TID", WriteThreadId),
@@ -170,13 +191,40 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		void Write(char c) => output.Append(c);
 		void WriteError() => Write("???");
 
+		void WriteAppDomainId() {
+			if (thread?.AppDomain?.Id is int adid)
+				Write(adid.ToString());
+			else
+				WriteError();
+		}
+
 		void WriteAddress() {
 			//TODO:
 			WriteError();
 		}
 
-		void WriteCaller() {
-			//TODO:
+		void WriteCaller1() {
+			//TODO: Show caller #1
+			WriteError();
+		}
+
+		void WriteCaller2() {
+			//TODO: Show caller #2
+			WriteError();
+		}
+
+		void WriteCaller3() {
+			//TODO: Show caller #3
+			WriteError();
+		}
+
+		void WriteCaller4() {
+			//TODO: Show caller #4
+			WriteError();
+		}
+
+		void WriteCaller5() {
+			//TODO: Show caller #5
 			WriteError();
 		}
 
@@ -185,8 +233,70 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			WriteError();
 		}
 
-		void WriteFunction() {
-			//TODO:
+		void WriteCallStack5() {
+			//TODO: At most 5 frames
+			WriteError();
+		}
+
+		void WriteCallStack10() {
+			//TODO: At most 10 frames
+			WriteError();
+		}
+
+		void WriteCallerToken1() {
+			//TODO: If it's a .NET method, write caller method token (eg. 0x06123456), else address (eg. 0xABCDEF)
+			WriteError();
+		}
+
+		void WriteCallerToken2() {
+			//TODO: caller #2 token
+			WriteError();
+		}
+
+		void WriteCallerToken3() {
+			//TODO: caller #3 token
+			WriteError();
+		}
+
+		void WriteCallerToken4() {
+			//TODO: caller #4 token
+			WriteError();
+		}
+
+		void WriteCallerToken5() {
+			//TODO: caller #5 token
+			WriteError();
+		}
+
+		void WriteManagedId() {
+			if (thread?.ManagedId is int mid)
+				Write(mid.ToString());
+			else
+				WriteError();
+		}
+
+		void WriteFunction1() {
+			//TODO: caller func #1
+			WriteError();
+		}
+
+		void WriteFunction2() {
+			//TODO: caller func #2
+			WriteError();
+		}
+
+		void WriteFunction3() {
+			//TODO: caller func #3
+			WriteError();
+		}
+
+		void WriteFunction4() {
+			//TODO: caller func #4
+			WriteError();
+		}
+
+		void WriteFunction5() {
+			//TODO: caller func #5
 			WriteError();
 		}
 
