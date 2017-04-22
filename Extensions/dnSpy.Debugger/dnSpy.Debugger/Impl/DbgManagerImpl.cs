@@ -42,6 +42,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override DispatcherThread DispatcherThread => dbgDispatcher.DispatcherThread;
+		internal DispatcherThread2 DispatcherThread2 => dbgDispatcher.DispatcherThread;
 		Dispatcher Dispatcher => dbgDispatcher.Dispatcher;
 
 		public override event EventHandler<DbgCollectionChangedEventArgs<DbgProcess>> ProcessesChanged;
@@ -966,5 +967,17 @@ namespace dnSpy.Debugger.Impl {
 
 		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed(object sender, ModulesRefreshedEventArgs e) =>
 			DbgThread(() => boundBreakpointsManager.ReAddBreakpoints_DbgThread(e.Modules));
+
+		public override void Close(DbgObject[] objs) {
+			if (objs == null)
+				throw new ArgumentNullException(nameof(objs));
+			DbgThread(() => Close_DbgThread(objs));
+		}
+
+		void Close_DbgThread(DbgObject[] objs) {
+			DispatcherThread.VerifyAccess();
+			foreach (var obj in objs)
+				obj.Close(DispatcherThread);
+		}
 	}
 }

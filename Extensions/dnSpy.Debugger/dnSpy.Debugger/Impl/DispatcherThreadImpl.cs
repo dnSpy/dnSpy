@@ -22,7 +22,11 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.Impl {
-	sealed class DispatcherThreadImpl : DispatcherThread {
+	abstract class DispatcherThread2 : DispatcherThread {
+		public abstract T Invoke<T>(Func<T> callback);
+	}
+
+	sealed class DispatcherThreadImpl : DispatcherThread2 {
 		const DispatcherPriority execPriority = DispatcherPriority.Send;
 		readonly DebuggerThread debuggerThread;
 
@@ -39,6 +43,12 @@ namespace dnSpy.Debugger.Impl {
 			if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
 				return;
 			Dispatcher.BeginInvoke(execPriority, callback);
+		}
+
+		public override T Invoke<T>(Func<T> callback) {
+			if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
+				return default(T);
+			return Dispatcher.Invoke(callback, execPriority);
 		}
 	}
 }

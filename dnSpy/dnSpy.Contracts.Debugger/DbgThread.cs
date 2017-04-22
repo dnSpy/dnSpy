@@ -19,6 +19,7 @@
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
@@ -96,5 +97,12 @@ namespace dnSpy.Contracts.Debugger {
 		/// Thaws the thread
 		/// </summary>
 		public abstract void Thaw();
+
+		/// <summary>
+		/// Creates a new <see cref="DbgStackWalker"/> instance that can be used to get the call stack.
+		/// The caller must close the returned instance by calling <see cref="DbgStackWalker.Close"/>.
+		/// </summary>
+		/// <returns></returns>
+		public abstract DbgStackWalker CreateStackWalker();
 	}
 }

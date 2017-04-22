@@ -67,6 +67,9 @@
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpoint.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointSettings.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsService.cs" />
+    <Compile Include="CallStack\DbgStackFrame.cs" />
+    <Compile Include="CallStack\DbgStackFrameFormatOptions.cs" />
+    <Compile Include="CallStack\DbgStackWalker.cs" />
     <Compile Include="DbgAppDomain.cs" />
     <Compile Include="DbgCollectionChangedEventArgs.cs" />
     <Compile Include="DbgDebuggingContext.cs" />
@@ -82,6 +85,8 @@
     <Compile Include="DbgThread.cs" />
     <Compile Include="DebuggerSettings.cs" />
     <Compile Include="DispatcherThread.cs" />
+    <Compile Include="Engine\CallStack\DbgEngineStackFrame.cs" />
+    <Compile Include="Engine\CallStack\DbgEngineStackWalker.cs" />
     <Compile Include="Engine\DbgEngine.cs" />
     <Compile Include="Engine\DbgEngineAppDomain.cs" />
     <Compile Include="Engine\DbgEngineBoundCodeBreakpoint.cs" />

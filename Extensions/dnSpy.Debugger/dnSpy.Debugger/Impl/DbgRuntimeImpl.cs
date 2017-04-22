@@ -21,7 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Debugger.CallStack;
 
 namespace dnSpy.Debugger.Impl {
 	sealed class DbgRuntimeImpl : DbgRuntime {
@@ -173,6 +176,29 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void Freeze(DbgThreadImpl thread) => Engine.Freeze(thread);
 		internal void Thaw(DbgThreadImpl thread) => Engine.Thaw(thread);
+
+		internal DbgStackWalker CreateStackWalker(DbgThreadImpl thread) {
+			var stackWalker = owner.DispatcherThread2.Invoke(() => CreateStackWalker_DbgThread(thread));
+			if (stackWalker != null)
+				return stackWalker;
+			// Invoke() returns null if shutdown has started but we can't return null
+			return new DbgStackWalkerImpl(thread, new NullDbgEngineStackWalker());
+		}
+
+		DbgStackWalker CreateStackWalker_DbgThread(DbgThreadImpl thread) {
+			DispatcherThread.VerifyAccess();
+			DbgEngineStackWalker engineStackWalker;
+			if (Engine.IsClosed)
+				engineStackWalker = new NullDbgEngineStackWalker();
+			else
+				engineStackWalker = Engine.CreateStackWalker(thread);
+			return new DbgStackWalkerImpl(thread, engineStackWalker);
+		}
+
+		sealed class NullDbgEngineStackWalker : DbgEngineStackWalker {
+			public override DbgEngineStackFrame[] GetNextStackFrames(int maxFrames) => Array.Empty<DbgEngineStackFrame>();
+			protected override void CloseCore() { }
+		}
 
 		protected override void CloseCore() {
 			DispatcherThread.VerifyAccess();

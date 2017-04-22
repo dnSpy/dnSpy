@@ -18,9 +18,12 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
 using Microsoft.Win32.SafeHandles;
@@ -62,6 +65,7 @@ namespace dnSpy.Debugger.Impl {
 		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
 		readonly SafeAccessTokenHandle hThread;
+		readonly HashSet<DbgObject> autoCloseObjects;
 		DbgAppDomainImpl appDomain;
 		string kind;
 		int id;
@@ -73,6 +77,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public DbgThreadImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) {
 			lockObj = new object();
+			autoCloseObjects = new HashSet<DbgObject>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.appDomain = appDomain;
 			this.kind = kind;
@@ -224,9 +229,35 @@ namespace dnSpy.Debugger.Impl {
 			return null;
 		}
 
+		public override DbgStackWalker CreateStackWalker() => runtime.CreateStackWalker(this);
+
+		internal void AddAutoClose(DbgObject obj) {
+			if (obj == null)
+				throw new ArgumentNullException(nameof(obj));
+			lock (lockObj) {
+				if (IsClosed)
+					return;
+				autoCloseObjects.Add(obj);
+			}
+		}
+
+		internal void RemoveAutoClose(DbgObject obj) {
+			if (obj == null)
+				throw new ArgumentNullException(nameof(obj));
+			lock (lockObj)
+				autoCloseObjects.Remove(obj);
+		}
+
 		protected override void CloseCore() {
 			DispatcherThread.VerifyAccess();
 			hThread.Dispose();
+			DbgObject[] objsToClose;
+			lock (lockObj) {
+				objsToClose = autoCloseObjects.Count == 0 ? Array.Empty<DbgObject>() : autoCloseObjects.ToArray();
+				autoCloseObjects.Clear();
+			}
+			foreach (var obj in objsToClose)
+				obj.Close(DispatcherThread);
 		}
 	}
 }

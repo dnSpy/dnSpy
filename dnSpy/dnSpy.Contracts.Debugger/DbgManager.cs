@@ -158,5 +158,17 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="rid">Runtime id</param>
 		/// <returns></returns>
 		public abstract bool CanDebugRuntime(int pid, RuntimeId rid);
+
+		/// <summary>
+		/// Closes <paramref name="obj"/>
+		/// </summary>
+		/// <param name="obj">Object to close</param>
+		public void Close(DbgObject obj) => Close(new[] { obj ?? throw new ArgumentNullException(nameof(obj)) });
+
+		/// <summary>
+		/// Closes <paramref name="objs"/>
+		/// </summary>
+		/// <param name="objs">Objects to close</param>
+		public abstract void Close(DbgObject[] objs);
 	}
 }

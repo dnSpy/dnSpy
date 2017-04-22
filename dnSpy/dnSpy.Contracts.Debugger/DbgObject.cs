@@ -62,6 +62,7 @@ namespace dnSpy.Contracts.Debugger {
 			if (Interlocked.Increment(ref isClosed) != 1)
 				return;
 			Closed?.Invoke(this, EventArgs.Empty);
+			Closed = null;
 
 			CloseCore();
 

@@ -30,6 +30,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.CorDebug.DAC;
@@ -662,6 +663,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					dnDebugger.TerminateProcesses();
 				}
 			}
+		}
+
+		public override DbgEngineStackWalker CreateStackWalker(DbgThread thread) {
+			throw new NotImplementedException();//TODO:
 		}
 	}
 }

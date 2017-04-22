@@ -17,22 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
-using System.Windows.Threading;
-
-namespace dnSpy.Debugger.Impl {
-	[Export(typeof(DbgDispatcher))]
-	sealed class DbgDispatcher {
-		public Dispatcher Dispatcher => dispatcherThread.Dispatcher;
-		public DispatcherThread2 DispatcherThread => dispatcherThread;
-
-		readonly DispatcherThreadImpl dispatcherThread;
-
-		[ImportingConstructor]
-		DbgDispatcher() => dispatcherThread = new DispatcherThreadImpl();
-
-		public void VerifyAccess() => DispatcherThread.VerifyAccess();
-		public void Dbg(Action callback) => DispatcherThread.BeginInvoke(callback);
+namespace dnSpy.Contracts.Debugger.Engine.CallStack {
+	/// <summary>
+	/// Creates <see cref="DbgEngineStackFrame"/>s
+	/// </summary>
+	public abstract class DbgEngineStackWalker : DbgObject {
+		/// <summary>
+		/// Gets the next frames or an empty list if there are no more frames
+		/// </summary>
+		/// <param name="maxFrames">Max number of frames to return</param>
+		/// <returns></returns>
+		public abstract DbgEngineStackFrame[] GetNextStackFrames(int maxFrames);
 	}
 }
