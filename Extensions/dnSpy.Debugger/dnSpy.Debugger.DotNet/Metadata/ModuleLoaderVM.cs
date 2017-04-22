@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Cancel();
 		}
 
-		void UI(Action action) => uiDispatcher.UI(action);
+		void UI(Action callback) => uiDispatcher.UI(callback);
 
 		void Cancel() {
 			if (Interlocked.Increment(ref cancelling) != 1)

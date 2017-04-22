@@ -49,7 +49,7 @@ namespace dnSpy.Bookmarks.Impl {
 				lz.Value.Initialize(this);
 		}
 
-		void BMThread(Action action) => uiDispatcher.UI(action);
+		void BMThread(Action callback) => uiDispatcher.UI(callback);
 
 		public override void Modify(BookmarkAndSettings[] settings) {
 			if (settings == null)

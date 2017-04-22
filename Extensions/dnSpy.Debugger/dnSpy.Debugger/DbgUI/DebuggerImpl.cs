@@ -209,10 +209,10 @@ namespace dnSpy.Debugger.DbgUI {
 			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
 		}
 
-		void UI(Action action) {
+		void UI(Action callback) {
 			var dispatcher = appWindow.MainWindow.Dispatcher;
 			if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
-				dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+				dispatcher.BeginInvoke(DispatcherPriority.Send, callback);
 		}
 
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {

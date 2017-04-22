@@ -33,11 +33,11 @@ namespace dnSpy.UI {
 		public void VerifyAccess() => Dispatcher.VerifyAccess();
 		public bool CheckAccess() => Dispatcher.CheckAccess();
 
-		public void UI(Action action) =>
+		public void UI(Action callback) =>
 			// Use Send so the windows are updated as fast as possible when adding new items
-			Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+			Dispatcher.BeginInvoke(DispatcherPriority.Send, callback);
 
-		public void UIBackground(Action action) =>
-			Dispatcher.BeginInvoke(DispatcherPriority.Background, action);
+		public void UIBackground(Action callback) =>
+			Dispatcher.BeginInvoke(DispatcherPriority.Background, callback);
 	}
 }

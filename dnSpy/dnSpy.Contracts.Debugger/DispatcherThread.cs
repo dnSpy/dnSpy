@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// Executes code asynchronously in the dispatcher thread. This method returns immediately even if
 		/// it happens to be called in the dispatcher thread.
 		/// </summary>
-		/// <param name="action">Code to execute</param>
-		public abstract void BeginInvoke(Action action);
+		/// <param name="callback">Code to execute</param>
+		public abstract void BeginInvoke(Action callback);
 	}
 }

@@ -61,7 +61,7 @@ namespace dnSpy.Bookmarks.Navigator {
 			UI(() => viewBookmarkProvider.SetActiveBookmark(activeBookmark));
 		}
 
-		void UI(Action action) => uiDispatcher.UI(action);
+		void UI(Action callback) => uiDispatcher.UI(callback);
 
 		void ViewBookmarkProvider_BookmarksViewOrderChanged(object sender, EventArgs e) => UI(() => ViewBookmarkProvider_BookmarksViewOrderChanged_UI());
 		void ViewBookmarkProvider_BookmarksViewOrderChanged_UI() {

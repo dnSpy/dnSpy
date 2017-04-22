@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 
 		void IOutputServiceListener2.Initialize(IOutputService outputService) => Initialize();
 
-		void UI(Action action) => uiDispatcher.UI(action);
+		void UI(Action callback) => uiDispatcher.UI(callback);
 
 		void Initialize() => UI(() => Initialize_UI());
 		void Initialize_UI() {

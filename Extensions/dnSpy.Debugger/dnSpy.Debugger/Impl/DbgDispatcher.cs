@@ -34,6 +34,6 @@ namespace dnSpy.Debugger.Impl {
 		DbgDispatcher() => dispatcherThread = new DispatcherThreadImpl();
 
 		public void VerifyAccess() => DispatcherThread.VerifyAccess();
-		public void Dbg(Action action) => DispatcherThread.BeginInvoke(action);
+		public void Dbg(Action callback) => DispatcherThread.BeginInvoke(callback);
 	}
 }

@@ -161,7 +161,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		}
 
 		// random thread
-		void BMThread(Action action) => uiDispatcher.UI(action);
+		void BMThread(Action callback) => uiDispatcher.UI(callback);
 		void BMThread_VerifyAccess() => uiDispatcher.VerifyAccess();
 
 		// UI thread
@@ -278,7 +278,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		}
 
 		// random thread
-		void UI(Action action) => bookmarkContext.UIDispatcher.UI(action);
+		void UI(Action callback) => bookmarkContext.UIDispatcher.UI(callback);
 
 		// BM thread
 		void BookmarksService_BookmarksChanged(object sender, CollectionChangedEventArgs<Bookmark> e) {

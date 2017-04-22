@@ -47,7 +47,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			UI(() => Initialize_UI());
 		}
 
-		void UI(Action action) => uiDispatcher.UI(action);
+		void UI(Action callback) => uiDispatcher.UI(callback);
 
 		void Initialize_UI() {
 			uiDispatcher.VerifyAccess();

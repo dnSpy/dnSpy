@@ -39,7 +39,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			this.cancellationToken = cancellationToken;
 		}
 
-		void ExecuteInThread(Action action) => dispatcher.BeginInvoke(DispatcherPriority.Background, action);
+		void ExecuteInThread(Action callback) => dispatcher.BeginInvoke(DispatcherPriority.Background, callback);
 
 		public void Find() {
 			foreach (var info in GacInfo.GetAssemblies(4)) {

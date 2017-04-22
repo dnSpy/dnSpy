@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// random thread
-		void UI(Action action) => Context.UIDispatcher.UI(action);
+		void UI(Action callback) => Context.UIDispatcher.UI(callback);
 
 		// random thread
 		void DbgBreakpointLocationFormatter_PropertyChanged(object sender, PropertyChangedEventArgs e) =>

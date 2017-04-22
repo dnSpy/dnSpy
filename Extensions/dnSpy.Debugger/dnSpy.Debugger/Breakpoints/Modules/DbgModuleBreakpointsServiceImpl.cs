@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 				lz.Value.Initialize(this);
 		}
 
-		void Dbg(Action action) => dbgDispatcher.Dbg(action);
+		void Dbg(Action callback) => dbgDispatcher.Dbg(callback);
 
 		public override void Modify(DbgModuleBreakpointAndSettings[] settings) {
 			if (settings == null)

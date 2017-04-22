@@ -461,23 +461,23 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		void FocusSearchStringTextBox() {
-			Action action = null;
+			Action callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.searchStringTextBox.Text.Length == 0 && SearchString.Length != 0)
-				action = () => searchControl.searchStringTextBox.SelectAll();
+				callback = () => searchControl.searchStringTextBox.SelectAll();
 			else
 				searchControl.searchStringTextBox.SelectAll();
-			UIUtilities.Focus(searchControl.searchStringTextBox, action);
+			UIUtilities.Focus(searchControl.searchStringTextBox, callback);
 		}
 
 		void FocusReplaceStringTextBox() {
-			Action action = null;
+			Action callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.replaceStringTextBox.Text.Length == 0 && ReplaceString.Length != 0)
-				action = () => searchControl.replaceStringTextBox.SelectAll();
+				callback = () => searchControl.replaceStringTextBox.SelectAll();
 			else
 				searchControl.replaceStringTextBox.SelectAll();
-			UIUtilities.Focus(searchControl.replaceStringTextBox, action);
+			UIUtilities.Focus(searchControl.replaceStringTextBox, callback);
 		}
 
 		void RepositionControl(bool recalcSize = false) {

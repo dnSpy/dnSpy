@@ -155,10 +155,10 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// random thread
-		void UI(Action action) => Context.UIDispatcher.UI(action);
+		void UI(Action callback) => Context.UIDispatcher.UI(callback);
 
 		// random thread
-		void UI(TimeSpan delay, Action action) => Context.UIDispatcher.UI(delay, action);
+		void UI(TimeSpan delay, Action callback) => Context.UIDispatcher.UI(delay, callback);
 
 		// DbgManager thread
 		void DbgProcess_PropertyChanged(object sender, PropertyChangedEventArgs e) =>

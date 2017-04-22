@@ -251,7 +251,7 @@ namespace dnSpy.Debugger.Impl {
 			engine.Start(options);
 		}
 
-		void DbgThread(Action action) => DispatcherThread.BeginInvoke(action);
+		void DbgThread(Action callback) => DispatcherThread.BeginInvoke(callback);
 
 		bool IsOurEngine(DbgEngine engine) {
 			lock (lockObj) {

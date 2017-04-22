@@ -171,8 +171,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		// random thread
-		void DbgThread(Action action) =>
-			dbgManager.Value.DispatcherThread.BeginInvoke(action);
+		void DbgThread(Action callback) =>
+			dbgManager.Value.DispatcherThread.BeginInvoke(callback);
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
@@ -253,7 +253,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		// random thread
-		void UI(Action action) => moduleBreakpointContext.UIDispatcher.UI(action);
+		void UI(Action callback) => moduleBreakpointContext.UIDispatcher.UI(callback);
 
 		// DbgManager thread
 		void DbgModuleBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgModuleBreakpoint> e) {

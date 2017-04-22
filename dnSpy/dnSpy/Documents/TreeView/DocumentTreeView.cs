@@ -151,11 +151,11 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		readonly Dispatcher dispatcher;
-		internal void AddAction(Action action) {
+		internal void AddAction(Action callback) {
 			if (!dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted) {
 				bool callInvoke;
 				lock (actionsToCall) {
-					actionsToCall.Add(action);
+					actionsToCall.Add(callback);
 					callInvoke = actionsToCall.Count == 1;
 				}
 				if (callInvoke) {

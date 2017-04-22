@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Exceptions {
 				lz.Value.Initialize(this);
 		}
 
-		void Dbg(Action action) => dbgDispatcher.Dbg(action);
+		void Dbg(Action callback) => dbgDispatcher.Dbg(callback);
 
 		public override void Reset() => Dbg(() => ResetCore());
 

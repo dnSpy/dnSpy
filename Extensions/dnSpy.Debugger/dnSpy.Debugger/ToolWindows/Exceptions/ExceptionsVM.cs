@@ -171,8 +171,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		// random thread
-		void DbgThread(Action action) =>
-			dbgManager.Value.DispatcherThread.BeginInvoke(action);
+		void DbgThread(Action callback) =>
+			dbgManager.Value.DispatcherThread.BeginInvoke(callback);
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
@@ -298,7 +298,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		// random thread
-		void UI(Action action) => exceptionContext.UIDispatcher.UI(action);
+		void UI(Action callback) => exceptionContext.UIDispatcher.UI(callback);
 
 		// UI thread
 		void AddItems_UI(IList<DbgExceptionSettingsInfo> exceptions) {

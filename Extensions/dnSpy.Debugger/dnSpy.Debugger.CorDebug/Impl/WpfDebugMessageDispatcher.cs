@@ -33,11 +33,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		Dispatcher Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;
 
-		public void ExecuteAsync(Action action) {
+		public void ExecuteAsync(Action callback) {
 			var disp = Dispatcher;
 			if (disp == null)
 				return;
-			queue.Enqueue(action);
+			queue.Enqueue(callback);
 			dispatchQueueEvent.Set();
 			if (disp.CheckAccess())
 				EmptyQueue();

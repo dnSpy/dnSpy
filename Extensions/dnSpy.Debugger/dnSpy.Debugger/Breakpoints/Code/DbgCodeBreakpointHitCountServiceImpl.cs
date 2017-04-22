@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 		}
 
-		void Dbg(Action action) => dbgDispatcher.DispatcherThread.BeginInvoke(action);
+		void Dbg(Action callback) => dbgDispatcher.DispatcherThread.BeginInvoke(callback);
 
 		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;

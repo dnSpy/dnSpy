@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 			Initialize(settings);
 		}
 
-		void UI(Action action) => uiDispatcher.UI(action);
+		void UI(Action callback) => uiDispatcher.UI(callback);
 
 		void Initialize(DbgCodeBreakpointSettings settings) {
 			IsEnabled = settings.IsEnabled;

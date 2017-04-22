@@ -153,20 +153,20 @@ namespace dnSpy.Tabs {
 			readonly TabGroup tabGroup;
 			readonly ITabContent content;
 			readonly UIElement uiElem;
-			readonly Action action;
+			readonly Action callback;
 
-			public SetFocusWhenVisible(TabGroup tabGroup, ITabContent content, UIElement uiElem, Action action) {
+			public SetFocusWhenVisible(TabGroup tabGroup, ITabContent content, UIElement uiElem, Action callback) {
 				this.tabGroup = tabGroup;
 				this.content = content;
 				this.uiElem = uiElem;
-				this.action = action;
+				this.callback = callback;
 				uiElem.IsVisibleChanged += uiElem_IsVisibleChanged;
 			}
 
 			void uiElem_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 				uiElem.IsVisibleChanged -= uiElem_IsVisibleChanged;
 				if (tabGroup.IsActiveTab(content))
-					action();
+					callback();
 			}
 		}
 

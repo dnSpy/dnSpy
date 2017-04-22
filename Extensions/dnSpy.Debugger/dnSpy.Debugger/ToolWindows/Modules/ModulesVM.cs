@@ -146,8 +146,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// random thread
-		void DbgThread(Action action) =>
-			dbgManager.Value.DispatcherThread.BeginInvoke(action);
+		void DbgThread(Action callback) =>
+			dbgManager.Value.DispatcherThread.BeginInvoke(callback);
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
@@ -310,7 +310,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// random thread
-		void UI(Action action) => moduleContext.UIDispatcher.UI(action);
+		void UI(Action callback) => moduleContext.UIDispatcher.UI(callback);
 
 		// DbgManager thread
 		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {

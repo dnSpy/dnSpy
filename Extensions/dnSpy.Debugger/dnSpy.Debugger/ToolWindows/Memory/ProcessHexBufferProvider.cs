@@ -184,7 +184,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// random thread
-		void UI(Action action) => uiDispatcher.UI(action);
+		void UI(Action callback) => uiDispatcher.UI(callback);
 
 		// DbgManager thread
 		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) =>

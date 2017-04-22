@@ -86,7 +86,7 @@ namespace dnSpy.Bookmarks.ToolWindows {
 		}
 
 		// random thread
-		protected void UI(Action action) => uiDispatcher.UI(action);
+		protected void UI(Action callback) => uiDispatcher.UI(callback);
 
 		void StartTimer() {
 			StopTimer();

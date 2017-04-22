@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 
 			// random thread
-			void UI(Action action) => uiDispatcher.UI(action);
+			void UI(Action callback) => uiDispatcher.UI(callback);
 
 			// UI thread
 			void OnProcessChanged_UI() {

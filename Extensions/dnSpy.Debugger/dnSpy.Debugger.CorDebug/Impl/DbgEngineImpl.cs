@@ -80,9 +80,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		internal void VerifyCorDebugThread() => Dispatcher.VerifyAccess();
 		internal T InvokeCorDebugThread<T>(Func<T> action) => Dispatcher.Invoke(action, DispatcherPriority.Send);
-		internal void CorDebugThread(Action action) {
+		internal void CorDebugThread(Action callback) {
 			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
-				Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+				Dispatcher.BeginInvoke(DispatcherPriority.Send, callback);
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
