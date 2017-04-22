@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void SendILCodeBreakpointHitMessage_CorDebug(DnILCodeBreakpoint breakpoint, DbgThread thread) {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			var bpData = (BoundBreakpointData)breakpoint.Tag;
 			Debug.Assert(bpData != null);
 			if (bpData != null)
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly List<DnBreakpoint> pendingBreakpointsToRemove = new List<DnBreakpoint>();
 
 		void RemoveBreakpoints_CorDebug() {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			DnBreakpoint[] breakpointsToRemove;
 			lock (lockObj) {
 				breakpointsToRemove = pendingBreakpointsToRemove.ToArray();
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public override void AddBreakpoints(DbgModule[] modules, DbgBreakpointLocation[] locations, bool includeNonModuleBreakpoints) =>
 			CorDebugThread(() => AddBreakpointsCore(modules, locations, includeNonModuleBreakpoints));
 		void AddBreakpointsCore(DbgModule[] modules, DbgBreakpointLocation[] locations, bool includeNonModuleBreakpoints) {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 
 			var dict = CreateDotNetLocationDictionary(locations);
 			var createdBreakpoints = new List<DbgBoundCodeBreakpointInfo<BoundBreakpointData>>();

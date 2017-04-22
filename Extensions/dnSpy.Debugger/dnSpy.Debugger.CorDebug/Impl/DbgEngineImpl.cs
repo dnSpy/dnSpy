@@ -30,7 +30,6 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.Engine;
-using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.CorDebug.DAC;
@@ -44,8 +43,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public event EventHandler ClrDacRunning;
 		public event EventHandler ClrDacPaused;
 		public event EventHandler ClrDacTerminated;
-
-		Dispatcher Dispatcher => debuggerThread.Dispatcher;
 
 		readonly DebuggerThread debuggerThread;
 		readonly object lockObj;
@@ -79,12 +76,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		internal event EventHandler<ClassLoadedEventArgs> ClassLoaded;
 
-		internal void VerifyCorDebugThread() => Dispatcher.VerifyAccess();
-		internal T InvokeCorDebugThread<T>(Func<T> action) => Dispatcher.Invoke(action, DispatcherPriority.Send);
-		internal void CorDebugThread(Action callback) {
-			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
-				Dispatcher.BeginInvoke(DispatcherPriority.Send, callback);
-		}
+		internal void VerifyCorDebugThread() => debuggerThread.VerifyAccess();
+		internal T InvokeCorDebugThread<T>(Func<T> action) => debuggerThread.InvokeCorDebugThread(action);
+		internal void CorDebugThread(Action callback) => debuggerThread.CorDebugThread(callback);
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
 			switch (e.Kind) {
@@ -363,7 +357,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		// There's code that caches ModuleIds, but they don't cache it if IsDynamic is true.
 		// This method updates the ModuleId and resets breakpoints in the module.
 		void UpdateDynamicModuleIds(DnModule dnModule) {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			if (!dnModule.IsDynamic)
 				return;
 			var module = TryGetModule(dnModule);
@@ -433,7 +427,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		internal CorModuleDef GetDynamicMetadata_EngineThread(DbgModule module) {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (!TryGetModuleData(module, out var data))
@@ -462,12 +456,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		protected abstract CLRTypeAttachInfo CreateAttachInfo(CorDebugAttachDebuggingOptions options);
 
 		void StartCore(CorDebugStartDebuggingOptions options) {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			try {
-				if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
+				if (debuggerThread.HasShutdownStarted)
 					throw new InvalidOperationException("Dispatcher has shut down");
 				var dbgOptions = new DebugProcessOptions(CreateDebugInfo(options)) {
-					DebugMessageDispatcher = new WpfDebugMessageDispatcher(Dispatcher),
+					DebugMessageDispatcher = debuggerThread.CreateDebugMessageDispatcher(),
 					CurrentDirectory = options.WorkingDirectory,
 					Filename = options.Filename,
 					CommandLine = options.CommandLine,
@@ -507,12 +501,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void AttachCore(CorDebugAttachDebuggingOptions options) {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			try {
-				if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
+				if (debuggerThread.HasShutdownStarted)
 					throw new InvalidOperationException("Dispatcher has shut down");
 				var dbgOptions = new AttachProcessOptions(CreateAttachInfo(options)) {
-					DebugMessageDispatcher = new WpfDebugMessageDispatcher(Dispatcher),
+					DebugMessageDispatcher = debuggerThread.CreateDebugMessageDispatcher(),
 					ProcessId = options.ProcessId,
 				};
 
@@ -595,7 +589,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		bool HasConnected_DebugThread {
 			get {
-				Dispatcher.VerifyAccess();
+				debuggerThread.VerifyAccess();
 				// If it's null, we haven't connected yet (most likely due to timeout, eg. trying to debug
 				// a .NET Framework program with the .NET Core engine)
 				return dnDebugger != null;
@@ -604,7 +598,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		public override void Break() => CorDebugThread(BreakCore);
 		void BreakCore() {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			if (!HasConnected_DebugThread)
 				return;
 
@@ -627,7 +621,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		public override void Run() => CorDebugThread(RunCore);
 		void RunCore() {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			if (!HasConnected_DebugThread)
 				return;
 			if (dnDebugger.ProcessState == DebuggerProcessState.Paused)
@@ -635,14 +629,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void Continue_CorDebug() {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			ClrDacRunning?.Invoke(this, EventArgs.Empty);
 			dnDebugger.Continue();
 		}
 
 		public override void Terminate() => CorDebugThread(TerminateCore);
 		void TerminateCore() {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			if (!HasConnected_DebugThread)
 				return;
 			if (dnDebugger.ProcessState != DebuggerProcessState.Terminated)
@@ -653,7 +647,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		public override void Detach() => CorDebugThread(DetachCore);
 		void DetachCore() {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			if (!HasConnected_DebugThread)
 				return;
 			if (dnDebugger.ProcessState != DebuggerProcessState.Terminated) {
@@ -663,10 +657,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					dnDebugger.TerminateProcesses();
 				}
 			}
-		}
-
-		public override DbgEngineStackWalker CreateStackWalker(DbgThread thread) {
-			throw new NotImplementedException();//TODO:
 		}
 	}
 }

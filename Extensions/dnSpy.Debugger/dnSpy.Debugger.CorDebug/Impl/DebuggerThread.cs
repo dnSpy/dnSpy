@@ -20,10 +20,11 @@
 using System;
 using System.Threading;
 using System.Windows.Threading;
+using dndbg.Engine;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DebuggerThread {
-		public Dispatcher Dispatcher { get; private set; }
+		Dispatcher Dispatcher { get; set; }
 
 		readonly Thread debuggerThread;
 		volatile bool terminate;
@@ -69,6 +70,17 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			try { callDispatcherRunEvent?.Set(); } catch (ObjectDisposedException) { }
 			if (Dispatcher != null && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
 				Dispatcher.BeginInvokeShutdown(DispatcherPriority.Send);
+		}
+
+		public IDebugMessageDispatcher CreateDebugMessageDispatcher() => new WpfDebugMessageDispatcher(Dispatcher);
+
+		public bool HasShutdownStarted => Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished;
+		public void VerifyAccess() => Dispatcher.VerifyAccess();
+		const DispatcherPriority DispPriority = DispatcherPriority.Send;
+		public T InvokeCorDebugThread<T>(Func<T> action) => Dispatcher.Invoke(action, DispPriority);
+		public void CorDebugThread(Action callback) {
+			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
+				Dispatcher.BeginInvoke(DispPriority, callback);
 		}
 	}
 }

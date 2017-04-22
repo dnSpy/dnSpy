@@ -25,6 +25,7 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Contracts.Debugger.Engine.CallStack;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
@@ -36,7 +37,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties oldProperties, bool isCreateThread, bool forceReadName) {
-			debuggerThread.Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			var appDomain = TryGetEngineAppDomain(thread.AppDomainOrNull)?.AppDomain;
 			var id = thread.VolatileThreadId;
 
@@ -154,7 +155,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug_NoLock(DnThread thread) {
-			debuggerThread.Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			bool b = toEngineThread.TryGetValue(thread, out var engineThread);
 			Debug.Assert(b);
 			if (!b)
@@ -163,7 +164,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug_NoLock(DbgEngineThread engineThread) {
-			debuggerThread.Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			var threadData = engineThread.Thread.GetData<DbgThreadData>();
 			var newProps = GetThreadProperties_CorDebug(threadData.DnThread, threadData.Last, isCreateThread: false, forceReadName: threadData.HasNewName);
 			threadData.HasNewName = false;
@@ -175,7 +176,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void NotifyThreadPropertiesChanged_CorDebug(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props) {
-			debuggerThread.Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			ReadOnlyCollection<DbgStateInfo> state = null;
 			if ((updateOptions & DbgEngineThread.UpdateOptions.State) != 0)
 				state = DnThreadUtils.GetState(props.UserState);
@@ -183,7 +184,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void UpdateThreadProperties_CorDebug() {
-			debuggerThread.Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			List<(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)> threadsToUpdate = null;
 			lock (lockObj) {
 				foreach (var kv in toEngineThread) {
@@ -237,7 +238,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void OnNewThreadName_CorDebug(DnThread thread) {
-			debuggerThread.Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			var engineThread = TryGetEngineThread(thread);
 			if (engineThread == null)
 				return;
@@ -247,7 +248,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public override void Freeze(DbgThread thread) => CorDebugThread(() => FreezeThawCore(thread, freeze: true));
 		public override void Thaw(DbgThread thread) => CorDebugThread(() => FreezeThawCore(thread, freeze: false));
 		void FreezeThawCore(DbgThread thread, bool freeze) {
-			Dispatcher.VerifyAccess();
+			debuggerThread.VerifyAccess();
 			if (!HasConnected_DebugThread)
 				return;
 			if (dnDebugger.ProcessState != DebuggerProcessState.Paused)
@@ -269,6 +270,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				info = UpdateThreadProperties_CorDebug_NoLock(threadData.DnThread);
 			if (info != null)
 				NotifyThreadPropertiesChanged_CorDebug(info.Value.engineThread, info.Value.updateOptions, info.Value.props);
+		}
+
+		public override DbgEngineStackWalker CreateStackWalker(DbgThread thread) => InvokeCorDebugThread(() => CreateStackWalker_CorDebug(thread));
+		DbgEngineStackWalker CreateStackWalker_CorDebug(DbgThread thread) {
+			throw new NotImplementedException();//TODO:
 		}
 	}
 }
