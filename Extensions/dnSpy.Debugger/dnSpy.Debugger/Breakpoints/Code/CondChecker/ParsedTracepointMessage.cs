@@ -51,14 +51,17 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					evaluates = true;
 					break;
 
+				case TracepointMessageKind.WriteCallStack:
+					maxFrames = Math.Max(maxFrames, part.Number);
+					break;
+
 				case TracepointMessageKind.WriteAddress:
 				case TracepointMessageKind.WriteCaller:
 				case TracepointMessageKind.WriteCallerModule:
 				case TracepointMessageKind.WriteCallerOffset:
 				case TracepointMessageKind.WriteCallerToken:
-				case TracepointMessageKind.WriteCallStack:
 				case TracepointMessageKind.WriteFunction:
-					maxFrames = Math.Max(maxFrames, part.Number);
+					maxFrames = Math.Max(maxFrames, part.Number + 1);
 					break;
 
 				default: throw new InvalidOperationException();

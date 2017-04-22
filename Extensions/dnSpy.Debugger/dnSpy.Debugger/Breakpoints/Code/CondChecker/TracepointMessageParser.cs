@@ -25,7 +25,7 @@ using System.Text;
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	sealed class TracepointMessageParser {
 		// Max methods to show when $CALLSTACK is used (no argument)
-		const int defaultCallStackCount = 20;
+		const int defaultCallStackCount = 50;
 
 		struct KeywordInfo {
 			public string Name { get; }
@@ -58,15 +58,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				new KeywordInfo("ADDRESS3", TracepointMessageKind.WriteAddress, 3),
 				new KeywordInfo("ADDRESS2", TracepointMessageKind.WriteAddress, 2),
 				new KeywordInfo("ADDRESS1", TracepointMessageKind.WriteAddress, 1),
-				new KeywordInfo("ADDRESS", TracepointMessageKind.WriteAddress, 1),
+				new KeywordInfo("ADDRESS", TracepointMessageKind.WriteAddress, 0),
 				new KeywordInfo("ADID", TracepointMessageKind.WriteAppDomainId),
 				new KeywordInfo("BPADDR", TracepointMessageKind.WriteBreakpointAddress),
-				new KeywordInfo("CALLER5", TracepointMessageKind.WriteCaller, 5),
-				new KeywordInfo("CALLER4", TracepointMessageKind.WriteCaller, 4),
-				new KeywordInfo("CALLER3", TracepointMessageKind.WriteCaller, 3),
-				new KeywordInfo("CALLER2", TracepointMessageKind.WriteCaller, 2),
-				new KeywordInfo("CALLER1", TracepointMessageKind.WriteCaller, 1),
-				new KeywordInfo("CALLER", TracepointMessageKind.WriteCaller, 1),
 				new KeywordInfo("CALLERMODULE5", TracepointMessageKind.WriteCallerModule, 5),
 				new KeywordInfo("CALLERMODULE4", TracepointMessageKind.WriteCallerModule, 4),
 				new KeywordInfo("CALLERMODULE3", TracepointMessageKind.WriteCallerModule, 3),
@@ -85,15 +79,23 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				new KeywordInfo("CALLERTOKEN2", TracepointMessageKind.WriteCallerToken, 2),
 				new KeywordInfo("CALLERTOKEN1", TracepointMessageKind.WriteCallerToken, 1),
 				new KeywordInfo("CALLERTOKEN", TracepointMessageKind.WriteCallerToken, 1),
+				new KeywordInfo("CALLSTACK20", TracepointMessageKind.WriteCallStack, 20),
+				new KeywordInfo("CALLSTACK15", TracepointMessageKind.WriteCallStack, 15),
 				new KeywordInfo("CALLSTACK10", TracepointMessageKind.WriteCallStack, 10),
 				new KeywordInfo("CALLSTACK5", TracepointMessageKind.WriteCallStack, 5),
 				new KeywordInfo("CALLSTACK", TracepointMessageKind.WriteCallStack, defaultCallStackCount),
+				new KeywordInfo("CALLER5", TracepointMessageKind.WriteCaller, 5),
+				new KeywordInfo("CALLER4", TracepointMessageKind.WriteCaller, 4),
+				new KeywordInfo("CALLER3", TracepointMessageKind.WriteCaller, 3),
+				new KeywordInfo("CALLER2", TracepointMessageKind.WriteCaller, 2),
+				new KeywordInfo("CALLER1", TracepointMessageKind.WriteCaller, 1),
+				new KeywordInfo("CALLER", TracepointMessageKind.WriteCaller, 1),
 				new KeywordInfo("FUNCTION5", TracepointMessageKind.WriteFunction, 5),
 				new KeywordInfo("FUNCTION4", TracepointMessageKind.WriteFunction, 4),
 				new KeywordInfo("FUNCTION3", TracepointMessageKind.WriteFunction, 3),
 				new KeywordInfo("FUNCTION2", TracepointMessageKind.WriteFunction, 2),
 				new KeywordInfo("FUNCTION1", TracepointMessageKind.WriteFunction, 1),
-				new KeywordInfo("FUNCTION", TracepointMessageKind.WriteFunction, 1),
+				new KeywordInfo("FUNCTION", TracepointMessageKind.WriteFunction, 0),
 				new KeywordInfo("MID", TracepointMessageKind.WriteManagedId),
 				new KeywordInfo("PID", TracepointMessageKind.WriteProcessId),
 				new KeywordInfo("PNAME", TracepointMessageKind.WriteProcessName),
@@ -195,6 +197,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			Debug.Assert(textPos == text.Length);
 			FlushPendingText();
 		}
+		// If you add more chars, update help message in ShowCodeBreakpointSettingsVM
 		static char[] specialChars = new char[] { '\\', '$', '{' };
 
 		static bool StartsWith(string s, int index, string other) {
