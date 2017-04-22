@@ -124,15 +124,15 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	}
 
 	[ExportMenuItem(Header = "res:FindCommand2", Icon = DsImagesAttribute.Search, InputGestureText = "res:FindKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 10)]
-	sealed class FindInCodeContexMenuEntry : DocumentViewerCommandTargetMenuItemBase {
-		FindInCodeContexMenuEntry()
+	sealed class FindInCodeContextMenuEntry : DocumentViewerCommandTargetMenuItemBase {
+		FindInCodeContextMenuEntry()
 			: base(StandardIds.Find) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 20)]
-	sealed class IncrementalSearchForwardContexMenuEntry : DocumentViewerCommandTargetMenuItemBase {
-		IncrementalSearchForwardContexMenuEntry()
+	sealed class IncrementalSearchForwardContextMenuEntry : DocumentViewerCommandTargetMenuItemBase {
+		IncrementalSearchForwardContextMenuEntry()
 			: base(StandardIds.IncrementalSearchForward) {
 		}
 	}

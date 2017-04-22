@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 	}
 
 	[ExportMenuItem(Header = "res:ExceptionsCommand", Icon = DsImagesAttribute.ExceptionPublic, Guid = Constants.EXCEPTIONCATEGORIES_GUID, Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_OPTIONS, Order = 0)]
-	sealed class ExceptionsContexMenuEntry : MenuItemBase<ExceptionsContexMenuEntry.Context> {
+	sealed class ExceptionsContextMenuEntry : MenuItemBase<ExceptionsContextMenuEntry.Context> {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		readonly ExceptionsCommandContext exceptionsCommandContext;
 
 		[ImportingConstructor]
-		ExceptionsContexMenuEntry(ExceptionsCommandContext exceptionsCommandContext) => this.exceptionsCommandContext = exceptionsCommandContext;
+		ExceptionsContextMenuEntry(ExceptionsCommandContext exceptionsCommandContext) => this.exceptionsCommandContext = exceptionsCommandContext;
 
 		public override void Execute(Context context) { }
 		protected override Context CreateContext(IMenuItemContext context) => CreateContext(exceptionsCommandContext, context);
@@ -186,16 +186,16 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.EXCEPTIONCATEGORIES_GUID, Group = Constants.GROUP_EXCEPTIONCATEGORIES, Order = 0)]
-	sealed class ExceptionsSubContexMenuEntry : MenuItemBase, IMenuItemProvider {
+	sealed class ExceptionsSubContextMenuEntry : MenuItemBase, IMenuItemProvider {
 		readonly ExceptionsCommandContext exceptionsCommandContext;
 
 		[ImportingConstructor]
-		ExceptionsSubContexMenuEntry(ExceptionsCommandContext exceptionsCommandContext) => this.exceptionsCommandContext = exceptionsCommandContext;
+		ExceptionsSubContextMenuEntry(ExceptionsCommandContext exceptionsCommandContext) => this.exceptionsCommandContext = exceptionsCommandContext;
 
 		public override void Execute(IMenuItemContext context) { }
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
-			var ctx = ExceptionsContexMenuEntry.CreateContext(exceptionsCommandContext, context);
+			var ctx = ExceptionsContextMenuEntry.CreateContext(exceptionsCommandContext, context);
 			Debug.Assert(ctx != null);
 			if (ctx == null)
 				yield break;

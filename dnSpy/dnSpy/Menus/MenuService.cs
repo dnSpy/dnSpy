@@ -202,7 +202,7 @@ namespace dnSpy.Menus {
 		internal bool? ShowContextMenu(object evArgs, FrameworkElement ctxMenuElem, Guid topLevelMenuGuid, Guid ownerMenuGuid, GuidObject creatorObject, IGuidObjectsProvider provider, IContextMenuInitializer initCtxMenu, bool openedFromKeyboard) {
 			InitializeMenuItemObjects();
 
-			// There could be nested contex menu handler calls, eg. first text editor followed by
+			// There could be nested context menu handler calls, eg. first text editor followed by
 			// the TabControl. We don't wan't the TabControl to disable the text editor's ctx menu.
 			if (prevEventArgs.Target == evArgs)
 				return null;

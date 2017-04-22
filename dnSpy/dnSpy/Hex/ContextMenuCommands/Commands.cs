@@ -75,52 +75,52 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(Header = "res:GoToOffsetCommand", InputGestureText = "res:ShortCutKeyCtrlG", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 0)]
-	sealed class GoToPositionContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		GoToPositionContexMenuEntry()
+	sealed class GoToPositionContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		GoToPositionContextMenuEntry()
 			: base(HexCommandIds.GoToPositionAbsolute) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:GoToMetadataCommand", InputGestureText = "res:ShortCutKeyCtrlM", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 10)]
-	sealed class GoToMetadataTableContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		GoToMetadataTableContexMenuEntry()
+	sealed class GoToMetadataTableContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		GoToMetadataTableContextMenuEntry()
 			: base(HexCommandIds.GoToMetadataTable) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:HexGoToCodeOrStructure", InputGestureText = "res:ShortCutKeyF12", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 20)]
-	sealed class GoToCodeOrStructureContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		GoToCodeOrStructureContexMenuEntry()
+	sealed class GoToCodeOrStructureContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		GoToCodeOrStructureContextMenuEntry()
 			: base(HexEditorIds.GoToCodeOrStructure) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:HexFollowFieldValueReference", InputGestureText = "res:ShortCutKeyCtrlF12", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 30)]
-	sealed class FollowFieldValueReferenceContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		FollowFieldValueReferenceContexMenuEntry()
+	sealed class FollowFieldValueReferenceContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		FollowFieldValueReferenceContextMenuEntry()
 			: base(HexEditorIds.FollowFieldValueReference) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:HexEditorSaveSelectionCommand", Icon = DsImagesAttribute.Save, InputGestureText = "res:ShortCutKeyCtrlAltS", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 100)]
-	sealed class SaveSelectionContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		SaveSelectionContexMenuEntry()
+	sealed class SaveSelectionContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		SaveSelectionContextMenuEntry()
 			: base(HexCommandIds.SaveSelection) {
 		}
 		public override bool IsEnabled(HexViewContext context) => !context.HexView.Selection.IsEmpty;
 	}
 
 	[ExportMenuItem(Header = "res:ShowOnlySelectedBytesCommand", InputGestureText = "res:ShortCutKeyCtrlD", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 200)]
-	sealed class ShowOnlySelectedBytesContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		ShowOnlySelectedBytesContexMenuEntry()
+	sealed class ShowOnlySelectedBytesContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		ShowOnlySelectedBytesContextMenuEntry()
 			: base(HexEditorIds.ShowOnlySelectedBytes) {
 		}
 		public override bool IsVisible(HexViewContext context) => !context.HexView.Selection.IsEmpty;
 	}
 
 	[ExportMenuItem(Header = "res:ShowAllBytesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftD", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 210)]
-	sealed class ShowAllBytesContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		ShowAllBytesContexMenuEntry()
+	sealed class ShowAllBytesContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		ShowAllBytesContextMenuEntry()
 			: base(HexEditorIds.ShowAllBytes) {
 		}
 		public override bool IsVisible(HexViewContext context) =>
@@ -128,8 +128,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(Icon = DsImagesAttribute.Cancel, InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_HEXVIEW_EDIT, Order = 0)]
-	sealed class DeleteContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		DeleteContexMenuEntry()
+	sealed class DeleteContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		DeleteContextMenuEntry()
 			: base(HexEditorIds.DELETE) {
 		}
 		public override bool IsVisible(HexViewContext context) => !IsReadOnly(context) && base.IsVisible(context);
@@ -137,8 +137,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(Header = "res:FillSelectionCommand", Icon = DsImagesAttribute.Fill, Group = MenuConstants.GROUP_CTX_HEXVIEW_EDIT, Order = 10)]
-	sealed class FillSelectionContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		FillSelectionContexMenuEntry()
+	sealed class FillSelectionContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		FillSelectionContextMenuEntry()
 			: base(HexCommandIds.FillSelection) {
 		}
 		public override bool IsVisible(HexViewContext context) => !IsReadOnly(context) && base.IsVisible(context);
@@ -172,12 +172,12 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(Header = "res:BytesPerLineCommand", Guid = Constants.BYTES_PER_LINE_GUID, Group = MenuConstants.GROUP_CTX_HEXVIEW_OPTS, Order = 0)]
-	sealed class BytesPerLineContexMenuEntry : HexViewCommandTargetMenuItemBase2 {
+	sealed class BytesPerLineContextMenuEntry : HexViewCommandTargetMenuItemBase2 {
 		public override void Execute(HexViewContext context) { }
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.BYTES_PER_LINE_GUID, Group = Constants.GROUP_BYTES_PER_LINE, Order = 0)]
-	sealed class BytesPerLineSubContexMenuEntry : HexViewCommandTargetMenuItemBase2, IMenuItemProvider {
+	sealed class BytesPerLineSubContextMenuEntry : HexViewCommandTargetMenuItemBase2, IMenuItemProvider {
 		public override void Execute(HexViewContext context) { }
 
 		static readonly (int bits, string header)[] subMenus = new (int, string)[] {
@@ -207,12 +207,12 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(Header = "res:ValueFormatCommand", Guid = Constants.VALUE_FORMAT_GUID, Group = MenuConstants.GROUP_CTX_HEXVIEW_OPTS, Order = 10)]
-	sealed class ValueFormatContexMenuEntry : HexViewCommandTargetMenuItemBase2 {
+	sealed class ValueFormatContextMenuEntry : HexViewCommandTargetMenuItemBase2 {
 		public override void Execute(HexViewContext context) { }
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.VALUE_FORMAT_GUID, Group = Constants.GROUP_VALUE_FORMAT, Order = 0)]
-	sealed class ValueFormatSubContexMenuEntry : HexViewCommandTargetMenuItemBase2, IMenuItemProvider {
+	sealed class ValueFormatSubContextMenuEntry : HexViewCommandTargetMenuItemBase2, IMenuItemProvider {
 		public override void Execute(HexViewContext context) { }
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
@@ -232,14 +232,14 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(Header = "res:HexEditorSettingsCommand", Icon = DsImagesAttribute.Settings, Group = MenuConstants.GROUP_CTX_HEXVIEW_OPTS, Order = 1000000)]
-	sealed class EditLocalSettingsContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		EditLocalSettingsContexMenuEntry()
+	sealed class EditLocalSettingsContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		EditLocalSettingsContextMenuEntry()
 			: base(HexCommandIds.EditLocalSettings) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:CopySpecialCommand", Icon = DsImagesAttribute.Copy, Guid = Constants.COPY_SPECIAL_GUID, Group = MenuConstants.GROUP_CTX_HEXVIEW_COPY, Order = 0)]
-	sealed class CopySpecialContexMenuEntry : HexViewCommandTargetMenuItemBase2 {
+	sealed class CopySpecialContextMenuEntry : HexViewCommandTargetMenuItemBase2 {
 		public override void Execute(HexViewContext context) { }
 	}
 
@@ -256,64 +256,64 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:CopyKey", Group = Constants.GROUP_COPY_SPECIAL, Order = 0)]
-	sealed class CopyContexMenuEntry : CopyHexViewCommandTargetMenuItemBase {
-		CopyContexMenuEntry()
+	sealed class CopyContextMenuEntry : CopyHexViewCommandTargetMenuItemBase {
+		CopyContextMenuEntry()
 			: base(StandardIds.Copy) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyUTF8StringCommand", InputGestureText = "res:ShortCutKeyCtrlShift8", Group = Constants.GROUP_COPY_SPECIAL, Order = 10)]
-	sealed class CopyUtf8StringContexMenuEntry : CopyHexViewCommandTargetMenuItemBase {
-		CopyUtf8StringContexMenuEntry()
+	sealed class CopyUtf8StringContextMenuEntry : CopyHexViewCommandTargetMenuItemBase {
+		CopyUtf8StringContextMenuEntry()
 			: base(HexEditorIds.CopyUtf8String) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyUnicodeStringCommand", InputGestureText = "res:ShortCutKeyCtrlShiftU", Group = Constants.GROUP_COPY_SPECIAL, Order = 20)]
-	sealed class CopyUnicodeStringContexMenuEntry : CopyHexViewCommandTargetMenuItemBase {
-		CopyUnicodeStringContexMenuEntry()
+	sealed class CopyUnicodeStringContextMenuEntry : CopyHexViewCommandTargetMenuItemBase {
+		CopyUnicodeStringContextMenuEntry()
 			: base(HexEditorIds.CopyUnicodeString) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyCSharpArrayCommand", InputGestureText = "res:ShortCutKeyCtrlShiftH", Group = Constants.GROUP_COPY_SPECIAL, Order = 30)]
-	sealed class CopyCSharpArrayContexMenuEntry : CopyHexViewCommandTargetMenuItemBase {
-		CopyCSharpArrayContexMenuEntry()
+	sealed class CopyCSharpArrayContextMenuEntry : CopyHexViewCommandTargetMenuItemBase {
+		CopyCSharpArrayContextMenuEntry()
 			: base(HexEditorIds.CopyCSharpArray) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyVisualBasicArrayCommand", InputGestureText = "res:ShortCutKeyCtrlShiftB", Group = Constants.GROUP_COPY_SPECIAL, Order = 40)]
-	sealed class CopyVisualBasicArrayContexMenuEntry : CopyHexViewCommandTargetMenuItemBase {
-		CopyVisualBasicArrayContexMenuEntry()
+	sealed class CopyVisualBasicArrayContextMenuEntry : CopyHexViewCommandTargetMenuItemBase {
+		CopyVisualBasicArrayContextMenuEntry()
 			: base(HexEditorIds.CopyVisualBasicArray) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyTextCommand", InputGestureText = "res:ShortCutKeyCtrlShiftC", Group = Constants.GROUP_COPY_SPECIAL, Order = 50)]
-	sealed class CopyTextContexMenuEntry : CopyHexViewCommandTargetMenuItemBase {
-		CopyTextContexMenuEntry()
+	sealed class CopyTextContextMenuEntry : CopyHexViewCommandTargetMenuItemBase {
+		CopyTextContextMenuEntry()
 			: base(HexEditorIds.CopyText) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyOffsetCommand", InputGestureText = "res:ShortCutKeyCtrlAltO", Group = Constants.GROUP_COPY_SPECIAL, Order = 60)]
-	sealed class CopyOffsetContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyOffsetContexMenuEntry()
+	sealed class CopyOffsetContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyOffsetContextMenuEntry()
 			: base(HexEditorIds.CopyOffset) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyValueCommand", InputGestureText = "res:ShortCutKeyCtrlShiftV", Group = Constants.GROUP_COPY_SPECIAL, Order = 70)]
-	sealed class CopyValueContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyValueContexMenuEntry()
+	sealed class CopyValueContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyValueContextMenuEntry()
 			: base(HexEditorIds.CopyValue) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 80)]
-	sealed class CopyUInt16ContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyUInt16ContexMenuEntry()
+	sealed class CopyUInt16ContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt16ContextMenuEntry()
 			: base(HexEditorIds.CopyUInt16) {
 		}
 
@@ -321,8 +321,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 90)]
-	sealed class CopyUInt16BigEndianContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyUInt16BigEndianContexMenuEntry()
+	sealed class CopyUInt16BigEndianContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt16BigEndianContextMenuEntry()
 			: base(HexEditorIds.CopyUInt16BigEndian) {
 		}
 
@@ -330,8 +330,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, InputGestureText = "res:ShortCutKeyCtrlShift3", Group = Constants.GROUP_COPY_SPECIAL, Order = 100)]
-	sealed class CopyUInt32ContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyUInt32ContexMenuEntry()
+	sealed class CopyUInt32ContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt32ContextMenuEntry()
 			: base(HexEditorIds.CopyUInt32) {
 		}
 
@@ -339,8 +339,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 110)]
-	sealed class CopyUInt32BigEndianContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyUInt32BigEndianContexMenuEntry()
+	sealed class CopyUInt32BigEndianContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt32BigEndianContextMenuEntry()
 			: base(HexEditorIds.CopyUInt32BigEndian) {
 		}
 
@@ -348,8 +348,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 120)]
-	sealed class CopyUInt64ContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyUInt64ContexMenuEntry()
+	sealed class CopyUInt64ContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt64ContextMenuEntry()
 			: base(HexEditorIds.CopyUInt64) {
 		}
 
@@ -357,8 +357,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 130)]
-	sealed class CopyUInt64BigEndianContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyUInt64BigEndianContexMenuEntry()
+	sealed class CopyUInt64BigEndianContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt64BigEndianContextMenuEntry()
 			: base(HexEditorIds.CopyUInt64BigEndian) {
 		}
 
@@ -366,28 +366,28 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyFileOffsetCommand", InputGestureText = "res:ShortCutKeyCtrlShiftO", Group = Constants.GROUP_COPY_SPECIAL, Order = 140)]
-	sealed class CopyFileOffsetContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyFileOffsetContexMenuEntry()
+	sealed class CopyFileOffsetContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyFileOffsetContextMenuEntry()
 			: base(HexEditorIds.CopyFileOffset) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyAbsoluteFileOffsetCommand", InputGestureText = "res:ShortCutKeyCtrlShiftA", Group = Constants.GROUP_COPY_SPECIAL, Order = 150)]
-	sealed class CopyAbsoluteFileOffsetContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyAbsoluteFileOffsetContexMenuEntry()
+	sealed class CopyAbsoluteFileOffsetContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyAbsoluteFileOffsetContextMenuEntry()
 			: base(HexEditorIds.CopyAbsoluteFileOffset) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyRVACommand", InputGestureText = "res:ShortCutKeyCtrlShiftR", Group = Constants.GROUP_COPY_SPECIAL, Order = 160)]
-	sealed class CopyRVAContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		CopyRVAContexMenuEntry()
+	sealed class CopyRVAContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyRVAContextMenuEntry()
 			: base(HexEditorIds.CopyRVA) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:PasteSpecialCommand", Icon = DsImagesAttribute.Paste, Guid = Constants.PASTE_SPECIAL_GUID, Group = MenuConstants.GROUP_CTX_HEXVIEW_COPY, Order = 10)]
-	sealed class PasteSpecialContexMenuEntry : HexViewCommandTargetMenuItemBase2 {
+	sealed class PasteSpecialContextMenuEntry : HexViewCommandTargetMenuItemBase2 {
 		public override bool IsVisible(HexViewContext context) => !IsReadOnly(context) && base.IsVisible(context);
 		public override void Execute(HexViewContext context) { }
 	}
@@ -405,98 +405,98 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteCommand", Icon = DsImagesAttribute.Paste, InputGestureText = "res:ShortCutKeyCtrlV", Group = Constants.GROUP_PASTE_SPECIAL, Order = 0)]
-	sealed class PasteContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
-		PasteContexMenuEntry()
+	sealed class PasteContextMenuEntry : PasteHexViewCommandTargetMenuItemBase {
+		PasteContextMenuEntry()
 			: base(StandardIds.Paste) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteUTF8Command", InputGestureText = "res:ShortCutKeyCtrl8", Group = Constants.GROUP_PASTE_SPECIAL, Order = 10)]
-	sealed class PasteUtf8StringContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
-		PasteUtf8StringContexMenuEntry()
+	sealed class PasteUtf8StringContextMenuEntry : PasteHexViewCommandTargetMenuItemBase {
+		PasteUtf8StringContextMenuEntry()
 			: base(HexEditorIds.PasteUtf8String) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteUTF8AndLength7Command", InputGestureText = "res:ShortCutKeyCtrlKCtrl8", Group = Constants.GROUP_PASTE_SPECIAL, Order = 20)]
-	sealed class PasteUtf8String7BitEncodedLengthPrefixContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
-		PasteUtf8String7BitEncodedLengthPrefixContexMenuEntry()
+	sealed class PasteUtf8String7BitEncodedLengthPrefixContextMenuEntry : PasteHexViewCommandTargetMenuItemBase {
+		PasteUtf8String7BitEncodedLengthPrefixContextMenuEntry()
 			: base(HexEditorIds.PasteUtf8String7BitEncodedLengthPrefix) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteUnicodeCommand", InputGestureText = "res:ShortCutKeyCtrlU", Group = Constants.GROUP_PASTE_SPECIAL, Order = 30)]
-	sealed class PasteUnicodeStringContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
-		PasteUnicodeStringContexMenuEntry()
+	sealed class PasteUnicodeStringContextMenuEntry : PasteHexViewCommandTargetMenuItemBase {
+		PasteUnicodeStringContextMenuEntry()
 			: base(HexEditorIds.PasteUnicodeString) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteUnicodeAndLength7Command", InputGestureText = "res:ShortCutKeyCtrlKCtrlU", Group = Constants.GROUP_PASTE_SPECIAL, Order = 40)]
-	sealed class PasteUnicodeString7BitEncodedLengthPrefixContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
-		PasteUnicodeString7BitEncodedLengthPrefixContexMenuEntry()
+	sealed class PasteUnicodeString7BitEncodedLengthPrefixContextMenuEntry : PasteHexViewCommandTargetMenuItemBase {
+		PasteUnicodeString7BitEncodedLengthPrefixContextMenuEntry()
 			: base(HexEditorIds.PasteUnicodeString7BitEncodedLengthPrefix) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteDotNetMetaDataBlobCommand", InputGestureText = "res:ShortCutKeyCtrlB", Group = Constants.GROUP_PASTE_SPECIAL, Order = 50)]
-	sealed class PasteBlobContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
-		PasteBlobContexMenuEntry()
+	sealed class PasteBlobContextMenuEntry : PasteHexViewCommandTargetMenuItemBase {
+		PasteBlobContextMenuEntry()
 			: base(HexEditorIds.PasteBlob) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:SelectSpecialCommand", Icon = DsImagesAttribute.Select, Guid = Constants.SELECT_SPECIAL_GUID, Group = MenuConstants.GROUP_CTX_HEXVIEW_COPY, Order = 10)]
-	sealed class SelectSpecialContexMenuEntry : HexViewCommandTargetMenuItemBase2 {
+	sealed class SelectSpecialContextMenuEntry : HexViewCommandTargetMenuItemBase2 {
 		public override void Execute(HexViewContext context) { }
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.SELECT_SPECIAL_GUID, Header = "res:HexEditorSelectCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 0)]
-	sealed class SelectContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		SelectContexMenuEntry()
+	sealed class SelectContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		SelectContextMenuEntry()
 			: base(HexCommandIds.Select) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.SELECT_SPECIAL_GUID, Header = "res:HexEditorSelectFileCommand", InputGestureText = "res:ShortCutKeyCtrlECtrlF", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 10)]
-	sealed class SelectFileContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		SelectFileContexMenuEntry()
+	sealed class SelectFileContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		SelectFileContextMenuEntry()
 			: base(HexEditorIds.SelectFile) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.SELECT_SPECIAL_GUID, Header = "res:HexEditorSelectNestedFileCommand", InputGestureText = "res:ShortCutKeyCtrlECtrlN", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 20)]
-	sealed class SelectNestedFileContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		SelectNestedFileContexMenuEntry()
+	sealed class SelectNestedFileContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		SelectNestedFileContextMenuEntry()
 			: base(HexEditorIds.SelectNestedFile) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.SELECT_SPECIAL_GUID, Header = "res:HexEditorSelectStructureCommand", InputGestureText = "res:ShortCutKeyCtrlECtrlS", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 30)]
-	sealed class SelectStructureContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		SelectStructureContexMenuEntry()
+	sealed class SelectStructureContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		SelectStructureContextMenuEntry()
 			: base(HexEditorIds.SelectStructure) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:Refresh", Icon = DsImagesAttribute.Refresh, InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_CTX_HEXVIEW_MISC, Order = 1000)]
-	sealed class RefreshContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		RefreshContexMenuEntry()
+	sealed class RefreshContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		RefreshContextMenuEntry()
 			: base(HexEditorIds.Refresh) {
 		}
 		public override bool IsVisible(HexViewContext context) => context.HexView.Buffer.IsVolatile;
 	}
 
 	[ExportMenuItem(Header = "res:FindCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlF", Group = MenuConstants.GROUP_CTX_HEXVIEW_FIND, Order = 0)]
-	sealed class FindCommandContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		FindCommandContexMenuEntry()
+	sealed class FindCommandContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		FindCommandContextMenuEntry()
 			: base(StandardIds.Find) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_HEXVIEW_FIND, Order = 10)]
-	sealed class IncrementalSearchForwardContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		IncrementalSearchForwardContexMenuEntry()
+	sealed class IncrementalSearchForwardContextMenuEntry : HexViewCommandTargetMenuItemBase {
+		IncrementalSearchForwardContextMenuEntry()
 			: base(StandardIds.IncrementalSearchForward) {
 		}
 	}

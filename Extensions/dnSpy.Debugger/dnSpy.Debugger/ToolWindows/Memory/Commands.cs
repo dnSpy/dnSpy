@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 	}
 
 	[ExportMenuItem(Header = "res:ProcessCommand", Icon = DsImagesAttribute.Process, Guid = Constants.PROCESSES_GUID, Group = MenuConstants.GROUP_CTX_HEXVIEW_MISC, Order = 2000)]
-	sealed class ProcessesContexMenuEntry : MenuItemBase<ProcessesContexMenuEntry.Context> {
+	sealed class ProcessesContextMenuEntry : MenuItemBase<ProcessesContextMenuEntry.Context> {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		readonly ProcessHexBufferProvider processHexBufferProvider;
 
 		[ImportingConstructor]
-		ProcessesContexMenuEntry(ProcessHexBufferProvider processHexBufferProvider) => this.processHexBufferProvider = processHexBufferProvider;
+		ProcessesContextMenuEntry(ProcessHexBufferProvider processHexBufferProvider) => this.processHexBufferProvider = processHexBufferProvider;
 
 		public override void Execute(Context context) { }
 		protected override Context CreateContext(IMenuItemContext context) => CreateContext(processHexBufferProvider, context);
@@ -67,16 +67,16 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.PROCESSES_GUID, Group = Constants.GROUP_PROCESSES, Order = 0)]
-	sealed class ProcessesSubContexMenuEntry : MenuItemBase, IMenuItemProvider {
+	sealed class ProcessesSubContextMenuEntry : MenuItemBase, IMenuItemProvider {
 		readonly ProcessHexBufferProvider processHexBufferProvider;
 
 		[ImportingConstructor]
-		ProcessesSubContexMenuEntry(ProcessHexBufferProvider processHexBufferProvider) => this.processHexBufferProvider = processHexBufferProvider;
+		ProcessesSubContextMenuEntry(ProcessHexBufferProvider processHexBufferProvider) => this.processHexBufferProvider = processHexBufferProvider;
 
 		public override void Execute(IMenuItemContext context) { }
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
-			var ctx = ProcessesContexMenuEntry.CreateContext(processHexBufferProvider, context);
+			var ctx = ProcessesContextMenuEntry.CreateContext(processHexBufferProvider, context);
 			Debug.Assert(ctx != null);
 			if (ctx == null)
 				yield break;
