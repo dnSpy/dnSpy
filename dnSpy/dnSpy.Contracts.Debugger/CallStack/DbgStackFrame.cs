@@ -58,6 +58,13 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		public abstract void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options);
 
 		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract string ToString(DbgStackFrameFormatOptions options);
+
+		/// <summary>
 		/// Closes this instance. If multiple frames must be closed at the same time, use <see cref="DbgManager.Close(DbgObject[])"/> instead.
 		/// </summary>
 		public void Close() => Thread.Process.DbgManager.Close(this);

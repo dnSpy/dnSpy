@@ -47,6 +47,20 @@ namespace dnSpy.Debugger.CallStack {
 			engineStackFrame.Format(writer, options);
 		}
 
+		public override string ToString(DbgStackFrameFormatOptions options) {
+			var output = new StringBuilderTextColorOutput();
+			Format(output, options);
+			return output.ToString();
+		}
+
+		const DbgStackFrameFormatOptions DefaultToStringOptions =
+			DbgStackFrameFormatOptions.ShowParameterTypes |
+			DbgStackFrameFormatOptions.ShowFunctionOffset |
+			DbgStackFrameFormatOptions.ShowDeclaringTypes |
+			DbgStackFrameFormatOptions.ShowNamespaces |
+			DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords;
+		public override string ToString() => ToString(DefaultToStringOptions);
+
 		protected override void CloseCore() {
 			DispatcherThread.VerifyAccess();
 			thread.RemoveAutoClose(this);
