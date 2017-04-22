@@ -58,20 +58,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) {
 			var dncOptions = (DotNetCoreStartDebuggingOptions)options;
-			string hostFilename, hostCommandLine;
+			string hostFilename;
 			if (string.IsNullOrWhiteSpace(dncOptions.Host)) {
 				hostFilename = DotNetCoreHelpers.GetPathToDotNetExeHost(Bitness);
 				if (!File.Exists(hostFilename))
 					throw new Exception(string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotFindDotNetCoreHost, DotNetCoreHelpers.DotNetExeName));
-				if (string.IsNullOrWhiteSpace(dncOptions.HostArguments))
-					hostCommandLine = "exec";
-				else
-					hostCommandLine = dncOptions.HostArguments;
 			}
-			else {
+			else
 				hostFilename = dncOptions.Host;
-				hostCommandLine = dncOptions.HostArguments ?? string.Empty;
-			}
+			var hostCommandLine = dncOptions.HostArguments ?? string.Empty;
 			return new CoreCLRTypeDebugInfo(GetDbgShimAndVerify(), hostFilename, hostCommandLine);
 		}
 

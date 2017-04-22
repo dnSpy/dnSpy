@@ -141,7 +141,7 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract bool CanDetachWithoutTerminating { get; }
 
 		/// <summary>
-		/// Gets the current runtime
+		/// Gets the current process
 		/// </summary>
 		public abstract DbgCurrentObject<DbgProcess> CurrentProcess { get; }
 
