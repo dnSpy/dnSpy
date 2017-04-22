@@ -51,7 +51,9 @@
     <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointHitCountChecker.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointTraceMessagePrinter.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\DbgFilterExpressionEvaluatorService.cs" />
+    <Compile Include="Breakpoints\Code\CondChecker\ParsedTracepointMessage.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\TracepointMessageCreator.cs" />
+    <Compile Include="Breakpoints\Code\CondChecker\TracepointMessageParser.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterService.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializerService.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointHitCountServiceImpl.cs" />

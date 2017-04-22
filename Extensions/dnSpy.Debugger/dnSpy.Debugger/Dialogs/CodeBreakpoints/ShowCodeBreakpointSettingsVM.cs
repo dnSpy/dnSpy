@@ -279,7 +279,7 @@ ThreadName");
 			sb.AppendLine();
 			sb.AppendLine(dnSpy_Debugger_Resources.TracepointMessage_ValidKeywords);
 			sb.Append(@"
-$ADDRESS
+$ADDRESS $ADDRESS1 $ADDRESS2 $ADDRESS3 $ADDRESS4 $ADDRESS5
 $ADID
 $BPADDR
 $CALLER $CALLER1 $CALLER2 $CALLER3 $CALLER4 $CALLER5
