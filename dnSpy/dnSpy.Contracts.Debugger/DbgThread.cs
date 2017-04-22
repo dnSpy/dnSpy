@@ -48,6 +48,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgAppDomain AppDomain { get; }
 
 		/// <summary>
+		/// true if this is the main thread
+		/// </summary>
+		public bool IsMain => Kind == PredefinedThreadKinds.Main;
+
+		/// <summary>
 		/// Gets the thread kind, see <see cref="PredefinedThreadKinds"/>
 		/// </summary>
 		public abstract string Kind { get; }

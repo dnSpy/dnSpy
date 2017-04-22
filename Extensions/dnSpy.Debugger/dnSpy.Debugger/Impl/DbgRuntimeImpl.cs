@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Impl {
 			DispatcherThread.VerifyAccess();
 			if (thread == null) {
 				lock (lockObj)
-					thread = threads.FirstOrDefault(a => a.Kind == PredefinedThreadKinds.Main) ?? (threads.Count == 0 ? null : threads[0]);
+					thread = threads.FirstOrDefault(a => a.IsMain) ?? (threads.Count == 0 ? null : threads[0]);
 			}
 			currentThread = new CurrentObject<DbgThreadImpl>(thread, thread);
 		}

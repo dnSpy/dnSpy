@@ -628,7 +628,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					var thread = TryGetThread(t);
 					if (firstThread == null)
 						firstThread = thread;
-					if (thread?.Kind == PredefinedThreadKinds.Main)
+					if (thread?.IsMain == true)
 						return thread;
 				}
 			}
