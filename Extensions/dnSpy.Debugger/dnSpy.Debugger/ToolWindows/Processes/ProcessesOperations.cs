@@ -128,17 +128,17 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				vm.Process.Break();
 		}
 
-		public override bool CanStepIntoProcess => dbgManager.Value.CurrentProcess != null;
+		public override bool CanStepIntoProcess => dbgManager.Value.CurrentProcess.Current != null;
 		public override void StepIntoProcess() {
 			//TODO: Use current process, not selected process
 		}
 
-		public override bool CanStepOverProcess => dbgManager.Value.CurrentProcess != null;
+		public override bool CanStepOverProcess => dbgManager.Value.CurrentProcess.Current != null;
 		public override void StepOverProcess() {
 			//TODO: Use current process, not selected process
 		}
 
-		public override bool CanStepOutProcess => dbgManager.Value.CurrentProcess != null;
+		public override bool CanStepOutProcess => dbgManager.Value.CurrentProcess.Current != null;
 		public override void StepOutProcess() {
 			//TODO: Use current process, not selected process
 		}

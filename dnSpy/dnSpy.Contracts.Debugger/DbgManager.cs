@@ -141,15 +141,34 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract bool CanDetachWithoutTerminating { get; }
 
 		/// <summary>
-		/// The current process. This is null if no process is paused. Only paused processes
-		/// can be written to this property.
+		/// Gets the current runtime
 		/// </summary>
-		public abstract DbgProcess CurrentProcess { get; set; }
+		public abstract DbgCurrentObject<DbgProcess> CurrentProcess { get; }
 
 		/// <summary>
 		/// Raised when <see cref="CurrentProcess"/> is changed
 		/// </summary>
-		public abstract event EventHandler CurrentProcessChanged;
+		public abstract event EventHandler<DbgCurrentObjectChangedEventArgs<DbgProcess>> CurrentProcessChanged;
+
+		/// <summary>
+		/// Gets the current runtime
+		/// </summary>
+		public abstract DbgCurrentObject<DbgRuntime> CurrentRuntime { get; }
+
+		/// <summary>
+		/// Raised when <see cref="CurrentRuntime"/> is changed
+		/// </summary>
+		public abstract event EventHandler<DbgCurrentObjectChangedEventArgs<DbgRuntime>> CurrentRuntimeChanged;
+
+		/// <summary>
+		/// Gets the current thread
+		/// </summary>
+		public abstract DbgCurrentObject<DbgThread> CurrentThread { get; }
+
+		/// <summary>
+		/// Raised when <see cref="CurrentThread"/> is changed
+		/// </summary>
+		public abstract event EventHandler<DbgCurrentObjectChangedEventArgs<DbgThread>> CurrentThreadChanged;
 
 		/// <summary>
 		/// Returns true if the runtime can be debugged
@@ -170,5 +189,47 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="objs">Objects to close</param>
 		public abstract void Close(DbgObject[] objs);
+	}
+
+	/// <summary>
+	/// Contains the current object and the object that caused the debugger to enter break mode
+	/// </summary>
+	/// <typeparam name="T">Type of object</typeparam>
+	public abstract class DbgCurrentObject<T> where T : DbgObject {
+		/// <summary>
+		/// Gets the current object or null if none
+		/// </summary>
+		public abstract T Current { get; set; }
+
+		/// <summary>
+		/// Gets the object that caused the debugger to enter break mode
+		/// </summary>
+		public abstract T Break { get; }
+	}
+
+	/// <summary>
+	/// <see cref="DbgCurrentObject{T}"/> changed event args
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public struct DbgCurrentObjectChangedEventArgs<T> where T : DbgObject {
+		/// <summary>
+		/// true if <see cref="DbgCurrentObject{T}.Current"/> changed
+		/// </summary>
+		public bool CurrentChanged { get; }
+
+		/// <summary>
+		/// true if <see cref="DbgCurrentObject{T}.Break"/> changed
+		/// </summary>
+		public bool BreakChanged { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="currentChanged">true if <see cref="DbgCurrentObject{T}.Current"/> changed</param>
+		/// <param name="breakChanged">true if <see cref="DbgCurrentObject{T}.Break"/> changed</param>
+		public DbgCurrentObjectChangedEventArgs(bool currentChanged, bool breakChanged) {
+			CurrentChanged = currentChanged;
+			BreakChanged = breakChanged;
+		}
 	}
 }

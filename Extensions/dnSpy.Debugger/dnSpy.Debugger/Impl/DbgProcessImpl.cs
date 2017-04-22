@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
@@ -75,14 +76,16 @@ namespace dnSpy.Debugger.Impl {
 			return sb.ToString();
 		}
 
-		struct EngineInfo {
+		sealed class EngineInfo {
 			public DbgEngine Engine { get; }
-			public DbgRuntime Runtime { get; }
+			public DbgRuntimeImpl Runtime { get; }
 			public string Debugging { get; }
-			public EngineInfo(DbgEngine engine, DbgRuntime runtime) {
+			public bool IsPaused { get; set; }
+			public EngineInfo(DbgEngine engine, DbgRuntimeImpl runtime) {
 				Engine = engine;
 				Runtime = runtime;
 				Debugging = engine.Debugging ?? "???";
+				IsPaused = false;
 			}
 		}
 		readonly List<EngineInfo> engineInfos;
@@ -110,9 +113,12 @@ namespace dnSpy.Debugger.Impl {
 		}
 		readonly List<DbgThread> threads;// Owned by the runtimes
 
+		internal CurrentObject<DbgRuntimeImpl> CurrentRuntime => currentRuntime;
+
 		readonly object lockObj;
 		readonly DbgManagerImpl owner;
 		readonly SafeProcessHandle hProcess;
+		CurrentObject<DbgRuntimeImpl> currentRuntime;
 
 		public DbgProcessImpl(DbgManagerImpl owner, Dispatcher dispatcher, int pid, DbgProcessState state, bool shouldDetach) {
 			lockObj = new object();
@@ -136,6 +142,49 @@ namespace dnSpy.Debugger.Impl {
 			Name = Path.GetFileName(Filename);
 
 			new DelayedIsRunningHelper(this, dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
+		}
+
+		// DbgManager thread
+		internal void UpdateRuntime_DbgThread(DbgRuntimeImpl runtime) {
+			owner.DispatcherThread.VerifyAccess();
+			lock (lockObj) {
+				var newCurrent = GetRuntime_NoLock(currentRuntime.Current, runtime);
+				var newBreak = GetRuntime_NoLock(currentRuntime.Break, runtime);
+				currentRuntime = new CurrentObject<DbgRuntimeImpl>(newCurrent, newBreak);
+			}
+		}
+
+		DbgRuntimeImpl GetRuntime_NoLock(DbgRuntimeImpl runtime, DbgRuntimeImpl defaultRuntime) {
+			if (runtime != null) {
+				var info = engineInfos.First(a => a.Runtime == runtime);
+				if (info.IsPaused)
+					return runtime;
+			}
+			return defaultRuntime ?? engineInfos.FirstOrDefault(a => a.IsPaused)?.Runtime;
+		}
+
+		// DbgManager thread
+		internal void SetPaused_DbgThread(DbgRuntimeImpl runtime) {
+			owner.DispatcherThread.VerifyAccess();
+			if (runtime == null)
+				return;
+			lock (lockObj) {
+				var info = engineInfos.First(a => a.Runtime == runtime);
+				info.IsPaused = true;
+				UpdateRuntime_DbgThread(runtime);
+			}
+		}
+
+		// DbgManager thread
+		internal void SetRunning_DbgThread(DbgRuntimeImpl runtime) {
+			owner.DispatcherThread.VerifyAccess();
+			if (runtime == null)
+				return;
+			lock (lockObj) {
+				var info = engineInfos.First(a => a.Runtime == runtime);
+				info.IsPaused = false;
+				UpdateRuntime_DbgThread(null);
+			}
 		}
 
 		// DbgManager thread
@@ -286,7 +335,7 @@ namespace dnSpy.Debugger.Impl {
 			ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(e.Objects, added: e.Added));
 		}
 
-		internal void Add_DbgThread(DbgEngine engine, DbgRuntime runtime, DbgProcessState newState) {
+		internal void Add_DbgThread(DbgEngine engine, DbgRuntimeImpl runtime, DbgProcessState newState) {
 			bool raiseStateChanged, raiseDebuggingChanged, raiseIsRunningChanged;
 			DbgThread[] addedThreads;
 			lock (lockObj) {
@@ -338,6 +387,7 @@ namespace dnSpy.Debugger.Impl {
 				for (int i = 0; i < engineInfos.Count; i++) {
 					var info = engineInfos[i];
 					if (info.Engine == engine) {
+						UpdateRuntime_DbgThread(null);
 						runtime = info.Runtime;
 						engineInfos.RemoveAt(i);
 						break;
@@ -392,6 +442,7 @@ namespace dnSpy.Debugger.Impl {
 		protected override void CloseCore() {
 			VerifyHasNoRuntimes();
 			hProcess.Dispose();
+			currentRuntime = default(CurrentObject<DbgRuntimeImpl>);
 		}
 
 		public override bool ShouldDetach {

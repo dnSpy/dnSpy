@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool CanAttachProgram => true;
 		public override void AttachProgram() => showAttachToProcessDialog.Value.Attach();
 
-		bool CanExecuteCurrentProcessPauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.CurrentProcess?.State == DbgProcessState.Paused;
+		bool CanExecuteCurrentProcessPauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.CurrentProcess.Current?.State == DbgProcessState.Paused;
 		bool CanExecutePauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != true;
 		bool CanExecuteRunningCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != false;
 		bool CanExecutePauseOrRunningCommand => dbgManager.Value.IsDebugging;

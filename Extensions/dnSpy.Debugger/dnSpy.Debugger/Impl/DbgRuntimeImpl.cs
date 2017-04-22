@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine;
@@ -58,13 +59,16 @@ namespace dnSpy.Debugger.Impl {
 					return threads.ToArray();
 			}
 		}
-		readonly List<DbgThread> threads;
+		readonly List<DbgThreadImpl> threads;
 
 		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
 		internal DbgEngine Engine { get; }
 
+		internal CurrentObject<DbgThreadImpl> CurrentThread => currentThread;
+
 		readonly object lockObj;
 		readonly DbgManagerImpl owner;
+		CurrentObject<DbgThreadImpl> currentThread;
 
 		public DbgRuntimeImpl(DbgManagerImpl owner, DbgProcess process, DbgEngine engine) {
 			lockObj = new object();
@@ -77,7 +81,21 @@ namespace dnSpy.Debugger.Impl {
 			Tags = info.Tags;
 			appDomains = new List<DbgAppDomain>();
 			modules = new List<DbgModule>();
-			threads = new List<DbgThread>();
+			threads = new List<DbgThreadImpl>();
+		}
+
+		internal void SetBreakThread(DbgThreadImpl thread) {
+			DispatcherThread.VerifyAccess();
+			if (thread == null) {
+				lock (lockObj)
+					thread = threads.FirstOrDefault(a => a.Kind == PredefinedThreadKinds.Main) ?? (threads.Count == 0 ? null : threads[0]);
+			}
+			currentThread = new CurrentObject<DbgThreadImpl>(thread, thread);
+		}
+
+		internal void ClearBreakThread() {
+			DispatcherThread.VerifyAccess();
+			currentThread = default(CurrentObject<DbgThreadImpl>);
 		}
 
 		internal void Add_DbgThread(DbgAppDomainImpl appDomain) {
@@ -213,6 +231,7 @@ namespace dnSpy.Debugger.Impl {
 				modules.Clear();
 				appDomains.Clear();
 			}
+			currentThread = default(CurrentObject<DbgThreadImpl>);
 			if (removedThreads.Length != 0)
 				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(removedThreads, added: false));
 			if (removedModules.Length != 0)

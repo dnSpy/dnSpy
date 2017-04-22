@@ -173,6 +173,9 @@ namespace dnSpy.Debugger.Impl {
 			debugTags = new TagsCollection();
 			restartOptions = new List<StartDebuggingOptions>();
 			debuggedRuntimes = new HashSet<ProcessKey>();
+			dbgCurrentProcess = new DbgCurrentProcess(this);
+			dbgCurrentRuntime = new DbgCurrentRuntime(this);
+			dbgCurrentThread = new DbgCurrentThread(this);
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgManagerStartListeners = dbgManagerStartListeners.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgModuleMemoryRefreshedNotifiers = dbgModuleMemoryRefreshedNotifiers.ToArray();
@@ -369,6 +372,7 @@ namespace dnSpy.Debugger.Impl {
 				info.Runtime = runtime;
 				info.ObjectFactory = objectFactory;
 				info.EngineState = EngineState.Paused;
+				info.Runtime?.SetBreakThread(null);
 				processState = CalculateProcessState(info.Process);
 				// Compare it before notifying the helper since it could clear it
 				pauseProgram = breakAllHelper != null || e.Pause;
@@ -387,10 +391,8 @@ namespace dnSpy.Debugger.Impl {
 
 			boundBreakpointsManager.InitializeBoundBreakpoints_DbgThread(engine);
 
-			if (pauseProgram) {
-				SetCurrentProcessIfCurrentIsNull_DbgThread(process);
-				BreakAllProcessesIfNeeded_DbgThread();
-			}
+			if (pauseProgram)
+				OnEnginePaused_DbgThread(engine);
 			else
 				Run_DbgThread(engine);
 		}
@@ -480,9 +482,10 @@ namespace dnSpy.Debugger.Impl {
 			if (runtime != null)
 				RaiseMessage_DbgThread(new DbgMessageRuntimeExitedEventArgs(runtime), ref pauseProgram);
 
+			RecheckAndUpdateCurrentProcess_DbgThread();
+
 			if (processToDispose != null) {
 				processToDispose.UpdateState_DbgThread(DbgProcessState.Terminated);
-				RecheckAndUpdateCurrentProcess_DbgThread();
 				ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(processToDispose, added: false));
 				int exitCode = processToDispose.GetExitCode();
 				RaiseMessage_DbgThread(new DbgMessageProcessExitedEventArgs(processToDispose, exitCode), ref pauseProgram);
@@ -592,8 +595,10 @@ namespace dnSpy.Debugger.Impl {
 				if (e.ErrorMessage != null) {
 					//TODO: Log the error
 				}
-				else
+				else {
 					info.EngineState = EngineState.Paused;
+					info.Runtime?.SetBreakThread((DbgThreadImpl)e.Thread);
+				}
 				cachedIsRunning = CalculateIsRunning_NoLock();
 				raiseIsRunningChanged = oldCachedIsRunning != cachedIsRunning;
 				processState = CalculateProcessState(info.Process);
@@ -603,9 +608,17 @@ namespace dnSpy.Debugger.Impl {
 			process?.UpdateState_DbgThread(processState);
 			if (raiseIsRunningChanged)
 				RaiseIsRunningChanged_DbgThread();
-			SetCurrentProcessIfCurrentIsNull_DbgThread(process);
 			if (e.ErrorMessage == null)
-				BreakAllProcessesIfNeeded_DbgThread();
+				OnEnginePaused_DbgThread(engine);
+		}
+
+		void OnEnginePaused_DbgThread(DbgEngine engine) {
+			lock (lockObj) {
+				var info = GetEngineInfo_NoLock(engine);
+				info.Process?.SetPaused_DbgThread(info.Runtime);
+			}
+			SetCurrentEngineIfCurrentIsNull_DbgThread(engine);
+			BreakAllProcessesIfNeeded_DbgThread();
 		}
 
 		void BreakCompleted_DbgThread(bool success) {
@@ -623,19 +636,19 @@ namespace dnSpy.Debugger.Impl {
 		void OnProgramMessage_DbgThread(DbgEngine engine, DbgMessageProgramMessage e) {
 			DispatcherThread.VerifyAccess();
 			var ep = new DbgMessageProgramMessageEventArgs(e.Message, GetRuntime(engine), e.Thread);
-			OnConditionalBreak_DbgThread(engine, ep, pauseDefaultValue: e.Pause);
+			OnConditionalBreak_DbgThread(engine, ep, ep.Thread, pauseDefaultValue: e.Pause);
 		}
 
 		void OnBreakpoint_DbgThread(DbgEngine engine, DbgMessageBreakpoint e) {
 			DispatcherThread.VerifyAccess();
 			var eb = new DbgMessageBoundBreakpointEventArgs(e.BoundBreakpoint, e.Thread);
-			OnConditionalBreak_DbgThread(engine, eb, pauseDefaultValue: e.Pause);
+			OnConditionalBreak_DbgThread(engine, eb, eb.Thread, pauseDefaultValue: e.Pause);
 		}
 
 		void OnProgramBreak_DbgThread(DbgEngine engine, DbgMessageProgramBreak e) {
 			DispatcherThread.VerifyAccess();
 			var eb = new DbgMessageProgramBreakEventArgs(GetRuntime(engine), e.Thread);
-			OnConditionalBreak_DbgThread(engine, eb, pauseDefaultValue: e.Pause || !debuggerSettings.IgnoreBreakInstructions);
+			OnConditionalBreak_DbgThread(engine, eb, eb.Thread, pauseDefaultValue: e.Pause || !debuggerSettings.IgnoreBreakInstructions);
 		}
 
 		internal void AddAppDomain_DbgThread(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, bool pause) {
@@ -645,7 +658,7 @@ namespace dnSpy.Debugger.Impl {
 				return;
 			runtime.Add_DbgThread(appDomain);
 			var e = new DbgMessageAppDomainLoadedEventArgs(appDomain);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, null, pauseDefaultValue: pause);
 		}
 
 		internal void AddModule_DbgThread(DbgRuntimeImpl runtime, DbgModuleImpl module, bool pause) {
@@ -656,7 +669,7 @@ namespace dnSpy.Debugger.Impl {
 			runtime.Add_DbgThread(module);
 			boundBreakpointsManager.AddBoundBreakpoints_DbgThread(new[] { module });
 			var e = new DbgMessageModuleLoadedEventArgs(module);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, null, pauseDefaultValue: pause);
 		}
 
 		internal void AddThread_DbgThread(DbgRuntimeImpl runtime, DbgThreadImpl thread, bool pause) {
@@ -666,7 +679,7 @@ namespace dnSpy.Debugger.Impl {
 				return;
 			runtime.Add_DbgThread(thread);
 			var e = new DbgMessageThreadCreatedEventArgs(thread);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, e.Thread, pauseDefaultValue: pause);
 		}
 
 		internal void RemoveAppDomain_DbgThread(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, bool pause) {
@@ -675,7 +688,7 @@ namespace dnSpy.Debugger.Impl {
 			if (!IsOurEngine(runtime.Engine))
 				return;
 			var e = new DbgMessageAppDomainUnloadedEventArgs(appDomain);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, null, pauseDefaultValue: pause);
 		}
 
 		internal void RemoveModule_DbgThread(DbgRuntimeImpl runtime, DbgModuleImpl module, bool pause) {
@@ -685,7 +698,7 @@ namespace dnSpy.Debugger.Impl {
 				return;
 			boundBreakpointsManager.RemoveBoundBreakpoints_DbgThread(new[] { module });
 			var e = new DbgMessageModuleUnloadedEventArgs(module);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, null, pauseDefaultValue: pause);
 		}
 
 		internal void RemoveThread_DbgThread(DbgRuntimeImpl runtime, DbgThreadImpl thread, bool pause) {
@@ -695,7 +708,7 @@ namespace dnSpy.Debugger.Impl {
 				return;
 			int exitCode = thread.GetExitCode();
 			var e = new DbgMessageThreadExitedEventArgs(thread, exitCode);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, null, pauseDefaultValue: pause);
 		}
 
 		internal void AddException_DbgThread(DbgRuntimeImpl runtime, DbgExceptionImpl exception, bool pause) {
@@ -704,10 +717,10 @@ namespace dnSpy.Debugger.Impl {
 			if (!IsOurEngine(runtime.Engine))
 				return;
 			var e = new DbgMessageExceptionThrownEventArgs(exception);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, exception, pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, e.Exception.Thread, exception, pause);
 		}
 
-		void OnConditionalBreak_DbgThread(DbgEngine engine, DbgMessageEventArgs e, DbgExceptionImpl exception = null, bool pauseDefaultValue = false) {
+		void OnConditionalBreak_DbgThread(DbgEngine engine, DbgMessageEventArgs e, DbgThread thread, DbgExceptionImpl exception = null, bool pauseDefaultValue = false) {
 			DispatcherThread.VerifyAccess();
 
 			bool pauseProgram = pauseDefaultValue;
@@ -725,6 +738,7 @@ namespace dnSpy.Debugger.Impl {
 				lock (lockObj) {
 					var info = GetEngineInfo_NoLock(engine);
 					info.EngineState = EngineState.Paused;
+					info.Runtime?.SetBreakThread((DbgThreadImpl)thread);
 					Debug.Assert(info.Exception == null);
 					info.Exception?.Close(DispatcherThread);
 					info.Exception = exception;
@@ -733,8 +747,7 @@ namespace dnSpy.Debugger.Impl {
 				}
 				breakAllHelper?.OnBreak_DbgThread(engine);
 				process?.UpdateState_DbgThread(processState);
-				SetCurrentProcessIfCurrentIsNull_DbgThread(process);
-				BreakAllProcessesIfNeeded_DbgThread();
+				OnEnginePaused_DbgThread(engine);
 			}
 			else {
 				exception?.Close(DispatcherThread);
@@ -786,6 +799,8 @@ namespace dnSpy.Debugger.Impl {
 						if (info.Process != null && !processes.Contains(info.Process))
 							processes.Add(info.Process);
 						info.EngineState = EngineState.Running;
+						info.Runtime?.ClearBreakThread();
+						info.Process?.SetRunning_DbgThread(info.Runtime);
 						Debug.Assert(info.Exception == null);
 						info.Engine.Run();
 					}
@@ -899,61 +914,6 @@ namespace dnSpy.Debugger.Impl {
 			}
 			if (engineInfos.Count != 0)
 				RunEngines_DbgThread(engineInfos.ToArray());
-		}
-
-		public override event EventHandler CurrentProcessChanged;
-		public override DbgProcess CurrentProcess {
-			get {
-				lock (lockObj)
-					return currentProcess;
-			}
-			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				var process = value as DbgProcessImpl;
-				if (process == null)
-					throw new ArgumentOutOfRangeException(nameof(value));
-				DbgThread(() => SetCurrentProcess_DbgThread(process));
-			}
-		}
-		DbgProcess currentProcess;
-
-		void SetCurrentProcess_DbgThread(DbgProcessImpl process) {
-			DispatcherThread.VerifyAccess();
-			if (process == null || process.State != DbgProcessState.Paused)
-				return;
-			lock (lockObj) {
-				Debug.Assert(process != null || processes.All(a => a.State != DbgProcessState.Paused));
-				if (currentProcess == process)
-					return;
-				currentProcess = process;
-			}
-			CurrentProcessChanged?.Invoke(this, EventArgs.Empty);
-		}
-
-		void SetCurrentProcessIfCurrentIsNull_DbgThread(DbgProcessImpl process) {
-			DispatcherThread.VerifyAccess();
-			if (process == null || process.State != DbgProcessState.Paused)
-				return;
-			lock (lockObj) {
-				if (currentProcess != null)
-					return;
-				currentProcess = process;
-			}
-			CurrentProcessChanged?.Invoke(this, EventArgs.Empty);
-		}
-
-		void RecheckAndUpdateCurrentProcess_DbgThread() {
-			DispatcherThread.VerifyAccess();
-			lock (lockObj) {
-				if (currentProcess?.State == DbgProcessState.Paused)
-					return;
-				var newProcess = processes.FirstOrDefault(a => a.State == DbgProcessState.Paused);
-				if (currentProcess == newProcess)
-					return;
-				currentProcess = newProcess;
-			}
-			CurrentProcessChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		public override bool CanDebugRuntime(int pid, RuntimeId rid) {

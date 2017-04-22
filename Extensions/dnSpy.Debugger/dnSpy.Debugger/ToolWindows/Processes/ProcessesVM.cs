@@ -200,7 +200,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// DbgManager thread
-		void DbgManager_CurrentProcessChanged(object sender, EventArgs e) {
+		void DbgManager_CurrentProcessChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgProcess> e) {
+			if (!e.CurrentChanged)
+				return;
 			if (dontDelaySetProcess) {
 				dontDelaySetProcess = false;
 				UI(() => UpdateCurrentProcess_UI());
@@ -216,7 +218,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		// UI thread
 		void UpdateCurrentProcess_UI() {
 			processContext.UIDispatcher.VerifyAccess();
-			var currentProcess = dbgManager.Value.CurrentProcess;
+			var currentProcess = dbgManager.Value.CurrentProcess.Current;
 			foreach (var vm in AllItems)
 				vm.IsCurrentProcess = vm.Process == currentProcess;
 		}
@@ -224,7 +226,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		// UI thread
 		void AddItems_UI(IList<DbgProcess> processes) {
 			processContext.UIDispatcher.VerifyAccess();
-			var currentProcess = dbgManager.Value.CurrentProcess;
+			var currentProcess = dbgManager.Value.CurrentProcess.Current;
 			foreach (var p in processes) {
 				var vm = new ProcessVM(this, p, processContext, processOrder++);
 				vm.IsCurrentProcess = vm.Process == currentProcess;

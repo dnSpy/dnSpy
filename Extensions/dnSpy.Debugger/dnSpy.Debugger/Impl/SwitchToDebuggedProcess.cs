@@ -42,8 +42,10 @@ namespace dnSpy.Debugger.Impl {
 				currentProcess = null;
 		}
 
-		void DbgManager_CurrentProcessChanged(object sender, EventArgs e) {
-			var newProcess = ((DbgManager)sender).CurrentProcess;
+		void DbgManager_CurrentProcessChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgProcess> e) {
+			if (!e.CurrentChanged)
+				return;
+			var newProcess = ((DbgManager)sender).CurrentProcess.Current;
 			if (newProcess != null)
 				currentProcess = newProcess;
 		}

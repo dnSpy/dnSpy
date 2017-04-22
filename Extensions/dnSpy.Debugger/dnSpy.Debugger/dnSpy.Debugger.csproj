@@ -122,10 +122,12 @@
     <Compile Include="Exceptions\ExceptionConditionsChecker.cs" />
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
+    <Compile Include="Impl\CurrentObject.cs" />
     <Compile Include="Impl\DbgBoundCodeBreakpointImpl.cs" />
     <Compile Include="Impl\DbgEngineBoundCodeBreakpointImpl.cs" />
     <Compile Include="Impl\DbgEngineBoundCodeBreakpointMessageExtensions.cs" />
     <Compile Include="Impl\DbgManagerImpl.BoundBreakpointsManager.cs" />
+    <Compile Include="Impl\DbgManagerImpl.CurrentObjects.cs" />
     <Compile Include="Impl\DbgManagerImpl.ProcessKey.cs" />
     <Compile Include="Modules\ReferenceNavigatorImpl.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />

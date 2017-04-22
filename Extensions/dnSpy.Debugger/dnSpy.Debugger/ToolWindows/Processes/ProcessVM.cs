@@ -203,9 +203,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		internal void SelectProcess() {
 			Context.UIDispatcher.VerifyAccess();
 			var process = Process;
-			if (process.State == DbgProcessState.Paused && process.DbgManager.CurrentProcess != process) {
+			if (process.State == DbgProcessState.Paused && process.DbgManager.CurrentProcess.Current != process) {
 				owner.DontDelaySetProcess();
-				process.DbgManager.CurrentProcess = process;
+				process.DbgManager.CurrentProcess.Current = process;
 			}
 		}
 
