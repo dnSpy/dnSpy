@@ -18,19 +18,17 @@
 */
 
 using System;
-using dnSpy.Contracts.Menus;
+using dndbg.Engine;
+using dnSpy.Contracts.Text;
 
-namespace dnSpy.Debugger.UI {
-	sealed class DynamicCheckableMenuItem : MenuItemBase {
-		readonly Action<IMenuItemContext> callback;
-		readonly bool isChecked;
-
-		public DynamicCheckableMenuItem(Action<IMenuItemContext> callback, bool isChecked = false) {
-			this.callback = callback;
-			this.isChecked = isChecked;
+namespace dnSpy.Debugger.CorDebug.Text {
+	sealed class TypeOutputTextColorWriter : ITypeOutput {
+		ITextColorWriter writer;
+		public TypeOutputTextColorWriter Initialize(ITextColorWriter writer) {
+			this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
+			return this;
 		}
-
-		public override void Execute(IMenuItemContext context) => callback(context);
-		public override bool IsChecked(IMenuItemContext context) => isChecked;
+		public void Clear() => writer = null;
+		public void Write(string s, TypeColor type) => writer.Write(type.ToBoxedTextColor(), s);
 	}
 }

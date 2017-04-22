@@ -18,19 +18,11 @@
 */
 
 using System;
-using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Debugger.Engine.CallStack;
 
-namespace dnSpy.Debugger.UI {
-	sealed class DynamicCheckableMenuItem : MenuItemBase {
-		readonly Action<IMenuItemContext> callback;
-		readonly bool isChecked;
-
-		public DynamicCheckableMenuItem(Action<IMenuItemContext> callback, bool isChecked = false) {
-			this.callback = callback;
-			this.isChecked = isChecked;
-		}
-
-		public override void Execute(IMenuItemContext context) => callback(context);
-		public override bool IsChecked(IMenuItemContext context) => isChecked;
+namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
+	sealed class NullDbgEngineStackWalker : DbgEngineStackWalker {
+		public override DbgEngineStackFrame[] GetNextStackFrames(int maxFrames) => Array.Empty<DbgEngineStackFrame>();
+		protected override void CloseCore() { }
 	}
 }

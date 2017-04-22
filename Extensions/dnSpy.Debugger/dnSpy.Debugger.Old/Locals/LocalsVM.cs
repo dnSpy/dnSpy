@@ -131,7 +131,7 @@ namespace dnSpy.Debugger.Locals {
 		TypePrinterFlags GetTypePrinterFlags(ILocalsSettings localsSettings, TypePrinterFlags flags) {
 			Update(localsSettings.ShowNamespaces, TypePrinterFlags.ShowNamespaces, ref flags);
 			Update(localsSettings.ShowTokens, TypePrinterFlags.ShowTokens, ref flags);
-			Update(localsSettings.ShowTypeKeywords, TypePrinterFlags.ShowTypeKeywords, ref flags);
+			Update(localsSettings.ShowTypeKeywords, TypePrinterFlags.ShowIntrinsicTypeKeywords, ref flags);
 			return flags;
 		}
 

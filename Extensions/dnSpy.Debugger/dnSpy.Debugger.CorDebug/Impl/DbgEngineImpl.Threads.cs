@@ -26,6 +26,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Debugger.CorDebug.Impl.CallStack;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
@@ -272,9 +273,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				NotifyThreadPropertiesChanged_CorDebug(info.Value.engineThread, info.Value.updateOptions, info.Value.props);
 		}
 
-		public override DbgEngineStackWalker CreateStackWalker(DbgThread thread) => InvokeCorDebugThread(() => CreateStackWalker_CorDebug(thread));
-		DbgEngineStackWalker CreateStackWalker_CorDebug(DbgThread thread) {
-			throw new NotImplementedException();//TODO:
+		public override DbgEngineStackWalker CreateStackWalker(DbgThread thread) {
+			var threadData = thread.GetData<DbgThreadData>();
+			var engineThread = TryGetEngineThread(threadData.DnThread);
+			if (engineThread == null || threadData.DnThread.HasExited)
+				return new NullDbgEngineStackWalker();
+			return new DbgEngineStackWalkerImpl(this, threadData.DnThread, thread);
 		}
 	}
 }

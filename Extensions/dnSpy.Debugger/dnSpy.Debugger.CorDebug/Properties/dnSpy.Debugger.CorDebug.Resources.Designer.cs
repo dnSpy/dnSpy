@@ -308,6 +308,114 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Appdomain Transition.
+        /// </summary>
+        public static string StackFrame_AppdomainTransition {
+            get {
+                return ResourceManager.GetString("StackFrame_AppdomainTransition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class Init.
+        /// </summary>
+        public static string StackFrame_ClassInit {
+            get {
+                return ResourceManager.GetString("StackFrame_ClassInit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception.
+        /// </summary>
+        public static string StackFrame_Exception {
+            get {
+                return ResourceManager.GetString("StackFrame_Exception", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Function Evaluation.
+        /// </summary>
+        public static string StackFrame_FunctionEvaluation {
+            get {
+                return ResourceManager.GetString("StackFrame_FunctionEvaluation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal Call.
+        /// </summary>
+        public static string StackFrame_InternalCall {
+            get {
+                return ResourceManager.GetString("StackFrame_InternalCall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal Frame ({0}).
+        /// </summary>
+        public static string StackFrame_InternalFrame {
+            get {
+                return ResourceManager.GetString("StackFrame_InternalFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to JIT Compilation.
+        /// </summary>
+        public static string StackFrame_JITCompilation {
+            get {
+                return ResourceManager.GetString("StackFrame_JITCompilation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lightweight Function.
+        /// </summary>
+        public static string StackFrame_LightweightFunction {
+            get {
+                return ResourceManager.GetString("StackFrame_LightweightFunction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Managed to Native Transition.
+        /// </summary>
+        public static string StackFrame_ManagedToNativeTransition {
+            get {
+                return ResourceManager.GetString("StackFrame_ManagedToNativeTransition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Native Frame {0}.
+        /// </summary>
+        public static string StackFrame_NativeFrame {
+            get {
+                return ResourceManager.GetString("StackFrame_NativeFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Native to Managed Transition.
+        /// </summary>
+        public static string StackFrame_NativeToManagedTransition {
+            get {
+                return ResourceManager.GetString("StackFrame_NativeToManagedTransition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Security.
+        /// </summary>
+        public static string StackFrame_Security {
+            get {
+                return ResourceManager.GetString("StackFrame_Security", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Background.
         /// </summary>
         public static string Thread_UserState_Background {

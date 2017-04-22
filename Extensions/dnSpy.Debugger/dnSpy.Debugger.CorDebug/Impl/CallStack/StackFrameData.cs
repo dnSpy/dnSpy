@@ -17,20 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dnSpy.Contracts.Menus;
+using System.Collections.Generic;
+using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Debugger.CorDebug.Text;
 
-namespace dnSpy.Debugger.UI {
-	sealed class DynamicCheckableMenuItem : MenuItemBase {
-		readonly Action<IMenuItemContext> callback;
-		readonly bool isChecked;
-
-		public DynamicCheckableMenuItem(Action<IMenuItemContext> callback, bool isChecked = false) {
-			this.callback = callback;
-			this.isChecked = isChecked;
-		}
-
-		public override void Execute(IMenuItemContext context) => callback(context);
-		public override bool IsChecked(IMenuItemContext context) => isChecked;
+namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
+	sealed class StackFrameData {
+		public readonly List<DbgEngineStackFrame> DbgEngineStackFrameList = new List<DbgEngineStackFrame>();
+		public readonly TypeOutputTextColorWriter TypeOutputTextColorWriter = new TypeOutputTextColorWriter();
 	}
 }

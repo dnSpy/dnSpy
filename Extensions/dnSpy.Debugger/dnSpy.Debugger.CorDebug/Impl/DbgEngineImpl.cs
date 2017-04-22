@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.DotNet;
 using dndbg.Engine;
@@ -33,6 +32,7 @@ using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.CorDebug.DAC;
+using dnSpy.Debugger.CorDebug.Impl.CallStack;
 using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
@@ -43,6 +43,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public event EventHandler ClrDacRunning;
 		public event EventHandler ClrDacPaused;
 		public event EventHandler ClrDacTerminated;
+
+		internal DebuggerThread DebuggerThread => debuggerThread;
+		internal DbgObjectFactory ObjectFactory => objectFactory;
 
 		readonly DebuggerThread debuggerThread;
 		readonly object lockObj;
@@ -55,17 +58,19 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		SafeHandle hProcess_debuggee;
 		DbgObjectFactory objectFactory;
 		readonly Dictionary<DnAppDomain, DbgEngineAppDomain> toEngineAppDomain;
-		readonly Dictionary<DnModule, DbgEngineModule> toEngineModule;
+		readonly Dictionary<CorModule, DbgEngineModule> toEngineModule;
 		readonly Dictionary<DnThread, DbgEngineThread> toEngineThread;
 		readonly Dictionary<DnAssembly, List<DnModule>> toAssemblyModules;
+		internal readonly StackFrameData stackFrameData;
 
 		protected DbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgStartKind startKind) {
 			StartKind = startKind;
 			lockObj = new object();
 			toEngineAppDomain = new Dictionary<DnAppDomain, DbgEngineAppDomain>();
-			toEngineModule = new Dictionary<DnModule, DbgEngineModule>();
+			toEngineModule = new Dictionary<CorModule, DbgEngineModule>();
 			toEngineThread = new Dictionary<DnThread, DbgEngineThread>();
 			toAssemblyModules = new Dictionary<DnAssembly, List<DnModule>>();
+			stackFrameData = new StackFrameData();
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			this.dbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier ?? throw new ArgumentNullException(nameof(dbgModuleMemoryRefreshedNotifier));
 			this.clrDacProvider = clrDacProvider ?? throw new ArgumentNullException(nameof(clrDacProvider));
@@ -77,8 +82,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		internal event EventHandler<ClassLoadedEventArgs> ClassLoaded;
 
 		internal void VerifyCorDebugThread() => debuggerThread.VerifyAccess();
-		internal T InvokeCorDebugThread<T>(Func<T> action) => debuggerThread.InvokeCorDebugThread(action);
-		internal void CorDebugThread(Action callback) => debuggerThread.CorDebugThread(callback);
+		internal T InvokeCorDebugThread<T>(Func<T> callback) => debuggerThread.Invoke(callback);
+		internal void CorDebugThread(Action callback) => debuggerThread.BeginInvoke(callback);
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
 			switch (e.Kind) {
@@ -138,7 +143,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					if (dnModule.IsDynamic) {
 						UpdateDynamicModuleIds(dnModule);
 						if (dnModule?.CorModuleDef != null) {
-							var module = TryGetModule(dnModule);
+							var module = TryGetModule(dnModule.CorModule);
 							Debug.Assert(module != null);
 							if (module != null)
 								ClassLoaded?.Invoke(this, new ClassLoadedEventArgs(module, cls.Token));
@@ -180,21 +185,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		DbgModule TryGetModule(CorFrame frame, CorThread thread) {
 			if (frame == null)
 				frame = thread?.ActiveFrame ?? thread?.AllFrames.FirstOrDefault();
-			var corModule = frame?.Function?.Module;
-			var module = dnDebugger.Modules.FirstOrDefault(a => a.CorModule == corModule);
-			if (module == null)
-				return null;
-			DbgEngineModule engineModule;
-			lock (lockObj)
-				toEngineModule.TryGetValue(module, out engineModule);
-			return engineModule?.Module;
+			return TryGetModule(frame?.Function?.Module);
 		}
 
-		DbgModule TryGetModule(DnModule dnModule) {
-			if (dnModule == null)
+		internal DbgModule TryGetModule(CorModule corModul) {
+			if (corModul == null)
 				return null;
 			lock (lockObj) {
-				if (toEngineModule.TryGetValue(dnModule, out var engineModule))
+				if (toEngineModule.TryGetValue(corModul, out var engineModule))
 					return engineModule.Module;
 			}
 			return null;
@@ -360,7 +358,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			debuggerThread.VerifyAccess();
 			if (!dnModule.IsDynamic)
 				return;
-			var module = TryGetModule(dnModule);
+			var module = TryGetModule(dnModule.CorModule);
 			if (module == null || !TryGetModuleData(module, out var data) || data.HasUpdatedModuleId)
 				return;
 			List<DbgModule> updatedModules = null;
@@ -370,7 +368,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 						dnModule = modules[i];
 						if (!dnModule.IsDynamic)
 							continue;
-						if (!toEngineModule.TryGetValue(dnModule, out var em))
+						if (!toEngineModule.TryGetValue(dnModule.CorModule, out var em))
 							continue;
 						if (!TryGetModuleData(em.Module, out data))
 							continue;
@@ -405,7 +403,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					if (!toAssemblyModules.TryGetValue(e.Module.Assembly, out var modules))
 						toAssemblyModules.Add(e.Module.Assembly, modules = new List<DnModule>());
 					modules.Add(e.Module);
-					toEngineModule.Add(e.Module, engineModule);
+					toEngineModule.Add(e.Module.CorModule, engineModule);
 				}
 			}
 			else {
@@ -416,8 +414,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 						if (modules.Count == 0)
 							toAssemblyModules.Remove(e.Module.Assembly);
 					}
-					if (toEngineModule.TryGetValue(e.Module, out engineModule))
-						toEngineModule.Remove(e.Module);
+					if (toEngineModule.TryGetValue(e.Module.CorModule, out engineModule))
+						toEngineModule.Remove(e.Module.CorModule);
 				}
 				if (engineModule != null) {
 					e.ShouldPause = true;
@@ -562,7 +560,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					return Array.Empty<DbgModule>();
 				var res = new List<DbgModule>(modules.Count);
 				foreach (var dnModule in modules) {
-					if (toEngineModule.TryGetValue(dnModule, out var engineModule))
+					if (toEngineModule.TryGetValue(dnModule.CorModule, out var engineModule))
 						res.Add(engineModule.Module);
 				}
 				return res.ToArray();

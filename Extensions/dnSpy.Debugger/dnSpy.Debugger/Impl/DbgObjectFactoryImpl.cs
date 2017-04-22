@@ -24,8 +24,10 @@ using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Debugger.Breakpoints.Code;
+using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Exceptions;
 
 namespace dnSpy.Debugger.Impl {
@@ -146,6 +148,12 @@ namespace dnSpy.Debugger.Impl {
 				});
 			}
 			return bps.ToArray();
+		}
+
+		public override DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgModule module, uint functionOffset, uint functionToken) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			return new SpecialDbgEngineStackFrame(name, module, functionOffset, functionToken);
 		}
 
 		internal void Dispose() => disposed = true;

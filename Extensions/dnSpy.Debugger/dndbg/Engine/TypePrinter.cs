@@ -90,10 +90,10 @@ namespace dndbg.Engine {
 		ShowParameterTypes			= 0x00000002,
 		ShowParameterNames			= 0x00000004,
 		ShowParameterValues			= 0x00000008,
-		ShowOwnerTypes				= 0x00000010,
+		ShowDeclaringTypes			= 0x00000010,
 		ShowReturnTypes				= 0x00000020,
 		ShowNamespaces				= 0x00000040,
-		ShowTypeKeywords			= 0x00000080,
+		ShowIntrinsicTypeKeywords	= 0x00000080,
 		UseDecimal					= 0x00000100,
 		ShowTokens					= 0x00000200,
 		ShowIP						= 0x00000400,
@@ -105,9 +105,9 @@ namespace dndbg.Engine {
 			ShowModuleNames |
 			ShowParameterTypes |
 			ShowParameterNames |
-			ShowOwnerTypes |
+			ShowDeclaringTypes |
 			ShowNamespaces |
-			ShowTypeKeywords |
+			ShowIntrinsicTypeKeywords |
 			ShowArrayValueSizes |
 			ShowFieldLiteralValues,
 	}
@@ -129,10 +129,10 @@ namespace dndbg.Engine {
 		bool ShowParameterTypes => (flags & TypePrinterFlags.ShowParameterTypes) != 0;
 		bool ShowParameterNames => (flags & TypePrinterFlags.ShowParameterNames) != 0;
 		bool ShowParameterValues => (flags & TypePrinterFlags.ShowParameterValues) != 0;
-		bool ShowOwnerTypes => (flags & TypePrinterFlags.ShowOwnerTypes) != 0;
+		bool ShowDeclaringTypes => (flags & TypePrinterFlags.ShowDeclaringTypes) != 0;
 		bool ShowReturnTypes => (flags & TypePrinterFlags.ShowReturnTypes) != 0;
 		bool ShowNamespaces => (flags & TypePrinterFlags.ShowNamespaces) != 0;
-		bool ShowTypeKeywords => (flags & TypePrinterFlags.ShowTypeKeywords) != 0;
+		bool ShowIntrinsicTypeKeywords => (flags & TypePrinterFlags.ShowIntrinsicTypeKeywords) != 0;
 		bool UseDecimal => (flags & TypePrinterFlags.UseDecimal) != 0;
 		bool ShowTokens => (flags & TypePrinterFlags.ShowTokens) != 0;
 		bool ShowIP => (flags & TypePrinterFlags.ShowIP) != 0;
@@ -325,7 +325,7 @@ namespace dndbg.Engine {
 				uint token = types[i].@class.Token;
 				var fullName = MDAPI.GetTypeDefName(mdi, token);
 
-				var typeKeyword = !ShowTypeKeywords || i != 0 ? null : GetTypeKeyword(fullName);
+				var typeKeyword = !ShowIntrinsicTypeKeywords || i != 0 ? null : GetTypeKeyword(fullName);
 				if (typeKeyword != null)
 					OutputWrite(typeKeyword, TypeColor.TypeKeyword);
 				else
@@ -409,7 +409,7 @@ namespace dndbg.Engine {
 				if (i > 0)
 					OutputWrite(".", TypeColor.Operator);
 
-				var typeKeyword = !ShowTypeKeywords ? null : GetTypeKeyword(list, i);
+				var typeKeyword = !ShowIntrinsicTypeKeywords ? null : GetTypeKeyword(list, i);
 				if (typeKeyword != null)
 					OutputWrite(typeKeyword, TypeColor.TypeKeyword);
 				else {
@@ -814,7 +814,7 @@ namespace dndbg.Engine {
 		}
 
 		void WriteSystemTypeKeyword(string name, string keyword, TypeColor typeColor) {
-			if (ShowTypeKeywords)
+			if (ShowIntrinsicTypeKeywords)
 				OutputWrite(keyword, TypeColor.TypeKeyword);
 			else
 				WriteSystemType(name, typeColor);
@@ -892,7 +892,7 @@ namespace dndbg.Engine {
 					Write(sig.Type, info.TypeGenericArguments, info.MethodGenericArguments, info.TypeTokenAndNames, info.MethodTokenAndNames);
 					WriteSpace();
 				}
-				if (ShowOwnerTypes) {
+				if (ShowDeclaringTypes) {
 					Write(type);
 					OutputWrite(".", TypeColor.Operator);
 				}
@@ -949,7 +949,7 @@ namespace dndbg.Engine {
 
 				WriteModuleName(module);
 				WriteReturnType(ref methodSig, retTypeIsLastArgType, module, token, info.TypeGenericArguments, info.MethodGenericArguments, info.TypeTokenAndNames, info.MethodTokenAndNames);
-				if (ShowOwnerTypes) {
+				if (ShowDeclaringTypes) {
 					Write(prop.Class.GetParameterizedType(CorElementType.Class));
 					OutputWrite(".", TypeColor.Operator);
 				}
@@ -1047,7 +1047,7 @@ namespace dndbg.Engine {
 
 				Write(evt.GetEventType());
 				WriteSpace();
-				if (ShowOwnerTypes) {
+				if (ShowDeclaringTypes) {
 					Write(evt.Class.GetParameterizedType(CorElementType.Class));
 					OutputWrite(".", TypeColor.Operator);
 				}
@@ -1241,7 +1241,7 @@ namespace dndbg.Engine {
 		}
 
 		bool WriteTypeOwner(CorClass cls, IList<CorType> typeGenArgs, List<TokenAndName> typeTokenAndNames) {
-			if (!ShowOwnerTypes)
+			if (!ShowDeclaringTypes)
 				return false;
 
 			WriteClassOrValueType(cls);

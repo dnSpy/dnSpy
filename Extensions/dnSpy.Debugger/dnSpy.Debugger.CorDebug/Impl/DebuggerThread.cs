@@ -77,8 +77,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public bool HasShutdownStarted => Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished;
 		public void VerifyAccess() => Dispatcher.VerifyAccess();
 		const DispatcherPriority DispPriority = DispatcherPriority.Send;
-		public T InvokeCorDebugThread<T>(Func<T> action) => Dispatcher.Invoke(action, DispPriority);
-		public void CorDebugThread(Action callback) {
+		public T Invoke<T>(Func<T> callback) => Dispatcher.Invoke(callback, DispPriority);
+		public void Invoke(Action callback) => Dispatcher.Invoke(callback, DispPriority);
+		public void BeginInvoke(Action callback) {
 			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
 				Dispatcher.BeginInvoke(DispPriority, callback);
 		}

@@ -79,6 +79,7 @@
     <Compile Include="Breakpoints\Modules\ModuleBreakpointsListSettings.cs" />
     <Compile Include="CallStack\DbgStackFrameImpl.cs" />
     <Compile Include="CallStack\DbgStackWalkerImpl.cs" />
+    <Compile Include="CallStack\SpecialDbgEngineStackFrame.cs" />
     <Compile Include="DbgUI\Debugger.cs" />
     <Compile Include="DbgUI\DebuggerImpl.cs" />
     <Compile Include="DbgUI\DebugMenu.cs" />

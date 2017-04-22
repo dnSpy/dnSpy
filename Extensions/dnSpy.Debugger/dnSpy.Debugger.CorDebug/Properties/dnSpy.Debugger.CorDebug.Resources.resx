@@ -235,4 +235,40 @@ Error: {0}</value>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
     <value>Some other process is already debugging process {0}</value>
   </data>
+  <data name="StackFrame_NativeFrame" xml:space="preserve">
+    <value>Native Frame {0}</value>
+  </data>
+  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
+    <value>Appdomain Transition</value>
+  </data>
+  <data name="StackFrame_ClassInit" xml:space="preserve">
+    <value>Class Init</value>
+  </data>
+  <data name="StackFrame_Exception" xml:space="preserve">
+    <value>Exception</value>
+  </data>
+  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
+    <value>Function Evaluation</value>
+  </data>
+  <data name="StackFrame_InternalCall" xml:space="preserve">
+    <value>Internal Call</value>
+  </data>
+  <data name="StackFrame_InternalFrame" xml:space="preserve">
+    <value>Internal Frame ({0})</value>
+  </data>
+  <data name="StackFrame_JITCompilation" xml:space="preserve">
+    <value>JIT Compilation</value>
+  </data>
+  <data name="StackFrame_LightweightFunction" xml:space="preserve">
+    <value>Lightweight Function</value>
+  </data>
+  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
+    <value>Managed to Native Transition</value>
+  </data>
+  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
+    <value>Native to Managed Transition</value>
+  </data>
+  <data name="StackFrame_Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
 </root>

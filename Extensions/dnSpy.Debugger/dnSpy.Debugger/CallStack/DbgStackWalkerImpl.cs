@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
@@ -41,6 +42,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (maxFrames < 0)
 				throw new ArgumentOutOfRangeException(nameof(maxFrames));
 			var engineFrames = engineStackWalker.GetNextStackFrames(maxFrames);
+			Debug.Assert(engineFrames.Length <= maxFrames);
 			var frames = new DbgStackFrame[engineFrames.Length];
 			for (int i = 0; i < engineFrames.Length; i++)
 				frames[i] = new DbgStackFrameImpl(thread, engineFrames[i]);

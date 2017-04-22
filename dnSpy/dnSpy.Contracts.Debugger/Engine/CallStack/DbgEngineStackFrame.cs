@@ -36,9 +36,14 @@ namespace dnSpy.Contracts.Debugger.Engine.CallStack {
 		public abstract uint FunctionOffset { get; }
 
 		/// <summary>
-		/// Gets the function token or <see cref="uint.MaxValue"/> if it doesn't have a token.
+		/// Gets the function token or <see cref="InvalidFunctionToken"/> if it doesn't have a token.
 		/// </summary>
 		public abstract uint FunctionToken { get; }
+
+		/// <summary>
+		/// Invalid function token
+		/// </summary>
+		public const uint InvalidFunctionToken = uint.MaxValue;
 
 		/// <summary>
 		/// Formats the stack frame

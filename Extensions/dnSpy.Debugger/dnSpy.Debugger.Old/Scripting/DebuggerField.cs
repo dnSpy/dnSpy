@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public override bool Equals(object obj) => (obj as DebuggerField)?.field == field;
 		public override int GetHashCode() => hashCode;
-		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.ShowNamespaces | TypePrinterFlags.ShowTypeKeywords;
+		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.ShowNamespaces | TypePrinterFlags.ShowIntrinsicTypeKeywords;
 		public void WriteTo(IOutputWriter output) => Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
 		public void Write(IOutputWriter output, TypeFormatFlags flags) =>
 			debugger.Dispatcher.UI(() => field.Write(new OutputWriterConverter(output), (TypePrinterFlags)flags));

@@ -26,7 +26,6 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Native;
-using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
 using Microsoft.Win32.SafeHandles;
 

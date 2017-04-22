@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.Scripting {
 		public override int GetHashCode() => hashCode;
 		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.ShowParameterTypes |
 			TypePrinterFlags.ShowReturnTypes | TypePrinterFlags.ShowNamespaces |
-			TypePrinterFlags.ShowTypeKeywords;
+			TypePrinterFlags.ShowIntrinsicTypeKeywords;
 		public void WriteTo(IOutputWriter output) => Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
 		public void Write(IOutputWriter output, TypeFormatFlags flags) =>
 			debugger.Dispatcher.UI(() => evt.Write(new OutputWriterConverter(output), (TypePrinterFlags)flags));

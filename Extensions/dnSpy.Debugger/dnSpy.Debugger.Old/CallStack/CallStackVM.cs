@@ -79,9 +79,9 @@ namespace dnSpy.Debugger.CallStack {
 				if (callStackSettings.ShowParameterNames) flags |= TypePrinterFlags.ShowParameterNames;
 				if (callStackSettings.ShowParameterValues) flags |= TypePrinterFlags.ShowParameterValues;
 				if (callStackSettings.ShowIP) flags |= TypePrinterFlags.ShowIP;
-				if (callStackSettings.ShowOwnerTypes) flags |= TypePrinterFlags.ShowOwnerTypes;
+				if (callStackSettings.ShowOwnerTypes) flags |= TypePrinterFlags.ShowDeclaringTypes;
 				if (callStackSettings.ShowNamespaces) flags |= TypePrinterFlags.ShowNamespaces;
-				if (callStackSettings.ShowTypeKeywords) flags |= TypePrinterFlags.ShowTypeKeywords;
+				if (callStackSettings.ShowTypeKeywords) flags |= TypePrinterFlags.ShowIntrinsicTypeKeywords;
 				if (callStackSettings.ShowTokens) flags |= TypePrinterFlags.ShowTokens;
 				if (callStackSettings.ShowReturnTypes) flags |= TypePrinterFlags.ShowReturnTypes;
 				return flags;
