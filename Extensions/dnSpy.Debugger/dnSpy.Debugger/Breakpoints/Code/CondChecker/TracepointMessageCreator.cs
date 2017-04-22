@@ -114,10 +114,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				this.thread = null;
 				if (stackWalker != null) {
 					stackWalker.Close();
-					stackWalker = null;
-				}
-				if (stackFrames != null) {
 					boundBreakpoint.Process.DbgManager.Close(stackFrames);
+					stackWalker = null;
 					stackFrames = null;
 				}
 				if (output.Capacity >= 1024) {

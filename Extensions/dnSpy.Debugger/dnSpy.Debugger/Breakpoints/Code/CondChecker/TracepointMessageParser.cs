@@ -36,10 +36,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				Kind = kind;
 				Number = -1;
 			}
-			public KeywordInfo(string name, TracepointMessageKind kind, int argument) {
+			public KeywordInfo(string name, TracepointMessageKind kind, int number) {
 				Name = name ?? throw new ArgumentNullException(nameof(name));
 				Kind = kind;
-				Number = argument;
+				Number = number;
 			}
 		}
 		readonly KeywordInfo[] keywords;

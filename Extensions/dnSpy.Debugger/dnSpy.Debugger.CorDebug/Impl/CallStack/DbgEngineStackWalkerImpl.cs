@@ -18,9 +18,9 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
@@ -34,6 +34,16 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 		readonly DbgThread thread;
 		readonly uint continueCounter;
 		IEnumerator<CorFrame> enumerator;
+
+		sealed class EmptyEnumerator<T> : IEnumerator<T> {
+			public static readonly IEnumerator<T> Empty = new EmptyEnumerator<T>();
+			EmptyEnumerator() { }
+			T IEnumerator<T>.Current => default(T);
+			object IEnumerator.Current => default(T);
+			bool IEnumerator.MoveNext() => false;
+			void IEnumerator.Reset() => throw new NotSupportedException();
+			void IDisposable.Dispose() { }
+		}
 
 		public DbgEngineStackWalkerImpl(DbgEngineImpl engine, DnThread dnThread, DbgThread thread) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
@@ -49,7 +59,7 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 			engine.DebuggerThread.VerifyAccess();
 			if (dnThread.Debugger.ProcessState != DebuggerProcessState.Paused || dnThread.HasExited || thread.IsClosed || continueCounter != dnThread.Debugger.ContinueCounter) {
 				enumerator?.Dispose();
-				enumerator = Enumerable.Empty<CorFrame>().GetEnumerator();
+				enumerator = EmptyEnumerator<CorFrame>.Empty;
 				return Array.Empty<DbgEngineStackFrame>();
 			}
 			if (enumerator == null)
