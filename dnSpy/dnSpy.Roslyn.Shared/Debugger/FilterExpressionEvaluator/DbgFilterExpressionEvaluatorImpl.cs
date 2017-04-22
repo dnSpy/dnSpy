@@ -27,6 +27,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator;
 using dnSpy.Roslyn.Shared.Properties;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 	[ExportDbgManagerStartListener]
@@ -165,7 +166,13 @@ static class " + FilterExpressionClassName + @" {
 ", parseOptions);
 			var comp = CSharpCompilation.Create("filter-expr-eval", new[] { mscorlibSyntaxTree, filterExprClass }, options: compilationOptions);
 			var peStream = new MemoryStream();
-			var emitResult = comp.Emit(peStream);
+			EmitResult emitResult;
+			try {
+				emitResult = comp.Emit(peStream);
+			}
+			catch (Exception ex) {
+				return (null, string.Format("Internal compiler error: {0}: {1}", ex.GetType().FullName, ex.Message));
+			}
 			if (!emitResult.Success) {
 				var error = emitResult.Diagnostics.FirstOrDefault(a => a.Severity == DiagnosticSeverity.Error)?.ToString() ?? "Unknown error";
 				return (null, error);
