@@ -610,11 +610,29 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					SendMessage(new DbgMessageBreak($"Couldn't break the process, hr=0x{hr:X8}"));
 				else {
 					Debug.Assert(dnDebugger.ProcessState == DebuggerProcessState.Paused);
-					SendMessage(new DbgMessageBreak(TryGetThread(dnDebugger.Current.Thread)));
+					// The debugger just picks the first thread in the first AppDomain, and this isn't
+					// always the main thread, eg. when we've attached to a proces. It also doesn't
+					// have enough info to find the main thread so we have to do it.
+					SendMessage(new DbgMessageBreak(GetThreadPreferMain_CorDebug()));
 				}
 			}
 			else
-				SendMessage(new DbgMessageBreak(TryGetThread(dnDebugger.Current.Thread)));
+				SendMessage(new DbgMessageBreak(GetThreadPreferMain_CorDebug()));
+		}
+
+		DbgThread GetThreadPreferMain_CorDebug() {
+			debuggerThread.VerifyAccess();
+			DbgThread firstThread = null;
+			foreach (var p in dnDebugger.Processes) {
+				foreach (var t in p.Threads) {
+					var thread = TryGetThread(t);
+					if (firstThread == null)
+						firstThread = thread;
+					if (thread?.Kind == PredefinedThreadKinds.Main)
+						return thread;
+				}
+			}
+			return firstThread;
 		}
 
 		public override void Run() => CorDebugThread(RunCore);
