@@ -218,6 +218,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			dbgManager.Value.DispatcherThread.VerifyAccess();
 			if (enable) {
 				dbgManager.Value.ProcessesChanged += DbgManager_ProcessesChanged;
+				dbgManager.Value.CurrentThreadChanged += DbgManager_CurrentThreadChanged;
 				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
 				var threads = new List<DbgThread>();
 				var processes = dbgManager.Value.Processes;
@@ -240,6 +241,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			}
 			else {
 				dbgManager.Value.ProcessesChanged -= DbgManager_ProcessesChanged;
+				dbgManager.Value.CurrentThreadChanged -= DbgManager_CurrentThreadChanged;
 				dbgManager.Value.DelayedIsRunningChanged -= DbgManager_DelayedIsRunningChanged;
 				foreach (var p in dbgManager.Value.Processes) {
 					DeinitializeProcess_DbgThread(p);
@@ -422,6 +424,21 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			}
 		}
 
+		// DbgManager thread
+		void DbgManager_CurrentThreadChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgThread> e) =>
+			UI(() => UpdateCurrentThread_UI());
+
+		// UI thread
+		void UpdateCurrentThread_UI() {
+			threadContext.UIDispatcher.VerifyAccess();
+			var currentThread = dbgManager.Value.CurrentThread.Current;
+			var breakThread = dbgManager.Value.CurrentThread.Break;
+			foreach (var vm in realAllItems) {
+				vm.IsSelectedThread = vm.Thread == currentThread;
+				vm.IsBreakThread = vm.Thread == breakThread;
+			}
+		}
+
 		// UI thread
 		void UpdateFields_UI() {
 			threadContext.UIDispatcher.VerifyAccess();
@@ -477,6 +494,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			threadContext.UIDispatcher.VerifyAccess();
 			foreach (var t in threads) {
 				var vm = new ThreadVM(t, threadContext, threadOrder++, threadCategoryService, NameEditValueProvider);
+				vm.IsSelectedThread = t == dbgManager.Value.CurrentThread.Current;
+				vm.IsBreakThread = t == dbgManager.Value.CurrentThread.Break;
 				realAllItems.Add(vm);
 				if (IsMatch_UI(vm, filterText, selectedProcess)) {
 					int insertionIndex = GetInsertionIndex_UI(vm);

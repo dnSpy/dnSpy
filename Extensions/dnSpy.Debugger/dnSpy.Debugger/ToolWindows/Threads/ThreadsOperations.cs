@@ -119,6 +119,10 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public override bool CanSwitchToThread => SelectedItems.Count == 1;
 		public override void SwitchToThread(bool newTab) {
+			if (!CanSwitchToThread)
+				return;
+			var thread = SelectedItems[0].Thread;
+			thread.Process.DbgManager.CurrentThread.Current = thread;
 			//TODO:
 		}
 

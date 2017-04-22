@@ -93,7 +93,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		void ThreadsControl_ThreadsListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			//TODO:
+			if (Operations.CanSwitchToThread)
+				Operations.SwitchToThread(newTab);
 		}
 
 		public void FocusSearchTextBox() => threadsControl.FocusSearchTextBox();

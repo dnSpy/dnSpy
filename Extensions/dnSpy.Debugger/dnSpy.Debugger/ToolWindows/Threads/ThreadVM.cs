@@ -39,7 +39,6 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	}
 
 	sealed class ThreadVM : ViewModelBase {
-		//TODO: init
 		internal bool IsSelectedThread {
 			get => isSelectedProcess;
 			set {
@@ -52,7 +51,6 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 		bool isSelectedProcess;
 
-		//TODO: init
 		internal bool IsBreakThread {
 			get => isBreakThread;
 			set {
