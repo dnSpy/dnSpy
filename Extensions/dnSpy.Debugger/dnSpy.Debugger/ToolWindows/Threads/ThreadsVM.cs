@@ -434,7 +434,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			var currentThread = dbgManager.Value.CurrentThread.Current;
 			var breakThread = dbgManager.Value.CurrentThread.Break;
 			foreach (var vm in realAllItems) {
-				vm.IsSelectedThread = vm.Thread == currentThread;
+				vm.IsCurrentThread = vm.Thread == currentThread;
 				vm.IsBreakThread = vm.Thread == breakThread;
 			}
 		}
@@ -494,7 +494,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			threadContext.UIDispatcher.VerifyAccess();
 			foreach (var t in threads) {
 				var vm = new ThreadVM(t, threadContext, threadOrder++, threadCategoryService, NameEditValueProvider);
-				vm.IsSelectedThread = t == dbgManager.Value.CurrentThread.Current;
+				vm.IsCurrentThread = t == dbgManager.Value.CurrentThread.Current;
 				vm.IsBreakThread = t == dbgManager.Value.CurrentThread.Break;
 				realAllItems.Add(vm);
 				if (IsMatch_UI(vm, filterText, selectedProcess)) {

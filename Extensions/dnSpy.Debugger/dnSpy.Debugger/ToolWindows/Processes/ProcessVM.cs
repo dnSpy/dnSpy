@@ -29,16 +29,28 @@ using dnSpy.Debugger.UI;
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	sealed class ProcessVM : ViewModelBase {
 		internal bool IsCurrentProcess {
-			get => isSelectedProcess;
+			get => isCurrentProcess;
 			set {
 				Context.UIDispatcher.VerifyAccess();
-				if (isSelectedProcess != value) {
-					isSelectedProcess = value;
+				if (isCurrentProcess != value) {
+					isCurrentProcess = value;
 					OnPropertyChanged(nameof(ImageReference));
 				}
 			}
 		}
-		bool isSelectedProcess;
+		bool isCurrentProcess;
+
+		internal bool IsBreakProcess {
+			get => isBreakProcess;
+			set {
+				Context.UIDispatcher.VerifyAccess();
+				if (isBreakProcess != value) {
+					isBreakProcess = value;
+					OnPropertyChanged(nameof(ImageReference));
+				}
+			}
+		}
+		bool isBreakProcess;
 
 		internal DbgProcessState CachedState {
 			get => cachedState;
@@ -51,7 +63,16 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 		DbgProcessState cachedState;
 
-		public ImageReference ImageReference => IsCurrentProcess ? DsImages.CurrentInstructionPointer : ImageReference.None;
+		public ImageReference ImageReference {
+			get {
+				if (IsCurrentProcess)
+					return DsImages.CurrentInstructionPointer;
+				if (IsBreakProcess)
+					return DsImages.DraggedCurrentInstructionPointer;
+				return ImageReference.None;
+			}
+		}
+
 		public object NameObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowName);
 		public object IdObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowId);
 		public object TitleObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowTitle);

@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		public void WriteImage(ITextColorWriter output, ThreadVM vm) {
-			if (vm.IsSelectedThread)
+			if (vm.IsCurrentThread)
 				output.Write(BoxedTextColor.Text, ">");
 		}
 

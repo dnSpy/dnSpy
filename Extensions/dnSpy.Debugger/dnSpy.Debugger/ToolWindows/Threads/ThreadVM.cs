@@ -39,17 +39,17 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	}
 
 	sealed class ThreadVM : ViewModelBase {
-		internal bool IsSelectedThread {
-			get => isSelectedProcess;
+		internal bool IsCurrentThread {
+			get => isCurrentThread;
 			set {
 				Context.UIDispatcher.VerifyAccess();
-				if (isSelectedProcess != value) {
-					isSelectedProcess = value;
+				if (isCurrentThread != value) {
+					isCurrentThread = value;
 					OnPropertyChanged(nameof(CurrentImageReference));
 				}
 			}
 		}
-		bool isSelectedProcess;
+		bool isCurrentThread;
 
 		internal bool IsBreakThread {
 			get => isBreakThread;
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public ImageReference CurrentImageReference {
 			get {
-				if (IsSelectedThread)
+				if (IsCurrentThread)
 					return DsImages.CurrentInstructionPointer;
 				if (IsBreakThread)
 					return DsImages.DraggedCurrentInstructionPointer;
