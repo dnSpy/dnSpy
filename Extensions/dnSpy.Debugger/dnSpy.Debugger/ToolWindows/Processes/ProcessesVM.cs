@@ -200,18 +200,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// DbgManager thread
-		void DbgManager_CurrentProcessChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgProcess> e) {
-			if (e.CurrentChanged && dontDelaySetProcess) {
-				dontDelaySetProcess = false;
-				UI(() => UpdateCurrentProcess_UI());
-			}
-			else
-				UI(AntiFlickerConstants.AntiFlickerDelay, () => UpdateCurrentProcess_UI());
-		}
-		// Called by ProcessVM when the user double clicks to select the new process. In this case, we don't
-		// want a delay since it will feel slow.
-		internal void DontDelaySetProcess() => dontDelaySetProcess = true;
-		bool dontDelaySetProcess;
+		void DbgManager_CurrentProcessChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgProcess> e) =>
+			UI(() => UpdateCurrentProcess_UI());
 
 		// UI thread
 		void UpdateCurrentProcess_UI() {
