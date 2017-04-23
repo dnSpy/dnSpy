@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -84,13 +85,29 @@ namespace dnSpy.Debugger.Impl {
 			threads = new List<DbgThreadImpl>();
 		}
 
-		internal void SetBreakThread(DbgThreadImpl thread) {
+		internal void SetCurrentThread_DbgThread(DbgThreadImpl thread) {
+			owner.DispatcherThread.VerifyAccess();
+			currentThread = new CurrentObject<DbgThreadImpl>(thread, currentThread.Break);
+		}
+
+		internal void SetBreakThread(DbgThreadImpl thread, bool tryOldCurrentThread = false) {
 			DispatcherThread.VerifyAccess();
-			if (thread == null) {
-				lock (lockObj)
-					thread = threads.FirstOrDefault(a => a.IsMain) ?? (threads.Count == 0 ? null : threads[0]);
+			DbgThreadImpl newCurrent, newBreak;
+			lock (lockObj) {
+				newBreak = GetThread_NoLock(thread);
+				if (tryOldCurrentThread && currentThread.Current?.IsClosed == false)
+					newCurrent = currentThread.Current;
+				else
+					newCurrent = GetThread_NoLock(thread);
 			}
-			currentThread = new CurrentObject<DbgThreadImpl>(thread, thread);
+			Debug.Assert((newBreak != null) == (newCurrent != null));
+			currentThread = new CurrentObject<DbgThreadImpl>(newCurrent, newBreak);
+		}
+
+		DbgThreadImpl GetThread_NoLock(DbgThreadImpl thread) {
+			if (thread?.IsClosed == false)
+				return thread;
+			return threads.FirstOrDefault(a => a.IsMain) ?? (threads.Count == 0 ? null : threads[0]);
 		}
 
 		internal void ClearBreakThread() {

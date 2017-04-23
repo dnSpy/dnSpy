@@ -141,10 +141,12 @@ namespace dnSpy.Debugger.Impl {
 			public string[] DebugTags { get; }
 			public DbgObjectFactoryImpl ObjectFactory { get; set; }
 			public DbgException Exception { get; set; }
+			public bool DelayedIsRunning { get; set; }
 			public EngineInfo(DbgEngine engine) {
 				Engine = engine;
 				DebugTags = (string[])engine.DebugTags.Clone();
 				EngineState = EngineState.Starting;
+				DelayedIsRunning = true;
 			}
 		}
 
@@ -372,6 +374,7 @@ namespace dnSpy.Debugger.Impl {
 				info.Runtime = runtime;
 				info.ObjectFactory = objectFactory;
 				info.EngineState = EngineState.Paused;
+				info.DelayedIsRunning = false;
 				info.Runtime?.SetBreakThread(null);
 				processState = CalculateProcessState(info.Process);
 				// Compare it before notifying the helper since it could clear it
@@ -597,7 +600,8 @@ namespace dnSpy.Debugger.Impl {
 				}
 				else {
 					info.EngineState = EngineState.Paused;
-					info.Runtime?.SetBreakThread((DbgThreadImpl)e.Thread);
+					info.DelayedIsRunning = false;
+					info.Runtime?.SetBreakThread((DbgThreadImpl)e.Thread, true);
 				}
 				cachedIsRunning = CalculateIsRunning_NoLock();
 				raiseIsRunningChanged = oldCachedIsRunning != cachedIsRunning;
@@ -738,6 +742,7 @@ namespace dnSpy.Debugger.Impl {
 				lock (lockObj) {
 					var info = GetEngineInfo_NoLock(engine);
 					info.EngineState = EngineState.Paused;
+					info.DelayedIsRunning = false;
 					info.Runtime?.SetBreakThread((DbgThreadImpl)thread);
 					Debug.Assert(info.Exception == null);
 					info.Exception?.Close(DispatcherThread);
@@ -799,7 +804,6 @@ namespace dnSpy.Debugger.Impl {
 						if (info.Process != null && !processes.Contains(info.Process))
 							processes.Add(info.Process);
 						info.EngineState = EngineState.Running;
-						info.Runtime?.ClearBreakThread();
 						info.Process?.SetRunning_DbgThread(info.Runtime);
 						Debug.Assert(info.Exception == null);
 						info.Engine.Run();
@@ -814,6 +818,31 @@ namespace dnSpy.Debugger.Impl {
 			foreach (var process in processes)
 				process.UpdateState_DbgThread(CalculateProcessState(process));
 			RecheckAndUpdateCurrentProcess_DbgThread();
+		}
+
+		internal void SetDelayedIsRunning_DbgThread(DbgEngine[] engines) {
+			DispatcherThread.VerifyAccess();
+			lock (lockObj) {
+				foreach (var engine in engines) {
+					var info = TryGetEngineInfo_NoLock(engine);
+					if (info != null) {
+						info.Runtime?.ClearBreakThread();
+						info.DelayedIsRunning = true;
+					}
+				}
+			}
+			RecheckAndUpdateCurrentProcess_DbgThread();
+		}
+
+		internal bool? GetDelayedIsRunning_DbgThread(DbgEngine engine) {
+			DispatcherThread.VerifyAccess();
+			lock (lockObj) {
+				foreach (var info in engines) {
+					if (info.Engine == engine)
+						return info.DelayedIsRunning;
+				}
+			}
+			return null;
 		}
 
 		void Run_DbgThread(DbgEngine engine) {
