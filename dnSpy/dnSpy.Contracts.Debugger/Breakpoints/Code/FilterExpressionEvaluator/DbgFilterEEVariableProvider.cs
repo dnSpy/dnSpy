@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// <summary>
 		/// Process id
 		/// </summary>
-		public abstract int ProcessId { get; }
+		public abstract ulong ProcessId { get; }
 
 		/// <summary>
 		/// Process name
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// <summary>
 		/// Thread id
 		/// </summary>
-		public abstract int ThreadId { get; }
+		public abstract ulong ThreadId { get; }
 
 		/// <summary>
 		/// Thread name

@@ -26,7 +26,7 @@ using SR = System.Reflection;
 using SRE = System.Reflection.Emit;
 
 namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
-	delegate bool EvalDelegate(string machineName, int processId, string processName, int threadId, string threadName);
+	delegate bool EvalDelegate(string machineName, ulong processId, string processName, ulong threadId, string threadName);
 
 	[Serializable]
 	sealed class EvalDelegateCreatorException : Exception { }
@@ -71,7 +71,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 			this.evalMethodName = evalMethodName;
 		}
 
-		static readonly Type[] evalDelegateParamTypes = new Type[] { typeof(string), typeof(int), typeof(string), typeof(int), typeof(string) };
+		static readonly Type[] evalDelegateParamTypes = new Type[] { typeof(string), typeof(ulong), typeof(string), typeof(ulong), typeof(string) };
 		public EvalDelegate CreateDelegate() {
 			var type = module.Find(evalClassName, isReflectionName: true);
 			Debug.Assert(type != null);
@@ -236,6 +236,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 			switch (typeSig.ElementType) {
 			case ElementType.Boolean: return typeof(bool);
 			case ElementType.I4: return typeof(int);
+			case ElementType.U4: return typeof(uint);
+			case ElementType.U8: return typeof(ulong);
 			case ElementType.String: return typeof(string);
 			default: throw new EvalDelegateCreatorException();
 			}

@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.Impl {
 			return engineModule;
 		}
 
-		public override DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause, T data) {
+		public override DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause, T data) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
 			var thread = new DbgThreadImpl(runtime, VerifyOptionalAppDomain(appDomain), kind, id, managedId, name, suspendedCount, state);

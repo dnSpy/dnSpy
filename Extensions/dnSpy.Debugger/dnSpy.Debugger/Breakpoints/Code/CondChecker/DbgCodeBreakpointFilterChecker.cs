@@ -42,9 +42,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		sealed class DbgFilterEEVariableProviderImpl : DbgFilterEEVariableProvider {
 			public override string MachineName => Environment.MachineName;
-			public override int ProcessId => process.Id;
+			public override ulong ProcessId => (uint)process.Id;
 			public override string ProcessName => process.Filename;
-			public override int ThreadId => thread?.Id ?? -1;
+			public override ulong ThreadId => thread?.Id ?? ulong.MaxValue;
 			public override string ThreadName => thread?.UIName;
 
 			DbgProcess process;

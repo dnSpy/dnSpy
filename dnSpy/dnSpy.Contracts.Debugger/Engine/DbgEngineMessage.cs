@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Gets the process id
 		/// </summary>
-		public int ProcessId { get; }
+		public ulong ProcessId { get; }
 
 		/// <summary>
 		/// true if the process should be paused, false if other code gets to decide if it should be paused
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// </summary>
 		/// <param name="processId">Process id</param>
 		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
-		public DbgMessageConnected(int processId, bool pause = false) {
+		public DbgMessageConnected(ulong processId, bool pause = false) {
 			ProcessId = processId;
 			Pause = pause;
 		}

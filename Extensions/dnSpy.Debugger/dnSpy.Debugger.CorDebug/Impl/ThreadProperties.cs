@@ -25,13 +25,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class ThreadProperties {
 		public DbgAppDomain AppDomain { get; }
 		public string Kind { get; }
-		public int Id { get; }
-		public int? ManagedId { get; }
+		public ulong Id { get; }
+		public ulong? ManagedId { get; }
 		public string Name { get; }
 		public int SuspendedCount { get; }
 		public CorDebugUserState UserState { get; }
 
-		public ThreadProperties(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, CorDebugUserState userState) {
+		public ThreadProperties(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, CorDebugUserState userState) {
 			AppDomain = appDomain;
 			Kind = kind;
 			Id = id;

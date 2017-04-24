@@ -149,6 +149,8 @@ namespace System {
 	public struct Void { }
 	public struct Boolean { }
 	public struct Int32 { }
+	public struct UInt32 { }
+	public struct UInt64 { }
 	public sealed class String {
 		public static bool operator ==(String left, String right) => false;
 		public static bool operator !=(String left, String right) => false;
@@ -159,7 +161,7 @@ namespace System {
 		(byte[] assembly, string error) Compile(string expr, bool verifyExpr = false) {
 			var filterExprClass = CSharpSyntaxTree.ParseText(@"
 static class " + FilterExpressionClassName + @" {
-	public static bool " + EvalMethodName + @"(string MachineName, int ProcessId, string ProcessName, int ThreadId, string ThreadName) =>
+	public static bool " + EvalMethodName + @"(string MachineName, ulong ProcessId, string ProcessName, ulong ThreadId, string ThreadName) =>
 #line 1
 " + expr + @";
 }

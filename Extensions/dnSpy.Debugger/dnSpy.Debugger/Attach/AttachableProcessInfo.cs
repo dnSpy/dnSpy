@@ -25,7 +25,7 @@ using dnSpy.Debugger.Utilities;
 
 namespace dnSpy.Debugger.Attach {
 	sealed class AttachableProcessInfo {
-		public int ProcessId { get; }
+		public ulong ProcessId { get; }
 		public RuntimeId RuntimeId { get; }
 		public string RuntimeName { get; }
 		public string Name { get; }
@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.Attach {
 		public string Filename { get; }
 		public string Architecture { get; }
 
-		AttachableProcessInfo(int processId, RuntimeId runtimeId, string runtimeName, string name, string title, string filename, string architecture) {
+		AttachableProcessInfo(ulong processId, RuntimeId runtimeId, string runtimeName, string name, string title, string filename, string architecture) {
 			ProcessId = processId;
 			RuntimeId = runtimeId ?? throw new ArgumentNullException(nameof(runtimeId));
 			RuntimeName = runtimeName ?? throw new ArgumentNullException(nameof(runtimeName));
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.Attach {
 				throw new ArgumentNullException(nameof(processProvider));
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			int processId = options.ProcessId;
+			var processId = options.ProcessId;
 			var runtimeId = options.RuntimeId;
 			var runtimeName = options.RuntimeName;
 			var name = options.Name;

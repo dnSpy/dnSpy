@@ -34,7 +34,7 @@ using Microsoft.Win32.SafeHandles;
 namespace dnSpy.Debugger.Impl {
 	unsafe sealed class DbgProcessImpl : DbgProcess, IIsRunningProvider {
 		public override DbgManager DbgManager => owner;
-		public override int Id { get; }
+		public override ulong Id { get; }
 		public override int Bitness { get; }
 		public override DbgMachine Machine { get; }
 		public override string Filename { get; }
@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.Impl {
 		readonly SafeProcessHandle hProcess;
 		CurrentObject<DbgRuntimeImpl> currentRuntime;
 
-		public DbgProcessImpl(DbgManagerImpl owner, Dispatcher dispatcher, int pid, DbgProcessState state, bool shouldDetach) {
+		public DbgProcessImpl(DbgManagerImpl owner, Dispatcher dispatcher, ulong pid, DbgProcessState state, bool shouldDetach) {
 			lockObj = new object();
 			engineInfos = new List<EngineInfo>();
 			threads = new List<DbgThread>();
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.Impl {
 
 			const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ |
 				NativeMethods.PROCESS_VM_WRITE | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
-			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, pid);
+			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, (int)pid);
 			if (hProcess.IsInvalid)
 				throw new InvalidOperationException($"Couldn't open process {pid}");
 
@@ -224,9 +224,9 @@ namespace dnSpy.Debugger.Impl {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
-		static string GetProcessFilename(int pid) {
+		static string GetProcessFilename(ulong pid) {
 			try {
-				using (var p = Process.GetProcessById(pid))
+				using (var p = Process.GetProcessById((int)pid))
 					return p.MainModule.FileName;
 			}
 			catch {

@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
 				hProcess_debuggee = Native.NativeMethods.OpenProcess(Native.NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
-				SendMessage(new DbgMessageConnected(cp.CorProcess.ProcessId, pause: false));
+				SendMessage(new DbgMessageConnected((uint)cp.CorProcess.ProcessId, pause: false));
 				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
@@ -505,7 +505,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					throw new InvalidOperationException("Dispatcher has shut down");
 				var dbgOptions = new AttachProcessOptions(CreateAttachInfo(options)) {
 					DebugMessageDispatcher = debuggerThread.CreateDebugMessageDispatcher(),
-					ProcessId = options.ProcessId,
+					ProcessId = (int)options.ProcessId,
 				};
 
 				dnDebugger = DnDebugger.Attach(dbgOptions);

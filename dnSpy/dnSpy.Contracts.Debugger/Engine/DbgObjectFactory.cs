@@ -125,7 +125,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
 		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
 		/// <returns></returns>
-		public DbgEngineThread CreateThread(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause) =>
+		public DbgEngineThread CreateThread(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause) =>
 			CreateThread<object>(appDomain, kind, id, managedId, name, suspendedCount, state, pause, null);
 
 		/// <summary>
@@ -142,7 +142,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
 		/// <param name="data">Data to add to the <see cref="DbgThread"/> or null if nothing gets added</param>
 		/// <returns></returns>
-		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause, T data) where T : class;
+		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause, T data) where T : class;
 
 		/// <summary>
 		/// Creates an exception. The engine has paused the program.

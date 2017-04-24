@@ -27,12 +27,12 @@ namespace dnSpy.Debugger.Utilities {
 	/// up code that must get multiple processes.
 	/// </summary>
 	sealed class ProcessProvider : IDisposable {
-		readonly Dictionary<int, Process> toProcess;
+		readonly Dictionary<ulong, Process> toProcess;
 		bool processesInitd;
 
-		public ProcessProvider() => toProcess = new Dictionary<int, Process>();
+		public ProcessProvider() => toProcess = new Dictionary<ulong, Process>();
 
-		public Process GetProcess(int pid) {
+		public Process GetProcess(ulong pid) {
 			if (!processesInitd)
 				ForceInitialize();
 
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Utilities {
 		void ForceInitialize() {
 			ClearProcesses();
 			foreach (var p in Process.GetProcesses())
-				toProcess[p.Id] = p;
+				toProcess[(uint)p.Id] = p;
 			processesInitd = true;
 		}
 

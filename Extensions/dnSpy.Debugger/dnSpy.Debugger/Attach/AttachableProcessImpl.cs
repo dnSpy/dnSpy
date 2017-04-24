@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.Attach;
 
 namespace dnSpy.Debugger.Attach {
 	sealed class AttachableProcessImpl : AttachableProcess {
-		public override int ProcessId => attachableProcessInfo.ProcessId;
+		public override ulong ProcessId => attachableProcessInfo.ProcessId;
 		public override RuntimeId RuntimeId => attachableProcessInfo.RuntimeId;
 		public override string RuntimeName => attachableProcessInfo.RuntimeName;
 		public override string Name => attachableProcessInfo.Name;

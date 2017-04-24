@@ -98,13 +98,13 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Updates <see cref="DbgThread.Id"/>
 		/// </summary>
 		/// <param name="id">New value</param>
-		public void UpdateId(int id) => Update(UpdateOptions.Id, id: id);
+		public void UpdateId(ulong id) => Update(UpdateOptions.Id, id: id);
 
 		/// <summary>
 		/// Updates <see cref="DbgThread.ManagedId"/>
 		/// </summary>
 		/// <param name="managedId">New value</param>
-		public void UpdateManagedId(int? managedId) => Update(UpdateOptions.ManagedId, managedId: managedId);
+		public void UpdateManagedId(ulong? managedId) => Update(UpdateOptions.ManagedId, managedId: managedId);
 
 		/// <summary>
 		/// Updates <see cref="DbgThread.Name"/>
@@ -135,6 +135,6 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="name">New <see cref="DbgThread.Name"/> value</param>
 		/// <param name="suspendedCount">New <see cref="DbgThread.SuspendedCount"/> value</param>
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
-		public abstract void Update(UpdateOptions options, DbgAppDomain appDomain = null, string kind = null, int id = 0, int? managedId = null, string name = null, int suspendedCount = 0, ReadOnlyCollection<DbgStateInfo> state = null);
+		public abstract void Update(UpdateOptions options, DbgAppDomain appDomain = null, string kind = null, ulong id = 0, ulong? managedId = null, string name = null, int suspendedCount = 0, ReadOnlyCollection<DbgStateInfo> state = null);
 	}
 }

@@ -255,7 +255,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					break;
 
 				case TracepointMessageKind.WriteManagedId:
-					if (thread?.ManagedId is int mid)
+					if (thread?.ManagedId is ulong mid)
 						Write(mid.ToString());
 					else
 						WriteError();

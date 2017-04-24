@@ -64,19 +64,19 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.AttachToProcess {
 			int bitness = IntPtr.Size * 8;
 			var dbgShimFilename = DotNetCoreHelpers.GetDebugShimFilename(bitness);
 			foreach (var ccInfo in CoreCLRHelper.GetCoreCLRInfos(process.Id, coreclrFilename, dbgShimFilename))
-				yield return new DotNetCoreAttachProgramOptions(process.Id, ccInfo.CoreCLRTypeInfo.Version, ccInfo.CoreCLRTypeInfo.CoreCLRFilename);
+				yield return new DotNetCoreAttachProgramOptions((uint)process.Id, ccInfo.CoreCLRTypeInfo.Version, ccInfo.CoreCLRTypeInfo.CoreCLRFilename);
 		}
 	}
 
 	sealed class DotNetCoreAttachProgramOptions : AttachProgramOptions {
-		public override int ProcessId { get; }
+		public override ulong ProcessId { get; }
 		public override RuntimeId RuntimeId { get; }
 		public override string RuntimeName { get; }
 
 		readonly string clrModuleVersion;
 		readonly string coreCLRFilename;
 
-		public DotNetCoreAttachProgramOptions(int pid, string clrModuleVersion, string coreCLRFilename) {
+		public DotNetCoreAttachProgramOptions(ulong pid, string clrModuleVersion, string coreCLRFilename) {
 			ProcessId = pid;
 			RuntimeId = new DotNetCoreRuntimeId(clrModuleVersion);
 			RuntimeName = "CoreCLR " + clrModuleVersion;

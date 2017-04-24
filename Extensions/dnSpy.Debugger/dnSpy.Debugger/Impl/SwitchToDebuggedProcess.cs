@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.Impl {
 			if (process == null)
 				return;
 			try {
-				using (var p = Process.GetProcessById(process.Id)) {
+				using (var p = Process.GetProcessById((int)process.Id)) {
 					var hWnd = p.MainWindowHandle;
 					if (hWnd != IntPtr.Zero)
 						NativeMethods.SetForegroundWindow(hWnd);

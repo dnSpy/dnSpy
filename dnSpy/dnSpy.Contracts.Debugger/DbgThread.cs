@@ -60,12 +60,12 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the id of this thread
 		/// </summary>
-		public abstract int Id { get; }
+		public abstract ulong Id { get; }
 
 		/// <summary>
 		/// Gets the managed id of this thread or null if it's not a managed thread
 		/// </summary>
-		public abstract int? ManagedId { get; }
+		public abstract ulong? ManagedId { get; }
 
 		/// <summary>
 		/// Gets the thread name

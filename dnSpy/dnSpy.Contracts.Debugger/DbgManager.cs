@@ -176,7 +176,15 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="pid">Process id</param>
 		/// <param name="rid">Runtime id</param>
 		/// <returns></returns>
-		public abstract bool CanDebugRuntime(int pid, RuntimeId rid);
+		public bool CanDebugRuntime(int pid, RuntimeId rid) => CanDebugRuntime((uint)pid, rid);
+
+		/// <summary>
+		/// Returns true if the runtime can be debugged
+		/// </summary>
+		/// <param name="pid">Process id</param>
+		/// <param name="rid">Runtime id</param>
+		/// <returns></returns>
+		public abstract bool CanDebugRuntime(ulong pid, RuntimeId rid);
 
 		/// <summary>
 		/// Closes <paramref name="obj"/>

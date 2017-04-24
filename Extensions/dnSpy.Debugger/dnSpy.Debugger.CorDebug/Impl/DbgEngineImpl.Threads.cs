@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties oldProperties, bool isCreateThread, bool forceReadName) {
 			debuggerThread.VerifyAccess();
 			var appDomain = TryGetEngineAppDomain(thread.AppDomainOrNull)?.AppDomain;
-			var id = thread.VolatileThreadId;
+			ulong id = (uint)thread.VolatileThreadId;
 
 			// If it was created, it could already have a new name so always try to read it
 			if (isCreateThread)
@@ -71,22 +71,22 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return threadObj;
 		}
 
-		static int? GetManagedId(DnThread thread) {
+		static ulong? GetManagedId(DnThread thread) {
 			var threadObj = TryGetThreadObject(thread);
 			if (threadObj == null)
 				return null;
 			// mscorlib 2.0 and 4.0 and CoreCLR all use this field name
 			if (!EvalReflectionUtils.ReadValue(threadObj, "m_ManagedThreadId", out int managedId))
 				return null;
-			return managedId;
+			return (uint)managedId;
 		}
 
-		int? GetManagedId_ClrDac(DnThread thread) {
+		ulong? GetManagedId_ClrDac(DnThread thread) {
 			Debug.Assert(clrDacInitd);
 			var info = clrDac.GetThreadInfo(thread.VolatileThreadId);
 			if (info == null)
 				return null;
-			return info.Value.ManagedThreadId;
+			return (uint)info.Value.ManagedThreadId;
 		}
 
 		static string GetThreadName(DnThread thread) {
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return name;
 		}
 
-		string GetThreadKind(DnThread thread, int? managedId) {
+		string GetThreadKind(DnThread thread, ulong? managedId) {
 			if (managedId == 1)
 				return PredefinedThreadKinds.Main;
 

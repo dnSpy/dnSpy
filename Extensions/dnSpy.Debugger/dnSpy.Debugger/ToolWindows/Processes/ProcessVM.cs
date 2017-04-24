@@ -122,9 +122,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			// ;)
 			readonly Process process;
 
-			public ProcessState(int pid) {
+			public ProcessState(ulong pid) {
 				try {
-					process = System.Diagnostics.Process.GetProcessById(pid);
+					process = System.Diagnostics.Process.GetProcessById((int)pid);
 				}
 				catch {
 				}

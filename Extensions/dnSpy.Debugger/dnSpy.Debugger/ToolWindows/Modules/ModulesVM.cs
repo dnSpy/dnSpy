@@ -688,7 +688,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				int c = StringComparer.OrdinalIgnoreCase.Compare(x.Process.Name, y.Process.Name);
 				if (c != 0)
 					return c;
-				return x.Process.Id - y.Process.Id;
+				return x.Process.Id.CompareTo(y.Process.Id);
 			}
 		}
 

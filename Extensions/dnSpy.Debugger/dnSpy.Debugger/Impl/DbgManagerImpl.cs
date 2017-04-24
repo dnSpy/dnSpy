@@ -32,7 +32,7 @@ using dnSpy.Debugger.Exceptions;
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgManager))]
 	sealed partial class DbgManagerImpl : DbgManager, IIsRunningProvider {
-		static int currentProcessId = Process.GetCurrentProcess().Id;
+		static ulong currentProcessId = (uint)Process.GetCurrentProcess().Id;
 
 		public override event EventHandler<DbgMessageEventArgs> Message;
 		void RaiseMessage_DbgThread(DbgMessageEventArgs e, ref bool pauseProgram) {
@@ -335,7 +335,7 @@ namespace dnSpy.Debugger.Impl {
 				return GetEngineInfo_NoLock(engine).Runtime;
 		}
 
-		DbgProcessImpl GetOrCreateProcess_DbgThread(int pid, DbgStartKind startKind, out bool createdProcess) {
+		DbgProcessImpl GetOrCreateProcess_DbgThread(ulong pid, DbgStartKind startKind, out bool createdProcess) {
 			DispatcherThread.VerifyAccess();
 			DbgProcessImpl process;
 			lock (lockObj) {
@@ -945,7 +945,7 @@ namespace dnSpy.Debugger.Impl {
 				RunEngines_DbgThread(engineInfos.ToArray());
 		}
 
-		public override bool CanDebugRuntime(int pid, RuntimeId rid) {
+		public override bool CanDebugRuntime(ulong pid, RuntimeId rid) {
 			if (rid == null)
 				throw new ArgumentNullException(nameof(rid));
 			if (pid == currentProcessId)

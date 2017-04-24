@@ -50,6 +50,13 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				output.Write(BoxedTextColor.Number, value.ToString());
 		}
 
+		void WriteUInt64(ITextColorWriter output, ulong value) {
+			if (useHex)
+				output.Write(BoxedTextColor.Number, "0x" + value.ToString("X8"));
+			else
+				output.Write(BoxedTextColor.Number, value.ToString());
+		}
+
 		public void WriteImage(ITextColorWriter output, ThreadVM vm) {
 			if (vm.IsCurrentThread)
 				output.Write(BoxedTextColor.Text, ">");
@@ -58,10 +65,10 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public void WriteManagedId(ITextColorWriter output, DbgThread thread) {
 			var managedId = thread.ManagedId;
 			if (managedId != null)
-				WriteInt32(output, managedId.Value);
+				WriteUInt64(output, managedId.Value);
 		}
 
-		public void WriteId(ITextColorWriter output, DbgThread thread) => WriteInt32(output, thread.Id);
+		public void WriteId(ITextColorWriter output, DbgThread thread) => WriteUInt64(output, thread.Id);
 		public void WriteSuspendedCount(ITextColorWriter output, DbgThread thread) => WriteInt32(output, thread.SuspendedCount);
 		public void WriteCategoryText(ITextColorWriter output, ThreadVM vm) => output.Write(BoxedTextColor.Text, vm.CategoryText);
 

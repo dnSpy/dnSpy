@@ -181,7 +181,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				var c = StringComparer.CurrentCultureIgnoreCase.Compare(x.Name, y.Name);
 				if (c != 0)
 					return c;
-				c = x.Id - y.Id;
+				c = x.Id.CompareTo(y.Id);
 				if (c != 0)
 					return c;
 				return StringComparer.CurrentCultureIgnoreCase.Compare(x.RuntimeName, y.RuntimeName);

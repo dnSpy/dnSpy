@@ -33,7 +33,6 @@ namespace dnSpy.Debugger.Impl {
 		public override DbgRuntime Runtime => runtime;
 		public override DbgAppDomain AppDomain => appDomain;
 		public override string Kind => kind;
-		public override int Id => id;
 		public override string Name => name;
 		public override int SuspendedCount => suspendedCount;
 
@@ -53,7 +52,14 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		public override int? ManagedId {
+		public override ulong Id {
+			get {
+				lock (lockObj)
+					return id;
+			}
+		}
+
+		public override ulong? ManagedId {
 			get {
 				lock (lockObj)
 					return managedId;
@@ -68,14 +74,14 @@ namespace dnSpy.Debugger.Impl {
 		readonly HashSet<DbgObject> autoCloseObjects;
 		DbgAppDomainImpl appDomain;
 		string kind;
-		int id;
-		int? managedId;
+		ulong id;
+		ulong? managedId;
 		string name;
 		int suspendedCount;
 		ReadOnlyCollection<DbgStateInfo> state;
 		static readonly ReadOnlyCollection<DbgStateInfo> emptyState = new ReadOnlyCollection<DbgStateInfo>(Array.Empty<DbgStateInfo>());
 
-		public DbgThreadImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, string kind, int id, int? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) {
+		public DbgThreadImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) {
 			lockObj = new object();
 			autoCloseObjects = new HashSet<DbgObject>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
@@ -120,15 +126,18 @@ namespace dnSpy.Debugger.Impl {
 				OnPropertyChanged(nameof(UIName));
 		}
 
-		internal void UpdateId_DbgThread(int id) {
+		internal void UpdateId_DbgThread(ulong id) {
 			DispatcherThread.VerifyAccess();
-			if (this.id != id) {
+			bool raiseEvent;
+			lock (lockObj) {
+				raiseEvent = this.id != id;
 				this.id = id;
-				OnPropertyChanged(nameof(Id));
 			}
+			if (raiseEvent)
+				OnPropertyChanged(nameof(Id));
 		}
 
-		internal void UpdateManagedId_DbgThread(int? managedId) {
+		internal void UpdateManagedId_DbgThread(ulong? managedId) {
 			DispatcherThread.VerifyAccess();
 			bool raiseEvent;
 			lock (lockObj) {

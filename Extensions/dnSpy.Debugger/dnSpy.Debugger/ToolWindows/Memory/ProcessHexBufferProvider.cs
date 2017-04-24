@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		/// </summary>
 		/// <param name="buffer">Buffer, created by <see cref="CreateBuffer"/></param>
 		/// <param name="pid">Process id of process to use</param>
-		public abstract void SetProcessStream(HexBuffer buffer, int pid);
+		public abstract void SetProcessStream(HexBuffer buffer, ulong pid);
 
 		/// <summary>
 		/// Gets the process id that is used by the underlying buffer stream. This can be null
@@ -93,12 +93,12 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		/// </summary>
 		/// <param name="buffer">Buffer, created by <see cref="CreateBuffer"/></param>
 		/// <returns></returns>
-		public abstract int? GetProcessId(HexBuffer buffer);
+		public abstract ulong? GetProcessId(HexBuffer buffer);
 
 		/// <summary>
-		/// Gets all process ids that can be passed to <see cref="SetProcessStream(HexBuffer, int)"/>
+		/// Gets all process ids that can be passed to <see cref="SetProcessStream(HexBuffer, ulong)"/>
 		/// </summary>
-		public abstract int[] ProcessIds { get; }
+		public abstract ulong[] ProcessIds { get; }
 
 		/// <summary>
 		/// Invalidates all memory which causes all <see cref="Contracts.Hex.Editor.HexView"/>s to
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		/// use the current memory content instead of cached values.
 		/// </summary>
 		/// <param name="pid">Process id</param>
-		public abstract void InvalidateMemory(int pid);
+		public abstract void InvalidateMemory(ulong pid);
 	}
 
 	[Export(typeof(ProcessHexBufferProvider))]
@@ -200,7 +200,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 				foreach (var p in processes) {
 					const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ |
 						NativeMethods.PROCESS_VM_WRITE | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
-					var processHandle = NativeMethods.OpenProcess(dwDesiredAccess, false, p.Id);
+					var processHandle = NativeMethods.OpenProcess(dwDesiredAccess, false, (int)p.Id);
 					Debug.Assert(!processHandle.IsInvalid);
 					var stream = CreateHexBufferStream_UI(processHandle.DangerousGetHandle());
 					processInfos.Add(new ProcessInfo(p, stream, processHandle));
@@ -248,7 +248,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// UI thread
-		ProcessInfo TryGetProcessInfo_UI(int pid) {
+		ProcessInfo TryGetProcessInfo_UI(ulong pid) {
 			uiDispatcher.VerifyAccess();
 			foreach (var info in processInfos) {
 				if (info.Process.Id == pid)
@@ -315,7 +315,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// UI thread
-		public override void SetProcessStream(HexBuffer buffer, int pid) {
+		public override void SetProcessStream(HexBuffer buffer, ulong pid) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			uiDispatcher.VerifyAccess();
@@ -329,7 +329,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// UI thread
-		public override int? GetProcessId(HexBuffer buffer) {
+		public override ulong? GetProcessId(HexBuffer buffer) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			uiDispatcher.VerifyAccess();
@@ -340,7 +340,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// UI thread
-		public override int[] ProcessIds {
+		public override ulong[] ProcessIds {
 			get {
 				uiDispatcher.VerifyAccess();
 				return processInfos.Select(a => a.Process.Id).ToArray();
@@ -355,7 +355,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// UI thread
-		public override void InvalidateMemory(int pid) {
+		public override void InvalidateMemory(ulong pid) {
 			uiDispatcher.VerifyAccess();
 			foreach (var info in processInfos) {
 				if (info.Process.Id == pid)
