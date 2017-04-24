@@ -45,14 +45,7 @@ namespace dnSpy.Debugger.CallStack {
 		/// <summary>
 		/// Gets the active frame or null if <see cref="Frames"/> is empty
 		/// </summary>
-		public DbgStackFrame ActiveFrame {
-			get {
-				var info = Frames;
-				var frames = info.Frames;
-				int index = info.ActiveFrameIndex;
-				return (uint)index < (uint)frames.Count ? frames[index] : null;
-			}
-		}
+		public DbgStackFrame ActiveFrame => Frames.ActiveStackFrame;
 
 		/// <summary>
 		/// Gets all frames. This is a truncated list if there are too many frames. The

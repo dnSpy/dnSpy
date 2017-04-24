@@ -385,7 +385,7 @@ namespace dnSpy.Debugger.DbgUI {
 		sealed class CallStackWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
 			public CallStackWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
-				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, true) {
+				: base(toolWindowService, ToolWindows.CallStack.CallStackToolWindowContent.THE_GUID, debugger, true) {
 			}
 		}
 

@@ -132,7 +132,22 @@
     <Compile Include="Impl\DbgManagerImpl.CurrentObjects.cs" />
     <Compile Include="Impl\DbgManagerImpl.ProcessKey.cs" />
     <Compile Include="Modules\ReferenceNavigatorImpl.cs" />
+    <Compile Include="Text\ClassifiedText.cs" />
+    <Compile Include="Text\ClassifiedTextWriter.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
+    <Compile Include="ToolWindows\CallStack\CallStackColumnConverter.cs" />
+    <Compile Include="ToolWindows\CallStack\CallStackContent.cs" />
+    <Compile Include="ToolWindows\CallStack\CallStackContext.cs" />
+    <Compile Include="ToolWindows\CallStack\CallStackControl.xaml.cs">
+      <DependentUpon>CallStackControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\CallStack\CallStackDisplaySettings.cs" />
+    <Compile Include="ToolWindows\CallStack\CallStackDisplaySettingsBase.cs" />
+    <Compile Include="ToolWindows\CallStack\CallStackFormatter.cs" />
+    <Compile Include="ToolWindows\CallStack\CallStackOperations.cs" />
+    <Compile Include="ToolWindows\CallStack\CallStackToolWindowContent.cs" />
+    <Compile Include="ToolWindows\CallStack\CallStackVM.cs" />
+    <Compile Include="ToolWindows\CallStack\StackFrameVM.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointColumnConverter.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointContext.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointFormatter.cs" />
@@ -352,6 +367,10 @@
     <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ToolWindows\CallStack\CallStackControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ToolWindows\CodeBreakpoints\CodeBreakpointsControl.xaml">
       <SubType>Designer</SubType>

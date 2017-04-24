@@ -78,12 +78,12 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 
 		static TypePrinterFlags GetFlags(DbgStackFrameFormatOptions options) {
 			var flags = TypePrinterFlags.ShowArrayValueSizes;
-			if ((options & DbgStackFrameFormatOptions.ShowReturnType) != 0) flags |= TypePrinterFlags.ShowReturnTypes;
+			if ((options & DbgStackFrameFormatOptions.ShowReturnTypes) != 0) flags |= TypePrinterFlags.ShowReturnTypes;
 			if ((options & DbgStackFrameFormatOptions.ShowParameterTypes) != 0) flags |= TypePrinterFlags.ShowParameterTypes;
 			if ((options & DbgStackFrameFormatOptions.ShowParameterNames) != 0) flags |= TypePrinterFlags.ShowParameterNames;
 			if ((options & DbgStackFrameFormatOptions.ShowParameterValues) != 0) flags |= TypePrinterFlags.ShowParameterValues;
 			if ((options & DbgStackFrameFormatOptions.ShowFunctionOffset) != 0) flags |= TypePrinterFlags.ShowIP;
-			if ((options & DbgStackFrameFormatOptions.ShowModuleName) != 0) flags |= TypePrinterFlags.ShowModuleNames;
+			if ((options & DbgStackFrameFormatOptions.ShowModuleNames) != 0) flags |= TypePrinterFlags.ShowModuleNames;
 			if ((options & DbgStackFrameFormatOptions.ShowDeclaringTypes) != 0) flags |= TypePrinterFlags.ShowDeclaringTypes;
 			if ((options & DbgStackFrameFormatOptions.ShowNamespaces) != 0) flags |= TypePrinterFlags.ShowNamespaces;
 			if ((options & DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords) != 0) flags |= TypePrinterFlags.ShowIntrinsicTypeKeywords;

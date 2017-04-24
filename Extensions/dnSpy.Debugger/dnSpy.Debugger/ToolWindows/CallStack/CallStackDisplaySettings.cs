@@ -17,72 +17,72 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.ComponentModel;
 
-namespace dnSpy.Contracts.Debugger.CallStack {
+namespace dnSpy.Debugger.ToolWindows.CallStack {
 	/// <summary>
-	/// Flags used when formatting a <see cref="DbgStackFrame"/>
+	/// Call stack display settings
 	/// </summary>
-	[Flags]
-	public enum DbgStackFrameFormatOptions {
+	abstract class CallStackDisplaySettings : INotifyPropertyChanged {
 		/// <summary>
-		/// No bit is set
+		/// Raised when a property is changed
 		/// </summary>
-		None							= 0,
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Raises <see cref="PropertyChanged"/>
+		/// </summary>
+		/// <param name="propName">Name of property that got changed</param>
+		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		/// <summary>
 		/// Show return types
 		/// </summary>
-		ShowReturnTypes					= 0x00000001,
+		public abstract bool ShowReturnTypes { get; set; }
 
 		/// <summary>
 		/// Show parameter types
 		/// </summary>
-		ShowParameterTypes				= 0x00000002,
+		public abstract bool ShowParameterTypes { get; set; }
 
 		/// <summary>
 		/// Show parameter names
 		/// </summary>
-		ShowParameterNames				= 0x00000004,
+		public abstract bool ShowParameterNames { get; set; }
 
 		/// <summary>
-		/// Show parameter values (parameters will be evaluated and formatted). See also <see cref="UseDecimal"/>
+		/// Show parameter values (parameters will be evaluated and formatted)
 		/// </summary>
-		ShowParameterValues				= 0x00000008,
+		public abstract bool ShowParameterValues { get; set; }
 
 		/// <summary>
-		/// Show the offset of the IP relative to the start of the function (always in hexadecimal)
+		/// Show the offset of the IP relative to the start of the function
 		/// </summary>
-		ShowFunctionOffset				= 0x00000010,
+		public abstract bool ShowFunctionOffset { get; set; }
 
 		/// <summary>
 		/// Show module names
 		/// </summary>
-		ShowModuleNames					= 0x00000020,
+		public abstract bool ShowModuleNames { get; set; }
 
 		/// <summary>
 		/// Show declaring types
 		/// </summary>
-		ShowDeclaringTypes				= 0x00000040,
+		public abstract bool ShowDeclaringTypes { get; set; }
 
 		/// <summary>
 		/// Show namespaces
 		/// </summary>
-		ShowNamespaces					= 0x00000080,
+		public abstract bool ShowNamespaces { get; set; }
 
 		/// <summary>
 		/// Show intrinsic type keywords (eg. int instead of Int32)
 		/// </summary>
-		ShowIntrinsicTypeKeywords		= 0x00000100,
+		public abstract bool ShowIntrinsicTypeKeywords { get; set; }
 
 		/// <summary>
-		/// Show tokens (always in hexadecimal)
+		/// Show tokens
 		/// </summary>
-		ShowTokens						= 0x00000200,
-
-		/// <summary>
-		/// Use decimal instead of hexadecimal when formatting parameter values. Offsets, addresses, tokens are always in hexadecimal.
-		/// </summary>
-		UseDecimal						= 0x00000400,
+		public abstract bool ShowTokens { get; set; }
 	}
 }
