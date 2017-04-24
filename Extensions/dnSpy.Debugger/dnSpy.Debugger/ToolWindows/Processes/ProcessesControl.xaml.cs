@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		public ProcessesControl() => InitializeComponent();
 
-		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			ProcessesListViewDoubleClick?.Invoke(this, EventArgs.Empty);

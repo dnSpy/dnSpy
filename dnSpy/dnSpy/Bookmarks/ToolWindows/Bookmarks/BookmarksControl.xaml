@@ -116,7 +116,7 @@
             Grid.Row="1"
             Visibility="{Binding VM.SomethingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
             Name="listView"
-            MouseDoubleClick="listView_MouseDoubleClick"
+            MouseDoubleClick="ListView_MouseDoubleClick"
             VirtualizingStackPanel.IsVirtualizing="True"
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"

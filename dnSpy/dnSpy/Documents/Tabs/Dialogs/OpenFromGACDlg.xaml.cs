@@ -49,7 +49,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				id.Dispose();
 		}
 
-		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			ClickOK();

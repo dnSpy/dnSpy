@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		public void FocusPane() => UIUtilities.FocusSelector(listView);
 
-		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			CallStackListViewDoubleClick?.Invoke(this, EventArgs.Empty);

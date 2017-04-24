@@ -46,7 +46,7 @@
             </Grid.ColumnDefinitions>
             <ListView Name="listView"
                       Grid.Column="0"
-                      MouseDoubleClick="listView_MouseDoubleClick"
+                      MouseDoubleClick="ListView_MouseDoubleClick"
                       VirtualizingStackPanel.IsVirtualizing="True"
                       VirtualizingStackPanel.VirtualizationMode="Recycling"
                       mvvm:InitDataTemplateAP.Initialize="True"

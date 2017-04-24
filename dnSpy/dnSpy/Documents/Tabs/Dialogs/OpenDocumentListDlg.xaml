@@ -53,7 +53,7 @@
         <ListView Name="listView"
                   Grid.Row="1"
                   Margin="5 5 5 0"
-                  MouseDoubleClick="listView_MouseDoubleClick"
+                  MouseDoubleClick="ListView_MouseDoubleClick"
                   VirtualizingStackPanel.IsVirtualizing="True"
                   VirtualizingStackPanel.VirtualizationMode="Recycling"
                   mvvm:InitDataTemplateAP.Initialize="True"

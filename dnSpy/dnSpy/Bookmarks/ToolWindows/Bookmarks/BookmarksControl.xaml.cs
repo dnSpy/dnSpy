@@ -41,7 +41,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			SearchTextBox.SelectAll();
 		}
 
-		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			BookmarksListViewDoubleClick?.Invoke(this, EventArgs.Empty);

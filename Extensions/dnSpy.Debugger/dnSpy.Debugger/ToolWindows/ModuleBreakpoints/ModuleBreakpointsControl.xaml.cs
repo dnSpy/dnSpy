@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			SearchTextBox.SelectAll();
 		}
 
-		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			ModuleBreakpointsListViewDoubleClick?.Invoke(this, EventArgs.Empty);

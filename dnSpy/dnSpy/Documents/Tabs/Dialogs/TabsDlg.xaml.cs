@@ -38,7 +38,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				vm.SelectedItems = listView.SelectedItems.OfType<TabVM>().ToArray();
 		}
 
-		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			ExitDialog();
