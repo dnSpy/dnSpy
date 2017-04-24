@@ -47,8 +47,10 @@ namespace dnSpy.Debugger.DotNet.UI {
 			return (int)_disableProcessingCountFieldInfo.GetValue(Dispatcher) > 0;
 		}
 
-		public void Invoke(Action callback) =>
+		public void Invoke(Action callback) {
+			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
 			Dispatcher.Invoke(DispatcherPriority.Background, callback);
+		}
 
 		public void UIBackground(Action callback) =>
 			Dispatcher.BeginInvoke(DispatcherPriority.Background, callback);
