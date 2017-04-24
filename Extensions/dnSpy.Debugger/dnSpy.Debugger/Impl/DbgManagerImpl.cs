@@ -485,14 +485,14 @@ namespace dnSpy.Debugger.Impl {
 			if (runtime != null)
 				RaiseMessage_DbgThread(new DbgMessageRuntimeExitedEventArgs(runtime), ref pauseProgram);
 
-			RecheckAndUpdateCurrentProcess_DbgThread();
-
 			if (processToDispose != null) {
 				processToDispose.UpdateState_DbgThread(DbgProcessState.Terminated);
 				ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(processToDispose, added: false));
 				int exitCode = processToDispose.GetExitCode();
 				RaiseMessage_DbgThread(new DbgMessageProcessExitedEventArgs(processToDispose, exitCode), ref pauseProgram);
 			}
+
+			RecheckAndUpdateCurrentProcess_DbgThread();
 
 			runtime?.Close(DispatcherThread);
 			engine.Close(DispatcherThread);

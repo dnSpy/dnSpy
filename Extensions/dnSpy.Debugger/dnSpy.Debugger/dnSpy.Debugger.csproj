@@ -79,6 +79,8 @@
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsServiceImpl.cs" />
     <Compile Include="Breakpoints\Modules\ModuleBreakpointHitChecker.cs" />
     <Compile Include="Breakpoints\Modules\ModuleBreakpointsListSettings.cs" />
+    <Compile Include="CallStack\CallStackService.cs" />
+    <Compile Include="CallStack\CallStackServiceImpl.cs" />
     <Compile Include="CallStack\DbgStackFrameImpl.cs" />
     <Compile Include="CallStack\DbgStackWalkerImpl.cs" />
     <Compile Include="CallStack\SpecialDbgEngineStackFrame.cs" />
