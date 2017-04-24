@@ -73,24 +73,24 @@ namespace dnSpy.Debugger {
 			return output;
 		}
 
-		public static CachedOutput CreateConstant(TypeSig type, object c, TypePrinterFlags flags) =>
-			TypePrinterUtils.WriteConstant(new TypeOutput(), type, c, flags).cachedOutput;
+		public static CachedOutput CreateConstant(TypeSig type, object c, TypeFormatterFlags flags) =>
+			TypeFormatterUtils.WriteConstant(new TypeOutput(), type, c, flags).cachedOutput;
 
-		public static CachedOutput Create(TypeSig fieldType, TypePrinterFlags flags) {
+		public static CachedOutput Create(TypeSig fieldType, TypeFormatterFlags flags) {
 			fieldType = fieldType.RemovePinnedAndModifiers() ?? fieldType;
 			if (fieldType is ByRefSig)
 				fieldType = fieldType.Next ?? fieldType;
-			var typeOutput = TypePrinterUtils.Write(new TypeOutput(), fieldType, flags);
+			var typeOutput = TypeFormatterUtils.Write(new TypeOutput(), fieldType, flags);
 			return typeOutput.cachedOutput;
 		}
 
-		public static CachedOutput Create(CorFrame frame, TypePrinterFlags flags) {
+		public static CachedOutput Create(CorFrame frame, TypeFormatterFlags flags) {
 			var output = new TypeOutput();
 			frame.Write(output, flags);
 			return output.cachedOutput;
 		}
 
-		public static CachedOutput CreateValue(CorValue value, TypePrinterFlags flags, Func<DnEval> getEval = null) {
+		public static CachedOutput CreateValue(CorValue value, TypeFormatterFlags flags, Func<DnEval> getEval = null) {
 			var output = new TypeOutput();
 			if (value == null)
 				output.Write("???", TypeColor.Error);
@@ -99,10 +99,10 @@ namespace dnSpy.Debugger {
 			return output.cachedOutput;
 		}
 
-		public static CachedOutput CreateType(CorValue value, TypePrinterFlags flags) =>
+		public static CachedOutput CreateType(CorValue value, TypeFormatterFlags flags) =>
 			CreateType(new TypeOutput(), value, flags).cachedOutput;
 
-		static TypeOutput CreateType(TypeOutput output, CorValue value, TypePrinterFlags flags) {
+		static TypeOutput CreateType(TypeOutput output, CorValue value, TypeFormatterFlags flags) {
 			if (value == null)
 				output.Write("???", TypeColor.Error);
 			else {
@@ -123,9 +123,9 @@ namespace dnSpy.Debugger {
 			return output;
 		}
 
-		public static CachedOutput CreateType(CorValue value, TypeSig ts, IList<CorType> typeArgs, IList<CorType> methodArgs, TypePrinterFlags flags) {
+		public static CachedOutput CreateType(CorValue value, TypeSig ts, IList<CorType> typeArgs, IList<CorType> methodArgs, TypeFormatterFlags flags) {
 			if (value == null && ts != null)
-				return TypePrinterUtils.Write(new TypeOutput(), ts, flags, typeArgs, methodArgs).cachedOutput;
+				return TypeFormatterUtils.Write(new TypeOutput(), ts, flags, typeArgs, methodArgs).cachedOutput;
 			var valueOutput = CreateType(new TypeOutput(), value, flags);
 			if (ts == null || value == null)
 				return valueOutput.cachedOutput;
@@ -152,7 +152,7 @@ namespace dnSpy.Debugger {
 			return typeOutput.cachedOutput;
 		}
 
-		public static CachedOutput CreateType(CorValue value, CorType type, TypePrinterFlags flags) {
+		public static CachedOutput CreateType(CorValue value, CorType type, TypeFormatterFlags flags) {
 			var valueOutput = CreateType(new TypeOutput(), value, flags);
 			if (type == null || value == null)
 				return valueOutput.cachedOutput;
@@ -161,7 +161,7 @@ namespace dnSpy.Debugger {
 			return CreateTypeInternal(valueOutput, typeOutput);
 		}
 
-		public static CachedOutput CreateType(CorValue value, CorClass cls, TypePrinterFlags flags) {
+		public static CachedOutput CreateType(CorValue value, CorClass cls, TypeFormatterFlags flags) {
 			var valueOutput = CreateType(new TypeOutput(), value, flags);
 			if (cls == null || value == null)
 				return valueOutput.cachedOutput;
@@ -170,7 +170,7 @@ namespace dnSpy.Debugger {
 			return CreateTypeInternal(valueOutput, typeOutput);
 		}
 
-		public static CachedOutput Create(CorType type, TypePrinterFlags flags) {
+		public static CachedOutput Create(CorType type, TypeFormatterFlags flags) {
 			var output = new TypeOutput();
 			if (type == null)
 				output.Write("???", TypeColor.Error);

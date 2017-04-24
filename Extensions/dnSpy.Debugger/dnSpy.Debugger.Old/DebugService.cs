@@ -484,7 +484,7 @@ namespace dnSpy.Debugger {
 			if (exValue == null)
 				return;
 			var exType = exValue.ExactType;
-			var name = exType?.ToString(TypePrinterFlags.ShowNamespaces) ?? "???";
+			var name = exType?.ToString(TypeFormatterFlags.ShowNamespaces) ?? "???";
 			var msg = string.Format(dnSpy_Debugger_Resources.ExceptionThrownMessage, name, Path.GetFileName(thread.Process.Filename));
 			BringMainWindowToFrontAndActivate();
 			messageBoxService.Show(msg);

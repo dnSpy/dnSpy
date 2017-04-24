@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.Locals {
 		public abstract void WriteName(ITextColorWriter output);
 
 		protected ValueContext context;
-		protected TypePrinterFlags TypePrinterFlags => context.LocalsOwner.PrinterContext.TypePrinterFlags;
+		protected TypeFormatterFlags TypePrinterFlags => context.LocalsOwner.PrinterContext.TypePrinterFlags;
 
 		internal void RefreshTypeFields() {
 			InvalidateValueObject();
@@ -1313,7 +1313,7 @@ namespace dnSpy.Debugger.Locals {
 			if (overridden) {
 				output.Write(BoxedTextColor.Text, " ");
 				output.Write(BoxedTextColor.Punctuation, "(");
-				ownerType.Write(new OutputConverter(output), TypePrinterFlags.Default);
+				ownerType.Write(new OutputConverter(output), TypeFormatterFlags.Default);
 				output.Write(BoxedTextColor.Punctuation, ")");
 			}
 		}

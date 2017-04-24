@@ -76,11 +76,11 @@ namespace dnSpy.Debugger.Scripting {
 
 		public override bool Equals(object obj) => (obj as DebuggerCode)?.CorCode == CorCode;
 		public override int GetHashCode() => hashCode;
-		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.Default;
+		const TypeFormatterFlags DEFAULT_FLAGS = TypeFormatterFlags.Default;
 		public void WriteTo(IOutputWriter output) => Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
 		public void Write(IOutputWriter output, TypeFormatFlags flags) =>
-			debugger.Dispatcher.UI(() => CorCode.Write(new OutputWriterConverter(output), (TypePrinterFlags)flags));
-		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => this.CorCode.ToString((TypePrinterFlags)flags));
+			debugger.Dispatcher.UI(() => CorCode.Write(new OutputWriterConverter(output), (TypeFormatterFlags)flags));
+		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => this.CorCode.ToString((TypeFormatterFlags)flags));
 		public override string ToString() => debugger.Dispatcher.UI(() => this.CorCode.ToString(DEFAULT_FLAGS));
 	}
 }

@@ -70,20 +70,20 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		object selectedItem;
 
-		TypePrinterFlags TypePrinterFlags {
+		TypeFormatterFlags TypePrinterFlags {
 			get {
-				var flags = TypePrinterFlags.ShowArrayValueSizes;
-				if (!debuggerSettings.UseHexadecimal) flags |= TypePrinterFlags.UseDecimal;
-				if (callStackSettings.ShowModuleNames) flags |= TypePrinterFlags.ShowModuleNames;
-				if (callStackSettings.ShowParameterTypes) flags |= TypePrinterFlags.ShowParameterTypes;
-				if (callStackSettings.ShowParameterNames) flags |= TypePrinterFlags.ShowParameterNames;
-				if (callStackSettings.ShowParameterValues) flags |= TypePrinterFlags.ShowParameterValues;
-				if (callStackSettings.ShowIP) flags |= TypePrinterFlags.ShowIP;
-				if (callStackSettings.ShowOwnerTypes) flags |= TypePrinterFlags.ShowDeclaringTypes;
-				if (callStackSettings.ShowNamespaces) flags |= TypePrinterFlags.ShowNamespaces;
-				if (callStackSettings.ShowTypeKeywords) flags |= TypePrinterFlags.ShowIntrinsicTypeKeywords;
-				if (callStackSettings.ShowTokens) flags |= TypePrinterFlags.ShowTokens;
-				if (callStackSettings.ShowReturnTypes) flags |= TypePrinterFlags.ShowReturnTypes;
+				var flags = TypeFormatterFlags.ShowArrayValueSizes;
+				if (!debuggerSettings.UseHexadecimal) flags |= TypeFormatterFlags.UseDecimal;
+				if (callStackSettings.ShowModuleNames) flags |= TypeFormatterFlags.ShowModuleNames;
+				if (callStackSettings.ShowParameterTypes) flags |= TypeFormatterFlags.ShowParameterTypes;
+				if (callStackSettings.ShowParameterNames) flags |= TypeFormatterFlags.ShowParameterNames;
+				if (callStackSettings.ShowParameterValues) flags |= TypeFormatterFlags.ShowParameterValues;
+				if (callStackSettings.ShowIP) flags |= TypeFormatterFlags.ShowIP;
+				if (callStackSettings.ShowOwnerTypes) flags |= TypeFormatterFlags.ShowDeclaringTypes;
+				if (callStackSettings.ShowNamespaces) flags |= TypeFormatterFlags.ShowNamespaces;
+				if (callStackSettings.ShowTypeKeywords) flags |= TypeFormatterFlags.ShowIntrinsicTypeKeywords;
+				if (callStackSettings.ShowTokens) flags |= TypeFormatterFlags.ShowTokens;
+				if (callStackSettings.ShowReturnTypes) flags |= TypeFormatterFlags.ShowReturnTypes;
 				return flags;
 			}
 		}

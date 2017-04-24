@@ -468,18 +468,18 @@ namespace dnSpy.Debugger.Scripting {
 
 		public override bool Equals(object obj) => (obj as DebuggerValue)?.CorValue == CorValue;
 		public override int GetHashCode() => hashCode;
-		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.Default;
+		const TypeFormatterFlags DEFAULT_FLAGS = TypeFormatterFlags.Default;
 		public void WriteTo(IOutputWriter output) => debugger.Dispatcher.UI(() => Write(output, Value, (TypeFormatFlags)DEFAULT_FLAGS));
 		public void Write(IOutputWriter output, ValueResult valueResult, TypeFormatFlags flags) =>
-			debugger.Dispatcher.UI(() => valueResult.ToCorValueResult().Write(new OutputWriterConverter(output), this.CorValue, (TypePrinterFlags)flags));
-		public string ToString(ValueResult valueResult, TypeFormatFlags flags) => debugger.Dispatcher.UI(() => valueResult.ToCorValueResult().ToString(this.CorValue, (TypePrinterFlags)flags));
+			debugger.Dispatcher.UI(() => valueResult.ToCorValueResult().Write(new OutputWriterConverter(output), this.CorValue, (TypeFormatterFlags)flags));
+		public string ToString(ValueResult valueResult, TypeFormatFlags flags) => debugger.Dispatcher.UI(() => valueResult.ToCorValueResult().ToString(this.CorValue, (TypeFormatterFlags)flags));
 		public void Write(IOutputWriter output, TypeFormatFlags flags) =>
-			debugger.Dispatcher.UI(() => CorValue.Write(new OutputWriterConverter(output), (TypePrinterFlags)flags));
+			debugger.Dispatcher.UI(() => CorValue.Write(new OutputWriterConverter(output), (TypeFormatterFlags)flags));
 		public void WriteType(IOutputWriter output, IDebuggerClass cls, TypeFormatFlags flags) =>
-			debugger.Dispatcher.UI(() => CorValue.WriteType(new OutputWriterConverter(output), ((DebuggerClass)cls).CorClass, (TypePrinterFlags)flags));
+			debugger.Dispatcher.UI(() => CorValue.WriteType(new OutputWriterConverter(output), ((DebuggerClass)cls).CorClass, (TypeFormatterFlags)flags));
 		public void WriteType(IOutputWriter output, IDebuggerType type, TypeFormatFlags flags) =>
-			debugger.Dispatcher.UI(() => CorValue.WriteType(new OutputWriterConverter(output), ((DebuggerType)type).CorType, (TypePrinterFlags)flags));
-		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => this.CorValue.ToString((TypePrinterFlags)flags));
+			debugger.Dispatcher.UI(() => CorValue.WriteType(new OutputWriterConverter(output), ((DebuggerType)type).CorType, (TypeFormatterFlags)flags));
+		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => this.CorValue.ToString((TypeFormatterFlags)flags));
 		public override string ToString() => debugger.Dispatcher.UI(() => this.CorValue.ToString(DEFAULT_FLAGS));
 	}
 }

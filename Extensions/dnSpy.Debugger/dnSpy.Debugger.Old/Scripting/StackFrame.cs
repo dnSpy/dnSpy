@@ -248,11 +248,11 @@ namespace dnSpy.Debugger.Scripting {
 		public IDebuggerValue ReadStaticField(IDebuggerType type, IDebuggerField field) => type.ReadStaticField(this, field);
 		public override bool Equals(object obj) => (obj as StackFrame)?.CorFrame == CorFrame;
 		public override int GetHashCode() => hashCode;
-		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.Default;
+		const TypeFormatterFlags DEFAULT_FLAGS = TypeFormatterFlags.Default;
 		public void WriteTo(IOutputWriter output) => Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
 		public void Write(IOutputWriter output, TypeFormatFlags flags) =>
-			debugger.Dispatcher.UI(() => CorFrame.Write(new OutputWriterConverter(output), (TypePrinterFlags)flags));
-		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => CorFrame.ToString((TypePrinterFlags)flags));
+			debugger.Dispatcher.UI(() => CorFrame.Write(new OutputWriterConverter(output), (TypeFormatterFlags)flags));
+		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => CorFrame.ToString((TypeFormatterFlags)flags));
 		public override string ToString() => debugger.Dispatcher.UI(() => CorFrame.ToString(DEFAULT_FLAGS));
 	}
 }

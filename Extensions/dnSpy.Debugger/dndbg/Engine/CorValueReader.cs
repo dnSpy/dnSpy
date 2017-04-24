@@ -38,12 +38,12 @@ namespace dndbg.Engine {
 			IsValid = true;
 		}
 
-		public T Write<T>(T output, CorValue value, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
-			new TypePrinter(output, flags, getEval).Write(value, this);
+		public T Write<T>(T output, CorValue value, TypeFormatterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypeFormatter(output, flags, getEval).Write(value, this);
 			return output;
 		}
 
-		public string ToString(CorValue value, TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), value, flags).ToString();
+		public string ToString(CorValue value, TypeFormatterFlags flags) => Write(new StringBuilderTypeOutput(), value, flags).ToString();
 
 		public bool Equals(CorValueResult other) {
 			if (IsValid != other.IsValid)

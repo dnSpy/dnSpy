@@ -669,28 +669,28 @@ namespace dndbg.Engine {
 		public override bool Equals(object obj) => Equals(obj as CorValue);
 		public override int GetHashCode() => RawObject.GetHashCode();
 
-		public T Write<T>(T output, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
-			new TypePrinter(output, flags, getEval).Write(this);
+		public T Write<T>(T output, TypeFormatterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypeFormatter(output, flags, getEval).Write(this);
 			return output;
 		}
 
-		public T WriteType<T>(T output, TypeSig ts, IList<CorType> typeArgs, IList<CorType> methodArgs, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
-			new TypePrinter(output, flags, getEval).Write(ts, typeArgs, methodArgs);
+		public T WriteType<T>(T output, TypeSig ts, IList<CorType> typeArgs, IList<CorType> methodArgs, TypeFormatterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypeFormatter(output, flags, getEval).Write(ts, typeArgs, methodArgs);
 			return output;
 		}
 
-		public T WriteType<T>(T output, CorType type, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
-			new TypePrinter(output, flags, getEval).Write(type);
+		public T WriteType<T>(T output, CorType type, TypeFormatterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypeFormatter(output, flags, getEval).Write(type);
 			return output;
 		}
 
-		public T WriteType<T>(T output, CorClass cls, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
-			new TypePrinter(output, flags, getEval).Write(cls);
+		public T WriteType<T>(T output, CorClass cls, TypeFormatterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypeFormatter(output, flags, getEval).Write(cls);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags, Func<DnEval> getEval = null) => Write(new StringBuilderTypeOutput(), flags, getEval).ToString();
-		public string ToString(Func<DnEval> getEval) => ToString(TypePrinterFlags.Default, getEval);
-		public override string ToString() => ToString(TypePrinterFlags.Default);
+		public string ToString(TypeFormatterFlags flags, Func<DnEval> getEval = null) => Write(new StringBuilderTypeOutput(), flags, getEval).ToString();
+		public string ToString(Func<DnEval> getEval) => ToString(TypeFormatterFlags.Default, getEval);
+		public override string ToString() => ToString(TypeFormatterFlags.Default);
 	}
 }

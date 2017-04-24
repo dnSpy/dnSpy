@@ -85,7 +85,7 @@ namespace dndbg.Engine {
 	}
 
 	[Flags]
-	enum TypePrinterFlags {
+	enum TypeFormatterFlags {
 		ShowModuleNames				= 0x00000001,
 		ShowParameterTypes			= 0x00000002,
 		ShowParameterNames			= 0x00000004,
@@ -112,7 +112,7 @@ namespace dndbg.Engine {
 			ShowFieldLiteralValues,
 	}
 
-	struct TypePrinter {
+	struct TypeFormatter {
 		const int MAX_RECURSION = 200;
 		const int MAX_OUTPUT_LEN = 1024 * 4;
 		int recursionCounter;
@@ -122,25 +122,25 @@ namespace dndbg.Engine {
 		readonly Func<DnEval> getEval;
 
 		readonly ITypeOutput output;
-		readonly TypePrinterFlags flags;
+		readonly TypeFormatterFlags flags;
 		Dictionary<CorModule, IMetaDataImport> dictMetaDataImport;
 
-		bool ShowModuleNames => (flags & TypePrinterFlags.ShowModuleNames) != 0;
-		bool ShowParameterTypes => (flags & TypePrinterFlags.ShowParameterTypes) != 0;
-		bool ShowParameterNames => (flags & TypePrinterFlags.ShowParameterNames) != 0;
-		bool ShowParameterValues => (flags & TypePrinterFlags.ShowParameterValues) != 0;
-		bool ShowDeclaringTypes => (flags & TypePrinterFlags.ShowDeclaringTypes) != 0;
-		bool ShowReturnTypes => (flags & TypePrinterFlags.ShowReturnTypes) != 0;
-		bool ShowNamespaces => (flags & TypePrinterFlags.ShowNamespaces) != 0;
-		bool ShowIntrinsicTypeKeywords => (flags & TypePrinterFlags.ShowIntrinsicTypeKeywords) != 0;
-		bool UseDecimal => (flags & TypePrinterFlags.UseDecimal) != 0;
-		bool ShowTokens => (flags & TypePrinterFlags.ShowTokens) != 0;
-		bool ShowIP => (flags & TypePrinterFlags.ShowIP) != 0;
-		bool ShowArrayValueSizes => (flags & TypePrinterFlags.ShowArrayValueSizes) != 0;
-		bool ShowFieldLiteralValues => (flags & TypePrinterFlags.ShowFieldLiteralValues) != 0;
-		bool ShowParameterLiteralValues => (flags & TypePrinterFlags.ShowParameterLiteralValues) != 0;
+		bool ShowModuleNames => (flags & TypeFormatterFlags.ShowModuleNames) != 0;
+		bool ShowParameterTypes => (flags & TypeFormatterFlags.ShowParameterTypes) != 0;
+		bool ShowParameterNames => (flags & TypeFormatterFlags.ShowParameterNames) != 0;
+		bool ShowParameterValues => (flags & TypeFormatterFlags.ShowParameterValues) != 0;
+		bool ShowDeclaringTypes => (flags & TypeFormatterFlags.ShowDeclaringTypes) != 0;
+		bool ShowReturnTypes => (flags & TypeFormatterFlags.ShowReturnTypes) != 0;
+		bool ShowNamespaces => (flags & TypeFormatterFlags.ShowNamespaces) != 0;
+		bool ShowIntrinsicTypeKeywords => (flags & TypeFormatterFlags.ShowIntrinsicTypeKeywords) != 0;
+		bool UseDecimal => (flags & TypeFormatterFlags.UseDecimal) != 0;
+		bool ShowTokens => (flags & TypeFormatterFlags.ShowTokens) != 0;
+		bool ShowIP => (flags & TypeFormatterFlags.ShowIP) != 0;
+		bool ShowArrayValueSizes => (flags & TypeFormatterFlags.ShowArrayValueSizes) != 0;
+		bool ShowFieldLiteralValues => (flags & TypeFormatterFlags.ShowFieldLiteralValues) != 0;
+		bool ShowParameterLiteralValues => (flags & TypeFormatterFlags.ShowParameterLiteralValues) != 0;
 
-		public TypePrinter(ITypeOutput output, TypePrinterFlags flags, Func<DnEval> getEval = null) {
+		public TypeFormatter(ITypeOutput output, TypeFormatterFlags flags, Func<DnEval> getEval = null) {
 			this.output = output;
 			this.flags = flags;
 			dictMetaDataImport = null;

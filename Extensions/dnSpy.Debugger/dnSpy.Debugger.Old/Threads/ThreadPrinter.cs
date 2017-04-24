@@ -105,9 +105,9 @@ namespace dnSpy.Debugger.Threads {
 			if (frame == null)
 				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Thread_LocationNotAvailable);
 			else {
-				var flags = TypePrinterFlags.Default | TypePrinterFlags.ShowIP;
+				var flags = TypeFormatterFlags.Default | TypeFormatterFlags.ShowIP;
 				if (!useHex)
-					flags |= TypePrinterFlags.UseDecimal;
+					flags |= TypeFormatterFlags.UseDecimal;
 				frame.Write(new OutputConverter(output), flags);
 			}
 		}

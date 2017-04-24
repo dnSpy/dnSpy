@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.Locals {
 			printerContext = new PrinterContext(classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightLocals,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
-				TypePrinterFlags = TypePrinterFlags.ShowArrayValueSizes,
+				TypePrinterFlags = TypeFormatterFlags.ShowArrayValueSizes,
 			};
 			printerContext.TypePrinterFlags = GetTypePrinterFlags(localsSettings, printerContext.TypePrinterFlags);
 			printerContext.TypePrinterFlags = GetTypePrinterFlags(debuggerSettings, printerContext.TypePrinterFlags);
@@ -121,22 +121,22 @@ namespace dnSpy.Debugger.Locals {
 
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshThemeFields();
 
-		static void Update(bool b, TypePrinterFlags f, ref TypePrinterFlags flags) {
+		static void Update(bool b, TypeFormatterFlags f, ref TypeFormatterFlags flags) {
 			if (b)
 				flags |= f;
 			else
 				flags &= ~f;
 		}
 
-		TypePrinterFlags GetTypePrinterFlags(ILocalsSettings localsSettings, TypePrinterFlags flags) {
-			Update(localsSettings.ShowNamespaces, TypePrinterFlags.ShowNamespaces, ref flags);
-			Update(localsSettings.ShowTokens, TypePrinterFlags.ShowTokens, ref flags);
-			Update(localsSettings.ShowTypeKeywords, TypePrinterFlags.ShowIntrinsicTypeKeywords, ref flags);
+		TypeFormatterFlags GetTypePrinterFlags(ILocalsSettings localsSettings, TypeFormatterFlags flags) {
+			Update(localsSettings.ShowNamespaces, TypeFormatterFlags.ShowNamespaces, ref flags);
+			Update(localsSettings.ShowTokens, TypeFormatterFlags.ShowTokens, ref flags);
+			Update(localsSettings.ShowTypeKeywords, TypeFormatterFlags.ShowIntrinsicTypeKeywords, ref flags);
 			return flags;
 		}
 
-		TypePrinterFlags GetTypePrinterFlags(IDebuggerSettings debuggerSettings, TypePrinterFlags flags) {
-			Update(!debuggerSettings.UseHexadecimal, TypePrinterFlags.UseDecimal, ref flags);
+		TypeFormatterFlags GetTypePrinterFlags(IDebuggerSettings debuggerSettings, TypeFormatterFlags flags) {
+			Update(!debuggerSettings.UseHexadecimal, TypeFormatterFlags.UseDecimal, ref flags);
 			return flags;
 		}
 

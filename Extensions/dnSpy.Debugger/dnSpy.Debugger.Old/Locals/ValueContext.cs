@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Locals {
 		ITextElementProvider TextElementProvider { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
-		TypePrinterFlags TypePrinterFlags { get; }
+		TypeFormatterFlags TypePrinterFlags { get; }
 	}
 
 	sealed class PrinterContext : IPrinterContext {
@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.Locals {
 		public ITextElementProvider TextElementProvider { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
-		public TypePrinterFlags TypePrinterFlags { get; set; }
+		public TypeFormatterFlags TypePrinterFlags { get; set; }
 		public PrinterContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;

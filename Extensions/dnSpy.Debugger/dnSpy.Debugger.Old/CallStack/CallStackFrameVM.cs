@@ -27,14 +27,14 @@ namespace dnSpy.Debugger.CallStack {
 	interface ICallStackFrameContext {
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
-		TypePrinterFlags TypePrinterFlags { get; }
+		TypeFormatterFlags TypePrinterFlags { get; }
 		bool SyntaxHighlight { get; }
 	}
 
 	sealed class CallStackFrameContext : ICallStackFrameContext {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
-		public TypePrinterFlags TypePrinterFlags { get; set; }
+		public TypeFormatterFlags TypePrinterFlags { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public CallStackFrameContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
 			ClassificationFormatMap = classificationFormatMap;

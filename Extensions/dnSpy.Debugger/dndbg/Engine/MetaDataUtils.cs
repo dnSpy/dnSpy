@@ -51,7 +51,7 @@ namespace dndbg.Engine {
 			CompilerGeneratedAttribute = compilerGeneratedAttribute;
 		}
 
-		public override string ToString() => string.Format("{0:X8} {1} {2} {3}", Token, TypePrinterUtils.ToString(FieldType), Name, OwnerType);
+		public override string ToString() => string.Format("{0:X8} {1} {2} {3}", Token, TypeFormatterUtils.ToString(FieldType), Name, OwnerType);
 	}
 
 	sealed class CorPropertyInfo {

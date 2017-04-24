@@ -137,8 +137,8 @@
     <Compile Include="Engine\ProcessCreationFlags.cs" />
     <Compile Include="Engine\StepRange.cs" />
     <Compile Include="Engine\TypeComparer.cs" />
-    <Compile Include="Engine\TypePrinter.cs" />
-    <Compile Include="Engine\TypePrinterUtils.cs" />
+    <Compile Include="Engine\TypeFormatter.cs" />
+    <Compile Include="Engine\TypeFormatterUtils.cs" />
     <Compile Include="Engine\Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

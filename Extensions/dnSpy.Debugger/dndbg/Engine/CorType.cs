@@ -642,20 +642,20 @@ namespace dndbg.Engine {
 		public override bool Equals(object obj) => Equals(obj as CorType);
 		public override int GetHashCode() => RawObject.GetHashCode();
 
-		public T Write<T>(T output, TypeSig type, TypePrinterFlags flags) where T : ITypeOutput {
-			new TypePrinter(output, flags).Write(type, TypeParameters.ToArray());
+		public T Write<T>(T output, TypeSig type, TypeFormatterFlags flags) where T : ITypeOutput {
+			new TypeFormatter(output, flags).Write(type, TypeParameters.ToArray());
 			return output;
 		}
 
-		public string ToString(TypeSig type, TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), type, flags).ToString();
-		public string ToString(TypeSig type) => ToString(type, TypePrinterFlags.Default);
+		public string ToString(TypeSig type, TypeFormatterFlags flags) => Write(new StringBuilderTypeOutput(), type, flags).ToString();
+		public string ToString(TypeSig type) => ToString(type, TypeFormatterFlags.Default);
 
-		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
-			new TypePrinter(output, flags).Write(this);
+		public T Write<T>(T output, TypeFormatterFlags flags) where T : ITypeOutput {
+			new TypeFormatter(output, flags).Write(this);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
-		public override string ToString() => ToString(TypePrinterFlags.Default);
+		public string ToString(TypeFormatterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
+		public override string ToString() => ToString(TypeFormatterFlags.Default);
 	}
 }

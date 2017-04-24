@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.Exceptions {
 			var exType = exValue.ExactType;
 			if (exType == null)
 				return;
-			var exTypeName = exType.ToString(TypePrinterFlags.ShowNamespaces);
+			var exTypeName = exType.ToString(TypeFormatterFlags.ShowNamespaces);
 			var key = new ExceptionInfoKey(ExceptionType.DotNet, exTypeName);
 			if (!exceptions.TryGetValue(key, out var info))
 				info = otherExceptions[(int)ExceptionType.DotNet];

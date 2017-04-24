@@ -75,12 +75,12 @@ namespace dndbg.Engine {
 		public override bool Equals(object obj) => Equals(obj as CorField);
 		public override int GetHashCode() => (int)Token ^ Class.GetHashCode();
 
-		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
-			new TypePrinter(output, flags).Write(this);
+		public T Write<T>(T output, TypeFormatterFlags flags) where T : ITypeOutput {
+			new TypeFormatter(output, flags).Write(this);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
-		public override string ToString() => ToString(TypePrinterFlags.Default);
+		public string ToString(TypeFormatterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
+		public override string ToString() => ToString(TypeFormatterFlags.Default);
 	}
 }

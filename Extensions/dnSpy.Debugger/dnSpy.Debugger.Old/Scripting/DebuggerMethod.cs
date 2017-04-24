@@ -169,13 +169,13 @@ namespace dnSpy.Debugger.Scripting {
 
 		public override bool Equals(object obj) => (obj as DebuggerMethod)?.CorFunction == CorFunction;
 		public override int GetHashCode() => hashCode;
-		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.ShowParameterTypes |
-			TypePrinterFlags.ShowReturnTypes | TypePrinterFlags.ShowNamespaces |
-			TypePrinterFlags.ShowIntrinsicTypeKeywords;
+		const TypeFormatterFlags DEFAULT_FLAGS = TypeFormatterFlags.ShowParameterTypes |
+			TypeFormatterFlags.ShowReturnTypes | TypeFormatterFlags.ShowNamespaces |
+			TypeFormatterFlags.ShowIntrinsicTypeKeywords;
 		public void WriteTo(IOutputWriter output) => Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
 		public void Write(IOutputWriter output, TypeFormatFlags flags) =>
-			debugger.Dispatcher.UI(() => CorFunction.Write(new OutputWriterConverter(output), (TypePrinterFlags)flags));
-		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => this.CorFunction.ToString((TypePrinterFlags)flags));
+			debugger.Dispatcher.UI(() => CorFunction.Write(new OutputWriterConverter(output), (TypeFormatterFlags)flags));
+		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => this.CorFunction.ToString((TypeFormatterFlags)flags));
 		public override string ToString() => debugger.Dispatcher.UI(() => this.CorFunction.ToString(DEFAULT_FLAGS));
 	}
 }
