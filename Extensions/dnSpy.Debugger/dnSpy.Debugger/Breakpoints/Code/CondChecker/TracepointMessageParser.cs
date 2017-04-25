@@ -46,10 +46,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		readonly List<TracepointMessagePart> partBuilder;
 		readonly StringBuilder currentText;
+		int currentTextLength;
 
 		public TracepointMessageParser() {
 			partBuilder = new List<TracepointMessagePart>();
 			currentText = new StringBuilder();
+			currentTextLength = 0;
 			keywords = new KeywordInfo[] {
 				// NOTE: order is important, first match is picked
 				// NOTE: When updating this table, also update the help message created by ShowCodeBreakpointSettingsVM
@@ -112,8 +114,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 			finally {
 				Debug.Assert(currentText.Length == 0);
+				Debug.Assert(currentTextLength == 0);
 				partBuilder.Clear();
 				currentText.Clear();
+				currentTextLength = 0;
 			}
 		}
 
@@ -134,20 +138,20 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					if (textPos + 1 < text.Length) {
 						var c = text[textPos + 1];
 						if (Array.IndexOf(specialChars, c) >= 0) {
-							AddText(c);
+							AddEscapeChar(c);
 							textPos += 2;
 							break;
 						}
 						else {
 							bool ok = true;
 							switch (c) {
-							case 'a': AddText('\a'); break;
-							case 'b': AddText('\b'); break;
-							case 'f': AddText('\f'); break;
-							case 'n': AddText('\n'); break;
-							case 'r': AddText('\r'); break;
-							case 't': AddText('\t'); break;
-							case 'v': AddText('\v'); break;
+							case 'a': AddEscapeChar('\a'); break;
+							case 'b': AddEscapeChar('\b'); break;
+							case 'f': AddEscapeChar('\f'); break;
+							case 'n': AddEscapeChar('\n'); break;
+							case 'r': AddEscapeChar('\r'); break;
+							case 't': AddEscapeChar('\t'); break;
+							case 'v': AddEscapeChar('\v'); break;
 							// If you add more cases, update help message in ShowCodeBreakpointSettingsVM
 							default:
 								ok = false;
@@ -168,9 +172,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 							textPos += 1 + info.Name.Length;
 							FlushPendingText();
 							if (info.Number != -1)
-								partBuilder.Add(new TracepointMessagePart(info.Kind, info.Number));
+								partBuilder.Add(new TracepointMessagePart(info.Kind, info.Number, info.Name.Length + 1));
 							else
-								partBuilder.Add(new TracepointMessagePart(info.Kind, null));
+								partBuilder.Add(new TracepointMessagePart(info.Kind, null, info.Name.Length + 1));
 							foundKeyword = true;
 							break;
 						}
@@ -183,7 +187,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					int exprEndIndex = text.IndexOf('}', textPos + 1);
 					if (exprEndIndex >= 0) {
 						FlushPendingText();
-						partBuilder.Add(new TracepointMessagePart(TracepointMessageKind.WriteEvaluatedExpression, text.Substring(textPos + 1, exprEndIndex - textPos - 1)));
+						partBuilder.Add(new TracepointMessagePart(TracepointMessageKind.WriteEvaluatedExpression, text.Substring(textPos + 1, exprEndIndex - textPos - 1), exprEndIndex - textPos + 1));
 						textPos = exprEndIndex + 1;
 						break;
 					}
@@ -210,14 +214,27 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			return true;
 		}
 
-		void AddText(string text, int startIndex, int count) => currentText.Append(text, startIndex, count);
-		void AddText(char c) => currentText.Append(c);
+		void AddText(string text, int startIndex, int count) {
+			currentText.Append(text, startIndex, count);
+			currentTextLength += count;
+		}
+
+		void AddText(char c) {
+			currentText.Append(c);
+			currentTextLength++;
+		}
+
+		void AddEscapeChar(char c) {
+			currentText.Append(c);
+			currentTextLength += 2;
+		}
 
 		void FlushPendingText() {
 			if (currentText.Length > 0) {
 				Debug.Assert(partBuilder.Count == 0 || partBuilder[partBuilder.Count - 1].Kind != TracepointMessageKind.WriteText);
-				partBuilder.Add(new TracepointMessagePart(TracepointMessageKind.WriteText, currentText.ToString()));
+				partBuilder.Add(new TracepointMessagePart(TracepointMessageKind.WriteText, currentText.ToString(), currentTextLength));
 				currentText.Clear();
+				currentTextLength = 0;
 			}
 		}
 	}

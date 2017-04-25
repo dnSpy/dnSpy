@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Text;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
@@ -48,6 +49,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 	abstract class TracepointMessageCreator {
 		public abstract string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace);
+		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointTrace trace);
 	}
 
 	[Export(typeof(TracepointMessageCreator))]
@@ -298,5 +300,47 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		void Write(string s) => output.Append(s);
 		void WriteError() => Write("???");
+
+		public override void Write(ITextColorWriter output, DbgCodeBreakpointTrace trace) {
+			if (output == null)
+				throw new ArgumentNullException(nameof(output));
+			var msg = trace.Message ?? string.Empty;
+			var parsed = tracepointMessageParser.Parse(msg);
+			int pos = 0;
+			foreach (var part in parsed.Parts) {
+				switch (part.Kind) {
+				case TracepointMessageKind.WriteText:
+					output.Write(BoxedTextColor.String, msg.Substring(pos, part.Length));
+					break;
+
+				case TracepointMessageKind.WriteEvaluatedExpression:
+					output.Write(BoxedTextColor.Punctuation, msg.Substring(pos, 1));
+					output.Write(BoxedTextColor.Text, msg.Substring(pos + 1, part.Length - 2));
+					output.Write(BoxedTextColor.Punctuation, msg.Substring(pos + part.Length - 1, 1));
+					break;
+
+				case TracepointMessageKind.WriteAddress:
+				case TracepointMessageKind.WriteAppDomainId:
+				case TracepointMessageKind.WriteBreakpointAddress:
+				case TracepointMessageKind.WriteCaller:
+				case TracepointMessageKind.WriteCallerModule:
+				case TracepointMessageKind.WriteCallerOffset:
+				case TracepointMessageKind.WriteCallerToken:
+				case TracepointMessageKind.WriteCallStack:
+				case TracepointMessageKind.WriteFunction:
+				case TracepointMessageKind.WriteManagedId:
+				case TracepointMessageKind.WriteProcessId:
+				case TracepointMessageKind.WriteProcessName:
+				case TracepointMessageKind.WriteThreadId:
+				case TracepointMessageKind.WriteThreadName:
+					output.Write(BoxedTextColor.Keyword, msg.Substring(pos, part.Length));
+					break;
+
+				default: throw new InvalidOperationException();
+				}
+				pos += part.Length;
+			}
+			Debug.Assert(pos == msg.Length);
+		}
 	}
 }

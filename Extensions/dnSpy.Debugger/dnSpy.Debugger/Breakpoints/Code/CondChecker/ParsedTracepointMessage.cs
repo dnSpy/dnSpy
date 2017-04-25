@@ -75,18 +75,21 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		public TracepointMessageKind Kind => (TracepointMessageKind)(val & 0xFF);
 		public int Number => (int)(val >> 8);
 		public string String { get; }
+		public int Length { get; }
 		uint val;
 
-		public TracepointMessagePart(TracepointMessageKind kind, string @string) {
+		public TracepointMessagePart(TracepointMessageKind kind, string @string, int length) {
 			val = (uint)kind;
 			String = @string;
+			Length = length;
 		}
 
-		public TracepointMessagePart(TracepointMessageKind kind, int number) {
+		public TracepointMessagePart(TracepointMessageKind kind, int number, int length) {
 			Debug.Assert((int)kind <= 0xFF);
 			Debug.Assert(0 <= number && number <= 0x00FFFFFF);
 			val = (uint)kind | ((uint)number << 8);
 			String = null;
+			Length = length;
 		}
 	}
 
