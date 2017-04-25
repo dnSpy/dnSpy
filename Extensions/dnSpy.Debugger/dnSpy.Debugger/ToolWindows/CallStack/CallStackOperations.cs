@@ -24,8 +24,10 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.CallStack;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {
 	abstract class CallStackOperations {
@@ -33,8 +35,33 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		public abstract void Copy();
 		public abstract bool CanSelectAll { get; }
 		public abstract void SelectAll();
+		public abstract bool CanSwitchToFrame { get; }
+		public abstract void SwitchToFrame(bool newTab);
 		public abstract bool CanGoToSourceCode { get; }
 		public abstract void GoToSourceCode(bool newTab);
+		public abstract bool CanGoToDisassembly { get; }
+		public abstract void GoToDisassembly();
+		public abstract bool CanRunToCursor { get; }
+		public abstract void RunToCursor();
+		public abstract bool CanUnwindToFrame { get; }
+		public abstract void UnwindToFrame();
+		public abstract BreakpointsCommandKind BreakpointsCommandKind { get; }
+		public abstract bool IsBreakpointEnabled { get; }
+		public abstract bool CanAddBreakpoint { get; }
+		public abstract void AddBreakpoint();
+		public abstract bool CanAddTracepoint { get; }
+		public abstract void AddTracepoint();
+		public abstract bool CanEnableBreakpoint { get; }
+		public abstract void EnableBreakpoint();
+		public abstract bool CanRemoveBreakpoint { get; }
+		public abstract void RemoveBreakpoint();
+		public abstract bool CanEditBreakpointSettings { get; }
+		public abstract void EditBreakpointSettings();
+		public abstract bool CanExportBreakpoint { get; }
+		public abstract void ExportBreakpoint();
+		public abstract bool CanToggleUseHexadecimal { get; }
+		public abstract void ToggleUseHexadecimal();
+		public abstract bool UseHexadecimal { get; set; }
 		public abstract bool ShowReturnTypes { get; set; }
 		public abstract bool ShowParameterTypes { get; set; }
 		public abstract bool ShowParameterNames { get; set; }
@@ -47,21 +74,31 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		public abstract bool ShowTokens { get; set; }
 	}
 
+	enum BreakpointsCommandKind {
+		None,
+		Add,
+		Edit,
+	}
+
 	[Export(typeof(CallStackOperations))]
 	sealed class CallStackOperationsImpl : CallStackOperations {
 		readonly ICallStackVM callStackVM;
+		readonly DebuggerSettings debuggerSettings;
 		readonly CallStackDisplaySettings callStackDisplaySettings;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
+		readonly Lazy<CallStackService> callStackService;
 
 		ObservableCollection<StackFrameVM> AllItems => callStackVM.AllItems;
 		ObservableCollection<StackFrameVM> SelectedItems => callStackVM.SelectedItems;
 		IEnumerable<StackFrameVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Index);
 
 		[ImportingConstructor]
-		CallStackOperationsImpl(ICallStackVM callStackVM, CallStackDisplaySettings callStackDisplaySettings, Lazy<ReferenceNavigatorService> referenceNavigatorService) {
+		CallStackOperationsImpl(ICallStackVM callStackVM, DebuggerSettings debuggerSettings, CallStackDisplaySettings callStackDisplaySettings, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<CallStackService> callStackService) {
 			this.callStackVM = callStackVM;
+			this.debuggerSettings = debuggerSettings;
 			this.callStackDisplaySettings = callStackDisplaySettings;
 			this.referenceNavigatorService = referenceNavigatorService;
+			this.callStackService = callStackService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -90,6 +127,16 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				SelectedItems.Add(vm);
 		}
 
+		public override bool CanSwitchToFrame => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override void SwitchToFrame(bool newTab) {
+			if (!CanSwitchToFrame)
+				return;
+			var vm = (NormalStackFrameVM)SelectedItems[0];
+			callStackService.Value.ActiveFrameIndex = vm.Index;
+			var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
+			referenceNavigatorService.Value.GoTo(vm.Frame, options);
+		}
+
 		public override bool CanGoToSourceCode => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
 		public override void GoToSourceCode(bool newTab) {
 			if (!CanGoToSourceCode)
@@ -97,6 +144,84 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			var vm = (NormalStackFrameVM)SelectedItems[0];
 			var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
 			referenceNavigatorService.Value.GoTo(vm.Frame, options);
+		}
+
+		public override bool CanGoToDisassembly => false;
+		public override void GoToDisassembly() {
+			if (!CanGoToDisassembly)
+				return;
+			var vm = (NormalStackFrameVM)SelectedItems[0];
+			//TODO:
+		}
+
+		public override bool CanRunToCursor => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override void RunToCursor() {
+			if (!CanRunToCursor)
+				return;
+			var vm = (NormalStackFrameVM)SelectedItems[0];
+			//TODO:
+		}
+
+		public override bool CanUnwindToFrame => false;
+		public override void UnwindToFrame() {
+			if (!CanUnwindToFrame)
+				return;
+			var vm = (NormalStackFrameVM)SelectedItems[0];
+			//TODO:
+		}
+
+		public override BreakpointsCommandKind BreakpointsCommandKind => BreakpointsCommandKind.Add;//TODO:
+		public override bool IsBreakpointEnabled => true;//TODO:
+
+		public override bool CanAddBreakpoint => CanAddBreakpointOrTracepoint;
+		public override void AddBreakpoint() => AddBreakpointOrTracepoint(true);
+		public override bool CanAddTracepoint => CanAddBreakpointOrTracepoint;
+		public override void AddTracepoint() => AddBreakpointOrTracepoint(false);
+		bool CanAddBreakpointOrTracepoint => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		void AddBreakpointOrTracepoint(bool addBreakpoint) {
+			if (!CanAddBreakpointOrTracepoint)
+				return;
+			var vm = (NormalStackFrameVM)SelectedItems[0];
+			//TODO: If BP/TP exists, remove it
+		}
+
+		public override bool CanEnableBreakpoint => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override void EnableBreakpoint() {
+			if (!CanEnableBreakpoint)
+				return;
+			var vm = (NormalStackFrameVM)SelectedItems[0];
+			//TODO:
+		}
+
+		public override bool CanRemoveBreakpoint => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override void RemoveBreakpoint() {
+			if (!CanRemoveBreakpoint)
+				return;
+			var vm = (NormalStackFrameVM)SelectedItems[0];
+			//TODO:
+		}
+
+		public override bool CanEditBreakpointSettings => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override void EditBreakpointSettings() {
+			if (!CanEditBreakpointSettings)
+				return;
+			var vm = (NormalStackFrameVM)SelectedItems[0];
+			//TODO:
+		}
+
+		public override bool CanExportBreakpoint => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override void ExportBreakpoint() {
+			if (!CanExportBreakpoint)
+				return;
+			var vm = (NormalStackFrameVM)SelectedItems[0];
+			//TODO:
+		}
+
+		public override bool CanToggleUseHexadecimal => true;
+		public override void ToggleUseHexadecimal() => UseHexadecimal = !UseHexadecimal;
+		public override bool UseHexadecimal {
+			get => debuggerSettings.UseHexadecimal;
+			set => debuggerSettings.UseHexadecimal = value;
 		}
 
 		public override bool ShowReturnTypes {

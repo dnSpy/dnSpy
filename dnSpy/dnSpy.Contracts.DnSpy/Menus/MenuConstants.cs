@@ -548,6 +548,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Debugger/CallStack, Group: Frame</summary>
 		public const string GROUP_CTX_DBG_CALLSTACK_FRAME = "1000,5F24F714-41CB-4111-89C1-BCA9734115B0";
 
+		/// <summary>Group: Context Menu, Type: Debugger/CallStack, Group: Breakpoints</summary>
+		public const string GROUP_CTX_DBG_CALLSTACK_BPS = "1500,C3FC3901-808B-472F-BB71-9AC7E75F1413";
+
 		/// <summary>Group: Context Menu, Type: Debugger/CallStack, Group: Hex Options</summary>
 		public const string GROUP_CTX_DBG_CALLSTACK_HEXOPTS = "2000,66C60524-E129-491D-A8A8-7939B567BC3A";
 

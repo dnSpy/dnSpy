@@ -1800,4 +1800,16 @@ Are you sure you want to expand it?</value>
   <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
     <value>The following keywords can be used:</value>
   </data>
+  <data name="CallStackBreakpointCommand" xml:space="preserve">
+    <value>_Breakpoint</value>
+  </data>
+  <data name="InsertBreakpointCommand" xml:space="preserve">
+    <value>Insert B_reakpoint</value>
+  </data>
+  <data name="InsertTracepointCommand" xml:space="preserve">
+    <value>Insert _Tracepoint</value>
+  </data>
+  <data name="UnwindToThisFrameCommand" xml:space="preserve">
+    <value>_Unwind To This Frame</value>
+  </data>
 </root>

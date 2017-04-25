@@ -147,6 +147,7 @@
     <Compile Include="ToolWindows\CallStack\CallStackOperations.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackToolWindowContent.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackVM.cs" />
+    <Compile Include="ToolWindows\CallStack\Commands.cs" />
     <Compile Include="ToolWindows\CallStack\StackFrameVM.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointColumnConverter.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointContext.cs" />

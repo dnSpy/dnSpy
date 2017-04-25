@@ -736,6 +736,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Breakpoint.
+        /// </summary>
+        public static string CallStackBreakpointCommand {
+            get {
+                return ResourceManager.GetString("CallStackBreakpointCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Call Stack.
         /// </summary>
         public static string CallStackCommand {
@@ -2844,6 +2853,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert B_reakpoint.
+        /// </summary>
+        public static string InsertBreakpointCommand {
+            get {
+                return ResourceManager.GetString("InsertBreakpointCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert _Tracepoint.
+        /// </summary>
+        public static string InsertTracepointCommand {
+            get {
+                return ResourceManager.GetString("InsertTracepointCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading the module. This could take a while if it&apos;s a big module..
         /// </summary>
         public static string LoadModule_InfoText {
@@ -4869,6 +4896,15 @@ namespace dnSpy.Debugger.Properties {
         public static string UnknownExceptionType {
             get {
                 return ResourceManager.GetString("UnknownExceptionType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Unwind To This Frame.
+        /// </summary>
+        public static string UnwindToThisFrameCommand {
+            get {
+                return ResourceManager.GetString("UnwindToThisFrameCommand", resourceCulture);
             }
         }
         

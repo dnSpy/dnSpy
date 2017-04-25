@@ -71,8 +71,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 		void CallStackControl_CallStackListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			if (Operations.CanGoToSourceCode)
-				Operations.GoToSourceCode(newTab);
+			if (Operations.CanSwitchToFrame)
+				Operations.SwitchToFrame(newTab);
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(callStackControl.ListView);
