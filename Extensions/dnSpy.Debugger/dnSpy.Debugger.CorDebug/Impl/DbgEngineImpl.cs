@@ -669,7 +669,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			if (dnDebugger.ProcessState != DebuggerProcessState.Terminated) {
 				int hr = dnDebugger.TryDetach();
 				if (hr < 0) {
-					Debug.Assert(hr == CordbgErrors.CORDBG_E_UNRECOVERABLE_ERROR);
+					Debug.Assert(hr == CordbgErrors.CORDBG_E_UNRECOVERABLE_ERROR || hr == CordbgErrors.CORDBG_E_PROCESS_NOT_SYNCHRONIZED);
 					dnDebugger.TerminateProcesses();
 				}
 			}

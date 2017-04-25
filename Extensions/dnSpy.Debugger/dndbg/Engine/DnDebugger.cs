@@ -1642,7 +1642,7 @@ namespace dndbg.Engine {
 					int hr = process.CorProcess.RawObject.Stop(uint.MaxValue);
 					hr = process.CorProcess.RawObject.Terminate(uint.MaxValue);
 					if (hr != 0) {
-						Debug.Assert(hr == CordbgErrors.CORDBG_E_UNRECOVERABLE_ERROR);
+						Debug.Assert(hr == CordbgErrors.CORDBG_E_UNRECOVERABLE_ERROR || hr == CordbgErrors.CORDBG_E_PROCESS_NOT_SYNCHRONIZED);
 						bool b = NativeMethods.TerminateProcess(process.CorProcess.Handle, uint.MaxValue);
 						Debug.Assert(b);
 						forceNotify = true;
