@@ -23,12 +23,16 @@ using dnSpy.Contracts.Documents;
 namespace dnSpy.Bookmarks.DotNet {
 	[ExportReferenceConverter]
 	sealed class DotNetReferenceConverter : ReferenceConverter {
-		public override object Convert(object reference) {
-			if (reference is DotNetMethodBodyBookmarkLocation bodyLoc)
-				return new DotNetMethodBodyReference(bodyLoc.Module, bodyLoc.Token, bodyLoc.Offset);
-			if (reference is DotNetTokenBookmarkLocation tokenLoc)
-				return new DotNetTokenReference(tokenLoc.Module, tokenLoc.Token);
-			return null;
+		public override void Convert(ref object reference) {
+			switch (reference) {
+			case DotNetMethodBodyBookmarkLocation bodyLoc:
+				reference = new DotNetMethodBodyReference(bodyLoc.Module, bodyLoc.Token, bodyLoc.Offset);
+				break;
+
+			case DotNetTokenBookmarkLocation tokenLoc:
+				reference = new DotNetTokenReference(tokenLoc.Module, tokenLoc.Token);
+				break;
+			}
 		}
 	}
 }

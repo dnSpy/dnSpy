@@ -42,9 +42,9 @@ namespace dnSpy.Documents {
 		public override void GoTo(object reference, object[] options) => uiDispatcher.UI(() => GoToCore(reference, options));
 		void GoToCore(object reference, object[] options) {
 			uiDispatcher.VerifyAccess();
+			reference = Convert(reference);
 			if (reference == null)
 				return;
-			reference = Convert(reference);
 			var roOptions = options == null || options.Length == 0 ? emptyOptions : new ReadOnlyCollection<object>(options);
 			foreach (var lz in referenceNavigators) {
 				if (lz.Value.GoTo(reference, roOptions))
@@ -55,8 +55,11 @@ namespace dnSpy.Documents {
 
 		object Convert(object reference) {
 			uiDispatcher.VerifyAccess();
-			foreach (var lz in referenceConverters)
-				reference = lz.Value.Convert(reference) ?? reference;
+			foreach (var lz in referenceConverters) {
+				if (reference == null)
+					break;
+				lz.Value.Convert(ref reference);
+			}
 			return reference;
 		}
 	}

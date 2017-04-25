@@ -23,10 +23,12 @@ using dnSpy.Contracts.Documents;
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 	[ExportReferenceConverter]
 	sealed class DotNetReferenceConverter : ReferenceConverter {
-		public override object Convert(object reference) {
-			if (reference is DbgDotNetBreakpointLocation bpLoc)
-				return new DotNetMethodBodyReference(bpLoc.Module, bpLoc.Token, bpLoc.Offset);
-			return null;
+		public override void Convert(ref object reference) {
+			switch (reference) {
+			case DbgDotNetBreakpointLocation bpLoc:
+				reference = new DotNetMethodBodyReference(bpLoc.Module, bpLoc.Token, bpLoc.Offset);
+				break;
+			}
 		}
 	}
 }

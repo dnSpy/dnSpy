@@ -86,12 +86,12 @@ namespace dnSpy.Contracts.Documents {
 	/// </summary>
 	public abstract class ReferenceConverter {
 		/// <summary>
-		/// Converts a reference or returns null if the original input should be used.
+		/// Converts a reference. If null is written to <paramref name="reference"/>,
+		/// <see cref="ReferenceNavigator.GoTo(object, ReadOnlyCollection{object})"/> won't get called.
 		/// This method is called on the UI thread.
 		/// </summary>
 		/// <param name="reference">Reference</param>
-		/// <returns></returns>
-		public abstract object Convert(object reference);
+		public abstract void Convert(ref object reference);
 	}
 
 	/// <summary>Metadata</summary>
