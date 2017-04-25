@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Debugger.Engine.CallStack {
@@ -29,6 +30,11 @@ namespace dnSpy.Contracts.Debugger.Engine.CallStack {
 		/// Gets the module or null if it's unknown
 		/// </summary>
 		public abstract DbgModule Module { get; }
+
+		/// <summary>
+		/// Gets the location or null if none. Can be passed to <see cref="ReferenceNavigatorService.GoTo(object, object[])"/>
+		/// </summary>
+		public abstract DbgStackFrameLocation Location { get; }
 
 		/// <summary>
 		/// Gets the offset of the IP relative to the start of the function

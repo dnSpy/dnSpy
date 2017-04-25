@@ -22,12 +22,13 @@ using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.CallStack;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Text;
-using dnSpy.Debugger.CorDebug.Text;
 
 namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 	sealed class ILDbgEngineStackFrame : DbgEngineStackFrame {
+		public override DbgStackFrameLocation Location { get; }
 		public override DbgModule Module { get; }
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
@@ -56,6 +57,9 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 			FunctionOffset = functionOffset;
 
 			FunctionToken = corFunction?.Token ?? throw new ArgumentNullException(nameof(corFunction));
+
+			var moduleId = corFrame.DnModuleId ?? default(DnModuleId);
+			Location = new DbgDotNetMethodBodyStackFrameLocation(moduleId.ToModuleId(), FunctionToken, FunctionOffset);
 		}
 
 		public override void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options) =>

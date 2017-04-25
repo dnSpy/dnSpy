@@ -25,14 +25,16 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class SpecialDbgEngineStackFrame : DbgEngineStackFrame {
+		public override DbgStackFrameLocation Location { get; }
 		public override DbgModule Module { get; }
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
 
 		readonly string name;
 
-		public SpecialDbgEngineStackFrame(string name, DbgModule module, uint functionOffset, uint functionToken) {
+		public SpecialDbgEngineStackFrame(string name, DbgStackFrameLocation location, DbgModule module, uint functionOffset, uint functionToken) {
 			this.name = name ?? throw new ArgumentNullException(nameof(name));
+			Location = location;
 			Module = module;
 			FunctionOffset = functionOffset;
 			FunctionToken = functionToken;

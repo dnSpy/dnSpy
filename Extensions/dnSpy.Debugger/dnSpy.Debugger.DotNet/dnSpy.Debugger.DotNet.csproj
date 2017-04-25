@@ -57,6 +57,7 @@
     <Compile Include="Breakpoints\Code\TextEditor\ClassBreakpointCommands.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DbgTextViewBreakpointLocationProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DeleteBreakpointsInRemovedModules.cs" />
+    <Compile Include="CallStack\StackFrameLocationReferenceConverter.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />

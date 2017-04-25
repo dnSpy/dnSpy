@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Debugger.CallStack {
@@ -29,6 +30,11 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// Gets the thread
 		/// </summary>
 		public abstract DbgThread Thread { get; }
+
+		/// <summary>
+		/// Gets the location or null if none. Can be passed to <see cref="ReferenceNavigatorService.GoTo(object, object[])"/>
+		/// </summary>
+		public abstract DbgStackFrameLocation Location { get; }
 
 		/// <summary>
 		/// Gets the module or null if it's unknown

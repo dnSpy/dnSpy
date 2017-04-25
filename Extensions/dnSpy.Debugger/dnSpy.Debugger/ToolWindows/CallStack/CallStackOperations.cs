@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			var vm = (NormalStackFrameVM)SelectedItems[0];
 			callStackService.Value.ActiveFrameIndex = vm.Index;
 			var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
-			referenceNavigatorService.Value.GoTo(vm.Frame, options);
+			referenceNavigatorService.Value.GoTo(vm.Frame.Location, options);
 		}
 
 		public override bool CanGoToSourceCode => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				return;
 			var vm = (NormalStackFrameVM)SelectedItems[0];
 			var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
-			referenceNavigatorService.Value.GoTo(vm.Frame, options);
+			referenceNavigatorService.Value.GoTo(vm.Frame.Location, options);
 		}
 
 		public override bool CanGoToDisassembly => false;

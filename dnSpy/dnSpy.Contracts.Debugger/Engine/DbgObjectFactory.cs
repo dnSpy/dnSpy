@@ -21,6 +21,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Debugger.Exceptions;
 
@@ -219,11 +220,12 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Creates a special stack frame that's displayed as [name], eg. [Managed to Native Transition]
 		/// </summary>
 		/// <param name="name">Name, eg. "Managed to Native Transition"</param>
+		/// <param name="location">Location or null</param>
 		/// <param name="module">Module or null</param>
 		/// <param name="functionOffset">Function offset</param>
 		/// <param name="functionToken">Function token</param>
 		/// <returns></returns>
-		public abstract DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgModule module = null, uint functionOffset = 0, uint functionToken = DbgEngineStackFrame.InvalidFunctionToken);
+		public abstract DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgStackFrameLocation location = null, DbgModule module = null, uint functionOffset = 0, uint functionToken = DbgEngineStackFrame.InvalidFunctionToken);
 	}
 
 	/// <summary>

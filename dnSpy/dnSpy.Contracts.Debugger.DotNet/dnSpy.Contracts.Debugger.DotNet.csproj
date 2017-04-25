@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Breakpoints\Code\DbgDotNetBreakpointFactory.cs" />
     <Compile Include="Breakpoints\Code\DbgDotNetBreakpointLocation.cs" />
+    <Compile Include="CallStack\DbgDotNetMethodBodyStackFrameLocation.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProvider.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProviderFactory.cs" />
     <Compile Include="Metadata\DbgDynamicModuleProvider.cs" />
