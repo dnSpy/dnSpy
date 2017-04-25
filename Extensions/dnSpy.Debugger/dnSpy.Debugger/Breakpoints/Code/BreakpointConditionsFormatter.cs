@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.Breakpoints.Code.CondChecker;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
@@ -39,6 +40,12 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 	[Export(typeof(BreakpointConditionsFormatter))]
 	sealed class BreakpointConditionsFormatterImpl : BreakpointConditionsFormatter {
+		readonly Lazy<DbgFilterExpressionEvaluatorService> dbgFilterExpressionEvaluatorService;
+
+		[ImportingConstructor]
+		BreakpointConditionsFormatterImpl(Lazy<DbgFilterExpressionEvaluatorService> dbgFilterExpressionEvaluatorService) =>
+			this.dbgFilterExpressionEvaluatorService = dbgFilterExpressionEvaluatorService;
+
 		public override void Write(ITextColorWriter output, DbgCodeBreakpointCondition? condition) {
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
@@ -103,7 +110,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			if (filter == null)
 				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Breakpoint_Filter_NoFilter);
 			else
-				output.Write(BoxedTextColor.String, filter.Value.Filter ?? string.Empty);
+				dbgFilterExpressionEvaluatorService.Value.Write(output, filter.Value.Filter ?? string.Empty);
 		}
 
 		public override void Write(ITextColorWriter output, DbgCodeBreakpointTrace? trace) {

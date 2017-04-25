@@ -22,12 +22,14 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgFilterExpressionEvaluatorService {
 		public abstract bool HasExpressionEvaluator { get; }
 		public abstract string IsValidExpression(string expr);
 		public abstract DbgFilterExpressionEvaluatorResult Evaluate(string expr, DbgFilterEEVariableProvider variableProvider);
+		public abstract void Write(ITextColorWriter output, string expr);
 	}
 
 	[Export(typeof(DbgFilterExpressionEvaluatorService))]
@@ -56,6 +58,17 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			if (variableProvider == null)
 				throw new ArgumentNullException(nameof(variableProvider));
 			return dbgFilterExpressionEvaluator?.Value.Evaluate(expr, variableProvider) ?? new DbgFilterExpressionEvaluatorResult(NoFEEError);
+		}
+
+		public override void Write(ITextColorWriter output, string expr) {
+			if (output == null)
+				throw new ArgumentNullException(nameof(output));
+			if (expr == null)
+				throw new ArgumentNullException(nameof(expr));
+			if (dbgFilterExpressionEvaluator != null)
+				dbgFilterExpressionEvaluator.Value.Write(output, expr);
+			else
+				output.Write(BoxedTextColor.Error, expr);
 		}
 	}
 }
