@@ -106,10 +106,13 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		public void Save(DbgCodeBreakpoint[] breakpoints) {
 			var section = settingsService.RecreateSection(SETTINGS_GUID);
 			foreach (var bp in breakpoints.OrderBy(a => a.Id)) {
+				var location = bp.Location;
+				if (!dbgBreakpointLocationSerializerService.CanSerialize(location))
+					continue;
 				var bpSect = section.CreateSection("Breakpoint");
 				var bpSettings = bp.Settings;
 				bpSect.Attribute("IsEnabled", bpSettings.IsEnabled);
-				dbgBreakpointLocationSerializerService.Serialize(bpSect.CreateSection("BPL"), bp.Location);
+				dbgBreakpointLocationSerializerService.Serialize(bpSect.CreateSection("BPL"), location);
 				if (bpSettings.Condition != null)
 					Save(bpSect.CreateSection("Condition"), bpSettings.Condition.Value);
 				if (bpSettings.HitCount != null)

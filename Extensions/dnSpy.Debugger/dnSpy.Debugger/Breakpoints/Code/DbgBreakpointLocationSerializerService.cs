@@ -27,6 +27,7 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class DbgBreakpointLocationSerializerService {
+		public abstract bool CanSerialize(DbgBreakpointLocation location);
 		public abstract void Serialize(ISettingsSection section, DbgBreakpointLocation location);
 		public abstract DbgBreakpointLocation Deserialize(ISettingsSection section);
 	}
@@ -46,6 +47,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 			return null;
 		}
+
+		public override bool CanSerialize(DbgBreakpointLocation location) => TryGetSerializer(location.Type) != null;
 
 		public override void Serialize(ISettingsSection section, DbgBreakpointLocation location) {
 			if (section == null)
