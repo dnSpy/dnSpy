@@ -82,6 +82,13 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public abstract void Remove(DbgCodeBreakpoint[] breakpoints);
 
 		/// <summary>
+		/// Returns an existing breakpoint at <paramref name="location"/> or null if none exists
+		/// </summary>
+		/// <param name="location">Location</param>
+		/// <returns></returns>
+		public abstract DbgCodeBreakpoint TryGetBreakpoint(DbgBreakpointLocation location);
+
+		/// <summary>
 		/// Removes all code breakpoints
 		/// </summary>
 		public abstract void Clear();

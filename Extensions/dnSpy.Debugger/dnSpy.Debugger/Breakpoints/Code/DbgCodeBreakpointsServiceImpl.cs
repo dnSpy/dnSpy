@@ -206,6 +206,16 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
+		public override DbgCodeBreakpoint TryGetBreakpoint(DbgBreakpointLocation location) {
+			if (location == null)
+				throw new ArgumentNullException(nameof(location));
+			lock (lockObj) {
+				if (locationToBreakpoint.TryGetValue(location, out var bp))
+					return bp;
+			}
+			return null;
+		}
+
 		public override void Clear() => Dbg(() => ClearCore());
 		void ClearCore() {
 			dbgDispatcher.VerifyAccess();
