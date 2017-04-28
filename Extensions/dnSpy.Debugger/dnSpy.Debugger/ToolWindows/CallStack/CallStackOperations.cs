@@ -25,9 +25,13 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.CallStack;
+using dnSpy.Debugger.Dialogs.CodeBreakpoints;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {
 	abstract class CallStackOperations {
@@ -87,18 +91,24 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		readonly CallStackDisplaySettings callStackDisplaySettings;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 		readonly Lazy<CallStackService> callStackService;
+		readonly Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService;
+		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
+		readonly Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService;
 
 		ObservableCollection<StackFrameVM> AllItems => callStackVM.AllItems;
 		ObservableCollection<StackFrameVM> SelectedItems => callStackVM.SelectedItems;
 		IEnumerable<StackFrameVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Index);
 
 		[ImportingConstructor]
-		CallStackOperationsImpl(ICallStackVM callStackVM, DebuggerSettings debuggerSettings, CallStackDisplaySettings callStackDisplaySettings, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<CallStackService> callStackService) {
+		CallStackOperationsImpl(ICallStackVM callStackVM, DebuggerSettings debuggerSettings, CallStackDisplaySettings callStackDisplaySettings, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<CallStackService> callStackService, Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService) {
 			this.callStackVM = callStackVM;
 			this.debuggerSettings = debuggerSettings;
 			this.callStackDisplaySettings = callStackDisplaySettings;
 			this.referenceNavigatorService = referenceNavigatorService;
 			this.callStackService = callStackService;
+			this.dbgCallStackBreakpointService = dbgCallStackBreakpointService;
+			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
+			this.dbgCodeBreakpointSerializerService = dbgCodeBreakpointSerializerService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -170,8 +180,35 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			//TODO:
 		}
 
-		public override BreakpointsCommandKind BreakpointsCommandKind => BreakpointsCommandKind.Add;//TODO:
-		public override bool IsBreakpointEnabled => true;//TODO:
+		(DbgCodeBreakpoint breakpoint, DbgStackFrameLocation location)? GetBreakpoint() {
+			if (SelectedItems.Count != 1)
+				return null;
+			var vm = SelectedItems[0] as NormalStackFrameVM;
+			if (vm == null)
+				return null;
+			var location = vm.Frame.Location;
+			if (location == null)
+				return null;
+			var bp = dbgCallStackBreakpointService.Value.TryGetBreakpoint(location);
+			return (bp, location);
+		}
+
+		public override BreakpointsCommandKind BreakpointsCommandKind {
+			get {
+				if (SelectedItems.Count != 1)
+					return BreakpointsCommandKind.None;
+				var vm = SelectedItems[0] as NormalStackFrameVM;
+				if (vm == null)
+					return BreakpointsCommandKind.None;
+				var location = vm.Frame.Location;
+				if (location == null)
+					return BreakpointsCommandKind.None;
+				var bp = dbgCallStackBreakpointService.Value.TryGetBreakpoint(location);
+				return bp == null ? BreakpointsCommandKind.Add : BreakpointsCommandKind.Edit;
+			}
+		}
+
+		public override bool IsBreakpointEnabled => GetBreakpoint()?.breakpoint?.IsEnabled == true;
 
 		public override bool CanAddBreakpoint => CanAddBreakpointOrTracepoint;
 		public override void AddBreakpoint() => AddBreakpointOrTracepoint(true);
@@ -181,40 +218,63 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		void AddBreakpointOrTracepoint(bool addBreakpoint) {
 			if (!CanAddBreakpointOrTracepoint)
 				return;
-			var vm = (NormalStackFrameVM)SelectedItems[0];
-			//TODO: If BP/TP exists, remove it
+			var info = GetBreakpoint();
+			if (info == null)
+				return;
+			if (info.Value.breakpoint != null)
+				info.Value.breakpoint.Remove();
+			else {
+				var bp = dbgCallStackBreakpointService.Value.Create(info.Value.location);
+				if (bp == null)
+					return;
+				if (!addBreakpoint) {
+					var settings = bp.Settings;
+					settings.Trace = new DbgCodeBreakpointTrace(string.Empty, @continue: true);
+					var newSettings = showCodeBreakpointSettingsService.Value.Show(settings);
+					if (newSettings != null)
+						bp.Settings = newSettings.Value;
+				}
+			}
 		}
 
-		public override bool CanEnableBreakpoint => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override bool CanEnableBreakpoint => GetBreakpoint()?.breakpoint != null;
 		public override void EnableBreakpoint() {
 			if (!CanEnableBreakpoint)
 				return;
-			var vm = (NormalStackFrameVM)SelectedItems[0];
-			//TODO:
+			var info = GetBreakpoint();
+			if (info?.breakpoint is DbgCodeBreakpoint bp)
+				bp.IsEnabled = !bp.IsEnabled;
 		}
 
-		public override bool CanRemoveBreakpoint => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override bool CanRemoveBreakpoint => GetBreakpoint()?.breakpoint != null;
 		public override void RemoveBreakpoint() {
 			if (!CanRemoveBreakpoint)
 				return;
-			var vm = (NormalStackFrameVM)SelectedItems[0];
-			//TODO:
+			var info = GetBreakpoint();
+			if (info?.breakpoint is DbgCodeBreakpoint bp)
+				bp.Remove();
 		}
 
-		public override bool CanEditBreakpointSettings => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override bool CanEditBreakpointSettings => GetBreakpoint()?.breakpoint != null;
 		public override void EditBreakpointSettings() {
 			if (!CanEditBreakpointSettings)
 				return;
-			var vm = (NormalStackFrameVM)SelectedItems[0];
-			//TODO:
+			var info = GetBreakpoint();
+			if (info?.breakpoint is DbgCodeBreakpoint bp) {
+				var settings = bp.Settings;
+				var newSettings = showCodeBreakpointSettingsService.Value.Show(settings);
+				if (newSettings != null)
+					bp.Settings = newSettings.Value;
+			}
 		}
 
-		public override bool CanExportBreakpoint => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override bool CanExportBreakpoint => GetBreakpoint()?.breakpoint != null;
 		public override void ExportBreakpoint() {
 			if (!CanExportBreakpoint)
 				return;
-			var vm = (NormalStackFrameVM)SelectedItems[0];
-			//TODO:
+			var info = GetBreakpoint();
+			if (info?.breakpoint is DbgCodeBreakpoint bp)
+				dbgCodeBreakpointSerializerService.Value.Save(new[] { bp });
 		}
 
 		public override bool CanToggleUseHexadecimal => true;
