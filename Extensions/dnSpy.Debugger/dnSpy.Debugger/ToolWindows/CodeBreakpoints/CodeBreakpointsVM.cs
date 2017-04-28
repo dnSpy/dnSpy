@@ -306,10 +306,13 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			dbgManager.Value.DispatcherThread.VerifyAccess();
 			UI(() => {
 				foreach (var info in e.Breakpoints) {
-					bool b = bpToVM.TryGetValue(info.Breakpoint, out var vm);
+					var breakpoint = info.Breakpoint;
+					if (breakpoint.IsHidden)
+						continue;
+					bool b = bpToVM.TryGetValue(breakpoint, out var vm);
 					Debug.Assert(b);
 					if (b)
-						vm.UpdateSettings_UI(info.Breakpoint.Settings);
+						vm.UpdateSettings_UI(breakpoint.Settings);
 				}
 			});
 		}
@@ -322,6 +325,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		void OnBoundBreakpointsMessageChanged_UI(ReadOnlyCollection<DbgCodeBreakpoint> breakpoints) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			foreach (var bp in breakpoints) {
+				if (bp.IsHidden)
+					continue;
 				bool b = bpToVM.TryGetValue(bp, out var vm);
 				Debug.Assert(b);
 				if (!b)
@@ -334,6 +339,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		void AddItems_UI(IList<DbgCodeBreakpoint> codeBreakpoints) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			foreach (var bp in codeBreakpoints) {
+				if (bp.IsHidden)
+					continue;
 				var vm = new CodeBreakpointVM(bp, dbgBreakpointLocationFormatterService.Value.GetFormatter(bp.Location), codeBreakpointContext, codeBreakpointOrder++, LabelsEditValueProvider);
 				Debug.Assert(!bpToVM.ContainsKey(bp));
 				bpToVM[bp] = vm;

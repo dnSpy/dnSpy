@@ -51,6 +51,8 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 
 		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
 			foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
+				if (bp.IsHidden)
+					continue;
 				var formatter = (bp.Location as DbgDotNetBreakpointLocationImpl)?.Formatter;
 				formatter?.RefreshName();
 			}

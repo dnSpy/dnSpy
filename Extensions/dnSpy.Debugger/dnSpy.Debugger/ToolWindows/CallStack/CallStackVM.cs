@@ -317,6 +317,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			if (usedBreakpoints.Count == 0)
 				return;
 			foreach (var breakpoint in breakpoints) {
+				if (breakpoint.IsHidden)
+					continue;
 				if (usedBreakpoints.TryGetValue(breakpoint, out var hash)) {
 					foreach (var vm in hash.ToArray())
 						vm.RefreshBreakpoint_UI();
@@ -388,7 +390,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		BreakpointKind? GetBreakpointKind_UI(NormalStackFrameVM vm) {
 			callStackContext.UIDispatcher.VerifyAccess();
 			var breakpoint = dbgCallStackBreakpointService.Value.TryGetBreakpoint(vm.Frame.Location);
-			if (breakpoint == null)
+			if (breakpoint == null || breakpoint.IsHidden)
 				return null;
 			if (!usedBreakpoints.TryGetValue(breakpoint, out var hash)) {
 				usedBreakpoints.Add(breakpoint, hash = new HashSet<NormalStackFrameVM>());

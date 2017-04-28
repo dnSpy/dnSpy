@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -49,6 +50,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// Gets all breakpoints
 		/// </summary>
 		public abstract DbgCodeBreakpoint[] Breakpoints { get; }
+
+		/// <summary>
+		/// Gets all visible breakpoints
+		/// </summary>
+		public IEnumerable<DbgCodeBreakpoint> VisibleBreakpoints => Breakpoints.Where(a => !a.IsHidden);
 
 		/// <summary>
 		/// Raised when <see cref="Breakpoints"/> is changed
@@ -89,7 +95,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public abstract DbgCodeBreakpoint TryGetBreakpoint(DbgBreakpointLocation location);
 
 		/// <summary>
-		/// Removes all code breakpoints
+		/// Removes all visible breakpoints
 		/// </summary>
 		public abstract void Clear();
 

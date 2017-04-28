@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Settings;
@@ -72,7 +73,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			dbgDispatcher.VerifyAccess();
 			if (ignoreSave)
 				return;
-			new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService).Save(dbgCodeBreakpointsService.Breakpoints);
+			new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService).Save(dbgCodeBreakpointsService.Breakpoints.Where(a => (a.Options & (DbgCodeBreakpointOptions.Hidden | DbgCodeBreakpointOptions.Temporary)) == 0).ToArray());
 		}
 		bool ignoreSave;
 	}

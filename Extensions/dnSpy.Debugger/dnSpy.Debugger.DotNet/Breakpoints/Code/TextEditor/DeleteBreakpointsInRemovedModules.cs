@@ -66,6 +66,8 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				removed.Remove(new ModuleId());
 				List<DbgCodeBreakpoint> breakpointsToRemove = null;
 				foreach (var bp in dbgCodeBreakpointsService.Breakpoints) {
+					if (bp.IsHidden)
+						continue;
 					if (!(bp.Location is DbgDotNetBreakpointLocationImpl location))
 						continue;
 					// Don't auto-remove BPs in dynamic modules since they have no disk file. The

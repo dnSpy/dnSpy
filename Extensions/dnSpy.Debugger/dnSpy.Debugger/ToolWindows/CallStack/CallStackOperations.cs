@@ -180,6 +180,11 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			//TODO:
 		}
 
+		DbgCodeBreakpoint TryGetBreakpoint(DbgStackFrameLocation location) {
+			var bp = dbgCallStackBreakpointService.Value.TryGetBreakpoint(location);
+			return bp == null || bp.IsHidden ? null : bp;
+		}
+
 		(DbgCodeBreakpoint breakpoint, DbgStackFrameLocation location)? GetBreakpoint() {
 			if (SelectedItems.Count != 1)
 				return null;
@@ -189,7 +194,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			var location = vm.Frame.Location;
 			if (location == null)
 				return null;
-			var bp = dbgCallStackBreakpointService.Value.TryGetBreakpoint(location);
+			var bp = TryGetBreakpoint(location);
 			return (bp, location);
 		}
 
@@ -203,7 +208,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				var location = vm.Frame.Location;
 				if (location == null)
 					return BreakpointsCommandKind.None;
-				var bp = dbgCallStackBreakpointService.Value.TryGetBreakpoint(location);
+				var bp = TryGetBreakpoint(location);
 				return bp == null ? BreakpointsCommandKind.Add : BreakpointsCommandKind.Edit;
 			}
 		}

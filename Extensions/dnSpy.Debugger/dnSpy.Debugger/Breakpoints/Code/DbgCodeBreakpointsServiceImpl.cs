@@ -217,21 +217,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return null;
 		}
 
-		public override void Clear() => Dbg(() => ClearCore());
-		void ClearCore() {
-			dbgDispatcher.VerifyAccess();
-			DbgCodeBreakpoint[] removed;
-			lock (lockObj) {
-				removed = breakpoints.ToArray();
-				breakpoints.Clear();
-				locationToBreakpoint.Clear();
-			}
-			if (removed.Length > 0) {
-				BreakpointsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgCodeBreakpoint>(removed, added: false));
-				foreach (var bp in removed)
-					bp.Close(dbgDispatcher.DispatcherThread);
-			}
-		}
+		public override void Clear() => Dbg(() => RemoveCore(VisibleBreakpoints.ToArray()));
 
 		public override void UpdateIsDebugging_DbgThread(bool newIsDebugging) {
 			dbgDispatcher.VerifyAccess();

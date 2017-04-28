@@ -159,7 +159,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void ToggleEnableBreakpoint() => textViewBreakpointService.Value.ToggleEnableBreakpoint();
 		public override ToggleEnableBreakpointKind GetToggleEnableBreakpointKind() => textViewBreakpointService.Value.GetToggleEnableBreakpointKind();
 
-		public override bool CanDeleteAllBreakpoints => dbgCodeBreakpointsService.Value.Breakpoints.Length > 0;
+		public override bool CanDeleteAllBreakpoints => dbgCodeBreakpointsService.Value.VisibleBreakpoints.Any();
 		public override void DeleteAllBreakpointsAskUser() {
 			var res = messageBoxService.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), dnSpy_Debugger_Resources.AskDeleteAllBreakpoints, MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res != null && res != MsgBoxButton.Yes)
@@ -167,13 +167,13 @@ namespace dnSpy.Debugger.DbgUI {
 			dbgCodeBreakpointsService.Value.Clear();
 		}
 
-		public override bool CanEnableAllBreakpoints => dbgCodeBreakpointsService.Value.Breakpoints.Any(a => !a.IsEnabled);
+		public override bool CanEnableAllBreakpoints => dbgCodeBreakpointsService.Value.VisibleBreakpoints.Any(a => !a.IsEnabled);
 		public override void EnableAllBreakpoints() => EnableAllBreakpoints(true);
-		public override bool CanDisableAllBreakpoints => dbgCodeBreakpointsService.Value.Breakpoints.Any(a => a.IsEnabled);
+		public override bool CanDisableAllBreakpoints => dbgCodeBreakpointsService.Value.VisibleBreakpoints.Any(a => a.IsEnabled);
 		public override void DisableAllBreakpoints() => EnableAllBreakpoints(false);
 
 		void EnableAllBreakpoints(bool enable) {
-			dbgCodeBreakpointsService.Value.Modify(dbgCodeBreakpointsService.Value.Breakpoints.Where(a => a.IsEnabled != enable).Select(a => {
+			dbgCodeBreakpointsService.Value.Modify(dbgCodeBreakpointsService.Value.VisibleBreakpoints.Where(a => a.IsEnabled != enable).Select(a => {
 				var s = a.Settings;
 				s.IsEnabled = enable;
 				return new DbgCodeBreakpointAndSettings(a, s);

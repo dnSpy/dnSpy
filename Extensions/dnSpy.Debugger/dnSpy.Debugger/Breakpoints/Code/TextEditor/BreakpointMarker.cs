@@ -129,6 +129,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (!e.Added)
 				throw new InvalidOperationException();
 			foreach (var bp in e.Objects) {
+				if (bp.IsHidden)
+					continue;
 				var location = breakpointGlyphTextMarkerLocationProviderService.GetLocation(bp);
 				if (location != null) {
 					bp.GetOrCreateData(() => new BreakpointData(location));
@@ -152,6 +154,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			var removedMarkers = new List<IGlyphTextMarker>(breakpoints.Count);
 			for (int i = 0; i < breakpoints.Count; i++) {
 				var bp = breakpoints[i];
+				if (bp.IsHidden)
+					continue;
 				if (!bp.TryGetData(out BreakpointData data))
 					continue;
 				bps.Add(bp);

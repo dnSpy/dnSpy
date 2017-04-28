@@ -102,6 +102,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		DbgCodeBreakpoint[] GetBreakpoints(DbgTextViewBreakpointLocationResult locations) {
 			var list = new List<DbgCodeBreakpoint>();
 			foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
+				if (bp.IsHidden)
+					continue;
 				foreach (var loc in locations.Locations) {
 					if (bp.Location.Equals(loc)) {
 						list.Add(bp);
