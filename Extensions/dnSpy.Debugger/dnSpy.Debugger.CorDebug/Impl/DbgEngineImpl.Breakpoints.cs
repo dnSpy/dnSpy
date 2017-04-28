@@ -27,15 +27,16 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Metadata;
+using dnSpy.Debugger.CorDebug.Breakpoints;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
 		sealed class BoundBreakpointData : IDisposable {
-			public DnILCodeBreakpoint Breakpoint { get; }
+			public DnCodeBreakpoint Breakpoint { get; }
 			public ModuleId Module { get; }
 			public DbgEngineBoundCodeBreakpoint EngineBoundCodeBreakpoint { get; set; }
 			public DbgEngineImpl Engine { get; }
-			public BoundBreakpointData(DbgEngineImpl engine, ModuleId module, DnILCodeBreakpoint breakpoint) {
+			public BoundBreakpointData(DbgEngineImpl engine, ModuleId module, DnCodeBreakpoint breakpoint) {
 				Engine = engine ?? throw new ArgumentNullException(nameof(engine));
 				Module = module;
 				Breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));
@@ -49,7 +50,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		void SendILCodeBreakpointHitMessage_CorDebug(DnILCodeBreakpoint breakpoint, DbgThread thread) {
+		void SendCodeBreakpointHitMessage_CorDebug(DnCodeBreakpoint breakpoint, DbgThread thread) {
 			debuggerThread.VerifyAccess();
 			var bpData = (BoundBreakpointData)breakpoint.Tag;
 			Debug.Assert(bpData != null);
@@ -91,24 +92,48 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return dict;
 		}
 
+		static Dictionary<ModuleId, List<DbgDotNetNativeBreakpointLocationImpl>> CreateDotNetNativeLocationDictionary(DbgBreakpointLocation[] locations) {
+			var dict = new Dictionary<ModuleId, List<DbgDotNetNativeBreakpointLocationImpl>>();
+			foreach (var location in locations) {
+				if (location is DbgDotNetNativeBreakpointLocationImpl loc) {
+					if (!dict.TryGetValue(loc.Module, out var list))
+						dict.Add(loc.Module, list = new List<DbgDotNetNativeBreakpointLocationImpl>());
+					list.Add(loc);
+				}
+			}
+			return dict;
+		}
+
 		public override void AddBreakpoints(DbgModule[] modules, DbgBreakpointLocation[] locations, bool includeNonModuleBreakpoints) =>
 			CorDebugThread(() => AddBreakpointsCore(modules, locations, includeNonModuleBreakpoints));
 		void AddBreakpointsCore(DbgModule[] modules, DbgBreakpointLocation[] locations, bool includeNonModuleBreakpoints) {
 			debuggerThread.VerifyAccess();
 
 			var dict = CreateDotNetLocationDictionary(locations);
+			var nativeDict = CreateDotNetNativeLocationDictionary(locations);
 			var createdBreakpoints = new List<DbgBoundCodeBreakpointInfo<BoundBreakpointData>>();
 			foreach (var module in modules) {
 				if (!TryGetModuleData(module, out var data))
 					continue;
-				if (!dict.TryGetValue(data.ModuleId, out var moduleLocations))
-					continue;
-				foreach (var location in moduleLocations) {
-					var ilbp = dnDebugger.CreateBreakpoint(location.Module.ToDnModuleId(), location.Token, location.Offset, null);
-					const ulong address = DbgObjectFactory.BoundBreakpointNoAddress;
-					var msg = GetBoundBreakpointMessage(ilbp);
-					var bpData = new BoundBreakpointData(this, location.Module, ilbp);
-					createdBreakpoints.Add(new DbgBoundCodeBreakpointInfo<BoundBreakpointData>(location, module, address, msg, bpData));
+				if (dict.TryGetValue(data.ModuleId, out var moduleLocations)) {
+					foreach (var location in moduleLocations) {
+						var ilbp = dnDebugger.CreateBreakpoint(location.Module.ToDnModuleId(), location.Token, location.Offset, null);
+						const ulong address = DbgObjectFactory.BoundBreakpointNoAddress;
+						var msg = GetBoundBreakpointMessage(ilbp);
+						var bpData = new BoundBreakpointData(this, location.Module, ilbp);
+						createdBreakpoints.Add(new DbgBoundCodeBreakpointInfo<BoundBreakpointData>(location, module, address, msg, bpData));
+					}
+				}
+				else if (nativeDict.TryGetValue(data.ModuleId, out var nativeModuleLocations)) {
+					foreach (var location in nativeModuleLocations) {
+						if (location.CorCode.Object == null)
+							continue;
+						var nbp = dnDebugger.CreateNativeBreakpoint(location.CorCode.Object, location.NativeMethodOffset, null);
+						var address = location.NativeMethodAddress + location.NativeMethodOffset;
+						var msg = GetBoundBreakpointMessage(nbp);
+						var bpData = new BoundBreakpointData(this, location.Module, nbp);
+						createdBreakpoints.Add(new DbgBoundCodeBreakpointInfo<BoundBreakpointData>(location, module, address, msg, bpData));
+					}
 				}
 			}
 			var boundBreakpoints = objectFactory.Create(createdBreakpoints.ToArray());

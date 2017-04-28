@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.DotNet.CorDebug.CallStack {
+namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
 	/// IL offset mapping result. This enum is similar to <c>CorDebugMappingResult</c>
 	/// </summary>

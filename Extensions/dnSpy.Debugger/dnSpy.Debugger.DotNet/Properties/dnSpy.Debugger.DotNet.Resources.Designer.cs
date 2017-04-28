@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to IL offset 0x{0}.
+        ///   Looks up a localized string similar to IL offset {0}.
         /// </summary>
         public static string GlyphToolTip_IL_offset_0 {
             get {

@@ -17,21 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text;
-using dnSpy.Debugger.DotNet.Properties;
+using dnSpy.Debugger.CorDebug.Properties;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
+namespace dnSpy.Debugger.CorDebug.Breakpoints.TextEditor {
 	[ExportBreakpointGlyphFormatter]
 	sealed class BreakpointGlyphFormatterImpl : BreakpointGlyphFormatter {
 		readonly IDecompilerService decompilerService;
@@ -40,23 +42,48 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 		BreakpointGlyphFormatterImpl(IDecompilerService decompilerService) => this.decompilerService = decompilerService;
 
 		public override bool WriteLocation(ITextColorWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
-			if (breakpoint.Location is DbgDotNetBreakpointLocationImpl location)
+			if (breakpoint.Location is DbgDotNetNativeBreakpointLocationImpl location)
 				return WriteLocation(output, textView, span, location);
 
 			return false;
 		}
 
-		bool WriteLocation(ITextColorWriter output, ITextView textView, SnapshotSpan span, DbgDotNetBreakpointLocationImpl location) {
+		bool WriteLocation(ITextColorWriter output, ITextView textView, SnapshotSpan span, DbgDotNetNativeBreakpointLocationImpl location) {
 			var line = span.Start.GetContainingLine();
-			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_Resources.GlyphToolTip_line_0_character_1,
+			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_CorDebug_Resources.GlyphToolTip_line_0_character_1,
 				(line.LineNumber + 1).ToString(CultureInfo.CurrentUICulture),
 				(span.Start - line.Start + 1).ToString(CultureInfo.CurrentUICulture)));
 			output.WriteSpace();
-			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_Resources.GlyphToolTip_IL_offset_0, "0x" + location.Offset.ToString("X4")));
+			switch (location.ILOffsetMapping) {
+			case DbgILOffsetMapping.Exact:
+			case DbgILOffsetMapping.Approximate:
+				var prefix = location.ILOffsetMapping == DbgILOffsetMapping.Approximate ? "~0x" : "0x";
+				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_CorDebug_Resources.GlyphToolTip_IL_offset_0, prefix + location.ILOffset.ToString("X4")));
+				break;
+
+			case DbgILOffsetMapping.Prolog:
+				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_CorDebug_Resources.GlyphToolTip_IL_offset_0, "(prolog)"));
+				break;
+
+			case DbgILOffsetMapping.Epilog:
+				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_CorDebug_Resources.GlyphToolTip_IL_offset_0, "(epilog)"));
+				break;
+
+			case DbgILOffsetMapping.Unknown:
+			case DbgILOffsetMapping.NoInfo:
+			case DbgILOffsetMapping.UnmappedAddress:
+				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_CorDebug_Resources.GlyphToolTip_IL_offset_0, "(???)"));
+				break;
+
+			default: throw new InvalidOperationException();
+			}
+			output.WriteSpace();
+			var addr = location.NativeMethodAddress + location.NativeMethodOffset;
+			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_CorDebug_Resources.GlyphToolTip_NativeAddress, "0x" + addr.ToString("X8")));
 
 			var documentViewer = textView.TextBuffer.TryGetDocumentViewer();
 			Debug.Assert(documentViewer != null);
-			var statement = documentViewer?.GetMethodDebugService().FindByCodeOffset(new ModuleTokenId(location.Module, location.Token), location.Offset);
+			var statement = documentViewer?.GetMethodDebugService().FindByCodeOffset(new ModuleTokenId(location.Module, location.Token), location.ILOffset);
 			Debug.Assert((documentViewer != null) == (statement != null));
 			if (statement != null) {
 				output.Write(BoxedTextColor.Text, " ('");

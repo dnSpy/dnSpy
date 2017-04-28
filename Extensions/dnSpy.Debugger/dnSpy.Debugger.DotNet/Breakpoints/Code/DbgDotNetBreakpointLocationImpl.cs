@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 		public override uint Token { get; }
 		public override uint Offset { get; }
 
-		internal DbgBreakpointLocationFormatter Formatter { get; set; }
+		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
 
 		public DbgDotNetBreakpointLocationImpl(ModuleId module, uint token, uint offset) {
 			Module = module;

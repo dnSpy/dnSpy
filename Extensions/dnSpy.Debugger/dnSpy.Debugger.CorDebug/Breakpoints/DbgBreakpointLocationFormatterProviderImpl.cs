@@ -17,19 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
-	/// <summary>
-	/// Predefined <see cref="DbgBreakpointLocation"/> types
-	/// </summary>
-	public static class PredefinedDbgBreakpointLocationTypes {
-		/// <summary>
-		/// .NET code breakpoint location with a module, token, and IL offset
-		/// </summary>
-		public const string DotNet = nameof(DotNet);
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
-		/// <summary>
-		/// .NET (CorDebug): native breakpoint location
-		/// </summary>
-		public const string DotNetCorDebugNative = nameof(DotNetCorDebugNative);
+namespace dnSpy.Debugger.CorDebug.Breakpoints {
+	[ExportDbgBreakpointLocationFormatterProvider(PredefinedDbgBreakpointLocationTypes.DotNetCorDebugNative)]
+	sealed class DbgBreakpointLocationFormatterProviderImpl : DbgBreakpointLocationFormatterProvider {
+		public override DbgBreakpointLocationFormatter Create(DbgBreakpointLocation location) =>
+			(location as DbgDotNetNativeBreakpointLocationImpl)?.Formatter;
 	}
 }

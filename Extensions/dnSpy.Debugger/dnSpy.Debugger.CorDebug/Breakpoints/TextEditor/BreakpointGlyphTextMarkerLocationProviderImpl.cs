@@ -19,15 +19,30 @@
 
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
-using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug.Breakpoints;
 using dnSpy.Contracts.Text.Editor;
 
-namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
+namespace dnSpy.Debugger.CorDebug.Breakpoints.TextEditor {
 	[ExportBreakpointGlyphTextMarkerLocationProvider]
 	sealed class BreakpointGlyphTextMarkerLocationProviderImpl : BreakpointGlyphTextMarkerLocationProvider {
 		public override GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint) {
-			if (breakpoint.Location is DbgDotNetBreakpointLocation loc)
-				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(loc.Module, loc.Token, loc.Offset);
+			if (breakpoint.Location is DbgDotNetNativeBreakpointLocation loc) {
+				switch (loc.ILOffsetMapping) {
+				case DbgILOffsetMapping.Exact:
+				case DbgILOffsetMapping.Approximate:
+					return new DotNetMethodBodyGlyphTextMarkerLocationInfo(loc.Module, loc.Token, loc.ILOffset);
+
+				case DbgILOffsetMapping.Unknown:
+				case DbgILOffsetMapping.Prolog:
+				case DbgILOffsetMapping.Epilog:
+				case DbgILOffsetMapping.NoInfo:
+				case DbgILOffsetMapping.UnmappedAddress:
+				default:
+					// The IL offset isn't known so use a method reference
+					return new DotNetTokenGlyphTextMarkerLocationInfo(loc.Module, loc.Token);
+				}
+			}
 			return null;
 		}
 	}

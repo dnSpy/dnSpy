@@ -19,6 +19,7 @@
 
 using System;
 using dndbg.Engine;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Contracts.Metadata;
 
@@ -30,18 +31,20 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 		public override DbgILOffsetMapping ILOffsetMapping { get; }
 		public override ulong NativeMethodAddress { get; }
 		public override uint NativeMethodOffset { get; }
-		public CorCode CorCode { get; }
+		public DnDebuggerObjectHolder<CorCode> CorCode { get; }
 
-		public DbgDotNetStackFrameLocationImpl(ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, CorCode corCode, uint nativeOffset) {
+		public DbgDotNetStackFrameLocationImpl(ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, DnDebuggerObjectHolder<CorCode> corCode, uint nativeOffset) {
 			if (corCode == null)
 				throw new ArgumentNullException(nameof(corCode));
-			if (corCode.IsIL)
+			if (corCode.Object == null)
+				throw new ArgumentException();
+			if (corCode.Object.IsIL)
 				throw new ArgumentException();
 			Module = module;
 			Token = token;
 			ILOffset = ilOffset;
 			ILOffsetMapping = ilOffsetMapping;
-			NativeMethodAddress = corCode.Address;
+			NativeMethodAddress = corCode.Object.Address;
 			NativeMethodOffset = nativeOffset;
 			CorCode = corCode;
 		}

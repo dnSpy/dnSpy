@@ -23,7 +23,8 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
 namespace dnSpy.Contracts.Debugger.CallStack {
 	/// <summary>
-	/// Converts a stack frame location to a breakpoint location
+	/// Converts a stack frame location to a breakpoint location. Use <see cref="ExportDbgStackFrameBreakpointLocationProviderAttribute"/>
+	/// to export an instance.
 	/// </summary>
 	public abstract class DbgStackFrameBreakpointLocationProvider {
 		/// <summary>

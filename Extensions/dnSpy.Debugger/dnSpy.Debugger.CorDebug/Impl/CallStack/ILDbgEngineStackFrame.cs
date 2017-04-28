@@ -23,7 +23,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.CallStack;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Text;
 
@@ -83,8 +83,10 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 			var moduleId = corFrame.DnModuleId.GetValueOrDefault().ToModuleId();
 			var nativeCode = corFrame.Code;
 			Debug.Assert(nativeCode?.IsIL == false);
-			if (nativeCode?.IsIL == false)
-				Location = new DbgDotNetStackFrameLocationImpl(moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, nativeCode, corFrame.NativeFrameIP);
+			if (nativeCode?.IsIL == false) {
+				var corCode = engine.CreateDnDebuggerObjectHolder(nativeCode);
+				Location = new DbgDotNetStackFrameLocationImpl(moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, corCode, corFrame.NativeFrameIP);
+			}
 			else
 				Location = new DbgDotNetMethodBodyStackFrameLocation(moduleId, FunctionToken, FunctionOffset);
 		}

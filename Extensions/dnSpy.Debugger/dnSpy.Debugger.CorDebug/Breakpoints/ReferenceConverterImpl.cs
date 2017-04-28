@@ -20,16 +20,16 @@
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Documents;
 
-namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
+namespace dnSpy.Debugger.CorDebug.Breakpoints {
 	[ExportReferenceConverter]
-	sealed class StackFrameLocationReferenceConverter : ReferenceConverter {
+	sealed class ReferenceConverterImpl : ReferenceConverter {
 		public override void Convert(ref object reference) {
 			switch (reference) {
-			case DbgDotNetStackFrameLocationImpl frameLoc:
-				switch (frameLoc.ILOffsetMapping) {
+			case DbgDotNetNativeBreakpointLocationImpl bpLoc:
+				switch (bpLoc.ILOffsetMapping) {
 				case DbgILOffsetMapping.Exact:
 				case DbgILOffsetMapping.Approximate:
-					reference = new DotNetMethodBodyReference(frameLoc.Module, frameLoc.Token, frameLoc.ILOffset);
+					reference = new DotNetMethodBodyReference(bpLoc.Module, bpLoc.Token, bpLoc.ILOffset);
 					break;
 
 				case DbgILOffsetMapping.Unknown:
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 				case DbgILOffsetMapping.UnmappedAddress:
 				default:
 					// The IL offset isn't known so use a method reference
-					reference = new DotNetTokenReference(frameLoc.Module, frameLoc.Token);
+					reference = new DotNetTokenReference(bpLoc.Module, bpLoc.Token);
 					break;
 				}
 				break;

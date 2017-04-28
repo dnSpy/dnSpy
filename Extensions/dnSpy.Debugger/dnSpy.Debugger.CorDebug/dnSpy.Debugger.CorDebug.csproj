@@ -46,6 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Breakpoints\BreakpointFormatterService.cs" />
+    <Compile Include="Breakpoints\DbgBreakpointLocationFormatterImpl.cs" />
+    <Compile Include="Breakpoints\DbgBreakpointLocationFormatterProviderImpl.cs" />
+    <Compile Include="Breakpoints\DbgDotNetNativeBreakpointLocationFactory.cs" />
+    <Compile Include="Breakpoints\DbgDotNetNativeBreakpointLocationImpl.cs" />
+    <Compile Include="Breakpoints\ReferenceConverterImpl.cs" />
+    <Compile Include="Breakpoints\TextEditor\BreakpointGlyphFormatterImpl.cs" />
+    <Compile Include="Breakpoints\TextEditor\BreakpointGlyphTextMarkerLocationProviderImpl.cs" />
     <Compile Include="DAC\ClrDac.cs" />
     <Compile Include="DAC\ClrDacImpl.cs" />
     <Compile Include="DAC\ClrDacProvider.cs" />
@@ -63,6 +71,7 @@
     <Compile Include="Impl\BreakProcessKindHelpers.cs" />
     <Compile Include="Impl\CallStack\DbgDotNetStackFrameLocationImpl.cs" />
     <Compile Include="Impl\CallStack\DbgEngineStackWalkerImpl.cs" />
+    <Compile Include="Impl\CallStack\DbgStackFrameBreakpointLocationProviderImpl.cs" />
     <Compile Include="Impl\CallStack\ILDbgEngineStackFrame.cs" />
     <Compile Include="Impl\CallStack\NullDbgEngineStackWalker.cs" />
     <Compile Include="Impl\CallStack\StackFrameData.cs" />
@@ -98,6 +107,7 @@
     <Compile Include="Text\TypeColorExtensions.cs" />
     <Compile Include="Text\TypeOutputTextColorWriter.cs" />
     <Compile Include="TheExtension.cs" />
+    <Compile Include="UI\UIDispatcher.cs" />
     <Compile Include="Utilities\DotNetCoreHelpers.cs" />
   </ItemGroup>
   <ItemGroup>

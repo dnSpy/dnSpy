@@ -271,4 +271,13 @@ Error: {0}</value>
   <data name="StackFrame_Security" xml:space="preserve">
     <value>Security</value>
   </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL offset {0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>line {0} character {1}</value>
+  </data>
+  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
+    <value>address {0}</value>
+  </data>
 </root>

@@ -17,19 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
-	/// <summary>
-	/// Predefined <see cref="DbgBreakpointLocation"/> types
-	/// </summary>
-	public static class PredefinedDbgBreakpointLocationTypes {
-		/// <summary>
-		/// .NET code breakpoint location with a module, token, and IL offset
-		/// </summary>
-		public const string DotNet = nameof(DotNet);
+using System;
+using System.ComponentModel.Composition;
+using System.Windows.Threading;
+using dnSpy.Contracts.App;
 
-		/// <summary>
-		/// .NET (CorDebug): native breakpoint location
-		/// </summary>
-		public const string DotNetCorDebugNative = nameof(DotNetCorDebugNative);
+namespace dnSpy.Debugger.CorDebug.UI {
+	[Export(typeof(UIDispatcher))]
+	sealed class UIDispatcher {
+		Dispatcher Dispatcher { get; }
+
+		[ImportingConstructor]
+		UIDispatcher(IAppWindow appWindow) => Dispatcher = appWindow.MainWindow.Dispatcher;
+
+		public void VerifyAccess() => Dispatcher.VerifyAccess();
+		public bool CheckAccess() => Dispatcher.CheckAccess();
+
+		public void UI(Action callback) =>
+			// Use Send so the windows are updated as fast as possible when adding new items
+			Dispatcher.BeginInvoke(DispatcherPriority.Send, callback);
 	}
 }
