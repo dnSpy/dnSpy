@@ -89,13 +89,13 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 				return new ILDbgEngineStackFrame(engine, module, corFrame, func);
 			}
 
+			if (corFrame.IsInternalFrame)
+				return engine.ObjectFactory.CreateSpecialStackFrame(GetInternalFrameTypeName(corFrame));
+
 			if (corFrame.IsNativeFrame) {
 				var name = string.Format(dnSpy_Debugger_CorDebug_Resources.StackFrame_NativeFrame, "0x" + corFrame.NativeFrameIP.ToString("X8"));
 				return engine.ObjectFactory.CreateSpecialStackFrame(name);
 			}
-
-			if (corFrame.IsInternalFrame)
-				return engine.ObjectFactory.CreateSpecialStackFrame(GetInternalFrameTypeName(corFrame));
 
 			return CreateErrorStackFrame();
 		}

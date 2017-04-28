@@ -41,6 +41,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BreakProcessKind.cs" />
+    <Compile Include="CallStack\DbgDotNetStackFrameLocation.cs" />
+    <Compile Include="CallStack\DbgILOffsetMapping.cs" />
     <Compile Include="CorDebugAttachDebuggingOptions.cs" />
     <Compile Include="CorDebugStartDebuggingOptions.cs" />
     <Compile Include="CorThreadUserStates.cs" />
@@ -57,6 +59,10 @@
     <ProjectReference Include="..\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
       <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>
       <Name>dnSpy.Contracts.Debugger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
+      <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>
+      <Name>dnSpy.Contracts.Logic</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -23,6 +23,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Text;
 
@@ -41,25 +42,51 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 			Module = module ?? throw new ArgumentNullException(nameof(module));
 			this.corFrame = corFrame ?? throw new ArgumentNullException(nameof(corFrame));
 
-			uint functionOffset;
-			Debug.Assert(corFrame.IsILFrame);
-			var ip = corFrame.ILFrameIP;
-			if (ip.IsExact)
-				functionOffset = ip.Offset;
-			else if (ip.IsApproximate)
-				functionOffset = ip.Offset;
-			else if (ip.IsProlog)
-				functionOffset = 0;
-			else if (ip.IsEpilog)
-				functionOffset = uint.MaxValue;
-			else
-				functionOffset = uint.MaxValue;
-			FunctionOffset = functionOffset;
-
 			FunctionToken = corFunction?.Token ?? throw new ArgumentNullException(nameof(corFunction));
 
-			var moduleId = corFrame.DnModuleId ?? default(DnModuleId);
-			Location = new DbgDotNetMethodBodyStackFrameLocation(moduleId.ToModuleId(), FunctionToken, FunctionOffset);
+			uint functionOffset;
+			DbgILOffsetMapping ilOffsetMapping;
+			Debug.Assert(corFrame.IsILFrame);
+			var ip = corFrame.ILFrameIP;
+			if (ip.IsExact) {
+				functionOffset = ip.Offset;
+				ilOffsetMapping = DbgILOffsetMapping.Exact;
+			}
+			else if (ip.IsApproximate) {
+				functionOffset = ip.Offset;
+				ilOffsetMapping = DbgILOffsetMapping.Approximate;
+			}
+			else if (ip.IsProlog) {
+				Debug.Assert(ip.Offset == 0);
+				functionOffset = ip.Offset;// 0
+				ilOffsetMapping = DbgILOffsetMapping.Prolog;
+			}
+			else if (ip.IsEpilog) {
+				functionOffset = ip.Offset;// end of method == DebuggerJitInfo.m_lastIL
+				ilOffsetMapping = DbgILOffsetMapping.Epilog;
+			}
+			else if (ip.HasNoInfo) {
+				functionOffset = uint.MaxValue;
+				ilOffsetMapping = DbgILOffsetMapping.NoInfo;
+			}
+			else if (ip.IsUnmappedAddress) {
+				functionOffset = uint.MaxValue;
+				ilOffsetMapping = DbgILOffsetMapping.UnmappedAddress;
+			}
+			else {
+				Debug.Fail($"Unknown mapping: {ip.Mapping}");
+				functionOffset = uint.MaxValue;
+				ilOffsetMapping = DbgILOffsetMapping.Unknown;
+			}
+			FunctionOffset = functionOffset;
+
+			var moduleId = corFrame.DnModuleId.GetValueOrDefault().ToModuleId();
+			var nativeCode = corFrame.Code;
+			Debug.Assert(nativeCode?.IsIL == false);
+			if (nativeCode?.IsIL == false)
+				Location = new DbgDotNetStackFrameLocationImpl(moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, nativeCode, corFrame.NativeFrameIP);
+			else
+				Location = new DbgDotNetMethodBodyStackFrameLocation(moduleId, FunctionToken, FunctionOffset);
 		}
 
 		public override void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options) =>

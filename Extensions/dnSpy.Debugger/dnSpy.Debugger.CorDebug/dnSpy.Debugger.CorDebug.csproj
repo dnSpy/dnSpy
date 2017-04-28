@@ -61,10 +61,12 @@
     <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="Impl\BreakProcessKindHelpers.cs" />
+    <Compile Include="Impl\CallStack\DbgDotNetStackFrameLocationImpl.cs" />
     <Compile Include="Impl\CallStack\DbgEngineStackWalkerImpl.cs" />
     <Compile Include="Impl\CallStack\ILDbgEngineStackFrame.cs" />
     <Compile Include="Impl\CallStack\NullDbgEngineStackWalker.cs" />
     <Compile Include="Impl\CallStack\StackFrameData.cs" />
+    <Compile Include="Impl\CallStack\StackFrameLocationReferenceConverter.cs" />
     <Compile Include="Impl\CorDebugRuntimeImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
