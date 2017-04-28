@@ -120,14 +120,15 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			List<DbgObject> objsToClose = null;
 			lock (lockObj) {
 				for (int i = 0; i < breakpoints.Length; i++) {
-					var location = breakpoints[i].Location;
+					var info = breakpoints[i];
+					var location = info.Location;
 					if (locationToBreakpoint.ContainsKey(location)) {
 						if (objsToClose == null)
 							objsToClose = new List<DbgObject>();
 						objsToClose.Add(location);
 					}
 					else {
-						var bp = new DbgCodeBreakpointImpl(this, breakpointId++, location, breakpoints[i].Settings, isDebugging);
+						var bp = new DbgCodeBreakpointImpl(this, breakpointId++, info.Options, location, info.Settings, isDebugging);
 						bpImpls.Add(bp);
 					}
 				}

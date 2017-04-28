@@ -55,6 +55,7 @@
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializer.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpoint.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointHitCountService.cs" />
+    <Compile Include="Breakpoints\Code\DbgCodeBreakpointOptions.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointSettings.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsService.cs" />
     <Compile Include="Breakpoints\Code\FilterExpressionEvaluator\DbgFilterEEVariableProvider.cs" />

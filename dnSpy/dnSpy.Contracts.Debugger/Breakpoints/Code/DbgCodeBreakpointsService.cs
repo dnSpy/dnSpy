@@ -198,6 +198,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public DbgCodeBreakpointSettings Settings { get; }
 
 		/// <summary>
+		/// Breakpoint options
+		/// </summary>
+		public DbgCodeBreakpointOptions Options { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="location">Breakpoint location</param>
@@ -205,6 +210,19 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public DbgCodeBreakpointInfo(DbgBreakpointLocation location, DbgCodeBreakpointSettings settings) {
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Settings = settings;
+			Options = DbgCodeBreakpointOptions.None;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="location">Breakpoint location</param>
+		/// <param name="settings">Breakpoint settings</param>
+		/// <param name="options">Breakpoint options</param>
+		public DbgCodeBreakpointInfo(DbgBreakpointLocation location, DbgCodeBreakpointSettings settings, DbgCodeBreakpointOptions options) {
+			Location = location ?? throw new ArgumentNullException(nameof(location));
+			Settings = settings;
+			Options = options;
 		}
 	}
 

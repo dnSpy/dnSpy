@@ -31,6 +31,21 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public abstract int Id { get; }
 
 		/// <summary>
+		/// Gets the breakpoint options
+		/// </summary>
+		public abstract DbgCodeBreakpointOptions Options { get; }
+
+		/// <summary>
+		/// true if it's a temporary breakpoint that gets removed when all debugged processes have exited
+		/// </summary>
+		public bool IsTemporary => (Options & DbgCodeBreakpointOptions.Temporary) != 0;
+
+		/// <summary>
+		/// true if it's a hidden breakpoint. It's not shown in the UI (eg. breakpoints window, call stack window, glyph margin, text view)
+		/// </summary>
+		public bool IsHidden => (Options & DbgCodeBreakpointOptions.Hidden) != 0;
+
+		/// <summary>
 		/// Gets/sets the current settings
 		/// </summary>
 		public abstract DbgCodeBreakpointSettings Settings { get; set; }

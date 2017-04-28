@@ -29,6 +29,7 @@ using dnSpy.Debugger.Properties;
 namespace dnSpy.Debugger.Breakpoints.Code {
 	sealed class DbgCodeBreakpointImpl : DbgCodeBreakpoint {
 		public override int Id { get; }
+		public override DbgCodeBreakpointOptions Options { get; }
 		public override DbgBreakpointLocation Location { get; }
 
 		public override DbgCodeBreakpointSettings Settings {
@@ -118,12 +119,13 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		readonly object lockObj;
 		readonly DbgCodeBreakpointsServiceImpl owner;
 
-		public DbgCodeBreakpointImpl(DbgCodeBreakpointsServiceImpl owner, int id, DbgBreakpointLocation location, DbgCodeBreakpointSettings settings, bool isDebugging) {
+		public DbgCodeBreakpointImpl(DbgCodeBreakpointsServiceImpl owner, int id, DbgCodeBreakpointOptions options, DbgBreakpointLocation location, DbgCodeBreakpointSettings settings, bool isDebugging) {
 			lockObj = new object();
 			boundCodeBreakpoints = new List<DbgBoundCodeBreakpoint>();
 			this.isDebugging = isDebugging;
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			Id = id;
+			Options = options;
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			this.settings = settings;
 			boundBreakpointsMessage = CalculateBoundBreakpointsMessage_NoLock();
