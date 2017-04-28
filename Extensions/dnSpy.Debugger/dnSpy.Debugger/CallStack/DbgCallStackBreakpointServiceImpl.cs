@@ -43,11 +43,11 @@ namespace dnSpy.Debugger.CallStack {
 			this.dbgStackFrameBreakpointLocationService = dbgStackFrameBreakpointLocationService;
 		}
 
-		public override DbgCodeBreakpoint Create(DbgStackFrameLocation location) {
+		public override DbgCodeBreakpoint Create(DbgStackFrameLocation location, DbgCodeBreakpointOptions options) {
 			var bpLoc = dbgStackFrameBreakpointLocationService.Value.Create(location);
 			if (bpLoc == null)
 				return null;
-			return dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(bpLoc, new DbgCodeBreakpointSettings { IsEnabled = true }));
+			return dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(bpLoc, new DbgCodeBreakpointSettings { IsEnabled = true }, options));
 		}
 
 		public override DbgCodeBreakpoint TryGetBreakpoint(DbgStackFrameLocation location) {

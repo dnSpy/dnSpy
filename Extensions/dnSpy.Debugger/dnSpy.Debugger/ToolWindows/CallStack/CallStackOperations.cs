@@ -94,13 +94,14 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		readonly Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService;
 		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
 		readonly Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService;
+		readonly Lazy<DbgManager> dbgManager;
 
 		ObservableCollection<StackFrameVM> AllItems => callStackVM.AllItems;
 		ObservableCollection<StackFrameVM> SelectedItems => callStackVM.SelectedItems;
 		IEnumerable<StackFrameVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Index);
 
 		[ImportingConstructor]
-		CallStackOperationsImpl(ICallStackVM callStackVM, DebuggerSettings debuggerSettings, CallStackDisplaySettings callStackDisplaySettings, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<CallStackService> callStackService, Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService) {
+		CallStackOperationsImpl(ICallStackVM callStackVM, DebuggerSettings debuggerSettings, CallStackDisplaySettings callStackDisplaySettings, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<CallStackService> callStackService, Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<DbgManager> dbgManager) {
 			this.callStackVM = callStackVM;
 			this.debuggerSettings = debuggerSettings;
 			this.callStackDisplaySettings = callStackDisplaySettings;
@@ -109,6 +110,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			this.dbgCallStackBreakpointService = dbgCallStackBreakpointService;
 			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
 			this.dbgCodeBreakpointSerializerService = dbgCodeBreakpointSerializerService;
+			this.dbgManager = dbgManager;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -164,12 +166,14 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			//TODO:
 		}
 
-		public override bool CanRunToCursor => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM;
+		public override bool CanRunToCursor => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM vm && vm.Index != 0 && dbgCallStackBreakpointService.Value.TryGetBreakpoint(vm.Frame.Location) == null;
 		public override void RunToCursor() {
 			if (!CanRunToCursor)
 				return;
 			var vm = (NormalStackFrameVM)SelectedItems[0];
-			//TODO:
+			var bp = dbgCallStackBreakpointService.Value.Create(vm.Frame.Location, DbgCodeBreakpointOptions.Hidden | DbgCodeBreakpointOptions.Temporary | DbgCodeBreakpointOptions.OneShot);
+			if (bp != null)
+				dbgManager.Value.RunAll();
 		}
 
 		public override bool CanUnwindToFrame => false;
