@@ -62,6 +62,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly Dictionary<DnThread, DbgEngineThread> toEngineThread;
 		readonly Dictionary<DnAssembly, List<DnModule>> toAssemblyModules;
 		internal readonly StackFrameData stackFrameData;
+		readonly HashSet<DnDebuggerObjectHolder> objectHolders;
 
 		protected DbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgStartKind startKind) {
 			StartKind = startKind;
@@ -71,6 +72,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			toEngineThread = new Dictionary<DnThread, DbgEngineThread>();
 			toAssemblyModules = new Dictionary<DnAssembly, List<DnModule>>();
 			stackFrameData = new StackFrameData();
+			objectHolders = new HashSet<DnDebuggerObjectHolder>();
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			this.dbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier ?? throw new ArgumentNullException(nameof(dbgModuleMemoryRefreshedNotifier));
 			this.clrDacProvider = clrDacProvider ?? throw new ArgumentNullException(nameof(clrDacProvider));
@@ -578,11 +580,16 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		protected override void CloseCore() {
 			UnhookDnDebuggerEventsAndCloseProcessHandle();
 			debuggerThread.Terminate();
+			DnDebuggerObjectHolder[] objHoldersToClose;
 			lock (lockObj) {
 				toEngineAppDomain.Clear();
 				toEngineModule.Clear();
 				toEngineThread.Clear();
+				objHoldersToClose = objectHolders.ToArray();
+				objectHolders.Clear();
 			}
+			foreach (var obj in objHoldersToClose)
+				obj.Close();
 		}
 
 		bool HasConnected_DebugThread {
@@ -673,6 +680,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					dnDebugger.TerminateProcesses();
 				}
 			}
+		}
+
+		internal DnDebuggerObjectHolder<T> CreateDnDebuggerObjectHolder<T>(T obj) where T : class {
+			var res = DnDebuggerObjectHolderImpl<T>.Create_DONT_CALL(obj);
+			objectHolders.Add(res);
+			return res;
 		}
 	}
 }

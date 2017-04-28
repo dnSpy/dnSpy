@@ -74,6 +74,7 @@
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DbgModuleMemoryRefreshedNotifierImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
+    <Compile Include="Impl\DnDebuggerObjectHolder.cs" />
     <Compile Include="Impl\DnModuleIdExtensions.cs" />
     <Compile Include="Impl\DnThreadUtils.cs" />
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
