@@ -183,6 +183,49 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="markers">Markers to remove</param>
 		void Remove(IEnumerable<IGlyphTextMarker> markers);
+
+		/// <summary>
+		/// Gets markers
+		/// </summary>
+		/// <param name="textView">Text view</param>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		GlyphTextMarkerAndSpan[] GetMarkers(ITextView textView, SnapshotSpan span);
+
+		/// <summary>
+		/// Gets the first marker or null if none is found
+		/// </summary>
+		/// <param name="textView">Text view</param>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		GlyphTextMarkerAndSpan? GetMarker(ITextView textView, SnapshotSpan span);
+	}
+
+	/// <summary>
+	/// Marker and its span in a <see cref="ITextView"/>
+	/// </summary>
+	public struct GlyphTextMarkerAndSpan {
+		/// <summary>
+		/// Gets the marker
+		/// </summary>
+		public IGlyphTextMarker Marker { get; }
+
+		/// <summary>
+		/// Gets the span of the marker in the <see cref="ITextView"/>
+		/// </summary>
+		public SnapshotSpan Span { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="marker">Marker</param>
+		/// <param name="span">Span of the marker in the <see cref="ITextView"/></param>
+		public GlyphTextMarkerAndSpan(IGlyphTextMarker marker, SnapshotSpan span) {
+			if (span.Snapshot == null)
+				throw new ArgumentException();
+			Marker = marker ?? throw new ArgumentNullException(nameof(marker));
+			Span = span;
+		}
 	}
 
 	/// <summary>

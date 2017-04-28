@@ -23,10 +23,12 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Debugger.UI;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -43,8 +45,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 	}
 
+	interface IBreakpointMarker {
+		DbgTextViewBreakpointLocationResult? GetLocations(ITextView textView, SnapshotSpan span);
+	}
+
 	[Export(typeof(IDbgCodeBreakpointsServiceListener))]
-	sealed class BreakpointMarker : IDbgCodeBreakpointsServiceListener {
+	[Export(typeof(IBreakpointMarker))]
+	sealed class BreakpointMarker : IDbgCodeBreakpointsServiceListener, IBreakpointMarker {
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<IGlyphTextMarkerService> glyphTextMarkerService;
 		readonly Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService;
@@ -174,5 +181,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			data.Marker = glyphTextMarkerService.Value.AddMarker(data.Location, info.ImageReference, info.MarkerTypeName, info.SelectedMarkerTypeName, info.ClassificationType, info.ZIndex, bp, breakpointGlyphTextMarkerHandler, textViewFilter);
 		}
 		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);
+
+		DbgTextViewBreakpointLocationResult? IBreakpointMarker.GetLocations(ITextView textView, SnapshotSpan span) {
+			var info = glyphTextMarkerService.Value.GetMarker(textView, span);
+			if (info == null)
+				return null;
+			var bp = (DbgCodeBreakpoint)info.Value.Marker.Tag;
+			return new DbgTextViewBreakpointLocationResult(bp.Location, new VirtualSnapshotSpan(info.Value.Span));
+		}
 	}
 }

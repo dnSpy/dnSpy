@@ -30,6 +30,7 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -53,6 +54,8 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler<GlyphTextMarkerAddedEventArgs> MarkerAdded;
 		public event EventHandler<GlyphTextMarkerRemovedEventArgs> MarkerRemoved;
 		public event EventHandler<GlyphTextMarkersRemovedEventArgs> MarkersRemoved;
+		public event EventHandler<GetGlyphTextMarkerAndSpanEventArgs> GetGlyphTextMarkerAndSpan;
+		public event EventHandler<GetFirstGlyphTextMarkerAndSpanEventArgs> GetFirstGlyphTextMarkerAndSpan;
 
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
@@ -197,6 +200,26 @@ namespace dnSpy.Text.Editor {
 			foreach (var m in hash)
 				glyphTextMarkers.Remove(m);
 			MarkersRemoved?.Invoke(this, new GlyphTextMarkersRemovedEventArgs(hash));
+		}
+
+		public GlyphTextMarkerAndSpan[] GetMarkers(ITextView textView, SnapshotSpan span) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			if (textView.TextSnapshot != span.Snapshot)
+				throw new ArgumentException();
+			var e = new GetGlyphTextMarkerAndSpanEventArgs(textView, span);
+			GetGlyphTextMarkerAndSpan?.Invoke(this, e);
+			return e.Result ?? Array.Empty<GlyphTextMarkerAndSpan>();
+		}
+
+		public GlyphTextMarkerAndSpan? GetMarker(ITextView textView, SnapshotSpan span) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			if (textView.TextSnapshot != span.Snapshot)
+				throw new ArgumentException();
+			var e = new GetFirstGlyphTextMarkerAndSpanEventArgs(textView, span);
+			GetFirstGlyphTextMarkerAndSpan?.Invoke(this, e);
+			return e.Result;
 		}
 
 		public void SetMethodOffsetSpanMap(ITextView textView, IMethodOffsetSpanMap map) {

@@ -56,12 +56,14 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 	sealed class TextViewBreakpointServiceImpl : TextViewBreakpointService {
 		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
+		readonly Lazy<IBreakpointMarker> breakpointMarker;
 		readonly Lazy<DbgTextViewBreakpointLocationProvider>[] dbgTextViewBreakpointLocationProviders;
 
 		[ImportingConstructor]
-		TextViewBreakpointServiceImpl(Lazy<IDocumentTabService> documentTabService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, [ImportMany] IEnumerable<Lazy<DbgTextViewBreakpointLocationProvider>> dbgTextViewBreakpointLocationProviders) {
+		TextViewBreakpointServiceImpl(Lazy<IDocumentTabService> documentTabService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<IBreakpointMarker> breakpointMarker, [ImportMany] IEnumerable<Lazy<DbgTextViewBreakpointLocationProvider>> dbgTextViewBreakpointLocationProviders) {
 			this.documentTabService = documentTabService;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
+			this.breakpointMarker = breakpointMarker;
 			this.dbgTextViewBreakpointLocationProviders = dbgTextViewBreakpointLocationProviders.ToArray();
 		}
 
@@ -76,14 +78,25 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
 			DbgTextViewBreakpointLocationResult? res = null;
-			foreach (var lz in dbgTextViewBreakpointLocationProviders) {
-				var result = lz.Value.CreateLocation(tab, textView, pos);
-				if (result?.Locations == null || result.Value.Span.Snapshot != textView.TextSnapshot)
-					continue;
-				if (res == null || result.Value.Span.Start < res.Value.Span.Start)
+			foreach (var lz in dbgTextViewBreakpointLocationProviders)
+				UpdateResult(textView, ref res, lz.Value.CreateLocation(tab, textView, pos), useIfSameSpan: false);
+			var span = new SnapshotSpan(pos.Position, res != null ? res.Value.Span.End.Position : new SnapshotPoint(pos.Position.Snapshot, pos.Position.Snapshot.Length));
+			// This one has higher priority since it already exists (eg. could be a stack frame BP location)
+			UpdateResult(textView, ref res, breakpointMarker.Value.GetLocations(textView, span), useIfSameSpan: true);
+			return res;
+		}
+
+		static void UpdateResult(ITextView textView, ref DbgTextViewBreakpointLocationResult? res, DbgTextViewBreakpointLocationResult? result, bool useIfSameSpan) {
+			if (result?.Locations == null || result.Value.Span.Snapshot != textView.TextSnapshot)
+				return;
+			if (res == null)
+				res = result;
+			else if (useIfSameSpan) {
+				if (result.Value.Span.Start <= res.Value.Span.Start)
 					res = result;
 			}
-			return res;
+			else if (result.Value.Span.Start < res.Value.Span.Start)
+				res = result;
 		}
 
 		DbgCodeBreakpoint[] GetBreakpoints(DbgTextViewBreakpointLocationResult locations) {

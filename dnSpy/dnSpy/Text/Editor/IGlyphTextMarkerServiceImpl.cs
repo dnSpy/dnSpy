@@ -22,7 +22,9 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Editor {
@@ -35,6 +37,8 @@ namespace dnSpy.Text.Editor {
 		event EventHandler<GlyphTextMarkerAddedEventArgs> MarkerAdded;
 		event EventHandler<GlyphTextMarkerRemovedEventArgs> MarkerRemoved;
 		event EventHandler<GlyphTextMarkersRemovedEventArgs> MarkersRemoved;
+		event EventHandler<GetGlyphTextMarkerAndSpanEventArgs> GetGlyphTextMarkerAndSpan;
+		event EventHandler<GetFirstGlyphTextMarkerAndSpanEventArgs> GetFirstGlyphTextMarkerAndSpan;
 	}
 
 	abstract class GlyphTextMarkerEventArgs : EventArgs {
@@ -59,5 +63,29 @@ namespace dnSpy.Text.Editor {
 		public HashSet<IGlyphTextMarkerImpl> Markers { get; }
 
 		public GlyphTextMarkersRemovedEventArgs(HashSet<IGlyphTextMarkerImpl> markers) => Markers = markers ?? throw new ArgumentNullException(nameof(markers));
+	}
+
+	sealed class GetGlyphTextMarkerAndSpanEventArgs : EventArgs {
+		public ITextView TextView { get; }
+		public SnapshotSpan Span { get; }
+		public GlyphTextMarkerAndSpan[] Result { get; set; }
+		public GetGlyphTextMarkerAndSpanEventArgs(ITextView textView, SnapshotSpan span) {
+			if (span.Snapshot == null)
+				throw new ArgumentException();
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			Span = span;
+		}
+	}
+
+	sealed class GetFirstGlyphTextMarkerAndSpanEventArgs : EventArgs {
+		public ITextView TextView { get; }
+		public SnapshotSpan Span { get; }
+		public GlyphTextMarkerAndSpan? Result { get; set; }
+		public GetFirstGlyphTextMarkerAndSpanEventArgs(ITextView textView, SnapshotSpan span) {
+			if (span.Snapshot == null)
+				throw new ArgumentException();
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			Span = span;
+		}
 	}
 }

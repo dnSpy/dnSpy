@@ -211,6 +211,8 @@ namespace dnSpy.Text.Editor {
 			glyphTextMarkerServiceImpl.MarkerAdded += GlyphTextMarkerServiceImpl_MarkerAdded;
 			glyphTextMarkerServiceImpl.MarkerRemoved += GlyphTextMarkerServiceImpl_MarkerRemoved;
 			glyphTextMarkerServiceImpl.MarkersRemoved += GlyphTextMarkerServiceImpl_MarkersRemoved;
+			glyphTextMarkerServiceImpl.GetGlyphTextMarkerAndSpan += GlyphTextMarkerServiceImpl_GetGlyphTextMarkerAndSpan;
+			glyphTextMarkerServiceImpl.GetFirstGlyphTextMarkerAndSpan += GlyphTextMarkerServiceImpl_GetFirstGlyphTextMarkerAndSpan;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
 		}
 
@@ -688,6 +690,40 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
+		void GlyphTextMarkerServiceImpl_GetGlyphTextMarkerAndSpan(object sender, GetGlyphTextMarkerAndSpanEventArgs e) {
+			if (e.TextView != TextView)
+				return;
+			e.Result = GetGlyphTextMarkerAndSpan(e.Span);
+		}
+
+		GlyphTextMarkerAndSpan[] GetGlyphTextMarkerAndSpan(SnapshotSpan span) {
+			List<GlyphTextMarkerAndSpan> result = null;
+			foreach (var info in GetMarkers(new NormalizedSnapshotSpanCollection(span), startOfSpanOnly: false)) {
+				if (result == null)
+					result = new List<GlyphTextMarkerAndSpan>();
+				result.Add(new GlyphTextMarkerAndSpan(info.Marker, info.Span));
+			}
+			if (result == null)
+				return Array.Empty<GlyphTextMarkerAndSpan>();
+			else {
+				result.Sort((a, b) => {
+					var c = a.Span.Start.Position - b.Span.Start.Position;
+					if (c != 0)
+						return c;
+					return a.Span.Span.Length - b.Span.Span.Length;
+				});
+				return result.ToArray();
+			}
+		}
+
+		void GlyphTextMarkerServiceImpl_GetFirstGlyphTextMarkerAndSpan(object sender, GetFirstGlyphTextMarkerAndSpanEventArgs e) {
+			if (e.TextView != TextView)
+				return;
+			var res = GetGlyphTextMarkerAndSpan(e.Span);
+			if (res.Length != 0)
+				e.Result = new GlyphTextMarkerAndSpan(res[0].Marker, res[0].Span);
+		}
+
 		public UIElement GenerateGlyph(IWpfTextViewLine line, GlyphTextMarkerGlyphTag glyphTag) {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
@@ -821,6 +857,8 @@ namespace dnSpy.Text.Editor {
 			glyphTextMarkerServiceImpl.MarkerAdded -= GlyphTextMarkerServiceImpl_MarkerAdded;
 			glyphTextMarkerServiceImpl.MarkerRemoved -= GlyphTextMarkerServiceImpl_MarkerRemoved;
 			glyphTextMarkerServiceImpl.MarkersRemoved -= GlyphTextMarkerServiceImpl_MarkersRemoved;
+			glyphTextMarkerServiceImpl.GetGlyphTextMarkerAndSpan -= GlyphTextMarkerServiceImpl_GetGlyphTextMarkerAndSpan;
+			glyphTextMarkerServiceImpl.GetFirstGlyphTextMarkerAndSpan -= GlyphTextMarkerServiceImpl_GetFirstGlyphTextMarkerAndSpan;
 			editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 			Debug.Assert(glyphTextMarkerTagAggregator != null);
 			if (glyphTextMarkerTagAggregator != null) {
