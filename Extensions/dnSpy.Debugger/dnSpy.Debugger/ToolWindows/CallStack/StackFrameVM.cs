@@ -40,24 +40,21 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 		bool isActive;
 
-		public BreakpointKind? BreakpointKind {
-			get => breakpointKind;
-			set {
-				if (breakpointKind == value)
-					return;
-				breakpointKind = value;
-				OnPropertyChanged(nameof(BreakpointImage));
-			}
-		}
-		BreakpointKind? breakpointKind;
-
 		public ImageReference BreakpointImage {
 			get {
+				if (!breakpointKindInitd) {
+					breakpointKindInitd = true;
+					breakpointKind = GetBreakpointKind();
+				}
 				if (breakpointKind == null)
 					return ImageReference.None;
 				return BreakpointImageUtilities.GetImage(breakpointKind.Value);
 			}
 		}
+		bool breakpointKindInitd;
+		BreakpointKind? breakpointKind;
+
+		protected virtual BreakpointKind? GetBreakpointKind() => null;
 
 		public virtual ImageReference InstructionPointerImage {
 			get {
@@ -84,8 +81,6 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 		int index;
 
-		public abstract ICallStackContext Context { get; }
-
 		protected abstract ClassifiedTextCollection CreateName();
 		public ClassifiedTextCollection CachedOutput {
 			get {
@@ -95,6 +90,10 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			}
 		}
 		ClassifiedTextCollection cachedOutput;
+
+		public ICallStackContext Context { get; }
+
+		protected StackFrameVM(ICallStackContext context) => Context = context ?? throw new ArgumentNullException(nameof(context));
 
 		// UI thread
 		internal void RefreshThemeFields_UI() {
@@ -111,40 +110,49 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			cachedOutput = default(ClassifiedTextCollection);
 			OnPropertyChanged(nameof(NameObject));
 		}
+
+		// UI thread
+		internal void RefreshBreakpoint_UI() {
+			Context.UIDispatcher.VerifyAccess();
+			breakpointKindInitd = false;
+			OnPropertyChanged(nameof(BreakpointImage));
+		}
 	}
 
 	sealed class NormalStackFrameVM : StackFrameVM {
 		public DbgStackFrame Frame => frame;
-		public override ICallStackContext Context { get; }
-
 		DbgStackFrame frame;
 
-		public NormalStackFrameVM(DbgStackFrame frame, ICallStackContext context, int index) {
+		readonly Func<NormalStackFrameVM, BreakpointKind?> getBreakpointKind;
+
+		public NormalStackFrameVM(DbgStackFrame frame, ICallStackContext context, int index, Func<NormalStackFrameVM, BreakpointKind?> getBreakpointKind)
+			: base(context) {
 			this.frame = frame ?? throw new ArgumentNullException(nameof(frame));
-			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Index = index;
+			this.getBreakpointKind = getBreakpointKind ?? throw new ArgumentNullException(nameof(getBreakpointKind));
 		}
 
 		public void SetFrame_UI(DbgStackFrame frame) {
 			this.frame = frame;
 			RefreshName_UI();
+			RefreshBreakpoint_UI();
 		}
 
 		protected override ClassifiedTextCollection CreateName() {
 			Frame.Format(Context.ClassifiedTextWriter, Context.StackFrameFormatOptions);
 			return Context.ClassifiedTextWriter.GetClassifiedText();
 		}
+
+		protected override BreakpointKind? GetBreakpointKind() => getBreakpointKind(this);
 	}
 
 	sealed class MessageStackFrameVM : StackFrameVM {
-		public override ICallStackContext Context { get; }
-
 		public override ImageReference InstructionPointerImage => DsImages.StatusError;
 
 		readonly string message;
 
-		public MessageStackFrameVM(string message, ICallStackContext context, int index) {
-			Context = context ?? throw new ArgumentNullException(nameof(context));
+		public MessageStackFrameVM(string message, ICallStackContext context, int index)
+			: base(context) {
 			Index = index;
 			this.message = message ?? throw new ArgumentNullException(nameof(message));
 		}

@@ -18,11 +18,14 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
@@ -60,18 +63,26 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		readonly CallStackContext callStackContext;
 		readonly Lazy<CallStackService> callStackService;
 		readonly CallStackDisplaySettings callStackDisplaySettings;
+		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
+		readonly Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService;
 		readonly CallStackFormatterProvider callStackFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
 		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
+		readonly Func<NormalStackFrameVM, BreakpointKind?> getBreakpointKind;
+		readonly Dictionary<DbgCodeBreakpoint, HashSet<NormalStackFrameVM>> usedBreakpoints;
 
 		[ImportingConstructor]
-		CallStackVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, Lazy<CallStackService> callStackService, CallStackDisplaySettings callStackDisplaySettings, CallStackFormatterProvider callStackFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+		CallStackVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, Lazy<CallStackService> callStackService, CallStackDisplaySettings callStackDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService, CallStackFormatterProvider callStackFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			uiDispatcher.VerifyAccess();
 			AllItems = new ObservableCollection<StackFrameVM>();
 			SelectedItems = new ObservableCollection<StackFrameVM>();
 			this.dbgManager = dbgManager;
 			this.callStackService = callStackService;
 			this.callStackDisplaySettings = callStackDisplaySettings;
+			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
+			this.dbgCallStackBreakpointService = dbgCallStackBreakpointService;
+			getBreakpointKind = GetBreakpointKind_UI;
+			usedBreakpoints = new Dictionary<DbgCodeBreakpoint, HashSet<NormalStackFrameVM>>();
 			this.callStackFormatterProvider = callStackFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
 			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
@@ -102,6 +113,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		// UI thread
 		void InitializeDebugger_UI(bool enable) {
 			callStackContext.UIDispatcher.VerifyAccess();
+			ClearUsedBreakpoints_UI();
 			if (enable) {
 				callStackDisplaySettings.PropertyChanged += CallStackDisplaySettings_PropertyChanged;
 				callStackContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
@@ -125,6 +137,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				callStackService.Value.FramesChanged += CallStackService_FramesChanged;
 				callStackService.Value.ActiveFrameIndexChanged += CallStackService_ActiveFrameIndexChanged;
 				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
+				dbgCodeBreakpointsService.Value.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
+				dbgCodeBreakpointsService.Value.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 
 				var framesInfo = callStackService.Value.Frames;
 				var thread = callStackService.Value.Thread;
@@ -134,6 +148,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				callStackService.Value.FramesChanged -= CallStackService_FramesChanged;
 				callStackService.Value.ActiveFrameIndexChanged -= CallStackService_ActiveFrameIndexChanged;
 				dbgManager.Value.DelayedIsRunningChanged -= DbgManager_DelayedIsRunningChanged;
+				dbgCodeBreakpointsService.Value.BreakpointsModified -= DbgCodeBreakpointsService_BreakpointsModified;
+				dbgCodeBreakpointsService.Value.BreakpointsChanged -= DbgCodeBreakpointsService_BreakpointsChanged;
 
 				UI(() => RemoveAllFrames_UI());
 			}
@@ -267,9 +283,52 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				lazyToolWindowVMHelper.TryHideWindow();
 		});
 
+		// DbgManager thread
+		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) =>
+			UI(() => RefreshBreakpoints_UI(e.Breakpoints.Select(a => a.Breakpoint)));
+
+		// DbgManager thread
+		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) =>
+			UI(() => RefreshBreakpoints_UI(e));
+
+		// DbgManager thread
+		void DbgCodeBreakpoint_BoundBreakpointsMessageChanged(object sender, EventArgs e) =>
+			UI(() => RefreshBreakpoints_UI(new[] { (DbgCodeBreakpoint)sender }));
+
+		// UI thread
+		void RefreshBreakpoints_UI(DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
+			callStackContext.UIDispatcher.VerifyAccess();
+			if (e.Added) {
+				foreach (var vm in AllItems)
+					vm.RefreshBreakpoint_UI();
+			}
+			else {
+				if (usedBreakpoints.Count != 0) {
+					RefreshBreakpoints_UI(e.Objects);
+					foreach (var bp in e.Objects)
+						usedBreakpoints.Remove(bp);
+				}
+			}
+		}
+
+		// UI thread
+		void RefreshBreakpoints_UI(IEnumerable<DbgCodeBreakpoint> breakpoints) {
+			callStackContext.UIDispatcher.VerifyAccess();
+			if (usedBreakpoints.Count == 0)
+				return;
+			foreach (var breakpoint in breakpoints) {
+				if (usedBreakpoints.TryGetValue(breakpoint, out var hash)) {
+					foreach (var vm in hash.ToArray())
+						vm.RefreshBreakpoint_UI();
+				}
+			}
+		}
+
 		// UI thread
 		void UpdateFrames_UI(DbgCallStackFramesInfo framesInfo, DbgThread thread) {
 			callStackContext.UIDispatcher.VerifyAccess();
+
+			ClearUsedBreakpoints_UI();
 
 			var newFrames = framesInfo.Frames;
 			if (newFrames.Count == 0 || framesThread != thread)
@@ -292,9 +351,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			if (framesToAdd > 0) {
 				for (int i = 0; i < framesToAdd; i++) {
 					var frame = newFrames[i];
-					var vm = new NormalStackFrameVM(frame, callStackContext, i);
+					var vm = new NormalStackFrameVM(frame, callStackContext, i, getBreakpointKind);
 					vm.IsActive = i == activeFrameIndex;
-					vm.BreakpointKind = GetBreakpointKind(frame);
 					AllItems.Insert(i, vm);
 				}
 			}
@@ -310,7 +368,6 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 				vm.Index = i;
 				vm.IsActive = i == activeFrameIndex;
-				vm.BreakpointKind = GetBreakpointKind(frame);
 				vm.SetFrame_UI(frame);
 			}
 
@@ -327,7 +384,27 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 		DbgThread framesThread;
 
-		BreakpointKind? GetBreakpointKind(DbgStackFrame frame) => null;//TODO:
+		// UI thread
+		BreakpointKind? GetBreakpointKind_UI(NormalStackFrameVM vm) {
+			callStackContext.UIDispatcher.VerifyAccess();
+			var breakpoint = dbgCallStackBreakpointService.Value.TryGetBreakpoint(vm.Frame.Location);
+			if (breakpoint == null)
+				return null;
+			if (!usedBreakpoints.TryGetValue(breakpoint, out var hash)) {
+				usedBreakpoints.Add(breakpoint, hash = new HashSet<NormalStackFrameVM>());
+				breakpoint.BoundBreakpointsMessageChanged += DbgCodeBreakpoint_BoundBreakpointsMessageChanged;
+			}
+			hash.Add(vm);
+			return BreakpointImageUtilities.GetBreakpointKind(breakpoint);
+		}
+
+		// UI thread
+		void ClearUsedBreakpoints_UI() {
+			callStackContext.UIDispatcher.VerifyAccess();
+			foreach (var breakpoint in usedBreakpoints.Keys)
+				breakpoint.BoundBreakpointsMessageChanged -= DbgCodeBreakpoint_BoundBreakpointsMessageChanged;
+			usedBreakpoints.Clear();
+		}
 
 		// UI thread
 		void RemoveAllFrames_UI() {
