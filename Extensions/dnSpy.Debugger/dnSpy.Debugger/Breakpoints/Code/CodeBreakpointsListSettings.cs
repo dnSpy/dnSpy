@@ -73,7 +73,9 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			dbgDispatcher.VerifyAccess();
 			if (ignoreSave)
 				return;
-			new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService).Save(dbgCodeBreakpointsService.Breakpoints.Where(a => (a.Options & (DbgCodeBreakpointOptions.Hidden | DbgCodeBreakpointOptions.Temporary)) == 0).ToArray());
+			// Don't save temporary and hidden BPs. They should only be created by code, not by the user.
+			// The options aren't serialized so don't save any BP that has a non-zero Options prop.
+			new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService).Save(dbgCodeBreakpointsService.Breakpoints.Where(a => a.Options == 0).ToArray());
 		}
 		bool ignoreSave;
 	}

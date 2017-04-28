@@ -39,5 +39,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// It's a hidden breakpoint. It's not shown in the UI (eg. breakpoints window, call stack window, glyph margin, text view)
 		/// </summary>
 		Hidden					= 0x00000002,
+
+		/// <summary>
+		/// It's a one-shot breakpoint. When the breakpoint is hit, the process is paused and the breakpoint is removed
+		/// </summary>
+		OneShot					= 0x00000004,
 	}
 }

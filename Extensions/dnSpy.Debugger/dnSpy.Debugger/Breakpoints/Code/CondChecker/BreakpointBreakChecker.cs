@@ -46,6 +46,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			if (e.Kind == DbgMessageKind.BoundBreakpoint) {
 				var be = (DbgMessageBoundBreakpointEventArgs)e;
 				e.Pause = ShouldBreak(be.BoundBreakpoint, be.Thread);
+				if (e.Pause && be.BoundBreakpoint.Breakpoint.IsOneShot)
+					be.BoundBreakpoint.Breakpoint.Remove();
 			}
 		}
 

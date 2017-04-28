@@ -46,6 +46,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public bool IsHidden => (Options & DbgCodeBreakpointOptions.Hidden) != 0;
 
 		/// <summary>
+		/// true if it's a one-shot breakpoint. When the breakpoint is hit, the process is paused and the breakpoint is removed
+		/// </summary>
+		public bool IsOneShot => (Options & DbgCodeBreakpointOptions.OneShot) != 0;
+
+		/// <summary>
 		/// Gets/sets the current settings
 		/// </summary>
 		public abstract DbgCodeBreakpointSettings Settings { get; set; }
