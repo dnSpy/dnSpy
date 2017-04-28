@@ -52,12 +52,15 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) {
-			var bp = boundBreakpoint.Breakpoint;
+			var bp = (DbgCodeBreakpointImpl)boundBreakpoint.Breakpoint;
 			if (bp.IsClosed || boundBreakpoint.IsClosed)
 				return false;
 
 			var settings = bp.Settings;
 			if (!settings.IsEnabled)
+				return false;
+
+			if (!bp.RaiseHitCheck(boundBreakpoint, thread))
 				return false;
 
 			// Don't reorder these checks. This seems to be the order VS' debugger checks everything:
@@ -80,11 +83,16 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					return false;
 			}
 
+			bool shouldBreak;
 			if (settings.Trace is DbgCodeBreakpointTrace trace) {
 				dbgCodeBreakpointTraceMessagePrinter.Value.Print(boundBreakpoint, thread, trace);
-				return !trace.Continue;
+				shouldBreak = !trace.Continue;
 			}
-			return true;
+			else
+				shouldBreak = true;
+			if (shouldBreak)
+				bp.RaiseHit(boundBreakpoint, thread);
+			return shouldBreak;
 		}
 	}
 }

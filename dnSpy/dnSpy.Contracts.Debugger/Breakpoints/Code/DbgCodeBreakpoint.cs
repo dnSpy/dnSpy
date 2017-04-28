@@ -31,6 +31,16 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		public abstract int Id { get; }
 
 		/// <summary>
+		/// Can be used by code to add custom hit test conditions
+		/// </summary>
+		public abstract event EventHandler<DbgBreakpointHitCheckEventArgs> HitCheck;
+
+		/// <summary>
+		/// Raised when the breakpoint is hit and the process will be paused
+		/// </summary>
+		public abstract event EventHandler<DbgBreakpointHitEventArgs> Hit;
+
+		/// <summary>
 		/// Gets the breakpoint options
 		/// </summary>
 		public abstract DbgCodeBreakpointOptions Options { get; }
@@ -114,5 +124,67 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// Removes the breakpoint
 		/// </summary>
 		public abstract void Remove();
+	}
+
+	/// <summary>
+	/// Breakpoint hit check event args
+	/// </summary>
+	public sealed class DbgBreakpointHitCheckEventArgs : EventArgs {
+		/// <summary>
+		/// If false, it doesn't count as a hit and the process is not paused.
+		/// If true, the normal BP settings decide if the process gets paused.
+		/// The default value is true.
+		/// </summary>
+		public bool Pause {
+			get => pause;
+			set => pause = value;
+		}
+		bool pause;
+
+		/// <summary>
+		/// Gets the bound breakpoint
+		/// </summary>
+		public DbgBoundCodeBreakpoint BoundBreakpoint { get; }
+
+		/// <summary>
+		/// Gets the thread
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="boundBreakpoint">Bound breakpoint</param>
+		/// <param name="thread">Thread</param>
+		public DbgBreakpointHitCheckEventArgs(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) {
+			pause = true;
+			BoundBreakpoint = boundBreakpoint ?? throw new ArgumentNullException(nameof(boundBreakpoint));
+			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+		}
+	}
+
+	/// <summary>
+	/// Breakpoint hit event args
+	/// </summary>
+	public sealed class DbgBreakpointHitEventArgs : EventArgs {
+		/// <summary>
+		/// Gets the bound breakpoint
+		/// </summary>
+		public DbgBoundCodeBreakpoint BoundBreakpoint { get; }
+
+		/// <summary>
+		/// Gets the thread
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="boundBreakpoint">Bound breakpoint</param>
+		/// <param name="thread">Thread</param>
+		public DbgBreakpointHitEventArgs(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) {
+			BoundBreakpoint = boundBreakpoint ?? throw new ArgumentNullException(nameof(boundBreakpoint));
+			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+		}
 	}
 }

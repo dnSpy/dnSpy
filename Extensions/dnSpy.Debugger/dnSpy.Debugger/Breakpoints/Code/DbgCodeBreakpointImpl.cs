@@ -31,6 +31,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		public override int Id { get; }
 		public override DbgCodeBreakpointOptions Options { get; }
 		public override DbgBreakpointLocation Location { get; }
+		public override event EventHandler<DbgBreakpointHitCheckEventArgs> HitCheck;
+		public override event EventHandler<DbgBreakpointHitEventArgs> Hit;
 
 		public override DbgCodeBreakpointSettings Settings {
 			get {
@@ -260,6 +262,15 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		public override void Remove() => owner.Remove(this);
+
+		internal bool RaiseHitCheck(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) {
+			var e = new DbgBreakpointHitCheckEventArgs(boundBreakpoint, thread);
+			HitCheck?.Invoke(this, e);
+			return e.Pause;
+		}
+
+		internal void RaiseHit(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) =>
+			Hit?.Invoke(this, new DbgBreakpointHitEventArgs(boundBreakpoint, thread));
 
 		protected override void CloseCore() {
 			owner.DbgDispatcher.VerifyAccess();
