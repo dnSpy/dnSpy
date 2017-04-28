@@ -28,9 +28,9 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// Creates a breakpoint or returns null if none could be created or if there's already a breakpoint at <paramref name="location"/>
 		/// </summary>
 		/// <param name="location">Location, null is allowed</param>
-		/// <param name="options">Breakpoint options</param>
+		/// <param name="options">Breakpoint options, default is <see cref="DbgCodeBreakpointOptions.Temporary"/></param>
 		/// <returns></returns>
-		public abstract DbgCodeBreakpoint Create(DbgStackFrameLocation location, DbgCodeBreakpointOptions options = DbgCodeBreakpointOptions.None);
+		public abstract DbgCodeBreakpoint Create(DbgStackFrameLocation location, DbgCodeBreakpointOptions options = DbgCodeBreakpointOptions.Temporary);
 
 		/// <summary>
 		/// Returns an existing breakpoint or null if none exists
