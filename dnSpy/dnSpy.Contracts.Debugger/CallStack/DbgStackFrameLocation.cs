@@ -25,6 +25,6 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 	/// in the call stack window. You also need to export a <see cref="ReferenceConverter"/> or
 	/// a <see cref="ReferenceNavigator"/>.
 	/// </summary>
-	public abstract class DbgStackFrameLocation {
+	public abstract class DbgStackFrameLocation : DbgObject {
 	}
 }

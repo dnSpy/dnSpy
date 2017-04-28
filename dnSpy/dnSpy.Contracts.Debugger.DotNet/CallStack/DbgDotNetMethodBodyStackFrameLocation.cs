@@ -51,5 +51,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.CallStack {
 			Token = token;
 			Offset = offset;
 		}
+
+		/// <inheritdoc/>
+		protected override void CloseCore() { }
 	}
 }

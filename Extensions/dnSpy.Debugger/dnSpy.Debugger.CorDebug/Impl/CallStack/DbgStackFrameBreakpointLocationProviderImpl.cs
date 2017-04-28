@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 		public override DbgBreakpointLocation Create(DbgStackFrameLocation location) {
 			switch (location) {
 			case DbgDotNetStackFrameLocationImpl frameLoc:
-				return dbgDotNetNativeBreakpointLocationFactory.Value.Create(frameLoc.Module, frameLoc.Token, frameLoc.ILOffset, frameLoc.ILOffsetMapping, frameLoc.NativeMethodAddress, frameLoc.NativeMethodOffset, frameLoc.CorCode);
+				return dbgDotNetNativeBreakpointLocationFactory.Value.Create(frameLoc.Module, frameLoc.Token, frameLoc.ILOffset, frameLoc.ILOffsetMapping, frameLoc.NativeMethodAddress, frameLoc.NativeMethodOffset, frameLoc.CorCode.AddRef());
 			}
 			return null;
 		}

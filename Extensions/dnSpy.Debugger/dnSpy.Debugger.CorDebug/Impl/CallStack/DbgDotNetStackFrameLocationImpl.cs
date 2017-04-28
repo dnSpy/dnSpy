@@ -48,5 +48,7 @@ namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
 			NativeMethodOffset = nativeOffset;
 			CorCode = corCode;
 		}
+
+		protected override void CloseCore() => CorCode.Close();
 	}
 }

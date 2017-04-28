@@ -593,7 +593,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				objectHolders.Clear();
 			}
 			foreach (var obj in objHoldersToClose)
-				obj.Close();
+				obj.Dispose();
 		}
 
 		bool HasConnected_DebugThread {
@@ -688,8 +688,17 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		internal DnDebuggerObjectHolder<T> CreateDnDebuggerObjectHolder<T>(T obj) where T : class {
 			var res = DnDebuggerObjectHolderImpl<T>.Create_DONT_CALL(this, obj);
-			objectHolders.Add(res);
+			lock (lockObj)
+				objectHolders.Add(res);
 			return res;
+		}
+
+		internal void Remove<T>(DnDebuggerObjectHolder<T> obj) where T : class {
+			lock (lockObj) {
+				bool b = objectHolders.Remove(obj);
+				Debug.Assert(b);
+			}
+			obj.Dispose();
 		}
 	}
 }

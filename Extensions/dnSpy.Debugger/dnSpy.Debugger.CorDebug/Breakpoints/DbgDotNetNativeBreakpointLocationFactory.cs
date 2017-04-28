@@ -41,10 +41,10 @@ namespace dnSpy.Debugger.CorDebug.Breakpoints {
 		public override DbgDotNetNativeBreakpointLocation Create(ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
 			if (corCode == null)
 				throw new ArgumentNullException(nameof(corCode));
-			var dnbp = new DbgDotNetNativeBreakpointLocationImpl(module, token, ilOffset, ilOffsetMapping, nativeMethodAddress, nativeMethodOffset, corCode);
-			var formatter = breakpointFormatterService.Create(dnbp);
-			dnbp.Formatter = formatter;
-			return dnbp;
+			var loc = new DbgDotNetNativeBreakpointLocationImpl(module, token, ilOffset, ilOffsetMapping, nativeMethodAddress, nativeMethodOffset, corCode);
+			var formatter = breakpointFormatterService.Create(loc);
+			loc.Formatter = formatter;
+			return loc;
 		}
 	}
 }

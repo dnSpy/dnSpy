@@ -66,6 +66,7 @@ namespace dnSpy.Debugger.CallStack {
 			DispatcherThread.VerifyAccess();
 			thread.RemoveAutoClose(this);
 			engineStackFrame.Close(DispatcherThread);
+			Location?.Close(DispatcherThread);
 		}
 	}
 }

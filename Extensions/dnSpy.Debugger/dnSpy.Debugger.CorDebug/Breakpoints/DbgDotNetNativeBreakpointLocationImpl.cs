@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.CorDebug.Breakpoints {
 			CorCode = corCode ?? throw new ArgumentNullException(nameof(corCode));
 		}
 
-		protected override void CloseCore() { }
+		protected override void CloseCore() => CorCode.Close();
 
 		public override bool Equals(object obj) =>
 			obj is DbgDotNetNativeBreakpointLocationImpl other &&

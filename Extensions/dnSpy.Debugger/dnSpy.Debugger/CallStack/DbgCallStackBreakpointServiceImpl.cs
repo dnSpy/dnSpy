@@ -18,18 +18,27 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Debugger.Impl;
 
 namespace dnSpy.Debugger.CallStack {
 	[Export(typeof(DbgCallStackBreakpointService))]
 	sealed class DbgCallStackBreakpointServiceImpl : DbgCallStackBreakpointService {
+		readonly object lockObj;
+		readonly List<DbgObject> objsToClose;
+		readonly DbgDispatcher dbgDispatcher;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgStackFrameBreakpointLocationService> dbgStackFrameBreakpointLocationService;
 
 		[ImportingConstructor]
-		DbgCallStackBreakpointServiceImpl(Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgStackFrameBreakpointLocationService> dbgStackFrameBreakpointLocationService) {
+		DbgCallStackBreakpointServiceImpl(DbgDispatcher dbgDispatcher, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgStackFrameBreakpointLocationService> dbgStackFrameBreakpointLocationService) {
+			lockObj = new object();
+			objsToClose = new List<DbgObject>();
+			this.dbgDispatcher = dbgDispatcher;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgStackFrameBreakpointLocationService = dbgStackFrameBreakpointLocationService;
 		}
@@ -45,7 +54,33 @@ namespace dnSpy.Debugger.CallStack {
 			var bpLoc = dbgStackFrameBreakpointLocationService.Value.Create(location);
 			if (bpLoc == null)
 				return null;
-			return dbgCodeBreakpointsService.Value.TryGetBreakpoint(bpLoc);
+			try {
+				return dbgCodeBreakpointsService.Value.TryGetBreakpoint(bpLoc);
+			}
+			finally {
+				Close(bpLoc);
+			}
+		}
+
+		void Close(DbgObject obj) {
+			bool start;
+			lock (lockObj) {
+				objsToClose.Add(obj);
+				start = objsToClose.Count == 1;
+			}
+			if (start)
+				dbgDispatcher.DispatcherThread.BeginInvoke(() => CloseAllObjs_DbgThread());
+		}
+
+		void CloseAllObjs_DbgThread() {
+			dbgDispatcher.DispatcherThread.VerifyAccess();
+			DbgObject[] objs;
+			lock (lockObj) {
+				objs = objsToClose.ToArray();
+				objsToClose.Clear();
+			}
+			foreach (var obj in objs)
+				obj.Close(dbgDispatcher.DispatcherThread);
 		}
 	}
 }

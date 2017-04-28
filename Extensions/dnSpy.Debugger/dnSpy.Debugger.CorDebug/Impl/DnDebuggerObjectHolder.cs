@@ -18,9 +18,12 @@
 */
 
 using System;
+using System.Diagnostics;
+using System.Threading;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract class DnDebuggerObjectHolder {
+		public abstract void Dispose();
 		public abstract void Close();
 		public abstract DbgEngineImpl Engine { get; }
 	}
@@ -29,6 +32,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public bool IsClosed => Object == null;
 		public abstract T Object { get; }
 		public abstract int HashCode { get; }
+		public abstract DnDebuggerObjectHolder<T> AddRef();
 	}
 
 	sealed class DnDebuggerObjectHolderImpl<T> : DnDebuggerObjectHolder<T> where T : class {
@@ -38,11 +42,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		T obj;
 		DbgEngineImpl engine;
+		int refCount;
 
 		DnDebuggerObjectHolderImpl(DbgEngineImpl engine, T obj) {
 			this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
 			HashCode = obj.GetHashCode();
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
+			refCount = 1;
 		}
 
 		/// <summary>
@@ -50,7 +56,20 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		/// </summary>
 		public static DnDebuggerObjectHolderImpl<T> Create_DONT_CALL(DbgEngineImpl engine, T obj) => new DnDebuggerObjectHolderImpl<T>(engine, obj);
 
+		public override DnDebuggerObjectHolder<T> AddRef() {
+			Interlocked.Increment(ref refCount);
+			return this;
+		}
+
 		public override void Close() {
+			if (Interlocked.Decrement(ref refCount) == 0) {
+				// engine can be null if its breakpoint is still alive or DbgEngineImpl gets closed before
+				// some code has a chance to call Close()
+				engine?.Remove(this);
+			}
+		}
+
+		public override void Dispose() {
 			obj = null;
 			engine = null;
 		}
