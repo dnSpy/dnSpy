@@ -22,6 +22,7 @@ using System;
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract class DnDebuggerObjectHolder {
 		public abstract void Close();
+		public abstract DbgEngineImpl Engine { get; }
 	}
 
 	abstract class DnDebuggerObjectHolder<T> : DnDebuggerObjectHolder where T : class {
@@ -33,19 +34,25 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DnDebuggerObjectHolderImpl<T> : DnDebuggerObjectHolder<T> where T : class {
 		public override T Object => obj;
 		public override int HashCode { get; }
+		public override DbgEngineImpl Engine => engine;
 
 		T obj;
+		DbgEngineImpl engine;
 
-		DnDebuggerObjectHolderImpl(T obj) {
+		DnDebuggerObjectHolderImpl(DbgEngineImpl engine, T obj) {
 			this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
 			HashCode = obj.GetHashCode();
+			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 		}
 
 		/// <summary>
 		/// Should only be called by <see cref="DbgEngineImpl"/>
 		/// </summary>
-		public static DnDebuggerObjectHolderImpl<T> Create_DONT_CALL(T obj) => new DnDebuggerObjectHolderImpl<T>(obj);
+		public static DnDebuggerObjectHolderImpl<T> Create_DONT_CALL(DbgEngineImpl engine, T obj) => new DnDebuggerObjectHolderImpl<T>(engine, obj);
 
-		public override void Close() => obj = null;
+		public override void Close() {
+			obj = null;
+			engine = null;
+		}
 	}
 }

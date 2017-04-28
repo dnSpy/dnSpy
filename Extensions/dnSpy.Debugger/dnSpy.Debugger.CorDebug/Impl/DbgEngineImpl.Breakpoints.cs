@@ -92,10 +92,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return dict;
 		}
 
-		static Dictionary<ModuleId, List<DbgDotNetNativeBreakpointLocationImpl>> CreateDotNetNativeLocationDictionary(DbgBreakpointLocation[] locations) {
+		Dictionary<ModuleId, List<DbgDotNetNativeBreakpointLocationImpl>> CreateDotNetNativeLocationDictionary(DbgBreakpointLocation[] locations) {
 			var dict = new Dictionary<ModuleId, List<DbgDotNetNativeBreakpointLocationImpl>>();
 			foreach (var location in locations) {
 				if (location is DbgDotNetNativeBreakpointLocationImpl loc) {
+					if (loc.CorCode.Object == null || loc.CorCode.Engine != this)
+						continue;
 					if (!dict.TryGetValue(loc.Module, out var list))
 						dict.Add(loc.Module, list = new List<DbgDotNetNativeBreakpointLocationImpl>());
 					list.Add(loc);
@@ -126,8 +128,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				}
 				else if (nativeDict.TryGetValue(data.ModuleId, out var nativeModuleLocations)) {
 					foreach (var location in nativeModuleLocations) {
-						if (location.CorCode.Object == null)
-							continue;
 						var nbp = dnDebugger.CreateNativeBreakpoint(location.CorCode.Object, location.NativeMethodOffset, null);
 						var address = location.NativeMethodAddress + location.NativeMethodOffset;
 						var msg = GetBoundBreakpointMessage(nbp);

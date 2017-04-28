@@ -687,7 +687,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		internal DnDebuggerObjectHolder<T> CreateDnDebuggerObjectHolder<T>(T obj) where T : class {
-			var res = DnDebuggerObjectHolderImpl<T>.Create_DONT_CALL(obj);
+			var res = DnDebuggerObjectHolderImpl<T>.Create_DONT_CALL(this, obj);
 			objectHolders.Add(res);
 			return res;
 		}
