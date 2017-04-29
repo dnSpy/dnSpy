@@ -20,22 +20,22 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Resets the hit count whenever the user adds a new hit count option. This matches VS behavior
 	/// </summary>
-	[ExportDbgManagerStartListener]
-	sealed class ResetHitCount : IDbgManagerStartListener {
+	[Export(typeof(IDbgCodeBreakpointsServiceListener))]
+	sealed class ResetHitCount : IDbgCodeBreakpointsServiceListener {
 		readonly Lazy<DbgCodeBreakpointHitCountService> dbgCodeBreakpointHitCountService;
 
 		[ImportingConstructor]
-		ResetHitCount(DbgCodeBreakpointsService dbgCodeBreakpointsService, Lazy<DbgCodeBreakpointHitCountService> dbgCodeBreakpointHitCountService) {
+		ResetHitCount(Lazy<DbgCodeBreakpointHitCountService> dbgCodeBreakpointHitCountService) =>
 			this.dbgCodeBreakpointHitCountService = dbgCodeBreakpointHitCountService;
+
+		void IDbgCodeBreakpointsServiceListener.Initialize(DbgCodeBreakpointsService dbgCodeBreakpointsService) =>
 			dbgCodeBreakpointsService.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
-		}
 
 		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) {
 			List<DbgCodeBreakpoint> resetThese = null;
@@ -52,7 +52,5 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			if (resetThese != null)
 				dbgCodeBreakpointHitCountService.Value.Reset(resetThese.ToArray());
 		}
-
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) { }
 	}
 }
