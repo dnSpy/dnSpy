@@ -2169,6 +2169,7 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.DebugLogMDA, "Debug output MDA messages"),
 							new BrushColorInfo(ColorType.DebugLogTimestamp, "Debug output timestamp"),
 							new BrushColorInfo(ColorType.DebugLogTrace, "Debug output trace"),
+							new BrushColorInfo(ColorType.DebugLogExtensionMessage, "Debug output extension message"),
 							new BrushColorInfo(ColorType.HexText, "Default text color in hex view"),
 							new BrushColorInfo(ColorType.HexOffset, "Hex Offset"),
 							new BrushColorInfo(ColorType.HexByte0, "Hex Byte Color #0"),

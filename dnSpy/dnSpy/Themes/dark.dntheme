@@ -290,6 +290,7 @@
 		<color name="hextooltipservicecurrentfield" bg="#FF082949" fg="#FFADC0D3" />
 		<color name="listfindmatchhighlight" bg="#FF773800" />
 		<color name="debuglogtrace" fg="#FF62CC00" />
+		<color name="debuglogextensionmessage" fg="#FFFFADC4" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

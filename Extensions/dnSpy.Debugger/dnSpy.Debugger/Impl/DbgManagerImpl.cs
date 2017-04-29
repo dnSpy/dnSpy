@@ -968,5 +968,14 @@ namespace dnSpy.Debugger.Impl {
 			foreach (var obj in objs)
 				obj.Close(Dispatcher);
 		}
+
+		public override event EventHandler<DbgManagerMessageEventArgs> DbgManagerMessage;
+		public override void WriteMessage(string messageKind, string message) {
+			if (messageKind == null)
+				throw new ArgumentNullException(nameof(messageKind));
+			if (message == null)
+				throw new ArgumentNullException(nameof(message));
+			DbgManagerMessage?.Invoke(this, new DbgManagerMessageEventArgs(messageKind, message));
+		}
 	}
 }

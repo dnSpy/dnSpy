@@ -79,6 +79,12 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			Initialize();
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 			dbgManager.Message += DbgManager_Message;
+			dbgManager.DbgManagerMessage += DbgManager_DbgManagerMessage;
+		}
+
+		void DbgManager_DbgManagerMessage(object sender, DbgManagerMessageEventArgs e) {
+			if (e.MessageKind == PredefinedDbgManagerMessageKinds.Output)
+				UI(() => WriteLine_UI(BoxedTextColor.DebugLogExtensionMessage, e.Message));
 		}
 
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {

@@ -197,6 +197,59 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="objs">Objects to close</param>
 		public abstract void Close(DbgObject[] objs);
+
+		/// <summary>
+		/// Writes a message that will be shown in the output window
+		/// </summary>
+		/// <param name="message">Message</param>
+		public void WriteMessage(string message) => WriteMessage(PredefinedDbgManagerMessageKinds.Output, message);
+
+		/// <summary>
+		/// Writes a message
+		/// </summary>
+		/// <param name="messageKind">Message kind, see <see cref="PredefinedDbgManagerMessageKinds"/></param>
+		/// <param name="message">Message</param>
+		public abstract void WriteMessage(string messageKind, string message);
+
+		/// <summary>
+		/// Raised when <see cref="WriteMessage(string)"/> gets called. This event is raised on a random thread.
+		/// </summary>
+		public abstract event EventHandler<DbgManagerMessageEventArgs> DbgManagerMessage;
+	}
+
+	/// <summary>
+	/// Predefined message kinds, see <see cref="DbgManager.WriteMessage(string, string)"/>
+	/// </summary>
+	public static class PredefinedDbgManagerMessageKinds {
+		/// <summary>
+		/// Output window
+		/// </summary>
+		public static string Output = nameof(Output);
+	}
+
+	/// <summary>
+	/// Message event args
+	/// </summary>
+	public struct DbgManagerMessageEventArgs {
+		/// <summary>
+		/// Gets the message kind, see <see cref="PredefinedDbgManagerMessageKinds"/>
+		/// </summary>
+		public string MessageKind { get; }
+
+		/// <summary>
+		/// Gets the message
+		/// </summary>
+		public string Message { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="messageKind">Message kind, see <see cref="PredefinedDbgManagerMessageKinds"/></param>
+		/// <param name="message">Message</param>
+		public DbgManagerMessageEventArgs(string messageKind, string message) {
+			MessageKind = messageKind ?? throw new ArgumentNullException(nameof(messageKind));
+			Message = message ?? throw new ArgumentNullException(nameof(message));
+		}
 	}
 
 	/// <summary>
