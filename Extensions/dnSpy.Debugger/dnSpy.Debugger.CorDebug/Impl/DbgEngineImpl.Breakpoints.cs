@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 						createdBreakpoints.Add(new DbgBoundCodeBreakpointInfo<BoundBreakpointData>(location, module, address, msg, bpData));
 					}
 				}
-				else if (nativeDict.TryGetValue(data.ModuleId, out var nativeModuleLocations)) {
+				if (nativeDict.TryGetValue(data.ModuleId, out var nativeModuleLocations)) {
 					foreach (var location in nativeModuleLocations) {
 						var nbp = dnDebugger.CreateNativeBreakpoint(location.CorCode.Object, location.NativeMethodOffset, null);
 						var address = location.NativeMethodAddress + location.NativeMethodOffset;
