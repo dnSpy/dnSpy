@@ -26,7 +26,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
-using dnSpy.Debugger.CorDebug.Impl.CallStack;
+using dnSpy.Debugger.CorDebug.CallStack;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {

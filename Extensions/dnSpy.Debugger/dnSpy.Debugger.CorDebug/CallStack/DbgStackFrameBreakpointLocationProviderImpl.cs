@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Debugger.CorDebug.Breakpoints;
 
-namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
+namespace dnSpy.Debugger.CorDebug.CallStack {
 	[ExportDbgStackFrameBreakpointLocationProvider]
 	sealed class DbgStackFrameBreakpointLocationProviderImpl : DbgStackFrameBreakpointLocationProvider {
 		readonly Lazy<DbgDotNetNativeBreakpointLocationFactory> dbgDotNetNativeBreakpointLocationFactory;

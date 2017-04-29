@@ -25,9 +25,10 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Debugger.CorDebug.Impl;
 using dnSpy.Debugger.CorDebug.Properties;
 
-namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
+namespace dnSpy.Debugger.CorDebug.CallStack {
 	sealed class DbgEngineStackWalkerImpl : DbgEngineStackWalker {
 		readonly DbgEngineImpl engine;
 		readonly DnThread dnThread;

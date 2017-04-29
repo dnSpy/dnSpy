@@ -26,8 +26,9 @@ using dnSpy.Contracts.Debugger.DotNet.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.CorDebug.Impl;
 
-namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
+namespace dnSpy.Debugger.CorDebug.CallStack {
 	sealed class ILDbgEngineStackFrame : DbgEngineStackFrame {
 		public override DbgStackFrameLocation Location { get; }
 		public override DbgModule Module { get; }

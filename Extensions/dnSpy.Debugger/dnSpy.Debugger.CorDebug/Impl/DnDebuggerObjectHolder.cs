@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Threading;
 
 namespace dnSpy.Debugger.CorDebug.Impl {

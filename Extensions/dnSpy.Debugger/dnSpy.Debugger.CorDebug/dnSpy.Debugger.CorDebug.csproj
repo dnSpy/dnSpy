@@ -54,6 +54,13 @@
     <Compile Include="Breakpoints\ReferenceConverterImpl.cs" />
     <Compile Include="Breakpoints\TextEditor\BreakpointGlyphFormatterImpl.cs" />
     <Compile Include="Breakpoints\TextEditor\BreakpointGlyphTextMarkerLocationProviderImpl.cs" />
+    <Compile Include="CallStack\DbgDotNetStackFrameLocationImpl.cs" />
+    <Compile Include="CallStack\DbgEngineStackWalkerImpl.cs" />
+    <Compile Include="CallStack\DbgStackFrameBreakpointLocationProviderImpl.cs" />
+    <Compile Include="CallStack\ILDbgEngineStackFrame.cs" />
+    <Compile Include="CallStack\NullDbgEngineStackWalker.cs" />
+    <Compile Include="CallStack\StackFrameData.cs" />
+    <Compile Include="CallStack\StackFrameLocationReferenceConverter.cs" />
     <Compile Include="DAC\ClrDac.cs" />
     <Compile Include="DAC\ClrDacImpl.cs" />
     <Compile Include="DAC\ClrDacProvider.cs" />
@@ -69,13 +76,6 @@
     <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="Impl\BreakProcessKindHelpers.cs" />
-    <Compile Include="Impl\CallStack\DbgDotNetStackFrameLocationImpl.cs" />
-    <Compile Include="Impl\CallStack\DbgEngineStackWalkerImpl.cs" />
-    <Compile Include="Impl\CallStack\DbgStackFrameBreakpointLocationProviderImpl.cs" />
-    <Compile Include="Impl\CallStack\ILDbgEngineStackFrame.cs" />
-    <Compile Include="Impl\CallStack\NullDbgEngineStackWalker.cs" />
-    <Compile Include="Impl\CallStack\StackFrameData.cs" />
-    <Compile Include="Impl\CallStack\StackFrameLocationReferenceConverter.cs" />
     <Compile Include="Impl\CorDebugRuntimeImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />

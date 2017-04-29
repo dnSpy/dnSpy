@@ -31,8 +31,8 @@ using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
+using dnSpy.Debugger.CorDebug.CallStack;
 using dnSpy.Debugger.CorDebug.DAC;
-using dnSpy.Debugger.CorDebug.Impl.CallStack;
 using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Impl {

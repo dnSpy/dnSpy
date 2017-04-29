@@ -22,8 +22,9 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Contracts.Metadata;
+using dnSpy.Debugger.CorDebug.Impl;
 
-namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
+namespace dnSpy.Debugger.CorDebug.CallStack {
 	sealed class DbgDotNetStackFrameLocationImpl : DbgDotNetStackFrameLocation {
 		public override ModuleId Module { get; }
 		public override uint Token { get; }

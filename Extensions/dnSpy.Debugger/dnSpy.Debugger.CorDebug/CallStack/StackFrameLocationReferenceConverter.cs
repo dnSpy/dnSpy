@@ -20,7 +20,7 @@
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Documents;
 
-namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
+namespace dnSpy.Debugger.CorDebug.CallStack {
 	[ExportReferenceConverter]
 	sealed class StackFrameLocationReferenceConverter : ReferenceConverter {
 		public override void Convert(ref object reference) {

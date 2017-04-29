@@ -17,13 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using System;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
-using dnSpy.Debugger.CorDebug.Text;
 
-namespace dnSpy.Debugger.CorDebug.Impl.CallStack {
-	sealed class StackFrameData {
-		public readonly List<DbgEngineStackFrame> DbgEngineStackFrameList = new List<DbgEngineStackFrame>();
-		public readonly TypeOutputTextColorWriter TypeOutputTextColorWriter = new TypeOutputTextColorWriter();
+namespace dnSpy.Debugger.CorDebug.CallStack {
+	sealed class NullDbgEngineStackWalker : DbgEngineStackWalker {
+		public override DbgEngineStackFrame[] GetNextStackFrames(int maxFrames) => Array.Empty<DbgEngineStackFrame>();
+		protected override void CloseCore() { }
 	}
 }
