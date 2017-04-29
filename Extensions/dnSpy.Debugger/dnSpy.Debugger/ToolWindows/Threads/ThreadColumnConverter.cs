@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			else if (obj.Tag == PredefinedTextClassifierTags.ThreadsWindowName)
 				formatter.WriteName(writer, obj.VM.Thread);
 			else if (obj.Tag == PredefinedTextClassifierTags.ThreadsWindowLocation)
-				formatter.WriteLocation(writer, obj.VM.Thread);
+				formatter.WriteLocation(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.ThreadsWindowPriority)
 				formatter.WritePriority(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.ThreadsWindowAffinityMask)

@@ -94,9 +94,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		static readonly object NameColor = BoxedTextColor.String;
 		internal const string NameColorClassificationTypeName = Contracts.Text.Classification.ThemeClassificationTypeNames.String;
 
-		public void WriteLocation(ITextColorWriter output, DbgThread thread) {
-			//TODO:
-		}
+		public void WriteLocation(ITextColorWriter output, ThreadVM vm) => vm.LocationCachedOutput.WriteTo(output);
 
 		public void WritePriority(ITextColorWriter output, ThreadVM vm) {
 			switch (vm.Priority) {

@@ -144,6 +144,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			threadContext = new ThreadContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions)) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
+				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				Formatter = threadFormatterProvider.Create(),
 			};
 		}
@@ -195,6 +196,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 				RecreateFormatter_UI();
 				threadContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
+				threadContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
 			}
 			else {
 				processes.Clear();
@@ -325,8 +327,6 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				threadContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				RefreshThemeFields_UI();
 			}
-			else if (propertyName == nameof(debuggerSettings.PropertyEvalAndFunctionCalls))
-				RefreshEvalFields_UI();
 		}
 
 		// UI thread
@@ -345,18 +345,12 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		void RefreshHexFields_UI() {
 			threadContext.UIDispatcher.VerifyAccess();
+			threadContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
 			RecreateFormatter_UI();
 			foreach (var vm in realAllItems)
 				vm.RefreshHexFields_UI();
 			foreach (var vm in processes)
 				vm.UpdateName(debuggerSettings.UseHexadecimal);
-		}
-
-		// UI thread
-		void RefreshEvalFields_UI() {
-			threadContext.UIDispatcher.VerifyAccess();
-			foreach (var vm in realAllItems)
-				vm.RefreshEvalFields_UI();
 		}
 
 		// random thread
@@ -620,7 +614,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		string GetLocation_UI(ThreadVM vm) {
 			Debug.Assert(threadContext.UIDispatcher.CheckAccess());
 			sbOutput.Reset();
-			threadContext.Formatter.WriteLocation(sbOutput, vm.Thread);
+			threadContext.Formatter.WriteLocation(sbOutput, vm);
 			return sbOutput.ToString();
 		}
 

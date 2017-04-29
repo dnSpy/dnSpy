@@ -22,10 +22,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Native;
+using dnSpy.Debugger.Properties;
+using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
 using Microsoft.Win32.SafeHandles;
 
@@ -128,6 +132,15 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 		ulong? affinityMask;
 
+		public ClassifiedTextCollection LocationCachedOutput {
+			get {
+				if (locationCachedOutput.IsDefault)
+					locationCachedOutput = CreateLocationCachedOutput();
+				return locationCachedOutput;
+			}
+		}
+		ClassifiedTextCollection locationCachedOutput;
+
 		public IEditableValue NameEditableValue { get; }
 		public IEditValueProvider NameEditValueProvider { get; }
 
@@ -185,6 +198,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			OnPropertyChanged(nameof(ManagedIdObject));
 			OnPropertyChanged(nameof(CategoryTextObject));
 			OnPropertyChanged(nameof(NameObject));
+			locationCachedOutput = default(ClassifiedTextCollection);
 			OnPropertyChanged(nameof(LocationObject));
 			OnPropertyChanged(nameof(PriorityObject));
 			OnPropertyChanged(nameof(AffinityMaskObject));
@@ -199,6 +213,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			Context.UIDispatcher.VerifyAccess();
 			OnPropertyChanged(nameof(IdObject));
 			OnPropertyChanged(nameof(ManagedIdObject));
+			locationCachedOutput = default(ClassifiedTextCollection);
 			OnPropertyChanged(nameof(LocationObject));
 			OnPropertyChanged(nameof(SuspendedCountObject));
 		}
@@ -216,6 +231,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			if (hThread == null)
 				OpenThread_UI();
 
+			locationCachedOutput = default(ClassifiedTextCollection);
+			OnPropertyChanged(nameof(LocationObject));
+
 			var newPriority = CalculateThreadPriority_UI();
 			if (newPriority != priority) {
 				priority = newPriority;
@@ -227,12 +245,6 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				affinityMask = newAffinityMask;
 				OnPropertyChanged(nameof(AffinityMask));
 			}
-		}
-
-		// UI thread
-		internal void RefreshEvalFields_UI() {
-			Context.UIDispatcher.VerifyAccess();
-			//TODO:
 		}
 
 		// DbgManager thread
@@ -309,6 +321,42 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		internal void ClearEditingValueProperties() {
 			Context.UIDispatcher.VerifyAccess();
 			NameEditableValue.IsEditingValue = false;
+		}
+
+		// UI thread
+		ClassifiedTextCollection CreateLocationCachedOutput() {
+			Context.UIDispatcher.VerifyAccess();
+			DbgStackWalker stackWalker = null;
+			DbgStackFrame[] frames = null;
+			try {
+				stackWalker = Thread.CreateStackWalker();
+				frames = stackWalker.GetNextStackFrames(1);
+				if (frames.Length == 0)
+					return new ClassifiedTextCollection(new[] { new ClassifiedText(BoxedTextColor.Text, dnSpy_Debugger_Resources.Thread_LocationNotAvailable) });
+				else {
+					Debug.Assert(frames.Length == 1);
+					var options =
+						DbgStackFrameFormatOptions.ShowModuleNames |
+						DbgStackFrameFormatOptions.ShowParameterTypes |
+						DbgStackFrameFormatOptions.ShowParameterNames |
+						DbgStackFrameFormatOptions.ShowDeclaringTypes |
+						DbgStackFrameFormatOptions.ShowNamespaces |
+						DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords |
+						DbgStackFrameFormatOptions.ShowFunctionOffset;
+					if (!Context.UseHexadecimal)
+						options |= DbgStackFrameFormatOptions.UseDecimal;
+					frames[0].Format(Context.ClassifiedTextWriter, options);
+					return Context.ClassifiedTextWriter.GetClassifiedText();
+				}
+			}
+			finally {
+				if (frames != null && frames.Length != 0) {
+					Debug.Assert(frames.Length == 1);
+					Thread.Process.DbgManager.Close(new DbgObject[] { stackWalker, frames[0] });
+				}
+				else
+					stackWalker?.Close();
+			}
 		}
 
 		// UI thread
