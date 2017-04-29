@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 		readonly Lazy<DbgManager> dbgManager;
 		readonly CallStackContext callStackContext;
-		readonly Lazy<CallStackService> callStackService;
+		readonly Lazy<DbgCallStackService> dbgCallStackService;
 		readonly CallStackDisplaySettings callStackDisplaySettings;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService;
@@ -72,12 +72,12 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		readonly Dictionary<DbgCodeBreakpoint, HashSet<NormalStackFrameVM>> usedBreakpoints;
 
 		[ImportingConstructor]
-		CallStackVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, Lazy<CallStackService> callStackService, CallStackDisplaySettings callStackDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService, CallStackFormatterProvider callStackFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+		CallStackVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, Lazy<DbgCallStackService> dbgCallStackService, CallStackDisplaySettings callStackDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService, CallStackFormatterProvider callStackFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			uiDispatcher.VerifyAccess();
 			AllItems = new ObservableCollection<StackFrameVM>();
 			SelectedItems = new ObservableCollection<StackFrameVM>();
 			this.dbgManager = dbgManager;
-			this.callStackService = callStackService;
+			this.dbgCallStackService = dbgCallStackService;
 			this.callStackDisplaySettings = callStackDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgCallStackBreakpointService = dbgCallStackBreakpointService;
@@ -134,19 +134,19 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		void InitializeDebugger_DbgThread(bool enable) {
 			dbgManager.Value.DispatcherThread.VerifyAccess();
 			if (enable) {
-				callStackService.Value.FramesChanged += CallStackService_FramesChanged;
-				callStackService.Value.ActiveFrameIndexChanged += CallStackService_ActiveFrameIndexChanged;
+				dbgCallStackService.Value.FramesChanged += DbgCallStackService_FramesChanged;
+				dbgCallStackService.Value.ActiveFrameIndexChanged += DbgCallStackService_ActiveFrameIndexChanged;
 				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
 				dbgCodeBreakpointsService.Value.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 
-				var framesInfo = callStackService.Value.Frames;
-				var thread = callStackService.Value.Thread;
+				var framesInfo = dbgCallStackService.Value.Frames;
+				var thread = dbgCallStackService.Value.Thread;
 				UI(() => UpdateFrames_UI(framesInfo, thread));
 			}
 			else {
-				callStackService.Value.FramesChanged -= CallStackService_FramesChanged;
-				callStackService.Value.ActiveFrameIndexChanged -= CallStackService_ActiveFrameIndexChanged;
+				dbgCallStackService.Value.FramesChanged -= DbgCallStackService_FramesChanged;
+				dbgCallStackService.Value.ActiveFrameIndexChanged -= DbgCallStackService_ActiveFrameIndexChanged;
 				dbgManager.Value.DelayedIsRunningChanged -= DbgManager_DelayedIsRunningChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified -= DbgCodeBreakpointsService_BreakpointsModified;
 				dbgCodeBreakpointsService.Value.BreakpointsChanged -= DbgCodeBreakpointsService_BreakpointsChanged;
@@ -257,15 +257,15 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		void UI(Action callback) => callStackContext.UIDispatcher.UI(callback);
 
 		// DbgManager thread
-		void CallStackService_FramesChanged(object sender, EventArgs e) {
-			var framesInfo = callStackService.Value.Frames;
-			var thread = callStackService.Value.Thread;
+		void DbgCallStackService_FramesChanged(object sender, EventArgs e) {
+			var framesInfo = dbgCallStackService.Value.Frames;
+			var thread = dbgCallStackService.Value.Thread;
 			UI(() => UpdateFrames_UI(framesInfo, thread));
 		}
 
 		// DbgManager thread
-		void CallStackService_ActiveFrameIndexChanged(object sender, EventArgs e) {
-			int activeFrameIndex = callStackService.Value.ActiveFrameIndex;
+		void DbgCallStackService_ActiveFrameIndexChanged(object sender, EventArgs e) {
+			int activeFrameIndex = dbgCallStackService.Value.ActiveFrameIndex;
 			UI(() => UpdateActiveFrameIndex_UI(activeFrameIndex));
 		}
 

@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.CallStack {
 	/// <summary>
 	/// Provides all stack frames shown in the call stack window
 	/// </summary>
-	abstract class CallStackService {
+	abstract class DbgCallStackService {
 		/// <summary>
 		/// Gets the selected thread. This is identical to <see cref="DbgManager.CurrentThread"/>
 		/// </summary>
@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		/// <summary>
 		/// Gets all frames. This is a truncated list if there are too many frames. The
-		/// frames must not be closed, they're owned by <see cref="CallStackService"/>.
+		/// frames must not be closed, they're owned by <see cref="DbgCallStackService"/>.
 		/// </summary>
 		public abstract DbgCallStackFramesInfo Frames { get; }
 

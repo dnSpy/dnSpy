@@ -25,8 +25,8 @@ using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Debugger.CallStack {
 	[ExportDbgManagerStartListener]
-	[Export(typeof(CallStackService))]
-	sealed class CallStackServiceImpl : CallStackService, IDbgManagerStartListener {
+	[Export(typeof(DbgCallStackService))]
+	sealed class DbgCallStackServiceImpl : DbgCallStackService, IDbgManagerStartListener {
 		const int MaxShownFrames = 5000;
 
 		public override DbgThread Thread => dbgManager?.CurrentThread.Current;
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.CallStack {
 		static ReadOnlyCollection<DbgStackFrame> emptyFrames = new ReadOnlyCollection<DbgStackFrame>(Array.Empty<DbgStackFrame>());
 
 		[ImportingConstructor]
-		CallStackServiceImpl() {
+		DbgCallStackServiceImpl() {
 			lockObj = new object();
 			frames = Array.Empty<DbgStackFrame>();
 			readOnlyFrames = emptyFrames;

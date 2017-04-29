@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		readonly DebuggerSettings debuggerSettings;
 		readonly CallStackDisplaySettings callStackDisplaySettings;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
-		readonly Lazy<CallStackService> callStackService;
+		readonly Lazy<DbgCallStackService> dbgCallStackService;
 		readonly Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService;
 		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
 		readonly Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService;
@@ -101,12 +101,12 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		IEnumerable<StackFrameVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Index);
 
 		[ImportingConstructor]
-		CallStackOperationsImpl(ICallStackVM callStackVM, DebuggerSettings debuggerSettings, CallStackDisplaySettings callStackDisplaySettings, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<CallStackService> callStackService, Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<DbgManager> dbgManager) {
+		CallStackOperationsImpl(ICallStackVM callStackVM, DebuggerSettings debuggerSettings, CallStackDisplaySettings callStackDisplaySettings, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<DbgManager> dbgManager) {
 			this.callStackVM = callStackVM;
 			this.debuggerSettings = debuggerSettings;
 			this.callStackDisplaySettings = callStackDisplaySettings;
 			this.referenceNavigatorService = referenceNavigatorService;
-			this.callStackService = callStackService;
+			this.dbgCallStackService = dbgCallStackService;
 			this.dbgCallStackBreakpointService = dbgCallStackBreakpointService;
 			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
 			this.dbgCodeBreakpointSerializerService = dbgCodeBreakpointSerializerService;
@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			if (!CanSwitchToFrame)
 				return;
 			var vm = (NormalStackFrameVM)SelectedItems[0];
-			callStackService.Value.ActiveFrameIndex = vm.Index;
+			dbgCallStackService.Value.ActiveFrameIndex = vm.Index;
 			var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
 			referenceNavigatorService.Value.GoTo(vm.Frame.Location, options);
 		}
