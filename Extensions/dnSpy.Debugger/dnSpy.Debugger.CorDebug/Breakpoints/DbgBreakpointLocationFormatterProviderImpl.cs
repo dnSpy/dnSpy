@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Debugger.CorDebug.Code;
@@ -24,7 +26,23 @@ using dnSpy.Debugger.CorDebug.Code;
 namespace dnSpy.Debugger.CorDebug.Breakpoints {
 	[ExportDbgBreakpointLocationFormatterProvider(PredefinedDbgCodeLocationTypes.DotNetCorDebugNative)]
 	sealed class DbgBreakpointLocationFormatterProviderImpl : DbgBreakpointLocationFormatterProvider {
-		public override DbgBreakpointLocationFormatter Create(DbgCodeLocation location) =>
-			(location as DbgDotNetNativeCodeLocationImpl)?.Formatter;
+		readonly Lazy<BreakpointFormatterService> breakpointFormatterService;
+
+		[ImportingConstructor]
+		DbgBreakpointLocationFormatterProviderImpl(Lazy<BreakpointFormatterService> breakpointFormatterService) =>
+			this.breakpointFormatterService = breakpointFormatterService;
+
+		public override DbgBreakpointLocationFormatter Create(DbgCodeLocation location) {
+			switch (location) {
+			case DbgDotNetNativeCodeLocationImpl nativeLoc:
+				var formatter = nativeLoc.Formatter;
+				if (formatter != null)
+					return formatter;
+				formatter = breakpointFormatterService.Value.Create(nativeLoc);
+				nativeLoc.Formatter = formatter;
+				return formatter;
+			}
+			return null;
+		}
 	}
 }

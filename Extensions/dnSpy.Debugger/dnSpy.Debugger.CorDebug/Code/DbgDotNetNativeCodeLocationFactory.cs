@@ -31,19 +31,10 @@ namespace dnSpy.Debugger.CorDebug.Code {
 
 	[Export(typeof(DbgDotNetNativeCodeLocationFactory))]
 	sealed class DbgDotNetNativeCodeLocationFactoryImpl : DbgDotNetNativeCodeLocationFactory {
-		readonly BreakpointFormatterService breakpointFormatterService;
-
-		[ImportingConstructor]
-		DbgDotNetNativeCodeLocationFactoryImpl(BreakpointFormatterService breakpointFormatterService) =>
-			this.breakpointFormatterService = breakpointFormatterService;
-
 		public override DbgDotNetNativeCodeLocation Create(ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
 			if (corCode == null)
 				throw new ArgumentNullException(nameof(corCode));
-			var loc = new DbgDotNetNativeCodeLocationImpl(this, module, token, ilOffset, ilOffsetMapping, nativeMethodAddress, nativeMethodOffset, corCode);
-			var formatter = breakpointFormatterService.Create(loc);
-			loc.Formatter = formatter;
-			return loc;
+			return new DbgDotNetNativeCodeLocationImpl(this, module, token, ilOffset, ilOffsetMapping, nativeMethodAddress, nativeMethodOffset, corCode);
 		}
 	}
 }

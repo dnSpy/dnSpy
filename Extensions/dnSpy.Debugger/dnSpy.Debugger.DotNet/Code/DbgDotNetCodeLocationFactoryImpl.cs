@@ -24,17 +24,7 @@ using dnSpy.Contracts.Metadata;
 namespace dnSpy.Debugger.DotNet.Code {
 	[Export(typeof(DbgDotNetCodeLocationFactory))]
 	sealed class DbgDotNetCodeLocationFactoryImpl : DbgDotNetCodeLocationFactory {
-		readonly BreakpointFormatterService breakpointFormatterService;
-
-		[ImportingConstructor]
-		DbgDotNetCodeLocationFactoryImpl(BreakpointFormatterService breakpointFormatterService) =>
-			this.breakpointFormatterService = breakpointFormatterService;
-
-		public override DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset) {
-			var dnbp = new DbgDotNetCodeLocationImpl(this, module, token, offset);
-			var formatter = breakpointFormatterService.Create(dnbp);
-			dnbp.Formatter = formatter;
-			return dnbp;
-		}
+		public override DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset) =>
+			new DbgDotNetCodeLocationImpl(this, module, token, offset);
 	}
 }
