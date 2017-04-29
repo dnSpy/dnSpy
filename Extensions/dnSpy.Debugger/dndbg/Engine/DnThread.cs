@@ -84,6 +84,13 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IEnumerable<CorFrame> AllFrames => CorThread.AllFrames;
 
+		/// <summary>
+		/// Gets all frames in all chains
+		/// </summary>
+		/// <param name="frames">Frames buffer</param>
+		/// <returns></returns>
+		public IEnumerable<CorFrame> GetAllFrames(ICorDebugFrame[] frames) => CorThread.GetAllFrames(frames);
+
 		internal DnThread(DnProcess ownerProcess, ICorDebugThread thread, int uniqueId, int uniqueIdProcess) {
 			Process = ownerProcess;
 			CorThread = new CorThread(thread);

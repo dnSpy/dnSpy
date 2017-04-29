@@ -19,6 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -109,17 +112,24 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets all frames
 		/// </summary>
-		public IEnumerable<CorFrame> Frames {
-			get {
-				int hr = obj.EnumerateFrames(out var frameEnum);
-				if (hr < 0)
-					yield break;
-				for (;;) {
-					hr = frameEnum.Next(1, out var frame, out uint count);
-					if (hr != 0 || frame == null)
-						break;
-					yield return new CorFrame(frame);
-				}
+		public IEnumerable<CorFrame> Frames => GetFrames(new ICorDebugFrame[1]);
+
+		/// <summary>
+		/// Gets all frames
+		/// </summary>
+		/// <param name="frames">Frames buffer</param>
+		/// <returns></returns>
+		public IEnumerable<CorFrame> GetFrames(ICorDebugFrame[] frames) {
+			int hr = obj.EnumerateFrames(out var frameEnum);
+			if (hr < 0)
+				yield break;
+			for (;;) {
+				hr = frameEnum.Next((uint)frames.Length, frames, out uint count);
+				if (hr < 0 || count == 0)
+					break;
+				int count2 = (int)count;
+				for (int i = 0; i < count2; i++)
+					yield return new CorFrame(frames[i]);
 			}
 		}
 

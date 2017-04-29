@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.CorDebug.CallStack {
 		readonly DbgEngineImpl engine;
 		readonly DnThread dnThread;
 		readonly DbgThread thread;
+		ICorDebugFrame[] framesBuffer;
 		readonly uint continueCounter;
 		IEnumerator<CorFrame> enumerator;
 
@@ -46,10 +47,11 @@ namespace dnSpy.Debugger.CorDebug.CallStack {
 			void IDisposable.Dispose() { }
 		}
 
-		public DbgEngineStackWalkerImpl(DbgEngineImpl engine, DnThread dnThread, DbgThread thread) {
+		public DbgEngineStackWalkerImpl(DbgEngineImpl engine, DnThread dnThread, DbgThread thread, ICorDebugFrame[] framesBuffer) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			this.dnThread = dnThread ?? throw new ArgumentNullException(nameof(dnThread));
 			this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
+			this.framesBuffer = framesBuffer ?? throw new ArgumentNullException(nameof(framesBuffer));
 			continueCounter = dnThread.Debugger.ContinueCounter;
 		}
 
@@ -64,7 +66,7 @@ namespace dnSpy.Debugger.CorDebug.CallStack {
 				return Array.Empty<DbgEngineStackFrame>();
 			}
 			if (enumerator == null)
-				enumerator = dnThread.AllFrames.GetEnumerator();
+				enumerator = dnThread.GetAllFrames(framesBuffer).GetEnumerator();
 			var list = engine.stackFrameData.DbgEngineStackFrameList;
 			try {
 				Debug.Assert(list.Count == 0);
@@ -149,6 +151,9 @@ namespace dnSpy.Debugger.CorDebug.CallStack {
 		}
 
 		protected override void CloseCore() {
+			if (framesBuffer != null)
+				engine.ReturnFramesBuffer(ref framesBuffer);
+			framesBuffer = null;
 			enumerator?.Dispose();
 			enumerator = null;
 		}

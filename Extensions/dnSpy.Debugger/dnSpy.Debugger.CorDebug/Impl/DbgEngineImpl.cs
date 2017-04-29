@@ -586,6 +586,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			debuggerThread.Terminate();
 			DnDebuggerObjectHolder[] objHoldersToClose;
 			lock (lockObj) {
+				framesBuffer = null;
 				toEngineAppDomain.Clear();
 				toEngineModule.Clear();
 				toEngineThread.Clear();

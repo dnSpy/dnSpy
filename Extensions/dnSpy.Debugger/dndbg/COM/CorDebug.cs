@@ -1221,7 +1221,7 @@ namespace dndbg.COM.CorDebug {
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
 		[PreserveSig]
-		int Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame frames, out uint pceltFetched);
+		int Next([In] uint celt, [MarshalAs(UnmanagedType.LPArray)] [Out] ICorDebugFrame[] frames, out uint pceltFetched);
 	}
 	[Guid("CC7BCAF3-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
@@ -278,7 +279,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			var engineThread = TryGetEngineThread(threadData.DnThread);
 			if (engineThread == null || threadData.DnThread.HasExited)
 				return new NullDbgEngineStackWalker();
-			return new DbgEngineStackWalkerImpl(this, threadData.DnThread, thread);
+			return new DbgEngineStackWalkerImpl(this, threadData.DnThread, thread, GetFramesBuffer());
+		}
+		const int framesBufferSize = 0x100;
+		ICorDebugFrame[] framesBuffer = new ICorDebugFrame[framesBufferSize];
+		ICorDebugFrame[] GetFramesBuffer() => Interlocked.Exchange(ref framesBuffer, null) ?? new ICorDebugFrame[framesBufferSize];
+		internal void ReturnFramesBuffer(ref ICorDebugFrame[] framesBuffer) {
+			Debug.Assert(framesBuffer != null);
+			Interlocked.Exchange(ref this.framesBuffer, framesBuffer);
+			framesBuffer = null;
 		}
 	}
 }

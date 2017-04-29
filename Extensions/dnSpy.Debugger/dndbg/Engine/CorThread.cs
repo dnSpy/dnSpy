@@ -108,12 +108,16 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets all frames in all chains
 		/// </summary>
-		public IEnumerable<CorFrame> AllFrames {
-			get {
-				foreach (var chain in Chains) {
-					foreach (var frame in chain.Frames)
-						yield return frame;
-				}
+		public IEnumerable<CorFrame> AllFrames => GetAllFrames(new ICorDebugFrame[1]);
+
+		/// <summary>
+		/// Gets all frames in all chains
+		/// </summary>
+		/// <param name="frames">Frames buffer</param>
+		public IEnumerable<CorFrame> GetAllFrames(ICorDebugFrame[] frames) {
+			foreach (var chain in Chains) {
+				foreach (var frame in chain.GetFrames(frames))
+					yield return frame;
 			}
 		}
 
