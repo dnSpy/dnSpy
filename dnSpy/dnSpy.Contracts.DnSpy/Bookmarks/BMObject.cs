@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// Destructor
 		/// </summary>
 		~BMObject() {
-			Debug.Fail(nameof(BMObject) + " dtor called! Type: " + GetType().FullName);
+			Debug.Assert(Environment.HasShutdownStarted, nameof(BMObject) + " dtor called! Type: " + GetType().FullName);
 		}
 #endif
 
