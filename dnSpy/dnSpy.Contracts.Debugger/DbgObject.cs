@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace dnSpy.Contracts.Debugger {
@@ -33,6 +34,15 @@ namespace dnSpy.Contracts.Debugger {
 		/// Constructor
 		/// </summary>
 		protected DbgObject() => lockObj = new object();
+
+#if DEBUG
+		/// <summary>
+		/// Destructor
+		/// </summary>
+		~DbgObject() {
+			Debug.Fail(nameof(DbgObject) + " dtor called! Type: " + GetType().FullName);
+		}
+#endif
 
 		/// <summary>
 		/// true if the instance has been closed
@@ -72,6 +82,10 @@ namespace dnSpy.Contracts.Debugger {
 			}
 			foreach (var kv in data)
 				(kv.data as IDisposable)?.Dispose();
+
+#if DEBUG
+			GC.SuppressFinalize(this);
+#endif
 		}
 
 		/// <summary>
