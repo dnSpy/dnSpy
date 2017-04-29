@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using dnSpy.Contracts.Debugger.Code;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
@@ -92,7 +93,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="location">Location</param>
 		/// <returns></returns>
-		public abstract DbgCodeBreakpoint TryGetBreakpoint(DbgBreakpointLocation location);
+		public abstract DbgCodeBreakpoint TryGetBreakpoint(DbgCodeLocation location);
 
 		/// <summary>
 		/// Removes all visible breakpoints
@@ -196,7 +197,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Breakpoint location
 		/// </summary>
-		public DbgBreakpointLocation Location { get; }
+		public DbgCodeLocation Location { get; }
 
 		/// <summary>
 		/// Breakpoint settings
@@ -211,9 +212,9 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="location">Breakpoint location</param>
+		/// <param name="location">Breakpoint location. If you don't own this location instance, you must call <see cref="DbgCodeLocation.Clone"/></param>
 		/// <param name="settings">Breakpoint settings</param>
-		public DbgCodeBreakpointInfo(DbgBreakpointLocation location, DbgCodeBreakpointSettings settings) {
+		public DbgCodeBreakpointInfo(DbgCodeLocation location, DbgCodeBreakpointSettings settings) {
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Settings = settings;
 			Options = DbgCodeBreakpointOptions.None;
@@ -222,10 +223,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="location">Breakpoint location</param>
+		/// <param name="location">Breakpoint location. If you don't own this location instance, you must call <see cref="DbgCodeLocation.Clone"/></param>
 		/// <param name="settings">Breakpoint settings</param>
 		/// <param name="options">Breakpoint options</param>
-		public DbgCodeBreakpointInfo(DbgBreakpointLocation location, DbgCodeBreakpointSettings settings, DbgCodeBreakpointOptions options) {
+		public DbgCodeBreakpointInfo(DbgCodeLocation location, DbgCodeBreakpointSettings settings, DbgCodeBreakpointOptions options) {
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Settings = settings;
 			Options = options;

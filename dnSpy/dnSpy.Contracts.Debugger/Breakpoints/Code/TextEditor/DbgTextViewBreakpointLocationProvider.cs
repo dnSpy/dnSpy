@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents.Tabs;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -28,7 +29,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 	/// </summary>
 	public abstract class DbgTextViewBreakpointLocationProvider {
 		/// <summary>
-		/// Creates a new <see cref="DbgBreakpointLocation"/> instance whose text view span is >= <paramref name="position"/>
+		/// Creates a new <see cref="DbgCodeLocation"/> instance whose text view span is >= <paramref name="position"/>
 		/// </summary>
 		/// <param name="tab">Tab</param>
 		/// <param name="textView">Text view</param>
@@ -44,7 +45,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 		/// <summary>
 		/// Gets all locations
 		/// </summary>
-		public DbgBreakpointLocation[] Locations { get; }
+		public DbgCodeLocation[] Locations { get; }
 
 		/// <summary>
 		/// Gets the span
@@ -56,7 +57,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 		/// </summary>
 		/// <param name="location">Location</param>
 		/// <param name="span">Text view span</param>
-		public DbgTextViewBreakpointLocationResult(DbgBreakpointLocation location, SnapshotSpan span)
+		public DbgTextViewBreakpointLocationResult(DbgCodeLocation location, SnapshotSpan span)
 			: this(location, new VirtualSnapshotSpan(span)) {
 		}
 
@@ -65,7 +66,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 		/// </summary>
 		/// <param name="location">Location</param>
 		/// <param name="span">Text view span</param>
-		public DbgTextViewBreakpointLocationResult(DbgBreakpointLocation location, VirtualSnapshotSpan span) {
+		public DbgTextViewBreakpointLocationResult(DbgCodeLocation location, VirtualSnapshotSpan span) {
 			if (span.Snapshot == null)
 				throw new ArgumentException();
 			Locations = new[] { location ?? throw new ArgumentNullException(nameof(location)) };
@@ -77,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 		/// </summary>
 		/// <param name="locations">Locations</param>
 		/// <param name="span">Text view span</param>
-		public DbgTextViewBreakpointLocationResult(DbgBreakpointLocation[] locations, SnapshotSpan span)
+		public DbgTextViewBreakpointLocationResult(DbgCodeLocation[] locations, SnapshotSpan span)
 			: this(locations, new VirtualSnapshotSpan(span)) {
 		}
 
@@ -86,7 +87,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 		/// </summary>
 		/// <param name="locations">Locations</param>
 		/// <param name="span">Text view span</param>
-		public DbgTextViewBreakpointLocationResult(DbgBreakpointLocation[] locations, VirtualSnapshotSpan span) {
+		public DbgTextViewBreakpointLocationResult(DbgCodeLocation[] locations, VirtualSnapshotSpan span) {
 			if (span.Snapshot == null)
 				throw new ArgumentException();
 			Locations = locations ?? throw new ArgumentNullException(nameof(locations));

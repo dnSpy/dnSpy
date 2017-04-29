@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
 
@@ -33,8 +34,9 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 
 		/// <summary>
 		/// Gets the location or null if none. Can be passed to <see cref="ReferenceNavigatorService.GoTo(object, object[])"/>
+		/// or can be used to create a breakpoint if you call <see cref="DbgCodeLocation.Clone"/>
 		/// </summary>
-		public abstract DbgStackFrameLocation Location { get; }
+		public abstract DbgCodeLocation Location { get; }
 
 		/// <summary>
 		/// Gets the module or null if it's unknown

@@ -24,13 +24,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	sealed class DbgCodeBreakpointImpl : DbgCodeBreakpoint {
 		public override int Id { get; }
 		public override DbgCodeBreakpointOptions Options { get; }
-		public override DbgBreakpointLocation Location { get; }
+		public override DbgCodeLocation Location { get; }
 		public override event EventHandler<DbgBreakpointHitCheckEventArgs> HitCheck;
 		public override event EventHandler<DbgBreakpointHitEventArgs> Hit;
 
@@ -121,7 +122,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		readonly object lockObj;
 		readonly DbgCodeBreakpointsServiceImpl owner;
 
-		public DbgCodeBreakpointImpl(DbgCodeBreakpointsServiceImpl owner, int id, DbgCodeBreakpointOptions options, DbgBreakpointLocation location, DbgCodeBreakpointSettings settings, bool isDebugging) {
+		public DbgCodeBreakpointImpl(DbgCodeBreakpointsServiceImpl owner, int id, DbgCodeBreakpointOptions options, DbgCodeLocation location, DbgCodeBreakpointSettings settings, bool isDebugging) {
 			lockObj = new object();
 			boundCodeBreakpoints = new List<DbgBoundCodeBreakpoint>();
 			this.isDebugging = isDebugging;

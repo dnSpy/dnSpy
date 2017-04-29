@@ -20,18 +20,17 @@
 using System;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Breakpoints;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
-namespace dnSpy.Debugger.CorDebug.Breakpoints {
+namespace dnSpy.Debugger.DotNet.Code {
 	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
-		readonly DbgDotNetNativeBreakpointLocation location;
+		readonly DbgDotNetCodeLocation location;
 		readonly BreakpointFormatterServiceImpl owner;
 		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
 
-		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetNativeBreakpointLocation location) {
+		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetCodeLocation location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings ?? throw new ArgumentNullException(nameof(codeBreakpointDisplaySettings));
 			this.location = location ?? throw new ArgumentNullException(nameof(location));
@@ -68,47 +67,10 @@ namespace dnSpy.Debugger.CorDebug.Breakpoints {
 			else
 				owner.MethodDecompiler.Write(output, method, GetPrinterFlags());
 
-			switch (location.ILOffsetMapping) {
-			case DbgILOffsetMapping.Exact:
-			case DbgILOffsetMapping.Approximate:
-				output.WriteSpace();
-				output.Write(BoxedTextColor.Operator, "+");
-				output.WriteSpace();
-				if (location.ILOffsetMapping == DbgILOffsetMapping.Approximate)
-					output.Write(BoxedTextColor.Operator, "~");
-				WriteILOffset(output, location.ILOffset);
-				break;
-
-			case DbgILOffsetMapping.Prolog:
-				WriteText(output, "prolog");
-				break;
-
-			case DbgILOffsetMapping.Epilog:
-				WriteText(output, "epilog");
-				break;
-
-			case DbgILOffsetMapping.Unknown:
-			case DbgILOffsetMapping.NoInfo:
-			case DbgILOffsetMapping.UnmappedAddress:
-				WriteText(output, "???");
-				break;
-
-			default: throw new InvalidOperationException();
-			}
-
 			output.WriteSpace();
-			output.Write(BoxedTextColor.Punctuation, "(");
-			output.Write(BoxedTextColor.Number, "0x" + location.NativeMethodAddress.ToString("X8"));
 			output.Write(BoxedTextColor.Operator, "+");
-			output.Write(BoxedTextColor.Number, "0x" + location.NativeMethodOffset.ToString("X"));
-			output.Write(BoxedTextColor.Punctuation, ")");
-		}
-
-		static void WriteText(ITextColorWriter output, string text) {
 			output.WriteSpace();
-			output.Write(BoxedTextColor.Punctuation, "(");
-			output.Write(BoxedTextColor.Text, text);
-			output.Write(BoxedTextColor.Punctuation, ")");
+			WriteILOffset(output, location.Offset);
 		}
 
 		SimplePrinterFlags GetPrinterFlags() {

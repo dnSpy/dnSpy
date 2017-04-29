@@ -26,12 +26,14 @@ using dndbg.COM.CorDebug;
 using dndbg.DotNet;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.CorDebug.CallStack;
+using dnSpy.Debugger.CorDebug.Code;
 using dnSpy.Debugger.CorDebug.DAC;
 using dnSpy.Debugger.CorDebug.Properties;
 
@@ -47,6 +49,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		internal DebuggerThread DebuggerThread => debuggerThread;
 		internal DbgObjectFactory ObjectFactory => objectFactory;
 
+		readonly Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory;
+		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
 		readonly DebuggerThread debuggerThread;
 		readonly object lockObj;
 		readonly ClrDacProvider clrDacProvider;
@@ -64,7 +68,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		internal readonly StackFrameData stackFrameData;
 		readonly HashSet<DnDebuggerObjectHolder> objectHolders;
 
-		protected DbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgStartKind startKind) {
+		protected DbgEngineImpl(Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgStartKind startKind) {
 			StartKind = startKind;
 			lockObj = new object();
 			toEngineAppDomain = new Dictionary<DnAppDomain, DbgEngineAppDomain>();
@@ -73,6 +77,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			toAssemblyModules = new Dictionary<DnAssembly, List<DnModule>>();
 			stackFrameData = new StackFrameData();
 			objectHolders = new HashSet<DnDebuggerObjectHolder>();
+			this.dbgDotNetNativeCodeLocationFactory = dbgDotNetNativeCodeLocationFactory ?? throw new ArgumentNullException(nameof(dbgDotNetNativeCodeLocationFactory));
+			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory ?? throw new ArgumentNullException(nameof(dbgDotNetCodeLocationFactory));
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			this.dbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier ?? throw new ArgumentNullException(nameof(dbgModuleMemoryRefreshedNotifier));
 			this.clrDacProvider = clrDacProvider ?? throw new ArgumentNullException(nameof(clrDacProvider));

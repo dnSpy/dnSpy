@@ -19,6 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 
 namespace dnSpy.Contracts.Debugger.Engine {
@@ -138,7 +139,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="locations">Breakpoint locations. The engine can ignore non-supported locations.</param>
 		/// <param name="includeNonModuleBreakpoints">If false, add breakpoints that exist in <paramref name="modules"/>, and if true,
 		/// add breakpoints that exist in <paramref name="modules"/> and all breakpoints not in a <see cref="DbgModule"/></param>
-		public abstract void AddBreakpoints(DbgModule[] modules, DbgBreakpointLocation[] locations, bool includeNonModuleBreakpoints);
+		public abstract void AddBreakpoints(DbgModule[] modules, DbgCodeLocation[] locations, bool includeNonModuleBreakpoints);
 
 		/// <summary>
 		/// Creates a stack walker

@@ -17,14 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Metadata;
 
-namespace dnSpy.Contracts.Debugger.CallStack {
+namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
-	/// The location (eg. IP address) of the stack frame. Used when double clicking a stack frame
-	/// in the call stack window. You also need to export a <see cref="ReferenceConverter"/> or
-	/// a <see cref="ReferenceNavigator"/>.
+	/// Creates <see cref="DbgDotNetCodeLocation"/> instances
 	/// </summary>
-	public abstract class DbgStackFrameLocation : DbgObject {
+	public abstract class DbgDotNetCodeLocationFactory {
+		/// <summary>
+		/// Creates a new <see cref="DbgDotNetCodeLocation"/> instance
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="token">Token of a method within the module</param>
+		/// <param name="offset">IL offset of the location within the method body</param>
+		/// <returns></returns>
+		public abstract DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset);
 	}
 }

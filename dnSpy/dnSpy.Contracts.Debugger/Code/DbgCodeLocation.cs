@@ -17,16 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
+namespace dnSpy.Contracts.Debugger.Code {
 	/// <summary>
-	/// Breakpoint location
+	/// Code location. There must be one owner per <see cref="DbgCodeLocation"/> instance. If you must create a
+	/// breakpoint using the same location, call <see cref="Clone"/> and use the new instance as the breakpoint location.
 	/// </summary>
-	public abstract class DbgBreakpointLocation : DbgObject {
+	public abstract class DbgCodeLocation : DbgObject {
 		/// <summary>
-		/// Unique type, see <see cref="PredefinedDbgBreakpointLocationTypes"/>. There should
+		/// Unique type, see <see cref="PredefinedDbgCodeLocationTypes"/>. There should
 		/// be a 1-1 correspondence between this string and the derived type.
 		/// </summary>
 		public abstract string Type { get; }
+
+		/// <summary>
+		/// Clones this instance. The returned instance can be used to create a breakpoint.
+		/// </summary>
+		/// <returns></returns>
+		public abstract DbgCodeLocation Clone();
 
 		/// <summary>
 		/// Compares this instance to <paramref name="obj"/>

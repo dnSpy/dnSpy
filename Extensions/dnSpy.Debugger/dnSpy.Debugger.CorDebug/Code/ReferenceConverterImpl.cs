@@ -17,19 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.CorDebug;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Documents;
 
-namespace dnSpy.Debugger.CorDebug.CallStack {
+namespace dnSpy.Debugger.CorDebug.Code {
 	[ExportReferenceConverter]
-	sealed class StackFrameLocationReferenceConverter : ReferenceConverter {
+	sealed class ReferenceConverterImpl : ReferenceConverter {
 		public override void Convert(ref object reference) {
 			switch (reference) {
-			case DbgDotNetStackFrameLocationImpl frameLoc:
-				switch (frameLoc.ILOffsetMapping) {
+			case DbgDotNetNativeCodeLocationImpl nativeLoc:
+				switch (nativeLoc.ILOffsetMapping) {
 				case DbgILOffsetMapping.Exact:
 				case DbgILOffsetMapping.Approximate:
-					reference = new DotNetMethodBodyReference(frameLoc.Module, frameLoc.Token, frameLoc.ILOffset);
+					reference = new DotNetMethodBodyReference(nativeLoc.Module, nativeLoc.Token, nativeLoc.ILOffset);
 					break;
 
 				case DbgILOffsetMapping.Unknown:
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.CorDebug.CallStack {
 				case DbgILOffsetMapping.UnmappedAddress:
 				default:
 					// The IL offset isn't known so use a method reference
-					reference = new DotNetTokenReference(frameLoc.Module, frameLoc.Token);
+					reference = new DotNetTokenReference(nativeLoc.Module, nativeLoc.Token);
 					break;
 				}
 				break;

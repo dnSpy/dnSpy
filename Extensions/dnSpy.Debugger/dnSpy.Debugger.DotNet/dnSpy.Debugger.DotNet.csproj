@@ -45,19 +45,19 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Breakpoints\Code\BreakpointFormatterService.cs" />
-    <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterProviderImpl.cs" />
-    <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializerImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgDotNetBreakpointFactory2.cs" />
-    <Compile Include="Breakpoints\Code\DbgDotNetBreakpointLocationImpl.cs" />
-    <Compile Include="Breakpoints\Code\DotNetReferenceConverter.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphFormatterImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphTextMarkerLocationProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\ClassBreakpointCommands.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DbgTextViewBreakpointLocationProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DeleteBreakpointsInRemovedModules.cs" />
-    <Compile Include="CallStack\StackFrameLocationReferenceConverter.cs" />
+    <Compile Include="Code\BreakpointFormatterService.cs" />
+    <Compile Include="Code\DbgBreakpointLocationFormatterImpl.cs" />
+    <Compile Include="Code\DbgCodeLocationSerializerImpl.cs" />
+    <Compile Include="Code\DbgDotNetCodeLocationFactoryImpl.cs" />
+    <Compile Include="Code\DbgDotNetCodeLocationImpl.cs" />
+    <Compile Include="Code\ReferenceConverterImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />

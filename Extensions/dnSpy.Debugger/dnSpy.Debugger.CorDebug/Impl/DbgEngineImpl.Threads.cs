@@ -279,7 +279,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			var engineThread = TryGetEngineThread(threadData.DnThread);
 			if (engineThread == null || threadData.DnThread.HasExited)
 				return new NullDbgEngineStackWalker();
-			return new DbgEngineStackWalkerImpl(this, threadData.DnThread, thread, GetFramesBuffer());
+			return new DbgEngineStackWalkerImpl(dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory, this, threadData.DnThread, thread, GetFramesBuffer());
 		}
 		const int framesBufferSize = 0x100;
 		ICorDebugFrame[] framesBuffer = new ICorDebugFrame[framesBufferSize];

@@ -19,10 +19,11 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Debugger.Code;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
-	/// Creates <see cref="DbgBreakpointLocation"/> formatters. Use <see cref="ExportDbgBreakpointLocationFormatterProviderAttribute"/>
+	/// Creates <see cref="DbgCodeLocation"/> formatters. Use <see cref="ExportDbgBreakpointLocationFormatterProviderAttribute"/>
 	/// to export an instance.
 	/// </summary>
 	public abstract class DbgBreakpointLocationFormatterProvider {
@@ -31,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="location">Breakpoint location</param>
 		/// <returns></returns>
-		public abstract DbgBreakpointLocationFormatter Create(DbgBreakpointLocation location);
+		public abstract DbgBreakpointLocationFormatter Create(DbgCodeLocation location);
 	}
 
 	/// <summary>Metadata</summary>
@@ -48,19 +49,19 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="type">Type (compared against <see cref="DbgBreakpointLocation.Type"/>), see <see cref="PredefinedDbgBreakpointLocationTypes"/></param>
+		/// <param name="type">Type (compared against <see cref="DbgCodeLocation.Type"/>), see <see cref="PredefinedDbgCodeLocationTypes"/></param>
 		public ExportDbgBreakpointLocationFormatterProviderAttribute(string type)
 			: base(typeof(DbgBreakpointLocationFormatterProvider)) => Types = new[] { type ?? throw new ArgumentNullException(nameof(type)) };
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="types">Types (compared against <see cref="DbgBreakpointLocation.Type"/>), see <see cref="PredefinedDbgBreakpointLocationTypes"/></param>
+		/// <param name="types">Types (compared against <see cref="DbgCodeLocation.Type"/>), see <see cref="PredefinedDbgCodeLocationTypes"/></param>
 		public ExportDbgBreakpointLocationFormatterProviderAttribute(string[] types)
 			: base(typeof(DbgBreakpointLocationFormatterProvider)) => Types = types ?? throw new ArgumentNullException(nameof(types));
 
 		/// <summary>
-		/// Types (compared against <see cref="DbgBreakpointLocation.Type"/>), see <see cref="PredefinedDbgBreakpointLocationTypes"/>
+		/// Types (compared against <see cref="DbgCodeLocation.Type"/>), see <see cref="PredefinedDbgCodeLocationTypes"/>
 		/// </summary>
 		public string[] Types { get; }
 	}

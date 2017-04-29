@@ -20,25 +20,26 @@
 using System;
 using System.ComponentModel.Composition;
 using dnlib.DotNet;
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Settings;
 
-namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	[ExportDbgBreakpointLocationSerializer(PredefinedDbgBreakpointLocationTypes.DotNet)]
-	sealed class DbgBreakpointLocationSerializerImpl : DbgBreakpointLocationSerializer {
-		readonly Lazy<DbgDotNetBreakpointFactory2> dbgDotNetBreakpointFactory;
+namespace dnSpy.Debugger.DotNet.Code {
+	[ExportDbgCodeLocationSerializer(PredefinedDbgCodeLocationTypes.DotNet)]
+	sealed class DbgCodeLocationSerializerImpl : DbgCodeLocationSerializer {
+		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
 		readonly Lazy<DbgMetadataService> dbgMetadataService;
 
 		[ImportingConstructor]
-		DbgBreakpointLocationSerializerImpl(Lazy<DbgDotNetBreakpointFactory2> dbgDotNetBreakpointFactory, Lazy<DbgMetadataService> dbgMetadataService) {
-			this.dbgDotNetBreakpointFactory = dbgDotNetBreakpointFactory;
+		DbgCodeLocationSerializerImpl(Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, Lazy<DbgMetadataService> dbgMetadataService) {
+			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
 			this.dbgMetadataService = dbgMetadataService;
 		}
 
-		public override void Serialize(ISettingsSection section, DbgBreakpointLocation location) {
-			var loc = (DbgDotNetBreakpointLocationImpl)location;
+		public override void Serialize(ISettingsSection section, DbgCodeLocation location) {
+			var loc = (DbgDotNetCodeLocation)location;
 			section.Attribute("Token", loc.Token);
 			section.Attribute("Offset", loc.Offset);
 			section.Attribute("AssemblyFullName", loc.Module.AssemblyFullName);
@@ -57,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 			}
 		}
 
-		public override DbgBreakpointLocation Deserialize(ISettingsSection section) {
+		public override DbgCodeLocation Deserialize(ISettingsSection section) {
 			var token = section.Attribute<uint?>("Token");
 			var offset = section.Attribute<uint?>("Offset");
 			var assemblyFullName = section.Attribute<string>("AssemblyFullName");
@@ -75,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 					return null;
 			}
 
-			return dbgDotNetBreakpointFactory.Value.CreateLocation(moduleId, token.Value, offset.Value);
+			return dbgDotNetCodeLocationFactory.Value.Create(moduleId, token.Value, offset.Value);
 		}
 
 		string GetMethodAsString(ModuleId moduleId, uint token) {

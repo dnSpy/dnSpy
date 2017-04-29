@@ -17,29 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
+using System;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Metadata;
 
-namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	sealed class DbgDotNetBreakpointLocationImpl : DbgDotNetBreakpointLocation {
-		public override string Type => PredefinedDbgBreakpointLocationTypes.DotNet;
+namespace dnSpy.Debugger.DotNet.Code {
+	sealed class DbgDotNetCodeLocationImpl : DbgDotNetCodeLocation {
+		public override string Type => PredefinedDbgCodeLocationTypes.DotNet;
 		public override ModuleId Module { get; }
 		public override uint Token { get; }
 		public override uint Offset { get; }
 
 		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
+		readonly DbgDotNetCodeLocationFactory factory;
 
-		public DbgDotNetBreakpointLocationImpl(ModuleId module, uint token, uint offset) {
+		public DbgDotNetCodeLocationImpl(DbgDotNetCodeLocationFactory factory, ModuleId module, uint token, uint offset) {
+			this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
 			Module = module;
 			Token = token;
 			Offset = offset;
 		}
 
+		public override DbgCodeLocation Clone() => factory.Create(Module, Token, Offset);
+
 		protected override void CloseCore() { }
 
 		public override bool Equals(object obj) =>
-			obj is DbgDotNetBreakpointLocationImpl other &&
+			obj is DbgDotNetCodeLocationImpl other &&
 			Module == other.Module &&
 			Token == other.Token &&
 			Offset == other.Offset;

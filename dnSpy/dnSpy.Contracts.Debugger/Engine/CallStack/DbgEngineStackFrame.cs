@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
 
@@ -34,7 +35,7 @@ namespace dnSpy.Contracts.Debugger.Engine.CallStack {
 		/// <summary>
 		/// Gets the location or null if none. Can be passed to <see cref="ReferenceNavigatorService.GoTo(object, object[])"/>
 		/// </summary>
-		public abstract DbgStackFrameLocation Location { get; }
+		public abstract DbgCodeLocation Location { get; }
 
 		/// <summary>
 		/// Gets the offset of the IP relative to the start of the function

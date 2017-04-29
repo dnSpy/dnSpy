@@ -46,21 +46,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Breakpoints\BreakpointFormatterService.cs" />
-    <Compile Include="Breakpoints\DbgBreakpointLocationFormatterImpl.cs" />
     <Compile Include="Breakpoints\DbgBreakpointLocationFormatterProviderImpl.cs" />
-    <Compile Include="Breakpoints\DbgDotNetNativeBreakpointLocationFactory.cs" />
-    <Compile Include="Breakpoints\DbgDotNetNativeBreakpointLocationImpl.cs" />
-    <Compile Include="Breakpoints\ReferenceConverterImpl.cs" />
     <Compile Include="Breakpoints\TextEditor\BreakpointGlyphFormatterImpl.cs" />
     <Compile Include="Breakpoints\TextEditor\BreakpointGlyphTextMarkerLocationProviderImpl.cs" />
-    <Compile Include="CallStack\DbgDotNetStackFrameLocationImpl.cs" />
     <Compile Include="CallStack\DbgEngineStackWalkerImpl.cs" />
-    <Compile Include="CallStack\DbgStackFrameBreakpointLocationProviderImpl.cs" />
     <Compile Include="CallStack\ILDbgEngineStackFrame.cs" />
     <Compile Include="CallStack\NullDbgEngineStackWalker.cs" />
     <Compile Include="CallStack\StackFrameData.cs" />
-    <Compile Include="CallStack\StackFrameLocationReferenceConverter.cs" />
+    <Compile Include="Code\BreakpointFormatterService.cs" />
+    <Compile Include="Code\DbgDotNetNativeCodeLocationFactory.cs" />
+    <Compile Include="Code\DbgDotNetNativeCodeLocationImpl.cs" />
+    <Compile Include="Code\DbgDotNetNativeLocationImpl.cs" />
+    <Compile Include="Code\ReferenceConverterImpl.cs" />
     <Compile Include="DAC\ClrDac.cs" />
     <Compile Include="DAC\ClrDacImpl.cs" />
     <Compile Include="DAC\ClrDacProvider.cs" />

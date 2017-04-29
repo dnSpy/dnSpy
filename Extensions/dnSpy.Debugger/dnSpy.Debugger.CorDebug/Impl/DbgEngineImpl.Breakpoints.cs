@@ -24,10 +24,11 @@ using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Metadata;
-using dnSpy.Debugger.CorDebug.Breakpoints;
+using dnSpy.Debugger.CorDebug.Code;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
@@ -80,39 +81,39 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				dnDebugger.RemoveBreakpoint(bp);
 		}
 
-		static Dictionary<ModuleId, List<DbgDotNetBreakpointLocation>> CreateDotNetLocationDictionary(DbgBreakpointLocation[] locations) {
-			var dict = new Dictionary<ModuleId, List<DbgDotNetBreakpointLocation>>();
+		static Dictionary<ModuleId, List<DbgDotNetCodeLocation>> CreateDotNetCodeLocationDictionary(DbgCodeLocation[] locations) {
+			var dict = new Dictionary<ModuleId, List<DbgDotNetCodeLocation>>();
 			foreach (var location in locations) {
-				if (location is DbgDotNetBreakpointLocation loc) {
+				if (location is DbgDotNetCodeLocation loc) {
 					if (!dict.TryGetValue(loc.Module, out var list))
-						dict.Add(loc.Module, list = new List<DbgDotNetBreakpointLocation>());
+						dict.Add(loc.Module, list = new List<DbgDotNetCodeLocation>());
 					list.Add(loc);
 				}
 			}
 			return dict;
 		}
 
-		Dictionary<ModuleId, List<DbgDotNetNativeBreakpointLocationImpl>> CreateDotNetNativeLocationDictionary(DbgBreakpointLocation[] locations) {
-			var dict = new Dictionary<ModuleId, List<DbgDotNetNativeBreakpointLocationImpl>>();
+		Dictionary<ModuleId, List<DbgDotNetNativeCodeLocationImpl>> CreateDotNetNativeCodeLocationDictionary(DbgCodeLocation[] locations) {
+			var dict = new Dictionary<ModuleId, List<DbgDotNetNativeCodeLocationImpl>>();
 			foreach (var location in locations) {
-				if (location is DbgDotNetNativeBreakpointLocationImpl loc) {
+				if (location is DbgDotNetNativeCodeLocationImpl loc) {
 					if (loc.CorCode.Object == null || loc.CorCode.Engine != this)
 						continue;
 					if (!dict.TryGetValue(loc.Module, out var list))
-						dict.Add(loc.Module, list = new List<DbgDotNetNativeBreakpointLocationImpl>());
+						dict.Add(loc.Module, list = new List<DbgDotNetNativeCodeLocationImpl>());
 					list.Add(loc);
 				}
 			}
 			return dict;
 		}
 
-		public override void AddBreakpoints(DbgModule[] modules, DbgBreakpointLocation[] locations, bool includeNonModuleBreakpoints) =>
+		public override void AddBreakpoints(DbgModule[] modules, DbgCodeLocation[] locations, bool includeNonModuleBreakpoints) =>
 			CorDebugThread(() => AddBreakpointsCore(modules, locations, includeNonModuleBreakpoints));
-		void AddBreakpointsCore(DbgModule[] modules, DbgBreakpointLocation[] locations, bool includeNonModuleBreakpoints) {
+		void AddBreakpointsCore(DbgModule[] modules, DbgCodeLocation[] locations, bool includeNonModuleBreakpoints) {
 			debuggerThread.VerifyAccess();
 
-			var dict = CreateDotNetLocationDictionary(locations);
-			var nativeDict = CreateDotNetNativeLocationDictionary(locations);
+			var dict = CreateDotNetCodeLocationDictionary(locations);
+			var nativeDict = CreateDotNetNativeCodeLocationDictionary(locations);
 			var createdBreakpoints = new List<DbgBoundCodeBreakpointInfo<BoundBreakpointData>>();
 			foreach (var module in modules) {
 				if (!TryGetModuleData(module, out var data))

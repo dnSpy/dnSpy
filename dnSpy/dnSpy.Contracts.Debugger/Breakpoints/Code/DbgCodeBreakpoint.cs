@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using dnSpy.Contracts.Debugger.Code;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
@@ -98,7 +99,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Gets the breakpoint location
 		/// </summary>
-		public abstract DbgBreakpointLocation Location { get; }
+		public abstract DbgCodeLocation Location { get; }
 
 		/// <summary>
 		/// Gets all bound breakpoints

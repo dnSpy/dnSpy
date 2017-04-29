@@ -20,6 +20,7 @@
 using System;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Impl;
@@ -27,7 +28,7 @@ using dnSpy.Debugger.Impl;
 namespace dnSpy.Debugger.CallStack {
 	sealed class DbgStackFrameImpl : DbgStackFrame {
 		public override DbgThread Thread => thread;
-		public override DbgStackFrameLocation Location => engineStackFrame.Location;
+		public override DbgCodeLocation Location => engineStackFrame.Location;
 		public override DbgModule Module => engineStackFrame.Module;
 		public override uint FunctionOffset => engineStackFrame.FunctionOffset;
 		public override uint FunctionToken => engineStackFrame.FunctionToken;

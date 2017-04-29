@@ -17,13 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
+namespace dnSpy.Contracts.Debugger.Code {
 	/// <summary>
-	/// Predefined <see cref="DbgBreakpointLocation"/> types
+	/// Predefined <see cref="DbgCodeLocation"/> types
 	/// </summary>
-	public static class PredefinedDbgBreakpointLocationTypes {
+	public static class PredefinedDbgCodeLocationTypes {
 		/// <summary>
-		/// .NET code breakpoint location with a module, token, and IL offset
+		/// .NET code location with a module, token, and IL offset
 		/// </summary>
 		public const string DotNet = nameof(DotNet);
 

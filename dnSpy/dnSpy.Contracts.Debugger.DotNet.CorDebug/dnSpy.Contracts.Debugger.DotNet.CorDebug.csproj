@@ -40,13 +40,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Breakpoints\DbgDotNetNativeBreakpointLocation.cs" />
     <Compile Include="BreakProcessKind.cs" />
-    <Compile Include="CallStack\DbgDotNetStackFrameLocation.cs" />
+    <Compile Include="Code\DbgDotNetNativeCodeLocation.cs" />
+    <Compile Include="Code\DbgILOffsetMapping.cs" />
     <Compile Include="CorDebugAttachDebuggingOptions.cs" />
     <Compile Include="CorDebugStartDebuggingOptions.cs" />
     <Compile Include="CorThreadUserStates.cs" />
-    <Compile Include="DbgILOffsetMapping.cs" />
     <Compile Include="DotNetCoreAttachDebuggingOptions.cs" />
     <Compile Include="DotNetCoreStartDebuggingOptions.cs" />
     <Compile Include="DotNetFrameworkAttachDebuggingOptions.cs" />

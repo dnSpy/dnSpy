@@ -49,10 +49,8 @@
     <Compile Include="Attach\PredefinedAttachProgramOptionsProviderNames.cs" />
     <Compile Include="Breakpoints\Code\CodeBreakpointDisplaySettings.cs" />
     <Compile Include="Breakpoints\Code\DbgBoundCodeBreakpoint.cs" />
-    <Compile Include="Breakpoints\Code\DbgBreakpointLocation.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatter.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterProvider.cs" />
-    <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializer.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpoint.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointHitCountService.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointOptions.cs" />
@@ -60,7 +58,6 @@
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointsService.cs" />
     <Compile Include="Breakpoints\Code\FilterExpressionEvaluator\DbgFilterEEVariableProvider.cs" />
     <Compile Include="Breakpoints\Code\FilterExpressionEvaluator\DbgFilterExpressionEvaluator.cs" />
-    <Compile Include="Breakpoints\Code\PredefinedDbgBreakpointLocationTypes.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphFormatter.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphTextMarkerLocationProvider.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DbgTextViewBreakpointLocationProvider.cs" />
@@ -68,12 +65,12 @@
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpoint.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointSettings.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsService.cs" />
-    <Compile Include="CallStack\DbgCallStackBreakpointService.cs" />
     <Compile Include="CallStack\DbgStackFrame.cs" />
-    <Compile Include="CallStack\DbgStackFrameBreakpointLocationProvider.cs" />
     <Compile Include="CallStack\DbgStackFrameFormatOptions.cs" />
-    <Compile Include="CallStack\DbgStackFrameLocation.cs" />
     <Compile Include="CallStack\DbgStackWalker.cs" />
+    <Compile Include="Code\DbgCodeLocation.cs" />
+    <Compile Include="Code\DbgCodeLocationSerializer.cs" />
+    <Compile Include="Code\PredefinedDbgCodeLocationTypes.cs" />
     <Compile Include="DbgAppDomain.cs" />
     <Compile Include="DbgCollectionChangedEventArgs.cs" />
     <Compile Include="DbgDebuggingContext.cs" />

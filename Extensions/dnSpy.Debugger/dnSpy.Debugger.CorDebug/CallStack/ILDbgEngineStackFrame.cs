@@ -22,15 +22,17 @@ using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
-using dnSpy.Contracts.Debugger.DotNet.CallStack;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.CorDebug.Code;
 using dnSpy.Debugger.CorDebug.Impl;
 
 namespace dnSpy.Debugger.CorDebug.CallStack {
 	sealed class ILDbgEngineStackFrame : DbgEngineStackFrame {
-		public override DbgStackFrameLocation Location { get; }
+		public override DbgCodeLocation Location { get; }
 		public override DbgModule Module { get; }
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
@@ -38,7 +40,7 @@ namespace dnSpy.Debugger.CorDebug.CallStack {
 		readonly DbgEngineImpl engine;
 		readonly CorFrame corFrame;
 
-		public ILDbgEngineStackFrame(DbgEngineImpl engine, DbgModule module, CorFrame corFrame, CorFunction corFunction) {
+		public ILDbgEngineStackFrame(DbgEngineImpl engine, DbgModule module, CorFrame corFrame, CorFunction corFunction, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			Module = module ?? throw new ArgumentNullException(nameof(module));
 			this.corFrame = corFrame ?? throw new ArgumentNullException(nameof(corFrame));
@@ -86,10 +88,10 @@ namespace dnSpy.Debugger.CorDebug.CallStack {
 			Debug.Assert(nativeCode?.IsIL == false);
 			if (nativeCode?.IsIL == false) {
 				var corCode = engine.CreateDnDebuggerObjectHolder(nativeCode);
-				Location = new DbgDotNetStackFrameLocationImpl(moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, corCode, corFrame.NativeFrameIP);
+				Location = dbgDotNetNativeCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, corCode.Object.Address, corFrame.NativeFrameIP, corCode);
 			}
 			else
-				Location = new DbgDotNetMethodBodyStackFrameLocation(moduleId, FunctionToken, FunctionOffset);
+				Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset);
 		}
 
 		public override void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options) =>

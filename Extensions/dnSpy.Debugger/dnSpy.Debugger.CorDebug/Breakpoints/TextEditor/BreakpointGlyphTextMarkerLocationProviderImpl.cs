@@ -19,15 +19,14 @@
 
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Breakpoints;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Debugger.CorDebug.Breakpoints.TextEditor {
 	[ExportBreakpointGlyphTextMarkerLocationProvider]
 	sealed class BreakpointGlyphTextMarkerLocationProviderImpl : BreakpointGlyphTextMarkerLocationProvider {
 		public override GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint) {
-			if (breakpoint.Location is DbgDotNetNativeBreakpointLocation loc) {
+			if (breakpoint.Location is DbgDotNetNativeCodeLocation loc) {
 				switch (loc.ILOffsetMapping) {
 				case DbgILOffsetMapping.Exact:
 				case DbgILOffsetMapping.Approximate:

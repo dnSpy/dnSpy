@@ -20,18 +20,24 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.CorDebug.Code;
 using dnSpy.Debugger.CorDebug.DAC;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	[ExportDbgEngineProvider]
 	sealed class DbgEngineProviderImpl : DbgEngineProvider {
+		readonly Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory;
+		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
 		readonly Lazy<ClrDacProvider> clrDacProvider;
 		readonly Lazy<DbgModuleMemoryRefreshedNotifier2> dbgModuleMemoryRefreshedNotifier;
 
 		[ImportingConstructor]
-		DbgEngineProviderImpl(Lazy<ClrDacProvider> clrDacProvider, Lazy<DbgModuleMemoryRefreshedNotifier2> dbgModuleMemoryRefreshedNotifier) {
+		DbgEngineProviderImpl(Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, Lazy<ClrDacProvider> clrDacProvider, Lazy<DbgModuleMemoryRefreshedNotifier2> dbgModuleMemoryRefreshedNotifier) {
+			this.dbgDotNetNativeCodeLocationFactory = dbgDotNetNativeCodeLocationFactory;
+			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
 			this.clrDacProvider = clrDacProvider;
 			this.dbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier;
 		}
@@ -39,16 +45,16 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public override DbgEngine Create(DbgManager dbgManager, StartDebuggingOptions options) {
 			switch (options) {
 			case DotNetFrameworkStartDebuggingOptions _:
-				return new DotNetFrameworkDbgEngineImpl(clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Start);
+				return new DotNetFrameworkDbgEngineImpl(dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory, clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Start);
 
 			case DotNetCoreStartDebuggingOptions _:
-				return new DotNetCoreDbgEngineImpl(clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Start);
+				return new DotNetCoreDbgEngineImpl(dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory, clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Start);
 
 			case DotNetFrameworkAttachDebuggingOptions _:
-				return new DotNetFrameworkDbgEngineImpl(clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Attach);
+				return new DotNetFrameworkDbgEngineImpl(dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory, clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Attach);
 
 			case DotNetCoreAttachDebuggingOptions _:
-				return new DotNetCoreDbgEngineImpl(clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Attach);
+				return new DotNetCoreDbgEngineImpl(dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory, clrDacProvider.Value, dbgManager, dbgModuleMemoryRefreshedNotifier.Value, DbgStartKind.Attach);
 			}
 
 			return null;

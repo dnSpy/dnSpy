@@ -22,33 +22,21 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
-using dnSpy.Contracts.Metadata;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	abstract class DbgDotNetBreakpointFactory2 : DbgDotNetBreakpointFactory {
-		public abstract DbgDotNetBreakpointLocation CreateLocation(ModuleId module, uint token, uint offset);
-	}
-
 	[Export(typeof(DbgDotNetBreakpointFactory))]
-	[Export(typeof(DbgDotNetBreakpointFactory2))]
-	sealed class DbgDotNetBreakpointFactoryImpl : DbgDotNetBreakpointFactory2 {
+	sealed class DbgDotNetBreakpointFactoryImpl : DbgDotNetBreakpointFactory {
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
-		readonly BreakpointFormatterService breakpointFormatterService;
+		readonly DbgDotNetCodeLocationFactory dbgDotNetCodeLocationFactory;
 
 		[ImportingConstructor]
-		DbgDotNetBreakpointFactoryImpl(Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, BreakpointFormatterService breakpointFormatterService) {
+		DbgDotNetBreakpointFactoryImpl(Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, DbgDotNetCodeLocationFactory dbgDotNetCodeLocationFactory) {
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
-			this.breakpointFormatterService = breakpointFormatterService;
+			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
 		}
 
 		public override DbgCodeBreakpoint[] Create(DbgDotNetBreakpointInfo[] breakpoints) =>
-			dbgCodeBreakpointsService.Value.Add(breakpoints.Select(a => new DbgCodeBreakpointInfo(CreateLocation(a.Module, a.Token, a.Offset), a.Settings)).ToArray());
-
-		public override DbgDotNetBreakpointLocation CreateLocation(ModuleId module, uint token, uint offset) {
-			var dnbp = new DbgDotNetBreakpointLocationImpl(module, token, offset);
-			var formatter = breakpointFormatterService.Create(dnbp);
-			dnbp.Formatter = formatter;
-			return dnbp;
-		}
+			dbgCodeBreakpointsService.Value.Add(breakpoints.Select(a => new DbgCodeBreakpointInfo(dbgDotNetCodeLocationFactory.Create(a.Module, a.Token, a.Offset), a.Settings)).ToArray());
 	}
 }

@@ -17,42 +17,44 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.CallStack;
-using dnSpy.Contracts.Metadata;
-
-namespace dnSpy.Contracts.Debugger.DotNet.CallStack {
+namespace dnSpy.Contracts.Debugger.DotNet.CorDebug.Code {
 	/// <summary>
-	/// Stack frame location in some IL body
+	/// IL offset mapping result. This enum is similar to <c>CorDebugMappingResult</c>
 	/// </summary>
-	public sealed class DbgDotNetMethodBodyStackFrameLocation : DbgStackFrameLocation {
+	public enum DbgILOffsetMapping {
 		/// <summary>
-		/// Gets the module
+		/// Unknown
 		/// </summary>
-		public ModuleId Module { get; }
+		Unknown,
 
 		/// <summary>
-		/// Gets the token of a method within the module
+		/// The native code is in the prolog
 		/// </summary>
-		public uint Token { get; }
+		Prolog,
 
 		/// <summary>
-		/// Gets the IL offset within the method body
+		/// The native code is in an epilog
 		/// </summary>
-		public uint Offset { get; }
+		Epilog,
 
 		/// <summary>
-		/// Constructor
+		/// Either the method maps exactly to MSIL code or the frame has been interpreted, so the value of the IP is accurate
 		/// </summary>
-		/// <param name="module">Module</param>
-		/// <param name="token">Token of method</param>
-		/// <param name="offset">IL offset in method body</param>
-		public DbgDotNetMethodBodyStackFrameLocation(ModuleId module, uint token, uint offset) {
-			Module = module;
-			Token = token;
-			Offset = offset;
-		}
+		Exact,
 
-		/// <inheritdoc/>
-		protected override void CloseCore() { }
+		/// <summary>
+		/// The method was successfully mapped, but the value of the IP may be approximate
+		/// </summary>
+		Approximate,
+
+		/// <summary>
+		/// No mapping information is available for the method
+		/// </summary>
+		NoInfo,
+
+		/// <summary>
+		/// Although there is mapping information for the method, the current address cannot be mapped to Microsoft intermediate language (MSIL) code
+		/// </summary>
+		UnmappedAddress,
 	}
 }

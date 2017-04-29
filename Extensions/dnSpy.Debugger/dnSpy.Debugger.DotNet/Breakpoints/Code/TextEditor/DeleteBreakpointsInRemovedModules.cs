@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Metadata;
@@ -68,7 +69,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				foreach (var bp in dbgCodeBreakpointsService.Breakpoints) {
 					if (bp.IsHidden)
 						continue;
-					if (!(bp.Location is DbgDotNetBreakpointLocationImpl location))
+					if (!(bp.Location is DbgDotNetCodeLocation location))
 						continue;
 					// Don't auto-remove BPs in dynamic modules since they have no disk file. The
 					// user must delete these him/herself.

@@ -23,7 +23,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Debugger.Exceptions;
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.Impl {
 			List<IDisposable> dataToDispose = null;
 
 			var allBreakpoints = boundCodeBreakpointsService.Value.Breakpoints;
-			var dict = new Dictionary<DbgBreakpointLocation, DbgCodeBreakpoint>(allBreakpoints.Length);
+			var dict = new Dictionary<DbgCodeLocation, DbgCodeBreakpoint>(allBreakpoints.Length);
 			foreach (var bp in allBreakpoints) {
 				Debug.Assert(!dict.ContainsKey(bp.Location));
 				dict[bp.Location] = bp;
@@ -151,7 +151,7 @@ namespace dnSpy.Debugger.Impl {
 			return bps.ToArray();
 		}
 
-		public override DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgStackFrameLocation location, DbgModule module, uint functionOffset, uint functionToken) {
+		public override DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgCodeLocation location, DbgModule module, uint functionOffset, uint functionToken) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 			return new SpecialDbgEngineStackFrame(name, location, module, functionOffset, functionToken);

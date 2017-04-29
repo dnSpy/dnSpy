@@ -24,8 +24,10 @@ using System.IO;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.CorDebug.Code;
 using dnSpy.Debugger.CorDebug.DAC;
 using dnSpy.Debugger.CorDebug.Properties;
 using dnSpy.Debugger.CorDebug.Utilities;
@@ -45,8 +47,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		int Bitness => IntPtr.Size * 8;
 
-		public DotNetCoreDbgEngineImpl(ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgStartKind startKind)
-			: base(clrDacProvider, dbgManager, dbgModuleMemoryRefreshedNotifier, startKind) {
+		public DotNetCoreDbgEngineImpl(Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgStartKind startKind)
+			: base(dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory, clrDacProvider, dbgManager, dbgModuleMemoryRefreshedNotifier, startKind) {
 		}
 
 		string GetDbgShimAndVerify() {

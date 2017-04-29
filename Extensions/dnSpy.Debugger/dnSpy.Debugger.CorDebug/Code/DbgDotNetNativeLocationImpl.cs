@@ -19,15 +19,14 @@
 
 using System;
 using dndbg.Engine;
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Breakpoints;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.CorDebug.Impl;
 
-namespace dnSpy.Debugger.CorDebug.Breakpoints {
-	sealed class DbgDotNetNativeBreakpointLocationImpl : DbgDotNetNativeBreakpointLocation {
-		public override string Type => PredefinedDbgBreakpointLocationTypes.DotNetCorDebugNative;
+namespace dnSpy.Debugger.CorDebug.Code {
+	sealed class DbgDotNetNativeCodeLocationImpl : DbgDotNetNativeCodeLocation {
+		public override string Type => PredefinedDbgCodeLocationTypes.DotNetCorDebugNative;
 		public override ModuleId Module { get; }
 		public override uint Token { get; }
 		public override uint ILOffset { get; }
@@ -38,7 +37,10 @@ namespace dnSpy.Debugger.CorDebug.Breakpoints {
 
 		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
 
-		public DbgDotNetNativeBreakpointLocationImpl(ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
+		readonly DbgDotNetNativeCodeLocationFactory owner;
+
+		public DbgDotNetNativeCodeLocationImpl(DbgDotNetNativeCodeLocationFactory owner, ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
+			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			Module = module;
 			Token = token;
 			ILOffset = ilOffset;
@@ -48,10 +50,13 @@ namespace dnSpy.Debugger.CorDebug.Breakpoints {
 			CorCode = corCode ?? throw new ArgumentNullException(nameof(corCode));
 		}
 
+		public override DbgCodeLocation Clone() =>
+			owner.Create(Module, Token, ILOffset, ILOffsetMapping, NativeMethodAddress, NativeMethodOffset, CorCode.AddRef());
+
 		protected override void CloseCore() => CorCode.Close();
 
 		public override bool Equals(object obj) =>
-			obj is DbgDotNetNativeBreakpointLocationImpl other &&
+			obj is DbgDotNetNativeCodeLocationImpl other &&
 			CorCode.Object == other.CorCode.Object &&
 			Module == other.Module &&
 			Token == other.Token &&

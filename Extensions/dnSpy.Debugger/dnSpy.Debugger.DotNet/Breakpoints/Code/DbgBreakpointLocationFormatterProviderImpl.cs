@@ -18,11 +18,13 @@
 */
 
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Debugger.DotNet.Code;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
-	[ExportDbgBreakpointLocationFormatterProvider(PredefinedDbgBreakpointLocationTypes.DotNet)]
+	[ExportDbgBreakpointLocationFormatterProvider(PredefinedDbgCodeLocationTypes.DotNet)]
 	sealed class DbgBreakpointLocationFormatterProviderImpl : DbgBreakpointLocationFormatterProvider {
-		public override DbgBreakpointLocationFormatter Create(DbgBreakpointLocation location) =>
-			(location as DbgDotNetBreakpointLocationImpl)?.Formatter;
+		public override DbgBreakpointLocationFormatter Create(DbgCodeLocation location) =>
+			(location as DbgDotNetCodeLocationImpl)?.Formatter;
 	}
 }

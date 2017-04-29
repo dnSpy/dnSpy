@@ -17,18 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.DotNet.Code;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Metadata;
 
-namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
-	[ExportBreakpointGlyphTextMarkerLocationProvider]
-	sealed class BreakpointGlyphTextMarkerLocationProviderImpl : BreakpointGlyphTextMarkerLocationProvider {
-		public override GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint) {
-			if (breakpoint.Location is DbgDotNetCodeLocation loc)
-				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(loc.Module, loc.Token, loc.Offset);
-			return null;
+namespace dnSpy.Debugger.DotNet.Code {
+	[Export(typeof(DbgDotNetCodeLocationFactory))]
+	sealed class DbgDotNetCodeLocationFactoryImpl : DbgDotNetCodeLocationFactory {
+		readonly BreakpointFormatterService breakpointFormatterService;
+
+		[ImportingConstructor]
+		DbgDotNetCodeLocationFactoryImpl(BreakpointFormatterService breakpointFormatterService) =>
+			this.breakpointFormatterService = breakpointFormatterService;
+
+		public override DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset) {
+			var dnbp = new DbgDotNetCodeLocationImpl(this, module, token, offset);
+			var formatter = breakpointFormatterService.Create(dnbp);
+			dnbp.Formatter = formatter;
+			return dnbp;
 		}
 	}
 }

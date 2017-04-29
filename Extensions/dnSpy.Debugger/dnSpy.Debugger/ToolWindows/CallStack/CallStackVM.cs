@@ -64,7 +64,6 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		readonly Lazy<DbgCallStackService> dbgCallStackService;
 		readonly CallStackDisplaySettings callStackDisplaySettings;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
-		readonly Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService;
 		readonly CallStackFormatterProvider callStackFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
 		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
@@ -72,7 +71,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		readonly Dictionary<DbgCodeBreakpoint, HashSet<NormalStackFrameVM>> usedBreakpoints;
 
 		[ImportingConstructor]
-		CallStackVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, Lazy<DbgCallStackService> dbgCallStackService, CallStackDisplaySettings callStackDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackBreakpointService> dbgCallStackBreakpointService, CallStackFormatterProvider callStackFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+		CallStackVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, Lazy<DbgCallStackService> dbgCallStackService, CallStackDisplaySettings callStackDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, CallStackFormatterProvider callStackFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			uiDispatcher.VerifyAccess();
 			AllItems = new ObservableCollection<StackFrameVM>();
 			SelectedItems = new ObservableCollection<StackFrameVM>();
@@ -80,7 +79,6 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			this.dbgCallStackService = dbgCallStackService;
 			this.callStackDisplaySettings = callStackDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
-			this.dbgCallStackBreakpointService = dbgCallStackBreakpointService;
 			getBreakpointKind = GetBreakpointKind_UI;
 			usedBreakpoints = new Dictionary<DbgCodeBreakpoint, HashSet<NormalStackFrameVM>>();
 			this.callStackFormatterProvider = callStackFormatterProvider;
@@ -389,7 +387,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		// UI thread
 		BreakpointKind? GetBreakpointKind_UI(NormalStackFrameVM vm) {
 			callStackContext.UIDispatcher.VerifyAccess();
-			var breakpoint = dbgCallStackBreakpointService.Value.TryGetBreakpoint(vm.Frame.Location);
+			var location = vm.Frame.Location;
+			var breakpoint = location == null ? null : dbgCodeBreakpointsService.Value.TryGetBreakpoint(location);
 			if (breakpoint == null || breakpoint.IsHidden)
 				return null;
 			if (!usedBreakpoints.TryGetValue(breakpoint, out var hash)) {

@@ -24,12 +24,16 @@ using System.Diagnostics;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Debugger.CorDebug.Code;
 using dnSpy.Debugger.CorDebug.Impl;
 using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.CallStack {
 	sealed class DbgEngineStackWalkerImpl : DbgEngineStackWalker {
+		readonly Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory;
+		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
 		readonly DbgEngineImpl engine;
 		readonly DnThread dnThread;
 		readonly DbgThread thread;
@@ -47,7 +51,9 @@ namespace dnSpy.Debugger.CorDebug.CallStack {
 			void IDisposable.Dispose() { }
 		}
 
-		public DbgEngineStackWalkerImpl(DbgEngineImpl engine, DnThread dnThread, DbgThread thread, ICorDebugFrame[] framesBuffer) {
+		public DbgEngineStackWalkerImpl(Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, DbgEngineImpl engine, DnThread dnThread, DbgThread thread, ICorDebugFrame[] framesBuffer) {
+			this.dbgDotNetNativeCodeLocationFactory = dbgDotNetNativeCodeLocationFactory ?? throw new ArgumentNullException(nameof(dbgDotNetNativeCodeLocationFactory));
+			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory ?? throw new ArgumentNullException(nameof(dbgDotNetCodeLocationFactory));
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			this.dnThread = dnThread ?? throw new ArgumentNullException(nameof(dnThread));
 			this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
@@ -89,7 +95,7 @@ namespace dnSpy.Debugger.CorDebug.CallStack {
 				var module = engine.TryGetModule(func.Module);
 				if (module == null)
 					return CreateErrorStackFrame();
-				return new ILDbgEngineStackFrame(engine, module, corFrame, func);
+				return new ILDbgEngineStackFrame(engine, module, corFrame, func, dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory);
 			}
 
 			if (corFrame.IsInternalFrame)

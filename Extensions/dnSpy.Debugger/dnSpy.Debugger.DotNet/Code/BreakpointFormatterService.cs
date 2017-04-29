@@ -20,15 +20,15 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Breakpoints;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
-using dnSpy.Debugger.CorDebug.UI;
+using dnSpy.Debugger.DotNet.UI;
 
-namespace dnSpy.Debugger.CorDebug.Breakpoints {
+namespace dnSpy.Debugger.DotNet.Code {
 	abstract class BreakpointFormatterService {
-		public abstract DbgBreakpointLocationFormatterImpl Create(DbgDotNetNativeBreakpointLocation location);
+		public abstract DbgBreakpointLocationFormatterImpl Create(DbgDotNetCodeLocation location);
 	}
 
 	[Export(typeof(BreakpointFormatterService))]
@@ -53,12 +53,12 @@ namespace dnSpy.Debugger.CorDebug.Breakpoints {
 			foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
 				if (bp.IsHidden)
 					continue;
-				var formatter = (bp.Location as DbgDotNetNativeBreakpointLocationImpl)?.Formatter;
+				var formatter = (bp.Location as DbgDotNetCodeLocationImpl)?.Formatter;
 				formatter?.RefreshName();
 			}
 		}
 
-		public override DbgBreakpointLocationFormatterImpl Create(DbgDotNetNativeBreakpointLocation location) =>
+		public override DbgBreakpointLocationFormatterImpl Create(DbgDotNetCodeLocation location) =>
 			new DbgBreakpointLocationFormatterImpl(this, codeBreakpointDisplaySettings, location);
 
 		internal TDef GetDefinition<TDef>(ModuleId module, uint token) where TDef : class {

@@ -32,14 +32,14 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	[Export(typeof(DbgCodeBreakpointSerializerService))]
 	sealed class DbgCodeBreakpointSerializerServiceImpl : DbgCodeBreakpointSerializerService {
 		readonly Lazy<ISettingsServiceFactory> settingsServiceFactory;
-		readonly Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService;
+		readonly Lazy<DbgCodeLocationSerializerService> dbgCodeLocationSerializerService;
 		readonly IPickSaveFilename pickSaveFilename;
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		DbgCodeBreakpointSerializerServiceImpl(Lazy<ISettingsServiceFactory> settingsServiceFactory, Lazy<DbgBreakpointLocationSerializerService> dbgBreakpointLocationSerializerService, IPickSaveFilename pickSaveFilename, IMessageBoxService messageBoxService) {
+		DbgCodeBreakpointSerializerServiceImpl(Lazy<ISettingsServiceFactory> settingsServiceFactory, Lazy<DbgCodeLocationSerializerService> dbgCodeLocationSerializerService, IPickSaveFilename pickSaveFilename, IMessageBoxService messageBoxService) {
 			this.settingsServiceFactory = settingsServiceFactory;
-			this.dbgBreakpointLocationSerializerService = dbgBreakpointLocationSerializerService;
+			this.dbgCodeLocationSerializerService = dbgCodeLocationSerializerService;
 			this.pickSaveFilename = pickSaveFilename;
 			this.messageBoxService = messageBoxService;
 		}
@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			if (filename == null)
 				return;
 			var settingsService = settingsServiceFactory.Value.Create();
-			new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService.Value).Save(breakpoints);
+			new BreakpointsSerializer(settingsService, dbgCodeLocationSerializerService.Value).Save(breakpoints);
 			try {
 				settingsService.Save(filename);
 			}

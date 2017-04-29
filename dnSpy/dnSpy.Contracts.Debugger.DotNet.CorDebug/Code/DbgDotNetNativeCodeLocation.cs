@@ -17,15 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Metadata;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
+namespace dnSpy.Contracts.Debugger.DotNet.CorDebug.Code {
 	/// <summary>
-	/// .NET code breakpoint. It contains a weak module reference, a method token and
-	/// an IL offset.
+	/// A .NET method body location including an exact native address
 	/// </summary>
-	public abstract class DbgDotNetBreakpointLocation : DbgBreakpointLocation {
+	public abstract class DbgDotNetNativeCodeLocation : DbgCodeLocation {
 		/// <summary>
 		/// Gets the module
 		/// </summary>
@@ -37,8 +36,23 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 		public abstract uint Token { get; }
 
 		/// <summary>
-		/// Gets the IL offset of the breakpoint within the method body
+		/// Gets the IL offset within the method body
 		/// </summary>
-		public abstract uint Offset { get; }
+		public abstract uint ILOffset { get; }
+
+		/// <summary>
+		/// Gets the IL offset mapping
+		/// </summary>
+		public abstract DbgILOffsetMapping ILOffsetMapping { get; }
+
+		/// <summary>
+		/// Gets the address of the native method
+		/// </summary>
+		public abstract ulong NativeMethodAddress { get; }
+
+		/// <summary>
+		/// Gets the offset of the native instruction within the native method body
+		/// </summary>
+		public abstract uint NativeMethodOffset { get; }
 	}
 }

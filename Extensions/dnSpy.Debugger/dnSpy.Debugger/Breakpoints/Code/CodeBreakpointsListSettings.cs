@@ -30,29 +30,29 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	sealed class CodeBreakpointsListSettingsListener : IDbgCodeBreakpointsServiceListener {
 		readonly DbgDispatcher dbgDispatcher;
 		readonly ISettingsService settingsService;
-		readonly DbgBreakpointLocationSerializerService dbgBreakpointLocationSerializerService;
+		readonly DbgCodeLocationSerializerService dbgCodeLocationSerializerService;
 
 		[ImportingConstructor]
-		CodeBreakpointsListSettingsListener(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgBreakpointLocationSerializerService dbgBreakpointLocationSerializerService) {
+		CodeBreakpointsListSettingsListener(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgCodeLocationSerializerService dbgCodeLocationSerializerService) {
 			this.dbgDispatcher = dbgDispatcher;
 			this.settingsService = settingsService;
-			this.dbgBreakpointLocationSerializerService = dbgBreakpointLocationSerializerService;
+			this.dbgCodeLocationSerializerService = dbgCodeLocationSerializerService;
 		}
 
 		void IDbgCodeBreakpointsServiceListener.Initialize(DbgCodeBreakpointsService dbgCodeBreakpointsService) =>
-			new CodeBreakpointsListSettings(dbgDispatcher, settingsService, dbgBreakpointLocationSerializerService, dbgCodeBreakpointsService);
+			new CodeBreakpointsListSettings(dbgDispatcher, settingsService, dbgCodeLocationSerializerService, dbgCodeBreakpointsService);
 	}
 
 	sealed class CodeBreakpointsListSettings {
 		readonly DbgDispatcher dbgDispatcher;
 		readonly ISettingsService settingsService;
-		readonly DbgBreakpointLocationSerializerService dbgBreakpointLocationSerializerService;
+		readonly DbgCodeLocationSerializerService dbgCodeLocationSerializerService;
 		readonly DbgCodeBreakpointsService dbgCodeBreakpointsService;
 
-		public CodeBreakpointsListSettings(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgBreakpointLocationSerializerService dbgBreakpointLocationSerializerService, DbgCodeBreakpointsService dbgCodeBreakpointsService) {
+		public CodeBreakpointsListSettings(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgCodeLocationSerializerService dbgCodeLocationSerializerService, DbgCodeBreakpointsService dbgCodeBreakpointsService) {
 			this.dbgDispatcher = dbgDispatcher ?? throw new ArgumentNullException(nameof(dbgDispatcher));
 			this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-			this.dbgBreakpointLocationSerializerService = dbgBreakpointLocationSerializerService ?? throw new ArgumentNullException(nameof(dbgBreakpointLocationSerializerService));
+			this.dbgCodeLocationSerializerService = dbgCodeLocationSerializerService ?? throw new ArgumentNullException(nameof(dbgCodeLocationSerializerService));
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService ?? throw new ArgumentNullException(nameof(dbgCodeBreakpointsService));
 			dbgCodeBreakpointsService.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 			dbgCodeBreakpointsService.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		void Load() {
 			dbgDispatcher.VerifyAccess();
 			ignoreSave = true;
-			dbgCodeBreakpointsService.Add(new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService).Load());
+			dbgCodeBreakpointsService.Add(new BreakpointsSerializer(settingsService, dbgCodeLocationSerializerService).Load());
 			dbgDispatcher.Dbg(() => ignoreSave = false);
 		}
 
@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				return;
 			// Don't save temporary and hidden BPs. They should only be created by code, not by the user.
 			// The options aren't serialized so don't save any BP that has a non-zero Options prop.
-			new BreakpointsSerializer(settingsService, dbgBreakpointLocationSerializerService).Save(dbgCodeBreakpointsService.Breakpoints.Where(a => a.Options == 0).ToArray());
+			new BreakpointsSerializer(settingsService, dbgCodeLocationSerializerService).Save(dbgCodeBreakpointsService.Breakpoints.Where(a => a.Options == 0).ToArray());
 		}
 		bool ignoreSave;
 	}

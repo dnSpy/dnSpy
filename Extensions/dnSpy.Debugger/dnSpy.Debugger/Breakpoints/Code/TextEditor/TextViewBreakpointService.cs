@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using Microsoft.VisualStudio.Text;
@@ -138,22 +139,22 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		public override void ToggleCreateBreakpoint() => ToggleCreateBreakpoint(GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null));
 		public override ToggleCreateBreakpointKind GetToggleCreateBreakpointKind() => GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null).kind;
 
-		(ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgBreakpointLocation[] locations) GetToggleCreateBreakpointInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
+		(ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgCodeLocation[] locations) GetToggleCreateBreakpointInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
 			var locRes = GetLocations(tab, position);
 			var bps = locRes == null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locRes.Value);
 			if (bps.Length != 0) {
 				if (bps.All(a => a.IsEnabled))
-					return (ToggleCreateBreakpointKind.Delete, bps, Array.Empty<DbgBreakpointLocation>());
-				return (ToggleCreateBreakpointKind.Enable, bps, Array.Empty<DbgBreakpointLocation>());
+					return (ToggleCreateBreakpointKind.Delete, bps, Array.Empty<DbgCodeLocation>());
+				return (ToggleCreateBreakpointKind.Enable, bps, Array.Empty<DbgCodeLocation>());
 			}
 			else {
 				if (locRes == null || locRes.Value.Locations.Length == 0)
-					return (ToggleCreateBreakpointKind.None, Array.Empty<DbgCodeBreakpoint>(), Array.Empty<DbgBreakpointLocation>());
+					return (ToggleCreateBreakpointKind.None, Array.Empty<DbgCodeBreakpoint>(), Array.Empty<DbgCodeLocation>());
 				return (ToggleCreateBreakpointKind.Add, Array.Empty<DbgCodeBreakpoint>(), locRes.Value.Locations);
 			}
 		}
 
-		void ToggleCreateBreakpoint((ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgBreakpointLocation[] locations) info) {
+		void ToggleCreateBreakpoint((ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgCodeLocation[] locations) info) {
 			switch (info.kind) {
 			case ToggleCreateBreakpointKind.Add:
 				dbgCodeBreakpointsService.Value.Add(info.locations.Select(a => new DbgCodeBreakpointInfo(a, new DbgCodeBreakpointSettings() { IsEnabled = true })).ToArray());

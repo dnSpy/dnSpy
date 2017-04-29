@@ -17,18 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.CallStack;
-using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Metadata;
 
-namespace dnSpy.Debugger.DotNet.CallStack {
-	[ExportReferenceConverter]
-	sealed class StackFrameLocationReferenceConverter : ReferenceConverter {
-		public override void Convert(ref object reference) {
-			switch (reference) {
-			case DbgDotNetMethodBodyStackFrameLocation bodyLoc:
-				reference = new DotNetMethodBodyReference(bodyLoc.Module, bodyLoc.Token, bodyLoc.Offset);
-				break;
-			}
-		}
+namespace dnSpy.Contracts.Debugger.DotNet.Code {
+	/// <summary>
+	/// .NET code breakpoint. It contains a weak module reference, a method token and
+	/// an IL offset.
+	/// </summary>
+	public abstract class DbgDotNetCodeLocation : DbgCodeLocation {
+		/// <summary>
+		/// Gets the module
+		/// </summary>
+		public abstract ModuleId Module { get; }
+
+		/// <summary>
+		/// Gets the token of a method within the module
+		/// </summary>
+		public abstract uint Token { get; }
+
+		/// <summary>
+		/// Gets the IL offset of the breakpoint within the method body
+		/// </summary>
+		public abstract uint Offset { get; }
 	}
 }

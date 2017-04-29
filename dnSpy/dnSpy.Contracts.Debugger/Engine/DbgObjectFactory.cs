@@ -21,7 +21,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Debugger.Exceptions;
 
@@ -187,7 +187,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="address">Address or <see cref="BoundBreakpointNoAddress"/> if unknown</param>
 		/// <param name="message">Warning/error message or null if none</param>
 		/// <returns></returns>
-		public DbgEngineBoundCodeBreakpoint Create(DbgBreakpointLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message) =>
+		public DbgEngineBoundCodeBreakpoint Create(DbgCodeLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message) =>
 			Create(new[] { new DbgBoundCodeBreakpointInfo<object>(location, module, address, message, null) }).FirstOrDefault();
 
 		/// <summary>
@@ -202,7 +202,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="message">Warning/error message or null if none</param>
 		/// <param name="data">Data to add to the <see cref="DbgEngineBoundCodeBreakpoint"/> or null if nothing gets added</param>
 		/// <returns></returns>
-		public DbgEngineBoundCodeBreakpoint Create<T>(DbgBreakpointLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T data) where T : class =>
+		public DbgEngineBoundCodeBreakpoint Create<T>(DbgCodeLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T data) where T : class =>
 			Create(new[] { new DbgBoundCodeBreakpointInfo<T>(location, module, address, message, data) }).FirstOrDefault();
 
 		/// <summary>
@@ -225,7 +225,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="functionOffset">Function offset</param>
 		/// <param name="functionToken">Function token</param>
 		/// <returns></returns>
-		public abstract DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgStackFrameLocation location = null, DbgModule module = null, uint functionOffset = 0, uint functionToken = DbgEngineStackFrame.InvalidFunctionToken);
+		public abstract DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgCodeLocation location = null, DbgModule module = null, uint functionOffset = 0, uint functionToken = DbgEngineStackFrame.InvalidFunctionToken);
 	}
 
 	/// <summary>
@@ -241,7 +241,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Gets the location
 		/// </summary>
-		public DbgBreakpointLocation Location { get; }
+		public DbgCodeLocation Location { get; }
 
 		/// <summary>
 		/// Gets the module or null if none
@@ -273,7 +273,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="message">Warning/error message or null if none</param>
 		/// <param name="data">Data to add to the <see cref="DbgBoundCodeBreakpoint"/> or null if nothing gets added.
 		/// If the data implements <see cref="IDisposable"/>, it gets disposed when the bound breakpoint gets deleted.</param>
-		public DbgBoundCodeBreakpointInfo(DbgBreakpointLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T data) {
+		public DbgBoundCodeBreakpointInfo(DbgCodeLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T data) {
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Module = module;
 			Address = address;

@@ -23,7 +23,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
@@ -35,21 +35,21 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 	sealed class MethodBreakpointsService {
 		readonly Lazy<IModuleIdProvider> moduleIdProvider;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
-		readonly Lazy<DbgDotNetBreakpointFactory2> dbgDotNetBreakpointFactory;
+		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
 
 		[ImportingConstructor]
-		MethodBreakpointsService(Lazy<IModuleIdProvider> moduleIdProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgDotNetBreakpointFactory2> dbgDotNetBreakpointFactory) {
+		MethodBreakpointsService(Lazy<IModuleIdProvider> moduleIdProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
 			this.moduleIdProvider = moduleIdProvider;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
-			this.dbgDotNetBreakpointFactory = dbgDotNetBreakpointFactory;
+			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
 		}
 
 		public void Add(MethodDef[] methods) {
 			var list = new List<DbgCodeBreakpointInfo>(methods.Length);
-			var existing = new HashSet<DbgDotNetBreakpointLocation>(dbgCodeBreakpointsService.Value.Breakpoints.Select(a => a.Location).OfType<DbgDotNetBreakpointLocation>());
+			var existing = new HashSet<DbgDotNetCodeLocation>(dbgCodeBreakpointsService.Value.Breakpoints.Select(a => a.Location).OfType<DbgDotNetCodeLocation>());
 			foreach (var method in methods) {
 				var moduleId = moduleIdProvider.Value.Create(method.Module);
-				var location = dbgDotNetBreakpointFactory.Value.CreateLocation(moduleId, method.MDToken.Raw, 0);
+				var location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, method.MDToken.Raw, 0);
 				if (existing.Contains(location))
 					continue;
 				existing.Add(location);

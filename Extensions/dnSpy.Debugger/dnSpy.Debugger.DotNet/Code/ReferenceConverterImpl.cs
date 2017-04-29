@@ -17,11 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Code;
+using dnSpy.Contracts.Documents;
 
-namespace dnSpy.Debugger.CallStack {
-	abstract class DbgStackFrameBreakpointLocationService {
-		public abstract DbgBreakpointLocation Create(DbgStackFrameLocation location);
+namespace dnSpy.Debugger.DotNet.Code {
+	[ExportReferenceConverter]
+	sealed class ReferenceConverterImpl : ReferenceConverter {
+		public override void Convert(ref object reference) {
+			switch (reference) {
+			case DbgDotNetCodeLocation loc:
+				reference = new DotNetMethodBodyReference(loc.Module, loc.Token, loc.Offset);
+				break;
+			}
+		}
 	}
 }

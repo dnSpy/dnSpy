@@ -19,8 +19,9 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -31,12 +32,12 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 	[Export(typeof(DbgTextViewBreakpointLocationProvider))]
 	sealed class DbgTextViewBreakpointLocationProviderImpl : DbgTextViewBreakpointLocationProvider {
-		readonly Lazy<DbgDotNetBreakpointFactory2> dbgDotNetBreakpointFactory;
+		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		DbgTextViewBreakpointLocationProviderImpl(Lazy<DbgDotNetBreakpointFactory2> dbgDotNetBreakpointFactory, IModuleIdProvider moduleIdProvider) {
-			this.dbgDotNetBreakpointFactory = dbgDotNetBreakpointFactory;
+		DbgTextViewBreakpointLocationProviderImpl(Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, IModuleIdProvider moduleIdProvider) {
+			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
@@ -55,11 +56,11 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			if (textSpan.End > snapshot.Length)
 				return null;
 			var span = new VirtualSnapshotSpan(new SnapshotSpan(snapshot, new Span(textSpan.Start, textSpan.Length)));
-			var locations = new DbgBreakpointLocation[methodStatements.Count];
+			var locations = new DbgCodeLocation[methodStatements.Count];
 			for (int i = 0; i < methodStatements.Count; i++) {
 				var statement = methodStatements[i];
 				var moduleId = moduleIdProvider.Create(statement.Method.Module);
-				locations[i] = dbgDotNetBreakpointFactory.Value.CreateLocation(moduleId, statement.Method.MDToken.Raw, statement.Statement.BinSpan.Start);
+				locations[i] = dbgDotNetCodeLocationFactory.Value.Create(moduleId, statement.Method.MDToken.Raw, statement.Statement.BinSpan.Start);
 			}
 			return new DbgTextViewBreakpointLocationResult(locations, span);
 		}

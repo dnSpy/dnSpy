@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Debugger.Impl;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
@@ -40,7 +41,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	sealed class DbgCodeBreakpointsServiceImpl : DbgCodeBreakpointsService2 {
 		readonly object lockObj;
 		readonly HashSet<DbgCodeBreakpointImpl> breakpoints;
-		readonly Dictionary<DbgBreakpointLocation, DbgCodeBreakpointImpl> locationToBreakpoint;
+		readonly Dictionary<DbgCodeLocation, DbgCodeBreakpointImpl> locationToBreakpoint;
 		readonly DbgDispatcher dbgDispatcher;
 		int breakpointId;
 		bool isDebugging;
@@ -53,7 +54,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		DbgCodeBreakpointsServiceImpl(DbgDispatcher dbgDispatcher, [ImportMany] IEnumerable<Lazy<IDbgCodeBreakpointsServiceListener>> dbgCodeBreakpointsServiceListener) {
 			lockObj = new object();
 			breakpoints = new HashSet<DbgCodeBreakpointImpl>();
-			locationToBreakpoint = new Dictionary<DbgBreakpointLocation, DbgCodeBreakpointImpl>();
+			locationToBreakpoint = new Dictionary<DbgCodeLocation, DbgCodeBreakpointImpl>();
 			this.dbgDispatcher = dbgDispatcher;
 			breakpointId = 0;
 			isDebugging = false;
@@ -207,7 +208,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		public override DbgCodeBreakpoint TryGetBreakpoint(DbgBreakpointLocation location) {
+		public override DbgCodeBreakpoint TryGetBreakpoint(DbgCodeLocation location) {
 			if (location == null)
 				throw new ArgumentNullException(nameof(location));
 			lock (lockObj) {
