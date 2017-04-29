@@ -17,13 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.UI;
 
@@ -52,6 +57,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	sealed class ThreadsOperationsImpl : ThreadsOperations {
 		readonly IThreadsVM threadsVM;
 		readonly DebuggerSettings debuggerSettings;
+		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 
 		BulkObservableCollection<ThreadVM> AllItems => threadsVM.AllItems;
 		ObservableCollection<ThreadVM> SelectedItems => threadsVM.SelectedItems;
@@ -59,9 +65,10 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		IEnumerable<ThreadVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		ThreadsOperationsImpl(IThreadsVM threadsVM, DebuggerSettings debuggerSettings) {
+		ThreadsOperationsImpl(IThreadsVM threadsVM, DebuggerSettings debuggerSettings, Lazy<ReferenceNavigatorService> referenceNavigatorService) {
 			this.threadsVM = threadsVM;
 			this.debuggerSettings = debuggerSettings;
+			this.referenceNavigatorService = referenceNavigatorService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -123,7 +130,36 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				return;
 			var thread = SelectedItems[0].Thread;
 			thread.Process.DbgManager.CurrentThread.Current = thread;
-			//TODO:
+			var location = GetFirstFrameLocation(thread);
+			if (location != null) {
+				try {
+					var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
+					referenceNavigatorService.Value.GoTo(location, options);
+				}
+				finally {
+					thread.Process.DbgManager.Close(new[] { location });
+				}
+			}
+		}
+
+		static DbgCodeLocation GetFirstFrameLocation(DbgThread thread) {
+			DbgStackWalker stackWalker = null;
+			DbgStackFrame[] frames = null;
+			try {
+				stackWalker = thread.CreateStackWalker();
+				frames = stackWalker.GetNextStackFrames(1);
+				if (frames.Length == 0)
+					return null;
+				return frames[0].Location?.Clone();
+			}
+			finally {
+				if (frames != null && frames.Length != 0) {
+					Debug.Assert(frames.Length == 1);
+					thread.Process.DbgManager.Close(new DbgObject[] { stackWalker, frames[0] });
+				}
+				else
+					stackWalker?.Close();
+			}
 		}
 
 		public override bool CanRenameThread => SelectedItems.Count == 1 && !SelectedItems[0].NameEditableValue.IsEditingValue;
