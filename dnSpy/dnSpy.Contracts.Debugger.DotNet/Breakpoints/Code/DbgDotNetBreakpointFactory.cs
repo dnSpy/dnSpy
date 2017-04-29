@@ -64,6 +64,15 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 		/// <param name="breakpoints">Breakpoint infos</param>
 		/// <returns></returns>
 		public abstract DbgCodeBreakpoint[] Create(DbgDotNetBreakpointInfo[] breakpoints);
+
+		/// <summary>
+		/// Returns an existing breakpoint or null if none exists
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="token">Token of a method within the module</param>
+		/// <param name="offset">IL offset of the breakpoint within the method body</param>
+		/// <returns></returns>
+		public abstract DbgCodeBreakpoint TryGetBreakpoint(ModuleId module, uint token, uint offset);
 	}
 
 	/// <summary>
