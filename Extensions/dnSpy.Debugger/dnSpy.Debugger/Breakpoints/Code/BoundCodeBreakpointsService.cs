@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			dbgCodeBreakpointsService.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 			dbgCodeBreakpointsService.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
-			dbgManager.DispatcherThread.BeginInvoke(() => dbgCodeBreakpointsService.UpdateIsDebugging_DbgThread(dbgManager.IsDebugging));
+			dbgManager.Dispatcher.BeginInvoke(() => dbgCodeBreakpointsService.UpdateIsDebugging_DbgThread(dbgManager.IsDebugging));
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 		}
 

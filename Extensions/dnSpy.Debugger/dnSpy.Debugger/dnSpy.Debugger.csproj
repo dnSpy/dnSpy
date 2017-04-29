@@ -43,7 +43,6 @@
     <Compile Include="Breakpoints\Code\BreakpointConditionsFormatter.cs" />
     <Compile Include="Breakpoints\Code\BreakpointImageUtilities.cs" />
     <Compile Include="Breakpoints\Code\BreakpointsSerializer.cs" />
-    <Compile Include="Breakpoints\Code\CodeBreakpointDisplaySettingsBase.cs" />
     <Compile Include="Breakpoints\Code\CodeBreakpointsListSettings.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\BreakpointBreakChecker.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointConditionChecker.cs" />
@@ -56,6 +55,7 @@
     <Compile Include="Breakpoints\Code\CondChecker\TracepointMessageParser.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterService.cs" />
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationSerializerService.cs" />
+    <Compile Include="Breakpoints\Code\DbgCodeBreakpointDisplaySettingsBase.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointHitCountServiceImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgCodeBreakpointSerializerService.cs" />
@@ -127,6 +127,8 @@
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
     <Compile Include="Impl\CurrentObject.cs" />
     <Compile Include="Impl\DbgBoundCodeBreakpointImpl.cs" />
+    <Compile Include="Impl\DbgDispatcherImpl.cs" />
+    <Compile Include="Impl\DbgDispatcherProvider.cs" />
     <Compile Include="Impl\DbgEngineBoundCodeBreakpointImpl.cs" />
     <Compile Include="Impl\DbgEngineBoundCodeBreakpointMessageExtensions.cs" />
     <Compile Include="Impl\DbgManagerImpl.BoundBreakpointsManager.cs" />
@@ -189,7 +191,6 @@
     <None Include="Exceptions\GenerateExceptionsXmlFile.cs" />
     <Compile Include="Impl\DbgAppDomainImpl.cs" />
     <Compile Include="Impl\DbgDebuggingContextImpl.cs" />
-    <Compile Include="Impl\DbgDispatcher.cs" />
     <Compile Include="Impl\DbgEngineAppDomainImpl.cs" />
     <Compile Include="Impl\DbgEngineModuleImpl.cs" />
     <Compile Include="Impl\DbgEngineThreadImpl.cs" />
@@ -204,7 +205,6 @@
     <Compile Include="Impl\DbgThreadImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
     <Compile Include="Impl\DelayedIsRunningHelper.cs" />
-    <Compile Include="Impl\DispatcherThreadImpl.cs" />
     <Compile Include="Impl\SwitchToDebuggedProcess.cs" />
     <Compile Include="Native\Memset.cs" />
     <Compile Include="Native\NativeMethods.cs" />

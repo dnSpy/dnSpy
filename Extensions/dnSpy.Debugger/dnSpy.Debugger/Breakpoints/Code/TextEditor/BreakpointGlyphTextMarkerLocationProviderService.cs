@@ -26,22 +26,22 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
-	abstract class BreakpointGlyphTextMarkerLocationProviderService {
+	abstract class DbgBreakpointGlyphTextMarkerLocationProviderService {
 		public abstract GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint);
 	}
 
-	[Export(typeof(BreakpointGlyphTextMarkerLocationProviderService))]
-	sealed class BreakpointGlyphTextMarkerLocationProviderServiceImpl : BreakpointGlyphTextMarkerLocationProviderService {
-		readonly Lazy<BreakpointGlyphTextMarkerLocationProvider, IBreakpointGlyphTextMarkerLocationProviderMetadata>[] breakpointGlyphTextMarkerLocationProviders;
+	[Export(typeof(DbgBreakpointGlyphTextMarkerLocationProviderService))]
+	sealed class DbgBreakpointGlyphTextMarkerLocationProviderServiceImpl : DbgBreakpointGlyphTextMarkerLocationProviderService {
+		readonly Lazy<DbgBreakpointGlyphTextMarkerLocationProvider, IDbgBreakpointGlyphTextMarkerLocationProviderMetadata>[] dbgBreakpointGlyphTextMarkerLocationProviders;
 
 		[ImportingConstructor]
-		BreakpointGlyphTextMarkerLocationProviderServiceImpl([ImportMany] IEnumerable<Lazy<BreakpointGlyphTextMarkerLocationProvider, IBreakpointGlyphTextMarkerLocationProviderMetadata>> breakpointGlyphTextMarkerLocationProviders) =>
-			this.breakpointGlyphTextMarkerLocationProviders = breakpointGlyphTextMarkerLocationProviders.OrderBy(a => a.Metadata.Order).ToArray();
+		DbgBreakpointGlyphTextMarkerLocationProviderServiceImpl([ImportMany] IEnumerable<Lazy<DbgBreakpointGlyphTextMarkerLocationProvider, IDbgBreakpointGlyphTextMarkerLocationProviderMetadata>> dbgBreakpointGlyphTextMarkerLocationProviders) =>
+			this.dbgBreakpointGlyphTextMarkerLocationProviders = dbgBreakpointGlyphTextMarkerLocationProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
 		public override GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint) {
 			if (breakpoint == null)
 				throw new ArgumentNullException(nameof(breakpoint));
-			foreach (var lz in breakpointGlyphTextMarkerLocationProviders) {
+			foreach (var lz in dbgBreakpointGlyphTextMarkerLocationProviders) {
 				var loc = lz.Value.GetLocation(breakpoint);
 				if (loc != null)
 					return loc;

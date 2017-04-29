@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 		readonly List<DbgThreadImpl> threads;
 
-		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
+		DbgDispatcher Dispatcher => Process.DbgManager.Dispatcher;
 		internal DbgEngine Engine { get; }
 
 		internal CurrentObject<DbgThreadImpl> CurrentThread => currentThread;
@@ -86,12 +86,12 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void SetCurrentThread_DbgThread(DbgThreadImpl thread) {
-			owner.DispatcherThread.VerifyAccess();
+			owner.Dispatcher.VerifyAccess();
 			currentThread = new CurrentObject<DbgThreadImpl>(thread, currentThread.Break);
 		}
 
 		internal void SetBreakThread(DbgThreadImpl thread, bool tryOldCurrentThread = false) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			DbgThreadImpl newCurrent, newBreak;
 			lock (lockObj) {
 				newBreak = GetThread_NoLock(thread);
@@ -111,19 +111,19 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void ClearBreakThread() {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			currentThread = default(CurrentObject<DbgThreadImpl>);
 		}
 
 		internal void Add_DbgThread(DbgAppDomainImpl appDomain) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			lock (lockObj)
 				appDomains.Add(appDomain);
 			AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: true));
 		}
 
 		internal void Remove_DbgThread(DbgAppDomainImpl appDomain, bool pause) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			List<DbgThread> threadsToRemove = null;
 			List<DbgModule> modulesToRemove = null;
 			lock (lockObj) {
@@ -157,24 +157,24 @@ namespace dnSpy.Debugger.Impl {
 			AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: false));
 			if (threadsToRemove != null) {
 				foreach (var thread in threadsToRemove)
-					thread.Close(DispatcherThread);
+					thread.Close(Dispatcher);
 			}
 			if (modulesToRemove != null) {
 				foreach (var module in modulesToRemove)
-					module.Close(DispatcherThread);
+					module.Close(Dispatcher);
 			}
-			appDomain.Close(DispatcherThread);
+			appDomain.Close(Dispatcher);
 		}
 
 		internal void Add_DbgThread(DbgModuleImpl module) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			lock (lockObj)
 				modules.Add(module);
 			ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(module, added: true));
 		}
 
 		internal void Remove_DbgThread(DbgModuleImpl module, bool pause) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				bool b = modules.Remove(module);
 				if (!b)
@@ -182,18 +182,18 @@ namespace dnSpy.Debugger.Impl {
 			}
 			owner.RemoveModule_DbgThread(this, module, pause);
 			ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(module, added: false));
-			module.Close(DispatcherThread);
+			module.Close(Dispatcher);
 		}
 
 		internal void Add_DbgThread(DbgThreadImpl thread) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			lock (lockObj)
 				threads.Add(thread);
 			ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(thread, added: true));
 		}
 
 		internal void Remove_DbgThread(DbgThreadImpl thread, bool pause) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				bool b = threads.Remove(thread);
 				if (!b)
@@ -201,11 +201,11 @@ namespace dnSpy.Debugger.Impl {
 			}
 			owner.RemoveThread_DbgThread(this, thread, pause);
 			ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(thread, added: false));
-			thread.Close(DispatcherThread);
+			thread.Close(Dispatcher);
 		}
 
 		internal void Remove_DbgThread(DbgEngineBoundCodeBreakpointImpl[] breakpoints) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			owner.RemoveBoundCodeBreakpoints_DbgThread(this, breakpoints);
 		}
 
@@ -213,7 +213,7 @@ namespace dnSpy.Debugger.Impl {
 		internal void Thaw(DbgThreadImpl thread) => Engine.Thaw(thread);
 
 		internal DbgStackWalker CreateStackWalker(DbgThreadImpl thread) {
-			var stackWalker = owner.DispatcherThread2.Invoke(() => CreateStackWalker_DbgThread(thread));
+			var stackWalker = owner.Dispatcher2.Invoke(() => CreateStackWalker_DbgThread(thread));
 			if (stackWalker != null)
 				return stackWalker;
 			// Invoke() returns null if shutdown has started but we can't return null
@@ -221,7 +221,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		DbgStackWalker CreateStackWalker_DbgThread(DbgThreadImpl thread) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			DbgEngineStackWalker engineStackWalker;
 			if (Engine.IsClosed)
 				engineStackWalker = new NullDbgEngineStackWalker();
@@ -236,7 +236,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		protected override void CloseCore() {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			DbgThread[] removedThreads;
 			DbgModule[] removedModules;
 			DbgAppDomain[] removedAppDomains;
@@ -256,11 +256,11 @@ namespace dnSpy.Debugger.Impl {
 			if (removedAppDomains.Length != 0)
 				AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(removedAppDomains, added: false));
 			foreach (var thread in removedThreads)
-				thread.Close(DispatcherThread);
+				thread.Close(Dispatcher);
 			foreach (var module in removedModules)
-				module.Close(DispatcherThread);
+				module.Close(Dispatcher);
 			foreach (var appDomain in removedAppDomains)
-				appDomain.Close(DispatcherThread);
+				appDomain.Close(Dispatcher);
 		}
 	}
 }

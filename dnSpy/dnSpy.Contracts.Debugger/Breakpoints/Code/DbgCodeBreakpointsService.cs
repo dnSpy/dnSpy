@@ -103,13 +103,13 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Raised when <see cref="DbgCodeBreakpoint.BoundBreakpointsMessage"/> is changed
 		/// </summary>
-		public abstract event EventHandler<BoundBreakpointsMessageChangedEventArgs> BoundBreakpointsMessageChanged;
+		public abstract event EventHandler<DbgBoundBreakpointsMessageChangedEventArgs> BoundBreakpointsMessageChanged;
 	}
 
 	/// <summary>
 	/// <see cref="DbgCodeBreakpoint.BoundBreakpointsMessage"/> changed event args
 	/// </summary>
-	public struct BoundBreakpointsMessageChangedEventArgs {
+	public struct DbgBoundBreakpointsMessageChangedEventArgs {
 		/// <summary>
 		/// Gets all breakpoints
 		/// </summary>
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// Constructor
 		/// </summary>
 		/// <param name="breakpoints">Breakpoints</param>
-		public BoundBreakpointsMessageChangedEventArgs(ReadOnlyCollection<DbgCodeBreakpoint> breakpoints) =>
+		public DbgBoundBreakpointsMessageChangedEventArgs(ReadOnlyCollection<DbgCodeBreakpoint> breakpoints) =>
 			Breakpoints = breakpoints ?? throw new ArgumentNullException(nameof(breakpoints));
 	}
 

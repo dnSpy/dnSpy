@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public override DbgThread Thread { get; }
 		public override DbgModule Module { get; }
 
-		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
+		DbgDispatcher Dispatcher => Process.DbgManager.Dispatcher;
 
 		public DbgExceptionImpl(DbgRuntime runtime, DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module) {
 			if (id.IsDefaultId)
@@ -43,6 +43,6 @@ namespace dnSpy.Debugger.Exceptions {
 			Module = module;
 		}
 
-		protected override void CloseCore() => DispatcherThread.VerifyAccess();
+		protected override void CloseCore() => Dispatcher.VerifyAccess();
 	}
 }

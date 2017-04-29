@@ -27,10 +27,10 @@ namespace dnSpy.Contracts.Debugger {
 	/// </summary>
 	public abstract class DbgManager {
 		/// <summary>
-		/// Gets the dispatcher. All debugger events are raised in this thread. <see cref="DbgObject.Close(DispatcherThread)"/>
+		/// Gets the dispatcher. All debugger events are raised in this thread. <see cref="DbgObject.Close(DbgDispatcher)"/>
 		/// is also called in this thread including disposing of data added by eg. <see cref="DbgObject.GetOrCreateData{T}()"/>.
 		/// </summary>
-		public abstract DispatcherThread DispatcherThread { get; }
+		public abstract DbgDispatcher Dispatcher { get; }
 
 		/// <summary>
 		/// Raised on the debugger thread when there's a new message, eg. a process was created, a thread has exited, etc.

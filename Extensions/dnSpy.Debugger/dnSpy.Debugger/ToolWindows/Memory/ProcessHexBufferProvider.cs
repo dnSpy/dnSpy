@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			foreach (var listener in processHexBufferProviderListeners)
 				listener.Value.Initialize(this);
 
-			dbgManager.DispatcherThread.BeginInvoke(() => {
+			dbgManager.Dispatcher.BeginInvoke(() => {
 				dbgManager.ProcessesChanged += DbgManager_ProcessesChanged;
 				InitializeProcesses_DbgManager(dbgManager.Processes, added: true);
 			});

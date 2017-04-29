@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.Impl {
 						info.EngineInfo.Engine.Break();
 				}
 				if (!CheckIsDone_NoLock()) {
-					timer = new DispatcherTimer(DispatcherPriority.Send, owner.Dispatcher);
+					timer = new DispatcherTimer(DispatcherPriority.Send, owner.WpfDispatcher);
 					timer.Interval = TimeSpan.FromMilliseconds(breakTimeoutMilliseconds);
 					timer.Tick += Timer_Tick_DbgThread;
 					timer.Start();
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			void DoneStep2_DbgThread(bool success) {
-				owner.DispatcherThread.VerifyAccess();
+				owner.Dispatcher.VerifyAccess();
 				// All of them could've been disconnected, and if so, there's nothing to do
 				if (infos.Count > 0)
 					owner.BreakCompleted_DbgThread(success);
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.Impl {
 					return false;
 				DoneStep1_NoLock(out bool canNotify);
 				if (canNotify)
-					owner.DispatcherThread.BeginInvoke(() => DoneStep2_DbgThread(success: true));
+					owner.Dispatcher.BeginInvoke(() => DoneStep2_DbgThread(success: true));
 				return true;
 			}
 

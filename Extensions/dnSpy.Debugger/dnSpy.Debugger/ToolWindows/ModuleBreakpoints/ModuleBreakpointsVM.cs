@@ -172,7 +172,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		// random thread
 		void DbgThread(Action callback) =>
-			dbgManager.Value.DispatcherThread.BeginInvoke(callback);
+			dbgManager.Value.Dispatcher.BeginInvoke(callback);
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
@@ -205,7 +205,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		// DbgManager thread
 		void InitializeDebugger_DbgThread(bool enable) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (enable) {
 				dbgModuleBreakpointsService.Value.BreakpointsChanged += DbgModuleBreakpointsService_BreakpointsChanged;
 				dbgModuleBreakpointsService.Value.BreakpointsModified += DbgModuleBreakpointsService_BreakpointsModified;
@@ -257,7 +257,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		// DbgManager thread
 		void DbgModuleBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgModuleBreakpoint> e) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (e.Added)
 				UI(() => AddItems_UI(e.Objects));
 			else {
@@ -274,7 +274,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		// DbgManager thread
 		void DbgModuleBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			UI(() => {
 				foreach (var info in e.Breakpoints) {
 					bool b = bpToVM.TryGetValue(info.Breakpoint, out var vm);

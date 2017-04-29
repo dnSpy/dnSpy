@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
+		DbgDispatcher Dispatcher => Process.DbgManager.Dispatcher;
 
 		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
@@ -94,12 +94,12 @@ namespace dnSpy.Debugger.Impl {
 
 		public override event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
 		internal void UpdateIsExe_DbgThread(bool isExe) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.isExe != isExe) {
 				this.isExe = isExe;
 				OnPropertyChanged(nameof(IsExe));
@@ -107,7 +107,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateAddress_DbgThread(ulong address) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			bool raiseEvent;
 			lock (lockObj) {
 				raiseEvent = this.address != address;
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateSize_DbgThread(uint size) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.size != size) {
 				this.size = size;
 				OnPropertyChanged(nameof(Size));
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateImageLayout_DbgThread(DbgImageLayout imageLayout) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.imageLayout != imageLayout) {
 				this.imageLayout = imageLayout;
 				OnPropertyChanged(nameof(ImageLayout));
@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateName_DbgThread(string name) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.name != name) {
 				this.name = name;
 				OnPropertyChanged(nameof(Name));
@@ -142,7 +142,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateFilename_DbgThread(string filename) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.filename != filename) {
 				this.filename = filename;
 				OnPropertyChanged(nameof(Filename));
@@ -150,7 +150,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateIsDynamic_DbgThread(bool isDynamic) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.isDynamic != isDynamic) {
 				this.isDynamic = isDynamic;
 				OnPropertyChanged(nameof(IsDynamic));
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateIsInMemory_DbgThread(bool isInMemory) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.isInMemory != isInMemory) {
 				this.isInMemory = isInMemory;
 				OnPropertyChanged(nameof(IsInMemory));
@@ -166,7 +166,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateIsOptimized_DbgThread(bool? isOptimized) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			bool raiseEvent;
 			lock (lockObj) {
 				raiseEvent = this.isOptimized != isOptimized;
@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateOrder_DbgThread(int order) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.order != order) {
 				this.order = order;
 				OnPropertyChanged(nameof(Order));
@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateTimestamp_DbgThread(DateTime? timestamp) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			bool raiseEvent;
 			timestamp = timestamp?.ToUniversalTime();
 			lock (lockObj) {
@@ -197,15 +197,15 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateVersion_DbgThread(string version) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.version != version) {
 				this.version = version;
 				OnPropertyChanged(nameof(Version));
 			}
 		}
 
-		internal void Remove(bool pause) => DispatcherThread.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
+		internal void Remove(bool pause) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
 
-		protected override void CloseCore() => DispatcherThread.VerifyAccess();
+		protected override void CloseCore() => Dispatcher.VerifyAccess();
 	}
 }

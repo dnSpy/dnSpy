@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.Impl {
 		public override string Name => name;
 		public override int Id => id;
 
-		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
+		DbgDispatcher Dispatcher => Process.DbgManager.Dispatcher;
 
 		readonly DbgRuntimeImpl runtime;
 		string name;
@@ -41,12 +41,12 @@ namespace dnSpy.Debugger.Impl {
 
 		public override event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
 		internal void UpdateName_DbgThread(string name) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.name != name) {
 				this.name = name;
 				OnPropertyChanged(nameof(Name));
@@ -54,15 +54,15 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateId_DbgThread(int id) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.id != id) {
 				this.id = id;
 				OnPropertyChanged(nameof(Id));
 			}
 		}
 
-		internal void Remove(bool pause) => DispatcherThread.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
+		internal void Remove(bool pause) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
 
-		protected override void CloseCore() => DispatcherThread.VerifyAccess();
+		protected override void CloseCore() => Dispatcher.VerifyAccess();
 	}
 }

@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 		// random thread
 		void DbgThread(Action callback) =>
-			dbgManager.Value.DispatcherThread.BeginInvoke(callback);
+			dbgManager.Value.Dispatcher.BeginInvoke(callback);
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 		// DbgManager thread
 		void InitializeDebugger_DbgThread(bool enable) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (enable) {
 				dbgCallStackService.Value.FramesChanged += DbgCallStackService_FramesChanged;
 				dbgCallStackService.Value.ActiveFrameIndexChanged += DbgCallStackService_ActiveFrameIndexChanged;

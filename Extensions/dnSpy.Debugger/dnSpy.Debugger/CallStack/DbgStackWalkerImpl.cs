@@ -27,7 +27,7 @@ using dnSpy.Debugger.Impl;
 namespace dnSpy.Debugger.CallStack {
 	sealed class DbgStackWalkerImpl : DbgStackWalker {
 		public override DbgThread Thread => thread;
-		DispatcherThread DispatcherThread => Thread.Process.DbgManager.DispatcherThread;
+		DbgDispatcher Dispatcher => Thread.Process.DbgManager.Dispatcher;
 
 		readonly DbgEngineStackWalker engineStackWalker;
 		readonly DbgThreadImpl thread;
@@ -50,9 +50,9 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		protected override void CloseCore() {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			thread.RemoveAutoClose(this);
-			engineStackWalker.Close(DispatcherThread);
+			engineStackWalker.Close(Dispatcher);
 		}
 	}
 }

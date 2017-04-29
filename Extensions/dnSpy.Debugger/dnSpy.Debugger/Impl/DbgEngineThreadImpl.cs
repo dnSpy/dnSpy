@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Update(UpdateOptions options, DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) {
 			var appDomainImpl = VerifyOptionalAppDomain(appDomain);
-			thread.Process.DbgManager.DispatcherThread.BeginInvoke(() => {
+			thread.Process.DbgManager.Dispatcher.BeginInvoke(() => {
 				if (thread.IsClosed)
 					return;
 				if ((options & UpdateOptions.AppDomain) != 0) {

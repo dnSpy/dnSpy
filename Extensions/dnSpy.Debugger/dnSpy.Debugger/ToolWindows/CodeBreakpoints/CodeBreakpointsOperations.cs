@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	[Export(typeof(CodeBreakpointsOperations))]
 	sealed class CodeBreakpointsOperationsImpl : CodeBreakpointsOperations {
 		readonly ICodeBreakpointsVM codeBreakpointsVM;
-		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
+		readonly DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgCodeLocationSerializerService> dbgCodeLocationSerializerService;
 		readonly Lazy<ISettingsServiceFactory> settingsServiceFactory;
@@ -105,9 +105,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		IEnumerable<CodeBreakpointVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCodeLocationSerializerService> dbgCodeLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCodeBreakpointHitCountService> dbgCodeBreakpointHitCountService) {
+		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCodeLocationSerializerService> dbgCodeLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCodeBreakpointHitCountService> dbgCodeBreakpointHitCountService) {
 			this.codeBreakpointsVM = codeBreakpointsVM;
-			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
+			this.dbgCodeBreakpointDisplaySettings = dbgCodeBreakpointDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgCodeLocationSerializerService = dbgCodeLocationSerializerService;
 			this.settingsServiceFactory = settingsServiceFactory;
@@ -291,43 +291,43 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		public override bool ShowTokens {
-			get => codeBreakpointDisplaySettings.ShowTokens;
-			set => codeBreakpointDisplaySettings.ShowTokens = value;
+			get => dbgCodeBreakpointDisplaySettings.ShowTokens;
+			set => dbgCodeBreakpointDisplaySettings.ShowTokens = value;
 		}
 
 		public override bool ShowModuleNames {
-			get => codeBreakpointDisplaySettings.ShowModuleNames;
-			set => codeBreakpointDisplaySettings.ShowModuleNames = value;
+			get => dbgCodeBreakpointDisplaySettings.ShowModuleNames;
+			set => dbgCodeBreakpointDisplaySettings.ShowModuleNames = value;
 		}
 
 		public override bool ShowParameterTypes {
-			get => codeBreakpointDisplaySettings.ShowParameterTypes;
-			set => codeBreakpointDisplaySettings.ShowParameterTypes = value;
+			get => dbgCodeBreakpointDisplaySettings.ShowParameterTypes;
+			set => dbgCodeBreakpointDisplaySettings.ShowParameterTypes = value;
 		}
 
 		public override bool ShowParameterNames {
-			get => codeBreakpointDisplaySettings.ShowParameterNames;
-			set => codeBreakpointDisplaySettings.ShowParameterNames = value;
+			get => dbgCodeBreakpointDisplaySettings.ShowParameterNames;
+			set => dbgCodeBreakpointDisplaySettings.ShowParameterNames = value;
 		}
 
 		public override bool ShowDeclaringTypes {
-			get => codeBreakpointDisplaySettings.ShowDeclaringTypes;
-			set => codeBreakpointDisplaySettings.ShowDeclaringTypes = value;
+			get => dbgCodeBreakpointDisplaySettings.ShowDeclaringTypes;
+			set => dbgCodeBreakpointDisplaySettings.ShowDeclaringTypes = value;
 		}
 
 		public override bool ShowReturnTypes {
-			get => codeBreakpointDisplaySettings.ShowReturnTypes;
-			set => codeBreakpointDisplaySettings.ShowReturnTypes = value;
+			get => dbgCodeBreakpointDisplaySettings.ShowReturnTypes;
+			set => dbgCodeBreakpointDisplaySettings.ShowReturnTypes = value;
 		}
 
 		public override bool ShowNamespaces {
-			get => codeBreakpointDisplaySettings.ShowNamespaces;
-			set => codeBreakpointDisplaySettings.ShowNamespaces = value;
+			get => dbgCodeBreakpointDisplaySettings.ShowNamespaces;
+			set => dbgCodeBreakpointDisplaySettings.ShowNamespaces = value;
 		}
 
 		public override bool ShowIntrinsicTypeKeywords {
-			get => codeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords;
-			set => codeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords = value;
+			get => dbgCodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords;
+			set => dbgCodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords = value;
 		}
 	}
 }

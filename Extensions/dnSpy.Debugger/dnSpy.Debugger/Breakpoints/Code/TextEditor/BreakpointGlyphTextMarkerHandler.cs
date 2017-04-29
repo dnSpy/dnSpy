@@ -48,14 +48,14 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
 		readonly BreakpointConditionsFormatter breakpointConditionsFormatter;
 		readonly DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService;
-		readonly IEnumerable<Lazy<BreakpointGlyphFormatter, IBreakpointGlyphFormatterMetadata>> breakpointGlyphFormatters;
+		readonly IEnumerable<Lazy<DbgBreakpointGlyphFormatter, IDbgBreakpointGlyphFormatterMetadata>> dbgBreakpointGlyphFormatters;
 
 		[ImportingConstructor]
-		BreakpointGlyphTextMarkerHandlerImpl(Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, BreakpointConditionsFormatter breakpointConditionsFormatter, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService, [ImportMany] IEnumerable<Lazy<BreakpointGlyphFormatter, IBreakpointGlyphFormatterMetadata>> breakpointGlyphFormatters) {
+		BreakpointGlyphTextMarkerHandlerImpl(Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, BreakpointConditionsFormatter breakpointConditionsFormatter, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService, [ImportMany] IEnumerable<Lazy<DbgBreakpointGlyphFormatter, IDbgBreakpointGlyphFormatterMetadata>> dbgBreakpointGlyphFormatters) {
 			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
 			this.breakpointConditionsFormatter = breakpointConditionsFormatter;
 			this.dbgCodeBreakpointHitCountService = dbgCodeBreakpointHitCountService;
-			this.breakpointGlyphFormatters = breakpointGlyphFormatters.OrderBy(a => a.Metadata.Order).ToArray();
+			this.dbgBreakpointGlyphFormatters = dbgBreakpointGlyphFormatters.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public override FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 
 		void WriteLocation(ITextColorWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
-			foreach (var lz in breakpointGlyphFormatters) {
+			foreach (var lz in dbgBreakpointGlyphFormatters) {
 				if (lz.Value.WriteLocation(output, breakpoint, textView, span))
 					return;
 			}

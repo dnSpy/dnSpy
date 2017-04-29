@@ -42,20 +42,20 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		readonly object lockObj;
 		readonly HashSet<DbgCodeBreakpointImpl> breakpoints;
 		readonly Dictionary<DbgCodeLocation, DbgCodeBreakpointImpl> locationToBreakpoint;
-		readonly DbgDispatcher dbgDispatcher;
+		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		int breakpointId;
 		bool isDebugging;
 
-		public override event EventHandler<BoundBreakpointsMessageChangedEventArgs> BoundBreakpointsMessageChanged;
+		public override event EventHandler<DbgBoundBreakpointsMessageChangedEventArgs> BoundBreakpointsMessageChanged;
 
-		internal DbgDispatcher DbgDispatcher => dbgDispatcher;
+		internal DbgDispatcherProvider DbgDispatcher => dbgDispatcherProvider;
 
 		[ImportingConstructor]
-		DbgCodeBreakpointsServiceImpl(DbgDispatcher dbgDispatcher, [ImportMany] IEnumerable<Lazy<IDbgCodeBreakpointsServiceListener>> dbgCodeBreakpointsServiceListener) {
+		DbgCodeBreakpointsServiceImpl(DbgDispatcherProvider dbgDispatcherProvider, [ImportMany] IEnumerable<Lazy<IDbgCodeBreakpointsServiceListener>> dbgCodeBreakpointsServiceListener) {
 			lockObj = new object();
 			breakpoints = new HashSet<DbgCodeBreakpointImpl>();
 			locationToBreakpoint = new Dictionary<DbgCodeLocation, DbgCodeBreakpointImpl>();
-			this.dbgDispatcher = dbgDispatcher;
+			this.dbgDispatcherProvider = dbgDispatcherProvider;
 			breakpointId = 0;
 			isDebugging = false;
 
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				lz.Value.Initialize(this);
 		}
 
-		void Dbg(Action callback) => dbgDispatcher.Dbg(callback);
+		void Dbg(Action callback) => dbgDispatcherProvider.Dbg(callback);
 
 		public override void Modify(DbgCodeBreakpointAndSettings[] settings) {
 			if (settings == null)
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		void ModifyCore(DbgCodeBreakpointAndSettings[] settings) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			List<DbgCodeBreakpointImpl> updatedBreakpoints = null;
 			var bps = new List<DbgCodeBreakpointAndOldSettings>(settings.Length);
 			lock (lockObj) {
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			if (updatedBreakpoints != null) {
 				foreach (var bp in updatedBreakpoints)
 					bp.RaiseBoundBreakpointsMessageChanged_DbgThread();
-				BoundBreakpointsMessageChanged?.Invoke(this, new BoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(updatedBreakpoints.ToArray())));
+				BoundBreakpointsMessageChanged?.Invoke(this, new DbgBoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(updatedBreakpoints.ToArray())));
 			}
 		}
 
@@ -139,7 +139,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		void AddCore(List<DbgCodeBreakpointImpl> breakpoints, List<DbgObject> objsToClose) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var added = new List<DbgCodeBreakpoint>(breakpoints.Count);
 			List<DbgCodeBreakpointImpl> updatedBreakpoints = null;
 			lock (lockObj) {
@@ -166,14 +166,14 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 			if (objsToClose != null) {
 				foreach (var obj in objsToClose)
-					obj.Close(dbgDispatcher.DispatcherThread);
+					obj.Close(dbgDispatcherProvider.Dispatcher);
 			}
 			if (added.Count > 0)
 				BreakpointsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgCodeBreakpoint>(added, added: true));
 			if (updatedBreakpoints != null) {
 				foreach (var bp in updatedBreakpoints)
 					bp.RaiseBoundBreakpointsMessageChanged_DbgThread();
-				BoundBreakpointsMessageChanged?.Invoke(this, new BoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(updatedBreakpoints.ToArray())));
+				BoundBreakpointsMessageChanged?.Invoke(this, new DbgBoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(updatedBreakpoints.ToArray())));
 			}
 		}
 
@@ -184,7 +184,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		void RemoveCore(DbgCodeBreakpoint[] breakpoints) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var removed = new List<DbgCodeBreakpoint>(breakpoints.Length);
 			lock (lockObj) {
 				foreach (var bp in breakpoints) {
@@ -204,7 +204,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			if (removed.Count > 0) {
 				BreakpointsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgCodeBreakpoint>(removed, added: false));
 				foreach (var bp in removed)
-					bp.Close(dbgDispatcher.DispatcherThread);
+					bp.Close(dbgDispatcherProvider.Dispatcher);
 			}
 		}
 
@@ -221,7 +221,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		public override void Clear() => Dbg(() => RemoveCore(VisibleBreakpoints.ToArray()));
 
 		public override void UpdateIsDebugging_DbgThread(bool newIsDebugging) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			List<DbgCodeBreakpointImpl> updatedBreakpoints;
 			lock (lockObj) {
 				if (isDebugging == newIsDebugging)
@@ -237,11 +237,11 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			foreach (var bp in updatedBreakpoints)
 				bp.RaiseBoundBreakpointsMessageChanged_DbgThread();
 			if (updatedBreakpoints.Count > 0)
-				BoundBreakpointsMessageChanged?.Invoke(this, new BoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(updatedBreakpoints.ToArray())));
+				BoundBreakpointsMessageChanged?.Invoke(this, new DbgBoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(updatedBreakpoints.ToArray())));
 		}
 
 		public override DbgBoundCodeBreakpoint[] AddBoundBreakpoints_DbgThread(IList<DbgBoundCodeBreakpoint> boundBreakpoints) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var dict = CreateBreakpointDictionary(boundBreakpoints);
 			var updatedBreakpoints = new List<(bool raiseMessageChanged, DbgCodeBreakpointImpl breakpoint, List<DbgBoundCodeBreakpoint> boundBreakpoints)>(dict.Count);
 			List<DbgBoundCodeBreakpoint> unusedBoundBreakpoints = null;
@@ -262,12 +262,12 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			foreach (var info in updatedBreakpoints)
 				info.breakpoint.RaiseEvents_DbgThread(info.raiseMessageChanged, info.boundBreakpoints, added: true);
 			if (updatedBreakpoints.Count > 0)
-				BoundBreakpointsMessageChanged?.Invoke(this, new BoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(updatedBreakpoints.Where(a => a.raiseMessageChanged).Select(a => a.breakpoint).ToArray())));
+				BoundBreakpointsMessageChanged?.Invoke(this, new DbgBoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(updatedBreakpoints.Where(a => a.raiseMessageChanged).Select(a => a.breakpoint).ToArray())));
 			return unusedBoundBreakpoints?.ToArray() ?? Array.Empty<DbgBoundCodeBreakpoint>();
 		}
 
 		public override void RemoveBoundBreakpoints_DbgThread(IList<DbgBoundCodeBreakpoint> boundBreakpoints) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var dict = CreateBreakpointDictionary(boundBreakpoints);
 			var updatedBreakpoints = new List<(bool raiseMessageChanged, DbgCodeBreakpointImpl breakpoint, List<DbgBoundCodeBreakpoint> boundBreakpoints)>(dict.Count);
 			lock (lockObj) {
@@ -282,7 +282,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			foreach (var info in updatedBreakpoints)
 				info.breakpoint.RaiseEvents_DbgThread(info.raiseMessageChanged, info.boundBreakpoints, added: false);
 			if (updatedBreakpoints.Count > 0)
-				BoundBreakpointsMessageChanged?.Invoke(this, new BoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(updatedBreakpoints.Where(a => a.raiseMessageChanged).Select(a => a.breakpoint).ToArray())));
+				BoundBreakpointsMessageChanged?.Invoke(this, new DbgBoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(updatedBreakpoints.Where(a => a.raiseMessageChanged).Select(a => a.breakpoint).ToArray())));
 		}
 
 		static Dictionary<DbgCodeBreakpointImpl, List<DbgBoundCodeBreakpoint>> CreateBreakpointDictionary(IList<DbgBoundCodeBreakpoint> boundBreakpoints) {
@@ -302,7 +302,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		public override DbgBoundCodeBreakpoint[] RemoveBoundBreakpoints_DbgThread(DbgRuntime runtime) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var list = new List<DbgBoundCodeBreakpoint>();
 			lock (lockObj) {
 				foreach (var bp in breakpoints) {
@@ -318,9 +318,9 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		internal void OnBoundBreakpointsMessageChanged_DbgThread(DbgCodeBreakpointImpl bp) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			bp.RaiseBoundBreakpointsMessageChanged_DbgThread();
-			BoundBreakpointsMessageChanged?.Invoke(this, new BoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(new[] { bp })));
+			BoundBreakpointsMessageChanged?.Invoke(this, new DbgBoundBreakpointsMessageChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpoint>(new[] { bp })));
 		}
 	}
 }

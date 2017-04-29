@@ -52,11 +52,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// 
 		/// This method must only be called by the owner object.
 		/// </summary>
-		/// <param name="dispatcherThread">Dispatcher thread</param>
-		public void Close(DispatcherThread dispatcherThread) {
-			if (dispatcherThread == null)
-				throw new ArgumentNullException(nameof(dispatcherThread));
-			dispatcherThread.VerifyAccess();
+		/// <param name="dispatcher">Dispatcher</param>
+		public void Close(DbgDispatcher dispatcher) {
+			if (dispatcher == null)
+				throw new ArgumentNullException(nameof(dispatcher));
+			dispatcher.VerifyAccess();
 			// This sometimes happens, eg. a cached frame gets closed by its thread, but also by the owner (eg. call stack service)
 			if (Interlocked.Increment(ref isClosed) != 1)
 				return;
@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Debugger {
 
 		/// <summary>
 		/// Called by <see cref="Close"/> after it has raised <see cref="Closed"/> and before it disposes
-		/// of all data. This method is called in the dispatcher thread (see <see cref="DbgManager.DispatcherThread"/>)
+		/// of all data. This method is called in the dispatcher thread (see <see cref="DbgManager.Dispatcher"/>)
 		/// </summary>
 		protected abstract void CloseCore();
 

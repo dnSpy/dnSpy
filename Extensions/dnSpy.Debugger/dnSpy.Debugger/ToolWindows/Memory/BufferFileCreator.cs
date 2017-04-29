@@ -102,12 +102,12 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 				process = newProcess;
 				if (newProcess != null)
-					newProcess.DbgManager.DispatcherThread.BeginInvoke(() => OnNewProcess_DbgThread(newProcess));
+					newProcess.DbgManager.Dispatcher.BeginInvoke(() => OnNewProcess_DbgThread(newProcess));
 			}
 
 			// DbgThread
 			void OnNewProcess_DbgThread(DbgProcess newProcess) {
-				newProcess.DbgManager.DispatcherThread.VerifyAccess();
+				newProcess.DbgManager.Dispatcher.VerifyAccess();
 				if (process != newProcess)
 					return;
 				newProcess.RuntimesChanged += Process_RuntimesChanged;

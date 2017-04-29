@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Remove(bool pause) => appDomain.Remove(pause);
 
-		public override void Update(UpdateOptions options, string name = null, int id = 0) => appDomain.Process.DbgManager.DispatcherThread.BeginInvoke(() => {
+		public override void Update(UpdateOptions options, string name = null, int id = 0) => appDomain.Process.DbgManager.Dispatcher.BeginInvoke(() => {
 			if (appDomain.IsClosed)
 				return;
 			if ((options & UpdateOptions.Name) != 0)

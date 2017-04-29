@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Impl {
 				lock (lockObj)
 					return GetUINameNoDefaultName_NoLock() ?? dnSpy_Debugger_Resources.Thread_NoName;
 			}
-			set => DispatcherThread.BeginInvoke(() => WriteUIName_DbgThread(value));
+			set => Dispatcher.BeginInvoke(() => WriteUIName_DbgThread(value));
 		}
 		string userName;
 
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
+		DbgDispatcher Dispatcher => Process.DbgManager.Dispatcher;
 
 		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
@@ -98,12 +98,12 @@ namespace dnSpy.Debugger.Impl {
 
 		public override event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
 		internal void UpdateAppDomain_DbgThread(DbgAppDomainImpl appDomain) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.appDomain != appDomain) {
 				// Caller has verified that it's a valid app domain
 				this.appDomain = appDomain;
@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateKind_DbgThread(string kind) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			bool raiseEvent, raiseUINameEvent;
 			lock (lockObj) {
 				var oldUIName = GetUINameNoDefaultName_NoLock();
@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateId_DbgThread(ulong id) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			bool raiseEvent;
 			lock (lockObj) {
 				raiseEvent = this.id != id;
@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateManagedId_DbgThread(ulong? managedId) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			bool raiseEvent;
 			lock (lockObj) {
 				raiseEvent = this.managedId != managedId;
@@ -149,7 +149,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateName_DbgThread(string name) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			bool raiseEvent, raiseUINameEvent;
 			lock (lockObj) {
 				var oldUIName = GetUINameNoDefaultName_NoLock();
@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateSuspendedCount_DbgThread(int suspendedCount) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.suspendedCount != suspendedCount) {
 				this.suspendedCount = suspendedCount;
 				OnPropertyChanged(nameof(SuspendedCount));
@@ -172,7 +172,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateState_DbgThread(ReadOnlyCollection<DbgStateInfo> state) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (state == null)
 				state = emptyState;
 			bool raiseEvent;
@@ -204,7 +204,7 @@ namespace dnSpy.Debugger.Impl {
 			return -1;
 		}
 
-		internal void Remove(bool pause) => DispatcherThread.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
+		internal void Remove(bool pause) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
 
 		public override void Freeze() => runtime.Freeze(this);
 		public override void Thaw() => runtime.Thaw(this);
@@ -215,7 +215,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void WriteUIName_DbgThread(string newUserName) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				if (newUserName == userName)
 					return;
@@ -258,7 +258,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		protected override void CloseCore() {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			hThread.Dispose();
 			DbgObject[] objsToClose;
 			lock (lockObj) {
@@ -266,7 +266,7 @@ namespace dnSpy.Debugger.Impl {
 				autoCloseObjects.Clear();
 			}
 			foreach (var obj in objsToClose)
-				obj.Close(DispatcherThread);
+				obj.Close(Dispatcher);
 		}
 	}
 }

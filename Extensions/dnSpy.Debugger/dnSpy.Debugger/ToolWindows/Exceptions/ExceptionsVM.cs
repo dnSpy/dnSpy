@@ -172,7 +172,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		// random thread
 		void DbgThread(Action callback) =>
-			dbgManager.Value.DispatcherThread.BeginInvoke(callback);
+			dbgManager.Value.Dispatcher.BeginInvoke(callback);
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
@@ -219,7 +219,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		// DbgManager thread
 		void InitializeDebugger_DbgThread(bool enable) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (enable) {
 				dbgExceptionSettingsService.Value.ExceptionsChanged += DbgExceptionSettingsService_ExceptionsChanged;
 				dbgExceptionSettingsService.Value.ExceptionSettingsModified += DbgExceptionSettingsService_ExceptionSettingsModified;
@@ -236,7 +236,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		// DbgManager thread
 		void DbgExceptionSettingsService_ExceptionsChanged(object sender, DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo> e) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (e.Added)
 				UI(() => AddItems_UI(e.Objects));
 			else {
@@ -256,7 +256,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		// DbgManager thread
 		void DbgExceptionSettingsService_ExceptionSettingsModified(object sender, DbgExceptionSettingsModifiedEventArgs e) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			UI(() => {
 				foreach (var info in e.IdAndSettings) {
 					if (toVM.TryGetValue(info.Id, out var ex))

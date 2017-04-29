@@ -27,11 +27,11 @@ namespace dnSpy.Debugger.DotNet.Code {
 	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
 		readonly DbgDotNetCodeLocationImpl location;
 		readonly BreakpointFormatterServiceImpl owner;
-		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
+		readonly DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings;
 
-		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetCodeLocationImpl location) {
+		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings, DbgDotNetCodeLocationImpl location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
-			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings ?? throw new ArgumentNullException(nameof(codeBreakpointDisplaySettings));
+			this.dbgCodeBreakpointDisplaySettings = dbgCodeBreakpointDisplaySettings ?? throw new ArgumentNullException(nameof(dbgCodeBreakpointDisplaySettings));
 			this.location = location ?? throw new ArgumentNullException(nameof(location));
 		}
 
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		public override void WriteName(ITextColorWriter output) {
 			bool printedToken = false;
-			if (codeBreakpointDisplaySettings.ShowTokens) {
+			if (dbgCodeBreakpointDisplaySettings.ShowTokens) {
 				WriteToken(output, location.Token);
 				output.WriteSpace();
 				printedToken = true;
@@ -76,13 +76,13 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		SimplePrinterFlags GetPrinterFlags() {
 			SimplePrinterFlags flags = 0;
-			if (codeBreakpointDisplaySettings.ShowModuleNames)				flags |= SimplePrinterFlags.ShowModuleNames;
-			if (codeBreakpointDisplaySettings.ShowParameterTypes)			flags |= SimplePrinterFlags.ShowParameterTypes;
-			if (codeBreakpointDisplaySettings.ShowParameterNames)			flags |= SimplePrinterFlags.ShowParameterNames;
-			if (codeBreakpointDisplaySettings.ShowDeclaringTypes)			flags |= SimplePrinterFlags.ShowOwnerTypes;
-			if (codeBreakpointDisplaySettings.ShowReturnTypes)				flags |= SimplePrinterFlags.ShowReturnTypes;
-			if (codeBreakpointDisplaySettings.ShowNamespaces)				flags |= SimplePrinterFlags.ShowNamespaces;
-			if (codeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords)	flags |= SimplePrinterFlags.ShowTypeKeywords;
+			if (dbgCodeBreakpointDisplaySettings.ShowModuleNames)			flags |= SimplePrinterFlags.ShowModuleNames;
+			if (dbgCodeBreakpointDisplaySettings.ShowParameterTypes)		flags |= SimplePrinterFlags.ShowParameterTypes;
+			if (dbgCodeBreakpointDisplaySettings.ShowParameterNames)		flags |= SimplePrinterFlags.ShowParameterNames;
+			if (dbgCodeBreakpointDisplaySettings.ShowDeclaringTypes)		flags |= SimplePrinterFlags.ShowOwnerTypes;
+			if (dbgCodeBreakpointDisplaySettings.ShowReturnTypes)			flags |= SimplePrinterFlags.ShowReturnTypes;
+			if (dbgCodeBreakpointDisplaySettings.ShowNamespaces)			flags |= SimplePrinterFlags.ShowNamespaces;
+			if (dbgCodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords)	flags |= SimplePrinterFlags.ShowTypeKeywords;
 			return flags;
 		}
 

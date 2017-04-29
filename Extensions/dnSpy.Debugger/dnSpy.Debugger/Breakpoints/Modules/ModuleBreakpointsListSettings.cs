@@ -27,45 +27,45 @@ using dnSpy.Debugger.Impl;
 namespace dnSpy.Debugger.Breakpoints.Modules {
 	[Export(typeof(IDbgModuleBreakpointsServiceListener))]
 	sealed class ModuleBreakpointsListSettingsListener : IDbgModuleBreakpointsServiceListener {
-		readonly DbgDispatcher dbgDispatcher;
+		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		ModuleBreakpointsListSettingsListener(DbgDispatcher dbgDispatcher, ISettingsService settingsService) {
-			this.dbgDispatcher = dbgDispatcher;
+		ModuleBreakpointsListSettingsListener(DbgDispatcherProvider dbgDispatcherProvider, ISettingsService settingsService) {
+			this.dbgDispatcherProvider = dbgDispatcherProvider;
 			this.settingsService = settingsService;
 		}
 
 		void IDbgModuleBreakpointsServiceListener.Initialize(DbgModuleBreakpointsService dbgModuleBreakpointsService) =>
-			new ModuleBreakpointsListSettings(dbgDispatcher, settingsService, dbgModuleBreakpointsService);
+			new ModuleBreakpointsListSettings(dbgDispatcherProvider, settingsService, dbgModuleBreakpointsService);
 	}
 
 	sealed class ModuleBreakpointsListSettings {
-		readonly DbgDispatcher dbgDispatcher;
+		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		readonly ISettingsService settingsService;
 		readonly DbgModuleBreakpointsService dbgModuleBreakpointsService;
 
-		public ModuleBreakpointsListSettings(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgModuleBreakpointsService dbgModuleBreakpointsService) {
-			this.dbgDispatcher = dbgDispatcher ?? throw new ArgumentNullException(nameof(dbgDispatcher));
+		public ModuleBreakpointsListSettings(DbgDispatcherProvider dbgDispatcherProvider, ISettingsService settingsService, DbgModuleBreakpointsService dbgModuleBreakpointsService) {
+			this.dbgDispatcherProvider = dbgDispatcherProvider ?? throw new ArgumentNullException(nameof(dbgDispatcherProvider));
 			this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 			this.dbgModuleBreakpointsService = dbgModuleBreakpointsService ?? throw new ArgumentNullException(nameof(dbgModuleBreakpointsService));
 			dbgModuleBreakpointsService.BreakpointsChanged += DbgModuleBreakpointsService_BreakpointsChanged;
 			dbgModuleBreakpointsService.BreakpointsModified += DbgModuleBreakpointsService_BreakpointsModified;
-			dbgDispatcher.Dbg(() => Load());
+			dbgDispatcherProvider.Dbg(() => Load());
 		}
 
 		void Load() {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			ignoreSave = true;
 			dbgModuleBreakpointsService.Add(new BreakpointsSerializer(settingsService).Load());
-			dbgDispatcher.Dbg(() => ignoreSave = false);
+			dbgDispatcherProvider.Dbg(() => ignoreSave = false);
 		}
 
 		void DbgModuleBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgModuleBreakpoint> e) => Save();
 		void DbgModuleBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) => Save();
 
 		void Save() {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			if (ignoreSave)
 				return;
 			new BreakpointsSerializer(settingsService).Save(dbgModuleBreakpointsService.Breakpoints);

@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// random thread
 		void DbgThread(Action callback) =>
-			dbgManager.Value.DispatcherThread.BeginInvoke(callback);
+			dbgManager.Value.Dispatcher.BeginInvoke(callback);
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// DbgManager thread
 		void InitializeDebugger_DbgThread(bool enable) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (enable) {
 				dbgManager.Value.ProcessesChanged += DbgManager_ProcessesChanged;
 				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;

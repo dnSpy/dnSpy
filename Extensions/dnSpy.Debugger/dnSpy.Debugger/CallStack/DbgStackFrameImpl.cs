@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.CallStack {
 		public override DbgModule Module => engineStackFrame.Module;
 		public override uint FunctionOffset => engineStackFrame.FunctionOffset;
 		public override uint FunctionToken => engineStackFrame.FunctionToken;
-		DispatcherThread DispatcherThread => thread.Process.DbgManager.DispatcherThread;
+		DbgDispatcher Dispatcher => thread.Process.DbgManager.Dispatcher;
 
 		readonly DbgThreadImpl thread;
 		readonly DbgEngineStackFrame engineStackFrame;
@@ -64,10 +64,10 @@ namespace dnSpy.Debugger.CallStack {
 		public override string ToString() => ToString(DefaultToStringOptions);
 
 		protected override void CloseCore() {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			thread.RemoveAutoClose(this);
-			engineStackFrame.Close(DispatcherThread);
-			Location?.Close(DispatcherThread);
+			engineStackFrame.Close(Dispatcher);
+			Location?.Close(Dispatcher);
 		}
 	}
 }

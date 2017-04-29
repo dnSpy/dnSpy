@@ -19,44 +19,39 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
+using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 	/// <summary>
-	/// Writes breakpoints info used by breakpoint glyph margin code, eg. in tooltips.
-	/// Use <see cref="ExportBreakpointGlyphFormatterAttribute"/> to export an instance.
+	/// Creates <see cref="GlyphTextMarkerLocationInfo"/>s. Use <see cref="ExportDbgBreakpointGlyphTextMarkerLocationProviderAttribute"/>
+	/// to export an instance.
 	/// </summary>
-	public abstract class BreakpointGlyphFormatter {
+	public abstract class DbgBreakpointGlyphTextMarkerLocationProvider {
 		/// <summary>
-		/// Writes the text shown after "Location: " in tooltips when hovering over the breakpoint icon in the glyph margin.
-		/// Returns true if something was written, and false if nothing was written.
+		/// Gets the location of the breakpoint or null
 		/// </summary>
-		/// <param name="output">Output</param>
 		/// <param name="breakpoint">Breakpoint</param>
-		/// <param name="textView">Text view</param>
-		/// <param name="span">Span of breakpoint marker in the document</param>
-		public abstract bool WriteLocation(ITextColorWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span);
+		/// <returns></returns>
+		public abstract GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint);
 	}
 
 	/// <summary>Metadata</summary>
-	public interface IBreakpointGlyphFormatterMetadata {
-		/// <summary>See <see cref="ExportBreakpointGlyphFormatterAttribute.Order"/></summary>
+	public interface IDbgBreakpointGlyphTextMarkerLocationProviderMetadata {
+		/// <summary>See <see cref="ExportDbgBreakpointGlyphTextMarkerLocationProviderAttribute.Order"/></summary>
 		double Order { get; }
 	}
 
 	/// <summary>
-	/// Exports a <see cref="BreakpointGlyphFormatter"/> instance
+	/// Exports a <see cref="DbgBreakpointGlyphTextMarkerLocationProvider"/> instance
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportBreakpointGlyphFormatterAttribute : ExportAttribute, IBreakpointGlyphFormatterMetadata {
+	public sealed class ExportDbgBreakpointGlyphTextMarkerLocationProviderAttribute : ExportAttribute, IDbgBreakpointGlyphTextMarkerLocationProviderMetadata {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="order">Order</param>
-		public ExportBreakpointGlyphFormatterAttribute(double order = double.MaxValue)
-			: base(typeof(BreakpointGlyphFormatter)) => Order = order;
+		public ExportDbgBreakpointGlyphTextMarkerLocationProviderAttribute(double order = double.MaxValue)
+			: base(typeof(DbgBreakpointGlyphTextMarkerLocationProvider)) => Order = order;
 
 		/// <summary>
 		/// Order

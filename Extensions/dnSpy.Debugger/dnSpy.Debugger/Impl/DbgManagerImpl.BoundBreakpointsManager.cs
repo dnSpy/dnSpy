@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Impl {
 		sealed class BoundBreakpointsManager {
 			readonly DbgManagerImpl owner;
 			BoundCodeBreakpointsService BoundCodeBreakpointsService => owner.boundCodeBreakpointsService.Value;
-			DispatcherThread DispatcherThread => owner.DispatcherThread;
+			DbgDispatcher Dispatcher => owner.Dispatcher;
 
 			public BoundBreakpointsManager(DbgManagerImpl owner) => this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 
@@ -43,32 +43,32 @@ namespace dnSpy.Debugger.Impl {
 			bool IsOurEngine(DbgEngine engine) => owner.IsOurEngine(engine);
 
 			internal void RemoveAllBoundBreakpoints_DbgThread(DbgRuntime runtime) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				var boundBreakpoints = BoundCodeBreakpointsService.RemoveBoundBreakpoints_DbgThread(runtime);
 				foreach (var bp in boundBreakpoints)
-					bp.Close(DispatcherThread);
+					bp.Close(Dispatcher);
 			}
 
 			internal void RemoveBoundCodeBreakpoints_DbgThread(DbgRuntimeImpl runtime, DbgEngineBoundCodeBreakpointImpl[] breakpoints) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				Debug.Assert(IsOurEngine(runtime.Engine));
 				if (!owner.IsOurEngine(runtime.Engine)) {
 					foreach (var bp in breakpoints)
-						bp.BoundCodeBreakpoint.Close(DispatcherThread);
+						bp.BoundCodeBreakpoint.Close(Dispatcher);
 					return;
 				}
 				var bps = breakpoints.Select(a => a.BoundCodeBreakpoint).ToArray();
 				BoundCodeBreakpointsService.RemoveBoundBreakpoints_DbgThread(bps);
 				foreach (var bp in bps)
-					bp.Close(DispatcherThread);
+					bp.Close(Dispatcher);
 			}
 
 			internal void AddBoundCodeBreakpoints_DbgThread(DbgRuntimeImpl runtime, DbgEngineBoundCodeBreakpointImpl[] breakpoints) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				Debug.Assert(IsOurEngine(runtime.Engine));
 				if (!IsOurEngine(runtime.Engine)) {
 					foreach (var bp in breakpoints)
-						bp.BoundCodeBreakpoint.Close(DispatcherThread);
+						bp.BoundCodeBreakpoint.Close(Dispatcher);
 					return;
 				}
 
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.Impl {
 				foreach (var bp in breakpoints) {
 					var bound = bp.BoundCodeBreakpoint;
 					if (bound.Runtime.IsClosed || bound.Module?.IsClosed == true || bound.Breakpoint.IsClosed)
-						bound.Close(DispatcherThread);
+						bound.Close(Dispatcher);
 					else
 						bpsToKeep.Add(bound);
 				}
@@ -84,12 +84,12 @@ namespace dnSpy.Debugger.Impl {
 				if (bpsToKeep.Count > 0) {
 					var objsToClose = BoundCodeBreakpointsService.AddBoundBreakpoints_DbgThread(bpsToKeep);
 					foreach (var bp in objsToClose)
-						bp.Close(DispatcherThread);
+						bp.Close(Dispatcher);
 				}
 			}
 
 			void BoundCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				if (e.Added)
 					AddBoundBreakpoints_DbgThread(e.Objects);
 				else
@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			void BoundCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				if (!owner.IsDebugging)
 					return;
 				List<DbgCodeBreakpoint> newEnabledBreakpoints = null;
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.Impl {
 
 			// Initializes non-module breakpoints. Called right after the engine has connected to the process
 			internal void InitializeBoundBreakpoints_DbgThread(DbgEngine engine) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				var locations = BoundCodeBreakpointsService.Breakpoints.Where(a => a.IsEnabled).Select(a => a.Location).ToArray();
 				if (locations.Length == 0)
 					return;
@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			void AddBoundBreakpoints_DbgThread(IList<DbgCodeBreakpoint> breakpoints) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				if (!owner.IsDebugging)
 					return;
 				var locations = breakpoints.Where(a => a.IsEnabled).Select(a => a.Location).ToArray();
@@ -145,7 +145,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			void RemoveBoundBreakpoints_DbgThread(IList<DbgCodeBreakpoint> breakpoints) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				if (!owner.IsDebugging)
 					return;
 				if (breakpoints.Count == 0)
@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			List<(DbgEngine engine, DbgModule[] modules)> GetStartedEngines_DbgThread() {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				lock (owner.lockObj) {
 					var list = new List<(DbgEngine, DbgModule[])>(owner.engines.Count);
 					foreach (var info in owner.engines) {
@@ -169,12 +169,12 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			internal void AddBoundBreakpoints_DbgThread(IList<DbgModule> modules) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				AddBoundBreakpoints_DbgThread(modules, BoundCodeBreakpointsService.Breakpoints);
 			}
 
 			internal void RemoveBoundBreakpoints_DbgThread(IList<DbgModule> modules) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				RemoveBoundBreakpoints_DbgThread(modules, BoundCodeBreakpointsService.Breakpoints);
 			}
 
@@ -209,7 +209,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			void AddBoundBreakpoints_DbgThread(IList<DbgModule> modules, IList<DbgCodeBreakpoint> breakpoints) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				if (modules.Count == 0 || breakpoints.Count == 0)
 					return;
 				var locations = breakpoints.Where(a => a.IsEnabled).Select(a => a.Location).ToArray();
@@ -223,7 +223,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			void RemoveBoundBreakpoints_DbgThread(IList<DbgModule> modules, IList<DbgCodeBreakpoint> breakpoints) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				if (modules.Count == 0 || breakpoints.Count == 0)
 					return;
 				var boundBreakpoints = breakpoints.SelectMany(a => a.BoundBreakpoints).ToArray();
@@ -232,7 +232,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			internal void ReAddBreakpoints_DbgThread(DbgModule[] modules) {
-				DispatcherThread.VerifyAccess();
+				Dispatcher.VerifyAccess();
 				var breakpoints = BoundCodeBreakpointsService.Breakpoints;
 				RemoveBoundBreakpoints_DbgThread(modules, breakpoints);
 				AddBoundBreakpoints_DbgThread(modules, breakpoints);

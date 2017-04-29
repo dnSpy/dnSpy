@@ -146,13 +146,13 @@ namespace dnSpy.Debugger.Impl {
 
 		// DbgManager thread
 		internal void SetCurrentRuntime_DbgThread(DbgRuntimeImpl runtime) {
-			owner.DispatcherThread.VerifyAccess();
+			owner.Dispatcher.VerifyAccess();
 			currentRuntime = new CurrentObject<DbgRuntimeImpl>(runtime, currentRuntime.Break);
 		}
 
 		// DbgManager thread
 		void UpdateRuntime_DbgThread(DbgRuntimeImpl runtime) {
-			owner.DispatcherThread.VerifyAccess();
+			owner.Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				var newCurrent = GetRuntime_NoLock(currentRuntime.Current, runtime);
 				var newBreak = GetRuntime_NoLock(currentRuntime.Break, runtime);
@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.Impl {
 
 		// DbgManager thread
 		internal void SetPaused_DbgThread(DbgRuntimeImpl runtime) {
-			owner.DispatcherThread.VerifyAccess();
+			owner.Dispatcher.VerifyAccess();
 			if (runtime == null)
 				return;
 			lock (lockObj) {
@@ -183,7 +183,7 @@ namespace dnSpy.Debugger.Impl {
 
 		// DbgManager thread
 		internal void SetRunning_DbgThread(DbgRuntimeImpl runtime) {
-			owner.DispatcherThread.VerifyAccess();
+			owner.Dispatcher.VerifyAccess();
 			if (runtime == null)
 				return;
 			lock (lockObj) {
@@ -195,7 +195,7 @@ namespace dnSpy.Debugger.Impl {
 
 		// DbgManager thread
 		internal void RaiseDelayedIsRunningChanged_DbgThread() {
-			owner.DispatcherThread.VerifyAccess();
+			owner.Dispatcher.VerifyAccess();
 			if (IsRunning) {
 				DbgEngine[] engines;
 				lock (lockObj)
@@ -220,7 +220,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) {
-			DbgManager.DispatcherThread.VerifyAccess();
+			DbgManager.Dispatcher.VerifyAccess();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
@@ -478,7 +478,7 @@ namespace dnSpy.Debugger.Impl {
 					shouldDetach = value;
 				}
 				if (raiseEvent)
-					DbgManager.DispatcherThread.BeginInvoke(() => OnPropertyChanged(nameof(ShouldDetach)));
+					DbgManager.Dispatcher.BeginInvoke(() => OnPropertyChanged(nameof(ShouldDetach)));
 			}
 		}
 		bool shouldDetach;

@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Impl {
 					if (processes.Count == 0)
 						raiseEvent = true;
 					else {
-						timer = new DispatcherTimer(DispatcherPriority.Send, owner.Dispatcher);
+						timer = new DispatcherTimer(DispatcherPriority.Send, owner.WpfDispatcher);
 						timer.Interval = TimeSpan.FromMilliseconds(stopDebuggingTimeoutMilliseconds);
 						timer.Tick += Timer_Tick_DbgThread;
 						timer.Start();

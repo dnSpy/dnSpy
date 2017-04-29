@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		readonly object lockObj;
-		readonly DbgDispatcher dbgDispatcher;
+		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		readonly DefaultExceptionDefinitionsProvider defaultExceptionDefinitionsProvider;
 		readonly Dictionary<DbgExceptionId, ExceptionInfo> toExceptionInfo;
 
@@ -57,9 +57,9 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		[ImportingConstructor]
-		DbgExceptionSettingsServiceImpl(DbgDispatcher dbgDispatcher, DefaultExceptionDefinitionsProvider defaultExceptionDefinitionsProvider, [ImportMany] IEnumerable<Lazy<IDbgExceptionSettingsServiceListener>> dbgExceptionSettingsServiceListeners) {
+		DbgExceptionSettingsServiceImpl(DbgDispatcherProvider dbgDispatcherProvider, DefaultExceptionDefinitionsProvider defaultExceptionDefinitionsProvider, [ImportMany] IEnumerable<Lazy<IDbgExceptionSettingsServiceListener>> dbgExceptionSettingsServiceListeners) {
 			lockObj = new object();
-			this.dbgDispatcher = dbgDispatcher;
+			this.dbgDispatcherProvider = dbgDispatcherProvider;
 			this.defaultExceptionDefinitionsProvider = defaultExceptionDefinitionsProvider;
 			toExceptionInfo = new Dictionary<DbgExceptionId, ExceptionInfo>();
 
@@ -67,12 +67,12 @@ namespace dnSpy.Debugger.Exceptions {
 				lz.Value.Initialize(this);
 		}
 
-		void Dbg(Action callback) => dbgDispatcher.Dbg(callback);
+		void Dbg(Action callback) => dbgDispatcherProvider.Dbg(callback);
 
 		public override void Reset() => Dbg(() => ResetCore());
 
 		void ResetCore() {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			DbgExceptionSettingsInfo[] removed;
 			DbgExceptionSettingsInfo[] added;
 			lock (lockObj) {
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void ModifyCore(DbgExceptionIdAndSettings[] settings) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var modified = new List<DbgExceptionIdAndSettings>(settings.Length);
 			lock (lockObj) {
 				foreach (var s in settings) {
@@ -122,7 +122,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void RemoveCore(DbgExceptionId[] ids) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var removed = new List<DbgExceptionSettingsInfo>(ids.Length);
 			lock (lockObj) {
 				foreach (var id in ids) {
@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void AddCore(DbgExceptionSettingsInfo[] settings) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var added = new List<DbgExceptionSettingsInfo>(settings.Length);
 			lock (lockObj) {
 				foreach (var s in settings) {

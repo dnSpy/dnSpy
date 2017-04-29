@@ -23,12 +23,12 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
-	class CodeBreakpointDisplaySettingsBase : CodeBreakpointDisplaySettings {
+	class DbgCodeBreakpointDisplaySettingsBase : DbgCodeBreakpointDisplaySettings {
 		protected virtual void OnModified() { }
 
 		readonly object lockObj;
 
-		protected CodeBreakpointDisplaySettingsBase() => lockObj = new object();
+		protected DbgCodeBreakpointDisplaySettingsBase() => lockObj = new object();
 
 		public override bool ShowTokens {
 			get {
@@ -183,14 +183,14 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		bool showIntrinsicTypeKeywords = true;
 	}
 
-	[Export(typeof(CodeBreakpointDisplaySettings))]
-	sealed class CodeBreakpointDisplaySettingsImpl : CodeBreakpointDisplaySettingsBase {
+	[Export(typeof(DbgCodeBreakpointDisplaySettings))]
+	sealed class DbgCodeBreakpointDisplaySettingsImpl : DbgCodeBreakpointDisplaySettingsBase {
 		static readonly Guid SETTINGS_GUID = new Guid("42CB1310-641D-4EB7-971D-16DC5CF9A40D");
 
 		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		CodeBreakpointDisplaySettingsImpl(ISettingsService settingsService) {
+		DbgCodeBreakpointDisplaySettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
 			disableSave = true;

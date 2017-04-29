@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Executes code in a thread
 	/// </summary>
-	public abstract class DispatcherThread {
+	public abstract class DbgDispatcher {
 		/// <summary>
 		/// Verifies that the current code is running in the dispatcher thread. <see cref="InvalidOperationException"/>
 		/// is thrown if it's the wrong thread.

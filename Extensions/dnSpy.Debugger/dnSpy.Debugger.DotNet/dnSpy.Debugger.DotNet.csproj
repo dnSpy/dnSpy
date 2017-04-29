@@ -47,9 +47,9 @@
   <ItemGroup>
     <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\DbgDotNetBreakpointFactory2.cs" />
-    <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphFormatterImpl.cs" />
-    <Compile Include="Breakpoints\Code\TextEditor\BreakpointGlyphTextMarkerLocationProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\ClassBreakpointCommands.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphFormatterImpl.cs" />
+    <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphTextMarkerLocationProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DbgTextViewBreakpointLocationProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DeleteBreakpointsInRemovedModules.cs" />
     <Compile Include="Code\BreakpointFormatterService.cs" />

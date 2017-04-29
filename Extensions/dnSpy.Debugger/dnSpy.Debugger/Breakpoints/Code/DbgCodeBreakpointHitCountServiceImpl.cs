@@ -39,15 +39,15 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		public override event EventHandler<DbgHitCountChangedEventArgs> HitCountChanged;
 
 		readonly object lockObj;
-		readonly DbgDispatcher dbgDispatcher;
+		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		Dictionary<DbgCodeBreakpoint, int> bpToHitCount;
 		DbgManager dbgManager;
 
 		[ImportingConstructor]
-		DbgCodeBreakpointHitCountServiceImpl(DbgDispatcher dbgDispatcher, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) {
+		DbgCodeBreakpointHitCountServiceImpl(DbgDispatcherProvider dbgDispatcherProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) {
 			lockObj = new object();
-			this.dbgDispatcher = dbgDispatcher;
+			this.dbgDispatcherProvider = dbgDispatcherProvider;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			bpToHitCount = new Dictionary<DbgCodeBreakpoint, int>();
 		}
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 		}
 
-		void Dbg(Action callback) => dbgDispatcher.DispatcherThread.BeginInvoke(callback);
+		void Dbg(Action callback) => dbgDispatcherProvider.Dispatcher.BeginInvoke(callback);
 
 		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		public override int Hit_DbgThread(DbgCodeBreakpoint breakpoint) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			if (breakpoint == null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			int hitCount;
@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		void FlushPendingHitCountChanged_DbgThread() {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			DbgCodeBreakpointAndHitCount[] breakpoints;
 			lock (lockObj) {
 				StopPendingHitCountChangedTimer_NoLock();
@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		void Reset_DbgThread(DbgCodeBreakpoint[] breakpoints) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			List<DbgCodeBreakpointAndHitCount> updated = null;
 			bool raisePendingEvent;
 			lock (lockObj) {

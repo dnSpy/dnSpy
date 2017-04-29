@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void RaiseCurrentObjectEvents_DbgThread(DbgCurrentObjectChangedEventArgs<DbgProcess> processEventArgs, DbgCurrentObjectChangedEventArgs<DbgRuntime> runtimeEventArgs, DbgCurrentObjectChangedEventArgs<DbgThread> threadEventArgs) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (processEventArgs.CurrentChanged || processEventArgs.BreakChanged)
 				CurrentProcessChanged?.Invoke(this, processEventArgs);
 			if (runtimeEventArgs.CurrentChanged || runtimeEventArgs.BreakChanged)
@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void SetCurrentProcess_DbgThread(DbgProcessImpl newProcess) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (newProcess == null || newProcess.State != DbgProcessState.Paused)
 				return;
 
@@ -147,7 +147,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void SetCurrentRuntime_DbgThread(DbgRuntimeImpl newRuntime) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			var newProcess = (DbgProcessImpl)newRuntime?.Process;
 			if (newProcess == null || newProcess.State != DbgProcessState.Paused || newRuntime.IsClosed)
 				return;
@@ -172,7 +172,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void SetCurrentThread_DbgThread(DbgThreadImpl newThread) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			var newProcess = (DbgProcessImpl)newThread?.Process;
 			if (newProcess == null || newProcess.State != DbgProcessState.Paused || newThread.IsClosed)
 				return;
@@ -198,7 +198,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void SetCurrentEngineIfCurrentIsNull_DbgThread(DbgEngine engine) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			DbgCurrentObjectChangedEventArgs<DbgProcess> processEventArgs;
 			DbgCurrentObjectChangedEventArgs<DbgRuntime> runtimeEventArgs;
 			DbgCurrentObjectChangedEventArgs<DbgThread> threadEventArgs;
@@ -222,7 +222,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void RecheckAndUpdateCurrentProcess_DbgThread() {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			DbgCurrentObjectChangedEventArgs<DbgProcess> processEventArgs;
 			DbgCurrentObjectChangedEventArgs<DbgRuntime> runtimeEventArgs;
 			DbgCurrentObjectChangedEventArgs<DbgThread> threadEventArgs;

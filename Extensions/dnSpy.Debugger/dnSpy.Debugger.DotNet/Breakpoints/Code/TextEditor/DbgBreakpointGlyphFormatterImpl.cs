@@ -33,12 +33,12 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
-	[ExportBreakpointGlyphFormatter]
-	sealed class BreakpointGlyphFormatterImpl : BreakpointGlyphFormatter {
+	[ExportDbgBreakpointGlyphFormatter]
+	sealed class DbgBreakpointGlyphFormatterImpl : DbgBreakpointGlyphFormatter {
 		readonly IDecompilerService decompilerService;
 
 		[ImportingConstructor]
-		BreakpointGlyphFormatterImpl(IDecompilerService decompilerService) => this.decompilerService = decompilerService;
+		DbgBreakpointGlyphFormatterImpl(IDecompilerService decompilerService) => this.decompilerService = decompilerService;
 
 		public override bool WriteLocation(ITextColorWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
 			if (breakpoint.Location is DbgDotNetCodeLocation location)

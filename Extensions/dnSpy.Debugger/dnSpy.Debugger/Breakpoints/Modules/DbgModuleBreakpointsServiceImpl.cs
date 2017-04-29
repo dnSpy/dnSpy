@@ -37,21 +37,21 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 	sealed class DbgModuleBreakpointsServiceImpl : DbgModuleBreakpointsService {
 		readonly object lockObj;
 		readonly HashSet<DbgModuleBreakpointImpl> breakpoints;
-		readonly DbgDispatcher dbgDispatcher;
+		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		int moduleId;
 
 		[ImportingConstructor]
-		DbgModuleBreakpointsServiceImpl(DbgDispatcher dbgDispatcher, [ImportMany] IEnumerable<Lazy<IDbgModuleBreakpointsServiceListener>> dbgModuleBreakpointsServiceListener) {
+		DbgModuleBreakpointsServiceImpl(DbgDispatcherProvider dbgDispatcherProvider, [ImportMany] IEnumerable<Lazy<IDbgModuleBreakpointsServiceListener>> dbgModuleBreakpointsServiceListener) {
 			lockObj = new object();
 			breakpoints = new HashSet<DbgModuleBreakpointImpl>();
-			this.dbgDispatcher = dbgDispatcher;
+			this.dbgDispatcherProvider = dbgDispatcherProvider;
 			moduleId = -1;
 
 			foreach (var lz in dbgModuleBreakpointsServiceListener)
 				lz.Value.Initialize(this);
 		}
 
-		void Dbg(Action callback) => dbgDispatcher.Dbg(callback);
+		void Dbg(Action callback) => dbgDispatcherProvider.Dbg(callback);
 
 		public override void Modify(DbgModuleBreakpointAndSettings[] settings) {
 			if (settings == null)
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		}
 
 		void ModifyCore(DbgModuleBreakpointAndSettings[] settings) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var bps = new List<DbgModuleBreakpointAndOldSettings>(settings.Length);
 			lock (lockObj) {
 				foreach (var info in settings) {
@@ -108,7 +108,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		}
 
 		void AddCore(DbgModuleBreakpointImpl[] breakpoints) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var added = new List<DbgModuleBreakpoint>(breakpoints.Length);
 			lock (lockObj) {
 				foreach (var bp in breakpoints) {
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		}
 
 		void RemoveCore(DbgModuleBreakpoint[] breakpoints) {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			var removed = new List<DbgModuleBreakpoint>(breakpoints.Length);
 			lock (lockObj) {
 				foreach (var bp in breakpoints) {
@@ -148,13 +148,13 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			if (removed.Count > 0) {
 				BreakpointsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModuleBreakpoint>(removed, added: false));
 				foreach (var bp in removed)
-					bp.Close(dbgDispatcher.DispatcherThread);
+					bp.Close(dbgDispatcherProvider.Dispatcher);
 			}
 		}
 
 		public override void Clear() => Dbg(() => ClearCore());
 		void ClearCore() {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			DbgModuleBreakpoint[] removed;
 			lock (lockObj) {
 				removed = breakpoints.ToArray();
@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			if (removed.Length > 0) {
 				BreakpointsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModuleBreakpoint>(removed, added: false));
 				foreach (var bp in removed)
-					bp.Close(dbgDispatcher.DispatcherThread);
+					bp.Close(dbgDispatcherProvider.Dispatcher);
 			}
 		}
 

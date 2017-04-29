@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		DispatcherThread DispatcherThread => Process.DbgManager.DispatcherThread;
+		DbgDispatcher Dispatcher => Process.DbgManager.Dispatcher;
 
 		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
@@ -62,12 +62,12 @@ namespace dnSpy.Debugger.Impl {
 
 		public override event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
 		internal void UpdateModule_DbgThread(DbgModule module) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			if (this.module != module) {
 				this.module = module;
 				OnPropertyChanged(nameof(Module));
@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateAddress_DbgThread(ulong address) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			bool raiseEvent;
 			lock (lockObj) {
 				raiseEvent = this.address != address;
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void UpdateMessage_DbgThread(DbgBoundCodeBreakpointMessage message) {
-			DispatcherThread.VerifyAccess();
+			Dispatcher.VerifyAccess();
 			bool raiseEvent;
 			lock (lockObj) {
 				raiseEvent = this.message != message;
@@ -98,8 +98,8 @@ namespace dnSpy.Debugger.Impl {
 				OnPropertyChanged(nameof(Message));
 		}
 
-		internal void Remove(DbgEngineBoundCodeBreakpointImpl[] breakpoints) => DispatcherThread.BeginInvoke(() => runtime.Remove_DbgThread(breakpoints));
+		internal void Remove(DbgEngineBoundCodeBreakpointImpl[] breakpoints) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(breakpoints));
 
-		protected override void CloseCore() => DispatcherThread.VerifyAccess();
+		protected override void CloseCore() => Dispatcher.VerifyAccess();
 	}
 }

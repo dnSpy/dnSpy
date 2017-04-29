@@ -28,49 +28,49 @@ using dnSpy.Debugger.Impl;
 namespace dnSpy.Debugger.Breakpoints.Code {
 	[Export(typeof(IDbgCodeBreakpointsServiceListener))]
 	sealed class CodeBreakpointsListSettingsListener : IDbgCodeBreakpointsServiceListener {
-		readonly DbgDispatcher dbgDispatcher;
+		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		readonly ISettingsService settingsService;
 		readonly DbgCodeLocationSerializerService dbgCodeLocationSerializerService;
 
 		[ImportingConstructor]
-		CodeBreakpointsListSettingsListener(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgCodeLocationSerializerService dbgCodeLocationSerializerService) {
-			this.dbgDispatcher = dbgDispatcher;
+		CodeBreakpointsListSettingsListener(DbgDispatcherProvider dbgDispatcherProvider, ISettingsService settingsService, DbgCodeLocationSerializerService dbgCodeLocationSerializerService) {
+			this.dbgDispatcherProvider = dbgDispatcherProvider;
 			this.settingsService = settingsService;
 			this.dbgCodeLocationSerializerService = dbgCodeLocationSerializerService;
 		}
 
 		void IDbgCodeBreakpointsServiceListener.Initialize(DbgCodeBreakpointsService dbgCodeBreakpointsService) =>
-			new CodeBreakpointsListSettings(dbgDispatcher, settingsService, dbgCodeLocationSerializerService, dbgCodeBreakpointsService);
+			new CodeBreakpointsListSettings(dbgDispatcherProvider, settingsService, dbgCodeLocationSerializerService, dbgCodeBreakpointsService);
 	}
 
 	sealed class CodeBreakpointsListSettings {
-		readonly DbgDispatcher dbgDispatcher;
+		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		readonly ISettingsService settingsService;
 		readonly DbgCodeLocationSerializerService dbgCodeLocationSerializerService;
 		readonly DbgCodeBreakpointsService dbgCodeBreakpointsService;
 
-		public CodeBreakpointsListSettings(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DbgCodeLocationSerializerService dbgCodeLocationSerializerService, DbgCodeBreakpointsService dbgCodeBreakpointsService) {
-			this.dbgDispatcher = dbgDispatcher ?? throw new ArgumentNullException(nameof(dbgDispatcher));
+		public CodeBreakpointsListSettings(DbgDispatcherProvider dbgDispatcherProvider, ISettingsService settingsService, DbgCodeLocationSerializerService dbgCodeLocationSerializerService, DbgCodeBreakpointsService dbgCodeBreakpointsService) {
+			this.dbgDispatcherProvider = dbgDispatcherProvider ?? throw new ArgumentNullException(nameof(dbgDispatcherProvider));
 			this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 			this.dbgCodeLocationSerializerService = dbgCodeLocationSerializerService ?? throw new ArgumentNullException(nameof(dbgCodeLocationSerializerService));
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService ?? throw new ArgumentNullException(nameof(dbgCodeBreakpointsService));
 			dbgCodeBreakpointsService.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 			dbgCodeBreakpointsService.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
-			dbgDispatcher.Dbg(() => Load());
+			dbgDispatcherProvider.Dbg(() => Load());
 		}
 
 		void Load() {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			ignoreSave = true;
 			dbgCodeBreakpointsService.Add(new BreakpointsSerializer(settingsService, dbgCodeLocationSerializerService).Load());
-			dbgDispatcher.Dbg(() => ignoreSave = false);
+			dbgDispatcherProvider.Dbg(() => ignoreSave = false);
 		}
 
 		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) => Save();
 		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) => Save();
 
 		void Save() {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			if (ignoreSave)
 				return;
 			// Don't save temporary and hidden BPs. They should only be created by code, not by the user.

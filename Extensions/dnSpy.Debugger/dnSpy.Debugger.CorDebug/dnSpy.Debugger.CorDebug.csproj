@@ -47,8 +47,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Breakpoints\DbgBreakpointLocationFormatterProviderImpl.cs" />
-    <Compile Include="Breakpoints\TextEditor\BreakpointGlyphFormatterImpl.cs" />
-    <Compile Include="Breakpoints\TextEditor\BreakpointGlyphTextMarkerLocationProviderImpl.cs" />
+    <Compile Include="Breakpoints\TextEditor\DbgBreakpointGlyphFormatterImpl.cs" />
+    <Compile Include="Breakpoints\TextEditor\DbgBreakpointGlyphTextMarkerLocationProviderImpl.cs" />
     <Compile Include="CallStack\DbgEngineStackWalkerImpl.cs" />
     <Compile Include="CallStack\ILDbgEngineStackFrame.cs" />
     <Compile Include="CallStack\NullDbgEngineStackWalker.cs" />

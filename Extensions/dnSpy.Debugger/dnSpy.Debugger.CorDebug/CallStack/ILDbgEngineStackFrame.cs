@@ -114,17 +114,17 @@ namespace dnSpy.Debugger.CorDebug.CallStack {
 
 		static TypeFormatterFlags GetFlags(DbgStackFrameFormatOptions options) {
 			var flags = TypeFormatterFlags.ShowArrayValueSizes;
-			if ((options & DbgStackFrameFormatOptions.ShowReturnTypes) != 0) flags |= TypeFormatterFlags.ShowReturnTypes;
-			if ((options & DbgStackFrameFormatOptions.ShowParameterTypes) != 0) flags |= TypeFormatterFlags.ShowParameterTypes;
-			if ((options & DbgStackFrameFormatOptions.ShowParameterNames) != 0) flags |= TypeFormatterFlags.ShowParameterNames;
-			if ((options & DbgStackFrameFormatOptions.ShowParameterValues) != 0) flags |= TypeFormatterFlags.ShowParameterValues;
-			if ((options & DbgStackFrameFormatOptions.ShowFunctionOffset) != 0) flags |= TypeFormatterFlags.ShowIP;
-			if ((options & DbgStackFrameFormatOptions.ShowModuleNames) != 0) flags |= TypeFormatterFlags.ShowModuleNames;
-			if ((options & DbgStackFrameFormatOptions.ShowDeclaringTypes) != 0) flags |= TypeFormatterFlags.ShowDeclaringTypes;
-			if ((options & DbgStackFrameFormatOptions.ShowNamespaces) != 0) flags |= TypeFormatterFlags.ShowNamespaces;
-			if ((options & DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords) != 0) flags |= TypeFormatterFlags.ShowIntrinsicTypeKeywords;
-			if ((options & DbgStackFrameFormatOptions.ShowTokens) != 0) flags |= TypeFormatterFlags.ShowTokens;
-			if ((options & DbgStackFrameFormatOptions.UseDecimal) != 0) flags |= TypeFormatterFlags.UseDecimal;
+			if ((options & DbgStackFrameFormatOptions.ShowReturnTypes) != 0)			flags |= TypeFormatterFlags.ShowReturnTypes;
+			if ((options & DbgStackFrameFormatOptions.ShowParameterTypes) != 0)			flags |= TypeFormatterFlags.ShowParameterTypes;
+			if ((options & DbgStackFrameFormatOptions.ShowParameterNames) != 0)			flags |= TypeFormatterFlags.ShowParameterNames;
+			if ((options & DbgStackFrameFormatOptions.ShowParameterValues) != 0)		flags |= TypeFormatterFlags.ShowParameterValues;
+			if ((options & DbgStackFrameFormatOptions.ShowFunctionOffset) != 0)			flags |= TypeFormatterFlags.ShowIP;
+			if ((options & DbgStackFrameFormatOptions.ShowModuleNames) != 0)			flags |= TypeFormatterFlags.ShowModuleNames;
+			if ((options & DbgStackFrameFormatOptions.ShowDeclaringTypes) != 0)			flags |= TypeFormatterFlags.ShowDeclaringTypes;
+			if ((options & DbgStackFrameFormatOptions.ShowNamespaces) != 0)				flags |= TypeFormatterFlags.ShowNamespaces;
+			if ((options & DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords) != 0)	flags |= TypeFormatterFlags.ShowIntrinsicTypeKeywords;
+			if ((options & DbgStackFrameFormatOptions.ShowTokens) != 0)					flags |= TypeFormatterFlags.ShowTokens;
+			if ((options & DbgStackFrameFormatOptions.UseDecimal) != 0)					flags |= TypeFormatterFlags.UseDecimal;
 			return flags;
 		}
 

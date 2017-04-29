@@ -80,10 +80,10 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		// Note that dbgManager can be null if called before debugging has started
-		void Dbg(Action callback) => dbgManager?.DispatcherThread.BeginInvoke(callback);
+		void Dbg(Action callback) => dbgManager?.Dispatcher.BeginInvoke(callback);
 
 		void SetActiveFrameIndex_DbgThread(int newIndex) {
-			dbgManager.DispatcherThread.VerifyAccess();
+			dbgManager.Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				if (activeFrameIndex == newIndex)
 					return;
@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		void UpdateCurrentThreadProcess_DbgThread(DbgProcess process) {
-			dbgManager.DispatcherThread.VerifyAccess();
+			dbgManager.Dispatcher.VerifyAccess();
 			if (currentThreadProcess == process)
 				return;
 			if (currentThreadProcess != null)
@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		void UpdateFrames_DbgThread() {
-			dbgManager.DispatcherThread.VerifyAccess();
+			dbgManager.Dispatcher.VerifyAccess();
 			bool raiseActiveFrameIndexChanged, raiseFramesChanged;
 			DbgStackWalker stackWalker = null;
 			DbgStackFrame[] newFrames = null;

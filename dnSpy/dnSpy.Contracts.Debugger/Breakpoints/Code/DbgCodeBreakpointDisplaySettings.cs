@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Code breakpoint display settings
 	/// </summary>
-	public abstract class CodeBreakpointDisplaySettings : INotifyPropertyChanged {
+	public abstract class DbgCodeBreakpointDisplaySettings : INotifyPropertyChanged {
 		/// <summary>
 		/// Raised when a property is changed
 		/// </summary>

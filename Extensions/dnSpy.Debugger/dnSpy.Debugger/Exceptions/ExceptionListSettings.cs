@@ -31,19 +31,19 @@ using dnSpy.Debugger.Impl;
 namespace dnSpy.Debugger.Exceptions {
 	[Export(typeof(IDbgExceptionSettingsServiceListener))]
 	sealed class ExceptionListSettingsListener : IDbgExceptionSettingsServiceListener {
-		readonly DbgDispatcher dbgDispatcher;
+		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		readonly ISettingsService settingsService;
 		readonly DefaultExceptionDefinitionsProvider defaultExceptionDefinitionsProvider;
 
 		[ImportingConstructor]
-		ExceptionListSettingsListener(DbgDispatcher dbgDispatcher, ISettingsService settingsService, DefaultExceptionDefinitionsProvider defaultExceptionDefinitionsProvider) {
-			this.dbgDispatcher = dbgDispatcher;
+		ExceptionListSettingsListener(DbgDispatcherProvider dbgDispatcherProvider, ISettingsService settingsService, DefaultExceptionDefinitionsProvider defaultExceptionDefinitionsProvider) {
+			this.dbgDispatcherProvider = dbgDispatcherProvider;
 			this.settingsService = settingsService;
 			this.defaultExceptionDefinitionsProvider = defaultExceptionDefinitionsProvider;
 		}
 
 		void IDbgExceptionSettingsServiceListener.Initialize(DbgExceptionSettingsService dbgExceptionSettingsService) =>
-			new ExceptionListSettings(dbgDispatcher, dbgExceptionSettingsService, settingsService, defaultExceptionDefinitionsProvider);
+			new ExceptionListSettings(dbgDispatcherProvider, dbgExceptionSettingsService, settingsService, defaultExceptionDefinitionsProvider);
 	}
 
 	sealed class ExceptionListSettings {
@@ -55,23 +55,23 @@ namespace dnSpy.Debugger.Exceptions {
 			Update,
 		}
 
-		readonly DbgDispatcher dbgDispatcher;
+		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		readonly DbgExceptionSettingsService dbgExceptionSettingsService;
 		readonly ISettingsService settingsService;
 		readonly DefaultExceptionDefinitionsProvider defaultExceptionDefinitionsProvider;
 
-		public ExceptionListSettings(DbgDispatcher dbgDispatcher, DbgExceptionSettingsService dbgExceptionSettingsService, ISettingsService settingsService, DefaultExceptionDefinitionsProvider defaultExceptionDefinitionsProvider) {
-			this.dbgDispatcher = dbgDispatcher ?? throw new ArgumentNullException(nameof(dbgDispatcher));
+		public ExceptionListSettings(DbgDispatcherProvider dbgDispatcherProvider, DbgExceptionSettingsService dbgExceptionSettingsService, ISettingsService settingsService, DefaultExceptionDefinitionsProvider defaultExceptionDefinitionsProvider) {
+			this.dbgDispatcherProvider = dbgDispatcherProvider ?? throw new ArgumentNullException(nameof(dbgDispatcherProvider));
 			this.dbgExceptionSettingsService = dbgExceptionSettingsService ?? throw new ArgumentNullException(nameof(dbgExceptionSettingsService));
 			this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 			this.defaultExceptionDefinitionsProvider = defaultExceptionDefinitionsProvider ?? throw new ArgumentNullException(nameof(defaultExceptionDefinitionsProvider));
 			dbgExceptionSettingsService.ExceptionsChanged += DbgExceptionSettingsService_ExceptionsChanged;
 			dbgExceptionSettingsService.ExceptionSettingsModified += DbgExceptionSettingsService_ExceptionSettingsModified;
-			dbgDispatcher.Dbg(() => Load());
+			dbgDispatcherProvider.Dbg(() => Load());
 		}
 
 		void Load() {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			ignoreSave = true;
 
 			dbgExceptionSettingsService.Reset();
@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.Exceptions {
 			if (exToUpdate.Count > 0)
 				dbgExceptionSettingsService.Modify(exToUpdate.ToArray());
 
-			dbgDispatcher.Dbg(() => ignoreSave = false);
+			dbgDispatcherProvider.Dbg(() => ignoreSave = false);
 		}
 
 		bool ReadSettings(ISettingsSection section, out DbgExceptionSettings settings) {
@@ -186,7 +186,7 @@ namespace dnSpy.Debugger.Exceptions {
 		void DbgExceptionSettingsService_ExceptionSettingsModified(object sender, DbgExceptionSettingsModifiedEventArgs e) => Save();
 
 		void Save() {
-			dbgDispatcher.VerifyAccess();
+			dbgDispatcherProvider.VerifyAccess();
 			if (ignoreSave)
 				return;
 			var section = settingsService.RecreateSection(SETTINGS_GUID);

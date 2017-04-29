@@ -55,16 +55,16 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<IGlyphTextMarkerService> glyphTextMarkerService;
 		readonly Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService;
-		readonly BreakpointGlyphTextMarkerLocationProviderService breakpointGlyphTextMarkerLocationProviderService;
+		readonly DbgBreakpointGlyphTextMarkerLocationProviderService dbgBreakpointGlyphTextMarkerLocationProviderService;
 		readonly BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler;
 		BreakpointInfo[] breakpointInfos;
 
 		[ImportingConstructor]
-		BreakpointMarker(UIDispatcher uiDispatcher, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService, BreakpointGlyphTextMarkerLocationProviderService breakpointGlyphTextMarkerLocationProviderService, BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler) {
+		BreakpointMarker(UIDispatcher uiDispatcher, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService, DbgBreakpointGlyphTextMarkerLocationProviderService dbgBreakpointGlyphTextMarkerLocationProviderService, BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler) {
 			this.uiDispatcher = uiDispatcher;
 			this.glyphTextMarkerService = glyphTextMarkerService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
-			this.breakpointGlyphTextMarkerLocationProviderService = breakpointGlyphTextMarkerLocationProviderService;
+			this.dbgBreakpointGlyphTextMarkerLocationProviderService = dbgBreakpointGlyphTextMarkerLocationProviderService;
 			this.breakpointGlyphTextMarkerHandler = breakpointGlyphTextMarkerHandler;
 			UI(() => Initialize_UI());
 		}
@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			dbgCodeBreakpointsService.BoundBreakpointsMessageChanged += DbgCodeBreakpointsService_BoundBreakpointsMessageChanged;
 		}
 
-		void DbgCodeBreakpointsService_BoundBreakpointsMessageChanged(object sender, BoundBreakpointsMessageChangedEventArgs e) =>
+		void DbgCodeBreakpointsService_BoundBreakpointsMessageChanged(object sender, DbgBoundBreakpointsMessageChangedEventArgs e) =>
 			UI(() => OnBreakpointsModified_UI(e.Breakpoints));
 
 		sealed class BreakpointData {
@@ -131,7 +131,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			foreach (var bp in e.Objects) {
 				if (bp.IsHidden)
 					continue;
-				var location = breakpointGlyphTextMarkerLocationProviderService.GetLocation(bp);
+				var location = dbgBreakpointGlyphTextMarkerLocationProviderService.GetLocation(bp);
 				if (location != null) {
 					bp.GetOrCreateData(() => new BreakpointData(location));
 					UpdateMarker(bp);

@@ -22,17 +22,17 @@ using System.ComponentModel.Composition;
 using System.Windows.Threading;
 
 namespace dnSpy.Debugger.Impl {
-	[Export(typeof(DbgDispatcher))]
-	sealed class DbgDispatcher {
-		public Dispatcher Dispatcher => dispatcherThread.Dispatcher;
-		public DispatcherThread2 DispatcherThread => dispatcherThread;
+	[Export(typeof(DbgDispatcherProvider))]
+	sealed class DbgDispatcherProvider {
+		public Dispatcher WpfDispatcher => dbgDispatcher.WpfDispatcher;
+		public DbgDispatcher2 Dispatcher => dbgDispatcher;
 
-		readonly DispatcherThreadImpl dispatcherThread;
+		readonly DbgDispatcherImpl dbgDispatcher;
 
 		[ImportingConstructor]
-		DbgDispatcher() => dispatcherThread = new DispatcherThreadImpl();
+		DbgDispatcherProvider() => dbgDispatcher = new DbgDispatcherImpl();
 
-		public void VerifyAccess() => DispatcherThread.VerifyAccess();
-		public void Dbg(Action callback) => DispatcherThread.BeginInvoke(callback);
+		public void VerifyAccess() => Dispatcher.VerifyAccess();
+		public void Dbg(Action callback) => Dispatcher.BeginInvoke(callback);
 	}
 }

@@ -147,7 +147,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// random thread
 		void DbgThread(Action callback) =>
-			dbgManager.Value.DispatcherThread.BeginInvoke(callback);
+			dbgManager.Value.Dispatcher.BeginInvoke(callback);
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
@@ -192,7 +192,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// DbgManager thread
 		void InitializeDebugger_DbgThread(bool enable) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (enable) {
 				dbgManager.Value.ProcessesChanged += DbgManager_ProcessesChanged;
 				var modules = new List<DbgModule>();
@@ -229,39 +229,39 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		// DbgManager thread
 		void InitializeProcess_DbgThread(DbgProcess process) {
-			process.DbgManager.DispatcherThread.VerifyAccess();
+			process.DbgManager.Dispatcher.VerifyAccess();
 			process.RuntimesChanged += DbgProcess_RuntimesChanged;
 		}
 
 		// DbgManager thread
 		void DeinitializeProcess_DbgThread(DbgProcess process) {
-			process.DbgManager.DispatcherThread.VerifyAccess();
+			process.DbgManager.Dispatcher.VerifyAccess();
 			process.RuntimesChanged -= DbgProcess_RuntimesChanged;
 		}
 
 		// DbgManager thread
 		void InitializeRuntime_DbgThread(DbgRuntime runtime) {
-			runtime.Process.DbgManager.DispatcherThread.VerifyAccess();
+			runtime.Process.DbgManager.Dispatcher.VerifyAccess();
 			runtime.AppDomainsChanged += DbgRuntime_AppDomainsChanged;
 			runtime.ModulesChanged += DbgRuntime_ModulesChanged;
 		}
 
 		// DbgManager thread
 		void DeinitializeRuntime_DbgThread(DbgRuntime runtime) {
-			runtime.Process.DbgManager.DispatcherThread.VerifyAccess();
+			runtime.Process.DbgManager.Dispatcher.VerifyAccess();
 			runtime.AppDomainsChanged -= DbgRuntime_AppDomainsChanged;
 			runtime.ModulesChanged -= DbgRuntime_ModulesChanged;
 		}
 
 		// DbgManager thread
 		void InitializeAppDomain_DbgThread(DbgAppDomain appDomain) {
-			appDomain.Process.DbgManager.DispatcherThread.VerifyAccess();
+			appDomain.Process.DbgManager.Dispatcher.VerifyAccess();
 			appDomain.PropertyChanged += DbgAppDomain_PropertyChanged;
 		}
 
 		// DbgManager thread
 		void DeinitializeAppDomain_DbgThread(DbgAppDomain appDomain) {
-			appDomain.Process.DbgManager.DispatcherThread.VerifyAccess();
+			appDomain.Process.DbgManager.Dispatcher.VerifyAccess();
 			appDomain.PropertyChanged -= DbgAppDomain_PropertyChanged;
 		}
 

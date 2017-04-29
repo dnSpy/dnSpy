@@ -275,7 +275,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		protected override void CloseCore() {
 			owner.DbgDispatcher.VerifyAccess();
-			Location.Close(owner.DbgDispatcher.DispatcherThread);
+			Location.Close(owner.DbgDispatcher.Dispatcher);
 			HitCheck = null;
 			Hit = null;
 			BoundBreakpointsChanged = null;

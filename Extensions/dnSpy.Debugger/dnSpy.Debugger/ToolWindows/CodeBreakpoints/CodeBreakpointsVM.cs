@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		readonly CodeBreakpointContext codeBreakpointContext;
 		readonly CodeBreakpointFormatterProvider codeBreakpointFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
-		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
+		readonly DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings;
 		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService;
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		int codeBreakpointOrder;
 
 		[ImportingConstructor]
-		CodeBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, UIDispatcher uiDispatcher, CodeBreakpointFormatterProvider codeBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService, BreakpointConditionsFormatter breakpointConditionsFormatter, EditValueProviderService editValueProviderService, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService) {
+		CodeBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings, UIDispatcher uiDispatcher, CodeBreakpointFormatterProvider codeBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService, BreakpointConditionsFormatter breakpointConditionsFormatter, EditValueProviderService editValueProviderService, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService) {
 			uiDispatcher.VerifyAccess();
 			sbOutput = new StringBuilderTextColorOutput();
 			realAllItems = new List<CodeBreakpointVM>();
@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			this.dbgManager = dbgManager;
 			this.codeBreakpointFormatterProvider = codeBreakpointFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
-			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings;
+			this.dbgCodeBreakpointDisplaySettings = dbgCodeBreakpointDisplaySettings;
 			lazyToolWindowVMHelper = new LazyToolWindowVMHelper(this, uiDispatcher);
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgBreakpointLocationFormatterService = dbgBreakpointLocationFormatterService;
@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 
 		// random thread
 		void DbgThread(Action callback) =>
-			dbgManager.Value.DispatcherThread.BeginInvoke(callback);
+			dbgManager.Value.Dispatcher.BeginInvoke(callback);
 
 		// UI thread
 		void ILazyToolWindowVM.Show() {
@@ -184,21 +184,21 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			if (enable) {
 				codeBreakpointContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
-				codeBreakpointDisplaySettings.PropertyChanged += CodeBreakpointDisplaySettings_PropertyChanged;
+				dbgCodeBreakpointDisplaySettings.PropertyChanged += DbgCodeBreakpointDisplaySettings_PropertyChanged;
 				RecreateFormatter_UI();
 				codeBreakpointContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 			}
 			else {
 				codeBreakpointContext.ClassificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged -= DebuggerSettings_PropertyChanged;
-				codeBreakpointDisplaySettings.PropertyChanged -= CodeBreakpointDisplaySettings_PropertyChanged;
+				dbgCodeBreakpointDisplaySettings.PropertyChanged -= DbgCodeBreakpointDisplaySettings_PropertyChanged;
 			}
 			DbgThread(() => InitializeDebugger_DbgThread(enable));
 		}
 
 		// DbgManager thread
 		void InitializeDebugger_DbgThread(bool enable) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (enable) {
 				dbgCodeBreakpointsService.Value.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
@@ -237,21 +237,21 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// random thread
-		void CodeBreakpointDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
-			UI(() => CodeBreakpointDisplaySettings_PropertyChanged_UI(e.PropertyName));
+		void DbgCodeBreakpointDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+			UI(() => DbgCodeBreakpointDisplaySettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void CodeBreakpointDisplaySettings_PropertyChanged_UI(string propertyName) {
+		void DbgCodeBreakpointDisplaySettings_PropertyChanged_UI(string propertyName) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
-			case nameof(CodeBreakpointDisplaySettings.ShowTokens):
-			case nameof(CodeBreakpointDisplaySettings.ShowModuleNames):
-			case nameof(CodeBreakpointDisplaySettings.ShowParameterTypes):
-			case nameof(CodeBreakpointDisplaySettings.ShowParameterNames):
-			case nameof(CodeBreakpointDisplaySettings.ShowDeclaringTypes):
-			case nameof(CodeBreakpointDisplaySettings.ShowReturnTypes):
-			case nameof(CodeBreakpointDisplaySettings.ShowNamespaces):
-			case nameof(CodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords):
+			case nameof(DbgCodeBreakpointDisplaySettings.ShowTokens):
+			case nameof(DbgCodeBreakpointDisplaySettings.ShowModuleNames):
+			case nameof(DbgCodeBreakpointDisplaySettings.ShowParameterTypes):
+			case nameof(DbgCodeBreakpointDisplaySettings.ShowParameterNames):
+			case nameof(DbgCodeBreakpointDisplaySettings.ShowDeclaringTypes):
+			case nameof(DbgCodeBreakpointDisplaySettings.ShowReturnTypes):
+			case nameof(DbgCodeBreakpointDisplaySettings.ShowNamespaces):
+			case nameof(DbgCodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords):
 				RefreshNameColumn_UI();
 				break;
 
@@ -286,7 +286,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 
 		// DbgManager thread
 		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (e.Added)
 				UI(() => AddItems_UI(e.Objects));
 			else {
@@ -303,7 +303,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 
 		// DbgManager thread
 		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) {
-			dbgManager.Value.DispatcherThread.VerifyAccess();
+			dbgManager.Value.Dispatcher.VerifyAccess();
 			UI(() => {
 				foreach (var info in e.Breakpoints) {
 					var breakpoint = info.Breakpoint;
@@ -318,7 +318,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// DbgManager thread
-		void DbgCodeBreakpointsService_BoundBreakpointsMessageChanged(object sender, BoundBreakpointsMessageChangedEventArgs e) =>
+		void DbgCodeBreakpointsService_BoundBreakpointsMessageChanged(object sender, DbgBoundBreakpointsMessageChangedEventArgs e) =>
 			UI(() => OnBoundBreakpointsMessageChanged_UI(e.Breakpoints));
 
 		// UI thread
