@@ -31,7 +31,6 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Roslyn.Shared.Properties;
 using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Classification;
-using dnSpy.Roslyn.Shared.UI;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -54,7 +53,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 	[Export(typeof(DbgFilterExpressionEvaluatorImpl))]
 	sealed class DbgFilterExpressionEvaluatorImpl : DbgFilterExpressionEvaluator {
 		readonly object lockObj;
-		RoslynClassificationTypes roslynClassificationTypes;
 		Dictionary<string, CompiledExpr> toCompiledExpr;
 		WeakReference toCompiledExprWeakRef;
 
@@ -67,17 +65,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 		}
 
 		[ImportingConstructor]
-		DbgFilterExpressionEvaluatorImpl(UIDispatcher uiDispatcher, Lazy<IThemeClassificationTypeService> themeClassificationTypeService) {
+		DbgFilterExpressionEvaluatorImpl(Lazy<IThemeClassificationTypeService> themeClassificationTypeService) {
 			lockObj = new object();
 			toCompiledExpr = CreateCompiledExprDict();
-			//TODO: RoslynClassificationTypes should have object fields so you can use BoxedTextColor (but it's public and can't be changed)
-			if (uiDispatcher.CheckAccess())
-				roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService.Value);
-			else {
-				uiDispatcher.UI(() => {
-					roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService.Value);
-				});
-			}
 		}
 
 		static Dictionary<string, CompiledExpr> CreateCompiledExprDict() => new Dictionary<string, CompiledExpr>(StringComparer.Ordinal);
@@ -129,12 +119,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 		}
 
 		public override void Write(ITextColorWriter output, string expr) {
-			Debug.Assert(roslynClassificationTypes != null);
-			if (roslynClassificationTypes == null) {
-				output.Write(BoxedTextColor.Error, expr);
-				return;
-			}
-
 			using (var workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices)) {
 				var projectId = ProjectId.CreateNewId();
 				var (filterText, exprOffset) = CreateFilterClassSource(expr);
@@ -149,16 +133,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 
 				var syntaxRoot = doc.GetSyntaxRootAsync().GetAwaiter().GetResult();
 				var semanticModel = doc.GetSemanticModelAsync().GetAwaiter().GetResult();
-				var classifier = new RoslynClassifier(syntaxRoot, semanticModel, workspace, roslynClassificationTypes, null, CancellationToken.None);
+				var classifier = new RoslynClassifier(syntaxRoot, semanticModel, workspace, RoslynClassificationTypes2.Default, null, CancellationToken.None);
 				var textSpan = new TextSpan(exprOffset, expr.Length);
 
 				int pos = textSpan.Start;
-				var paramColor = roslynClassificationTypes.Parameter;
-				var propColor = roslynClassificationTypes.InstanceProperty;
-				foreach (var info in classifier.GetClassifications(textSpan)) {
+				var paramColor = RoslynClassificationTypes2.Default.Parameter;
+				var propColor = RoslynClassificationTypes2.Default.InstanceProperty;
+				foreach (var info in classifier.GetColors(textSpan)) {
 					if (pos < info.Span.Start)
 						output.Write(BoxedTextColor.Text, expr.Substring(pos - textSpan.Start, info.Span.Start - pos));
-					output.Write(info.Type == paramColor ? propColor : info.Type, expr.Substring(info.Span.Start - textSpan.Start, info.Span.Length));
+					output.Write(info.Color == paramColor ? propColor : info.Color, expr.Substring(info.Span.Start - textSpan.Start, info.Span.Length));
 					pos = info.Span.End;
 				}
 				if (pos < textSpan.End)

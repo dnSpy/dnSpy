@@ -152,7 +152,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		readonly Dispatcher dispatcher;
-		readonly RoslynClassificationTypes roslynClassificationTypes;
+		readonly RoslynClassificationTypes2 roslynClassificationTypes;
 		readonly IClassificationType defaultClassificationType;
 		readonly ReplSettings replSettings;
 
@@ -167,7 +167,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			ReplEditor.TextView.Options.OptionChanged += Options_OptionChanged;
 
 			var themeClassificationTypeService = serviceLocator.Resolve<IThemeClassificationTypeService>();
-			roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
+			roslynClassificationTypes = RoslynClassificationTypes2.GetClassificationTypeInstance(themeClassificationTypeService);
 			defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
 
 			toScriptCommand = new Dictionary<string, IScriptCommand>(StringComparer.Ordinal);
@@ -338,8 +338,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 			using (var workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices)) {
 				var classifier = new RoslynClassifier(sem.SyntaxTree.GetRoot(), sem, workspace, roslynClassificationTypes, defaultClassificationType, cancellationToken);
-				foreach (var info in classifier.GetClassifications(new TextSpan(0, command.Input.Length)))
-					command.AddClassification(info.Span.Start, info.Span.Length, info.Type);
+				foreach (var info in classifier.GetColors(new TextSpan(0, command.Input.Length)))
+					command.AddClassification(info.Span.Start, info.Span.Length, (IClassificationType)info.Color);
 			}
 
 			return Task.CompletedTask;

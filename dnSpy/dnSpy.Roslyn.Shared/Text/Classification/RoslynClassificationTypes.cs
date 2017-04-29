@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
@@ -26,6 +27,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 	/// <summary>
 	/// Classification types used by <see cref="RoslynClassifier"/>
 	/// </summary>
+	[Obsolete("Use " + nameof(RoslynClassificationTypes2))]
 	public sealed class RoslynClassificationTypes {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public readonly IClassificationType Comment;

@@ -34,7 +34,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	sealed class RoslynTagger : AsyncTagger<IClassificationTag, RoslynTaggerAsyncState>, ISynchronousTagger<IClassificationTag> {
 		readonly ITextBuffer textBuffer;
 		readonly IClassificationType defaultClassificationType;
-		readonly RoslynClassificationTypes roslynClassificationTypes;
+		readonly RoslynClassificationTypes2 roslynClassificationTypes;
 		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 
 		public RoslynTagger(ITextBuffer textBuffer, IThemeClassificationTypeService themeClassificationTypeService, IRoslynDocumentChangedService roslynDocumentChangedService) {
@@ -42,7 +42,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
-			roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
+			roslynClassificationTypes = RoslynClassificationTypes2.GetClassificationTypeInstance(themeClassificationTypeService);
 			this.roslynDocumentChangedService = roslynDocumentChangedService ?? throw new ArgumentNullException(nameof(roslynDocumentChangedService));
 			roslynDocumentChangedService.DocumentChanged += RoslynDocumentChangedService_DocumentChanged;
 		}
@@ -65,8 +65,8 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 
 			var classifier = new RoslynClassifier(asyncState.SyntaxRoot, asyncState.SemanticModel, asyncState.Workspace, roslynClassificationTypes, defaultClassificationType, cancellationToken);
 			foreach (var span in spans) {
-				foreach (var info in classifier.GetClassifications(span.Span.ToTextSpan()))
-					yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, info.Span), new ClassificationTag(info.Type));
+				foreach (var info in classifier.GetColors(span.Span.ToTextSpan()))
+					yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, info.Span), new ClassificationTag((IClassificationType)info.Color));
 			}
 		}
 
@@ -83,8 +83,8 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			var classifier = new RoslynClassifier(state.UserAsyncState.SyntaxRoot, state.UserAsyncState.SemanticModel, state.UserAsyncState.Workspace, roslynClassificationTypes, defaultClassificationType, state.CancellationToken);
 			state.UserAsyncState.TagsList.Clear();
 			foreach (var span in spans) {
-				foreach (var info in classifier.GetClassifications(span.Span.ToTextSpan()))
-					state.UserAsyncState.TagsList.Add(new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, info.Span), new ClassificationTag(info.Type)));
+				foreach (var info in classifier.GetColors(span.Span.ToTextSpan()))
+					state.UserAsyncState.TagsList.Add(new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, info.Span), new ClassificationTag((IClassificationType)info.Color)));
 				if (state.UserAsyncState.TagsList.Count != 0) {
 					state.AddResult(new TagsResult(span, state.UserAsyncState.TagsList.ToArray()));
 					state.UserAsyncState.TagsList.Clear();
