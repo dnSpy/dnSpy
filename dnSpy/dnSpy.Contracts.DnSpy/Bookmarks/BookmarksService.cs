@@ -85,6 +85,18 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// Removes all bookmarks
 		/// </summary>
 		public abstract void Clear();
+
+		/// <summary>
+		/// Closes <paramref name="obj"/>
+		/// </summary>
+		/// <param name="obj">Object to close</param>
+		public void Close(BMObject obj) => Close(new[] { obj ?? throw new ArgumentNullException(nameof(obj)) });
+
+		/// <summary>
+		/// Closes <paramref name="objs"/>
+		/// </summary>
+		/// <param name="objs">Objects to close</param>
+		public abstract void Close(BMObject[] objs);
 	}
 
 	/// <summary>

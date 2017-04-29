@@ -86,6 +86,7 @@
     <Compile Include="Bookmarks\DotNet\BookmarkLocationFormatterProviderImpl.cs" />
     <Compile Include="Bookmarks\DotNet\BookmarkLocationSerializerImpl.cs" />
     <Compile Include="Bookmarks\DotNet\DotNetBookmarkFactoryImpl.cs" />
+    <Compile Include="Bookmarks\DotNet\DotNetBookmarkLocationFactory.cs" />
     <Compile Include="Bookmarks\DotNet\DotNetBookmarkLocationFormatter.cs" />
     <Compile Include="Bookmarks\DotNet\DotNetMethodBodyBookmarkLocationImpl.cs" />
     <Compile Include="Bookmarks\DotNet\DotNetReferenceConverter.cs" />

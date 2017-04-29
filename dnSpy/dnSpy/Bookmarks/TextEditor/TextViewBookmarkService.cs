@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Bookmarks.Navigator;
 using dnSpy.Contracts.Bookmarks;
@@ -90,22 +91,49 @@ namespace dnSpy.Bookmarks.TextEditor {
 		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
 		ITextView GetTextView(IDocumentTab tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
 
-		TextViewBookmarkLocationResult? GetLocation(IDocumentTab tab, VirtualSnapshotPoint? position) {
+		struct LocationsResult : IDisposable {
+			public TextViewBookmarkLocationResult? locRes;
+			readonly Lazy<BookmarksService> bookmarksService;
+			readonly List<BookmarkLocation> allLocations;
+
+			public LocationsResult(Lazy<BookmarksService> bookmarksService, TextViewBookmarkLocationResult? locRes, List<BookmarkLocation> allLocations) {
+				this.bookmarksService = bookmarksService;
+				this.locRes = locRes;
+				this.allLocations = allLocations;
+			}
+
+			public void Dispose() {
+				if (allLocations.Count > 0)
+					bookmarksService.Value.Close(allLocations.ToArray());
+			}
+
+			public BookmarkLocation TakeOwnership(BookmarkLocation location) {
+				bool b = allLocations.Remove(location);
+				Debug.Assert(b);
+				return location;
+			}
+		}
+
+		LocationsResult GetLocation(IDocumentTab tab, VirtualSnapshotPoint? position) {
+			var allLocations = new List<BookmarkLocation>();
 			var textView = GetTextView(tab);
 			if (textView == null)
-				return null;
+				return new LocationsResult(bookmarksService, null, allLocations);
 			var pos = position ?? textView.Caret.Position.VirtualBufferPosition;
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
 			TextViewBookmarkLocationResult? res = null;
 			foreach (var lz in textViewBookmarkLocationProviders) {
 				var result = lz.Value.CreateLocation(tab, textView, pos);
-				if (result?.Location == null || result.Value.Span.Snapshot != textView.TextSnapshot)
+				if (result?.Location == null)
+					continue;
+				allLocations.Add(result.Value.Location);
+				if (result.Value.Span.Snapshot != textView.TextSnapshot)
 					continue;
 				if (res == null || result.Value.Span.Start < res.Value.Span.Start)
 					res = result;
 			}
-			return res;
+			return new LocationsResult(bookmarksService, res, allLocations);
 		}
 
 		Bookmark[] GetBookmarks(TextViewBookmarkLocationResult locations) {
@@ -121,9 +149,11 @@ namespace dnSpy.Bookmarks.TextEditor {
 		}
 
 		Bookmark[] GetBookmarks(IDocumentTab tab, VirtualSnapshotPoint? position) {
-			if (GetLocation(tab, position) is TextViewBookmarkLocationResult locRes)
-				return GetBookmarks(locRes);
-			return Array.Empty<Bookmark>();
+			using (var info = GetLocation(tab, position)) {
+				if (info.locRes is TextViewBookmarkLocationResult locRes)
+					return GetBookmarks(locRes);
+				return Array.Empty<Bookmark>();
+			}
 		}
 
 		IDocumentTab GetTab(ITextView textView) {
@@ -140,37 +170,74 @@ namespace dnSpy.Bookmarks.TextEditor {
 		public override void ToggleCreateBookmark(ITextView textView) =>
 			ToggleCreateBookmark(GetToggleCreateBookmarkInfo(GetTab(textView), textView.Caret.Position.VirtualBufferPosition));
 
-		public override bool CanToggleCreateBookmark => GetToggleCreateBookmarkInfo(documentTabService.Value.ActiveTab, null).kind != ToggleCreateBookmarkKind.None;
+		public override bool CanToggleCreateBookmark => GetToggleCreateBookmarkKind() != ToggleCreateBookmarkKind.None;
 		public override void ToggleCreateBookmark() => ToggleCreateBookmark(GetToggleCreateBookmarkInfo(documentTabService.Value.ActiveTab, null));
-		public override ToggleCreateBookmarkKind GetToggleCreateBookmarkKind() => GetToggleCreateBookmarkInfo(documentTabService.Value.ActiveTab, null).kind;
 
-		(ToggleCreateBookmarkKind kind, Bookmark[] bookmarks, BookmarkLocation location) GetToggleCreateBookmarkInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
-			var locRes = GetLocation(tab, position);
-			var bms = locRes == null ? Array.Empty<Bookmark>() : GetBookmarks(locRes.Value);
-			if (bms.Length != 0)
-				return (ToggleCreateBookmarkKind.Delete, bms, null);
-			else {
-				if (locRes == null || locRes.Value.Location == null)
-					return (ToggleCreateBookmarkKind.None, Array.Empty<Bookmark>(), null);
-				return (ToggleCreateBookmarkKind.Add, Array.Empty<Bookmark>(), locRes.Value.Location);
+		public override ToggleCreateBookmarkKind GetToggleCreateBookmarkKind() {
+			using (var info = GetToggleCreateBookmarkInfo(documentTabService.Value.ActiveTab, null))
+				return info.kind;
+		}
+
+		struct ToggleCreateBreakpointInfoResult : IDisposable {
+			readonly Lazy<BookmarksService> bookmarksService;
+			public ToggleCreateBookmarkKind kind;
+			public Bookmark[] bookmarks;
+			public BookmarkLocation location;
+			public ToggleCreateBreakpointInfoResult(Lazy<BookmarksService> bookmarksService, ToggleCreateBookmarkKind kind, Bookmark[] bookmarks, BookmarkLocation location) {
+				this.bookmarksService = bookmarksService;
+				this.kind = kind;
+				this.bookmarks = bookmarks;
+				this.location = location;
+			}
+
+			public void Dispose() {
+				if (location != null)
+					bookmarksService.Value.Close(location);
+			}
+
+			public BookmarkLocation TakeOwnershipOfLocation() {
+				var res = location;
+				location = null;
+				return res;
 			}
 		}
 
-		void ToggleCreateBookmark((ToggleCreateBookmarkKind kind, Bookmark[] bookmarks, BookmarkLocation location) info) {
-			switch (info.kind) {
-			case ToggleCreateBookmarkKind.Add:
-				var bookmark = bookmarksService.Value.Add(new Contracts.Bookmarks.BookmarkInfo(info.location, new BookmarkSettings() { IsEnabled = true }));
-				if (bookmark != null)
-					bookmarkNavigator.Value.SetActiveBookmarkNoCheck(bookmark);
-				break;
+		ToggleCreateBreakpointInfoResult GetToggleCreateBookmarkInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
+			using (var info = GetLocation(tab, position)) {
+				var locRes = info.locRes;
+				var bms = locRes == null ? Array.Empty<Bookmark>() : GetBookmarks(locRes.Value);
+				if (bms.Length != 0)
+					return new ToggleCreateBreakpointInfoResult(bookmarksService, ToggleCreateBookmarkKind.Delete, bms, null);
+				else {
+					if (locRes == null || locRes.Value.Location == null)
+						return new ToggleCreateBreakpointInfoResult(bookmarksService, ToggleCreateBookmarkKind.None, Array.Empty<Bookmark>(), null);
+					return new ToggleCreateBreakpointInfoResult(bookmarksService, ToggleCreateBookmarkKind.Add, Array.Empty<Bookmark>(), info.TakeOwnership(locRes.Value.Location));
+				}
+			}
+		}
 
-			case ToggleCreateBookmarkKind.Delete:
-				bookmarksService.Value.Remove(info.bookmarks);
-				break;
+		void ToggleCreateBookmark(ToggleCreateBreakpointInfoResult info) {
+			try {
+				switch (info.kind) {
+				case ToggleCreateBookmarkKind.Add:
+					var bookmark = bookmarksService.Value.Add(new Contracts.Bookmarks.BookmarkInfo(info.TakeOwnershipOfLocation(), new BookmarkSettings() { IsEnabled = true }));
+					if (bookmark != null)
+						bookmarkNavigator.Value.SetActiveBookmarkNoCheck(bookmark);
+					break;
 
-			case ToggleCreateBookmarkKind.None:
-			default:
-				return;
+				case ToggleCreateBookmarkKind.Delete:
+					bookmarksService.Value.Remove(info.bookmarks);
+					break;
+
+				case ToggleCreateBookmarkKind.None:
+				default:
+					return;
+				}
+			}
+			finally {
+				// Don't use a using statement since the compiler will make a copy of it and this
+				// copy will always dispose the bookmark location.
+				info.Dispose();
 			}
 		}
 

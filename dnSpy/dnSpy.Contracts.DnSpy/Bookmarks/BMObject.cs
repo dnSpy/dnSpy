@@ -35,6 +35,15 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// </summary>
 		protected BMObject() => lockObj = new object();
 
+#if DEBUG
+		/// <summary>
+		/// Destructor
+		/// </summary>
+		~BMObject() {
+			Debug.Fail(nameof(BMObject) + " dtor called! Type: " + GetType().FullName);
+		}
+#endif
+
 		/// <summary>
 		/// true if the instance has been closed
 		/// </summary>
@@ -58,6 +67,7 @@ namespace dnSpy.Contracts.Bookmarks {
 			if (Interlocked.Increment(ref isClosed) != 1)
 				return;
 			Closed?.Invoke(this, EventArgs.Empty);
+			Closed = null;
 
 			CloseCore();
 
@@ -68,6 +78,10 @@ namespace dnSpy.Contracts.Bookmarks {
 			}
 			foreach (var kv in data)
 				(kv.data as IDisposable)?.Dispose();
+
+#if DEBUG
+			GC.SuppressFinalize(this);
+#endif
 		}
 
 		/// <summary>

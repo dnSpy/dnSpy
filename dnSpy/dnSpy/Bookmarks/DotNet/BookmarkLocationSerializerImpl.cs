@@ -28,11 +28,11 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Bookmarks.DotNet {
 	abstract class DotNetBookmarkLocationSerializer : BookmarkLocationSerializer {
-		protected readonly Lazy<DotNetBookmarkFactory2> dotNetBookmarkFactory;
+		protected readonly Lazy<DotNetBookmarkLocationFactory> dotNetBookmarkLocationFactory;
 		readonly Lazy<DbgMetadataService> dbgMetadataService;
 
-		protected DotNetBookmarkLocationSerializer(Lazy<DotNetBookmarkFactory2> dotNetBookmarkFactory, Lazy<DbgMetadataService> dbgMetadataService) {
-			this.dotNetBookmarkFactory = dotNetBookmarkFactory;
+		protected DotNetBookmarkLocationSerializer(Lazy<DotNetBookmarkLocationFactory> dotNetBookmarkLocationFactory, Lazy<DbgMetadataService> dbgMetadataService) {
+			this.dotNetBookmarkLocationFactory = dotNetBookmarkLocationFactory;
 			this.dbgMetadataService = dbgMetadataService;
 		}
 
@@ -89,8 +89,8 @@ namespace dnSpy.Bookmarks.DotNet {
 	[ExportBookmarkLocationSerializer(PredefinedBookmarkLocationTypes.DotNetBody)]
 	sealed class DotNetMethodBodyBookmarkLocationSerializer : DotNetBookmarkLocationSerializer {
 		[ImportingConstructor]
-		DotNetMethodBodyBookmarkLocationSerializer(Lazy<DotNetBookmarkFactory2> dotNetBookmarkFactory, Lazy<DbgMetadataService> dbgMetadataService)
-			: base(dotNetBookmarkFactory, dbgMetadataService) {
+		DotNetMethodBodyBookmarkLocationSerializer(Lazy<DotNetBookmarkLocationFactory> dotNetBookmarkLocationFactory, Lazy<DbgMetadataService> dbgMetadataService)
+			: base(dotNetBookmarkLocationFactory, dbgMetadataService) {
 		}
 
 		protected override void SerializeCore(ISettingsSection section, BookmarkLocation location) {
@@ -102,20 +102,20 @@ namespace dnSpy.Bookmarks.DotNet {
 			var offset = section.Attribute<uint?>("Offset");
 			if (offset == null)
 				return null;
-			return dotNetBookmarkFactory.Value.CreateMethodBodyLocation(module, token, offset.Value);
+			return dotNetBookmarkLocationFactory.Value.CreateMethodBodyLocation(module, token, offset.Value);
 		}
 	}
 
 	[ExportBookmarkLocationSerializer(PredefinedBookmarkLocationTypes.DotNetToken)]
 	sealed class DotNetTokenBookmarkLocationSerializer : DotNetBookmarkLocationSerializer {
 		[ImportingConstructor]
-		DotNetTokenBookmarkLocationSerializer(Lazy<DotNetBookmarkFactory2> dotNetBookmarkFactory, Lazy<DbgMetadataService> dbgMetadataService)
-			: base(dotNetBookmarkFactory, dbgMetadataService) {
+		DotNetTokenBookmarkLocationSerializer(Lazy<DotNetBookmarkLocationFactory> dotNetBookmarkLocationFactory, Lazy<DbgMetadataService> dbgMetadataService)
+			: base(dotNetBookmarkLocationFactory, dbgMetadataService) {
 		}
 
 		protected override void SerializeCore(ISettingsSection section, BookmarkLocation location) { }
 
 		protected override BookmarkLocation DeserializeCore(ISettingsSection section, ModuleId module, uint token) =>
-			dotNetBookmarkFactory.Value.CreateTokenLocation(module, token);
+			dotNetBookmarkLocationFactory.Value.CreateTokenLocation(module, token);
 	}
 }

@@ -17,12 +17,39 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Bookmarks;
 
 namespace dnSpy.Bookmarks.DotNet {
 	[ExportBookmarkLocationFormatterProvider(new[] { PredefinedBookmarkLocationTypes.DotNetBody, PredefinedBookmarkLocationTypes.DotNetToken })]
 	sealed class BookmarkLocationFormatterProviderImpl : BookmarkLocationFormatterProvider {
-		public override BookmarkLocationFormatter Create(BookmarkLocation location) =>
-			(location as IDotNetBookmarkLocation)?.Formatter;
+		readonly Lazy<BookmarkFormatterService> bookmarkFormatterService;
+
+		[ImportingConstructor]
+		BookmarkLocationFormatterProviderImpl(Lazy<BookmarkFormatterService> bookmarkFormatterService) =>
+			this.bookmarkFormatterService = bookmarkFormatterService;
+
+		public override BookmarkLocationFormatter Create(BookmarkLocation location) {
+			switch (location) {
+			case DotNetMethodBodyBookmarkLocationImpl loc:
+				var formatter = loc.Formatter;
+				if (formatter != null)
+					return formatter;
+				formatter = bookmarkFormatterService.Value.Create(loc);
+				loc.Formatter = formatter;
+				return formatter;
+
+			case DotNetTokenBookmarkLocationImpl loc:
+				formatter = loc.Formatter;
+				if (formatter != null)
+					return formatter;
+				formatter = bookmarkFormatterService.Value.Create(loc);
+				loc.Formatter = formatter;
+				return formatter;
+			}
+
+			return null;
+		}
 	}
 }

@@ -28,7 +28,7 @@ namespace dnSpy.Bookmarks.DotNet {
 		public override uint Token { get; }
 		public override uint Offset { get; }
 
-		public BookmarkLocationFormatter Formatter { get; set; }
+		public DotNetBookmarkLocationFormatter Formatter { get; set; }
 
 		public DotNetMethodBodyBookmarkLocationImpl(ModuleId module, uint token, uint offset) {
 			Module = module;

@@ -183,6 +183,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		internal void Dispose() {
 			Context.UIDispatcher.VerifyAccess();
 			BookmarkLocationFormatter.PropertyChanged -= BookmarkLocationFormatter_PropertyChanged;
+			BookmarkLocationFormatter.Dispose();
 			ClearEditingValueProperties();
 		}
 

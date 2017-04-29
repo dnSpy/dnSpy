@@ -29,12 +29,12 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Bookmarks.DotNet.TextEditor {
 	[Export(typeof(TextViewBookmarkLocationProvider))]
 	sealed class TextViewDotNetMethodBodyBookmarkLocationProvider : TextViewBookmarkLocationProvider {
-		readonly Lazy<DotNetBookmarkFactory2> dotNetBookmarkFactory;
+		readonly Lazy<DotNetBookmarkLocationFactory> dotNetBookmarkLocationFactory;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		TextViewDotNetMethodBodyBookmarkLocationProvider(Lazy<DotNetBookmarkFactory2> dotNetBookmarkFactory, IModuleIdProvider moduleIdProvider) {
-			this.dotNetBookmarkFactory = dotNetBookmarkFactory;
+		TextViewDotNetMethodBodyBookmarkLocationProvider(Lazy<DotNetBookmarkLocationFactory> dotNetBookmarkLocationFactory, IModuleIdProvider moduleIdProvider) {
+			this.dotNetBookmarkLocationFactory = dotNetBookmarkLocationFactory;
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
@@ -59,7 +59,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 
 			var statement = methodStatements[0];
 			var moduleId = moduleIdProvider.Create(statement.Method.Module);
-			var location = dotNetBookmarkFactory.Value.CreateMethodBodyLocation(moduleId, statement.Method.MDToken.Raw, statement.Statement.BinSpan.Start);
+			var location = dotNetBookmarkLocationFactory.Value.CreateMethodBodyLocation(moduleId, statement.Method.MDToken.Raw, statement.Statement.BinSpan.Start);
 			return new TextViewBookmarkLocationResult(location, span);
 		}
 	}

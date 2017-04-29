@@ -17,13 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Bookmarks.DotNet {
 	interface IDotNetBookmarkLocation {
 		ModuleId Module { get; }
 		uint Token { get; }
-		BookmarkLocationFormatter Formatter { get; }
+		DotNetBookmarkLocationFormatter Formatter { get; set; }
 	}
 }

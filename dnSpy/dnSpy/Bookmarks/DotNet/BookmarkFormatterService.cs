@@ -27,8 +27,8 @@ using dnSpy.UI;
 
 namespace dnSpy.Bookmarks.DotNet {
 	abstract class BookmarkFormatterService {
-		public abstract BookmarkLocationFormatter Create(DotNetMethodBodyBookmarkLocationImpl location);
-		public abstract BookmarkLocationFormatter Create(DotNetTokenBookmarkLocationImpl location);
+		public abstract DotNetBookmarkLocationFormatter Create(DotNetMethodBodyBookmarkLocationImpl location);
+		public abstract DotNetBookmarkLocationFormatter Create(DotNetTokenBookmarkLocationImpl location);
 	}
 
 	[Export(typeof(BookmarkFormatterService))]
@@ -52,14 +52,14 @@ namespace dnSpy.Bookmarks.DotNet {
 		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
 			foreach (var bm in bookmarksService.Value.Bookmarks) {
 				if (bm.Location is IDotNetBookmarkLocation location)
-					(location.Formatter as DotNetBookmarkLocationFormatter)?.RefreshLocation();
+					location.Formatter?.RefreshLocation();
 			}
 		}
 
-		public override BookmarkLocationFormatter Create(DotNetMethodBodyBookmarkLocationImpl location) =>
+		public override DotNetBookmarkLocationFormatter Create(DotNetMethodBodyBookmarkLocationImpl location) =>
 			new DotNetMethodBodyBookmarkLocationFormatterImpl(this, bookmarkDisplaySettings, location);
 
-		public override BookmarkLocationFormatter Create(DotNetTokenBookmarkLocationImpl location) =>
+		public override DotNetBookmarkLocationFormatter Create(DotNetTokenBookmarkLocationImpl location) =>
 			new DotNetTokenBookmarkLocationFormatterImpl(this, bookmarkDisplaySettings, location);
 
 		internal TDef GetDefinition<TDef>(ModuleId module, uint token) where TDef : class {

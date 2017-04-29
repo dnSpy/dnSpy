@@ -17,30 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Bookmarks;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Bookmarks.DotNet;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Bookmarks.DotNet {
-	sealed class DotNetTokenBookmarkLocationImpl : DotNetTokenBookmarkLocation, IDotNetBookmarkLocation {
-		public override string Type => PredefinedBookmarkLocationTypes.DotNetToken;
-		public override ModuleId Module { get; }
-		public override uint Token { get; }
+	abstract class DotNetBookmarkLocationFactory {
+		public abstract DotNetMethodBodyBookmarkLocation CreateMethodBodyLocation(ModuleId module, uint token, uint offset);
+		public abstract DotNetTokenBookmarkLocation CreateTokenLocation(ModuleId module, uint token);
+	}
 
-		public DotNetBookmarkLocationFormatter Formatter { get; set; }
+	[Export(typeof(DotNetBookmarkLocationFactory))]
+	sealed class DotNetBookmarkLocationFactoryImpl : DotNetBookmarkLocationFactory {
+		public override DotNetMethodBodyBookmarkLocation CreateMethodBodyLocation(ModuleId module, uint token, uint offset) =>
+			new DotNetMethodBodyBookmarkLocationImpl(module, token, offset);
 
-		public DotNetTokenBookmarkLocationImpl(ModuleId module, uint token) {
-			Module = module;
-			Token = token;
-		}
-
-		protected override void CloseCore() { }
-
-		public override bool Equals(object obj) =>
-			obj is DotNetTokenBookmarkLocationImpl other &&
-			Module == other.Module &&
-			Token == other.Token;
-
-		public override int GetHashCode() => Module.GetHashCode() ^ (int)Token;
+		public override DotNetTokenBookmarkLocation CreateTokenLocation(ModuleId module, uint token) =>
+			new DotNetTokenBookmarkLocationImpl(module, token);
 	}
 }

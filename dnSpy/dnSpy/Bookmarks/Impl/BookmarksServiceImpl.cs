@@ -187,5 +187,17 @@ namespace dnSpy.Bookmarks.Impl {
 					bm.Close();
 			}
 		}
+
+		public override void Close(BMObject[] objs) {
+			if (objs == null)
+				throw new ArgumentNullException(nameof(objs));
+			BMThread(() => Close_BMThread(objs));
+		}
+
+		void Close_BMThread(BMObject[] objs) {
+			uiDispatcher.VerifyAccess();
+			foreach (var obj in objs)
+				obj.Close();
+		}
 	}
 }

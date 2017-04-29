@@ -22,44 +22,23 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Bookmarks.DotNet;
-using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Bookmarks.DotNet {
-	abstract class DotNetBookmarkFactory2 : DotNetBookmarkFactory {
-		public abstract DotNetMethodBodyBookmarkLocation CreateMethodBodyLocation(ModuleId module, uint token, uint offset);
-		public abstract DotNetTokenBookmarkLocation CreateTokenLocation(ModuleId module, uint token);
-	}
-
 	[Export(typeof(DotNetBookmarkFactory))]
-	[Export(typeof(DotNetBookmarkFactory2))]
-	sealed class DotNetBookmarkFactoryImpl : DotNetBookmarkFactory2 {
+	sealed class DotNetBookmarkFactoryImpl : DotNetBookmarkFactory {
 		readonly Lazy<BookmarksService> bookmarksService;
-		readonly BookmarkFormatterService bookmarkFormatterService;
+		readonly DotNetBookmarkLocationFactory dotNetBookmarkLocationFactory;
 
 		[ImportingConstructor]
-		DotNetBookmarkFactoryImpl(Lazy<BookmarksService> bookmarksService, BookmarkFormatterService bookmarkFormatterService) {
+		DotNetBookmarkFactoryImpl(Lazy<BookmarksService> bookmarksService, DotNetBookmarkLocationFactory dotNetBookmarkLocationFactory) {
 			this.bookmarksService = bookmarksService;
-			this.bookmarkFormatterService = bookmarkFormatterService;
+			this.dotNetBookmarkLocationFactory = dotNetBookmarkLocationFactory;
 		}
 
 		public override Bookmark[] Create(DotNetMethodBodyBookmarkInfo[] bookmarks) =>
-			bookmarksService.Value.Add(bookmarks.Select(a => new BookmarkInfo(CreateMethodBodyLocation(a.Module, a.Token, a.Offset), a.Settings)).ToArray());
+			bookmarksService.Value.Add(bookmarks.Select(a => new BookmarkInfo(dotNetBookmarkLocationFactory.CreateMethodBodyLocation(a.Module, a.Token, a.Offset), a.Settings)).ToArray());
 
 		public override Bookmark[] Create(DotNetTokenBookmarkInfo[] bookmarks) =>
-			bookmarksService.Value.Add(bookmarks.Select(a => new BookmarkInfo(CreateTokenLocation(a.Module, a.Token), a.Settings)).ToArray());
-
-		public override DotNetMethodBodyBookmarkLocation CreateMethodBodyLocation(ModuleId module, uint token, uint offset) {
-			var bodyLoc = new DotNetMethodBodyBookmarkLocationImpl(module, token, offset);
-			var formatter = bookmarkFormatterService.Create(bodyLoc);
-			bodyLoc.Formatter = formatter;
-			return bodyLoc;
-		}
-
-		public override DotNetTokenBookmarkLocation CreateTokenLocation(ModuleId module, uint token) {
-			var tokenLoc = new DotNetTokenBookmarkLocationImpl(module, token);
-			var formatter = bookmarkFormatterService.Create(tokenLoc);
-			tokenLoc.Formatter = formatter;
-			return tokenLoc;
-		}
+			bookmarksService.Value.Add(bookmarks.Select(a => new BookmarkInfo(dotNetBookmarkLocationFactory.CreateTokenLocation(a.Module, a.Token), a.Settings)).ToArray());
 	}
 }

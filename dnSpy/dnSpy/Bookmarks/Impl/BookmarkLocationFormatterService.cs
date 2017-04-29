@@ -57,5 +57,6 @@ namespace dnSpy.Bookmarks.Impl {
 		NullBookmarkLocationFormatter() { }
 		public override void WriteLocation(ITextColorWriter output) { }
 		public override void WriteModule(ITextColorWriter output) { }
+		public override void Dispose() { }
 	}
 }

@@ -36,6 +36,8 @@ namespace dnSpy.Bookmarks.DotNet {
 			this.location = location ?? throw new ArgumentNullException(nameof(location));
 		}
 
+		public override void Dispose() => location.Formatter = null;
+
 		internal void RefreshLocation() => RaiseLocationChanged();
 
 		void WriteToken(ITextColorWriter output, uint token) =>
