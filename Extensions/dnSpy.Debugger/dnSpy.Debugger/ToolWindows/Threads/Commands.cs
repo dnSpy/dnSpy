@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public override bool IsChecked(ThreadsCtxMenuContext context) => context.Operations.UseHexadecimal;
 	}
 
-	[Export, ExportMenuItem(Header = "res:SwitchToThreadCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:SwitchToThreadCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
 	sealed class SwitchToThreadThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		SwitchToThreadThreadsCtxMenuCommand(Lazy<IThreadsContent> threadsContent)
@@ -112,17 +112,6 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		public override void Execute(ThreadsCtxMenuContext context) => context.Operations.SwitchToThread(newTab: false);
-		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.Operations.CanSwitchToThread;
-	}
-
-	[ExportMenuItem(Header = "res:SwitchToThreadNewTabCommand", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
-	sealed class SwitchToThreadNewTabThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		[ImportingConstructor]
-		SwitchToThreadNewTabThreadsCtxMenuCommand(Lazy<IThreadsContent> threadsContent)
-			: base(threadsContent) {
-		}
-
-		public override void Execute(ThreadsCtxMenuContext context) => context.Operations.SwitchToThread(newTab: true);
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.Operations.CanSwitchToThread;
 	}
 
