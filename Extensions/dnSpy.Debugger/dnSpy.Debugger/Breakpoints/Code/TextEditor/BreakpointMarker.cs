@@ -190,8 +190,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			var info = glyphTextMarkerService.Value.GetMarker(textView, span);
 			if (info == null)
 				return null;
-			var bp = (DbgCodeBreakpoint)info.Value.Marker.Tag;
-			return new DbgTextViewBreakpointLocationResult(bp.Location, new VirtualSnapshotSpan(info.Value.Span));
+			if (info.Value.Marker.Tag is DbgCodeBreakpoint bp)
+				return new DbgTextViewBreakpointLocationResult(bp.Location.Clone(), new VirtualSnapshotSpan(info.Value.Span));
+			return null;
 		}
 	}
 }

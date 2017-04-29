@@ -232,8 +232,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				messageBoxService.Show(ex);
 				return;
 			}
-			var breakpoints = new BreakpointsSerializer(settingsService, dbgCodeLocationSerializerService.Value).Load();
-			dbgCodeBreakpointsService.Value.Add(breakpoints);
+			dbgCodeBreakpointsService.Value.Add(new BreakpointsSerializer(settingsService, dbgCodeLocationSerializerService.Value).Load());
 		}
 
 		public override bool CanResetSearchSettings => true;

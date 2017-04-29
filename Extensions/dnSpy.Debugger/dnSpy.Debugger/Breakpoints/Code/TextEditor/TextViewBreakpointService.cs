@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Contracts.Debugger.Code;
@@ -55,13 +56,15 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 
 	[Export(typeof(TextViewBreakpointService))]
 	sealed class TextViewBreakpointServiceImpl : TextViewBreakpointService {
+		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<IBreakpointMarker> breakpointMarker;
 		readonly Lazy<DbgTextViewBreakpointLocationProvider>[] dbgTextViewBreakpointLocationProviders;
 
 		[ImportingConstructor]
-		TextViewBreakpointServiceImpl(Lazy<IDocumentTabService> documentTabService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<IBreakpointMarker> breakpointMarker, [ImportMany] IEnumerable<Lazy<DbgTextViewBreakpointLocationProvider>> dbgTextViewBreakpointLocationProviders) {
+		TextViewBreakpointServiceImpl(Lazy<DbgManager> dbgManager, Lazy<IDocumentTabService> documentTabService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<IBreakpointMarker> breakpointMarker, [ImportMany] IEnumerable<Lazy<DbgTextViewBreakpointLocationProvider>> dbgTextViewBreakpointLocationProviders) {
+			this.dbgManager = dbgManager;
 			this.documentTabService = documentTabService;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.breakpointMarker = breakpointMarker;
@@ -71,24 +74,45 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
 		ITextView GetTextView(IDocumentTab tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
 
-		DbgTextViewBreakpointLocationResult? GetLocations(IDocumentTab tab, VirtualSnapshotPoint? position) {
+		struct LocationsResult : IDisposable {
+			public DbgTextViewBreakpointLocationResult? locRes;
+			readonly Lazy<DbgManager> dbgManager;
+			readonly List<DbgCodeLocation> allLocations;
+
+			public LocationsResult(Lazy<DbgManager> dbgManager, DbgTextViewBreakpointLocationResult? locRes, List<DbgCodeLocation> allLocations) {
+				this.dbgManager = dbgManager;
+				this.locRes = locRes;
+				this.allLocations = allLocations;
+			}
+
+			public void Dispose() {
+				if (allLocations.Count > 0)
+					dbgManager.Value.Close(allLocations.ToArray());
+			}
+		}
+
+		LocationsResult GetLocations(IDocumentTab tab, VirtualSnapshotPoint? position) {
+			var allLocations = new List<DbgCodeLocation>();
 			var textView = GetTextView(tab);
 			if (textView == null)
-				return null;
+				return new LocationsResult(dbgManager, null, allLocations);
 			var pos = position ?? textView.Caret.Position.VirtualBufferPosition;
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
 			DbgTextViewBreakpointLocationResult? res = null;
 			foreach (var lz in dbgTextViewBreakpointLocationProviders)
-				UpdateResult(textView, ref res, lz.Value.CreateLocation(tab, textView, pos), useIfSameSpan: false);
+				UpdateResult(allLocations, textView, ref res, lz.Value.CreateLocation(tab, textView, pos), useIfSameSpan: false);
 			var span = new SnapshotSpan(pos.Position, res != null ? res.Value.Span.End.Position : new SnapshotPoint(pos.Position.Snapshot, pos.Position.Snapshot.Length));
 			// This one has higher priority since it already exists (eg. could be a stack frame BP location)
-			UpdateResult(textView, ref res, breakpointMarker.Value.GetLocations(textView, span), useIfSameSpan: true);
-			return res;
+			UpdateResult(allLocations, textView, ref res, breakpointMarker.Value.GetLocations(textView, span), useIfSameSpan: true);
+			return new LocationsResult(dbgManager, res, allLocations);
 		}
 
-		static void UpdateResult(ITextView textView, ref DbgTextViewBreakpointLocationResult? res, DbgTextViewBreakpointLocationResult? result, bool useIfSameSpan) {
-			if (result?.Locations == null || result.Value.Span.Snapshot != textView.TextSnapshot)
+		static void UpdateResult(List<DbgCodeLocation> allLocations, ITextView textView, ref DbgTextViewBreakpointLocationResult? res, DbgTextViewBreakpointLocationResult? result, bool useIfSameSpan) {
+			if (result?.Locations == null)
+				return;
+			allLocations.AddRange(result.Value.Locations);
+			if (result.Value.Span.Snapshot != textView.TextSnapshot)
 				return;
 			if (res == null)
 				res = result;
@@ -102,23 +126,20 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 
 		DbgCodeBreakpoint[] GetBreakpoints(DbgTextViewBreakpointLocationResult locations) {
 			var list = new List<DbgCodeBreakpoint>();
-			foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
-				if (bp.IsHidden)
-					continue;
-				foreach (var loc in locations.Locations) {
-					if (bp.Location.Equals(loc)) {
-						list.Add(bp);
-						break;
-					}
-				}
+			foreach (var loc in locations.Locations) {
+				var bp = dbgCodeBreakpointsService.Value.TryGetBreakpoint(loc);
+				if (bp?.IsHidden == false)
+					list.Add(bp);
 			}
 			return list.ToArray();
 		}
 
 		DbgCodeBreakpoint[] GetBreakpoints() {
-			if (GetLocations(documentTabService.Value.ActiveTab, null) is DbgTextViewBreakpointLocationResult locRes)
-				return GetBreakpoints(locRes);
-			return Array.Empty<DbgCodeBreakpoint>();
+			using (var info = GetLocations(documentTabService.Value.ActiveTab, null)) {
+				if (info.locRes is DbgTextViewBreakpointLocationResult locRes)
+					return GetBreakpoints(locRes);
+				return Array.Empty<DbgCodeBreakpoint>();
+			}
 		}
 
 		IDocumentTab GetTab(ITextView textView) {
@@ -135,46 +156,72 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		public override void ToggleCreateBreakpoint(ITextView textView, VirtualSnapshotPoint position) =>
 			ToggleCreateBreakpoint(GetToggleCreateBreakpointInfo(GetTab(textView), position));
 
-		public override bool CanToggleCreateBreakpoint => GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null).kind != ToggleCreateBreakpointKind.None;
-		public override void ToggleCreateBreakpoint() => ToggleCreateBreakpoint(GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null));
-		public override ToggleCreateBreakpointKind GetToggleCreateBreakpointKind() => GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null).kind;
+		public override ToggleCreateBreakpointKind GetToggleCreateBreakpointKind() {
+			using (var info = GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null))
+				return info.kind;
+		}
 
-		(ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgCodeLocation[] locations) GetToggleCreateBreakpointInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
-			var locRes = GetLocations(tab, position);
-			var bps = locRes == null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locRes.Value);
-			if (bps.Length != 0) {
-				if (bps.All(a => a.IsEnabled))
-					return (ToggleCreateBreakpointKind.Delete, bps, Array.Empty<DbgCodeLocation>());
-				return (ToggleCreateBreakpointKind.Enable, bps, Array.Empty<DbgCodeLocation>());
+		public override bool CanToggleCreateBreakpoint => GetToggleCreateBreakpointKind() != ToggleCreateBreakpointKind.None;
+		public override void ToggleCreateBreakpoint() => ToggleCreateBreakpoint(GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null));
+
+		struct ToggleCreateBreakpointInfoResult : IDisposable {
+			readonly Lazy<DbgManager> dbgManager;
+			public ToggleCreateBreakpointKind kind;
+			public DbgCodeBreakpoint[] breakpoints;
+			public DbgCodeLocation[] locations;
+			public ToggleCreateBreakpointInfoResult(Lazy<DbgManager> dbgManager, ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgCodeLocation[] locations) {
+				this.dbgManager = dbgManager;
+				this.kind = kind;
+				this.breakpoints = breakpoints;
+				this.locations = locations;
 			}
-			else {
-				if (locRes == null || locRes.Value.Locations.Length == 0)
-					return (ToggleCreateBreakpointKind.None, Array.Empty<DbgCodeBreakpoint>(), Array.Empty<DbgCodeLocation>());
-				return (ToggleCreateBreakpointKind.Add, Array.Empty<DbgCodeBreakpoint>(), locRes.Value.Locations);
+
+			public void Dispose() {
+				if (locations != null && locations.Length > 0)
+					dbgManager.Value.Close(locations);
 			}
 		}
 
-		void ToggleCreateBreakpoint((ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgCodeLocation[] locations) info) {
-			switch (info.kind) {
-			case ToggleCreateBreakpointKind.Add:
-				dbgCodeBreakpointsService.Value.Add(info.locations.Select(a => new DbgCodeBreakpointInfo(a, new DbgCodeBreakpointSettings() { IsEnabled = true })).ToArray());
-				break;
+		ToggleCreateBreakpointInfoResult GetToggleCreateBreakpointInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
+			using (var info = GetLocations(tab, position)) {
+				var locRes = info.locRes;
+				var bps = locRes == null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locRes.Value);
+				if (bps.Length != 0) {
+					if (bps.All(a => a.IsEnabled))
+						return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.Delete, bps, Array.Empty<DbgCodeLocation>());
+					return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.Enable, bps, Array.Empty<DbgCodeLocation>());
+				}
+				else {
+					if (locRes == null || locRes.Value.Locations.Length == 0)
+						return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.None, Array.Empty<DbgCodeBreakpoint>(), Array.Empty<DbgCodeLocation>());
+					return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.Add, Array.Empty<DbgCodeBreakpoint>(), locRes.Value.Locations.Select(a => a.Clone()).ToArray());
+				}
+			}
+		}
 
-			case ToggleCreateBreakpointKind.Delete:
-				dbgCodeBreakpointsService.Value.Remove(info.breakpoints);
-				break;
+		void ToggleCreateBreakpoint(ToggleCreateBreakpointInfoResult info) {
+			using (info) {
+				switch (info.kind) {
+				case ToggleCreateBreakpointKind.Add:
+					dbgCodeBreakpointsService.Value.Add(info.locations.Select(a => new DbgCodeBreakpointInfo(a.Clone(), new DbgCodeBreakpointSettings() { IsEnabled = true })).ToArray());
+					break;
 
-			case ToggleCreateBreakpointKind.Enable:
-				dbgCodeBreakpointsService.Value.Modify(info.breakpoints.Select(a => {
-					var newSettings = a.Settings;
-					newSettings.IsEnabled = true;
-					return new DbgCodeBreakpointAndSettings(a, newSettings);
-				}).ToArray());
-				break;
+				case ToggleCreateBreakpointKind.Delete:
+					dbgCodeBreakpointsService.Value.Remove(info.breakpoints);
+					break;
 
-			case ToggleCreateBreakpointKind.None:
-			default:
-				return;
+				case ToggleCreateBreakpointKind.Enable:
+					dbgCodeBreakpointsService.Value.Modify(info.breakpoints.Select(a => {
+						var newSettings = a.Settings;
+						newSettings.IsEnabled = true;
+						return new DbgCodeBreakpointAndSettings(a, newSettings);
+					}).ToArray());
+					break;
+
+				case ToggleCreateBreakpointKind.None:
+				default:
+					return;
+				}
 			}
 		}
 

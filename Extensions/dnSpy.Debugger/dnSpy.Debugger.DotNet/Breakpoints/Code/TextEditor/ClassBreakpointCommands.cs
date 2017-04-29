@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnlib.DotNet;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -33,12 +34,14 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 	[Export(typeof(MethodBreakpointsService))]
 	sealed class MethodBreakpointsService {
+		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<IModuleIdProvider> moduleIdProvider;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
 
 		[ImportingConstructor]
-		MethodBreakpointsService(Lazy<IModuleIdProvider> moduleIdProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
+		MethodBreakpointsService(Lazy<DbgManager> dbgManager, Lazy<IModuleIdProvider> moduleIdProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
+			this.dbgManager = dbgManager;
 			this.moduleIdProvider = moduleIdProvider;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
@@ -47,14 +50,21 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 		public void Add(MethodDef[] methods) {
 			var list = new List<DbgCodeBreakpointInfo>(methods.Length);
 			var existing = new HashSet<DbgDotNetCodeLocation>(dbgCodeBreakpointsService.Value.Breakpoints.Select(a => a.Location).OfType<DbgDotNetCodeLocation>());
+			List<DbgObject> objsToClose = null;
 			foreach (var method in methods) {
 				var moduleId = moduleIdProvider.Value.Create(method.Module);
 				var location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, method.MDToken.Raw, 0);
-				if (existing.Contains(location))
+				if (existing.Contains(location)) {
+					if (objsToClose == null)
+						objsToClose = new List<DbgObject>();
+					objsToClose.Add(location);
 					continue;
+				}
 				existing.Add(location);
 				list.Add(new DbgCodeBreakpointInfo(location, new DbgCodeBreakpointSettings { IsEnabled = true }));
 			}
+			if (objsToClose != null)
+				dbgManager.Value.Close(objsToClose.ToArray());
 			dbgCodeBreakpointsService.Value.Add(list.ToArray());
 		}
 	}
