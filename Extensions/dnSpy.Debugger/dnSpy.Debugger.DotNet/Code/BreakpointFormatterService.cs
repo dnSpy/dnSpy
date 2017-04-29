@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		}
 
 		public override DbgBreakpointLocationFormatterImpl Create(DbgDotNetCodeLocation location) =>
-			new DbgBreakpointLocationFormatterImpl(this, codeBreakpointDisplaySettings, location);
+			new DbgBreakpointLocationFormatterImpl(this, codeBreakpointDisplaySettings, (DbgDotNetCodeLocationImpl)location);
 
 		internal TDef GetDefinition<TDef>(ModuleId module, uint token) where TDef : class {
 			var md = dbgMetadataService.Value.TryGetMetadata(module, DbgLoadModuleOptions.AutoLoaded);

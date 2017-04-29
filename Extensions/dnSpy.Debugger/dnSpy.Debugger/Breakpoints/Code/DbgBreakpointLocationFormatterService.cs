@@ -58,5 +58,6 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		NullDbgBreakpointLocationFormatter() { }
 		public override void WriteName(ITextColorWriter output) { }
 		public override void WriteModule(ITextColorWriter output) { }
+		public override void Dispose() { }
 	}
 }

@@ -20,21 +20,22 @@
 using System;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Code {
 	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
-		readonly DbgDotNetCodeLocation location;
+		readonly DbgDotNetCodeLocationImpl location;
 		readonly BreakpointFormatterServiceImpl owner;
 		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
 
-		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetCodeLocation location) {
+		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetCodeLocationImpl location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings ?? throw new ArgumentNullException(nameof(codeBreakpointDisplaySettings));
 			this.location = location ?? throw new ArgumentNullException(nameof(location));
 		}
+
+		public override void Dispose() => location.Formatter = null;
 
 		internal void RefreshName() => RaiseNameChanged();
 

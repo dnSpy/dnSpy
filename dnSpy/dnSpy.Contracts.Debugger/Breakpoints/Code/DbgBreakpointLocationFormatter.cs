@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using dnSpy.Contracts.Text;
 
@@ -24,7 +25,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Formats some columns in the code breakpoints window
 	/// </summary>
-	public abstract class DbgBreakpointLocationFormatter : INotifyPropertyChanged {
+	public abstract class DbgBreakpointLocationFormatter : INotifyPropertyChanged, IDisposable {
 		/// <summary>
 		/// Name of the Name property
 		/// </summary>
@@ -63,5 +64,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="output">Output</param>
 		public abstract void WriteModule(ITextColorWriter output);
+
+		/// <summary>
+		/// Called when this instance isn't needed anymore
+		/// </summary>
+		public abstract void Dispose();
 	}
 }

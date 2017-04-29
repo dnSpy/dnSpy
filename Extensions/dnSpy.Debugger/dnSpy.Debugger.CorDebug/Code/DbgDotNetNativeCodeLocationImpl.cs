@@ -26,15 +26,17 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.CorDebug.Code {
 	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
-		readonly DbgDotNetNativeCodeLocation location;
+		readonly DbgDotNetNativeCodeLocationImpl location;
 		readonly BreakpointFormatterServiceImpl owner;
 		readonly CodeBreakpointDisplaySettings codeBreakpointDisplaySettings;
 
-		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetNativeCodeLocation location) {
+		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, CodeBreakpointDisplaySettings codeBreakpointDisplaySettings, DbgDotNetNativeCodeLocationImpl location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			this.codeBreakpointDisplaySettings = codeBreakpointDisplaySettings ?? throw new ArgumentNullException(nameof(codeBreakpointDisplaySettings));
 			this.location = location ?? throw new ArgumentNullException(nameof(location));
 		}
+
+		public override void Dispose() => location.Formatter = null;
 
 		internal void RefreshName() => RaiseNameChanged();
 

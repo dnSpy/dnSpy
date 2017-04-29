@@ -203,6 +203,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		internal void Dispose() {
 			Context.UIDispatcher.VerifyAccess();
 			BreakpointLocationFormatter.PropertyChanged -= DbgBreakpointLocationFormatter_PropertyChanged;
+			BreakpointLocationFormatter.Dispose();
 			ClearEditingValueProperties();
 		}
 
