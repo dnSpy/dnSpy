@@ -36,8 +36,8 @@ namespace dnSpy.Debugger.DbgUI {
 	[Export(typeof(Debugger))]
 	[ExportDbgManagerStartListener]
 	sealed class DebuggerImpl : Debugger, IDbgManagerStartListener {
-		readonly IMessageBoxService messageBoxService;
-		readonly IAppWindow appWindow;
+		readonly Lazy<IMessageBoxService> messageBoxService;
+		readonly Lazy<IAppWindow> appWindow;
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider;
 		readonly Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog;
@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(IMessageBoxService messageBoxService, IAppWindow appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) {
+		DebuggerImpl(Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) {
 			this.messageBoxService = messageBoxService;
 			this.appWindow = appWindow;
 			this.dbgManager = dbgManager;
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DbgUI {
 				Process.Start(filename);
 			}
 			catch (Exception ex) {
-				messageBoxService.Show(string.Format(dnSpy_Debugger_Resources.Error_StartWithoutDebuggingCouldNotStart, filename, ex.Message));
+				messageBoxService.Value.Show(string.Format(dnSpy_Debugger_Resources.Error_StartWithoutDebuggingCouldNotStart, filename, ex.Message));
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			var errMsg = dbgManager.Value.Start(options);
 			if (errMsg != null)
-				messageBoxService.Show(errMsg);
+				messageBoxService.Value.Show(errMsg);
 		}
 
 		public override bool CanAttachProgram => true;
@@ -161,7 +161,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public override bool CanDeleteAllBreakpoints => dbgCodeBreakpointsService.Value.VisibleBreakpoints.Any();
 		public override void DeleteAllBreakpointsAskUser() {
-			var res = messageBoxService.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), dnSpy_Debugger_Resources.AskDeleteAllBreakpoints, MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = messageBoxService.Value.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), dnSpy_Debugger_Resources.AskDeleteAllBreakpoints, MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res != null && res != MsgBoxButton.Yes)
 				return;
 			dbgCodeBreakpointsService.Value.Clear();
@@ -210,7 +210,7 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		void UI(Action callback) {
-			var dispatcher = appWindow.MainWindow.Dispatcher;
+			var dispatcher = appWindow.Value.MainWindow.Dispatcher;
 			if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
 				dispatcher.BeginInvoke(DispatcherPriority.Send, callback);
 		}
@@ -224,20 +224,20 @@ namespace dnSpy.Debugger.DbgUI {
 				oldIsDebugging = newIsDebugging;
 				Application.Current.Resources["IsDebuggingKey"] = newIsDebugging;
 				if (newIsDebugging) {
-					appWindow.StatusBar.Open();
+					appWindow.Value.StatusBar.Open();
 					SetRunningStatusMessage();
-					appWindow.AddTitleInfo(dnSpy_Debugger_Resources.AppTitle_Debugging);
+					appWindow.Value.AddTitleInfo(dnSpy_Debugger_Resources.AppTitle_Debugging);
 				}
 				else {
-					appWindow.StatusBar.Close();
-					appWindow.RemoveTitleInfo(dnSpy_Debugger_Resources.AppTitle_Debugging);
+					appWindow.Value.StatusBar.Close();
+					appWindow.Value.RemoveTitleInfo(dnSpy_Debugger_Resources.AppTitle_Debugging);
 				}
-				appWindow.RefreshToolBar();
+				appWindow.Value.RefreshToolBar();
 			});
 		}
 		bool oldIsDebugging;
 
-		void SetRunningStatusMessage() => appWindow.StatusBar.Show(dnSpy_Debugger_Resources.StatusBar_Running);
+		void SetRunningStatusMessage() => appWindow.Value.StatusBar.Show(dnSpy_Debugger_Resources.StatusBar_Running);
 
 		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
