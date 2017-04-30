@@ -20,8 +20,8 @@
 using System;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Breakpoints.Code.Dialogs;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Debugger.Dialogs.CodeBreakpoints;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {

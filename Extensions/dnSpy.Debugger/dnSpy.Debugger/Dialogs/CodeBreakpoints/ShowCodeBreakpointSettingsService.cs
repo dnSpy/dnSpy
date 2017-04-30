@@ -22,16 +22,11 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Breakpoints.Code.Dialogs;
 using dnSpy.Debugger.Breakpoints.Code.CondChecker;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
-	abstract class ShowCodeBreakpointSettingsService {
-		public abstract DbgCodeBreakpointSettings? Show(DbgCodeBreakpointSettings settings);
-		public void Edit(DbgCodeBreakpoint breakpoint) => Edit(new[] { breakpoint ?? throw new ArgumentNullException(nameof(breakpoint)) });
-		public abstract void Edit(DbgCodeBreakpoint[] breakpoints);
-	}
-
 	[Export(typeof(ShowCodeBreakpointSettingsService))]
 	sealed class ShowCodeBreakpointSettingsServiceImpl : ShowCodeBreakpointSettingsService {
 		readonly IAppWindow appWindow;

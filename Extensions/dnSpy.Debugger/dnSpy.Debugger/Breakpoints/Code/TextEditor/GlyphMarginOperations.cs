@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Debugger.Dialogs.CodeBreakpoints;
+using dnSpy.Contracts.Debugger.Breakpoints.Code.Dialogs;
 
 namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 	abstract class GlyphMarginOperations {

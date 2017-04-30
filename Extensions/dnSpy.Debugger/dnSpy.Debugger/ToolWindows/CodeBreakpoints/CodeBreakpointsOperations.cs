@@ -27,12 +27,12 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Breakpoints.Code.Dialogs;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Breakpoints.Code;
-using dnSpy.Debugger.Dialogs.CodeBreakpoints;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
 
