@@ -81,23 +81,35 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		internal bool TryUpdateMemory() {
 			if (Process.State == DbgProcessState.Terminated)
 				return false;
-			var newData = new byte[data.Length];
-			Process.ReadMemory(Address, newData, 0, data.Length);
-			if (Equals(data, newData))
+			byte[] buffer = null;
+			try {
+				buffer = GetBuffer();
+				int pos = 0;
+				var addr = Address;
+				while (pos < data.Length) {
+					int len = Math.Min(data.Length - pos, buffer.Length);
+					Process.ReadMemory(addr, buffer, 0, len);
+					if (!Equals(data, pos, buffer, len)) {
+						Process.ReadMemory(Address, data, 0, data.Length);
+						return true;
+					}
+					addr += (uint)len;
+					pos += len;
+				}
 				return false;
-			Array.Copy(newData, data, data.Length);
-			return true;
+			}
+			finally {
+				if (buffer != null)
+					ReleaseBuffer(buffer);
+			}
 		}
+		WeakReference weakBuffer;
+		byte[] GetBuffer() => weakBuffer?.Target as byte[] ?? new byte[0x2000];
+		void ReleaseBuffer(byte[] buffer) => weakBuffer = new WeakReference(buffer);
 
-		static bool Equals(byte[] a, byte[] b) {
-			if (a == b)
-				return true;
-			if (a == null || b == null)
-				return false;
-			if (a.Length != b.Length)
-				return false;
-			for (int i = 0; i < a.Length; i++) {
-				if (a[i] != b[i])
+		static bool Equals(byte[] a, int ai, byte[] b, int len) {
+			for (int i = 0; i < len; i++) {
+				if (a[ai + i] != b[i])
 					return false;
 			}
 			return true;
