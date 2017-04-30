@@ -50,8 +50,17 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public void WriteName(ITextColorWriter output, DbgProcess process) => output.WriteFilename(process.Name);
 		public void WriteTitle(ITextColorWriter output, ProcessVM vm) => output.Write(BoxedTextColor.String, vm.Title);
 		public void WriteState(ITextColorWriter output, ProcessVM vm) => output.Write(BoxedTextColor.EnumField, GetStateText(vm.CachedState));
-		public void WriteDebugging(ITextColorWriter output, DbgProcess process) => output.Write(BoxedTextColor.Text, process.Debugging);
 		public void WritePath(ITextColorWriter output, DbgProcess process) => output.WriteFilename(process.Filename);
+
+		public void WriteDebugging(ITextColorWriter output, DbgProcess process) {
+			bool comma = false;
+			foreach (var s in process.Debugging) {
+				if (comma)
+					output.Write(BoxedTextColor.Text, ", ");
+				comma = true;
+				output.Write(BoxedTextColor.Text, s);
+			}
+		}
 
 		public void WriteId(ITextColorWriter output, DbgProcess process) {
 			if (useHex) {

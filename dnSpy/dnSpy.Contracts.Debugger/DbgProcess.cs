@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace dnSpy.Contracts.Debugger {
@@ -78,7 +79,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// What is being debugged. This is shown in the UI (eg. Processes window)
 		/// </summary>
-		public abstract string Debugging { get; }
+		public abstract ReadOnlyCollection<string> Debugging { get; }
 
 		/// <summary>
 		/// Gets all threads

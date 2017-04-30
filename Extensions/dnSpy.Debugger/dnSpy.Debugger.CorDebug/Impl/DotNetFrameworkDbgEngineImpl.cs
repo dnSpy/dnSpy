@@ -32,7 +32,8 @@ using dnSpy.Debugger.CorDebug.DAC;
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DotNetFrameworkDbgEngineImpl : DbgEngineImpl {
 		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetFramework;
-		public override string Debugging => "CLR";
+		public override string[] Debugging => debugging;
+		static readonly string[] debugging = new[] { "CLR" };
 
 		public override DbgEngineRuntimeInfo RuntimeInfo {
 			get {

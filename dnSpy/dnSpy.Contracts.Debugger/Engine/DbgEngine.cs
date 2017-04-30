@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// What is being debugged. This is shown in the UI (eg. Processes window)
 		/// </summary>
-		public abstract string Debugging { get; }
+		public abstract string[] Debugging { get; }
 
 		/// <summary>
 		/// Called when the engine can start or attach to the debugged process. This method is called shortly after

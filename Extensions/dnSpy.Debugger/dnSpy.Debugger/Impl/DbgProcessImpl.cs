@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -54,37 +55,48 @@ namespace dnSpy.Debugger.Impl {
 		bool CalculateIsRunning_NoLock() => state == DbgProcessState.Running;
 		bool cachedIsRunning;
 
-		public override string Debugging {
+		public override ReadOnlyCollection<string> Debugging {
 			get {
 				lock (lockObj)
 					return debugging;
 			}
 		}
-		string debugging = string.Empty;
-		string CalculateDebugging_NoLock() {
+		ReadOnlyCollection<string> debugging;
+		ReadOnlyCollection<string> CalculateDebugging_NoLock() {
+			var list = new List<string>();
 			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			var sb = new StringBuilder();
 			foreach (var info in engineInfos) {
-				var desc = info.Debugging;
-				if (seen.Contains(desc))
-					continue;
-				seen.Add(desc);
-				if (sb.Length != 0)
-					sb.Append(", ");
-				sb.Append(desc);
+				foreach (var s in info.Debugging) {
+					if (!list.Contains(s))
+						list.Add(s);
+				}
 			}
-			return sb.ToString();
+			return new ReadOnlyCollection<string>(list.ToArray());
+		}
+		static bool StringArrayEquals(IList<string> a, IList<string> b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Count != b.Count)
+				return false;
+			for (int i = 0; i < a.Count; i++) {
+				if (!StringComparer.Ordinal.Equals(a[i], b[i]))
+					return false;
+			}
+			return true;
 		}
 
 		sealed class EngineInfo {
 			public DbgEngine Engine { get; }
 			public DbgRuntimeImpl Runtime { get; }
-			public string Debugging { get; }
+			public string[] Debugging { get; }
 			public bool IsPaused { get; set; }
 			public EngineInfo(DbgEngine engine, DbgRuntimeImpl runtime) {
 				Engine = engine;
 				Runtime = runtime;
-				Debugging = engine.Debugging ?? "???";
+				Debugging = engine.Debugging ?? Array.Empty<string>();
 				IsPaused = false;
 			}
 		}
@@ -363,9 +375,10 @@ namespace dnSpy.Debugger.Impl {
 				engineInfos.Add(new EngineInfo(engine, runtime));
 				var newDebugging = CalculateDebugging_NoLock();
 				raiseStateChanged = state != newState;
-				raiseDebuggingChanged = debugging != newDebugging;
+				raiseDebuggingChanged = !StringArrayEquals(debugging, newDebugging);
 				state = newState;
-				debugging = newDebugging;
+				if (raiseDebuggingChanged)
+					debugging = newDebugging;
 				var newIsRunning = CalculateIsRunning_NoLock();
 				raiseIsRunningChanged = cachedIsRunning != newIsRunning;
 				cachedIsRunning = newIsRunning;
@@ -424,8 +437,9 @@ namespace dnSpy.Debugger.Impl {
 			DbgThread[] removedThreads;
 			lock (lockObj) {
 				var newDebugging = CalculateDebugging_NoLock();
-				raiseDebuggingChanged = debugging != newDebugging;
-				debugging = newDebugging;
+				raiseDebuggingChanged = !StringArrayEquals(debugging, newDebugging);
+				if (raiseDebuggingChanged)
+					debugging = newDebugging;
 				runtime.ThreadsChanged -= DbgRuntime_ThreadsChanged;
 				var threadsList = new List<DbgThread>();
 				for (int i = threads.Count - 1; i >= 0; i--) {
