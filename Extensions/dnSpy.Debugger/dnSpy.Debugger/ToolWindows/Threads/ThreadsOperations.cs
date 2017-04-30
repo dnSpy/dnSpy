@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -30,7 +29,6 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
-using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {

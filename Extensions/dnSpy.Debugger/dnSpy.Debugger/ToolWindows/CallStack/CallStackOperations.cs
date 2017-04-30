@@ -26,11 +26,11 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Breakpoints.Code;
-using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs.CodeBreakpoints;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {

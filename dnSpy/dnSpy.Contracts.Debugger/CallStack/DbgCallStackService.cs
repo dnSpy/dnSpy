@@ -19,14 +19,12 @@
 
 using System;
 using System.Collections.ObjectModel;
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 
-namespace dnSpy.Debugger.CallStack {
+namespace dnSpy.Contracts.Debugger.CallStack {
 	/// <summary>
 	/// Provides all stack frames shown in the call stack window
 	/// </summary>
-	abstract class DbgCallStackService {
+	public abstract class DbgCallStackService {
 		/// <summary>
 		/// Gets the selected thread. This is identical to <see cref="DbgManager.CurrentThread"/>
 		/// </summary>
@@ -62,7 +60,7 @@ namespace dnSpy.Debugger.CallStack {
 	/// <summary>
 	/// Contains the stack frames and related info
 	/// </summary>
-	struct DbgCallStackFramesInfo {
+	public struct DbgCallStackFramesInfo {
 		/// <summary>
 		/// Gets all frames
 		/// </summary>

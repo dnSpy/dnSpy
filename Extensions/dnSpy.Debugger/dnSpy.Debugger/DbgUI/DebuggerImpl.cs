@@ -32,7 +32,6 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents;
 using dnSpy.Debugger.Breakpoints.Code.TextEditor;
-using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.Properties;
 

@@ -31,7 +31,6 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Breakpoints.Code;
-using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;

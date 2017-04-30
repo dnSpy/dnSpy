@@ -29,7 +29,6 @@ using dnSpy.Contracts.Debugger.CallStack.TextEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
