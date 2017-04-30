@@ -50,6 +50,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public abstract void ThawThread();
 		public abstract bool CanResetSearchSettings { get; }
 		public abstract void ResetSearchSettings();
+		public abstract bool IsEditingValues { get; }
 	}
 
 	[Export(typeof(ThreadsOperations))]
@@ -198,5 +199,15 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public override bool CanResetSearchSettings => true;
 		public override void ResetSearchSettings() => threadsVM.ResetSearchSettings();
+
+		public override bool IsEditingValues {
+			get {
+				foreach (var vm in SelectedItems) {
+					if (vm.IsEditingValues)
+						return true;
+				}
+				return false;
+			}
+		}
 	}
 }

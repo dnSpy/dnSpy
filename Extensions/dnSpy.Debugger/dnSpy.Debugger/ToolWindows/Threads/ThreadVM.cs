@@ -370,5 +370,13 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			ClearEditingValueProperties();
 		}
 		bool disposed;
+
+		// UI thread
+		internal bool IsEditingValues {
+			get {
+				Context.UIDispatcher.VerifyAccess();
+				return NameEditableValue.IsEditingValue;
+			}
+		}
 	}
 }

@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 
 		void CodeBreakpointsControl_CodeBreakpointsListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			if (Operations.CanGoToSourceCode)
+			if (!Operations.IsEditingValues && Operations.CanGoToSourceCode)
 				Operations.GoToSourceCode(newTab);
 		}
 

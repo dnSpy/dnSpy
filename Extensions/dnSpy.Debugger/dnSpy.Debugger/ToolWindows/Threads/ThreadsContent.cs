@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		void ThreadsControl_ThreadsListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			if (Operations.CanSwitchToThread)
+			if (!Operations.IsEditingValues && Operations.CanSwitchToThread)
 				Operations.SwitchToThread(newTab);
 		}
 

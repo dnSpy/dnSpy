@@ -119,7 +119,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 
 		void BookmarksControl_BookmarksListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			if (Operations.CanGoToLocation)
+			if (!Operations.IsEditingValues && Operations.CanGoToLocation)
 				Operations.GoToLocation(newTab);
 		}
 
