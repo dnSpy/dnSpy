@@ -138,6 +138,7 @@
     <Compile Include="Text\ClassifiedText.cs" />
     <Compile Include="Text\ClassifiedTextWriter.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
+    <Compile Include="ToolWindows\CallStack\ActiveStatementService.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackColumnConverter.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackContent.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackContext.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="ToolWindows\CallStack\CallStackDisplaySettings.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackDisplaySettingsBase.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackFormatter.cs" />
+    <Compile Include="ToolWindows\CallStack\CallStackMarker.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackOperations.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackToolWindowContent.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackVM.cs" />

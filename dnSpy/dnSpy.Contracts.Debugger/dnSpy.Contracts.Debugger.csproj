@@ -68,6 +68,8 @@
     <Compile Include="CallStack\DbgStackFrame.cs" />
     <Compile Include="CallStack\DbgStackFrameFormatOptions.cs" />
     <Compile Include="CallStack\DbgStackWalker.cs" />
+    <Compile Include="CallStack\TextEditor\DbgStackFrameGlyphTextMarkerLocationInfoProvider.cs" />
+    <Compile Include="CallStack\TextEditor\DbgStackFrameTextViewMarker.cs" />
     <Compile Include="Code\DbgCodeLocation.cs" />
     <Compile Include="Code\DbgCodeLocationSerializer.cs" />
     <Compile Include="Code\PredefinedDbgCodeLocationTypes.cs" />

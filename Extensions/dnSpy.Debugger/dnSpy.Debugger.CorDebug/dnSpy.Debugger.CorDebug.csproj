@@ -53,6 +53,8 @@
     <Compile Include="CallStack\ILDbgEngineStackFrame.cs" />
     <Compile Include="CallStack\NullDbgEngineStackWalker.cs" />
     <Compile Include="CallStack\StackFrameData.cs" />
+    <Compile Include="CallStack\TextEditor\DbgStackFrameGlyphTextMarkerLocationInfoProviderImpl.cs" />
+    <Compile Include="CallStack\TextEditor\DbgStackFrameTextViewMarkerImpl.cs" />
     <Compile Include="Code\BreakpointFormatterService.cs" />
     <Compile Include="Code\DbgDotNetNativeCodeLocationFactory.cs" />
     <Compile Include="Code\DbgDotNetNativeCodeLocationImpl.cs" />
