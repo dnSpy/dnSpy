@@ -28,7 +28,11 @@ using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Documents;
 using dnSpy.Debugger.Breakpoints.Code.TextEditor;
+using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.Properties;
 
@@ -43,11 +47,13 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog;
 		readonly Lazy<TextViewBreakpointService> textViewBreakpointService;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
+		readonly Lazy<DbgCallStackService> dbgCallStackService;
+		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) {
+		DebuggerImpl(Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService) {
 			this.messageBoxService = messageBoxService;
 			this.appWindow = appWindow;
 			this.dbgManager = dbgManager;
@@ -55,6 +61,8 @@ namespace dnSpy.Debugger.DbgUI {
 			this.showAttachToProcessDialog = showAttachToProcessDialog;
 			this.textViewBreakpointService = textViewBreakpointService;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
+			this.dbgCallStackService = dbgCallStackService;
+			this.referenceNavigatorService = referenceNavigatorService;
 		}
 
 		public override string GetCurrentExecutableFilename() => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
@@ -113,7 +121,21 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public override bool CanShowNextStatement => CanExecutePauseCommand;
 		public override void ShowNextStatement() {
-			//TODO:
+			var info = GetCurrentStatementLocation();
+			if (info.location != null) {
+				referenceNavigatorService.Value.GoTo(info.location);
+				dbgCallStackService.Value.ActiveFrameIndex = info.frameIndex;
+			}
+		}
+
+		(DbgCodeLocation location, int frameIndex) GetCurrentStatementLocation() {
+			var frames = dbgCallStackService.Value.Frames.Frames;
+			for (int i = 0; i < frames.Count; i++) {
+				var location = frames[i].Location;
+				if (location != null)
+					return (location, i);
+			}
+			return (null, -1);
 		}
 
 		public override bool CanSetNextStatement => CanExecutePauseCommand;
