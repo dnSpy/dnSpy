@@ -21,8 +21,6 @@ using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.ToolWindows.Memory {
 	static class MemoryWindowsHelper {
-		// Four should be enough, but if more are required, it's as simple as changing this constant.
-		// The first 10 will have keyboard shortcuts (Ctrl+N or Ctrl+Alt+N) depending on the command.
 		public static readonly int NUMBER_OF_MEMORY_WINDOWS = 4;
 
 		public static string GetHeaderText(int i) {

@@ -81,6 +81,8 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			return new MemoryToolWindowContent(new Lazy<IMemoryContent>(() => CreateMemoryContent(content), LazyThreadSafetyMode.None), content.Guid, content.Index);
 		}
 
+		public Guid GetWindowGuid(int index) => contents[index].Guid;
+
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get {
 				foreach (var info in contents)

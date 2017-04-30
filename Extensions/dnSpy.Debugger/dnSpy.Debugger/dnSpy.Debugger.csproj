@@ -166,6 +166,7 @@
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointVM.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\SearchTextClassifierProvider.cs" />
+    <Compile Include="ToolWindows\Commands.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionCategoryVM.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointColumnConverter.cs" />
@@ -184,6 +185,7 @@
     <Compile Include="ToolWindows\Modules\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\SimpleProcessVM.cs" />
     <Compile Include="ToolWindows\Threads\SearchTextClassifierProvider.cs" />
+    <Compile Include="ToolWindows\ToolWindowsOperations.cs" />
     <Compile Include="UI\BulkObservableCollection.cs" />
     <Compile Include="UI\FormatterObject.cs" />
     <Compile Include="Utilities\ProcessProvider.cs" />
