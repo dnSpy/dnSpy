@@ -1202,7 +1202,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		static bool IsDelegate(TypeDef td) => td != null &&
-				new SigComparer().Equals(td.BaseType, td.Module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
-				td.BaseType.DefinitionAssembly.IsCorLib();
+			new SigComparer().Equals(td.BaseType, td.Module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
+			td.BaseType.DefinitionAssembly.IsCorLib();
 	}
 }

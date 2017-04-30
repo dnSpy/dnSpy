@@ -324,6 +324,10 @@ namespace dndbg.Engine {
 
 				uint token = types[i].@class.Token;
 				var fullName = MDAPI.GetTypeDefName(mdi, token);
+				if (fullName == null) {
+					OutputWrite("???", TypeColor.Error);
+					continue;
+				}
 
 				var typeKeyword = !ShowIntrinsicTypeKeywords || i != 0 ? null : GetTypeKeyword(fullName);
 				if (typeKeyword != null)
@@ -1005,7 +1009,7 @@ namespace dndbg.Engine {
 		static string GetPropName(CorFunction method) {
 			if (method == null)
 				return null;
-			var name = method.GetName();
+			var name = method.GetName() ?? string.Empty;
 			if (name.StartsWith("get_", StringComparison.Ordinal) || name.StartsWith("set_", StringComparison.Ordinal))
 				return name.Substring(4);
 			return null;

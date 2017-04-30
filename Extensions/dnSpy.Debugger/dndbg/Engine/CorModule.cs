@@ -312,6 +312,8 @@ namespace dndbg.Engine {
 			while (findClassCacheEnum.MoveNext()) {
 				var t = findClassCacheEnum.Current;
 				var typeName = t.name;
+				if (typeName == null)
+					continue;
 				if (!findClassCacheDict.ContainsKey(typeName))
 					findClassCacheDict[typeName] = t.token;
 				if (typeName == name)
