@@ -70,6 +70,15 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Class Tracepoint.
+        /// </summary>
+        public static string AddClassTracepointCommand {
+            get {
+                return ResourceManager.GetString("AddClassTracepointCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Method Breakpoint.
         /// </summary>
         public static string AddMethodBreakpointCommand {

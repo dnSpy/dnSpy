@@ -120,6 +120,9 @@
   <data name="AddClassBreakpointCommand" xml:space="preserve">
     <value>Add Class Breakpoint</value>
   </data>
+  <data name="AddClassTracepointCommand" xml:space="preserve">
+    <value>Add Class Tracepoint</value>
+  </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
     <value>Add Method Breakpoint</value>
   </data>

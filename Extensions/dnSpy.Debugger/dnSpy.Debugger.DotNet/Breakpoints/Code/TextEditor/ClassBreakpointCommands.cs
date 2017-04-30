@@ -24,6 +24,7 @@ using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Breakpoints.Code.Dialogs;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
@@ -38,16 +39,28 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 		readonly Lazy<IModuleIdProvider> moduleIdProvider;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
+		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
 
 		[ImportingConstructor]
-		MethodBreakpointsService(Lazy<DbgManager> dbgManager, Lazy<IModuleIdProvider> moduleIdProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
+		MethodBreakpointsService(Lazy<DbgManager> dbgManager, Lazy<IModuleIdProvider> moduleIdProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService) {
 			this.dbgManager = dbgManager;
 			this.moduleIdProvider = moduleIdProvider;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
+			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
 		}
 
-		public void Add(MethodDef[] methods) {
+		public void Add(MethodDef[] methods, bool tracepoint) {
+			DbgCodeBreakpointSettings settings;
+			if (tracepoint) {
+				var newSettings = showCodeBreakpointSettingsService.Value.Show(new DbgCodeBreakpointSettings { IsEnabled = true, Trace = new DbgCodeBreakpointTrace(string.Empty, true) });
+				if (newSettings == null)
+					return;
+				settings = newSettings.Value;
+			}
+			else
+				settings = new DbgCodeBreakpointSettings { IsEnabled = true };
+
 			var list = new List<DbgCodeBreakpointInfo>(methods.Length);
 			var existing = new HashSet<DbgDotNetCodeLocation>(dbgCodeBreakpointsService.Value.Breakpoints.Select(a => a.Location).OfType<DbgDotNetCodeLocation>());
 			List<DbgObject> objsToClose = null;
@@ -61,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 					continue;
 				}
 				existing.Add(location);
-				list.Add(new DbgCodeBreakpointInfo(location, new DbgCodeBreakpointSettings { IsEnabled = true }));
+				list.Add(new DbgCodeBreakpointInfo(location, settings));
 			}
 			if (objsToClose != null)
 				dbgManager.Value.Close(objsToClose.ToArray());
@@ -78,10 +91,12 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 
 		abstract class MenuItemCommon : MenuItemBase {
 			readonly Lazy<MethodBreakpointsService> methodBreakpointsService;
+			readonly bool tracepoint;
 			readonly Guid guid;
 
-			protected MenuItemCommon(Lazy<MethodBreakpointsService> methodBreakpointsService, string guid) {
+			protected MenuItemCommon(Lazy<MethodBreakpointsService> methodBreakpointsService, bool tracepoint, string guid) {
 				this.methodBreakpointsService = methodBreakpointsService;
+				this.tracepoint = tracepoint;
 				this.guid = Guid.Parse(guid);
 			}
 
@@ -92,32 +107,56 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				var type = GetTypeRef(context, guid)?.ResolveTypeDef();
 				if (type == null)
 					return;
-				methodBreakpointsService.Value.Add(type.Methods.ToArray());
+				methodBreakpointsService.Value.Add(type.Methods.ToArray(), tracepoint);
 			}
 		}
 
 		[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 100)]
-		sealed class CodeCommand : MenuItemCommon {
+		sealed class BreakpointCodeCommand : MenuItemCommon {
 			[ImportingConstructor]
-			CodeCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID) { }
+			BreakpointCodeCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, false, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID) { }
 		}
 
 		[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUG, Order = 100)]
-		sealed class AssemblyExplorerCommand : MenuItemCommon {
+		sealed class BreakpointAssemblyExplorerCommand : MenuItemCommon {
 			[ImportingConstructor]
-			AssemblyExplorerCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) { }
+			BreakpointAssemblyExplorerCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, false, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) { }
 		}
 
 		[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_SEARCH_DEBUG, Order = 100)]
-		sealed class SearchCommand : MenuItemCommon {
+		sealed class BreakpointSearchCommand : MenuItemCommon {
 			[ImportingConstructor]
-			SearchCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, MenuConstants.GUIDOBJ_SEARCH_GUID) { }
+			BreakpointSearchCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, false, MenuConstants.GUIDOBJ_SEARCH_GUID) { }
 		}
 
 		[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_ANALYZER_DEBUG, Order = 100)]
-		sealed class AnalyzerCommand : MenuItemCommon {
+		sealed class BreakpointAnalyzerCommand : MenuItemCommon {
 			[ImportingConstructor]
-			AnalyzerCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID) { }
+			BreakpointAnalyzerCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, false, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID) { }
+		}
+
+		[ExportMenuItem(Header = "res:AddClassTracepointCommand", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 101)]
+		sealed class TracepointCodeCommand : MenuItemCommon {
+			[ImportingConstructor]
+			TracepointCodeCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, true, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID) { }
+		}
+
+		[ExportMenuItem(Header = "res:AddClassTracepointCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUG, Order = 101)]
+		sealed class TracepointAssemblyExplorerCommand : MenuItemCommon {
+			[ImportingConstructor]
+			TracepointAssemblyExplorerCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, true, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) { }
+		}
+
+		[ExportMenuItem(Header = "res:AddClassTracepointCommand", Group = MenuConstants.GROUP_CTX_SEARCH_DEBUG, Order = 101)]
+		sealed class TracepointSearchCommand : MenuItemCommon {
+			[ImportingConstructor]
+			TracepointSearchCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, true, MenuConstants.GUIDOBJ_SEARCH_GUID) { }
+		}
+
+		[ExportMenuItem(Header = "res:AddClassTracepointCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_DEBUG, Order = 101)]
+		sealed class TracepointAnalyzerCommand : MenuItemCommon {
+			[ImportingConstructor]
+			TracepointAnalyzerCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, true, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID) { }
 		}
 	}
 
@@ -175,10 +214,12 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 
 		abstract class MenuItemCommon : MenuItemBase {
 			readonly Lazy<MethodBreakpointsService> methodBreakpointsService;
+			readonly bool tracepoint;
 			readonly Guid guid;
 
-			protected MenuItemCommon(Lazy<MethodBreakpointsService> methodBreakpointsService, string guid) {
+			protected MenuItemCommon(Lazy<MethodBreakpointsService> methodBreakpointsService, bool tracepoint, string guid) {
 				this.methodBreakpointsService = methodBreakpointsService;
+				this.tracepoint = tracepoint;
 				this.guid = Guid.Parse(guid);
 			}
 
@@ -189,32 +230,32 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				var methodRefs = GetMethodReferences(context, guid);
 				if (methodRefs == null)
 					return;
-				methodBreakpointsService.Value.Add(methodRefs.Select(a => a.ResolveMethodDef()).Where(a => a != null).ToArray());
+				methodBreakpointsService.Value.Add(methodRefs.Select(a => a.ResolveMethodDef()).Where(a => a != null).ToArray(), tracepoint);
 			}
 		}
 
 		[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 150)]
 		sealed class CodeCommand : MenuItemCommon {
 			[ImportingConstructor]
-			CodeCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID) { }
+			CodeCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, false, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID) { }
 		}
 
 		[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUG, Order = 150)]
 		sealed class AssemblyExplorerCommand : MenuItemCommon {
 			[ImportingConstructor]
-			AssemblyExplorerCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) { }
+			AssemblyExplorerCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, false, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) { }
 		}
 
 		[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_SEARCH_DEBUG, Order = 150)]
 		sealed class SearchCommand : MenuItemCommon {
 			[ImportingConstructor]
-			SearchCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, MenuConstants.GUIDOBJ_SEARCH_GUID) { }
+			SearchCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, false, MenuConstants.GUIDOBJ_SEARCH_GUID) { }
 		}
 
 		[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_ANALYZER_DEBUG, Order = 150)]
 		sealed class AnalyzerCommand : MenuItemCommon {
 			[ImportingConstructor]
-			AnalyzerCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID) { }
+			AnalyzerCommand(Lazy<MethodBreakpointsService> methodBreakpointsService) : base(methodBreakpointsService, false, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID) { }
 		}
 	}
 }
