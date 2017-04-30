@@ -190,7 +190,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// Closes <paramref name="obj"/>
 		/// </summary>
 		/// <param name="obj">Object to close</param>
-		public void Close(DbgObject obj) => Close(new[] { obj ?? throw new ArgumentNullException(nameof(obj)) });
+		public abstract void Close(DbgObject obj);
 
 		/// <summary>
 		/// Closes <paramref name="objs"/>

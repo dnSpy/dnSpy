@@ -957,6 +957,17 @@ namespace dnSpy.Debugger.Impl {
 		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed(object sender, ModulesRefreshedEventArgs e) =>
 			DbgThread(() => boundBreakpointsManager.ReAddBreakpoints_DbgThread(e.Modules));
 
+		public override void Close(DbgObject obj) {
+			if (obj == null)
+				throw new ArgumentNullException(nameof(obj));
+			DbgThread(() => Close_DbgThread(obj));
+		}
+
+		void Close_DbgThread(DbgObject obj) {
+			Dispatcher.VerifyAccess();
+			obj.Close(Dispatcher);
+		}
+
 		public override void Close(DbgObject[] objs) {
 			if (objs == null)
 				throw new ArgumentNullException(nameof(objs));

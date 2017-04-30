@@ -30,9 +30,9 @@ namespace dnSpy.Debugger.DotNet.Code {
 		public override uint Offset { get; }
 
 		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
-		readonly DbgDotNetCodeLocationFactory factory;
+		readonly DbgDotNetCodeLocationFactoryImpl factory;
 
-		public DbgDotNetCodeLocationImpl(DbgDotNetCodeLocationFactory factory, ModuleId module, uint token, uint offset) {
+		public DbgDotNetCodeLocationImpl(DbgDotNetCodeLocationFactoryImpl factory, ModuleId module, uint token, uint offset) {
 			this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
 			Module = module;
 			Token = token;
@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		}
 
 		public override DbgCodeLocation Clone() => factory.Create(Module, Token, Offset);
-
+		public override void Close() => factory.DbgManager.Value.Close(this);
 		protected override void CloseCore() { }
 
 		public override bool Equals(object obj) =>

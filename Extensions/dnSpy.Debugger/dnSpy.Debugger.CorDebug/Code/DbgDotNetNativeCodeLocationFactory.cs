@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using dndbg.Engine;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.CorDebug.Impl;
@@ -31,6 +32,11 @@ namespace dnSpy.Debugger.CorDebug.Code {
 
 	[Export(typeof(DbgDotNetNativeCodeLocationFactory))]
 	sealed class DbgDotNetNativeCodeLocationFactoryImpl : DbgDotNetNativeCodeLocationFactory {
+		internal Lazy<DbgManager> DbgManager { get; }
+
+		[ImportingConstructor]
+		DbgDotNetNativeCodeLocationFactoryImpl(Lazy<DbgManager> dbgManager) => DbgManager = dbgManager;
+
 		public override DbgDotNetNativeCodeLocation Create(ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
 			if (corCode == null)
 				throw new ArgumentNullException(nameof(corCode));

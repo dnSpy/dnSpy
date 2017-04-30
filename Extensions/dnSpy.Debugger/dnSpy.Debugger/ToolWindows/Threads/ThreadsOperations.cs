@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 					referenceNavigatorService.Value.GoTo(location, options);
 				}
 				finally {
-					thread.Process.DbgManager.Close(new[] { location });
+					location.Close();
 				}
 			}
 		}

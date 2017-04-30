@@ -17,13 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Code {
 	[Export(typeof(DbgDotNetCodeLocationFactory))]
 	sealed class DbgDotNetCodeLocationFactoryImpl : DbgDotNetCodeLocationFactory {
+		internal Lazy<DbgManager> DbgManager { get; }
+
+		[ImportingConstructor]
+		DbgDotNetCodeLocationFactoryImpl(Lazy<DbgManager> dbgManager) => DbgManager = dbgManager;
+
 		public override DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset) =>
 			new DbgDotNetCodeLocationImpl(this, module, token, offset);
 	}

@@ -37,9 +37,9 @@ namespace dnSpy.Debugger.CorDebug.Code {
 
 		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
 
-		readonly DbgDotNetNativeCodeLocationFactory owner;
+		readonly DbgDotNetNativeCodeLocationFactoryImpl owner;
 
-		public DbgDotNetNativeCodeLocationImpl(DbgDotNetNativeCodeLocationFactory owner, ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
+		public DbgDotNetNativeCodeLocationImpl(DbgDotNetNativeCodeLocationFactoryImpl owner, ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			Module = module;
 			Token = token;
@@ -53,6 +53,7 @@ namespace dnSpy.Debugger.CorDebug.Code {
 		public override DbgCodeLocation Clone() =>
 			owner.Create(Module, Token, ILOffset, ILOffsetMapping, NativeMethodAddress, NativeMethodOffset, CorCode.AddRef());
 
+		public override void Close() => owner.DbgManager.Value.Close(this);
 		protected override void CloseCore() => CorCode.Close();
 
 		public override bool Equals(object obj) =>

@@ -30,10 +30,16 @@ namespace dnSpy.Contracts.Debugger.Code {
 		public abstract string Type { get; }
 
 		/// <summary>
-		/// Clones this instance. The returned instance can be used to create a breakpoint.
+		/// Clones this instance. The returned instance can be used to create a breakpoint. If the cloned instance
+		/// isn't used, it must be closed (see <see cref="Close"/>)
 		/// </summary>
 		/// <returns></returns>
 		public abstract DbgCodeLocation Clone();
+
+		/// <summary>
+		/// Closes this instance (it calls <see cref="DbgManager.Close(DbgObject)"/>)
+		/// </summary>
+		public abstract void Close();
 
 		/// <summary>
 		/// Compares this instance to <paramref name="obj"/>
