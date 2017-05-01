@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					return;
 				showOnlyEnabledExceptions = value;
 				OnPropertyChanged(nameof(ShowOnlyEnabledExceptions));
-				FilterList_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
+				delayedSearch.Start();
 			}
 		}
 		bool showOnlyEnabledExceptions;
@@ -95,10 +95,11 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					return;
 				filterText = value;
 				OnPropertyChanged(nameof(FilterText));
-				FilterList_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
+				delayedSearch.Start();
 			}
 		}
 		string filterText = string.Empty;
+		readonly DelayedAction delayedSearch;
 
 		public ExceptionCategoryVM SelectedCategory {
 			get => selectedCategory;
@@ -107,7 +108,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					return;
 				selectedCategory = value;
 				OnPropertyChanged(nameof(SelectedCategory));
-				FilterList_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
+				delayedSearch.Start();
 			}
 		}
 		ExceptionCategoryVM selectedCategory;
@@ -144,6 +145,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			AllItems = new BulkObservableCollection<ExceptionVM>();
 			SelectedItems = new ObservableCollection<ExceptionVM>();
 			exceptionCategories = new ObservableCollection<ExceptionCategoryVM>();
+			delayedSearch = new DelayedAction(uiDispatcher, SearchConstants.DefaultSearchDelayMilliSeconds, DelayStartSearch_UI);
 			this.dbgManager = dbgManager;
 			this.dbgExceptionSettingsService = dbgExceptionSettingsService;
 			this.exceptionFormatterProvider = exceptionFormatterProvider;
@@ -163,6 +165,15 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ExceptionSettingsWindowCategory, "cat", dnSpy_Debugger_Resources.Column_Category),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ExceptionSettingsWindowConditions, "c", dnSpy_Debugger_Resources.Column_Conditions),
 		};
+
+		// UI thread
+		void DelayStartSearch_UI() {
+			exceptionContext.UIDispatcher.VerifyAccess();
+			delayedSearch.Cancel();
+			if (!IsOpen)
+				return;
+			FilterList_UI(filterText, showOnlyEnabledExceptions, selectedCategory);
+		}
 
 		// UI thread
 		public string GetSearchHelpText() {
@@ -193,6 +204,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				InitializeExceptionCategories_UI();
 			IsAddingExceptions = false;
 			ResetSearchSettings();
+			delayedSearch.Cancel();
 			if (enable) {
 				exceptionContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -481,10 +493,16 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		// UI thread
 		public void ResetSearchSettings() {
 			exceptionContext.UIDispatcher.VerifyAccess();
-			ShowOnlyEnabledExceptions = false;
-			FilterText = string.Empty;
-			if (exceptionCategories.Count > 0)
-				SelectedCategory = exceptionCategories[0];
+			var newShowOnlyEnabledExceptions = false;
+			var newFilterText = string.Empty;
+			var newSelectedCategory = exceptionCategories.Count > 0 ? exceptionCategories[0] : null;
+			if (ShowOnlyEnabledExceptions != newShowOnlyEnabledExceptions || FilterText != newFilterText || SelectedCategory != newSelectedCategory) {
+				ShowOnlyEnabledExceptions = newShowOnlyEnabledExceptions;
+				FilterText = newFilterText;
+				SelectedCategory = newSelectedCategory;
+				delayedSearch.Cancel();
+				DelayStartSearch_UI();
+			}
 		}
 	}
 }

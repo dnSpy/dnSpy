@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				if (selectedProcess != value) {
 					selectedProcess = (SimpleProcessVM)value;
 					OnPropertyChanged(nameof(SelectedProcess));
-					FilterList_UI(filterText, selectedProcess);
+					delayedSearch.Start();
 				}
 			}
 		}
@@ -81,10 +81,11 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 					return;
 				filterText = value;
 				OnPropertyChanged(nameof(FilterText));
-				FilterList_UI(filterText, selectedProcess);
+				delayedSearch.Start();
 			}
 		}
 		string filterText = string.Empty;
+		readonly DelayedAction delayedSearch;
 
 		public bool SomethingMatched => !nothingMatched;
 		public bool NothingMatched {
@@ -114,6 +115,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			AllItems = new BulkObservableCollection<ModuleVM>();
 			SelectedItems = new ObservableCollection<ModuleVM>();
 			processes = new ObservableCollection<SimpleProcessVM>();
+			delayedSearch = new DelayedAction(uiDispatcher, SearchConstants.DefaultSearchDelayMilliSeconds, DelayStartSearch_UI);
 			this.dbgManager = dbgManager;
 			this.moduleFormatterProvider = moduleFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
@@ -138,6 +140,15 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowAppDomain, "ad", dnSpy_Debugger_Resources.Column_AppDomain),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowPath, "f", dnSpy_Debugger_Resources.Column_Path),
 		};
+
+		// UI thread
+		void DelayStartSearch_UI() {
+			moduleContext.UIDispatcher.VerifyAccess();
+			delayedSearch.Cancel();
+			if (!IsOpen)
+				return;
+			FilterList_UI(filterText, selectedProcess);
+		}
 
 		// UI thread
 		public string GetSearchHelpText() {
@@ -167,6 +178,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			if (processes.Count == 0)
 				InitializeProcesses_UI();
 			ResetSearchSettings();
+			delayedSearch.Cancel();
 			if (enable) {
 				moduleContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -695,8 +707,13 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		// UI thread
 		public void ResetSearchSettings() {
 			moduleContext.UIDispatcher.VerifyAccess();
-			FilterText = string.Empty;
-			SelectedProcess = processes.FirstOrDefault();
+			var newProcess = processes.FirstOrDefault();
+			if (FilterText != string.Empty || SelectedProcess != newProcess) {
+				FilterText = string.Empty;
+				SelectedProcess = processes.FirstOrDefault();
+				delayedSearch.Cancel();
+				DelayStartSearch_UI();
+			}
 		}
 	}
 }

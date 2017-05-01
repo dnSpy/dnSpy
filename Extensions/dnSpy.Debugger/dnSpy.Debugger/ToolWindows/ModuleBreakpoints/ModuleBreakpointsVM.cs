@@ -67,10 +67,11 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 					return;
 				filterText = value;
 				OnPropertyChanged(nameof(FilterText));
-				FilterList_UI(filterText);
+				delayedSearch.Start();
 			}
 		}
 		string filterText = string.Empty;
+		readonly DelayedAction delayedSearch;
 
 		public bool SomethingMatched => !nothingMatched;
 		public bool NothingMatched {
@@ -143,6 +144,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			AllItems = new BulkObservableCollection<ModuleBreakpointVM>();
 			SelectedItems = new ObservableCollection<ModuleBreakpointVM>();
 			bpToVM = new Dictionary<DbgModuleBreakpoint, ModuleBreakpointVM>();
+			delayedSearch = new DelayedAction(uiDispatcher, SearchConstants.DefaultSearchDelayMilliSeconds, DelayStartSearch_UI);
 			this.dbgManager = dbgManager;
 			this.moduleBreakpointFormatterProvider = moduleBreakpointFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
@@ -163,6 +165,15 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowProcessName, "p", dnSpy_Debugger_Resources.Column_Process),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleAppDomainName, "ad", dnSpy_Debugger_Resources.Column_AppDomain),
 		};
+
+		// UI thread
+		void DelayStartSearch_UI() {
+			moduleBreakpointContext.UIDispatcher.VerifyAccess();
+			delayedSearch.Cancel();
+			if (!IsOpen)
+				return;
+			FilterList_UI(filterText);
+		}
 
 		// UI thread
 		public string GetSearchHelpText() {
@@ -190,6 +201,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		void InitializeDebugger_UI(bool enable) {
 			moduleBreakpointContext.UIDispatcher.VerifyAccess();
 			ResetSearchSettings();
+			delayedSearch.Cancel();
 			if (enable) {
 				moduleBreakpointContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -437,7 +449,11 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		// UI thread
 		public void ResetSearchSettings() {
 			moduleBreakpointContext.UIDispatcher.VerifyAccess();
-			FilterText = string.Empty;
+			if (FilterText != string.Empty) {
+				FilterText = string.Empty;
+				delayedSearch.Cancel();
+				DelayStartSearch_UI();
+			}
 		}
 	}
 }

@@ -68,10 +68,11 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 					return;
 				filterText = value;
 				OnPropertyChanged(nameof(FilterText));
-				FilterList_UI(filterText);
+				delayedSearch.Start();
 			}
 		}
 		string filterText = string.Empty;
+		readonly DelayedAction delayedSearch;
 
 		public bool SomethingMatched => !nothingMatched;
 		public bool NothingMatched {
@@ -117,6 +118,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			AllItems = new BulkObservableCollection<CodeBreakpointVM>();
 			SelectedItems = new ObservableCollection<CodeBreakpointVM>();
 			bpToVM = new Dictionary<DbgCodeBreakpoint, CodeBreakpointVM>();
+			delayedSearch = new DelayedAction(uiDispatcher, SearchConstants.DefaultSearchDelayMilliSeconds, DelayStartSearch_UI);
 			this.dbgManager = dbgManager;
 			this.codeBreakpointFormatterProvider = codeBreakpointFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
@@ -141,6 +143,15 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.CodeBreakpointsWindowWhenHit, "w", dnSpy_Debugger_Resources.Column_WhenHit),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.CodeBreakpointsWindowModule, "m", dnSpy_Debugger_Resources.Column_Module),
 		};
+
+		// UI thread
+		void DelayStartSearch_UI() {
+			codeBreakpointContext.UIDispatcher.VerifyAccess();
+			delayedSearch.Cancel();
+			if (!IsOpen)
+				return;
+			FilterList_UI(filterText);
+		}
 
 		// DbgManager thread
 		void DbgCodeBreakpointHitCountService_HitCountChanged(object sender, DbgHitCountChangedEventArgs e) =>
@@ -181,6 +192,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		void InitializeDebugger_UI(bool enable) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			ResetSearchSettings();
+			delayedSearch.Cancel();
 			if (enable) {
 				codeBreakpointContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -507,7 +519,11 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		// UI thread
 		public void ResetSearchSettings() {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
-			FilterText = string.Empty;
+			if (FilterText != string.Empty) {
+				FilterText = string.Empty;
+				delayedSearch.Cancel();
+				DelayStartSearch_UI();
+			}
 		}
 	}
 }

@@ -133,7 +133,9 @@
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\SearchTextClassifierProvider.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\TextViewTaggers.cs" />
     <Compile Include="Bookmarks\ToolWindows\Bookmarks\ViewBookmarkProviderImpl.cs" />
+    <Compile Include="Bookmarks\ToolWindows\DelayedAction.cs" />
     <Compile Include="Bookmarks\ToolWindows\LazyToolWindowVMHelper.cs" />
+    <Compile Include="Bookmarks\ToolWindows\SearchConstants.cs" />
     <Compile Include="Bookmarks\UI\BulkObservableCollection.cs" />
     <Compile Include="Bookmarks\UI\ContentTypeDefinitions.cs" />
     <Compile Include="Bookmarks\UI\FormatterObject.cs" />

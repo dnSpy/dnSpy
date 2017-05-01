@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				if (selectedProcess != value) {
 					selectedProcess = (SimpleProcessVM)value;
 					OnPropertyChanged(nameof(SelectedProcess));
-					FilterList_UI(filterText, selectedProcess);
+					delayedSearch.Start();
 				}
 			}
 		}
@@ -92,10 +92,11 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 					return;
 				filterText = value;
 				OnPropertyChanged(nameof(FilterText));
-				FilterList_UI(filterText, selectedProcess);
+				delayedSearch.Start();
 			}
 		}
 		string filterText = string.Empty;
+		readonly DelayedAction delayedSearch;
 
 		public bool SomethingMatched => !nothingMatched;
 		public bool NothingMatched {
@@ -135,6 +136,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			AllItems = new BulkObservableCollection<ThreadVM>();
 			SelectedItems = new ObservableCollection<ThreadVM>();
 			processes = new ObservableCollection<SimpleProcessVM>();
+			delayedSearch = new DelayedAction(uiDispatcher, SearchConstants.DefaultSearchDelayMilliSeconds, DelayStartSearch_UI);
 			this.dbgManager = dbgManager;
 			this.threadFormatterProvider = threadFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
@@ -164,6 +166,15 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		};
 
 		// UI thread
+		void DelayStartSearch_UI() {
+			threadContext.UIDispatcher.VerifyAccess();
+			delayedSearch.Cancel();
+			if (!IsOpen)
+				return;
+			FilterList_UI(filterText, selectedProcess);
+		}
+
+		// UI thread
 		public string GetSearchHelpText() {
 			threadContext.UIDispatcher.VerifyAccess();
 			return threadContext.SearchMatcher.GetHelpText();
@@ -191,6 +202,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			if (processes.Count == 0)
 				InitializeProcesses_UI();
 			ResetSearchSettings();
+			delayedSearch.Cancel();
 			if (enable) {
 				threadContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -762,8 +774,13 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		public void ResetSearchSettings() {
 			threadContext.UIDispatcher.VerifyAccess();
-			FilterText = string.Empty;
-			SelectedProcess = processes.FirstOrDefault();
+			var newProcess = processes.FirstOrDefault();
+			if (FilterText != string.Empty || SelectedProcess != newProcess) {
+				FilterText = string.Empty;
+				SelectedProcess = processes.FirstOrDefault();
+				delayedSearch.Cancel();
+				DelayStartSearch_UI();
+			}
 		}
 	}
 }
