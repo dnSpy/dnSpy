@@ -125,6 +125,13 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract void RunAll();
 
 		/// <summary>
+		/// Lets <paramref name="process"/> run again. If <see cref="DebuggerSettings.BreakAllProcesses"/>
+		/// is true, all other processes will also run.
+		/// </summary>
+		/// <param name="process">Process to run</param>
+		public abstract void Run(DbgProcess process);
+
+		/// <summary>
 		/// Stops debugging. All programs started by the debugger will be terminated. All
 		/// other programs will be detached, if possible, else terminated.
 		/// </summary>

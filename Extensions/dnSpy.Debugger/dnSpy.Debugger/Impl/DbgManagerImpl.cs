@@ -779,6 +779,15 @@ namespace dnSpy.Debugger.Impl {
 			RunEngines_DbgThread(engineInfos);
 		}
 
+		public override void Run(DbgProcess process) {
+			if (process == null)
+				throw new ArgumentNullException(nameof(process));
+			if (debuggerSettings.BreakAllProcesses)
+				RunAll();
+			else
+				process.Run();
+		}
+
 		void RunEngines_DbgThread(EngineInfo[] engineInfos) {
 			Dispatcher.VerifyAccess();
 

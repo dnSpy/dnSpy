@@ -28,6 +28,16 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 	/// </summary>
 	public abstract class DbgStackFrame : DbgObject {
 		/// <summary>
+		/// Gets the process
+		/// </summary>
+		public DbgProcess Process => Thread.Process;
+
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public DbgRuntime Runtime => Thread.Runtime;
+
+		/// <summary>
 		/// Gets the thread
 		/// </summary>
 		public abstract DbgThread Thread { get; }

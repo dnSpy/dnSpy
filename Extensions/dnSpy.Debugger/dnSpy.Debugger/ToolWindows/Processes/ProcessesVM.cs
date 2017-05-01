@@ -222,7 +222,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			foreach (var p in processes) {
 				var vm = new ProcessVM(this, p, processContext, processOrder++);
 				vm.IsCurrentProcess = vm.Process == currentProcess;
-				vm.IsBreakProcess = vm.Process == currentProcess;
+				vm.IsBreakProcess = vm.Process == breakProcess;
 				AllItems.Add(vm);
 			}
 		}

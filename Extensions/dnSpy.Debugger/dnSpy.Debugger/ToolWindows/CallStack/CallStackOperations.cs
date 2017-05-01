@@ -171,9 +171,10 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			if (!CanRunToCursor)
 				return;
 			var vm = (NormalStackFrameVM)SelectedItems[0];
+			var process = vm.Frame.Process;
 			var bp = dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(vm.Frame.Location.Clone(), new DbgCodeBreakpointSettings { IsEnabled = true }, DbgCodeBreakpointOptions.Hidden | DbgCodeBreakpointOptions.Temporary | DbgCodeBreakpointOptions.OneShot));
 			if (bp != null)
-				dbgManager.Value.RunAll();
+				dbgManager.Value.Run(process);
 		}
 
 		public override bool CanUnwindToFrame => false;
