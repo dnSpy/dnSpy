@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
+
 namespace dndbg.Engine {
 	abstract class CLRTypeDebugInfo {
 		public abstract CLRType CLRType { get; }
@@ -88,6 +90,11 @@ namespace dndbg.Engine {
 		/// Current directory of debugged program or null to use the debugger's cwd
 		/// </summary>
 		public string CurrentDirectory { get; set; }
+
+		/// <summary>
+		/// Environment
+		/// </summary>
+		public KeyValuePair<string, string>[] Environment { get; set; }
 
 		/// <summary>
 		/// true if handles should be inherited by the started process

@@ -218,8 +218,8 @@ namespace dndbg.Engine {
 			if (dbgShimState == null)
 				throw new Exception(string.Format("Could not load dbgshim.dll: '{0}' . Make sure you use the {1}-bit version", info.DbgShimFilename, IntPtr.Size * 8));
 
-			IntPtr startupEvent = IntPtr.Zero;
-			IntPtr hThread = IntPtr.Zero;
+			var startupEvent = IntPtr.Zero;
+			var hThread = IntPtr.Zero;
 			IntPtr pHandleArray = IntPtr.Zero, pStringArray = IntPtr.Zero;
 			uint dwArrayLength = 0;
 
@@ -231,8 +231,10 @@ namespace dndbg.Engine {
 				var si = new STARTUPINFO();
 				si.cb = (uint)(4 * 1 + IntPtr.Size * 3 + 4 * 8 + 2 * 2 + IntPtr.Size * 4);
 				var cmdline = "\"" + info.HostFilename + "\" " + info.HostCommandLine + " \"" + options.Filename + "\"" + (string.IsNullOrEmpty(options.CommandLine) ? string.Empty : " " + options.CommandLine);
+				var env = Win32EnvironmentStringBuilder.CreateEnvironmentUnicodeString(options.Environment);
+				dwCreationFlags |= ProcessCreationFlags.CREATE_UNICODE_ENVIRONMENT;
 				bool b = NativeMethods.CreateProcess(info.HostFilename ?? string.Empty, cmdline, IntPtr.Zero, IntPtr.Zero,
-							options.InheritHandles, dwCreationFlags, IntPtr.Zero, options.CurrentDirectory,
+							options.InheritHandles, dwCreationFlags, env, options.CurrentDirectory,
 							ref si, out pi);
 				hThread = pi.hThread;
 				if (!b)

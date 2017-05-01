@@ -754,7 +754,7 @@ namespace dndbg.COM.CorDebug {
 		int Terminate();
 		void SetManagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugManagedCallback pCallback);
 		void SetUnmanagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugUnmanagedCallback pCallback);
-		void CreateProcess([MarshalAs(UnmanagedType.LPWStr)] [In] string lpApplicationName, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, [In] int bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] IntPtr lpEnvironment, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, [In] ref PROCESS_INFORMATION lpProcessInformation, [In] CorDebugCreateProcessFlags debuggingFlags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
+		void CreateProcess([MarshalAs(UnmanagedType.LPWStr)] [In] string lpApplicationName, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, [In] int bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] string lpEnvironment, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, [In] ref PROCESS_INFORMATION lpProcessInformation, [In] CorDebugCreateProcessFlags debuggingFlags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
 		void DebugActiveProcess([In] int id, [In] int win32Attach, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
 		void EnumerateProcesses([MarshalAs(UnmanagedType.Interface)] out ICorDebugProcessEnum ppProcess);
 		void GetProcess([In] uint dwProcessId, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);

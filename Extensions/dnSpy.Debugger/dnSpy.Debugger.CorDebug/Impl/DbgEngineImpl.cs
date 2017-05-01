@@ -499,6 +499,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					Filename = options.Filename,
 					CommandLine = options.CommandLine,
 					BreakProcessKind = options.BreakProcessKind.ToDndbg(),
+					Environment = options.Environment.Environment,
 				};
 				dbgOptions.DebugOptions.IgnoreBreakInstructions = false;
 

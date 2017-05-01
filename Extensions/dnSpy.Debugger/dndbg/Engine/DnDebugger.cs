@@ -1187,8 +1187,10 @@ namespace dndbg.Engine {
 				var cmdline = "\"" + options.Filename + "\"";
 				if (!string.IsNullOrEmpty(options.CommandLine))
 					cmdline = cmdline + " " + options.CommandLine;
+				var env = Win32EnvironmentStringBuilder.CreateEnvironmentUnicodeString(options.Environment);
+				dwCreationFlags |= ProcessCreationFlags.CREATE_UNICODE_ENVIRONMENT;
 				corDebug.CreateProcess(options.Filename ?? string.Empty, cmdline, IntPtr.Zero, IntPtr.Zero,
-							options.InheritHandles ? 1 : 0, dwCreationFlags, IntPtr.Zero, options.CurrentDirectory,
+							options.InheritHandles ? 1 : 0, dwCreationFlags, env, options.CurrentDirectory,
 							ref si, ref pi, CorDebugCreateProcessFlags.DEBUG_NO_SPECIAL_OPTIONS, out comProcess);
 				// We don't need these
 				NativeMethods.CloseHandle(pi.hProcess);

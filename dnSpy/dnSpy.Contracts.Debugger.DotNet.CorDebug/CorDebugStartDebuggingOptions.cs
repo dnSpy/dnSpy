@@ -45,6 +45,16 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		public BreakProcessKind BreakProcessKind { get; set; } = BreakProcessKind.None;
 
 		/// <summary>
+		/// Environment variables
+		/// </summary>
+		public DbgEnvironment Environment { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected CorDebugStartDebuggingOptions() => Environment = new DbgEnvironment();
+
+		/// <summary>
 		/// Copies this instance to <paramref name="other"/>
 		/// </summary>
 		/// <param name="other">Destination</param>
@@ -55,6 +65,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 			other.CommandLine = CommandLine;
 			other.WorkingDirectory = WorkingDirectory;
 			other.BreakProcessKind = BreakProcessKind;
+			other.Environment.Clear();
+			other.Environment.AddRange(Environment.Environment);
 		}
 	}
 }

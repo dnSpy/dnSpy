@@ -79,6 +79,7 @@
     <Compile Include="DbgCollectionChangedEventArgs.cs" />
     <Compile Include="DbgDebuggingContext.cs" />
     <Compile Include="DbgDispatcher.cs" />
+    <Compile Include="DbgEnvironment.cs" />
     <Compile Include="DbgImageLayout.cs" />
     <Compile Include="DbgManager.cs" />
     <Compile Include="DbgMessageEventArgs.cs" />
