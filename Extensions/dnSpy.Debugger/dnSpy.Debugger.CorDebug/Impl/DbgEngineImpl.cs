@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -38,6 +39,24 @@ using dnSpy.Debugger.CorDebug.DAC;
 using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
+	[Export(typeof(DbgEngineImplDependencies))]
+	sealed class DbgEngineImplDependencies {
+		public DebuggerSettings DebuggerSettings { get; }
+		public Lazy<DbgDotNetNativeCodeLocationFactory> DbgDotNetNativeCodeLocationFactory { get; }
+		public Lazy<DbgDotNetCodeLocationFactory> DbgDotNetCodeLocationFactory { get; }
+		public ClrDacProvider ClrDacProvider { get; }
+		public DbgModuleMemoryRefreshedNotifier2 DbgModuleMemoryRefreshedNotifier { get; }
+
+		[ImportingConstructor]
+		DbgEngineImplDependencies(DebuggerSettings debuggerSettings, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier) {
+			DebuggerSettings = debuggerSettings;
+			DbgDotNetNativeCodeLocationFactory = dbgDotNetNativeCodeLocationFactory;
+			DbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
+			ClrDacProvider = clrDacProvider;
+			DbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier;
+		}
+	}
+
 	abstract partial class DbgEngineImpl : DbgEngine, IClrDacDebugger {
 		public override DbgStartKind StartKind { get; }
 		public override string[] DebugTags => new[] { PredefinedDebugTags.DotNetDebugger };
@@ -49,6 +68,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		internal DebuggerThread DebuggerThread => debuggerThread;
 		internal DbgObjectFactory ObjectFactory => objectFactory;
 
+		readonly DebuggerSettings debuggerSettings;
 		readonly Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory;
 		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
 		readonly DebuggerThread debuggerThread;
@@ -68,7 +88,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		internal readonly StackFrameData stackFrameData;
 		readonly HashSet<DnDebuggerObjectHolder> objectHolders;
 
-		protected DbgEngineImpl(Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgManager dbgManager, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgStartKind startKind) {
+		protected DbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, DbgStartKind startKind) {
+			if (deps == null)
+				throw new ArgumentNullException(nameof(deps));
 			StartKind = startKind;
 			lockObj = new object();
 			toEngineAppDomain = new Dictionary<DnAppDomain, DbgEngineAppDomain>();
@@ -77,11 +99,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			toAssemblyModules = new Dictionary<DnAssembly, List<DnModule>>();
 			stackFrameData = new StackFrameData();
 			objectHolders = new HashSet<DnDebuggerObjectHolder>();
-			this.dbgDotNetNativeCodeLocationFactory = dbgDotNetNativeCodeLocationFactory ?? throw new ArgumentNullException(nameof(dbgDotNetNativeCodeLocationFactory));
-			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory ?? throw new ArgumentNullException(nameof(dbgDotNetCodeLocationFactory));
+			debuggerSettings = deps.DebuggerSettings;
+			dbgDotNetNativeCodeLocationFactory = deps.DbgDotNetNativeCodeLocationFactory;
+			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
-			this.dbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier ?? throw new ArgumentNullException(nameof(dbgModuleMemoryRefreshedNotifier));
-			this.clrDacProvider = clrDacProvider ?? throw new ArgumentNullException(nameof(clrDacProvider));
+			dbgModuleMemoryRefreshedNotifier = deps.DbgModuleMemoryRefreshedNotifier;
+			clrDacProvider = deps.ClrDacProvider;
 			clrDac = NullClrDac.Instance;
 			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
@@ -481,7 +504,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 				dnDebugger = DnDebugger.DebugProcess(dbgOptions);
 				OnDebugProcess(dnDebugger);
-				if (options.DisableManagedDebuggerDetection)
+				if (debuggerSettings.DisableManagedDebuggerDetection)
 					DisableSystemDebuggerDetection.Initialize(dnDebugger);
 				HookDnDebuggerEvents();
 				return;
