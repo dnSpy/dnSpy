@@ -98,6 +98,12 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract event EventHandler<DbgCollectionChangedEventArgs<string>> DebugTagsChanged;
 
 		/// <summary>
+		/// Raised when a process gets paused due to some event in the process. If more than one process
+		/// is being debugged, this is normally only raised once, for the first process.
+		/// </summary>
+		public abstract event EventHandler<ProcessPausedEventArgs> ProcessPaused;
+
+		/// <summary>
 		/// Gets all debugged processes. Can be empty even if <see cref="IsDebugging"/> is true
 		/// if the process hasn't been created yet.
 		/// </summary>
@@ -291,6 +297,31 @@ namespace dnSpy.Contracts.Debugger {
 		public DbgCurrentObjectChangedEventArgs(bool currentChanged, bool breakChanged) {
 			CurrentChanged = currentChanged;
 			BreakChanged = breakChanged;
+		}
+	}
+
+	/// <summary>
+	/// Process paused event args
+	/// </summary>
+	public struct ProcessPausedEventArgs {
+		/// <summary>
+		/// Gets the process
+		/// </summary>
+		public DbgProcess Process { get; }
+
+		/// <summary>
+		/// Gets the thread or null if unknown
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="process">Process</param>
+		/// <param name="thread">Thread or null if unknown</param>
+		public ProcessPausedEventArgs(DbgProcess process, DbgThread thread) {
+			Process = process ?? throw new ArgumentNullException(nameof(process));
+			Thread = thread;
 		}
 	}
 }

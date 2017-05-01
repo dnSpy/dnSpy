@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.Impl {
 			currentThread = new CurrentObject<DbgThreadImpl>(thread, currentThread.Break);
 		}
 
-		internal void SetBreakThread(DbgThreadImpl thread, bool tryOldCurrentThread = false) {
+		internal DbgThread SetBreakThread(DbgThreadImpl thread, bool tryOldCurrentThread = false) {
 			Dispatcher.VerifyAccess();
 			DbgThreadImpl newCurrent, newBreak;
 			lock (lockObj) {
@@ -98,10 +98,11 @@ namespace dnSpy.Debugger.Impl {
 				if (tryOldCurrentThread && currentThread.Current?.IsClosed == false)
 					newCurrent = currentThread.Current;
 				else
-					newCurrent = GetThread_NoLock(thread);
+					newCurrent = newBreak;
 			}
 			Debug.Assert((newBreak != null) == (newCurrent != null));
 			currentThread = new CurrentObject<DbgThreadImpl>(newCurrent, newBreak);
+			return newCurrent;
 		}
 
 		DbgThreadImpl GetThread_NoLock(DbgThreadImpl thread) {

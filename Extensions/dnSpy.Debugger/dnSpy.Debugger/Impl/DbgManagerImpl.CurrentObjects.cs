@@ -197,14 +197,14 @@ namespace dnSpy.Debugger.Impl {
 			RaiseCurrentObjectEvents_DbgThread(processEventArgs, runtimeEventArgs, threadEventArgs);
 		}
 
-		void SetCurrentEngineIfCurrentIsNull_DbgThread(DbgEngine engine) {
+		bool SetCurrentEngineIfCurrentIsNull_DbgThread(DbgEngine engine, bool forceSet) {
 			Dispatcher.VerifyAccess();
 			DbgCurrentObjectChangedEventArgs<DbgProcess> processEventArgs;
 			DbgCurrentObjectChangedEventArgs<DbgRuntime> runtimeEventArgs;
 			DbgCurrentObjectChangedEventArgs<DbgThread> threadEventArgs;
 			lock (lockObj) {
-				if (dbgCurrentProcess.currentProcess.Current != null)
-					return;
+				if (!forceSet && dbgCurrentProcess.currentProcess.Current != null)
+					return false;
 				var info = GetEngineInfo_NoLock(engine);
 				var process = info.Process;
 				var runtime = info.Runtime;
@@ -219,6 +219,7 @@ namespace dnSpy.Debugger.Impl {
 				dbgCurrentThread.currentThread = newCurrentThread;
 			}
 			RaiseCurrentObjectEvents_DbgThread(processEventArgs, runtimeEventArgs, threadEventArgs);
+			return true;
 		}
 
 		void RecheckAndUpdateCurrentProcess_DbgThread() {
