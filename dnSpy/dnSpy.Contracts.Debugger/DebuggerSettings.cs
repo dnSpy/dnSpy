@@ -80,5 +80,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// true to break all processes when one process breaks
 		/// </summary>
 		public abstract bool BreakAllProcesses { get; set; }
+
+		/// <summary>
+		/// true to enable Managed Debugging Assistants (MDA)
+		/// </summary>
+		public abstract bool EnableManagedDebuggingAssistants { get; set; }
 	}
 }

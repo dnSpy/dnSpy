@@ -1402,6 +1402,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable Managed Debugging Assistants (MDA).
+        /// </summary>
+        public static string DbgSettings_EnableManagedDebuggingAssistants {
+            get {
+                return ResourceManager.GetString("DbgSettings_EnableManagedDebuggingAssistants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ignore Debugger.Break() and break instructions.
         /// </summary>
         public static string DbgSettings_IgnoreBreakInstructions {

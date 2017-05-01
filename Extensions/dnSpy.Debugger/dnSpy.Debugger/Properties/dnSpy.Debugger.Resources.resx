@@ -1818,4 +1818,7 @@ Are you sure you want to expand it?</value>
   <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
     <value>This is the next statement to execute when this thread returns from the current function.</value>
   </data>
+  <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
+    <value>Enable Managed Debugging Assistants (MDA)</value>
+  </data>
 </root>

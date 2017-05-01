@@ -45,6 +45,13 @@ namespace dnSpy.Contracts.Debugger {
 		}
 
 		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		/// <param name="other">Other instance</param>
+		public DbgEnvironment(DbgEnvironment other) =>
+			environment = new List<KeyValuePair<string, string>>(other.environment);
+
+		/// <summary>
 		/// Clears the environment
 		/// </summary>
 		public void Clear() => environment.Clear();

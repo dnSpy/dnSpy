@@ -493,13 +493,20 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			try {
 				if (debuggerThread.HasShutdownStarted)
 					throw new InvalidOperationException("Dispatcher has shut down");
+
+				var env = new DbgEnvironment(options.Environment);
+				if (!debuggerSettings.EnableManagedDebuggingAssistants) {
+					// https://msdn.microsoft.com/en-us/library/d21c150d.aspx
+					env.Add("COMPLUS_MDA", "0");
+				}
+
 				var dbgOptions = new DebugProcessOptions(CreateDebugInfo(options)) {
 					DebugMessageDispatcher = debuggerThread.CreateDebugMessageDispatcher(),
 					CurrentDirectory = options.WorkingDirectory,
 					Filename = options.Filename,
 					CommandLine = options.CommandLine,
 					BreakProcessKind = options.BreakProcessKind.ToDndbg(),
-					Environment = options.Environment.Environment,
+					Environment = env.Environment,
 				};
 				dbgOptions.DebugOptions.IgnoreBreakInstructions = false;
 

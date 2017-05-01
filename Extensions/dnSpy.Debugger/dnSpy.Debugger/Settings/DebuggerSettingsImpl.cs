@@ -201,6 +201,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool breakAllProcesses = true;
 
+		public override bool EnableManagedDebuggingAssistants {
+			get {
+				lock (lockObj)
+					return enableManagedDebuggingAssistants;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = enableManagedDebuggingAssistants != value;
+					enableManagedDebuggingAssistants = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(EnableManagedDebuggingAssistants));
+					OnModified();
+				}
+			}
+		}
+		bool enableManagedDebuggingAssistants = false;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -213,6 +232,7 @@ namespace dnSpy.Debugger.Settings {
 			other.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
 			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
 			other.BreakAllProcesses = BreakAllProcesses;
+			other.EnableManagedDebuggingAssistants = EnableManagedDebuggingAssistants;
 			return other;
 		}
 	}
@@ -239,6 +259,7 @@ namespace dnSpy.Debugger.Settings {
 			DisableManagedDebuggerDetection = sect.Attribute<bool?>(nameof(DisableManagedDebuggerDetection)) ?? DisableManagedDebuggerDetection;
 			IgnoreBreakInstructions = sect.Attribute<bool?>(nameof(IgnoreBreakInstructions)) ?? IgnoreBreakInstructions;
 			BreakAllProcesses = sect.Attribute<bool?>(nameof(BreakAllProcesses)) ?? BreakAllProcesses;
+			EnableManagedDebuggingAssistants = sect.Attribute<bool?>(nameof(EnableManagedDebuggingAssistants)) ?? EnableManagedDebuggingAssistants;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -256,6 +277,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(DisableManagedDebuggerDetection), DisableManagedDebuggerDetection);
 			sect.Attribute(nameof(IgnoreBreakInstructions), IgnoreBreakInstructions);
 			sect.Attribute(nameof(BreakAllProcesses), BreakAllProcesses);
+			sect.Attribute(nameof(EnableManagedDebuggingAssistants), EnableManagedDebuggingAssistants);
 		}
 	}
 }
