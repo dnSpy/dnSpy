@@ -329,7 +329,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt16" + " (" + dnSpy_Resources.BigEndian + ")");
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, InputGestureText = "res:ShortCutKeyCtrlShift3", Group = Constants.GROUP_COPY_SPECIAL, Order = 100)]
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, InputGestureText = "res:ShortCutKeyCtrlShiftQ", Group = Constants.GROUP_COPY_SPECIAL, Order = 100)]
 	sealed class CopyUInt32ContextMenuEntry : HexViewCommandTargetMenuItemBase {
 		CopyUInt32ContextMenuEntry()
 			: base(HexEditorIds.CopyUInt32) {

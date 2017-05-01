@@ -1566,8 +1566,8 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="CopyValueCommand" xml:space="preserve">
     <value>Copy Value</value>
   </data>
-  <data name="ShortCutKeyCtrlShift3" xml:space="preserve">
-    <value>Ctrl+Shift+3</value>
+  <data name="ShortCutKeyCtrlShiftQ" xml:space="preserve">
+    <value>Ctrl+Shift+Q</value>
   </data>
   <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
     <value>Ctrl+Shift+A</value>

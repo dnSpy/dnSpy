@@ -4503,15 +4503,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ctrl+Shift+3.
-        /// </summary>
-        public static string ShortCutKeyCtrlShift3 {
-            get {
-                return ResourceManager.GetString("ShortCutKeyCtrlShift3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Shift+8.
         /// </summary>
         public static string ShortCutKeyCtrlShift8 {
@@ -4589,6 +4580,15 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyCtrlShiftP {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlShiftP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+Q.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftQ {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftQ", resourceCulture);
             }
         }
         
