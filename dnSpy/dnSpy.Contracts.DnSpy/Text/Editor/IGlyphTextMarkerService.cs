@@ -191,14 +191,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="span">Span</param>
 		/// <returns></returns>
 		GlyphTextMarkerAndSpan[] GetMarkers(ITextView textView, SnapshotSpan span);
-
-		/// <summary>
-		/// Gets the first marker or null if none is found
-		/// </summary>
-		/// <param name="textView">Text view</param>
-		/// <param name="span">Span</param>
-		/// <returns></returns>
-		GlyphTextMarkerAndSpan? GetMarker(ITextView textView, SnapshotSpan span);
 	}
 
 	/// <summary>

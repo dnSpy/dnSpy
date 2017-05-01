@@ -38,7 +38,6 @@ namespace dnSpy.Text.Editor {
 		event EventHandler<GlyphTextMarkerRemovedEventArgs> MarkerRemoved;
 		event EventHandler<GlyphTextMarkersRemovedEventArgs> MarkersRemoved;
 		event EventHandler<GetGlyphTextMarkerAndSpanEventArgs> GetGlyphTextMarkerAndSpan;
-		event EventHandler<GetFirstGlyphTextMarkerAndSpanEventArgs> GetFirstGlyphTextMarkerAndSpan;
 	}
 
 	abstract class GlyphTextMarkerEventArgs : EventArgs {

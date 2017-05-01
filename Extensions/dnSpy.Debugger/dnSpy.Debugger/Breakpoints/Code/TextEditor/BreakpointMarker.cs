@@ -187,11 +187,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);
 
 		DbgTextViewBreakpointLocationResult? IBreakpointMarker.GetLocations(ITextView textView, SnapshotSpan span) {
-			var info = glyphTextMarkerService.Value.GetMarker(textView, span);
-			if (info == null)
-				return null;
-			if (info.Value.Marker.Tag is DbgCodeBreakpoint bp)
-				return new DbgTextViewBreakpointLocationResult(bp.Location.Clone(), new VirtualSnapshotSpan(info.Value.Span));
+			foreach (var info in glyphTextMarkerService.Value.GetMarkers(textView, span)) {
+				if (info.Marker.Tag is DbgCodeBreakpoint bp)
+					return new DbgTextViewBreakpointLocationResult(bp.Location.Clone(), new VirtualSnapshotSpan(info.Span));
+			}
 			return null;
 		}
 	}

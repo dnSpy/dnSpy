@@ -55,7 +55,6 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler<GlyphTextMarkerRemovedEventArgs> MarkerRemoved;
 		public event EventHandler<GlyphTextMarkersRemovedEventArgs> MarkersRemoved;
 		public event EventHandler<GetGlyphTextMarkerAndSpanEventArgs> GetGlyphTextMarkerAndSpan;
-		public event EventHandler<GetFirstGlyphTextMarkerAndSpanEventArgs> GetFirstGlyphTextMarkerAndSpan;
 
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
@@ -210,16 +209,6 @@ namespace dnSpy.Text.Editor {
 			var e = new GetGlyphTextMarkerAndSpanEventArgs(textView, span);
 			GetGlyphTextMarkerAndSpan?.Invoke(this, e);
 			return e.Result ?? Array.Empty<GlyphTextMarkerAndSpan>();
-		}
-
-		public GlyphTextMarkerAndSpan? GetMarker(ITextView textView, SnapshotSpan span) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (textView.TextSnapshot != span.Snapshot)
-				throw new ArgumentException();
-			var e = new GetFirstGlyphTextMarkerAndSpanEventArgs(textView, span);
-			GetFirstGlyphTextMarkerAndSpan?.Invoke(this, e);
-			return e.Result;
 		}
 
 		public void SetMethodOffsetSpanMap(ITextView textView, IMethodOffsetSpanMap map) {
