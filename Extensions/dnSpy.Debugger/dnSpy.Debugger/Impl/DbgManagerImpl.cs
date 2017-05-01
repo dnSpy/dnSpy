@@ -749,7 +749,9 @@ namespace dnSpy.Debugger.Impl {
 					var info = GetEngineInfo_NoLock(engine);
 					info.EngineState = EngineState.Paused;
 					info.DelayedIsRunning = false;
-					info.Runtime?.SetBreakThread((DbgThreadImpl)thread);
+					var newThread = info.Runtime?.SetBreakThread((DbgThreadImpl)thread);
+					if (thread == null)
+						thread = newThread;
 					Debug.Assert(info.Exception == null);
 					info.Exception?.Close(Dispatcher);
 					info.Exception = exception;

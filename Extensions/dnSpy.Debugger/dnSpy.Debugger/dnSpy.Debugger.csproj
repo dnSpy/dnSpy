@@ -88,6 +88,7 @@
     <Compile Include="CallStack\TextEditor\CallStackFrameKind.cs" />
     <Compile Include="CallStack\TextEditor\CallStackGlyphTextMarkerHandler.cs" />
     <Compile Include="CallStack\TextEditor\CallStackMarker.cs" />
+    <Compile Include="DbgUI\CurrentStatementUpdater.cs" />
     <Compile Include="DbgUI\Debugger.cs" />
     <Compile Include="DbgUI\DebuggerImpl.cs" />
     <Compile Include="DbgUI\DebugMenu.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="DbgUI\StartDebuggingOptionsMru.cs" />
     <Compile Include="DbgUI\StartDebuggingOptionsProvider.cs" />
     <Compile Include="DbgUI\ToolbarButtonCommands.cs" />
+    <Compile Include="DbgUI\WpfCurrentStatementUpdater.cs" />
     <Compile Include="Dialogs\AttachToProcess\AttachProgramOptionsAggregator.cs" />
     <Compile Include="Dialogs\AttachToProcess\AttachProgramOptionsAggregatorImpl.cs" />
     <Compile Include="Dialogs\AttachToProcess\AttachToProcessContext.cs" />
