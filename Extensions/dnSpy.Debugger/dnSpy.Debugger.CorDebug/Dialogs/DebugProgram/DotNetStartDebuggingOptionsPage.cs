@@ -21,7 +21,6 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
-using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Contracts.MVVM;
@@ -93,17 +92,6 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			set => BreakProcessKindVM.SelectedItem = value;
 		}
 
-		public bool DisableManagedDebuggerDetection {
-			get => disableManagedDebuggerDetection;
-			set {
-				if (disableManagedDebuggerDetection != value) {
-					disableManagedDebuggerDetection = value;
-					OnPropertyChanged(nameof(DisableManagedDebuggerDetection));
-				}
-			}
-		}
-		bool disableManagedDebuggerDetection;
-
 		public override bool IsValid => isValid;
 		bool isValid;
 
@@ -117,12 +105,10 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 
 		protected abstract bool CalculateIsValid();
 
-		readonly DebuggerSettings debuggerSettings;
 		protected readonly IPickFilename pickFilename;
 		readonly IPickDirectory pickDirectory;
 
-		protected DotNetStartDebuggingOptionsPage(DebuggerSettings debuggerSettings, IPickFilename pickFilename, IPickDirectory pickDirectory) {
-			this.debuggerSettings = debuggerSettings ?? throw new ArgumentNullException(nameof(debuggerSettings));
+		protected DotNetStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory) {
 			this.pickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
 			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
 		}
@@ -157,12 +143,10 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			// Must be init'd after Filename since it also overwrites this property
 			WorkingDirectory = options.WorkingDirectory;
 			BreakProcessKind = options.BreakProcessKind;
-			DisableManagedDebuggerDetection = options.DisableManagedDebuggerDetection;
 		}
 
 		protected T InitializeDefault<T>(T options) where T : CorDebugStartDebuggingOptions {
 			options.BreakProcessKind = BreakProcessKind.None;
-			options.DisableManagedDebuggerDetection = debuggerSettings.DisableManagedDebuggerDetection;
 			return options;
 		}
 
@@ -171,7 +155,6 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			options.CommandLine = CommandLine;
 			options.WorkingDirectory = WorkingDirectory;
 			options.BreakProcessKind = BreakProcessKind;
-			options.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
 			return options;
 		}
 

@@ -58,8 +58,8 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 
 		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename());
 
-		public DotNetCoreStartDebuggingOptionsPage(DebuggerSettings debuggerSettings, IPickFilename pickFilename, IPickDirectory pickDirectory)
-			: base(debuggerSettings, pickFilename, pickDirectory) {
+		public DotNetCoreStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(pickFilename, pickDirectory) {
 		}
 
 		void PickNewHostFilename() {

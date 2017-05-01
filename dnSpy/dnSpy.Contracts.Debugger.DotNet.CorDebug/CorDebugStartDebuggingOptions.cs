@@ -45,11 +45,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		public BreakProcessKind BreakProcessKind { get; set; } = BreakProcessKind.None;
 
 		/// <summary>
-		/// true to disable detection of managed debuggers
-		/// </summary>
-		public bool DisableManagedDebuggerDetection { get; set; }
-
-		/// <summary>
 		/// Copies this instance to <paramref name="other"/>
 		/// </summary>
 		/// <param name="other">Destination</param>
@@ -60,7 +55,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 			other.CommandLine = CommandLine;
 			other.WorkingDirectory = WorkingDirectory;
 			other.BreakProcessKind = BreakProcessKind;
-			other.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
 		}
 	}
 }

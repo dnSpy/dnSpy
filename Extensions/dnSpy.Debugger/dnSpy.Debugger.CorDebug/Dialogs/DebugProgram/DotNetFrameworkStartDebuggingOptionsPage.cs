@@ -32,8 +32,8 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		// Shouldn't be localized
 		public override string DisplayName => ".NET Framework";
 
-		public DotNetFrameworkStartDebuggingOptionsPage(DebuggerSettings debuggerSettings, IPickFilename pickFilename, IPickDirectory pickDirectory)
-			: base(debuggerSettings, pickFilename, pickDirectory) {
+		public DotNetFrameworkStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(pickFilename, pickDirectory) {
 		}
 
 		protected override void PickNewFilename() {
