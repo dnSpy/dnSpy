@@ -36,7 +36,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.Copy(), a => processesContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.C);
 			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.Copy(), a => processesContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.Insert);
 			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.AttachToProcess(), a => processesContent.Value.Operations.CanAttachToProcess), ModifierKeys.Control | ModifierKeys.Alt, Key.P);
-			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.SetCurrentProcess(), a => processesContent.Value.Operations.CanSetCurrentProcess), ModifierKeys.None, Key.Enter);
+			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.SetCurrentProcess(newTab: false), a => processesContent.Value.Operations.CanSetCurrentProcess), ModifierKeys.None, Key.Enter);
+			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.SetCurrentProcess(newTab: true), a => processesContent.Value.Operations.CanSetCurrentProcess), ModifierKeys.Control, Key.Enter);
+			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.SetCurrentProcess(newTab: true), a => processesContent.Value.Operations.CanSetCurrentProcess), ModifierKeys.Shift, Key.Enter);
 		}
 	}
 

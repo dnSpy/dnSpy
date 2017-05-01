@@ -221,13 +221,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			}
 		}
 
-		internal void SelectProcess() {
-			Context.UIDispatcher.VerifyAccess();
-			var process = Process;
-			if (process.State == DbgProcessState.Paused && process.DbgManager.CurrentProcess.Current != process)
-				process.DbgManager.CurrentProcess.Current = process;
-		}
-
 		// DbgManager thread
 		void DbgProcess_IsRunningChanged(object sender, EventArgs e) => UI(() => refreshTitlesOnPause = true);
 		bool refreshTitlesOnPause;

@@ -25,8 +25,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	abstract class ProcessesOperations {
@@ -57,15 +60,18 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public abstract void ToggleUseHexadecimal();
 		public abstract bool UseHexadecimal { get; set; }
 		public abstract bool CanSetCurrentProcess { get; }
-		public abstract void SetCurrentProcess();
+		public abstract void SetCurrentProcess(bool newTab);
 	}
 
 	[Export(typeof(ProcessesOperations))]
 	sealed class ProcessesOperationsImpl : ProcessesOperations {
+		readonly UIDispatcher uiDispatcher;
 		readonly IProcessesVM processesVM;
 		readonly DebuggerSettings debuggerSettings;
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog;
+		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
+		readonly Lazy<DbgCallStackService> dbgCallStackService;
 
 		ObservableCollection<ProcessVM> AllItems => processesVM.AllItems;
 		ObservableCollection<ProcessVM> SelectedItems => processesVM.SelectedItems;
@@ -73,11 +79,14 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		IEnumerable<ProcessVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
 
 		[ImportingConstructor]
-		ProcessesOperationsImpl(IProcessesVM processesVM, DebuggerSettings debuggerSettings, Lazy<DbgManager> dbgManager, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog) {
+		ProcessesOperationsImpl(UIDispatcher uiDispatcher, IProcessesVM processesVM, DebuggerSettings debuggerSettings, Lazy<DbgManager> dbgManager, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCallStackService> dbgCallStackService) {
+			this.uiDispatcher = uiDispatcher;
 			this.processesVM = processesVM;
 			this.debuggerSettings = debuggerSettings;
 			this.dbgManager = dbgManager;
 			this.showAttachToProcessDialog = showAttachToProcessDialog;
+			this.referenceNavigatorService = referenceNavigatorService;
+			this.dbgCallStackService = dbgCallStackService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
@@ -176,10 +185,34 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		public override bool CanSetCurrentProcess => SelectedItems.Count == 1 && SelectedItems[0].Process.State == DbgProcessState.Paused;
-		public override void SetCurrentProcess() {
+		public override void SetCurrentProcess(bool newTab) {
 			if (!CanSetCurrentProcess)
 				return;
-			SelectedItems[0].SelectProcess();
+			var process = SelectedItems[0].Process;
+			if (process.State == DbgProcessState.Paused) {
+				process.DbgManager.CurrentProcess.Current = process;
+				process.DbgManager.Dispatcher.BeginInvoke(() => {
+					if (process.DbgManager.CurrentProcess.Current == process) {
+						var thread = process.DbgManager.CurrentThread.Current;
+						if (thread != null)
+							uiDispatcher.UI(() => GoToThread(thread, newTab: newTab));
+					}
+				});
+			}
+		}
+
+		void GoToThread(DbgThread thread, bool newTab) {
+			var info = Threads.ThreadUtilities.GetFirstFrameLocation(thread);
+			if (info.location != null) {
+				try {
+					var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
+					referenceNavigatorService.Value.GoTo(info.location, options);
+					dbgCallStackService.Value.ActiveFrameIndex = info.frameIndex;
+				}
+				finally {
+					info.location.Close();
+				}
+			}
 		}
 	}
 }

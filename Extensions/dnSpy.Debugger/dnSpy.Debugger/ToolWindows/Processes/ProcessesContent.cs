@@ -90,8 +90,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		void ProcessesControl_ProcessesListViewDoubleClick(object sender, EventArgs e) {
+			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
 			if (Operations.CanSetCurrentProcess)
-				Operations.SetCurrentProcess();
+				Operations.SetCurrentProcess(newTab);
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(processesControl.ListView);

@@ -26,7 +26,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
-using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.UI;
@@ -132,7 +131,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				return;
 			var thread = SelectedItems[0].Thread;
 			thread.Process.DbgManager.CurrentThread.Current = thread;
-			var info = GetFirstFrameLocation(thread);
+			var info = ThreadUtilities.GetFirstFrameLocation(thread);
 			if (info.location != null) {
 				try {
 					var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
@@ -143,34 +142,6 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 					info.location.Close();
 				}
 			}
-		}
-
-		static (DbgCodeLocation location, int frameIndex) GetFirstFrameLocation(DbgThread thread) {
-			DbgStackWalker stackWalker = null;
-			var objsToFree = new List<DbgObject>();
-			try {
-				stackWalker = thread.CreateStackWalker();
-				objsToFree.Add(stackWalker);
-				int frameIndex = 0;
-				while (frameIndex < 20) {
-					// Usually the first frame contains a location and if not, the one after that.
-					var frames = stackWalker.GetNextStackFrames(2);
-					objsToFree.AddRange(frames);
-					if (frames.Length == 0)
-						break;
-					foreach (var frame in frames) {
-						var location = frame.Location;
-						if (location != null)
-							return (location.Clone(), frameIndex);
-						frameIndex++;
-					}
-				}
-			}
-			finally {
-				if (objsToFree.Count > 0)
-					thread.Process.DbgManager.Close(objsToFree.ToArray());
-			}
-			return (null, -1);
 		}
 
 		public override bool CanRenameThread => SelectedItems.Count == 1 && !SelectedItems[0].NameEditableValue.IsEditingValue;
