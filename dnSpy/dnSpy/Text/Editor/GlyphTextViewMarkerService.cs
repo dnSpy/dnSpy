@@ -617,13 +617,12 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Refresh(IGlyphTextMarker marker, SnapshotSpan span) {
-			if (!TextView.TextViewLines.FormattedSpan.IntersectsWith(span))
-				return;
-			if (marker.GlyphImageReference != null)
+			bool visible = TextView.TextViewLines.FormattedSpan.IntersectsWith(span);
+			if (visible && marker.GlyphImageReference != null)
 				glyphTextViewMarkerGlyphTagTagger.RaiseTagsChanged(span);
 			if (marker.ClassificationType != null)
 				glyphTextViewMarkerClassificationTagTagger.RaiseTagsChanged(span);
-			if (marker.MarkerTypeName != null)
+			if (visible && marker.MarkerTypeName != null)
 				glyphTextViewMarkerGlyphTextMarkerTagTagger.RaiseTagsChanged(span);
 		}
 
