@@ -1812,4 +1812,10 @@ Are you sure you want to expand it?</value>
   <data name="UnwindToThisFrameCommand" xml:space="preserve">
     <value>_Unwind To This Frame</value>
   </data>
+  <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
+    <value>This is the next statement that will be executed.</value>
+  </data>
+  <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
+    <value>This is the next statement to execute when this thread returns from the current function.</value>
+  </data>
 </root>

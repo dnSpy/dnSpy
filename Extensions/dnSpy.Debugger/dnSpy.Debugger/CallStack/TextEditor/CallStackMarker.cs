@@ -39,6 +39,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 		readonly UIDispatcher uiDispatcher;
 		readonly DbgCallStackService dbgCallStackService;
 		readonly Lazy<ActiveStatementService> activeStatementService;
+		readonly Lazy<CallStackGlyphTextMarkerHandler> callStackGlyphTextMarkerHandler;
 		readonly Lazy<IGlyphTextMarkerService> glyphTextMarkerService;
 		readonly Lazy<DbgStackFrameGlyphTextMarkerLocationInfoProvider>[] dbgStackFrameGlyphTextMarkerLocationInfoProviders;
 		IClassificationType classificationTypeCurrentStatement;
@@ -48,10 +49,11 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 		DbgProcess currentProcess;
 
 		[ImportingConstructor]
-		CallStackMarker(UIDispatcher uiDispatcher, DbgCallStackService dbgCallStackService, Lazy<ActiveStatementService> activeStatementService, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService, [ImportMany] IEnumerable<Lazy<DbgStackFrameGlyphTextMarkerLocationInfoProvider>> dbgStackFrameGlyphTextMarkerLocationInfoProviders) {
+		CallStackMarker(UIDispatcher uiDispatcher, DbgCallStackService dbgCallStackService, Lazy<ActiveStatementService> activeStatementService, Lazy<CallStackGlyphTextMarkerHandler> callStackGlyphTextMarkerHandler, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService, [ImportMany] IEnumerable<Lazy<DbgStackFrameGlyphTextMarkerLocationInfoProvider>> dbgStackFrameGlyphTextMarkerLocationInfoProviders) {
 			this.uiDispatcher = uiDispatcher;
 			this.dbgCallStackService = dbgCallStackService;
 			this.activeStatementService = activeStatementService;
+			this.callStackGlyphTextMarkerHandler = callStackGlyphTextMarkerHandler;
 			this.glyphTextMarkerService = glyphTextMarkerService;
 			this.dbgStackFrameGlyphTextMarkerLocationInfoProviders = dbgStackFrameGlyphTextMarkerLocationInfoProviders.ToArray();
 			UI(() => Initialize_UI(classificationTypeRegistryService));
@@ -135,8 +137,8 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 						null,
 						classificationTypeCurrentStatement,
 						GlyphTextMarkerServiceZIndexes.CurrentStatement,
-						null,
-						null,
+						CallStackFrameKind.CurrentStatement,
+						callStackGlyphTextMarkerHandler.Value,
 						textViewFilter);
 				}
 
@@ -150,8 +152,8 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 						null,
 						classificationTypeCallReturn,
 						GlyphTextMarkerServiceZIndexes.ReturnStatement,
-						null,
-						null,
+						CallStackFrameKind.ReturnStatement,
+						callStackGlyphTextMarkerHandler.Value,
 						textViewFilter);
 				}
 			}

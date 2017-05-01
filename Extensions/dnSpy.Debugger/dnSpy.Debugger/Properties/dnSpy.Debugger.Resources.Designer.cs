@@ -2727,6 +2727,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This is the next statement that will be executed..
+        /// </summary>
+        public static string GlyphMargin_CurrentStatementToolTip {
+            get {
+                return ResourceManager.GetString("GlyphMargin_CurrentStatementToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is the next statement to execute when this thread returns from the current function..
+        /// </summary>
+        public static string GlyphMargin_ReturnStatementToolTip {
+            get {
+                return ResourceManager.GetString("GlyphMargin_ReturnStatementToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actions:.
         /// </summary>
         public static string GlyphToolTip_Actions {
