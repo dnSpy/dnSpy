@@ -84,6 +84,8 @@
     <Compile Include="CallStack\DbgStackFrameImpl.cs" />
     <Compile Include="CallStack\DbgStackWalkerImpl.cs" />
     <Compile Include="CallStack\SpecialDbgEngineStackFrame.cs" />
+    <Compile Include="CallStack\TextEditor\ActiveStatementService.cs" />
+    <Compile Include="CallStack\TextEditor\CallStackMarker.cs" />
     <Compile Include="DbgUI\Debugger.cs" />
     <Compile Include="DbgUI\DebuggerImpl.cs" />
     <Compile Include="DbgUI\DebugMenu.cs" />
@@ -137,7 +139,6 @@
     <Compile Include="Text\ClassifiedText.cs" />
     <Compile Include="Text\ClassifiedTextWriter.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
-    <Compile Include="ToolWindows\CallStack\ActiveStatementService.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackColumnConverter.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackContent.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackContext.cs" />
@@ -147,7 +148,6 @@
     <Compile Include="ToolWindows\CallStack\CallStackDisplaySettings.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackDisplaySettingsBase.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackFormatter.cs" />
-    <Compile Include="ToolWindows\CallStack\CallStackMarker.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackOperations.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackToolWindowContent.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackVM.cs" />

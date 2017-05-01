@@ -33,7 +33,7 @@ using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Debugger.ToolWindows.CallStack {
+namespace dnSpy.Debugger.CallStack.TextEditor {
 	[ExportDbgManagerStartListener]
 	sealed class CallStackMarker : IDbgManagerStartListener {
 		readonly UIDispatcher uiDispatcher;
