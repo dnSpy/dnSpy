@@ -94,8 +94,10 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 			if (currentProcess != sender)
 				return;
 			if (currentProcess.IsRunning) {
-				ClearMarkers();
-				activeStatementService.Value.OnNewActiveStatements(emptyStackFrames);
+				UI(() => {
+					ClearMarkers();
+					activeStatementService.Value.OnNewActiveStatements(emptyStackFrames);
+				});
 			}
 		}
 		static readonly ReadOnlyCollection<DbgStackFrame> emptyStackFrames = new ReadOnlyCollection<DbgStackFrame>(Array.Empty<DbgStackFrame>());
