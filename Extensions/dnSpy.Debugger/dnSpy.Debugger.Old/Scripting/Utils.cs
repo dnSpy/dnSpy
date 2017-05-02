@@ -291,9 +291,6 @@ namespace dnSpy.Debugger.Scripting {
 				var nbp = (DBG.NativeCodeBreakpointPauseState)ps;
 				return new NativeBreakpointPauseState(nbp.Breakpoint.Tag as INativeBreakpoint ?? NullNativeBreakpoint.Instance);
 
-			case DBG.DebuggerPauseReason.Step:
-				return new StepPauseState((DebugStepReason)((DBG.StepPauseState)ps).StepReason);
-
 			case DBG.DebuggerPauseReason.UserBreak:
 				return new DebuggerPauseState(PauseReason.UserBreak);
 

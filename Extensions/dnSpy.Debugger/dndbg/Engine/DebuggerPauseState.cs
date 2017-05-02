@@ -62,11 +62,6 @@ namespace dndbg.Engine {
 		NativeCodeBreakpoint,
 
 		/// <summary>
-		/// A step in, step out or step over command has completed
-		/// </summary>
-		Step,
-
-		/// <summary>
 		/// TryBreakProcesses() was called
 		/// </summary>
 		UserBreak,
@@ -126,13 +121,6 @@ namespace dndbg.Engine {
 			CorAppDomain = corAppDomain;
 			CorThread = corThread;
 		}
-	}
-
-	sealed class StepPauseState : DebuggerPauseState {
-		public CorDebugStepReason StepReason { get; }
-
-		public StepPauseState(CorDebugStepReason stepReason)
-			: base(DebuggerPauseReason.Step) => StepReason = stepReason;
 	}
 
 	sealed class BreakPauseState : DebuggerPauseState {

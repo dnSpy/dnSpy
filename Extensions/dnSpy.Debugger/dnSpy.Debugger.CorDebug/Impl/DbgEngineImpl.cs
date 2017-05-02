@@ -38,10 +38,12 @@ using dnSpy.Debugger.CorDebug.CallStack;
 using dnSpy.Debugger.CorDebug.Code;
 using dnSpy.Debugger.CorDebug.DAC;
 using dnSpy.Debugger.CorDebug.Properties;
+using dnSpy.Debugger.CorDebug.Steppers;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	[Export(typeof(DbgEngineImplDependencies))]
 	sealed class DbgEngineImplDependencies {
+		public DbgDotNetCodeRangeService DotNetCodeRangeService { get; }
 		public DebuggerSettings DebuggerSettings { get; }
 		public Lazy<DbgDotNetNativeCodeLocationFactory> DbgDotNetNativeCodeLocationFactory { get; }
 		public Lazy<DbgDotNetCodeLocationFactory> DbgDotNetCodeLocationFactory { get; }
@@ -49,7 +51,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public DbgModuleMemoryRefreshedNotifier2 DbgModuleMemoryRefreshedNotifier { get; }
 
 		[ImportingConstructor]
-		DbgEngineImplDependencies(DebuggerSettings debuggerSettings, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier) {
+		DbgEngineImplDependencies(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DebuggerSettings debuggerSettings, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier) {
+			DotNetCodeRangeService = dbgDotNetCodeRangeService;
 			DebuggerSettings = debuggerSettings;
 			DbgDotNetNativeCodeLocationFactory = dbgDotNetNativeCodeLocationFactory;
 			DbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
@@ -69,6 +72,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		internal DebuggerThread DebuggerThread => debuggerThread;
 		internal DbgObjectFactory ObjectFactory => objectFactory;
 
+		readonly DbgDotNetCodeRangeService dbgDotNetCodeRangeService;
 		readonly DebuggerSettings debuggerSettings;
 		readonly Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory;
 		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
@@ -101,6 +105,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			stackFrameData = new StackFrameData();
 			objectHolders = new HashSet<DnDebuggerObjectHolder>();
 			debuggerSettings = deps.DebuggerSettings;
+			dbgDotNetCodeRangeService = deps.DotNetCodeRangeService;
 			dbgDotNetNativeCodeLocationFactory = deps.DbgDotNetNativeCodeLocationFactory;
 			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
@@ -198,7 +203,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return null;
 		}
 
-		DbgThread TryGetThread(CorThread thread) {
+		internal DbgThread TryGetThread(CorThread thread) {
 			if (thread == null)
 				return null;
 			var dnThread = dnDebugger.Processes.FirstOrDefault()?.Threads.FirstOrDefault(a => a.CorThread == thread);
@@ -296,7 +301,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 						case DebuggerPauseReason.DebugEventBreakpoint:
 						case DebuggerPauseReason.AnyDebugEventBreakpoint:
-						case DebuggerPauseReason.Step:
 						case DebuggerPauseReason.Eval:
 							//TODO:
 							SendMessage(new DbgMessageBreak(TryGetThread(debuggerState.Thread)));
@@ -694,7 +698,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				Continue_CorDebug();
 		}
 
-		void Continue_CorDebug() {
+		internal void Continue_CorDebug() {
 			debuggerThread.VerifyAccess();
 			ClrDacRunning?.Invoke(this, EventArgs.Empty);
 			dnDebugger.Continue();
@@ -741,8 +745,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		public override DbgEngineStepper CreateStepper(DbgThread thread) {
-			//TODO:
-			throw new NotImplementedException();
+			var data = thread.GetData<DbgThreadData>();
+			return new DbgEngineStepperImpl(dbgDotNetCodeRangeService, this, thread, data.DnThread);
 		}
 	}
 }

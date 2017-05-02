@@ -103,6 +103,7 @@
       <DependentUpon>dnSpy.Debugger.CorDebug.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Steppers\DbgEngineStepperImpl.cs" />
     <Compile Include="Text\TypeColorExtensions.cs" />
     <Compile Include="Text\TypeOutputTextColorWriter.cs" />
     <Compile Include="TheExtension.cs" />

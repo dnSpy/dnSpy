@@ -303,9 +303,6 @@ namespace dnSpy.Debugger {
 							seenCodeBp = true;
 							Append(dnSpy_Debugger_Resources.Debug_StopReason_Breakpoint);
 							break;
-
-						case DebuggerPauseReason.Step:
-							break;
 						}
 					}
 				}
@@ -1140,13 +1137,13 @@ namespace dnSpy.Debugger {
 			TheDebugger.Debugger.StepOut(frame);
 		}
 
-		public bool CanRunTo(CorFrame frame) => ProcessState == DebuggerProcessState.Paused && TheDebugger.Debugger.CanRunTo(frame);
+		public bool CanRunTo(CorFrame frame) => ProcessState == DebuggerProcessState.Paused;
 
 		public bool RunTo(CorFrame frame) {
 			if (!CanRunTo(frame))
 				return false;
 
-			return TheDebugger.Debugger.RunTo(frame);
+			return false;
 		}
 
 		public bool CanShowNextStatement => ProcessState == DebuggerProcessState.Paused && GetCurrentILFrame() != null;
