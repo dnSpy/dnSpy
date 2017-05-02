@@ -57,6 +57,7 @@
     <Compile Include="Code\DbgCodeLocationSerializerImpl.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationFactoryImpl.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationImpl.cs" />
+    <Compile Include="Code\DbgDotNetCodeRangeServiceImpl.cs" />
     <Compile Include="Code\ReferenceConverterImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />

@@ -41,8 +41,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Breakpoints\Code\DbgDotNetBreakpointFactory.cs" />
+    <Compile Include="Code\DbgCodeRange.cs" />
     <Compile Include="Code\DbgDotNetCodeLocation.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationFactory.cs" />
+    <Compile Include="Code\DbgDotNetCodeRangeService.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProvider.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProviderFactory.cs" />
     <Compile Include="Metadata\DbgDynamicModuleProvider.cs" />
