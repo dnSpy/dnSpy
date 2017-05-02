@@ -30,6 +30,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.Steppers;
 using dnSpy.Contracts.Documents;
 using dnSpy.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
@@ -93,8 +94,8 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool CanAttachProgram => true;
 		public override void AttachProgram() => showAttachToProcessDialog.Value.Attach();
 
-		bool CanExecuteCurrentProcessPauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.CurrentProcess.Current?.State == DbgProcessState.Paused;
 		bool CanExecutePauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != true;
+		bool CanStepCommand => dbgManager.Value.CurrentThread.Current?.Process?.State == DbgProcessState.Paused;
 		bool CanExecuteRunningCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != false;
 		bool CanExecutePauseOrRunningCommand => dbgManager.Value.IsDebugging;
 
@@ -142,34 +143,29 @@ namespace dnSpy.Debugger.DbgUI {
 			//TODO:
 		}
 
-		public override bool CanStepInto => CanExecutePauseCommand;
-		public override void StepInto() {
-			//TODO:
-		}
+		public override bool CanStepInto => CanStepCommand;
+		public override void StepInto() => Step(DbgStepperKind.StepInto);
 
-		public override bool CanStepOver => CanExecutePauseCommand;
-		public override void StepOver() {
-			//TODO:
-		}
+		public override bool CanStepOver => CanStepCommand;
+		public override void StepOver() => Step(DbgStepperKind.StepOver);
 
-		public override bool CanStepOut => CanExecutePauseCommand;
-		public override void StepOut() {
-			//TODO:
-		}
+		public override bool CanStepOut => CanStepCommand;
+		public override void StepOut() => Step(DbgStepperKind.StepOut);
 
-		public override bool CanStepIntoCurrentProcess => CanExecuteCurrentProcessPauseCommand;
-		public override void StepIntoCurrentProcess() {
-			//TODO:
-		}
+		public override bool CanStepIntoCurrentProcess => CanStepCommand;
+		public override void StepIntoCurrentProcess() => Step(DbgStepperKind.StepIntoProcess);
 
-		public override bool CanStepOverCurrentProcess => CanExecuteCurrentProcessPauseCommand;
-		public override void StepOverCurrentProcess() {
-			//TODO:
-		}
+		public override bool CanStepOverCurrentProcess => CanStepCommand;
+		public override void StepOverCurrentProcess() => Step(DbgStepperKind.StepOverProcess);
 
-		public override bool CanStepOutCurrentProcess => CanExecuteCurrentProcessPauseCommand;
-		public override void StepOutCurrentProcess() {
-			//TODO:
+		public override bool CanStepOutCurrentProcess => CanStepCommand;
+		public override void StepOutCurrentProcess() => Step(DbgStepperKind.StepOutProcess);
+
+		void Step(DbgStepperKind step) {
+			var thread = dbgManager.Value.CurrentThread.Current;
+			if (thread == null)
+				return;
+			thread.CreateStepper().Step(step, autoClose: true);
 		}
 
 		public override bool CanToggleCreateBreakpoint => textViewBreakpointService.Value.CanToggleCreateBreakpoint;
