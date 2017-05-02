@@ -788,7 +788,11 @@ namespace dnSpy.Debugger.Impl {
 				process.Run();
 		}
 
-		void RunEngines_DbgThread(EngineInfo[] engineInfos) {
+		void RunEngines_DbgThread(EngineInfo[] engineInfos) =>
+			RunEngines_DbgThread(engineInfos, defaultRunEngines_runEngine);
+		static readonly Action<EngineInfo> defaultRunEngines_runEngine = info => info.Engine.Run();
+
+		void RunEngines_DbgThread(EngineInfo[] engineInfos, Action<EngineInfo> runEngine) {
 			Dispatcher.VerifyAccess();
 
 			List<DbgException> exceptions = null;
@@ -823,7 +827,7 @@ namespace dnSpy.Debugger.Impl {
 						info.EngineState = EngineState.Running;
 						info.Process?.SetRunning_DbgThread(info.Runtime);
 						Debug.Assert(info.Exception == null);
-						info.Engine.Run();
+						runEngine(info);
 					}
 				}
 

@@ -1821,4 +1821,10 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
     <value>Enable Managed Debugging Assistants (MDA)</value>
   </data>
+  <data name="DebugStepProcessError" xml:space="preserve">
+    <value>Could not step: {0}</value>
+  </data>
+  <data name="ProcessIsNotPaused" xml:space="preserve">
+    <value>Process is not paused</value>
+  </data>
 </root>

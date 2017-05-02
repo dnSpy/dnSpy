@@ -95,6 +95,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// The program paused itself by executing a break instruction or method (<see cref="DbgMessageProgramBreakEventArgs"/>)
 		/// </summary>
 		ProgramBreak,
+
+		/// <summary>
+		/// Step into/over/out is complete (<see cref="DbgMessageStepCompleteEventArgs"/>)
+		/// </summary>
+		StepComplete,
 	}
 
 	/// <summary>
@@ -509,6 +514,46 @@ namespace dnSpy.Contracts.Debugger {
 		public DbgMessageProgramBreakEventArgs(DbgRuntime runtime, DbgThread thread) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Thread = thread;
+		}
+	}
+
+	/// <summary>
+	/// Step into/over/out is complete (<see cref="DbgMessageKind.StepComplete"/>)
+	/// </summary>
+	public sealed class DbgMessageStepCompleteEventArgs : DbgMessageEventArgs {
+		/// <summary>
+		/// Returns <see cref="DbgMessageKind.StepComplete"/>
+		/// </summary>
+		public override DbgMessageKind Kind => DbgMessageKind.StepComplete;
+
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public DbgRuntime Runtime => Thread.Runtime;
+
+		/// <summary>
+		/// Gets the thread
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Gets the error message or null if none
+		/// </summary>
+		public string Error { get; }
+
+		/// <summary>
+		/// true if there was an error. Error message is in <see cref="Error"/>
+		/// </summary>
+		public bool HasError => Error != null;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="thread">Thread</param>
+		/// <param name="error">Error message or null if none</param>
+		public DbgMessageStepCompleteEventArgs(DbgThread thread, string error) {
+			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+			Error = error;
 		}
 	}
 }

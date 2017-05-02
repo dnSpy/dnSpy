@@ -31,6 +31,7 @@ using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Contracts.Debugger.Engine.Steppers;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.CorDebug.CallStack;
@@ -737,6 +738,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				Debug.Assert(b);
 			}
 			obj.Dispose();
+		}
+
+		public override DbgEngineStepper CreateStepper(DbgThread thread) {
+			//TODO:
+			throw new NotImplementedException();
 		}
 	}
 }

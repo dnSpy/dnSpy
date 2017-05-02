@@ -103,6 +103,8 @@
     <Compile Include="Engine\DbgEngineRuntimeInfo.cs" />
     <Compile Include="Engine\DbgEngineThread.cs" />
     <Compile Include="Engine\DbgObjectFactory.cs" />
+    <Compile Include="Engine\Steppers\DbgEngineStepper.cs" />
+    <Compile Include="Engine\Steppers\DbgEngineStepperKind.cs" />
     <Compile Include="Exceptions\DbgException.cs" />
     <Compile Include="Exceptions\DbgExceptionCategoryDefinition.cs" />
     <Compile Include="Exceptions\DbgExceptionCategoryDefinitionFlags.cs" />
@@ -130,6 +132,8 @@
     <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPageProvider.cs" />
     <Compile Include="StartDebugging\GenericDebugEngineGuidProvider.cs" />
     <Compile Include="StartDebugging\PredefinedGenericDebugEngineGuids.cs" />
+    <Compile Include="Steppers\DbgStepper.cs" />
+    <Compile Include="Steppers\DbgStepperKind.cs" />
     <Compile Include="ThreadCategoryProvider.cs" />
   </ItemGroup>
   <ItemGroup>

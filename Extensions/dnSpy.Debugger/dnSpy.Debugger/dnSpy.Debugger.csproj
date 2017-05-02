@@ -139,7 +139,9 @@
     <Compile Include="Impl\DbgManagerImpl.BoundBreakpointsManager.cs" />
     <Compile Include="Impl\DbgManagerImpl.CurrentObjects.cs" />
     <Compile Include="Impl\DbgManagerImpl.ProcessKey.cs" />
+    <Compile Include="Impl\DbgManagerImpl.Steppers.cs" />
     <Compile Include="Modules\ReferenceNavigatorImpl.cs" />
+    <Compile Include="Steppers\DbgStepperImpl.cs" />
     <Compile Include="Text\ClassifiedText.cs" />
     <Compile Include="Text\ClassifiedTextWriter.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />

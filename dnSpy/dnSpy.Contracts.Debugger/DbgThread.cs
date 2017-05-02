@@ -20,6 +20,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Steppers;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
@@ -109,5 +110,12 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <returns></returns>
 		public abstract DbgStackWalker CreateStackWalker();
+
+		/// <summary>
+		/// Creates a stepper.
+		/// The caller must close the returned instance by calling <see cref="DbgStepper.Close"/>.
+		/// </summary>
+		/// <returns></returns>
+		public abstract DbgStepper CreateStepper();
 	}
 }

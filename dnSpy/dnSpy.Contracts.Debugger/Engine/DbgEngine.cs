@@ -21,6 +21,7 @@ using System;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Contracts.Debugger.Engine.Steppers;
 
 namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
@@ -147,6 +148,13 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="thread">Thread created by this engine</param>
 		/// <returns></returns>
 		public abstract DbgEngineStackWalker CreateStackWalker(DbgThread thread);
+
+		/// <summary>
+		/// Creates a stepper
+		/// </summary>
+		/// <param name="thread">Thread to step</param>
+		/// <returns></returns>
+		public abstract DbgEngineStepper CreateStepper(DbgThread thread);
 	}
 
 	/// <summary>

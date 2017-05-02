@@ -1888,6 +1888,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not step: {0}.
+        /// </summary>
+        public static string DebugStepProcessError {
+            get {
+                return ResourceManager.GetString("DebugStepProcessError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Windows.
         /// </summary>
         public static string DebugWindows {
@@ -3600,6 +3609,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ProcessesCommand {
             get {
                 return ResourceManager.GetString("ProcessesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Process is not paused.
+        /// </summary>
+        public static string ProcessIsNotPaused {
+            get {
+                return ResourceManager.GetString("ProcessIsNotPaused", resourceCulture);
             }
         }
         

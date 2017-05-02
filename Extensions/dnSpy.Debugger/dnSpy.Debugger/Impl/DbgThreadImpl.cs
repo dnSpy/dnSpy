@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Steppers;
 using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
 using Microsoft.Win32.SafeHandles;
@@ -67,6 +68,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		DbgDispatcher Dispatcher => Process.DbgManager.Dispatcher;
+		internal DbgRuntimeImpl RuntimeImpl => runtime;
 
 		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
@@ -239,6 +241,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override DbgStackWalker CreateStackWalker() => runtime.CreateStackWalker(this);
+		public override DbgStepper CreateStepper() => runtime.CreateStepper(this);
 
 		internal void AddAutoClose(DbgObject obj) {
 			if (obj == null)

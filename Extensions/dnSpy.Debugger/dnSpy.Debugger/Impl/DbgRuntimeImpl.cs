@@ -26,7 +26,9 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Contracts.Debugger.Steppers;
 using dnSpy.Debugger.CallStack;
+using dnSpy.Debugger.Steppers;
 
 namespace dnSpy.Debugger.Impl {
 	sealed class DbgRuntimeImpl : DbgRuntime {
@@ -235,6 +237,8 @@ namespace dnSpy.Debugger.Impl {
 			public override DbgEngineStackFrame[] GetNextStackFrames(int maxFrames) => Array.Empty<DbgEngineStackFrame>();
 			protected override void CloseCore() { }
 		}
+
+		internal DbgStepper CreateStepper(DbgThreadImpl thread) => new DbgStepperImpl(owner, thread, Engine.CreateStepper(thread));
 
 		protected override void CloseCore() {
 			Dispatcher.VerifyAccess();
