@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.CallStack {
 				lock (lockObj) {
 					if (frames.Length > 0)
 						dbgManager.Close(frames);
-					const int newActiveFrameIndex = 0;
+					int newActiveFrameIndex = GetFrameIndex(newFrames);
 					raiseFramesChanged = frames.Length != 0 || newFrames.Length != 0;
 					raiseActiveFrameIndexChanged = newActiveFrameIndex != activeFrameIndex;
 
@@ -159,6 +159,14 @@ namespace dnSpy.Debugger.CallStack {
 				FramesChanged?.Invoke(this, EventArgs.Empty);
 			if (raiseActiveFrameIndexChanged)
 				ActiveFrameIndexChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		int GetFrameIndex(DbgStackFrame[] newFrames) {
+			for (int i = 0; i < newFrames.Length; i++) {
+				if (newFrames[i].Location != null)
+					return i;
+			}
+			return 0;
 		}
 	}
 }
