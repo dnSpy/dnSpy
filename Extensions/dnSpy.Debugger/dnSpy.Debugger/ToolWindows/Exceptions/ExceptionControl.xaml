@@ -113,7 +113,7 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox Grid.Column="0" IsChecked="{Binding BreakWhenThrown}" />
+                                    <CheckBox Grid.Column="0" Focusable="False" IsChecked="{Binding BreakWhenThrown}" />
                                     <ContentPresenter Grid.Column="1" Margin="5 0 0 0" Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource exceptionColumnConverter}}" />
                                 </Grid>
                             </DataTemplate>
