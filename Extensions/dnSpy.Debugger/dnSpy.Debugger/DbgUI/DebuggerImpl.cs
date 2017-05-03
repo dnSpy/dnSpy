@@ -144,24 +144,24 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		public override bool CanStepInto => CanStepCommand;
-		public override void StepInto() => Step(DbgStepperKind.StepInto);
+		public override void StepInto() => Step(DbgStepKind.StepInto);
 
 		public override bool CanStepOver => CanStepCommand;
-		public override void StepOver() => Step(DbgStepperKind.StepOver);
+		public override void StepOver() => Step(DbgStepKind.StepOver);
 
 		public override bool CanStepOut => CanStepCommand;
-		public override void StepOut() => Step(DbgStepperKind.StepOut);
+		public override void StepOut() => Step(DbgStepKind.StepOut);
 
 		public override bool CanStepIntoCurrentProcess => CanStepCommand;
-		public override void StepIntoCurrentProcess() => Step(DbgStepperKind.StepIntoProcess);
+		public override void StepIntoCurrentProcess() => Step(DbgStepKind.StepIntoProcess);
 
 		public override bool CanStepOverCurrentProcess => CanStepCommand;
-		public override void StepOverCurrentProcess() => Step(DbgStepperKind.StepOverProcess);
+		public override void StepOverCurrentProcess() => Step(DbgStepKind.StepOverProcess);
 
 		public override bool CanStepOutCurrentProcess => CanStepCommand;
-		public override void StepOutCurrentProcess() => Step(DbgStepperKind.StepOutProcess);
+		public override void StepOutCurrentProcess() => Step(DbgStepKind.StepOutProcess);
 
-		void Step(DbgStepperKind step) {
+		void Step(DbgStepKind step) {
 			var thread = dbgManager.Value.CurrentThread.Current;
 			if (thread == null)
 				return;

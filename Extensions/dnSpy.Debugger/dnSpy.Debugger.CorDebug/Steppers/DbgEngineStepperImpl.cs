@@ -58,8 +58,8 @@ namespace dnSpy.Debugger.CorDebug.Steppers {
 			StepComplete?.Invoke(this, new DbgEngineStepCompleteEventArgs(thread, tag, error));
 		}
 
-		public override void Step(object tag, DbgEngineStepperKind step) => engine.CorDebugThread(() => Step_CorDebug(tag, step));
-		void Step_CorDebug(object tag, DbgEngineStepperKind step) {
+		public override void Step(object tag, DbgEngineStepKind step) => engine.CorDebugThread(() => Step_CorDebug(tag, step));
+		void Step_CorDebug(object tag, DbgEngineStepKind step) {
 			engine.VerifyCorDebugThread();
 
 			if (stepData != null) {
@@ -86,15 +86,15 @@ namespace dnSpy.Debugger.CorDebug.Steppers {
 
 			CorStepper newCorStepper = null;
 			switch (step) {
-			case DbgEngineStepperKind.StepInto:
+			case DbgEngineStepKind.StepInto:
 				GetStepRanges(frame, tag, isStepInto: true);
 				return;
 
-			case DbgEngineStepperKind.StepOver:
+			case DbgEngineStepKind.StepOver:
 				GetStepRanges(frame, tag, isStepInto: false);
 				return;
 
-			case DbgEngineStepperKind.StepOut:
+			case DbgEngineStepKind.StepOut:
 				newCorStepper = dbg.StepOut(frame, (_, e) => StepCompleted(e, newCorStepper, tag, null));
 				break;
 

@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.Steppers {
 				RaiseStepComplete_DbgThread(thread, error);
 		}
 
-		public override void Step(DbgStepperKind step, bool autoClose) {
+		public override void Step(DbgStepKind step, bool autoClose) {
 			Debug.Assert(CanStep);
 			if (IsClosed) {
 				Debug.Fail("Stepper has been closed");
@@ -127,28 +127,28 @@ namespace dnSpy.Debugger.Steppers {
 
 			closeWhenStepComplete = autoClose;
 			switch (step) {
-			case DbgStepperKind.StepInto:
-				dbgManager.Step(this, stepperTagTmp, DbgEngineStepperKind.StepInto, singleProcess: false);
+			case DbgStepKind.StepInto:
+				dbgManager.Step(this, stepperTagTmp, DbgEngineStepKind.StepInto, singleProcess: false);
 				break;
 
-			case DbgStepperKind.StepOver:
-				dbgManager.Step(this, stepperTagTmp, DbgEngineStepperKind.StepOver, singleProcess: false);
+			case DbgStepKind.StepOver:
+				dbgManager.Step(this, stepperTagTmp, DbgEngineStepKind.StepOver, singleProcess: false);
 				break;
 
-			case DbgStepperKind.StepOut:
-				dbgManager.Step(this, stepperTagTmp, DbgEngineStepperKind.StepOut, singleProcess: false);
+			case DbgStepKind.StepOut:
+				dbgManager.Step(this, stepperTagTmp, DbgEngineStepKind.StepOut, singleProcess: false);
 				break;
 
-			case DbgStepperKind.StepIntoProcess:
-				dbgManager.Step(this, stepperTagTmp, DbgEngineStepperKind.StepInto, singleProcess: true);
+			case DbgStepKind.StepIntoProcess:
+				dbgManager.Step(this, stepperTagTmp, DbgEngineStepKind.StepInto, singleProcess: true);
 				break;
 
-			case DbgStepperKind.StepOverProcess:
-				dbgManager.Step(this, stepperTagTmp, DbgEngineStepperKind.StepOver, singleProcess: true);
+			case DbgStepKind.StepOverProcess:
+				dbgManager.Step(this, stepperTagTmp, DbgEngineStepKind.StepOver, singleProcess: true);
 				break;
 
-			case DbgStepperKind.StepOutProcess:
-				dbgManager.Step(this, stepperTagTmp, DbgEngineStepperKind.StepOut, singleProcess: true);
+			case DbgStepKind.StepOutProcess:
+				dbgManager.Step(this, stepperTagTmp, DbgEngineStepKind.StepOut, singleProcess: true);
 				break;
 
 			default:

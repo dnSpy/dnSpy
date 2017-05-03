@@ -17,11 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.Steppers {
+namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 	/// <summary>
-	/// Stepper kind
+	/// Step kind
 	/// </summary>
-	public enum DbgStepperKind {
+	public enum DbgEngineStepKind {
 		/// <summary>
 		/// Step into
 		/// </summary>
@@ -36,20 +36,5 @@ namespace dnSpy.Contracts.Debugger.Steppers {
 		/// Step out
 		/// </summary>
 		StepOut,
-
-		/// <summary>
-		/// Step into (only one process executes, the other ones aren't started)
-		/// </summary>
-		StepIntoProcess,
-
-		/// <summary>
-		/// Step over (only one process executes, the other ones aren't started)
-		/// </summary>
-		StepOverProcess,
-
-		/// <summary>
-		/// Step out (only one process executes, the other ones aren't started)
-		/// </summary>
-		StepOutProcess,
 	}
 }

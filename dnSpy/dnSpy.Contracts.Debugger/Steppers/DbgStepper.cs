@@ -40,12 +40,12 @@ namespace dnSpy.Contracts.Debugger.Steppers {
 		public abstract DbgThread Thread { get; }
 
 		/// <summary>
-		/// true if it's possible to call <see cref="Step(DbgStepperKind, bool)"/> (eg. process must be paused)
+		/// true if it's possible to call <see cref="Step(DbgStepKind, bool)"/> (eg. process must be paused)
 		/// </summary>
 		public abstract bool CanStep { get; }
 
 		/// <summary>
-		/// true if <see cref="Step(DbgStepperKind, bool)"/> has been called but <see cref="StepComplete"/> hasn't been raised yet
+		/// true if <see cref="Step(DbgStepKind, bool)"/> has been called but <see cref="StepComplete"/> hasn't been raised yet
 		/// </summary>
 		public abstract bool IsStepping { get; }
 
@@ -58,9 +58,9 @@ namespace dnSpy.Contracts.Debugger.Steppers {
 		/// Steps once. This method can be called again once <see cref="StepComplete"/> is raised.
 		/// The method can only be called when its process is paused.
 		/// </summary>
-		/// <param name="step">Stepper kind</param>
+		/// <param name="step">Step kind</param>
 		/// <param name="autoClose">true to call <see cref="Close"/> once <see cref="StepComplete"/> is raised</param>
-		public abstract void Step(DbgStepperKind step, bool autoClose = false);
+		public abstract void Step(DbgStepKind step, bool autoClose = false);
 
 		/// <summary>
 		/// Cancels the step
@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Debugger.Steppers {
 		public abstract void Cancel();
 
 		/// <summary>
-		/// Closes the stepper and cancels <see cref="Step(DbgStepperKind, bool)"/>
+		/// Closes the stepper and cancels <see cref="Step(DbgStepKind, bool)"/>
 		/// </summary>
 		public abstract void Close();
 	}

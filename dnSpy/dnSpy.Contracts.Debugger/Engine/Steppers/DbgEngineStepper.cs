@@ -21,7 +21,7 @@ using System;
 
 namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 	/// <summary>
-	/// Steps into, over or out of a method. When closed, any non-completed <see cref="Step(object, DbgEngineStepperKind)"/> call must be canceled.
+	/// Steps into, over or out of a method. When closed, any non-completed <see cref="Step(object, DbgEngineStepKind)"/> call must be canceled.
 	/// </summary>
 	public abstract class DbgEngineStepper : DbgObject {
 		/// <summary>
@@ -34,13 +34,13 @@ namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 		/// This method is only called if the engine is paused.
 		/// </summary>
 		/// <param name="tag">This value must be used when raising <see cref="StepComplete"/></param>
-		/// <param name="step">Stepper kind</param>
-		public abstract void Step(object tag, DbgEngineStepperKind step);
+		/// <param name="step">Step kind</param>
+		public abstract void Step(object tag, DbgEngineStepKind step);
 
 		/// <summary>
 		/// Cancels the step, but does not raise <see cref="StepComplete"/>
 		/// </summary>
-		/// <param name="tag">Same value that was passed to <see cref="Step(object, DbgEngineStepperKind)"/></param>
+		/// <param name="tag">Same value that was passed to <see cref="Step(object, DbgEngineStepKind)"/></param>
 		public abstract void Cancel(object tag);
 	}
 
@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 		/// Constructor
 		/// </summary>
 		/// <param name="thread">Thread or null to use the default thread that was used to create the stepper</param>
-		/// <param name="tag">Same value that was passed to <see cref="DbgEngineStepper.Step(object, DbgEngineStepperKind)"/></param>
+		/// <param name="tag">Same value that was passed to <see cref="DbgEngineStepper.Step(object, DbgEngineStepKind)"/></param>
 		/// <param name="error">Error message or null if none</param>
 		public DbgEngineStepCompleteEventArgs(DbgThread thread, object tag, string error) {
 			Thread = thread;
