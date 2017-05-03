@@ -18,16 +18,15 @@
 */
 
 using System;
-using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents.Tabs;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
+namespace dnSpy.Contracts.Debugger.Code.TextEditor {
 	/// <summary>
 	/// Creates breakpoint locations in text views
 	/// </summary>
-	public abstract class DbgTextViewBreakpointLocationProvider {
+	public abstract class DbgTextViewCodeLocationProvider {
 		/// <summary>
 		/// Creates a new <see cref="DbgCodeLocation"/> instance whose text view span is >= <paramref name="position"/>
 		/// </summary>

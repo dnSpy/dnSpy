@@ -19,8 +19,8 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.Code.TextEditor;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
@@ -29,14 +29,14 @@ using dnSpy.Contracts.Metadata;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
-	[Export(typeof(DbgTextViewBreakpointLocationProvider))]
-	sealed class DbgTextViewBreakpointLocationProviderImpl : DbgTextViewBreakpointLocationProvider {
+namespace dnSpy.Debugger.DotNet.Code.TextEditor {
+	[Export(typeof(DbgTextViewCodeLocationProvider))]
+	sealed class DbgTextViewCodeLocationProviderImpl : DbgTextViewCodeLocationProvider {
 		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		DbgTextViewBreakpointLocationProviderImpl(Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, IModuleIdProvider moduleIdProvider) {
+		DbgTextViewCodeLocationProviderImpl(Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, IModuleIdProvider moduleIdProvider) {
 			this.dbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
 			this.moduleIdProvider = moduleIdProvider;
 		}

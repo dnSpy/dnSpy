@@ -50,7 +50,6 @@
     <Compile Include="Breakpoints\Code\TextEditor\ClassBreakpointCommands.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphFormatterImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphTextMarkerLocationProviderImpl.cs" />
-    <Compile Include="Breakpoints\Code\TextEditor\DbgTextViewBreakpointLocationProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DeleteBreakpointsInRemovedModules.cs" />
     <Compile Include="Code\BreakpointFormatterService.cs" />
     <Compile Include="Code\DbgBreakpointLocationFormatterImpl.cs" />
@@ -60,6 +59,7 @@
     <Compile Include="Code\DbgDotNetCodeRangeServiceImpl.cs" />
     <Compile Include="Code\DotNetReferenceNavigator.cs" />
     <Compile Include="Code\ReferenceConverterImpl.cs" />
+    <Compile Include="Code\TextEditor\DbgTextViewCodeLocationProviderImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />

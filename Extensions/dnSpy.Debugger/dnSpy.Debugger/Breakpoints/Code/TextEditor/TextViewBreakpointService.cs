@@ -23,10 +23,11 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.Code.TextEditor;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Debugger.Code.TextEditor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -60,15 +61,15 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<IBreakpointMarker> breakpointMarker;
-		readonly Lazy<DbgTextViewBreakpointLocationProvider>[] dbgTextViewBreakpointLocationProviders;
+		readonly Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService;
 
 		[ImportingConstructor]
-		TextViewBreakpointServiceImpl(Lazy<DbgManager> dbgManager, Lazy<IDocumentTabService> documentTabService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<IBreakpointMarker> breakpointMarker, [ImportMany] IEnumerable<Lazy<DbgTextViewBreakpointLocationProvider>> dbgTextViewBreakpointLocationProviders) {
+		TextViewBreakpointServiceImpl(Lazy<DbgManager> dbgManager, Lazy<IDocumentTabService> documentTabService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<IBreakpointMarker> breakpointMarker, Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService) {
 			this.dbgManager = dbgManager;
 			this.documentTabService = documentTabService;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.breakpointMarker = breakpointMarker;
-			this.dbgTextViewBreakpointLocationProviders = dbgTextViewBreakpointLocationProviders.ToArray();
+			this.dbgTextViewCodeLocationService = dbgTextViewCodeLocationService;
 		}
 
 		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
@@ -100,8 +101,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
 			DbgTextViewBreakpointLocationResult? res = null;
-			foreach (var lz in dbgTextViewBreakpointLocationProviders)
-				UpdateResult(allLocations, textView, ref res, lz.Value.CreateLocation(tab, textView, pos), useIfSameSpan: false);
+			foreach (var loc in dbgTextViewCodeLocationService.Value.CreateLocation(tab, textView, pos))
+				UpdateResult(allLocations, textView, ref res, loc, useIfSameSpan: false);
 			SnapshotSpan span;
 			if (res != null) {
 				var resSpan = res.Value.Span.SnapshotSpan;
