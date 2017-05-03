@@ -155,6 +155,13 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="thread">Thread to step</param>
 		/// <returns></returns>
 		public abstract DbgEngineStepper CreateStepper(DbgThread thread);
+
+		/// <summary>
+		/// Sets a new instruction pointer
+		/// </summary>
+		/// <param name="thread">Thread</param>
+		/// <param name="location">New location</param>
+		public abstract void SetIP(DbgThread thread, DbgCodeLocation location);
 	}
 
 	/// <summary>

@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Debugger.Steppers;
@@ -239,6 +240,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal DbgStepper CreateStepper(DbgThreadImpl thread) => new DbgStepperImpl(owner, thread, Engine.CreateStepper(thread));
+		internal void SetIP(DbgThreadImpl thread, DbgCodeLocation location) => Engine.SetIP(thread, location);
 
 		protected override void CloseCore() {
 			Dispatcher.VerifyAccess();

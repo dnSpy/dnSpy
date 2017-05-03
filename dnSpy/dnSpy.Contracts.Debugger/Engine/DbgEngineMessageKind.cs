@@ -62,5 +62,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// The program paused itself by executing a break instruction or method
 		/// </summary>
 		ProgramBreak,
+
+		/// <summary>
+		/// SetIP() is complete
+		/// </summary>
+		SetIPComplete,
 	}
 }

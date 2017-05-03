@@ -223,6 +223,15 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not set the next statement..
+        /// </summary>
+        public static string Error_CouldNotSetNextStatement {
+            get {
+                return ResourceManager.GetString("Error_CouldNotSetNextStatement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not start the debugger. {0}.
         /// </summary>
         public static string Error_CouldNotStartDebugger {

@@ -260,4 +260,41 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			Pause = pause;
 		}
 	}
+
+	/// <summary>
+	/// <see cref="DbgEngineMessageKind.SetIPComplete"/> event
+	/// </summary>
+	public sealed class DbgMessageSetIPComplete : DbgEngineMessage {
+		/// <summary>
+		/// Returns <see cref="DbgEngineMessageKind.SetIPComplete"/>
+		/// </summary>
+		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.SetIPComplete;
+
+		/// <summary>
+		/// Gets the thread
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// true if all frames in the thread have been invalidated
+		/// </summary>
+		public bool FramesInvalidated { get; }
+
+		/// <summary>
+		/// Gets the error string or null if none
+		/// </summary>
+		public string Error { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="thread">Thread or null if it's not known</param>
+		/// <param name="framesInvalidated">true if all frames in the thread have been invalidated</param>
+		/// <param name="error">Error string or null if none</param>
+		public DbgMessageSetIPComplete(DbgThread thread, bool framesInvalidated, string error) {
+			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+			FramesInvalidated = framesInvalidated;
+			Error = error;
+		}
+	}
 }

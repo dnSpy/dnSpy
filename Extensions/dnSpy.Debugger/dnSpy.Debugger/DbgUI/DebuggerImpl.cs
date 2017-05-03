@@ -228,6 +228,17 @@ namespace dnSpy.Debugger.DbgUI {
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
+			dbgManager.Message += DbgManager_Message;
+		}
+
+		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
+			switch (e.Kind) {
+			case DbgMessageKind.SetIPComplete:
+				var ep = (DbgMessageSetIPCompleteEventArgs)e;
+				if (ep.Error != null)
+					UI(() => ShowError_UI(ep.Error));
+				break;
+			}
 		}
 
 		void UI(Action callback) {
@@ -235,6 +246,8 @@ namespace dnSpy.Debugger.DbgUI {
 			if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
 				dispatcher.BeginInvoke(DispatcherPriority.Send, callback);
 		}
+
+		void ShowError_UI(string error) => messageBoxService.Value.Show(error);
 
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;

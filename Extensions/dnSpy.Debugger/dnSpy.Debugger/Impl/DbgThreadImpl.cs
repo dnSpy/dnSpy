@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Steppers;
 using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
@@ -242,6 +243,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override DbgStackWalker CreateStackWalker() => runtime.CreateStackWalker(this);
 		public override DbgStepper CreateStepper() => runtime.CreateStepper(this);
+		public override void SetIP(DbgCodeLocation location) => runtime.SetIP(this, location ?? throw new ArgumentNullException(nameof(location)));
 
 		internal void AddAutoClose(DbgObject obj) {
 			if (obj == null)

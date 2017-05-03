@@ -106,6 +106,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// Step into/over/out is complete (<see cref="DbgMessageStepCompleteEventArgs"/>)
 		/// </summary>
 		StepComplete,
+
+		/// <summary>
+		/// SetIP() is complete (<see cref="DbgMessageSetIPCompleteEventArgs"/>)
+		/// </summary>
+		SetIPComplete,
 	}
 
 	/// <summary>
@@ -590,6 +595,53 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="error">Error message or null if none</param>
 		public DbgMessageStepCompleteEventArgs(DbgThread thread, string error) {
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+			Error = error;
+		}
+	}
+
+	/// <summary>
+	/// SetIP() is complete (<see cref="DbgMessageKind.SetIPComplete"/>)
+	/// </summary>
+	public sealed class DbgMessageSetIPCompleteEventArgs : DbgMessageEventArgs {
+		/// <summary>
+		/// Returns <see cref="DbgMessageKind.SetIPComplete"/>
+		/// </summary>
+		public override DbgMessageKind Kind => DbgMessageKind.SetIPComplete;
+
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public DbgRuntime Runtime => Thread.Runtime;
+
+		/// <summary>
+		/// Gets the thread
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// true if all frames in the thread have been invalidated
+		/// </summary>
+		public bool FramesInvalidated { get; }
+
+		/// <summary>
+		/// Gets the error message or null if none
+		/// </summary>
+		public string Error { get; }
+
+		/// <summary>
+		/// true if there was an error. Error message is in <see cref="Error"/>
+		/// </summary>
+		public bool HasError => Error != null;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="thread">Thread</param>
+		/// <param name="framesInvalidated">true if all frames in the thread have been invalidated</param>
+		/// <param name="error">Error message or null if none</param>
+		public DbgMessageSetIPCompleteEventArgs(DbgThread thread, bool framesInvalidated, string error) {
+			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+			FramesInvalidated = framesInvalidated;
 			Error = error;
 		}
 	}

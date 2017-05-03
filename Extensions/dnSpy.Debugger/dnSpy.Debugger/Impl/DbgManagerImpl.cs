@@ -318,6 +318,10 @@ namespace dnSpy.Debugger.Impl {
 				OnProgramBreak_DbgThread(engine, (DbgMessageProgramBreak)e);
 				break;
 
+			case DbgEngineMessageKind.SetIPComplete:
+				OnSetIPComplete_DbgThread(engine, (DbgMessageSetIPComplete)e);
+				break;
+
 			default:
 				Debug.Fail($"Unknown message: {e.MessageKind}");
 				break;
@@ -676,6 +680,16 @@ namespace dnSpy.Debugger.Impl {
 			OnConditionalBreak_DbgThread(engine, eb, eb.Thread, pauseDefaultValue: e.Pause || !debuggerSettings.IgnoreBreakInstructions);
 		}
 
+		void OnSetIPComplete_DbgThread(DbgEngine engine, DbgMessageSetIPComplete e) {
+			Dispatcher.VerifyAccess();
+			if (e.Thread.IsClosed)
+				return;
+			var es = new DbgMessageSetIPCompleteEventArgs(e.Thread, e.FramesInvalidated, e.Error);
+			// It was paused, so keep it paused.
+			es.Pause = true;
+			OnConditionalBreak_DbgThread(engine, es, es.Thread, pauseDefaultValue: false);
+		}
+
 		internal void AddAppDomain_DbgThread(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, bool pause) {
 			Dispatcher.VerifyAccess();
 			Debug.Assert(IsOurEngine(runtime.Engine));
@@ -768,9 +782,12 @@ namespace dnSpy.Debugger.Impl {
 					var newThread = info.Runtime?.SetBreakThread((DbgThreadImpl)thread);
 					if (thread == null)
 						thread = newThread;
-					Debug.Assert(info.Exception == null);
-					info.Exception?.Close(Dispatcher);
-					info.Exception = exception;
+					// If we get eg. SetIPComplete, the saved exception shouldn't be cleared
+					if (exception != null) {
+						Debug.Assert(info.Exception == null);
+						info.Exception?.Close(Dispatcher);
+						info.Exception = exception;
+					}
 					processState = CalculateProcessState(info.Process);
 					process = info.Process;
 				}

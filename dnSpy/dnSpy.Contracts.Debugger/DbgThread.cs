@@ -20,6 +20,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Steppers;
 
 namespace dnSpy.Contracts.Debugger {
@@ -117,5 +118,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <returns></returns>
 		public abstract DbgStepper CreateStepper();
+
+		/// <summary>
+		/// Sets a new instruction pointer
+		/// </summary>
+		/// <param name="location">New location</param>
+		public abstract void SetIP(DbgCodeLocation location);
 	}
 }

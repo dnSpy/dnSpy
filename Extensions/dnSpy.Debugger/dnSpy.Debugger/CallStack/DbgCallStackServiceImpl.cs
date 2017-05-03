@@ -77,6 +77,7 @@ namespace dnSpy.Debugger.CallStack {
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			this.dbgManager = dbgManager;
 			dbgManager.CurrentThreadChanged += DbgManager_CurrentThreadChanged;
+			dbgManager.Message += DbgManager_Message;
 		}
 
 		// Note that dbgManager can be null if called before debugging has started
@@ -94,11 +95,22 @@ namespace dnSpy.Debugger.CallStack {
 			ActiveFrameIndexChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		void DbgManager_CurrentThreadChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgThread> e) {
-			if (e.CurrentChanged) {
-				UpdateCurrentThreadProcess_DbgThread(dbgManager.CurrentThread.Current?.Process);
-				UpdateFrames_DbgThread();
+		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
+			if (e.Kind == DbgMessageKind.SetIPComplete) {
+				var ep = (DbgMessageSetIPCompleteEventArgs)e;
+				if (ep.FramesInvalidated && dbgManager.CurrentThread.Current == ep.Thread)
+					RefreshAllFrames_DbgThread();
 			}
+		}
+
+		void DbgManager_CurrentThreadChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgThread> e) {
+			if (e.CurrentChanged)
+				RefreshAllFrames_DbgThread();
+		}
+
+		void RefreshAllFrames_DbgThread() {
+			UpdateCurrentThreadProcess_DbgThread(dbgManager.CurrentThread.Current?.Process);
+			UpdateFrames_DbgThread();
 		}
 
 		void UpdateCurrentThreadProcess_DbgThread(DbgProcess process) {

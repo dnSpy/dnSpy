@@ -21,13 +21,19 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.CorDebug.CallStack;
+using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
@@ -288,6 +294,80 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			Debug.Assert(framesBuffer != null);
 			Interlocked.Exchange(ref this.framesBuffer, framesBuffer);
 			framesBuffer = null;
+		}
+
+		public override void SetIP(DbgThread thread, DbgCodeLocation location) =>
+			CorDebugThread(() => SetIP_CorDebug(thread, location));
+
+		void SetIP_CorDebug(DbgThread thread, DbgCodeLocation location) {
+			debuggerThread.VerifyAccess();
+
+			bool framesInvalidated = false;
+			if (dnDebugger.ProcessState != DebuggerProcessState.Paused) {
+				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement));
+				return;
+			}
+
+			if (!TryGetFrame(thread, out var corFrame)) {
+				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement));
+				return;
+			}
+
+			if (!TryGetLocation(location, out var moduleId, out uint token, out uint offset)) {
+				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement));
+				return;
+			}
+
+			var frameModuleId = corFrame.DnModuleId;
+			if (frameModuleId == null || frameModuleId.Value.ToModuleId() != moduleId || corFrame.Token != token) {
+				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement));
+				return;
+			}
+
+			framesInvalidated = true;
+			bool failed = !corFrame.SetILFrameIP(offset);
+			if (failed) {
+				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement));
+				return;
+			}
+
+			SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: null));
+		}
+
+		bool TryGetFrame(DbgThread thread, out CorFrame frame) {
+			debuggerThread.VerifyAccess();
+			frame = null;
+			if (!thread.TryGetData(out DbgThreadData data))
+				return false;
+			if (data.DnThread.HasExited)
+				return false;
+			frame = data.DnThread.AllFrames.FirstOrDefault();
+			if (frame == null || !frame.IsILFrame)
+				return false;
+			return true;
+		}
+
+		static bool TryGetLocation(DbgCodeLocation location, out ModuleId moduleId, out uint token, out uint offset) {
+			switch (location) {
+			case DbgDotNetCodeLocation dnLoc:
+				moduleId = dnLoc.Module;
+				token = dnLoc.Token;
+				offset = dnLoc.Offset;
+				return true;
+
+			case DbgDotNetNativeCodeLocation nativeLoc:
+				if (nativeLoc.ILOffsetMapping != DbgILOffsetMapping.Exact && nativeLoc.ILOffsetMapping != DbgILOffsetMapping.Approximate)
+					break;
+				moduleId = nativeLoc.Module;
+				token = nativeLoc.Token;
+				offset = nativeLoc.ILOffset;
+				return true;
+			}
+
+			moduleId = default(ModuleId);
+			token = 0;
+			offset = 0;
+			return false;
 		}
 	}
 }
