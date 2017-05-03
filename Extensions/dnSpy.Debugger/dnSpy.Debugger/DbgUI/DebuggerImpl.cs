@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -32,9 +33,12 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Steppers;
 using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Debugger.Breakpoints.Code.TextEditor;
+using dnSpy.Debugger.Code.TextEditor;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.Properties;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Debugger.DbgUI {
 	[Export(typeof(Debugger))]
@@ -42,6 +46,7 @@ namespace dnSpy.Debugger.DbgUI {
 	sealed class DebuggerImpl : Debugger, IDbgManagerStartListener {
 		readonly Lazy<IMessageBoxService> messageBoxService;
 		readonly Lazy<IAppWindow> appWindow;
+		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider;
 		readonly Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog;
@@ -49,14 +54,16 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgCallStackService> dbgCallStackService;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
+		readonly Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService;
 		readonly DebuggerSettings debuggerSettings;
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, DebuggerSettings debuggerSettings) {
+		DebuggerImpl(Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<IDocumentTabService> documentTabService, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService, DebuggerSettings debuggerSettings) {
 			this.messageBoxService = messageBoxService;
 			this.appWindow = appWindow;
+			this.documentTabService = documentTabService;
 			this.dbgManager = dbgManager;
 			this.startDebuggingOptionsProvider = startDebuggingOptionsProvider;
 			this.showAttachToProcessDialog = showAttachToProcessDialog;
@@ -64,6 +71,7 @@ namespace dnSpy.Debugger.DbgUI {
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgCallStackService = dbgCallStackService;
 			this.referenceNavigatorService = referenceNavigatorService;
+			this.dbgTextViewCodeLocationService = dbgTextViewCodeLocationService;
 			this.debuggerSettings = debuggerSettings;
 		}
 
@@ -144,7 +152,38 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public override bool CanSetNextStatement => CanExecutePauseCommand;
 		public override void SetNextStatement() {
-			//TODO:
+			if (!CanSetNextStatement)
+				return;
+			var allLocations = new List<DbgCodeLocation>();
+			var location = GetCurrentTextViewStatementLocation(allLocations);
+			try {
+				if (location != null)
+					dbgManager.Value.CurrentThread.Current?.SetIP(location);
+			}
+			finally {
+				if (allLocations.Count > 0)
+					dbgManager.Value.Close(allLocations.ToArray());
+			}
+		}
+
+		DbgCodeLocation GetCurrentTextViewStatementLocation(List<DbgCodeLocation> allLocations) {
+			var tab = documentTabService.Value.ActiveTab;
+			if (tab == null)
+				return null;
+			var documentViewer = tab.TryGetDocumentViewer();
+			if (documentViewer == null)
+				return null;
+			var textView = documentViewer.TextView;
+
+			foreach (var loc in dbgTextViewCodeLocationService.Value.CreateLocation(tab, textView, textView.Caret.Position.VirtualBufferPosition)) {
+				allLocations.AddRange(loc.Locations);
+				if (loc.Locations.Length != 0) {
+					//TODO: Pick the correct location if there are multiple locations, eg. field initializers outside the ctor and 2+ ctors
+					return loc.Locations[0];
+				}
+			}
+
+			return null;
 		}
 
 		public override bool CanStepInto => CanStepCommand;
