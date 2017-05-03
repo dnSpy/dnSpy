@@ -21,37 +21,30 @@ using System;
 
 namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
-	/// .NET Core attach to process options
+	/// .NET Framework attach to process options
 	/// </summary>
-	sealed class DotNetCoreAttachDebuggingOptions : CorDebugAttachDebuggingOptions {
+	sealed class DotNetFrameworkAttachToProgramOptions : CorDebugAttachToProgramOptions {
 		/// <summary>
-		/// A string returned by <c>dbgshim.dll</c>'s <c>CreateVersionStringFromModule</c> function
-		/// or null to use the first found CoreCLR in the process.
+		/// Version of an already installed CLR (eg. "v2.0.50727", or "v4.0.30319") or null to auto detect it
 		/// </summary>
-		public string ClrModuleVersion { get; set; }
-
-		/// <summary>
-		/// Path to <c>coreclr.dll</c> or null to use the first found one in the process
-		/// </summary>
-		public string CoreCLRFilename { get; set; }
+		public string DebuggeeVersion { get; set; }
 
 		/// <summary>
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public override StartDebuggingOptions Clone() => CopyTo(new DotNetCoreAttachDebuggingOptions());
+		public override DebugProgramOptions Clone() => CopyTo(new DotNetFrameworkAttachToProgramOptions());
 
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/> and returns it
 		/// </summary>
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
-		public DotNetCoreAttachDebuggingOptions CopyTo(DotNetCoreAttachDebuggingOptions other) {
+		public DotNetFrameworkAttachToProgramOptions CopyTo(DotNetFrameworkAttachToProgramOptions other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
-			other.ClrModuleVersion = ClrModuleVersion;
-			other.CoreCLRFilename = CoreCLRFilename;
+			other.DebuggeeVersion = DebuggeeVersion;
 			return other;
 		}
 	}

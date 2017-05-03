@@ -191,7 +191,7 @@ namespace dnSpy.Debugger.Impl {
 				DelayedIsRunningChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		public override string Start(StartDebuggingOptions options) {
+		public override string Start(DebugProgramOptions options) {
 			var clonedOptions = options.Clone();
 			// Make sure Clone() works correctly by only using a clone of the input.
 			// If it's buggy, the owner will notice something's wrong and fix it.
@@ -227,7 +227,7 @@ namespace dnSpy.Debugger.Impl {
 			return "Couldn't create a debug engine";
 		}
 
-		void Start_DbgThread(DbgEngine engine, StartDebuggingOptions options, StartDebuggingOptions clonedOptions) {
+		void Start_DbgThread(DbgEngine engine, DebugProgramOptions options, DebugProgramOptions clonedOptions) {
 			Dispatcher.VerifyAccess();
 			bool raiseIsDebuggingChanged, raiseIsRunningChanged;
 			string[] addedDebugTags;
@@ -235,8 +235,8 @@ namespace dnSpy.Debugger.Impl {
 				var oldIsRunning = cachedIsRunning;
 				raiseIsDebuggingChanged = engines.Count == 0;
 				var engineInfo = new EngineInfo(engine);
-				if (engine.StartKind == DbgStartKind.Start)
-					restartOptions.Add(clonedOptions);
+				if (clonedOptions is StartDebuggingOptions startOptions)
+					restartOptions.Add(startOptions);
 				engines.Add(engineInfo);
 				addedDebugTags = debugTags.Add(engineInfo.DebugTags);
 				cachedIsRunning = CalculateIsRunning_NoLock();

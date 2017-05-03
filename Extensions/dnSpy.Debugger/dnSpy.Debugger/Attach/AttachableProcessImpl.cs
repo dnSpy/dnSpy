@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Attach {
 			this.attachableProcessInfo = attachableProcessInfo ?? throw new ArgumentNullException(nameof(attachableProcessInfo));
 		}
 
-		public override StartDebuggingOptions GetOptions() => attachProgramOptions.GetOptions();
+		public override AttachToProgramOptions GetOptions() => attachProgramOptions.GetOptions();
 		public override void Attach() => dbgManager.Start(GetOptions());
 	}
 }

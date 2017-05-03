@@ -17,12 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
+using dnSpy.Contracts.Debugger.Attach;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// Debug a program base class. Created eg. by <see cref="StartDebuggingOptionsPage.GetOptions"/>
+	/// Attach to program base class. Created eg. by <see cref="AttachProgramOptions.GetOptions"/>
 	/// </summary>
-	public abstract class StartDebuggingOptions : DebugProgramOptions {
+	public abstract class AttachToProgramOptions : DebugProgramOptions {
 	}
 }

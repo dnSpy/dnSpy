@@ -40,6 +40,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AttachToProgramOptions.cs" />
     <Compile Include="Attach\AttachableProcess.cs" />
     <Compile Include="Attach\AttachableProcessesService.cs" />
     <Compile Include="Attach\AttachProgramOptions.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="DbgStateInfo.cs" />
     <Compile Include="DbgThread.cs" />
     <Compile Include="DebuggerSettings.cs" />
+    <Compile Include="DebugProgramOptions.cs" />
     <Compile Include="Engine\CallStack\DbgEngineStackFrame.cs" />
     <Compile Include="Engine\CallStack\DbgEngineStackWalker.cs" />
     <Compile Include="Engine\DbgEngine.cs" />

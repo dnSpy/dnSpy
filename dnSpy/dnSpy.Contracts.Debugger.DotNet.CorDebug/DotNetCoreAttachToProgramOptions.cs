@@ -21,22 +21,38 @@ using System;
 
 namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
-	/// Debugging options base class shared by .NET Framework code and .NET Core code
+	/// .NET Core attach to process options
 	/// </summary>
-	abstract class CorDebugAttachDebuggingOptions : StartDebuggingOptions {
+	sealed class DotNetCoreAttachToProgramOptions : CorDebugAttachToProgramOptions {
 		/// <summary>
-		/// Gets the process id
+		/// A string returned by <c>dbgshim.dll</c>'s <c>CreateVersionStringFromModule</c> function
+		/// or null to use the first found CoreCLR in the process.
 		/// </summary>
-		public ulong ProcessId { get; set; }
+		public string ClrModuleVersion { get; set; }
 
 		/// <summary>
-		/// Copies this instance to <paramref name="other"/>
+		/// Path to <c>coreclr.dll</c> or null to use the first found one in the process
+		/// </summary>
+		public string CoreCLRFilename { get; set; }
+
+		/// <summary>
+		/// Clones this instance
+		/// </summary>
+		/// <returns></returns>
+		public override DebugProgramOptions Clone() => CopyTo(new DotNetCoreAttachToProgramOptions());
+
+		/// <summary>
+		/// Copies this instance to <paramref name="other"/> and returns it
 		/// </summary>
 		/// <param name="other">Destination</param>
-		protected void CopyTo(CorDebugAttachDebuggingOptions other) {
+		/// <returns></returns>
+		public DotNetCoreAttachToProgramOptions CopyTo(DotNetCoreAttachToProgramOptions other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
-			other.ProcessId = ProcessId;
+			base.CopyTo(other);
+			other.ClrModuleVersion = ClrModuleVersion;
+			other.CoreCLRFilename = CoreCLRFilename;
+			return other;
 		}
 	}
 }

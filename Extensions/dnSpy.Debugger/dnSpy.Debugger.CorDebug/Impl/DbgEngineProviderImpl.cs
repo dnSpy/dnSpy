@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		DbgEngineProviderImpl(Lazy<DbgEngineImplDependencies> dbgEngineImplDependencies) =>
 			this.dbgEngineImplDependencies = dbgEngineImplDependencies;
 
-		public override DbgEngine Create(DbgManager dbgManager, StartDebuggingOptions options) {
+		public override DbgEngine Create(DbgManager dbgManager, DebugProgramOptions options) {
 			switch (options) {
 			case DotNetFrameworkStartDebuggingOptions _:
 				return new DotNetFrameworkDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Start);
@@ -40,10 +40,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			case DotNetCoreStartDebuggingOptions _:
 				return new DotNetCoreDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Start);
 
-			case DotNetFrameworkAttachDebuggingOptions _:
+			case DotNetFrameworkAttachToProgramOptions _:
 				return new DotNetFrameworkDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Attach);
 
-			case DotNetCoreAttachDebuggingOptions _:
+			case DotNetCoreAttachToProgramOptions _:
 				return new DotNetCoreDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Attach);
 			}
 

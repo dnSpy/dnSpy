@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			this.messageBoxService = messageBoxService;
 		}
 
-		public override StartDebuggingOptions[] Show() {
+		public override AttachToProgramOptions[] Show() {
 			AttachToProcessVM vm = null;
 			try {
 				var dlg = new AttachToProcessDlg();
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				dlg.Owner = appWindow.MainWindow;
 				var res = dlg.ShowDialog();
 				if (res != true)
-					return Array.Empty<StartDebuggingOptions>();
+					return Array.Empty<AttachToProgramOptions>();
 				return vm.SelectedItems.Select(a => a.AttachProgramOptions.GetOptions()).ToArray();
 			}
 			finally {

@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.AttachToProcess {
 			this.coreCLRFilename = coreCLRFilename;
 		}
 
-		public override StartDebuggingOptions GetOptions() => new DotNetCoreAttachDebuggingOptions {
+		public override AttachToProgramOptions GetOptions() => new DotNetCoreAttachToProgramOptions {
 			ProcessId = ProcessId,
 			ClrModuleVersion = clrModuleVersion,
 			CoreCLRFilename = coreCLRFilename,

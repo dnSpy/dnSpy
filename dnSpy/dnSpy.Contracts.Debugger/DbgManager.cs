@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Manages all debug engines. All events are raised in the dispatcher thread.
 	/// If you need to hook events before debugging starts, you should export an <see cref="IDbgManagerStartListener"/>.
-	/// It gets called when <see cref="Start(StartDebuggingOptions)"/> gets called for the first time.
+	/// It gets called when <see cref="Start(DebugProgramOptions)"/> gets called for the first time.
 	/// </summary>
 	public abstract class DbgManager {
 		/// <summary>
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// See <see cref="IDbgManagerStartListener"/> on how to get called the first time this method gets called.
 		/// </summary>
 		/// <param name="options">Options needed to start the program or attach to it</param>
-		public abstract string Start(StartDebuggingOptions options);
+		public abstract string Start(DebugProgramOptions options);
 
 		/// <summary>
 		/// true if <see cref="Restart"/> can be called

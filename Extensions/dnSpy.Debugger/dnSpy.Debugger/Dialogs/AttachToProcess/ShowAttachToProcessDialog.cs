@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		/// Shows the dialog box and returns the selected processes or an empty list
 		/// </summary>
 		/// <returns></returns>
-		public abstract StartDebuggingOptions[] Show();
+		public abstract AttachToProgramOptions[] Show();
 
 		/// <summary>
 		/// Shows the dialog box and attaches to the selected processes

@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// Gets all options required to attach to the process
 		/// </summary>
 		/// <returns></returns>
-		public abstract StartDebuggingOptions GetOptions();
+		public abstract AttachToProgramOptions GetOptions();
 
 		/// <summary>
 		/// Attaches to the process

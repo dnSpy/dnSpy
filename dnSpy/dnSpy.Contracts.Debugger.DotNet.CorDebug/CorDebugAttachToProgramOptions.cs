@@ -21,31 +21,22 @@ using System;
 
 namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
-	/// .NET Framework attach to process options
+	/// Debugging options base class shared by .NET Framework code and .NET Core code
 	/// </summary>
-	sealed class DotNetFrameworkAttachDebuggingOptions : CorDebugAttachDebuggingOptions {
+	abstract class CorDebugAttachToProgramOptions : AttachToProgramOptions {
 		/// <summary>
-		/// Version of an already installed CLR (eg. "v2.0.50727", or "v4.0.30319") or null to auto detect it
+		/// Gets the process id
 		/// </summary>
-		public string DebuggeeVersion { get; set; }
+		public ulong ProcessId { get; set; }
 
 		/// <summary>
-		/// Clones this instance
-		/// </summary>
-		/// <returns></returns>
-		public override StartDebuggingOptions Clone() => CopyTo(new DotNetFrameworkAttachDebuggingOptions());
-
-		/// <summary>
-		/// Copies this instance to <paramref name="other"/> and returns it
+		/// Copies this instance to <paramref name="other"/>
 		/// </summary>
 		/// <param name="other">Destination</param>
-		/// <returns></returns>
-		public DotNetFrameworkAttachDebuggingOptions CopyTo(DotNetFrameworkAttachDebuggingOptions other) {
+		protected void CopyTo(CorDebugAttachToProgramOptions other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
-			base.CopyTo(other);
-			other.DebuggeeVersion = DebuggeeVersion;
-			return other;
+			other.ProcessId = ProcessId;
 		}
 	}
 }

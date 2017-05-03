@@ -481,17 +481,17 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		void SendMessage(DbgEngineMessage message) => Message?.Invoke(this, message);
 
-		public override void Start(StartDebuggingOptions options) => CorDebugThread(() => {
+		public override void Start(DebugProgramOptions options) => CorDebugThread(() => {
 			if (StartKind == DbgStartKind.Start)
 				StartCore((CorDebugStartDebuggingOptions)options);
 			else if (StartKind == DbgStartKind.Attach)
-				AttachCore((CorDebugAttachDebuggingOptions)options);
+				AttachCore((CorDebugAttachToProgramOptions)options);
 			else
 				throw new InvalidOperationException();
 		});
 
 		protected abstract CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options);
-		protected abstract CLRTypeAttachInfo CreateAttachInfo(CorDebugAttachDebuggingOptions options);
+		protected abstract CLRTypeAttachInfo CreateAttachInfo(CorDebugAttachToProgramOptions options);
 
 		void StartCore(CorDebugStartDebuggingOptions options) {
 			debuggerThread.VerifyAccess();
@@ -546,7 +546,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return dnSpy_Debugger_CorDebug_Resources.UseDnSpy64ExeToDebug32;
 		}
 
-		void AttachCore(CorDebugAttachDebuggingOptions options) {
+		void AttachCore(CorDebugAttachToProgramOptions options) {
 			debuggerThread.VerifyAccess();
 			try {
 				if (debuggerThread.HasShutdownStarted)

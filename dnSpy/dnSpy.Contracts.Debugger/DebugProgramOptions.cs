@@ -17,30 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
+namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// Debugging options that will start and debug an application when passed to <see cref="DbgManager.Start(DebugProgramOptions)"/>.
-	/// This is used to debug .NET Framework assemblies.
+	/// Debug program base class
 	/// </summary>
-	public sealed class DotNetFrameworkStartDebuggingOptions : CorDebugStartDebuggingOptions {
+	public abstract class DebugProgramOptions {
 		/// <summary>
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public override DebugProgramOptions Clone() => CopyTo(new DotNetFrameworkStartDebuggingOptions());
-
-		/// <summary>
-		/// Copies this instance to <paramref name="other"/> and returns it
-		/// </summary>
-		/// <param name="other">Destination</param>
-		/// <returns></returns>
-		public DotNetFrameworkStartDebuggingOptions CopyTo(DotNetFrameworkStartDebuggingOptions other) {
-			if (other == null)
-				throw new ArgumentNullException(nameof(other));
-			base.CopyTo(other);
-			return other;
-		}
+		public abstract DebugProgramOptions Clone();
 	}
 }

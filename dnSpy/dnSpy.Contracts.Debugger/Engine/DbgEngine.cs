@@ -52,12 +52,12 @@ namespace dnSpy.Contracts.Debugger.Engine {
 
 		/// <summary>
 		/// Called when the engine can start or attach to the debugged process. This method is called shortly after
-		/// this instance gets created by a call to <see cref="DbgEngineProvider.Create(DbgManager, StartDebuggingOptions)"/>.
+		/// this instance gets created by a call to <see cref="DbgEngineProvider.Create(DbgManager, DebugProgramOptions)"/>.
 		/// It must send a <see cref="DbgMessageConnected"/> message when it has connected to the program or
 		/// if it failed.
 		/// </summary>
-		/// <param name="options">Same options that were passed to <see cref="DbgEngineProvider.Create(DbgManager, StartDebuggingOptions)"/></param>
-		public abstract void Start(StartDebuggingOptions options);
+		/// <param name="options">Same options that were passed to <see cref="DbgEngineProvider.Create(DbgManager, DebugProgramOptions)"/></param>
+		public abstract void Start(DebugProgramOptions options);
 
 		/// <summary>
 		/// Raised when there's a new message. It can be raised in any thread.

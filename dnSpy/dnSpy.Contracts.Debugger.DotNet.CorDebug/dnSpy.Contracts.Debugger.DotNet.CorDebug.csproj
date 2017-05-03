@@ -43,12 +43,12 @@
     <Compile Include="BreakProcessKind.cs" />
     <Compile Include="Code\DbgDotNetNativeCodeLocation.cs" />
     <Compile Include="Code\DbgILOffsetMapping.cs" />
-    <Compile Include="CorDebugAttachDebuggingOptions.cs" />
+    <Compile Include="CorDebugAttachToProgramOptions.cs" />
     <Compile Include="CorDebugStartDebuggingOptions.cs" />
     <Compile Include="CorThreadUserStates.cs" />
-    <Compile Include="DotNetCoreAttachDebuggingOptions.cs" />
+    <Compile Include="DotNetCoreAttachToProgramOptions.cs" />
     <Compile Include="DotNetCoreStartDebuggingOptions.cs" />
-    <Compile Include="DotNetFrameworkAttachDebuggingOptions.cs" />
+    <Compile Include="DotNetFrameworkAttachToProgramOptions.cs" />
     <Compile Include="DotNetFrameworkStartDebuggingOptions.cs" />
     <Compile Include="CorDebugRuntime.cs" />
     <Compile Include="CorDebugRuntimeKind.cs" />

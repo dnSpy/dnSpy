@@ -70,8 +70,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return new CoreCLRTypeDebugInfo(GetDbgShimAndVerify(), hostFilename, hostCommandLine);
 		}
 
-		protected override CLRTypeAttachInfo CreateAttachInfo(CorDebugAttachDebuggingOptions options) {
-			var dncOptions = (DotNetCoreAttachDebuggingOptions)options;
+		protected override CLRTypeAttachInfo CreateAttachInfo(CorDebugAttachToProgramOptions options) {
+			var dncOptions = (DotNetCoreAttachToProgramOptions)options;
 			return new CoreCLRTypeAttachInfo(dncOptions.ClrModuleVersion, GetDbgShimAndVerify(), dncOptions.CoreCLRFilename);
 		}
 

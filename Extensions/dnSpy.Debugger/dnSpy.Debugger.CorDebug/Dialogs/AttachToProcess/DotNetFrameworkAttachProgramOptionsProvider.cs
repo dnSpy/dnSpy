@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.AttachToProcess {
 			debuggeeVersion = clrVersion;
 		}
 
-		public override StartDebuggingOptions GetOptions() => new DotNetFrameworkAttachDebuggingOptions {
+		public override AttachToProgramOptions GetOptions() => new DotNetFrameworkAttachToProgramOptions {
 			ProcessId = ProcessId,
 			DebuggeeVersion = debuggeeVersion,
 		};
