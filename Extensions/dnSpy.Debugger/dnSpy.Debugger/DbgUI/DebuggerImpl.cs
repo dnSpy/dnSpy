@@ -49,11 +49,12 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgCallStackService> dbgCallStackService;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
+		readonly DebuggerSettings debuggerSettings;
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService) {
+		DebuggerImpl(Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, DebuggerSettings debuggerSettings) {
 			this.messageBoxService = messageBoxService;
 			this.appWindow = appWindow;
 			this.dbgManager = dbgManager;
@@ -63,6 +64,7 @@ namespace dnSpy.Debugger.DbgUI {
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgCallStackService = dbgCallStackService;
 			this.referenceNavigatorService = referenceNavigatorService;
+			this.debuggerSettings = debuggerSettings;
 		}
 
 		public override string GetCurrentExecutableFilename() => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
@@ -96,6 +98,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 		bool CanExecutePauseCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != true;
 		bool CanStepCommand => dbgManager.Value.CurrentThread.Current?.Process?.State == DbgProcessState.Paused;
+		bool CanStepProcessCommand => CanStepCommand && !debuggerSettings.BreakAllProcesses;
 		bool CanExecuteRunningCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning != false;
 		bool CanExecutePauseOrRunningCommand => dbgManager.Value.IsDebugging;
 
@@ -152,13 +155,13 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool CanStepOut => CanStepCommand;
 		public override void StepOut() => Step(DbgStepKind.StepOut);
 
-		public override bool CanStepIntoCurrentProcess => CanStepCommand;
+		public override bool CanStepIntoCurrentProcess => CanStepProcessCommand;
 		public override void StepIntoCurrentProcess() => Step(DbgStepKind.StepIntoProcess);
 
-		public override bool CanStepOverCurrentProcess => CanStepCommand;
+		public override bool CanStepOverCurrentProcess => CanStepProcessCommand;
 		public override void StepOverCurrentProcess() => Step(DbgStepKind.StepOverProcess);
 
-		public override bool CanStepOutCurrentProcess => CanStepCommand;
+		public override bool CanStepOutCurrentProcess => CanStepProcessCommand;
 		public override void StepOutCurrentProcess() => Step(DbgStepKind.StepOutProcess);
 
 		void Step(DbgStepKind step) {
