@@ -78,6 +78,11 @@ namespace dnSpy.Contracts.Debugger.Steppers {
 	/// </summary>
 	public struct DbgStepCompleteEventArgs {
 		/// <summary>
+		/// Gets the thread
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
 		/// Gets the error message or null if none
 		/// </summary>
 		public string Error { get; }
@@ -90,7 +95,11 @@ namespace dnSpy.Contracts.Debugger.Steppers {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="thread">Thread</param>
 		/// <param name="error">Error message or null if none</param>
-		public DbgStepCompleteEventArgs(string error) => Error = error;
+		public DbgStepCompleteEventArgs(DbgThread thread, string error) {
+			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+			Error = error;
+		}
 	}
 }

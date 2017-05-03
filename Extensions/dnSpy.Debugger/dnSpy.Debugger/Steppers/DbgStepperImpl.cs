@@ -66,16 +66,17 @@ namespace dnSpy.Debugger.Steppers {
 				wasStepping = stepperTag != null && stepperTag == e.Tag;
 				stepperTag = null;
 			}
-			dbgManager.StepComplete_DbgThread((DbgThreadImpl)e.Thread ?? thread, e.Error);
+			var stepThread = (DbgThreadImpl)e.Thread ?? thread;
+			dbgManager.StepComplete_DbgThread(stepThread, e.Error);
 			if (wasStepping)
-				RaiseStepComplete_DbgThread(e.Error);
+				RaiseStepComplete_DbgThread(stepThread, e.Error);
 		}
 
-		void RaiseStepComplete(string error) => Dispatcher.BeginInvoke(() => RaiseStepComplete_DbgThread(error));
+		void RaiseStepComplete(string error) => Dispatcher.BeginInvoke(() => RaiseStepComplete_DbgThread(thread, error));
 
-		void RaiseStepComplete_DbgThread(string error) {
+		void RaiseStepComplete_DbgThread(DbgThread thread, string error) {
 			Dispatcher.VerifyAccess();
-			StepComplete?.Invoke(this, new DbgStepCompleteEventArgs(error));
+			StepComplete?.Invoke(this, new DbgStepCompleteEventArgs(thread, error));
 			if (closeWhenStepComplete)
 				Close(Dispatcher);
 		}
@@ -90,7 +91,7 @@ namespace dnSpy.Debugger.Steppers {
 				stepperTag = null;
 			}
 			if (wasStepping)
-				RaiseStepComplete_DbgThread(error);
+				RaiseStepComplete_DbgThread(thread, error);
 		}
 
 		public override void Step(DbgStepperKind step, bool autoClose) {
