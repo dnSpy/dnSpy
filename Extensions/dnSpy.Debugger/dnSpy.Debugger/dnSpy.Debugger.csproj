@@ -88,6 +88,7 @@
     <Compile Include="CallStack\TextEditor\CallStackFrameKind.cs" />
     <Compile Include="CallStack\TextEditor\CallStackGlyphTextMarkerHandler.cs" />
     <Compile Include="CallStack\TextEditor\CallStackMarker.cs" />
+    <Compile Include="Code\GoToInMemoryModuleStatement.cs" />
     <Compile Include="DbgUI\CurrentStatementUpdater.cs" />
     <Compile Include="DbgUI\Debugger.cs" />
     <Compile Include="DbgUI\DebuggerImpl.cs" />
