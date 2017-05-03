@@ -51,12 +51,13 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			Initialize(dnfOptions);
 		}
 
-		public override void InitializeDefaultOptions(string filename, StartDebuggingOptions options) => Initialize(GetDefaultOptions(filename, options));
+		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
+			Initialize(GetDefaultOptions(filename, breakKind, options));
 
-		DotNetFrameworkStartDebuggingOptions GetDefaultOptions(string filename, StartDebuggingOptions options) {
+		DotNetFrameworkStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
 			bool isExe = PortableExecutableFileHelpers.IsExecutable(filename);
 			if (isExe) {
-				var dnfOptions = CreateOptions();
+				var dnfOptions = CreateOptions(breakKind);
 				Initialize(filename, dnfOptions);
 				return dnfOptions;
 			}
@@ -64,11 +65,12 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 				// If it's a DLL, use the old EXE options if available
 				if (options is DotNetFrameworkStartDebuggingOptions dnfOptions)
 					return dnfOptions;
-				return CreateOptions();
+				return CreateOptions(breakKind);
 			}
 		}
 
-		DotNetFrameworkStartDebuggingOptions CreateOptions() => InitializeDefault(new DotNetFrameworkStartDebuggingOptions());
+		DotNetFrameworkStartDebuggingOptions CreateOptions(string breakKind) =>
+			InitializeDefault(new DotNetFrameworkStartDebuggingOptions(), breakKind);
 
 		void Initialize(DotNetFrameworkStartDebuggingOptions options) => base.Initialize(options);
 

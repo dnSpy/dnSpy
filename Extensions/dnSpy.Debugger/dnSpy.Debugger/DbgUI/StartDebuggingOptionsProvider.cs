@@ -70,7 +70,8 @@ namespace dnSpy.Debugger.DbgUI {
 			return null;
 		}
 
-		public StartDebuggingOptions GetStartDebuggingOptions() {
+		public StartDebuggingOptions GetStartDebuggingOptions(string defaultBreakKind) {
+			var breakKind = defaultBreakKind ?? PredefinedBreakKinds.DontBreak;
 			var filename = GetCurrentFilename();
 			var context = new StartDebuggingOptionsPageContext(filename);
 			var pages = GetStartDebuggingOptionsPages(context);
@@ -82,11 +83,11 @@ namespace dnSpy.Debugger.DbgUI {
 			var lastOptions = mru.TryGetLastOptions();
 			foreach (var page in pages) {
 				if (oldOptions?.pageGuid == page.Guid)
-					page.InitializePreviousOptions(oldOptions.Value.options);
+					page.InitializePreviousOptions(WithBreakKind(oldOptions.Value.options, defaultBreakKind));
 				else if (oldOptions == null && lastOptions?.pageGuid == page.Guid)
-					page.InitializeDefaultOptions(filename, lastOptions.Value.options);
+					page.InitializeDefaultOptions(filename, breakKind, WithBreakKind(lastOptions.Value.options, defaultBreakKind));
 				else
-					page.InitializeDefaultOptions(filename, null);
+					page.InitializeDefaultOptions(filename, breakKind, null);
 			}
 
 			// If there's an exact match ('oldOptions'), then prefer it.
@@ -110,6 +111,14 @@ namespace dnSpy.Debugger.DbgUI {
 			if (info.Filename != null)
 				mru.Add(info.Filename, info.Options, vm.SelectedPageGuid);
 			return info.Options;
+		}
+
+		static StartDebuggingOptions WithBreakKind(StartDebuggingOptions options, string breakKind) {
+			if (breakKind == null)
+				return options;
+			options = (StartDebuggingOptions)options.Clone();
+			options.BreakKind = breakKind;
+			return options;
 		}
 
 		Guid? GetDefaultPageGuid(StartDebuggingOptionsPage[] pages, string filename, Guid? lastGuid) {

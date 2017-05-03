@@ -131,16 +131,24 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			WorkingDirectory = newDir;
 		}
 
+		static string FilterBreakKind(string breakKind) {
+			foreach (var info in breakProcessKindList) {
+				if (StringComparer.Ordinal.Equals(breakKind, (string)info.Value))
+					return breakKind;
+			}
+			return PredefinedBreakKinds.DontBreak;
+		}
+
 		protected void Initialize(CorDebugStartDebuggingOptions options) {
 			Filename = options.Filename;
 			CommandLine = options.CommandLine;
 			// Must be init'd after Filename since it also overwrites this property
 			WorkingDirectory = options.WorkingDirectory;
-			BreakKind = options.BreakKind;
+			BreakKind = FilterBreakKind(options.BreakKind);
 		}
 
-		protected T InitializeDefault<T>(T options) where T : CorDebugStartDebuggingOptions {
-			options.BreakKind = PredefinedBreakKinds.DontBreak;
+		protected T InitializeDefault<T>(T options, string breakKind) where T : CorDebugStartDebuggingOptions {
+			options.BreakKind = FilterBreakKind(breakKind);
 			return options;
 		}
 
@@ -148,7 +156,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			options.Filename = Filename;
 			options.CommandLine = CommandLine;
 			options.WorkingDirectory = WorkingDirectory;
-			options.BreakKind = BreakKind;
+			options.BreakKind = FilterBreakKind(BreakKind);
 			return options;
 		}
 

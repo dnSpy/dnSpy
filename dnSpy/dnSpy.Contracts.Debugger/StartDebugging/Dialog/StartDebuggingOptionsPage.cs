@@ -76,8 +76,9 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// else <paramref name="options"/> should be ignored.
 		/// </summary>
 		/// <param name="filename">Filename</param>
+		/// <param name="breakKind">Default break kind, see <see cref="PredefinedBreakKinds"/></param>
 		/// <param name="options">Options or null</param>
-		public abstract void InitializeDefaultOptions(string filename, StartDebuggingOptions options);
+		public abstract void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options);
 
 		/// <summary>
 		/// Gets all options. This method is only called if <see cref="IsValid"/> returns true

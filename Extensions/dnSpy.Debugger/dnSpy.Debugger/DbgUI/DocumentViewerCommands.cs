@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DbgUI {
 				return string.Format(dnSpy_Debugger_Resources.DebugProgramX, UIUtilities.EscapeMenuItemHeader(Path.GetFileName(filename)));
 			}
 
-			public override void Execute(Context context) => debugger.Value.DebugProgram();
+			public override void Execute(Context context) => debugger.Value.DebugProgram(pauseAtEntryPoint: false);
 			public override bool IsVisible(Context context) => debugger.Value.CanDebugProgram;
 		}
 

@@ -83,8 +83,9 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		public override bool CanDebugProgram => true;
-		public override void DebugProgram() {
-			var options = startDebuggingOptionsProvider.Value.GetStartDebuggingOptions();
+		public override void DebugProgram(bool pauseAtEntryPoint) {
+			var breakKind = pauseAtEntryPoint ? PredefinedBreakKinds.EntryPoint : null;
+			var options = startDebuggingOptionsProvider.Value.GetStartDebuggingOptions(breakKind);
 			if (options == null)
 				return;
 
@@ -205,7 +206,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (CanContinue)
 				Continue();
 			else if (CanDebugProgram)
-				DebugProgram();
+				DebugProgram(pauseAtEntryPoint: false);
 		}
 
 		public override bool CanStepIntoOrDegbugProgram => CanStepInto || CanDebugProgram;
@@ -213,7 +214,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (CanStepInto)
 				StepInto();
 			else if (CanDebugProgram)
-				DebugProgram();
+				DebugProgram(pauseAtEntryPoint: true);
 		}
 
 		public override bool CanStepOverOrDegbugProgram => CanStepOver || CanDebugProgram;
@@ -221,7 +222,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (CanStepOver)
 				StepOver();
 			else if (CanDebugProgram)
-				DebugProgram();
+				DebugProgram(pauseAtEntryPoint: true);
 		}
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {

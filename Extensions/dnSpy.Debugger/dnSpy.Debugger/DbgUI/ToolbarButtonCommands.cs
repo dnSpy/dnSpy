@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override bool IsVisible(IToolBarItemContext context) => !initd || !debugger.Value.IsDebugging;
-			public override void Execute(IToolBarItemContext context) => debugger.Value.DebugProgram();
+			public override void Execute(IToolBarItemContext context) => debugger.Value.DebugProgram(pauseAtEntryPoint: false);
 			public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.ToolBarDebugAssemblyToolTip, dnSpy_Debugger_Resources.ShortCutKeyF5);
 		}
 
