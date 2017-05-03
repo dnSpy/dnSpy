@@ -32,9 +32,15 @@ namespace dnSpy.Debugger.CorDebug.Code {
 					reference = new DotNetMethodBodyReference(nativeLoc.Module, nativeLoc.Token, nativeLoc.ILOffset);
 					break;
 
-				case DbgILOffsetMapping.Unknown:
 				case DbgILOffsetMapping.Prolog:
+					reference = new DotNetMethodBodyReference(nativeLoc.Module, nativeLoc.Token, DotNetMethodBodyReference.PROLOG);
+					break;
+
 				case DbgILOffsetMapping.Epilog:
+					reference = new DotNetMethodBodyReference(nativeLoc.Module, nativeLoc.Token, DotNetMethodBodyReference.EPILOG);
+					break;
+
+				case DbgILOffsetMapping.Unknown:
 				case DbgILOffsetMapping.NoInfo:
 				case DbgILOffsetMapping.UnmappedAddress:
 				default:

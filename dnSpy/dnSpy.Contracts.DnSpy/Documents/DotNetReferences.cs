@@ -25,6 +25,16 @@ namespace dnSpy.Contracts.Documents {
 	/// </summary>
 	public sealed class DotNetMethodBodyReference {
 		/// <summary>
+		/// The offset is in an epilog
+		/// </summary>
+		public const uint EPILOG = 0xFFFFFFFF;
+
+		/// <summary>
+		/// The offset is in the prolog
+		/// </summary>
+		public const uint PROLOG = 0xFFFFFFFE;
+
+		/// <summary>
 		/// Gets the module
 		/// </summary>
 		public ModuleId Module { get; }
@@ -35,7 +45,7 @@ namespace dnSpy.Contracts.Documents {
 		public uint Token { get; }
 
 		/// <summary>
-		/// Gets the IL offset within the method body
+		/// Gets the IL offset in method body, or one of <see cref="PROLOG"/>, <see cref="EPILOG"/>
 		/// </summary>
 		public uint Offset { get; }
 
@@ -44,7 +54,7 @@ namespace dnSpy.Contracts.Documents {
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of method</param>
-		/// <param name="offset">IL offset in method body</param>
+		/// <param name="offset">IL offset in method body, or one of <see cref="PROLOG"/>, <see cref="EPILOG"/></param>
 		public DotNetMethodBodyReference(ModuleId module, uint token, uint offset) {
 			Module = module;
 			Token = token;

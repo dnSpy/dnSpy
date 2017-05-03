@@ -74,18 +74,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return null;
 		}
 
+		// Priority order: 1) active in-memory/dynamic module, 2) active module, 3) other module
 		ModuleDef LoadExisting(ModuleId moduleId) {
 			ModuleDef foundModule = null;
+			ModuleDef activeModule = null;
 			foreach (var info in dsDocumentProvider.DocumentInfos) {
 				if (info.Id != moduleId)
 					continue;
-				if (info.IsActive)
-					return info.Document.ModuleDef;
-				else if (foundModule == null)
-					foundModule = info.Document.ModuleDef;
+				if (info.IsActive) {
+					if (info.Document is MemoryModuleDefDocument || info.Document is DynamicModuleDefDocument)
+						return info.Document.ModuleDef;
+					activeModule = activeModule ?? info.Document.ModuleDef;
+				}
+				else
+					foundModule = foundModule ?? info.Document.ModuleDef;
 			}
-			// No active module found, use whatever we found
-			return foundModule;
+			return activeModule ?? foundModule;
 		}
 
 		public override ModuleDef TryGetMetadata(ModuleId moduleId, DbgLoadModuleOptions options) {

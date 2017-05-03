@@ -19,8 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
@@ -39,13 +37,15 @@ namespace dnSpy.Debugger.DotNet.Code {
 		readonly DbgModuleIdProviderService dbgModuleIdProviderService;
 		readonly DbgMetadataService dbgMetadataService;
 		readonly Lazy<IDocumentTabService> documentTabService;
+		readonly Lazy<DotNetReferenceNavigator> dotNetReferenceNavigator;
 
 		[ImportingConstructor]
-		DbgDotNetCodeRangeServiceImpl(UIDispatcher uiDispatcher, DbgModuleIdProviderService dbgModuleIdProviderService, DbgMetadataService dbgMetadataService, Lazy<IDocumentTabService> documentTabService) {
+		DbgDotNetCodeRangeServiceImpl(UIDispatcher uiDispatcher, DbgModuleIdProviderService dbgModuleIdProviderService, DbgMetadataService dbgMetadataService, Lazy<IDocumentTabService> documentTabService, Lazy<DotNetReferenceNavigator> dotNetReferenceNavigator) {
 			this.uiDispatcher = uiDispatcher;
 			this.dbgModuleIdProviderService = dbgModuleIdProviderService;
 			this.dbgMetadataService = dbgMetadataService;
 			this.documentTabService = documentTabService;
+			this.dotNetReferenceNavigator = dotNetReferenceNavigator;
 		}
 
 		void UI(Action callback) => uiDispatcher.UI(callback);
@@ -76,9 +76,9 @@ namespace dnSpy.Debugger.DotNet.Code {
 			if (moduleId == null)
 				return null;
 
-			bool specialIpOffset;
+			uint refNavOffset;
 			if (offset == EPILOG) {
-				specialIpOffset = true;
+				refNavOffset = DotNetReferenceNavigator.EPILOG;
 				var mod = dbgMetadataService.TryGetMetadata(module, DbgLoadModuleOptions.AutoLoaded);
 				if (mod?.ResolveToken(token) is MethodDef md && md.Body != null && md.Body.Instructions.Count > 0)
 					offset = md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
@@ -86,11 +86,11 @@ namespace dnSpy.Debugger.DotNet.Code {
 					return null;
 			}
 			else if (offset == PROLOG) {
-				specialIpOffset = true;
+				refNavOffset = DotNetReferenceNavigator.PROLOG;
 				offset = 0;
 			}
 			else
-				specialIpOffset = false;
+				refNavOffset = offset;
 
 			var key = new ModuleTokenId(moduleId.Value, token);
 			var info = methodDebugService.TryGetMethodDebugInfo(key);
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 					return null;
 
 				tab.FollowReference(mdMethod);
-				JumpToCurrentStatement(tab, mdMethod, key, offset, specialIpOffset);
+				dotNetReferenceNavigator.Value.GoToLocation(tab, mdMethod, key, refNavOffset);
 				documentViewer = tab.TryGetDocumentViewer();
 				methodDebugService = documentViewer.GetMethodDebugService();
 				info = methodDebugService.TryGetMethodDebugInfo(key);
@@ -128,88 +128,6 @@ namespace dnSpy.Debugger.DotNet.Code {
 			for (int i = 0; i < stepRanges.Length; i++)
 				stepRanges[i] = new DbgCodeRange(ilSpans[i * 2], ilSpans[i * 2 + 1]);
 			return stepRanges;
-		}
-
-		void JumpToCurrentStatement(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset) =>
-			JumpToCurrentStatement(tab, method, module, offset, specialIpOffset, canRefreshMethods: true);
-
-		void JumpToCurrentStatement(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods) {
-			if (tab == null || method == null)
-				return;
-
-			// The file could've been added lazily to the list so add a short delay before we select it
-			uiDispatcher.UIBackground(() => {
-				tab.FollowReference(method, false, e => {
-					Debug.Assert(e.Tab == tab);
-					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
-					if (e.Success && !e.HasMovedCaret) {
-						MoveCaretToCurrentStatement(e.Tab.UIContext as IDocumentViewer, method, module, offset, specialIpOffset, canRefreshMethods);
-						e.HasMovedCaret = true;
-					}
-				});
-			});
-		}
-
-		bool MoveCaretToCurrentStatement(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods) {
-			if (documentViewer == null)
-				return false;
-			if (MoveCaretTo(documentViewer, module, offset))
-				return true;
-			if (!canRefreshMethods)
-				return false;
-
-			RefreshMethodBodies(documentViewer, method, module, offset, specialIpOffset);
-
-			return false;
-		}
-
-		static bool MoveCaretTo(IDocumentViewer documentViewer, ModuleTokenId module, uint offset) {
-			if (documentViewer == null)
-				return false;
-
-			if (!VerifyAndGetCurrentDebuggedMethod(documentViewer, module, out var methodDebugService))
-				return false;
-
-			var sourceStatement = methodDebugService.TryGetMethodDebugInfo(module).GetSourceStatementByCodeOffset(offset);
-			if (sourceStatement == null)
-				return false;
-
-			documentViewer.MoveCaretToPosition(sourceStatement.Value.TextSpan.Start);
-			return true;
-		}
-
-		static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, ModuleTokenId token, out IMethodDebugService methodDebugService) {
-			methodDebugService = documentViewer.GetMethodDebugService();
-			return methodDebugService.TryGetMethodDebugInfo(token) != null;
-		}
-
-		void RefreshMethodBodies(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset) {
-			// If it's in the prolog/epilog, ignore it
-			if (specialIpOffset)
-				return;
-			if (module.Module.IsDynamic)
-				return;
-
-			var body = method.Body;
-			if (body == null)
-				return;
-			// If the offset is a valid instruction in the body, the method is probably not encrypted
-			if (body.Instructions.Any(i => i.Offset == offset))
-				return;
-
-			var modNode = documentTabService.Value.DocumentTreeView.FindNode(method.Module);
-			if (modNode == null)
-				return;
-			if (modNode.Document is MemoryModuleDefDocument memFile)
-				memFile.UpdateMemory();
-			else {
-				var mod = dbgMetadataService.TryGetMetadata(module.Module, DbgLoadModuleOptions.ForceMemory | DbgLoadModuleOptions.AutoLoaded);
-				method = mod?.ResolveToken(module.Token) as MethodDef;
-				if (method == null)
-					return;
-			}
-
-			JumpToCurrentStatement(documentViewer.DocumentTab, method, module, offset, specialIpOffset, canRefreshMethods: false);
 		}
 	}
 }
