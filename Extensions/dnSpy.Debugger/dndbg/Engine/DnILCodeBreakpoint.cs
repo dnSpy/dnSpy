@@ -23,9 +23,13 @@ namespace dndbg.Engine {
 	sealed class ILCodeBreakpointConditionContext : BreakpointConditionContext {
 		public override DnBreakpoint Breakpoint => ILCodeBreakpoint;
 		public DnILCodeBreakpoint ILCodeBreakpoint { get; }
+		public BreakpointDebugCallbackEventArgs E { get; }
 
-		public ILCodeBreakpointConditionContext(DnDebugger debugger, DnILCodeBreakpoint bp)
-			: base(debugger) => ILCodeBreakpoint = bp;
+		public ILCodeBreakpointConditionContext(DnDebugger debugger, DnILCodeBreakpoint bp, BreakpointDebugCallbackEventArgs e)
+			: base(debugger) {
+			ILCodeBreakpoint = bp;
+			E = e;
+		}
 	}
 
 	sealed class DnILCodeBreakpoint : DnCodeBreakpoint {

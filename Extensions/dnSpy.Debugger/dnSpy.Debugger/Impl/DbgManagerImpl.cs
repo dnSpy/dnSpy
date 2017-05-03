@@ -142,11 +142,13 @@ namespace dnSpy.Debugger.Impl {
 			public DbgObjectFactoryImpl ObjectFactory { get; set; }
 			public DbgException Exception { get; set; }
 			public bool DelayedIsRunning { get; set; }
-			public EngineInfo(DbgEngine engine) {
+			public string BreakKind { get; }
+			public EngineInfo(DbgEngine engine, string breakKind) {
 				Engine = engine;
 				DebugTags = (string[])engine.DebugTags.Clone();
 				EngineState = EngineState.Starting;
 				DelayedIsRunning = true;
+				BreakKind = breakKind;
 			}
 		}
 
@@ -234,9 +236,12 @@ namespace dnSpy.Debugger.Impl {
 			lock (lockObj) {
 				var oldIsRunning = cachedIsRunning;
 				raiseIsDebuggingChanged = engines.Count == 0;
-				var engineInfo = new EngineInfo(engine);
-				if (clonedOptions is StartDebuggingOptions startOptions)
+				string breakKind = null;
+				if (clonedOptions is StartDebuggingOptions startOptions) {
 					restartOptions.Add(startOptions);
+					breakKind = startOptions.BreakKind;
+				}
+				var engineInfo = new EngineInfo(engine, breakKind);
 				engines.Add(engineInfo);
 				addedDebugTags = debugTags.Add(engineInfo.DebugTags);
 				cachedIsRunning = CalculateIsRunning_NoLock();
@@ -295,6 +300,10 @@ namespace dnSpy.Debugger.Impl {
 
 			case DbgEngineMessageKind.Break:
 				OnBreak_DbgThread(engine, (DbgMessageBreak)e);
+				break;
+
+			case DbgEngineMessageKind.EntryPointBreak:
+				OnEntryPointBreak_DbgThread(engine, (DbgMessageEntryPointBreak)e);
 				break;
 
 			case DbgEngineMessageKind.ProgramMessage:
@@ -371,6 +380,7 @@ namespace dnSpy.Debugger.Impl {
 			bool otherPauseProgram;
 			lock (lockObj) {
 				var info = GetEngineInfo_NoLock(engine);
+				pauseProgram |= info.BreakKind == PredefinedBreakKinds.CreateProcess;
 				info.Process = process;
 				info.Runtime = runtime;
 				info.ObjectFactory = objectFactory;
@@ -640,6 +650,12 @@ namespace dnSpy.Debugger.Impl {
 			}
 			if (raiseIsRunning)
 				RaiseIsRunningChanged_DbgThread();
+		}
+
+		void OnEntryPointBreak_DbgThread(DbgEngine engine, DbgMessageEntryPointBreak e) {
+			Dispatcher.VerifyAccess();
+			var ep = new DbgMessageEntryPointBreakEventArgs(GetRuntime(engine), e.Thread);
+			OnConditionalBreak_DbgThread(engine, ep, ep.Thread, pauseDefaultValue: true);
 		}
 
 		void OnProgramMessage_DbgThread(DbgEngine engine, DbgMessageProgramMessage e) {

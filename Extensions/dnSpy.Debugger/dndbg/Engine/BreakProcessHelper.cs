@@ -137,7 +137,8 @@ namespace dndbg.Engine {
 			DnBreakpoint bp = null;
 			bp = debugger.CreateBreakpoint(moduleId, token, 0, ctx2 => {
 				debugger.RemoveBreakpoint(bp);
-				return true;
+				ctx2.E.AddPauseState(new EntryPointBreakpointPauseState(ctx2.E.CorAppDomain, ctx2.E.CorThread));
+				return false;
 			});
 		}
 

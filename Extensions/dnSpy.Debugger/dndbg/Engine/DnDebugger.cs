@@ -1083,7 +1083,7 @@ namespace dndbg.Engine {
 					if (!bp.IsBreakpoint(bpArgs.Breakpoint))
 						continue;
 
-					if (bp.IsEnabled && bp.Condition(new ILCodeBreakpointConditionContext(this, bp)))
+					if (bp.IsEnabled && bp.Condition(new ILCodeBreakpointConditionContext(this, bp, bpArgs)))
 						e.AddPauseState(new ILCodeBreakpointPauseState(bp, bpArgs.CorAppDomain, bpArgs.CorThread));
 					break;
 				}

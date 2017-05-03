@@ -82,6 +82,12 @@ namespace dnSpy.Contracts.Debugger {
 		ExceptionThrown,
 
 		/// <summary>
+		/// The entry point has been reached (<see cref="DbgMessageEntryPointBreakEventArgs"/>).
+		/// This message is only sent if the user chose to break at the entry point.
+		/// </summary>
+		EntryPointBreak,
+
+		/// <summary>
 		/// Message from the debugged program (<see cref="DbgMessageProgramMessageEventArgs"/>)
 		/// </summary>
 		ProgramMessage,
@@ -418,6 +424,37 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="exception">Exception</param>
 		public DbgMessageExceptionThrownEventArgs(DbgException exception) =>
 			Exception = exception ?? throw new ArgumentNullException(nameof(exception));
+	}
+
+	/// <summary>
+	/// The entry point has been reached (<see cref="DbgMessageKind.EntryPointBreak"/>).
+	/// This message is only sent if the user chose to break at the entry point.
+	/// </summary>
+	public sealed class DbgMessageEntryPointBreakEventArgs : DbgMessageEventArgs {
+		/// <summary>
+		/// Returns <see cref="DbgMessageKind.EntryPointBreak"/>
+		/// </summary>
+		public override DbgMessageKind Kind => DbgMessageKind.EntryPointBreak;
+
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public DbgRuntime Runtime { get; }
+
+		/// <summary>
+		/// Gets the thread or null if it's unknown
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="runtime">Runtime</param>
+		/// <param name="thread">Thread or null if it's unknown</param>
+		public DbgMessageEntryPointBreakEventArgs(DbgRuntime runtime, DbgThread thread) {
+			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
+			Thread = thread;
+		}
 	}
 
 	/// <summary>

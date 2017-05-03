@@ -138,6 +138,26 @@ namespace dnSpy.Contracts.Debugger.Engine {
 	}
 
 	/// <summary>
+	/// <see cref="DbgEngineMessageKind.EntryPointBreak"/> event
+	/// </summary>
+	public sealed class DbgMessageEntryPointBreak : DbgEngineMessage {
+		/// <summary>
+		/// Returns <see cref="DbgEngineMessageKind.EntryPointBreak"/>
+		/// </summary>
+		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.EntryPointBreak;
+
+		/// <summary>
+		/// Gets the thread or null if it's not known
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public DbgMessageEntryPointBreak(DbgThread thread) => Thread = thread;
+	}
+
+	/// <summary>
 	/// <see cref="DbgEngineMessageKind.ProgramMessage"/> event
 	/// </summary>
 	public sealed class DbgMessageProgramMessage : DbgEngineMessage {

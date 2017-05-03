@@ -72,6 +72,11 @@ namespace dndbg.Engine {
 		Eval,
 
 		/// <summary>
+		/// Breakpoint at entry point or Module .cctor got hit
+		/// </summary>
+		EntryPointBreakpoint,
+
+		/// <summary>
 		/// Start of user pause reasons
 		/// </summary>
 		UserReason = 0x10000000,
@@ -130,6 +135,17 @@ namespace dndbg.Engine {
 
 		public BreakPauseState(CorAppDomain corAppDomain, CorThread corThread)
 			: base(DebuggerPauseReason.Break) {
+			CorAppDomain = corAppDomain;
+			CorThread = corThread;
+		}
+	}
+
+	sealed class EntryPointBreakpointPauseState : DebuggerPauseState {
+		public CorAppDomain CorAppDomain { get; }
+		public CorThread CorThread { get; }
+
+		public EntryPointBreakpointPauseState(CorAppDomain corAppDomain, CorThread corThread)
+			: base(DebuggerPauseReason.EntryPointBreakpoint) {
 			CorAppDomain = corAppDomain;
 			CorThread = corThread;
 		}

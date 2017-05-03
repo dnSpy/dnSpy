@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CreateProcess Event.
+        ///   Looks up a localized string similar to CreateProcess.
         /// </summary>
         public static string DbgBreak_CreateProcessEvent {
             get {

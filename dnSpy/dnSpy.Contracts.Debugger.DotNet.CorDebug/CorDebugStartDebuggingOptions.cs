@@ -40,11 +40,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		public string WorkingDirectory { get; set; }
 
 		/// <summary>
-		/// Break kind, defaults to <see cref="BreakProcessKind.None"/>
-		/// </summary>
-		public BreakProcessKind BreakProcessKind { get; set; } = BreakProcessKind.None;
-
-		/// <summary>
 		/// Environment variables
 		/// </summary>
 		public DbgEnvironment Environment { get; }
@@ -61,10 +56,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		protected void CopyTo(CorDebugStartDebuggingOptions other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
+			base.CopyTo(other);
 			other.Filename = Filename;
 			other.CommandLine = CommandLine;
 			other.WorkingDirectory = WorkingDirectory;
-			other.BreakProcessKind = BreakProcessKind;
 			other.Environment.Clear();
 			other.Environment.AddRange(Environment.Environment);
 		}

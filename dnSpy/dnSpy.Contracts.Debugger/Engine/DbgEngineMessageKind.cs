@@ -43,6 +43,12 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		Break,
 
 		/// <summary>
+		/// Entry point has been reached. The engine has paused the program.
+		/// This message is only sent if the user chose to break at the entry point.
+		/// </summary>
+		EntryPointBreak,
+
+		/// <summary>
 		/// Log message written by the debugged program. The engine has paused the program.
 		/// </summary>
 		ProgramMessage,

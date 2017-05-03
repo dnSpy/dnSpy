@@ -36,6 +36,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		protected void CopyTo(CorDebugAttachToProgramOptions other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
+			base.CopyTo(other);
 			other.ProcessId = ProcessId;
 		}
 	}

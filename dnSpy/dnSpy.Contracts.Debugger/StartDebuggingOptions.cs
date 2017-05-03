@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 
 namespace dnSpy.Contracts.Debugger {
@@ -24,5 +25,39 @@ namespace dnSpy.Contracts.Debugger {
 	/// Debug a program base class. Created eg. by <see cref="StartDebuggingOptionsPage.GetOptions"/>
 	/// </summary>
 	public abstract class StartDebuggingOptions : DebugProgramOptions {
+		/// <summary>
+		/// Where to break, see <see cref="PredefinedBreakKinds"/>
+		/// </summary>
+		public string BreakKind { get; set; }
+
+		/// <summary>
+		/// Copies this instance to <paramref name="other"/>
+		/// </summary>
+		/// <param name="other">Destination</param>
+		protected void CopyTo(StartDebuggingOptions other) {
+			if (other == null)
+				throw new ArgumentNullException(nameof(other));
+			other.BreakKind = BreakKind;
+		}
+	}
+
+	/// <summary>
+	/// Predefined break kinds, see <see cref="StartDebuggingOptions.BreakKind"/>
+	/// </summary>
+	public static class PredefinedBreakKinds {
+		/// <summary>
+		/// Don't break, let the program run
+		/// </summary>
+		public const string DontBreak = nameof(DontBreak);
+
+		/// <summary>
+		/// Break as soon as the process has been created
+		/// </summary>
+		public const string CreateProcess = nameof(CreateProcess);
+
+		/// <summary>
+		/// Break at entry point
+		/// </summary>
+		public const string EntryPoint = nameof(EntryPoint);
 	}
 }

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger.Attach;
 
 namespace dnSpy.Contracts.Debugger {
@@ -24,5 +25,16 @@ namespace dnSpy.Contracts.Debugger {
 	/// Attach to program base class. Created eg. by <see cref="AttachProgramOptions.GetOptions"/>
 	/// </summary>
 	public abstract class AttachToProgramOptions : DebugProgramOptions {
+		/// <summary>
+		/// Copies this instance to <paramref name="other"/> and returns it
+		/// </summary>
+		/// <param name="other">Destination</param>
+		/// <returns></returns>
+		protected AttachToProgramOptions CopyTo(AttachToProgramOptions other) {
+			if (other == null)
+				throw new ArgumentNullException(nameof(other));
+			// Nothing at the moment
+			return other;
+		}
 	}
 }

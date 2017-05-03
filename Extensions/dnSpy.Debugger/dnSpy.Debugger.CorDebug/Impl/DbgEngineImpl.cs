@@ -299,6 +299,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 							SendCodeBreakpointHitMessage_CorDebug(nbp.Breakpoint, TryGetThread(nbp.CorThread));
 							break;
 
+						case DebuggerPauseReason.EntryPointBreakpoint:
+							var epbp = (EntryPointBreakpointPauseState)pauseState;
+							SendMessage(new DbgMessageEntryPointBreak(TryGetThread(epbp.CorThread)));
+							break;
+
 						case DebuggerPauseReason.DebugEventBreakpoint:
 						case DebuggerPauseReason.AnyDebugEventBreakpoint:
 						case DebuggerPauseReason.Eval:
@@ -510,7 +515,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					CurrentDirectory = options.WorkingDirectory,
 					Filename = options.Filename,
 					CommandLine = options.CommandLine,
-					BreakProcessKind = options.BreakProcessKind.ToDndbg(),
+					BreakProcessKind = GetBreakProcessKind(options.BreakKind),
 					Environment = env.Environment,
 				};
 				dbgOptions.DebugOptions.IgnoreBreakInstructions = false;
@@ -538,6 +543,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				SendMessage(new DbgMessageConnected(errMsg));
 				return;
 			}
+		}
+
+		static BreakProcessKind GetBreakProcessKind(string breakKind) {
+			if (breakKind == PredefinedBreakKinds.EntryPoint)
+				return BreakProcessKind.EntryPoint;
+			return BreakProcessKind.None;
 		}
 
 		static string GetIncompatiblePlatformErrorMessage() {

@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Contracts.MVVM;
@@ -72,23 +73,16 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		public ICommand PickFilenameCommand => new RelayCommand(a => PickNewFilename());
 		public ICommand PickWorkingDirectoryCommand => new RelayCommand(a => PickNewWorkingDirectory());
 
-		static readonly EnumVM[] breakProcessKindList = new EnumVM[(int)BreakProcessKind.Last] {
-			new EnumVM(BreakProcessKind.None, dnSpy_Debugger_CorDebug_Resources.DbgBreak_Dont),
-			new EnumVM(BreakProcessKind.CreateProcess, dnSpy_Debugger_CorDebug_Resources.DbgBreak_CreateProcessEvent),
-			new EnumVM(BreakProcessKind.CreateAppDomain, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstCreateAppDomainEvent),
-			new EnumVM(BreakProcessKind.LoadModule, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstLoadModuleEvent),
-			new EnumVM(BreakProcessKind.LoadClass, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstLoadClassEvent),
-			new EnumVM(BreakProcessKind.CreateThread, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstCreateThreadEvent),
-			new EnumVM(BreakProcessKind.ExeLoadModule, dnSpy_Debugger_CorDebug_Resources.DbgBreak_ExeLoadModuleEvent),
-			new EnumVM(BreakProcessKind.ExeLoadClass, dnSpy_Debugger_CorDebug_Resources.DbgBreak_ExeFirstLoadClassEvent),
-			new EnumVM(BreakProcessKind.ModuleCctorOrEntryPoint, dnSpy_Debugger_CorDebug_Resources.DbgBreak_ModuleClassConstructorOrEntryPoint),
-			new EnumVM(BreakProcessKind.EntryPoint, dnSpy_Debugger_CorDebug_Resources.DbgBreak_EntryPoint),
+		static readonly EnumVM[] breakProcessKindList = new EnumVM[] {
+			new EnumVM(PredefinedBreakKinds.DontBreak, dnSpy_Debugger_CorDebug_Resources.DbgBreak_Dont),
+			new EnumVM(PredefinedBreakKinds.CreateProcess, dnSpy_Debugger_CorDebug_Resources.DbgBreak_CreateProcessEvent),
+			new EnumVM(PredefinedBreakKinds.EntryPoint, dnSpy_Debugger_CorDebug_Resources.DbgBreak_EntryPoint),
 		};
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(breakProcessKindList);
 
-		public BreakProcessKind BreakProcessKind {
-			get => (BreakProcessKind)BreakProcessKindVM.SelectedItem;
+		public string BreakKind {
+			get => (string)BreakProcessKindVM.SelectedItem;
 			set => BreakProcessKindVM.SelectedItem = value;
 		}
 
@@ -142,11 +136,11 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			CommandLine = options.CommandLine;
 			// Must be init'd after Filename since it also overwrites this property
 			WorkingDirectory = options.WorkingDirectory;
-			BreakProcessKind = options.BreakProcessKind;
+			BreakKind = options.BreakKind;
 		}
 
 		protected T InitializeDefault<T>(T options) where T : CorDebugStartDebuggingOptions {
-			options.BreakProcessKind = BreakProcessKind.None;
+			options.BreakKind = PredefinedBreakKinds.DontBreak;
 			return options;
 		}
 
@@ -154,7 +148,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			options.Filename = Filename;
 			options.CommandLine = CommandLine;
 			options.WorkingDirectory = WorkingDirectory;
-			options.BreakProcessKind = BreakProcessKind;
+			options.BreakKind = BreakKind;
 			return options;
 		}
 

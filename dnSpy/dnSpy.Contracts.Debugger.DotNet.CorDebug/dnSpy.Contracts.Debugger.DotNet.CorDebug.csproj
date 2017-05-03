@@ -40,7 +40,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BreakProcessKind.cs" />
     <Compile Include="Code\DbgDotNetNativeCodeLocation.cs" />
     <Compile Include="Code\DbgILOffsetMapping.cs" />
     <Compile Include="CorDebugAttachToProgramOptions.cs" />
