@@ -102,11 +102,22 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			DbgTextViewBreakpointLocationResult? res = null;
 			foreach (var lz in dbgTextViewBreakpointLocationProviders)
 				UpdateResult(allLocations, textView, ref res, lz.Value.CreateLocation(tab, textView, pos), useIfSameSpan: false);
-			var span = new SnapshotSpan(pos.Position, res != null ? res.Value.Span.End.Position : new SnapshotPoint(pos.Position.Snapshot, pos.Position.Snapshot.Length));
+			SnapshotSpan span;
+			if (res != null) {
+				var resSpan = res.Value.Span.SnapshotSpan;
+				var newStart = Min(pos.Position, resSpan.Start);
+				var newEnd = Max(pos.Position, resSpan.End);
+				span = new SnapshotSpan(newStart, newEnd);
+			}
+			else
+				span = new SnapshotSpan(pos.Position, new SnapshotPoint(pos.Position.Snapshot, pos.Position.Snapshot.Length));
 			// This one has higher priority since it already exists (eg. could be a stack frame BP location)
 			UpdateResult(allLocations, textView, ref res, breakpointMarker.Value.GetLocations(textView, span), useIfSameSpan: true);
 			return new LocationsResult(dbgManager, res, allLocations);
 		}
+
+		static SnapshotPoint Min(SnapshotPoint a, SnapshotPoint b) => a <= b ? a : b;
+		static SnapshotPoint Max(SnapshotPoint a, SnapshotPoint b) => a >= b ? a : b;
 
 		static void UpdateResult(List<DbgCodeLocation> allLocations, ITextView textView, ref DbgTextViewBreakpointLocationResult? res, DbgTextViewBreakpointLocationResult? result, bool useIfSameSpan) {
 			if (result?.Locations == null)

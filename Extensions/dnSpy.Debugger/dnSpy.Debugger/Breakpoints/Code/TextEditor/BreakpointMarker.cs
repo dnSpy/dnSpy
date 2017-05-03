@@ -24,6 +24,7 @@ using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
@@ -187,10 +188,23 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);
 
 		DbgTextViewBreakpointLocationResult? IBreakpointMarker.GetLocations(ITextView textView, SnapshotSpan span) {
+			List<DbgCodeLocation> locations = null;
+			var locationSpan = default(SnapshotSpan);
 			foreach (var info in glyphTextMarkerService.Value.GetMarkers(textView, span)) {
-				if (info.Marker.Tag is DbgCodeBreakpoint bp)
-					return new DbgTextViewBreakpointLocationResult(bp.Location.Clone(), new VirtualSnapshotSpan(info.Span));
+				if (info.Marker.Tag is DbgCodeBreakpoint bp) {
+					bool reset = false;
+					if (locationSpan.Snapshot == null || locationSpan == info.Span || (reset = info.Span.Start < locationSpan.Start)) {
+						locationSpan = info.Span;
+						if (locations == null)
+							locations = new List<DbgCodeLocation>();
+						else if (reset)
+							locations.Clear();
+						locations.Add(bp.Location);
+					}
+				}
 			}
+			if (locations != null)
+				return new DbgTextViewBreakpointLocationResult(locations.Select(a => a.Clone()).ToArray(), new VirtualSnapshotSpan(locationSpan));
 			return null;
 		}
 	}
