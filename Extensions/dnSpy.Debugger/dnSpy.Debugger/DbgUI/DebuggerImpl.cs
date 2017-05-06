@@ -173,7 +173,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public void Dispose() {
 				if (allLocations != null && allLocations.Count > 0)
-					dbgManager.Value.Close(allLocations.ToArray());
+					dbgManager.Value.Close(allLocations);
 			}
 		}
 

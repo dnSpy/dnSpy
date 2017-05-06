@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			}
 			finally {
 				if (objsToFree.Count > 0)
-					thread.Process.DbgManager.Close(objsToFree.ToArray());
+					thread.Process.DbgManager.Close(objsToFree);
 			}
 			return (null, -1);
 		}

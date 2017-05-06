@@ -163,6 +163,7 @@ namespace dnSpy.Debugger.Impl {
 		readonly Lazy<DbgModuleMemoryRefreshedNotifier>[] dbgModuleMemoryRefreshedNotifiers;
 		readonly List<StartDebuggingOptions> restartOptions;
 		readonly HashSet<ProcessKey> debuggedRuntimes;
+		readonly List<DbgObject> objsToClose;
 		int hasNotifiedStartListenersCounter;
 
 		[ImportingConstructor]
@@ -180,6 +181,7 @@ namespace dnSpy.Debugger.Impl {
 			dbgCurrentProcess = new DbgCurrentProcess(this);
 			dbgCurrentRuntime = new DbgCurrentRuntime(this);
 			dbgCurrentThread = new DbgCurrentThread(this);
+			objsToClose = new List<DbgObject>();
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgManagerStartListeners = dbgManagerStartListeners.ToArray();
 			this.dbgModuleMemoryRefreshedNotifiers = dbgModuleMemoryRefreshedNotifiers.ToArray();
@@ -1018,22 +1020,35 @@ namespace dnSpy.Debugger.Impl {
 		public override void Close(DbgObject obj) {
 			if (obj == null)
 				throw new ArgumentNullException(nameof(obj));
-			DbgThread(() => Close_DbgThread(obj));
+			bool start;
+			lock (objsToClose) {
+				start = objsToClose.Count == 0;
+				objsToClose.Add(obj);
+			}
+			if (start)
+				DbgThread(() => CloseObjects_DbgThread());
 		}
 
-		void Close_DbgThread(DbgObject obj) {
-			Dispatcher.VerifyAccess();
-			obj.Close(Dispatcher);
-		}
-
-		public override void Close(DbgObject[] objs) {
+		public override void Close(IEnumerable<DbgObject> objs) {
 			if (objs == null)
 				throw new ArgumentNullException(nameof(objs));
-			DbgThread(() => Close_DbgThread(objs));
+			bool start;
+			lock (objsToClose) {
+				int origCount = objsToClose.Count;
+				objsToClose.AddRange(objs);
+				start = origCount == 0 && objsToClose.Count > 0;
+			}
+			if (start)
+				DbgThread(() => CloseObjects_DbgThread());
 		}
 
-		void Close_DbgThread(DbgObject[] objs) {
+		void CloseObjects_DbgThread() {
 			Dispatcher.VerifyAccess();
+			DbgObject[] objs;
+			lock (objsToClose) {
+				objs = objsToClose.ToArray();
+				objsToClose.Clear();
+			}
 			foreach (var obj in objs)
 				obj.Close(Dispatcher);
 		}

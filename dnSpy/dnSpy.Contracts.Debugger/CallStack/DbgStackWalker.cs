@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
+
 namespace dnSpy.Contracts.Debugger.CallStack {
 	/// <summary>
 	/// Walks the stack of a thread in a debugged process and creates <see cref="DbgStackFrame"/>s.
@@ -30,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 
 		/// <summary>
 		/// Gets the next frames or an empty list if there are no more frames. The caller must close the
-		/// returned instances by calling <see cref="DbgStackFrame.Close"/> or <see cref="DbgManager.Close(DbgObject[])"/>.
+		/// returned instances by calling <see cref="DbgStackFrame.Close"/> or <see cref="DbgManager.Close(IEnumerable{DbgObject})"/>.
 		/// </summary>
 		/// <param name="maxFrames">Max number of frames to return</param>
 		/// <returns></returns>

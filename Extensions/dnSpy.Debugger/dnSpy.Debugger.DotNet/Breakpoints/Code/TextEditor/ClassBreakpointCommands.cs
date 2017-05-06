@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				list.Add(new DbgCodeBreakpointInfo(location, settings));
 			}
 			if (objsToClose != null)
-				dbgManager.Value.Close(objsToClose.ToArray());
+				dbgManager.Value.Close(objsToClose);
 			dbgCodeBreakpointsService.Value.Add(list.ToArray());
 		}
 	}

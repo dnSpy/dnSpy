@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
@@ -24,7 +25,7 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Contracts.Debugger.CallStack {
 	/// <summary>
 	/// A stack frame in a debugged process. The owner is responsible for closing this instance by calling <see cref="Close"/>
-	/// or <see cref="DbgManager.Close(DbgObject[])"/> if more than one frame must be closed at the same time.
+	/// or <see cref="DbgManager.Close(IEnumerable{DbgObject})"/> if more than one frame must be closed at the same time.
 	/// </summary>
 	public abstract class DbgStackFrame : DbgObject {
 		/// <summary>
@@ -83,7 +84,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		public abstract string ToString(DbgStackFrameFormatOptions options);
 
 		/// <summary>
-		/// Closes this instance. If multiple frames must be closed at the same time, use <see cref="DbgManager.Close(DbgObject[])"/> instead.
+		/// Closes this instance. If multiple frames must be closed at the same time, use <see cref="DbgManager.Close(IEnumerable{DbgObject})"/> instead.
 		/// </summary>
 		public void Close() => Thread.Process.DbgManager.Close(this);
 	}

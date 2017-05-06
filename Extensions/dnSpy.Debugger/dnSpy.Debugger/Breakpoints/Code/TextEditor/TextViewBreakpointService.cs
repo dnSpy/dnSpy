@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 
 			public void Dispose() {
 				if (allLocations.Count > 0)
-					dbgManager.Value.Close(allLocations.ToArray());
+					dbgManager.Value.Close(allLocations);
 			}
 		}
 

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
@@ -209,7 +210,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// Closes <paramref name="objs"/>
 		/// </summary>
 		/// <param name="objs">Objects to close</param>
-		public abstract void Close(DbgObject[] objs);
+		public abstract void Close(IEnumerable<DbgObject> objs);
 
 		/// <summary>
 		/// Writes a message that will be shown in the output window
