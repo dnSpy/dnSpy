@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			new DesktopCLRTypeAttachInfo(((DotNetFrameworkAttachToProgramOptions)options).DebuggeeVersion);
 
 		protected override void OnDebugProcess(DnDebugger dnDebugger) =>
-			runtimeInfo = new DbgEngineRuntimeInfo("CLR " + dnDebugger.DebuggeeVersion, new DotNetFrameworkRuntimeId(dnDebugger.DebuggeeVersion), runtimeTags);
+			runtimeInfo = new DbgEngineRuntimeInfo(PredefinedDbgRuntimeGuids.DotNetFramework, "CLR " + dnDebugger.DebuggeeVersion, new DotNetFrameworkRuntimeId(dnDebugger.DebuggeeVersion), runtimeTags);
 		static readonly ReadOnlyCollection<string> runtimeTags = new ReadOnlyCollection<string>(new[] {
 			PredefinedDotNetDbgRuntimeTags.DotNet,
 			PredefinedDotNetDbgRuntimeTags.DotNetFramework,

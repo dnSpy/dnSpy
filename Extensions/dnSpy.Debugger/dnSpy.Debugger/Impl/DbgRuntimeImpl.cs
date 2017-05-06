@@ -35,6 +35,7 @@ namespace dnSpy.Debugger.Impl {
 	sealed class DbgRuntimeImpl : DbgRuntime {
 		public override DbgProcess Process { get; }
 		public override RuntimeId Id { get; }
+		public override Guid Guid { get; }
 		public override string Name { get; }
 		public override ReadOnlyCollection<string> Tags { get; }
 
@@ -81,6 +82,7 @@ namespace dnSpy.Debugger.Impl {
 			Engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			var info = engine.RuntimeInfo;
 			Id = info.Id;
+			Guid = info.Guid;
 			Name = info.Name;
 			Tags = info.Tags;
 			appDomains = new List<DbgAppDomain>();

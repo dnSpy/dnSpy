@@ -121,6 +121,7 @@
     <Compile Include="Exceptions\DbgExceptionSettingsService.cs" />
     <Compile Include="Exceptions\PredefinedExceptionCategories.cs" />
     <Compile Include="IDbgManagerStartListener.cs" />
+    <Compile Include="PredefinedDbgRuntimeGuids.cs" />
     <Compile Include="PredefinedDebugTags.cs" />
     <Compile Include="PredefinedThreadKinds.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
