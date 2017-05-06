@@ -156,7 +156,6 @@ namespace dnSpy.Bookmarks.Impl {
 					Debug.Assert(bmImpl != null);
 					if (bmImpl == null)
 						continue;
-					Debug.Assert(this.bookmarks.Contains(bmImpl));
 					if (!this.bookmarks.Contains(bmImpl))
 						continue;
 					removed.Add(bmImpl);

@@ -192,7 +192,6 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					Debug.Assert(bpImpl != null);
 					if (bpImpl == null)
 						continue;
-					Debug.Assert(this.breakpoints.Contains(bpImpl));
 					if (!this.breakpoints.Contains(bpImpl))
 						continue;
 					removed.Add(bpImpl);
