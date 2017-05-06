@@ -775,8 +775,12 @@ namespace dnSpy.Debugger.Impl {
 			if (pauseProgram || otherPauseProgram) {
 				DbgProcessState processState;
 				DbgProcessImpl process;
+				bool wasPaused;
 				lock (lockObj) {
 					var info = GetEngineInfo_NoLock(engine);
+					// If it's already paused, don't set a new process and raise ProcessPaused (this
+					// happens when we get a SetIPComplete message)
+					wasPaused = info.EngineState == EngineState.Paused;
 					info.EngineState = EngineState.Paused;
 					info.DelayedIsRunning = false;
 					var newThread = info.Runtime?.SetBreakThread((DbgThreadImpl)thread);
@@ -793,7 +797,7 @@ namespace dnSpy.Debugger.Impl {
 				}
 				breakAllHelper?.OnBreak_DbgThread(engine);
 				process?.UpdateState_DbgThread(processState);
-				OnEnginePaused_DbgThread(engine, process, thread, setCurrentProcess: pauseProgram);
+				OnEnginePaused_DbgThread(engine, process, thread, setCurrentProcess: pauseProgram && !wasPaused);
 			}
 			else {
 				exception?.Close(Dispatcher);
