@@ -108,7 +108,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 					return;
 				selectedCategory = value;
 				OnPropertyChanged(nameof(SelectedCategory));
-				delayedSearch.Start();
+				// It's set by the combo box so don't delay updating the UI
+				DelayStartSearch_UI();
 			}
 		}
 		ExceptionCategoryVM selectedCategory;

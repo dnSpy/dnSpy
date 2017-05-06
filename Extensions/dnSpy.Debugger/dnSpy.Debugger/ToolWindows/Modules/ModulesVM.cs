@@ -68,7 +68,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				if (selectedProcess != value) {
 					selectedProcess = (SimpleProcessVM)value;
 					OnPropertyChanged(nameof(SelectedProcess));
-					delayedSearch.Start();
+					// It's set by the combo box so don't delay updating the UI
+					DelayStartSearch_UI();
 				}
 			}
 		}
