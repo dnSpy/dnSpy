@@ -38,7 +38,6 @@ using dnSpy.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Debugger.Code.TextEditor;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.Properties;
-using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Debugger.DbgUI {
 	[Export(typeof(Debugger))]
@@ -150,40 +149,62 @@ namespace dnSpy.Debugger.DbgUI {
 			return (null, -1);
 		}
 
-		public override bool CanSetNextStatement => CanExecutePauseCommand;
+		public override bool CanSetNextStatement => CanExecutePauseCommand && dbgManager.Value.CurrentThread.Current != null;
 		public override void SetNextStatement() {
 			if (!CanSetNextStatement)
 				return;
-			var allLocations = new List<DbgCodeLocation>();
-			var location = GetCurrentTextViewStatementLocation(allLocations);
-			try {
-				if (location != null)
-					dbgManager.Value.CurrentThread.Current?.SetIP(location);
+			using (var res = GetCurrentTextViewStatementLocation()) {
+				if (res.Location != null)
+					dbgManager.Value.CurrentThread.Current?.SetIP(res.Location);
 			}
-			finally {
-				if (allLocations.Count > 0)
+		}
+
+		struct TextViewStatementLocationResult : IDisposable {
+			readonly Lazy<DbgManager> dbgManager;
+			readonly List<DbgCodeLocation> allLocations;
+
+			public DbgCodeLocation Location { get; }
+
+			public TextViewStatementLocationResult(Lazy<DbgManager> dbgManager, List<DbgCodeLocation> allLocations, DbgCodeLocation location) {
+				this.dbgManager = dbgManager;
+				this.allLocations = allLocations;
+				Location = location;
+			}
+
+			public void Dispose() {
+				if (allLocations != null && allLocations.Count > 0)
 					dbgManager.Value.Close(allLocations.ToArray());
 			}
 		}
 
-		DbgCodeLocation GetCurrentTextViewStatementLocation(List<DbgCodeLocation> allLocations) {
+		TextViewStatementLocationResult GetCurrentTextViewStatementLocation() {
 			var tab = documentTabService.Value.ActiveTab;
 			if (tab == null)
-				return null;
+				return default(TextViewStatementLocationResult);
 			var documentViewer = tab.TryGetDocumentViewer();
 			if (documentViewer == null)
-				return null;
+				return default(TextViewStatementLocationResult);
 			var textView = documentViewer.TextView;
 
-			foreach (var loc in dbgTextViewCodeLocationService.Value.CreateLocation(tab, textView, textView.Caret.Position.VirtualBufferPosition)) {
-				allLocations.AddRange(loc.Locations);
-				if (loc.Locations.Length != 0) {
-					//TODO: Pick the correct location if there are multiple locations, eg. field initializers outside the ctor and 2+ ctors
-					return loc.Locations[0];
+			var allLocations = new List<DbgCodeLocation>();
+			foreach (var res in dbgTextViewCodeLocationService.Value.CreateLocation(tab, textView, textView.Caret.Position.VirtualBufferPosition)) {
+				allLocations.AddRange(res.Locations);
+				if (res.Locations.Length != 0) {
+					var location = res.Locations[0];
+					if (res.Locations.Length > 1) {
+						var thread = dbgManager.Value.CurrentThread.Current;
+						foreach (var loc in res.Locations) {
+							if (thread?.CanSetIP(loc) == true) {
+								location = loc;
+								break;
+							}
+						}
+					}
+					return new TextViewStatementLocationResult(dbgManager, allLocations, location);
 				}
 			}
 
-			return null;
+			return new TextViewStatementLocationResult(dbgManager, allLocations, null);
 		}
 
 		public override bool CanStepInto => CanStepCommand;

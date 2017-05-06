@@ -124,5 +124,12 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="location">New location</param>
 		public abstract void SetIP(DbgCodeLocation location);
+
+		/// <summary>
+		/// Checks if <see cref="SetIP(DbgCodeLocation)"/> can be called
+		/// </summary>
+		/// <param name="location">New location</param>
+		/// <returns></returns>
+		public abstract bool CanSetIP(DbgCodeLocation location);
 	}
 }

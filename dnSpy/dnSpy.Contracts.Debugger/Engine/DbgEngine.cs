@@ -162,6 +162,14 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="thread">Thread</param>
 		/// <param name="location">New location</param>
 		public abstract void SetIP(DbgThread thread, DbgCodeLocation location);
+
+		/// <summary>
+		/// Checks if <see cref="SetIP(DbgThread, DbgCodeLocation)"/> can be called
+		/// </summary>
+		/// <param name="thread">Thread</param>
+		/// <param name="location">New location</param>
+		/// <returns></returns>
+		public abstract bool CanSetIP(DbgThread thread, DbgCodeLocation location);
 	}
 
 	/// <summary>

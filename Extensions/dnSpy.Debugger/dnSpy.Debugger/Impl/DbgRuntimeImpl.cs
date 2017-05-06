@@ -241,6 +241,7 @@ namespace dnSpy.Debugger.Impl {
 
 		internal DbgStepper CreateStepper(DbgThreadImpl thread) => new DbgStepperImpl(owner, thread, Engine.CreateStepper(thread));
 		internal void SetIP(DbgThreadImpl thread, DbgCodeLocation location) => Engine.SetIP(thread, location);
+		internal bool CanSetIP(DbgThreadImpl thread, DbgCodeLocation location) => Engine.CanSetIP(thread, location);
 
 		protected override void CloseCore() {
 			Dispatcher.VerifyAccess();

@@ -244,6 +244,7 @@ namespace dnSpy.Debugger.Impl {
 		public override DbgStackWalker CreateStackWalker() => runtime.CreateStackWalker(this);
 		public override DbgStepper CreateStepper() => runtime.CreateStepper(this);
 		public override void SetIP(DbgCodeLocation location) => runtime.SetIP(this, location ?? throw new ArgumentNullException(nameof(location)));
+		public override bool CanSetIP(DbgCodeLocation location) => runtime.CanSetIP(this, location ?? throw new ArgumentNullException(nameof(location)));
 
 		internal void AddAutoClose(DbgObject obj) {
 			if (obj == null)

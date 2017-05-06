@@ -303,24 +303,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			debuggerThread.VerifyAccess();
 
 			bool framesInvalidated = false;
-			if (dnDebugger.ProcessState != DebuggerProcessState.Paused) {
-				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement));
-				return;
-			}
-
-			if (!TryGetFrame(thread, out var corFrame)) {
-				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement));
-				return;
-			}
-
-			if (!TryGetLocation(location, out var moduleId, out uint token, out uint offset)) {
-				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement));
-				return;
-			}
-
-			var frameModuleId = corFrame.DnModuleId;
-			if (frameModuleId == null || frameModuleId.Value.ToModuleId() != moduleId || corFrame.Token != token) {
-				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement));
+			if (TryGetFrameForSetIP_CorDebug(thread, location, out var corFrame, out uint offset) is string error) {
+				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: error));
 				return;
 			}
 
@@ -332,6 +316,32 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 
 			SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: null));
+		}
+
+		public override bool CanSetIP(DbgThread thread, DbgCodeLocation location) =>
+			InvokeCorDebugThread(() => CanSetIP_CorDebug(thread, location));
+
+		bool CanSetIP_CorDebug(DbgThread thread, DbgCodeLocation location) => TryGetFrameForSetIP_CorDebug(thread, location, out var corFrame, out uint offset) == null;
+
+		string TryGetFrameForSetIP_CorDebug(DbgThread thread, DbgCodeLocation location, out CorFrame corFrame, out uint offset) {
+			debuggerThread.VerifyAccess();
+			corFrame = null;
+			offset = 0;
+
+			if (dnDebugger.ProcessState != DebuggerProcessState.Paused)
+				return dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement;
+
+			if (!TryGetFrame(thread, out corFrame))
+				return dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement;
+
+			if (!TryGetLocation(location, out var moduleId, out uint token, out offset))
+				return dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement;
+
+			var frameModuleId = corFrame.DnModuleId;
+			if (frameModuleId == null || frameModuleId.Value.ToModuleId() != moduleId || corFrame.Token != token)
+				return dnSpy_Debugger_CorDebug_Resources.Error_CouldNotSetNextStatement;
+
+			return null;
 		}
 
 		bool TryGetFrame(DbgThread thread, out CorFrame frame) {
