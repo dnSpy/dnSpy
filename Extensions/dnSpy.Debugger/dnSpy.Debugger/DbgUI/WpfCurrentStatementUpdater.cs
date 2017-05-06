@@ -28,7 +28,7 @@ using dnSpy.Debugger.Native;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.DbgUI {
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class WpfCurrentStatementUpdater : CurrentStatementUpdater {
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<IAppWindow> appWindow;

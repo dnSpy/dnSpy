@@ -41,7 +41,7 @@ using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.DbgUI {
 	[Export(typeof(Debugger))]
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class DebuggerImpl : Debugger, IDbgManagerStartListener {
 		readonly Lazy<IMessageBoxService> messageBoxService;
 		readonly Lazy<IAppWindow> appWindow;

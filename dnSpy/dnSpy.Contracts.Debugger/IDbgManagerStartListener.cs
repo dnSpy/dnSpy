@@ -17,13 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
-
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// All classes implementing this interface get created the first time <see cref="DbgManager.Start(DebugProgramOptions)"/>
-	/// gets called. Use <see cref="ExportDbgManagerStartListenerAttribute"/> to export an instance.
+	/// All exported classes implementing this interface get created the first time
+	/// <see cref="DbgManager.Start(DebugProgramOptions)"/> gets called.
 	/// </summary>
 	public interface IDbgManagerStartListener {
 		/// <summary>
@@ -33,29 +30,5 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="dbgManager">Debug manager instance</param>
 		void OnStart(DbgManager dbgManager);
-	}
-
-	/// <summary>Metadata</summary>
-	public interface IDbgManagerStartListenerMetadata {
-		/// <summary>See <see cref="ExportDbgManagerStartListenerAttribute.Order"/></summary>
-		double Order { get; }
-	}
-
-	/// <summary>
-	/// Exports an <see cref="IDbgManagerStartListener"/> instance
-	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportDbgManagerStartListenerAttribute : ExportAttribute, IDbgManagerStartListenerMetadata {
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="order">Order</param>
-		public ExportDbgManagerStartListenerAttribute(double order = double.MaxValue)
-			: base(typeof(IDbgManagerStartListener)) => Order = order;
-
-		/// <summary>
-		/// Order
-		/// </summary>
-		public double Order { get; }
 	}
 }

@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
 
 namespace dnSpy.Debugger.Breakpoints.Modules {
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class ModuleBreakpointHitChecker : IDbgManagerStartListener {
 		readonly DbgModuleBreakpointsService dbgModuleBreakpointsService;
 

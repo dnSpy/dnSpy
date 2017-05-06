@@ -37,7 +37,7 @@ using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 
 namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class ClearCompiledExpressions : IDbgManagerStartListener {
 		readonly DbgFilterExpressionEvaluatorImpl dbgFilterExpressionEvaluatorImpl;
 		[ImportingConstructor]

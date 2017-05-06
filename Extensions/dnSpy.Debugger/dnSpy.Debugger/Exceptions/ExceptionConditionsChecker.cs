@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Debugger.Utilities;
 
 namespace dnSpy.Debugger.Exceptions {
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class ExceptionConditionsChecker : IDbgManagerStartListener {
 		readonly Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService;
 

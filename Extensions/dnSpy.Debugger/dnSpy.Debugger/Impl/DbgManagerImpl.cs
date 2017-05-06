@@ -159,14 +159,14 @@ namespace dnSpy.Debugger.Impl {
 		readonly BoundBreakpointsManager boundBreakpointsManager;
 		readonly List<EngineInfo> engines;
 		readonly Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>[] dbgEngineProviders;
-		readonly Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>[] dbgManagerStartListeners;
+		readonly Lazy<IDbgManagerStartListener>[] dbgManagerStartListeners;
 		readonly Lazy<DbgModuleMemoryRefreshedNotifier>[] dbgModuleMemoryRefreshedNotifiers;
 		readonly List<StartDebuggingOptions> restartOptions;
 		readonly HashSet<ProcessKey> debuggedRuntimes;
 		int hasNotifiedStartListenersCounter;
 
 		[ImportingConstructor]
-		DbgManagerImpl(DbgDispatcherProvider dbgDispatcherProvider, DebuggerSettings debuggerSettings, Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners, [ImportMany] IEnumerable<Lazy<DbgModuleMemoryRefreshedNotifier>> dbgModuleMemoryRefreshedNotifiers) {
+		DbgManagerImpl(DbgDispatcherProvider dbgDispatcherProvider, DebuggerSettings debuggerSettings, Lazy<BoundCodeBreakpointsService> boundCodeBreakpointsService, [ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener>> dbgManagerStartListeners, [ImportMany] IEnumerable<Lazy<DbgModuleMemoryRefreshedNotifier>> dbgModuleMemoryRefreshedNotifiers) {
 			lockObj = new object();
 			this.dbgDispatcherProvider = dbgDispatcherProvider;
 			this.debuggerSettings = debuggerSettings;
@@ -181,7 +181,7 @@ namespace dnSpy.Debugger.Impl {
 			dbgCurrentRuntime = new DbgCurrentRuntime(this);
 			dbgCurrentThread = new DbgCurrentThread(this);
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
-			this.dbgManagerStartListeners = dbgManagerStartListeners.OrderBy(a => a.Metadata.Order).ToArray();
+			this.dbgManagerStartListeners = dbgManagerStartListeners.ToArray();
 			this.dbgModuleMemoryRefreshedNotifiers = dbgModuleMemoryRefreshedNotifiers.ToArray();
 			new DelayedIsRunningHelper(this, WpfDispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}

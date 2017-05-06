@@ -18,13 +18,14 @@
 */
 
 using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Debugger.Native;
 
 namespace dnSpy.Debugger.Impl {
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class SwitchToDebuggedProcess : IDbgManagerStartListener {
 		bool ignoreSetForeground;
 		DbgProcess currentProcess;

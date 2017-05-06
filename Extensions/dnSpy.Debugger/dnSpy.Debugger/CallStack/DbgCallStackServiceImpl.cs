@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Debugger.CallStack {
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	[Export(typeof(DbgCallStackService))]
 	sealed class DbgCallStackServiceImpl : DbgCallStackService, IDbgManagerStartListener {
 		const int MaxShownFrames = 5000;

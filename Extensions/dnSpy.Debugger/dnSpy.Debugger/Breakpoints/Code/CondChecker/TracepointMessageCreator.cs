@@ -28,7 +28,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class ClearParsedMessages : IDbgManagerStartListener {
 		readonly TracepointMessageCreatorImpl tracepointMessageCreatorImpl;
 		[ImportingConstructor]

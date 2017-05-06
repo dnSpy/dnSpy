@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 	[Export(typeof(DbgCodeBreakpointHitCountService))]
 	[Export(typeof(DbgCodeBreakpointHitCountService2))]
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class DbgCodeBreakpointHitCountServiceImpl : DbgCodeBreakpointHitCountService2, IDbgManagerStartListener {
 		public override event EventHandler<DbgHitCountChangedEventArgs> HitCountChanged;
 

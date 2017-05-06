@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		void IOutputServiceListener2.Initialize(IOutputService outputService) => ((IOutputServiceListener2)outputLogger).Initialize(outputService);
 	}
 
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	[Export(typeof(OutputLogger))]
 	[Export(typeof(ITracepointMessageListener))]
 	sealed class OutputLogger : IOutputServiceListener2, IDbgManagerStartListener, ITracepointMessageListener {

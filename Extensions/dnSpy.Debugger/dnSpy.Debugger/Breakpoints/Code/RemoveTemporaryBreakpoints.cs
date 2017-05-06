@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class RemoveTemporaryBreakpoints : IDbgManagerStartListener {
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 

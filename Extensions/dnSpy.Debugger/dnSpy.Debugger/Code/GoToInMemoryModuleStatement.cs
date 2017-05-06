@@ -25,7 +25,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Debugger.Code {
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class GoToInMemoryModuleStatement : IDbgManagerStartListener {
 		readonly Lazy<DbgCallStackService> dbgCallStackService;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;

@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DbgUI {
 	static class ToolbarButtonCommands {
 		abstract class DebugToolBarButton : ToolBarButtonBase {
 			// Prevents the debugger from being loaded since IsVisible will be called early
-			[ExportDbgManagerStartListener]
+			[Export(typeof(IDbgManagerStartListener))]
 			sealed class DbgManagerStartListener : IDbgManagerStartListener {
 				public void OnStart(DbgManager dbgManager) => initd = true;
 			}

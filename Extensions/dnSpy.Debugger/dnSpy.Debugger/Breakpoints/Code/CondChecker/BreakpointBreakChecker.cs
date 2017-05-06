@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class BreakpointBreakChecker : IDbgManagerStartListener {
 		readonly Lazy<DbgCodeBreakpointHitCountService2> dbgCodeBreakpointHitCountService;
 		readonly Lazy<DbgCodeBreakpointFilterChecker> dbgCodeBreakpointFilterChecker;

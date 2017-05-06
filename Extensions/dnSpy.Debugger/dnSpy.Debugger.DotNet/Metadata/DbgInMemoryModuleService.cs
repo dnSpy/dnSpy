@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	}
 
 	[Export(typeof(DbgInMemoryModuleService))]
-	[ExportDbgManagerStartListener]
+	[Export(typeof(IDbgManagerStartListener))]
 	sealed class DbgInMemoryModuleServiceImpl : DbgInMemoryModuleService, IDbgManagerStartListener {
 		readonly object lockObj;
 		readonly UIDispatcher uiDispatcher;
