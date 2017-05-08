@@ -17,31 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using dnSpy.Contracts.Debugger.CallStack;
 
-namespace dnSpy.Contracts.Debugger {
+namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
-	/// Predefined <see cref="DbgRuntime"/> GUIDs (<see cref="DbgRuntime.Guid"/>)
+	/// Creates <see cref="DbgValueNode"/>s
 	/// </summary>
-	public static class PredefinedDbgRuntimeGuids {
+	public abstract class DbgValueNodeFactory {
 		/// <summary>
-		/// .NET Framework (CorDebug)
+		/// Gets the language
 		/// </summary>
-		public const string DotNetFramework_CorDebug = "CD03ACDD-4F3A-4736-8591-4902B4DCC8C1";
+		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
-		/// .NET Framework (CorDebug)
+		/// Creates a <see cref="DbgValueNode"/> or returns null if there was an error (eg. <see cref="DbgEvaluationOptions.NoSideEffects"/>
+		/// is set and the expression has side effects)
 		/// </summary>
-		public static readonly Guid DotNetFramework_CorDebug_Guid = new Guid(DotNetFramework_CorDebug);
-
-		/// <summary>
-		/// .NET Core (CorDebug)
-		/// </summary>
-		public const string DotNetCore_CorDebug = "E0B4EB52-D1D9-42AB-B130-028CA31CF9F6";
-
-		/// <summary>
-		/// .NET Core (CorDebug)
-		/// </summary>
-		public static readonly Guid DotNetCore_CorDebug_Guid = new Guid(DotNetCore_CorDebug);
+		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="expression">Expression</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DbgValueNode Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options);
 	}
 }

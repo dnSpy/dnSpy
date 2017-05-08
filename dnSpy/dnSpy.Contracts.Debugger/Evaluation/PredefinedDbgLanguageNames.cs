@@ -17,31 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Contracts.Debugger {
+namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
-	/// Predefined <see cref="DbgRuntime"/> GUIDs (<see cref="DbgRuntime.Guid"/>)
+	/// Predefined language names. These aren't language display names, they're just unique language names.
 	/// </summary>
-	public static class PredefinedDbgRuntimeGuids {
+	public static class PredefinedDbgLanguageNames {
 		/// <summary>
-		/// .NET Framework (CorDebug)
+		/// No language is available
 		/// </summary>
-		public const string DotNetFramework_CorDebug = "CD03ACDD-4F3A-4736-8591-4902B4DCC8C1";
+		public const string None = "<no language>";
 
 		/// <summary>
-		/// .NET Framework (CorDebug)
+		/// C#
 		/// </summary>
-		public static readonly Guid DotNetFramework_CorDebug_Guid = new Guid(DotNetFramework_CorDebug);
+		public const string CSharp = "c-#-";// Not a display name so don't use "C#"
 
 		/// <summary>
-		/// .NET Core (CorDebug)
+		/// Visual Basic
 		/// </summary>
-		public const string DotNetCore_CorDebug = "E0B4EB52-D1D9-42AB-B130-028CA31CF9F6";
-
-		/// <summary>
-		/// .NET Core (CorDebug)
-		/// </summary>
-		public static readonly Guid DotNetCore_CorDebug_Guid = new Guid(DotNetCore_CorDebug);
+		public const string VisualBasic = "v-b-";// Not a display name so don't use "Visual Basic"
 	}
 }

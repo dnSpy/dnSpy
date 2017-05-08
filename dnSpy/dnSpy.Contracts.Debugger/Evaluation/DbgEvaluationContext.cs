@@ -19,29 +19,39 @@
 
 using System;
 
-namespace dnSpy.Contracts.Debugger {
+namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
-	/// Predefined <see cref="DbgRuntime"/> GUIDs (<see cref="DbgRuntime.Guid"/>)
+	/// Evaluation context
 	/// </summary>
-	public static class PredefinedDbgRuntimeGuids {
+	public abstract class DbgEvaluationContext : DbgObject {
 		/// <summary>
-		/// .NET Framework (CorDebug)
+		/// Gets the language
 		/// </summary>
-		public const string DotNetFramework_CorDebug = "CD03ACDD-4F3A-4736-8591-4902B4DCC8C1";
+		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
-		/// .NET Framework (CorDebug)
+		/// Gets the process
 		/// </summary>
-		public static readonly Guid DotNetFramework_CorDebug_Guid = new Guid(DotNetFramework_CorDebug);
+		public DbgProcess Process => Runtime.Process;
 
 		/// <summary>
-		/// .NET Core (CorDebug)
+		/// Gets the runtime
 		/// </summary>
-		public const string DotNetCore_CorDebug = "E0B4EB52-D1D9-42AB-B130-028CA31CF9F6";
+		public abstract DbgRuntime Runtime { get; }
 
 		/// <summary>
-		/// .NET Core (CorDebug)
+		/// Gets the current session. It gets closed when the runtime continues
 		/// </summary>
-		public static readonly Guid DotNetCore_CorDebug_Guid = new Guid(DotNetCore_CorDebug);
+		public abstract DbgEvaluationSession Session { get; }
+
+		/// <summary>
+		/// Func-eval timeout (func-eval = calling functions in debugged process)
+		/// </summary>
+		public abstract TimeSpan FuncEvalTimeout { get; }
+
+		/// <summary>
+		/// Context options
+		/// </summary>
+		public abstract DbgEvaluationContextOptions Options { get; }
 	}
 }
