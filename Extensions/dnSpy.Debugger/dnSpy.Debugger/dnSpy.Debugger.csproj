@@ -129,12 +129,14 @@
     <Compile Include="Evaluation\DbgEvaluationSessionImpl.cs" />
     <Compile Include="Evaluation\DbgExpressionEvaluatorImpl.cs" />
     <Compile Include="Evaluation\DbgLanguageImpl.cs" />
+    <Compile Include="Evaluation\DbgLanguageServiceImpl.cs" />
     <Compile Include="Evaluation\DbgValueFormatterImpl.cs" />
     <Compile Include="Evaluation\DbgValueImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeFactoryImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeProviderImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeUtils.cs" />
+    <Compile Include="Evaluation\NullDbgEngineLanguage.cs" />
     <Compile Include="Exceptions\DbgExceptionFormatterService.cs" />
     <Compile Include="Exceptions\DbgExceptionImpl.cs" />
     <Compile Include="Exceptions\DbgExceptionSettingsServiceImpl.cs" />
