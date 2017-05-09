@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace dnSpy.Contracts.Debugger {
@@ -79,5 +80,17 @@ namespace dnSpy.Contracts.Debugger {
 		/// Raised when <see cref="Threads"/> is changed
 		/// </summary>
 		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgThread>> ThreadsChanged;
+
+		/// <summary>
+		/// Closes <paramref name="obj"/> just before the runtime continues (or when it gets closed if it never continues)
+		/// </summary>
+		/// <param name="obj">Object</param>
+		public abstract void CloseOnContinue(DbgObject obj);
+
+		/// <summary>
+		/// Closes <paramref name="objs"/> just before the runtime continues (or when it gets closed if it never continues)
+		/// </summary>
+		/// <param name="objs">Objects</param>
+		public abstract void CloseOnContinue(IEnumerable<DbgObject> objs);
 	}
 }

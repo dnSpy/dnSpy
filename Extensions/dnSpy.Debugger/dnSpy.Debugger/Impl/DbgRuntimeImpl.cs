@@ -73,6 +73,7 @@ namespace dnSpy.Debugger.Impl {
 
 		readonly object lockObj;
 		readonly DbgManagerImpl owner;
+		readonly List<DbgObject> closeOnContinueList;
 		CurrentObject<DbgThreadImpl> currentThread;
 
 		public DbgRuntimeImpl(DbgManagerImpl owner, DbgProcess process, DbgEngine engine) {
@@ -88,6 +89,7 @@ namespace dnSpy.Debugger.Impl {
 			appDomains = new List<DbgAppDomain>();
 			modules = new List<DbgModule>();
 			threads = new List<DbgThreadImpl>();
+			closeOnContinueList = new List<DbgObject>();
 		}
 
 		internal void SetCurrentThread_DbgThread(DbgThreadImpl thread) {
@@ -242,21 +244,63 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal DbgStepper CreateStepper(DbgThreadImpl thread) => new DbgStepperImpl(owner, thread, Engine.CreateStepper(thread));
-		internal void SetIP(DbgThreadImpl thread, DbgCodeLocation location) => Engine.SetIP(thread, location);
+		internal void SetIP(DbgThreadImpl thread, DbgCodeLocation location) => Dispatcher.BeginInvoke(() => SetIP_DbgThread(thread, location));
 		internal bool CanSetIP(DbgThreadImpl thread, DbgCodeLocation location) => Engine.CanSetIP(thread, location);
+
+		void SetIP_DbgThread(DbgThreadImpl thread, DbgCodeLocation location) {
+			Dispatcher.VerifyAccess();
+			OnBeforeContinuing_DbgThread();
+			Engine.SetIP(thread, location);
+		}
+
+		public override void CloseOnContinue(DbgObject obj) {
+			if (obj == null)
+				throw new ArgumentNullException(nameof(obj));
+			lock (lockObj) {
+				if (IsClosed)
+					Process.DbgManager.Close(obj);
+				else
+					closeOnContinueList.Add(obj);
+			}
+		}
+
+		public override void CloseOnContinue(IEnumerable<DbgObject> objs) {
+			if (objs == null)
+				throw new ArgumentNullException(nameof(objs));
+			lock (lockObj) {
+				if (IsClosed)
+					Process.DbgManager.Close(objs);
+				else
+					closeOnContinueList.AddRange(objs);
+			}
+		}
+
+		internal void OnBeforeContinuing_DbgThread() {
+			Dispatcher.VerifyAccess();
+			DbgObject[] objsToClose;
+			lock (lockObj) {
+				objsToClose = closeOnContinueList.Count == 0 ? Array.Empty<DbgObject>() : closeOnContinueList.ToArray();
+				closeOnContinueList.Clear();
+			}
+			foreach (var obj in objsToClose)
+				obj.Close(Dispatcher);
+		}
 
 		protected override void CloseCore() {
 			Dispatcher.VerifyAccess();
 			DbgThread[] removedThreads;
 			DbgModule[] removedModules;
 			DbgAppDomain[] removedAppDomains;
+			DbgObject[] objsToClose;
 			lock (lockObj) {
 				removedThreads = threads.ToArray();
 				removedModules = modules.ToArray();
 				removedAppDomains = appDomains.ToArray();
+				objsToClose = closeOnContinueList.ToArray();
 				threads.Clear();
 				modules.Clear();
 				appDomains.Clear();
+				closeOnContinueList.Clear();
 			}
 			currentThread = default(CurrentObject<DbgThreadImpl>);
 			if (removedThreads.Length != 0)
@@ -265,6 +309,8 @@ namespace dnSpy.Debugger.Impl {
 				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(removedModules, added: false));
 			if (removedAppDomains.Length != 0)
 				AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(removedAppDomains, added: false));
+			foreach (var obj in objsToClose)
+				obj.Close(Dispatcher);
 			foreach (var thread in removedThreads)
 				thread.Close(Dispatcher);
 			foreach (var module in removedModules)

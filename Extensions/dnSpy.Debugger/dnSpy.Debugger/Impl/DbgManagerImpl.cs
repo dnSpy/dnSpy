@@ -803,6 +803,8 @@ namespace dnSpy.Debugger.Impl {
 			}
 			else {
 				exception?.Close(Dispatcher);
+				lock (lockObj)
+					GetEngineInfo_NoLock(engine).Runtime.OnBeforeContinuing_DbgThread();
 				engine.Run();
 			}
 		}
@@ -866,6 +868,7 @@ namespace dnSpy.Debugger.Impl {
 						info.EngineState = EngineState.Running;
 						info.Process?.SetRunning_DbgThread(info.Runtime);
 						Debug.Assert(info.Exception == null);
+						info.Runtime.OnBeforeContinuing_DbgThread();
 						runEngine(info);
 					}
 				}
