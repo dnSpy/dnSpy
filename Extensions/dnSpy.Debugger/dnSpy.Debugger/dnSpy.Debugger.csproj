@@ -130,6 +130,7 @@
     <Compile Include="Evaluation\DbgExpressionEvaluatorImpl.cs" />
     <Compile Include="Evaluation\DbgLanguageImpl.cs" />
     <Compile Include="Evaluation\DbgLanguageServiceImpl.cs" />
+    <Compile Include="Evaluation\DbgLanguageServiceSettings.cs" />
     <Compile Include="Evaluation\DbgValueFormatterImpl.cs" />
     <Compile Include="Evaluation\DbgValueImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeFactoryImpl.cs" />
