@@ -58,7 +58,6 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 			this.dbgStackFrameGlyphTextMarkerLocationInfoProviders = dbgStackFrameGlyphTextMarkerLocationInfoProviders.ToArray();
 			UI(() => Initialize_UI(classificationTypeRegistryService));
 			dbgCallStackService.FramesChanged += DbgCallStackService_FramesChanged;
-			dbgCallStackService.ActiveFrameIndexChanged += DbgCallStackService_ActiveFrameIndexChanged;
 		}
 
 		void Initialize_UI(Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService) {
@@ -71,8 +70,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) { }
 
-		void DbgCallStackService_FramesChanged(object sender, EventArgs e) => UI(() => UpdateMarkers(updateActiveStatements: true));
-		void DbgCallStackService_ActiveFrameIndexChanged(object sender, EventArgs e) => UI(() => UpdateMarkers(updateActiveStatements: false));
+		void DbgCallStackService_FramesChanged(object sender, FramesChangedEventArgs e) => UI(() => UpdateMarkers(updateActiveStatements: e.FramesChanged));
 
 		void UpdateMarkers(bool updateActiveStatements) {
 			SetCurrentProcess(dbgCallStackService.Thread?.Process);

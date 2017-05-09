@@ -36,11 +36,6 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		public abstract int ActiveFrameIndex { get; set; }
 
 		/// <summary>
-		/// Raised when <see cref="ActiveFrameIndex"/> is changed
-		/// </summary>
-		public abstract event EventHandler ActiveFrameIndexChanged;
-
-		/// <summary>
 		/// Gets the active frame or null if <see cref="Frames"/> is empty
 		/// </summary>
 		public DbgStackFrame ActiveFrame => Frames.ActiveStackFrame;
@@ -54,7 +49,32 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// <summary>
 		/// Raised when <see cref="Frames"/> is changed
 		/// </summary>
-		public abstract event EventHandler FramesChanged;
+		public abstract event EventHandler<FramesChangedEventArgs> FramesChanged;
+	}
+
+	/// <summary>
+	/// Frames changed event args
+	/// </summary>
+	public struct FramesChangedEventArgs {
+		/// <summary>
+		/// true if there are new frames available
+		/// </summary>
+		public bool FramesChanged { get; }
+
+		/// <summary>
+		/// true if active frame index changed
+		/// </summary>
+		public bool ActiveFrameIndexChanged { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="framesChanged">true if there are new frames available</param>
+		/// <param name="activeFrameIndexChanged">true if active frame index changed</param>
+		public FramesChangedEventArgs(bool framesChanged, bool activeFrameIndexChanged) {
+			FramesChanged = framesChanged;
+			ActiveFrameIndexChanged = activeFrameIndexChanged;
+		}
 	}
 
 	/// <summary>

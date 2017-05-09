@@ -132,7 +132,6 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (enable) {
 				dbgCallStackService.Value.FramesChanged += DbgCallStackService_FramesChanged;
-				dbgCallStackService.Value.ActiveFrameIndexChanged += DbgCallStackService_ActiveFrameIndexChanged;
 				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
 				dbgCodeBreakpointsService.Value.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
@@ -143,7 +142,6 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			}
 			else {
 				dbgCallStackService.Value.FramesChanged -= DbgCallStackService_FramesChanged;
-				dbgCallStackService.Value.ActiveFrameIndexChanged -= DbgCallStackService_ActiveFrameIndexChanged;
 				dbgManager.Value.DelayedIsRunningChanged -= DbgManager_DelayedIsRunningChanged;
 				dbgCodeBreakpointsService.Value.BreakpointsModified -= DbgCodeBreakpointsService_BreakpointsModified;
 				dbgCodeBreakpointsService.Value.BreakpointsChanged -= DbgCodeBreakpointsService_BreakpointsChanged;
@@ -254,16 +252,13 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		void UI(Action callback) => callStackContext.UIDispatcher.UI(callback);
 
 		// DbgManager thread
-		void DbgCallStackService_FramesChanged(object sender, EventArgs e) {
+		void DbgCallStackService_FramesChanged(object sender, FramesChangedEventArgs e) {
 			var framesInfo = dbgCallStackService.Value.Frames;
 			var thread = dbgCallStackService.Value.Thread;
-			UI(() => UpdateFrames_UI(framesInfo, thread));
-		}
-
-		// DbgManager thread
-		void DbgCallStackService_ActiveFrameIndexChanged(object sender, EventArgs e) {
-			int activeFrameIndex = dbgCallStackService.Value.ActiveFrameIndex;
-			UI(() => UpdateActiveFrameIndex_UI(activeFrameIndex));
+			if (e.FramesChanged)
+				UI(() => UpdateFrames_UI(framesInfo, thread));
+			else if (e.ActiveFrameIndexChanged)
+				UI(() => UpdateActiveFrameIndex_UI(framesInfo.ActiveFrameIndex));
 		}
 
 		// UI thread

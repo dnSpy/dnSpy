@@ -31,7 +31,6 @@ namespace dnSpy.Debugger.CallStack {
 
 		public override DbgThread Thread => dbgManager?.CurrentThread.Current;
 
-		public override event EventHandler ActiveFrameIndexChanged;
 		public override int ActiveFrameIndex {
 			get {
 				lock (lockObj)
@@ -48,7 +47,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		public override event EventHandler FramesChanged;
+		public override event EventHandler<FramesChangedEventArgs> FramesChanged;
 		public override DbgCallStackFramesInfo Frames {
 			get {
 				lock (lockObj)
@@ -92,7 +91,7 @@ namespace dnSpy.Debugger.CallStack {
 					return;
 				activeFrameIndex = newIndex;
 			}
-			ActiveFrameIndexChanged?.Invoke(this, EventArgs.Empty);
+			FramesChanged?.Invoke(this, new FramesChangedEventArgs(framesChanged: false, activeFrameIndexChanged: true));
 		}
 
 		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
@@ -148,7 +147,8 @@ namespace dnSpy.Debugger.CallStack {
 					if (frames.Length > 0)
 						dbgManager.Close(frames);
 					int newActiveFrameIndex = GetFrameIndex(newFrames);
-					raiseFramesChanged = frames.Length != 0 || newFrames.Length != 0;
+					// Always raise frames-changed event even if old and new arrays have 0 length.
+					raiseFramesChanged = true;
 					raiseActiveFrameIndexChanged = newActiveFrameIndex != activeFrameIndex;
 
 					// Note that we keep the extra frame so we don't have to create a new array with one less
@@ -167,10 +167,8 @@ namespace dnSpy.Debugger.CallStack {
 				if (newFrames != null && frames != newFrames && newFrames.Length > 0)
 					dbgManager.Close(newFrames);
 			}
-			if (raiseFramesChanged)
-				FramesChanged?.Invoke(this, EventArgs.Empty);
-			if (raiseActiveFrameIndexChanged)
-				ActiveFrameIndexChanged?.Invoke(this, EventArgs.Empty);
+			if (raiseFramesChanged || raiseActiveFrameIndexChanged)
+				FramesChanged?.Invoke(this, new FramesChangedEventArgs(raiseFramesChanged, raiseActiveFrameIndexChanged));
 		}
 
 		int GetFrameIndex(DbgStackFrame[] newFrames) {
