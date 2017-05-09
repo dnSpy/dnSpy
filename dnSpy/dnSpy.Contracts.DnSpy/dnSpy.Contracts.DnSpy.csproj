@@ -123,10 +123,12 @@
     <Compile Include="Command\TextEditorIdsExtensions.cs" />
     <Compile Include="Command\TextReferenceIds.cs" />
     <Compile Include="Command\TextReferenceIdsExtensions.cs" />
+    <Compile Include="MVVM\CollectionSortInfo.cs" />
     <Compile Include="Controls\ControlConstants.cs" />
     <Compile Include="Controls\FastTextBlock.cs" />
     <Compile Include="Controls\FontUtilities.cs" />
     <Compile Include="Controls\GlyphRunFormatter.cs" />
+    <Compile Include="Controls\GridViewSortableColumn.cs" />
     <Compile Include="Controls\IFocusable.cs" />
     <Compile Include="Controls\IUIObjectProvider.cs" />
     <Compile Include="Controls\IWpfCommands.cs" />
@@ -617,6 +619,7 @@
     <Compile Include="Metadata\IModuleIdFactoryProvider.cs" />
     <Compile Include="Metadata\IModuleIdProvider.cs" />
     <Compile Include="Metadata\ModuleIdFactoryProviderConstants.cs" />
+    <Compile Include="MVVM\BaseVMComparer.cs" />
     <Compile Include="MVVM\Converters\FontSizeConverter.cs" />
     <Compile Include="MVVM\Converters\NegateBooleanConverter.cs" />
     <Compile Include="MVVM\DataFieldVM.cs" />

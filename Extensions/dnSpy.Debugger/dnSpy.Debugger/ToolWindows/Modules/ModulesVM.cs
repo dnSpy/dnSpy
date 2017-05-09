@@ -42,6 +42,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		ObservableCollection<ModuleVM> SelectedItems { get; }
 		void ResetSearchSettings();
 		string GetSearchHelpText();
+		void Sort(SortInfo sortInfo);
 	}
 
 	[Export(typeof(IModulesVM))]
@@ -481,11 +482,6 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		void InitializeNothingMatched(string filterText, SimpleProcessVM selectedProcess) =>
 			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process == null);
 
-		sealed class ModuleVMComparer : IComparer<ModuleVM> {
-			public static readonly IComparer<ModuleVM> Instance = new ModuleVMComparer();
-			public int Compare(ModuleVM x, ModuleVM y) => x.Order - y.Order;
-		}
-
 		// UI thread
 		IEnumerable<ModuleVM> GetFilteredItems_UI(string filterText, SimpleProcessVM selectedProcess) {
 			moduleContext.UIDispatcher.VerifyAccess();
@@ -715,6 +711,11 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				delayedSearch.Cancel();
 				DelayStartSearch_UI();
 			}
+		}
+
+		public void Sort(SortInfo sortInfo) {
+			ModuleVMComparer.Instance.SortInfo = sortInfo;
+			FilterList_UI(filterText, selectedProcess);
 		}
 	}
 }

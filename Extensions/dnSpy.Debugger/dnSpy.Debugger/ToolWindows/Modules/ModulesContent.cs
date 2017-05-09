@@ -61,6 +61,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);
 			public ICommand SearchHelpCommand => new RelayCommand(a => SearchHelp());
+			public ICommand SortCommand => new RelayCommand(a => Operations.Sort((SortInfo)a));
 
 			readonly IMessageBoxService messageBoxService;
 			readonly DependencyObject control;
