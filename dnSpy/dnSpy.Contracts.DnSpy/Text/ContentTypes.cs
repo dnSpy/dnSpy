@@ -267,6 +267,11 @@ namespace dnSpy.Contracts.Text {
 		public const string LocalsWindow = nameof(LocalsWindow);
 
 		/// <summary>
+		/// Autos window
+		/// </summary>
+		public const string AutosWindow = nameof(AutosWindow);
+
+		/// <summary>
 		/// Modules window
 		/// </summary>
 		public const string ModulesWindow = nameof(ModulesWindow);

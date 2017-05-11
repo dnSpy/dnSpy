@@ -1827,4 +1827,7 @@ Are you sure you want to expand it?</value>
   <data name="ProcessIsNotPaused" xml:space="preserve">
     <value>Process is not paused</value>
   </data>
+  <data name="Window_Autos" xml:space="preserve">
+    <value>Autos</value>
+  </data>
 </root>

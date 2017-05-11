@@ -246,6 +246,21 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string LocalsWindowType = "Type";
 
 		/// <summary>
+		/// Autos window column: Name
+		/// </summary>
+		public static readonly string AutosWindowName = "Name";
+
+		/// <summary>
+		/// Autos window column: Value
+		/// </summary>
+		public static readonly string AutosWindowValue = "Value";
+
+		/// <summary>
+		/// Autos window column: Type
+		/// </summary>
+		public static readonly string AutosWindowType = "Type";
+
+		/// <summary>
 		/// Modules window column: Name
 		/// </summary>
 		public static readonly string ModulesWindowName = "Name";

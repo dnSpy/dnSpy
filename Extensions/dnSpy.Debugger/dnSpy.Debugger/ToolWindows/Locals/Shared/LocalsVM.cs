@@ -214,7 +214,10 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 						options.TypeColumnName = PredefinedTextClassifierTags.LocalsWindowType;
 					}
 					else {
-						throw new NotImplementedException();//TODO: autos window
+						options.WindowContentType = ContentTypes.AutosWindow;
+						options.NameColumnName = PredefinedTextClassifierTags.AutosWindowName;
+						options.ValueColumnName = PredefinedTextClassifierTags.AutosWindowValue;
+						options.TypeColumnName = PredefinedTextClassifierTags.AutosWindowType;
 					}
 					valueNodesVM = valueNodesVMFactory.Value.Create(options);
 				}

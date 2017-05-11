@@ -174,6 +174,8 @@
     <Compile Include="Text\ClassifiedText.cs" />
     <Compile Include="Text\ClassifiedTextWriter.cs" />
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
+    <Compile Include="ToolWindows\Autos\AutosContent.cs" />
+    <Compile Include="ToolWindows\Autos\AutosToolWindowContent.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackColumnConverter.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackContent.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackContext.cs" />

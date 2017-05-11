@@ -44,10 +44,10 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 		readonly LocalsControl localsControl;
 		readonly ILocalsVM localsVM;
 
-		protected LocalsContentBase(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory, LocalsOperations localsOperations) {
+		protected LocalsContentBase(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory, LocalsOperations localsOperations, bool isLocals) {
 			Operations = localsOperations;
 			localsControl = new LocalsControl();
-			localsVM = localsVMFactory.Create(isLocals: true);
+			localsVM = localsVMFactory.Create(isLocals);
 			localsVM.TreeViewChanged += LocalsVM_TreeViewChanged;
 			localsControl.DataContext = localsVM;
 		}

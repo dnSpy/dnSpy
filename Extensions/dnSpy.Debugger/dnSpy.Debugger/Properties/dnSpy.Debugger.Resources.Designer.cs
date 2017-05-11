@@ -4981,6 +4981,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Autos.
+        /// </summary>
+        public static string Window_Autos {
+            get {
+                return ResourceManager.GetString("Window_Autos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Breakpoints.
         /// </summary>
         public static string Window_Breakpoints {

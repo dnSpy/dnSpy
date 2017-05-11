@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.ToolWindows {
 		public override bool CanShowCallStack => dbgManager.Value.IsDebugging;
 		public override void ShowCallStack() => toolWindowService.Show(CallStack.CallStackToolWindowContent.THE_GUID);
 		public override bool CanShowAutos => dbgManager.Value.IsDebugging;
-		public override void ShowAutos() { }//TODO:
+		public override void ShowAutos() => toolWindowService.Show(Autos.AutosToolWindowContentProvider.THE_GUID);
 		public override bool CanShowLocals => dbgManager.Value.IsDebugging;
 		public override void ShowLocals() => toolWindowService.Show(Locals.LocalsToolWindowContentProvider.THE_GUID);
 		public override bool CanShowThreads => dbgManager.Value.IsDebugging;

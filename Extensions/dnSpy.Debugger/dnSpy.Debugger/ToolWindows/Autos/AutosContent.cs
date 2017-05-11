@@ -21,12 +21,12 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Controls;
 using dnSpy.Debugger.ToolWindows.Locals.Shared;
 
-namespace dnSpy.Debugger.ToolWindows.Locals {
-	[Export(typeof(LocalsContent))]
-	sealed class LocalsContent : LocalsContentBase {
+namespace dnSpy.Debugger.ToolWindows.Autos {
+	[Export(typeof(AutosContent))]
+	sealed class AutosContent : LocalsContentBase {
 		[ImportingConstructor]
-		LocalsContent(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory, LocalsOperations localsOperations)
-			: base(wpfCommandService, localsVMFactory, localsOperations, isLocals: true) {
+		AutosContent(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory, LocalsOperations localsOperations)
+			: base(wpfCommandService, localsVMFactory, localsOperations, isLocals: false) {
 		}
 	}
 }
