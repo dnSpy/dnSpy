@@ -44,6 +44,7 @@ namespace dnSpy.Debugger.ToolWindows {
 			cmds.Add(new RelayCommand(a => toolWindowsOperations.Value.ShowModules(), a => toolWindowsOperations.Value.CanShowModules), ModifierKeys.Control | ModifierKeys.Alt, Key.U);
 			cmds.Add(new RelayCommand(a => toolWindowsOperations.Value.ShowExceptions(), a => toolWindowsOperations.Value.CanShowExceptions), ModifierKeys.Control | ModifierKeys.Alt, Key.E);
 			cmds.Add(new RelayCommand(a => toolWindowsOperations.Value.ShowProcesses(), a => toolWindowsOperations.Value.CanShowProcesses), ModifierKeys.Control | ModifierKeys.Alt, Key.Z);
+			cmds.Add(new RelayCommand(a => toolWindowsOperations.Value.ShowLocals(), a => toolWindowsOperations.Value.CanShowLocals), ModifierKeys.Alt, Key.D4);
 
 			for (int i = 0; i < Memory.MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS && i < 10; i++) {
 				int index = i;
