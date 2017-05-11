@@ -204,6 +204,14 @@
     <Compile Include="ToolWindows\Commands.cs" />
     <Compile Include="ToolWindows\DelayedAction.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionCategoryVM.cs" />
+    <Compile Include="ToolWindows\Locals\Shared\LocalsColumnConverter.cs" />
+    <Compile Include="ToolWindows\Locals\Shared\LocalsContentBase.cs" />
+    <Compile Include="ToolWindows\Locals\Shared\LocalsControl.xaml.cs">
+      <DependentUpon>LocalsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\Locals\Shared\LocalsOperations.cs" />
+    <Compile Include="ToolWindows\Locals\Shared\LocalsToolWindowContent.cs" />
+    <Compile Include="ToolWindows\Locals\Shared\LocalsVM.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointColumnConverter.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointContext.cs" />
@@ -362,6 +370,10 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj">
+      <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>
+      <Name>ICSharpCode.TreeView</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -430,6 +442,10 @@
     <Page Include="ToolWindows\Exceptions\ExceptionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ToolWindows\Locals\Shared\LocalsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ToolWindows\Memory\MemoryControl.xaml">
       <Generator>MSBuild:Compile</Generator>
