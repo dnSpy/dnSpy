@@ -125,6 +125,8 @@
     </Compile>
     <Compile Include="Dialogs\DebugProgram\DebugProgramVM.cs" />
     <Compile Include="Dialogs\DebugProgram\OptionsPageVM.cs" />
+    <Compile Include="Evaluation\DbgEvalFormatterSettings.cs" />
+    <Compile Include="Evaluation\DbgEvalFormatterSettingsBase.cs" />
     <Compile Include="Evaluation\DbgEvaluationContextImpl.cs" />
     <Compile Include="Evaluation\DbgEvaluationSessionImpl.cs" />
     <Compile Include="Evaluation\DbgExpressionEvaluatorImpl.cs" />
@@ -138,6 +140,18 @@
     <Compile Include="Evaluation\DbgValueNodeProviderImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeUtils.cs" />
     <Compile Include="Evaluation\NullDbgEngineLanguage.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeFormatParameters.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeImageReferenceService.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeReader.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\ValueNodeFormatter.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\ValueNodeImpl.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\ValueNodesContext.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\ValueNodesVM.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\ValueNodesVMFactoryImpl.cs" />
+    <Compile Include="Evaluation\ViewModel\IValueNodesVM.cs" />
+    <Compile Include="Evaluation\ViewModel\ValueNode.cs" />
+    <Compile Include="Evaluation\ViewModel\ValueNodesProvider.cs" />
+    <Compile Include="Evaluation\ViewModel\ValueNodesVMFactory.cs" />
     <Compile Include="Exceptions\DbgExceptionFormatterService.cs" />
     <Compile Include="Exceptions\DbgExceptionImpl.cs" />
     <Compile Include="Exceptions\DbgExceptionSettingsServiceImpl.cs" />

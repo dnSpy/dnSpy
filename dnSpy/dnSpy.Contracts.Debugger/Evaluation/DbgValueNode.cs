@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Number of children. This property is called as late as possible and can be lazily initialized.
 		/// It's assumed to be 0 if <see cref="HasChildren"/> is false.
 		/// </summary>
-		public abstract ulong ChildrenCount { get; }
+		public abstract ulong ChildCount { get; }
 
 		/// <summary>
 		/// Creates new children. This method blocks the current thread until the children have been created.
@@ -99,7 +99,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// </summary>
 		/// <param name="output">Output</param>
 		public void FormatName(ITextColorWriter output) =>
-			Format(new DbgValueNodeFormatParameters { NameWriter = output ?? throw new ArgumentNullException(nameof(output)) });
+			Format(new DbgValueNodeFormatParameters { NameOutput = output ?? throw new ArgumentNullException(nameof(output)) });
 
 		/// <summary>
 		/// Formats the value. This method blocks the current thread until all requested values have been formatted
@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Formatter options</param>
 		public void FormatValue(ITextColorWriter output, DbgValueFormatterOptions options) =>
 			Format(new DbgValueNodeFormatParameters {
-				ValueWriter = output ?? throw new ArgumentNullException(nameof(output)),
+				ValueOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ValueFormatterOptions = options,
 			});
 
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Formatter options</param>
 		public void FormatExpectedType(ITextColorWriter output, DbgValueFormatterTypeOptions options) =>
 			Format(new DbgValueNodeFormatParameters {
-				ExpectedTypeWriter = output ?? throw new ArgumentNullException(nameof(output)),
+				ExpectedTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ExpectedTypeFormatterOptions = options,
 			});
 
@@ -130,7 +130,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Formatter options</param>
 		public void FormatActualType(ITextColorWriter output, DbgValueFormatterTypeOptions options) =>
 			Format(new DbgValueNodeFormatParameters {
-				ActualTypeWriter = output ?? throw new ArgumentNullException(nameof(output)),
+				ActualTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ActualTypeFormatterOptions = options,
 			});
 
@@ -155,22 +155,22 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Used when writing the name or null if it's not written
 		/// </summary>
-		ITextColorWriter NameWriter { get; }
+		ITextColorWriter NameOutput { get; }
 
 		/// <summary>
 		/// Used when writing the value or null if it's not written
 		/// </summary>
-		ITextColorWriter ValueWriter { get; }
+		ITextColorWriter ValueOutput { get; }
 
 		/// <summary>
 		/// Used when writing the expected type ("field" type) or null if it's not written
 		/// </summary>
-		ITextColorWriter ExpectedTypeWriter { get; }
+		ITextColorWriter ExpectedTypeOutput { get; }
 
 		/// <summary>
 		/// Used when writing the actual type (value type) or null if it's not written
 		/// </summary>
-		ITextColorWriter ActualTypeWriter { get; }
+		ITextColorWriter ActualTypeOutput { get; }
 
 		/// <summary>
 		/// Value formatter options
@@ -189,10 +189,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	}
 
 	sealed class DbgValueNodeFormatParameters : IDbgValueNodeFormatParameters {
-		public ITextColorWriter NameWriter { get; set; }
-		public ITextColorWriter ValueWriter { get; set; }
-		public ITextColorWriter ExpectedTypeWriter { get; set; }
-		public ITextColorWriter ActualTypeWriter { get; set; }
+		public ITextColorWriter NameOutput { get; set; }
+		public ITextColorWriter ValueOutput { get; set; }
+		public ITextColorWriter ExpectedTypeOutput { get; set; }
+		public ITextColorWriter ActualTypeOutput { get; set; }
 		public DbgValueFormatterOptions ValueFormatterOptions { get; set; }
 		public DbgValueFormatterTypeOptions ExpectedTypeFormatterOptions { get; set; }
 		public DbgValueFormatterTypeOptions ActualTypeFormatterOptions { get; set; }

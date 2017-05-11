@@ -36,7 +36,23 @@ namespace dnSpy.Debugger.Text {
 			return res;
 		}
 
+		public void Clear() => result.Clear();
+
 		void ITextColorWriter.Write(object color, string text) => result.Add(new ClassifiedText(color, text));
 		void ITextColorWriter.Write(TextColor color, string text) => result.Add(new ClassifiedText(color.Box(), text));
+
+		public bool Equals(ClassifiedTextCollection collection) {
+			if (collection.IsDefault)
+				return false;
+			var other = collection.Result;
+			var result = this.result;
+			if (other.Length != result.Count)
+				return false;
+			for (int i = 0; i < other.Length; i++) {
+				if (!other[i].Equals(result[i]))
+					return false;
+			}
+			return true;
+		}
 	}
 }

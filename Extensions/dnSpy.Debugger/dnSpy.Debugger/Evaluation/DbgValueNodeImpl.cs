@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override string ImageName => engineValueNode.ImageName;
 		public override bool IsReadOnly => engineValueNode.IsReadOnly;
 		public override bool? HasChildren => engineValueNode.HasChildren;
-		public override ulong ChildrenCount => engineValueNode.ChildrenCount;
+		public override ulong ChildCount => engineValueNode.ChildrenCount;
 
 		readonly DbgEngineValueNode engineValueNode;
 

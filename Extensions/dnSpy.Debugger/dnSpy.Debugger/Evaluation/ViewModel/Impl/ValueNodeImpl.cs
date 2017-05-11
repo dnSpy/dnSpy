@@ -1,0 +1,184 @@
+﻿/*
+    Copyright (C) 2014-2017 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using dnSpy.Contracts.Controls.ToolWindows;
+using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.TreeView;
+using dnSpy.Debugger.Properties;
+using dnSpy.Debugger.Text;
+using dnSpy.Debugger.UI;
+
+namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
+	[Flags]
+	enum RefreshNodeOptions {
+		RefreshName					= 0x00000001,
+		RefreshNameControl			= 0x00000002,
+		RefreshValue				= 0x00000004,
+		RefreshValueControl			= 0x00000008,
+		RefreshType					= 0x00000010,
+		RefreshTypeControl			= 0x00000020,
+	}
+
+	sealed class ValueNodeImpl : ValueNode, INotifyPropertyChanged {
+		// We have to use a small number here because the treeview derives from listview which uses a
+		// ListCollectionView that only supports adding/removing one item at a time. It's incredibly slow.
+		// TODO: use your own ICollectionView (collection impls ICollectionView or ICollectionViewFactory)
+		const uint MAX_CHILDREN = 10000;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		public override ImageReference Icon => Context.ValueNodeImageReferenceService.GetImageReference(DebuggerValueNode.ImageName);
+
+		public override FormatterObject<ValueNode> NameObject => new FormatterObject<ValueNode>(this, Context.NameColumnName);
+		public override FormatterObject<ValueNode> ValueObject => new FormatterObject<ValueNode>(this, Context.ValueColumnName);
+		public override FormatterObject<ValueNode> TypeObject => new FormatterObject<ValueNode>(this, Context.TypeColumnName);
+
+		public override ClassifiedTextCollection CachedName {
+			get {
+				if (cachedName.IsDefault)
+					InitializeCachedText();
+				return cachedName;
+			}
+		}
+		public override ClassifiedTextCollection CachedValue {
+			get {
+				if (cachedValue.IsDefault)
+					InitializeCachedText();
+				return cachedValue;
+			}
+		}
+		public override ClassifiedTextCollection CachedExpectedType {
+			get {
+				if (cachedExpectedType.IsDefault)
+					InitializeCachedText();
+				return cachedExpectedType;
+			}
+		}
+		/// <summary>
+		/// It's default if it's identical to <see cref="CachedExpectedType"/>
+		/// </summary>
+		public override ClassifiedTextCollection CachedActualType_OrDefaultInstance {
+			get {
+				// Check cachedExpectedType and not cachedActualType since cachedActualType
+				// is default if it equals cachedExpectedType
+				if (cachedExpectedType.IsDefault)
+					InitializeCachedText();
+				return cachedActualType;
+			}
+		}
+
+		void InitializeCachedText() {
+			var p = Context.ValueNodeFormatParameters;
+			p.Initialize(cachedName.IsDefault, cachedValue.IsDefault, cachedExpectedType.IsDefault);
+			DebuggerValueNode.Format(p);
+			if (cachedName.IsDefault)
+				cachedName = p.NameOutput.GetClassifiedText();
+			if (cachedValue.IsDefault)
+				cachedValue = p.ValueOutput.GetClassifiedText();
+			if (cachedExpectedType.IsDefault) {
+				cachedExpectedType = p.ExpectedTypeOutput.GetClassifiedText();
+				if (p.ActualTypeOutput.Equals(cachedExpectedType)) {
+					p.ActualTypeOutput.Clear();
+					cachedActualType = default(ClassifiedTextCollection);
+				}
+				else
+					cachedActualType = p.ActualTypeOutput.GetClassifiedText();
+			}
+		}
+		ClassifiedTextCollection cachedName;
+		ClassifiedTextCollection cachedValue;
+		ClassifiedTextCollection cachedExpectedType;
+		ClassifiedTextCollection cachedActualType;
+
+		public IValueNodesContext Context { get; }
+
+		internal uint DbgValueNodeChildIndex { get; }
+		internal ValueNodeImpl Parent { get; }
+		internal DbgValueNode DebuggerValueNode {
+			get {
+				var dbgNode = __dbgValueNode_DONT_USE;
+				if (dbgNode == null)
+					__dbgValueNode_DONT_USE = dbgNode = Context.ValueNodeReader.GetDebuggerNode(this);
+				return dbgNode;
+			}
+		}
+		DbgValueNode __dbgValueNode_DONT_USE;
+
+		public override IEditableValue ValueEditableValue { get; }
+		public override IEditValueProvider ValueEditValueProvider { get; }
+
+		public ValueNodeImpl(IValueNodesContext context, DbgValueNode dbgValueNode) : this(context) =>
+			__dbgValueNode_DONT_USE = dbgValueNode ?? throw new ArgumentNullException(nameof(dbgValueNode));
+
+		// parent is needed since we need it before TreeNodeData.Parent is available
+		public ValueNodeImpl(IValueNodesContext context, ValueNodeImpl parent, uint childIndex) : this(context) {
+			Parent = parent ?? throw new ArgumentNullException(nameof(parent));
+			DbgValueNodeChildIndex = childIndex;
+		}
+
+		ValueNodeImpl(IValueNodesContext context) {
+			Context = context ?? throw new ArgumentNullException(nameof(context));
+			ValueEditValueProvider = context.ValueEditValueProvider;
+			//TODO:
+			ValueEditableValue = new EditableValueImpl(() => string.Empty, s => { }, () => false);
+		}
+
+		public override void Initialize() => TreeNode.LazyLoading = DebuggerValueNode.HasChildren != false;
+
+		public override IEnumerable<TreeNodeData> CreateChildren() {
+			if (DebuggerValueNode.HasChildren == false)
+				yield break;
+
+			ulong childCount = DebuggerValueNode.ChildCount;
+			if (childCount > MAX_CHILDREN) {
+				bool open = Context.ShowYesNoMessageBox(string.Format(dnSpy_Debugger_Resources.Locals_Ask_TooManyItems, MAX_CHILDREN));
+				if (!open) {
+					TreeNode.LazyLoading = true;
+					yield break;
+				}
+				childCount = MAX_CHILDREN;
+			}
+			uint count = (uint)childCount;
+			for (uint i = 0; i < count; i++)
+				yield return new ValueNodeImpl(Context, this, i);
+		}
+
+		void RefreshControls(RefreshNodeOptions options) {
+			if ((options & RefreshNodeOptions.RefreshName) != 0)
+				cachedName = default(ClassifiedTextCollection);
+			if ((options & RefreshNodeOptions.RefreshValue) != 0)
+				cachedValue = default(ClassifiedTextCollection);
+			if ((options & RefreshNodeOptions.RefreshType) != 0) {
+				cachedExpectedType = default(ClassifiedTextCollection);
+				cachedActualType = default(ClassifiedTextCollection);
+			}
+			if ((options & RefreshNodeOptions.RefreshNameControl) != 0)
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NameObject)));
+			if ((options & RefreshNodeOptions.RefreshValueControl) != 0)
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValueObject)));
+			if ((options & RefreshNodeOptions.RefreshTypeControl) != 0)
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TypeObject)));
+		}
+
+		public override void OnRefreshUI() => RefreshControls(Context.RefreshNodeOptions);
+	}
+}
