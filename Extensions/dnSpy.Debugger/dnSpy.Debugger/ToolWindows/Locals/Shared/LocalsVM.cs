@@ -85,8 +85,11 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			public override event EventHandler NodesChanged;
 			public override event EventHandler IsReadOnlyChanged;
 			public override bool IsReadOnly => isReadOnly;
+			public override event EventHandler LanguageChanged;
+			public override DbgLanguage Language => language;
 			bool isReadOnly;
 			bool isOpen;
+			DbgLanguage language;
 
 			readonly bool isLocals;
 			readonly UIDispatcher uiDispatcher;
@@ -138,7 +141,12 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 
 			void RefreshNodes_UI() {
 				uiDispatcher.VerifyAccess();
-				bool newIsReadOnly = TryGetLanguage().frame == null;
+				var info = TryGetLanguage();
+				if (info.language != language) {
+					language = info.language;
+					LanguageChanged?.Invoke(this, EventArgs.Empty);
+				}
+				bool newIsReadOnly = info.frame == null;
 				NodesChanged?.Invoke(this, EventArgs.Empty);
 				SetIsReadOnly_UI(newIsReadOnly);
 			}

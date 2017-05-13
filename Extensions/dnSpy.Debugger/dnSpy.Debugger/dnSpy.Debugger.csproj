@@ -143,6 +143,7 @@
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeFormatParameters.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeImageReferenceService.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeReader.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\LanguageEditValueProvider.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodeFormatter.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodeImpl.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodesContext.cs" />

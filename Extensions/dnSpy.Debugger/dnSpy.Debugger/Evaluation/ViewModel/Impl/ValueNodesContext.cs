@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.UI;
@@ -43,7 +42,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		string ValueColumnName { get; }
 		string TypeColumnName { get; }
 		ShowYesNoMessageBox ShowYesNoMessageBox { get; }
-		IEditValueProvider ValueEditValueProvider { get; }
+		LanguageEditValueProvider ValueEditValueProvider { get; }
 	}
 
 	sealed class ValueNodesContext : IValueNodesContext {
@@ -64,26 +63,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public string ValueColumnName { get; }
 		public string TypeColumnName { get; }
 		public ShowYesNoMessageBox ShowYesNoMessageBox { get; }
+		public LanguageEditValueProvider ValueEditValueProvider { get; }
 
-		public IEditValueProvider ValueEditValueProvider {
-			get {
-				UIDispatcher.VerifyAccess();
-				if (valueEditValueProvider == null)
-					valueEditValueProvider = editValueProviderService.Create(WindowContentType, Array.Empty<string>());
-				return valueEditValueProvider;
-			}
-		}
-		IEditValueProvider valueEditValueProvider;
-		readonly EditValueProviderService editValueProviderService;
-
-		public ValueNodesContext(UIDispatcher uiDispatcher, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, EditValueProviderService editValueProviderService, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, ShowYesNoMessageBox showYesNoMessageBox) {
+		public ValueNodesContext(UIDispatcher uiDispatcher, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, ShowYesNoMessageBox showYesNoMessageBox) {
 			UIDispatcher = uiDispatcher;
 			WindowContentType = windowContentType;
 			NameColumnName = nameColumnName;
 			ValueColumnName = valueColumnName;
 			TypeColumnName = typeColumnName;
 			ShowYesNoMessageBox = showYesNoMessageBox;
-			this.editValueProviderService = editValueProviderService;
+			ValueEditValueProvider = languageEditValueProviderFactory.Create(windowContentType);
 			ValueNodeImageReferenceService = dbgValueNodeImageReferenceService;
 			ValueNodeReader = dbgValueNodeReader;
 			ClassificationFormatMap = classificationFormatMap;

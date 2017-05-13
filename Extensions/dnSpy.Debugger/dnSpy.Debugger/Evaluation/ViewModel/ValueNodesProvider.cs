@@ -38,6 +38,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// </summary>
 		public abstract bool IsReadOnly { get; }
 		public abstract event EventHandler IsReadOnlyChanged;
+
+		/// <summary>
+		/// Gets the language or null if none
+		/// </summary>
+		public abstract DbgLanguage Language { get; }
+		public abstract event EventHandler LanguageChanged;
 	}
 
 	struct DbgValueNodeInfo {
