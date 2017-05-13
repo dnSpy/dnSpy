@@ -41,5 +41,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract ClassifiedTextCollection CachedValue { get; }
 		public abstract ClassifiedTextCollection CachedExpectedType { get; }
 		public abstract ClassifiedTextCollection CachedActualType_OrDefaultInstance { get; }
+		public abstract ClassifiedTextCollection OldCachedValue { get; }
 	}
 }

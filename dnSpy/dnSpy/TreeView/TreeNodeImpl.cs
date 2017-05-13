@@ -41,7 +41,10 @@ namespace dnSpy.TreeView {
 
 		public bool LazyLoading {
 			get { return Node.LazyLoading; }
-			set { Node.LazyLoading = value; }
+			set {
+				if (Node.LazyLoading != value)
+					Node.LazyLoading = value;
+			}
 		}
 
 		public bool IsExpanded {

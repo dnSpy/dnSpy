@@ -36,16 +36,17 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			var writer = nodeCtx.TextClassifierTextColorWriter;
 			writer.Clear();
 			var formatter = nodeCtx.Formatter;
+			bool textChanged = false;
 			if (obj.Tag == nodeCtx.NameColumnName)
 				formatter.WriteName(writer, obj.VM);
 			else if (obj.Tag == nodeCtx.ValueColumnName)
-				formatter.WriteValue(writer, obj.VM);
+				formatter.WriteValue(writer, obj.VM, out textChanged);
 			else if (obj.Tag == nodeCtx.TypeColumnName)
 				formatter.WriteType(writer, obj.VM);
 			else
 				return null;
 
-			var context = new TextClassifierContext(writer.Text, obj.Tag, nodeCtx.SyntaxHighlight, writer.Colors);
+			var context = new ValueNodeTextClassifierContext(textChanged, writer.Text, obj.Tag, nodeCtx.SyntaxHighlight, writer.Colors);
 			return nodeCtx.TextElementProvider.CreateTextElement(nodeCtx.ClassificationFormatMap, context, nodeCtx.WindowContentType, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
 		}
 

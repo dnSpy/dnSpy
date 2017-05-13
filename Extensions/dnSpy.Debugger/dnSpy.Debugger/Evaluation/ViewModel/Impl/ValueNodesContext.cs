@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		ValueNodeFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		DbgValueNodeFormatParameters ValueNodeFormatParameters { get; }
-		RefreshNodeOptions RefreshNodeOptions { get; }
+		RefreshNodeOptions RefreshNodeOptions { get; set; }
 		string WindowContentType { get; }
 		string NameColumnName { get; }
 		string ValueColumnName { get; }

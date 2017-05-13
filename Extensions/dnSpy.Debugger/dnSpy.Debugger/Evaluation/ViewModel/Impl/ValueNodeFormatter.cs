@@ -22,7 +22,11 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class ValueNodeFormatter {
 		public void WriteName(ITextColorWriter output, ValueNode vm) => vm.CachedName.WriteTo(output);
-		public void WriteValue(ITextColorWriter output, ValueNode vm) => vm.CachedValue.WriteTo(output);
+
+		public void WriteValue(ITextColorWriter output, ValueNode vm, out bool textChanged) {
+			vm.CachedValue.WriteTo(output);
+			textChanged = !vm.OldCachedValue.IsDefault && !vm.OldCachedValue.Equals(vm.CachedValue);
+		}
 
 		public void WriteType(ITextColorWriter output, ValueNode vm) {
 			vm.CachedExpectedType.WriteTo(output);

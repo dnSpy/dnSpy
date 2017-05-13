@@ -23,6 +23,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	abstract class DbgValueNodeReader {
 		public abstract DbgValueNode GetDebuggerNode(ValueNodeImpl valueNode);
+		public abstract DbgValueNode GetDebuggerNodeForReuse(ValueNodeImpl valueNode);
 	}
 
 	sealed class DbgValueNodeReaderImpl : DbgValueNodeReader {
@@ -30,6 +31,19 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var parent = valueNode.Parent;
 			uint startIndex = valueNode.DbgValueNodeChildIndex;
 			int count = 1;//TODO:
+			var newNodes = parent.DebuggerValueNode.GetChildren(startIndex, count);
+			newNodes[0].Runtime.CloseOnContinue(newNodes);
+			Debug.Assert(count == 1);
+			return newNodes[0];
+		}
+
+		public override DbgValueNode GetDebuggerNodeForReuse(ValueNodeImpl valueNode) {
+			var parent = valueNode.Parent;
+			uint startIndex = valueNode.DbgValueNodeChildIndex;
+			//TODO: Read more than one value. This code would need help from the caller
+			//		since it wants to exit its method as quickly as possible if the new
+			//		value isn't equal to the old value.
+			const int count = 1;
 			var newNodes = parent.DebuggerValueNode.GetChildren(startIndex, count);
 			newNodes[0].Runtime.CloseOnContinue(newNodes);
 			Debug.Assert(count == 1);

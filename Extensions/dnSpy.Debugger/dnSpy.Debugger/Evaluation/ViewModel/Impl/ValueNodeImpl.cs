@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
@@ -85,6 +86,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return cachedActualType;
 			}
 		}
+		public override ClassifiedTextCollection OldCachedValue => oldCachedValue;
 
 		void InitializeCachedText() {
 			var p = Context.ValueNodeFormatParameters;
@@ -108,11 +110,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		ClassifiedTextCollection cachedValue;
 		ClassifiedTextCollection cachedExpectedType;
 		ClassifiedTextCollection cachedActualType;
+		ClassifiedTextCollection oldCachedValue;
 
 		public IValueNodesContext Context { get; }
 
 		internal uint DbgValueNodeChildIndex { get; }
 		internal ValueNodeImpl Parent { get; }
+		bool HasDebuggerValueNode => __dbgValueNode_DONT_USE != null;
 		internal DbgValueNode DebuggerValueNode {
 			get {
 				var dbgNode = __dbgValueNode_DONT_USE;
@@ -123,24 +127,30 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 		DbgValueNode __dbgValueNode_DONT_USE;
 
-		public override IEditableValue ValueEditableValue { get; }
-		public override IEditValueProvider ValueEditValueProvider { get; }
+		public override IEditValueProvider ValueEditValueProvider => Context.ValueEditValueProvider;
 
-		public ValueNodeImpl(IValueNodesContext context, DbgValueNode dbgValueNode) : this(context) =>
+		public override IEditableValue ValueEditableValue {
+			get {
+				if (valueEditableValue == null)
+					valueEditableValue = new EditableValueImpl(() => string.Empty, s => { }, () => false);//TODO:
+				return valueEditableValue;
+			}
+		}
+		IEditableValue valueEditableValue;
+
+		public ValueNodeImpl(IValueNodesContext context, DbgValueNode dbgValueNode) {
+			Context = context ?? throw new ArgumentNullException(nameof(context));
 			__dbgValueNode_DONT_USE = dbgValueNode ?? throw new ArgumentNullException(nameof(dbgValueNode));
+		}
 
 		// parent is needed since we need it before TreeNodeData.Parent is available
-		public ValueNodeImpl(IValueNodesContext context, ValueNodeImpl parent, uint childIndex) : this(context) {
+		public ValueNodeImpl(IValueNodesContext context, ValueNodeImpl parent, uint childIndex) {
+			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Parent = parent ?? throw new ArgumentNullException(nameof(parent));
 			DbgValueNodeChildIndex = childIndex;
 		}
 
-		ValueNodeImpl(IValueNodesContext context) {
-			Context = context ?? throw new ArgumentNullException(nameof(context));
-			ValueEditValueProvider = context.ValueEditValueProvider;
-			//TODO:
-			ValueEditableValue = new EditableValueImpl(() => string.Empty, s => { }, () => false);
-		}
+		public override bool Activate() => valueEditableValue?.IsEditingValue == true;
 
 		public override void Initialize() => TreeNode.LazyLoading = DebuggerValueNode.HasChildren != false;
 
@@ -152,7 +162,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (childCount > MAX_CHILDREN) {
 				bool open = Context.ShowYesNoMessageBox(string.Format(dnSpy_Debugger_Resources.Locals_Ask_TooManyItems, MAX_CHILDREN));
 				if (!open) {
-					TreeNode.LazyLoading = true;
+					TreeNode.LazyLoading = DebuggerValueNode.HasChildren != false;
 					yield break;
 				}
 				childCount = MAX_CHILDREN;
@@ -180,5 +190,92 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override void OnRefreshUI() => RefreshControls(Context.RefreshNodeOptions);
+
+		// If it's a new value, then reset everything, else try to re-use it so eg. expanded arrays
+		// or classes don't get collapsed again.
+		internal void SetDebuggerValueNodeForRoot(DbgValueNode newNode) {
+			if (Parent != null)
+				throw new InvalidOperationException();
+			SetDebuggerValueNode(newNode, recursionCounter: 0);
+		}
+
+		bool SetDebuggerValueNode(DbgValueNode newNode, int recursionCounter) {
+			const int MAX_RECURSION = 30;
+			Debug.Assert(newNode != null);
+			var oldNode = __dbgValueNode_DONT_USE;
+			__dbgValueNode_DONT_USE = newNode;
+			oldCachedValue = cachedValue;
+
+			if (recursionCounter >= MAX_RECURSION || !IsSame(oldNode, newNode)) {
+				ResetForReuse();
+				return false;
+			}
+
+			if (TreeNode.IsExpanded) {
+				var children = TreeNode.Children;
+				// This was checked in IsSame
+				Debug.Assert(oldNode.ChildCount == newNode.ChildCount);
+				Debug.Assert((uint)children.Count <= newNode.ChildCount);
+				int count = children.Count;
+				for (int i = 0; i < count; i++) {
+					var node = (ValueNodeImpl)children[i].Data;
+					if (!node.HasDebuggerValueNode)
+						continue;
+					var newChildNode = Context.ValueNodeReader.GetDebuggerNodeForReuse(node);
+					if (!node.SetDebuggerValueNode(newChildNode, recursionCounter + 1)) {
+						ResetForReuse();
+						return false;
+					}
+				}
+			}
+			else
+				ResetChildren();
+
+			RefreshAllColumns();
+			return true;
+		}
+
+		bool IsSame(DbgValueNode oldNode, DbgValueNode newNode) {
+			// If any one of them is null (even if both are null), they're not the same
+			if (oldNode == null || newNode == null)
+				return false;
+
+			if (oldNode.Expression != newNode.Expression)
+				return false;
+			if (oldNode.ImageName != newNode.ImageName)
+				return false;
+			if (oldNode.IsReadOnly != newNode.IsReadOnly)
+				return false;
+			if (oldNode.HasChildren != newNode.HasChildren)
+				return false;
+
+			if (TreeNode.IsExpanded) {
+				if (oldNode.ChildCount != newNode.ChildCount)
+					return false;
+			}
+
+			return true;
+		}
+
+		void ResetForReuse() {
+			ResetChildren();
+			RefreshAllColumns();
+		}
+
+		void ResetChildren() {
+			TreeNode.Children.Clear();
+			Debug.Assert(HasDebuggerValueNode);
+			TreeNode.LazyLoading = DebuggerValueNode.HasChildren != false;
+		}
+
+		void RefreshAllColumns() {
+			Context.RefreshNodeOptions =
+				RefreshNodeOptions.RefreshName | RefreshNodeOptions.RefreshNameControl |
+				RefreshNodeOptions.RefreshValue | RefreshNodeOptions.RefreshValueControl |
+				RefreshNodeOptions.RefreshType | RefreshNodeOptions.RefreshTypeControl;
+			// Need to call it to refresh the icon (could've changed). It will call OnRefreshUI()
+			// which uses the options init'd above
+			TreeNode.RefreshUI();
+		}
 	}
 }

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Controls.ToolWindows;
@@ -80,12 +81,103 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void RecreateRootChildren_UI() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			var nodes = isOpen ? valueNodesProvider.GetNodes() : Array.Empty<DbgValueNode>();
+			RecreateRootChildrenCore_UI(nodes);
+			VerifyChildren_UI(nodes);
+		}
+
+		// UI thread
+		[Conditional("DEBUG")]
+		void VerifyChildren_UI(DbgValueNode[] nodes) {
+			var children = rootNode.TreeNode.Children;
+			Debug.Assert(children.Count == nodes.Length);
+			if (children.Count == nodes.Length) {
+				for (int i = 0; i < nodes.Length; i++) {
+					var node = (ValueNodeImpl)children[i].Data;
+					Debug.Assert(node.DebuggerValueNode == nodes[i]);
+				}
+			}
+		}
+
+		// UI thread
+		void RecreateRootChildrenCore_UI(DbgValueNode[] nodes) {
+			valueNodesContext.UIDispatcher.VerifyAccess();
 			if (nodes.Length > 0)
 				nodes[0].Runtime.CloseOnContinue(nodes);
 
-			SetNewRootChildren_UI(nodes);
+			if (nodes.Length == 0 || rootNode.TreeNode.Children.Count == 0) {
+				SetNewRootChildren_UI(nodes);
+				return;
+			}
+
+			// PERF: Re-use as many nodes as possible so the UI is only updated when something changes.
+			// Most of the time the node's UI elements don't change (same name, value, and type).
+			// Recreating these elements is slow.
+
+			var children = rootNode.TreeNode.Children;
+			int oldChildCount = children.Count;
+			var toOldIndex = new Dictionary<string, List<int>>(oldChildCount, StringComparer.Ordinal);
+			for (int i = 0; i < oldChildCount; i++) {
+				var node = (ValueNodeImpl)children[i].Data;
+				var expression = node.DebuggerValueNode.Expression;
+				if (!toOldIndex.TryGetValue(expression, out var list))
+					toOldIndex.Add(expression, list = new List<int>(1));
+				list.Add(i);
+			}
+
+			int currentNewIndex = 0;
+			int updateIndex = 0;
+			for (int currentOldIndex = 0; currentNewIndex < nodes.Length;) {
+				var (newIndex, oldIndex) = GetOldIndex(toOldIndex, nodes, currentNewIndex, currentOldIndex);
+				Debug.Assert((oldIndex < 0) == (newIndex < 0));
+				bool lastIter = oldIndex < 0;
+				if (lastIter) {
+					newIndex = nodes.Length;
+					oldIndex = oldChildCount;
+
+					// Check if all nodes were removed
+					if (currentNewIndex == 0) {
+						SetNewRootChildren_UI(nodes);
+						return;
+					}
+				}
+
+				int deleteCount = oldIndex - currentOldIndex;
+				for (int i = deleteCount - 1; i >= 0; i--) {
+					Debug.Assert(updateIndex + i < children.Count);
+					children.RemoveAt(updateIndex + i);
+				}
+
+				for (; currentNewIndex < newIndex; currentNewIndex++) {
+					Debug.Assert(updateIndex <= children.Count);
+					children.Insert(updateIndex++, treeView.Create(new ValueNodeImpl(valueNodesContext, nodes[currentNewIndex])));
+				}
+
+				if (lastIter)
+					break;
+				Debug.Assert(updateIndex < children.Count);
+				var reusedNode = (ValueNodeImpl)children[updateIndex++].Data;
+				reusedNode.SetDebuggerValueNodeForRoot(nodes[currentNewIndex++]);
+				currentOldIndex = oldIndex + 1;
+			}
+			while (children.Count != updateIndex)
+				children.RemoveAt(children.Count - 1);
 		}
 
+		static (int newIndex, int oldIndex) GetOldIndex(Dictionary<string, List<int>> dict, DbgValueNode[] newNodes, int newIndex, int minOldIndex) {
+			for (; newIndex < newNodes.Length; newIndex++) {
+				if (dict.TryGetValue(newNodes[newIndex].Expression, out var list)) {
+					for (int i = 0; i < list.Count; i++) {
+						int oldIndex = list[i];
+						if (oldIndex >= minOldIndex)
+							return (newIndex, oldIndex);
+					}
+					return (-1, -1);
+				}
+			}
+			return (-1, -1);
+		}
+
+		// UI thread
 		void SetNewRootChildren_UI(DbgValueNode[] nodes) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			rootNode.TreeNode.Children.Clear();
