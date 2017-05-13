@@ -1411,6 +1411,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Highlight changed variables in variables windows.
+        /// </summary>
+        public static string DbgSettings_HighlightChangedVariables {
+            get {
+                return ResourceManager.GetString("DbgSettings_HighlightChangedVariables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ignore Debugger.Break() and break instructions.
         /// </summary>
         public static string DbgSettings_IgnoreBreakInstructions {

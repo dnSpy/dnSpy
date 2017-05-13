@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		ValueNodeFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
+		bool HighlightChangedVariables { get; }
 		DbgValueNodeFormatParameters ValueNodeFormatParameters { get; }
 		RefreshNodeOptions RefreshNodeOptions { get; set; }
 		string WindowContentType { get; }
@@ -52,6 +53,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public ValueNodeFormatter Formatter { get; }
 		public bool SyntaxHighlight { get; set; }
+		public bool HighlightChangedVariables { get; set; }
 		public DbgValueNodeFormatParameters ValueNodeFormatParameters { get; }
 		public RefreshNodeOptions RefreshNodeOptions { get; set; }
 		public string WindowContentType { get; }

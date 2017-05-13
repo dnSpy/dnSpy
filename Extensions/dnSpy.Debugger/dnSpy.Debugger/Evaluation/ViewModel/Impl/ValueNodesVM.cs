@@ -58,9 +58,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			this.debuggerSettings = debuggerSettings;
 			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			valueNodesContext = new ValueNodesContext(uiDispatcher, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, editValueProviderService, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(), classificationFormatMap, textElementProvider, options.ShowYesNoMessageBox) {
-				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-			};
+			valueNodesContext = new ValueNodesContext(uiDispatcher, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, editValueProviderService, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(), classificationFormatMap, textElementProvider, options.ShowYesNoMessageBox);
 
 			rootNode = new RootNode();
 			var tvOptions = new TreeViewOptions {
@@ -206,6 +204,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 				dbgEvalFormatterSettings.PropertyChanged += DbgEvalFormatterSettings_PropertyChanged;
 				valueNodesContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
+				valueNodesContext.HighlightChangedVariables = debuggerSettings.HighlightChangedVariables;
 				UpdateFormatterOptions();
 				valueNodesProvider.NodesChanged += ValueNodesProvider_NodesChanged;
 			}
@@ -234,18 +233,29 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			if (propertyName == nameof(DebuggerSettings.UseHexadecimal))
+			switch (propertyName) {
+			case nameof(DebuggerSettings.UseHexadecimal):
 				RefreshHexFields_UI();
-			else if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
+				break;
+
+			case nameof(DebuggerSettings.SyntaxHighlight):
 				valueNodesContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				RefreshThemeFields_UI();
-			}
-			else if (propertyName == nameof(DebuggerSettings.PropertyEvalAndFunctionCalls) || propertyName == nameof(DebuggerSettings.UseStringConversionFunction)) {
+				break;
+
+			case nameof(DebuggerSettings.PropertyEvalAndFunctionCalls):
+			case nameof(DebuggerSettings.UseStringConversionFunction):
 				UpdateFormatterOptions();
 				const RefreshNodeOptions options =
 					RefreshNodeOptions.RefreshValue |
 					RefreshNodeOptions.RefreshValueControl;
 				RefreshNodes(options);
+				break;
+
+			case nameof(DebuggerSettings.HighlightChangedVariables):
+				valueNodesContext.HighlightChangedVariables = debuggerSettings.HighlightChangedVariables;
+				RefreshNodes(RefreshNodeOptions.RefreshValueControl);
+				break;
 			}
 		}
 

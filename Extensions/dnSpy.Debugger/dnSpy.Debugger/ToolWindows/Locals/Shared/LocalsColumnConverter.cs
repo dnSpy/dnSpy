@@ -46,6 +46,8 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			else
 				return null;
 
+			if (!nodeCtx.HighlightChangedVariables)
+				textChanged = false;
 			var context = new ValueNodeTextClassifierContext(textChanged, writer.Text, obj.Tag, nodeCtx.SyntaxHighlight, writer.Colors);
 			return nodeCtx.TextElementProvider.CreateTextElement(nodeCtx.ClassificationFormatMap, context, nodeCtx.WindowContentType, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
 		}

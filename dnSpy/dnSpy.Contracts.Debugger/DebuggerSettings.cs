@@ -85,5 +85,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// true to enable Managed Debugging Assistants (MDA)
 		/// </summary>
 		public abstract bool EnableManagedDebuggingAssistants { get; set; }
+
+		/// <summary>
+		/// Highlights the value of a variable that has changed in variables windows
+		/// </summary>
+		public abstract bool HighlightChangedVariables { get; set; }
 	}
 }

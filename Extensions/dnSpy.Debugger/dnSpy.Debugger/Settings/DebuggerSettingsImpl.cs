@@ -220,6 +220,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool enableManagedDebuggingAssistants = false;
 
+		public override bool HighlightChangedVariables {
+			get {
+				lock (lockObj)
+					return highlightChangedVariables;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = highlightChangedVariables != value;
+					highlightChangedVariables = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(HighlightChangedVariables));
+					OnModified();
+				}
+			}
+		}
+		bool highlightChangedVariables = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -233,6 +252,7 @@ namespace dnSpy.Debugger.Settings {
 			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
 			other.BreakAllProcesses = BreakAllProcesses;
 			other.EnableManagedDebuggingAssistants = EnableManagedDebuggingAssistants;
+			other.HighlightChangedVariables = HighlightChangedVariables;
 			return other;
 		}
 	}
@@ -260,6 +280,7 @@ namespace dnSpy.Debugger.Settings {
 			IgnoreBreakInstructions = sect.Attribute<bool?>(nameof(IgnoreBreakInstructions)) ?? IgnoreBreakInstructions;
 			BreakAllProcesses = sect.Attribute<bool?>(nameof(BreakAllProcesses)) ?? BreakAllProcesses;
 			EnableManagedDebuggingAssistants = sect.Attribute<bool?>(nameof(EnableManagedDebuggingAssistants)) ?? EnableManagedDebuggingAssistants;
+			HighlightChangedVariables = sect.Attribute<bool?>(nameof(HighlightChangedVariables)) ?? HighlightChangedVariables;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -278,6 +299,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(IgnoreBreakInstructions), IgnoreBreakInstructions);
 			sect.Attribute(nameof(BreakAllProcesses), BreakAllProcesses);
 			sect.Attribute(nameof(EnableManagedDebuggingAssistants), EnableManagedDebuggingAssistants);
+			sect.Attribute(nameof(HighlightChangedVariables), HighlightChangedVariables);
 		}
 	}
 }

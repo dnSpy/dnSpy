@@ -1830,4 +1830,7 @@ Are you sure you want to expand it?</value>
   <data name="Window_Autos" xml:space="preserve">
     <value>Autos</value>
   </data>
+  <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
+    <value>Highlight changed variables in variables windows</value>
+  </data>
 </root>
