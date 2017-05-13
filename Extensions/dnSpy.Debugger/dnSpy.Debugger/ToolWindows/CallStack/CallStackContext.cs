@@ -21,14 +21,16 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
+using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {
 	interface ICallStackContext {
 		UIDispatcher UIDispatcher { get; }
 		IClassificationFormatMap ClassificationFormatMap { get; }
-		ITextElementProvider TextElementProvider { get; }
+		ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		int UIVersion { get; }
 		CallStackFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		ClassifiedTextWriter ClassifiedTextWriter { get; }
@@ -38,17 +40,18 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 	sealed class CallStackContext : ICallStackContext {
 		public UIDispatcher UIDispatcher { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
-		public ITextElementProvider TextElementProvider { get; }
+		public ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		public int UIVersion { get; set; }
 		public CallStackFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public ClassifiedTextWriter ClassifiedTextWriter { get; }
 		public DbgStackFrameFormatOptions StackFrameFormatOptions { get; set; }
 
-		public CallStackContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
+		public CallStackContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
-			TextElementProvider = textElementProvider;
+			TextBlockContentInfoFactory = textBlockContentInfoFactory;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
 			ClassifiedTextWriter = new ClassifiedTextWriter();
 		}

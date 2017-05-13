@@ -27,6 +27,7 @@
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Contracts.Controls.ToolWindows;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
+             xmlns:uiwpf="clr-namespace:dnSpy.Debugger.UI.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -75,7 +76,7 @@
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource callStackColumnConverter}}" />
+                                <uiwpf:SmartTextBlock ContentInfo="{Binding NameObject, Mode=OneWay, Converter={StaticResource callStackColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

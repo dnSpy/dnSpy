@@ -21,14 +21,16 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
+using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
 	interface IThreadContext {
 		UIDispatcher UIDispatcher { get; }
 		IClassificationFormatMap ClassificationFormatMap { get; }
-		ITextElementProvider TextElementProvider { get; }
+		ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		int UIVersion { get; }
 		ThreadFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
@@ -39,18 +41,19 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	sealed class ThreadContext : IThreadContext {
 		public UIDispatcher UIDispatcher { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
-		public ITextElementProvider TextElementProvider { get; }
+		public ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		public int UIVersion { get; set; }
 		public ThreadFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 		public SearchMatcher SearchMatcher { get; }
 		public ClassifiedTextWriter ClassifiedTextWriter { get; }
 
-		public ThreadContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
+		public ThreadContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, SearchMatcher searchMatcher) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
-			TextElementProvider = textElementProvider;
+			TextBlockContentInfoFactory = textBlockContentInfoFactory;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
 			SearchMatcher = searchMatcher;
 			ClassifiedTextWriter = new ClassifiedTextWriter();

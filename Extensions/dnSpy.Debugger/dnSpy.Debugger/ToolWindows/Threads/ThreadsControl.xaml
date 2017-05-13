@@ -28,6 +28,7 @@
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Contracts.Controls.ToolWindows;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
+             xmlns:uiwpf="clr-namespace:dnSpy.Debugger.UI.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
     <Grid>
@@ -113,14 +114,14 @@
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadID}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding IdObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                <uiwpf:SmartTextBlock ContentInfo="{Binding IdObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadManagedId}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding ManagedIdObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                <uiwpf:SmartTextBlock ContentInfo="{Binding ManagedIdObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -141,7 +142,7 @@
                                             </DataTemplate>
                                         </ContentPresenter.ContentTemplate>
                                     </ContentPresenter>
-                                    <ContentPresenter Grid.Column="1" Margin="5 0 0 0" Content="{Binding CategoryTextObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                    <uiwpf:SmartTextBlock Grid.Column="1" Margin="5 0 0 0" ContentInfo="{Binding CategoryTextObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                                 </Grid>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -149,56 +150,60 @@
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ctrls:EditValueControl ReadOnlyContent="{Binding NameObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" EditableValue="{Binding NameEditableValue}" EditValueProvider="{Binding NameEditValueProvider}" />
+                                <ctrls:EditValueControl EditableValue="{Binding NameEditableValue}" EditValueProvider="{Binding NameEditValueProvider}">
+                                    <ctrls:EditValueControl.ReadOnlyContent>
+                                        <uiwpf:SmartTextBlock ContentInfo="{Binding NameObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                    </ctrls:EditValueControl.ReadOnlyContent>
+                                </ctrls:EditValueControl>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadLocation}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding LocationObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                <uiwpf:SmartTextBlock ContentInfo="{Binding LocationObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadPriority}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding PriorityObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                <uiwpf:SmartTextBlock ContentInfo="{Binding PriorityObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadAffinityMask}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding AffinityMaskObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                <uiwpf:SmartTextBlock ContentInfo="{Binding AffinityMaskObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadSuspendedCount}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding SuspendedCountObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                <uiwpf:SmartTextBlock ContentInfo="{Binding SuspendedCountObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessName}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding ProcessNameObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                <uiwpf:SmartTextBlock ContentInfo="{Binding ProcessNameObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding AppDomainObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                <uiwpf:SmartTextBlock ContentInfo="{Binding AppDomainObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadState}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding StateObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
+                                <uiwpf:SmartTextBlock ContentInfo="{Binding StateObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

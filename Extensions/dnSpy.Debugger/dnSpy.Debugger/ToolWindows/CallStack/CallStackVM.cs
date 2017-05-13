@@ -33,6 +33,7 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
+using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {
@@ -70,7 +71,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		readonly Dictionary<DbgCodeBreakpoint, HashSet<NormalStackFrameVM>> usedBreakpoints;
 
 		[ImportingConstructor]
-		CallStackVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, Lazy<DbgCallStackService> dbgCallStackService, CallStackDisplaySettings callStackDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, CallStackFormatterProvider callStackFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+		CallStackVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, Lazy<DbgCallStackService> dbgCallStackService, CallStackDisplaySettings callStackDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, CallStackFormatterProvider callStackFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory) {
 			uiDispatcher.VerifyAccess();
 			AllItems = new ObservableCollection<StackFrameVM>();
 			SelectedItems = new ObservableCollection<StackFrameVM>();
@@ -84,7 +85,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			this.debuggerSettings = debuggerSettings;
 			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			callStackContext = new CallStackContext(uiDispatcher, classificationFormatMap, textElementProvider) {
+			callStackContext = new CallStackContext(uiDispatcher, classificationFormatMap, textBlockContentInfoFactory) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = callStackFormatterProvider.Create(),
 				StackFrameFormatOptions = GetStackFrameFormatOptions(),
@@ -115,6 +116,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				callStackDisplaySettings.PropertyChanged += CallStackDisplaySettings_PropertyChanged;
 				callStackContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
+				callStackContext.UIVersion++;
 				RecreateFormatter_UI();
 				callStackContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				callStackContext.StackFrameFormatOptions = GetStackFrameFormatOptions();
@@ -153,6 +155,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		// UI thread
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
 			callStackContext.UIDispatcher.VerifyAccess();
+			callStackContext.UIVersion++;
 			RefreshThemeFields_UI();
 		}
 

@@ -33,6 +33,7 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
+using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
@@ -131,7 +132,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		int threadOrder;
 
 		[ImportingConstructor]
-		ThreadsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ThreadFormatterProvider threadFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, ThreadCategoryService threadCategoryService, EditValueProviderService editValueProviderService) {
+		ThreadsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ThreadFormatterProvider threadFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, ThreadCategoryService threadCategoryService, EditValueProviderService editValueProviderService) {
 			uiDispatcher.VerifyAccess();
 			realAllItems = new List<ThreadVM>();
 			AllItems = new BulkObservableCollection<ThreadVM>();
@@ -145,7 +146,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			this.threadCategoryService = threadCategoryService;
 			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			threadContext = new ThreadContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions)) {
+			threadContext = new ThreadContext(uiDispatcher, classificationFormatMap, textBlockContentInfoFactory, new SearchMatcher(searchColumnDefinitions)) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				Formatter = threadFormatterProvider.Create(),
@@ -207,6 +208,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			if (enable) {
 				threadContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
+				threadContext.UIVersion++;
 				RecreateFormatter_UI();
 				threadContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				threadContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
@@ -324,6 +326,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
 			threadContext.UIDispatcher.VerifyAccess();
+			threadContext.UIVersion++;
 			RefreshThemeFields_UI();
 		}
 

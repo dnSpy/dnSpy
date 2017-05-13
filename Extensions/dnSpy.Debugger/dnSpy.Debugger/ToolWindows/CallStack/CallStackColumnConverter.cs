@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				return null;
 
 			var context = new TextClassifierContext(writer.Text, obj.Tag, obj.VM.Context.SyntaxHighlight, writer.Colors);
-			return obj.VM.Context.TextElementProvider.CreateTextElement(obj.VM.Context.ClassificationFormatMap, context, ContentTypes.CallStackWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			return obj.VM.Context.TextBlockContentInfoFactory.Create(obj.VM.Context.UIVersion, obj.VM.Context.ClassificationFormatMap, context, ContentTypes.CallStackWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
