@@ -28,9 +28,9 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
-using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.UI;
+using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
@@ -53,13 +53,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly RootNode rootNode;
 		bool isOpen;
 
-		public ValueNodesVM(UIDispatcher uiDispatcher, ValueNodesVMOptions options, ITreeViewService treeViewService, EditValueProviderService editValueProviderService, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+		public ValueNodesVM(UIDispatcher uiDispatcher, ValueNodesVMOptions options, ITreeViewService treeViewService, EditValueProviderService editValueProviderService, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory) {
 			uiDispatcher.VerifyAccess();
 			valueNodesProvider = options.NodesProvider;
 			this.debuggerSettings = debuggerSettings;
 			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			valueNodesContext = new ValueNodesContext(uiDispatcher, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, editValueProviderService, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(), classificationFormatMap, textElementProvider, options.ShowYesNoMessageBox);
+			valueNodesContext = new ValueNodesContext(uiDispatcher, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, editValueProviderService, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(), classificationFormatMap, textBlockContentInfoFactory, options.ShowYesNoMessageBox);
 
 			rootNode = new RootNode();
 			var tvOptions = new TreeViewOptions {
@@ -206,6 +206,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 				dbgEvalFormatterSettings.PropertyChanged += DbgEvalFormatterSettings_PropertyChanged;
+				valueNodesContext.UIVersion++;
 				valueNodesContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				valueNodesContext.HighlightChangedVariables = debuggerSettings.HighlightChangedVariables;
 				UpdateFormatterOptions();
@@ -226,6 +227,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
+			valueNodesContext.UIVersion++;
 			RefreshThemeFields_UI();
 		}
 

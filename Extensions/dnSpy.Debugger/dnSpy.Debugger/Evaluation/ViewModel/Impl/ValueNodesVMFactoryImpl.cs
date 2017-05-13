@@ -21,9 +21,9 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.UI;
+using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
@@ -36,10 +36,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly DebuggerSettings debuggerSettings;
 		readonly DbgEvalFormatterSettings dbgEvalFormatterSettings;
 		readonly IClassificationFormatMapService classificationFormatMapService;
-		readonly ITextElementProvider textElementProvider;
+		readonly ITextBlockContentInfoFactory textBlockContentInfoFactory;
 
 		[ImportingConstructor]
-		ValueNodesVMFactoryImpl(UIDispatcher uiDispatcher, ITreeViewService treeViewService, EditValueProviderService editValueProviderService, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+		ValueNodesVMFactoryImpl(UIDispatcher uiDispatcher, ITreeViewService treeViewService, EditValueProviderService editValueProviderService, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory) {
 			uiDispatcher.VerifyAccess();
 			this.uiDispatcher = uiDispatcher;
 			this.treeViewService = treeViewService;
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			this.debuggerSettings = debuggerSettings;
 			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
 			this.classificationFormatMapService = classificationFormatMapService;
-			this.textElementProvider = textElementProvider;
+			this.textBlockContentInfoFactory = textBlockContentInfoFactory;
 		}
 
 		public override IValueNodesVM Create(ValueNodesVMOptions options) {
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				throw new ArgumentException();
 			if (options.ShowYesNoMessageBox == null)
 				throw new ArgumentException();
-			return new ValueNodesVM(uiDispatcher, options, treeViewService, editValueProviderService, dbgValueNodeImageReferenceService, debuggerSettings, dbgEvalFormatterSettings, classificationFormatMapService, textElementProvider);
+			return new ValueNodesVM(uiDispatcher, options, treeViewService, editValueProviderService, dbgValueNodeImageReferenceService, debuggerSettings, dbgEvalFormatterSettings, classificationFormatMapService, textBlockContentInfoFactory);
 		}
 	}
 }

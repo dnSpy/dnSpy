@@ -784,6 +784,7 @@
     <Compile Include="Text\Classification\ITextClassifierAggregator.cs" />
     <Compile Include="Text\Classification\ITextClassifierAggregatorService.cs" />
     <Compile Include="Text\Classification\ITextClassifierProvider.cs" />
+    <Compile Include="Text\Classification\ITextElementFactory.cs" />
     <Compile Include="Text\Classification\ITextElementProvider.cs" />
     <Compile Include="Text\Classification\IThemeClassificationTypeService.cs" />
     <Compile Include="Text\Classification\IThemeFormatDefinition.cs" />

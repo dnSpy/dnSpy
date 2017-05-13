@@ -243,6 +243,10 @@
     <Compile Include="ToolWindows\ToolWindowsOperations.cs" />
     <Compile Include="UI\BulkObservableCollection.cs" />
     <Compile Include="UI\FormatterObject.cs" />
+    <Compile Include="UI\Wpf\ITextBlockContentInfoFactory.cs" />
+    <Compile Include="UI\Wpf\SmartTextBlock.cs" />
+    <Compile Include="UI\Wpf\TextBlockContentInfo.cs" />
+    <Compile Include="UI\Wpf\TextBlockContentInfoFactory.cs" />
     <Compile Include="Utilities\ProcessProvider.cs" />
     <Compile Include="Utilities\ProcessUtilities.cs" />
     <Compile Include="Utilities\WildcardsUtils.cs" />

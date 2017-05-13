@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			if (!nodeCtx.HighlightChangedVariables)
 				textChanged = false;
 			var context = new ValueNodeTextClassifierContext(textChanged, writer.Text, obj.Tag, nodeCtx.SyntaxHighlight, writer.Colors);
-			return nodeCtx.TextElementProvider.CreateTextElement(nodeCtx.ClassificationFormatMap, context, nodeCtx.WindowContentType, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			return nodeCtx.TextBlockContentInfoFactory.Create(nodeCtx.UIVersion, nodeCtx.ClassificationFormatMap, context, nodeCtx.WindowContentType, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();

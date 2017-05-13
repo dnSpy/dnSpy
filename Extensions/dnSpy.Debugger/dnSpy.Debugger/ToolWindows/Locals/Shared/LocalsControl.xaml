@@ -26,6 +26,7 @@
              xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls.ToolWindows;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
+             xmlns:uiwpf="clr-namespace:dnSpy.Debugger.UI.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -43,7 +44,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <tv:SharpTreeNodeView Grid.Column="0" Style="{StaticResource SharpTreeNodeView_GridView}" />
-                                <ContentPresenter Grid.Column="1" Content="{Binding Data.NameObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}" />
+                                <uiwpf:SmartTextBlock Grid.Column="1" ContentInfo="{Binding Data.NameObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}" />
                             </Grid>
                         </Border>
                     </DataTemplate>
@@ -55,7 +56,11 @@
                         <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"
                                 BorderThickness="0 0 1 1"
                                 Margin="-8 0">
-                            <ctrls:EditValueControl Margin="8 0 4 0" ReadOnlyContent="{Binding Data.ValueObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}" EditableValue="{Binding Data.ValueEditableValue}" EditValueProvider="{Binding Data.ValueEditValueProvider}" />
+                            <ctrls:EditValueControl Margin="8 0 4 0" EditableValue="{Binding Data.ValueEditableValue}" EditValueProvider="{Binding Data.ValueEditValueProvider}">
+                                <ctrls:EditValueControl.ReadOnlyContent>
+                                    <uiwpf:SmartTextBlock ContentInfo="{Binding Data.ValueObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}" />
+                                </ctrls:EditValueControl.ReadOnlyContent>
+                            </ctrls:EditValueControl>
                         </Border>
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
@@ -66,7 +71,7 @@
                         <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"
                                 BorderThickness="0 0 1 1"
                                 Margin="-8 0">
-                            <ContentPresenter Margin="6 0" Content="{Binding Data.TypeObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}" />
+                            <uiwpf:SmartTextBlock Margin="6 0" ContentInfo="{Binding Data.TypeObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}" />
                         </Border>
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>

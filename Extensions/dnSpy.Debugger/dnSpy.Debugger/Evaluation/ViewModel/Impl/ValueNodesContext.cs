@@ -21,6 +21,7 @@ using System;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.UI;
+using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
@@ -29,8 +30,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		DbgValueNodeImageReferenceService ValueNodeImageReferenceService { get; }
 		DbgValueNodeReader ValueNodeReader { get; }
 		IClassificationFormatMap ClassificationFormatMap { get; }
-		ITextElementProvider TextElementProvider { get; }
+		ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		int UIVersion { get; }
 		ValueNodeFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		bool HighlightChangedVariables { get; }
@@ -49,8 +51,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public DbgValueNodeImageReferenceService ValueNodeImageReferenceService { get; }
 		public DbgValueNodeReader ValueNodeReader { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
-		public ITextElementProvider TextElementProvider { get; }
+		public ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		public int UIVersion { get; set; }
 		public ValueNodeFormatter Formatter { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool HighlightChangedVariables { get; set; }
@@ -73,7 +76,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		IEditValueProvider valueEditValueProvider;
 		readonly EditValueProviderService editValueProviderService;
 
-		public ValueNodesContext(UIDispatcher uiDispatcher, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, EditValueProviderService editValueProviderService, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, ShowYesNoMessageBox showYesNoMessageBox) {
+		public ValueNodesContext(UIDispatcher uiDispatcher, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, EditValueProviderService editValueProviderService, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, ShowYesNoMessageBox showYesNoMessageBox) {
 			UIDispatcher = uiDispatcher;
 			WindowContentType = windowContentType;
 			NameColumnName = nameColumnName;
@@ -84,7 +87,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			ValueNodeImageReferenceService = dbgValueNodeImageReferenceService;
 			ValueNodeReader = dbgValueNodeReader;
 			ClassificationFormatMap = classificationFormatMap;
-			TextElementProvider = textElementProvider;
+			TextBlockContentInfoFactory = textBlockContentInfoFactory;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
 			Formatter = new ValueNodeFormatter();
 			ValueNodeFormatParameters = new DbgValueNodeFormatParameters();

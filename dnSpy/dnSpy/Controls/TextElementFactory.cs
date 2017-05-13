@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -34,6 +35,12 @@ using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Controls {
+	[Export(typeof(ITextElementFactory))]
+	sealed class TextElementFactoryImpl : ITextElementFactory {
+		public FrameworkElement Create(IClassificationFormatMap classificationFormatMap, string text, IList<TextClassificationTag> tags, TextElementFlags flags) =>
+			TextElementFactory.Create(classificationFormatMap, text, tags, flags);
+	}
+
 	static class TextElementFactory {
 		static string ToString(string s, bool filterOutNewLines) {
 			if (!filterOutNewLines)
@@ -68,19 +75,19 @@ namespace dnSpy.Controls {
 			}
 		}
 
-		public static FrameworkElement Create(IClassificationFormatMap classificationFormatMap, string text, List<TextClassificationTag> tagsList, TextElementFlags flags) {
+		public static FrameworkElement Create(IClassificationFormatMap classificationFormatMap, string text, IList<TextClassificationTag> tags, TextElementFlags flags) {
 			bool useFastTextBlock = (flags & (TextElementFlags.TrimmingMask | TextElementFlags.WrapMask | TextElementFlags.FilterOutNewLines)) == (TextElementFlags.NoTrimming | TextElementFlags.NoWrap | TextElementFlags.FilterOutNewLines);
 			bool filterOutNewLines = (flags & TextElementFlags.FilterOutNewLines) != 0;
-			if (tagsList.Count != 0) {
+			if (tags.Count != 0) {
 				if (useFastTextBlock) {
 					return new FastTextBlock((flags & TextElementFlags.NewFormatter) != 0, new TextSrc {
 						text = ToString(text, filterOutNewLines),
 						classificationFormatMap = classificationFormatMap,
-						tagsList = tagsList.ToArray(),
+						tagsList = tags.ToArray(),
 					});
 				}
 
-				var propsSpans = tagsList.Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType)));
+				var propsSpans = tags.Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType)));
 				var textBlock = TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize | (filterOutNewLines ? TextBlockFactory.Flags.FilterOutNewlines : 0));
 				textBlock.TextTrimming = GetTextTrimming(flags);
 				textBlock.TextWrapping = GetTextWrapping(flags);
