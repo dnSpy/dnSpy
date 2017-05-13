@@ -209,6 +209,7 @@
     <Compile Include="ToolWindows\Commands.cs" />
     <Compile Include="ToolWindows\DelayedAction.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionCategoryVM.cs" />
+    <Compile Include="ToolWindows\Locals\AutoShowLocalsWindow.cs" />
     <Compile Include="ToolWindows\Locals\LocalsContent.cs" />
     <Compile Include="ToolWindows\Locals\LocalsToolWindowContent.cs" />
     <Compile Include="ToolWindows\Locals\Shared\LocalsColumnConverter.cs" />
