@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -78,32 +79,32 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void RecreateRootChildren_UI() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			var nodes = isOpen ? valueNodesProvider.GetNodes() : Array.Empty<DbgValueNode>();
+			var nodes = isOpen ? valueNodesProvider.GetNodes() : Array.Empty<DbgValueNodeInfo>();
 			RecreateRootChildrenCore_UI(nodes);
 			VerifyChildren_UI(nodes);
 		}
 
 		// UI thread
 		[Conditional("DEBUG")]
-		void VerifyChildren_UI(DbgValueNode[] nodes) {
+		void VerifyChildren_UI(DbgValueNodeInfo[] infos) {
 			var children = rootNode.TreeNode.Children;
-			Debug.Assert(children.Count == nodes.Length);
-			if (children.Count == nodes.Length) {
-				for (int i = 0; i < nodes.Length; i++) {
+			Debug.Assert(children.Count == infos.Length);
+			if (children.Count == infos.Length) {
+				for (int i = 0; i < infos.Length; i++) {
 					var node = (ValueNodeImpl)children[i].Data;
-					Debug.Assert(node.DebuggerValueNode == nodes[i]);
+					Debug.Assert(node.DebuggerValueNode == infos[i].Node);
 				}
 			}
 		}
 
 		// UI thread
-		void RecreateRootChildrenCore_UI(DbgValueNode[] nodes) {
+		void RecreateRootChildrenCore_UI(DbgValueNodeInfo[] infos) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			if (nodes.Length > 0)
-				nodes[0].Runtime.CloseOnContinue(nodes);
+			if (infos.Length > 0)
+				infos[0].Node.Runtime.CloseOnContinue(infos.Select(a => a.Node));
 
-			if (nodes.Length == 0 || rootNode.TreeNode.Children.Count == 0) {
-				SetNewRootChildren_UI(nodes);
+			if (infos.Length == 0 || rootNode.TreeNode.Children.Count == 0) {
+				SetNewRootChildren_UI(infos);
 				return;
 			}
 
@@ -116,25 +117,25 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var toOldIndex = new Dictionary<string, List<int>>(oldChildCount, StringComparer.Ordinal);
 			for (int i = 0; i < oldChildCount; i++) {
 				var node = (ValueNodeImpl)children[i].Data;
-				var expression = node.DebuggerValueNode.Expression;
-				if (!toOldIndex.TryGetValue(expression, out var list))
-					toOldIndex.Add(expression, list = new List<int>(1));
+				var id = node.RootId ?? node.DebuggerValueNode.Expression;
+				if (!toOldIndex.TryGetValue(id, out var list))
+					toOldIndex.Add(id, list = new List<int>(1));
 				list.Add(i);
 			}
 
 			int currentNewIndex = 0;
 			int updateIndex = 0;
-			for (int currentOldIndex = 0; currentNewIndex < nodes.Length;) {
-				var (newIndex, oldIndex) = GetOldIndex(toOldIndex, nodes, currentNewIndex, currentOldIndex);
+			for (int currentOldIndex = 0; currentNewIndex < infos.Length;) {
+				var (newIndex, oldIndex) = GetOldIndex(toOldIndex, infos, currentNewIndex, currentOldIndex);
 				Debug.Assert((oldIndex < 0) == (newIndex < 0));
 				bool lastIter = oldIndex < 0;
 				if (lastIter) {
-					newIndex = nodes.Length;
+					newIndex = infos.Length;
 					oldIndex = oldChildCount;
 
 					// Check if all nodes were removed
 					if (currentNewIndex == 0) {
-						SetNewRootChildren_UI(nodes);
+						SetNewRootChildren_UI(infos);
 						return;
 					}
 				}
@@ -147,23 +148,25 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 				for (; currentNewIndex < newIndex; currentNewIndex++) {
 					Debug.Assert(updateIndex <= children.Count);
-					children.Insert(updateIndex++, treeView.Create(new ValueNodeImpl(valueNodesContext, nodes[currentNewIndex])));
+					var info = infos[currentNewIndex];
+					children.Insert(updateIndex++, treeView.Create(new ValueNodeImpl(valueNodesContext, info.Node, info.Id)));
 				}
 
 				if (lastIter)
 					break;
 				Debug.Assert(updateIndex < children.Count);
 				var reusedNode = (ValueNodeImpl)children[updateIndex++].Data;
-				reusedNode.SetDebuggerValueNodeForRoot(nodes[currentNewIndex++]);
+				reusedNode.SetDebuggerValueNodeForRoot(infos[currentNewIndex++].Node);
 				currentOldIndex = oldIndex + 1;
 			}
 			while (children.Count != updateIndex)
 				children.RemoveAt(children.Count - 1);
 		}
 
-		static (int newIndex, int oldIndex) GetOldIndex(Dictionary<string, List<int>> dict, DbgValueNode[] newNodes, int newIndex, int minOldIndex) {
+		static (int newIndex, int oldIndex) GetOldIndex(Dictionary<string, List<int>> dict, DbgValueNodeInfo[] newNodes, int newIndex, int minOldIndex) {
 			for (; newIndex < newNodes.Length; newIndex++) {
-				if (dict.TryGetValue(newNodes[newIndex].Expression, out var list)) {
+				var info = newNodes[newIndex];
+				if (dict.TryGetValue(info.Id ?? info.Node.Expression, out var list)) {
 					for (int i = 0; i < list.Count; i++) {
 						int oldIndex = list[i];
 						if (oldIndex >= minOldIndex)
@@ -176,11 +179,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void SetNewRootChildren_UI(DbgValueNode[] nodes) {
+		void SetNewRootChildren_UI(DbgValueNodeInfo[] infos) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			rootNode.TreeNode.Children.Clear();
-			foreach (var node in nodes)
-				rootNode.TreeNode.AddChild(treeView.Create(new ValueNodeImpl(valueNodesContext, node)));
+			foreach (var info in infos)
+				rootNode.TreeNode.AddChild(treeView.Create(new ValueNodeImpl(valueNodesContext, info.Node, info.Id)));
 		}
 
 		// UI thread

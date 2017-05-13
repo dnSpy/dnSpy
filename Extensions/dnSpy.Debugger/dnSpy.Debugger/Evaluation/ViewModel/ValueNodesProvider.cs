@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// Gets all nodes. Caller owns the nodes and must close them.
 		/// </summary>
 		/// <returns></returns>
-		public abstract DbgValueNode[] GetNodes();
+		public abstract DbgValueNodeInfo[] GetNodes();
 
 		/// <summary>
 		/// Raised when <see cref="GetNodes"/> must be called again, eg. the debugged program is paused
@@ -38,5 +38,21 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// </summary>
 		public abstract bool IsReadOnly { get; }
 		public abstract event EventHandler IsReadOnlyChanged;
+	}
+
+	struct DbgValueNodeInfo {
+		/// <summary>
+		/// null or the id of the value. Should be used if <see cref="DbgValueNode.Expression"/> isn't unique
+		/// </summary>
+		public string Id { get; }
+		public DbgValueNode Node { get; }
+		public DbgValueNodeInfo(DbgValueNode node) {
+			Node = node ?? throw new ArgumentNullException(nameof(node));
+			Id = null;
+		}
+		public DbgValueNodeInfo(DbgValueNode node, string id) {
+			Node = node ?? throw new ArgumentNullException(nameof(node));
+			Id = id ?? throw new ArgumentNullException(nameof(id));
+		}
 	}
 }

@@ -116,6 +116,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		internal uint DbgValueNodeChildIndex { get; }
 		internal ValueNodeImpl Parent { get; }
+		internal string RootId { get; }
 		bool HasDebuggerValueNode => __dbgValueNode_DONT_USE != null;
 		internal DbgValueNode DebuggerValueNode {
 			get {
@@ -138,8 +139,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 		IEditableValue valueEditableValue;
 
-		public ValueNodeImpl(IValueNodesContext context, DbgValueNode dbgValueNode) {
+		public ValueNodeImpl(IValueNodesContext context, DbgValueNode dbgValueNode, string rootId) {
 			Context = context ?? throw new ArgumentNullException(nameof(context));
+			RootId = rootId;
 			__dbgValueNode_DONT_USE = dbgValueNode ?? throw new ArgumentNullException(nameof(dbgValueNode));
 		}
 

@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -152,13 +153,13 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 				return (language, frame);
 			}
 
-			public override DbgValueNode[] GetNodes() {
+			public override DbgValueNodeInfo[] GetNodes() {
 				uiDispatcher.VerifyAccess();
 				var info = TryGetLanguage();
 				if (info.frame == null)
-					return Array.Empty<DbgValueNode>();
+					return Array.Empty<DbgValueNodeInfo>();
 				var provider = isLocals ? info.language.LocalsProvider : info.language.AutosProvider;
-				return provider.GetNodes(info.frame);
+				return provider.GetNodes(info.frame).Select(a => new DbgValueNodeInfo(a)).ToArray();
 			}
 
 			void SetIsReadOnly_UI(bool newIsReadOnly) {
