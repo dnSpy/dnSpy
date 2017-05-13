@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueNodeImpl : DbgValueNode {
 		public override DbgLanguage Language { get; }
 		public override DbgThread Thread { get; }
-		public override DbgValue Value { get; }
+		public override DbgValue Value => value;
 		public override string Expression => engineValueNode.Expression;
 		public override string ImageName => engineValueNode.ImageName;
 		public override bool IsReadOnly => engineValueNode.IsReadOnly;
@@ -34,12 +34,13 @@ namespace dnSpy.Debugger.Evaluation {
 		public override ulong ChildCount => engineValueNode.ChildrenCount;
 
 		readonly DbgEngineValueNode engineValueNode;
+		DbgValueImpl value;
 
 		public DbgValueNodeImpl(DbgLanguage language, DbgThread thread, DbgEngineValueNode engineValueNode) {
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			Language = language ?? throw new ArgumentNullException(nameof(language));
 			this.engineValueNode = engineValueNode ?? throw new ArgumentNullException(nameof(engineValueNode));
-			Value = new DbgValueImpl(thread, engineValueNode.Value);
+			value = new DbgValueImpl(thread, engineValueNode.Value);
 		}
 
 		public override DbgValueNode[] GetChildren(ulong index, int count) {
@@ -69,6 +70,37 @@ namespace dnSpy.Debugger.Evaluation {
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
 			engineValueNode.Format(options, callback);
+		}
+
+		DbgValueNodeAssignmentResult OnAssignmentComplete(DbgEngineValueNodeAssignmentResult result) {
+			if (result.Error != null) {
+				if (engineValueNode.Value != value.EngineValue)
+					throw new InvalidOperationException();
+				return new DbgValueNodeAssignmentResult(result.Error);
+			}
+			if (result.Value != engineValueNode.Value)
+				throw new InvalidOperationException();
+			lock (engineValueNode) {
+				var oldValue = value;
+				value = new DbgValueImpl(Thread, result.Value);
+				Process.DbgManager.Close(oldValue);
+			}
+			return new DbgValueNodeAssignmentResult(error: null);
+		}
+
+		public override DbgValueNodeAssignmentResult Assign(string expression, DbgEvaluationOptions options) {
+			if (expression == null)
+				throw new ArgumentNullException(nameof(expression));
+			var res = engineValueNode.Assign(expression, options);
+			return OnAssignmentComplete(res);
+		}
+
+		public override void Assign(string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback) {
+			if (expression == null)
+				throw new ArgumentNullException(nameof(expression));
+			if (callback == null)
+				throw new ArgumentNullException(nameof(callback));
+			engineValueNode.Assign(expression, options, res => callback(OnAssignmentComplete(res)));
 		}
 
 		protected override void CloseCore() {

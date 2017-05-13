@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Controls.ToolWindows;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.UI;
 using dnSpy.Debugger.UI.Wpf;
@@ -41,7 +42,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		string NameColumnName { get; }
 		string ValueColumnName { get; }
 		string TypeColumnName { get; }
-		ShowYesNoMessageBox ShowYesNoMessageBox { get; }
+		ShowMessageBox ShowMessageBox { get; }
 		LanguageEditValueProvider ValueEditValueProvider { get; }
 	}
 
@@ -62,16 +63,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public string NameColumnName { get; }
 		public string ValueColumnName { get; }
 		public string TypeColumnName { get; }
-		public ShowYesNoMessageBox ShowYesNoMessageBox { get; }
+		public ShowMessageBox ShowMessageBox { get; }
 		public LanguageEditValueProvider ValueEditValueProvider { get; }
 
-		public ValueNodesContext(UIDispatcher uiDispatcher, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, ShowYesNoMessageBox showYesNoMessageBox) {
+		public ValueNodesContext(UIDispatcher uiDispatcher, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, ShowMessageBox showMessageBox) {
 			UIDispatcher = uiDispatcher;
 			WindowContentType = windowContentType;
 			NameColumnName = nameColumnName;
 			ValueColumnName = valueColumnName;
 			TypeColumnName = typeColumnName;
-			ShowYesNoMessageBox = showYesNoMessageBox;
+			ShowMessageBox = showMessageBox;
 			ValueEditValueProvider = languageEditValueProviderFactory.Create(windowContentType);
 			ValueNodeImageReferenceService = dbgValueNodeImageReferenceService;
 			ValueNodeReader = dbgValueNodeReader;

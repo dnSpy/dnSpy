@@ -85,5 +85,55 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
 		public abstract void Format(IDbgValueNodeFormatParameters options, Action callback);
+
+		/// <summary>
+		/// Writes a new value. It blocks the current thread until the assignment is complete.
+		/// </summary>
+		/// <param name="expression">Source expression (rhs)</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DbgEngineValueNodeAssignmentResult Assign(string expression, DbgEvaluationOptions options);
+
+		/// <summary>
+		/// Writes a new value
+		/// </summary>
+		/// <param name="expression">Source expression (rhs)</param>
+		/// <param name="options">Options</param>
+		/// <param name="callback">Called when this method is complete</param>
+		/// <returns></returns>
+		public abstract void Assign(string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback);
+	}
+
+	/// <summary>
+	/// Assignment result
+	/// </summary>
+	public struct DbgEngineValueNodeAssignmentResult {
+		/// <summary>
+		/// Gets the value or null. This value is owned by the <see cref="DbgEngineValueNode"/> instance.
+		/// </summary>
+		public DbgEngineValue Value { get; }
+
+		/// <summary>
+		/// Gets the error or null if none
+		/// </summary>
+		public string Error { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="value">New value. It's owned by the <see cref="DbgEngineValueNode"/> instance</param>
+		public DbgEngineValueNodeAssignmentResult(DbgEngineValue value) {
+			Value = value ?? throw new ArgumentNullException(nameof(value));
+			Error = null;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="error">Error message</param>
+		public DbgEngineValueNodeAssignmentResult(string error) {
+			Value = null;
+			Error = error ?? throw new ArgumentNullException(nameof(error));
+		}
 	}
 }

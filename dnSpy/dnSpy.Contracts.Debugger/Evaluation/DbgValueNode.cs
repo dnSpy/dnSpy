@@ -146,6 +146,39 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
 		public abstract void Format(IDbgValueNodeFormatParameters options, Action callback);
+
+		/// <summary>
+		/// Writes a new value. It blocks the current thread until the assignment is complete.
+		/// </summary>
+		/// <param name="expression">Source expression (rhs)</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DbgValueNodeAssignmentResult Assign(string expression, DbgEvaluationOptions options);
+
+		/// <summary>
+		/// Writes a new value
+		/// </summary>
+		/// <param name="expression">Source expression (rhs)</param>
+		/// <param name="options">Options</param>
+		/// <param name="callback">Called when this method is complete</param>
+		/// <returns></returns>
+		public abstract void Assign(string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback);
+	}
+
+	/// <summary>
+	/// Assignment result
+	/// </summary>
+	public struct DbgValueNodeAssignmentResult {
+		/// <summary>
+		/// Gets the error message or null if none
+		/// </summary>
+		public string Error { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="error">Error message or null if none</param>
+		public DbgValueNodeAssignmentResult(string error) => Error = error;
 	}
 
 	/// <summary>

@@ -214,7 +214,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 				if (valueNodesVM == null) {
 					var options = new ValueNodesVMOptions {
 						NodesProvider = valueNodesProvider,
-						ShowYesNoMessageBox = msg => messageBoxService.Value.Show(msg, MsgBoxButton.Yes | MsgBoxButton.No) == MsgBoxButton.Yes,
+						ShowMessageBox = ShowMessageBox,
 					};
 					if (isLocals) {
 						options.WindowContentType = ContentTypes.LocalsWindow;
@@ -238,6 +238,24 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 				TreeViewChanged?.Invoke(this, EventArgs.Empty);
 				valueNodesProvider.Initialize_UI(enable);
 			}
+		}
+
+		bool ShowMessageBox(string message, ShowMessageBoxButtons buttons) {
+			MsgBoxButton mbb;
+			MsgBoxButton resButton;
+			switch (buttons) {
+			case ShowMessageBoxButtons.YesNo:
+				mbb = MsgBoxButton.Yes | MsgBoxButton.No;
+				resButton = MsgBoxButton.Yes;
+				break;
+			case ShowMessageBoxButtons.OK:
+				mbb = MsgBoxButton.OK;
+				resButton = MsgBoxButton.OK;
+				break;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(buttons));
+			}
+			return messageBoxService.Value.Show(message, mbb) == resButton;
 		}
 	}
 }

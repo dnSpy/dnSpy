@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			this.debuggerSettings = debuggerSettings;
 			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			valueNodesContext = new ValueNodesContext(uiDispatcher, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(), classificationFormatMap, textBlockContentInfoFactory, options.ShowYesNoMessageBox);
+			valueNodesContext = new ValueNodesContext(uiDispatcher, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(), classificationFormatMap, textBlockContentInfoFactory, options.ShowMessageBox);
 
 			rootNode = new RootNode();
 			var tvOptions = new TreeViewOptions {

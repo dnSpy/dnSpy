@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				throw new ArgumentException();
 			if (options.TypeColumnName == null)
 				throw new ArgumentException();
-			if (options.ShowYesNoMessageBox == null)
+			if (options.ShowMessageBox == null)
 				throw new ArgumentException();
 			return new ValueNodesVM(uiDispatcher, options, treeViewService, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, debuggerSettings, dbgEvalFormatterSettings, classificationFormatMapService, textBlockContentInfoFactory);
 		}

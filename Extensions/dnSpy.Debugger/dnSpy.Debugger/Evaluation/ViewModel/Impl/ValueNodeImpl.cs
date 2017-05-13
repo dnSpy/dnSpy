@@ -24,6 +24,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.Text;
@@ -133,7 +134,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override IEditableValue ValueEditableValue {
 			get {
 				if (valueEditableValue == null)
-					valueEditableValue = new EditableValueImpl(() => string.Empty, s => { }, () => false);//TODO:
+					valueEditableValue = new EditableValueImpl(() => GetEditableValue(), s => SaveEditableValue(s), () => !DebuggerValueNode.IsReadOnly);
 				return valueEditableValue;
 			}
 		}
@@ -152,8 +153,26 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			DbgValueNodeChildIndex = childIndex;
 		}
 
-		public override bool Activate() => valueEditableValue?.IsEditingValue == true;
+		string GetEditableValue() {
+			var output = new StringBuilderTextColorOutput();
+			var options = Context.ValueNodeFormatParameters.ValueFormatterOptions & ~DbgValueFormatterOptions.Display;
+			DebuggerValueNode.FormatValue(output, options);
+			return output.ToString();
+		}
 
+		void SaveEditableValue(string expression) {
+			if (DebuggerValueNode.IsReadOnly)
+				throw new InvalidOperationException();
+			var evalOptions = DbgEvaluationOptions.Expression;
+			var res = DebuggerValueNode.Assign(expression, evalOptions);
+			if (res.Error == null)
+				oldCachedValue = cachedValue;
+			ResetForReuse();
+			if (res.Error != null)
+				Context.ShowMessageBox(res.Error, ShowMessageBoxButtons.OK);
+		}
+
+		public override bool Activate() => valueEditableValue?.IsEditingValue == true;
 		public override void Initialize() => TreeNode.LazyLoading = DebuggerValueNode.HasChildren != false;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
@@ -162,7 +181,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 			ulong childCount = DebuggerValueNode.ChildCount;
 			if (childCount > MAX_CHILDREN) {
-				bool open = Context.ShowYesNoMessageBox(string.Format(dnSpy_Debugger_Resources.Locals_Ask_TooManyItems, MAX_CHILDREN));
+				bool open = Context.ShowMessageBox(string.Format(dnSpy_Debugger_Resources.Locals_Ask_TooManyItems, MAX_CHILDREN), ShowMessageBoxButtons.YesNo);
 				if (!open) {
 					TreeNode.LazyLoading = DebuggerValueNode.HasChildren != false;
 					yield break;

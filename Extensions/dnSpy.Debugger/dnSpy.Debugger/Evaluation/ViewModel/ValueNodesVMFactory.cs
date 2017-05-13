@@ -24,7 +24,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract IValueNodesVM Create(ValueNodesVMOptions options);
 	}
 
-	delegate bool ShowYesNoMessageBox(string message);
+	enum ShowMessageBoxButtons {
+		YesNo,
+		OK,
+	}
+	delegate bool ShowMessageBox(string message, ShowMessageBoxButtons buttons);
 
 	sealed class ValueNodesVMOptions {
 		public ValueNodesProvider NodesProvider { get; set; }
@@ -49,7 +53,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// </summary>
 		public string TypeColumnName { get; set; }
 
-		public ShowYesNoMessageBox ShowYesNoMessageBox { get; set; }
+		public ShowMessageBox ShowMessageBox { get; set; }
 
 		public Guid TreeViewGuid { get; set; }
 	}
