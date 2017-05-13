@@ -130,6 +130,7 @@
 		<color name="hextooltipservicefield1" fg="#FFFFFFFF" bg="#FF008000" />
 		<color name="hextooltipservicecurrentfield" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="listfindmatchhighlight" bg="#FF008000" />
+		<color name="debuggervaluechangedhighlight" bg="#FF008000" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />

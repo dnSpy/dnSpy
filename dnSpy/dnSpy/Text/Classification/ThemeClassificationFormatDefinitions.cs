@@ -1510,6 +1510,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.ListFindMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ListFindMatchHighlightClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebuggerValueChangedHighlight)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebuggerValueChangedHighlightClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -4133,6 +4138,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.High)]
 		sealed class ListFindMatchHighlight : ThemeClassificationFormatDefinition {
 			ListFindMatchHighlight() : base(TextColor.ListFindMatchHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebuggerValueChangedHighlight)]
+		[Name(ThemeClassificationTypeNameKeys.DebuggerValueChangedHighlight)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class DebuggerValueChangedHighlight : ThemeClassificationFormatDefinition {
+			DebuggerValueChangedHighlight() : base(TextColor.DebuggerValueChangedHighlight) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

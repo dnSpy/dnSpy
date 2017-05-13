@@ -1486,5 +1486,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.DebugLogExtensionMessage"/>
 		/// </summary>
 		public const string DebugLogExtensionMessage = nameof(DebugLogExtensionMessage);
+
+		/// <summary>
+		/// <see cref="TextColor.DebuggerValueChangedHighlight"/>
+		/// </summary>
+		public const string DebuggerValueChangedHighlight = nameof(DebuggerValueChangedHighlight);
 	}
 }

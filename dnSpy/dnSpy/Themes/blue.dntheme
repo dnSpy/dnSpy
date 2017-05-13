@@ -291,6 +291,7 @@
 		<color name="listfindmatchhighlight" bg="#FFF4A721" />
 		<color name="debuglogtrace" fg="#FF0000CC" />
 		<color name="debuglogextensionmessage" fg="#FFFF3DE5" />
+		<color name="debuggervaluechangedhighlight" bg="#FFF4A721" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
 		<color name="systemcolorscontroldark" bg="#FFA0A0A0" />

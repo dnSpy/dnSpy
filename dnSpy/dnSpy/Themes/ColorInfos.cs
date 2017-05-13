@@ -2020,6 +2020,7 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.HexToolTipServiceField1, "ToolTip Field #1 (Hex Editor)"),
 			new BrushColorInfo(ColorType.HexToolTipServiceCurrentField, "ToolTip Current Field (Hex Editor)"),
 			new BrushColorInfo(ColorType.ListFindMatchHighlight, "Find match highlight"),
+			new BrushColorInfo(ColorType.DebuggerValueChangedHighlight, "Debugger value changed highlight"),
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",

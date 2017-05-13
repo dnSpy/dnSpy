@@ -318,6 +318,7 @@ namespace dnSpy.Contracts.Text {
 		ActiveBookmarkName,
 		DebugLogTrace,
 		DebugLogExtensionMessage,
+		DebuggerValueChangedHighlight,
 
 		/// <summary>
 		/// Must be last
@@ -622,6 +623,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object ActiveBookmarkName = TextColor.ActiveBookmarkName;
 		public static readonly object DebugLogTrace = TextColor.DebugLogTrace;
 		public static readonly object DebugLogExtensionMessage = TextColor.DebugLogExtensionMessage;
+		public static readonly object DebuggerValueChangedHighlight = TextColor.DebuggerValueChangedHighlight;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -928,6 +930,7 @@ namespace dnSpy.Contracts.Text {
 			ActiveBookmarkName,
 			DebugLogTrace,
 			DebugLogExtensionMessage,
+			DebuggerValueChangedHighlight,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

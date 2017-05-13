@@ -316,6 +316,7 @@ namespace dnSpy.Contracts.Themes {
 		ActiveBookmarkName,
 		DebugLogTrace,
 		DebugLogExtensionMessage,
+		DebuggerValueChangedHighlight,
 
 		// Must be last in this group
 		LastNR,

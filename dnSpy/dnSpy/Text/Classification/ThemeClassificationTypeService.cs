@@ -323,6 +323,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ActiveBookmarkName),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugLogTrace),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugLogExtensionMessage),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebuggerValueChangedHighlight),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);
