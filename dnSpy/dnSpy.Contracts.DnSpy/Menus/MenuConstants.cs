@@ -569,19 +569,39 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Debugger/Exceptions, Group: Options</summary>
 		public const string GROUP_CTX_DBG_EXCEPTIONS_OPTIONS = "5000,64A4FCD8-64BD-4435-84E3-5FD0F78BFFCF";
 
+		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Copy</summary>
+		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_COPY = "0,5DE1C544-8079-4C4E-ABB1-7CE34BDF6A94";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Values</summary>
+		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES = "1000,1A0FDB51-7DCC-4B18-A4BA-0A6A45A8B14A";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Hex Options</summary>
+		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_HEXOPTS = "2000,72E9B097-DD72-411E-B9FC-B01AE30EF24F";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Tree</summary>
+		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_TREE = "3000,877A4CC7-3074-4EFF-9C6B-96D1203F55F5";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Options</summary>
+		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS = "4000,93573019-549D-40EC-8B3C-D515DACB3C47";
+
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Copy</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_COPY), true)]
 		public const string GROUP_CTX_DBG_LOCALS_COPY = "0,28D5E753-B1D0-415A-A8C8-7D8F1AC27592";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Values</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES), true)]
 		public const string GROUP_CTX_DBG_LOCALS_VALUES = "1000,33D69C4B-ACB2-4131-8154-CB413EF9D8BA";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Hex Options</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_HEXOPTS), true)]
 		public const string GROUP_CTX_DBG_LOCALS_HEXOPTS = "2000,C8143511-5CEA-47A8-B334-0A83D7C85108";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Tree</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_TREE), true)]
 		public const string GROUP_CTX_DBG_LOCALS_TREE = "3000,A3E4126C-A23C-4902-9033-723C52374ECF";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Options</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS), true)]
 		public const string GROUP_CTX_DBG_LOCALS_OPTS = "4000,A599080F-6572-4CB1-B97B-63763D2E2F56";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Modules, Group: Copy</summary>

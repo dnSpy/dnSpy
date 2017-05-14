@@ -3325,6 +3325,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Make Object ID.
+        /// </summary>
+        public static string MakeObjectIdCommand {
+            get {
+                return ResourceManager.GetString("MakeObjectIdCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Memory.
         /// </summary>
         public static string MemoryWindowCommand {

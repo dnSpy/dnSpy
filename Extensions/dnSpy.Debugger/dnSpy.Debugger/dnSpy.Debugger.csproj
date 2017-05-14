@@ -152,6 +152,7 @@
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodeTextClassifier.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodeTextClassifierContext.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\VariablesWindowOperationsImpl.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\VariablesWindowsCommands.cs" />
     <Compile Include="Evaluation\ViewModel\IValueNodesVM.cs" />
     <Compile Include="Evaluation\ViewModel\ValueNode.cs" />
     <Compile Include="Evaluation\ViewModel\ValueNodesProvider.cs" />

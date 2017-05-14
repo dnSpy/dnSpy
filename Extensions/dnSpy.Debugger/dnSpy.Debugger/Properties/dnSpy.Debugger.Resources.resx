@@ -1833,4 +1833,7 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
     <value>Highlight changed variables in variables windows</value>
   </data>
+  <data name="MakeObjectIdCommand" xml:space="preserve">
+    <value>_Make Object ID</value>
+  </data>
 </root>
