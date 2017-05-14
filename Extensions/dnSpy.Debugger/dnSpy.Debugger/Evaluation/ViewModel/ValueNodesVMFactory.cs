@@ -30,6 +30,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 	}
 	delegate bool ShowMessageBox(string message, ShowMessageBoxButtons buttons);
 
+	enum VariablesWindowKind {
+		None,
+		Locals,
+		Autos,
+		Watch,
+	}
+
 	sealed class ValueNodesVMOptions {
 		public ValueNodesProvider NodesProvider { get; set; }
 
@@ -52,6 +59,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// Eg. <see cref="Contracts.Text.Classification.PredefinedTextClassifierTags.LocalsWindowType"/>
 		/// </summary>
 		public string TypeColumnName { get; set; }
+
+		public VariablesWindowKind VariablesWindowKind { get; set; }
+		public Guid VariablesWindowGuid { get; set; }
 
 		public ShowMessageBox ShowMessageBox { get; set; }
 

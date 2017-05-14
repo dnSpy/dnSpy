@@ -44,13 +44,15 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 		readonly LocalsControl localsControl;
 		readonly ILocalsVM localsVM;
 
-		protected LocalsContentBase(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory, LocalsOperations localsOperations, bool isLocals) {
+		protected LocalsContentBase(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory, LocalsOperations localsOperations) {
 			Operations = localsOperations;
 			localsControl = new LocalsControl();
-			localsVM = localsVMFactory.Create(isLocals);
+			localsVM = localsVMFactory.Create(CreateLocalsVMOptions());
 			localsVM.TreeViewChanged += LocalsVM_TreeViewChanged;
 			localsControl.DataContext = localsVM;
 		}
+
+		protected abstract LocalsVMOptions CreateLocalsVMOptions();
 
 		void LocalsVM_TreeViewChanged(object sender, EventArgs e) => localsControl.SetTreeView(localsVM.TreeView);
 

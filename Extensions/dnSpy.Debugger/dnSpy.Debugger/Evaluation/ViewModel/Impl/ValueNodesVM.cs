@@ -22,9 +22,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.TreeView;
@@ -52,7 +54,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly RootNode rootNode;
 		bool isOpen;
 
-		public ValueNodesVM(UIDispatcher uiDispatcher, ValueNodesVMOptions options, ITreeViewService treeViewService, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory) {
+		sealed class GuidObjectsProvider : IGuidObjectsProvider {
+			readonly IValueNodesVM vm;
+			public GuidObjectsProvider(IValueNodesVM vm) => this.vm = vm ?? throw new ArgumentNullException(nameof(vm));
+
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
+				yield return new GuidObject(ValueNodesVMConstants.GUIDOBJ_VALUENODESVM_GUID, vm);
+			}
+		}
+
+		public ValueNodesVM(UIDispatcher uiDispatcher, ValueNodesVMOptions options, ITreeViewService treeViewService, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, IMenuService menuService, IWpfCommandService wpfCommandService) {
 			uiDispatcher.VerifyAccess();
 			valueNodesProvider = options.NodesProvider;
 			this.debuggerSettings = debuggerSettings;
@@ -67,6 +78,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				RootNode = rootNode,
 			};
 			treeView = treeViewService.Create(options.TreeViewGuid, tvOptions);
+
+			menuService.InitializeContextMenu(treeView.UIObject, new Guid(MenuConstants.GUIDOBJ_VARIABLES_WINDOW_TREEVIEW_GUID), new GuidObjectsProvider(this));
+			wpfCommandService.Add(options.VariablesWindowGuid, treeView.UIObject);
 		}
 
 		// UI thread

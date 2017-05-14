@@ -192,6 +192,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Bookmark</summary>
 		public static readonly string GUIDOBJ_BOOKMARK_GUID = "71BD1A39-50A8-43C2-B88A-8986D0C674B4";
 
+		/// <summary>Variables window treeview (autos, locals, watch)</summary>
+		public static readonly string GUIDOBJ_VARIABLES_WINDOW_TREEVIEW_GUID = "6415325D-11CC-48C7-9E7B-15D363B7D18E";
+
 		/// <summary>Group: App Menu: File, Group: Save</summary>
 		public const string GROUP_APP_MENU_FILE_SAVE = "0,557C4B2D-5966-41AF-BFCA-D0A36DB5D6D8";
 

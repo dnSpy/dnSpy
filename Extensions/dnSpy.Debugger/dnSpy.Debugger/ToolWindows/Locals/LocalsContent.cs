@@ -17,16 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Evaluation.ViewModel;
 using dnSpy.Debugger.ToolWindows.Locals.Shared;
 
 namespace dnSpy.Debugger.ToolWindows.Locals {
 	[Export(typeof(LocalsContent))]
 	sealed class LocalsContent : LocalsContentBase {
+		public static readonly Guid VariablesWindowGuid = new Guid("1A53B7B7-19AE-490F-9D67-F1992D849150");
+
 		[ImportingConstructor]
 		LocalsContent(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory, LocalsOperations localsOperations)
-			: base(wpfCommandService, localsVMFactory, localsOperations, isLocals: true) {
+			: base(wpfCommandService, localsVMFactory, localsOperations) {
+		}
+
+		protected override LocalsVMOptions CreateLocalsVMOptions() {
+			var options = new LocalsVMOptions() {
+				WindowContentType = ContentTypes.LocalsWindow,
+				NameColumnName = PredefinedTextClassifierTags.LocalsWindowName,
+				ValueColumnName = PredefinedTextClassifierTags.LocalsWindowValue,
+				TypeColumnName = PredefinedTextClassifierTags.LocalsWindowType,
+				VariablesWindowKind = VariablesWindowKind.Locals,
+				VariablesWindowGuid = VariablesWindowGuid,
+			};
+			return options;
 		}
 	}
 }

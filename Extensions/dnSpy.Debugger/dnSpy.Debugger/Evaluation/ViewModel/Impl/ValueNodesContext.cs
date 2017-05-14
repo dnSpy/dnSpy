@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Controls.ToolWindows;
-using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.UI;
 using dnSpy.Debugger.UI.Wpf;

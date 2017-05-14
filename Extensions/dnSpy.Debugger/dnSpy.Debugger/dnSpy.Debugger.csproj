@@ -221,6 +221,7 @@
     <Compile Include="ToolWindows\Locals\Shared\LocalsOperations.cs" />
     <Compile Include="ToolWindows\Locals\Shared\LocalsToolWindowContent.cs" />
     <Compile Include="ToolWindows\Locals\Shared\LocalsVM.cs" />
+    <Compile Include="ToolWindows\Locals\Shared\LocalsVMOptions.cs" />
     <Compile Include="ToolWindows\Locals\ValueNodeTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointColumnConverter.cs" />

@@ -18,17 +18,15 @@
 */
 
 using System;
-using System.ComponentModel;
-using dnSpy.Contracts.TreeView;
+using dnSpy.Debugger.Evaluation.ViewModel;
 
-namespace dnSpy.Debugger.Evaluation.ViewModel {
-	interface IValueNodesVM : INotifyPropertyChanged, IDisposable {
-		void Show();
-		void Hide();
-		ITreeView TreeView { get; }
-	}
-
-	static class ValueNodesVMConstants {
-		public static readonly Guid GUIDOBJ_VALUENODESVM_GUID = new Guid("A148423F-B2C3-492D-9710-8573E559E957");
+namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
+	sealed class LocalsVMOptions {
+		public string WindowContentType { get; set; }
+		public string NameColumnName { get; set; }
+		public string ValueColumnName { get; set; }
+		public string TypeColumnName { get; set; }
+		public VariablesWindowKind VariablesWindowKind { get; set; }
+		public Guid VariablesWindowGuid { get; set; }
 	}
 }

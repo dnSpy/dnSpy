@@ -24,15 +24,13 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Evaluation.ViewModel;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 	abstract class LocalsVMFactory {
-		public abstract ILocalsVM Create(bool isLocals);
+		public abstract ILocalsVM Create(LocalsVMOptions localsVMOptions);
 	}
 
 	[Export(typeof(LocalsVMFactory))]
@@ -54,9 +52,9 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			this.messageBoxService = messageBoxService;
 		}
 
-		public override ILocalsVM Create(bool isLocals) {
+		public override ILocalsVM Create(LocalsVMOptions localsVMOptions) {
 			uiDispatcher.VerifyAccess();
-			return new LocalsVM(isLocals, dbgManager, uiDispatcher, valueNodesVMFactory, dbgLanguageService, dbgCallStackService, messageBoxService);
+			return new LocalsVM(localsVMOptions, dbgManager, uiDispatcher, valueNodesVMFactory, dbgLanguageService, dbgCallStackService, messageBoxService);
 		}
 	}
 
@@ -179,7 +177,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			}
 		}
 
-		readonly bool isLocals;
+		readonly LocalsVMOptions localsVMOptions;
 		readonly UIDispatcher uiDispatcher;
 		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		readonly ValueNodesProviderImpl valueNodesProvider;
@@ -187,12 +185,12 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 		readonly Lazy<IMessageBoxService> messageBoxService;
 		IValueNodesVM valueNodesVM;
 
-		public LocalsVM(bool isLocals, Lazy<DbgManager> dbgManager, UIDispatcher uiDispatcher, Lazy<ValueNodesVMFactory> valueNodesVMFactory, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<IMessageBoxService> messageBoxService) {
+		public LocalsVM(LocalsVMOptions localsVMOptions, Lazy<DbgManager> dbgManager, UIDispatcher uiDispatcher, Lazy<ValueNodesVMFactory> valueNodesVMFactory, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<IMessageBoxService> messageBoxService) {
 			uiDispatcher.VerifyAccess();
-			this.isLocals = isLocals;
+			this.localsVMOptions = localsVMOptions;
 			this.uiDispatcher = uiDispatcher;
 			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
-			valueNodesProvider = new ValueNodesProviderImpl(isLocals, uiDispatcher, dbgManager, dbgLanguageService, dbgCallStackService);
+			valueNodesProvider = new ValueNodesProviderImpl(localsVMOptions.VariablesWindowKind == VariablesWindowKind.Locals, uiDispatcher, dbgManager, dbgLanguageService, dbgCallStackService);
 			this.valueNodesVMFactory = valueNodesVMFactory;
 			this.messageBoxService = messageBoxService;
 		}
@@ -212,22 +210,16 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			if (enable) {
 				valueNodesProvider.Initialize_UI(enable);
 				if (valueNodesVM == null) {
-					var options = new ValueNodesVMOptions {
+					var options = new ValueNodesVMOptions() {
 						NodesProvider = valueNodesProvider,
 						ShowMessageBox = ShowMessageBox,
+						WindowContentType = localsVMOptions.WindowContentType,
+						NameColumnName = localsVMOptions.NameColumnName,
+						ValueColumnName = localsVMOptions.ValueColumnName,
+						TypeColumnName = localsVMOptions.TypeColumnName,
+						VariablesWindowKind = localsVMOptions.VariablesWindowKind,
+						VariablesWindowGuid = localsVMOptions.VariablesWindowGuid,
 					};
-					if (isLocals) {
-						options.WindowContentType = ContentTypes.LocalsWindow;
-						options.NameColumnName = PredefinedTextClassifierTags.LocalsWindowName;
-						options.ValueColumnName = PredefinedTextClassifierTags.LocalsWindowValue;
-						options.TypeColumnName = PredefinedTextClassifierTags.LocalsWindowType;
-					}
-					else {
-						options.WindowContentType = ContentTypes.AutosWindow;
-						options.NameColumnName = PredefinedTextClassifierTags.AutosWindowName;
-						options.ValueColumnName = PredefinedTextClassifierTags.AutosWindowValue;
-						options.TypeColumnName = PredefinedTextClassifierTags.AutosWindowType;
-					}
 					valueNodesVM = valueNodesVMFactory.Value.Create(options);
 				}
 				valueNodesVM.Show();
