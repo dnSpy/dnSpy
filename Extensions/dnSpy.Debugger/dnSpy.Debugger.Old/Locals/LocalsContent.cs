@@ -50,9 +50,6 @@ namespace dnSpy.Debugger.Locals {
 			localsControl = new LocalsControl();
 			vmLocals = localsVM;
 			localsControl.DataContext = vmLocals;
-
-			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_CONTROL, localsControl);
-			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW, localsControl.ListView);
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(localsControl.ListView);

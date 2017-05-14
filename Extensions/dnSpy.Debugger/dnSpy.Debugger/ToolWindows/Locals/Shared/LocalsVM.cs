@@ -63,6 +63,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 		bool IsVisible { get; set; }
 		event EventHandler TreeViewChanged;
 		ITreeView TreeView { get; }
+		IValueNodesVM VM { get; }
 	}
 
 	sealed class LocalsVM : ILocalsVM, ILazyToolWindowVM {
@@ -176,6 +177,8 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 				IsReadOnlyChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
+
+		IValueNodesVM ILocalsVM.VM => valueNodesVM;
 
 		readonly LocalsVMOptions localsVMOptions;
 		readonly UIDispatcher uiDispatcher;

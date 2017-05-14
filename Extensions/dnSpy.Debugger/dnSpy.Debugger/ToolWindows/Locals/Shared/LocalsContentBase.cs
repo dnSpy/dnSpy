@@ -19,7 +19,6 @@
 
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Utilities;
 
@@ -30,22 +29,19 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 		void OnVisible();
 		void OnHidden();
 		void Focus();
-		ListView ListView { get; }
-		LocalsOperations Operations { get; }
+		ILocalsVM VM { get; }
 	}
 
 	abstract class LocalsContentBase : ILocalsContent {
 		public object UIObject => localsControl;
 		public IInputElement FocusedElement => localsControl.ListView as IInputElement ?? localsControl;
 		public FrameworkElement ZoomElement => localsControl;
-		public ListView ListView => localsControl.ListView;
-		public LocalsOperations Operations { get; }
+		public ILocalsVM VM => localsVM;
 
 		readonly LocalsControl localsControl;
 		readonly ILocalsVM localsVM;
 
-		protected LocalsContentBase(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory, LocalsOperations localsOperations) {
-			Operations = localsOperations;
+		protected LocalsContentBase(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory) {
 			localsControl = new LocalsControl();
 			localsVM = localsVMFactory.Create(CreateLocalsVMOptions());
 			localsVM.TreeViewChanged += LocalsVM_TreeViewChanged;

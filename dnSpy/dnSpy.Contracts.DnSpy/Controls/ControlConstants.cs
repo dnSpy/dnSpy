@@ -79,9 +79,11 @@ namespace dnSpy.Contracts.Controls {
 		public static readonly Guid GUID_DEBUGGER_CALLSTACK_LISTVIEW = new Guid("7E39E2DD-666C-4309-867E-9460D97361D2");
 
 		/// <summary>Guid of debugger locals control</summary>
+		[Obsolete("This field isn't used anymore", true)]
 		public static readonly Guid GUID_DEBUGGER_LOCALS_CONTROL = new Guid("391EB04D-F544-459A-A242-2D856E3C6CDB");
 
 		/// <summary>Guid of debugger locals <see cref="ListView"/></summary>
+		[Obsolete("This field isn't used anymore", true)]
 		public static readonly Guid GUID_DEBUGGER_LOCALS_LISTVIEW = new Guid("B50167E5-2AD7-44A3-B3E2-C486BD56BE3B");
 
 		/// <summary>Guid of debugger exceptions control</summary>

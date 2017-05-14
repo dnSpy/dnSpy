@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.ToolWindows.Autos {
 		public static readonly Guid VariablesWindowGuid = new Guid("F183274A-8EC3-4DE7-A291-388C6BB73362");
 
 		[ImportingConstructor]
-		AutosContent(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory, LocalsOperations localsOperations)
-			: base(wpfCommandService, localsVMFactory, localsOperations) {
+		AutosContent(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory)
+			: base(wpfCommandService, localsVMFactory) {
 		}
 
 		protected override LocalsVMOptions CreateLocalsVMOptions() {

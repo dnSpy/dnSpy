@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Linq;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 

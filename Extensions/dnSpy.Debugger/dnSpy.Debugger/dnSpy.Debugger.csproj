@@ -182,6 +182,7 @@
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
     <Compile Include="ToolWindows\Autos\AutosContent.cs" />
     <Compile Include="ToolWindows\Autos\AutosToolWindowContent.cs" />
+    <Compile Include="ToolWindows\Autos\Commands.cs" />
     <Compile Include="ToolWindows\Autos\ValueNodeTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackColumnConverter.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackContent.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="ToolWindows\DelayedAction.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionCategoryVM.cs" />
     <Compile Include="ToolWindows\Locals\AutoShowLocalsWindow.cs" />
+    <Compile Include="ToolWindows\Locals\Commands.cs" />
     <Compile Include="ToolWindows\Locals\LocalsContent.cs" />
     <Compile Include="ToolWindows\Locals\LocalsToolWindowContent.cs" />
     <Compile Include="ToolWindows\Locals\Shared\LocalsColumnConverter.cs" />
@@ -221,7 +223,6 @@
     <Compile Include="ToolWindows\Locals\Shared\LocalsControl.xaml.cs">
       <DependentUpon>LocalsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ToolWindows\Locals\Shared\LocalsOperations.cs" />
     <Compile Include="ToolWindows\Locals\Shared\LocalsToolWindowContent.cs" />
     <Compile Include="ToolWindows\Locals\Shared\LocalsVM.cs" />
     <Compile Include="ToolWindows\Locals\Shared\LocalsVMOptions.cs" />

@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Locals {
 	sealed class LocalsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		LocalsContentCommandLoader(IWpfCommandService wpfCommandService, Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowService memoryWindowService, CopyLocalsCtxMenuCommand copyCmd, EditValueLocalsCtxMenuCommand editValueCmd, CopyValueLocalsCtxMenuCommand copyValueCmd, ToggleCollapsedLocalsCtxMenuCommand toggleCollapsedCmd, ShowInMemoryLocalsCtxMenuCommand showInMemCmd) {
-			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW);
+			var cmds = wpfCommandService.GetCommands(Guid.Empty);
 			cmds.Add(ApplicationCommands.Copy, new LocalsCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new LocalsCtxMenuCommandProxy(editValueCmd), ModifierKeys.None, Key.F2);
 			cmds.Add(new LocalsCtxMenuCommandProxy(copyValueCmd), ModifierKeys.Control | ModifierKeys.Shift, Key.C);
