@@ -39,6 +39,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		bool IValueNodesVM.IsOpen => isOpen;
 		bool IValueNodesVM.IsReadOnly => isReadOnly;
 		ITreeView IValueNodesVM.TreeView => treeView;
+		Guid? IValueNodesVM.RuntimeGuid => valueNodesProvider.Language?.RuntimeGuid;
 
 		sealed class RootNode : TreeNodeData {
 			public override Guid Guid => Guid.Empty;

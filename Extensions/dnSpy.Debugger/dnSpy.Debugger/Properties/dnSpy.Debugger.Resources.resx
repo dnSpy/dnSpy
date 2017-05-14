@@ -1836,4 +1836,7 @@ Are you sure you want to expand it?</value>
   <data name="MakeObjectIdCommand" xml:space="preserve">
     <value>_Make Object ID</value>
   </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>Language</value>
+  </data>
 </root>

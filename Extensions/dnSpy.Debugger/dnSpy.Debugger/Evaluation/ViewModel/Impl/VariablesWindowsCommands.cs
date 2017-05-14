@@ -21,8 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class VariablesWindowCtxMenuContext {
@@ -106,6 +109,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	static class Constants {
 		public const string SHOW_IN_MEMORY_WINDOW_GUID = "10E1F865-8531-486F-86E2-071FB1B9E1B1";
 		public const string GROUP_SHOW_IN_MEMORY_WINDOW = "0,CFAF7CC1-2289-436D-8EB6-C5F6E32DE253";
+		public const string LANGUAGE_GUID = "5CFF54C9-B6A8-45CD-B70A-7406FF33794A";
+		public const string GROUP_LANGUAGE = "0,81ADE85F-2CA6-4C29-AF32-9300CEAFB584";
 	}
 
 	[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = DsImagesAttribute.MemoryWindow, Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 70)]
@@ -154,6 +159,52 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public ShowInMemoryWindowModulesCtxMenuCommand(Lazy<VariablesWindowOperations> operations, int windowIndex) : base(operations) => this.windowIndex = windowIndex;
 		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.ShowInMemoryWindow(context.VM, windowIndex);
 		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanShowInMemoryWindow(context.VM);
+	}
+
+	[ExportMenuItem(Header = "res:LanguageCommand", Guid = Constants.LANGUAGE_GUID, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 80)]
+	sealed class LanguageVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
+		[ImportingConstructor]
+		LanguageVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
+		public override void Execute(VariablesWindowCtxMenuContext context) { }
+		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.GetLanguages(context.VM).Count > 0;
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.LANGUAGE_GUID, Group = Constants.GROUP_LANGUAGE, Order = 0)]
+	sealed class LanguageXVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand, IMenuItemProvider {
+		[ImportingConstructor]
+		LanguageXVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
+
+		public override void Execute(VariablesWindowCtxMenuContext context) { }
+
+		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
+			var ctx = CreateContext(context);
+			Debug.Assert(ctx != null);
+			if (ctx == null)
+				yield break;
+
+			var languages = ctx.Operations.GetLanguages(ctx.VM);
+			if (languages.Count == 0)
+				yield break;
+
+			var currentLanguage = ctx.Operations.GetCurrentLanguage(ctx.VM);
+			foreach (var language in languages.OrderBy(a => a.DisplayName, StringComparer.CurrentCultureIgnoreCase)) {
+				var attr = new ExportMenuItemAttribute { Header = UIUtilities.EscapeMenuItemHeader(language.DisplayName) };
+				var cmd = new SetLanguageWindowModulesCtxMenuCommand(operations, language, language == currentLanguage);
+				yield return new CreatedMenuItem(attr, cmd);
+			}
+		}
+	}
+
+	sealed class SetLanguageWindowModulesCtxMenuCommand : VariablesWindowCtxMenuCommand {
+		readonly DbgLanguage language;
+		readonly bool isChecked;
+		public SetLanguageWindowModulesCtxMenuCommand(Lazy<VariablesWindowOperations> operations, DbgLanguage language, bool isChecked)
+			: base(operations) {
+			this.language = language;
+			this.isChecked = isChecked;
+		}
+		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.SetCurrentLanguage(context.VM, language);
+		public override bool IsChecked(VariablesWindowCtxMenuContext context) => isChecked;
 	}
 
 	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 10000)]

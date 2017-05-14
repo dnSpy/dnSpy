@@ -2916,6 +2916,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string LanguageCommand {
+            get {
+                return ResourceManager.GetString("LanguageCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading the module. This could take a while if it&apos;s a big module..
         /// </summary>
         public static string LoadModule_InfoText {

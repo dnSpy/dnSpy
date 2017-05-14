@@ -40,14 +40,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class VariablesWindowOperationsImpl : VariablesWindowOperations {
 		readonly DebuggerSettings debuggerSettings;
 		readonly DbgEvalFormatterSettings dbgEvalFormatterSettings;
+		readonly Lazy<DbgLanguageService> dbgLanguageService;
 		readonly Lazy<ToolWindows.Memory.MemoryWindowService> memoryWindowService;
 		readonly Lazy<IPickSaveFilename> pickSaveFilename;
 		readonly Lazy<IMessageBoxService> messageBoxService;
 
 		[ImportingConstructor]
-		VariablesWindowOperationsImpl(DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, Lazy<ToolWindows.Memory.MemoryWindowService> memoryWindowService, Lazy<IPickSaveFilename> pickSaveFilename, Lazy<IMessageBoxService> messageBoxService) {
+		VariablesWindowOperationsImpl(DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, Lazy<DbgLanguageService> dbgLanguageService, Lazy<ToolWindows.Memory.MemoryWindowService> memoryWindowService, Lazy<IPickSaveFilename> pickSaveFilename, Lazy<IMessageBoxService> messageBoxService) {
 			this.debuggerSettings = debuggerSettings;
 			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
+			this.dbgLanguageService = dbgLanguageService;
 			this.memoryWindowService = memoryWindowService;
 			this.pickSaveFilename = pickSaveFilename;
 			this.messageBoxService = messageBoxService;
@@ -320,6 +322,33 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return;
 			foreach (var child in node.TreeNode.Children)
 				child.IsExpanded = false;
+		}
+
+		public override IList<DbgLanguage> GetLanguages(IValueNodesVM vm) {
+			if (!CanExecCommands(vm))
+				return Array.Empty<DbgLanguage>();
+			var runtimeGuid= vm.RuntimeGuid;
+			if (runtimeGuid == null)
+				return Array.Empty<DbgLanguage>();
+			return dbgLanguageService.Value.GetLanguages(runtimeGuid.Value);
+		}
+
+		public override DbgLanguage GetCurrentLanguage(IValueNodesVM vm) {
+			if (!CanExecCommands(vm))
+				return null;
+			var runtimeGuid = vm.RuntimeGuid;
+			if (runtimeGuid == null)
+				return null;
+			return dbgLanguageService.Value.GetCurrentLanguage(runtimeGuid.Value);
+		}
+
+		public override void SetCurrentLanguage(IValueNodesVM vm, DbgLanguage language) {
+			if (!CanExecCommands(vm))
+				return;
+			var runtimeGuid = vm.RuntimeGuid;
+			if (runtimeGuid == null)
+				return;
+			dbgLanguageService.Value.SetCurrentLanguage(runtimeGuid.Value, language);
 		}
 
 		public override bool CanToggleUseHexadecimal => true;
