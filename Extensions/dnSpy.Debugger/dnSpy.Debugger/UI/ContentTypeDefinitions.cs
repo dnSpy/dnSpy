@@ -75,13 +75,18 @@ namespace dnSpy.Debugger.UI {
 		static readonly ContentTypeDefinition ExceptionSettingsWindow;
 
 		[Export]
-		[Name(ContentTypes.LocalsWindow)]
+		[Name(ContentTypes.VariablesWindow)]
 		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition VariablesWindow;
+
+		[Export]
+		[Name(ContentTypes.LocalsWindow)]
+		[BaseDefinition(ContentTypes.VariablesWindow)]
 		static readonly ContentTypeDefinition LocalsWindow;
 
 		[Export]
 		[Name(ContentTypes.AutosWindow)]
-		[BaseDefinition(ContentTypes.Text)]
+		[BaseDefinition(ContentTypes.VariablesWindow)]
 		static readonly ContentTypeDefinition AutosWindow;
 
 		[Export]

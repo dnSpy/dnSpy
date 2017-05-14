@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text;
@@ -26,10 +27,13 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
-	abstract class ValueNodeTextClassifierProviderBase : ITextClassifierProvider {
+	[Export(typeof(ITextClassifierProvider))]
+	[ContentType(ContentTypes.VariablesWindow)]
+	sealed class ValueNodeTextClassifierProvider : ITextClassifierProvider {
 		readonly IClassificationType debuggerValueChangedHighlightClassificationType;
 
-		protected ValueNodeTextClassifierProviderBase(IThemeClassificationTypeService themeClassificationTypeService) =>
+		[ImportingConstructor]
+		ValueNodeTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) =>
 			debuggerValueChangedHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.DebuggerValueChangedHighlight);
 
 		public ITextClassifier Create(IContentType contentType) => new ValueNodeTextClassifier(debuggerValueChangedHighlightClassificationType);

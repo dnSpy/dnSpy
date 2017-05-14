@@ -183,7 +183,6 @@
     <Compile Include="ToolWindows\Autos\AutosContent.cs" />
     <Compile Include="ToolWindows\Autos\AutosToolWindowContent.cs" />
     <Compile Include="ToolWindows\Autos\Commands.cs" />
-    <Compile Include="ToolWindows\Autos\ValueNodeTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackColumnConverter.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackContent.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackContext.cs" />
@@ -226,7 +225,6 @@
     <Compile Include="ToolWindows\Locals\Shared\LocalsToolWindowContent.cs" />
     <Compile Include="ToolWindows\Locals\Shared\LocalsVM.cs" />
     <Compile Include="ToolWindows\Locals\Shared\LocalsVMOptions.cs" />
-    <Compile Include="ToolWindows\Locals\ValueNodeTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointColumnConverter.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointContext.cs" />

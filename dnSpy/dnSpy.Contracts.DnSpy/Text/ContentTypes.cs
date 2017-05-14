@@ -262,6 +262,11 @@ namespace dnSpy.Contracts.Text {
 		public const string ExceptionSettingsWindow = nameof(ExceptionSettingsWindow);
 
 		/// <summary>
+		/// Variables window (autos, locals, watch)
+		/// </summary>
+		public const string VariablesWindow = nameof(VariablesWindow);
+
+		/// <summary>
 		/// Locals window
 		/// </summary>
 		public const string LocalsWindow = nameof(LocalsWindow);
