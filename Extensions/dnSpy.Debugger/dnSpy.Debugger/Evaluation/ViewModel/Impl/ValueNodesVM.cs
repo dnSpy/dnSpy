@@ -57,6 +57,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly RootNode rootNode;
 		bool isOpen;
 		bool isReadOnly;
+		Guid? runtimeGuid;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly IValueNodesVM vm;
@@ -102,14 +103,24 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void ValueNodesProvider_LanguageChanged(object sender, EventArgs e) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
+			runtimeGuid = null;
 			valueNodesContext.ValueEditValueProvider.Language = valueNodesProvider.Language;
 		}
 
 		// UI thread
 		void RecreateRootChildren_UI() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			var nodes = isOpen ? valueNodesProvider.GetNodes() : Array.Empty<DbgValueNodeInfo>();
-			RecreateRootChildrenCore_UI(nodes);
+			Guid? runtimeGuid;
+			DbgValueNodeInfo[] nodes;
+			if (isOpen) {
+				nodes = valueNodesProvider.GetNodes();
+				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid;
+			}
+			else {
+				nodes = Array.Empty<DbgValueNodeInfo>();
+				runtimeGuid = null;
+			}
+			RecreateRootChildrenCore_UI(nodes, runtimeGuid);
 			VerifyChildren_UI(nodes);
 		}
 
@@ -127,12 +138,15 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void RecreateRootChildrenCore_UI(DbgValueNodeInfo[] infos) {
+		void RecreateRootChildrenCore_UI(DbgValueNodeInfo[] infos, Guid? runtimeGuid) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			if (infos.Length > 0)
 				infos[0].Node.Runtime.CloseOnContinue(infos.Select(a => a.Node));
 
-			if (infos.Length == 0 || rootNode.TreeNode.Children.Count == 0) {
+			bool runtimeGuidChanged = runtimeGuid != this.runtimeGuid;
+			this.runtimeGuid = runtimeGuid;
+
+			if (infos.Length == 0 || rootNode.TreeNode.Children.Count == 0 || runtimeGuidChanged) {
 				SetNewRootChildren_UI(infos);
 				return;
 			}
@@ -244,6 +258,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.NodesChanged += ValueNodesProvider_NodesChanged;
 				valueNodesProvider.IsReadOnlyChanged += ValueNodesProvider_IsReadOnlyChanged;
 				valueNodesProvider.LanguageChanged += ValueNodesProvider_LanguageChanged;
+				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid;
 			}
 			else {
 				valueNodesContext.ClassificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
@@ -253,6 +268,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.IsReadOnlyChanged -= ValueNodesProvider_IsReadOnlyChanged;
 				valueNodesProvider.LanguageChanged -= ValueNodesProvider_LanguageChanged;
 				isReadOnly = true;
+				runtimeGuid = null;
 			}
 			RecreateRootChildren_UI();
 		}
@@ -354,6 +370,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			treeView.RefreshAllNodes();
 		}
 
+		// UI thread
 		void UpdateFormatterOptions() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			valueNodesContext.ValueNodeFormatParameters.ValueFormatterOptions = GetValueFormatterOptions(isDisplay: true);
