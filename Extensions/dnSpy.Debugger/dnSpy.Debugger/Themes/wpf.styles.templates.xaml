@@ -41,6 +41,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <CheckBox Grid.Row="0" Margin="0 0 0 0" IsChecked="{Binding Settings.DisableManagedDebuggerDetection}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DisableManagedDebuggerDetection}" />
             <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding Settings.PropertyEvalAndFunctionCalls}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_PropertyEvalAndFunctionCalls}" />
@@ -52,6 +53,22 @@
             <CheckBox Grid.Row="7" Margin="0 5 0 0" IsChecked="{Binding Settings.EnableManagedDebuggingAssistants}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_EnableManagedDebuggingAssistants}" />
             <CheckBox Grid.Row="8" Margin="0 5 0 0" IsChecked="{Binding Settings.HighlightChangedVariables}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_HighlightChangedVariables}" />
             <CheckBox Grid.Row="9" Margin="0 5 0 0" IsChecked="{Binding Settings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlight}" />
+            <GroupBox Grid.Row="10" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_Language}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DebugEngine}" />
+                    <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Runtimes.Items}" SelectedItem="{Binding Runtimes.SelectedItem}" VerticalContentAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="0" Margin="0 0 5 0" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_Language}" />
+                    <ComboBox Grid.Row="1" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Runtimes.SelectedItem.Languages}" SelectedItem="{Binding Runtimes.SelectedItem.SelectedItem}" VerticalContentAlignment="Center" />
+                </Grid>
+            </GroupBox>
         </Grid>
     </DataTemplate>
 

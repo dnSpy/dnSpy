@@ -19,20 +19,28 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Linq;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Debugger.Evaluation;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Settings {
 	[Export(typeof(IAppSettingsPageProvider))]
 	sealed class DebuggerAppSettingsPageProvider : IAppSettingsPageProvider {
 		readonly DebuggerSettingsImpl debuggerSettingsImpl;
+		readonly Lazy<DbgLanguageService2> dbgLanguageService;
 
 		[ImportingConstructor]
-		DebuggerAppSettingsPageProvider(DebuggerSettingsImpl debuggerSettingsImpl) => this.debuggerSettingsImpl = debuggerSettingsImpl;
+		DebuggerAppSettingsPageProvider(DebuggerSettingsImpl debuggerSettingsImpl, Lazy<DbgLanguageService2> dbgLanguageService) {
+			this.debuggerSettingsImpl = debuggerSettingsImpl;
+			this.dbgLanguageService = dbgLanguageService;
+		}
 
 		public IEnumerable<AppSettingsPage> Create() {
-			yield return new DebuggerAppSettingsPage(debuggerSettingsImpl);
+			yield return new DebuggerAppSettingsPage(debuggerSettingsImpl, dbgLanguageService);
 		}
 	}
 
@@ -46,11 +54,90 @@ namespace dnSpy.Debugger.Settings {
 		public override string Title => dnSpy_Debugger_Resources.DebuggerOptDlgTab;
 		public override object UIObject => this;
 
-		public DebuggerAppSettingsPage(DebuggerSettingsImpl debuggerSettingsImpl) {
+		public object Runtimes {
+			get {
+				if (runtimesVM == null)
+					runtimesVM = new RuntimesVM(dbgLanguageService.Value.GetLanguageInfos());
+				return runtimesVM;
+			}
+		}
+		RuntimesVM runtimesVM;
+
+		readonly Lazy<DbgLanguageService2> dbgLanguageService;
+
+		public DebuggerAppSettingsPage(DebuggerSettingsImpl debuggerSettingsImpl, Lazy<DbgLanguageService2> dbgLanguageService) {
 			_global_settings = debuggerSettingsImpl;
+			this.dbgLanguageService = dbgLanguageService;
 			Settings = debuggerSettingsImpl.Clone();
 		}
 
-		public override void OnApply() => Settings.CopyTo(_global_settings);
+		public override void OnApply() {
+			Settings.CopyTo(_global_settings);
+			if (runtimesVM != null) {
+				foreach (var info in runtimesVM.GetSettings()) {
+					var language = dbgLanguageService.Value.GetLanguages(info.runtimeGuid).First(a => a.Name == info.languageName);
+					dbgLanguageService.Value.SetCurrentLanguage(info.runtimeGuid, language);
+				}
+			}
+		}
+	}
+
+	sealed class RuntimesVM : ViewModelBase {
+		public object Items => runtimes;
+		readonly ObservableCollection<RuntimeVM> runtimes;
+		public object SelectedItem {
+			get => selectedItem;
+			set {
+				if (selectedItem == value)
+					return;
+				selectedItem = (RuntimeVM)value;
+				OnPropertyChanged(nameof(SelectedItem));
+			}
+		}
+		RuntimeVM selectedItem;
+
+		public RuntimesVM(RuntimeLanguageInfo[] infos) {
+			runtimes = new ObservableCollection<RuntimeVM>(infos.OrderBy(a => a.RuntimeDisplayName, StringComparer.CurrentCultureIgnoreCase).Select(a => new RuntimeVM(a)));
+			selectedItem = runtimes.FirstOrDefault();
+		}
+
+		public IEnumerable<(Guid runtimeGuid, string languageName)> GetSettings() {
+			foreach (var runtime in runtimes)
+				yield return runtime.GetSettings();
+		}
+	}
+
+	sealed class RuntimeVM : ViewModelBase {
+		public string Name { get; }
+		public object Languages => languages;
+		readonly ObservableCollection<LanguageVM> languages;
+		public object SelectedItem {
+			get => selectedItem;
+			set {
+				if (selectedItem == value)
+					return;
+				selectedItem = (LanguageVM)value;
+				OnPropertyChanged(nameof(SelectedItem));
+			}
+		}
+		LanguageVM selectedItem;
+
+		readonly Guid runtimeGuid;
+
+		public RuntimeVM(RuntimeLanguageInfo info) {
+			Name = info.RuntimeDisplayName;
+			runtimeGuid = info.RuntimeGuid;
+			languages = new ObservableCollection<LanguageVM>(info.Languages.OrderBy(a => a.LanguageDisplayName, StringComparer.CurrentCultureIgnoreCase).Select(a => new LanguageVM(a)));
+			selectedItem = languages.FirstOrDefault(a => a.ID == info.CurrentLanguage) ?? languages.FirstOrDefault();
+		}
+
+		public (Guid runtimeGuid, string languageName) GetSettings() => (runtimeGuid, selectedItem.ID);
+	}
+
+	sealed class LanguageVM {
+		public string Name => info.LanguageDisplayName;
+		public string ID => info.LanguageName;
+		readonly LanguageInfo info;
+		public LanguageVM(LanguageInfo info) => this.info = info;
 	}
 }

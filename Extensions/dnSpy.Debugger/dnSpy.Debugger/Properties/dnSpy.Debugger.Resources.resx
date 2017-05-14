@@ -1839,4 +1839,10 @@ Are you sure you want to expand it?</value>
   <data name="LanguageCommand" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="DbgSettings_DebugEngine" xml:space="preserve">
+    <value>Debug Engine</value>
+  </data>
+  <data name="DbgSettings_Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
 </root>

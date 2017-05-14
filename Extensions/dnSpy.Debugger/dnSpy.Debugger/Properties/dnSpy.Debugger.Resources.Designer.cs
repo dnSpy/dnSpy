@@ -1384,6 +1384,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Debug Engine.
+        /// </summary>
+        public static string DbgSettings_DebugEngine {
+            get {
+                return ResourceManager.GetString("DbgSettings_DebugEngine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DebuggerBrowsableAttributes can hide fields and properties.
         /// </summary>
         public static string DbgSettings_DebuggerBrowsableAttributesCanHidePropsFields {
@@ -1425,6 +1434,15 @@ namespace dnSpy.Debugger.Properties {
         public static string DbgSettings_IgnoreBreakInstructions {
             get {
                 return ResourceManager.GetString("DbgSettings_IgnoreBreakInstructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string DbgSettings_Language {
+            get {
+                return ResourceManager.GetString("DbgSettings_Language", resourceCulture);
             }
         }
         
