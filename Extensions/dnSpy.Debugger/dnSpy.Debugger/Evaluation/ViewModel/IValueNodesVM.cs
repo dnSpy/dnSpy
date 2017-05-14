@@ -25,6 +25,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 	interface IValueNodesVM : INotifyPropertyChanged, IDisposable {
 		void Show();
 		void Hide();
+		bool IsOpen { get; }
+		bool IsReadOnly { get; }
 		ITreeView TreeView { get; }
 	}
 

@@ -151,10 +151,12 @@
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodesVMFactoryImpl.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodeTextClassifier.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodeTextClassifierContext.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\VariablesWindowOperationsImpl.cs" />
     <Compile Include="Evaluation\ViewModel\IValueNodesVM.cs" />
     <Compile Include="Evaluation\ViewModel\ValueNode.cs" />
     <Compile Include="Evaluation\ViewModel\ValueNodesProvider.cs" />
     <Compile Include="Evaluation\ViewModel\ValueNodesVMFactory.cs" />
+    <Compile Include="Evaluation\ViewModel\VariablesWindowOperations.cs" />
     <Compile Include="Exceptions\DbgExceptionFormatterService.cs" />
     <Compile Include="Exceptions\DbgExceptionImpl.cs" />
     <Compile Include="Exceptions\DbgExceptionSettingsServiceImpl.cs" />

@@ -108,7 +108,7 @@ namespace dnSpy.Debugger.Evaluation {
 
 	[Export(typeof(DbgEvalFormatterSettings))]
 	sealed class DbgEvalFormatterSettingsImpl : DbgEvalFormatterSettingsBase {
-		static readonly Guid SETTINGS_GUID = new Guid("0C2DA477-53DE-4374-885C-A091AC4804CB");
+		static readonly Guid SETTINGS_GUID = new Guid("33608C69-6696-4721-8011-81ECCCC80C64");
 
 		readonly ISettingsService settingsService;
 

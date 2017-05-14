@@ -298,5 +298,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			// which uses the options init'd above
 			TreeNode.RefreshUI();
 		}
+
+		internal void ClearEditingValueProperties() {
+			if (valueEditableValue != null)
+				valueEditableValue.IsEditingValue = false;
+		}
 	}
 }

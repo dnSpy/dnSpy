@@ -36,6 +36,8 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class ValueNodesVM : ViewModelBase, IValueNodesVM {
+		bool IValueNodesVM.IsOpen => isOpen;
+		bool IValueNodesVM.IsReadOnly => isReadOnly;
 		ITreeView IValueNodesVM.TreeView => treeView;
 
 		sealed class RootNode : TreeNodeData {
@@ -53,6 +55,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly ITreeView treeView;
 		readonly RootNode rootNode;
 		bool isOpen;
+		bool isReadOnly;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly IValueNodesVM vm;
@@ -87,6 +90,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void ValueNodesProvider_NodesChanged(object sender, EventArgs e) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			RecreateRootChildren_UI();
+		}
+
+		// UI thread
+		void ValueNodesProvider_IsReadOnlyChanged(object sender, EventArgs e) {
+			valueNodesContext.UIDispatcher.VerifyAccess();
+			isReadOnly = valueNodesProvider.IsReadOnly;
 		}
 
 		// UI thread
@@ -230,7 +239,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesContext.HighlightChangedVariables = debuggerSettings.HighlightChangedVariables;
 				valueNodesContext.ValueEditValueProvider.Language = valueNodesProvider.Language;
 				UpdateFormatterOptions();
+				isReadOnly = valueNodesProvider.IsReadOnly;
 				valueNodesProvider.NodesChanged += ValueNodesProvider_NodesChanged;
+				valueNodesProvider.IsReadOnlyChanged += ValueNodesProvider_IsReadOnlyChanged;
 				valueNodesProvider.LanguageChanged += ValueNodesProvider_LanguageChanged;
 			}
 			else {
@@ -238,7 +249,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				debuggerSettings.PropertyChanged -= DebuggerSettings_PropertyChanged;
 				dbgEvalFormatterSettings.PropertyChanged -= DbgEvalFormatterSettings_PropertyChanged;
 				valueNodesProvider.NodesChanged -= ValueNodesProvider_NodesChanged;
+				valueNodesProvider.IsReadOnlyChanged -= ValueNodesProvider_IsReadOnlyChanged;
 				valueNodesProvider.LanguageChanged -= ValueNodesProvider_LanguageChanged;
+				isReadOnly = true;
 			}
 			RecreateRootChildren_UI();
 		}
