@@ -25,6 +25,7 @@ using dnSpy.Contracts.Debugger.Evaluation.Engine;
 
 namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgLanguageImpl : DbgLanguage {
+		public override Guid RuntimeGuid { get; }
 		public override string Name { get; }
 		public override string DisplayName { get; }
 		public override DbgExpressionEvaluator ExpressionEvaluator { get; }
@@ -33,11 +34,10 @@ namespace dnSpy.Debugger.Evaluation {
 		public override DbgValueNodeProvider AutosProvider { get; }
 		public override DbgValueNodeFactory ValueNodeFactory { get; }
 
-		readonly Guid runtimeGuid;
 		readonly DbgEngineLanguage engineLanguage;
 
 		public DbgLanguageImpl(Guid runtimeGuid, DbgEngineLanguage engineLanguage) {
-			this.runtimeGuid = runtimeGuid;
+			RuntimeGuid = runtimeGuid;
 			this.engineLanguage = engineLanguage ?? throw new ArgumentNullException(nameof(engineLanguage));
 			Name = engineLanguage.Name ?? throw new ArgumentException();
 			DisplayName = engineLanguage.DisplayName ?? throw new ArgumentException();
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options) {
 			if (runtime == null)
 				throw new ArgumentNullException(nameof(runtime));
-			if (runtime.Guid != runtimeGuid)
+			if (runtime.Guid != RuntimeGuid)
 				throw new ArgumentException();
 			if (location == null)
 				throw new ArgumentNullException(nameof(location));
