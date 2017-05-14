@@ -31,6 +31,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			var obj = value as FormatterObject<ValueNode>;
 			if (obj == null)
 				return null;
+			bool isToolTip = parameter is string paramString && paramString == "ToolTip";
 
 			var nodeCtx = ((ValueNodeImpl)obj.VM).Context;
 			var writer = nodeCtx.TextClassifierTextColorWriter;
@@ -49,7 +50,8 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			if (!nodeCtx.HighlightChangedVariables)
 				textChanged = false;
 			var context = new ValueNodeTextClassifierContext(textChanged, writer.Text, obj.Tag, nodeCtx.SyntaxHighlight, writer.Colors);
-			return nodeCtx.TextBlockContentInfoFactory.Create(nodeCtx.UIVersion, nodeCtx.ClassificationFormatMap, context, nodeCtx.WindowContentType, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			var flags = isToolTip ? TextElementFlags.Wrap : TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis;
+			return nodeCtx.TextBlockContentInfoFactory.Create(nodeCtx.UIVersion, nodeCtx.ClassificationFormatMap, context, nodeCtx.WindowContentType, flags);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();

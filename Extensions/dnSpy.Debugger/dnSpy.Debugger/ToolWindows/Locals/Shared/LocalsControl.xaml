@@ -44,6 +44,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <tv:SharpTreeNodeView Grid.Column="0" Style="{StaticResource SharpTreeNodeView_GridView}" />
+                                <!-- There's no tooltip here since it's rarely needed -->
                                 <uiwpf:SmartTextBlock Grid.Column="1" ContentInfo="{Binding Data.NameObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}" />
                             </Grid>
                         </Border>
@@ -58,7 +59,11 @@
                                 Margin="-8 0">
                             <ctrls:EditValueControl Margin="8 0 4 0" EditableValue="{Binding Data.ValueEditableValue}" EditValueProvider="{Binding Data.ValueEditValueProvider}">
                                 <ctrls:EditValueControl.ReadOnlyContent>
-                                    <uiwpf:SmartTextBlock ContentInfo="{Binding Data.ValueObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}" />
+                                    <uiwpf:SmartTextBlock ContentInfo="{Binding Data.ValueObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}">
+                                        <uiwpf:SmartTextBlock.ToolTip>
+                                            <uiwpf:SmartTextBlock ContentInfo="{Binding Data.ValueObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}, ConverterParameter=ToolTip}" />
+                                        </uiwpf:SmartTextBlock.ToolTip>
+                                    </uiwpf:SmartTextBlock>
                                 </ctrls:EditValueControl.ReadOnlyContent>
                             </ctrls:EditValueControl>
                         </Border>
@@ -71,7 +76,11 @@
                         <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"
                                 BorderThickness="0 0 1 1"
                                 Margin="-8 0">
-                            <uiwpf:SmartTextBlock Margin="6 0" ContentInfo="{Binding Data.TypeObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}" />
+                            <uiwpf:SmartTextBlock Margin="6 0" ContentInfo="{Binding Data.TypeObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}}">
+                                <uiwpf:SmartTextBlock.ToolTip>
+                                    <uiwpf:SmartTextBlock ContentInfo="{Binding Data.TypeObject, Mode=OneWay, Converter={StaticResource localsColumnConverter}, ConverterParameter=ToolTip}" />
+                                </uiwpf:SmartTextBlock.ToolTip>
+                            </uiwpf:SmartTextBlock>
                         </Border>
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
