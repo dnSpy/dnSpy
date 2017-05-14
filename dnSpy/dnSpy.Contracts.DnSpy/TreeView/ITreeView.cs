@@ -56,6 +56,11 @@ namespace dnSpy.Contracts.TreeView {
 		void SelectItems(IEnumerable<TreeNodeData> items);
 
 		/// <summary>
+		/// Selects all visible items
+		/// </summary>
+		void SelectAll();
+
+		/// <summary>
 		/// Raised when selection has changed
 		/// </summary>
 		event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;

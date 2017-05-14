@@ -239,6 +239,8 @@ namespace dnSpy.TreeView {
 			}
 		}
 
+		public void SelectAll() => sharpTreeView.SelectAll();
+
 		public void Focus() {
 			Focus2();
 			// This is needed if the treeview was hidden and just got visible. It's disabled because
