@@ -88,6 +88,7 @@ namespace dnSpy.Contracts.Images {
 		public const string DelegatePublic = Prefix + DsImageStrings.DelegatePublic;
 		public const string DelegateShortcut = Prefix + DsImageStrings.DelegateShortcut;
 		public const string DeleteBreakpoint = Prefix + DsImageStrings.DeleteBreakpoint;
+		public const string DeleteWatch = Prefix + DsImageStrings.DeleteWatch;
 		public const string Dialog = Prefix + DsImageStrings.Dialog;
 		public const string DisableAllBreakpoints = Prefix + DsImageStrings.DisableAllBreakpoints;
 		public const string DisassemblyWindow = Prefix + DsImageStrings.DisassemblyWindow;

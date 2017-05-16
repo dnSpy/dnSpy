@@ -87,6 +87,7 @@ namespace dnSpy.Contracts.Images {
 		public const string DelegatePublic = nameof(DelegatePublic);
 		public const string DelegateShortcut = nameof(DelegateShortcut);
 		public const string DeleteBreakpoint = nameof(DeleteBreakpoint);
+		public const string DeleteWatch = nameof(DeleteWatch);
 		public const string Dialog = nameof(Dialog);
 		public const string DisableAllBreakpoints = nameof(DisableAllBreakpoints);
 		public const string DisassemblyWindow = nameof(DisassemblyWindow);

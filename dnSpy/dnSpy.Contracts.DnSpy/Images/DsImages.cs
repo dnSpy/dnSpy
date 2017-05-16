@@ -91,6 +91,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference DelegatePublic { get; } = new ImageReference(assembly, DsImageStrings.DelegatePublic);
 		public static ImageReference DelegateShortcut { get; } = new ImageReference(assembly, DsImageStrings.DelegateShortcut);
 		public static ImageReference DeleteBreakpoint { get; } = new ImageReference(assembly, DsImageStrings.DeleteBreakpoint);
+		public static ImageReference DeleteWatch { get; } = new ImageReference(assembly, DsImageStrings.DeleteWatch);
 		public static ImageReference Dialog { get; } = new ImageReference(assembly, DsImageStrings.Dialog);
 		public static ImageReference DisableAllBreakpoints { get; } = new ImageReference(assembly, DsImageStrings.DisableAllBreakpoints);
 		public static ImageReference DisassemblyWindow { get; } = new ImageReference(assembly, DsImageStrings.DisassemblyWindow);
