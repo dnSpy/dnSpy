@@ -18,10 +18,17 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.Evaluation.ViewModel;
 
 namespace dnSpy.Debugger.Evaluation.UI {
+	abstract class VariablesWindowValueNodesProvider {
+		public abstract DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame);
+	}
+
 	sealed class VariablesWindowVMOptions {
+		public VariablesWindowValueNodesProvider VariablesWindowValueNodesProvider { get; set; }
 		public string WindowContentType { get; set; }
 		public string NameColumnName { get; set; }
 		public string ValueColumnName { get; set; }

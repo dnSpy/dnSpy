@@ -19,7 +19,10 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Evaluation.UI;
@@ -35,8 +38,14 @@ namespace dnSpy.Debugger.ToolWindows.Autos {
 			: base(wpfCommandService, variablesWindowVMFactory) {
 		}
 
+		sealed class VariablesWindowValueNodesProviderImpl : VariablesWindowValueNodesProvider {
+			public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame) =>
+				language.AutosProvider.GetNodes(frame).Select(a => new DbgValueNodeInfo(a)).ToArray();
+		}
+
 		protected override VariablesWindowVMOptions CreateVariablesWindowVMOptions() {
 			var options = new VariablesWindowVMOptions() {
+				VariablesWindowValueNodesProvider = new VariablesWindowValueNodesProviderImpl(),
 				WindowContentType = ContentTypes.AutosWindow,
 				NameColumnName = PredefinedTextClassifierTags.AutosWindowName,
 				ValueColumnName = PredefinedTextClassifierTags.AutosWindowValue,

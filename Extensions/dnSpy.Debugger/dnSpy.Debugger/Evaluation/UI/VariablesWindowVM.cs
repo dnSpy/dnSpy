@@ -91,16 +91,16 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			bool isOpen;
 			DbgLanguage language;
 
-			readonly bool isLocals;
+			readonly VariablesWindowValueNodesProvider variablesWindowValueNodesProvider;
 			readonly UIDispatcher uiDispatcher;
 			readonly Lazy<DbgManager> dbgManager;
 			readonly Lazy<DbgLanguageService> dbgLanguageService;
 			readonly Lazy<DbgCallStackService> dbgCallStackService;
 
-			public ValueNodesProviderImpl(bool isLocals, UIDispatcher uiDispatcher, Lazy<DbgManager> dbgManager, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgCallStackService> dbgCallStackService) {
-				this.isLocals = isLocals;
-				this.uiDispatcher = uiDispatcher;
-				this.dbgManager = dbgManager;
+			public ValueNodesProviderImpl(VariablesWindowValueNodesProvider variablesWindowValueNodesProvider, UIDispatcher uiDispatcher, Lazy<DbgManager> dbgManager, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgCallStackService> dbgCallStackService) {
+				this.variablesWindowValueNodesProvider = variablesWindowValueNodesProvider ?? throw new ArgumentNullException(nameof(variablesWindowValueNodesProvider));
+				this.uiDispatcher = uiDispatcher ?? throw new ArgumentNullException(nameof(uiDispatcher));
+				this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 				this.dbgLanguageService = dbgLanguageService ?? throw new ArgumentNullException(nameof(dbgLanguageService));
 				this.dbgCallStackService = dbgCallStackService ?? throw new ArgumentNullException(nameof(dbgCallStackService));
 			}
@@ -166,8 +166,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				var info = TryGetLanguage();
 				if (info.frame == null)
 					return Array.Empty<DbgValueNodeInfo>();
-				var provider = isLocals ? info.language.LocalsProvider : info.language.AutosProvider;
-				return provider.GetNodes(info.frame).Select(a => new DbgValueNodeInfo(a)).ToArray();
+				return variablesWindowValueNodesProvider.GetNodes(info.language, info.frame);
 			}
 
 			void SetIsReadOnly_UI(bool newIsReadOnly) {
@@ -194,7 +193,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			this.variablesWindowVMOptions = variablesWindowVMOptions;
 			this.uiDispatcher = uiDispatcher;
 			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
-			valueNodesProvider = new ValueNodesProviderImpl(variablesWindowVMOptions.VariablesWindowKind == VariablesWindowKind.Locals, uiDispatcher, dbgManager, dbgLanguageService, dbgCallStackService);
+			valueNodesProvider = new ValueNodesProviderImpl(variablesWindowVMOptions.VariablesWindowValueNodesProvider, uiDispatcher, dbgManager, dbgLanguageService, dbgCallStackService);
 			this.valueNodesVMFactory = valueNodesVMFactory;
 			this.messageBoxService = messageBoxService;
 		}
