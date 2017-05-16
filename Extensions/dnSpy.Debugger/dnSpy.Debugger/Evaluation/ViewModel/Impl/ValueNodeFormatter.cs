@@ -21,6 +21,18 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class ValueNodeFormatter {
+		public void WriteExpander(ITextColorWriter output, ValueNode vm) {
+			if (vm.TreeNode.LazyLoading)
+				output.Write(BoxedTextColor.Text, "+");
+			else if (vm.TreeNode.Children.Count == 0) {
+				// VS prints nothing
+			}
+			else if (vm.TreeNode.IsExpanded)
+				output.Write(BoxedTextColor.Text, "-");
+			else
+				output.Write(BoxedTextColor.Text, "+");
+		}
+
 		public void WriteName(ITextColorWriter output, ValueNode vm) => vm.CachedName.WriteTo(output);
 
 		public void WriteValue(ITextColorWriter output, ValueNode vm, out bool textChanged) {

@@ -88,8 +88,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 			//TODO: Show a progress dlg box and allow the user to cancel it if it's taking too long
 			var output = new StringBuilderTextColorOutput();
+			var expressions = new List<string>();
 			foreach (var node in SelectedNodes(vm)) {
+				expressions.Add(node.DebuggerValueNode.Expression);
 				var formatter = node.Context.Formatter;
+				formatter.WriteExpander(output, node);
+				output.Write(BoxedTextColor.Text, "\t");
+				// Add an extra tab here to emulate VS output
+				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteName(output, node);
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteValue(output, node, out _);
@@ -100,7 +106,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var s = output.ToString();
 			if (s.Length > 0) {
 				try {
-					Clipboard.SetText(s);
+					var dataObj = new DataObject();
+					dataObj.SetText(s);
+					dataObj.SetData(ClipboardFormats.VARIABLES_WINDOW_EXPRESSIONS, expressions.ToArray());
+					Clipboard.SetDataObject(dataObj);
 				}
 				catch (ExternalException) { }
 			}

@@ -148,6 +148,7 @@
     <Compile Include="Evaluation\UI\VariablesWindowToolWindowContent.cs" />
     <Compile Include="Evaluation\UI\VariablesWindowVM.cs" />
     <Compile Include="Evaluation\UI\VariablesWindowVMOptions.cs" />
+    <Compile Include="Evaluation\ViewModel\ClipboardFormats.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeFormatParameters.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeImageReferenceService.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeReader.cs" />
