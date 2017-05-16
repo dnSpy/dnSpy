@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
@@ -35,5 +36,12 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <returns></returns>
 		public abstract DbgValueNode[] GetNodes(DbgStackFrame frame);
+
+		/// <summary>
+		/// Gets all values
+		/// </summary>
+		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="callback">Called when the method is complete</param>
+		public abstract void GetNodes(DbgStackFrame frame, Action<DbgValueNode[]> callback);
 	}
 }

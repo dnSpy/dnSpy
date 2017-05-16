@@ -45,5 +45,17 @@ namespace dnSpy.Debugger.Evaluation {
 			var engineValueNode = engineValueNodeFactory.Create(frame, expression, options);
 			return new DbgValueNodeImpl(Language, frame.Thread, engineValueNode);
 		}
+
+		public override void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgValueNode> callback) {
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (frame.Runtime.Guid != runtimeGuid)
+				throw new ArgumentException();
+			if (expression == null)
+				throw new ArgumentNullException(nameof(expression));
+			if (callback == null)
+				throw new ArgumentNullException(nameof(callback));
+			engineValueNodeFactory.Create(frame, expression, options, engineValueNode => callback(new DbgValueNodeImpl(Language, frame.Thread, engineValueNode)));
+		}
 	}
 }

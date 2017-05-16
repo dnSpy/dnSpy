@@ -74,9 +74,11 @@ namespace dnSpy.Debugger.Evaluation {
 
 	sealed class NullDbgEngineValueNodeProvider : DbgEngineValueNodeProvider {
 		public override DbgEngineValueNode[] GetNodes(DbgStackFrame frame) => Array.Empty<DbgEngineValueNode>();
+		public override void GetNodes(DbgStackFrame frame, Action<DbgEngineValueNode[]> callback) => callback(Array.Empty<DbgEngineValueNode>());
 	}
 
 	sealed class NullDbgEngineValueNodeFactory : DbgEngineValueNodeFactory {
 		public override DbgEngineValueNode Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options) => null;
+		public override void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNode> callback) => callback(Create(frame, expression, options));
 	}
 }

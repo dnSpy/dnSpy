@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
@@ -33,5 +34,15 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public abstract DbgEngineValueNode Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options);
+
+		/// <summary>
+		/// Creates a <see cref="DbgEngineValueNode"/> or returns null if there was an error (eg. <see cref="DbgEvaluationOptions.NoSideEffects"/>
+		/// is set and the expression has side effects)
+		/// </summary>
+		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="expression">Expression</param>
+		/// <param name="options">Options</param>
+		/// <param name="callback">Called when the evaluation is complete</param>
+		public abstract void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNode> callback);
 	}
 }

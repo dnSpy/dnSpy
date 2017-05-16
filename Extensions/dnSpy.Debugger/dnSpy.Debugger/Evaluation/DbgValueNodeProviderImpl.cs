@@ -42,5 +42,15 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			return DbgValueNodeUtils.ToValueNodeArray(Language, frame.Thread, engineValueNodeProvider.GetNodes(frame));
 		}
+
+		public override void GetNodes(DbgStackFrame frame, Action<DbgValueNode[]> callback) {
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (frame.Runtime.Guid != runtimeGuid)
+				throw new ArgumentException();
+			if (callback == null)
+				throw new ArgumentNullException(nameof(callback));
+			engineValueNodeProvider.GetNodes(frame, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, frame.Thread, engineNodes)));
+		}
 	}
 }
