@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.ToolWindows;
@@ -26,27 +28,75 @@ using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Debugger.Evaluation.UI {
 	abstract class VariablesWindowToolWindowContentProviderBase : IToolWindowContentProvider {
-		readonly Lazy<IVariablesWindowContent> variablesWindowContent;
+		public TWContent[] Contents => contents;
+		readonly TWContent[] contents;
 
-		public VariablesWindowToolWindowContent VariablesWindowToolWindowContent => variablesWindowToolWindowContent ?? (variablesWindowToolWindowContent = new VariablesWindowToolWindowContent(contentGuid, contentTitle, variablesWindowContent));
-		VariablesWindowToolWindowContent variablesWindowToolWindowContent;
+		public sealed class TWContent {
+			public int Index { get; }
+			public Guid Guid { get; }
+			public string Title { get; }
+			public AppToolWindowLocation DefaultLocation => AppToolWindowLocation.DefaultHorizontal;
 
-		readonly Guid contentGuid;
-		readonly double contentOrder;
-		readonly string contentTitle;
+			public VariablesWindowToolWindowContent Content {
+				get {
+					if (content == null)
+						content = createContent();
+					return content;
+				}
+			}
+			VariablesWindowToolWindowContent content;
 
-		protected VariablesWindowToolWindowContentProviderBase(Guid guid, double contentOrder, string contentTitle, Lazy<IVariablesWindowContent> variablesWindowContent) {
-			contentGuid = guid;
-			this.contentOrder = contentOrder;
-			this.contentTitle = contentTitle;
-			this.variablesWindowContent = variablesWindowContent;
+			readonly Func<VariablesWindowToolWindowContent> createContent;
+
+			public TWContent(int windowIndex, Guid guid, string title, Func<VariablesWindowToolWindowContent> createContent) {
+				Index = windowIndex;
+				Guid = guid;
+				Title = title;
+				this.createContent = createContent;
+			}
 		}
+
+		readonly double contentOrder;
+
+		protected VariablesWindowToolWindowContentProviderBase(int maxWindows, Guid contentGuid, double contentOrder) {
+			this.contentOrder = contentOrder;
+			contents = new TWContent[maxWindows];
+			var guidString = contentGuid.ToString();
+			Debug.Assert(guidString.Length == 36);
+			var guidBase = guidString.Substring(0, 36 - 8);
+			uint lastDword = uint.Parse(guidString.Substring(36 - 8), NumberStyles.HexNumber);
+			for (int i = 0; i < contents.Length; i++) {
+				var tmpIndex = i;
+				var guid = new Guid(guidBase + (lastDword + (uint)i).ToString("X8"));
+				var title = GetWindowTitle(i);
+				contents[i] = new TWContent(i, guid, title, () => CreateContent(tmpIndex));
+			}
+		}
+
+		VariablesWindowToolWindowContent CreateContent(int index) {
+			var content = contents[index];
+			return new VariablesWindowToolWindowContent(content.Guid, content.Title, CreateVariablesWindowContent(index));
+		}
+
+		protected abstract string GetWindowTitle(int windowIndex);
+		protected abstract Lazy<IVariablesWindowContent> CreateVariablesWindowContent(int windowIndex);
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
-			get { yield return new ToolWindowContentInfo(contentGuid, VariablesWindowToolWindowContent.DEFAULT_LOCATION, contentOrder, false); }
+			get {
+				for (int i = 0; i < contents.Length; i++) {
+					var info = contents[i];
+					yield return new ToolWindowContentInfo(info.Guid, info.DefaultLocation, contentOrder + (double)i / contents.Length, false);
+				}
+			}
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) => guid == contentGuid ? VariablesWindowToolWindowContent : null;
+		public ToolWindowContent GetOrCreate(Guid guid) {
+			foreach (var info in contents) {
+				if (info.Guid == guid)
+					return info.Content;
+			}
+			return null;
+		}
 	}
 
 	sealed class VariablesWindowToolWindowContent : ToolWindowContent, IFocusable {

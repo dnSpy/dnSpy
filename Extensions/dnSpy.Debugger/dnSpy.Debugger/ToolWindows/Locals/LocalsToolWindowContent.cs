@@ -27,8 +27,22 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 	[Export(typeof(IToolWindowContentProvider))]
 	sealed class LocalsToolWindowContentProvider : VariablesWindowToolWindowContentProviderBase {
 		public static readonly Guid THE_GUID = new Guid("D799829F-CAE3-4F8F-AD81-1732ABC50636");
+		readonly Lazy<LocalsContent> localsContent;
+
 		[ImportingConstructor]
 		LocalsToolWindowContentProvider(Lazy<LocalsContent> localsContent)
-			: base(THE_GUID, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_LOCALS, dnSpy_Debugger_Resources.Window_Locals, new Lazy<IVariablesWindowContent>(() => localsContent.Value)) { }
+			: base(1, THE_GUID, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_LOCALS) => this.localsContent = localsContent;
+
+		protected override string GetWindowTitle(int windowIndex) {
+			if (windowIndex != 0)
+				throw new ArgumentOutOfRangeException(nameof(windowIndex));
+			return dnSpy_Debugger_Resources.Window_Locals;
+		}
+
+		protected override Lazy<IVariablesWindowContent> CreateVariablesWindowContent(int windowIndex) {
+			if (windowIndex != 0)
+				throw new ArgumentOutOfRangeException(nameof(windowIndex));
+			return new Lazy<IVariablesWindowContent>(() => localsContent.Value);
+		}
 	}
 }

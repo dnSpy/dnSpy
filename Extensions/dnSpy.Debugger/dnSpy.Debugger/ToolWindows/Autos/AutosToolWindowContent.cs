@@ -27,8 +27,22 @@ namespace dnSpy.Debugger.ToolWindows.Autos {
 	[Export(typeof(IToolWindowContentProvider))]
 	sealed class AutosToolWindowContentProvider : VariablesWindowToolWindowContentProviderBase {
 		public static readonly Guid THE_GUID = new Guid("6E0232EC-3D88-4087-A571-CC1184D86645");
+		readonly Lazy<AutosContent> autosContent;
+
 		[ImportingConstructor]
 		AutosToolWindowContentProvider(Lazy<AutosContent> autosContent)
-			: base(THE_GUID, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_AUTOS, dnSpy_Debugger_Resources.Window_Autos, new Lazy<IVariablesWindowContent>(() => autosContent.Value)) { }
+			: base(1, THE_GUID, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_AUTOS) => this.autosContent = autosContent;
+
+		protected override string GetWindowTitle(int windowIndex) {
+			if (windowIndex != 0)
+				throw new ArgumentOutOfRangeException(nameof(windowIndex));
+			return dnSpy_Debugger_Resources.Window_Autos;
+		}
+
+		protected override Lazy<IVariablesWindowContent> CreateVariablesWindowContent(int windowIndex) {
+			if (windowIndex != 0)
+				throw new ArgumentOutOfRangeException(nameof(windowIndex));
+			return new Lazy<IVariablesWindowContent>(() => autosContent.Value);
+		}
 	}
 }
