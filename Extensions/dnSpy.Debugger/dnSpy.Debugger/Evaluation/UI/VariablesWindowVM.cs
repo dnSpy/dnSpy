@@ -26,15 +26,16 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Evaluation.ViewModel;
+using dnSpy.Debugger.ToolWindows;
 using dnSpy.Debugger.UI;
 
-namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
-	abstract class LocalsVMFactory {
-		public abstract ILocalsVM Create(LocalsVMOptions localsVMOptions);
+namespace dnSpy.Debugger.Evaluation.UI {
+	abstract class VariablesWindowVMFactory {
+		public abstract IVariablesWindowVM Create(VariablesWindowVMOptions variablesWindowVMOptions);
 	}
 
-	[Export(typeof(LocalsVMFactory))]
-	sealed class LocalsVMFactoryImpl : LocalsVMFactory {
+	[Export(typeof(VariablesWindowVMFactory))]
+	sealed class VariablesWindowVMFactoryImpl : VariablesWindowVMFactory {
 		readonly Lazy<DbgManager> dbgManager;
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<ValueNodesVMFactory> valueNodesVMFactory;
@@ -43,7 +44,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 		readonly Lazy<IMessageBoxService> messageBoxService;
 
 		[ImportingConstructor]
-		LocalsVMFactoryImpl(Lazy<DbgManager> dbgManager, UIDispatcher uiDispatcher, Lazy<ValueNodesVMFactory> valueNodesVMFactory, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<IMessageBoxService> messageBoxService) {
+		VariablesWindowVMFactoryImpl(Lazy<DbgManager> dbgManager, UIDispatcher uiDispatcher, Lazy<ValueNodesVMFactory> valueNodesVMFactory, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<IMessageBoxService> messageBoxService) {
 			this.dbgManager = dbgManager;
 			this.uiDispatcher = uiDispatcher;
 			this.valueNodesVMFactory = valueNodesVMFactory;
@@ -52,13 +53,13 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			this.messageBoxService = messageBoxService;
 		}
 
-		public override ILocalsVM Create(LocalsVMOptions localsVMOptions) {
+		public override IVariablesWindowVM Create(VariablesWindowVMOptions variablesWindowVMOptions) {
 			uiDispatcher.VerifyAccess();
-			return new LocalsVM(localsVMOptions, dbgManager, uiDispatcher, valueNodesVMFactory, dbgLanguageService, dbgCallStackService, messageBoxService);
+			return new VariablesWindowVM(variablesWindowVMOptions, dbgManager, uiDispatcher, valueNodesVMFactory, dbgLanguageService, dbgCallStackService, messageBoxService);
 		}
 	}
 
-	interface ILocalsVM {
+	interface IVariablesWindowVM {
 		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		event EventHandler TreeViewChanged;
@@ -66,7 +67,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 		IValueNodesVM VM { get; }
 	}
 
-	sealed class LocalsVM : ILocalsVM, ILazyToolWindowVM {
+	sealed class VariablesWindowVM : IVariablesWindowVM, ILazyToolWindowVM {
 		public bool IsOpen {
 			get => lazyToolWindowVMHelper.IsOpen;
 			set => lazyToolWindowVMHelper.IsOpen = value;
@@ -178,9 +179,9 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 			}
 		}
 
-		IValueNodesVM ILocalsVM.VM => valueNodesVM;
+		IValueNodesVM IVariablesWindowVM.VM => valueNodesVM;
 
-		readonly LocalsVMOptions localsVMOptions;
+		readonly VariablesWindowVMOptions variablesWindowVMOptions;
 		readonly UIDispatcher uiDispatcher;
 		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		readonly ValueNodesProviderImpl valueNodesProvider;
@@ -188,12 +189,12 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 		readonly Lazy<IMessageBoxService> messageBoxService;
 		IValueNodesVM valueNodesVM;
 
-		public LocalsVM(LocalsVMOptions localsVMOptions, Lazy<DbgManager> dbgManager, UIDispatcher uiDispatcher, Lazy<ValueNodesVMFactory> valueNodesVMFactory, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<IMessageBoxService> messageBoxService) {
+		public VariablesWindowVM(VariablesWindowVMOptions variablesWindowVMOptions, Lazy<DbgManager> dbgManager, UIDispatcher uiDispatcher, Lazy<ValueNodesVMFactory> valueNodesVMFactory, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<IMessageBoxService> messageBoxService) {
 			uiDispatcher.VerifyAccess();
-			this.localsVMOptions = localsVMOptions;
+			this.variablesWindowVMOptions = variablesWindowVMOptions;
 			this.uiDispatcher = uiDispatcher;
 			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
-			valueNodesProvider = new ValueNodesProviderImpl(localsVMOptions.VariablesWindowKind == VariablesWindowKind.Locals, uiDispatcher, dbgManager, dbgLanguageService, dbgCallStackService);
+			valueNodesProvider = new ValueNodesProviderImpl(variablesWindowVMOptions.VariablesWindowKind == VariablesWindowKind.Locals, uiDispatcher, dbgManager, dbgLanguageService, dbgCallStackService);
 			this.valueNodesVMFactory = valueNodesVMFactory;
 			this.messageBoxService = messageBoxService;
 		}
@@ -216,12 +217,12 @@ namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
 					var options = new ValueNodesVMOptions() {
 						NodesProvider = valueNodesProvider,
 						ShowMessageBox = ShowMessageBox,
-						WindowContentType = localsVMOptions.WindowContentType,
-						NameColumnName = localsVMOptions.NameColumnName,
-						ValueColumnName = localsVMOptions.ValueColumnName,
-						TypeColumnName = localsVMOptions.TypeColumnName,
-						VariablesWindowKind = localsVMOptions.VariablesWindowKind,
-						VariablesWindowGuid = localsVMOptions.VariablesWindowGuid,
+						WindowContentType = variablesWindowVMOptions.WindowContentType,
+						NameColumnName = variablesWindowVMOptions.NameColumnName,
+						ValueColumnName = variablesWindowVMOptions.ValueColumnName,
+						TypeColumnName = variablesWindowVMOptions.TypeColumnName,
+						VariablesWindowKind = variablesWindowVMOptions.VariablesWindowKind,
+						VariablesWindowGuid = variablesWindowVMOptions.VariablesWindowGuid,
 					};
 					valueNodesVM = valueNodesVMFactory.Value.Create(options);
 				}

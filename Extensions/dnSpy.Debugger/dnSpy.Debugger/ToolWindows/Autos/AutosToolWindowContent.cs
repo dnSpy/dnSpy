@@ -20,15 +20,15 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.ToolWindows.App;
+using dnSpy.Debugger.Evaluation.UI;
 using dnSpy.Debugger.Properties;
-using dnSpy.Debugger.ToolWindows.Locals.Shared;
 
 namespace dnSpy.Debugger.ToolWindows.Autos {
 	[Export(typeof(IToolWindowContentProvider))]
-	sealed class AutosToolWindowContentProvider : LocalsToolWindowContentProviderBase {
+	sealed class AutosToolWindowContentProvider : VariablesWindowToolWindowContentProviderBase {
 		public static readonly Guid THE_GUID = new Guid("6E0232EC-3D88-4087-A571-CC1184D86645");
 		[ImportingConstructor]
 		AutosToolWindowContentProvider(Lazy<AutosContent> autosContent)
-			: base(THE_GUID, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_AUTOS, dnSpy_Debugger_Resources.Window_Autos, new Lazy<ILocalsContent>(() => autosContent.Value)) { }
+			: base(THE_GUID, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_AUTOS, dnSpy_Debugger_Resources.Window_Autos, new Lazy<IVariablesWindowContent>(() => autosContent.Value)) { }
 	}
 }

@@ -25,8 +25,8 @@ using dnSpy.Debugger.Evaluation.ViewModel;
 using dnSpy.Debugger.Evaluation.ViewModel.Impl;
 using dnSpy.Debugger.UI;
 
-namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
-	sealed class LocalsColumnConverter : IValueConverter {
+namespace dnSpy.Debugger.Evaluation.UI {
+	sealed class VariablesWindowColumnConverter : IValueConverter {
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var obj = value as FormatterObject<ValueNode>;
 			if (obj == null)

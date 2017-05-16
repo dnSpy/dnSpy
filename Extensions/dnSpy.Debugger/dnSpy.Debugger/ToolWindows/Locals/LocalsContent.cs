@@ -22,21 +22,21 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Debugger.Evaluation.UI;
 using dnSpy.Debugger.Evaluation.ViewModel;
-using dnSpy.Debugger.ToolWindows.Locals.Shared;
 
 namespace dnSpy.Debugger.ToolWindows.Locals {
 	[Export(typeof(LocalsContent))]
-	sealed class LocalsContent : LocalsContentBase {
+	sealed class LocalsContent : VariablesWindowContentBase {
 		public static readonly Guid VariablesWindowGuid = new Guid("1A53B7B7-19AE-490F-9D67-F1992D849150");
 
 		[ImportingConstructor]
-		LocalsContent(IWpfCommandService wpfCommandService, LocalsVMFactory localsVMFactory)
-			: base(wpfCommandService, localsVMFactory) {
+		LocalsContent(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory)
+			: base(wpfCommandService, variablesWindowVMFactory) {
 		}
 
-		protected override LocalsVMOptions CreateLocalsVMOptions() {
-			var options = new LocalsVMOptions() {
+		protected override VariablesWindowVMOptions CreateVariablesWindowVMOptions() {
+			var options = new VariablesWindowVMOptions() {
 				WindowContentType = ContentTypes.LocalsWindow,
 				NameColumnName = PredefinedTextClassifierTags.LocalsWindowName,
 				ValueColumnName = PredefinedTextClassifierTags.LocalsWindowValue,

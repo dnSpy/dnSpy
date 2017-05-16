@@ -140,6 +140,14 @@
     <Compile Include="Evaluation\DbgValueNodeProviderImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeUtils.cs" />
     <Compile Include="Evaluation\NullDbgEngineLanguage.cs" />
+    <Compile Include="Evaluation\UI\VariablesWindowColumnConverter.cs" />
+    <Compile Include="Evaluation\UI\VariablesWindowContentBase.cs" />
+    <Compile Include="Evaluation\UI\VariablesWindowControl.xaml.cs">
+      <DependentUpon>VariablesWindowControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Evaluation\UI\VariablesWindowToolWindowContent.cs" />
+    <Compile Include="Evaluation\UI\VariablesWindowVM.cs" />
+    <Compile Include="Evaluation\UI\VariablesWindowVMOptions.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeFormatParameters.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeImageReferenceService.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeReader.cs" />
@@ -217,14 +225,6 @@
     <Compile Include="ToolWindows\Locals\Commands.cs" />
     <Compile Include="ToolWindows\Locals\LocalsContent.cs" />
     <Compile Include="ToolWindows\Locals\LocalsToolWindowContent.cs" />
-    <Compile Include="ToolWindows\Locals\Shared\LocalsColumnConverter.cs" />
-    <Compile Include="ToolWindows\Locals\Shared\LocalsContentBase.cs" />
-    <Compile Include="ToolWindows\Locals\Shared\LocalsControl.xaml.cs">
-      <DependentUpon>LocalsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ToolWindows\Locals\Shared\LocalsToolWindowContent.cs" />
-    <Compile Include="ToolWindows\Locals\Shared\LocalsVM.cs" />
-    <Compile Include="ToolWindows\Locals\Shared\LocalsVMOptions.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointColumnConverter.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointContext.cs" />
@@ -436,6 +436,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Evaluation\UI\VariablesWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -459,10 +463,6 @@
     <Page Include="ToolWindows\Exceptions\ExceptionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ToolWindows\Locals\Shared\LocalsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ToolWindows\Memory\MemoryControl.xaml">
       <Generator>MSBuild:Compile</Generator>

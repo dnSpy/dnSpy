@@ -17,22 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Controls;
-using dnSpy.Contracts.TreeView;
+using System;
+using dnSpy.Debugger.Evaluation.ViewModel;
 
-namespace dnSpy.Debugger.ToolWindows.Locals.Shared {
-	sealed partial class LocalsControl : UserControl {
-		public ListView ListView => treeViewContentPresenter.Content as ListView;
-		public LocalsControl() => InitializeComponent();
-		public void SetTreeView(ITreeView treeView) {
-			var listView = (ListView)treeView?.UIObject;
-			if (treeViewContentPresenter.Content == listView)
-				return;
-			treeViewContentPresenter.Content = listView;
-			if (listView != null) {
-				var gridView = (GridView)FindResource("GridView");
-				listView.View = gridView;
-			}
-		}
+namespace dnSpy.Debugger.Evaluation.UI {
+	sealed class VariablesWindowVMOptions {
+		public string WindowContentType { get; set; }
+		public string NameColumnName { get; set; }
+		public string ValueColumnName { get; set; }
+		public string TypeColumnName { get; set; }
+		public VariablesWindowKind VariablesWindowKind { get; set; }
+		public Guid VariablesWindowGuid { get; set; }
 	}
 }
