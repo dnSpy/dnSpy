@@ -1682,7 +1682,7 @@
     <value>Все нижележащие узлы используют Hex-редактор для изменения PE-файла</value>
   </data>
   <data name="NopInstrCommand" xml:space="preserve">
-    <value>_NOP Инструкция</value>
+    <value>_NOP-инструкция</value>
   </data>
   <data name="NopInstrsCommand" xml:space="preserve">
     <value>_NOP Инструкции</value>

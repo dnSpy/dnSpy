@@ -141,6 +141,12 @@
   <data name="FieldsToolTip" xml:space="preserve">
     <value>Felder</value>
   </data>
+  <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
+    <value>Kompilierter Ausdruck warf eine Ausnahme: {0}</value>
+  </data>
+  <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
+    <value>Ausdruck ist ungültig</value>
+  </data>
   <data name="InterfacesToolTip" xml:space="preserve">
     <value>Interfaces</value>
   </data>

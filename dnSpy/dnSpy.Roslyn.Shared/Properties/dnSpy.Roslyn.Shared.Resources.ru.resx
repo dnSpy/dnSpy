@@ -141,6 +141,12 @@
   <data name="FieldsToolTip" xml:space="preserve">
     <value>Поля</value>
   </data>
+  <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
+    <value>Скомпилированное выражение выбросило исключение: {0}</value>
+  </data>
+  <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
+    <value>Выражение неверно</value>
+  </data>
   <data name="InterfacesToolTip" xml:space="preserve">
     <value>Интерфейсы</value>
   </data>

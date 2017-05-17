@@ -141,6 +141,12 @@
   <data name="FieldsToolTip" xml:space="preserve">
     <value>字段</value>
   </data>
+  <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
+    <value>Compiled expression threw an exception: {0}</value>
+  </data>
+  <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
+    <value>Expression is invalid</value>
+  </data>
   <data name="InterfacesToolTip" xml:space="preserve">
     <value>接口</value>
   </data>

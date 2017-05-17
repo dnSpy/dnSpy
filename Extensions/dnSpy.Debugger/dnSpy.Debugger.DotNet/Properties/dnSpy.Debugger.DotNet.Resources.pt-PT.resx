@@ -120,6 +120,9 @@
   <data name="AddClassBreakpointCommand" xml:space="preserve">
     <value>Adicionar Interrupção de Classe</value>
   </data>
+  <data name="AddClassTracepointCommand" xml:space="preserve">
+    <value>Add Class Tracepoint</value>
+  </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
     <value>Adicionar interrupção de Método</value>
   </data>
@@ -133,7 +136,7 @@
     <value>Cancel loading modules?</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>Offset IL 0x{0}</value>
+    <value>IL offset {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>linha {0} caráter {1}</value>

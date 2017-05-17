@@ -903,7 +903,7 @@
     <value>_Показать вывод из:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Переключение Переноса Слов</value>
+    <value>Переключение переноса слов</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
@@ -1098,7 +1098,7 @@
     <value>Ctrl+I</value>
   </data>
   <data name="ShortCutKeyAltPlusAnyKey" xml:space="preserve">
-    <value>Alt +{0}</value>
+    <value>Alt+{0}</value>
   </data>
   <data name="SignatureHelp_Signature_N_of_TotalCount" xml:space="preserve">
     <value>{0} из {1}</value>
@@ -1179,7 +1179,7 @@
     <value>Выделение скобок</value>
   </data>
   <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
-    <value>Подсветка связанных ключевых слов</value>
+    <value>Подсветить связанные ключевые слова</value>
   </data>
   <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
     <value>Показать горизонтальную полосу прокрутки</value>
@@ -1565,8 +1565,8 @@
   <data name="CopyValueCommand" xml:space="preserve">
     <value>Копировать значение</value>
   </data>
-  <data name="ShortCutKeyCtrlShift3" xml:space="preserve">
-    <value>Ctrl+Shift+3</value>
+  <data name="ShortCutKeyCtrlShiftQ" xml:space="preserve">
+    <value>Ctrl+Shift+Q</value>
   </data>
   <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
     <value>Ctrl+Shift+A</value>
@@ -1671,7 +1671,7 @@
     <value>Раскрасить текст</value>
   </data>
   <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
-    <value>Alt+Стрелка Вправо</value>
+    <value>Alt+Стрелка вправо</value>
   </data>
   <data name="ShortCutKeyBackspace" xml:space="preserve">
     <value>Backspace</value>
@@ -1710,10 +1710,10 @@
     <value>Формат отметки времени</value>
   </data>
   <data name="Window_Bookmarks" xml:space="preserve">
-    <value>Bookmarks</value>
+    <value>Закладки</value>
   </data>
   <data name="BookmarksOptDlgTab" xml:space="preserve">
-    <value>Bookmarks</value>
+    <value>Закладки</value>
   </data>
   <data name="BookmarksSettings_SyntaxHighlight" xml:space="preserve">
     <value>Подсветка синтаксиса</value>
@@ -1722,7 +1722,7 @@
     <value>Справка</value>
   </data>
   <data name="Column_Labels" xml:space="preserve">
-    <value>Labels</value>
+    <value>Метки</value>
   </data>
   <data name="Column_Location" xml:space="preserve">
     <value>Размещение</value>
@@ -1734,22 +1734,22 @@
     <value>Имя</value>
   </data>
   <data name="Bookmarks_NoMatch" xml:space="preserve">
-    <value>No bookmarks match your search filter.</value>
+    <value>Ни одна закладка не совпадает с фильтром.</value>
   </data>
   <data name="Bookmarks_Search" xml:space="preserve">
     <value>Поиск</value>
   </data>
   <data name="BookmarksCommand" xml:space="preserve">
-    <value>Boo_kmarks</value>
+    <value>За_кладки</value>
   </data>
   <data name="BookmarksWindowCommand" xml:space="preserve">
-    <value>_Bookmark Window</value>
+    <value>Окно _закладок</value>
   </data>
   <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Export all bookmarks matching the current search criteria</value>
+    <value>Экспортирует все закладки, соответствующие текущему фильтру</value>
   </data>
   <data name="Bookmarks_GoToLocation_ToolTip" xml:space="preserve">
-    <value>Move the caret to the selected bookmark.</value>
+    <value>Перемещает курсор на выбранную закладку.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkInFile_ToolTip" xml:space="preserve">
     <value>Move the caret to the next bookmark in the current file.</value>
@@ -1770,55 +1770,55 @@
     <value>Move the caret to the previous bookmark.</value>
   </data>
   <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
-    <value>Import bookmarks from a file</value>
+    <value>Импортирует закладки из файла</value>
   </data>
   <data name="Bookmarks_RemoveBookmark_ToolTip" xml:space="preserve">
-    <value>Remove bookmark</value>
+    <value>Удаляет закладку</value>
   </data>
   <data name="Bookmarks_RemoveMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Remove all bookmarks matching the current search criteria</value>
+    <value>Удаляет все закладки, соответствующие текущему фильтру</value>
   </data>
   <data name="Bookmarks_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all bookmarks are shown</value>
+    <value>Сбрасывает все фильтры, чтобы отобразились все закладки</value>
   </data>
   <data name="Bookmarks_Search_ToolTip" xml:space="preserve">
-    <value>Search for a bookmark</value>
+    <value>Выполняет поиск закладки</value>
   </data>
   <data name="Bookmarks_ToggleCreateBookmark_ToolTip" xml:space="preserve">
-    <value>Toggle a bookmark on the current line.</value>
+    <value>Переключает закладку на текущей строке.</value>
   </data>
   <data name="Bookmarks_ToggleMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Enable or disable all bookmarks matching the current search criteria</value>
+    <value>Включает или выключает все закладки, соответствующие текущему фильтру</value>
   </data>
   <data name="BookmarkDefaultName" xml:space="preserve">
-    <value>Bookmark{0}</value>
+    <value>Закладка{0}</value>
   </data>
   <data name="RenameCommand" xml:space="preserve">
     <value>Переименовать</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
-    <value>Go To Bookmark</value>
+    <value>Перейти к закладке</value>
   </data>
   <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
     <value>Ctrl+{0}</value>
   </data>
   <data name="DisableBookmarkCommand3" xml:space="preserve">
-    <value>Disable Bookmark</value>
+    <value>Выключить закладку</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
-    <value>Edit Labels</value>
+    <value>Изменить метки</value>
   </data>
   <data name="EnableBookmarkCommand3" xml:space="preserve">
-    <value>Enable Bookmark</value>
+    <value>Включить закладку</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
-    <value>_Экспорт Выбранных...</value>
+    <value>_Экспортировать выбранные...</value>
   </data>
   <data name="RemoveAllBookmarksCommand" xml:space="preserve">
-    <value>Remove All Bookmarks</value>
+    <value>Убрать все закладки</value>
   </data>
   <data name="RemoveBookmarkCommand" xml:space="preserve">
-    <value>Remove Bookmark</value>
+    <value>Убрать закладку</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
     <value>Выбр_ать все</value>
@@ -1836,10 +1836,10 @@
     <value>F2</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>Показать Объявления Типов</value>
+    <value>Показать объявляемые типы</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>Show Intrinsic Type Keywords</value>
+    <value>Показать ключевые слова встроенных типов</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
     <value>Показать имена _модулей</value>
@@ -1863,37 +1863,37 @@
     <value>Ctrl+K, Ctrl+W</value>
   </data>
   <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
-    <value>Clear All Bookmarks In Document</value>
+    <value>Очистить все закладки в документе</value>
   </data>
   <data name="ClearBookmarksCommand" xml:space="preserve">
-    <value>_Clear Bookmarks</value>
+    <value>_Очистить закладки</value>
   </data>
   <data name="DisableAllBookmarksCommand" xml:space="preserve">
-    <value>Disable _All Bookmarks</value>
+    <value>Выключить _все закладки</value>
   </data>
   <data name="EnableAllBookmarksCommand" xml:space="preserve">
-    <value>Enable _All Bookmarks</value>
+    <value>Включить _все закладки</value>
   </data>
   <data name="EnableBookmarkCommand" xml:space="preserve">
-    <value>Enable Bookmark</value>
+    <value>Включить закладку</value>
   </data>
   <data name="GoToNextBookmarkCommand" xml:space="preserve">
-    <value>Next _Bookmark</value>
+    <value>Следующая _закладка</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
-    <value>N_ext Bookmark In Document</value>
+    <value>Сл_едующая закладка в документе</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Next Bookmark With Same Label</value>
+    <value>Следующая закладка с той же меткой</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
-    <value>_Previous Bookmark</value>
+    <value>_Предыдущая закладка</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
-    <value>P_revious Bookmark In Document</value>
+    <value>П_редыдущая закладка в документе</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Previous Bookmark With Same Label</value>
+    <value>Предыдущая закладка с той же меткой</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
     <value>Ctrl+K, Ctrl+K</value>
@@ -1908,6 +1908,12 @@
     <value>Ctrl+K, Ctrl+P</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
-    <value>_Toggle Bookmark</value>
+    <value>Переключи_ть закладку</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Метки</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Изменить метки</value>
   </data>
 </root>

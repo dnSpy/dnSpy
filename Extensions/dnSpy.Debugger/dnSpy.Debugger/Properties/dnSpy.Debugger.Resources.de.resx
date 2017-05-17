@@ -1767,4 +1767,103 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="Threads_AllProcesses" xml:space="preserve">
     <value>Alle</value>
   </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Bezeichnungen</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Bezeichnungen bearbeiten</value>
+  </data>
+  <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
+    <value>momentan {0}</value>
+  </data>
+  <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
+    <value>Trefferanzahl zurücksetzen</value>
+  </data>
+  <data name="HelpToolTip" xml:space="preserve">
+    <value>Hilfe</value>
+  </data>
+  <data name="FilterExpression_AllVariables" xml:space="preserve">
+    <value>Variablen, die verwendet werden können:</value>
+  </data>
+  <data name="FilterExpression_Example" xml:space="preserve">
+    <value>Beispiel: {0}</value>
+  </data>
+  <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
+    <value>Escape-Sequenzen: {0}</value>
+  </data>
+  <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
+    <value>Verwenden Sie {xxx} um den Ausdruck xxx auszuwerten</value>
+  </data>
+  <data name="TracepointMessage_Example" xml:space="preserve">
+    <value>Beispiel: {0}</value>
+  </data>
+  <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
+    <value>Die folgenden Schlüsselwörter können verwendet werden:</value>
+  </data>
+  <data name="CallStackBreakpointCommand" xml:space="preserve">
+    <value>_Haltepunkt</value>
+  </data>
+  <data name="InsertBreakpointCommand" xml:space="preserve">
+    <value>Hal_tepunkt einfügen</value>
+  </data>
+  <data name="InsertTracepointCommand" xml:space="preserve">
+    <value>_Ablaufverfolgungspunkt einfügen</value>
+  </data>
+  <data name="UnwindToThisFrameCommand" xml:space="preserve">
+    <value>_Unwind To This Frame</value>
+  </data>
+  <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
+    <value>Dies ist die nächste Anweisung, die ausgeführt wird.</value>
+  </data>
+  <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
+    <value>Dies ist die nächste Anweisung, die ausgeführt wird, wenn dieser Thread von der aktuellen Funktion zurückkehrt.</value>
+  </data>
+  <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
+    <value>Managed Debugging Assistants (MDA) verwenden</value>
+  </data>
+  <data name="DebugStepProcessError" xml:space="preserve">
+    <value>Could not step: {0}</value>
+  </data>
+  <data name="ProcessIsNotPaused" xml:space="preserve">
+    <value>Prozess ist nicht angehalten</value>
+  </data>
+  <data name="Window_Autos" xml:space="preserve">
+    <value>Autos</value>
+  </data>
+  <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
+    <value>Highlight changed variables in variables windows</value>
+  </data>
+  <data name="MakeObjectIdCommand" xml:space="preserve">
+    <value>_Make Object ID</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="DbgSettings_DebugEngine" xml:space="preserve">
+    <value>Debug Engine</value>
+  </data>
+  <data name="DbgSettings_Language" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Strg+V</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Alle löschen</value>
+  </data>
+  <data name="DeleteWatchCommand" xml:space="preserve">
+    <value>_Delete Watch</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Einfügen</value>
+  </data>
+  <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
+    <value>This expression causes side effects and will not be evaluated</value>
+  </data>
+  <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
+    <value>Click this button to evaluate now.</value>
+  </data>
+  <data name="ErrorEvaluatingExpression" xml:space="preserve">
+    <value>Couldn't evaluate the expression</value>
+  </data>
 </root>

@@ -220,7 +220,7 @@
     <value>&lt;leer&gt;</value>
   </data>
   <data name="ExceptionMessage" xml:space="preserve">
-    <value>Ein Ausnahme trat auf:</value>
+    <value>Eine Ausnahme trat auf:</value>
   </data>
   <data name="ExitAppCommand" xml:space="preserve">
     <value>S_chließen</value>
@@ -1566,8 +1566,8 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   <data name="CopyValueCommand" xml:space="preserve">
     <value>Wert kopieren</value>
   </data>
-  <data name="ShortCutKeyCtrlShift3" xml:space="preserve">
-    <value>Strg+Umschalt+3</value>
+  <data name="ShortCutKeyCtrlShiftQ" xml:space="preserve">
+    <value>Strg+Umschalt+Q</value>
   </data>
   <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
     <value>Strg+Umschalt+A</value>
@@ -1910,5 +1910,11 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
     <value>Lesezeichen _umschalten</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Bezeichnungen</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Bezeichnungen bearbeiten</value>
   </data>
 </root>

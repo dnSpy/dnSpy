@@ -1562,8 +1562,8 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   <data name="CopyValueCommand" xml:space="preserve">
     <value>Copiar Valor</value>
   </data>
-  <data name="ShortCutKeyCtrlShift3" xml:space="preserve">
-    <value>CTRL + Shift + 3</value>
+  <data name="ShortCutKeyCtrlShiftQ" xml:space="preserve">
+    <value>Ctrl+Shift+Q</value>
   </data>
   <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
     <value>CTRL + Shift + A</value>
@@ -1906,5 +1906,11 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
     <value>_Toggle Bookmark</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Labels</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Edit Labels</value>
   </data>
 </root>

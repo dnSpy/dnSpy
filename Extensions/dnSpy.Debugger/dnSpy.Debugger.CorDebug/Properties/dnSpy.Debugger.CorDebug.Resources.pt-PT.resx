@@ -136,7 +136,7 @@
     <value>Diretório de Trabalho</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Evento de CreateProcess</value>
+    <value>CreateProcess</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
     <value>Não quebre</value>
@@ -234,5 +234,53 @@ Erro: {0}</value>
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
     <value>Algum outro processo já estiver depurando o processo {0}</value>
+  </data>
+  <data name="StackFrame_NativeFrame" xml:space="preserve">
+    <value>Native Frame {0}</value>
+  </data>
+  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
+    <value>Appdomain Transition</value>
+  </data>
+  <data name="StackFrame_ClassInit" xml:space="preserve">
+    <value>Class Init</value>
+  </data>
+  <data name="StackFrame_Exception" xml:space="preserve">
+    <value>Exceção</value>
+  </data>
+  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
+    <value>Function Evaluation</value>
+  </data>
+  <data name="StackFrame_InternalCall" xml:space="preserve">
+    <value>Internal Call</value>
+  </data>
+  <data name="StackFrame_InternalFrame" xml:space="preserve">
+    <value>Internal Frame ({0})</value>
+  </data>
+  <data name="StackFrame_JITCompilation" xml:space="preserve">
+    <value>JIT Compilation</value>
+  </data>
+  <data name="StackFrame_LightweightFunction" xml:space="preserve">
+    <value>Lightweight Function</value>
+  </data>
+  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
+    <value>Managed to Native Transition</value>
+  </data>
+  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
+    <value>Native to Managed Transition</value>
+  </data>
+  <data name="StackFrame_Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL offset {0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>linha {0} caráter {1}</value>
+  </data>
+  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
+    <value>address {0}</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>Não foi possível definir a próxima instrução.</value>
   </data>
 </root>

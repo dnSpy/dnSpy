@@ -136,7 +136,7 @@
     <value>_Рабочий каталог</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Событие CreateProcess</value>
+    <value>CreateProcess</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
     <value>Не прерывать</value>
@@ -166,7 +166,7 @@
     <value>.cctor модуля или точка входа</value>
   </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Не найден .NET Core хост '{0}'</value>
+    <value>Не найден хост .NET Core '{0}'</value>
   </data>
   <data name="Error_CouldNotStartDebugger" xml:space="preserve">
     <value>Не могу запустить дебаггер. {0}</value>
@@ -234,5 +234,53 @@
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
     <value>Другой процесс уже отлаживает процесс {0}</value>
+  </data>
+  <data name="StackFrame_NativeFrame" xml:space="preserve">
+    <value>Native Frame {0}</value>
+  </data>
+  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
+    <value>Appdomain Transition</value>
+  </data>
+  <data name="StackFrame_ClassInit" xml:space="preserve">
+    <value>Class Init</value>
+  </data>
+  <data name="StackFrame_Exception" xml:space="preserve">
+    <value>Исключение</value>
+  </data>
+  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
+    <value>Function Evaluation</value>
+  </data>
+  <data name="StackFrame_InternalCall" xml:space="preserve">
+    <value>Internal Call</value>
+  </data>
+  <data name="StackFrame_InternalFrame" xml:space="preserve">
+    <value>Internal Frame ({0})</value>
+  </data>
+  <data name="StackFrame_JITCompilation" xml:space="preserve">
+    <value>JIT Compilation</value>
+  </data>
+  <data name="StackFrame_LightweightFunction" xml:space="preserve">
+    <value>Lightweight Function</value>
+  </data>
+  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
+    <value>Managed to Native Transition</value>
+  </data>
+  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
+    <value>Native to Managed Transition</value>
+  </data>
+  <data name="StackFrame_Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL offset {0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>линия {0} символ {1}</value>
+  </data>
+  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
+    <value>address {0}</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>Не могу установить следующую инструкцию.</value>
   </data>
 </root>

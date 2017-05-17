@@ -160,7 +160,7 @@
     <value>Используйте dnSpy-x86.exe для присоединения к 32-битным процессам</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
-    <value>Прер_вать Все</value>
+    <value>Прер_вать все</value>
   </data>
   <data name="BreakpointsCommand" xml:space="preserve">
     <value>Точки _останова</value>
@@ -262,7 +262,7 @@
     <value>Состояние</value>
   </data>
   <data name="Column_ThreadSuspendedCount" xml:space="preserve">
-    <value>Счетчик Приостановки</value>
+    <value>Счетчик приостановки</value>
   </data>
   <data name="Column_Timestamp" xml:space="preserve">
     <value>Штамп времени</value>
@@ -301,7 +301,7 @@
     <value>Ар_гументы хоста</value>
   </data>
   <data name="DbgAsm_Title" xml:space="preserve">
-    <value>Отладка Программы</value>
+    <value>Отладка программы</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Рабочий каталог</value>
@@ -391,7 +391,7 @@
     <value>_Отладить сборку</value>
   </data>
   <data name="StartDebugging2" xml:space="preserve">
-    <value>_Запуск Отладки...</value>
+    <value>_Начать отладку...</value>
   </data>
   <data name="DebugCoreCLRAssemblyCommand" xml:space="preserve">
     <value>_Отладить сборку CoreCLR...</value>
@@ -496,7 +496,7 @@
     <value>_Удалить</value>
   </data>
   <data name="DetachAllCommand" xml:space="preserve">
-    <value>Отсоединение В_сех</value>
+    <value>Отсоединить в_се</value>
   </data>
   <data name="DisableAllBreakpointsCommand" xml:space="preserve">
     <value>Выключить все точки оста_нова</value>
@@ -994,7 +994,7 @@ HResult: 0x{3:X8}</value>
     <value>По_казать следующую инструкцию</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>Показать Объявления Типов</value>
+    <value>Показать объявляемые типы</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
     <value>Показать имена _параметров</value>
@@ -1012,7 +1012,7 @@ HResult: 0x{3:X8}</value>
     <value>Показать токены</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>Show Intrinsic Type Keywords</value>
+    <value>Показать ключевые слова встроенных типов</value>
   </data>
   <data name="StartWithoutDebuggingCommand" xml:space="preserve">
     <value>Старт б_ез отладки</value>
@@ -1126,7 +1126,7 @@ HResult: 0x{3:X8}</value>
     <value>Пер_еключить точку останова</value>
   </data>
   <data name="ToolBarBreakAllToolTip" xml:space="preserve">
-    <value>Прервать Все</value>
+    <value>Прерывает все</value>
   </data>
   <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
     <value>Продолжить</value>
@@ -1135,28 +1135,28 @@ HResult: 0x{3:X8}</value>
     <value>Продолжить</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
-    <value>Отладка Программы</value>
+    <value>Отлаживает программу</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
     <value>Перезапустить</value>
   </data>
   <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
-    <value>Показать Следующую Инструкцию</value>
+    <value>Показать следующую инструкцию</value>
   </data>
   <data name="ToolBarStartDebuggingButton" xml:space="preserve">
     <value>Старт</value>
   </data>
   <data name="ToolBarStepIntoToolTip" xml:space="preserve">
-    <value>Шаг Внутрь</value>
+    <value>Шаг внутрь</value>
   </data>
   <data name="ToolBarStepOutToolTip" xml:space="preserve">
-    <value>Шаг с выходом</value>
+    <value>Шаг наружу</value>
   </data>
   <data name="ToolBarStepOverToolTip" xml:space="preserve">
-    <value>Шаг Через</value>
+    <value>Шаг через</value>
   </data>
   <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
-    <value>Остановить Отладку</value>
+    <value>Остановить отладку</value>
   </data>
   <data name="UnknownExceptionType" xml:space="preserve">
     <value>&lt;Неизвестный тип исключения&gt;</value>
@@ -1312,7 +1312,7 @@ HResult: 0x{3:X8}</value>
     <value>Ctrl+Alt+W, {0}</value>
   </data>
   <data name="TerminateAllCommand" xml:space="preserve">
-    <value>_Завершить Все</value>
+    <value>_Завершить все</value>
   </data>
   <data name="WatchCommand" xml:space="preserve">
     <value>Контроль Значений</value>
@@ -1354,7 +1354,7 @@ HResult: 0x{3:X8}</value>
     <value>Заголовок</value>
   </data>
   <data name="Process_Paused" xml:space="preserve">
-    <value>Точка Остановки</value>
+    <value>Остановлен</value>
   </data>
   <data name="Process_Running" xml:space="preserve">
     <value>Выполняется</value>
@@ -1363,10 +1363,10 @@ HResult: 0x{3:X8}</value>
     <value>Присоединиться к процессу</value>
   </data>
   <data name="Processes_DetachToolTip" xml:space="preserve">
-    <value>Отсоединение Процесса</value>
+    <value>Отсоединение процесса</value>
   </data>
   <data name="Processes_TerminateToolTip" xml:space="preserve">
-    <value>Завершить Процесс</value>
+    <value>Завершить процесс</value>
   </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Ctrl+F</value>
@@ -1375,22 +1375,22 @@ HResult: 0x{3:X8}</value>
     <value>_Отсоединение Процесса</value>
   </data>
   <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
-    <value>Отсоединенить _Когда Отладка Завершится</value>
+    <value>Отсоединить, _когда отладка завершится</value>
   </data>
   <data name="TerminateProcessCommand" xml:space="preserve">
-    <value>_Завершить Процесс</value>
+    <value>_Завершить процесс</value>
   </data>
   <data name="ProcessCommand" xml:space="preserve">
     <value>Процесс</value>
   </data>
   <data name="Column_ProcessName" xml:space="preserve">
-    <value>Имя Процесса</value>
+    <value>Имя процесса</value>
   </data>
   <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
     <value>&lt;Все {0} не в этом списке&gt;</value>
   </data>
   <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
-    <value>Редактировать Условия</value>
+    <value>Редактировать условия</value>
   </data>
   <data name="Column_Conditions" xml:space="preserve">
     <value>Условия</value>
@@ -1405,7 +1405,7 @@ HResult: 0x{3:X8}</value>
     <value>И</value>
   </data>
   <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
-    <value>Равняется имени модуля</value>
+    <value>Имя модуля равно</value>
   </data>
   <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
     <value>Имя модуля не равно</value>
@@ -1417,7 +1417,7 @@ HResult: 0x{3:X8}</value>
     <value>Все</value>
   </data>
   <data name="EditConditionsCommand" xml:space="preserve">
-    <value>Редактировать Условия...</value>
+    <value>Редактировать условия...</value>
   </data>
   <data name="ExceptionsCommand" xml:space="preserve">
     <value>Исключения</value>
@@ -1426,7 +1426,7 @@ HResult: 0x{3:X8}</value>
     <value>_Найти</value>
   </data>
   <data name="Exceptions_NoMatch" xml:space="preserve">
-    <value>Не найдены типы исключений соответствующие условиям поиска.</value>
+    <value>Не найдены типы исключений, соответствующие условиям поиска.</value>
   </data>
   <data name="AddExceptionButton" xml:space="preserve">
     <value>Добавить</value>
@@ -1438,16 +1438,16 @@ HResult: 0x{3:X8}</value>
     <value>Название не может быть пустым</value>
   </data>
   <data name="EditConditions_Title" xml:space="preserve">
-    <value>Редактировать Условия</value>
+    <value>Редактировать условия</value>
   </data>
   <data name="Button_AddCondition" xml:space="preserve">
-    <value>_Добавить Условие</value>
+    <value>_Добавить условие</value>
   </data>
   <data name="ModuleBreakpointsCommand" xml:space="preserve">
-    <value>Точки Останова _Модуля</value>
+    <value>Точки останова _модуля</value>
   </data>
   <data name="Window_ModuleBreakpoints" xml:space="preserve">
-    <value>Точки Останова Модуля</value>
+    <value>Точки останова модуля</value>
   </data>
   <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
     <value>Добавление точки останова</value>
@@ -1471,13 +1471,13 @@ HResult: 0x{3:X8}</value>
     <value>Редактировать имя процесса</value>
   </data>
   <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
-    <value>Удаление Всех Точек Останова</value>
+    <value>Удалить все точки останова</value>
   </data>
   <data name="RemoveBreakpointCommand" xml:space="preserve">
-    <value>Удаление Точки Останова</value>
+    <value>Удалить точку останова</value>
   </data>
   <data name="DisableBreakpointCommand3" xml:space="preserve">
-    <value>Выключить Точку Останова</value>
+    <value>Выключить точку останова</value>
   </data>
   <data name="EnableBreakpointCommand3" xml:space="preserve">
     <value>Включить точку останова</value>
@@ -1498,7 +1498,7 @@ HResult: 0x{3:X8}</value>
     <value>Шаг с заходом (текущий процесс)</value>
   </data>
   <data name="StepOutCurrentProcessCommand" xml:space="preserve">
-    <value>Шаг с выходом(текущий процесс)</value>
+    <value>Шаг с выходом (текущий процесс)</value>
   </data>
   <data name="StepOverCurrentProcessCommand" xml:space="preserve">
     <value>Шаг с обходом (текущий процесс)</value>
@@ -1510,13 +1510,13 @@ HResult: 0x{3:X8}</value>
     <value>Продолжить процесс</value>
   </data>
   <data name="Processes_StepIntoProcessToolTip" xml:space="preserve">
-    <value>Шаг Внутрь</value>
+    <value>Шаг внутрь</value>
   </data>
   <data name="Processes_StepOutProcessToolTip" xml:space="preserve">
-    <value>Шаг с выходом</value>
+    <value>Шаг наружу</value>
   </data>
   <data name="Processes_StepOverProcessToolTip" xml:space="preserve">
-    <value>Шаг Через</value>
+    <value>Шаг через</value>
   </data>
   <data name="StepsOnlyTheCurrentProcess" xml:space="preserve">
     <value>Шаги только в текущем процессе</value>
@@ -1543,10 +1543,10 @@ HResult: 0x{3:X8}</value>
     <value>Импортировать точки останова из файла</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
-    <value>_Экспорт Выбранных...</value>
+    <value>_Экспортировать выбранные...</value>
   </data>
   <data name="Breakpoints_NoMatch" xml:space="preserve">
-    <value>Нет точек останова соответствующих условиям поиска.</value>
+    <value>Нет точек останова, соответствующих условиям поиска.</value>
   </data>
   <data name="Breakpoints_Search" xml:space="preserve">
     <value>Поиск</value>
@@ -1585,7 +1585,7 @@ HResult: 0x{3:X8}</value>
     <value>Справка</value>
   </data>
   <data name="Search_SearchColumnHelpText" xml:space="preserve">
-    <value>Столбец Поиска: {0}</value>
+    <value>Столбец поиска: {0}</value>
   </data>
   <data name="Column_Condition" xml:space="preserve">
     <value>Условие</value>
@@ -1594,10 +1594,10 @@ HResult: 0x{3:X8}</value>
     <value>Фильтр</value>
   </data>
   <data name="Column_HitCount" xml:space="preserve">
-    <value>Число Попаданий</value>
+    <value>Число попаданий</value>
   </data>
   <data name="Column_WhenHit" xml:space="preserve">
-    <value>При Попадании</value>
+    <value>При попадании</value>
   </data>
   <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
     <value>К дизассемблированному коду</value>
@@ -1633,7 +1633,7 @@ HResult: 0x{3:X8}</value>
     <value>прерывать всегда</value>
   </data>
   <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
-    <value>Точка Остановки</value>
+    <value>Остановлен</value>
   </data>
   <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
     <value>Печатать сообщение '{0}'</value>
@@ -1645,7 +1645,7 @@ HResult: 0x{3:X8}</value>
     <value>_Настройки</value>
   </data>
   <data name="EditBreakpointSettings_Title" xml:space="preserve">
-    <value>Параметры Точки Останова</value>
+    <value>Параметры точки останова</value>
   </data>
   <data name="Breakpoint_Condition_IsTrue" xml:space="preserve">
     <value>Истина</value>
@@ -1657,34 +1657,34 @@ HResult: 0x{3:X8}</value>
     <value>Кратно</value>
   </data>
   <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
-    <value>Условное _Выражение</value>
+    <value>Условное _выражение</value>
   </data>
   <data name="EditBreakpointSettings_Filter" xml:space="preserve">
     <value>_Фильтр</value>
   </data>
   <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
-    <value>_Число Попаданий</value>
+    <value>_Число попаданий</value>
   </data>
   <data name="EditBreakpointSettings_Trace" xml:space="preserve">
     <value>_Log Сообщение</value>
   </data>
   <data name="GlyphToolTip_Actions" xml:space="preserve">
-    <value>Actions:</value>
+    <value>Действия:</value>
   </data>
   <data name="GlyphToolTip_Conditions" xml:space="preserve">
-    <value>Conditions:</value>
+    <value>Условия:</value>
   </data>
   <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
-    <value>Conditional expression:</value>
+    <value>Условное выражение:</value>
   </data>
   <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
-    <value>'{0}' has changed</value>
+    <value>'{0}' было изменено</value>
   </data>
   <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
-    <value>'{0}' is true</value>
+    <value>'{0}' истино</value>
   </data>
   <data name="Breakpoint_Filter_Filter" xml:space="preserve">
-    <value>Filter: '{0}'</value>
+    <value>Фильтр: '{0}'</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
     <value>Hit count is a multiple of {0}</value>
@@ -1699,72 +1699,171 @@ HResult: 0x{3:X8}</value>
     <value>Log message '{0}', to Output window</value>
   </data>
   <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
-    <value>Disable breakpoint</value>
+    <value>Выключить точку останова</value>
   </data>
   <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
-    <value>Enable breakpoint</value>
+    <value>Включить точку останова</value>
   </data>
   <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
     <value>Настройки...</value>
   </data>
   <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
-    <value>Точка Остановки</value>
+    <value>Остановлен</value>
   </data>
   <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
-    <value>Continue execution</value>
+    <value>Продолжить выполнение</value>
   </data>
   <data name="ExportCommand" xml:space="preserve">
-    <value>E_xport...</value>
+    <value>Экспорт...</value>
   </data>
   <data name="SettingsCommand2" xml:space="preserve">
-    <value>_Settings...</value>
+    <value>На_стройки...</value>
   </data>
   <data name="StartDebuggingCommand" xml:space="preserve">
-    <value>Start Debugging</value>
+    <value>Начать отладку</value>
   </data>
   <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
-    <value>Break and print message '{0}'</value>
+    <value>Остановиться и вывести сообщение '{0}'</value>
   </data>
   <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
-    <value>The function cannot be found: {0}</value>
+    <value>Функция не найдена: {0}</value>
   </data>
   <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
     <value>The breakpoint will not currently be hit. {0}</value>
   </data>
   <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
-    <value>The module hasn't been loaded or no symbols have been loaded for this module.</value>
+    <value>Модуль не может быть загружен или не могут быть загружены символы для этого модуля.</value>
   </data>
   <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
-    <value>Could not create the breakpoint.</value>
+    <value>Не могу создать точку останова.</value>
   </data>
   <data name="Column_Labels" xml:space="preserve">
-    <value>Labels</value>
+    <value>Метки</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
-    <value>Edit Labels</value>
+    <value>Изменить метки</value>
   </data>
   <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
-    <value>Freeze Threads</value>
+    <value>Заморозить потоки</value>
   </data>
   <data name="Threads_NoMatch" xml:space="preserve">
-    <value>No threads match your search filter.</value>
+    <value>Ни один поток не соответствует фильтру.</value>
   </data>
   <data name="Threads_Process" xml:space="preserve">
     <value>Процесс</value>
   </data>
   <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all threads are shown</value>
+    <value>Сбрасывает все поисковые условия так, чтобы потоки стали видны</value>
   </data>
   <data name="Threads_Search" xml:space="preserve">
     <value>Поиск</value>
   </data>
   <data name="Threads_Search_ToolTip" xml:space="preserve">
-    <value>Search for a thread</value>
+    <value>Поиск потока</value>
   </data>
   <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
-    <value>Thaw Threads</value>
+    <value>Разморозить потоки</value>
   </data>
   <data name="Threads_AllProcesses" xml:space="preserve">
     <value>Все</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Метки</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Изменить метки</value>
+  </data>
+  <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
+    <value>сейчас {0}</value>
+  </data>
+  <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
+    <value>Сбросить счетчик остановов</value>
+  </data>
+  <data name="HelpToolTip" xml:space="preserve">
+    <value>Справка</value>
+  </data>
+  <data name="FilterExpression_AllVariables" xml:space="preserve">
+    <value>Переменные, которые могут быть использованы:</value>
+  </data>
+  <data name="FilterExpression_Example" xml:space="preserve">
+    <value>Пример: {0}</value>
+  </data>
+  <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
+    <value>Escape-последовательности: {0}</value>
+  </data>
+  <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
+    <value>Используйте {xxx}, чтобы вычислить выражение xxx</value>
+  </data>
+  <data name="TracepointMessage_Example" xml:space="preserve">
+    <value>Пример: {0}</value>
+  </data>
+  <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
+    <value>Могут быть использованы следующие ключевые слова:</value>
+  </data>
+  <data name="CallStackBreakpointCommand" xml:space="preserve">
+    <value>_Точка останова</value>
+  </data>
+  <data name="InsertBreakpointCommand" xml:space="preserve">
+    <value>Вставить т_очку останова</value>
+  </data>
+  <data name="InsertTracepointCommand" xml:space="preserve">
+    <value>Вставить то_чку трассировки</value>
+  </data>
+  <data name="UnwindToThisFrameCommand" xml:space="preserve">
+    <value>_Размотать до этого кадра</value>
+  </data>
+  <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
+    <value>Это следующая инструкция, которая будет выполнена.</value>
+  </data>
+  <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
+    <value>Это следующая инструкция, которая будет выполнена после возвращения потока из текущей функции.</value>
+  </data>
+  <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
+    <value>Включить помощники отладки управляемого кода (MDA)</value>
+  </data>
+  <data name="DebugStepProcessError" xml:space="preserve">
+    <value>Не могу перейти: {0}</value>
+  </data>
+  <data name="ProcessIsNotPaused" xml:space="preserve">
+    <value>Процесс не приостановлен</value>
+  </data>
+  <data name="Window_Autos" xml:space="preserve">
+    <value>Autos</value>
+  </data>
+  <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
+    <value>Highlight changed variables in variables windows</value>
+  </data>
+  <data name="MakeObjectIdCommand" xml:space="preserve">
+    <value>_Make Object ID</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="DbgSettings_DebugEngine" xml:space="preserve">
+    <value>Debug Engine</value>
+  </data>
+  <data name="DbgSettings_Language" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Очистить всё</value>
+  </data>
+  <data name="DeleteWatchCommand" xml:space="preserve">
+    <value>_Delete Watch</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Вставить</value>
+  </data>
+  <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
+    <value>This expression causes side effects and will not be evaluated</value>
+  </data>
+  <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
+    <value>Click this button to evaluate now.</value>
+  </data>
+  <data name="ErrorEvaluatingExpression" xml:space="preserve">
+    <value>Couldn't evaluate the expression</value>
   </data>
 </root>

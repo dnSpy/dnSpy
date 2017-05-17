@@ -1767,4 +1767,103 @@ HResult: 0x{3:X8}</value>
   <data name="Threads_AllProcesses" xml:space="preserve">
     <value>全部</value>
   </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Labels</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Edit Labels</value>
+  </data>
+  <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
+    <value>currently {0}</value>
+  </data>
+  <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
+    <value>Reset Hit Count</value>
+  </data>
+  <data name="HelpToolTip" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="FilterExpression_AllVariables" xml:space="preserve">
+    <value>Variables that can be used:</value>
+  </data>
+  <data name="FilterExpression_Example" xml:space="preserve">
+    <value>Example: {0}</value>
+  </data>
+  <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
+    <value>Escape sequences: {0}</value>
+  </data>
+  <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
+    <value>Use {xxx} to evaluate expression xxx</value>
+  </data>
+  <data name="TracepointMessage_Example" xml:space="preserve">
+    <value>Example: {0}</value>
+  </data>
+  <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
+    <value>The following keywords can be used:</value>
+  </data>
+  <data name="CallStackBreakpointCommand" xml:space="preserve">
+    <value>_Breakpoint</value>
+  </data>
+  <data name="InsertBreakpointCommand" xml:space="preserve">
+    <value>Insert B_reakpoint</value>
+  </data>
+  <data name="InsertTracepointCommand" xml:space="preserve">
+    <value>Insert _Tracepoint</value>
+  </data>
+  <data name="UnwindToThisFrameCommand" xml:space="preserve">
+    <value>_Unwind To This Frame</value>
+  </data>
+  <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
+    <value>This is the next statement that will be executed.</value>
+  </data>
+  <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
+    <value>This is the next statement to execute when this thread returns from the current function.</value>
+  </data>
+  <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
+    <value>Enable Managed Debugging Assistants (MDA)</value>
+  </data>
+  <data name="DebugStepProcessError" xml:space="preserve">
+    <value>Could not step: {0}</value>
+  </data>
+  <data name="ProcessIsNotPaused" xml:space="preserve">
+    <value>Process is not paused</value>
+  </data>
+  <data name="Window_Autos" xml:space="preserve">
+    <value>Autos</value>
+  </data>
+  <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
+    <value>Highlight changed variables in variables windows</value>
+  </data>
+  <data name="MakeObjectIdCommand" xml:space="preserve">
+    <value>_Make Object ID</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="DbgSettings_DebugEngine" xml:space="preserve">
+    <value>Debug Engine</value>
+  </data>
+  <data name="DbgSettings_Language" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Clear All</value>
+  </data>
+  <data name="DeleteWatchCommand" xml:space="preserve">
+    <value>_Delete Watch</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>粘贴(_P)</value>
+  </data>
+  <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
+    <value>This expression causes side effects and will not be evaluated</value>
+  </data>
+  <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
+    <value>Click this button to evaluate now.</value>
+  </data>
+  <data name="ErrorEvaluatingExpression" xml:space="preserve">
+    <value>Couldn't evaluate the expression</value>
+  </data>
 </root>

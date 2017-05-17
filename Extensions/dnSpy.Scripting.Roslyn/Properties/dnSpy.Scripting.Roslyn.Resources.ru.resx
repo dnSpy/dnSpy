@@ -190,10 +190,10 @@
     <value>Очистить экран</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>Следующий из Истории</value>
+    <value>Следующий из истории</value>
   </data>
   <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>Предыдущий из Истории</value>
+    <value>Предыдущий из истории</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
     <value>Сброс</value>
@@ -277,7 +277,7 @@
     <value>_Перенос слов</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
-    <value>Переключение Переноса Слов</value>
+    <value>Переключение переноса слов</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>Все файлы</value>

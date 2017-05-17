@@ -136,7 +136,7 @@
     <value>_Arbeitsverzeichnis</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>CreateProcess Ereignis</value>
+    <value>CreateProcess</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
     <value>Nicht unterbrechen</value>
@@ -234,5 +234,53 @@ Fehler: {0}</value>
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
     <value>Es wurde bereits ein Debugger an den Prozess {0} angefügt.</value>
+  </data>
+  <data name="StackFrame_NativeFrame" xml:space="preserve">
+    <value>Nativer Rahmen {0}</value>
+  </data>
+  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
+    <value>AppDomain Übergang</value>
+  </data>
+  <data name="StackFrame_ClassInit" xml:space="preserve">
+    <value>Class Init</value>
+  </data>
+  <data name="StackFrame_Exception" xml:space="preserve">
+    <value>Ausname</value>
+  </data>
+  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
+    <value>Funktionsauswertung</value>
+  </data>
+  <data name="StackFrame_InternalCall" xml:space="preserve">
+    <value>Interner Anruf</value>
+  </data>
+  <data name="StackFrame_InternalFrame" xml:space="preserve">
+    <value>Interner Rahmen ({0})</value>
+  </data>
+  <data name="StackFrame_JITCompilation" xml:space="preserve">
+    <value>JIT-Kompilierung</value>
+  </data>
+  <data name="StackFrame_LightweightFunction" xml:space="preserve">
+    <value>Lightweight Function</value>
+  </data>
+  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
+    <value>Übergang von Verwaltet zu Nativ</value>
+  </data>
+  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
+    <value>Übergang von Nativ zu Verwaltet</value>
+  </data>
+  <data name="StackFrame_Security" xml:space="preserve">
+    <value>Sicherheit</value>
+  </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL Versatz {0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>Zeile {0} Zeichen {1}</value>
+  </data>
+  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
+    <value>Adresse {0}</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>Konnte nächste Anweisung nicht setzen.</value>
   </data>
 </root>

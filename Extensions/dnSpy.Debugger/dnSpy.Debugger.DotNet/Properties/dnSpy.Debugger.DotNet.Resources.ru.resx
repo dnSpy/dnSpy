@@ -120,6 +120,9 @@
   <data name="AddClassBreakpointCommand" xml:space="preserve">
     <value>Добавить точку останова класса</value>
   </data>
+  <data name="AddClassTracepointCommand" xml:space="preserve">
+    <value>Добавить точку трассировки класса</value>
+  </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
     <value>Добавить точку останова метода</value>
   </data>
@@ -133,7 +136,7 @@
     <value>Отменить загрузку модулей?</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>Смещение IL 0x{0}</value>
+    <value>Смещение в IL {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>линия {0} символ {1}</value>

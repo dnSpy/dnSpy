@@ -180,7 +180,7 @@
     <value>Сохранить ресурсы</value>
   </data>
   <data name="Search_SearchColumnHelpText" xml:space="preserve">
-    <value>Столбец Поиска: {0}</value>
+    <value>Столбец поиска: {0}</value>
   </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>Значение должно быть типа {0}.
