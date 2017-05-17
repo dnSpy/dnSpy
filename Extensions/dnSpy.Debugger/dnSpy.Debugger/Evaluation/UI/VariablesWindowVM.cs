@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -166,7 +165,8 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				var info = TryGetLanguage();
 				if (info.frame == null)
 					return Array.Empty<DbgValueNodeInfo>();
-				return variablesWindowValueNodesProvider.GetNodes(info.language, info.frame);
+				var options = DbgEvaluationOptions.Expression;
+				return variablesWindowValueNodesProvider.GetNodes(info.language, info.frame, options);
 			}
 
 			void SetIsReadOnly_UI(bool newIsReadOnly) {
@@ -176,6 +176,34 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				isReadOnly = newIsReadOnly;
 				IsReadOnlyChanged?.Invoke(this, EventArgs.Empty);
 			}
+
+			public override bool CanAddRemoveExpressions => variablesWindowValueNodesProvider.CanAddRemoveExpressions;
+
+			public override void DeleteExpressions(string[] ids) {
+				if (!CanAddRemoveExpressions)
+					throw new InvalidOperationException();
+				variablesWindowValueNodesProvider.DeleteExpressions(ids);
+			}
+
+			public override void ClearAllExpressions() {
+				if (!CanAddRemoveExpressions)
+					throw new InvalidOperationException();
+				variablesWindowValueNodesProvider.ClearAllExpressions();
+			}
+
+			public override void EditExpression(string id, string expression) {
+				if (!CanAddRemoveExpressions)
+					throw new InvalidOperationException();
+				variablesWindowValueNodesProvider.EditExpression(id, expression);
+			}
+
+			public override string[] AddExpressions(string[] expressions) {
+				if (!CanAddRemoveExpressions)
+					throw new InvalidOperationException();
+				return variablesWindowValueNodesProvider.AddExpressions(expressions);
+			}
+
+			public override (DbgLanguage language, DbgStackFrame frame) GetEvaluateInfo() => TryGetLanguage();
 		}
 
 		IValueNodesVM IVariablesWindowVM.VM => valueNodesVM;

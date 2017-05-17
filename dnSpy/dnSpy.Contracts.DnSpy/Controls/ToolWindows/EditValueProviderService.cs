@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			this.extraTextViewRoles = extraTextViewRoles ?? throw new ArgumentNullException(nameof(extraTextViewRoles));
 		}
 
-		public IEditValue Create(string text) {
+		public IEditValue Create(string text, EditValueFlags flags) {
 			var buffer = textBufferFactoryService.CreateTextBuffer(text, contentType);
 			var rolesHash = new HashSet<string>(textEditorFactoryService.DefaultRoles, StringComparer.OrdinalIgnoreCase) {
 				EditValueConstants.EditValueTextViewRole,
@@ -89,7 +89,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			var roles = textEditorFactoryService.CreateTextViewRoleSet(rolesHash);
 			var textView = textEditorFactoryService.CreateTextView(buffer, roles);
 			try {
-				return new EditValueImpl(textView);
+				return new EditValueImpl(textView, flags);
 			}
 			catch {
 				textView.Close();
@@ -131,10 +131,12 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 		readonly IWpfTextView wpfTextView;
 		readonly UIControl uiControl;
+		readonly EditValueFlags flags;
 
-		public EditValueImpl(IWpfTextView wpfTextView) {
+		public EditValueImpl(IWpfTextView wpfTextView, EditValueFlags flags) {
 			this.wpfTextView = wpfTextView;
 			uiControl = new UIControl(wpfTextView);
+			this.flags = flags;
 			wpfTextView.VisualElement.Loaded += VisualElement_Loaded;
 			wpfTextView.TextBuffer.Properties.AddProperty(typeof(EditValueImpl), this);
 			wpfTextView.Options.SetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId, true);
@@ -156,7 +158,8 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			wpfTextView.VisualElement.Loaded -= VisualElement_Loaded;
 			wpfTextView.VisualElement.Focus();
 			var snapshot = wpfTextView.TextSnapshot;
-			wpfTextView.Selection.Select(new SnapshotSpan(snapshot, new Span(0, snapshot.Length)), isReversed: false);
+			if ((flags & EditValueFlags.SelectText) != 0)
+				wpfTextView.Selection.Select(new SnapshotSpan(snapshot, new Span(0, snapshot.Length)), isReversed: false);
 			wpfTextView.Caret.MoveTo(new SnapshotPoint(snapshot, snapshot.Length));
 			wpfTextView.Caret.EnsureVisible();
 			wpfTextView.LostAggregateFocus += WpfTextView_LostAggregateFocus;

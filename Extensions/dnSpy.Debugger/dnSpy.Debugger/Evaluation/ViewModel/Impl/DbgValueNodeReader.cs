@@ -17,37 +17,44 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	abstract class DbgValueNodeReader {
-		public abstract DbgValueNode GetDebuggerNode(ValueNodeImpl valueNode);
-		public abstract DbgValueNode GetDebuggerNodeForReuse(ValueNodeImpl valueNode);
+		public abstract DbgValueNode GetDebuggerNode(ChildDbgValueRawNode valueNode);
+		public abstract DbgValueNode GetDebuggerNodeForReuse(DebuggerValueRawNode parent, uint startIndex);
+		public abstract DbgCreateValueNodeResult Evaluate(string expression);
 	}
 
 	sealed class DbgValueNodeReaderImpl : DbgValueNodeReader {
-		public override DbgValueNode GetDebuggerNode(ValueNodeImpl valueNode) {
+		readonly Func<string, DbgCreateValueNodeResult> evaluate;
+
+		public DbgValueNodeReaderImpl(Func<string, DbgCreateValueNodeResult> evaluate) => this.evaluate = evaluate ?? throw new ArgumentNullException(nameof(evaluate));
+
+		public override DbgValueNode GetDebuggerNode(ChildDbgValueRawNode valueNode) {
 			var parent = valueNode.Parent;
 			uint startIndex = valueNode.DbgValueNodeChildIndex;
-			int count = 1;//TODO:
+			const int count = 1;
 			var newNodes = parent.DebuggerValueNode.GetChildren(startIndex, count);
 			newNodes[0].Runtime.CloseOnContinue(newNodes);
 			Debug.Assert(count == 1);
 			return newNodes[0];
 		}
 
-		public override DbgValueNode GetDebuggerNodeForReuse(ValueNodeImpl valueNode) {
-			var parent = valueNode.Parent;
-			uint startIndex = valueNode.DbgValueNodeChildIndex;
-			//TODO: Read more than one value. This code would need help from the caller
-			//		since it wants to exit its method as quickly as possible if the new
-			//		value isn't equal to the old value.
+		public override DbgValueNode GetDebuggerNodeForReuse(DebuggerValueRawNode parent, uint startIndex) {
 			const int count = 1;
 			var newNodes = parent.DebuggerValueNode.GetChildren(startIndex, count);
 			newNodes[0].Runtime.CloseOnContinue(newNodes);
 			Debug.Assert(count == 1);
 			return newNodes[0];
+		}
+
+		public override DbgCreateValueNodeResult Evaluate(string expression) {
+			var res = evaluate(expression);
+			res.ValueNode?.Runtime.CloseOnContinue(res.ValueNode);
+			return res;
 		}
 	}
 }

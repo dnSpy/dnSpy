@@ -1845,4 +1845,25 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_Language" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Clear All</value>
+  </data>
+  <data name="DeleteWatchCommand" xml:space="preserve">
+    <value>_Delete Watch</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Paste</value>
+  </data>
+  <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
+    <value>This expression causes side effects and will not be evaluated</value>
+  </data>
+  <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
+    <value>Click this button to evaluate now.</value>
+  </data>
+  <data name="ErrorEvaluatingExpression" xml:space="preserve">
+    <value>Couldn't evaluate the expression</value>
+  </data>
 </root>

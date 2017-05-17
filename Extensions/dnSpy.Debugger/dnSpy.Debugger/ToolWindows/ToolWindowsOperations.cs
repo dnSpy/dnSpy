@@ -38,6 +38,8 @@ namespace dnSpy.Debugger.ToolWindows {
 		public abstract void ShowAutos();
 		public abstract bool CanShowLocals { get; }
 		public abstract void ShowLocals();
+		public abstract bool CanShowWatch(int index);
+		public abstract void ShowWatch(int index);
 		public abstract bool CanShowThreads { get; }
 		public abstract void ShowThreads();
 		public abstract bool CanShowModules { get; }
@@ -57,14 +59,16 @@ namespace dnSpy.Debugger.ToolWindows {
 		readonly Lazy<IOutputService> outputService;
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<Memory.MemoryToolWindowContentProvider> memoryToolWindowContentProvider;
+		readonly Lazy<Watch.WatchToolWindowContentProvider> watchToolWindowContentProvider;
 
 		[ImportingConstructor]
-		ToolWindowsOperationsImpl(UIDispatcher uiDispatcher, IDsToolWindowService toolWindowService, Lazy<IOutputService> outputService, Lazy<DbgManager> dbgManager, Lazy<Memory.MemoryToolWindowContentProvider> memoryToolWindowContentProvider) {
+		ToolWindowsOperationsImpl(UIDispatcher uiDispatcher, IDsToolWindowService toolWindowService, Lazy<IOutputService> outputService, Lazy<DbgManager> dbgManager, Lazy<Memory.MemoryToolWindowContentProvider> memoryToolWindowContentProvider, Lazy<Watch.WatchToolWindowContentProvider> watchToolWindowContentProvider) {
 			this.uiDispatcher = uiDispatcher;
 			this.toolWindowService = toolWindowService;
 			this.outputService = outputService;
 			this.dbgManager = dbgManager;
 			this.memoryToolWindowContentProvider = memoryToolWindowContentProvider;
+			this.watchToolWindowContentProvider = watchToolWindowContentProvider;
 		}
 
 		public override bool CanShowOutput => true;
@@ -83,6 +87,8 @@ namespace dnSpy.Debugger.ToolWindows {
 		public override void ShowAutos() => toolWindowService.Show(Autos.AutosToolWindowContentProvider.THE_GUID);
 		public override bool CanShowLocals => dbgManager.Value.IsDebugging;
 		public override void ShowLocals() => toolWindowService.Show(Locals.LocalsToolWindowContentProvider.THE_GUID);
+		public override bool CanShowWatch(int index) => dbgManager.Value.IsDebugging;
+		public override void ShowWatch(int index) => toolWindowService.Show(watchToolWindowContentProvider.Value.GetWindowGuid(index));
 		public override bool CanShowThreads => dbgManager.Value.IsDebugging;
 		public override void ShowThreads() => toolWindowService.Show(Threads.ThreadsToolWindowContent.THE_GUID);
 		public override bool CanShowModules => dbgManager.Value.IsDebugging;

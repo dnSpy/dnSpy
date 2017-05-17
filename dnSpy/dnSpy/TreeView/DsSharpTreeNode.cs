@@ -72,7 +72,6 @@ namespace dnSpy.TreeView {
 
 		protected override void OnExpanding() {
 			base.OnExpanding();
-			Debug.Assert(IsExpanded);
 			treeNodeImpl.Data.OnIsExpandedChanged(true);
 		}
 

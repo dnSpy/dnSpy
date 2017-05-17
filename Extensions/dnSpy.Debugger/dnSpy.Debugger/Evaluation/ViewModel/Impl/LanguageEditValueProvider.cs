@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 	abstract class LanguageEditValueProvider : IEditValueProvider {
 		public abstract DbgLanguage Language { get; set; }
-		public abstract IEditValue Create(string text);
+		public abstract IEditValue Create(string text, EditValueFlags flags);
 	}
 
 	sealed class LanguageEditValueProviderImpl : LanguageEditValueProvider {
@@ -81,11 +81,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			return defaultContentType;
 		}
 
-		public override IEditValue Create(string text) {
+		public override IEditValue Create(string text, EditValueFlags flags) {
 			uiDispatcher.VerifyAccess();
 			if (editValueProvider == null)
 				editValueProvider = editValueProviderService.Create(GetContentType(), Array.Empty<string>());
-			return editValueProvider.Create(text);
+			return editValueProvider.Create(text, flags);
 		}
 	}
 }

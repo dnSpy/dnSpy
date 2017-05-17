@@ -39,16 +39,15 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public IVariablesWindowVM VM => variablesWindowVM;
 
 		readonly VariablesWindowControl variablesWindowControl;
-		readonly IVariablesWindowVM variablesWindowVM;
+		IVariablesWindowVM variablesWindowVM;
 
-		protected VariablesWindowContentBase(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory) {
-			variablesWindowControl = new VariablesWindowControl();
-			variablesWindowVM = variablesWindowVMFactory.Create(CreateVariablesWindowVMOptions());
+		protected VariablesWindowContentBase() => variablesWindowControl = new VariablesWindowControl();
+
+		protected void Initialize(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory, VariablesWindowVMOptions options) {
+			variablesWindowVM = variablesWindowVMFactory.Create(options);
 			variablesWindowVM.TreeViewChanged += VariablesWindowVM_TreeViewChanged;
 			variablesWindowControl.DataContext = variablesWindowVM;
 		}
-
-		protected abstract VariablesWindowVMOptions CreateVariablesWindowVMOptions();
 
 		void VariablesWindowVM_TreeViewChanged(object sender, EventArgs e) => variablesWindowControl.SetTreeView(variablesWindowVM.TreeView);
 

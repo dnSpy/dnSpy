@@ -24,6 +24,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.Evaluation.UI"
              xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls.ToolWindows;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
              xmlns:uiwpf="clr-namespace:dnSpy.Debugger.UI.Wpf"
@@ -44,8 +45,12 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <tv:SharpTreeNodeView Grid.Column="0" Style="{StaticResource SharpTreeNodeView_GridView}" />
-                                <!-- There's no tooltip here since it's rarely needed -->
-                                <uiwpf:SmartTextBlock Grid.Column="1" ContentInfo="{Binding Data.NameObject, Mode=OneWay, Converter={StaticResource variablesWindowColumnConverter}}" />
+                                <ctrls:EditValueControl Grid.Column="1" EditableValue="{Binding Data.NameEditableValue}" EditValueProvider="{Binding Data.NameEditValueProvider}">
+                                    <ctrls:EditValueControl.ReadOnlyContent>
+                                        <!-- There's no tooltip here since it's rarely needed -->
+                                        <uiwpf:SmartTextBlock ContentInfo="{Binding Data.NameObject, Mode=OneWay, Converter={StaticResource variablesWindowColumnConverter}}" />
+                                    </ctrls:EditValueControl.ReadOnlyContent>
+                                </ctrls:EditValueControl>
                             </Grid>
                         </Border>
                     </DataTemplate>
@@ -57,15 +62,24 @@
                         <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"
                                 BorderThickness="0 0 1 1"
                                 Margin="-8 0">
-                            <ctrls:EditValueControl Margin="8 0 4 0" EditableValue="{Binding Data.ValueEditableValue}" EditValueProvider="{Binding Data.ValueEditValueProvider}">
-                                <ctrls:EditValueControl.ReadOnlyContent>
-                                    <uiwpf:SmartTextBlock ContentInfo="{Binding Data.ValueObject, Mode=OneWay, Converter={StaticResource variablesWindowColumnConverter}}">
-                                        <uiwpf:SmartTextBlock.ToolTip>
-                                            <uiwpf:SmartTextBlock ContentInfo="{Binding Data.ValueObject, Mode=OneWay, Converter={StaticResource variablesWindowColumnConverter}, ConverterParameter=ToolTip}" />
-                                        </uiwpf:SmartTextBlock.ToolTip>
-                                    </uiwpf:SmartTextBlock>
-                                </ctrls:EditValueControl.ReadOnlyContent>
-                            </ctrls:EditValueControl>
+                            <Grid Margin="8 0 4 0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ctrls:EditValueControl Grid.Column="0" EditableValue="{Binding Data.ValueEditableValue}" EditValueProvider="{Binding Data.ValueEditValueProvider}">
+                                    <ctrls:EditValueControl.ReadOnlyContent>
+                                        <uiwpf:SmartTextBlock ContentInfo="{Binding Data.ValueObject, Mode=OneWay, Converter={StaticResource variablesWindowColumnConverter}}">
+                                            <uiwpf:SmartTextBlock.ToolTip>
+                                                <uiwpf:SmartTextBlock ContentInfo="{Binding Data.ValueObject, Mode=OneWay, Converter={StaticResource variablesWindowColumnConverter}, ConverterParameter=ToolTip}" />
+                                            </uiwpf:SmartTextBlock.ToolTip>
+                                        </uiwpf:SmartTextBlock>
+                                    </ctrls:EditValueControl.ReadOnlyContent>
+                                </ctrls:EditValueControl>
+                                <Button Grid.Column="1" Padding="0" BorderThickness="0" Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding Data.RefreshExpressionCommand}" ToolTip="{Binding Data.RefreshExpressionToolTip}" Visibility="{Binding Data.IsInvalid, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <img:DsImage ImageReference="{x:Static img:DsImages.Refresh}" />
+                                </Button>
+                            </Grid>
                         </Border>
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>

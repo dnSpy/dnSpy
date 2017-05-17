@@ -17,28 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel;
-using dnSpy.Contracts.TreeView;
-
-namespace dnSpy.Debugger.Evaluation.ViewModel {
-	interface IValueNodesVM : INotifyPropertyChanged, IDisposable {
-		void Show();
-		void Hide();
-		bool IsOpen { get; }
-		bool IsReadOnly { get; }
-		ITreeView TreeView { get; }
-		Guid? RuntimeGuid { get; }
-		VariablesWindowKind VariablesWindowKind { get; }
-
-		bool CanAddRemoveExpressions { get; }
-		void DeleteExpressions(string[] ids);
-		void ClearAllExpressions();
+namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
+	interface IEditValueNodeExpression {
+		bool SupportsEditExpression { get; }
 		void EditExpression(string id, string expression);
 		string[] AddExpressions(string[] expressions);
-	}
-
-	static class ValueNodesVMConstants {
-		public static readonly Guid GUIDOBJ_VALUENODESVM_GUID = new Guid("A148423F-B2C3-492D-9710-8573E559E957");
 	}
 }

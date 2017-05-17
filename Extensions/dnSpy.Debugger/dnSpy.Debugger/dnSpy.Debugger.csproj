@@ -152,7 +152,9 @@
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeFormatParameters.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeImageReferenceService.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\DbgValueNodeReader.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\IEditValueNodeExpression.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\LanguageEditValueProvider.cs" />
+    <Compile Include="Evaluation\ViewModel\Impl\RawNode.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodeFormatter.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodeImpl.cs" />
     <Compile Include="Evaluation\ViewModel\Impl\ValueNodesContext.cs" />
@@ -246,6 +248,12 @@
     <Compile Include="ToolWindows\Threads\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\Threads\ThreadUtilities.cs" />
     <Compile Include="ToolWindows\ToolWindowsOperations.cs" />
+    <Compile Include="ToolWindows\Watch\CommandsLoader.cs" />
+    <Compile Include="ToolWindows\Watch\WatchContent.cs" />
+    <Compile Include="ToolWindows\Watch\WatchContentFactory.cs" />
+    <Compile Include="ToolWindows\Watch\WatchToolWindowContent.cs" />
+    <Compile Include="ToolWindows\Watch\WatchVariablesWindowValueNodesProvider.cs" />
+    <Compile Include="ToolWindows\Watch\WatchWindowsHelper.cs" />
     <Compile Include="UI\BulkObservableCollection.cs" />
     <Compile Include="UI\FormatterObject.cs" />
     <Compile Include="UI\Wpf\ITextBlockContentInfoFactory.cs" />

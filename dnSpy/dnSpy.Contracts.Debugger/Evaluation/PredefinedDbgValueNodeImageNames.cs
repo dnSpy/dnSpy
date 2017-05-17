@@ -23,6 +23,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// </summary>
 	public static class PredefinedDbgValueNodeImageNames {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+		public const string Edit = nameof(Edit);
 		public const string Information = nameof(Information);
 		public const string Warning = nameof(Warning);
 		public const string Error = nameof(Error);

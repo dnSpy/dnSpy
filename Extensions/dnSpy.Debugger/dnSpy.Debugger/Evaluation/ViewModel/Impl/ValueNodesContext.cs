@@ -25,6 +25,7 @@ using Microsoft.VisualStudio.Text.Classification;
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	interface IValueNodesContext {
 		UIDispatcher UIDispatcher { get; }
+		IEditValueNodeExpression EditValueNodeExpression { get; }
 		DbgValueNodeImageReferenceService ValueNodeImageReferenceService { get; }
 		DbgValueNodeReader ValueNodeReader { get; }
 		IClassificationFormatMap ClassificationFormatMap { get; }
@@ -42,10 +43,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		string TypeColumnName { get; }
 		ShowMessageBox ShowMessageBox { get; }
 		LanguageEditValueProvider ValueEditValueProvider { get; }
+		LanguageEditValueProvider NameEditValueProvider { get; }
+		string ExpressionToEdit { get; set; }
+		bool IsWindowReadOnly { get; }
 	}
 
 	sealed class ValueNodesContext : IValueNodesContext {
 		public UIDispatcher UIDispatcher { get; }
+		public IEditValueNodeExpression EditValueNodeExpression { get; }
 		public DbgValueNodeImageReferenceService ValueNodeImageReferenceService { get; }
 		public DbgValueNodeReader ValueNodeReader { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
@@ -63,15 +68,20 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public string TypeColumnName { get; }
 		public ShowMessageBox ShowMessageBox { get; }
 		public LanguageEditValueProvider ValueEditValueProvider { get; }
+		public LanguageEditValueProvider NameEditValueProvider { get; }
+		public string ExpressionToEdit { get; set; }
+		public bool IsWindowReadOnly { get; set; }
 
-		public ValueNodesContext(UIDispatcher uiDispatcher, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, ShowMessageBox showMessageBox) {
+		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, ShowMessageBox showMessageBox) {
 			UIDispatcher = uiDispatcher;
+			EditValueNodeExpression = editValueNodeExpression;
 			WindowContentType = windowContentType;
 			NameColumnName = nameColumnName;
 			ValueColumnName = valueColumnName;
 			TypeColumnName = typeColumnName;
 			ShowMessageBox = showMessageBox;
 			ValueEditValueProvider = languageEditValueProviderFactory.Create(windowContentType);
+			NameEditValueProvider = languageEditValueProviderFactory.Create(windowContentType);
 			ValueNodeImageReferenceService = dbgValueNodeImageReferenceService;
 			ValueNodeReader = dbgValueNodeReader;
 			ClassificationFormatMap = classificationFormatMap;

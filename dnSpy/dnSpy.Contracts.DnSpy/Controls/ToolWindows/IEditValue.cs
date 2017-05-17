@@ -29,8 +29,9 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		/// started the edit operation.
 		/// </summary>
 		/// <param name="text">Text shown in the control</param>
+		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		IEditValue Create(string text);
+		IEditValue Create(string text, EditValueFlags flags);
 	}
 
 	/// <summary>

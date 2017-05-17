@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel {
@@ -44,21 +45,68 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// </summary>
 		public abstract DbgLanguage Language { get; }
 		public abstract event EventHandler LanguageChanged;
+
+		/// <summary>
+		/// true if root nodes can be added/deleted (supported by watch window)
+		/// </summary>
+		public abstract bool CanAddRemoveExpressions { get; }
+		public abstract void DeleteExpressions(string[] ids);
+		public abstract void ClearAllExpressions();
+		public abstract void EditExpression(string id, string expression);
+		public abstract string[] AddExpressions(string[] expressions);
+
+		public abstract (DbgLanguage language, DbgStackFrame frame) GetEvaluateInfo();
 	}
 
 	struct DbgValueNodeInfo {
 		/// <summary>
 		/// null or the id of the value. Should be used if <see cref="DbgValueNode.Expression"/> isn't unique
+		/// or when <see cref="ValueNodesProvider.CanAddRemoveExpressions"/> is true
 		/// </summary>
 		public string Id { get; }
+
+		/// <summary>
+		/// null if it's been invalidated (it causes side effects and it wasn't re-evaluated or there was another error)
+		/// </summary>
 		public DbgValueNode Node { get; }
+
+		/// <summary>
+		/// Shown in Name column if <see cref="Node"/> is null, else it's ignored
+		/// </summary>
+		public string Expression { get; }
+
+		/// <summary>
+		/// Shown in Value column if <see cref="Node"/> is null, else it's ignored
+		/// </summary>
+		public string ErrorMessage { get; }
+
+		/// <summary>
+		/// The expression wasn't evaluated because it causes side effects
+		/// </summary>
+		public bool CausesSideEffects { get; }
+
+		public DbgValueNodeInfo(string id, string expression, string errorMessage, bool causesSideEffects) {
+			Node = null;
+			Id = id ?? throw new ArgumentNullException(nameof(id));
+			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
+			CausesSideEffects = causesSideEffects;
+		}
+
 		public DbgValueNodeInfo(DbgValueNode node) {
 			Node = node ?? throw new ArgumentNullException(nameof(node));
 			Id = null;
+			Expression = null;
+			ErrorMessage = null;
+			CausesSideEffects = false;
 		}
+
 		public DbgValueNodeInfo(DbgValueNode node, string id) {
 			Node = node ?? throw new ArgumentNullException(nameof(node));
 			Id = id ?? throw new ArgumentNullException(nameof(id));
+			Expression = null;
+			ErrorMessage = null;
+			CausesSideEffects = false;
 		}
 	}
 }

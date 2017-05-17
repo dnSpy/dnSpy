@@ -107,8 +107,17 @@ namespace dnSpy.Debugger.ToolWindows {
 
 	[ExportMenuItem(OwnerGuid = Constants.WATCH_GUID, Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_WATCH_SUB, Order = 0)]
 	sealed class SubMenuWatchWindowCommand : MenuItemBase, IMenuItemProvider {
-		static SubMenuWatchWindowCommand() {
-			subCmds = Array.Empty<Tuple<IMenuItem, string, string>>();//TODO:
+		readonly (IMenuItem menuItem, string headerText, string inputGestureText)[] subCmds;
+
+		[ImportingConstructor]
+		SubMenuWatchWindowCommand(Lazy<ToolWindowsOperations> toolWindowsOperations) {
+			subCmds = new(IMenuItem, string, string)[Watch.WatchWindowsHelper.NUMBER_OF_WATCH_WINDOWS];
+			for (int i = 0; i < subCmds.Length; i++) {
+				var inputGestureText = GetInputGestureText(i);
+				var headerText = Watch.WatchWindowsHelper.GetHeaderText(i);
+				var cmd = new WatchWindowNCommand(toolWindowsOperations, i);
+				subCmds[i] = (cmd, headerText, inputGestureText);
+			}
 		}
 
 		static string GetInputGestureText(int i) {
@@ -116,8 +125,6 @@ namespace dnSpy.Debugger.ToolWindows {
 				return string.Format(dnSpy_Debugger_Resources.ShortCutKeyCtrlAltW_DIGIT, (i + 1) % 10);
 			return string.Empty;
 		}
-
-		static readonly Tuple<IMenuItem, string, string>[] subCmds;
 
 		public override void Execute(IMenuItemContext context) { }
 
@@ -130,6 +137,13 @@ namespace dnSpy.Debugger.ToolWindows {
 				yield return new CreatedMenuItem(attr, info.Item1);
 			}
 		}
+	}
+
+	sealed class WatchWindowNCommand : DebugToolWindowMainMenuCommand {
+		readonly int index;
+		public WatchWindowNCommand(Lazy<ToolWindowsOperations> toolWindowsOperations, int index) : base(toolWindowsOperations) => this.index = index;
+		public override void Execute(IMenuItemContext context) => toolWindowsOperations.Value.ShowWatch(index);
+		public override bool IsEnabled(IMenuItemContext context) => toolWindowsOperations.Value.CanShowWatch(index);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:AutosCommand", Icon = DsImagesAttribute.AutosWindow, InputGestureText = "res:ShortCutKeyCtrlAltV_A", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_VALUES, Order = 10)]

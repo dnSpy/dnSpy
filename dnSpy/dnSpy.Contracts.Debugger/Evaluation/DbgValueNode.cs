@@ -67,6 +67,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract bool IsReadOnly { get; }
 
 		/// <summary>
+		/// true if the expression causes side effects
+		/// </summary>
+		public abstract bool CausesSideEffects { get; }
+
+		/// <summary>
 		/// Returns true if it has children, false if it has no children and null if it's unknown (eg. it's too expensive to calculate it now).
 		/// UI code can use this property to decide if it shows the treeview node expander ("|>").
 		/// </summary>

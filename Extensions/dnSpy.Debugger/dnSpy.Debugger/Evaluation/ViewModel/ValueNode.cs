@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Windows.Input;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Text;
@@ -29,10 +30,17 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public override object Text => null;
 		public override object ToolTip => null;
 
+		public abstract string RootId { get; }
+
 		// Used by XAML
+		public abstract bool IsInvalid { get; protected set; }
+		public abstract ICommand RefreshExpressionCommand { get; }
+		public abstract string RefreshExpressionToolTip { get; }
 		public abstract FormatterObject<ValueNode> NameObject { get; }
 		public abstract FormatterObject<ValueNode> ValueObject { get; }
 		public abstract FormatterObject<ValueNode> TypeObject { get; }
+		public abstract IEditableValue NameEditableValue { get; }
+		public abstract IEditValueProvider NameEditValueProvider { get; }
 		public abstract IEditableValue ValueEditableValue { get; }
 		public abstract IEditValueProvider ValueEditValueProvider { get; }
 

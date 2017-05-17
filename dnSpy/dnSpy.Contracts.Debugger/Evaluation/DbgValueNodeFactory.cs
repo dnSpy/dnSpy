@@ -31,23 +31,67 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
-		/// Creates a <see cref="DbgValueNode"/> or returns null if there was an error (eg. <see cref="DbgEvaluationOptions.NoSideEffects"/>
-		/// is set and the expression has side effects). It blocks the current thread until the evaluation is complete.
+		/// Creates a <see cref="DbgValueNode"/>. It blocks the current thread until the evaluation is complete.
 		/// </summary>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgValueNode Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options);
+		public abstract DbgCreateValueNodeResult Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options);
 
 		/// <summary>
-		/// Creates a <see cref="DbgValueNode"/> or returns null if there was an error (eg. <see cref="DbgEvaluationOptions.NoSideEffects"/>
-		/// is set and the expression has side effects)
+		/// Creates a <see cref="DbgValueNode"/>
 		/// </summary>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
-		public abstract void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgValueNode> callback);
+		public abstract void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback);
+	}
+
+	/// <summary>
+	/// Contains the created <see cref="DbgValueNode"/> or an error message
+	/// </summary>
+	public struct DbgCreateValueNodeResult {
+		/// <summary>
+		/// Gets the created node or null if there was an error
+		/// </summary>
+		public DbgValueNode ValueNode { get; }
+
+		/// <summary>
+		/// true if there was an error (see <see cref="Error"/>)
+		/// </summary>
+		public bool HasError => Error != null;
+
+		/// <summary>
+		/// Error message or null if none
+		/// </summary>
+		public string Error { get; }
+
+		/// <summary>
+		/// true if the expression wasn't evaluated because it causes side effects (<see cref="DbgEvaluationOptions.NoSideEffects"/> was used)
+		/// </summary>
+		public bool CausesSideEffects { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="node">New value node</param>
+		public DbgCreateValueNodeResult(DbgValueNode node) {
+			ValueNode = node ?? throw new ArgumentNullException(nameof(node));
+			Error = null;
+			CausesSideEffects = false;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="error">Error message</param>
+		/// <param name="causesSideEffects">true if the expression wasn't evaluated because it causes side effects (<see cref="DbgEvaluationOptions.NoSideEffects"/> was used)</param>
+		public DbgCreateValueNodeResult(string error, bool causesSideEffects) {
+			ValueNode = null;
+			Error = error ?? throw new ArgumentNullException(nameof(error));
+			CausesSideEffects = causesSideEffects;
+		}
 	}
 }

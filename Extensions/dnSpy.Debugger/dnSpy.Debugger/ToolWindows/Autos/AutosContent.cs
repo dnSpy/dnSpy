@@ -34,16 +34,15 @@ namespace dnSpy.Debugger.ToolWindows.Autos {
 		public static readonly Guid VariablesWindowGuid = new Guid("F183274A-8EC3-4DE7-A291-388C6BB73362");
 
 		[ImportingConstructor]
-		AutosContent(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory)
-			: base(wpfCommandService, variablesWindowVMFactory) {
-		}
+		AutosContent(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory) =>
+			Initialize(wpfCommandService, variablesWindowVMFactory, CreateVariablesWindowVMOptions());
 
 		sealed class VariablesWindowValueNodesProviderImpl : VariablesWindowValueNodesProvider {
-			public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame) =>
+			public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) =>
 				language.AutosProvider.GetNodes(frame).Select(a => new DbgValueNodeInfo(a)).ToArray();
 		}
 
-		protected override VariablesWindowVMOptions CreateVariablesWindowVMOptions() {
+		VariablesWindowVMOptions CreateVariablesWindowVMOptions() {
 			var options = new VariablesWindowVMOptions() {
 				VariablesWindowValueNodesProvider = new VariablesWindowValueNodesProviderImpl(),
 				WindowContentType = ContentTypes.AutosWindow,

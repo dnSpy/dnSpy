@@ -34,16 +34,15 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 		public static readonly Guid VariablesWindowGuid = new Guid("1A53B7B7-19AE-490F-9D67-F1992D849150");
 
 		[ImportingConstructor]
-		LocalsContent(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory)
-			: base(wpfCommandService, variablesWindowVMFactory) {
-		}
+		LocalsContent(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory) =>
+			Initialize(wpfCommandService, variablesWindowVMFactory, CreateVariablesWindowVMOptions());
 
 		sealed class VariablesWindowValueNodesProviderImpl : VariablesWindowValueNodesProvider {
-			public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame) =>
+			public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) =>
 				language.LocalsProvider.GetNodes(frame).Select(a => new DbgValueNodeInfo(a)).ToArray();
 		}
 
-		protected override VariablesWindowVMOptions CreateVariablesWindowVMOptions() {
+		VariablesWindowVMOptions CreateVariablesWindowVMOptions() {
 			var options = new VariablesWindowVMOptions() {
 				VariablesWindowValueNodesProvider = new VariablesWindowValueNodesProviderImpl(),
 				WindowContentType = ContentTypes.LocalsWindow,

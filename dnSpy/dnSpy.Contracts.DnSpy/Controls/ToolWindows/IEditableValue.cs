@@ -39,16 +39,62 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		bool IsEditingValue { get; set; }
 
 		/// <summary>
-		/// Gets the text shown in the textbox. The control will write the new value when
-		/// the user hits enter.
+		/// Returns the text shown in the control
 		/// </summary>
-		string Text { get; set; }
+		/// <returns></returns>
+		EditableValueTextInfo GetText();
+
+		/// <summary>
+		/// The control calls this method to write the new value
+		/// </summary>
+		/// <param name="text">New text</param>
+		void SetText(string text);
+	}
+
+	/// <summary>
+	/// Edit value flags
+	/// </summary>
+	[Flags]
+	public enum EditValueFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// Select the text
+		/// </summary>
+		SelectText			= 0x00000001,
+	}
+
+	/// <summary>
+	/// Contains the text to edit
+	/// </summary>
+	public struct EditableValueTextInfo {
+		/// <summary>
+		/// Gets the text
+		/// </summary>
+		public string Text { get; }
+
+		/// <summary>
+		/// Flags
+		/// </summary>
+		public EditValueFlags Flags { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="text">Text to edit</param>
+		/// <param name="flags">Flags</param>
+		public EditableValueTextInfo(string text, EditValueFlags flags = EditValueFlags.SelectText) {
+			Text = text ?? throw new ArgumentNullException(nameof(text));
+			Flags = flags;
+		}
 	}
 
 	abstract class EditableValue : IEditableValue {
 		public event PropertyChangedEventHandler PropertyChanged;
 		public virtual bool CanEdit => true;
-		public abstract string Text { get; set; }
 
 		public bool IsEditingValue {
 			get => isEditingValue;
@@ -60,25 +106,34 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			}
 		}
 		bool isEditingValue;
+
+		public abstract EditableValueTextInfo GetText();
+		public abstract void SetText(string text);
 	}
 
 	sealed class EditableValueImpl : EditableValue {
-		readonly Func<string> getText;
+		readonly Func<EditableValueTextInfo> getText;
 		readonly Action<string> setText;
 		readonly Func<bool> canEdit;
 		static readonly Func<bool> defaultCanEdit = () => true;
 
 		public override bool CanEdit => canEdit();
 
-		public override string Text {
-			get => getText();
-			set => setText(value);
+		public EditableValueImpl(Func<string> getText, Action<string> setText, Func<bool> canEdit = null) {
+			if (getText == null)
+				throw new ArgumentNullException(nameof(getText));
+			this.getText = () => new EditableValueTextInfo(getText());
+			this.setText = setText ?? throw new ArgumentNullException(nameof(setText));
+			this.canEdit = canEdit ?? defaultCanEdit;
 		}
 
-		public EditableValueImpl(Func<string> getText, Action<string> setText, Func<bool> canEdit = null) {
+		public EditableValueImpl(Func<EditableValueTextInfo> getText, Action<string> setText, Func<bool> canEdit = null) {
 			this.getText = getText ?? throw new ArgumentNullException(nameof(getText));
 			this.setText = setText ?? throw new ArgumentNullException(nameof(setText));
 			this.canEdit = canEdit ?? defaultCanEdit;
 		}
+
+		public override EditableValueTextInfo GetText() => getText();
+		public override void SetText(string text) => setText(text);
 	}
 }

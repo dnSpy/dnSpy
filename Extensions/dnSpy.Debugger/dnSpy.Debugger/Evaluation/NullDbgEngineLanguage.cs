@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Evaluation {
 
 	sealed class NullDbgEngineExpressionEvaluator : DbgEngineExpressionEvaluator {
 		// No need to localize it, an EE should always be available
-		const string ERROR = "No expression evaluator is available for this runtime";
+		public const string ERROR = "No expression evaluator is available for this runtime";
 
 		public override DbgEngineEvaluationResult Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options) =>
 			new DbgEngineEvaluationResult(ERROR);
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Evaluation {
 	}
 
 	sealed class NullDbgEngineValueNodeFactory : DbgEngineValueNodeFactory {
-		public override DbgEngineValueNode Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options) => null;
-		public override void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNode> callback) => callback(Create(frame, expression, options));
+		public override DbgCreateEngineValueNodeResult Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options) => new DbgCreateEngineValueNodeResult(NullDbgEngineExpressionEvaluator.ERROR);
+		public override void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateEngineValueNodeResult> callback) => callback(Create(frame, expression, options));
 	}
 }

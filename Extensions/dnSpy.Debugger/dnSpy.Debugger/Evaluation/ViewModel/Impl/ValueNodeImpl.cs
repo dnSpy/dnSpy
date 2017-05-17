@@ -21,9 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows.Input;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Properties;
@@ -48,7 +50,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		const uint MAX_CHILDREN = 10000;
 
 		public event PropertyChangedEventHandler PropertyChanged;
-		public override ImageReference Icon => Context.ValueNodeImageReferenceService.GetImageReference(DebuggerValueNode.ImageName);
+		public override ImageReference Icon => Context.ValueNodeImageReferenceService.GetImageReference(RawNode.ImageName);
+
+		public override ICommand RefreshExpressionCommand => new RelayCommand(a => RefreshExpression(), a => IsInvalid);
+		public override string RefreshExpressionToolTip => dnSpy_Debugger_Resources.RefreshExpressionButtonToolTip;
 
 		public override FormatterObject<ValueNode> NameObject => new FormatterObject<ValueNode>(this, Context.NameColumnName);
 		public override FormatterObject<ValueNode> ValueObject => new FormatterObject<ValueNode>(this, Context.ValueColumnName);
@@ -92,7 +97,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void InitializeCachedText() {
 			var p = Context.ValueNodeFormatParameters;
 			p.Initialize(cachedName.IsDefault, cachedValue.IsDefault, cachedExpectedType.IsDefault);
-			DebuggerValueNode.Format(p);
+			RawNode.Format(p);
 			if (cachedName.IsDefault)
 				cachedName = p.NameOutput.GetClassifiedText();
 			if (cachedValue.IsDefault)
@@ -114,57 +119,119 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		ClassifiedTextCollection oldCachedValue;
 
 		public IValueNodesContext Context { get; }
+		public override string RootId => rootId;
+		string rootId;
 
-		internal uint DbgValueNodeChildIndex { get; }
-		internal ValueNodeImpl Parent { get; }
-		internal string RootId { get; }
-		bool HasDebuggerValueNode => __dbgValueNode_DONT_USE != null;
-		internal DbgValueNode DebuggerValueNode {
-			get {
-				var dbgNode = __dbgValueNode_DONT_USE;
-				if (dbgNode == null)
-					__dbgValueNode_DONT_USE = dbgNode = Context.ValueNodeReader.GetDebuggerNode(this);
-				return dbgNode;
+		public override bool IsInvalid {
+			get => isInvalid;
+			protected set {
+				if (isInvalid == value)
+					return;
+				isInvalid = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsInvalid)));
 			}
 		}
-		DbgValueNode __dbgValueNode_DONT_USE;
+		bool isInvalid;
+
+		internal bool IsRoot { get; }
+		internal RawNode RawNode => __rawNode_DONT_USE;
+		RawNode __rawNode_DONT_USE;
+		bool disableHighlightingOnReuse;
+		ulong? cachedChildCount;
+
+		public override IEditValueProvider NameEditValueProvider => Context.NameEditValueProvider;
+		public override IEditableValue NameEditableValue {
+			get {
+				if (nameEditableValue == null)
+					nameEditableValue = new EditableValueImpl(() => GetNameExpression(), s => SaveNameExpression(s), () => CanEditNameExpression());
+				return nameEditableValue;
+			}
+		}
+		IEditableValue nameEditableValue;
 
 		public override IEditValueProvider ValueEditValueProvider => Context.ValueEditValueProvider;
-
 		public override IEditableValue ValueEditableValue {
 			get {
 				if (valueEditableValue == null)
-					valueEditableValue = new EditableValueImpl(() => GetEditableValue(), s => SaveEditableValue(s), () => !DebuggerValueNode.IsReadOnly);
+					valueEditableValue = new EditableValueImpl(() => GetEditableValue(), s => SaveEditableValue(s), () => !RawNode.IsReadOnly && !Context.IsWindowReadOnly);
 				return valueEditableValue;
 			}
 		}
 		IEditableValue valueEditableValue;
 
-		public ValueNodeImpl(IValueNodesContext context, DbgValueNode dbgValueNode, string rootId) {
+		public static ValueNodeImpl CreateEditNode(IValueNodesContext context) => new ValueNodeImpl(context);
+
+		ValueNodeImpl(IValueNodesContext context) {
+			IsRoot = true;
 			Context = context ?? throw new ArgumentNullException(nameof(context));
-			RootId = rootId;
-			__dbgValueNode_DONT_USE = dbgValueNode ?? throw new ArgumentNullException(nameof(dbgValueNode));
+			rootId = null;
+			if (!context.EditValueNodeExpression.SupportsEditExpression)
+				throw new InvalidOperationException();
+			__rawNode_DONT_USE = new EditRawNode();
 		}
 
-		// parent is needed since we need it before TreeNodeData.Parent is available
-		public ValueNodeImpl(IValueNodesContext context, ValueNodeImpl parent, uint childIndex) {
+		public ValueNodeImpl(IValueNodesContext context, DbgValueNode rootValueNode, string rootId, string expression, string errorMessage) {
+			IsRoot = true;
 			Context = context ?? throw new ArgumentNullException(nameof(context));
-			Parent = parent ?? throw new ArgumentNullException(nameof(parent));
-			DbgValueNodeChildIndex = childIndex;
+			this.rootId = rootId;
+			if (rootValueNode == null) {
+				__rawNode_DONT_USE = new ErrorRawNode(expression, errorMessage);
+				IsInvalid = true;
+			}
+			else
+				__rawNode_DONT_USE = new DbgValueRawNode(Context.ValueNodeReader, rootValueNode);
+		}
+
+		public ValueNodeImpl(IValueNodesContext context, RawNode parent, uint childIndex) {
+			IsRoot = false;
+			Context = context ?? throw new ArgumentNullException(nameof(context));
+			__rawNode_DONT_USE = parent.CreateChild(childIndex);
+		}
+
+		// We don't check RawRoot if it's a EditRawNode. We overwrite the RootId with the new expression id so
+		// the node will get reused (the UI node will still have keyboard focus and be selected).
+		internal bool IsEditNode => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && RootId == null;
+
+		internal bool CanEditNameExpression() => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && !Context.IsWindowReadOnly;
+
+		EditableValueTextInfo GetNameExpression() {
+			if (!CanEditNameExpression())
+				throw new InvalidOperationException();
+			var text = Context.ExpressionToEdit;
+			Context.ExpressionToEdit = null;
+			if (text != null)
+				return new EditableValueTextInfo(text, EditValueFlags.None);
+			var output = new StringBuilderTextColorOutput();
+			RawNode.FormatName(output);
+			return new EditableValueTextInfo(output.ToString());
+		}
+
+		void SaveNameExpression(string expression) {
+			if (!CanEditNameExpression())
+				throw new InvalidOperationException();
+			disableHighlightingOnReuse = true;
+			if (IsEditNode) {
+				// Use the new expression's id so the UI node gets re-used
+				rootId = Context.EditValueNodeExpression.AddExpressions(new[] { expression })[0];
+				if (rootId == null)
+					throw new InvalidOperationException();
+			}
+			else
+				Context.EditValueNodeExpression.EditExpression(RootId, expression);
 		}
 
 		string GetEditableValue() {
 			var output = new StringBuilderTextColorOutput();
 			var options = Context.ValueNodeFormatParameters.ValueFormatterOptions & ~DbgValueFormatterOptions.Display;
-			DebuggerValueNode.FormatValue(output, options);
+			RawNode.FormatValue(output, options);
 			return output.ToString();
 		}
 
 		void SaveEditableValue(string expression) {
-			if (DebuggerValueNode.IsReadOnly)
+			if (RawNode.IsReadOnly)
 				throw new InvalidOperationException();
 			var evalOptions = DbgEvaluationOptions.Expression;
-			var res = DebuggerValueNode.Assign(expression, evalOptions);
+			var res = RawNode.Assign(expression, evalOptions);
 			if (res.Error == null)
 				oldCachedValue = cachedValue;
 			ResetForReuse();
@@ -172,25 +239,39 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				Context.ShowMessageBox(res.Error, ShowMessageBoxButtons.OK);
 		}
 
-		public override bool Activate() => valueEditableValue?.IsEditingValue == true;
-		public override void Initialize() => TreeNode.LazyLoading = DebuggerValueNode.HasChildren != false;
+		public override bool Activate() => IsEditingValue();
+		public override void Initialize() => TreeNode.LazyLoading = RawNode.HasChildren != false;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (DebuggerValueNode.HasChildren == false)
+			if (RawNode.HasChildren == false)
 				yield break;
 
-			ulong childCount = DebuggerValueNode.ChildCount;
+			if (IsInvalid) {
+				TreeNode.LazyLoading = RawNode.HasChildren != false;
+				yield break;
+			}
+
+			var childCountTmp = RawNode.ChildCount;
+			cachedChildCount = childCountTmp;
+			if (childCountTmp == null) {
+				TreeNode.LazyLoading = RawNode.HasChildren != false;
+				yield break;
+			}
+
+			var childCount = childCountTmp.Value;
 			if (childCount > MAX_CHILDREN) {
 				bool open = Context.ShowMessageBox(string.Format(dnSpy_Debugger_Resources.Locals_Ask_TooManyItems, MAX_CHILDREN), ShowMessageBoxButtons.YesNo);
 				if (!open) {
-					TreeNode.LazyLoading = DebuggerValueNode.HasChildren != false;
+					TreeNode.LazyLoading = RawNode.HasChildren != false;
 					yield break;
 				}
 				childCount = MAX_CHILDREN;
 			}
+			Debug.Assert(MAX_CHILDREN <= uint.MaxValue);
+			Debug.Assert(childCount <= uint.MaxValue);
 			uint count = (uint)childCount;
 			for (uint i = 0; i < count; i++)
-				yield return new ValueNodeImpl(Context, this, i);
+				yield return new ValueNodeImpl(Context, RawNode, i);
 		}
 
 		void RefreshControls(RefreshNodeOptions options) {
@@ -214,20 +295,68 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		// If it's a new value, then reset everything, else try to re-use it so eg. expanded arrays
 		// or classes don't get collapsed again.
-		internal void SetDebuggerValueNodeForRoot(DbgValueNode newNode) {
-			if (Parent != null)
+		internal void SetDebuggerValueNodeForRoot(DbgValueNodeInfo info) {
+			if (!IsRoot)
 				throw new InvalidOperationException();
-			SetDebuggerValueNode(newNode, recursionCounter: 0);
+			SetDebuggerValueNode(info);
 		}
 
-		bool SetDebuggerValueNode(DbgValueNode newNode, int recursionCounter) {
-			const int MAX_RECURSION = 30;
-			Debug.Assert(newNode != null);
-			var oldNode = __dbgValueNode_DONT_USE;
-			__dbgValueNode_DONT_USE = newNode;
-			oldCachedValue = cachedValue;
+		internal void SetDebuggerValueNode(DbgValueNodeInfo info) {
+			if (info.Node == null) {
+				var newNode = info.CausesSideEffects ? null : new ErrorRawNode(info.Expression, info.ErrorMessage);
+				InvalidateNodes(newNode, recursionCounter: 0);
+			}
+			else
+				SetDebuggerValueNode(new DbgValueRawNode(Context.ValueNodeReader, info.Node), recursionCounter: 0);
+		}
+		const int MAX_TREEVIEW_RECURSION = 30;
 
-			if (recursionCounter >= MAX_RECURSION || !IsSame(oldNode, newNode)) {
+		RawNode CreateNewNode(RawNode newNode) {
+			if (newNode != null)
+				return newNode;
+			if (RawNode is ErrorRawNode errorNode)
+				return errorNode;
+			if (RawNode is CachedRawNode cachedNode)
+				return cachedNode;
+			return new CachedRawNode(RawNode.Expression, RawNode.ImageName, RawNode.HasChildren, cachedChildCount, cachedName, cachedValue, cachedExpectedType, cachedActualType);
+		}
+
+		void InvalidateNodes(RawNode newNode, int recursionCounter) {
+			__rawNode_DONT_USE = CreateNewNode(newNode);
+			oldCachedValue = cachedValue;
+			// Don't show the value as changed if it's an error message
+			if (disableHighlightingOnReuse || __rawNode_DONT_USE is ErrorRawNode)
+				oldCachedValue = default(ClassifiedTextCollection);
+			disableHighlightingOnReuse = false;
+			IsInvalid = true;
+
+			if (recursionCounter >= MAX_TREEVIEW_RECURSION) {
+				ResetForReuse();
+				return;
+			}
+
+			if (TreeNode.Children.Count > 0) {
+				var children = TreeNode.Children;
+				int count = children.Count;
+				for (int i = 0; i < count; i++) {
+					var node = (ValueNodeImpl)children[i].Data;
+					node.InvalidateNodes(null, recursionCounter + 1);
+				}
+			}
+			RefreshAllColumns();
+		}
+
+		bool SetDebuggerValueNode(DebuggerValueRawNode newNode, int recursionCounter) {
+			Debug.Assert(newNode != null);
+			var oldNode = __rawNode_DONT_USE;
+			__rawNode_DONT_USE = newNode;
+			oldCachedValue = cachedValue;
+			if (disableHighlightingOnReuse)
+				oldCachedValue = default(ClassifiedTextCollection);
+			disableHighlightingOnReuse = false;
+			IsInvalid = false;
+
+			if (recursionCounter >= MAX_TREEVIEW_RECURSION || !IsSame(oldNode, newNode)) {
 				ResetForReuse();
 				return false;
 			}
@@ -235,14 +364,25 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (TreeNode.IsExpanded) {
 				var children = TreeNode.Children;
 				// This was checked in IsSame
-				Debug.Assert(oldNode.ChildCount == newNode.ChildCount);
-				Debug.Assert((uint)children.Count <= newNode.ChildCount);
+				Debug.Assert(GetChildCount(oldNode) == GetChildCount(newNode));
+				Debug.Assert((uint)children.Count <= GetChildCount(newNode));
 				int count = children.Count;
 				for (int i = 0; i < count; i++) {
 					var node = (ValueNodeImpl)children[i].Data;
-					if (!node.HasDebuggerValueNode)
+					var rawNode = node.RawNode as ChildDbgValueRawNode;
+					if (rawNode != null && !rawNode.HasDebuggerValueNode) {
+						rawNode.SetParent(newNode, null);
 						continue;
-					var newChildNode = Context.ValueNodeReader.GetDebuggerNodeForReuse(node);
+					}
+
+					var newChildValue = Context.ValueNodeReader.GetDebuggerNodeForReuse(newNode, (uint)i);
+					DebuggerValueRawNode newChildNode;
+					if (rawNode != null) {
+						newChildNode = rawNode;
+						rawNode.SetParent(newNode, newChildValue);
+					}
+					else
+						newChildNode = new ChildDbgValueRawNode(newNode, (uint)i, Context.ValueNodeReader, newChildValue);
 					if (!node.SetDebuggerValueNode(newChildNode, recursionCounter + 1)) {
 						ResetForReuse();
 						return false;
@@ -256,7 +396,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			return true;
 		}
 
-		bool IsSame(DbgValueNode oldNode, DbgValueNode newNode) {
+		bool IsSame(RawNode oldNode, DebuggerValueRawNode newNode) {
 			// If any one of them is null (even if both are null), they're not the same
 			if (oldNode == null || newNode == null)
 				return false;
@@ -265,17 +405,30 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return false;
 			if (oldNode.ImageName != newNode.ImageName)
 				return false;
-			if (oldNode.IsReadOnly != newNode.IsReadOnly)
-				return false;
 			if (oldNode.HasChildren != newNode.HasChildren)
 				return false;
 
 			if (TreeNode.IsExpanded) {
-				if (oldNode.ChildCount != newNode.ChildCount)
+				var oldCount = GetChildCount(oldNode);
+				var newCount = GetChildCount(newNode);
+				// If any one of them is null, it's unknown and never matches the other one even if it's also null
+				if (oldCount == null || newCount == null || oldCount != newCount)
 					return false;
 			}
 
 			return true;
+		}
+
+		static ulong? GetChildCount(RawNode node) => node.HasChildren == false ? 0 : node.ChildCount;
+
+		void RefreshExpression() {
+			if (Context.IsWindowReadOnly)
+				return;
+			var res = Context.ValueNodeReader.Evaluate(RawNode.Expression);
+			if (res.Error != null)
+				SetDebuggerValueNode(new DbgValueNodeInfo(RootId ?? RawNode.Expression, RawNode.Expression, res.Error, res.CausesSideEffects));
+			else
+				SetDebuggerValueNode(new DbgValueNodeInfo(res.ValueNode));
 		}
 
 		void ResetForReuse() {
@@ -284,9 +437,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		void ResetChildren() {
+			cachedChildCount = null;
 			TreeNode.Children.Clear();
-			Debug.Assert(HasDebuggerValueNode);
-			TreeNode.LazyLoading = DebuggerValueNode.HasChildren != false;
+			TreeNode.LazyLoading = RawNode.HasChildren != false;
 		}
 
 		void RefreshAllColumns() {
@@ -299,7 +452,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			TreeNode.RefreshUI();
 		}
 
+		bool IsEditingValue() => nameEditableValue?.IsEditingValue == true || valueEditableValue?.IsEditingValue == true;
+
 		internal void ClearEditingValueProperties() {
+			if (nameEditableValue != null)
+				nameEditableValue.IsEditingValue = false;
 			if (valueEditableValue != null)
 				valueEditableValue.IsEditingValue = false;
 		}

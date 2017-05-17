@@ -21,6 +21,7 @@ using System;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueNodeFactoryImpl : DbgValueNodeFactory {
@@ -35,18 +36,31 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineValueNodeFactory = engineValueNodeFactory ?? throw new ArgumentNullException(nameof(engineValueNodeFactory));
 		}
 
-		public override DbgValueNode Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options) {
+		DbgCreateValueNodeResult CreateResult(DbgStackFrame frame, DbgCreateEngineValueNodeResult result) {
+			if (result.EngineValueNode != null)
+				return new DbgCreateValueNodeResult(new DbgValueNodeImpl(Language, frame.Thread, result.EngineValueNode));
+			return new DbgCreateValueNodeResult(ConvertError(result.Error), result.Error == PredefinedDbgCreateEngineValueNodeResultErrors.ExpressionCausesSideEffects);
+		}
+
+		static string ConvertError(string error) {
+			switch (error) {
+			case PredefinedDbgCreateEngineValueNodeResultErrors.ExpressionCausesSideEffects:
+				return dnSpy_Debugger_Resources.ExpressionCausesSideEffectsNoEval;
+			}
+			return error;
+		}
+
+		public override DbgCreateValueNodeResult Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options) {
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
-			var engineValueNode = engineValueNodeFactory.Create(frame, expression, options);
-			return new DbgValueNodeImpl(Language, frame.Thread, engineValueNode);
+			return CreateResult(frame, engineValueNodeFactory.Create(frame, expression, options));
 		}
 
-		public override void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgValueNode> callback) {
+		public override void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback) {
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.Guid != runtimeGuid)
@@ -55,7 +69,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(expression));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNodeFactory.Create(frame, expression, options, engineValueNode => callback(new DbgValueNodeImpl(Language, frame.Thread, engineValueNode)));
+			engineValueNodeFactory.Create(frame, expression, options, result => callback(CreateResult(frame, result)));
 		}
 	}
 }

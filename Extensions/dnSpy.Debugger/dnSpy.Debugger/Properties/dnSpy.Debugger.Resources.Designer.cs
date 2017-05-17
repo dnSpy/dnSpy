@@ -754,6 +754,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear All.
+        /// </summary>
+        public static string ClearAllCommand {
+            get {
+                return ResourceManager.GetString("ClearAllCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Address.
         /// </summary>
         public static string Column_Address {
@@ -1978,6 +1987,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Delete Watch.
+        /// </summary>
+        public static string DeleteWatchCommand {
+            get {
+                return ResourceManager.GetString("DeleteWatchCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Detach A_ll.
         /// </summary>
         public static string DetachAllCommand {
@@ -2467,6 +2485,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t evaluate the expression.
+        /// </summary>
+        public static string ErrorEvaluatingExpression {
+            get {
+                return ResourceManager.GetString("ErrorEvaluatingExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred:
         ///
         ///{0}.
@@ -2732,6 +2759,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ExportSelectedCommand {
             get {
                 return ResourceManager.GetString("ExportSelectedCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This expression causes side effects and will not be evaluated.
+        /// </summary>
+        public static string ExpressionCausesSideEffectsNoEval {
+            get {
+                return ResourceManager.GetString("ExpressionCausesSideEffectsNoEval", resourceCulture);
             }
         }
         
@@ -3523,6 +3559,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Paste.
+        /// </summary>
+        public static string PasteCommand {
+            get {
+                return ResourceManager.GetString("PasteCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Debugger.
         /// </summary>
         public static string Plugin_ShortDescription {
@@ -3663,6 +3708,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ProcessIsNotPaused {
             get {
                 return ResourceManager.GetString("ProcessIsNotPaused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click this button to evaluate now..
+        /// </summary>
+        public static string RefreshExpressionButtonToolTip {
+            get {
+                return ResourceManager.GetString("RefreshExpressionButtonToolTip", resourceCulture);
             }
         }
         
@@ -4086,6 +4140,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyCtrlShiftF9 {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlShiftF9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+V.
+        /// </summary>
+        public static string ShortCutKeyCtrlV {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlV", resourceCulture);
             }
         }
         

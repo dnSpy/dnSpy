@@ -26,6 +26,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Utilities;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class VariablesWindowCtxMenuContext {
@@ -61,14 +62,29 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanCopy(context.VM);
 	}
 
-	// Order = 10: Paste (watch window)
+	[ExportMenuItem(Header = "res:PasteCommand", Icon = DsImagesAttribute.Paste, InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_COPY, Order = 10)]
+	sealed class PasteVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
+		[ImportingConstructor]
+		PasteVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
+		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.Paste(context.VM);
+		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanPaste(context.VM);
+		public override bool IsVisible(VariablesWindowCtxMenuContext context) => context.Operations.SupportsPaste(context.VM);
+	}
 
-	[ExportMenuItem(Header = "res:LocalsEditValueCommand", InputGestureText = "res:ShortCutKeyF2", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 0)]
+	[ExportMenuItem(Header = "res:LocalsEditValueCommand", Icon = DsImagesAttribute.Edit, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 0)]
 	sealed class EditValueVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
 		[ImportingConstructor]
 		EditValueVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
 		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.EditValue(context.VM);
 		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanEditValue(context.VM);
+		public override string GetInputGestureText(VariablesWindowCtxMenuContext context) {
+			switch (context.VM.VariablesWindowKind) {
+			case VariablesWindowKind.Locals: return dnSpy_Debugger_Resources.ShortCutKeyF2;
+			case VariablesWindowKind.Autos: return dnSpy_Debugger_Resources.ShortCutKeyF2;
+			case VariablesWindowKind.Watch: return null;
+			default: throw new InvalidOperationException();
+			}
+		}
 	}
 
 	[ExportMenuItem(Header = "res:LocalsCopyValueCommand", InputGestureText = "res:ShortCutKeyCtrlShiftC", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 10)]
@@ -88,7 +104,15 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	// Order = 30: Add _Parallel Watch
-	// Order = 40: _Delete Watch (watch window)
+
+	[ExportMenuItem(Header = "res:DeleteWatchCommand", Icon = DsImagesAttribute.DeleteWatch, InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 40)]
+	sealed class DeleteWatchVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
+		[ImportingConstructor]
+		DeleteWatchVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
+		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.DeleteWatch(context.VM);
+		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanDeleteWatch(context.VM);
+		public override bool IsVisible(VariablesWindowCtxMenuContext context) => context.Operations.SupportsDeleteWatch(context.VM);
+	}
 
 	[ExportMenuItem(Header = "res:MakeObjectIdCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 50)]
 	sealed class MakeObjectIdVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
@@ -166,7 +190,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		[ImportingConstructor]
 		LanguageVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
 		public override void Execute(VariablesWindowCtxMenuContext context) { }
-		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.GetLanguages(context.VM).Count > 0;
+		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.GetLanguages(context.VM).Any(a => a.Name != PredefinedDbgLanguageNames.None);
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.LANGUAGE_GUID, Group = Constants.GROUP_LANGUAGE, Order = 0)]
@@ -215,7 +239,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanSelectAll(context.VM);
 	}
 
-	// Order = 10010: Clear Al_l (watch window)
+	[ExportMenuItem(Header = "res:ClearAllCommand", Icon = DsImagesAttribute.ClearWindowContent, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 10010)]
+	sealed class ClearAllVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
+		[ImportingConstructor]
+		ClearAllVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
+		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.ClearAll(context.VM);
+		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanClearAll(context.VM);
+		public override bool IsVisible(VariablesWindowCtxMenuContext context) => context.Operations.SupportsClearAll(context.VM);
+	}
 
 	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_HEXOPTS, Order = 0)]
 	sealed class UseHexadecimalCallStackCtxMenuCommand : VariablesWindowCtxMenuCommand {

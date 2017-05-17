@@ -81,6 +81,8 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		protected abstract string GetWindowTitle(int windowIndex);
 		protected abstract Lazy<IVariablesWindowContent> CreateVariablesWindowContent(int windowIndex);
 
+		public Guid GetWindowGuid(int index) => contents[index].Guid;
+
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get {
 				for (int i = 0; i < contents.Length; i++) {

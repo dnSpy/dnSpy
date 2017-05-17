@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		Expression					= 0x00000001,
 
 		/// <summary>
-		/// Fail if the expression has side effects, eg. method calls
+		/// Fail if the expression causes side effects, eg. method calls
 		/// </summary>
 		NoSideEffects				= 0x00000002,
 
@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		None						= 0,
 
 		/// <summary>
-		/// The expression has side effects
+		/// The expression causes side effects
 		/// </summary>
 		SideEffects					= 0x00000001,
 

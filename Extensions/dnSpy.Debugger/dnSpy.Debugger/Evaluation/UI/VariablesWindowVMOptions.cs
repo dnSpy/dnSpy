@@ -24,7 +24,16 @@ using dnSpy.Debugger.Evaluation.ViewModel;
 
 namespace dnSpy.Debugger.Evaluation.UI {
 	abstract class VariablesWindowValueNodesProvider {
-		public abstract DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame);
+		public abstract DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options);
+
+		/// <summary>
+		/// true if root nodes can be added/deleted (supported by watch window)
+		/// </summary>
+		public virtual bool CanAddRemoveExpressions => false;
+		public virtual void DeleteExpressions(string[] ids) => throw new NotSupportedException();
+		public virtual void ClearAllExpressions() => throw new NotSupportedException();
+		public virtual void EditExpression(string id, string expression) => throw new NotSupportedException();
+		public virtual string[] AddExpressions(string[] expressions) => throw new NotSupportedException();
 	}
 
 	sealed class VariablesWindowVMOptions {

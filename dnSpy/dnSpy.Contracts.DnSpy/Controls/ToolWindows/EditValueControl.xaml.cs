@@ -146,7 +146,8 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 			DisposeEditValue();
 			Debug.Assert(editValue == null);
-			editValue = EditValueProvider?.Create(editableValue.Text ?? string.Empty);
+			var info = editableValue.GetText();
+			editValue = EditValueProvider?.Create(info.Text, info.Flags);
 			if (editValue == null) {
 				CancelEdit(editableValue);
 				return;
@@ -215,7 +216,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 				return;
 			if (e.NewText == null)
 				return;
-			editableValue.Text = e.NewText;
+			editableValue.SetText(e.NewText);
 		}
 	}
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
