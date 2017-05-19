@@ -41,6 +41,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract void EditExpression(IValueNodesVM vm, string text);
 		public abstract bool CanEditValue(IValueNodesVM vm);
 		public abstract void EditValue(IValueNodesVM vm);
+		public abstract void EditValue(IValueNodesVM vm, string text);
 		public abstract bool CanCopyValue(IValueNodesVM vm);
 		public abstract void CopyValue(IValueNodesVM vm);
 		public abstract bool CanAddWatch(IValueNodesVM vm);

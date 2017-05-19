@@ -26,6 +26,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Evaluation.ViewModel;
+using dnSpy.Debugger.Evaluation.ViewModel.Impl;
 
 namespace dnSpy.Debugger.Evaluation.UI {
 	sealed partial class VariablesWindowControl : UserControl {
@@ -68,10 +69,20 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var text = e.Text;
 			if (text.Length == 0 || (text.Length == 1 && (text[0] == '\u001B' || text[0] == '\b')))
 				return;
-			if (!variablesWindowOperations.Value.CanEditExpression(vm.VM))
-				return;
-			e.Handled = true;
-			variablesWindowOperations.Value.EditExpression(vm.VM, text);
+			if (vm.VM.CanAddRemoveExpressions) {
+				// watch windows
+				if (!variablesWindowOperations.Value.CanEditExpression(vm.VM))
+					return;
+				e.Handled = true;
+				variablesWindowOperations.Value.EditExpression(vm.VM, text);
+			}
+			else {
+				// autos, locals windows
+				if (!variablesWindowOperations.Value.CanEditValue(vm.VM))
+					return;
+				e.Handled = true;
+				variablesWindowOperations.Value.EditValue(vm.VM, text);
+			}
 		}
 	}
 }

@@ -157,7 +157,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override IEditableValue ValueEditableValue {
 			get {
 				if (valueEditableValue == null)
-					valueEditableValue = new EditableValueImpl(() => GetEditableValue(), s => SaveEditableValue(s), () => !RawNode.IsReadOnly && !Context.IsWindowReadOnly);
+					valueEditableValue = new EditableValueImpl(() => GetEditableValue(), s => SaveEditableValue(s), () => CanEditValue());
 				return valueEditableValue;
 			}
 		}
@@ -233,15 +233,23 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				Context.EditValueNodeExpression.EditExpression(RootId, expression);
 		}
 
-		string GetEditableValue() {
+		internal bool CanEditValue() => !RawNode.IsReadOnly && !Context.IsWindowReadOnly;
+
+		EditableValueTextInfo GetEditableValue() {
+			if (!CanEditValue())
+				throw new InvalidOperationException();
+			var text = Context.ExpressionToEdit;
+			Context.ExpressionToEdit = null;
+			if (text != null)
+				return new EditableValueTextInfo(text, EditValueFlags.None);
 			var output = new StringBuilderTextColorOutput();
 			var options = Context.ValueNodeFormatParameters.ValueFormatterOptions & ~DbgValueFormatterOptions.Display;
 			RawNode.FormatValue(output, options);
-			return output.ToString();
+			return new EditableValueTextInfo(output.ToString());
 		}
 
 		void SaveEditableValue(string expression) {
-			if (RawNode.IsReadOnly)
+			if (!CanEditValue())
 				throw new InvalidOperationException();
 			var evalOptions = DbgEvaluationOptions.Expression;
 			var res = RawNode.Assign(expression, evalOptions);

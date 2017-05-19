@@ -162,6 +162,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 		}
 
+		// UI thread
 		ValueNodeImpl TryGetEditNode() {
 			var children = rootNode.TreeNode.Children;
 			if (children.Count == 0)

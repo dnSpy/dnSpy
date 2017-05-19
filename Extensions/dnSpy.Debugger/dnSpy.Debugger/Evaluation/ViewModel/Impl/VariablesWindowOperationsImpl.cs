@@ -256,7 +256,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			node.NameEditableValue.IsEditingValue = true;
 		}
 
-		public override bool CanEditValue(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNode(vm)?.RawNode.IsReadOnly == false;
+		public override bool CanEditValue(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNode(vm)?.CanEditValue() == true;
 		public override void EditValue(IValueNodesVM vm) {
 			if (!CanEditValue(vm))
 				return;
@@ -264,6 +264,19 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (node == null || node.RawNode.IsReadOnly)
 				return;
 			node.ClearEditingValueProperties();
+			node.ValueEditableValue.IsEditingValue = true;
+		}
+
+		public override void EditValue(IValueNodesVM vm, string text) {
+			if (text == null)
+				throw new ArgumentNullException(nameof(text));
+			if (!CanEditValue(vm))
+				return;
+			var node = SelectedNode(vm);
+			if (node == null || node.RawNode.IsReadOnly)
+				return;
+			node.ClearEditingValueProperties();
+			node.Context.ExpressionToEdit = text;
 			node.ValueEditableValue.IsEditingValue = true;
 		}
 
