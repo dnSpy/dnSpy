@@ -253,6 +253,7 @@
     <Compile Include="ToolWindows\Watch\WatchContentFactory.cs" />
     <Compile Include="ToolWindows\Watch\WatchToolWindowContent.cs" />
     <Compile Include="ToolWindows\Watch\WatchVariablesWindowValueNodesProvider.cs" />
+    <Compile Include="ToolWindows\Watch\WatchWindowExpressionsSettings.cs" />
     <Compile Include="ToolWindows\Watch\WatchWindowsHelper.cs" />
     <Compile Include="UI\BulkObservableCollection.cs" />
     <Compile Include="UI\FormatterObject.cs" />

@@ -36,11 +36,13 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 	[Export(typeof(WatchVariablesWindowValueNodesProviderService))]
 	sealed class WatchVariablesWindowValueNodesProviderServiceImpl : WatchVariablesWindowValueNodesProviderService {
 		readonly UIDispatcher uiDispatcher;
+		readonly Lazy<WatchWindowExpressionsSettings> watchWindowExpressionsSettings;
 		readonly WatchVariablesWindowValueNodesProvider[] providers;
 
 		[ImportingConstructor]
-		WatchVariablesWindowValueNodesProviderServiceImpl(UIDispatcher uiDispatcher) {
+		WatchVariablesWindowValueNodesProviderServiceImpl(UIDispatcher uiDispatcher, Lazy<WatchWindowExpressionsSettings> watchWindowExpressionsSettings) {
 			this.uiDispatcher = uiDispatcher;
+			this.watchWindowExpressionsSettings = watchWindowExpressionsSettings;
 			providers = new WatchVariablesWindowValueNodesProvider[WatchWindowsHelper.NUMBER_OF_WATCH_WINDOWS];
 		}
 
@@ -50,8 +52,8 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 				throw new ArgumentOutOfRangeException(nameof(windowIndex));
 			var provider = providers[windowIndex];
 			if (provider == null) {
-				var savedExpressions = Array.Empty<string>();
-				provider = new WatchVariablesWindowValueNodesProviderImpl(savedExpressions);
+				var savedExpressions = watchWindowExpressionsSettings.Value.GetExpressions(windowIndex);
+				provider = new WatchVariablesWindowValueNodesProviderImpl(savedExpressions, expressions => watchWindowExpressionsSettings.Value.SetExpressions(windowIndex, expressions));
 				providers[windowIndex] = provider;
 			}
 			return provider;
@@ -68,6 +70,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 
 	sealed class WatchVariablesWindowValueNodesProviderImpl : WatchVariablesWindowValueNodesProvider {
 		readonly List<ExpressionInfo> expressions;
+		readonly Action<string[]> saveExpressions;
 		uint nextId;
 
 		sealed class ExpressionInfo {
@@ -82,8 +85,10 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			}
 		}
 
-		public WatchVariablesWindowValueNodesProviderImpl(string[] savedExpressions) =>
+		public WatchVariablesWindowValueNodesProviderImpl(string[] savedExpressions, Action<string[]> saveExpressions) {
 			expressions = new List<ExpressionInfo>(savedExpressions.Select(a => new ExpressionInfo(GetNextId(), a, forceEval: false)));
+			this.saveExpressions = saveExpressions ?? throw new ArgumentNullException(nameof(saveExpressions));
+		}
 
 		// The returned id is unique and also sortable (unless it overflows...)
 		string GetNextId() => nextId++.ToString("X8");
@@ -159,8 +164,6 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			OnExpressionsChanged();
 		}
 
-		void OnExpressionsChanged() {
-			//TODO: Save expressions
-		}
+		void OnExpressionsChanged() => saveExpressions(expressions.Select(a => a.Expression).ToArray());
 	}
 }
