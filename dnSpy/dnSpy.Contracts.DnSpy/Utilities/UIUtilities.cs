@@ -95,8 +95,18 @@ namespace dnSpy.Contracts.Utilities {
 				item = selector.ItemContainerGenerator.ContainerFromItem(selector.SelectedItem) as IInputElement;
 			if (item != null)
 				focused = item.Focus();
-			if (!focused)
+			if (!focused) {
 				selector.Focus();
+				// Needed by eg. locals window. We have to wait until the item is visible.
+				if (item is UIElement ui && !ui.IsVisible)
+					ui.IsVisibleChanged += UIElement_IsVisibleChanged;
+			}
+		}
+
+		static void UIElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			var ui = (UIElement)sender;
+			ui.IsVisibleChanged -= UIElement_IsVisibleChanged;
+			ui.Focus();
 		}
 
 		/// <summary>
