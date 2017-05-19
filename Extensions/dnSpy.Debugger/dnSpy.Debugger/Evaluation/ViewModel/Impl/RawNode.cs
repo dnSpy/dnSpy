@@ -108,10 +108,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				WriteTo(options.ActualTypeOutput, CachedActualType);
 		}
 
-		public sealed override void FormatName(ITextColorWriter output) => WriteTo(output, CachedName, Expression);
+		public sealed override void FormatName(ITextColorWriter output) => WriteTo(output, CachedName, string.IsNullOrEmpty(Expression) ? UNKNOWN : Expression);
 		public sealed override void FormatValue(ITextColorWriter output, DbgValueFormatterOptions options) => WriteTo(output, CachedValue);
 
-		static void WriteTo(ITextColorWriter output, ClassifiedTextCollection coll, string unknownText = "???") {
+		const string UNKNOWN = "???";
+		static void WriteTo(ITextColorWriter output, ClassifiedTextCollection coll, string unknownText = UNKNOWN) {
 			if (coll.IsDefault) {
 				output.Write(BoxedTextColor.Error, unknownText);
 				return;
