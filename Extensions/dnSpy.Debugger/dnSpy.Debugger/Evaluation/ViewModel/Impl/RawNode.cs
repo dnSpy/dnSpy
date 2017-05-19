@@ -33,13 +33,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		/// data hasn't been read yet, this property returns false. This is used to prevent reading the
 		/// underlying data when re-using nodes.
 		/// </summary>
-		public abstract bool HasInitializedUnderlyingData { get; }
+		public virtual bool HasInitializedUnderlyingData => true;
 		public abstract string Expression { get; }
 		public abstract string ImageName { get; }
 		public abstract bool IsReadOnly { get; }
 		public abstract bool? HasChildren { get; }
 		public abstract ulong? ChildCount { get; }
-		public virtual RawNode CreateChild(uint index) => throw new NotSupportedException();
+		public virtual RawNode CreateChild(Action<ChildDbgValueRawNode, object> debuggerValueNodeChanged, object debuggerValueNodeChangedData, uint index) => throw new NotSupportedException();
 		public abstract void Format(IDbgValueNodeFormatParameters options);
 		public abstract void FormatName(ITextColorWriter output);
 		public abstract void FormatValue(ITextColorWriter output, DbgValueFormatterOptions options);
@@ -47,7 +47,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class EditRawNode : RawNode {
-		public override bool HasInitializedUnderlyingData => true;
 		public override string Expression => string.Empty;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Edit;
 		public override bool IsReadOnly => true;
@@ -60,7 +59,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class ErrorRawNode : RawNode {
-		public override bool HasInitializedUnderlyingData => true;
 		public string ErrorMessage => errorMessage;
 		public override string Expression => expression;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
@@ -127,11 +125,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public static readonly EmptyCachedRawNode Instance = new EmptyCachedRawNode();
 		EmptyCachedRawNode() { }
 
-		public override bool HasInitializedUnderlyingData => false;
 		public override string Expression => string.Empty;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
-		public override bool? HasChildren => null;
-		public override ulong? ChildCount => null;
+		// We pretend it doesn't have any children. This will also prevent the treeview node expander to be shown.
+		public override bool? HasChildren => false;
+		public override ulong? ChildCount => 0;
 
 		protected override ClassifiedTextCollection CachedName => default(ClassifiedTextCollection);
 		protected override ClassifiedTextCollection CachedValue => default(ClassifiedTextCollection);
@@ -140,7 +138,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class CachedRawNode : CachedRawNodeBase {
-		public override bool HasInitializedUnderlyingData => true;
 		public override string Expression { get; }
 		public override string ImageName { get; }
 		public override bool? HasChildren { get; }
@@ -179,7 +176,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		protected DebuggerValueRawNode(DbgValueNodeReader reader) => this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-		public override RawNode CreateChild(uint index) => new ChildDbgValueRawNode(this, index, reader);
+		public override RawNode CreateChild(Action<ChildDbgValueRawNode, object> debuggerValueNodeChanged, object debuggerValueNodeChangedData, uint index) =>
+			new ChildDbgValueRawNode(debuggerValueNodeChanged, debuggerValueNodeChangedData, this, index, reader);
 		public override void Format(IDbgValueNodeFormatParameters options) => DebuggerValueNode.Format(options);
 		public override void FormatName(ITextColorWriter output) => DebuggerValueNode.FormatName(output);
 		public override void FormatValue(ITextColorWriter output, DbgValueFormatterOptions options) => DebuggerValueNode.FormatValue(output, options);
@@ -191,7 +189,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	/// it got refreshed (user pressed the Refresh icon).
 	/// </summary>
 	sealed class DbgValueRawNode : DebuggerValueRawNode {
-		public override bool HasInitializedUnderlyingData => true;
 		internal override DbgValueNode DebuggerValueNode { get; }
 		public DbgValueRawNode(DbgValueNodeReader reader, DbgValueNode valueNode)
 			: base(reader) => DebuggerValueNode = valueNode ?? throw new ArgumentNullException(nameof(valueNode));
@@ -205,23 +202,31 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		internal override DbgValueNode DebuggerValueNode {
 			get {
 				var dbgNode = __dbgValueNode_DONT_USE;
-				if (dbgNode == null)
+				if (dbgNode == null) {
 					__dbgValueNode_DONT_USE = dbgNode = reader.GetDebuggerNode(this);
+					debuggerValueNodeChanged(this, debuggerValueNodeChangedData);
+				}
 				return dbgNode;
 			}
 		}
 		DbgValueNode __dbgValueNode_DONT_USE;
 
 		DebuggerValueRawNode parent;
+		readonly Action<ChildDbgValueRawNode, object> debuggerValueNodeChanged;
+		readonly object debuggerValueNodeChangedData;
 
-		public ChildDbgValueRawNode(DebuggerValueRawNode parent, uint dbgValueNodeChildIndex, DbgValueNodeReader reader)
+		public ChildDbgValueRawNode(Action<ChildDbgValueRawNode, object> debuggerValueNodeChanged, object debuggerValueNodeChangedData, DebuggerValueRawNode parent, uint dbgValueNodeChildIndex, DbgValueNodeReader reader)
 			: base(reader) {
+			this.debuggerValueNodeChanged = debuggerValueNodeChanged ?? throw new ArgumentNullException(nameof(debuggerValueNodeChanged));
+			this.debuggerValueNodeChangedData = debuggerValueNodeChangedData;
 			this.parent = parent ?? throw new ArgumentNullException(nameof(parent));
 			DbgValueNodeChildIndex = dbgValueNodeChildIndex;
 		}
 
-		public ChildDbgValueRawNode(DebuggerValueRawNode parent, uint dbgValueNodeChildIndex, DbgValueNodeReader reader, DbgValueNode value)
+		public ChildDbgValueRawNode(Action<ChildDbgValueRawNode, object> debuggerValueNodeChanged, object debuggerValueNodeChangedData, DebuggerValueRawNode parent, uint dbgValueNodeChildIndex, DbgValueNodeReader reader, DbgValueNode value)
 			: base(reader) {
+			this.debuggerValueNodeChanged = debuggerValueNodeChanged ?? throw new ArgumentNullException(nameof(debuggerValueNodeChanged));
+			this.debuggerValueNodeChangedData = debuggerValueNodeChangedData;
 			this.parent = parent ?? throw new ArgumentNullException(nameof(parent));
 			DbgValueNodeChildIndex = dbgValueNodeChildIndex;
 			__dbgValueNode_DONT_USE = value ?? throw new ArgumentNullException(nameof(value));

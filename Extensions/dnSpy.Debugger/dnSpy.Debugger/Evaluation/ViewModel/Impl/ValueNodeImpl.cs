@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public ValueNodeImpl(IValueNodesContext context, RawNode parent, uint childIndex) {
 			IsRoot = false;
 			Context = context ?? throw new ArgumentNullException(nameof(context));
-			__rawNode_DONT_USE = parent.CreateChild(childIndex);
+			__rawNode_DONT_USE = parent.CreateChild(debuggerValueNodeChanged, this, childIndex);
 		}
 
 		// We don't check RawRoot if it's a EditRawNode. We overwrite the RootId with the new expression id so
@@ -240,21 +240,44 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override bool Activate() => IsEditingValue();
-		public override void Initialize() => TreeNode.LazyLoading = RawNode.HasChildren != false;
+		public override void Initialize() => ResetLazyLoading();
+
+		void ResetLazyLoading() {
+			if (RawNode.HasInitializedUnderlyingData)
+				TreeNode.LazyLoading = RawNode.HasChildren != false;
+			else {
+				// The underlying DbgValueNode hasn't been read yet and we must not read it now (eg. it
+				// could be a child of a large array or a class with lots of properties/fields).
+				// Whenever it has read its value, it will notify us and we'll update LazyLoading.
+				TreeNode.LazyLoading = true;
+			}
+		}
+
+		// To minimize allocations we use a static delegate and pass in 'this' to the delegate
+		static readonly Action<ChildDbgValueRawNode, object> debuggerValueNodeChanged = OnDebuggerValueNodeChanged;
+		static void OnDebuggerValueNodeChanged(ChildDbgValueRawNode rawNode, object obj) {
+			if (!rawNode.HasInitializedUnderlyingData)
+				throw new InvalidOperationException();
+			var self = (ValueNodeImpl)obj;
+			if (rawNode != self.RawNode)
+				throw new InvalidOperationException();
+			self.ResetLazyLoading();
+		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
+			Debug.Assert(RawNode.HasInitializedUnderlyingData);
 			if (RawNode.HasChildren == false)
 				yield break;
 
 			if (IsInvalid) {
-				TreeNode.LazyLoading = RawNode.HasChildren != false;
+				ResetLazyLoading();
 				yield break;
 			}
 
 			var childCountTmp = RawNode.ChildCount;
 			cachedChildCount = childCountTmp;
 			if (childCountTmp == null) {
-				TreeNode.LazyLoading = RawNode.HasChildren != false;
+				ResetLazyLoading();
 				yield break;
 			}
 
@@ -262,7 +285,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (childCount > MAX_CHILDREN) {
 				bool open = Context.ShowMessageBox(string.Format(dnSpy_Debugger_Resources.Locals_Ask_TooManyItems, MAX_CHILDREN), ShowMessageBoxButtons.YesNo);
 				if (!open) {
-					TreeNode.LazyLoading = RawNode.HasChildren != false;
+					ResetLazyLoading();
 					yield break;
 				}
 				childCount = MAX_CHILDREN;
@@ -384,7 +407,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 						// We have to create a new one here and can't reuse the existing ChildDbgValueRawNode by
 						// calling its SetParent() method. Otherwise IsSame() above will compare the same
 						// reference against itself.
-						var newChildRawNode = new ChildDbgValueRawNode(newNode, childRawNode.DbgValueNodeChildIndex, Context.ValueNodeReader, newChildValue);
+						var newChildRawNode = new ChildDbgValueRawNode(debuggerValueNodeChanged, childNode, newNode, childRawNode.DbgValueNodeChildIndex, Context.ValueNodeReader, newChildValue);
 						if (!childNode.SetDebuggerValueNode(newChildRawNode, recursionCounter + 1)) {
 							ResetForReuse();
 							return false;
@@ -395,12 +418,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 						if (childRawNode != null)
 							childRawNode.SetParent(newNode, null);
 						else
-							childNode.__rawNode_DONT_USE = new ChildDbgValueRawNode(newNode, (uint)i, Context.ValueNodeReader);
+							childNode.__rawNode_DONT_USE = new ChildDbgValueRawNode(debuggerValueNodeChanged, childNode, newNode, (uint)i, Context.ValueNodeReader);
 						childNode.oldCachedValue = childNode.cachedValue;
 						if (childNode.disableHighlightingOnReuse)
 							childNode.oldCachedValue = default(ClassifiedTextCollection);
 						childNode.disableHighlightingOnReuse = false;
-						IsInvalid = false;
+						childNode.IsInvalid = false;
 						childNode.ResetForReuse();
 					}
 				}
@@ -416,6 +439,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			// If any one of them is null (even if both are null), they're not the same
 			if (oldNode == null || newNode == null)
 				return false;
+
+			Debug.Assert(oldNode.HasInitializedUnderlyingData);
+			Debug.Assert(newNode.HasInitializedUnderlyingData);
 
 			if (oldNode.Expression != newNode.Expression)
 				return false;
@@ -455,7 +481,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void ResetChildren() {
 			cachedChildCount = null;
 			TreeNode.Children.Clear();
-			TreeNode.LazyLoading = RawNode.HasChildren != false;
+			ResetLazyLoading();
 		}
 
 		void RefreshAllColumns() {

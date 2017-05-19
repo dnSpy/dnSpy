@@ -38,7 +38,11 @@ namespace dnSpy.TreeView {
 		public bool IsReadOnly => false;
 
 		public void Add(ITreeNode item) => node.Children.Add(GetAndVerifyTreeNodeImpl(item).Node);
-		public void Clear() => node.Children.Clear();
+
+		public void Clear() {
+			if (node.Children.Count != 0)
+				node.Children.Clear();
+		}
 
 		public bool Contains(ITreeNode item) {
 			if (item == null)
