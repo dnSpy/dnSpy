@@ -459,10 +459,18 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		void RefreshAllColumns() {
+			// We can't check PropertyChanged if it's null since it can be non-null even if this
+			// node isn't visible on the screen.
+			if (cachedName.IsDefault && cachedValue.IsDefault && cachedExpectedType.IsDefault) {
+				// All cached values are default so there's no reason to clear them
+				return;
+			}
+
 			Context.RefreshNodeOptions =
 				RefreshNodeOptions.RefreshName | RefreshNodeOptions.RefreshNameControl |
 				RefreshNodeOptions.RefreshValue | RefreshNodeOptions.RefreshValueControl |
 				RefreshNodeOptions.RefreshType | RefreshNodeOptions.RefreshTypeControl;
+
 			// Need to call it to refresh the icon (could've changed). It will call OnRefreshUI()
 			// which uses the options init'd above
 			TreeNode.RefreshUI();
