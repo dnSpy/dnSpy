@@ -35,7 +35,10 @@ namespace dnSpy.Debugger.UI.Wpf {
 			var newValue = (TextBlockContentInfo)e.NewValue;
 			if (oldValue == newValue)
 				return;
-			((SmartTextBlock)d).Content = newValue?.TextElementFactory.Create(newValue.ClassificationFormatMap, newValue.Text, newValue.Tags, newValue.TextElementFlags);
+			var newContent = newValue?.TextElementFactory.Create(newValue.ClassificationFormatMap, newValue.Text, newValue.Tags, newValue.TextElementFlags);
+			if (newContent != null && newValue.Opacity != 1.0)
+				newContent.Opacity = newValue.Opacity;
+			((SmartTextBlock)d).Content = newContent;
 		}
 
 		public TextBlockContentInfo ContentInfo {

@@ -126,13 +126,18 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string RootId => rootId;
 		string rootId;
 
+		public bool IsDisabled => IsInvalid || Context.IsWindowReadOnly;
+
 		public override bool IsInvalid {
 			get => isInvalid;
 			protected set {
 				if (isInvalid == value)
 					return;
+				bool oldIsDisabled = IsDisabled;
 				isInvalid = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsInvalid)));
+				if (oldIsDisabled != IsDisabled)
+					RefreshAllColumns();
 			}
 		}
 		bool isInvalid;

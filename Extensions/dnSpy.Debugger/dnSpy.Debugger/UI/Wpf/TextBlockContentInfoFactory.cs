@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 			toAggregator = new Dictionary<IContentType, ITextClassifierAggregator>();
 		}
 
-		public TextBlockContentInfo Create(int version, IClassificationFormatMap classificationFormatMap, TextClassifierContext context, string contentType, TextElementFlags flags) {
+		public TextBlockContentInfo Create(int version, IClassificationFormatMap classificationFormatMap, TextClassifierContext context, string contentType, TextElementFlags flags, double opacity) {
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (context == null)
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 				toAggregator.Add(ct, aggregator = textClassifierAggregatorService.Create(ct));
 
 			var tags = aggregator.GetTags(context).ToArray();
-			return new TextBlockContentInfo(textElementFactory, version, classificationFormatMap, context.Text, tags, flags);
+			return new TextBlockContentInfo(textElementFactory, version, classificationFormatMap, context.Text, tags, flags, opacity);
 		}
 	}
 }

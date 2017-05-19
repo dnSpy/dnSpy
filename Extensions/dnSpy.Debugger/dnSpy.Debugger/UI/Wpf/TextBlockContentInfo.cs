@@ -36,6 +36,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 		public string Text { get; }
 		public TextClassificationTag[] Tags { get; }
 		public TextElementFlags TextElementFlags { get; }
+		public double Opacity { get; }
 
 		/// <summary>
 		/// Constructor
@@ -46,13 +47,15 @@ namespace dnSpy.Debugger.UI.Wpf {
 		/// <param name="text"></param>
 		/// <param name="tags"></param>
 		/// <param name="textElementFlags"></param>
-		public TextBlockContentInfo(ITextElementFactory textElementFactory, int version, IClassificationFormatMap classificationFormatMap, string text, TextClassificationTag[] tags, TextElementFlags textElementFlags) {
+		/// <param name="opacity"></param>
+		public TextBlockContentInfo(ITextElementFactory textElementFactory, int version, IClassificationFormatMap classificationFormatMap, string text, TextClassificationTag[] tags, TextElementFlags textElementFlags, double opacity) {
 			TextElementFactory = textElementFactory ?? throw new ArgumentNullException(nameof(textElementFactory));
 			Version = version;
 			ClassificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			Text = text ?? throw new ArgumentNullException(nameof(text));
 			Tags = tags ?? throw new ArgumentNullException(nameof(tags));
 			TextElementFlags = textElementFlags;
+			Opacity = opacity;
 		}
 
 		public static bool operator !=(TextBlockContentInfo left, TextBlockContentInfo right) => !(left == right);
@@ -71,7 +74,8 @@ namespace dnSpy.Debugger.UI.Wpf {
 			ClassificationFormatMap == other.ClassificationFormatMap &&
 			Text == other.Text &&
 			CompareTags(Tags, other.Tags) &&
-			TextElementFlags == other.TextElementFlags;
+			TextElementFlags == other.TextElementFlags &&
+			Opacity == other.Opacity;
 
 		static bool CompareTags(TextClassificationTag[] a, TextClassificationTag[] b) {
 			if (a == b)
@@ -99,6 +103,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 			hc ^= Text.GetHashCode();
 			hc ^= Tags.Length == 0 ? 0 : Tags[0].Span.GetHashCode() ^ Tags[0].ClassificationType.GetHashCode();
 			hc ^= (int)TextElementFlags;
+			hc ^= Opacity.GetHashCode();
 			return hc;
 		}
 	}

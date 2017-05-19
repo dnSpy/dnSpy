@@ -33,7 +33,8 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				return null;
 			bool isToolTip = parameter is string paramString && paramString == "ToolTip";
 
-			var nodeCtx = ((ValueNodeImpl)obj.VM).Context;
+			var node = (ValueNodeImpl)obj.VM;
+			var nodeCtx = node.Context;
 			var writer = nodeCtx.TextClassifierTextColorWriter;
 			writer.Clear();
 			var formatter = nodeCtx.Formatter;
@@ -51,7 +52,9 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				textChanged = false;
 			var context = new ValueNodeTextClassifierContext(textChanged, writer.Text, obj.Tag, nodeCtx.SyntaxHighlight, writer.Colors);
 			var flags = isToolTip ? TextElementFlags.Wrap : TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis;
-			return nodeCtx.TextBlockContentInfoFactory.Create(nodeCtx.UIVersion, nodeCtx.ClassificationFormatMap, context, nodeCtx.WindowContentType, flags);
+			const double DISABLED_OPACITY = 0.5;
+			double opacity = !isToolTip && node.IsDisabled ? DISABLED_OPACITY : 1.0;
+			return nodeCtx.TextBlockContentInfoFactory.Create(nodeCtx.UIVersion, nodeCtx.ClassificationFormatMap, context, nodeCtx.WindowContentType, flags, opacity);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();

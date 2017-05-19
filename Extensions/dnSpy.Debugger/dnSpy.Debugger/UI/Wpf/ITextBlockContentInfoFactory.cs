@@ -22,6 +22,6 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.UI.Wpf {
 	interface ITextBlockContentInfoFactory {
-		TextBlockContentInfo Create(int version, IClassificationFormatMap classificationFormatMap, TextClassifierContext context, string contentType, TextElementFlags flags);
+		TextBlockContentInfo Create(int version, IClassificationFormatMap classificationFormatMap, TextClassifierContext context, string contentType, TextElementFlags flags, double opacity = 1.0);
 	}
 }

@@ -108,6 +108,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void ValueNodesProvider_IsReadOnlyChanged(object sender, EventArgs e) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			valueNodesContext.IsWindowReadOnly = valueNodesProvider.IsReadOnly;
+			RefreshThemeFields_UI();
 		}
 
 		// UI thread
@@ -399,6 +400,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				selectNodeKind = SelectNodeKind.None;
 			}
 			RecreateRootChildren_UI();
+
+			// IsWindowReadOnly changed
+			RefreshThemeFields_UI();
 		}
 
 		// random thread
