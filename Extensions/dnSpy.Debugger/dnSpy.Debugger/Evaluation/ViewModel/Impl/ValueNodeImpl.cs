@@ -383,7 +383,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				}
 			}
 			else
-				ResetForReuse();
+				ResetChildren();
+
+			RefreshAllColumns();
 		}
 
 		bool SetDebuggerValueNode(DebuggerValueRawNode newNode, int recursionCounter) {
