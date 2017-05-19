@@ -153,7 +153,7 @@
     <value>强名称密钥文件</value>
   </data>
   <data name="Files_XmlFiles" xml:space="preserve">
-    <value>XML Files</value>
+    <value>XML 文件</value>
   </data>
   <data name="InvalidGuid" xml:space="preserve">
     <value>GUID 无效</value>
@@ -180,7 +180,7 @@
     <value>保存资源</value>
   </data>
   <data name="Search_SearchColumnHelpText" xml:space="preserve">
-    <value>Search column: {0}</value>
+    <value>搜索列: {0}</value>
   </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>值必须为类型 {0}。

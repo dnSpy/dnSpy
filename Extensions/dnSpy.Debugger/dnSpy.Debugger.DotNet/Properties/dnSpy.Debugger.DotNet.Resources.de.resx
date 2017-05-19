@@ -136,7 +136,7 @@
     <value>Laden der Module abbrechen?</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL Versatz {0}</value>
+    <value>IL-Versatz {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>Zeile {0} Zeichen {1}</value>

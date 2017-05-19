@@ -1810,7 +1810,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>_Ablaufverfolgungspunkt einfügen</value>
   </data>
   <data name="UnwindToThisFrameCommand" xml:space="preserve">
-    <value>_Unwind To This Frame</value>
+    <value>Bis z_u diesem Frame abwickeln</value>
   </data>
   <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
     <value>Dies ist die nächste Anweisung, die ausgeführt wird.</value>
@@ -1822,25 +1822,25 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Managed Debugging Assistants (MDA) verwenden</value>
   </data>
   <data name="DebugStepProcessError" xml:space="preserve">
-    <value>Could not step: {0}</value>
+    <value>Schritt nicht ausführbar: {0}</value>
   </data>
   <data name="ProcessIsNotPaused" xml:space="preserve">
     <value>Prozess ist nicht angehalten</value>
   </data>
   <data name="Window_Autos" xml:space="preserve">
-    <value>Autos</value>
+    <value>Auto</value>
   </data>
   <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
-    <value>Highlight changed variables in variables windows</value>
+    <value>Geänderte Variablen in den Variablenfenstern hervorheben</value>
   </data>
   <data name="MakeObjectIdCommand" xml:space="preserve">
-    <value>_Make Object ID</value>
+    <value>Objekt-ID erstellen</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
     <value>Sprache</value>
   </data>
   <data name="DbgSettings_DebugEngine" xml:space="preserve">
-    <value>Debug Engine</value>
+    <value>Debug-Engine</value>
   </data>
   <data name="DbgSettings_Language" xml:space="preserve">
     <value>Sprache</value>
@@ -1852,18 +1852,18 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Alle löschen</value>
   </data>
   <data name="DeleteWatchCommand" xml:space="preserve">
-    <value>_Delete Watch</value>
+    <value>Übe_rwachung löschen</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
     <value>_Einfügen</value>
   </data>
   <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
-    <value>This expression causes side effects and will not be evaluated</value>
+    <value>Dieser Ausdruck verursacht Nebeneffekte und wird nicht ausgewertet.</value>
   </data>
   <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
-    <value>Click this button to evaluate now.</value>
+    <value>Klicken Sie auf diese Schaltfläche, um die Auswertung jetzt zu beginnen.</value>
   </data>
   <data name="ErrorEvaluatingExpression" xml:space="preserve">
-    <value>Couldn't evaluate the expression</value>
+    <value>Der Ausdruck konnte nicht ausgewertet werden.</value>
   </data>
 </root>

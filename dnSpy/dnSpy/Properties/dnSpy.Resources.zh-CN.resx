@@ -367,10 +367,10 @@
     <value>移动到前一标签组</value>
   </data>
   <data name="NavigateBackCommand" xml:space="preserve">
-    <value>Navigate Backward</value>
+    <value>后退</value>
   </data>
   <data name="NavigateForwardCommand" xml:space="preserve">
-    <value>Navigate Forward</value>
+    <value>前进</value>
   </data>
   <data name="NewDataIsNotAnImage" xml:space="preserve">
     <value>新数据不是映像。</value>
@@ -475,7 +475,7 @@
     <value>打开列表</value>
   </data>
   <data name="OpenToolBarToolTip" xml:space="preserve">
-    <value>Open</value>
+    <value>打开</value>
   </data>
   <data name="OptionsTitle" xml:space="preserve">
     <value>选项</value>
@@ -517,7 +517,7 @@
     <value>搜索程序集</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Search Assemblies</value>
+    <value>搜索程序集</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>搜索中…</value>
@@ -897,13 +897,13 @@
     <value>输出</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Clear All</value>
+    <value>全部清除</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
     <value>显示输出来源(_S):</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap</value>
+    <value>切换自动换行</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
@@ -1065,25 +1065,25 @@
     <value>上边距 %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
-    <value>Find next</value>
+    <value>查找下一个</value>
   </data>
   <data name="Search_FindPreviousToolTip" xml:space="preserve">
-    <value>Find previous</value>
+    <value>查找上一个</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Match case</value>
+    <value>区分大小写</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Match whole word</value>
+    <value>全词匹配</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Replace all</value>
+    <value>全部替换</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Replace next</value>
+    <value>替换下一个</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Use Regular Expressions</value>
+    <value>使用正则表达式</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
     <value>切换查找模式/替换模式</value>
@@ -1388,7 +1388,7 @@
     <value>适合宽度(_F)</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
-    <value>_Base Offset</value>
+    <value>基础偏移量(_B)</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
     <value>This value is added to start offset before it's shown on the screen</value>
@@ -1397,10 +1397,10 @@
     <value>每行的字节数(_Y)</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>_End Offset</value>
+    <value>结束偏移量(_E)</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
-    <value>Offset Bi_t Size</value>
+    <value>偏移位大小(_T)</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
     <value>显示ASCII (_W)</value>
@@ -1506,7 +1506,7 @@
     <value>文本编辑器</value>
   </data>
   <data name="Search_BigEndianToolTip" xml:space="preserve">
-    <value>Big endian</value>
+    <value>大端模式</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
@@ -1548,7 +1548,7 @@
     <value>偏移</value>
   </data>
   <data name="BigEndian" xml:space="preserve">
-    <value>Big Endian</value>
+    <value>大端模式</value>
   </data>
   <data name="CopyDataCommand" xml:space="preserve">
     <value>复制 {0}</value>
@@ -1671,10 +1671,10 @@
     <value>对文本进行着色</value>
   </data>
   <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
-    <value>Alt+Right Arrow</value>
+    <value>Alt+右</value>
   </data>
   <data name="ShortCutKeyBackspace" xml:space="preserve">
-    <value>Backspace</value>
+    <value>退格键</value>
   </data>
   <data name="ShortCutKeyCtrlS" xml:space="preserve">
     <value>Ctrl+S</value>
@@ -1707,13 +1707,13 @@
     <value>Alt+R</value>
   </data>
   <data name="TimestampDateTimeFormat" xml:space="preserve">
-    <value>Timestamp format</value>
+    <value>时间戳格式</value>
   </data>
   <data name="Window_Bookmarks" xml:space="preserve">
-    <value>Bookmarks</value>
+    <value>书签</value>
   </data>
   <data name="BookmarksOptDlgTab" xml:space="preserve">
-    <value>Bookmarks</value>
+    <value>书签</value>
   </data>
   <data name="BookmarksSettings_SyntaxHighlight" xml:space="preserve">
     <value>语法高亮</value>
@@ -1866,34 +1866,34 @@
     <value>Clear All Bookmarks In Document</value>
   </data>
   <data name="ClearBookmarksCommand" xml:space="preserve">
-    <value>_Clear Bookmarks</value>
+    <value>清除书签(_C)</value>
   </data>
   <data name="DisableAllBookmarksCommand" xml:space="preserve">
-    <value>Disable _All Bookmarks</value>
+    <value>禁用所有书签(_A)</value>
   </data>
   <data name="EnableAllBookmarksCommand" xml:space="preserve">
-    <value>Enable _All Bookmarks</value>
+    <value>启用所有书签(_A)</value>
   </data>
   <data name="EnableBookmarkCommand" xml:space="preserve">
-    <value>Enable Bookmark</value>
+    <value>启用书签</value>
   </data>
   <data name="GoToNextBookmarkCommand" xml:space="preserve">
-    <value>Next _Bookmark</value>
+    <value>下一个书签(_B)</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
-    <value>N_ext Bookmark In Document</value>
+    <value>此文档中的下一个书签(_E)</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Next Bookmark With Same Label</value>
+    <value>下一个有相同标签的书签</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
-    <value>_Previous Bookmark</value>
+    <value>上一个书签(_P)</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
-    <value>P_revious Bookmark In Document</value>
+    <value>此文档中的上一个书签(_R)</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Previous Bookmark With Same Label</value>
+    <value>上一个有相同标签的书签</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
     <value>Ctrl+K, Ctrl+K</value>
@@ -1908,12 +1908,12 @@
     <value>Ctrl+K, Ctrl+P</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
-    <value>_Toggle Bookmark</value>
+    <value>启用/禁用书签(_T)</value>
   </data>
   <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
-    <value>Labels</value>
+    <value>标签</value>
   </data>
   <data name="EditLabelsTitle" xml:space="preserve">
-    <value>Edit Labels</value>
+    <value>编辑标签</value>
   </data>
 </root>

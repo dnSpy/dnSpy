@@ -1849,7 +1849,7 @@ HResult: 0x{3:X8}</value>
     <value>Ctrl+V</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
-    <value>Clear All</value>
+    <value>全部清除</value>
   </data>
   <data name="DeleteWatchCommand" xml:space="preserve">
     <value>_Delete Watch</value>

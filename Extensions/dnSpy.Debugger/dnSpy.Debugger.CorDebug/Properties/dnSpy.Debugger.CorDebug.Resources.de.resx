@@ -130,13 +130,13 @@
     <value>_Host</value>
   </data>
   <data name="DbgAsm_HostArgs" xml:space="preserve">
-    <value>Host Ar_gumente</value>
+    <value>Host-Ar_gumente</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Arbeitsverzeichnis</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>CreateProcess</value>
+    <value>Prozess erzeugen</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
     <value>Nicht unterbrechen</value>
@@ -145,28 +145,28 @@
     <value>Einstiegspunkt</value>
   </data>
   <data name="DbgBreak_ExeFirstLoadClassEvent" xml:space="preserve">
-    <value>Exe's erstes LoadClass Ereignis</value>
+    <value>Exes erstes LoadClass-Ereignis</value>
   </data>
   <data name="DbgBreak_ExeLoadModuleEvent" xml:space="preserve">
-    <value>Exe's LoadModule Ereignis</value>
+    <value>Exes LoadModule-Ereignis</value>
   </data>
   <data name="DbgBreak_FirstCreateAppDomainEvent" xml:space="preserve">
-    <value>Erstes CreateAppDomain Ereignis</value>
+    <value>Erstes CreateAppDomain-Ereignis</value>
   </data>
   <data name="DbgBreak_FirstCreateThreadEvent" xml:space="preserve">
-    <value>Erstes CreateThread Ereignis</value>
+    <value>Erstes CreateThread-Ereignis</value>
   </data>
   <data name="DbgBreak_FirstLoadClassEvent" xml:space="preserve">
-    <value>Erstes LoadClass Ereignis</value>
+    <value>Erstes LoadClass-Ereignis</value>
   </data>
   <data name="DbgBreak_FirstLoadModuleEvent" xml:space="preserve">
-    <value>Erstes LoadModule Ereignis</value>
+    <value>Erstes LoadModule-Ereignis</value>
   </data>
   <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
     <value>Modul .cctor oder Einstiegspunkt</value>
   </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>.NET Core host '{0}' nicht gefunden</value>
+    <value>Konnte .NET Core Host '{0}' nicht finden</value>
   </data>
   <data name="Error_CouldNotStartDebugger" xml:space="preserve">
     <value>Konnte Debugger nicht starten. {0}</value>
@@ -198,7 +198,7 @@ Fehler: {1}</value>
     <value>Beenden angefordert</value>
   </data>
   <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Ausgesetzt</value>
+    <value>Angehalten</value>
   </data>
   <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
     <value>Anhalten angefordert</value>
@@ -216,10 +216,10 @@ Fehler: {1}</value>
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Verwende dnSpy-x86.exe zum Debuggen von 32-Bit Applikationen.</value>
+    <value>Verwende dnSpy-x86.exe zum Debuggen von 32-Bit-Applikationen.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Verwende dnSpy.exe zum Debuggen von 64-Bit Applikationen.</value>
+    <value>Verwende dnSpy.exe zum Debuggen von 64-Bit-Applikationen.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;keine Ausnahmemeldung&gt;"</value>
@@ -230,19 +230,19 @@ Fehler: {1}</value>
 Fehler: {0}</value>
   </data>
   <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Anfügen an den Prozess {0} nicht möglich.</value>
+    <value>Anhängen an Prozess {0} nicht möglich</value>
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Es wurde bereits ein Debugger an den Prozess {0} angefügt.</value>
+    <value>Ein anderer Prozess debuggt bereits Prozess {0}</value>
   </data>
   <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Nativer Rahmen {0}</value>
+    <value>Nativer Frame {0}</value>
   </data>
   <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>AppDomain Übergang</value>
+    <value>AppDomain-Übergang</value>
   </data>
   <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Class Init</value>
+    <value>Init-Klasse</value>
   </data>
   <data name="StackFrame_Exception" xml:space="preserve">
     <value>Ausname</value>
@@ -251,16 +251,16 @@ Fehler: {0}</value>
     <value>Funktionsauswertung</value>
   </data>
   <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Interner Anruf</value>
+    <value>Interner Aufruf</value>
   </data>
   <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Interner Rahmen ({0})</value>
+    <value>Interner Frame ({0})</value>
   </data>
   <data name="StackFrame_JITCompilation" xml:space="preserve">
     <value>JIT-Kompilierung</value>
   </data>
   <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Lightweight Function</value>
+    <value>Leichtgewichtige Funktion</value>
   </data>
   <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
     <value>Übergang von Verwaltet zu Nativ</value>
@@ -272,7 +272,7 @@ Fehler: {0}</value>
     <value>Sicherheit</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL Versatz {0}</value>
+    <value>IL-Versatz {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>Zeile {0} Zeichen {1}</value>
