@@ -98,6 +98,18 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			base.OnMouseDoubleClick(e);
 		}
 
+		protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e) {
+			if (!e.Handled && isLoaded) {
+				var editableValue = EditableValue;
+				if (editableValue?.CanEdit == true && (editableValue.Options & EditableValueOptions.SingleClick) != 0) {
+					editableValue.IsEditingValue = true;
+					e.Handled = true;
+					return;
+				}
+			}
+			base.OnMouseLeftButtonUp(e);
+		}
+
 		void OnEditableValuePropertyChanged(IEditableValue oldValue, IEditableValue newValue, bool force) {
 			if (!force && !isLoaded)
 				return;

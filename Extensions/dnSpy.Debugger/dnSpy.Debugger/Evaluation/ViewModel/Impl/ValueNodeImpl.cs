@@ -147,7 +147,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override IEditableValue NameEditableValue {
 			get {
 				if (nameEditableValue == null)
-					nameEditableValue = new EditableValueImpl(() => GetNameExpression(), s => SaveNameExpression(s), () => CanEditNameExpression());
+					nameEditableValue = new EditableValueImpl(() => GetNameExpression(), s => SaveNameExpression(s), () => CanEditNameExpression(), IsEditNode ? EditableValueOptions.SingleClick : EditableValueOptions.None);
 				return nameEditableValue;
 			}
 		}

@@ -22,9 +22,30 @@ using System.ComponentModel;
 
 namespace dnSpy.Contracts.Controls.ToolWindows {
 	/// <summary>
+	/// <see cref="IEditableValue"/> options
+	/// </summary>
+	[Flags]
+	public enum EditableValueOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// Single click to edit text
+		/// </summary>
+		SingleClick				= 0x00000001,
+	}
+
+	/// <summary>
 	/// Implemented by data that can be edited
 	/// </summary>
 	public interface IEditableValue : INotifyPropertyChanged {
+		/// <summary>
+		/// Gets the options
+		/// </summary>
+		EditableValueOptions Options { get; }
+
 		/// <summary>
 		/// true if the value can be edited, false if it's read-only
 		/// </summary>
@@ -94,6 +115,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 	abstract class EditableValue : IEditableValue {
 		public event PropertyChangedEventHandler PropertyChanged;
+		public virtual EditableValueOptions Options => EditableValueOptions.None;
 		public virtual bool CanEdit => true;
 
 		public bool IsEditingValue {
@@ -117,20 +139,23 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		readonly Func<bool> canEdit;
 		static readonly Func<bool> defaultCanEdit = () => true;
 
+		public override EditableValueOptions Options { get; }
 		public override bool CanEdit => canEdit();
 
-		public EditableValueImpl(Func<string> getText, Action<string> setText, Func<bool> canEdit = null) {
+		public EditableValueImpl(Func<string> getText, Action<string> setText, Func<bool> canEdit = null, EditableValueOptions options = EditableValueOptions.None) {
 			if (getText == null)
 				throw new ArgumentNullException(nameof(getText));
 			this.getText = () => new EditableValueTextInfo(getText());
 			this.setText = setText ?? throw new ArgumentNullException(nameof(setText));
 			this.canEdit = canEdit ?? defaultCanEdit;
+			Options = options;
 		}
 
-		public EditableValueImpl(Func<EditableValueTextInfo> getText, Action<string> setText, Func<bool> canEdit = null) {
+		public EditableValueImpl(Func<EditableValueTextInfo> getText, Action<string> setText, Func<bool> canEdit = null, EditableValueOptions options = EditableValueOptions.None) {
 			this.getText = getText ?? throw new ArgumentNullException(nameof(getText));
 			this.setText = setText ?? throw new ArgumentNullException(nameof(setText));
 			this.canEdit = canEdit ?? defaultCanEdit;
+			Options = options;
 		}
 
 		public override EditableValueTextInfo GetText() => getText();
