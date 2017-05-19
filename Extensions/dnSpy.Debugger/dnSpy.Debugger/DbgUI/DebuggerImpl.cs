@@ -89,10 +89,14 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		public override bool CanDebugProgram => true;
+		public override bool CanDebugProgram => !showingDebugProgramDlgBox;
 		public override void DebugProgram(bool pauseAtEntryPoint) {
+			if (!CanDebugProgram)
+				return;
 			var breakKind = pauseAtEntryPoint ? PredefinedBreakKinds.EntryPoint : null;
+			showingDebugProgramDlgBox = true;
 			var options = startDebuggingOptionsProvider.Value.GetStartDebuggingOptions(breakKind);
+			showingDebugProgramDlgBox = false;
 			if (options == null)
 				return;
 
@@ -100,6 +104,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (errMsg != null)
 				messageBoxService.Value.Show(errMsg);
 		}
+		bool showingDebugProgramDlgBox;
 
 		public override bool CanAttachProgram => true;
 		public override void AttachProgram() => showAttachToProcessDialog.Value.Attach();
