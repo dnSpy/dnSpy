@@ -51,6 +51,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			public override void OnRefreshUI() { }
 		}
 
+		enum SelectNodeKind {
+			None,
+			Open,
+			Added,
+		}
+
 		readonly ValueNodesProvider valueNodesProvider;
 		readonly VariablesWindowKind variablesWindowKind;
 		readonly DebuggerSettings debuggerSettings;
@@ -59,7 +65,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly ITreeView treeView;
 		readonly RootNode rootNode;
 		bool isOpen;
-		bool forceSelectNode;
+		SelectNodeKind selectNodeKind;
 		Guid? runtimeGuid;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
@@ -152,9 +158,20 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			Debug.Assert(origEditNode == null || origEditNode == TryGetEditNode());
 #endif
 
-			if (forceSelectNode) {
-				forceSelectNode = false;
-				var node = rootNode.TreeNode.Children.FirstOrDefault();
+			if (selectNodeKind != SelectNodeKind.None) {
+				ITreeNode node;
+				switch (selectNodeKind) {
+				case SelectNodeKind.Open:
+					node = rootNode.TreeNode.Children.FirstOrDefault();
+					break;
+
+				case SelectNodeKind.Added:
+					node = rootNode.TreeNode.Children.LastOrDefault(a => !((ValueNodeImpl)a.Data).IsEditNode) ?? rootNode.TreeNode.Children.LastOrDefault();
+					break;
+
+				default: throw new InvalidOperationException();
+				}
+				selectNodeKind = SelectNodeKind.None;
 				if (node != null) {
 					treeView.SelectItems(new[] { node.Data });
 					treeView.ScrollIntoView();
@@ -368,7 +385,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.IsReadOnlyChanged += ValueNodesProvider_IsReadOnlyChanged;
 				valueNodesProvider.LanguageChanged += ValueNodesProvider_LanguageChanged;
 				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid;
-				forceSelectNode = true;
+				selectNodeKind = SelectNodeKind.Open;
 			}
 			else {
 				valueNodesContext.ClassificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
@@ -379,7 +396,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.LanguageChanged -= ValueNodesProvider_LanguageChanged;
 				valueNodesContext.IsWindowReadOnly = true;
 				runtimeGuid = null;
-				forceSelectNode = false;
+				selectNodeKind = SelectNodeKind.None;
 			}
 			RecreateRootChildren_UI();
 		}
@@ -553,11 +570,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			RecreateRootChildrenDelay_UI();
 		}
 
-		void IValueNodesVM.AddExpressions(string[] expressions) {
+		public void AddExpressions(string[] expressions, bool select) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			if (!valueNodesProvider.CanAddRemoveExpressions)
 				throw new InvalidOperationException();
 			valueNodesProvider.AddExpressions(expressions);
+			selectNodeKind = select ? SelectNodeKind.Added : SelectNodeKind.None;
 			RecreateRootChildrenDelay_UI();
 		}
 

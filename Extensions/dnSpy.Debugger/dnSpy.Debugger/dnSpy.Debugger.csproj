@@ -169,6 +169,7 @@
     <Compile Include="Evaluation\ViewModel\ValueNodesProvider.cs" />
     <Compile Include="Evaluation\ViewModel\ValueNodesVMFactory.cs" />
     <Compile Include="Evaluation\ViewModel\VariablesWindowOperations.cs" />
+    <Compile Include="Evaluation\Watch\WatchExpressionsService.cs" />
     <Compile Include="Exceptions\DbgExceptionFormatterService.cs" />
     <Compile Include="Exceptions\DbgExceptionImpl.cs" />
     <Compile Include="Exceptions\DbgExceptionSettingsServiceImpl.cs" />
@@ -257,6 +258,7 @@
     <Compile Include="ToolWindows\Watch\CommandsLoader.cs" />
     <Compile Include="ToolWindows\Watch\WatchContent.cs" />
     <Compile Include="ToolWindows\Watch\WatchContentFactory.cs" />
+    <Compile Include="ToolWindows\Watch\WatchExpressionsServiceImpl.cs" />
     <Compile Include="ToolWindows\Watch\WatchToolWindowContent.cs" />
     <Compile Include="ToolWindows\Watch\WatchVariablesWindowValueNodesProvider.cs" />
     <Compile Include="ToolWindows\Watch\WatchWindowExpressionsSettings.cs" />

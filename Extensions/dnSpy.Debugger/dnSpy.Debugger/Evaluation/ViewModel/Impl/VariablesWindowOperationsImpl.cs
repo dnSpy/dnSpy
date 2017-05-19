@@ -33,6 +33,7 @@ using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Debugger.Evaluation.Watch;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
@@ -41,15 +42,17 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly DebuggerSettings debuggerSettings;
 		readonly DbgEvalFormatterSettings dbgEvalFormatterSettings;
 		readonly Lazy<DbgLanguageService> dbgLanguageService;
+		readonly Lazy<WatchExpressionsService> watchExpressionsService;
 		readonly Lazy<ToolWindows.Memory.MemoryWindowService> memoryWindowService;
 		readonly Lazy<IPickSaveFilename> pickSaveFilename;
 		readonly Lazy<IMessageBoxService> messageBoxService;
 
 		[ImportingConstructor]
-		VariablesWindowOperationsImpl(DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, Lazy<DbgLanguageService> dbgLanguageService, Lazy<ToolWindows.Memory.MemoryWindowService> memoryWindowService, Lazy<IPickSaveFilename> pickSaveFilename, Lazy<IMessageBoxService> messageBoxService) {
+		VariablesWindowOperationsImpl(DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, Lazy<DbgLanguageService> dbgLanguageService, Lazy<WatchExpressionsService> watchExpressionsService, Lazy<ToolWindows.Memory.MemoryWindowService> memoryWindowService, Lazy<IPickSaveFilename> pickSaveFilename, Lazy<IMessageBoxService> messageBoxService) {
 			this.debuggerSettings = debuggerSettings;
 			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
 			this.dbgLanguageService = dbgLanguageService;
+			this.watchExpressionsService = watchExpressionsService;
 			this.memoryWindowService = memoryWindowService;
 			this.pickSaveFilename = pickSaveFilename;
 			this.messageBoxService = messageBoxService;
@@ -284,7 +287,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override void AddWatch(IValueNodesVM vm) {
 			if (!CanAddWatch(vm))
 				return;
-			//TODO: Add 1+ expressions to the watch window
+			var expressions = SortedSelectedNodes(vm).Select(a => a.RawNode.Expression).Where(a => !string.IsNullOrWhiteSpace(a)).ToArray();
+			watchExpressionsService.Value.AddExpressions(expressions);
 		}
 
 		public override bool CanMakeObjectId(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Any(a => a.RawNode is DebuggerValueRawNode);

@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		void DeleteExpressions(string[] ids);
 		void ClearAllExpressions();
 		void EditExpression(string id, string expression);
-		void AddExpressions(string[] expressions);
+		void AddExpressions(string[] expressions, bool select = false);
 	}
 
 	static class ValueNodesVMConstants {
