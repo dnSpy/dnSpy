@@ -316,8 +316,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return newNode;
 			if (RawNode is ErrorRawNode errorNode)
 				return errorNode;
-			if (RawNode is CachedRawNode cachedNode)
+			if (RawNode is CachedRawNodeBase cachedNode)
 				return cachedNode;
+			if (!RawNode.HasInitializedUnderlyingData)
+				return EmptyCachedRawNode.Instance;
 			return new CachedRawNode(RawNode.Expression, RawNode.ImageName, RawNode.HasChildren, cachedChildCount, cachedName, cachedValue, cachedExpectedType, cachedActualType);
 		}
 

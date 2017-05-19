@@ -28,6 +28,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	/// others contain cached data or error messages.
 	/// </summary>
 	abstract class RawNode {
+		/// <summary>
+		/// Some nodes can delay reading the underlying debugger <see cref="DbgValueNode"/>. If the real
+		/// data hasn't been read yet, this property returns false. This is used to prevent reading the
+		/// underlying data when re-using nodes.
+		/// </summary>
+		public abstract bool HasInitializedUnderlyingData { get; }
 		public abstract string Expression { get; }
 		public abstract string ImageName { get; }
 		public abstract bool IsReadOnly { get; }
@@ -41,6 +47,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class EditRawNode : RawNode {
+		public override bool HasInitializedUnderlyingData => true;
 		public override string Expression => string.Empty;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Edit;
 		public override bool IsReadOnly => true;
@@ -53,6 +60,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class ErrorRawNode : RawNode {
+		public override bool HasInitializedUnderlyingData => true;
 		public string ErrorMessage => errorMessage;
 		public override string Expression => expression;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
@@ -82,42 +90,28 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override DbgValueNodeAssignmentResult Assign(string expression, DbgEvaluationOptions options) => throw new NotSupportedException();
 	}
 
-	sealed class CachedRawNode : RawNode {
-		public override string Expression { get; }
-		public override string ImageName { get; }
-		public override bool IsReadOnly => true;
-		public override bool? HasChildren { get; }
-		public override ulong? ChildCount { get; }
+	abstract class CachedRawNodeBase : RawNode {
+		public sealed override bool IsReadOnly => true;
+		public sealed override DbgValueNodeAssignmentResult Assign(string expression, DbgEvaluationOptions options) => throw new NotImplementedException();
 
-		/*readonly*/ ClassifiedTextCollection cachedName;
-		/*readonly*/ ClassifiedTextCollection cachedValue;
-		/*readonly*/ ClassifiedTextCollection cachedExpectedType;
-		/*readonly*/ ClassifiedTextCollection cachedActualType;
+		protected abstract ClassifiedTextCollection CachedName { get; }
+		protected abstract ClassifiedTextCollection CachedValue { get; }
+		protected abstract ClassifiedTextCollection CachedExpectedType { get; }
+		protected abstract ClassifiedTextCollection CachedActualType { get; }
 
-		public CachedRawNode(string expression, string imageName, bool? hasChildren, ulong? childCount, ClassifiedTextCollection cachedName, ClassifiedTextCollection cachedValue, ClassifiedTextCollection cachedExpectedType, ClassifiedTextCollection cachedActualType) {
-			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
-			ImageName = imageName ?? throw new ArgumentNullException(nameof(imageName));
-			HasChildren = hasChildren;
-			ChildCount = childCount;
-			this.cachedName = cachedName;
-			this.cachedValue = cachedValue;
-			this.cachedExpectedType = cachedExpectedType;
-			this.cachedActualType = cachedActualType.IsDefault ? cachedExpectedType : cachedActualType;
-		}
-
-		public override void Format(IDbgValueNodeFormatParameters options) {
+		public sealed override void Format(IDbgValueNodeFormatParameters options) {
 			if (options.NameOutput != null)
 				FormatName(options.NameOutput);
 			if (options.ValueOutput != null)
 				FormatValue(options.ValueOutput, options.ValueFormatterOptions);
 			if (options.ExpectedTypeOutput != null)
-				WriteTo(options.ExpectedTypeOutput, cachedExpectedType);
+				WriteTo(options.ExpectedTypeOutput, CachedExpectedType);
 			if (options.ActualTypeOutput != null)
-				WriteTo(options.ActualTypeOutput, cachedActualType);
+				WriteTo(options.ActualTypeOutput, CachedActualType);
 		}
 
-		public override void FormatName(ITextColorWriter output) => WriteTo(output, cachedName, Expression);
-		public override void FormatValue(ITextColorWriter output, DbgValueFormatterOptions options) => WriteTo(output, cachedValue);
+		public sealed override void FormatName(ITextColorWriter output) => WriteTo(output, CachedName, Expression);
+		public sealed override void FormatValue(ITextColorWriter output, DbgValueFormatterOptions options) => WriteTo(output, CachedValue);
 
 		static void WriteTo(ITextColorWriter output, ClassifiedTextCollection coll, string unknownText = "???") {
 			if (coll.IsDefault) {
@@ -125,11 +119,48 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return;
 			}
 
-			foreach (var info in coll.Result)
-				output.Write(info.Color, info.Text);
+			coll.WriteTo(output);
 		}
+	}
 
-		public override DbgValueNodeAssignmentResult Assign(string expression, DbgEvaluationOptions options) => throw new NotImplementedException();
+	sealed class EmptyCachedRawNode : CachedRawNodeBase {
+		public static readonly EmptyCachedRawNode Instance = new EmptyCachedRawNode();
+		EmptyCachedRawNode() { }
+
+		public override bool HasInitializedUnderlyingData => false;
+		public override string Expression => string.Empty;
+		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
+		public override bool? HasChildren => null;
+		public override ulong? ChildCount => null;
+
+		protected override ClassifiedTextCollection CachedName => default(ClassifiedTextCollection);
+		protected override ClassifiedTextCollection CachedValue => default(ClassifiedTextCollection);
+		protected override ClassifiedTextCollection CachedExpectedType => default(ClassifiedTextCollection);
+		protected override ClassifiedTextCollection CachedActualType => default(ClassifiedTextCollection);
+	}
+
+	sealed class CachedRawNode : CachedRawNodeBase {
+		public override bool HasInitializedUnderlyingData => true;
+		public override string Expression { get; }
+		public override string ImageName { get; }
+		public override bool? HasChildren { get; }
+		public override ulong? ChildCount { get; }
+
+		protected override ClassifiedTextCollection CachedName { get; }
+		protected override ClassifiedTextCollection CachedValue { get; }
+		protected override ClassifiedTextCollection CachedExpectedType { get; }
+		protected override ClassifiedTextCollection CachedActualType { get; }
+
+		public CachedRawNode(string expression, string imageName, bool? hasChildren, ulong? childCount, ClassifiedTextCollection cachedName, ClassifiedTextCollection cachedValue, ClassifiedTextCollection cachedExpectedType, ClassifiedTextCollection cachedActualType) {
+			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+			ImageName = imageName ?? throw new ArgumentNullException(nameof(imageName));
+			HasChildren = hasChildren;
+			ChildCount = childCount;
+			CachedName = cachedName;
+			CachedValue = cachedValue;
+			CachedExpectedType = cachedExpectedType;
+			CachedActualType = cachedActualType.IsDefault ? cachedExpectedType : cachedActualType;
+		}
 	}
 
 	/// <summary>
@@ -160,16 +191,17 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	/// it got refreshed (user pressed the Refresh icon).
 	/// </summary>
 	sealed class DbgValueRawNode : DebuggerValueRawNode {
+		public override bool HasInitializedUnderlyingData => true;
 		internal override DbgValueNode DebuggerValueNode { get; }
 		public DbgValueRawNode(DbgValueNodeReader reader, DbgValueNode valueNode)
 			: base(reader) => DebuggerValueNode = valueNode ?? throw new ArgumentNullException(nameof(valueNode));
 	}
 
 	sealed class ChildDbgValueRawNode : DebuggerValueRawNode {
+		public override bool HasInitializedUnderlyingData => __dbgValueNode_DONT_USE != null;
 		internal DebuggerValueRawNode Parent => parent;
 		internal uint DbgValueNodeChildIndex { get; }
 
-		internal bool HasDebuggerValueNode => __dbgValueNode_DONT_USE != null;
 		internal override DbgValueNode DebuggerValueNode {
 			get {
 				var dbgNode = __dbgValueNode_DONT_USE;
