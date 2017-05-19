@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 		public abstract override void DeleteExpressions(string[] ids);
 		public abstract override void ClearAllExpressions();
 		public abstract override void EditExpression(string id, string expression);
-		public abstract override string[] AddExpressions(string[] expressions);
+		public abstract override void AddExpressions(string[] expressions);
 	}
 
 	sealed class WatchVariablesWindowValueNodesProviderImpl : WatchVariablesWindowValueNodesProvider {
@@ -150,17 +150,13 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			OnExpressionsChanged();
 		}
 
-		public override string[] AddExpressions(string[] expressions) {
-			var ids = new string[expressions.Length];
+		public override void AddExpressions(string[] expressions) {
 			for (int i = 0; i < expressions.Length; i++) {
 				var expr = expressions[i].Trim();
-				var id = GetNextId();
-				ids[i] = id;
 				if (expr.Length != 0)
-					this.expressions.Add(new ExpressionInfo(id, expr, forceEval: true));
+					this.expressions.Add(new ExpressionInfo(GetNextId(), expr, forceEval: true));
 			}
 			OnExpressionsChanged();
-			return ids;
 		}
 
 		void OnExpressionsChanged() {

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -58,6 +59,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly ITreeView treeView;
 		readonly RootNode rootNode;
 		bool isOpen;
+		bool forceSelectNode;
 		Guid? runtimeGuid;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
@@ -140,10 +142,32 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				nodes = Array.Empty<DbgValueNodeInfo>();
 				runtimeGuid = null;
 			}
+#if DEBUG
+			var origEditNode = TryGetEditNode();
+#endif
 			RecreateRootChildrenCore_UI(nodes, runtimeGuid);
 			VerifyChildren_UI(nodes);
-			if (valueNodesContext.EditValueNodeExpression.SupportsEditExpression && rootNode.TreeNode.Children.Count == 1)
-				treeView.SelectItems(new[] { rootNode.TreeNode.Children[0].Data });
+#if DEBUG
+			// PERF: make sure edit node was re-used
+			Debug.Assert(origEditNode == null || origEditNode == TryGetEditNode());
+#endif
+
+			if (forceSelectNode) {
+				forceSelectNode = false;
+				var node = rootNode.TreeNode.Children.FirstOrDefault();
+				if (node != null) {
+					treeView.SelectItems(new[] { node.Data });
+					treeView.ScrollIntoView();
+				}
+			}
+		}
+
+		ValueNodeImpl TryGetEditNode() {
+			var children = rootNode.TreeNode.Children;
+			if (children.Count == 0)
+				return null;
+			var node = (ValueNodeImpl)children[children.Count - 1].Data;
+			return node.IsEditNode ? node : null;
 		}
 
 		// UI thread
@@ -159,6 +183,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					else
 						Debug.Assert(infos[i].Node == null);
 					Debug.Assert(!valueNodesProvider.CanAddRemoveExpressions || infos[i].Id != null, "Root IDs are required");
+					Debug.Assert(infos[i].Id == node.RootId);
 				}
 			}
 		}
@@ -222,16 +247,28 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					}
 				}
 
+				// Delete M nodes, create N nodes, but try to re-use min(M, N) nodes
 				int deleteCount = oldIndex - currentOldIndex;
-				for (int i = deleteCount - 1; i >= 0; i--) {
-					Debug.Assert(updateIndex + i < children.Count);
-					children.RemoveAt(updateIndex + i);
-				}
-
-				for (; currentNewIndex < newIndex; currentNewIndex++) {
-					Debug.Assert(updateIndex <= children.Count);
-					var info = infos[currentNewIndex];
-					children.Insert(updateIndex++, treeView.Create(new ValueNodeImpl(valueNodesContext, info.Node, info.Id, info.Expression, info.ErrorMessage)));
+				for (;;) {
+					if (currentNewIndex < newIndex) {
+						var info = infos[currentNewIndex];
+						ValueNodeImpl node;
+						if (deleteCount > 0 && !(node = (ValueNodeImpl)children[updateIndex].Data).IsEditNode) {
+							node.Reuse(info.Node, info.Id, info.Expression, info.ErrorMessage);
+							deleteCount--;
+						}
+						else
+							children.Insert(updateIndex, treeView.Create(new ValueNodeImpl(valueNodesContext, info.Node, info.Id, info.Expression, info.ErrorMessage)));
+						currentNewIndex++;
+						updateIndex++;
+					}
+					else if (deleteCount > 0) {
+						if (deleteCount == 1 && !((ValueNodeImpl)children[updateIndex].Data).IsEditNode)
+							children.RemoveAt(updateIndex);
+						deleteCount--;
+					}
+					else
+						break;
 				}
 
 				if (lastIter)
@@ -241,9 +278,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				reusedNode.SetDebuggerValueNodeForRoot(infos[currentNewIndex++]);
 				currentOldIndex = oldIndex + 1;
 			}
-			while (children.Count != updateIndex)
-				children.RemoveAt(children.Count - 1);
-			if (valueNodesContext.EditValueNodeExpression.SupportsEditExpression)
+			while (updateIndex < children.Count && !((ValueNodeImpl)children[updateIndex].Data).IsEditNode)
+				children.RemoveAt(updateIndex);
+			if (valueNodesContext.EditValueNodeExpression.SupportsEditExpression && TryGetEditNode() == null)
 				children.Add(treeView.Create(ValueNodeImpl.CreateEditNode(valueNodesContext)));
 		}
 
@@ -265,13 +302,38 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void SetNewRootChildren_UI(DbgValueNodeInfo[] infos) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
+
 			// Treeview has bad PERF when removing lots of selected items, so deselect everything before calling Clear()
-			treeView.SelectItems(Array.Empty<TreeNodeData>());
-			rootNode.TreeNode.Children.Clear();
-			foreach (var info in infos)
-				rootNode.TreeNode.AddChild(treeView.Create(new ValueNodeImpl(valueNodesContext, info.Node, info.Id, info.Expression, info.ErrorMessage)));
-			if (valueNodesContext.EditValueNodeExpression.SupportsEditExpression)
-				rootNode.TreeNode.AddChild(treeView.Create(ValueNodeImpl.CreateEditNode(valueNodesContext)));
+			if (treeView.SelectedItems.Length > 10)
+				treeView.SelectItems(Array.Empty<TreeNodeData>());
+
+			if (valueNodesContext.EditValueNodeExpression.SupportsEditExpression) {
+				var children = rootNode.TreeNode.Children;
+				var editNode = TryGetEditNode();
+				if (infos.Length == 0 && children.Count == 1 && editNode != null)
+					return;
+				if (children.Count < 30) {
+					while (children.Count > 0 && editNode != children[0].Data)
+						children.RemoveAt(0);
+					for (int i = 0; i < infos.Length; i++) {
+						var info = infos[i];
+						children.Insert(i, treeView.Create(new ValueNodeImpl(valueNodesContext, info.Node, info.Id, info.Expression, info.ErrorMessage)));
+					}
+					if (editNode == null)
+						rootNode.TreeNode.AddChild(treeView.Create(ValueNodeImpl.CreateEditNode(valueNodesContext)));
+				}
+				else {
+					children.Clear();
+					foreach (var info in infos)
+						rootNode.TreeNode.AddChild(treeView.Create(new ValueNodeImpl(valueNodesContext, info.Node, info.Id, info.Expression, info.ErrorMessage)));
+					rootNode.TreeNode.AddChild(editNode?.TreeNode ?? treeView.Create(ValueNodeImpl.CreateEditNode(valueNodesContext)));
+				}
+			}
+			else {
+				rootNode.TreeNode.Children.Clear();
+				foreach (var info in infos)
+					rootNode.TreeNode.AddChild(treeView.Create(new ValueNodeImpl(valueNodesContext, info.Node, info.Id, info.Expression, info.ErrorMessage)));
+			}
 		}
 
 		// UI thread
@@ -305,6 +367,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.IsReadOnlyChanged += ValueNodesProvider_IsReadOnlyChanged;
 				valueNodesProvider.LanguageChanged += ValueNodesProvider_LanguageChanged;
 				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid;
+				forceSelectNode = true;
 			}
 			else {
 				valueNodesContext.ClassificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
@@ -315,6 +378,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.LanguageChanged -= ValueNodesProvider_LanguageChanged;
 				valueNodesContext.IsWindowReadOnly = true;
 				runtimeGuid = null;
+				forceSelectNode = false;
 			}
 			RecreateRootChildren_UI();
 		}
@@ -488,20 +552,17 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			RecreateRootChildrenDelay_UI();
 		}
 
-		string[] IValueNodesVM.AddExpressions(string[] expressions) {
+		void IValueNodesVM.AddExpressions(string[] expressions) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			if (!valueNodesProvider.CanAddRemoveExpressions)
 				throw new InvalidOperationException();
-			var ids = valueNodesProvider.AddExpressions(expressions);
-			if (ids.Length != expressions.Length)
-				throw new InvalidOperationException();
+			valueNodesProvider.AddExpressions(expressions);
 			RecreateRootChildrenDelay_UI();
-			return ids;
 		}
 
 		bool IEditValueNodeExpression.SupportsEditExpression => ((IValueNodesVM)this).CanAddRemoveExpressions;
 		void IEditValueNodeExpression.EditExpression(string id, string expression) => ((IValueNodesVM)this).EditExpression(id, expression);
-		string[] IEditValueNodeExpression.AddExpressions(string[] expressions) => ((IValueNodesVM)this).AddExpressions(expressions);
+		void IEditValueNodeExpression.AddExpressions(string[] expressions) => ((IValueNodesVM)this).AddExpressions(expressions);
 
 		void IDisposable.Dispose() {
 			valueNodesContext.UIDispatcher.VerifyAccess();

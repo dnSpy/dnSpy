@@ -197,10 +197,10 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				variablesWindowValueNodesProvider.EditExpression(id, expression);
 			}
 
-			public override string[] AddExpressions(string[] expressions) {
+			public override void AddExpressions(string[] expressions) {
 				if (!CanAddRemoveExpressions)
 					throw new InvalidOperationException();
-				return variablesWindowValueNodesProvider.AddExpressions(expressions);
+				variablesWindowValueNodesProvider.AddExpressions(expressions);
 			}
 
 			public override (DbgLanguage language, DbgStackFrame frame) GetEvaluateInfo() => TryGetLanguage();

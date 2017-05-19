@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract void DeleteExpressions(string[] ids);
 		public abstract void ClearAllExpressions();
 		public abstract void EditExpression(string id, string expression);
-		public abstract string[] AddExpressions(string[] expressions);
+		public abstract void AddExpressions(string[] expressions);
 
 		public abstract (DbgLanguage language, DbgStackFrame frame) GetEvaluateInfo();
 	}

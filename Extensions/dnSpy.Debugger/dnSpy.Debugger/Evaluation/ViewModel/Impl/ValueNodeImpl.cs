@@ -66,6 +66,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return cachedName;
 			}
 		}
+
 		public override ClassifiedTextCollection CachedValue {
 			get {
 				if (cachedValue.IsDefault)
@@ -73,6 +74,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return cachedValue;
 			}
 		}
+
 		public override ClassifiedTextCollection CachedExpectedType {
 			get {
 				if (cachedExpectedType.IsDefault)
@@ -80,6 +82,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return cachedExpectedType;
 			}
 		}
+
 		/// <summary>
 		/// It's default if it's identical to <see cref="CachedExpectedType"/>
 		/// </summary>
@@ -92,6 +95,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return cachedActualType;
 			}
 		}
+
 		public override ClassifiedTextCollection OldCachedValue => oldCachedValue;
 
 		void InitializeCachedText() {
@@ -182,14 +186,27 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				__rawNode_DONT_USE = new DbgValueRawNode(Context.ValueNodeReader, rootValueNode);
 		}
 
+		public void Reuse(DbgValueNode rootValueNode, string rootId, string expression, string errorMessage) {
+			this.rootId = rootId;
+			oldCachedValue = default(ClassifiedTextCollection);
+			disableHighlightingOnReuse = false;
+			if (rootValueNode == null) {
+				__rawNode_DONT_USE = new ErrorRawNode(expression, errorMessage);
+				IsInvalid = true;
+			}
+			else {
+				__rawNode_DONT_USE = new DbgValueRawNode(Context.ValueNodeReader, rootValueNode);
+				IsInvalid = false;
+			}
+			ResetForReuse();
+		}
+
 		public ValueNodeImpl(IValueNodesContext context, RawNode parent, uint childIndex) {
 			IsRoot = false;
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			__rawNode_DONT_USE = parent.CreateChild(debuggerValueNodeChanged, this, childIndex);
 		}
 
-		// We don't check RawRoot if it's a EditRawNode. We overwrite the RootId with the new expression id so
-		// the node will get reused (the UI node will still have keyboard focus and be selected).
 		internal bool IsEditNode => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && RootId == null;
 
 		internal bool CanEditNameExpression() => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && !Context.IsWindowReadOnly;
@@ -210,12 +227,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (!CanEditNameExpression())
 				throw new InvalidOperationException();
 			disableHighlightingOnReuse = true;
-			if (IsEditNode) {
-				// Use the new expression's id so the UI node gets re-used
-				rootId = Context.EditValueNodeExpression.AddExpressions(new[] { expression })[0];
-				if (rootId == null)
-					throw new InvalidOperationException();
-			}
+			if (IsEditNode)
+				Context.EditValueNodeExpression.AddExpressions(new[] { expression });
 			else
 				Context.EditValueNodeExpression.EditExpression(RootId, expression);
 		}
@@ -321,6 +334,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		internal void SetDebuggerValueNodeForRoot(DbgValueNodeInfo info) {
 			if (!IsRoot)
 				throw new InvalidOperationException();
+			rootId = info.Id;
 			SetDebuggerValueNode(info);
 		}
 
