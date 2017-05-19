@@ -270,7 +270,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void ContinueOrDegbugProgram() {
 			if (CanContinue)
 				Continue();
-			else if (CanDebugProgram)
+			else if (CanDebugProgram && !dbgManager.Value.IsDebugging)
 				DebugProgram(pauseAtEntryPoint: false);
 		}
 
@@ -278,7 +278,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void StepIntoOrDegbugProgram() {
 			if (CanStepInto)
 				StepInto();
-			else if (CanDebugProgram)
+			else if (CanDebugProgram && !dbgManager.Value.IsDebugging)
 				DebugProgram(pauseAtEntryPoint: true);
 		}
 
@@ -286,7 +286,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void StepOverOrDegbugProgram() {
 			if (CanStepOver)
 				StepOver();
-			else if (CanDebugProgram)
+			else if (CanDebugProgram && !dbgManager.Value.IsDebugging)
 				DebugProgram(pauseAtEntryPoint: true);
 		}
 
