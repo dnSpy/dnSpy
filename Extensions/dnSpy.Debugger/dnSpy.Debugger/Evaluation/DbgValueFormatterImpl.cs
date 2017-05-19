@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
 using dnSpy.Contracts.Text;
@@ -35,7 +36,7 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineValueFormatter = engineValueFormatter ?? throw new ArgumentNullException(nameof(engineValueFormatter));
 		}
 
-		public override void Format(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options) {
+		public override void Format(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -50,10 +51,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (value.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
-			engineValueFormatter.Format(context, output, valueImpl.EngineValue, options);
+			engineValueFormatter.Format(context, output, valueImpl.EngineValue, options, cancellationToken);
 		}
 
-		public override void Format(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, Action callback) {
+		public override void Format(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, Action callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -70,10 +71,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueFormatter.Format(context, output, valueImpl.EngineValue, options, callback);
+			engineValueFormatter.Format(context, output, valueImpl.EngineValue, options, callback, cancellationToken);
 		}
 
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options) {
+		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -88,10 +89,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (value.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
-			engineValueFormatter.FormatType(context, output, valueImpl.EngineValue, options);
+			engineValueFormatter.FormatType(context, output, valueImpl.EngineValue, options, cancellationToken);
 		}
 
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, Action callback) {
+		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, Action callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -108,7 +109,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueFormatter.FormatType(context, output, valueImpl.EngineValue, options, callback);
+			engineValueFormatter.FormatType(context, output, valueImpl.EngineValue, options, callback, cancellationToken);
 		}
 	}
 }

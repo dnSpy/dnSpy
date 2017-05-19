@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
@@ -35,22 +36,22 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineValueNodeProvider = engineValueNodeProvider ?? throw new ArgumentNullException(nameof(engineValueNodeProvider));
 		}
 
-		public override DbgValueNode[] GetNodes(DbgStackFrame frame) {
+		public override DbgValueNode[] GetNodes(DbgStackFrame frame, CancellationToken cancellationToken) {
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
-			return DbgValueNodeUtils.ToValueNodeArray(Language, frame.Thread, engineValueNodeProvider.GetNodes(frame));
+			return DbgValueNodeUtils.ToValueNodeArray(Language, frame.Thread, engineValueNodeProvider.GetNodes(frame, cancellationToken));
 		}
 
-		public override void GetNodes(DbgStackFrame frame, Action<DbgValueNode[]> callback) {
+		public override void GetNodes(DbgStackFrame frame, Action<DbgValueNode[]> callback, CancellationToken cancellationToken) {
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNodeProvider.GetNodes(frame, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, frame.Thread, engineNodes)));
+			engineValueNodeProvider.GetNodes(frame, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, frame.Thread, engineNodes)), cancellationToken);
 		}
 	}
 }

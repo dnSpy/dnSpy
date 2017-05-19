@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
@@ -50,17 +51,17 @@ namespace dnSpy.Debugger.Evaluation {
 			return error;
 		}
 
-		public override DbgCreateValueNodeResult Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options) {
+		public override DbgCreateValueNodeResult Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
-			return CreateResult(frame, engineValueNodeFactory.Create(frame, expression, options));
+			return CreateResult(frame, engineValueNodeFactory.Create(frame, expression, options, cancellationToken));
 		}
 
-		public override void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback) {
+		public override void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback, CancellationToken cancellationToken) {
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.Guid != runtimeGuid)
@@ -69,7 +70,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(expression));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNodeFactory.Create(frame, expression, options, result => callback(CreateResult(frame, result)));
+			engineValueNodeFactory.Create(frame, expression, options, result => callback(CreateResult(frame, result)), cancellationToken);
 		}
 	}
 }

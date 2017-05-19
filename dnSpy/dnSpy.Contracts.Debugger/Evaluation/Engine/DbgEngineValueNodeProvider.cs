@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
@@ -29,14 +30,16 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// Gets all values
 		/// </summary>
 		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNode[] GetNodes(DbgStackFrame frame);
+		public abstract DbgEngineValueNode[] GetNodes(DbgStackFrame frame, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets all values
 		/// </summary>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="callback">Called when the method is complete</param>
-		public abstract void GetNodes(DbgStackFrame frame, Action<DbgEngineValueNode[]> callback);
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void GetNodes(DbgStackFrame frame, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 	}
 }

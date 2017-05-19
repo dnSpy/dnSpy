@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
@@ -31,8 +32,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
+		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgCreateEngineValueNodeResult Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options);
+		public abstract DbgCreateEngineValueNodeResult Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates a <see cref="DbgEngineValueNode"/>
@@ -41,7 +43,8 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
-		public abstract void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateEngineValueNodeResult> callback);
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateEngineValueNodeResult> callback, CancellationToken cancellationToken);
 	}
 
 	/// <summary>
