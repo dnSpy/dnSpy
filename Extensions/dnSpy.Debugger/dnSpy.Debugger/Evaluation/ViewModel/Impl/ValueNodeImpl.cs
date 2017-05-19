@@ -337,7 +337,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return;
 			}
 
-			if (TreeNode.Children.Count > 0) {
+			if (!(__rawNode_DONT_USE is ErrorRawNode) && TreeNode.Children.Count > 0) {
 				var children = TreeNode.Children;
 				int count = children.Count;
 				for (int i = 0; i < count; i++) {
@@ -345,7 +345,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					node.InvalidateNodes(null, recursionCounter + 1);
 				}
 			}
-			RefreshAllColumns();
+			else
+				ResetForReuse();
 		}
 
 		bool SetDebuggerValueNode(DebuggerValueRawNode newNode, int recursionCounter) {
@@ -370,24 +371,37 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				Debug.Assert((uint)children.Count <= GetChildCount(newNode));
 				int count = children.Count;
 				for (int i = 0; i < count; i++) {
-					var node = (ValueNodeImpl)children[i].Data;
-					var rawNode = node.RawNode as ChildDbgValueRawNode;
-					if (rawNode != null && !rawNode.HasDebuggerValueNode) {
-						rawNode.SetParent(newNode, null);
+					var childNode = (ValueNodeImpl)children[i].Data;
+					var childRawNode = childNode.RawNode as ChildDbgValueRawNode;
+					if (childRawNode != null && !childRawNode.HasInitializedUnderlyingData) {
+						childRawNode.SetParent(newNode, null);
 						continue;
 					}
 
-					var newChildValue = Context.ValueNodeReader.GetDebuggerNodeForReuse(newNode, (uint)i);
-					DebuggerValueRawNode newChildNode;
-					if (rawNode != null) {
-						newChildNode = rawNode;
-						rawNode.SetParent(newNode, newChildValue);
+					// Check if we must read the value. If its treenode is expanded, it must be read now, else it can be delayed
+					if (childRawNode != null && childNode.TreeNode.IsExpanded) {
+						var newChildValue = Context.ValueNodeReader.GetDebuggerNodeForReuse(newNode, (uint)i);
+						// We have to create a new one here and can't reuse the existing ChildDbgValueRawNode by
+						// calling its SetParent() method. Otherwise IsSame() above will compare the same
+						// reference against itself.
+						var newChildRawNode = new ChildDbgValueRawNode(newNode, childRawNode.DbgValueNodeChildIndex, Context.ValueNodeReader, newChildValue);
+						if (!childNode.SetDebuggerValueNode(newChildRawNode, recursionCounter + 1)) {
+							ResetForReuse();
+							return false;
+						}
 					}
-					else
-						newChildNode = new ChildDbgValueRawNode(newNode, (uint)i, Context.ValueNodeReader, newChildValue);
-					if (!node.SetDebuggerValueNode(newChildNode, recursionCounter + 1)) {
-						ResetForReuse();
-						return false;
+					else {
+						// It's safe to read the underlying data lazily
+						if (childRawNode != null)
+							childRawNode.SetParent(newNode, null);
+						else
+							childNode.__rawNode_DONT_USE = new ChildDbgValueRawNode(newNode, (uint)i, Context.ValueNodeReader);
+						childNode.oldCachedValue = childNode.cachedValue;
+						if (childNode.disableHighlightingOnReuse)
+							childNode.oldCachedValue = default(ClassifiedTextCollection);
+						childNode.disableHighlightingOnReuse = false;
+						IsInvalid = false;
+						childNode.ResetForReuse();
 					}
 				}
 			}
