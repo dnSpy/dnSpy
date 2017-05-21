@@ -199,6 +199,7 @@
     <Compile Include="ToolWindows\AntiFlickerConstants.cs" />
     <Compile Include="ToolWindows\Autos\AutosContent.cs" />
     <Compile Include="ToolWindows\Autos\AutosToolWindowContent.cs" />
+    <Compile Include="ToolWindows\Autos\AutosVariablesWindowValueNodesProvider.cs" />
     <Compile Include="ToolWindows\Autos\Commands.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackColumnConverter.cs" />
     <Compile Include="ToolWindows\CallStack\CallStackContent.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="ToolWindows\Locals\Commands.cs" />
     <Compile Include="ToolWindows\Locals\LocalsContent.cs" />
     <Compile Include="ToolWindows\Locals\LocalsToolWindowContent.cs" />
+    <Compile Include="ToolWindows\Locals\LocalsVariablesWindowValueNodesProvider.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointColumnConverter.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointContext.cs" />
