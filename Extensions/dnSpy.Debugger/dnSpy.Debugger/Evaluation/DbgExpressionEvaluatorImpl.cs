@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Evaluation {
 			var result = engineExpressionEvaluator.Evaluate(context, expression, options, cancellationToken);
 			if (result.Error != null)
 				return new DbgEvaluationResult(result.Error);
-			return new DbgEvaluationResult(new DbgValueImpl(result.Thread, result.Value), result.Flags);
+			return new DbgEvaluationResult(new DbgValueImpl(result.Thread.Runtime, result.Value), result.Flags);
 		}
 
 		public override void Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEvaluationResult> callback, CancellationToken cancellationToken) {
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.Evaluation {
 				if (result.Error != null)
 					callback(new DbgEvaluationResult(result.Error));
 				else
-					callback(new DbgEvaluationResult(new DbgValueImpl(result.Thread, result.Value), result.Flags));
+					callback(new DbgEvaluationResult(new DbgValueImpl(result.Thread.Runtime, result.Value), result.Flags));
 			}, cancellationToken);
 		}
 

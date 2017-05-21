@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Evaluation {
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			Language = language ?? throw new ArgumentNullException(nameof(language));
 			this.engineValueNode = engineValueNode ?? throw new ArgumentNullException(nameof(engineValueNode));
-			value = new DbgValueImpl(thread, engineValueNode.Value);
+			value = new DbgValueImpl(thread.Runtime, engineValueNode.Value);
 		}
 
 		public override DbgValueNode[] GetChildren(ulong index, int count) {
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new InvalidOperationException();
 			lock (engineValueNode) {
 				var oldValue = value;
-				value = new DbgValueImpl(Thread, result.Value);
+				value = new DbgValueImpl(Thread.Runtime, result.Value);
 				Process.DbgManager.Close(oldValue);
 			}
 			return new DbgValueNodeAssignmentResult(error: null);

@@ -24,15 +24,15 @@ using dnSpy.Contracts.Debugger.Evaluation.Engine;
 
 namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueImpl : DbgValue {
-		public override DbgThread Thread { get; }
+		public override DbgRuntime Runtime { get; }
 		public override DbgSimpleValueType ValueType => EngineValue.ValueType;
 		public override bool HasRawValue => EngineValue.HasRawValue;
 		public override object RawValue => EngineValue.RawValue;
 
 		internal DbgEngineValue EngineValue { get; }
 
-		public DbgValueImpl(DbgThread thread, DbgEngineValue engineValue) {
-			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+		public DbgValueImpl(DbgRuntime runtime, DbgEngineValue engineValue) {
+			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			EngineValue = engineValue ?? throw new ArgumentNullException(nameof(engineValue));
 		}
 

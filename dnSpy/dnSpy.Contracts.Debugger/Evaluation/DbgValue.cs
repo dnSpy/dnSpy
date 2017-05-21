@@ -27,17 +27,12 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Gets the process
 		/// </summary>
-		public DbgProcess Process => Thread.Process;
+		public DbgProcess Process => Runtime.Process;
 
 		/// <summary>
 		/// Gets the runtime
 		/// </summary>
-		public DbgRuntime Runtime => Thread.Runtime;
-
-		/// <summary>
-		/// Gets the thread
-		/// </summary>
-		public abstract DbgThread Thread { get; }
+		public abstract DbgRuntime Runtime { get; }
 
 		/// <summary>
 		/// Type of the value
