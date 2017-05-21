@@ -1987,6 +1987,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Object ID.
+        /// </summary>
+        public static string DeleteObjectIdCommand {
+            get {
+                return ResourceManager.GetString("DeleteObjectIdCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Delete Watch.
         /// </summary>
         public static string DeleteWatchCommand {

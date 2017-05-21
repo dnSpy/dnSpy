@@ -17,17 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Debugger.Evaluation.Engine;
+namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
+	/// <summary>
+	/// References a value in the debugged process
+	/// </summary>
+	public abstract class DbgEngineObjectId : DbgObject {
+		/// <summary>
+		/// Gets the unique id in the runtime
+		/// </summary>
+		public abstract uint Id { get; }
 
-namespace dnSpy.Debugger.Evaluation {
-	static class DbgValueNodeUtils {
-		public static DbgValueNode[] ToValueNodeArray(DbgLanguage language, DbgRuntime runtime, DbgEngineValueNode[] engineNodes) {
-			var nodes = new DbgValueNode[engineNodes.Length];
-			for (int i = 0; i < nodes.Length; i++)
-				nodes[i] = new DbgValueNodeImpl(language, runtime, engineNodes[i]);
-			return nodes;
-		}
+		/// <summary>
+		/// Creates a new value
+		/// </summary>
+		/// <returns></returns>
+		public abstract DbgEngineValue GetValue();
 	}
 }

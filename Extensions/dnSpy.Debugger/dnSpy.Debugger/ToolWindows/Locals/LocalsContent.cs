@@ -18,8 +18,10 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
+using System.Diagnostics;
+using System.Threading;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -33,18 +35,77 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 	sealed class LocalsContent : VariablesWindowContentBase {
 		public static readonly Guid VariablesWindowGuid = new Guid("1A53B7B7-19AE-490F-9D67-F1992D849150");
 
+		readonly DbgObjectIdService dbgObjectIdService;
+
 		[ImportingConstructor]
-		LocalsContent(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory) =>
+		LocalsContent(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory, DbgObjectIdService dbgObjectIdService) {
+			this.dbgObjectIdService = dbgObjectIdService;
 			Initialize(wpfCommandService, variablesWindowVMFactory, CreateVariablesWindowVMOptions());
+		}
+
+		sealed class DbgObjectIdComparer : IComparer<DbgObjectId> {
+			public static readonly DbgObjectIdComparer Instance = new DbgObjectIdComparer();
+			DbgObjectIdComparer() { }
+			public int Compare(DbgObjectId x, DbgObjectId y) {
+				if (x == y)
+					return 0;
+				if (x == null)
+					return -1;
+				if (y == null)
+					return 1;
+				return x.Id.CompareTo(y.Id);
+			}
+		}
 
 		sealed class VariablesWindowValueNodesProviderImpl : VariablesWindowValueNodesProvider {
-			public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) =>
-				language.LocalsProvider.GetNodes(frame).Select(a => new DbgValueNodeInfo(a)).ToArray();
+			public override event EventHandler NodesChanged;
+			readonly DbgObjectIdService dbgObjectIdService;
+
+			public VariablesWindowValueNodesProviderImpl(DbgObjectIdService dbgObjectIdService) =>
+				this.dbgObjectIdService = dbgObjectIdService ?? throw new ArgumentNullException(nameof(dbgObjectIdService));
+
+			public override void Initialize(bool enable) {
+				if (enable)
+					dbgObjectIdService.ObjectIdsChanged += DbgObjectIdService_ObjectIdsChanged;
+				else
+					dbgObjectIdService.ObjectIdsChanged -= DbgObjectIdService_ObjectIdsChanged;
+			}
+
+			void DbgObjectIdService_ObjectIdsChanged(object sender, EventArgs e) => NodesChanged?.Invoke(this, EventArgs.Empty);
+
+			public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) {
+				var objectIds = dbgObjectIdService.GetObjectIds(frame.Runtime);
+				Array.Sort(objectIds, DbgObjectIdComparer.Instance);
+				var locals = language.LocalsProvider.GetNodes(frame);
+
+				var res = new DbgValueNodeInfo[objectIds.Length + locals.Length];
+				var objectIdInfos = language.ValueNodeFactory.Create(objectIds, CancellationToken.None);
+				Debug.Assert(objectIdInfos.Length == objectIds.Length);
+				int ri = 0;
+				for (int i = 0; i < objectIdInfos.Length; i++, ri++) {
+					var id = GetObjectIdNodeId(objectIds[i]);
+					var result = objectIdInfos[i];
+					if (result.Error is string error)
+						res[ri] = new DbgValueNodeInfo(id, result.Expression, error, causesSideEffects: false);
+					else
+						res[ri] = new DbgValueNodeInfo(result.ValueNode, id);
+				}
+
+				for (int i = 0; i < locals.Length; i++, ri++) {
+					var local = locals[i];
+					res[ri] = new DbgValueNodeInfo(local);
+				}
+
+				return res;
+			}
+
+			string GetObjectIdNodeId(DbgObjectId objectId) => objectIdNodeIdBase + objectId.Id.ToString();
+			static readonly string objectIdNodeIdBase = "oid-" + Guid.NewGuid().ToString() + "-";
 		}
 
 		VariablesWindowVMOptions CreateVariablesWindowVMOptions() {
 			var options = new VariablesWindowVMOptions() {
-				VariablesWindowValueNodesProvider = new VariablesWindowValueNodesProviderImpl(),
+				VariablesWindowValueNodesProvider = new VariablesWindowValueNodesProviderImpl(dbgObjectIdService),
 				WindowContentType = ContentTypes.LocalsWindow,
 				NameColumnName = PredefinedTextClassifierTags.LocalsWindowName,
 				ValueColumnName = PredefinedTextClassifierTags.LocalsWindowValue,

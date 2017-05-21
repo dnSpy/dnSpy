@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
@@ -37,10 +38,24 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineValueNodeFactory = engineValueNodeFactory ?? throw new ArgumentNullException(nameof(engineValueNodeFactory));
 		}
 
-		DbgCreateValueNodeResult CreateResult(DbgStackFrame frame, DbgCreateEngineValueNodeResult result) {
+		DbgCreateValueNodeResult CreateResult(DbgRuntime runtime, DbgCreateEngineValueNodeResult result) {
 			if (result.EngineValueNode != null)
-				return new DbgCreateValueNodeResult(new DbgValueNodeImpl(Language, frame.Thread, result.EngineValueNode));
+				return new DbgCreateValueNodeResult(new DbgValueNodeImpl(Language, runtime, result.EngineValueNode));
 			return new DbgCreateValueNodeResult(ConvertError(result.Error), result.Error == PredefinedDbgCreateEngineValueNodeResultErrors.ExpressionCausesSideEffects);
+		}
+
+		DbgCreateObjectIdValueNodeResult[] CreateResult(DbgRuntime runtime, DbgCreateEngineObjectIdValueNodeResult[] result, int expectedLength) {
+			if (result.Length != expectedLength)
+				throw new InvalidOperationException();
+			var res = new DbgCreateObjectIdValueNodeResult[result.Length];
+			for (int i = 0; i < res.Length; i++) {
+				var info = result[i];
+				if (info.EngineValueNode != null)
+					res[i] = new DbgCreateObjectIdValueNodeResult(new DbgValueNodeImpl(Language, runtime, info.EngineValueNode));
+				else
+					res[i] = new DbgCreateObjectIdValueNodeResult(info.Expression, ConvertError(info.Error));
+			}
+			return res;
 		}
 
 		static string ConvertError(string error) {
@@ -58,7 +73,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
-			return CreateResult(frame, engineValueNodeFactory.Create(frame, expression, options, cancellationToken));
+			return CreateResult(frame.Runtime, engineValueNodeFactory.Create(frame, expression, options, cancellationToken));
 		}
 
 		public override void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback, CancellationToken cancellationToken) {
@@ -70,7 +85,35 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(expression));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNodeFactory.Create(frame, expression, options, result => callback(CreateResult(frame, result)), cancellationToken);
+			engineValueNodeFactory.Create(frame, expression, options, result => callback(CreateResult(frame.Runtime, result)), cancellationToken);
+		}
+
+		public override DbgCreateObjectIdValueNodeResult[] Create(DbgObjectId[] objectIds, CancellationToken cancellationToken) {
+			if (objectIds == null)
+				throw new ArgumentNullException(nameof(objectIds));
+			if (objectIds.Length == 0)
+				return Array.Empty<DbgCreateObjectIdValueNodeResult>();
+			var runtime = objectIds[0].Runtime;
+			if (runtime.Guid != runtimeGuid)
+				throw new ArgumentException();
+			var engineObjectIds = new DbgEngineObjectId[objectIds.Length];
+			for (int i = 0; i < objectIds.Length; i++)
+				engineObjectIds[i] = ((DbgObjectIdImpl)objectIds[i]).EngineObjectId;
+			return CreateResult(runtime, engineValueNodeFactory.Create(engineObjectIds, cancellationToken), engineObjectIds.Length);
+		}
+
+		public override void Create(DbgObjectId[] objectIds, Action<DbgCreateObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken) {
+			if (objectIds == null)
+				throw new ArgumentNullException(nameof(objectIds));
+			if (callback == null)
+				throw new ArgumentNullException(nameof(callback));
+			var runtime = objectIds[0].Runtime;
+			if (runtime.Guid != runtimeGuid)
+				throw new ArgumentException();
+			var engineObjectIds = new DbgEngineObjectId[objectIds.Length];
+			for (int i = 0; i < objectIds.Length; i++)
+				engineObjectIds[i] = ((DbgObjectIdImpl)objectIds[i]).EngineObjectId;
+			engineValueNodeFactory.Create(engineObjectIds, result => CreateResult(runtime, result, engineObjectIds.Length), cancellationToken);
 		}
 	}
 }

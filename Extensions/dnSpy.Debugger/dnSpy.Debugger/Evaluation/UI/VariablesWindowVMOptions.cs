@@ -24,8 +24,15 @@ using dnSpy.Debugger.Evaluation.ViewModel;
 
 namespace dnSpy.Debugger.Evaluation.UI {
 	abstract class VariablesWindowValueNodesProvider {
+		public virtual event EventHandler NodesChanged { add { } remove { } }
 		public abstract DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options);
 		public virtual DbgValueNodeInfo[] GetDefaultNodes() => null;
+
+		/// <summary>
+		/// Called when the window gets shown or closed
+		/// </summary>
+		/// <param name="enable">true if window is shown, false if it's closed</param>
+		public virtual void Initialize(bool enable) { }
 
 		/// <summary>
 		/// true if root nodes can be added/deleted (supported by watch window)

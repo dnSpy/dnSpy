@@ -51,6 +51,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgValueFormatter ValueFormatter { get; }
 
 		/// <summary>
+		/// Gets the object id formatter
+		/// </summary>
+		public abstract DbgObjectIdFormatter ObjectIdFormatter { get; }
+
+		/// <summary>
 		/// Gets the locals provider
 		/// </summary>
 		public abstract DbgValueNodeProvider LocalsProvider { get; }

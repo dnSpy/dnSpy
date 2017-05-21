@@ -50,6 +50,22 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="callback">Called when the evaluation is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		public abstract void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Creates <see cref="DbgValueNode"/>s. It blocks the current thread.
+		/// </summary>
+		/// <param name="objectIds">Object ids</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public abstract DbgCreateObjectIdValueNodeResult[] Create(DbgObjectId[] objectIds, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Creates <see cref="DbgValueNode"/>s
+		/// </summary>
+		/// <param name="objectIds">Object ids</param>
+		/// <param name="callback">Called when the method is complete</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void Create(DbgObjectId[] objectIds, Action<DbgCreateObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken);
 	}
 
 	/// <summary>
@@ -95,6 +111,52 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 			ValueNode = null;
 			Error = error ?? throw new ArgumentNullException(nameof(error));
 			CausesSideEffects = causesSideEffects;
+		}
+	}
+
+	/// <summary>
+	/// Contains the created <see cref="DbgValueNode"/> or an error message
+	/// </summary>
+	public struct DbgCreateObjectIdValueNodeResult {
+		/// <summary>
+		/// Gets the created node or null if there was an error
+		/// </summary>
+		public DbgValueNode ValueNode { get; }
+
+		/// <summary>
+		/// true if there was an error (see <see cref="Error"/>)
+		/// </summary>
+		public bool HasError => Error != null;
+
+		/// <summary>
+		/// Error message or null if none
+		/// </summary>
+		public string Error { get; }
+
+		/// <summary>
+		/// Object id expression
+		/// </summary>
+		public string Expression { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="node">New value node</param>
+		public DbgCreateObjectIdValueNodeResult(DbgValueNode node) {
+			ValueNode = node ?? throw new ArgumentNullException(nameof(node));
+			Expression = node.Expression;
+			Error = null;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="expression">Object id expression</param>
+		/// <param name="error">Error message</param>
+		public DbgCreateObjectIdValueNodeResult(string expression, string error) {
+			ValueNode = null;
+			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+			Error = error ?? throw new ArgumentNullException(nameof(error));
 		}
 	}
 }

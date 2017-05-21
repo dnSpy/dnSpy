@@ -33,6 +33,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public string Text => sb.ToString();
 
 		/// <summary>
+		/// Gets the text length
+		/// </summary>
+		public int Length => sb.Length;
+
+		/// <summary>
 		/// Gets the colors
 		/// </summary>
 		public List<SpanData<object>> Colors => colors;

@@ -25,7 +25,7 @@ using dnSpy.Contracts.Debugger.Evaluation.Engine;
 namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueNodeImpl : DbgValueNode {
 		public override DbgLanguage Language { get; }
-		public override DbgThread Thread { get; }
+		public override DbgRuntime Runtime { get; }
 		public override DbgValue Value => value;
 		public override string Expression => engineValueNode.Expression;
 		public override string ImageName => engineValueNode.ImageName;
@@ -37,18 +37,18 @@ namespace dnSpy.Debugger.Evaluation {
 		readonly DbgEngineValueNode engineValueNode;
 		DbgValueImpl value;
 
-		public DbgValueNodeImpl(DbgLanguage language, DbgThread thread, DbgEngineValueNode engineValueNode) {
-			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+		public DbgValueNodeImpl(DbgLanguage language, DbgRuntime runtime, DbgEngineValueNode engineValueNode) {
+			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Language = language ?? throw new ArgumentNullException(nameof(language));
 			this.engineValueNode = engineValueNode ?? throw new ArgumentNullException(nameof(engineValueNode));
-			value = new DbgValueImpl(thread.Runtime, engineValueNode.Value);
+			value = new DbgValueImpl(runtime, engineValueNode.Value);
 		}
 
 		public override DbgValueNode[] GetChildren(ulong index, int count) {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException(nameof(count));
 			var engineNodes = engineValueNode.GetChildren(index, count);
-			return DbgValueNodeUtils.ToValueNodeArray(Language, Thread, engineNodes);
+			return DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes);
 		}
 
 		public override void GetChildren(ulong index, int count, Action<DbgValueNode[]> callback) {
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentOutOfRangeException(nameof(count));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNode.GetChildren(index, count, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, Thread, engineNodes)));
+			engineValueNode.GetChildren(index, count, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes)));
 		}
 
 		public override void Format(IDbgValueNodeFormatParameters options) {
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new InvalidOperationException();
 			lock (engineValueNode) {
 				var oldValue = value;
-				value = new DbgValueImpl(Thread.Runtime, result.Value);
+				value = new DbgValueImpl(Runtime, result.Value);
 				Process.DbgManager.Close(oldValue);
 			}
 			return new DbgValueNodeAssignmentResult(error: null);

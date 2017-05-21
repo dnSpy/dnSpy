@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -34,6 +35,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override string DisplayName => "<no name>";
 		public override DbgEngineExpressionEvaluator ExpressionEvaluator { get; }
 		public override DbgEngineValueFormatter ValueFormatter { get; }
+		public override DbgEngineObjectIdFormatter ObjectIdFormatter { get; }
 		public override DbgEngineValueNodeProvider LocalsProvider { get; }
 		public override DbgEngineValueNodeProvider AutosProvider { get; }
 		public override DbgEngineValueNodeFactory ValueNodeFactory { get; }
@@ -41,6 +43,7 @@ namespace dnSpy.Debugger.Evaluation {
 		NullDbgEngineLanguage() {
 			ExpressionEvaluator = new NullDbgEngineExpressionEvaluator();
 			ValueFormatter = new NullDbgEngineValueFormatter();
+			ObjectIdFormatter = new NullDbgEngineObjectIdFormatter();
 			LocalsProvider = new NullDbgEngineValueNodeProvider();
 			AutosProvider = new NullDbgEngineValueNodeProvider();
 			ValueNodeFactory = new NullDbgEngineValueNodeFactory();
@@ -73,6 +76,10 @@ namespace dnSpy.Debugger.Evaluation {
 		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, Action callback, CancellationToken cancellationToken) => callback();
 	}
 
+	sealed class NullDbgEngineObjectIdFormatter : DbgEngineObjectIdFormatter {
+		public override void FormatName(ITextColorWriter output, DbgEngineObjectId objectId) { }
+	}
+
 	sealed class NullDbgEngineValueNodeProvider : DbgEngineValueNodeProvider {
 		public override DbgEngineValueNode[] GetNodes(DbgStackFrame frame, CancellationToken cancellationToken) => Array.Empty<DbgEngineValueNode>();
 		public override void GetNodes(DbgStackFrame frame, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(Array.Empty<DbgEngineValueNode>());
@@ -81,5 +88,7 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class NullDbgEngineValueNodeFactory : DbgEngineValueNodeFactory {
 		public override DbgCreateEngineValueNodeResult Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new DbgCreateEngineValueNodeResult(NullDbgEngineExpressionEvaluator.ERROR);
 		public override void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateEngineValueNodeResult> callback, CancellationToken cancellationToken) => callback(Create(frame, expression, options, cancellationToken));
+		public override DbgCreateEngineObjectIdValueNodeResult[] Create(DbgEngineObjectId[] objectIds, CancellationToken cancellationToken) => objectIds.Select(a => new DbgCreateEngineObjectIdValueNodeResult(string.Empty, NullDbgEngineExpressionEvaluator.ERROR)).ToArray();
+		public override void Create(DbgEngineObjectId[] objectIds, Action<DbgCreateEngineObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken) => callback(Create(objectIds, cancellationToken));
 	}
 }

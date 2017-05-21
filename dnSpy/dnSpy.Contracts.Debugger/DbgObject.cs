@@ -159,6 +159,7 @@ namespace dnSpy.Contracts.Debugger {
 						return (T)kv.data;
 				}
 				var value = create();
+				Debug.Assert(!(value is DbgObject));
 				dataList.Add((type, value));
 				return value;
 			}

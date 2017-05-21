@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.UI;
@@ -36,13 +37,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService;
 		readonly DebuggerSettings debuggerSettings;
 		readonly DbgEvalFormatterSettings dbgEvalFormatterSettings;
+		readonly DbgObjectIdService dbgObjectIdService;
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly ITextBlockContentInfoFactory textBlockContentInfoFactory;
 		readonly IMenuService menuService;
 		readonly IWpfCommandService wpfCommandService;
 
 		[ImportingConstructor]
-		ValueNodesVMFactoryImpl(UIDispatcher uiDispatcher, ITreeViewService treeViewService, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, IMenuService menuService, IWpfCommandService wpfCommandService) {
+		ValueNodesVMFactoryImpl(UIDispatcher uiDispatcher, ITreeViewService treeViewService, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, DbgObjectIdService dbgObjectIdService, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, IMenuService menuService, IWpfCommandService wpfCommandService) {
 			uiDispatcher.VerifyAccess();
 			this.uiDispatcher = uiDispatcher;
 			this.treeViewService = treeViewService;
@@ -50,6 +52,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			this.dbgValueNodeImageReferenceService = dbgValueNodeImageReferenceService;
 			this.debuggerSettings = debuggerSettings;
 			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
+			this.dbgObjectIdService = dbgObjectIdService;
 			this.classificationFormatMapService = classificationFormatMapService;
 			this.textBlockContentInfoFactory = textBlockContentInfoFactory;
 			this.menuService = menuService;
@@ -75,7 +78,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				throw new ArgumentException();
 			if (options.ShowMessageBox == null)
 				throw new ArgumentException();
-			return new ValueNodesVM(uiDispatcher, options, treeViewService, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, debuggerSettings, dbgEvalFormatterSettings, classificationFormatMapService, textBlockContentInfoFactory, menuService, wpfCommandService);
+			return new ValueNodesVM(uiDispatcher, options, treeViewService, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, debuggerSettings, dbgEvalFormatterSettings, dbgObjectIdService, classificationFormatMapService, textBlockContentInfoFactory, menuService, wpfCommandService);
 		}
 	}
 }

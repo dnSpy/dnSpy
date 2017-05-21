@@ -45,6 +45,22 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="callback">Called when the evaluation is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		public abstract void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateEngineValueNodeResult> callback, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Creates <see cref="DbgEngineValueNode"/>s. It blocks the current thread.
+		/// </summary>
+		/// <param name="objectIds">Object ids</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public abstract DbgCreateEngineObjectIdValueNodeResult[] Create(DbgEngineObjectId[] objectIds, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Creates <see cref="DbgEngineValueNode"/>s
+		/// </summary>
+		/// <param name="objectIds">Object ids</param>
+		/// <param name="callback">Called when the method is complete</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void Create(DbgEngineObjectId[] objectIds, Action<DbgCreateEngineObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken);
 	}
 
 	/// <summary>
@@ -88,6 +104,47 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="error">Error message, see also <see cref="PredefinedDbgCreateEngineValueNodeResultErrors"/></param>
 		public DbgCreateEngineValueNodeResult(string error) {
 			EngineValueNode = null;
+			Error = error ?? throw new ArgumentNullException(nameof(error));
+		}
+	}
+
+	/// <summary>
+	/// Contains the created <see cref="DbgEngineValueNode"/> or an error message
+	/// </summary>
+	public struct DbgCreateEngineObjectIdValueNodeResult {
+		/// <summary>
+		/// Gets the created node or null if there was an error
+		/// </summary>
+		public DbgEngineValueNode EngineValueNode { get; }
+
+		/// <summary>
+		/// Gets the object id expression
+		/// </summary>
+		public string Expression { get; }
+
+		/// <summary>
+		/// Error message or null if none
+		/// </summary>
+		public string Error { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="node">New value node</param>
+		public DbgCreateEngineObjectIdValueNodeResult(DbgEngineValueNode node) {
+			EngineValueNode = node ?? throw new ArgumentNullException(nameof(node));
+			Expression = node.Expression;
+			Error = null;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="expression">Object id expression</param>
+		/// <param name="error">Error message, see also <see cref="PredefinedDbgCreateEngineValueNodeResultErrors"/></param>
+		public DbgCreateEngineObjectIdValueNodeResult(string expression, string error) {
+			EngineValueNode = null;
+			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
 			Error = error ?? throw new ArgumentNullException(nameof(error));
 		}
 	}

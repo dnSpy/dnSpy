@@ -1866,4 +1866,7 @@ Are you sure you want to expand it?</value>
   <data name="ErrorEvaluatingExpression" xml:space="preserve">
     <value>Couldn't evaluate the expression</value>
   </data>
+  <data name="DeleteObjectIdCommand" xml:space="preserve">
+    <value>Delete Object ID</value>
+  </data>
 </root>

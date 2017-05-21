@@ -20,11 +20,24 @@
 using System.Collections.Generic;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class ValueNodeTextClassifierContext : TextClassifierContext {
+		/// <summary>
+		/// true if the text changed
+		/// </summary>
 		public bool TextChanged { get; }
-		public ValueNodeTextClassifierContext(bool textChanged, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
-			: base(text, tag, colorize, colors) => TextChanged = textChanged;
+
+		/// <summary>
+		/// Span of the text that changed (the object id is at the end and isn't included in this span)
+		/// </summary>
+		public Span TextChangedSpan { get; }
+
+		public ValueNodeTextClassifierContext(bool textChanged, Span textChangedSpan, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+			: base(text, tag, colorize, colors) {
+			TextChanged = textChanged;
+			TextChangedSpan = textChangedSpan;
+		}
 	}
 }

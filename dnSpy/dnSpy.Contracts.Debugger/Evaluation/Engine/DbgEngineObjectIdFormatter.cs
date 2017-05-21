@@ -17,17 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Debugger.Evaluation.Engine;
+using dnSpy.Contracts.Text;
 
-namespace dnSpy.Debugger.Evaluation {
-	static class DbgValueNodeUtils {
-		public static DbgValueNode[] ToValueNodeArray(DbgLanguage language, DbgRuntime runtime, DbgEngineValueNode[] engineNodes) {
-			var nodes = new DbgValueNode[engineNodes.Length];
-			for (int i = 0; i < nodes.Length; i++)
-				nodes[i] = new DbgValueNodeImpl(language, runtime, engineNodes[i]);
-			return nodes;
-		}
+namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
+	/// <summary>
+	/// Formats <see cref="DbgEngineObjectId"/>s
+	/// </summary>
+	public abstract class DbgEngineObjectIdFormatter {
+		/// <summary>
+		/// Formats the name of an object id
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="objectId">Object id</param>
+		public abstract void FormatName(ITextColorWriter output, DbgEngineObjectId objectId);
 	}
 }

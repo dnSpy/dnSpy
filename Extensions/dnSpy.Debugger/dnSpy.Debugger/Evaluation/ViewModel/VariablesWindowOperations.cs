@@ -46,8 +46,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract void CopyValue(IValueNodesVM vm);
 		public abstract bool CanAddWatch(IValueNodesVM vm);
 		public abstract void AddWatch(IValueNodesVM vm);
+		public abstract bool IsMakeObjectIdVisible(IValueNodesVM vm);
 		public abstract bool CanMakeObjectId(IValueNodesVM vm);
 		public abstract void MakeObjectId(IValueNodesVM vm);
+		public abstract bool CanDeleteObjectId(IValueNodesVM vm);
+		public abstract void DeleteObjectId(IValueNodesVM vm);
 		public abstract bool CanSave(IValueNodesVM vm);
 		public abstract void Save(IValueNodesVM vm);
 		public abstract bool CanShowInMemoryWindow(IValueNodesVM vm);

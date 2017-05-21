@@ -120,9 +120,18 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		MakeObjectIdVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
 		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.MakeObjectId(context.VM);
 		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanMakeObjectId(context.VM);
+		public override bool IsVisible(VariablesWindowCtxMenuContext context) => context.Operations.IsMakeObjectIdVisible(context.VM);
 	}
 
-	[ExportMenuItem(Header = "res:LocalsSaveCommand", Icon = DsImagesAttribute.Save, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 60)]
+	[ExportMenuItem(Header = "res:DeleteObjectIdCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 60)]
+	sealed class DeleteObjectIdVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
+		[ImportingConstructor]
+		DeleteObjectIdVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
+		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.DeleteObjectId(context.VM);
+		public override bool IsVisible(VariablesWindowCtxMenuContext context) => context.Operations.CanDeleteObjectId(context.VM);
+	}
+
+	[ExportMenuItem(Header = "res:LocalsSaveCommand", Icon = DsImagesAttribute.Save, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 70)]
 	sealed class SaveVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
 		[ImportingConstructor]
 		SaveVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
@@ -137,7 +146,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public const string GROUP_LANGUAGE = "0,81ADE85F-2CA6-4C29-AF32-9300CEAFB584";
 	}
 
-	[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = DsImagesAttribute.MemoryWindow, Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 70)]
+	[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = DsImagesAttribute.MemoryWindow, Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 80)]
 	sealed class ShowInMemoryWindowVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
 		[ImportingConstructor]
 		ShowInMemoryWindowVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
@@ -185,7 +194,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanShowInMemoryWindow(context.VM);
 	}
 
-	[ExportMenuItem(Header = "res:LanguageCommand", Guid = Constants.LANGUAGE_GUID, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 80)]
+	[ExportMenuItem(Header = "res:LanguageCommand", Guid = Constants.LANGUAGE_GUID, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 90)]
 	sealed class LanguageVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
 		[ImportingConstructor]
 		LanguageVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }

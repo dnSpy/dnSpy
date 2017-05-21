@@ -24,6 +24,7 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Evaluation.ViewModel;
 using dnSpy.Debugger.Evaluation.ViewModel.Impl;
 using dnSpy.Debugger.UI;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Debugger.Evaluation.UI {
 	sealed class VariablesWindowColumnConverter : IValueConverter {
@@ -39,10 +40,14 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			writer.Clear();
 			var formatter = nodeCtx.Formatter;
 			bool textChanged = false;
+			int textLen = -1;
 			if (obj.Tag == nodeCtx.NameColumnName)
 				formatter.WriteName(writer, obj.VM);
-			else if (obj.Tag == nodeCtx.ValueColumnName)
+			else if (obj.Tag == nodeCtx.ValueColumnName) {
 				formatter.WriteValue(writer, obj.VM, out textChanged);
+				textLen = writer.Length;
+				formatter.WriteObjectId(writer, obj.VM);
+			}
 			else if (obj.Tag == nodeCtx.TypeColumnName)
 				formatter.WriteType(writer, obj.VM);
 			else
@@ -50,7 +55,9 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 			if (!nodeCtx.HighlightChangedVariables)
 				textChanged = false;
-			var context = new ValueNodeTextClassifierContext(textChanged, writer.Text, obj.Tag, nodeCtx.SyntaxHighlight, writer.Colors);
+			var text = writer.Text;
+			var textChangedSpan = new Span(0, textLen == -1 ? text.Length : textLen);
+			var context = new ValueNodeTextClassifierContext(textChanged, textChangedSpan, text, obj.Tag, nodeCtx.SyntaxHighlight, writer.Colors);
 			var flags = isToolTip ? TextElementFlags.Wrap : TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis;
 			const double DISABLED_OPACITY = 0.5;
 			double opacity = !isToolTip && node.IsDisabled ? DISABLED_OPACITY : 1.0;

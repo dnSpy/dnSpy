@@ -17,17 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
 
 namespace dnSpy.Debugger.Evaluation {
-	static class DbgValueNodeUtils {
-		public static DbgValueNode[] ToValueNodeArray(DbgLanguage language, DbgRuntime runtime, DbgEngineValueNode[] engineNodes) {
-			var nodes = new DbgValueNode[engineNodes.Length];
-			for (int i = 0; i < nodes.Length; i++)
-				nodes[i] = new DbgValueNodeImpl(language, runtime, engineNodes[i]);
-			return nodes;
-		}
+	sealed class NullDbgEngineObjectIdFactory : DbgEngineObjectIdFactory {
+		public static readonly DbgEngineObjectIdFactory Instance = new NullDbgEngineObjectIdFactory();
+		NullDbgEngineObjectIdFactory() { }
+		public override bool CanCreateObjectId(DbgEngineValue value) => false;
+		public override DbgEngineObjectId CreateObjectId(DbgEngineValue value, uint id) => null;
+		public override bool Equals(DbgEngineObjectId objectId, DbgEngineValue value) => false;
+		public override int GetHashCode(DbgEngineObjectId objectId) => 0;
+		public override int GetHashCode(DbgEngineValue value) => 0;
 	}
 }

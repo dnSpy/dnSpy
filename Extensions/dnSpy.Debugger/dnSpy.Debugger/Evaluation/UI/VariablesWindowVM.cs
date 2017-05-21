@@ -112,6 +112,11 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			public void Initialize_UI(bool enable) {
 				uiDispatcher.VerifyAccess();
 				isOpen = enable;
+				variablesWindowValueNodesProvider.Initialize(enable);
+				if (enable)
+					variablesWindowValueNodesProvider.NodesChanged += VariablesWindowValueNodesProvider_NodesChanged;
+				else
+					variablesWindowValueNodesProvider.NodesChanged -= VariablesWindowValueNodesProvider_NodesChanged;
 				RefreshNodes_UI();
 				DbgThread(() => InitializeDebugger_DbgThread(enable));
 			}
@@ -136,6 +141,9 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			}
 
 			void DbgCallStackService_FramesChanged(object sender, FramesChangedEventArgs e) =>
+				UI(() => RefreshNodes_UI());
+
+			void VariablesWindowValueNodesProvider_NodesChanged(object sender, EventArgs e) =>
 				UI(() => RefreshNodes_UI());
 
 			void RefreshNodes_UI() {

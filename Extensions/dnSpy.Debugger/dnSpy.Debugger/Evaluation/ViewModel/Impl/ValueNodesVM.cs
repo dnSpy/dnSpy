@@ -61,6 +61,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly VariablesWindowKind variablesWindowKind;
 		readonly DebuggerSettings debuggerSettings;
 		readonly DbgEvalFormatterSettings dbgEvalFormatterSettings;
+		readonly DbgObjectIdService dbgObjectIdService;
 		readonly ValueNodesContext valueNodesContext;
 		readonly ITreeView treeView;
 		readonly RootNode rootNode;
@@ -77,14 +78,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 		}
 
-		public ValueNodesVM(UIDispatcher uiDispatcher, ValueNodesVMOptions options, ITreeViewService treeViewService, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, IMenuService menuService, IWpfCommandService wpfCommandService) {
+		public ValueNodesVM(UIDispatcher uiDispatcher, ValueNodesVMOptions options, ITreeViewService treeViewService, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, DbgObjectIdService dbgObjectIdService, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, IMenuService menuService, IWpfCommandService wpfCommandService) {
 			uiDispatcher.VerifyAccess();
 			valueNodesProvider = options.NodesProvider;
 			variablesWindowKind = options.VariablesWindowKind;
 			this.debuggerSettings = debuggerSettings;
 			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
+			this.dbgObjectIdService = dbgObjectIdService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			valueNodesContext = new ValueNodesContext(uiDispatcher, this, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(EvaluateExpression), classificationFormatMap, textBlockContentInfoFactory, options.ShowMessageBox);
+			valueNodesContext.Formatter.ObjectIdService = dbgObjectIdService;
 
 			rootNode = new RootNode();
 			var tvOptions = new TreeViewOptions {
@@ -116,6 +119,28 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			valueNodesContext.NameEditValueProvider.Language = valueNodesProvider.Language;
 			valueNodesContext.ValueEditValueProvider.Language = valueNodesProvider.Language;
+			valueNodesContext.Formatter.Language = valueNodesProvider.Language;
+		}
+
+		// random thread
+		void DbgObjectIdService_ObjectIdsChanged(object sender, EventArgs e) {
+			if (refreshNameFields)
+				return;
+			refreshNameFields = true;
+			// Add an extra UI() so RecreateRootChildren_UI() gets called before RefreshNameFields_UI().
+			// This way we avoid creating extra UI elements in the locals window.
+			UI(() => UI(() => RefreshNameFields_UI()));
+		}
+		volatile bool refreshNameFields;
+
+		// UI thread
+		void RefreshNameFields_UI() {
+			valueNodesContext.UIDispatcher.VerifyAccess();
+			if (!refreshNameFields)
+				return;
+			refreshNameFields = false;
+			const RefreshNodeOptions options = RefreshNodeOptions.RefreshValueControl;
+			RefreshNodes(options);
 		}
 
 		// UI thread
@@ -138,6 +163,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void RecreateRootChildren_UI() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
+			refreshNameFields = false;
 			Guid? runtimeGuid;
 			DbgValueNodeInfo[] nodes;
 			if (isOpen) {
@@ -370,6 +396,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void InitializeDebugger_UI(bool enable) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			isOpen = enable;
+			refreshNameFields = false;
 			if (enable) {
 				valueNodesContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -379,6 +406,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesContext.HighlightChangedVariables = debuggerSettings.HighlightChangedVariables;
 				valueNodesContext.NameEditValueProvider.Language = valueNodesProvider.Language;
 				valueNodesContext.ValueEditValueProvider.Language = valueNodesProvider.Language;
+				valueNodesContext.Formatter.Language = valueNodesProvider.Language;
 				UpdateFormatterOptions();
 				valueNodesContext.IsWindowReadOnly = valueNodesProvider.IsReadOnly;
 				valueNodesProvider.NodesChanged += ValueNodesProvider_NodesChanged;
@@ -386,6 +414,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.LanguageChanged += ValueNodesProvider_LanguageChanged;
 				lastRuntimeGuid = null;
 				selectNodeKind = SelectNodeKind.Open;
+				dbgObjectIdService.ObjectIdsChanged += DbgObjectIdService_ObjectIdsChanged;
 			}
 			else {
 				valueNodesContext.ClassificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
@@ -394,9 +423,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.NodesChanged -= ValueNodesProvider_NodesChanged;
 				valueNodesProvider.IsReadOnlyChanged -= ValueNodesProvider_IsReadOnlyChanged;
 				valueNodesProvider.LanguageChanged -= ValueNodesProvider_LanguageChanged;
+				dbgObjectIdService.ObjectIdsChanged -= DbgObjectIdService_ObjectIdsChanged;
 				valueNodesContext.IsWindowReadOnly = true;
 				lastRuntimeGuid = null;
 				selectNodeKind = SelectNodeKind.None;
+				valueNodesContext.NameEditValueProvider.Language = null;
+				valueNodesContext.ValueEditValueProvider.Language = null;
+				valueNodesContext.Formatter.Language = null;
 			}
 			RecreateRootChildren_UI();
 

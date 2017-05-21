@@ -42,16 +42,18 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly DebuggerSettings debuggerSettings;
 		readonly DbgEvalFormatterSettings dbgEvalFormatterSettings;
 		readonly Lazy<DbgLanguageService> dbgLanguageService;
+		readonly Lazy<DbgObjectIdService> dbgObjectIdService;
 		readonly Lazy<WatchExpressionsService> watchExpressionsService;
 		readonly Lazy<ToolWindows.Memory.MemoryWindowService> memoryWindowService;
 		readonly Lazy<IPickSaveFilename> pickSaveFilename;
 		readonly Lazy<IMessageBoxService> messageBoxService;
 
 		[ImportingConstructor]
-		VariablesWindowOperationsImpl(DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, Lazy<DbgLanguageService> dbgLanguageService, Lazy<WatchExpressionsService> watchExpressionsService, Lazy<ToolWindows.Memory.MemoryWindowService> memoryWindowService, Lazy<IPickSaveFilename> pickSaveFilename, Lazy<IMessageBoxService> messageBoxService) {
+		VariablesWindowOperationsImpl(DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgObjectIdService> dbgObjectIdService, Lazy<WatchExpressionsService> watchExpressionsService, Lazy<ToolWindows.Memory.MemoryWindowService> memoryWindowService, Lazy<IPickSaveFilename> pickSaveFilename, Lazy<IMessageBoxService> messageBoxService) {
 			this.debuggerSettings = debuggerSettings;
 			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
 			this.dbgLanguageService = dbgLanguageService;
+			this.dbgObjectIdService = dbgObjectIdService;
 			this.watchExpressionsService = watchExpressionsService;
 			this.memoryWindowService = memoryWindowService;
 			this.pickSaveFilename = pickSaveFilename;
@@ -108,7 +110,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteName(output, node);
 				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteValue(output, node, out _);
+				formatter.WriteValueAndObjectId(output, node, out _);
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteType(output, node);
 				output.WriteLine();
@@ -138,6 +140,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					output.WriteLine();
 				count++;
 
+				// Don't write the object id since the command is "copy value" (VS copies the object id, though)
 				node.Context.Formatter.WriteValue(output, node, out _);
 			}
 			if (count > 1)
@@ -292,12 +295,35 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			watchExpressionsService.Value.AddExpressions(expressions);
 		}
 
-		public override bool CanMakeObjectId(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Any(a => a.RawNode is DebuggerValueRawNode);
+		public override bool IsMakeObjectIdVisible(IValueNodesVM vm) {
+			if (vm == null)
+				return false;
+			int removeCount = 0;
+			foreach (var node in SelectedNodes(vm)) {
+				if (node.RawNode is DebuggerValueRawNode rawNode) {
+					if (dbgObjectIdService.Value.CanCreateObjectId(rawNode.DebuggerValueNode.Value))
+						return true;
+					if (dbgObjectIdService.Value.GetObjectId(rawNode.DebuggerValueNode.Value) != null)
+						removeCount++;
+				}
+			}
+			return removeCount == 0;
+		}
+
+		public override bool CanMakeObjectId(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Any(a => dbgObjectIdService.Value.CanCreateObjectId(a.DebuggerValueNode.Value));
 		public override void MakeObjectId(IValueNodesVM vm) {
 			if (!CanMakeObjectId(vm))
 				return;
-			var nodes = SortedSelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().ToArray();
-			//TODO: Create 1+ obj ids, ignore value types
+			var values = SortedSelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Select(a => a.DebuggerValueNode.Value).ToArray();
+			dbgObjectIdService.Value.CreateObjectIds(values);
+		}
+
+		public override bool CanDeleteObjectId(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Any(a => dbgObjectIdService.Value.GetObjectId(a.DebuggerValueNode.Value) != null);
+		public override void DeleteObjectId(IValueNodesVM vm) {
+			if (!CanDeleteObjectId(vm))
+				return;
+			var objectIds = SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Select(a => dbgObjectIdService.Value.GetObjectId(a.DebuggerValueNode.Value)).Where(a => a != null);
+			dbgObjectIdService.Value.Remove(objectIds);
 		}
 
 		public override bool CanSave(IValueNodesVM vm) => CanExecCommands(vm) && GetValue(SelectedNode(vm)?.RawNode)?.GetRawAddressValue(onlyDataAddress: true) != null;

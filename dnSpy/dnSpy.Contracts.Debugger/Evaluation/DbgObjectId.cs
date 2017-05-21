@@ -17,17 +17,35 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Debugger.Evaluation.Engine;
+namespace dnSpy.Contracts.Debugger.Evaluation {
+	/// <summary>
+	/// References a value in the debugged process
+	/// </summary>
+	public abstract class DbgObjectId : DbgObject {
+		/// <summary>
+		/// Gets the process
+		/// </summary>
+		public DbgProcess Process => Runtime.Process;
 
-namespace dnSpy.Debugger.Evaluation {
-	static class DbgValueNodeUtils {
-		public static DbgValueNode[] ToValueNodeArray(DbgLanguage language, DbgRuntime runtime, DbgEngineValueNode[] engineNodes) {
-			var nodes = new DbgValueNode[engineNodes.Length];
-			for (int i = 0; i < nodes.Length; i++)
-				nodes[i] = new DbgValueNodeImpl(language, runtime, engineNodes[i]);
-			return nodes;
-		}
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public abstract DbgRuntime Runtime { get; }
+
+		/// <summary>
+		/// Gets the unique id in the runtime
+		/// </summary>
+		public abstract uint Id { get; }
+
+		/// <summary>
+		/// Creates a new value
+		/// </summary>
+		/// <returns></returns>
+		public abstract DbgValue GetValue();
+
+		/// <summary>
+		/// Removes and closes the object id
+		/// </summary>
+		public abstract void Remove();
 	}
 }

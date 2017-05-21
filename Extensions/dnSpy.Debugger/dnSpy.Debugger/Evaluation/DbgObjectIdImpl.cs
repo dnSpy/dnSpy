@@ -17,17 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
 
 namespace dnSpy.Debugger.Evaluation {
-	static class DbgValueNodeUtils {
-		public static DbgValueNode[] ToValueNodeArray(DbgLanguage language, DbgRuntime runtime, DbgEngineValueNode[] engineNodes) {
-			var nodes = new DbgValueNode[engineNodes.Length];
-			for (int i = 0; i < nodes.Length; i++)
-				nodes[i] = new DbgValueNodeImpl(language, runtime, engineNodes[i]);
-			return nodes;
+	sealed class DbgObjectIdImpl : DbgObjectId {
+		public override DbgRuntime Runtime => owner.Runtime;
+		public override uint Id => EngineObjectId.Id;
+		public DbgEngineObjectId EngineObjectId { get; }
+
+		readonly DbgRuntimeObjectIdServiceImpl owner;
+
+		public DbgObjectIdImpl(DbgRuntimeObjectIdServiceImpl owner, DbgEngineObjectId engineObjectId) {
+			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
+			EngineObjectId = engineObjectId ?? throw new ArgumentNullException(nameof(engineObjectId));
 		}
+
+		public override DbgValue GetValue() => new DbgValueImpl(Runtime, EngineObjectId.GetValue());
+		public override void Remove() => owner.Remove(new[] { this });
+		protected override void CloseCore() => EngineObjectId.Close(Process.DbgManager.Dispatcher);
 	}
 }

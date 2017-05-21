@@ -17,10 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class ValueNodeFormatter {
+		public DbgObjectIdService ObjectIdService { get; set; }
+		public DbgLanguage Language { get; set; }
+
 		public void WriteExpander(ITextColorWriter output, ValueNode vm) {
 			if (vm.TreeNode.LazyLoading)
 				output.Write(BoxedTextColor.Text, "+");
@@ -35,9 +40,33 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		public void WriteName(ITextColorWriter output, ValueNode vm) => vm.CachedName.WriteTo(output);
 
+		public void WriteValueAndObjectId(ITextColorWriter output, ValueNode vm, out bool textChanged) {
+			WriteValue(output, vm, out textChanged);
+			WriteObjectId(output, vm);
+		}
+
 		public void WriteValue(ITextColorWriter output, ValueNode vm, out bool textChanged) {
 			vm.CachedValue.WriteTo(output);
 			textChanged = !vm.OldCachedValue.IsDefault && !vm.OldCachedValue.Equals(vm.CachedValue);
+		}
+
+		public void WriteObjectId(ITextColorWriter output, ValueNode vm) {
+			Debug.Assert(ObjectIdService != null);
+			if (ObjectIdService == null)
+				return;
+			var vmImpl = (ValueNodeImpl)vm;
+			if (vmImpl.RawNode is DebuggerValueRawNode rawNode) {
+				Debug.Assert(Language != null);
+				if (Language == null)
+					return;
+				var objectId = ObjectIdService.GetObjectId(rawNode.DebuggerValueNode.Value);
+				if (objectId != null) {
+					output.WriteSpace();
+					output.Write(BoxedTextColor.Punctuation, "{");
+					Language.ObjectIdFormatter.FormatName(output, objectId);
+					output.Write(BoxedTextColor.Punctuation, "}");
+				}
+			}
 		}
 
 		public void WriteType(ITextColorWriter output, ValueNode vm) {
