@@ -107,6 +107,7 @@
     <Compile Include="Text\TypeOutputTextColorWriter.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="UI\UIDispatcher.cs" />
+    <Compile Include="Utilities\DotNetAssemblyUtilities.cs" />
     <Compile Include="Utilities\DotNetCoreHelpers.cs" />
   </ItemGroup>
   <ItemGroup>

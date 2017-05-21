@@ -39,6 +39,7 @@ using dnSpy.Debugger.CorDebug.Code;
 using dnSpy.Debugger.CorDebug.DAC;
 using dnSpy.Debugger.CorDebug.Properties;
 using dnSpy.Debugger.CorDebug.Steppers;
+using dnSpy.Debugger.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	[Export(typeof(DbgEngineImplDependencies))]
@@ -535,8 +536,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage());
 				else if (cex != null && cex.ErrorCode == CordbgErrors.CORDBG_E_UNCOMPATIBLE_PLATFORMS)
 					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage());
-				else if (cex != null && cex.ErrorCode == unchecked((int)0x800702E4))
-					errMsg = dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerRequireAdminPrivLvl;
+				else if (cex != null && cex.ErrorCode == unchecked((int)0x800702E4)) {
+					// The x64 CLR debugger doesn't return the correct error code when we try to debug a 32-bit req-admin program.
+					// It doesn't support debugging 32-bit programs, so it should return CORDBG_E_UNCOMPATIBLE_PLATFORMS or ERROR_NOT_SUPPORTED.
+					if (IntPtr.Size == 8 && DotNetAssemblyUtilities.TryGetProgramBitness(options.Filename) == 32)
+						errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage());
+					else
+						errMsg = dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerRequireAdminPrivLvl;
+				}
 				else
 					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerCheckAccessToFile, options.Filename ?? "<???>", ex.Message);
 
