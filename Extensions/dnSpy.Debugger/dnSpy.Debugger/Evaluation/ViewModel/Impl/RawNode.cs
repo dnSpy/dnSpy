@@ -128,7 +128,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		public override string Expression => string.Empty;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
-		// We pretend it doesn't have any children. This will also prevent the treeview node expander to be shown.
 		public override bool? HasChildren => false;
 		public override ulong? ChildCount => 0;
 

@@ -33,12 +33,22 @@ namespace dnSpy.Debugger.UI.Wpf {
 		static void ContentInfoProperty_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var oldValue = (TextBlockContentInfo)e.OldValue;
 			var newValue = (TextBlockContentInfo)e.NewValue;
-			if (oldValue == newValue)
-				return;
+			var tb = (SmartTextBlock)d;
+			if (oldValue == newValue) {
+				if (oldValue.Opacity == newValue.Opacity)
+					return;
+				if (tb.Content is FrameworkElement fwElem) {
+					if (newValue.Opacity == 1.0)
+						fwElem.ClearValue(OpacityProperty);
+					else
+						fwElem.Opacity = newValue.Opacity;
+					return;
+				}
+			}
 			var newContent = newValue?.TextElementFactory.Create(newValue.ClassificationFormatMap, newValue.Text, newValue.Tags, newValue.TextElementFlags);
 			if (newContent != null && newValue.Opacity != 1.0)
 				newContent.Opacity = newValue.Opacity;
-			((SmartTextBlock)d).Content = newContent;
+			tb.Content = newContent;
 		}
 
 		public TextBlockContentInfo ContentInfo {

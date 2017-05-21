@@ -36,6 +36,10 @@ namespace dnSpy.Debugger.UI.Wpf {
 		public string Text { get; }
 		public TextClassificationTag[] Tags { get; }
 		public TextElementFlags TextElementFlags { get; }
+
+		/// <summary>
+		/// The opacity isn't used when comparing this instance to some other instance
+		/// </summary>
 		public double Opacity { get; }
 
 		/// <summary>
@@ -74,8 +78,8 @@ namespace dnSpy.Debugger.UI.Wpf {
 			ClassificationFormatMap == other.ClassificationFormatMap &&
 			Text == other.Text &&
 			CompareTags(Tags, other.Tags) &&
-			TextElementFlags == other.TextElementFlags &&
-			Opacity == other.Opacity;
+			TextElementFlags == other.TextElementFlags
+			/* Opacity isn't checked */;
 
 		static bool CompareTags(TextClassificationTag[] a, TextClassificationTag[] b) {
 			if (a == b)
@@ -103,7 +107,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 			hc ^= Text.GetHashCode();
 			hc ^= Tags.Length == 0 ? 0 : Tags[0].Span.GetHashCode() ^ Tags[0].ClassificationType.GetHashCode();
 			hc ^= (int)TextElementFlags;
-			hc ^= Opacity.GetHashCode();
+			// Opacity isn't used
 			return hc;
 		}
 	}

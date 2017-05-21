@@ -150,6 +150,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				catch (ExternalException) { }
 			}
 		}
+
 		static bool HasClipboardExpressions() {
 			try {
 				return Clipboard.ContainsText() || Clipboard.ContainsData(ClipboardFormats.VARIABLES_WINDOW_EXPRESSIONS);
