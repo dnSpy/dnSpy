@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				uiDispatcher.VerifyAccess();
 				var info = TryGetLanguage();
 				if (info.frame == null)
-					return Array.Empty<DbgValueNodeInfo>();
+					return variablesWindowValueNodesProvider.GetDefaultNodes() ?? Array.Empty<DbgValueNodeInfo>();
 				var options = DbgEvaluationOptions.Expression;
 				return variablesWindowValueNodesProvider.GetNodes(info.language, info.frame, options);
 			}
@@ -209,6 +209,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		IValueNodesVM IVariablesWindowVM.VM => valueNodesVM;
 
 		readonly VariablesWindowVMOptions variablesWindowVMOptions;
+		readonly Lazy<DbgManager> dbgManager;
 		readonly UIDispatcher uiDispatcher;
 		readonly LazyToolWindowVMHelper lazyToolWindowVMHelper;
 		readonly ValueNodesProviderImpl valueNodesProvider;
@@ -219,12 +220,20 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public VariablesWindowVM(VariablesWindowVMOptions variablesWindowVMOptions, Lazy<DbgManager> dbgManager, UIDispatcher uiDispatcher, Lazy<ValueNodesVMFactory> valueNodesVMFactory, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<IMessageBoxService> messageBoxService) {
 			uiDispatcher.VerifyAccess();
 			this.variablesWindowVMOptions = variablesWindowVMOptions;
+			this.dbgManager = dbgManager;
 			this.uiDispatcher = uiDispatcher;
 			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
 			valueNodesProvider = new ValueNodesProviderImpl(variablesWindowVMOptions.VariablesWindowValueNodesProvider, uiDispatcher, dbgManager, dbgLanguageService, dbgCallStackService);
 			this.valueNodesVMFactory = valueNodesVMFactory;
 			this.messageBoxService = messageBoxService;
 		}
+
+		// random thread
+		void DbgThread(Action callback) =>
+			dbgManager.Value.Dispatcher.BeginInvoke(callback);
+
+		// random thread
+		void UI(Action callback) => uiDispatcher.UI(callback);
 
 		void ILazyToolWindowVM.Show() {
 			uiDispatcher.VerifyAccess();
@@ -261,6 +270,23 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				TreeViewChanged?.Invoke(this, EventArgs.Empty);
 				valueNodesProvider.Initialize_UI(enable);
 			}
+			DbgThread(() => InitializeDebugger_DbgThread(enable));
+		}
+
+		// DbgManager thread
+		void InitializeDebugger_DbgThread(bool enable) {
+			dbgManager.Value.Dispatcher.VerifyAccess();
+			if (enable)
+				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
+			else
+				dbgManager.Value.DelayedIsRunningChanged -= DbgManager_DelayedIsRunningChanged;
+		}
+
+		// DbgManager thread
+		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) {
+			// If all processes are running and the window is hidden, hide it now
+			if (!IsVisible)
+				UI(() => lazyToolWindowVMHelper.TryHideWindow());
 		}
 
 		bool ShowMessageBox(string message, ShowMessageBoxButtons buttons) {

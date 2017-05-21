@@ -26,6 +26,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.Evaluation.UI;
 using dnSpy.Debugger.Evaluation.ViewModel;
+using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Watch {
@@ -93,6 +94,15 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 		// The returned id is unique and also sortable (unless it overflows...)
 		string GetNextId() => nextId++.ToString("X8");
 
+		public override DbgValueNodeInfo[] GetDefaultNodes() {
+			var res = new DbgValueNodeInfo[expressions.Count];
+			for (int i = 0; i < res.Length; i++) {
+				var info = expressions[i];
+				res[i] = new DbgValueNodeInfo(info.Id, info.Expression, dnSpy_Debugger_Resources.ErrorEvaluatingExpression, causesSideEffects: true);
+			}
+			return res;
+		}
+
 		public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) {
 			var res = new DbgValueNodeInfo[expressions.Count];
 			Debug.Assert((options & DbgEvaluationOptions.NoSideEffects) == 0);
@@ -113,7 +123,6 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 					res[i] = new DbgValueNodeInfo(result.ValueNode, info.Id);
 				}
 			}
-
 			return res;
 		}
 

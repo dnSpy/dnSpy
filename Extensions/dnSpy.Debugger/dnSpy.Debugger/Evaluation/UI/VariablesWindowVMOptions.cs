@@ -25,6 +25,7 @@ using dnSpy.Debugger.Evaluation.ViewModel;
 namespace dnSpy.Debugger.Evaluation.UI {
 	abstract class VariablesWindowValueNodesProvider {
 		public abstract DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options);
+		public virtual DbgValueNodeInfo[] GetDefaultNodes() => null;
 
 		/// <summary>
 		/// true if root nodes can be added/deleted (supported by watch window)

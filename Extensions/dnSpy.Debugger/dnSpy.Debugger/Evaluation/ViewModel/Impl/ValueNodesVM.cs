@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly RootNode rootNode;
 		bool isOpen;
 		SelectNodeKind selectNodeKind;
-		Guid? runtimeGuid;
+		Guid? lastRuntimeGuid;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly IValueNodesVM vm;
@@ -114,7 +114,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void ValueNodesProvider_LanguageChanged(object sender, EventArgs e) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			runtimeGuid = null;
 			valueNodesContext.NameEditValueProvider.Language = valueNodesProvider.Language;
 			valueNodesContext.ValueEditValueProvider.Language = valueNodesProvider.Language;
 		}
@@ -143,7 +142,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			DbgValueNodeInfo[] nodes;
 			if (isOpen) {
 				nodes = valueNodesProvider.GetNodes();
-				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid;
+				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid ?? lastRuntimeGuid;
 			}
 			else {
 				nodes = Array.Empty<DbgValueNodeInfo>();
@@ -224,8 +223,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			CloseOnContinue(infos);
 
-			bool runtimeGuidChanged = runtimeGuid != this.runtimeGuid;
-			this.runtimeGuid = runtimeGuid;
+			bool runtimeGuidChanged = runtimeGuid != lastRuntimeGuid;
+			lastRuntimeGuid = runtimeGuid;
 
 			if (infos.Length == 0 || rootNode.TreeNode.Children.Count == 0 || runtimeGuidChanged) {
 				SetNewRootChildren_UI(infos);
@@ -385,7 +384,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.NodesChanged += ValueNodesProvider_NodesChanged;
 				valueNodesProvider.IsReadOnlyChanged += ValueNodesProvider_IsReadOnlyChanged;
 				valueNodesProvider.LanguageChanged += ValueNodesProvider_LanguageChanged;
-				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid;
+				lastRuntimeGuid = null;
 				selectNodeKind = SelectNodeKind.Open;
 			}
 			else {
@@ -396,7 +395,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.IsReadOnlyChanged -= ValueNodesProvider_IsReadOnlyChanged;
 				valueNodesProvider.LanguageChanged -= ValueNodesProvider_LanguageChanged;
 				valueNodesContext.IsWindowReadOnly = true;
-				runtimeGuid = null;
+				lastRuntimeGuid = null;
 				selectNodeKind = SelectNodeKind.None;
 			}
 			RecreateRootChildren_UI();
