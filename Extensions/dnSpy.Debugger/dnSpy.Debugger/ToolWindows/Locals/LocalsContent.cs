@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Threading;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -74,14 +73,22 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			void DbgObjectIdService_ObjectIdsChanged(object sender, EventArgs e) => NodesChanged?.Invoke(this, EventArgs.Empty);
 
 			public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) {
+				var exceptions = language.ExceptionProvider.GetNodes(frame);
+				var returnValues = language.ReturnValueProvider.GetNodes(frame);
+				var variables = language.LocalsProvider.GetNodes(frame);
+
 				var objectIds = dbgObjectIdService.GetObjectIds(frame.Runtime);
 				Array.Sort(objectIds, DbgObjectIdComparer.Instance);
-				var locals = language.LocalsProvider.GetNodes(frame);
 
-				var res = new DbgValueNodeInfo[objectIds.Length + locals.Length];
-				var objectIdInfos = language.ValueNodeFactory.Create(objectIds, CancellationToken.None);
-				Debug.Assert(objectIdInfos.Length == objectIds.Length);
+				var res = new DbgValueNodeInfo[exceptions.Length + returnValues.Length + objectIds.Length + variables.Length];
 				int ri = 0;
+				for (int i = 0; i < exceptions.Length; i++, ri++)
+					res[ri] = new DbgValueNodeInfo(exceptions[i], GetNextExceptionId());
+				for (int i = 0; i < returnValues.Length; i++, ri++)
+					res[ri] = new DbgValueNodeInfo(returnValues[i], GetNextReturnValueId());
+
+				var objectIdInfos = language.ValueNodeFactory.Create(objectIds);
+				Debug.Assert(objectIdInfos.Length == objectIds.Length);
 				for (int i = 0; i < objectIdInfos.Length; i++, ri++) {
 					var id = GetObjectIdNodeId(objectIds[i]);
 					var result = objectIdInfos[i];
@@ -91,16 +98,22 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 						res[ri] = new DbgValueNodeInfo(result.ValueNode, id);
 				}
 
-				for (int i = 0; i < locals.Length; i++, ri++) {
-					var local = locals[i];
-					res[ri] = new DbgValueNodeInfo(local);
-				}
+				for (int i = 0; i < variables.Length; i++, ri++)
+					res[ri] = new DbgValueNodeInfo(variables[i]);
 
 				return res;
 			}
 
+			string GetNextExceptionId() => exceptionIdBase + exceptionCounter++.ToString();
+			uint exceptionCounter;
+			readonly string exceptionIdBase = "eid-" + Guid.NewGuid().ToString() + "-";
+
+			string GetNextReturnValueId() => returnValueIdBase + returnValueCounter++.ToString();
+			uint returnValueCounter;
+			readonly string returnValueIdBase = "rid-" + Guid.NewGuid().ToString() + "-";
+
 			string GetObjectIdNodeId(DbgObjectId objectId) => objectIdNodeIdBase + objectId.Id.ToString();
-			static readonly string objectIdNodeIdBase = "oid-" + Guid.NewGuid().ToString() + "-";
+			readonly string objectIdNodeIdBase = "oid-" + Guid.NewGuid().ToString() + "-";
 		}
 
 		VariablesWindowVMOptions CreateVariablesWindowVMOptions() {

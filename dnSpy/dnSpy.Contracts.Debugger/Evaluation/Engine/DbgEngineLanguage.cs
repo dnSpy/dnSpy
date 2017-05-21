@@ -60,6 +60,16 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		public abstract DbgEngineValueNodeProvider AutosProvider { get; }
 
 		/// <summary>
+		/// Gets the exceptions
+		/// </summary>
+		public abstract DbgEngineValueNodeProvider ExceptionProvider { get; }
+
+		/// <summary>
+		/// Gets the return values
+		/// </summary>
+		public abstract DbgEngineValueNodeProvider ReturnValueProvider { get; }
+
+		/// <summary>
 		/// Gets the <see cref="DbgEngineValueNode"/> factory
 		/// </summary>
 		public abstract DbgEngineValueNodeFactory ValueNodeFactory { get; }

@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Linq;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -38,8 +37,23 @@ namespace dnSpy.Debugger.ToolWindows.Autos {
 			Initialize(wpfCommandService, variablesWindowVMFactory, CreateVariablesWindowVMOptions());
 
 		sealed class VariablesWindowValueNodesProviderImpl : VariablesWindowValueNodesProvider {
-			public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) =>
-				language.AutosProvider.GetNodes(frame).Select(a => new DbgValueNodeInfo(a)).ToArray();
+			public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) {
+				var returnValues = language.ReturnValueProvider.GetNodes(frame);
+				var variables = language.AutosProvider.GetNodes(frame);
+
+				var res = new DbgValueNodeInfo[returnValues.Length + variables.Length];
+				int ri = 0;
+				for (int i = 0; i < returnValues.Length; i++, ri++)
+					res[ri] = new DbgValueNodeInfo(returnValues[i], GetNextReturnValueId());
+				for (int i = 0; i < variables.Length; i++, ri++)
+					res[ri] = new DbgValueNodeInfo(variables[i]);
+
+				return res;
+			}
+
+			string GetNextReturnValueId() => returnValueIdBase + returnValueCounter++.ToString();
+			uint returnValueCounter;
+			readonly string returnValueIdBase = "rid-" + Guid.NewGuid().ToString() + "-";
 		}
 
 		VariablesWindowVMOptions CreateVariablesWindowVMOptions() {

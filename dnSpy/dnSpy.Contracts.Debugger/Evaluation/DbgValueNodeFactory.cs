@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgCreateObjectIdValueNodeResult[] Create(DbgObjectId[] objectIds, CancellationToken cancellationToken);
+		public abstract DbgCreateObjectIdValueNodeResult[] Create(DbgObjectId[] objectIds, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Creates <see cref="DbgValueNode"/>s
@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgObjectId[] objectIds, Action<DbgCreateObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken);
+		public abstract void Create(DbgObjectId[] objectIds, Action<DbgCreateObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken = default(CancellationToken));
 	}
 
 	/// <summary>
