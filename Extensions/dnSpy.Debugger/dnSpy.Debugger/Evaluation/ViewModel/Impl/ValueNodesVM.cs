@@ -307,7 +307,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 						updateIndex++;
 					}
 					else if (deleteCount > 0) {
-						if (deleteCount == 1 && !((ValueNodeImpl)children[updateIndex].Data).IsEditNode)
+						if (!(deleteCount == 1 && ((ValueNodeImpl)children[updateIndex].Data).IsEditNode))
 							children.RemoveAt(updateIndex);
 						deleteCount--;
 					}
