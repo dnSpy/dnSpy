@@ -35,7 +35,12 @@ namespace dnSpy.Debugger.Evaluation {
 			EngineObjectId = engineObjectId ?? throw new ArgumentNullException(nameof(engineObjectId));
 		}
 
-		public override DbgValue GetValue() => new DbgValueImpl(Runtime, EngineObjectId.GetValue());
+		public override DbgValue GetValue() {
+			var value = new DbgValueImpl(Runtime, EngineObjectId.GetValue());
+			Runtime.CloseOnContinue(value);
+			return value;
+		}
+
 		public override void Remove() => owner.Remove(new[] { this });
 		protected override void CloseCore() => EngineObjectId.Close(Process.DbgManager.Dispatcher);
 	}

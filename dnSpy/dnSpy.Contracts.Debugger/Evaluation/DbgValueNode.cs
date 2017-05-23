@@ -80,6 +80,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 
 		/// <summary>
 		/// Creates new children. This method blocks the current thread until the children have been created.
+		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
 		/// </summary>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
@@ -87,7 +88,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgValueNode[] GetChildren(ulong index, int count);
 
 		/// <summary>
-		/// Creates new children
+		/// Creates new children. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
 		/// </summary>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>

@@ -232,22 +232,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 		}
 
-		static void CloseOnContinue(DbgValueNodeInfo[] infos) {
-			if (infos.Length == 0)
-				return;
-			var list = new List<DbgValueNode>(infos.Length);
-			foreach (var info in infos) {
-				if (info.Node != null)
-					list.Add(info.Node);
-			}
-			if (list.Count > 0)
-				list[0].Runtime.CloseOnContinue(list);
-		}
-
 		// UI thread
 		void RecreateRootChildrenCore_UI(DbgValueNodeInfo[] infos, Guid? runtimeGuid) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			CloseOnContinue(infos);
 
 			bool runtimeGuidChanged = runtimeGuid != lastRuntimeGuid;
 			lastRuntimeGuid = runtimeGuid;

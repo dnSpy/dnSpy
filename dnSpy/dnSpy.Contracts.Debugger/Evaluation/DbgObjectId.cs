@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract uint Id { get; }
 
 		/// <summary>
-		/// Creates a new value
+		/// Creates a new value. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
 		/// </summary>
 		/// <returns></returns>
 		public abstract DbgValue GetValue();

@@ -38,7 +38,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			uint startIndex = valueNode.DbgValueNodeChildIndex;
 			const int count = 1;
 			var newNodes = parent.DebuggerValueNode.GetChildren(startIndex, count);
-			newNodes[0].Runtime.CloseOnContinue(newNodes);
 			Debug.Assert(count == 1);
 			return newNodes[0];
 		}
@@ -46,7 +45,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override DbgValueNode GetDebuggerNodeForReuse(DebuggerValueRawNode parent, uint startIndex) {
 			const int count = 1;
 			var newNodes = parent.DebuggerValueNode.GetChildren(startIndex, count);
-			newNodes[0].Runtime.CloseOnContinue(newNodes);
 			Debug.Assert(count == 1);
 			return newNodes[0];
 		}

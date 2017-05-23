@@ -32,6 +32,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 
 		/// <summary>
 		/// Evaluates an expression. It blocks the current thread until the evaluation is complete.
+		/// The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="expression">Expression to evaluate</param>
@@ -41,7 +42,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgEvaluationResult Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Evaluates an expression
+		/// Evaluates an expression. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="expression">Expression to evaluate</param>

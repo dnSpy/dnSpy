@@ -39,8 +39,11 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		DbgCreateValueNodeResult CreateResult(DbgRuntime runtime, DbgCreateEngineValueNodeResult result) {
-			if (result.EngineValueNode != null)
-				return new DbgCreateValueNodeResult(new DbgValueNodeImpl(Language, runtime, result.EngineValueNode));
+			if (result.EngineValueNode != null) {
+				var valueNode = new DbgValueNodeImpl(Language, runtime, result.EngineValueNode);
+				runtime.CloseOnContinue(valueNode);
+				return new DbgCreateValueNodeResult(valueNode);
+			}
 			return new DbgCreateValueNodeResult(ConvertError(result.Error), result.Error == PredefinedDbgCreateEngineValueNodeResultErrors.ExpressionCausesSideEffects);
 		}
 
@@ -50,8 +53,11 @@ namespace dnSpy.Debugger.Evaluation {
 			var res = new DbgCreateObjectIdValueNodeResult[result.Length];
 			for (int i = 0; i < res.Length; i++) {
 				var info = result[i];
-				if (info.EngineValueNode != null)
-					res[i] = new DbgCreateObjectIdValueNodeResult(new DbgValueNodeImpl(Language, runtime, info.EngineValueNode));
+				if (info.EngineValueNode != null) {
+					var valueNode = new DbgValueNodeImpl(Language, runtime, info.EngineValueNode);
+					runtime.CloseOnContinue(valueNode);
+					res[i] = new DbgCreateObjectIdValueNodeResult(valueNode);
+				}
 				else
 					res[i] = new DbgCreateObjectIdValueNodeResult(info.Expression, ConvertError(info.Error));
 			}

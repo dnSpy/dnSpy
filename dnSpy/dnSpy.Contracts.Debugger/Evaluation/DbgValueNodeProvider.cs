@@ -32,7 +32,8 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
-		/// Gets all values
+		/// Gets all values. It blocks the current thread until the method is complete.
+		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -40,7 +41,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgValueNode[] GetNodes(DbgStackFrame frame, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Gets all values
+		/// Gets all values. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="callback">Called when the method is complete</param>

@@ -27,6 +27,7 @@ namespace dnSpy.Debugger.Evaluation {
 			var nodes = new DbgValueNode[engineNodes.Length];
 			for (int i = 0; i < nodes.Length; i++)
 				nodes[i] = new DbgValueNodeImpl(language, runtime, engineNodes[i]);
+			runtime.CloseOnContinue(nodes);
 			return nodes;
 		}
 	}
