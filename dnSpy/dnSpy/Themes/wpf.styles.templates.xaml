@@ -4853,18 +4853,16 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type shtv:SharpTreeViewItem}">
-                    <Border Background="Transparent">
-                        <Border Background="{TemplateBinding Background}">
-                            <ctrls:FastTreeNodeView x:Name="nodeView"
-                                                       Foreground="{Binding Foreground}"
-                                                       HorizontalAlignment="Left" />
-                        </Border>
+                    <Border x:Name="nodeBorder" Background="{TemplateBinding Background}">
+                        <ctrls:FastTreeNodeView x:Name="nodeView"
+                                                    Foreground="{Binding Foreground}"
+                                                    HorizontalAlignment="Left" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected"
                                  Value="True">
-                            <Setter TargetName="nodeView"
-                                    Property="TextBackground"
+                            <Setter TargetName="nodeBorder"
+                                    Property="Background"
                                     Value="{DynamicResource TreeViewItemSelectedBackground}" />
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
@@ -4872,8 +4870,8 @@
                         </Trigger>
                         <Trigger Property="IsMouseOver"
                                  Value="True">
-                            <Setter TargetName="nodeView"
-                                    Property="TextBackground"
+                            <Setter TargetName="nodeBorder"
+                                    Property="Background"
                                     Value="{DynamicResource TreeViewItemMouseOverTextBackground}" />
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
@@ -4886,8 +4884,8 @@
                                 <Condition Property="Selector.IsSelectionActive"
                                            Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="nodeView"
-                                    Property="TextBackground"
+                            <Setter TargetName="nodeBorder"
+                                    Property="Background"
                                     Value="{DynamicResource SystemColorsControl}" />
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
