@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -139,8 +140,17 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override DbgObjectId[] GetObjectIds() {
-			lock (lockObj)
-				return objectIds.Values.ToArray();
+			lock (lockObj) {
+				int count = this.objectIds.Count;
+				if (count == 0)
+					return Array.Empty<DbgObjectId>();
+				var objectIds = new DbgObjectId[count];
+				int i = 0;
+				foreach (var kv in this.objectIds)
+					objectIds[i++] = kv.Value;
+				Debug.Assert(i == objectIds.Length);
+				return objectIds;
+			}
 		}
 
 		public override void Remove(IList<DbgObjectId> objectIds) {
@@ -150,8 +160,6 @@ namespace dnSpy.Debugger.Evaluation {
 				foreach (var objectId in objectIds) {
 					if (objectId == null || objectId.Runtime != Runtime)
 						throw new ArgumentException();
-					if (objectId.IsClosed)
-						continue;
 					this.objectIds.Remove(objectId);
 				}
 			}

@@ -26,6 +26,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// </summary>
 	public abstract class DbgObjectIdService {
 		/// <summary>
+		/// Raised when one or more <see cref="DbgObjectId"/>s are created or removed
+		/// </summary>
+		public abstract event EventHandler ObjectIdsChanged;
+
+		/// <summary>
 		/// Returns true if it's possible to create an object id
 		/// </summary>
 		/// <param name="value">Value</param>
@@ -37,7 +42,8 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
-		public DbgObjectId CreateObjectId(DbgValue value) => CreateObjectIds(new[] { value })[0];
+		public DbgObjectId CreateObjectId(DbgValue value) =>
+			CreateObjectIds(new[] { value ?? throw new ArgumentNullException(nameof(value)) })[0];
 
 		/// <summary>
 		/// Creates object ids. The returned array will contain null elements if it wasn't possible to create object ids
@@ -72,10 +78,5 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// </summary>
 		/// <param name="objectIds">Object ids to remove and close</param>
 		public abstract void Remove(IEnumerable<DbgObjectId> objectIds);
-
-		/// <summary>
-		/// Raised when one or more <see cref="DbgObjectId"/>s are created or removed
-		/// </summary>
-		public abstract event EventHandler ObjectIdsChanged;
 	}
 }
