@@ -46,6 +46,7 @@ namespace dnSpy.Debugger.CallStack {
 			var frames = new DbgStackFrame[engineFrames.Length];
 			for (int i = 0; i < engineFrames.Length; i++)
 				frames[i] = new DbgStackFrameImpl(thread, engineFrames[i]);
+			Runtime.CloseOnContinue(frames);
 			return frames;
 		}
 

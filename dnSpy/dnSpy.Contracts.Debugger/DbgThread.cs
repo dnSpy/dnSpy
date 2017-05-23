@@ -107,7 +107,6 @@ namespace dnSpy.Contracts.Debugger {
 
 		/// <summary>
 		/// Creates a new <see cref="DbgStackWalker"/> instance that can be used to get the call stack.
-		/// The caller must close the returned instance by calling <see cref="DbgStackWalker.Close"/>.
 		/// </summary>
 		/// <returns></returns>
 		public abstract DbgStackWalker CreateStackWalker();

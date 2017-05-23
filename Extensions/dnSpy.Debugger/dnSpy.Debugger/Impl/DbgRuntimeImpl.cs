@@ -222,10 +222,12 @@ namespace dnSpy.Debugger.Impl {
 
 		internal DbgStackWalker CreateStackWalker(DbgThreadImpl thread) {
 			var stackWalker = owner.Dispatcher2.Invoke(() => CreateStackWalker_DbgThread(thread));
-			if (stackWalker != null)
-				return stackWalker;
-			// Invoke() returns null if shutdown has started but we can't return null
-			return new DbgStackWalkerImpl(thread, new NullDbgEngineStackWalker());
+			if (stackWalker == null) {
+				// Invoke() returns null if shutdown has started but we can't return null
+				stackWalker = new DbgStackWalkerImpl(thread, new NullDbgEngineStackWalker());
+			}
+			CloseOnContinue(stackWalker);
+			return stackWalker;
 		}
 
 		DbgStackWalker CreateStackWalker_DbgThread(DbgThreadImpl thread) {

@@ -41,8 +41,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		public DbgStackFrame ActiveFrame => Frames.ActiveStackFrame;
 
 		/// <summary>
-		/// Gets all frames. This is a truncated list if there are too many frames. The
-		/// frames must not be closed, they're owned by <see cref="DbgCallStackService"/>.
+		/// Gets all frames. This is a truncated list if there are too many frames
 		/// </summary>
 		public abstract DbgCallStackFramesInfo Frames { get; }
 
