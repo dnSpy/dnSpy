@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;THREAD_SAFE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -29,7 +29,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;THREAD_SAFE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -74,6 +74,111 @@
     <Compile Include="Dialogs\DebugProgram\DotNetStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
+    <Compile Include="dndbg\COM\CorDebug.cs" />
+    <Compile Include="dndbg\COM\MetaData.cs" />
+    <Compile Include="dndbg\COM\MetaHost.cs" />
+    <Compile Include="dndbg\DotNet\CorAssemblyDef.cs" />
+    <Compile Include="dndbg\DotNet\CorAssemblyRef.cs" />
+    <Compile Include="dndbg\DotNet\CorDeclSecurity.cs" />
+    <Compile Include="dndbg\DotNet\CorEventDef.cs" />
+    <Compile Include="dndbg\DotNet\CorExportedType.cs" />
+    <Compile Include="dndbg\DotNet\CorFieldDef.cs" />
+    <Compile Include="dndbg\DotNet\CorFileDef.cs" />
+    <Compile Include="dndbg\DotNet\CorGenericParam.cs" />
+    <Compile Include="dndbg\DotNet\CorGenericParamConstraint.cs" />
+    <Compile Include="dndbg\DotNet\CorInterfaceImpl.cs" />
+    <Compile Include="dndbg\DotNet\CorManifestResource.cs" />
+    <Compile Include="dndbg\DotNet\CorMemberRef.cs" />
+    <Compile Include="dndbg\DotNet\CorMethodDef.cs" />
+    <Compile Include="dndbg\DotNet\CorMethodSpec.cs" />
+    <Compile Include="dndbg\DotNet\CorModuleDef.cs" />
+    <Compile Include="dndbg\DotNet\CorModuleRef.cs" />
+    <Compile Include="dndbg\DotNet\CorParamDef.cs" />
+    <Compile Include="dndbg\DotNet\CorPropertyDef.cs" />
+    <Compile Include="dndbg\DotNet\CorStandAloneSig.cs" />
+    <Compile Include="dndbg\DotNet\CorTypeDef.cs" />
+    <Compile Include="dndbg\DotNet\CorTypeRef.cs" />
+    <Compile Include="dndbg\DotNet\CorTypeSpec.cs" />
+    <Compile Include="dndbg\DotNet\ICorMDTokenProvider.cs" />
+    <Compile Include="dndbg\DotNet\ICorModuleDefHelper.cs" />
+    <Compile Include="dndbg\DotNet\IProcessReader.cs" />
+    <Compile Include="dndbg\DotNet\ProcessBinaryReader.cs" />
+    <Compile Include="dndbg\DotNet\TypeUpdatedEventArgs.cs" />
+    <Compile Include="dndbg\DotNet\Utils.cs" />
+    <Compile Include="dndbg\Engine\AttachProcessOptions.cs" />
+    <Compile Include="dndbg\Engine\BreakpointList.cs" />
+    <Compile Include="dndbg\Engine\BreakProcessHelper.cs" />
+    <Compile Include="dndbg\Engine\BreakProcessKind.cs" />
+    <Compile Include="dndbg\Engine\COMObject.cs" />
+    <Compile Include="dndbg\Engine\CorAppDomain.cs" />
+    <Compile Include="dndbg\Engine\CorAssembly.cs" />
+    <Compile Include="dndbg\Engine\CorChain.cs" />
+    <Compile Include="dndbg\Engine\CorClass.cs" />
+    <Compile Include="dndbg\Engine\CorCode.cs" />
+    <Compile Include="dndbg\Engine\CordbgErrors.cs" />
+    <Compile Include="dndbg\Engine\CorDebugExtensions.cs" />
+    <Compile Include="dndbg\Engine\CorDebugManagedCallback.cs" />
+    <Compile Include="dndbg\Engine\CoreCLRHelper.cs" />
+    <Compile Include="dndbg\Engine\CorEval.cs" />
+    <Compile Include="dndbg\Engine\CorEvent.cs" />
+    <Compile Include="dndbg\Engine\CorExceptionObjectStackFrame.cs" />
+    <Compile Include="dndbg\Engine\CorField.cs" />
+    <Compile Include="dndbg\Engine\CorFrame.cs" />
+    <Compile Include="dndbg\Engine\CorFunction.cs" />
+    <Compile Include="dndbg\Engine\CorFunctionBreakpoint.cs" />
+    <Compile Include="dndbg\Engine\CorMDA.cs" />
+    <Compile Include="dndbg\Engine\CorModule.cs" />
+    <Compile Include="dndbg\Engine\CorModuleDefHelper.cs" />
+    <Compile Include="dndbg\Engine\CorOverride.cs" />
+    <Compile Include="dndbg\Engine\CorProcess.cs" />
+    <Compile Include="dndbg\Engine\CorProcessReader.cs" />
+    <Compile Include="dndbg\Engine\CorProperty.cs" />
+    <Compile Include="dndbg\Engine\CorStepper.cs" />
+    <Compile Include="dndbg\Engine\CorThread.cs" />
+    <Compile Include="dndbg\Engine\CorType.cs" />
+    <Compile Include="dndbg\Engine\CorValue.cs" />
+    <Compile Include="dndbg\Engine\CorValueHolder.cs" />
+    <Compile Include="dndbg\Engine\CorValueReader.cs" />
+    <Compile Include="dndbg\Engine\DebugCallbackEventArgs.cs" />
+    <Compile Include="dndbg\Engine\DebugEventBreakpointList.cs" />
+    <Compile Include="dndbg\Engine\DebuggeeVersionDetector.cs" />
+    <Compile Include="dndbg\Engine\DebuggerCollection.cs" />
+    <Compile Include="dndbg\Engine\DebuggerEventArgs.cs" />
+    <Compile Include="dndbg\Engine\DebuggerPauseState.cs" />
+    <Compile Include="dndbg\Engine\DebuggerProcessState.cs" />
+    <Compile Include="dndbg\Engine\DebuggerState.cs" />
+    <Compile Include="dndbg\Engine\DebugOptions.cs" />
+    <Compile Include="dndbg\Engine\DebugProcessOptions.cs" />
+    <Compile Include="dndbg\Engine\DisableSystemDebuggerDetection.cs" />
+    <Compile Include="dndbg\Engine\DnAnyDebugEventBreakpoint.cs" />
+    <Compile Include="dndbg\Engine\DnAppDomain.cs" />
+    <Compile Include="dndbg\Engine\DnAssembly.cs" />
+    <Compile Include="dndbg\Engine\DnBreakpoint.cs" />
+    <Compile Include="dndbg\Engine\DnCodeBreakpoint.cs" />
+    <Compile Include="dndbg\Engine\DndbgSignatureReader.cs" />
+    <Compile Include="dndbg\Engine\DnDebugEventBreakpoint.cs" />
+    <Compile Include="dndbg\Engine\DnDebugger.cs" />
+    <Compile Include="dndbg\Engine\DnEval.cs" />
+    <Compile Include="dndbg\Engine\DnILCodeBreakpoint.cs" />
+    <Compile Include="dndbg\Engine\DnModule.cs" />
+    <Compile Include="dndbg\Engine\DnModuleId.cs" />
+    <Compile Include="dndbg\Engine\DnNativeCodeBreakpoint.cs" />
+    <Compile Include="dndbg\Engine\DnProcess.cs" />
+    <Compile Include="dndbg\Engine\DnThread.cs" />
+    <Compile Include="dndbg\Engine\ECallManager.cs" />
+    <Compile Include="dndbg\Engine\IDebugMessageDispatcher.cs" />
+    <Compile Include="dndbg\Engine\IdentifierEscaper.cs" />
+    <Compile Include="dndbg\Engine\ILFrameIP.cs" />
+    <Compile Include="dndbg\Engine\MDAPI.cs" />
+    <Compile Include="dndbg\Engine\MetaDataUtils.cs" />
+    <Compile Include="dndbg\Engine\NativeMethods.cs" />
+    <Compile Include="dndbg\Engine\ProcessCreationFlags.cs" />
+    <Compile Include="dndbg\Engine\StepRange.cs" />
+    <Compile Include="dndbg\Engine\TypeComparer.cs" />
+    <Compile Include="dndbg\Engine\TypeFormatter.cs" />
+    <Compile Include="dndbg\Engine\TypeFormatterUtils.cs" />
+    <Compile Include="dndbg\Engine\Utils.cs" />
+    <Compile Include="dndbg\Engine\Win32EnvironmentStringBuilder.cs" />
     <Compile Include="Impl\CorDebugRuntimeImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
@@ -134,10 +239,6 @@
     <ProjectReference Include="..\clrmd\src\Microsoft.Diagnostics.Runtime\Microsoft.Diagnostics.Runtime.csproj">
       <Project>{a82126ca-23aa-41f1-8586-a5938d44d0a7}</Project>
       <Name>Microsoft.Diagnostics.Runtime</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dndbg\dndbg.csproj">
-      <Project>{989a5c51-8c4c-4f4d-90a2-042cd1846075}</Project>
-      <Name>dndbg</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>

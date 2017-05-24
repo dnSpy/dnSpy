@@ -21,6 +21,7 @@ using System;
 using System.Runtime.InteropServices;
 
 #pragma warning disable 0108 // Member hides inherited member; missing new keyword
+#pragma warning disable 0649
 namespace dndbg.COM.MetaData {
 	[Flags]
 	enum CorPEKind {
@@ -315,4 +316,5 @@ namespace dndbg.COM.MetaData {
 		void EnumMethodSpecs([In] [Out] ref IntPtr phEnum, [In] uint tk, [Out] IntPtr rMethodSpecs, [In] uint cMax, out uint pcMethodSpecs);
 	}
 }
+#pragma warning restore 0649
 #pragma warning restore 0108 // Member hides inherited member; missing new keyword
