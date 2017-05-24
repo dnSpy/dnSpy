@@ -679,7 +679,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			if (dnDebugger.ProcessState == DebuggerProcessState.Running) {
 				int hr = dnDebugger.TryBreakProcesses();
 				if (hr < 0)
-					SendMessage(new DbgMessageBreak($"Couldn't break the process, hr=0x{hr:X8}"));
+					SendMessage(new DbgMessageBreak(string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotBreakProcess, hr)));
 				else {
 					Debug.Assert(dnDebugger.ProcessState == DebuggerProcessState.Paused);
 					// The debugger just picks the first thread in the first AppDomain, and this isn't

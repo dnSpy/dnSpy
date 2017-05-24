@@ -214,6 +214,15 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not break process. Error: 0x{0:X8}.
+        /// </summary>
+        public static string Error_CouldNotBreakProcess {
+            get {
+                return ResourceManager.GetString("Error_CouldNotBreakProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Couldn&apos;t find .NET Core host &apos;{0}&apos;.
         /// </summary>
         public static string Error_CouldNotFindDotNetCoreHost {
