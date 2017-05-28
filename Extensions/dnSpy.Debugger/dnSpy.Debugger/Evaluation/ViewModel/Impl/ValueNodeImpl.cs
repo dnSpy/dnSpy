@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public event PropertyChangedEventHandler PropertyChanged;
 		public override ImageReference Icon => Context.ValueNodeImageReferenceService.GetImageReference(RawNode.ImageName);
 
-		public override ICommand RefreshExpressionCommand => new RelayCommand(a => RefreshExpression(), a => IsInvalid);
+		public override ICommand RefreshExpressionCommand => new RelayCommand(a => RefreshExpression(), a => CanRefreshExpression);
 		public override string RefreshExpressionToolTip => dnSpy_Debugger_Resources.RefreshExpressionButtonToolTip;
 
 		public override FormatterObject<ValueNode> NameObject => new FormatterObject<ValueNode>(this, Context.NameColumnName);
@@ -492,7 +492,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		static ulong? GetChildCount(RawNode node) => node.HasChildren == false ? 0 : node.ChildCount;
 
+		// Don't allow refreshing the value if it's an EmptyCachedRawNode since it doesn't have the original expression
+		bool CanRefreshExpression => IsInvalid && !string.IsNullOrEmpty(RawNode.Expression);
+
 		void RefreshExpression() {
+			if (!CanRefreshExpression)
+				throw new InvalidOperationException();
 			if (Context.IsWindowReadOnly)
 				return;
 			var res = Context.ValueNodeReader.Evaluate(RawNode.Expression);
