@@ -146,6 +146,7 @@
     <Compile Include="Evaluation\EvaluationConstants.cs" />
     <Compile Include="Evaluation\NullDbgEngineLanguage.cs" />
     <Compile Include="Evaluation\NullDbgEngineObjectIdFactory.cs" />
+    <Compile Include="Evaluation\UI\ValueNodesProviderImpl.cs" />
     <Compile Include="Evaluation\UI\VariablesWindowColumnConverter.cs" />
     <Compile Include="Evaluation\UI\VariablesWindowContentBase.cs" />
     <Compile Include="Evaluation\UI\VariablesWindowControl.xaml.cs">

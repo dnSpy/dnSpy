@@ -20,7 +20,6 @@
 using System;
 using System.Linq;
 using System.Threading;
-using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Evaluation;
