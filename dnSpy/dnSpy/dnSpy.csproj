@@ -1227,11 +1227,11 @@
       <Project>{83bbd76b-4ecd-42e1-bf9c-af8114e52317}</Project>
       <Name>dnSpy.Images</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj">
+    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj">
       <Project>{f10a60da-4716-45f6-ab2e-4690440c0c7c}</Project>
       <Name>dnSpy.Roslyn.EditorFeatures</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj">
+    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj">
       <Project>{844eef8a-c7b6-4299-8cf0-4bd21dddd4a8}</Project>
       <Name>dnSpy.Roslyn.Shared</Name>
     </ProjectReference>
@@ -1243,7 +1243,7 @@
       <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Roslyn.VisualBasic.EditorFeatures\dnSpy.Roslyn.VisualBasic.EditorFeatures.vbproj">
+    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.VisualBasic.EditorFeatures\dnSpy.Roslyn.VisualBasic.EditorFeatures.vbproj">
       <Project>{30057546-ded0-450e-89c3-0354b4ff9ccd}</Project>
       <Name>dnSpy.Roslyn.VisualBasic.EditorFeatures</Name>
     </ProjectReference>

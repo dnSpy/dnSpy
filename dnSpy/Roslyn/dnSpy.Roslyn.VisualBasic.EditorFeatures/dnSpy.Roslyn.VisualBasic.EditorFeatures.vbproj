@@ -20,8 +20,8 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>..\dnSpy\bin\Debug\</OutputPath>
-    <DocumentationFile>..\dnSpy\bin\Debug\Roslyn.VisualStudio.Services.UnitTests.xml</DocumentationFile>
+    <OutputPath>..\..\dnSpy\bin\Debug\</OutputPath>
+    <DocumentationFile>..\..\dnSpy\bin\Debug\Roslyn.VisualStudio.Services.UnitTests.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -29,8 +29,8 @@
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>..\dnSpy\bin\Release\</OutputPath>
-    <DocumentationFile>..\dnSpy\bin\Release\Roslyn.VisualStudio.Services.UnitTests.xml</DocumentationFile>
+    <OutputPath>..\..\dnSpy\bin\Release\</OutputPath>
+    <DocumentationFile>..\..\dnSpy\bin\Release\Roslyn.VisualStudio.Services.UnitTests.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>

@@ -18,21 +18,21 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\dnSpy\bin\Debug\</OutputPath>
+    <OutputPath>..\..\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\dnSpy\bin\Debug\Roslyn.Services.Editor.UnitTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Debug\Roslyn.Services.Editor.UnitTests.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\dnSpy\bin\Release\</OutputPath>
+    <OutputPath>..\..\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\dnSpy\bin\Release\Roslyn.Services.Editor.UnitTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Release\Roslyn.Services.Editor.UnitTests.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
