@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
@@ -35,16 +36,32 @@ namespace dnSpy.Debugger.Evaluation {
 			EngineObjectId = engineObjectId ?? throw new ArgumentNullException(nameof(engineObjectId));
 		}
 
-		public override DbgValue GetValue(DbgEvaluationContext context) {
+		DbgValue CreateResult(DbgEngineValue engineValue) {
+			var value = new DbgValueImpl(Runtime, engineValue);
+			Runtime.CloseOnContinue(value);
+			return value;
+		}
+
+		public override DbgValue GetValue(DbgEvaluationContext context, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
 			if (context.Runtime != Runtime)
 				throw new ArgumentException();
-			var value = new DbgValueImpl(Runtime, EngineObjectId.GetValue(context));
-			Runtime.CloseOnContinue(value);
-			return value;
+			return CreateResult(EngineObjectId.GetValue(context, cancellationToken));
+		}
+
+		public override void GetValue(DbgEvaluationContext context, Action<DbgValue> callback, CancellationToken cancellationToken) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Runtime != Runtime)
+				throw new ArgumentException();
+			if (callback == null)
+				throw new ArgumentNullException(nameof(callback));
+			EngineObjectId.GetValue(context, engineValue => callback(CreateResult(engineValue)), cancellationToken);
 		}
 
 		public override void Remove() => owner.Remove(new[] { this });

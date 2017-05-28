@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 
 namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 	/// <summary>
@@ -69,8 +70,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
+		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options);
+		public abstract DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates new children
@@ -80,14 +82,16 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
-		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback);
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="options">Options</param>
-		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options);
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Formats the name, value, and type
@@ -95,7 +99,8 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
-		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback);
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Writes a new value. It blocks the current thread until the assignment is complete.
@@ -103,8 +108,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
+		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options);
+		public abstract DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Writes a new value
@@ -113,8 +119,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
+		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback);
+		public abstract void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback, CancellationToken cancellationToken);
 	}
 
 	/// <summary>
