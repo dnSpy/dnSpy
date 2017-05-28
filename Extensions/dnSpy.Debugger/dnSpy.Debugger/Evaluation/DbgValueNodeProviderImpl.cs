@@ -36,22 +36,38 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineValueNodeProvider = engineValueNodeProvider ?? throw new ArgumentNullException(nameof(engineValueNodeProvider));
 		}
 
-		public override DbgValueNode[] GetNodes(DbgStackFrame frame, CancellationToken cancellationToken) {
+		public override DbgValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime.Guid != runtimeGuid)
+				throw new ArgumentException();
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
-			return DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineValueNodeProvider.GetNodes(frame, cancellationToken));
+			return DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineValueNodeProvider.GetNodes(context, frame, cancellationToken));
 		}
 
-		public override void GetNodes(DbgStackFrame frame, Action<DbgValueNode[]> callback, CancellationToken cancellationToken) {
+		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, Action<DbgValueNode[]> callback, CancellationToken cancellationToken) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime.Guid != runtimeGuid)
+				throw new ArgumentException();
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNodeProvider.GetNodes(frame, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineNodes)), cancellationToken);
+			engineValueNodeProvider.GetNodes(context, frame, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineNodes)), cancellationToken);
 		}
 	}
 }

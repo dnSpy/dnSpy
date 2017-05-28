@@ -33,8 +33,8 @@ namespace dnSpy.Debugger.Evaluation {
 		public override DbgObjectIdFormatter ObjectIdFormatter { get; }
 		public override DbgValueNodeProvider LocalsProvider { get; }
 		public override DbgValueNodeProvider AutosProvider { get; }
-		public override DbgValueNodeProvider ExceptionProvider { get; }
-		public override DbgValueNodeProvider ReturnValueProvider { get; }
+		public override DbgValueNodeProvider ExceptionsProvider { get; }
+		public override DbgValueNodeProvider ReturnValuesProvider { get; }
 		public override DbgValueNodeFactory ValueNodeFactory { get; }
 
 		readonly DbgEngineLanguage engineLanguage;
@@ -49,8 +49,8 @@ namespace dnSpy.Debugger.Evaluation {
 			ObjectIdFormatter = new DbgObjectIdFormatterImpl(this, runtimeGuid, engineLanguage.ObjectIdFormatter);
 			LocalsProvider = new DbgValueNodeProviderImpl(this, runtimeGuid, engineLanguage.LocalsProvider);
 			AutosProvider = new DbgValueNodeProviderImpl(this, runtimeGuid, engineLanguage.AutosProvider);
-			ExceptionProvider = new DbgValueNodeProviderImpl(this, runtimeGuid, engineLanguage.ExceptionProvider);
-			ReturnValueProvider = new DbgValueNodeProviderImpl(this, runtimeGuid, engineLanguage.ReturnValueProvider);
+			ExceptionsProvider = new DbgValueNodeProviderImpl(this, runtimeGuid, engineLanguage.ExceptionsProvider);
+			ReturnValuesProvider = new DbgValueNodeProviderImpl(this, runtimeGuid, engineLanguage.ReturnValuesProvider);
 			ValueNodeFactory = new DbgValueNodeFactoryImpl(this, runtimeGuid, engineLanguage.ValueNodeFactory);
 		}
 
@@ -59,10 +59,8 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(runtime));
 			if (runtime.Guid != RuntimeGuid)
 				throw new ArgumentException();
-			if (location == null)
-				throw new ArgumentNullException(nameof(location));
 			var context = new DbgEvaluationContextImpl(this, runtime, funcEvalTimeout, options);
-			engineLanguage.InitializeContext(context, runtime, location);
+			engineLanguage.InitializeContext(context, location);
 			return context;
 		}
 	}

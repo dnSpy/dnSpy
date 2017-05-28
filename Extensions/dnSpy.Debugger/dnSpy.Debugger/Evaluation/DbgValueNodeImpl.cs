@@ -44,33 +44,65 @@ namespace dnSpy.Debugger.Evaluation {
 			value = new DbgValueImpl(runtime, engineValueNode.Value);
 		}
 
-		public override DbgValueNode[] GetChildren(ulong index, int count) {
+		public override DbgValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime != Runtime)
+				throw new ArgumentException();
 			if (count < 0)
 				throw new ArgumentOutOfRangeException(nameof(count));
-			var engineNodes = engineValueNode.GetChildren(index, count);
+			var engineNodes = engineValueNode.GetChildren(context, index, count);
 			return DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes);
 		}
 
-		public override void GetChildren(ulong index, int count, Action<DbgValueNode[]> callback) {
+		public override void GetChildren(DbgEvaluationContext context, ulong index, int count, Action<DbgValueNode[]> callback) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime != Runtime)
+				throw new ArgumentException();
 			if (count < 0)
 				throw new ArgumentOutOfRangeException(nameof(count));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNode.GetChildren(index, count, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes)));
+			engineValueNode.GetChildren(context, index, count, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes)));
 		}
 
-		public override void Format(IDbgValueNodeFormatParameters options) {
+		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime != Runtime)
+				throw new ArgumentException();
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			engineValueNode.Format(options);
+			engineValueNode.Format(context, options);
 		}
 
-		public override void Format(IDbgValueNodeFormatParameters options, Action callback) {
+		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime != Runtime)
+				throw new ArgumentException();
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNode.Format(options, callback);
+			engineValueNode.Format(context, options, callback);
 		}
 
 		DbgValueNodeAssignmentResult OnAssignmentComplete(DbgEngineValueNodeAssignmentResult result) {
@@ -89,19 +121,35 @@ namespace dnSpy.Debugger.Evaluation {
 			return new DbgValueNodeAssignmentResult(error: null);
 		}
 
-		public override DbgValueNodeAssignmentResult Assign(string expression, DbgEvaluationOptions options) {
+		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime != Runtime)
+				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
-			var res = engineValueNode.Assign(expression, options);
+			var res = engineValueNode.Assign(context, expression, options);
 			return OnAssignmentComplete(res);
 		}
 
-		public override void Assign(string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback) {
+		public override void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime != Runtime)
+				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNode.Assign(expression, options, res => callback(OnAssignmentComplete(res)));
+			engineValueNode.Assign(context, expression, options, res => callback(OnAssignmentComplete(res)));
 		}
 
 		protected override void CloseCore() {

@@ -19,9 +19,11 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Evaluation.ViewModel;
@@ -89,6 +91,19 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			bool isReadOnly;
 			bool isOpen;
 			DbgLanguage language;
+			EvalContextInfo evalContextInfo;
+
+			sealed class EvalContextInfo {
+				public DbgEvaluationContext Context;
+				public DbgLanguage Language;
+				public DbgStackFrame Frame;
+
+				public void Clear() {
+					Context = null;
+					Language = null;
+					Frame = null;
+				}
+			}
 
 			readonly VariablesWindowValueNodesProvider variablesWindowValueNodesProvider;
 			readonly UIDispatcher uiDispatcher;
@@ -102,6 +117,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 				this.dbgLanguageService = dbgLanguageService ?? throw new ArgumentNullException(nameof(dbgLanguageService));
 				this.dbgCallStackService = dbgCallStackService ?? throw new ArgumentNullException(nameof(dbgCallStackService));
+				evalContextInfo = new EvalContextInfo();
 			}
 
 			void UI(Action callback) => uiDispatcher.UI(callback);
@@ -112,6 +128,8 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			public void Initialize_UI(bool enable) {
 				uiDispatcher.VerifyAccess();
 				isOpen = enable;
+				evalContextInfo.Context?.Process.DbgManager.Close(evalContextInfo.Context);
+				evalContextInfo.Clear();
 				variablesWindowValueNodesProvider.Initialize(enable);
 				if (enable)
 					variablesWindowValueNodesProvider.NodesChanged += VariablesWindowValueNodesProvider_NodesChanged;
@@ -172,9 +190,12 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				uiDispatcher.VerifyAccess();
 				var info = TryGetLanguage();
 				if (info.frame == null)
-					return variablesWindowValueNodesProvider.GetDefaultNodes() ?? Array.Empty<DbgValueNodeInfo>();
+					return variablesWindowValueNodesProvider.GetDefaultNodes();
+				var evalContext = TryGetEvaluationContext();
+				if (evalContext == null)
+					return variablesWindowValueNodesProvider.GetDefaultNodes();
 				var options = DbgEvaluationOptions.Expression;
-				return variablesWindowValueNodesProvider.GetNodes(info.language, info.frame, options);
+				return variablesWindowValueNodesProvider.GetNodes(evalContext, info.language, info.frame, options);
 			}
 
 			void SetIsReadOnly_UI(bool newIsReadOnly) {
@@ -211,7 +232,22 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				variablesWindowValueNodesProvider.AddExpressions(expressions);
 			}
 
-			public override (DbgLanguage language, DbgStackFrame frame) GetEvaluateInfo() => TryGetLanguage();
+			public override DbgEvaluationContext TryGetEvaluationContext() {
+				var info = TryGetLanguage();
+				if (evalContextInfo.Language == info.language && evalContextInfo.Frame == info.frame)
+					return evalContextInfo.Context;
+
+				evalContextInfo.Context?.Process.DbgManager.Close(evalContextInfo.Context);
+				evalContextInfo.Language = info.language;
+				evalContextInfo.Frame = info.frame;
+				if (info.frame != null)
+					evalContextInfo.Context = info.language.CreateContext(info.frame.Runtime, info.frame.Location, EvaluationConstants.DefaultFuncEvalTimeout, DbgEvaluationContextOptions.None);
+				else
+					evalContextInfo.Context = null;
+				return evalContextInfo.Context;
+			}
+
+			public override DbgStackFrame TryGetFrame() => TryGetLanguage().frame;
 		}
 
 		IValueNodesVM IVariablesWindowVM.VM => valueNodesVM;

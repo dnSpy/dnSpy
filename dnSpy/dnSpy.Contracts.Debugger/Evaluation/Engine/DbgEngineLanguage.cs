@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		public abstract DbgEngineObjectIdFormatter ObjectIdFormatter { get; }
 
 		/// <summary>
-		/// Gets the locals provider
+		/// Gets the locals and parameters provider
 		/// </summary>
 		public abstract DbgEngineValueNodeProvider LocalsProvider { get; }
 
@@ -60,14 +60,14 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		public abstract DbgEngineValueNodeProvider AutosProvider { get; }
 
 		/// <summary>
-		/// Gets the exceptions
+		/// Gets the exceptions provider
 		/// </summary>
-		public abstract DbgEngineValueNodeProvider ExceptionProvider { get; }
+		public abstract DbgEngineValueNodeProvider ExceptionsProvider { get; }
 
 		/// <summary>
-		/// Gets the return values
+		/// Gets the return values provider
 		/// </summary>
-		public abstract DbgEngineValueNodeProvider ReturnValueProvider { get; }
+		public abstract DbgEngineValueNodeProvider ReturnValuesProvider { get; }
 
 		/// <summary>
 		/// Gets the <see cref="DbgEngineValueNode"/> factory
@@ -78,9 +78,8 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// Initializes an evaluation context
 		/// </summary>
 		/// <param name="context">Context</param>
-		/// <param name="runtime">Runtime</param>
-		/// <param name="location">Location</param>
+		/// <param name="location">Location or null</param>
 		/// <returns></returns>
-		public abstract void InitializeContext(DbgEvaluationContext context, DbgRuntime runtime, DbgCodeLocation location);
+		public abstract void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location);
 	}
 }

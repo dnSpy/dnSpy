@@ -29,38 +29,42 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <summary>
 		/// Creates a <see cref="DbgEngineValueNode"/>. It blocks the current thread until the evaluation is complete.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgCreateEngineValueNodeResult Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgCreateEngineValueNodeResult Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates a <see cref="DbgEngineValueNode"/>
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateEngineValueNodeResult> callback, CancellationToken cancellationToken);
+		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateEngineValueNodeResult> callback, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates <see cref="DbgEngineValueNode"/>s. It blocks the current thread.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgCreateEngineObjectIdValueNodeResult[] Create(DbgEngineObjectId[] objectIds, CancellationToken cancellationToken);
+		public abstract DbgCreateEngineObjectIdValueNodeResult[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates <see cref="DbgEngineValueNode"/>s
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgEngineObjectId[] objectIds, Action<DbgCreateEngineObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken);
+		public abstract void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, Action<DbgCreateEngineObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken);
 	}
 
 	/// <summary>

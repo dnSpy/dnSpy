@@ -35,7 +35,15 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineObjectIdFormatter = engineObjectIdFormatter ?? throw new ArgumentNullException(nameof(engineObjectIdFormatter));
 		}
 
-		public override void FormatName(ITextColorWriter output, DbgObjectId objectId) {
+		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgObjectId objectId) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime.Guid != runtimeGuid)
+				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
 			if (objectId == null)
@@ -44,7 +52,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (objectId.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
-			engineObjectIdFormatter.FormatName(output, objectIdImpl.EngineObjectId);
+			engineObjectIdFormatter.FormatName(context, output, objectIdImpl.EngineObjectId);
 		}
 	}
 }

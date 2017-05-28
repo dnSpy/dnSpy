@@ -25,8 +25,8 @@ using dnSpy.Debugger.Evaluation.ViewModel;
 namespace dnSpy.Debugger.Evaluation.UI {
 	abstract class VariablesWindowValueNodesProvider {
 		public virtual event EventHandler NodesChanged { add { } remove { } }
-		public abstract DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options);
-		public virtual DbgValueNodeInfo[] GetDefaultNodes() => null;
+		public abstract DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options);
+		public virtual DbgValueNodeInfo[] GetDefaultNodes() => Array.Empty<DbgValueNodeInfo>();
 
 		/// <summary>
 		/// Called when the window gets shown or closed

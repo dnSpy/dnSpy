@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.UI;
 using dnSpy.Debugger.UI.Wpf;
@@ -44,6 +45,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		ShowMessageBox ShowMessageBox { get; }
 		LanguageEditValueProvider ValueEditValueProvider { get; }
 		LanguageEditValueProvider NameEditValueProvider { get; }
+		DbgEvaluationContext EvaluationContext { get; }
 		string ExpressionToEdit { get; set; }
 		bool IsWindowReadOnly { get; }
 	}
@@ -69,6 +71,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public ShowMessageBox ShowMessageBox { get; }
 		public LanguageEditValueProvider ValueEditValueProvider { get; }
 		public LanguageEditValueProvider NameEditValueProvider { get; }
+		public DbgEvaluationContext EvaluationContext { get; set; }
 		public string ExpressionToEdit { get; set; }
 		public bool IsWindowReadOnly { get; set; }
 

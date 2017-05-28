@@ -43,6 +43,8 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
+			if (context.Runtime.Guid != runtimeGuid)
+				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
 			if (value == null)
@@ -60,6 +62,8 @@ namespace dnSpy.Debugger.Evaluation {
 			if (!(context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
 			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
@@ -81,6 +85,8 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
+			if (context.Runtime.Guid != runtimeGuid)
+				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
 			if (value == null)
@@ -98,6 +104,8 @@ namespace dnSpy.Debugger.Evaluation {
 			if (!(context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
 			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));

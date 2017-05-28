@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
@@ -56,7 +57,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgObjectIdFormatter ObjectIdFormatter { get; }
 
 		/// <summary>
-		/// Gets the locals provider
+		/// Gets the locals and parameters provider
 		/// </summary>
 		public abstract DbgValueNodeProvider LocalsProvider { get; }
 
@@ -66,14 +67,14 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgValueNodeProvider AutosProvider { get; }
 
 		/// <summary>
-		/// Gets the exceptions
+		/// Gets the exceptions provider
 		/// </summary>
-		public abstract DbgValueNodeProvider ExceptionProvider { get; }
+		public abstract DbgValueNodeProvider ExceptionsProvider { get; }
 
 		/// <summary>
-		/// Gets the return values
+		/// Gets the return values provider
 		/// </summary>
-		public abstract DbgValueNodeProvider ReturnValueProvider { get; }
+		public abstract DbgValueNodeProvider ReturnValuesProvider { get; }
 
 		/// <summary>
 		/// Gets the <see cref="DbgValueNode"/> factory
@@ -84,11 +85,24 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Creates an evaluation context
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
-		/// <param name="location">Location</param>
+		/// <param name="location">Location or null</param>
 		/// <param name="funcEvalTimeout">Func-eval timeout (func-eval = calling functions in the debugged process)</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public abstract DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options);
+
+		/// <summary>
+		/// Creates an evaluation context
+		/// </summary>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="funcEvalTimeout">Func-eval timeout (func-eval = calling functions in the debugged process)</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public DbgEvaluationContext CreateContext(DbgStackFrame frame, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options) {
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			return CreateContext(frame.Runtime, frame.Location, funcEvalTimeout, options);
+		}
 	}
 
 	/// <summary>

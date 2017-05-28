@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void InitializeCachedText() {
 			var p = Context.ValueNodeFormatParameters;
 			p.Initialize(cachedName.IsDefault, cachedValue.IsDefault, cachedExpectedType.IsDefault);
-			RawNode.Format(p);
+			RawNode.Format(Context.EvaluationContext, p);
 			if (cachedName.IsDefault)
 				cachedName = p.NameOutput.GetClassifiedText();
 			if (cachedValue.IsDefault)
@@ -214,7 +214,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		internal bool IsEditNode => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && RootId == null;
 
-		internal bool CanEditNameExpression() => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && !Context.IsWindowReadOnly;
+		internal bool CanEditNameExpression() => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && !Context.IsWindowReadOnly && Context.EvaluationContext != null;
 
 		EditableValueTextInfo GetNameExpression() {
 			if (!CanEditNameExpression())
@@ -224,7 +224,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (text != null)
 				return new EditableValueTextInfo(text, EditValueFlags.None);
 			var output = new StringBuilderTextColorOutput();
-			RawNode.FormatName(output);
+			RawNode.FormatName(Context.EvaluationContext, output);
 			return new EditableValueTextInfo(output.ToString());
 		}
 
@@ -238,7 +238,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				Context.EditValueNodeExpression.EditExpression(RootId, expression);
 		}
 
-		internal bool CanEditValue() => !RawNode.IsReadOnly && !Context.IsWindowReadOnly;
+		internal bool CanEditValue() => !RawNode.IsReadOnly && !Context.IsWindowReadOnly && Context.EvaluationContext != null;
 
 		EditableValueTextInfo GetEditableValue() {
 			if (!CanEditValue())
@@ -249,7 +249,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return new EditableValueTextInfo(text, EditValueFlags.None);
 			var output = new StringBuilderTextColorOutput();
 			var options = Context.ValueNodeFormatParameters.ValueFormatterOptions & ~DbgValueFormatterOptions.Display;
-			RawNode.FormatValue(output, options);
+			RawNode.FormatValue(Context.EvaluationContext, output, options);
 			return new EditableValueTextInfo(output.ToString());
 		}
 
@@ -257,7 +257,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (!CanEditValue())
 				throw new InvalidOperationException();
 			var evalOptions = DbgEvaluationOptions.Expression;
-			var res = RawNode.Assign(expression, evalOptions);
+			var res = RawNode.Assign(Context.EvaluationContext, expression, evalOptions);
 			if (res.Error == null)
 				oldCachedValue = cachedValue;
 			ResetForReuse();

@@ -63,7 +63,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				if (objectId != null) {
 					output.WriteSpace();
 					output.Write(BoxedTextColor.Punctuation, "{");
-					Language.ObjectIdFormatter.FormatName(output, objectId);
+					var evalContext = vmImpl.Context.EvaluationContext;
+					Debug.Assert(evalContext != null);
+					if (evalContext == null)
+						output.Write(BoxedTextColor.Error, "???");
+					else
+						Language.ObjectIdFormatter.FormatName(evalContext, output, objectId);
 					output.Write(BoxedTextColor.Punctuation, "}");
 				}
 			}

@@ -40,8 +40,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Creates a new value. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <returns></returns>
-		public abstract DbgValue GetValue();
+		public abstract DbgValue GetValue(DbgEvaluationContext context);
 
 		/// <summary>
 		/// Removes and closes the object id

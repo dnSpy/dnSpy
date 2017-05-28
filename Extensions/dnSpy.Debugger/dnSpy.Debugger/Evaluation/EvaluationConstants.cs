@@ -17,21 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
-	/// <summary>
-	/// References a value in the debugged process
-	/// </summary>
-	public abstract class DbgEngineObjectId : DbgObject {
-		/// <summary>
-		/// Gets the unique id in the runtime
-		/// </summary>
-		public abstract uint Id { get; }
+using System;
 
-		/// <summary>
-		/// Creates a new value
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <returns></returns>
-		public abstract DbgEngineValue GetValue(DbgEvaluationContext context);
+namespace dnSpy.Debugger.Evaluation {
+	static class EvaluationConstants {
+		public static readonly TimeSpan DefaultFuncEvalTimeout = TimeSpan.FromSeconds(1);
 	}
 }

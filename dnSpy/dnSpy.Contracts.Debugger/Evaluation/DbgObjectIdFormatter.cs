@@ -32,8 +32,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Formats the name of an object id
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
 		/// <param name="objectId">Object id</param>
-		public abstract void FormatName(ITextColorWriter output, DbgObjectId objectId);
+		public abstract void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgObjectId objectId);
 	}
 }

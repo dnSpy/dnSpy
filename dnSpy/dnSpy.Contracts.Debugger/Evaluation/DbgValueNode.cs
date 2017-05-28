@@ -82,33 +82,37 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Creates new children. This method blocks the current thread until the children have been created.
 		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <returns></returns>
-		public abstract DbgValueNode[] GetChildren(ulong index, int count);
+		public abstract DbgValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count);
 
 		/// <summary>
 		/// Creates new children. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="callback">Called when this method is complete</param>
-		public abstract void GetChildren(ulong index, int count, Action<DbgValueNode[]> callback);
+		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, Action<DbgValueNode[]> callback);
 
 		/// <summary>
 		/// Formats the name. This method blocks the current thread until all requested values have been formatted
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
-		public void FormatName(ITextColorWriter output) =>
-			Format(new DbgValueNodeFormatParameters { NameOutput = output ?? throw new ArgumentNullException(nameof(output)) });
+		public void FormatName(DbgEvaluationContext context, ITextColorWriter output) =>
+			Format(context, new DbgValueNodeFormatParameters { NameOutput = output ?? throw new ArgumentNullException(nameof(output)) });
 
 		/// <summary>
 		/// Formats the value. This method blocks the current thread until all requested values have been formatted
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
-		public void FormatValue(ITextColorWriter output, DbgValueFormatterOptions options) =>
-			Format(new DbgValueNodeFormatParameters {
+		public void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgValueFormatterOptions options) =>
+			Format(context, new DbgValueNodeFormatParameters {
 				ValueOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ValueFormatterOptions = options,
 			});
@@ -116,10 +120,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Formats the expected type ("field" type). This method blocks the current thread until all requested values have been formatted
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
-		public void FormatExpectedType(ITextColorWriter output, DbgValueFormatterTypeOptions options) =>
-			Format(new DbgValueNodeFormatParameters {
+		public void FormatExpectedType(DbgEvaluationContext context, ITextColorWriter output, DbgValueFormatterTypeOptions options) =>
+			Format(context, new DbgValueNodeFormatParameters {
 				ExpectedTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ExpectedTypeFormatterOptions = options,
 			});
@@ -127,10 +132,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Formats the actual type (value type). This method blocks the current thread until all requested values have been formatted
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
-		public void FormatActualType(ITextColorWriter output, DbgValueFormatterTypeOptions options) =>
-			Format(new DbgValueNodeFormatParameters {
+		public void FormatActualType(DbgEvaluationContext context, ITextColorWriter output, DbgValueFormatterTypeOptions options) =>
+			Format(context, new DbgValueNodeFormatParameters {
 				ActualTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ActualTypeFormatterOptions = options,
 			});
@@ -138,32 +144,36 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="options">Options</param>
-		public abstract void Format(IDbgValueNodeFormatParameters options);
+		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options);
 
 		/// <summary>
 		/// Formats the name, value, and type
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
-		public abstract void Format(IDbgValueNodeFormatParameters options, Action callback);
+		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback);
 
 		/// <summary>
 		/// Writes a new value. It blocks the current thread until the assignment is complete.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgValueNodeAssignmentResult Assign(string expression, DbgEvaluationOptions options);
+		public abstract DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options);
 
 		/// <summary>
 		/// Writes a new value
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
 		/// <returns></returns>
-		public abstract void Assign(string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback);
+		public abstract void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback);
 	}
 
 	/// <summary>

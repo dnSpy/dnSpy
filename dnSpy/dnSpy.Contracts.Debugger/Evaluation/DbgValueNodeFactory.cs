@@ -35,39 +35,43 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Creates a <see cref="DbgValueNode"/>. It blocks the current thread until the evaluation is complete.
 		/// The returned <see cref="DbgValueNode"/> is automatically closed when its runtime continues.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgCreateValueNodeResult Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgCreateValueNodeResult Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Creates a <see cref="DbgValueNode"/>. The returned <see cref="DbgValueNode"/> is automatically closed when its runtime continues.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Creates <see cref="DbgValueNode"/>s. It blocks the current thread.
 		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgCreateObjectIdValueNodeResult[] Create(DbgObjectId[] objectIds, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgCreateObjectIdValueNodeResult[] Create(DbgEvaluationContext context, DbgObjectId[] objectIds, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Creates <see cref="DbgValueNode"/>s. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgObjectId[] objectIds, Action<DbgCreateObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Create(DbgEvaluationContext context, DbgObjectId[] objectIds, Action<DbgCreateObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken = default(CancellationToken));
 	}
 
 	/// <summary>

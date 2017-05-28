@@ -144,14 +144,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		DbgCreateValueNodeResult EvaluateExpression(string expression) {
+		DbgCreateValueNodeResult EvaluateExpression(DbgEvaluationContext context, string expression) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			var (language, frame) = valueNodesProvider.GetEvaluateInfo();
-			Debug.Assert((language == null) == (frame == null));
+			var frame = valueNodesProvider.TryGetFrame();
 			if (frame == null)
 				return new DbgCreateValueNodeResult(dnSpy_Debugger_Resources.ErrorEvaluatingExpression, causesSideEffects: false);
 			var options = DbgEvaluationOptions.Expression;
-			return language.ValueNodeFactory.Create(frame, expression, options);
+			return context.Language.ValueNodeFactory.Create(context, frame, expression, options);
 		}
 
 		// UI thread
@@ -166,14 +165,20 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			refreshNameFields = false;
 			Guid? runtimeGuid;
 			DbgValueNodeInfo[] nodes;
+			DbgEvaluationContext evalContext;
 			if (isOpen) {
+				evalContext = valueNodesProvider.TryGetEvaluationContext();
 				nodes = valueNodesProvider.GetNodes();
 				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid ?? lastRuntimeGuid;
 			}
 			else {
+				evalContext = null;
 				nodes = Array.Empty<DbgValueNodeInfo>();
 				runtimeGuid = null;
 			}
+			valueNodesContext.ValueNodeReader.SetEvaluationContext(evalContext);
+			valueNodesContext.EvaluationContext = evalContext;
+
 #if DEBUG
 			var origEditNode = TryGetEditNode();
 #endif

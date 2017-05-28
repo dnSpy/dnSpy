@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			return res;
 		}
 
-		public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) {
+		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) {
 			var res = new DbgValueNodeInfo[expressions.Count];
 			Debug.Assert((options & DbgEvaluationOptions.NoSideEffects) == 0);
 			for (int i = 0; i < res.Length; i++) {
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 				else
 					evalOptions = options | DbgEvaluationOptions.NoSideEffects;
 				info.ForceEval = false;
-				var result = language.ValueNodeFactory.Create(frame, info.Expression, evalOptions);
+				var result = language.ValueNodeFactory.Create(context, frame, info.Expression, evalOptions);
 				if (result.Error is string error)
 					res[i] = new DbgValueNodeInfo(info.Id, info.Expression, error, result.CausesSideEffects);
 				else {

@@ -55,7 +55,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract void EditExpression(string id, string expression);
 		public abstract void AddExpressions(string[] expressions);
 
-		public abstract (DbgLanguage language, DbgStackFrame frame) GetEvaluateInfo();
+		public abstract DbgEvaluationContext TryGetEvaluationContext();
+		public abstract DbgStackFrame TryGetFrame();
 	}
 
 	struct DbgValueNodeInfo {

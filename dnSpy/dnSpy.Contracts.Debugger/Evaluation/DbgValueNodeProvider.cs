@@ -35,17 +35,19 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Gets all values. It blocks the current thread until the method is complete.
 		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNode[] GetNodes(DbgStackFrame frame, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Gets all values. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetNodes(DbgStackFrame frame, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

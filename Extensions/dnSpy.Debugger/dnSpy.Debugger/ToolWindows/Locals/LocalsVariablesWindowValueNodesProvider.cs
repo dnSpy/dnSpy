@@ -56,10 +56,10 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			}
 		}
 
-		public override DbgValueNodeInfo[] GetNodes(DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) {
-			var exceptions = language.ExceptionProvider.GetNodes(frame);
-			var returnValues = language.ReturnValueProvider.GetNodes(frame);
-			var variables = language.LocalsProvider.GetNodes(frame);
+		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) {
+			var exceptions = language.ExceptionsProvider.GetNodes(context, frame);
+			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame);
+			var variables = language.LocalsProvider.GetNodes(context, frame);
 
 			var objectIds = dbgObjectIdService.GetObjectIds(frame.Runtime);
 			Array.Sort(objectIds, DbgObjectIdComparer.Instance);
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			for (int i = 0; i < returnValues.Length; i++, ri++)
 				res[ri] = new DbgValueNodeInfo(returnValues[i], GetNextReturnValueId());
 
-			var objectIdInfos = language.ValueNodeFactory.Create(objectIds);
+			var objectIdInfos = language.ValueNodeFactory.Create(context, objectIds);
 			Debug.Assert(objectIdInfos.Length == objectIds.Length);
 			for (int i = 0; i < objectIdInfos.Length; i++, ri++) {
 				var id = GetObjectIdNodeId(objectIds[i]);

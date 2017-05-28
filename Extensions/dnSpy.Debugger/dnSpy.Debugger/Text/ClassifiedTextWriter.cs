@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Text {
 
 		public void Clear() => result.Clear();
 
-		void ITextColorWriter.Write(object color, string text) => result.Add(new ClassifiedText(color, text));
+		public void Write(object color, string text) => result.Add(new ClassifiedText(color, text));
 		void ITextColorWriter.Write(TextColor color, string text) => result.Add(new ClassifiedText(color.Box(), text));
 
 		public bool Equals(ClassifiedTextCollection collection) {

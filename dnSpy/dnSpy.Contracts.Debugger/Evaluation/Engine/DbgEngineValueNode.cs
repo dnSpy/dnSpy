@@ -65,48 +65,54 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <summary>
 		/// Creates new children. This method blocks the current thread until the children have been created.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNode[] GetChildren(ulong index, int count);
+		public abstract DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count);
 
 		/// <summary>
 		/// Creates new children
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="callback">Called when this method is complete</param>
-		public abstract void GetChildren(ulong index, int count, Action<DbgEngineValueNode[]> callback);
+		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, Action<DbgEngineValueNode[]> callback);
 
 		/// <summary>
 		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="options">Options</param>
-		public abstract void Format(IDbgValueNodeFormatParameters options);
+		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options);
 
 		/// <summary>
 		/// Formats the name, value, and type
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
-		public abstract void Format(IDbgValueNodeFormatParameters options, Action callback);
+		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback);
 
 		/// <summary>
 		/// Writes a new value. It blocks the current thread until the assignment is complete.
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNodeAssignmentResult Assign(string expression, DbgEvaluationOptions options);
+		public abstract DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options);
 
 		/// <summary>
 		/// Writes a new value
 		/// </summary>
+		/// <param name="context">Evaluation context</param>
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
 		/// <returns></returns>
-		public abstract void Assign(string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback);
+		public abstract void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback);
 	}
 
 	/// <summary>
