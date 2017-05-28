@@ -25,9 +25,9 @@ using dnSpy.Debugger.Evaluation.ViewModel;
 
 namespace dnSpy.Debugger.ToolWindows.Autos {
 	sealed class AutosVariablesWindowValueNodesProvider : VariablesWindowValueNodesProvider {
-		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options) {
-			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame);
-			var variables = language.AutosProvider.GetNodes(context, frame);
+		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
+			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame, nodeEvalOptions);
+			var variables = language.AutosProvider.GetNodes(context, frame, nodeEvalOptions);
 
 			var res = new DbgValueNodeInfo[returnValues.Length + variables.Length];
 			int ri = 0;

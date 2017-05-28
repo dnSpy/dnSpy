@@ -31,17 +31,19 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
+		public abstract DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets all values
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
+		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 	}
 }

@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineValueNodeFactory.Create(context, frame, expression, options, result => callback(CreateResult(frame.Runtime, result)), cancellationToken);
 		}
 
-		public override DbgCreateObjectIdValueNodeResult[] Create(DbgEvaluationContext context, DbgObjectId[] objectIds, CancellationToken cancellationToken) {
+		public override DbgCreateObjectIdValueNodeResult[] Create(DbgEvaluationContext context, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -129,10 +129,10 @@ namespace dnSpy.Debugger.Evaluation {
 			var engineObjectIds = new DbgEngineObjectId[objectIds.Length];
 			for (int i = 0; i < objectIds.Length; i++)
 				engineObjectIds[i] = ((DbgObjectIdImpl)objectIds[i]).EngineObjectId;
-			return CreateResult(runtime, engineValueNodeFactory.Create(context, engineObjectIds, cancellationToken), engineObjectIds.Length);
+			return CreateResult(runtime, engineValueNodeFactory.Create(context, engineObjectIds, options, cancellationToken), engineObjectIds.Length);
 		}
 
-		public override void Create(DbgEvaluationContext context, DbgObjectId[] objectIds, Action<DbgCreateObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken) {
+		public override void Create(DbgEvaluationContext context, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgCreateObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -151,7 +151,7 @@ namespace dnSpy.Debugger.Evaluation {
 			var engineObjectIds = new DbgEngineObjectId[objectIds.Length];
 			for (int i = 0; i < objectIds.Length; i++)
 				engineObjectIds[i] = ((DbgObjectIdImpl)objectIds[i]).EngineObjectId;
-			engineValueNodeFactory.Create(context, engineObjectIds, result => CreateResult(runtime, result, engineObjectIds.Length), cancellationToken);
+			engineValueNodeFactory.Create(context, engineObjectIds, options, result => CreateResult(runtime, result, engineObjectIds.Length), cancellationToken);
 		}
 	}
 }

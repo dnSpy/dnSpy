@@ -149,8 +149,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var frame = valueNodesProvider.TryGetFrame();
 			if (frame == null)
 				return new DbgCreateValueNodeResult(dnSpy_Debugger_Resources.ErrorEvaluatingExpression, causesSideEffects: false);
-			var options = DbgEvaluationOptions.Expression;
-			return context.Language.ValueNodeFactory.Create(context, frame, expression, options);
+			return context.Language.ValueNodeFactory.Create(context, frame, expression, valueNodesContext.EvaluationOptions);
 		}
 
 		// UI thread
@@ -168,7 +167,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			DbgEvaluationContext evalContext;
 			if (isOpen) {
 				evalContext = valueNodesProvider.TryGetEvaluationContext();
-				nodes = valueNodesProvider.GetNodes();
+				nodes = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions);
 				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid ?? lastRuntimeGuid;
 			}
 			else {
@@ -400,6 +399,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesContext.ValueEditValueProvider.Language = valueNodesProvider.Language;
 				valueNodesContext.Formatter.Language = valueNodesProvider.Language;
 				UpdateFormatterOptions();
+				UpdateEvaluationOptions();
 				valueNodesContext.IsWindowReadOnly = valueNodesProvider.IsReadOnly;
 				valueNodesProvider.NodesChanged += ValueNodesProvider_NodesChanged;
 				valueNodesProvider.IsReadOnlyChanged += ValueNodesProvider_IsReadOnlyChanged;
@@ -457,6 +457,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				break;
 
 			case nameof(DebuggerSettings.PropertyEvalAndFunctionCalls):
+				UpdateFormatterOptions();
+				UpdateEvaluationOptions();
+				RecreateRootChildren_UI();
+				break;
+
 			case nameof(DebuggerSettings.UseStringConversionFunction):
 				UpdateFormatterOptions();
 				const RefreshNodeOptions options =
@@ -533,38 +538,60 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			valueNodesContext.ValueNodeFormatParameters.TypeFormatterOptions = GetTypeFormatterOptions();
 		}
 
+		// UI thread
+		void UpdateEvaluationOptions() {
+			valueNodesContext.UIDispatcher.VerifyAccess();
+			valueNodesContext.EvaluationOptions = GetEvaluationOptions();
+			valueNodesContext.ValueNodeEvaluationOptions = GetValueNodeEvaluationOptions();
+			valueNodesContext.ValueNodeReader.SetValueNodeEvaluationOptions(valueNodesContext.ValueNodeEvaluationOptions);
+		}
+
 		DbgValueFormatterOptions GetValueFormatterOptions(bool isDisplay) {
-			var flags = DbgValueFormatterOptions.None;
+			var options = DbgValueFormatterOptions.None;
 			if (isDisplay)
-				flags |= DbgValueFormatterOptions.Display;
+				options |= DbgValueFormatterOptions.Display;
 			if (!debuggerSettings.UseHexadecimal)
-				flags |= DbgValueFormatterOptions.Decimal;
+				options |= DbgValueFormatterOptions.Decimal;
 			if (debuggerSettings.PropertyEvalAndFunctionCalls)
-				flags |= DbgValueFormatterOptions.FuncEval;
-			if (debuggerSettings.UseStringConversionFunction)
-				flags |= DbgValueFormatterOptions.ToString;
+				options |= DbgValueFormatterOptions.FuncEval;
+			if (debuggerSettings.UseStringConversionFunction && debuggerSettings.PropertyEvalAndFunctionCalls)
+				options |= DbgValueFormatterOptions.ToString;
 			if (dbgEvalFormatterSettings.ShowDeclaringTypes)
-				flags |= DbgValueFormatterOptions.DeclaringTypes;
+				options |= DbgValueFormatterOptions.DeclaringTypes;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
-				flags |= DbgValueFormatterOptions.Namespaces;
+				options |= DbgValueFormatterOptions.Namespaces;
 			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)
-				flags |= DbgValueFormatterOptions.IntrinsicTypeKeywords;
+				options |= DbgValueFormatterOptions.IntrinsicTypeKeywords;
 			if (dbgEvalFormatterSettings.ShowTokens)
-				flags |= DbgValueFormatterOptions.Tokens;
-			return flags;
+				options |= DbgValueFormatterOptions.Tokens;
+			return options;
 		}
 
 		DbgValueFormatterTypeOptions GetTypeFormatterOptions() {
-			var flags = DbgValueFormatterTypeOptions.None;
+			var options = DbgValueFormatterTypeOptions.None;
 			if (dbgEvalFormatterSettings.ShowDeclaringTypes)
-				flags |= DbgValueFormatterTypeOptions.DeclaringTypes;
+				options |= DbgValueFormatterTypeOptions.DeclaringTypes;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
-				flags |= DbgValueFormatterTypeOptions.Namespaces;
+				options |= DbgValueFormatterTypeOptions.Namespaces;
 			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)
-				flags |= DbgValueFormatterTypeOptions.IntrinsicTypeKeywords;
+				options |= DbgValueFormatterTypeOptions.IntrinsicTypeKeywords;
 			if (dbgEvalFormatterSettings.ShowTokens)
-				flags |= DbgValueFormatterTypeOptions.Tokens;
-			return flags;
+				options |= DbgValueFormatterTypeOptions.Tokens;
+			return options;
+		}
+
+		DbgEvaluationOptions GetEvaluationOptions() {
+			var options = DbgEvaluationOptions.Expression;
+			if (!debuggerSettings.PropertyEvalAndFunctionCalls)
+				options |= DbgEvaluationOptions.NoFuncEval;
+			return options;
+		}
+
+		DbgValueNodeEvaluationOptions GetValueNodeEvaluationOptions() {
+			var options = DbgValueNodeEvaluationOptions.None;
+			if (!debuggerSettings.PropertyEvalAndFunctionCalls)
+				options |= DbgValueNodeEvaluationOptions.NoFuncEval;
+			return options;
 		}
 
 		bool IValueNodesVM.CanAddRemoveExpressions {

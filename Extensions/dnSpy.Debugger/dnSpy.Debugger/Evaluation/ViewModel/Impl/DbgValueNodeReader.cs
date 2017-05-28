@@ -24,6 +24,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	abstract class DbgValueNodeReader {
 		public abstract void SetEvaluationContext(DbgEvaluationContext context);
+		public abstract void SetValueNodeEvaluationOptions(DbgValueNodeEvaluationOptions options);
 		public abstract DbgValueNode GetDebuggerNode(ChildDbgValueRawNode valueNode);
 		public abstract DbgValueNode GetDebuggerNodeForReuse(DebuggerValueRawNode parent, uint startIndex);
 		public abstract DbgCreateValueNodeResult Evaluate(string expression);
@@ -32,18 +33,20 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class DbgValueNodeReaderImpl : DbgValueNodeReader {
 		readonly Func<DbgEvaluationContext, string, DbgCreateValueNodeResult> evaluate;
 		DbgEvaluationContext dbgEvaluationContext;
+		DbgValueNodeEvaluationOptions dbgValueNodeEvaluationOptions;
 
 		public DbgValueNodeReaderImpl(Func<DbgEvaluationContext, string, DbgCreateValueNodeResult> evaluate) =>
 			this.evaluate = evaluate ?? throw new ArgumentNullException(nameof(evaluate));
 
 		public override void SetEvaluationContext(DbgEvaluationContext context) => dbgEvaluationContext = context;
+		public override void SetValueNodeEvaluationOptions(DbgValueNodeEvaluationOptions options) => dbgValueNodeEvaluationOptions = options;
 
 		public override DbgValueNode GetDebuggerNode(ChildDbgValueRawNode valueNode) {
 			Debug.Assert(dbgEvaluationContext != null);
 			var parent = valueNode.Parent;
 			uint startIndex = valueNode.DbgValueNodeChildIndex;
 			const int count = 1;
-			var newNodes = parent.DebuggerValueNode.GetChildren(dbgEvaluationContext, startIndex, count);
+			var newNodes = parent.DebuggerValueNode.GetChildren(dbgEvaluationContext, startIndex, count, dbgValueNodeEvaluationOptions);
 			Debug.Assert(count == 1);
 			return newNodes[0];
 		}
@@ -51,7 +54,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override DbgValueNode GetDebuggerNodeForReuse(DebuggerValueRawNode parent, uint startIndex) {
 			Debug.Assert(dbgEvaluationContext != null);
 			const int count = 1;
-			var newNodes = parent.DebuggerValueNode.GetChildren(dbgEvaluationContext, startIndex, count);
+			var newNodes = parent.DebuggerValueNode.GetChildren(dbgEvaluationContext, startIndex, count, dbgValueNodeEvaluationOptions);
 			Debug.Assert(count == 1);
 			return newNodes[0];
 		}

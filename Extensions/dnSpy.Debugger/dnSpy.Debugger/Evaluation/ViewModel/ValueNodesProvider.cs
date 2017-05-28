@@ -26,11 +26,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// <summary>
 		/// Gets all nodes. Caller owns the nodes and must close them.
 		/// </summary>
+		/// <param name="evalOptions">Evaluation options</param>
+		/// <param name="nodeEvalOptions">Value node evaluation options</param>
 		/// <returns></returns>
-		public abstract DbgValueNodeInfo[] GetNodes();
+		public abstract DbgValueNodeInfo[] GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions);
 
 		/// <summary>
-		/// Raised when <see cref="GetNodes"/> must be called again, eg. the debugged program is paused
+		/// Raised when <see cref="GetNodes(DbgEvaluationOptions, DbgValueNodeEvaluationOptions)"/> must be called again, eg. the debugged program is paused
 		/// </summary>
 		public abstract event EventHandler NodesChanged;
 

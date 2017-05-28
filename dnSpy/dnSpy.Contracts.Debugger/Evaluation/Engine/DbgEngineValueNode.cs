@@ -68,8 +68,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count);
+		public abstract DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options);
 
 		/// <summary>
 		/// Creates new children
@@ -77,8 +78,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
+		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
-		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, Action<DbgEngineValueNode[]> callback);
+		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback);
 
 		/// <summary>
 		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted

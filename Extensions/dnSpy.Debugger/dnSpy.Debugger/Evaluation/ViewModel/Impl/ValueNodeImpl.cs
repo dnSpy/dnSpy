@@ -256,8 +256,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void SaveEditableValue(string expression) {
 			if (!CanEditValue())
 				throw new InvalidOperationException();
-			var evalOptions = DbgEvaluationOptions.Expression;
-			var res = RawNode.Assign(Context.EvaluationContext, expression, evalOptions);
+			var res = RawNode.Assign(Context.EvaluationContext, expression, Context.EvaluationOptions);
 			if (res.Error == null)
 				oldCachedValue = cachedValue;
 			ResetForReuse();

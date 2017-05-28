@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Evaluation {
 			value = new DbgValueImpl(runtime, engineValueNode.Value);
 		}
 
-		public override DbgValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count) {
+		public override DbgValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -55,11 +55,11 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (count < 0)
 				throw new ArgumentOutOfRangeException(nameof(count));
-			var engineNodes = engineValueNode.GetChildren(context, index, count);
+			var engineNodes = engineValueNode.GetChildren(context, index, count, options);
 			return DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes);
 		}
 
-		public override void GetChildren(DbgEvaluationContext context, ulong index, int count, Action<DbgValueNode[]> callback) {
+		public override void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentOutOfRangeException(nameof(count));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNode.GetChildren(context, index, count, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes)));
+			engineValueNode.GetChildren(context, index, count, options, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes)));
 		}
 
 		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options) {

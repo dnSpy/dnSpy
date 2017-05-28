@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			return (language, frame);
 		}
 
-		public override DbgValueNodeInfo[] GetNodes() {
+		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
 			uiDispatcher.VerifyAccess();
 			var info = TryGetLanguage();
 			if (info.frame == null)
@@ -137,8 +137,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var evalContext = TryGetEvaluationContext();
 			if (evalContext == null)
 				return variablesWindowValueNodesProvider.GetDefaultNodes();
-			var options = DbgEvaluationOptions.Expression;
-			return variablesWindowValueNodesProvider.GetNodes(evalContext, info.language, info.frame, options);
+			return variablesWindowValueNodesProvider.GetNodes(evalContext, info.language, info.frame, evalOptions, nodeEvalOptions);
 		}
 
 		void SetIsReadOnly_UI(bool newIsReadOnly) {

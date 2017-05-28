@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineValueNodeProvider = engineValueNodeProvider ?? throw new ArgumentNullException(nameof(engineValueNodeProvider));
 		}
 
-		public override DbgValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+		public override DbgValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -49,10 +49,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.Guid != runtimeGuid)
 				throw new ArgumentException();
-			return DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineValueNodeProvider.GetNodes(context, frame, cancellationToken));
+			return DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineValueNodeProvider.GetNodes(context, frame, options, cancellationToken));
 		}
 
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, Action<DbgValueNode[]> callback, CancellationToken cancellationToken) {
+		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNodeProvider.GetNodes(context, frame, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineNodes)), cancellationToken);
+			engineValueNodeProvider.GetNodes(context, frame, options, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineNodes)), cancellationToken);
 		}
 	}
 }

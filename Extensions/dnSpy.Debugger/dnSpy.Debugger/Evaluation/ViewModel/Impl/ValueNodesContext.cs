@@ -46,6 +46,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		LanguageEditValueProvider ValueEditValueProvider { get; }
 		LanguageEditValueProvider NameEditValueProvider { get; }
 		DbgEvaluationContext EvaluationContext { get; }
+		DbgEvaluationOptions EvaluationOptions { get; }
+		DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; }
 		string ExpressionToEdit { get; set; }
 		bool IsWindowReadOnly { get; }
 	}
@@ -72,6 +74,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public LanguageEditValueProvider ValueEditValueProvider { get; }
 		public LanguageEditValueProvider NameEditValueProvider { get; }
 		public DbgEvaluationContext EvaluationContext { get; set; }
+		public DbgEvaluationOptions EvaluationOptions { get; set; }
+		public DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; set; }
 		public string ExpressionToEdit { get; set; }
 		public bool IsWindowReadOnly { get; set; }
 

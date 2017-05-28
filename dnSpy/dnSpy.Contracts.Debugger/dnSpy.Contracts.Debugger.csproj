@@ -118,6 +118,7 @@
     <Compile Include="Evaluation\DbgValue.cs" />
     <Compile Include="Evaluation\DbgValueFormatter.cs" />
     <Compile Include="Evaluation\DbgValueNode.cs" />
+    <Compile Include="Evaluation\DbgValueNodeEvaluationOptions.cs" />
     <Compile Include="Evaluation\DbgValueNodeFactory.cs" />
     <Compile Include="Evaluation\DbgValueNodeProvider.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineExpressionEvaluator.cs" />
