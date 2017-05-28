@@ -102,7 +102,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var output = new StringBuilderTextColorOutput();
 			var expressions = new List<string>();
 			foreach (var node in SortedSelectedNodes(vm)) {
-				expressions.Add(node.RawNode.Expression);
+				if (node.RawNode.CanEvaluateExpression)
+					expressions.Add(node.RawNode.Expression);
 				var formatter = node.Context.Formatter;
 				formatter.WriteExpander(output, node);
 				output.Write(BoxedTextColor.Text, "\t");
@@ -287,11 +288,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			node.ValueEditableValue.IsEditingValue = true;
 		}
 
-		public override bool CanAddWatch(IValueNodesVM vm) => CanExecCommands(vm) && HasSelectedNodes(vm);
+		public override bool CanAddWatch(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Any(a => a.RawNode.CanEvaluateExpression);
 		public override void AddWatch(IValueNodesVM vm) {
 			if (!CanAddWatch(vm))
 				return;
-			var expressions = SortedSelectedNodes(vm).Select(a => a.RawNode.Expression).Where(a => !string.IsNullOrWhiteSpace(a)).ToArray();
+			var expressions = SortedSelectedNodes(vm).Where(a => a.RawNode.CanEvaluateExpression).Select(a => a.RawNode.Expression).Where(a => !string.IsNullOrWhiteSpace(a)).ToArray();
 			watchExpressionsService.Value.AddExpressions(expressions);
 		}
 

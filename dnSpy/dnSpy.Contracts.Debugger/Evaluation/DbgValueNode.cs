@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgRuntime Runtime { get; }
 
 		/// <summary>
-		/// true if this is an error value node, it has an error message and not a value
+		/// true if this is an error value node
 		/// </summary>
 		public bool HasError => ErrorMessage != null;
 
@@ -57,13 +57,18 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public bool HasValue => Value != null;
 
 		/// <summary>
-		/// Gets the value or null if there was an error (see <see cref="ErrorMessage"/>)
+		/// Gets the value or null if there's none
 		/// </summary>
 		public abstract DbgValue Value { get; }
 
 		/// <summary>
+		/// true if it's a node that has an <see cref="Expression"/> can be evaluated, false if it's a non-value node, eg. 'Type variables', 'Raw View', etc.
+		/// </summary>
+		public abstract bool CanEvaluateExpression { get; }
+
+		/// <summary>
 		/// Gets the expression that is used when adding an expression to the watch window or
-		/// when assigning a new value to the source.
+		/// when assigning a new value to the source. See also <see cref="CanEvaluateExpression"/>.
 		/// </summary>
 		public abstract string Expression { get; }
 

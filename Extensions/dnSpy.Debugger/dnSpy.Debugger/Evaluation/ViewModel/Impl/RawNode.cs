@@ -34,6 +34,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		/// underlying data when re-using nodes.
 		/// </summary>
 		public virtual bool HasInitializedUnderlyingData => true;
+		public abstract bool CanEvaluateExpression { get; }
 		public abstract string Expression { get; }
 		public abstract string ImageName { get; }
 		public abstract bool IsReadOnly { get; }
@@ -47,6 +48,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class EditRawNode : RawNode {
+		public override bool CanEvaluateExpression => false;
 		public override string Expression => string.Empty;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Edit;
 		public override bool IsReadOnly => true;
@@ -59,6 +61,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class ErrorRawNode : RawNode {
+		public override bool CanEvaluateExpression => true;
 		public string ErrorMessage => errorMessage;
 		public override string Expression => expression;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
@@ -126,6 +129,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public static readonly EmptyCachedRawNode Instance = new EmptyCachedRawNode();
 		EmptyCachedRawNode() { }
 
+		public override bool CanEvaluateExpression => false;
 		public override string Expression => string.Empty;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
 		public override bool? HasChildren => false;
@@ -138,6 +142,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class CachedRawNode : CachedRawNodeBase {
+		public override bool CanEvaluateExpression { get; }
 		public override string Expression { get; }
 		public override string ImageName { get; }
 		public override bool? HasChildren { get; }
@@ -148,7 +153,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		protected override ClassifiedTextCollection CachedExpectedType { get; }
 		protected override ClassifiedTextCollection CachedActualType { get; }
 
-		public CachedRawNode(string expression, string imageName, bool? hasChildren, ulong? childCount, ClassifiedTextCollection cachedName, ClassifiedTextCollection cachedValue, ClassifiedTextCollection cachedExpectedType, ClassifiedTextCollection cachedActualType) {
+		public CachedRawNode(bool canEvaluateExpression, string expression, string imageName, bool? hasChildren, ulong? childCount, ClassifiedTextCollection cachedName, ClassifiedTextCollection cachedValue, ClassifiedTextCollection cachedExpectedType, ClassifiedTextCollection cachedActualType) {
+			CanEvaluateExpression = canEvaluateExpression;
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
 			ImageName = imageName ?? throw new ArgumentNullException(nameof(imageName));
 			HasChildren = hasChildren;
@@ -164,6 +170,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	/// Base class of nodes containing actual debugger data (a <see cref="DbgValueNode"/>)
 	/// </summary>
 	abstract class DebuggerValueRawNode : RawNode {
+		public override bool CanEvaluateExpression => DebuggerValueNode.CanEvaluateExpression;
 		public override string Expression => DebuggerValueNode.Expression;
 		public override string ImageName => DebuggerValueNode.ImageName;
 		public override bool IsReadOnly => DebuggerValueNode.IsReadOnly;

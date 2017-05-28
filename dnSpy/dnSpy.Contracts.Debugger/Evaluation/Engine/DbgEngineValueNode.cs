@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 	/// </summary>
 	public abstract class DbgEngineValueNode : DbgBaseEngineValueNode {
 		/// <summary>
-		/// Gets the value
+		/// Gets the value or null if none
 		/// </summary>
 		public abstract DbgEngineValue Value { get; }
 

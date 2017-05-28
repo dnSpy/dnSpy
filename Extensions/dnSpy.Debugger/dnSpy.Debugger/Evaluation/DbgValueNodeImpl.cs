@@ -29,6 +29,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override DbgRuntime Runtime { get; }
 		public override string ErrorMessage => null;
 		public override DbgValue Value => value;
+		public override bool CanEvaluateExpression => value != null;
 		public override string Expression => engineValueNode.Expression;
 		public override string ImageName => engineValueNode.ImageName;
 		public override bool IsReadOnly => engineValueNode.IsReadOnly;
@@ -43,7 +44,11 @@ namespace dnSpy.Debugger.Evaluation {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Language = language ?? throw new ArgumentNullException(nameof(language));
 			this.engineValueNode = engineValueNode ?? throw new ArgumentNullException(nameof(engineValueNode));
-			value = new DbgValueImpl(runtime, engineValueNode.Value);
+			var engineValue = engineValueNode.Value;
+			if (engineValue != null)
+				value = new DbgValueImpl(runtime, engineValue);
+			else if (!engineValueNode.IsReadOnly)
+				throw new InvalidOperationException();
 		}
 
 		public override DbgValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
@@ -134,6 +139,8 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
+			if (IsReadOnly)
+				throw new InvalidOperationException();
 			return CreateResult(engineValueNode.Assign(context, expression, options, cancellationToken));
 		}
 
@@ -150,11 +157,13 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(expression));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
+			if (IsReadOnly)
+				throw new InvalidOperationException();
 			engineValueNode.Assign(context, expression, options, res => callback(CreateResult(res)), cancellationToken);
 		}
 
 		protected override void CloseCore() {
-			Value.Close(Process.DbgManager.Dispatcher);
+			value?.Close(Process.DbgManager.Dispatcher);
 			engineValueNode.Close(Process.DbgManager.Dispatcher);
 		}
 	}

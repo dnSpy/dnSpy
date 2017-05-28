@@ -375,7 +375,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return cachedNode;
 			if (!RawNode.HasInitializedUnderlyingData)
 				return EmptyCachedRawNode.Instance;
-			return new CachedRawNode(RawNode.Expression, RawNode.ImageName, RawNode.HasChildren, cachedChildCount, cachedName, cachedValue, cachedExpectedType, cachedActualType);
+			return new CachedRawNode(RawNode.CanEvaluateExpression, RawNode.Expression, RawNode.ImageName, RawNode.HasChildren, cachedChildCount, cachedName, cachedValue, cachedExpectedType, cachedActualType);
 		}
 
 		void InvalidateNodes(RawNode newNode, int recursionCounter) {
@@ -498,7 +498,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		static ulong? GetChildCount(RawNode node) => node.HasChildren == false ? 0 : node.ChildCount;
 
 		// Don't allow refreshing the value if it's an EmptyCachedRawNode since it doesn't have the original expression
-		bool CanRefreshExpression => IsInvalid && !string.IsNullOrEmpty(RawNode.Expression);
+		bool CanRefreshExpression => IsInvalid && RawNode.CanEvaluateExpression && !string.IsNullOrEmpty(RawNode.Expression);
 
 		void RefreshExpression() {
 			if (!CanRefreshExpression)

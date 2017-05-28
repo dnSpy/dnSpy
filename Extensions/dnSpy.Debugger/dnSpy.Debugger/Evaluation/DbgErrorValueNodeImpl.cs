@@ -30,6 +30,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override DbgRuntime Runtime { get; }
 		public override string ErrorMessage => PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(engineErrorValueNode.ErrorMessage);
 		public override DbgValue Value => null;
+		public override bool CanEvaluateExpression => true;
 		public override string Expression => engineErrorValueNode.Expression;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
 		public override bool IsReadOnly => true;
