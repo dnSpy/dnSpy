@@ -59,7 +59,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				Debug.Assert(Language != null);
 				if (Language == null)
 					return;
-				var objectId = ObjectIdService.GetObjectId(rawNode.DebuggerValueNode.Value);
+				var value = rawNode.DebuggerValueNode.Value;
+				if (value == null)
+					return;
+				var objectId = ObjectIdService.GetObjectId(value);
 				if (objectId != null) {
 					output.WriteSpace();
 					output.Write(BoxedTextColor.Punctuation, "{");

@@ -144,12 +144,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		DbgCreateValueNodeResult EvaluateExpression(DbgEvaluationContext context, string expression) {
+		DbgValueNodeInfo EvaluateExpression(DbgEvaluationContext context, string expression) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			var frame = valueNodesProvider.TryGetFrame();
 			if (frame == null)
-				return new DbgCreateValueNodeResult(dnSpy_Debugger_Resources.ErrorEvaluatingExpression, causesSideEffects: false);
-			return context.Language.ValueNodeFactory.Create(context, frame, expression, valueNodesContext.EvaluationOptions);
+				return new DbgValueNodeInfo(expression, expression, dnSpy_Debugger_Resources.ErrorEvaluatingExpression, causesSideEffects: false);
+			var res = context.Language.ValueNodeFactory.Create(context, frame, expression, valueNodesContext.EvaluationOptions);
+			return new DbgValueNodeInfo(res.ValueNode, res.CausesSideEffects);
 		}
 
 		// UI thread
@@ -228,6 +229,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					var node = (ValueNodeImpl)children[i].Data;
 					if (node.RawNode is DbgValueRawNode rootNode)
 						Debug.Assert(rootNode.DebuggerValueNode == infos[i].Node);
+					else if (infos[i].Node != null && infos[i].CausesSideEffects && infos[i].Node.HasError) {
+					}
 					else
 						Debug.Assert(infos[i].Node == null);
 					Debug.Assert(!valueNodesProvider.CanAddRemoveExpressions || infos[i].Id != null, "Root IDs are required");

@@ -58,18 +58,10 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class NullDbgEngineExpressionEvaluator : DbgEngineExpressionEvaluator {
 		// No need to localize it, an EE should always be available
 		public const string ERROR = "No expression evaluator is available for this runtime";
-
-		public override DbgEngineEvaluationResult Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) =>
-			new DbgEngineEvaluationResult(ERROR);
-
-		public override void Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEngineEvaluationResult> callback, CancellationToken cancellationToken) =>
-			callback(new DbgEngineEvaluationResult(ERROR));
-
-		public override DbgEngineEEAssignmentResult Assign(DbgEvaluationContext context, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) =>
-			new DbgEngineEEAssignmentResult(ERROR);
-
-		public override void Assign(DbgEvaluationContext context, string expression, string valueExpression, DbgEvaluationOptions options, Action<DbgEngineEEAssignmentResult> callback, CancellationToken cancellationToken) =>
-			callback(new DbgEngineEEAssignmentResult(ERROR));
+		public override DbgEngineEvaluationResult Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new DbgEngineEvaluationResult(ERROR);
+		public override void Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEngineEvaluationResult> callback, CancellationToken cancellationToken) => callback(new DbgEngineEvaluationResult(ERROR));
+		public override DbgEngineEEAssignmentResult Assign(DbgEvaluationContext context, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new DbgEngineEEAssignmentResult(ERROR);
+		public override void Assign(DbgEvaluationContext context, string expression, string valueExpression, DbgEvaluationOptions options, Action<DbgEngineEEAssignmentResult> callback, CancellationToken cancellationToken) => callback(new DbgEngineEEAssignmentResult(ERROR));
 	}
 
 	sealed class NullDbgEngineValueFormatter : DbgEngineValueFormatter {
@@ -84,14 +76,22 @@ namespace dnSpy.Debugger.Evaluation {
 	}
 
 	sealed class NullDbgEngineValueNodeProvider : DbgEngineValueNodeProvider {
-		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgEngineValueNode>();
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(Array.Empty<DbgEngineValueNode>());
+		public override DbgBaseEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgBaseEngineValueNode>();
+		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(Array.Empty<DbgBaseEngineValueNode>());
 	}
 
 	sealed class NullDbgEngineValueNodeFactory : DbgEngineValueNodeFactory {
-		public override DbgCreateEngineValueNodeResult Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new DbgCreateEngineValueNodeResult(NullDbgEngineExpressionEvaluator.ERROR);
-		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateEngineValueNodeResult> callback, CancellationToken cancellationToken) => callback(Create(context, frame, expression, options, cancellationToken));
-		public override DbgCreateEngineObjectIdValueNodeResult[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => objectIds.Select(a => new DbgCreateEngineObjectIdValueNodeResult(string.Empty, NullDbgEngineExpressionEvaluator.ERROR)).ToArray();
-		public override void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgCreateEngineObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken) => callback(Create(context, objectIds, options, cancellationToken));
+		public override DbgBaseEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new NullDbgEngineErrorValueNode();
+		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgBaseEngineValueNode> callback, CancellationToken cancellationToken) => callback(Create(context, frame, expression, options, cancellationToken));
+		public override DbgBaseEngineValueNode[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => objectIds.Select(a => new NullDbgEngineErrorValueNode()).ToArray();
+		public override void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(Create(context, objectIds, options, cancellationToken));
+	}
+
+	sealed class NullDbgEngineErrorValueNode : DbgEngineErrorValueNode {
+		public override string ErrorMessage => NullDbgEngineExpressionEvaluator.ERROR;
+		public override string Expression => string.Empty;
+		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, CancellationToken cancellationToken) { }
+		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, Action callback, CancellationToken cancellationToken) => callback();
+		protected override void CloseCore() { }
 	}
 }

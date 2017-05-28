@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgCreateObjectIdValueNodeResult[] Create(DbgEvaluationContext context, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgValueNode[] Create(DbgEvaluationContext context, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Creates <see cref="DbgValueNode"/>s. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgEvaluationContext context, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgCreateObjectIdValueNodeResult[]> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Create(DbgEvaluationContext context, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default(CancellationToken));
 	}
 
 	/// <summary>
@@ -86,16 +86,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public DbgValueNode ValueNode { get; }
 
 		/// <summary>
-		/// true if there was an error (see <see cref="Error"/>)
-		/// </summary>
-		public bool HasError => Error != null;
-
-		/// <summary>
-		/// Error message or null if none
-		/// </summary>
-		public string Error { get; }
-
-		/// <summary>
 		/// true if the expression wasn't evaluated because it causes side effects (<see cref="DbgEvaluationOptions.NoSideEffects"/> was used)
 		/// </summary>
 		public bool CausesSideEffects { get; }
@@ -104,67 +94,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Constructor
 		/// </summary>
 		/// <param name="node">New value node</param>
-		public DbgCreateValueNodeResult(DbgValueNode node) {
-			ValueNode = node ?? throw new ArgumentNullException(nameof(node));
-			Error = null;
-			CausesSideEffects = false;
-		}
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="error">Error message</param>
 		/// <param name="causesSideEffects">true if the expression wasn't evaluated because it causes side effects (<see cref="DbgEvaluationOptions.NoSideEffects"/> was used)</param>
-		public DbgCreateValueNodeResult(string error, bool causesSideEffects) {
-			ValueNode = null;
-			Error = error ?? throw new ArgumentNullException(nameof(error));
-			CausesSideEffects = causesSideEffects;
-		}
-	}
-
-	/// <summary>
-	/// Contains the created <see cref="DbgValueNode"/> or an error message
-	/// </summary>
-	public struct DbgCreateObjectIdValueNodeResult {
-		/// <summary>
-		/// Gets the created node or null if there was an error
-		/// </summary>
-		public DbgValueNode ValueNode { get; }
-
-		/// <summary>
-		/// true if there was an error (see <see cref="Error"/>)
-		/// </summary>
-		public bool HasError => Error != null;
-
-		/// <summary>
-		/// Error message or null if none
-		/// </summary>
-		public string Error { get; }
-
-		/// <summary>
-		/// Object id expression
-		/// </summary>
-		public string Expression { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="node">New value node</param>
-		public DbgCreateObjectIdValueNodeResult(DbgValueNode node) {
+		public DbgCreateValueNodeResult(DbgValueNode node, bool causesSideEffects) {
 			ValueNode = node ?? throw new ArgumentNullException(nameof(node));
-			Expression = node.Expression;
-			Error = null;
-		}
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="expression">Object id expression</param>
-		/// <param name="error">Error message</param>
-		public DbgCreateObjectIdValueNodeResult(string expression, string error) {
-			ValueNode = null;
-			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
-			Error = error ?? throw new ArgumentNullException(nameof(error));
+			CausesSideEffects = causesSideEffects;
 		}
 	}
 }

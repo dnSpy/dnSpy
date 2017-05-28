@@ -125,6 +125,9 @@
     </Compile>
     <Compile Include="Dialogs\DebugProgram\DebugProgramVM.cs" />
     <Compile Include="Dialogs\DebugProgram\OptionsPageVM.cs" />
+    <Compile Include="Evaluation\DbgBaseValueNodeImpl.cs" />
+    <Compile Include="Evaluation\DbgBaseValueNodeImplFactory.cs" />
+    <Compile Include="Evaluation\DbgErrorValueNodeImpl.cs" />
     <Compile Include="Evaluation\DbgEvalFormatterSettings.cs" />
     <Compile Include="Evaluation\DbgEvalFormatterSettingsBase.cs" />
     <Compile Include="Evaluation\DbgEvaluationContextImpl.cs" />
@@ -146,6 +149,7 @@
     <Compile Include="Evaluation\EvaluationConstants.cs" />
     <Compile Include="Evaluation\NullDbgEngineLanguage.cs" />
     <Compile Include="Evaluation\NullDbgEngineObjectIdFactory.cs" />
+    <Compile Include="Evaluation\PredefinedEvaluationErrorMessagesHelper.cs" />
     <Compile Include="Evaluation\UI\ValueNodesProviderImpl.cs" />
     <Compile Include="Evaluation\UI\VariablesWindowColumnConverter.cs" />
     <Compile Include="Evaluation\UI\VariablesWindowContentBase.cs" />

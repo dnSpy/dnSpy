@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 	/// <summary>
 	/// A value shown in a treeview (eg. in locals window)
 	/// </summary>
-	public abstract class DbgEngineValueNode : DbgObject {
+	public abstract class DbgEngineValueNode : DbgBaseEngineValueNode {
 		/// <summary>
 		/// Gets the value
 		/// </summary>
@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgBaseEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates new children
@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
+		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		public DbgEngineValue Value { get; }
 
 		/// <summary>
-		/// Gets the error or null if none
+		/// Gets the error message (also see <see cref="PredefinedEvaluationErrorMessages"/>) or null if none
 		/// </summary>
 		public string Error { get; }
 
@@ -150,7 +150,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="error">Error message</param>
+		/// <param name="error">Error message or one of the errors in <see cref="PredefinedEvaluationErrorMessages"/></param>
 		public DbgEngineValueNodeAssignmentResult(string error) {
 			Value = null;
 			Error = error ?? throw new ArgumentNullException(nameof(error));

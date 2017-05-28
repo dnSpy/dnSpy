@@ -300,29 +300,29 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return false;
 			int removeCount = 0;
 			foreach (var node in SelectedNodes(vm)) {
-				if (node.RawNode is DebuggerValueRawNode rawNode) {
-					if (dbgObjectIdService.Value.CanCreateObjectId(rawNode.DebuggerValueNode.Value))
+				if (node.RawNode is DebuggerValueRawNode rawNode && rawNode.DebuggerValueNode.Value is DbgValue value) {
+					if (dbgObjectIdService.Value.CanCreateObjectId(value))
 						return true;
-					if (dbgObjectIdService.Value.GetObjectId(rawNode.DebuggerValueNode.Value) != null)
+					if (dbgObjectIdService.Value.GetObjectId(value) != null)
 						removeCount++;
 				}
 			}
 			return removeCount == 0;
 		}
 
-		public override bool CanMakeObjectId(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Any(a => dbgObjectIdService.Value.CanCreateObjectId(a.DebuggerValueNode.Value));
+		public override bool CanMakeObjectId(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Any(a => a.DebuggerValueNode.Value is DbgValue value && dbgObjectIdService.Value.CanCreateObjectId(value));
 		public override void MakeObjectId(IValueNodesVM vm) {
 			if (!CanMakeObjectId(vm))
 				return;
-			var values = SortedSelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Select(a => a.DebuggerValueNode.Value).ToArray();
+			var values = SortedSelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Select(a => a.DebuggerValueNode.Value).Where(a => a != null).ToArray();
 			dbgObjectIdService.Value.CreateObjectIds(values);
 		}
 
-		public override bool CanDeleteObjectId(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Any(a => dbgObjectIdService.Value.GetObjectId(a.DebuggerValueNode.Value) != null);
+		public override bool CanDeleteObjectId(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Any(a => a.DebuggerValueNode.Value is DbgValue value && dbgObjectIdService.Value.GetObjectId(value) != null);
 		public override void DeleteObjectId(IValueNodesVM vm) {
 			if (!CanDeleteObjectId(vm))
 				return;
-			var objectIds = SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Select(a => dbgObjectIdService.Value.GetObjectId(a.DebuggerValueNode.Value)).Where(a => a != null);
+			var objectIds = SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Select(a => a.DebuggerValueNode.Value is DbgValue value ? dbgObjectIdService.Value.GetObjectId(value) : null).Where(a => a != null);
 			dbgObjectIdService.Value.Remove(objectIds);
 		}
 
@@ -397,7 +397,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (node == null)
 				return;
 			var valueNode = GetValueNode(node.RawNode);
-			var addr = valueNode?.Value.GetRawAddressValue(onlyDataAddress: true);
+			var addr = valueNode?.Value?.GetRawAddressValue(onlyDataAddress: true);
 			if (addr == null)
 				return;
 			var process = valueNode.Process;

@@ -19,31 +19,38 @@
 
 using System;
 using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
 	/// <summary>
-	/// Provides <see cref="DbgBaseEngineValueNode"/>s for the locals and autos windows
+	/// Engine value node with an error message
 	/// </summary>
-	public abstract class DbgEngineValueNodeProvider {
+	public abstract class DbgEngineErrorValueNode : DbgBaseEngineValueNode {
 		/// <summary>
-		/// Gets all values
+		/// Gets the error message. It can be a custom error message or an error message defined in <see cref="PredefinedEvaluationErrorMessages"/>
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
-		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		/// <returns></returns>
-		public abstract DbgBaseEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract string ErrorMessage { get; }
 
 		/// <summary>
-		/// Gets all values
+		/// Gets the expression
+		/// </summary>
+		public abstract string Expression { get; }
+
+		/// <summary>
+		/// Formats the name
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
-		/// <param name="options">Options</param>
-		/// <param name="callback">Called when the method is complete</param>
+		/// <param name="output">Output</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken);
+		public abstract void FormatName(DbgEvaluationContext context, ITextColorWriter output, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Formats the name
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="output">Output</param>
+		/// <param name="callback">Called when the formatting is complete</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void FormatName(DbgEvaluationContext context, ITextColorWriter output, Action callback, CancellationToken cancellationToken);
 	}
 }

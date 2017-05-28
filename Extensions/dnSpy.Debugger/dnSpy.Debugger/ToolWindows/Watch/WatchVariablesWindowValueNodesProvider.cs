@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.Evaluation;
 using dnSpy.Debugger.Evaluation.UI;
 using dnSpy.Debugger.Evaluation.ViewModel;
 using dnSpy.Debugger.Properties;
@@ -116,13 +117,9 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 					realEvalOptions = evalOptions | DbgEvaluationOptions.NoSideEffects;
 				info.ForceEval = false;
 				var result = language.ValueNodeFactory.Create(context, frame, info.Expression, realEvalOptions);
-				if (result.Error is string error)
-					res[i] = new DbgValueNodeInfo(info.Id, info.Expression, error, result.CausesSideEffects);
-				else {
-					if (result.ValueNode.Expression != info.Expression)
-						throw new InvalidOperationException();
-					res[i] = new DbgValueNodeInfo(result.ValueNode, info.Id);
-				}
+				if (result.ValueNode.Expression != info.Expression)
+					throw new InvalidOperationException();
+				res[i] = new DbgValueNodeInfo(result.ValueNode, info.Id, result.CausesSideEffects);
 			}
 			return res;
 		}

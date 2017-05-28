@@ -187,8 +187,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				__rawNode_DONT_USE = new ErrorRawNode(expression, errorMessage);
 				IsInvalid = true;
 			}
-			else
+			else {
 				__rawNode_DONT_USE = new DbgValueRawNode(Context.ValueNodeReader, rootValueNode);
+				IsInvalid = rootValueNode.HasError;
+			}
 		}
 
 		public void Reuse(DbgValueNode rootValueNode, string rootId, string expression, string errorMessage) {
@@ -201,7 +203,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 			else {
 				__rawNode_DONT_USE = new DbgValueRawNode(Context.ValueNodeReader, rootValueNode);
-				IsInvalid = false;
+				IsInvalid = rootValueNode.HasError;
 			}
 			ResetForReuse();
 		}
@@ -355,6 +357,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				var newNode = info.CausesSideEffects ? null : new ErrorRawNode(info.Expression, info.ErrorMessage);
 				InvalidateNodes(newNode, recursionCounter: 0);
 			}
+			else if (info.Node.HasError) {
+				var newNode = info.CausesSideEffects ? null : new DbgValueRawNode(Context.ValueNodeReader, info.Node);
+				InvalidateNodes(newNode, recursionCounter: 0);
+			}
 			else
 				SetDebuggerValueNode(new DbgValueRawNode(Context.ValueNodeReader, info.Node), recursionCounter: 0);
 		}
@@ -500,10 +506,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (Context.IsWindowReadOnly)
 				return;
 			var res = Context.ValueNodeReader.Evaluate(RawNode.Expression);
-			if (res.Error != null)
-				SetDebuggerValueNode(new DbgValueNodeInfo(RootId ?? RawNode.Expression, RawNode.Expression, res.Error, res.CausesSideEffects));
-			else
-				SetDebuggerValueNode(new DbgValueNodeInfo(res.ValueNode));
+			if (res.Node == null)
+				res = new DbgValueNodeInfo(RootId ?? res.Expression, res.Expression, res.ErrorMessage, res.CausesSideEffects);
+			SetDebuggerValueNode(res);
 		}
 
 		void ResetForReuse() {

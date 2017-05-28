@@ -67,23 +67,19 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			var res = new DbgValueNodeInfo[exceptions.Length + returnValues.Length + objectIds.Length + variables.Length];
 			int ri = 0;
 			for (int i = 0; i < exceptions.Length; i++, ri++)
-				res[ri] = new DbgValueNodeInfo(exceptions[i], GetNextExceptionId());
+				res[ri] = new DbgValueNodeInfo(exceptions[i], GetNextExceptionId(), causesSideEffects: false);
 			for (int i = 0; i < returnValues.Length; i++, ri++)
-				res[ri] = new DbgValueNodeInfo(returnValues[i], GetNextReturnValueId());
+				res[ri] = new DbgValueNodeInfo(returnValues[i], GetNextReturnValueId(), causesSideEffects: false);
 
-			var objectIdInfos = language.ValueNodeFactory.Create(context, objectIds, nodeEvalOptions);
-			Debug.Assert(objectIdInfos.Length == objectIds.Length);
-			for (int i = 0; i < objectIdInfos.Length; i++, ri++) {
+			var objectIdNodes = language.ValueNodeFactory.Create(context, objectIds, nodeEvalOptions);
+			Debug.Assert(objectIdNodes.Length == objectIds.Length);
+			for (int i = 0; i < objectIdNodes.Length; i++, ri++) {
 				var id = GetObjectIdNodeId(objectIds[i]);
-				var result = objectIdInfos[i];
-				if (result.Error is string error)
-					res[ri] = new DbgValueNodeInfo(id, result.Expression, error, causesSideEffects: false);
-				else
-					res[ri] = new DbgValueNodeInfo(result.ValueNode, id);
+				res[ri] = new DbgValueNodeInfo(objectIdNodes[i], id, causesSideEffects: false);
 			}
 
 			for (int i = 0; i < variables.Length; i++, ri++)
-				res[ri] = new DbgValueNodeInfo(variables[i]);
+				res[ri] = new DbgValueNodeInfo(variables[i], causesSideEffects: false);
 
 			return res;
 		}

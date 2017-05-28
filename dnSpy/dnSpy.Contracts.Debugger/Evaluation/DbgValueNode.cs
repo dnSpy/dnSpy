@@ -42,7 +42,22 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgRuntime Runtime { get; }
 
 		/// <summary>
-		/// Gets the value
+		/// true if this is an error value node, it has an error message and not a value
+		/// </summary>
+		public bool HasError => ErrorMessage != null;
+
+		/// <summary>
+		/// Gets the error message or null
+		/// </summary>
+		public abstract string ErrorMessage { get; }
+
+		/// <summary>
+		/// true if <see cref="Value"/> is not null
+		/// </summary>
+		public bool HasValue => Value != null;
+
+		/// <summary>
+		/// Gets the value or null if there was an error (see <see cref="ErrorMessage"/>)
 		/// </summary>
 		public abstract DbgValue Value { get; }
 

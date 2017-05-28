@@ -17,18 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Debugger.Evaluation.Engine;
+namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
+	/// <summary>
+	/// Common error messages
+	/// </summary>
+	public static class PredefinedEvaluationErrorMessages {
+		const string SUFFIX = " <({[dnSpy]})> ";
 
-namespace dnSpy.Debugger.Evaluation {
-	static class DbgValueNodeUtils {
-		public static DbgValueNode[] ToValueNodeArray(DbgLanguage language, DbgRuntime runtime, DbgBaseEngineValueNode[] engineNodes) {
-			var nodes = new DbgValueNode[engineNodes.Length];
-			for (int i = 0; i < nodes.Length; i++)
-				nodes[i] = DbgBaseValueNodeImplFactory.Create(language, runtime, engineNodes[i]);
-			runtime.CloseOnContinue(nodes);
-			return nodes;
-		}
+		/// <summary>
+		/// <see cref="DbgEvaluationOptions.NoSideEffects"/> is set but expression causes side effects
+		/// </summary>
+		public const string ExpressionCausesSideEffects = nameof(ExpressionCausesSideEffects) + SUFFIX;
+
+		// If more errors are added, also update the code in PredefinedEvaluationErrorMessagesHelper
 	}
 }

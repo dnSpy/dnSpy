@@ -27,15 +27,15 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public abstract void SetValueNodeEvaluationOptions(DbgValueNodeEvaluationOptions options);
 		public abstract DbgValueNode GetDebuggerNode(ChildDbgValueRawNode valueNode);
 		public abstract DbgValueNode GetDebuggerNodeForReuse(DebuggerValueRawNode parent, uint startIndex);
-		public abstract DbgCreateValueNodeResult Evaluate(string expression);
+		public abstract DbgValueNodeInfo Evaluate(string expression);
 	}
 
 	sealed class DbgValueNodeReaderImpl : DbgValueNodeReader {
-		readonly Func<DbgEvaluationContext, string, DbgCreateValueNodeResult> evaluate;
+		readonly Func<DbgEvaluationContext, string, DbgValueNodeInfo> evaluate;
 		DbgEvaluationContext dbgEvaluationContext;
 		DbgValueNodeEvaluationOptions dbgValueNodeEvaluationOptions;
 
-		public DbgValueNodeReaderImpl(Func<DbgEvaluationContext, string, DbgCreateValueNodeResult> evaluate) =>
+		public DbgValueNodeReaderImpl(Func<DbgEvaluationContext, string, DbgValueNodeInfo> evaluate) =>
 			this.evaluate = evaluate ?? throw new ArgumentNullException(nameof(evaluate));
 
 		public override void SetEvaluationContext(DbgEvaluationContext context) => dbgEvaluationContext = context;
@@ -59,11 +59,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			return newNodes[0];
 		}
 
-		public override DbgCreateValueNodeResult Evaluate(string expression) {
+		public override DbgValueNodeInfo Evaluate(string expression) {
 			Debug.Assert(dbgEvaluationContext != null);
-			var res = evaluate(dbgEvaluationContext, expression);
-			res.ValueNode?.Runtime.CloseOnContinue(res.ValueNode);
-			return res;
+			return evaluate(dbgEvaluationContext, expression);
 		}
 	}
 }

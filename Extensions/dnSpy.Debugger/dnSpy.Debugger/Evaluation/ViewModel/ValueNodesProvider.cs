@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// </summary>
 		public DbgValueNode Node { get; }
 
-		/// <summary>
+ 		/// <summary>
 		/// Shown in Name column if <see cref="Node"/> is null, else it's ignored
 		/// </summary>
 		public string Expression { get; }
@@ -89,27 +89,27 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public bool CausesSideEffects { get; }
 
 		public DbgValueNodeInfo(string id, string expression, string errorMessage, bool causesSideEffects) {
-			Node = null;
 			Id = id ?? throw new ArgumentNullException(nameof(id));
+			Node = null;
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
 			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 			CausesSideEffects = causesSideEffects;
 		}
 
-		public DbgValueNodeInfo(DbgValueNode node) {
+		public DbgValueNodeInfo(DbgValueNode node, string id, bool causesSideEffects) {
+			Id = id ?? throw new ArgumentNullException(nameof(id));
 			Node = node ?? throw new ArgumentNullException(nameof(node));
-			Id = null;
 			Expression = null;
 			ErrorMessage = null;
-			CausesSideEffects = false;
+			CausesSideEffects = causesSideEffects;
 		}
 
-		public DbgValueNodeInfo(DbgValueNode node, string id) {
+		public DbgValueNodeInfo(DbgValueNode node, bool causesSideEffects) {
+			Id = null;
 			Node = node ?? throw new ArgumentNullException(nameof(node));
-			Id = id ?? throw new ArgumentNullException(nameof(id));
 			Expression = null;
 			ErrorMessage = null;
-			CausesSideEffects = false;
+			CausesSideEffects = causesSideEffects;
 		}
 	}
 }

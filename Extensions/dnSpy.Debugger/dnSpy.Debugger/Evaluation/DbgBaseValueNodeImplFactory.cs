@@ -17,18 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
 
 namespace dnSpy.Debugger.Evaluation {
-	static class DbgValueNodeUtils {
-		public static DbgValueNode[] ToValueNodeArray(DbgLanguage language, DbgRuntime runtime, DbgBaseEngineValueNode[] engineNodes) {
-			var nodes = new DbgValueNode[engineNodes.Length];
-			for (int i = 0; i < nodes.Length; i++)
-				nodes[i] = DbgBaseValueNodeImplFactory.Create(language, runtime, engineNodes[i]);
-			runtime.CloseOnContinue(nodes);
-			return nodes;
+	static class DbgBaseValueNodeImplFactory {
+		public static DbgBaseValueNodeImpl Create(DbgLanguage language, DbgRuntime runtime, DbgBaseEngineValueNode baseEngineValueNode) {
+			if (baseEngineValueNode == null)
+				throw new ArgumentNullException(nameof(baseEngineValueNode));
+			switch (baseEngineValueNode) {
+			case DbgEngineValueNode valueNode:			return new DbgValueNodeImpl(language, runtime, valueNode);
+			case DbgEngineErrorValueNode errorNode:		return new DbgErrorValueNodeImpl(language, runtime, errorNode);
+			default:									throw new InvalidOperationException();
+			}
 		}
 	}
 }

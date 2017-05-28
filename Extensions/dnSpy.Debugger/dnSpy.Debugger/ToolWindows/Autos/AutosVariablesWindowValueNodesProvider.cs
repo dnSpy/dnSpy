@@ -32,9 +32,9 @@ namespace dnSpy.Debugger.ToolWindows.Autos {
 			var res = new DbgValueNodeInfo[returnValues.Length + variables.Length];
 			int ri = 0;
 			for (int i = 0; i < returnValues.Length; i++, ri++)
-				res[ri] = new DbgValueNodeInfo(returnValues[i], GetNextReturnValueId());
+				res[ri] = new DbgValueNodeInfo(returnValues[i], GetNextReturnValueId(), causesSideEffects: false);
 			for (int i = 0; i < variables.Length; i++, ri++)
-				res[ri] = new DbgValueNodeInfo(variables[i]);
+				res[ri] = new DbgValueNodeInfo(variables[i], causesSideEffects: false);
 
 			return res;
 		}

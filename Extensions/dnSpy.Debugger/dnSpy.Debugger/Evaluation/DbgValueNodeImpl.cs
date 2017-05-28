@@ -24,9 +24,10 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
 
 namespace dnSpy.Debugger.Evaluation {
-	sealed class DbgValueNodeImpl : DbgValueNode {
+	sealed class DbgValueNodeImpl : DbgBaseValueNodeImpl {
 		public override DbgLanguage Language { get; }
 		public override DbgRuntime Runtime { get; }
+		public override string ErrorMessage => null;
 		public override DbgValue Value => value;
 		public override string Expression => engineValueNode.Expression;
 		public override string ImageName => engineValueNode.ImageName;
@@ -110,7 +111,7 @@ namespace dnSpy.Debugger.Evaluation {
 			if (result.Error != null) {
 				if (engineValueNode.Value != value.EngineValue)
 					throw new InvalidOperationException();
-				return new DbgValueNodeAssignmentResult(result.Error);
+				return new DbgValueNodeAssignmentResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
 			}
 			if (result.Value != engineValueNode.Value)
 				throw new InvalidOperationException();

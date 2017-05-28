@@ -17,18 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.Evaluation;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Evaluation.Engine;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Evaluation {
-	static class DbgValueNodeUtils {
-		public static DbgValueNode[] ToValueNodeArray(DbgLanguage language, DbgRuntime runtime, DbgBaseEngineValueNode[] engineNodes) {
-			var nodes = new DbgValueNode[engineNodes.Length];
-			for (int i = 0; i < nodes.Length; i++)
-				nodes[i] = DbgBaseValueNodeImplFactory.Create(language, runtime, engineNodes[i]);
-			runtime.CloseOnContinue(nodes);
-			return nodes;
+	static class PredefinedEvaluationErrorMessagesHelper {
+		static readonly Dictionary<string, string> toErrorMessage;
+		static PredefinedEvaluationErrorMessagesHelper() {
+			const int TOTAL_COUNT = 1;
+			toErrorMessage = new Dictionary<string, string>(TOTAL_COUNT, StringComparer.Ordinal) {
+				{ PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, dnSpy_Debugger_Resources.ExpressionCausesSideEffectsNoEval },
+			};
+			Debug.Assert(toErrorMessage.Count == TOTAL_COUNT);
+		}
+
+		public static string GetErrorMessage(string error) {
+			if (error == null)
+				throw new ArgumentNullException(nameof(error));
+			if (toErrorMessage.TryGetValue(error, out var msg))
+				return msg;
+			return error;
 		}
 	}
 }
