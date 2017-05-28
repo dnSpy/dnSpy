@@ -382,7 +382,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			__rawNode_DONT_USE = CreateNewNode(newNode);
 			oldCachedValue = cachedValue;
 			// Don't show the value as changed if it's an error message
-			if (disableHighlightingOnReuse || __rawNode_DONT_USE is ErrorRawNode)
+			if (disableHighlightingOnReuse || __rawNode_DONT_USE is ErrorRawNode || (__rawNode_DONT_USE is DebuggerValueRawNode valueNode && valueNode.HasInitializedUnderlyingData && valueNode.DebuggerValueNode.HasError))
 				oldCachedValue = default(ClassifiedTextCollection);
 			disableHighlightingOnReuse = false;
 			IsInvalid = true;
