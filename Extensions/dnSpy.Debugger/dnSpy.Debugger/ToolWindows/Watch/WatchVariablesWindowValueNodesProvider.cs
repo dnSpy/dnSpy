@@ -24,7 +24,6 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Debugger.Evaluation;
 using dnSpy.Debugger.Evaluation.UI;
 using dnSpy.Debugger.Evaluation.ViewModel;
 using dnSpy.Debugger.Properties;

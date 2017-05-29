@@ -19,8 +19,8 @@
 
 using System;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Debugger.Evaluation.Engine;
 
 namespace dnSpy.Debugger.Evaluation {
 	static class DbgBaseValueNodeImplFactory {

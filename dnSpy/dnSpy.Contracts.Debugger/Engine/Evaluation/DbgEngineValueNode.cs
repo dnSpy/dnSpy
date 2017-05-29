@@ -19,8 +19,9 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger.Evaluation;
 
-namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// A value shown in a treeview (eg. in locals window)
 	/// </summary>

@@ -19,9 +19,10 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 
-namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// Formats values and their types
 	/// </summary>

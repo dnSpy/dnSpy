@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
-namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// Creates <see cref="DbgEngineLanguage"/>s. Use <see cref="ExportDbgEngineLanguageProviderAttribute"/>
 	/// to export an instance.

@@ -18,8 +18,9 @@
 */
 
 using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.Evaluation;
 
-namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// Debugger language that evaluates expressions and formats values
 	/// </summary>

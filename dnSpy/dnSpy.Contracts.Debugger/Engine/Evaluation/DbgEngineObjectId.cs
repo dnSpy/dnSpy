@@ -19,8 +19,9 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger.Evaluation;
 
-namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// References a value in the debugged process
 	/// </summary>

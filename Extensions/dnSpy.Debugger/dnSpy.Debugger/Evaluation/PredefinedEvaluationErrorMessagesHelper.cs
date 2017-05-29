@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnSpy.Contracts.Debugger.Evaluation.Engine;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Evaluation {

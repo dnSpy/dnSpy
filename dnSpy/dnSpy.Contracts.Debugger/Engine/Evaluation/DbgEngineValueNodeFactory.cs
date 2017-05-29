@@ -20,8 +20,9 @@
 using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
 
-namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// Creates <see cref="DbgBaseEngineValueNode"/>s
 	/// </summary>

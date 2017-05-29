@@ -19,8 +19,8 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Debugger.Evaluation.Engine;
 
 namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgExpressionEvaluatorImpl : DbgExpressionEvaluator {

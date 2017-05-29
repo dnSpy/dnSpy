@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Evaluation.Engine;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation {
 	sealed class NullDbgEngineObjectIdFactory : DbgEngineObjectIdFactory {

@@ -18,8 +18,8 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Debugger.Evaluation.Engine;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Evaluation {

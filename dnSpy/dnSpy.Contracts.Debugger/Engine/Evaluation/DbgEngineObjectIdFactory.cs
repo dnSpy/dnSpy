@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 
-namespace dnSpy.Contracts.Debugger.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// Creates <see cref="DbgEngineObjectId"/>s.
 	/// Use <see cref="ExportDbgEngineObjectIdFactoryAttribute"/> to export an instance.
