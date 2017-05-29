@@ -113,6 +113,8 @@ namespace dnSpy.Debugger.Evaluation {
 						else {
 							if (engineObjectId.Id != objectIdCounter)
 								throw new InvalidOperationException();
+							Debug.Assert(dbgEngineObjectIdFactory.Equals(engineObjectId, value.EngineValue));
+							Debug.Assert(dbgEngineObjectIdFactory.GetHashCode(engineObjectId) == dbgEngineObjectIdFactory.GetHashCode(value.EngineValue));
 							objectIdCounter++;
 							objectId = new DbgObjectIdImpl(this, engineObjectId);
 							objectIds.Add(objectId, objectId);
@@ -170,13 +172,15 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		void IDisposable.Dispose() {
+			var dispatcher = Runtime.Process.DbgManager.Dispatcher;
+			dispatcher.VerifyAccess();
 			DbgObjectId[] objsToClose;
 			lock (lockObj) {
 				objsToClose = objectIds.Values.ToArray();
 				objectIds.Clear();
 			}
 			foreach (var obj in objsToClose)
-				obj.Close(Runtime.Process.DbgManager.Dispatcher);
+				obj.Close(dispatcher);
 		}
 	}
 }
