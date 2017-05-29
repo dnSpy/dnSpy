@@ -90,5 +90,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Highlights the value of a variable that has changed in variables windows
 		/// </summary>
 		public abstract bool HighlightChangedVariables { get; set; }
+
+		/// <summary>
+		/// Shows raw structure of objects in variables windows
+		/// </summary>
+		public abstract bool ShowRawStructureOfObjects { get; set; }
 	}
 }

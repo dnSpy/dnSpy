@@ -239,6 +239,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool highlightChangedVariables = true;
 
+		public override bool ShowRawStructureOfObjects {
+			get {
+				lock (lockObj)
+					return showRawStructureOfObjects;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = showRawStructureOfObjects != value;
+					showRawStructureOfObjects = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(ShowRawStructureOfObjects));
+					OnModified();
+				}
+			}
+		}
+		bool showRawStructureOfObjects = false;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -253,6 +272,7 @@ namespace dnSpy.Debugger.Settings {
 			other.BreakAllProcesses = BreakAllProcesses;
 			other.EnableManagedDebuggingAssistants = EnableManagedDebuggingAssistants;
 			other.HighlightChangedVariables = HighlightChangedVariables;
+			other.ShowRawStructureOfObjects = ShowRawStructureOfObjects;
 			return other;
 		}
 	}
@@ -281,6 +301,7 @@ namespace dnSpy.Debugger.Settings {
 			BreakAllProcesses = sect.Attribute<bool?>(nameof(BreakAllProcesses)) ?? BreakAllProcesses;
 			EnableManagedDebuggingAssistants = sect.Attribute<bool?>(nameof(EnableManagedDebuggingAssistants)) ?? EnableManagedDebuggingAssistants;
 			HighlightChangedVariables = sect.Attribute<bool?>(nameof(HighlightChangedVariables)) ?? HighlightChangedVariables;
+			ShowRawStructureOfObjects = sect.Attribute<bool?>(nameof(ShowRawStructureOfObjects)) ?? ShowRawStructureOfObjects;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -300,6 +321,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(BreakAllProcesses), BreakAllProcesses);
 			sect.Attribute(nameof(EnableManagedDebuggingAssistants), EnableManagedDebuggingAssistants);
 			sect.Attribute(nameof(HighlightChangedVariables), HighlightChangedVariables);
+			sect.Attribute(nameof(ShowRawStructureOfObjects), ShowRawStructureOfObjects);
 		}
 	}
 }

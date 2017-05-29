@@ -98,6 +98,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Don't allow function evaluations (calling code in debugged process)
 		/// </summary>
 		NoFuncEval					= 0x00000004,
+
+		/// <summary>
+		/// Show the raw view (don't use debugger type proxies). It's enabled if <see cref="DebuggerSettings.ShowRawStructureOfObjects"/> is true
+		/// </summary>
+		RawView						= 0x00000008,
 	}
 
 	/// <summary>

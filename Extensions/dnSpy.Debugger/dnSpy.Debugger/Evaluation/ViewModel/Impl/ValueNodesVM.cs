@@ -460,6 +460,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				break;
 
 			case nameof(DebuggerSettings.PropertyEvalAndFunctionCalls):
+			case nameof(DebuggerSettings.ShowRawStructureOfObjects):
 				UpdateFormatterOptions();
 				UpdateEvaluationOptions();
 				RecreateRootChildren_UI();
@@ -587,6 +588,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var options = DbgEvaluationOptions.Expression;
 			if (!debuggerSettings.PropertyEvalAndFunctionCalls)
 				options |= DbgEvaluationOptions.NoFuncEval;
+			if (debuggerSettings.ShowRawStructureOfObjects)
+				options |= DbgEvaluationOptions.RawView;
 			return options;
 		}
 
@@ -594,6 +597,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var options = DbgValueNodeEvaluationOptions.None;
 			if (!debuggerSettings.PropertyEvalAndFunctionCalls)
 				options |= DbgValueNodeEvaluationOptions.NoFuncEval;
+			if (debuggerSettings.ShowRawStructureOfObjects)
+				options |= DbgValueNodeEvaluationOptions.RawView;
 			return options;
 		}
 
