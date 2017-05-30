@@ -293,6 +293,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		static readonly ReadOnlyCollection<FlagInfo> paramAttrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x0001, "In"),
 			new FlagInfo(0x0002, "Out"),
+			new FlagInfo(0x0004, "Lcid"),
+			new FlagInfo(0x0008, "Retval"),
 			new FlagInfo(0x0010, "Optional"),
 			new FlagInfo(0x1000, "HasDefault"),
 			new FlagInfo(0x2000, "HasFieldMarshal"),

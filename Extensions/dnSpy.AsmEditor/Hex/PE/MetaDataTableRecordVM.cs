@@ -592,6 +592,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				var field = new UInt16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("In", 0));
 				field.Add(new BooleanHexBitField("Out", 1));
+				field.Add(new BooleanHexBitField("Lcid", 2));
+				field.Add(new BooleanHexBitField("Retval", 3));
 				field.Add(new BooleanHexBitField("Optional", 4));
 				field.Add(new BooleanHexBitField("HasDefault", 12));
 				field.Add(new BooleanHexBitField("HasFieldMarshal", 13));

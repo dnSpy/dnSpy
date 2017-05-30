@@ -4922,6 +4922,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lcid.
+        /// </summary>
+        public static string ParamDef_Flags_Lcid {
+            get {
+                return ResourceManager.GetString("ParamDef_Flags_Lcid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to O_ptional.
         /// </summary>
         public static string ParamDef_Flags_Optional {
@@ -4936,6 +4945,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string ParamDef_Flags_Out {
             get {
                 return ResourceManager.GetString("ParamDef_Flags_Out", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retval.
+        /// </summary>
+        public static string ParamDef_Flags_Retval {
+            get {
+                return ResourceManager.GetString("ParamDef_Flags_Retval", resourceCulture);
             }
         }
         
