@@ -1,8 +1,8 @@
 {
 	"dependencies": {
 		"System.ValueTuple": "4.3.0",
-		"Microsoft.CodeAnalysis.CSharp.Features": "2.1.0",
-		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.1.0"
+		"Microsoft.CodeAnalysis.CSharp.Features": "2.2.0",
+		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.2.0"
 	},
 	"frameworks": {
 		"net46": { }
