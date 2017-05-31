@@ -494,7 +494,7 @@
     <value>Art</value>
   </data>
   <data name="GP_Kind_ToolTip" xml:space="preserve">
-    <value>Wird nur verwendet wenn die MD Kopfversion 1.1 (0x0101) ist. Es ist nie 1.1, drum ignoriere Kind</value>
+    <value>Wird nur bei der MD Header-Version 1.1 (0x0101) verwendet. Es ist niemals 1.1, drum ignoriere Kind</value>
   </data>
   <data name="GP_Name" xml:space="preserve">
     <value>_Name</value>
@@ -530,7 +530,7 @@
     <value>Verfolge Debug Daten</value>
   </data>
   <data name="HexNode_Cor20_Header" xml:space="preserve">
-    <value>Cor20 Header</value>
+    <value>Cor20-Header</value>
   </data>
   <data name="HexNode_DOSHeader" xml:space="preserve">
     <value>DOS-Header</value>
@@ -1605,7 +1605,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Header O_ffset</value>
   </data>
   <data name="MethodBody_HeaderRVA" xml:space="preserve">
-    <value>Kopf _RVA</value>
+    <value>Header _RVA</value>
   </data>
   <data name="MethodBody_InitLocals" xml:space="preserve">
     <value>Felder _initialisieren</value>
@@ -1794,7 +1794,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>A_lles speichern...</value>
   </data>
   <data name="SaveAllToolBarToolTip" xml:space="preserve">
-    <value>Alle speichern</value>
+    <value>Alles speichern</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
     <value>_Modul speichern...</value>
@@ -2496,5 +2496,11 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   </data>
   <data name="CompileDiagnostics_Header_Severity" xml:space="preserve">
     <value>Warnstufe</value>
+  </data>
+  <data name="ParamDef_Flags_Lcid" xml:space="preserve">
+    <value>Lcid</value>
+  </data>
+  <data name="ParamDef_Flags_Retval" xml:space="preserve">
+    <value>Retval</value>
   </data>
 </root>

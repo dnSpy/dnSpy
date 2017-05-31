@@ -1866,4 +1866,10 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="ErrorEvaluatingExpression" xml:space="preserve">
     <value>Der Ausdruck konnte nicht ausgewertet werden.</value>
   </data>
+  <data name="DeleteObjectIdCommand" xml:space="preserve">
+    <value>Objekt-ID löschen</value>
+  </data>
+  <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
+    <value>Unformatierte Struktur von Objekten in Variablenfenstern anzeigen</value>
+  </data>
 </root>

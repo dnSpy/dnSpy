@@ -1866,4 +1866,10 @@ HResult: 0x{3:X8}</value>
   <data name="ErrorEvaluatingExpression" xml:space="preserve">
     <value>Couldn't evaluate the expression</value>
   </data>
+  <data name="DeleteObjectIdCommand" xml:space="preserve">
+    <value>Delete Object ID</value>
+  </data>
+  <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
+    <value>Show raw structure of objects in variables windows</value>
+  </data>
 </root>

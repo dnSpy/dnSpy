@@ -236,7 +236,7 @@ Fehler: {0}</value>
     <value>Ein anderer Prozess debuggt bereits Prozess {0}</value>
   </data>
   <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Nativer Frame {0}</value>
+    <value>Nativer Rahmen {0}</value>
   </data>
   <data name="StackFrame_AppdomainTransition" xml:space="preserve">
     <value>AppDomain-Übergang</value>
@@ -254,7 +254,7 @@ Fehler: {0}</value>
     <value>Interner Aufruf</value>
   </data>
   <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Interner Frame ({0})</value>
+    <value>Interner Rahmen ({0})</value>
   </data>
   <data name="StackFrame_JITCompilation" xml:space="preserve">
     <value>JIT-Kompilierung</value>
@@ -282,5 +282,8 @@ Fehler: {0}</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Konnte nächste Anweisung nicht setzen.</value>
+  </data>
+  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
+    <value>Konnte Prozess nicht anhalten. Fehler: 0x{0:X8}</value>
   </data>
 </root>

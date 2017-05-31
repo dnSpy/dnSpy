@@ -283,4 +283,7 @@
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Не могу установить следующую инструкцию.</value>
   </data>
+  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
+    <value>Не могу прервать процесс. Ошибка: 0x{0:X8}</value>
+  </data>
 </root>

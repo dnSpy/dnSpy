@@ -283,4 +283,7 @@ Erro: {0}</value>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Não foi possível definir a próxima instrução.</value>
   </data>
+  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
+    <value>Could not break process. Error: 0x{0:X8}</value>
+  </data>
 </root>

@@ -2500,4 +2500,10 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
   <data name="CompileDiagnostics_Header_Severity" xml:space="preserve">
     <value>Gravidade</value>
   </data>
+  <data name="ParamDef_Flags_Lcid" xml:space="preserve">
+    <value>Lcid</value>
+  </data>
+  <data name="ParamDef_Flags_Retval" xml:space="preserve">
+    <value>Retval</value>
+  </data>
 </root>
