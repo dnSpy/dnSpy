@@ -1,0 +1,165 @@
+﻿/*
+    Copyright (C) 2014-2017 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Collections.Generic;
+
+namespace dnSpy.Debugger.DotNet.Metadata {
+	/// <summary>
+	/// A .NET method parameter
+	/// </summary>
+	public abstract class DmdParameterInfo : DmdObject, IDmdCustomAttributeProvider, IEquatable<DmdParameterInfo> {
+		/// <summary>
+		/// Gets the parameter type
+		/// </summary>
+		public abstract DmdType ParameterType { get; }
+
+		/// <summary>
+		/// Gets the parameter name
+		/// </summary>
+		public abstract string Name { get; }
+
+		/// <summary>
+		/// true if <see cref="DefaultValue"/> is valid
+		/// </summary>
+		public abstract bool HasDefaultValue { get; }
+
+		/// <summary>
+		/// Gets the default value, see also <see cref="HasDefaultValue"/>
+		/// </summary>
+		public abstract object DefaultValue { get; }
+
+		/// <summary>
+		/// Gets the default value, see also <see cref="HasDefaultValue"/>
+		/// </summary>
+		public abstract object RawDefaultValue { get; }
+
+		/// <summary>
+		/// Gets the parameter index
+		/// </summary>
+		public abstract int Position { get; }
+
+		/// <summary>
+		/// Gets the parameter attributes
+		/// </summary>
+		public abstract DmdParameterAttributes Attributes { get; }
+
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+		public bool IsIn => (Attributes & DmdParameterAttributes.In) != 0;
+		public bool IsOut => (Attributes & DmdParameterAttributes.Out) != 0;
+		public bool IsLcid => (Attributes & DmdParameterAttributes.Lcid) != 0;
+		public bool IsRetval => (Attributes & DmdParameterAttributes.Retval) != 0;
+		public bool IsOptional => (Attributes & DmdParameterAttributes.Optional) != 0;
+		public bool HasDefault => (Attributes & DmdParameterAttributes.HasDefault) != 0;
+		public bool HasFieldMarshal => (Attributes & DmdParameterAttributes.HasFieldMarshal) != 0;
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+
+		/// <summary>
+		/// Gets the owner (the method)
+		/// </summary>
+		public abstract DmdMemberInfo Member { get; }
+
+		/// <summary>
+		/// true if this is not the real method parameter since the declaring method is just a reference.
+		/// Resolve the method to get the real method parameters.
+		/// </summary>
+		public bool IsMetadataReference => Member.IsMetadataReference;
+
+		/// <summary>
+		/// Gets the metadata token
+		/// </summary>
+		public abstract int MetadataToken { get; }
+
+		/// <summary>
+		/// Gets all required custom modifiers
+		/// </summary>
+		/// <returns></returns>
+		public abstract DmdType[] GetRequiredCustomModifiers();
+
+		/// <summary>
+		/// Gets all optional custom modifiers
+		/// </summary>
+		/// <returns></returns>
+		public abstract DmdType[] GetOptionalCustomModifiers();
+
+		/// <summary>
+		/// Gets all custom modifiers
+		/// </summary>
+		/// <returns></returns>
+		public abstract DmdType[] GetCustomModifiers();
+
+		/// <summary>
+		/// Gets the custom attributes
+		/// </summary>
+		public IEnumerable<DmdCustomAttributeData> CustomAttributes => GetCustomAttributesData();
+
+		/// <summary>
+		/// Gets the custom attributes
+		/// </summary>
+		/// <returns></returns>
+		public abstract IList<DmdCustomAttributeData> GetCustomAttributesData();
+
+		/// <summary>
+		/// Checks if a custom attribute is present
+		/// </summary>
+		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		public abstract bool IsDefined(string attributeTypeFullName, bool inherit);
+
+		/// <summary>
+		/// Checks if a custom attribute is present
+		/// </summary>
+		/// <param name="attributeType">Custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		public abstract bool IsDefined(DmdType attributeType, bool inherit);
+
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+		public static bool operator ==(DmdParameterInfo left, DmdParameterInfo right) => DmdMemberInfoEqualityComparer.Default.Equals(left, right);
+		public static bool operator !=(DmdParameterInfo left, DmdParameterInfo right) => !DmdMemberInfoEqualityComparer.Default.Equals(left, right);
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public bool Equals(DmdParameterInfo other) => DmdMemberInfoEqualityComparer.Default.Equals(this, other);
+
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj) => Equals(obj as DmdParameterInfo);
+
+		/// <summary>
+		/// GetHashCode()
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode() => DmdMemberInfoEqualityComparer.Default.GetHashCode(this);
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public abstract override string ToString();
+	}
+}

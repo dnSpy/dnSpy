@@ -45,6 +45,8 @@
     <Compile Include="Code\DbgDotNetCodeLocation.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationFactory.cs" />
     <Compile Include="Code\DbgDotNetCodeRangeService.cs" />
+    <Compile Include="Extensions\DmdModuleExtensions.cs" />
+    <Compile Include="Extensions\DmdRuntimeExtensions.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProvider.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProviderFactory.cs" />
     <Compile Include="Metadata\DbgDynamicModuleProvider.cs" />
@@ -68,6 +70,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj">
+      <Project>{fcd8913d-85a0-479e-9689-70fea52c6dcb}</Project>
+      <Name>dnSpy.Debugger.DotNet.Metadata</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
       <Name>dnlib</Name>

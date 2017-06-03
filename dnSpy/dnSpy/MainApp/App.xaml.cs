@@ -61,7 +61,7 @@ namespace dnSpy.MainApp {
 
 		static void InstallExceptionHandlers() {
 			TaskScheduler.UnobservedTaskException += (s, e) => e.SetObserved();
-			if (!Debugger.IsAttached) {
+			if (!System.Diagnostics.Debugger.IsAttached) {
 				AppDomain.CurrentDomain.UnhandledException += (s, e) => ShowException(e.ExceptionObject as Exception);
 				Dispatcher.CurrentDispatcher.UnhandledException += (s, e) => {
 					ShowException(e.Exception);

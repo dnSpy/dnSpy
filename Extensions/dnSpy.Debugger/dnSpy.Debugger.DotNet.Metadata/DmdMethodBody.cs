@@ -1,0 +1,159 @@
+﻿/*
+    Copyright (C) 2014-2017 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Collections.Generic;
+
+namespace dnSpy.Debugger.DotNet.Metadata {
+	/// <summary>
+	/// .NET method body
+	/// </summary>
+	public abstract class DmdMethodBody {
+		/// <summary>
+		/// Gets the token of the locals signature
+		/// </summary>
+		public abstract int LocalSignatureMetadataToken { get; }
+
+		/// <summary>
+		/// Gets all locals
+		/// </summary>
+		public abstract IList<DmdLocalVariableInfo> LocalVariables { get; }
+
+		/// <summary>
+		/// Gets max stack size
+		/// </summary>
+		public abstract int MaxStackSize { get; }
+
+		/// <summary>
+		/// true if locals are automatically initialized
+		/// </summary>
+		public abstract bool InitLocals { get; }
+
+		/// <summary>
+		/// Gets the IL bytes
+		/// </summary>
+		/// <returns></returns>
+		public abstract byte[] GetILAsByteArray();
+
+		/// <summary>
+		/// Gets the exception clauses
+		/// </summary>
+		public abstract IList<DmdExceptionHandlingClause> ExceptionHandlingClauses { get; }
+	}
+
+	/// <summary>
+	/// Local variable info
+	/// </summary>
+	public abstract class DmdLocalVariableInfo {
+		/// <summary>
+		/// Gets the type of the local
+		/// </summary>
+		public abstract DmdType LocalType { get; }
+
+		/// <summary>
+		/// true if it's a pinned local
+		/// </summary>
+		public abstract bool IsPinned { get; }
+
+		/// <summary>
+		/// Index of the local in the locals signature
+		/// </summary>
+		public abstract int LocalIndex { get; }
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() {
+			if (IsPinned)
+				return LocalType.ToString() + " (" + LocalIndex.ToString() + ") (pinned)";
+			return LocalType.ToString() + " (" + LocalIndex.ToString() + ")";
+		}
+	}
+
+	/// <summary>
+	/// Exception clause kind
+	/// </summary>
+	[Flags]
+	public enum DmdExceptionHandlingClauseOptions {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+		Clause				= 0,
+		Filter				= 1,
+		Finally				= 2,
+		Fault				= 4,
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+	}
+
+	/// <summary>
+	/// Exception clause
+	/// </summary>
+	public abstract class DmdExceptionHandlingClause {
+		/// <summary>
+		/// Gets the clause kind
+		/// </summary>
+		public abstract DmdExceptionHandlingClauseOptions Flags { get; }
+
+		/// <summary>
+		/// Try offset
+		/// </summary>
+		public abstract int TryOffset { get; }
+
+		/// <summary>
+		/// Try length
+		/// </summary>
+		public abstract int TryLength { get; }
+
+		/// <summary>
+		/// Handler offset
+		/// </summary>
+		public abstract int HandlerOffset { get; }
+
+		/// <summary>
+		/// Handler length
+		/// </summary>
+		public abstract int HandlerLength { get; }
+
+		/// <summary>
+		/// Filter offset
+		/// </summary>
+		public abstract int FilterOffset { get; }
+
+		/// <summary>
+		/// Catch type
+		/// </summary>
+		public abstract DmdType CatchType { get; }
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() {
+			switch (Flags) {
+			case DmdExceptionHandlingClauseOptions.Clause:
+				return $"Flags={Flags}, TryOffset={TryOffset}, TryLength={TryLength}, HandlerOffset={HandlerOffset}, HandlerLength={HandlerLength}, CatchType={CatchType}";
+			case DmdExceptionHandlingClauseOptions.Filter:
+				return $"Flags={Flags}, TryOffset={TryOffset}, TryLength={TryLength}, HandlerOffset={HandlerOffset}, HandlerLength={HandlerLength}, FilterOffset={FilterOffset}";
+			case DmdExceptionHandlingClauseOptions.Finally:
+			case DmdExceptionHandlingClauseOptions.Fault:
+			default:
+				return $"Flags={Flags}, TryOffset={TryOffset}, TryLength={TryLength}, HandlerOffset={HandlerOffset}, HandlerLength={HandlerLength}";
+			}
+		}
+	}
+}
