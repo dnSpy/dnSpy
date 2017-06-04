@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.IO;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -77,7 +78,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the public key token
 		/// </summary>
 		/// <returns></returns>
-		public byte[] GetPublicKeyToken() => publicKeyToken;
+		public byte[] GetPublicKeyToken() {
+			if (publicKeyToken == null && publicKey != null) {
+				try {
+					publicKeyToken = AssemblyHasher.CreatePublicKeyToken(publicKey);
+				}
+				catch (IOException) { }
+			}
+			return publicKeyToken;
+		}
 		byte[] publicKeyToken;
 
 		/// <summary>

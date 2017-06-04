@@ -40,6 +40,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AssemblyHasher.cs" />
     <Compile Include="DmdAppDomain.cs" />
     <Compile Include="DmdAppDomainController.cs" />
     <Compile Include="DmdAssembly.cs" />
