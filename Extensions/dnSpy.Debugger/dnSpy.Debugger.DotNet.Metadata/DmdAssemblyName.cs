@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the full assembly name
 		/// </summary>
-		public string FullName => throw new NotImplementedException();//TODO:
+		public string FullName => DmdAssemblyNameFormatter.Format(Name, Version, CultureName, GetPublicKeyToken(), Flags, isPublicKeyToken: true);
 
 		/// <summary>
 		/// Gets the full assembly name
@@ -110,6 +110,24 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Flags = DmdAssemblyNameFlags.None;
 		}
 
+		DmdAssemblyName(DmdAssemblyName other) {
+			Name = other.Name;
+			Version = other.Version;
+			CultureName = other.CultureName;
+			Flags = other.Flags;
+			HashAlgorithm = other.HashAlgorithm;
+			publicKey = Clone(publicKey);
+			publicKeyToken = Clone(publicKeyToken);
+		}
+
+		static byte[] Clone(byte[] array) {
+			if (array == null)
+				return null;
+			var res = new byte[array.Length];
+			Array.Copy(array, res, res.Length);
+			return res;
+		}
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -120,6 +138,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public DmdAssemblyName Clone() => throw new NotImplementedException();//TODO:
+		public DmdAssemblyName Clone() => new DmdAssemblyName(this);
 	}
 }

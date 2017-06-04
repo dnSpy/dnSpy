@@ -48,6 +48,7 @@
     <Compile Include="DmdAssemblyHashAlgorithm.cs" />
     <Compile Include="DmdAssemblyName.cs" />
     <Compile Include="DmdAssemblyNameFlags.cs" />
+    <Compile Include="DmdAssemblyNameFormatter.cs" />
     <Compile Include="DmdBindingFlags.cs" />
     <Compile Include="DmdCallingConventions.cs" />
     <Compile Include="DmdConstructorInfo.cs" />
