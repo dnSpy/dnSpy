@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdAssemblyImpl assembly;
 		readonly DmdModuleControllerImpl moduleController;
 
-		public DmdAssemblyControllerImpl(DmdAppDomainImpl appDomain, DmdMetadataReader metadataReader, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) {
+		public DmdAssemblyControllerImpl(DmdAppDomainImpl appDomain, DmdLazyMetadataReader metadataReader, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) {
 			if (appDomain == null)
 				throw new ArgumentNullException(nameof(appDomain));
 			if (metadataReader == null)
@@ -40,6 +40,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			assembly = new DmdAssemblyImpl(appDomain, metadataReader, assemblyLocation);
 			moduleController = new DmdModuleControllerImpl(assembly, metadataReader, isInMemory, isDynamic, fullyQualifiedName);
+			metadataReader.SetModule(moduleController.ModuleImpl);
 			appDomain.Add(assembly);
 		}
 

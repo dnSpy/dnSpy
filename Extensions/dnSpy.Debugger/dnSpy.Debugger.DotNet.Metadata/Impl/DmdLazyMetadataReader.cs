@@ -23,11 +23,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdLazyMetadataReader : DmdMetadataReader {
 		readonly object lockObj;
 		Func<DmdLazyMetadataBytes> getMetadata;
-		Func<DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory;
+		Func<DmdModuleImpl, DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory;
 		DmdMetadataReader MetadataReader => __metadataReader_DONT_USE ?? InitializeMetadataReader();
 		DmdMetadataReader __metadataReader_DONT_USE;
+		DmdModuleImpl module;
 
-		public DmdLazyMetadataReader(Func<DmdLazyMetadataBytes> getMetadata, Func<DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory) {
+		public DmdLazyMetadataReader(Func<DmdLazyMetadataBytes> getMetadata, Func<DmdModuleImpl, DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory) {
 			lockObj = new object();
 			this.getMetadata = getMetadata ?? throw new ArgumentNullException(nameof(getMetadata));
 			this.metadataReaderFactory = metadataReaderFactory ?? throw new ArgumentNullException(nameof(metadataReaderFactory));
@@ -38,7 +39,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var reader = __metadataReader_DONT_USE;
 				if (reader != null)
 					return reader;
-				reader = metadataReaderFactory(getMetadata());
+				if (module == null)
+					throw new InvalidOperationException();
+				reader = metadataReaderFactory(module, getMetadata());
+				module = null;
 				getMetadata = null;
 				metadataReaderFactory = null;
 				__metadataReader_DONT_USE = reader;
@@ -46,8 +50,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
+		internal void SetModule(DmdModuleImpl module) => this.module = module;
+
 		public override Guid ModuleVersionId => MetadataReader.ModuleVersionId;
-		public override int MetadataToken => MetadataReader.MetadataToken;
+		public override int ModuleMetadataToken => MetadataReader.ModuleMetadataToken;
 		public override DmdType GlobalType => MetadataReader.GlobalType;
 		public override int MDStreamVersion => MetadataReader.MDStreamVersion;
 		public override string ModuleScopeName => MetadataReader.ModuleScopeName;

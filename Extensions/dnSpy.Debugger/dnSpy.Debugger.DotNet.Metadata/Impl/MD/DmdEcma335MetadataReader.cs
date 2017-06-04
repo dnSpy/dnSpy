@@ -22,16 +22,16 @@ using System;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdEcma335MetadataReader : DmdMetadataReader {
 		public override Guid ModuleVersionId => throw new NotImplementedException();//TODO:
-		public override int MetadataToken => throw new NotImplementedException();//TODO:
+		public override int ModuleMetadataToken => throw new NotImplementedException();//TODO:
 		public override DmdType GlobalType => throw new NotImplementedException();//TODO:
 		public override int MDStreamVersion => throw new NotImplementedException();//TODO:
 		public override string ModuleScopeName => throw new NotImplementedException();//TODO:
 		public override string ImageRuntimeVersion => throw new NotImplementedException();//TODO:
 		public override DmdMethodInfo EntryPoint => throw new NotImplementedException();//TODO:
 
-		public static DmdEcma335MetadataReader Create(IntPtr address, uint size, bool isFileLayout) => throw new NotImplementedException();//TODO:
-		public static DmdEcma335MetadataReader Create(byte[] bytes, bool isFileLayout) => throw new NotImplementedException();//TODO:
-		public static DmdEcma335MetadataReader Create(string filename, bool isFileLayout) => throw new NotImplementedException();//TODO:
+		public static DmdEcma335MetadataReader Create(DmdModuleImpl module, IntPtr address, uint size, bool isFileLayout) => throw new NotImplementedException();//TODO:
+		public static DmdEcma335MetadataReader Create(DmdModuleImpl module, byte[] bytes, bool isFileLayout) => throw new NotImplementedException();//TODO:
+		public static DmdEcma335MetadataReader Create(DmdModuleImpl module, string filename, bool isFileLayout) => throw new NotImplementedException();//TODO:
 
 		public override DmdType[] GetTypes() => throw new NotImplementedException();//TODO:
 		public override DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => throw new NotImplementedException();//TODO:

@@ -22,7 +22,7 @@ using System;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdComMetadataReader : DmdMetadataReader {
 		public override Guid ModuleVersionId => throw new NotImplementedException();//TODO:
-		public override int MetadataToken => throw new NotImplementedException();//TODO:
+		public override int ModuleMetadataToken => throw new NotImplementedException();//TODO:
 		public override DmdType GlobalType => throw new NotImplementedException();//TODO:
 		public override int MDStreamVersion => throw new NotImplementedException();//TODO:
 		public override string ModuleScopeName => throw new NotImplementedException();//TODO:
@@ -31,8 +31,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		readonly object comMetadata;
 		readonly DmdDispatcher dispatcher;
+		readonly DmdModuleImpl module;
 
-		public DmdComMetadataReader(object comMetadata, DmdDispatcher dispatcher) {
+		public DmdComMetadataReader(DmdModuleImpl module, object comMetadata, DmdDispatcher dispatcher) {
+			this.module = module ?? throw new ArgumentNullException(nameof(module));
 			this.comMetadata = comMetadata ?? throw new ArgumentNullException(nameof(comMetadata));
 			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}

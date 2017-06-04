@@ -22,7 +22,7 @@ using System;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdMetadataReader {
 		public abstract Guid ModuleVersionId { get; }
-		public abstract int MetadataToken { get; }
+		public abstract int ModuleMetadataToken { get; }
 		public abstract DmdType GlobalType { get; }
 		public abstract int MDStreamVersion { get; }
 		public abstract string ModuleScopeName { get; }

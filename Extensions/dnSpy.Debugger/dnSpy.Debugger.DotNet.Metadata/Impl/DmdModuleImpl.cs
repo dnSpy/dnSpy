@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsDynamic { get; }
 		public override bool IsInMemory { get; }
 		public override Guid ModuleVersionId => metadataReader.ModuleVersionId;
-		public override int MetadataToken => metadataReader.MetadataToken;
+		public override int MetadataToken => metadataReader.ModuleMetadataToken;
 		public override DmdType GlobalType => metadataReader.GlobalType;
 		public override int MDStreamVersion => metadataReader.MDStreamVersion;
 		public override string ScopeName => scopeNameOverride ?? metadataReader.ModuleScopeName;

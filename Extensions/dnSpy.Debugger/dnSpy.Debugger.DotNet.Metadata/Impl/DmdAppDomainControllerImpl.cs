@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdRuntimeImpl runtime;
 		readonly DmdAppDomainImpl appDomain;
-		readonly Func<DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory;
+		readonly Func<DmdModuleImpl, DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory;
 
 		public DmdAppDomainControllerImpl(DmdRuntimeImpl runtime, int id) {
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
@@ -34,16 +34,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			runtime.Add(appDomain);
 		}
 
-		DmdMetadataReader CreateDmdMetadataReader(DmdLazyMetadataBytes lzmd) {
+		DmdMetadataReader CreateDmdMetadataReader(DmdModuleImpl module, DmdLazyMetadataBytes lzmd) {
 			if (lzmd == null)
 				throw new ArgumentNullException(nameof(lzmd));
-			switch (lzmd) {
-			case DmdLazyMetadataBytesPtr lzmdPtr:		return MD.DmdEcma335MetadataReader.Create(lzmdPtr.Address, lzmdPtr.Size, lzmdPtr.IsFileLayout);
-			case DmdLazyMetadataBytesArray lzmdArray:	return MD.DmdEcma335MetadataReader.Create(lzmdArray.Bytes, lzmdArray.IsFileLayout);
-			case DmdLazyMetadataBytesFile lzmdFile:		return MD.DmdEcma335MetadataReader.Create(lzmdFile.Filename, lzmdFile.IsFileLayout);
-			case DmdLazyMetadataBytesCom lzmdCom:		return new COMD.DmdComMetadataReader(lzmdCom.ComMetadata, lzmdCom.Dispatcher);
-			default:									throw new NotSupportedException($"Unknown lazy metadata: {lzmd.GetType()}");
+			try {
+				switch (lzmd) {
+				case DmdLazyMetadataBytesPtr lzmdPtr:		return MD.DmdEcma335MetadataReader.Create(module, lzmdPtr.Address, lzmdPtr.Size, lzmdPtr.IsFileLayout);
+				case DmdLazyMetadataBytesArray lzmdArray:	return MD.DmdEcma335MetadataReader.Create(module, lzmdArray.Bytes, lzmdArray.IsFileLayout);
+				case DmdLazyMetadataBytesFile lzmdFile:		return MD.DmdEcma335MetadataReader.Create(module, lzmdFile.Filename, lzmdFile.IsFileLayout);
+				case DmdLazyMetadataBytesCom lzmdCom:		return new COMD.DmdComMetadataReader(module, lzmdCom.ComMetadata, lzmdCom.Dispatcher);
+				}
 			}
+			catch {
+				return new DmdNullMetadataReader(module);
+			}
+			throw new NotSupportedException($"Unknown lazy metadata: {lzmd.GetType()}");
 		}
 
 		public override void Remove() => runtime.Remove(appDomain);

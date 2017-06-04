@@ -22,6 +22,7 @@ using System;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdModuleControllerImpl : DmdModuleController {
 		public override DmdModule Module => module;
+		internal DmdModuleImpl ModuleImpl => module;
 
 		readonly DmdAssemblyImpl assembly;
 		readonly DmdModuleImpl module;

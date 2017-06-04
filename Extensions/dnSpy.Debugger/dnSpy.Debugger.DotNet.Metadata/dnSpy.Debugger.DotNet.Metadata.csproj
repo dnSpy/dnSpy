@@ -100,6 +100,8 @@
     <Compile Include="Impl\DmdMetadataReader.cs" />
     <Compile Include="Impl\DmdModuleControllerImpl.cs" />
     <Compile Include="Impl\DmdModuleImpl.cs" />
+    <Compile Include="Impl\DmdNullMetadataReader.cs" />
+    <Compile Include="Impl\DmdNullType.cs" />
     <Compile Include="Impl\DmdRuntimeControllerImpl.cs" />
     <Compile Include="Impl\DmdRuntimeImpl.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
@@ -115,6 +117,12 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
