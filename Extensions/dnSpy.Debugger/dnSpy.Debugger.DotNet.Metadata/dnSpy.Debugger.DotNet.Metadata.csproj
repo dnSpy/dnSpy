@@ -49,6 +49,7 @@
     <Compile Include="DmdAssemblyName.cs" />
     <Compile Include="DmdAssemblyNameFlags.cs" />
     <Compile Include="DmdAssemblyNameFormatter.cs" />
+    <Compile Include="DmdAssemblyNameParser.cs" />
     <Compile Include="DmdBindingFlags.cs" />
     <Compile Include="DmdCallingConventions.cs" />
     <Compile Include="DmdConstructorInfo.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="DmdTypeAttributes.cs" />
     <Compile Include="DmdWellKnownMember.cs" />
     <Compile Include="DmdWellKnownType.cs" />
+    <Compile Include="HexUtils.cs" />
     <Compile Include="IDmdCustomAttributeProvider.cs" />
     <Compile Include="IDmdEvaluationContext.cs" />
     <Compile Include="Impl\COMD\DmdComMetadataReader.cs" />

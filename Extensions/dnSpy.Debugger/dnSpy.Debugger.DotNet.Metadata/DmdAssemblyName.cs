@@ -132,7 +132,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Constructor
 		/// </summary>
 		/// <param name="assemblyName">Assembly name</param>
-		public DmdAssemblyName(string assemblyName) => throw new NotImplementedException();//TODO:
+		public DmdAssemblyName(string assemblyName) {
+			if (assemblyName == null)
+				throw new ArgumentNullException(nameof(assemblyName));
+			DmdAssemblyNameParser.Parse(this, assemblyName);
+		}
 
 		/// <summary>
 		/// Clones this instance
