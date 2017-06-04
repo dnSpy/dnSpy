@@ -91,10 +91,18 @@
     <Compile Include="DmdWellKnownType.cs" />
     <Compile Include="IDmdCustomAttributeProvider.cs" />
     <Compile Include="IDmdEvaluationContext.cs" />
+    <Compile Include="Impl\COMD\DmdComMetadataReader.cs" />
     <Compile Include="Impl\DmdAppDomainControllerImpl.cs" />
     <Compile Include="Impl\DmdAppDomainImpl.cs" />
+    <Compile Include="Impl\DmdAssemblyControllerImpl.cs" />
+    <Compile Include="Impl\DmdAssemblyImpl.cs" />
+    <Compile Include="Impl\DmdLazyMetadataReader.cs" />
+    <Compile Include="Impl\DmdMetadataReader.cs" />
+    <Compile Include="Impl\DmdModuleControllerImpl.cs" />
+    <Compile Include="Impl\DmdModuleImpl.cs" />
     <Compile Include="Impl\DmdRuntimeControllerImpl.cs" />
     <Compile Include="Impl\DmdRuntimeImpl.cs" />
+    <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

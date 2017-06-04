@@ -34,6 +34,24 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			Evaluator = evaluator ?? throw new ArgumentNullException(nameof(evaluator));
 		}
 
+		internal void Add(DmdAppDomainImpl appDomain) {
+			if (appDomain == null)
+				throw new ArgumentNullException(nameof(appDomain));
+			lock (lockObj) {
+				Debug.Assert(!appDomains.Contains(appDomain));
+				appDomains.Add(appDomain);
+			}
+		}
+
+		internal void Remove(DmdAppDomainImpl appDomain) {
+			if (appDomain == null)
+				throw new ArgumentNullException(nameof(appDomain));
+			lock (lockObj) {
+				bool b = appDomains.Remove(appDomain);
+				Debug.Assert(b);
+			}
+		}
+
 		public override DmdAppDomain[] GetAppDomains() {
 			lock (lockObj)
 				return appDomains.ToArray();
@@ -47,13 +65,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				}
 			}
 			return null;
-		}
-
-		internal void Remove(DmdAppDomainImpl appDomain) {
-			lock (lockObj) {
-				bool b = appDomains.Remove(appDomain);
-				Debug.Assert(b);
-			}
 		}
 	}
 }

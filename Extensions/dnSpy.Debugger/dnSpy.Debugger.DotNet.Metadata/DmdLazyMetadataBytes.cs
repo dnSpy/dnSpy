@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the dispatcher to use when accessing <see cref="ComMetadata"/>
 		/// </summary>
-		DmdDispatcher Dispatcher { get; }
+		public DmdDispatcher Dispatcher { get; }
 
 		/// <summary>
 		/// Constructor

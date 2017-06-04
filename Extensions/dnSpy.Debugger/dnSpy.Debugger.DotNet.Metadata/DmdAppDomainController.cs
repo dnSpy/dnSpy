@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract void Remove();
 
 		/// <summary>
-		/// Creates an assembly and adds it to the AppDomain
+		/// Creates an assembly and adds it to the AppDomain. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
 		/// </summary>
 		/// <param name="getMetadata">Called to provide the metadata</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdAssemblyController CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation);
 
 		/// <summary>
-		/// Creates an assembly
+		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
 		/// </summary>
 		/// <param name="filename">Filename</param>
 		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			CreateAssembly(() => new DmdLazyMetadataBytesFile(filename, isFileLayout), isInMemory, isDynamic, fullyQualifiedName ?? filename, assemblyLocation ?? filename);
 
 		/// <summary>
-		/// Creates an assembly
+		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
 		/// </summary>
 		/// <param name="address">Address of PE file</param>
 		/// <param name="size">Size of PE file</param>
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			CreateAssembly(() => new DmdLazyMetadataBytesPtr(address, size, isFileLayout), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
 
 		/// <summary>
-		/// Creates an assembly
+		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
 		/// </summary>
 		/// <param name="assemblyBytes">Raw PE file bytes</param>
 		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			CreateAssembly(() => new DmdLazyMetadataBytesArray(assemblyBytes, isFileLayout), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
 
 		/// <summary>
-		/// Creates an assembly
+		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
 		/// </summary>
 		/// <param name="comMetadata">COM <c>IMetaDataImport</c> instance</param>
 		/// <param name="dispatcher">Dispatcher to use when accessing <paramref name="comMetadata"/></param>

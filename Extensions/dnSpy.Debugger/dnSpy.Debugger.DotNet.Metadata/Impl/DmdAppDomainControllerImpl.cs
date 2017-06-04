@@ -25,15 +25,40 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdRuntimeImpl runtime;
 		readonly DmdAppDomainImpl appDomain;
+		readonly Func<DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory;
 
 		public DmdAppDomainControllerImpl(DmdRuntimeImpl runtime, int id) {
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			appDomain = new DmdAppDomainImpl(runtime, id);
+			metadataReaderFactory = CreateDmdMetadataReader;
+			runtime.Add(appDomain);
+		}
+
+		DmdMetadataReader CreateDmdMetadataReader(DmdLazyMetadataBytes lzmd) {
+			if (lzmd == null)
+				throw new ArgumentNullException(nameof(lzmd));
+			switch (lzmd) {
+			case DmdLazyMetadataBytesPtr lzmdPtr:		return MD.DmdEcma335MetadataReader.Create(lzmdPtr.Address, lzmdPtr.Size, lzmdPtr.IsFileLayout);
+			case DmdLazyMetadataBytesArray lzmdArray:	return MD.DmdEcma335MetadataReader.Create(lzmdArray.Bytes, lzmdArray.IsFileLayout);
+			case DmdLazyMetadataBytesFile lzmdFile:		return MD.DmdEcma335MetadataReader.Create(lzmdFile.Filename, lzmdFile.IsFileLayout);
+			case DmdLazyMetadataBytesCom lzmdCom:		return new COMD.DmdComMetadataReader(lzmdCom.ComMetadata, lzmdCom.Dispatcher);
+			default:									throw new NotSupportedException($"Unknown lazy metadata: {lzmd.GetType()}");
+			}
 		}
 
 		public override void Remove() => runtime.Remove(appDomain);
 
-		public override DmdAssemblyController CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) => throw new NotImplementedException();//TODO:
+		public override DmdAssemblyController CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) {
+			if (getMetadata == null)
+				throw new ArgumentNullException(nameof(getMetadata));
+			if (fullyQualifiedName == null)
+				throw new ArgumentNullException(nameof(fullyQualifiedName));
+			if (assemblyLocation == null)
+				throw new ArgumentNullException(nameof(assemblyLocation));
+			var metadataReader = new DmdLazyMetadataReader(getMetadata, metadataReaderFactory);
+			return new DmdAssemblyControllerImpl(appDomain, metadataReader, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
+		}
+
 		public override DmdModuleController CreateModule(DmdAssembly assembly, Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName) => throw new NotImplementedException();//TODO:
 	}
 }

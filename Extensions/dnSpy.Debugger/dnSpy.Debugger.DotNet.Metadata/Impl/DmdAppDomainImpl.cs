@@ -18,24 +18,82 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdAppDomainImpl : DmdAppDomain {
 		public override DmdRuntime Runtime => runtime;
 		public override int Id { get; }
-		public override DmdAssembly CorLib => throw new NotImplementedException();//TODO:
 
+		public override DmdAssembly CorLib {
+			get {
+				lock (lockObj) {
+					// Assume that the first assembly is always the corlib. This is documented in DmdAppDomainController.CreateAssembly()
+					return assemblies.Count == 0 ? null : assemblies[0];
+				}
+			}
+		}
+
+		readonly object lockObj;
 		readonly DmdRuntimeImpl runtime;
+		readonly List<DmdAssemblyImpl> assemblies;
 
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
+			lockObj = new object();
+			assemblies = new List<DmdAssemblyImpl>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Id = id;
 		}
 
-		public override DmdAssembly[] GetAssemblies() => throw new NotImplementedException();//TODO:
-		public override DmdAssembly GetAssembly(string simpleName) => throw new NotImplementedException();//TODO:
-		public override DmdAssembly GetAssembly(DmdAssemblyName name) => throw new NotImplementedException();//TODO:
+		internal void Add(DmdAssemblyImpl assembly) {
+			if (assembly == null)
+				throw new ArgumentNullException(nameof(assembly));
+			lock (lockObj) {
+				Debug.Assert(!assemblies.Contains(assembly));
+				assemblies.Add(assembly);
+			}
+		}
+
+		internal void Remove(DmdAssemblyImpl assembly) {
+			if (assembly == null)
+				throw new ArgumentNullException(nameof(assembly));
+			lock (lockObj) {
+				bool b = assemblies.Remove(assembly);
+				Debug.Assert(b);
+			}
+		}
+
+		public override DmdAssembly[] GetAssemblies() {
+			lock (lockObj)
+				return assemblies.ToArray();
+		}
+
+		public override DmdAssembly GetAssembly(string simpleName) {
+			if (simpleName == null)
+				throw new ArgumentNullException(nameof(simpleName));
+			lock (lockObj) {
+				foreach (var assembly in assemblies) {
+					if (StringComparer.OrdinalIgnoreCase.Equals(assembly.GetName().Name, simpleName))
+						return assembly;
+				}
+			}
+			return null;
+		}
+
+		public override DmdAssembly GetAssembly(DmdAssemblyName name) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			lock (lockObj) {
+				foreach (var assembly in assemblies) {
+					if (DmdMemberInfoEqualityComparer.Default.Equals(assembly.GetName(), name))
+						return assembly;
+				}
+			}
+			return null;
+		}
+
 		public override DmdAssembly Load(IDmdEvaluationContext context, DmdAssemblyName name) => throw new NotImplementedException();//TODO:
 		public override DmdMemberInfo GetWellKnownMember(DmdWellKnownMember wellKnownMember, bool isOptional) => throw new NotImplementedException();//TODO:
 		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) => throw new NotImplementedException();//TODO:

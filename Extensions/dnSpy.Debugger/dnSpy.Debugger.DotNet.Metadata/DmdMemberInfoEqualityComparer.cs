@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			IEqualityComparer<DmdMemberInfo>, IEqualityComparer<DmdType>, IEqualityComparer<DmdFieldInfo>,
 			IEqualityComparer<DmdMethodBase>, IEqualityComparer<DmdConstructorInfo>, IEqualityComparer<DmdMethodInfo>,
 			IEqualityComparer<DmdPropertyInfo>, IEqualityComparer<DmdEventInfo>, IEqualityComparer<DmdParameterInfo>,
-			IEqualityComparer<DmdMethodSignature> {
+			IEqualityComparer<DmdMethodSignature>, IEqualityComparer<DmdAssemblyName> {
 		/// <summary>
 		/// Gets an <see cref="IEqualityComparer{T}"/> that can be used to compare types, members and parameters using default
 		/// <see cref="DmdSigComparer"/> options (<see cref="DefaultOptions"/>)
@@ -68,6 +68,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public int GetHashCode(DmdParameterInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
 		public bool Equals(DmdMethodSignature x, DmdMethodSignature y) => new DmdSigComparer(options).Equals(x, y);
 		public int GetHashCode(DmdMethodSignature obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdAssemblyName x, DmdAssemblyName y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdAssemblyName obj) => new DmdSigComparer(options).GetHashCode(obj);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }
