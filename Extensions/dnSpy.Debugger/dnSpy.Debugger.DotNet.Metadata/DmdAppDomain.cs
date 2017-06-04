@@ -243,6 +243,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
+		/// Makes a function pointer type
+		/// </summary>
+		/// <param name="methodSignature">Method signature</param>
+		/// <returns></returns>
+		public abstract DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature);
+
+		/// <summary>
 		/// Gets a type
 		/// </summary>
 		/// <param name="typeName">Full type name</param>

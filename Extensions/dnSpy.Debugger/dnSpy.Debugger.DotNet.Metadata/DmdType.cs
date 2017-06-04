@@ -242,13 +242,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdType MakeGenericType(params DmdType[] typeArguments);
 
 		/// <summary>
-		/// Makes a function pointer type
-		/// </summary>
-		/// <param name="methodSignature">Method signature</param>
-		/// <returns></returns>
-		public abstract DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature);
-
-		/// <summary>
 		/// Gets the type code
 		/// </summary>
 		/// <param name="type">Type or null</param>

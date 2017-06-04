@@ -43,7 +43,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType MakeArrayType() => throw new NotImplementedException();//TODO:
 		public override DmdType MakeArrayType(int rank) => throw new NotImplementedException();//TODO:
 		public override DmdType MakeGenericType(params DmdType[] typeArguments) => throw new InvalidOperationException();
-		public override DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature) => throw new InvalidOperationException();
 		public override DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, DmdType[] types, DmdParameterModifier[] modifiers) => null;
 		public override DmdConstructorInfo[] GetConstructors(DmdBindingFlags bindingAttr) => Array.Empty<DmdConstructorInfo>();
 		public override DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, DmdType[] types, DmdParameterModifier[] modifiers) => null;

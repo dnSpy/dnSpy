@@ -35,6 +35,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		DmdMetadataReader CreateDmdMetadataReader(DmdModuleImpl module, DmdLazyMetadataBytes lzmd) {
+			if (module == null)
+				throw new ArgumentNullException(nameof(module));
 			if (lzmd == null)
 				throw new ArgumentNullException(nameof(lzmd));
 			try {
