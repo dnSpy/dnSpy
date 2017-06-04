@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the declaring type. This is the type that declares the member, see also <see cref="ReflectedType"/>
 		/// </summary>
-		public override DmdType DeclaringType => throw new NotImplementedException();
+		public override DmdType DeclaringType => throw new NotImplementedException();//TODO:
 
 		/// <summary>
 		/// Gets the reflected type. This is the type that owns this member, see also <see cref="DeclaringType"/>

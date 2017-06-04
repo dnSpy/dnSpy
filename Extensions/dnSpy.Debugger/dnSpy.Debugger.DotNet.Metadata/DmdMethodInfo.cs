@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all generic arguments if it's a generic method
 		/// </summary>
 		/// <returns></returns>
-		public override DmdType[] GetGenericArguments() => throw new NotSupportedException();
+		public abstract override DmdType[] GetGenericArguments();
 
 		/// <summary>
 		/// Gets the generic method definition

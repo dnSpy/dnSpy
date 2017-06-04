@@ -76,28 +76,28 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public bool Equals(DmdMemberInfo a, DmdMemberInfo b) => throw new NotImplementedException();
-		public bool Equals(DmdType a, DmdType b) => throw new NotImplementedException();
-		public bool Equals(DmdFieldInfo a, DmdFieldInfo b) => throw new NotImplementedException();
-		public bool Equals(DmdMethodBase a, DmdMethodBase b) => throw new NotImplementedException();
-		public bool Equals(DmdConstructorInfo a, DmdConstructorInfo b) => throw new NotImplementedException();
-		public bool Equals(DmdMethodInfo a, DmdMethodInfo b) => throw new NotImplementedException();
-		public bool Equals(DmdPropertyInfo a, DmdPropertyInfo b) => throw new NotImplementedException();
-		public bool Equals(DmdEventInfo a, DmdEventInfo b) => throw new NotImplementedException();
-		public bool Equals(DmdParameterInfo a, DmdParameterInfo b) => throw new NotImplementedException();
-		public bool Equals(DmdAssemblyName a, DmdAssemblyName b) => throw new NotImplementedException();
-		public bool Equals(DmdMethodSignature a, DmdMethodSignature b) => throw new NotImplementedException();
-		public int GetHashCode(DmdMemberInfo a) => throw new NotImplementedException();
-		public int GetHashCode(DmdType a) => throw new NotImplementedException();
-		public int GetHashCode(DmdFieldInfo a) => throw new NotImplementedException();
-		public int GetHashCode(DmdMethodBase a) => throw new NotImplementedException();
-		public int GetHashCode(DmdConstructorInfo a) => throw new NotImplementedException();
-		public int GetHashCode(DmdMethodInfo a) => throw new NotImplementedException();
-		public int GetHashCode(DmdPropertyInfo a) => throw new NotImplementedException();
-		public int GetHashCode(DmdEventInfo a) => throw new NotImplementedException();
-		public int GetHashCode(DmdParameterInfo a) => throw new NotImplementedException();
-		public int GetHashCode(DmdAssemblyName a) => throw new NotImplementedException();
-		public int GetHashCode(DmdMethodSignature a) => throw new NotImplementedException();
+		public bool Equals(DmdMemberInfo a, DmdMemberInfo b) => throw new NotImplementedException();//TODO:
+		public bool Equals(DmdType a, DmdType b) => throw new NotImplementedException();//TODO:
+		public bool Equals(DmdFieldInfo a, DmdFieldInfo b) => throw new NotImplementedException();//TODO:
+		public bool Equals(DmdMethodBase a, DmdMethodBase b) => throw new NotImplementedException();//TODO:
+		public bool Equals(DmdConstructorInfo a, DmdConstructorInfo b) => throw new NotImplementedException();//TODO:
+		public bool Equals(DmdMethodInfo a, DmdMethodInfo b) => throw new NotImplementedException();//TODO:
+		public bool Equals(DmdPropertyInfo a, DmdPropertyInfo b) => throw new NotImplementedException();//TODO:
+		public bool Equals(DmdEventInfo a, DmdEventInfo b) => throw new NotImplementedException();//TODO:
+		public bool Equals(DmdParameterInfo a, DmdParameterInfo b) => throw new NotImplementedException();//TODO:
+		public bool Equals(DmdAssemblyName a, DmdAssemblyName b) => throw new NotImplementedException();//TODO:
+		public bool Equals(DmdMethodSignature a, DmdMethodSignature b) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdMemberInfo a) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdType a) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdFieldInfo a) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdMethodBase a) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdConstructorInfo a) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdMethodInfo a) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdPropertyInfo a) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdEventInfo a) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdParameterInfo a) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdAssemblyName a) => throw new NotImplementedException();//TODO:
+		public int GetHashCode(DmdMethodSignature a) => throw new NotImplementedException();//TODO:
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

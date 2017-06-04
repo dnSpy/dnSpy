@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the full assembly name
 		/// </summary>
-		public string FullName => throw new NotImplementedException();
+		public string FullName => throw new NotImplementedException();//TODO:
 
 		/// <summary>
 		/// Gets the full assembly name
@@ -114,12 +114,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Constructor
 		/// </summary>
 		/// <param name="assemblyName">Assembly name</param>
-		public DmdAssemblyName(string assemblyName) => throw new NotImplementedException();
+		public DmdAssemblyName(string assemblyName) => throw new NotImplementedException();//TODO:
 
 		/// <summary>
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public DmdAssemblyName Clone() => throw new NotImplementedException();
+		public DmdAssemblyName Clone() => throw new NotImplementedException();//TODO:
 	}
 }

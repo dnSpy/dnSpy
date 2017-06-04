@@ -18,22 +18,20 @@
 */
 
 using System;
-using dnSpy.Debugger.DotNet.Metadata.Impl;
 
-namespace dnSpy.Debugger.DotNet.Metadata {
-	/// <summary>
-	/// Creates runtimes
-	/// </summary>
-	public static class DmdRuntimeFactory {
-		/// <summary>
-		/// Creates a runtime
-		/// </summary>
-		/// <param name="evaluator">Evaluator</param>
-		/// <returns></returns>
-		public static DmdRuntimeController CreateRuntime(DmdEvaluator evaluator) {
+namespace dnSpy.Debugger.DotNet.Metadata.Impl {
+	sealed class DmdRuntimeControllerImpl : DmdRuntimeController {
+		public override DmdRuntime Runtime => runtime;
+
+		readonly DmdRuntimeImpl runtime;
+
+		public DmdRuntimeControllerImpl(DmdEvaluator evaluator) {
 			if (evaluator == null)
 				throw new ArgumentNullException(nameof(evaluator));
-			return new DmdRuntimeControllerImpl(evaluator);
+			runtime = new DmdRuntimeImpl(evaluator);
 		}
+
+		public override DmdAppDomainController CreateAppDomain(int id) =>
+			new DmdAppDomainControllerImpl(runtime, id);
 	}
 }

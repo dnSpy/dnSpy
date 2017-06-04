@@ -17,23 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dnSpy.Debugger.DotNet.Metadata.Impl;
+using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
-	/// Creates runtimes
+	/// Extension methods
 	/// </summary>
-	public static class DmdRuntimeFactory {
+	public static class DmdAppDomainExtensions {
 		/// <summary>
-		/// Creates a runtime
+		/// Gets the debugger AppDomain object
 		/// </summary>
-		/// <param name="evaluator">Evaluator</param>
+		/// <param name="appDomain">Debugger metadata AppDomain object</param>
 		/// <returns></returns>
-		public static DmdRuntimeController CreateRuntime(DmdEvaluator evaluator) {
-			if (evaluator == null)
-				throw new ArgumentNullException(nameof(evaluator));
-			return new DmdRuntimeControllerImpl(evaluator);
-		}
+		public static DbgAppDomain GetDbgAppDomain(this DmdAppDomain appDomain) => appDomain.GetData<DbgAppDomain>();
 	}
 }

@@ -91,6 +91,10 @@
     <Compile Include="DmdWellKnownType.cs" />
     <Compile Include="IDmdCustomAttributeProvider.cs" />
     <Compile Include="IDmdEvaluationContext.cs" />
+    <Compile Include="Impl\DmdAppDomainControllerImpl.cs" />
+    <Compile Include="Impl\DmdAppDomainImpl.cs" />
+    <Compile Include="Impl\DmdRuntimeControllerImpl.cs" />
+    <Compile Include="Impl\DmdRuntimeImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
