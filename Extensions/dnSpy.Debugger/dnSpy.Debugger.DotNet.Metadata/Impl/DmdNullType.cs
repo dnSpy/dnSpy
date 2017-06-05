@@ -23,6 +23,8 @@ using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdNullType : DmdType {
+		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Type;
+		public override DmdTypeScope TypeScope => new DmdTypeScope(Module);
 		public override DmdMethodBase DeclaringMethod => null;
 		public override Guid GUID => Guid.Empty;
 		public override DmdModule Module { get; }
@@ -41,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType MakePointerType() => throw new NotImplementedException();//TODO:
 		public override DmdType MakeByRefType() => throw new NotImplementedException();//TODO:
 		public override DmdType MakeArrayType() => throw new NotImplementedException();//TODO:
-		public override DmdType MakeArrayType(int rank) => throw new NotImplementedException();//TODO:
+		public override DmdType MakeArrayType(int rank, int[] sizes, int[] lowerBounds) => throw new NotImplementedException();//TODO:
 		public override DmdType MakeGenericType(params DmdType[] typeArguments) => throw new InvalidOperationException();
 		public override DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, DmdType[] types, DmdParameterModifier[] modifiers) => null;
 		public override DmdConstructorInfo[] GetConstructors(DmdBindingFlags bindingAttr) => Array.Empty<DmdConstructorInfo>();
@@ -72,17 +74,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdMemberInfo[] GetMembers(DmdBindingFlags bindingAttr) => Array.Empty<DmdMemberInfo>();
 		public override DmdMemberInfo[] GetDefaultMembers() => Array.Empty<DmdMemberInfo>();
 		public override int GetArrayRank() => throw new InvalidOperationException();
-		public override bool IsArray => false;
-		public override bool IsSZArray => false;
-		public override bool IsVariableBoundArray => false;
+		public override int[] GetArraySizes() => throw new InvalidOperationException();
+		public override int[] GetArrayLowerBounds() => throw new InvalidOperationException();
 		public override bool IsGenericType => false;
 		public override bool IsGenericTypeDefinition => false;
-		public override bool IsGenericParameter => false;
 		public override int GenericParameterPosition => throw new InvalidOperationException();
 		public override DmdType[] GetGenericParameterConstraints() => throw new InvalidOperationException();
-		public override bool IsByRef => false;
-		public override bool IsPointer => false;
-		public override bool IsFunctionPointer => false;
 		public override DmdMethodSignature GetFunctionPointerMethodSignature() => throw new InvalidOperationException();
 		public override bool IsCOMObject => false;
 		public override bool HasElementType => false;

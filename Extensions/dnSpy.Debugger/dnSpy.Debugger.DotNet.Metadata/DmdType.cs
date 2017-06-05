@@ -36,6 +36,16 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public sealed override DmdMemberTypes MemberType => IsPublic || IsNotPublic ? DmdMemberTypes.TypeInfo : DmdMemberTypes.NestedType;
 
 		/// <summary>
+		/// Gets the type signature kind
+		/// </summary>
+		public abstract DmdTypeSignatureKind TypeSignatureKind { get; }
+
+		/// <summary>
+		/// Gets the type scope. This property is only valid if it's a TypeDef or TypeRef (i.e., not an array, generic instance, etc)
+		/// </summary>
+		public abstract DmdTypeScope TypeScope { get; }
+
+		/// <summary>
 		/// Gets the declaring type. This is the type that declares the member, see also <see cref="ReflectedType"/>
 		/// </summary>
 		public override DmdType DeclaringType => throw new NotImplementedException();//TODO:
@@ -232,7 +242,16 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="rank">Number of dimensions</param>
 		/// <returns></returns>
-		public abstract DmdType MakeArrayType(int rank);
+		public DmdType MakeArrayType(int rank) => MakeArrayType(rank, Array.Empty<int>(), Array.Empty<int>());
+
+		/// <summary>
+		/// Makes a multi-dimensional type
+		/// </summary>
+		/// <param name="rank">Number of dimensions</param>
+		/// <param name="sizes">Sizes</param>
+		/// <param name="lowerBounds">Lower bounds</param>
+		/// <returns></returns>
+		public abstract DmdType MakeArrayType(int rank, int[] sizes, int[] lowerBounds);
 
 		/// <summary>
 		/// Makes a generic type
@@ -610,19 +629,33 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract int GetArrayRank();
 
 		/// <summary>
+		/// Gets the array sizes of each dimension of an array. The returned array could
+		/// have less elements than the rank of the array.
+		/// </summary>
+		/// <returns></returns>
+		public abstract int[] GetArraySizes();
+
+		/// <summary>
+		/// Gets the lower bounds of each dimension of an array. The returned array could
+		/// have less elements than the rank of the array.
+		/// </summary>
+		/// <returns></returns>
+		public abstract int[] GetArrayLowerBounds();
+
+		/// <summary>
 		/// true if it's an array (SZ array or MD array)
 		/// </summary>
-		public abstract bool IsArray { get; }
+		public bool IsArray => TypeSignatureKind == DmdTypeSignatureKind.SZArray || TypeSignatureKind == DmdTypeSignatureKind.MDArray;
 
 		/// <summary>
 		/// true if it's an SZ array
 		/// </summary>
-		public abstract bool IsSZArray { get; }
+		public bool IsSZArray => TypeSignatureKind == DmdTypeSignatureKind.SZArray;
 
 		/// <summary>
 		/// true if it's a multi-dimensional aray
 		/// </summary>
-		public abstract bool IsVariableBoundArray { get; }
+		public bool IsVariableBoundArray => TypeSignatureKind == DmdTypeSignatureKind.MDArray;
 
 		/// <summary>
 		/// true if it's a generic type
@@ -642,7 +675,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// true if it's a generic type or method parameter
 		/// </summary>
-		public abstract bool IsGenericParameter { get; }
+		public bool IsGenericParameter => TypeSignatureKind == DmdTypeSignatureKind.TypeGenericParameter || TypeSignatureKind == DmdTypeSignatureKind.MethodGenericParameter;
 
 		/// <summary>
 		/// Gets the generic parameter position if this is a generic paramter
@@ -676,17 +709,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// true if this is a by-ref type
 		/// </summary>
-		public abstract bool IsByRef { get; }
+		public bool IsByRef => TypeSignatureKind == DmdTypeSignatureKind.ByRef;
 
 		/// <summary>
 		/// true if this is a pointer type
 		/// </summary>
-		public abstract bool IsPointer { get; }
+		public bool IsPointer => TypeSignatureKind == DmdTypeSignatureKind.Pointer;
 
 		/// <summary>
 		/// true if this is a function pointer type
 		/// </summary>
-		public abstract bool IsFunctionPointer { get; }
+		public bool IsFunctionPointer => TypeSignatureKind == DmdTypeSignatureKind.FunctionPointer;
 
 		/// <summary>
 		/// Gets the method signature if this is a function pointer type

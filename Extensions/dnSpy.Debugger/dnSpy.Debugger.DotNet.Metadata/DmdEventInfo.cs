@@ -47,17 +47,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the event handler type
 		/// </summary>
-		public DmdType EventHandlerType {
-			get {
-				var delegateType = DeclaringType.Assembly.AppDomain.System_Delegate;
-				foreach (var param in GetAddMethod(nonPublic: true)?.GetParameters() ?? Array.Empty<DmdParameterInfo>()) {
-					var paramType = param.ParameterType;
-					if (paramType.IsSubclassOf(delegateType))
-						return paramType;
-				}
-				return null;
-			}
-		}
+		public abstract DmdType EventHandlerType { get; }
 
 		/// <summary>
 		/// true if it's a multi-cast delegate

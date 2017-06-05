@@ -139,6 +139,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdMethodBody GetMethodBody();
 
 		/// <summary>
+		/// Gets the method signature
+		/// </summary>
+		/// <returns></returns>
+		public abstract DmdMethodSignature GetMethodSignature();
+
+		/// <summary>
 		/// Calls the method
 		/// </summary>
 		/// <param name="context">Evaluation context</param>

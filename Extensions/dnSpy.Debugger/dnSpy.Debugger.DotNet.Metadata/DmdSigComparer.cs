@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -65,7 +66,29 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// Compares types and members
 	/// </summary>
 	public struct DmdSigComparer {
+		const int HASHCODE_MAGIC_TYPE = -674970533;
+		const int HASHCODE_MAGIC_NESTED_TYPE = -1049070942;
+		const int HASHCODE_MAGIC_ET_GENERICINST = -2050514639;
+		const int HASHCODE_MAGIC_ET_VAR = 1288450097;
+		const int HASHCODE_MAGIC_ET_MVAR = -990598495;
+		const int HASHCODE_MAGIC_ET_ARRAY = -96331531;
+		const int HASHCODE_MAGIC_ET_SZARRAY = 871833535;
+		const int HASHCODE_MAGIC_ET_BYREF = -634749586;
+		const int HASHCODE_MAGIC_ET_PTR = 1976400808;
+		const int HASHCODE_MAGIC_ET_FNPTR = 68439620;
+
 		readonly DmdSigComparerOptions options;
+		const int MAX_RECURSION_COUNT = 100;
+		int recursionCounter;
+
+		bool DontCompareTypeScope => (options & DmdSigComparerOptions.DontCompareTypeScope) != 0;
+		bool CompareDeclaringType => (options & DmdSigComparerOptions.CompareDeclaringType) != 0;
+		bool DontCompareReturnType => (options & DmdSigComparerOptions.DontCompareReturnType) != 0;
+		bool CaseInsensitiveMemberNames => (options & DmdSigComparerOptions.CaseInsensitiveMemberNames) != 0;
+		//TODO: Use this option
+		bool ProjectWinMDReferences => (options & DmdSigComparerOptions.ProjectWinMDReferences) != 0;
+		//TODO: Use this option
+		bool CheckTypeEquivalence => (options & DmdSigComparerOptions.CheckTypeEquivalence) != 0;
 
 		/// <summary>
 		/// Constructor
@@ -73,31 +96,581 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="options">Options</param>
 		public DmdSigComparer(DmdSigComparerOptions options) {
 			this.options = options;
+			recursionCounter = 0;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public bool Equals(DmdMemberInfo a, DmdMemberInfo b) => throw new NotImplementedException();//TODO:
-		public bool Equals(DmdType a, DmdType b) => throw new NotImplementedException();//TODO:
-		public bool Equals(DmdFieldInfo a, DmdFieldInfo b) => throw new NotImplementedException();//TODO:
-		public bool Equals(DmdMethodBase a, DmdMethodBase b) => throw new NotImplementedException();//TODO:
-		public bool Equals(DmdConstructorInfo a, DmdConstructorInfo b) => throw new NotImplementedException();//TODO:
-		public bool Equals(DmdMethodInfo a, DmdMethodInfo b) => throw new NotImplementedException();//TODO:
-		public bool Equals(DmdPropertyInfo a, DmdPropertyInfo b) => throw new NotImplementedException();//TODO:
-		public bool Equals(DmdEventInfo a, DmdEventInfo b) => throw new NotImplementedException();//TODO:
-		public bool Equals(DmdParameterInfo a, DmdParameterInfo b) => throw new NotImplementedException();//TODO:
-		public bool Equals(DmdAssemblyName a, DmdAssemblyName b) => throw new NotImplementedException();//TODO:
-		public bool Equals(DmdMethodSignature a, DmdMethodSignature b) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdMemberInfo a) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdType a) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdFieldInfo a) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdMethodBase a) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdConstructorInfo a) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdMethodInfo a) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdPropertyInfo a) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdEventInfo a) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdParameterInfo a) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdAssemblyName a) => throw new NotImplementedException();//TODO:
-		public int GetHashCode(DmdMethodSignature a) => throw new NotImplementedException();//TODO:
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+		bool IncrementRecursionCounter() => recursionCounter++ < MAX_RECURSION_COUNT;
+		void DecrementRecursionCounter() => recursionCounter--;
+
+		bool MemberNameEquals(string a, string b) {
+			if (CaseInsensitiveMemberNames)
+				return StringComparer.OrdinalIgnoreCase.Equals(a, b);
+			return StringComparer.Ordinal.Equals(a, b);
+		}
+
+		int MemberNameGetHashCode(string a) {
+			if ((object)a == null)
+				return 0;
+			if (CaseInsensitiveMemberNames)
+				return StringComparer.OrdinalIgnoreCase.GetHashCode(a);
+			return StringComparer.Ordinal.GetHashCode(a);
+		}
+
+		/// <summary>
+		/// Compares two members
+		/// </summary>
+		/// <param name="a">First member</param>
+		/// <param name="b">Second member</param>
+		/// <returns></returns>
+		public bool Equals(DmdMemberInfo a, DmdMemberInfo b) {
+			if ((object)a == b)
+				return true;
+			if ((object)a == null || (object)b == null)
+				return false;
+
+			switch (a.MemberType) {
+			case DmdMemberTypes.TypeInfo:
+			case DmdMemberTypes.NestedType:
+				return Equals((DmdType)a, b as DmdType);
+
+			case DmdMemberTypes.Field:
+				return Equals((DmdFieldInfo)a, b as DmdFieldInfo);
+
+			case DmdMemberTypes.Method:
+			case DmdMemberTypes.Constructor:
+				return Equals((DmdMethodBase)a, b as DmdMethodBase);
+
+			case DmdMemberTypes.Property:
+				return Equals((DmdPropertyInfo)a, b as DmdPropertyInfo);
+
+			case DmdMemberTypes.Event:
+				return Equals((DmdEventInfo)a, b as DmdEventInfo);
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Compares two types
+		/// </summary>
+		/// <param name="a">First type</param>
+		/// <param name="b">Second type</param>
+		/// <returns></returns>
+		public bool Equals(DmdType a, DmdType b) {
+			if ((object)a == b)
+				return true;
+			if ((object)a == null || (object)b == null)
+				return false;
+
+			if (!IncrementRecursionCounter())
+				return false;
+
+			bool result;
+			var at = a.TypeSignatureKind;
+			if (at != b.TypeSignatureKind)
+				result = false;
+			else if (!Equals(a.GetCustomModifiers(), b.GetCustomModifiers()))
+				result = false;
+			else {
+				switch (at) {
+				case DmdTypeSignatureKind.Type:
+					result = MemberNameEquals(a.Name, b.Name) &&
+						MemberNameEquals(a.Namespace, b.Namespace) &&
+						Equals(a.DeclaringType, b.DeclaringType) &&
+						// Type scope only needs to be checked if it's a non-nested type
+						((object)a.DeclaringType != null || DontCompareTypeScope || TypeScopeEquals(a, b));
+					break;
+
+				case DmdTypeSignatureKind.Pointer:
+				case DmdTypeSignatureKind.ByRef:
+				case DmdTypeSignatureKind.SZArray:
+					result = Equals(a.GetElementType(), b.GetElementType());
+					break;
+
+				case DmdTypeSignatureKind.TypeGenericParameter:
+				case DmdTypeSignatureKind.MethodGenericParameter:
+					result = a.GenericParameterPosition == b.GenericParameterPosition;
+					break;
+
+				case DmdTypeSignatureKind.MDArray:
+					result = a.GetArrayRank() == b.GetArrayRank() &&
+						Equals(a.GetArraySizes(), b.GetArraySizes()) &&
+						Equals(a.GetArrayLowerBounds(), b.GetArrayLowerBounds()) &&
+						Equals(a.GetElementType(), b.GetElementType());
+					break;
+
+				case DmdTypeSignatureKind.GenericInstance:
+					result = Equals(a.GetGenericTypeDefinition(), b.GetGenericTypeDefinition()) &&
+							Equals(a.GetGenericArguments(), b.GetGenericArguments());
+					break;
+
+				case DmdTypeSignatureKind.FunctionPointer:
+					result = Equals(a.GetFunctionPointerMethodSignature(), b.GetFunctionPointerMethodSignature());
+					break;
+
+				default: throw new InvalidOperationException();
+				}
+			}
+
+			DecrementRecursionCounter();
+			return result;
+		}
+
+		/// <summary>
+		/// Compares two fields
+		/// </summary>
+		/// <param name="a">First field</param>
+		/// <param name="b">Second field</param>
+		/// <returns></returns>
+		public bool Equals(DmdFieldInfo a, DmdFieldInfo b) {
+			if ((object)a == b)
+				return true;
+			if ((object)a == null || (object)b == null)
+				return false;
+
+			return MemberNameEquals(a.Name, b.Name) &&
+				Equals(a.FieldType, b.FieldType) &&
+				(!CompareDeclaringType || Equals(a.DeclaringType, b.DeclaringType));
+		}
+
+		/// <summary>
+		/// Compares two methods or constructors
+		/// </summary>
+		/// <param name="a">First method or constructor</param>
+		/// <param name="b">Second method or constructor</param>
+		/// <returns></returns>
+		public bool Equals(DmdMethodBase a, DmdMethodBase b) {
+			if ((object)a == b)
+				return true;
+			if ((object)a == null || (object)b == null)
+				return false;
+
+			return MemberNameEquals(a.Name, b.Name) &&
+				Equals(a.GetMethodSignature(), b.GetMethodSignature()) &&
+				(!CompareDeclaringType || Equals(a.DeclaringType, b.DeclaringType));
+		}
+
+		/// <summary>
+		/// Compares two properties
+		/// </summary>
+		/// <param name="a">First property</param>
+		/// <param name="b">Second property</param>
+		/// <returns></returns>
+		public bool Equals(DmdPropertyInfo a, DmdPropertyInfo b) {
+			if ((object)a == b)
+				return true;
+			if ((object)a == null || (object)b == null)
+				return false;
+
+			return MemberNameEquals(a.Name, b.Name) &&
+				Equals(a.GetMethodSignature(), b.GetMethodSignature()) &&
+				(!CompareDeclaringType || Equals(a.DeclaringType, b.DeclaringType));
+		}
+
+		/// <summary>
+		/// Compares two events
+		/// </summary>
+		/// <param name="a">First event</param>
+		/// <param name="b">Second event</param>
+		/// <returns></returns>
+		public bool Equals(DmdEventInfo a, DmdEventInfo b) {
+			if ((object)a == b)
+				return true;
+			if ((object)a == null || (object)b == null)
+				return false;
+
+			return MemberNameEquals(a.Name, b.Name) &&
+				Equals(a.EventHandlerType, b.EventHandlerType) &&
+				(!CompareDeclaringType || Equals(a.DeclaringType, b.DeclaringType));
+		}
+
+		/// <summary>
+		/// Compares two method parameters
+		/// </summary>
+		/// <param name="a">First method parameter</param>
+		/// <param name="b">Second method parameter</param>
+		/// <returns></returns>
+		public bool Equals(DmdParameterInfo a, DmdParameterInfo b) {
+			if ((object)a == b)
+				return true;
+			if ((object)a == null || (object)b == null)
+				return false;
+
+			return a.Position == b.Position &&
+				Equals(a.ParameterType, b.ParameterType) &&
+				(!CompareDeclaringType || Equals(a.Member, b.Member));
+		}
+
+		/// <summary>
+		/// Compares two assembly names
+		/// </summary>
+		/// <param name="a">First assembly name</param>
+		/// <param name="b">Second assembly name</param>
+		/// <returns></returns>
+		public bool Equals(DmdAssemblyName a, DmdAssemblyName b) {
+			if ((object)a == b)
+				return true;
+			if ((object)a == null || (object)b == null)
+				return false;
+
+			// We do not compare the version number. The runtime can redirect an assembly
+			// reference from a requested version to any other version.
+			const DmdAssemblyNameFlags flagsMask = DmdAssemblyNameFlags.ContentType_Mask;
+			return (a.Flags & flagsMask) == (b.Flags & flagsMask) &&
+				StringComparer.OrdinalIgnoreCase.Equals(a.Name, b.Name) &&
+				StringComparer.OrdinalIgnoreCase.Equals(a.CultureName, b.CultureName) &&
+				Equals(a.GetPublicKeyToken(), b.GetPublicKeyToken());
+		}
+
+		/// <summary>
+		/// Compares two method signatures
+		/// </summary>
+		/// <param name="a">First method signature</param>
+		/// <param name="b">Second method signature</param>
+		/// <returns></returns>
+		public bool Equals(DmdMethodSignature a, DmdMethodSignature b) {
+			if ((object)a == b)
+				return true;
+			if ((object)a == null || (object)b == null)
+				return false;
+
+			return a.Flags == b.Flags &&
+				a.GenericParameterCount == b.GenericParameterCount &&
+				(DontCompareReturnType || Equals(a.ReturnType, b.ReturnType)) &&
+				Equals(a.GetParameterTypes(), b.GetParameterTypes()) &&
+				Equals(a.GetVarArgsParameterTypes(), b.GetVarArgsParameterTypes());
+		}
+
+		bool Equals(DmdType[] a, DmdType[] b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Length != b.Length)
+				return false;
+			for (int i = 0; i < a.Length; i++) {
+				if (!Equals(a[i], b[i]))
+					return false;
+			}
+			return true;
+		}
+
+		bool Equals(int[] a, int[] b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Length != b.Length)
+				return false;
+			for (int i = 0; i < a.Length; i++) {
+				if (a[i] != b[i])
+					return false;
+			}
+			return true;
+		}
+
+		bool Equals(byte[] a, byte[] b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Length != b.Length)
+				return false;
+			for (int i = 0; i < a.Length; i++) {
+				if (a[i] != b[i])
+					return false;
+			}
+			return true;
+		}
+
+		bool TypeScopeEquals(DmdType a, DmdType b) {
+			Debug.Assert((object)a != null && (object)b != null && !a.HasElementType && !b.HasElementType);
+			if (DontCompareTypeScope)
+				return true;
+			if ((object)a == b)
+				return true;
+
+			var at = a.TypeScope;
+			var bt = b.TypeScope;
+			switch (at.Kind) {
+			case DmdTypeScopeKind.Invalid:
+				return false;
+
+			case DmdTypeScopeKind.Module:
+				switch (bt.Kind) {
+				case DmdTypeScopeKind.Invalid:
+					return false;
+				case DmdTypeScopeKind.Module:
+					return at.Data == bt.Data;
+				case DmdTypeScopeKind.ModuleRef:
+					return StringComparer.OrdinalIgnoreCase.Equals(((DmdModule)at.Data).ScopeName, (string)bt.Data) &&
+						Equals(((DmdModule)at.Data).Assembly.GetName(), (DmdAssemblyName)bt.Data2);
+				case DmdTypeScopeKind.AssemblyRef:
+					return Equals(((DmdModule)at.Data).Assembly.GetName(), (DmdAssemblyName)bt.Data);
+				default:
+					throw new InvalidOperationException();
+				}
+
+			case DmdTypeScopeKind.ModuleRef:
+				switch (bt.Kind) {
+				case DmdTypeScopeKind.Invalid:
+					return false;
+				case DmdTypeScopeKind.Module:
+					return StringComparer.OrdinalIgnoreCase.Equals((string)at.Data, ((DmdModule)bt.Data).ScopeName) &&
+						Equals((DmdAssemblyName)at.Data2, ((DmdModule)bt.Data).Assembly.GetName());
+				case DmdTypeScopeKind.ModuleRef:
+					return StringComparer.OrdinalIgnoreCase.Equals((string)at.Data, (string)bt.Data) &&
+						Equals((DmdAssemblyName)at.Data2, (DmdAssemblyName)bt.Data2);
+				case DmdTypeScopeKind.AssemblyRef:
+					return Equals((DmdAssemblyName)at.Data2, (DmdAssemblyName)bt.Data);
+				default:
+					throw new InvalidOperationException();
+				}
+
+			case DmdTypeScopeKind.AssemblyRef:
+				switch (bt.Kind) {
+				case DmdTypeScopeKind.Invalid:
+					return false;
+				case DmdTypeScopeKind.Module:
+					return Equals((DmdAssemblyName)at.Data, ((DmdModule)bt.Data).Assembly.GetName());
+				case DmdTypeScopeKind.ModuleRef:
+					return Equals((DmdAssemblyName)at.Data, (DmdAssemblyName)bt.Data2);
+				case DmdTypeScopeKind.AssemblyRef:
+					return Equals((DmdAssemblyName)at.Data, (DmdAssemblyName)bt.Data);
+				default:
+					throw new InvalidOperationException();
+				}
+
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
+		/// <summary>
+		/// Gets the hash code of a member
+		/// </summary>
+		/// <param name="a">Member</param>
+		/// <returns></returns>
+		public int GetHashCode(DmdMemberInfo a) {
+			if ((object)a == null)
+				return 0;
+
+			switch (a.MemberType) {
+			case DmdMemberTypes.TypeInfo:
+			case DmdMemberTypes.NestedType:
+				return GetHashCode((DmdType)a);
+
+			case DmdMemberTypes.Field:
+				return GetHashCode((DmdFieldInfo)a);
+
+			case DmdMemberTypes.Method:
+			case DmdMemberTypes.Constructor:
+				return GetHashCode((DmdMethodBase)a);
+
+			case DmdMemberTypes.Property:
+				return GetHashCode((DmdPropertyInfo)a);
+
+			case DmdMemberTypes.Event:
+				return GetHashCode((DmdEventInfo)a);
+			}
+
+			Debug.Fail($"Unknown type: {a.GetType()}");
+			return 0;
+		}
+
+		/// <summary>
+		/// Gets the hash code of a type
+		/// </summary>
+		/// <param name="a">Type</param>
+		/// <returns></returns>
+		public int GetHashCode(DmdType a) {
+			if ((object)a == null)
+				return 0;
+
+			if (!IncrementRecursionCounter())
+				return 0;
+
+			int hc = GetHashCode(a.GetCustomModifiers());
+			switch (a.TypeSignatureKind) {
+			case DmdTypeSignatureKind.Type:
+				hc ^= (object)a.DeclaringType == null ? HASHCODE_MAGIC_TYPE : HASHCODE_MAGIC_NESTED_TYPE;
+				hc ^= MemberNameGetHashCode(a.Name);
+				hc ^= MemberNameGetHashCode(a.Namespace);
+				hc ^= GetHashCode(a.DeclaringType);
+				// Don't include the type scope in the hash since it can be one of Module, ModuleRef, AssemblyRef
+				// and we could only hash the common denominator which isn't much at all.
+				break;
+
+			case DmdTypeSignatureKind.Pointer:
+				hc ^= HASHCODE_MAGIC_ET_PTR ^ GetHashCode(a.GetElementType());
+				break;
+
+			case DmdTypeSignatureKind.ByRef:
+				hc ^= HASHCODE_MAGIC_ET_BYREF ^ GetHashCode(a.GetElementType());
+				break;
+
+			case DmdTypeSignatureKind.SZArray:
+				hc ^= HASHCODE_MAGIC_ET_SZARRAY ^ GetHashCode(a.GetElementType());
+				break;
+
+			case DmdTypeSignatureKind.TypeGenericParameter:
+				hc ^= HASHCODE_MAGIC_ET_VAR ^ a.GenericParameterPosition;
+				break;
+
+			case DmdTypeSignatureKind.MethodGenericParameter:
+				hc ^= HASHCODE_MAGIC_ET_MVAR ^ a.GenericParameterPosition;
+				break;
+
+			case DmdTypeSignatureKind.MDArray:
+				hc ^= HASHCODE_MAGIC_ET_ARRAY;
+				hc ^= a.GetArrayRank();
+				hc ^= GetHashCode(a.GetArraySizes());
+				hc ^= GetHashCode(a.GetArrayLowerBounds());
+				hc ^= GetHashCode(a.GetElementType());
+				break;
+
+			case DmdTypeSignatureKind.GenericInstance:
+				hc ^= HASHCODE_MAGIC_ET_GENERICINST;
+				hc ^= GetHashCode(a.GetGenericTypeDefinition());
+				hc ^= GetHashCode(a.GetGenericArguments());
+				break;
+
+			case DmdTypeSignatureKind.FunctionPointer:
+				hc ^= HASHCODE_MAGIC_ET_FNPTR;
+				hc ^= GetHashCode(a.GetFunctionPointerMethodSignature());
+				break;
+
+			default: throw new InvalidOperationException();
+			}
+
+			DecrementRecursionCounter();
+			return hc;
+		}
+
+		/// <summary>
+		/// Gets the hash code of a field
+		/// </summary>
+		/// <param name="a">Field</param>
+		/// <returns></returns>
+		public int GetHashCode(DmdFieldInfo a) {
+			if ((object)a == null)
+				return 0;
+
+			int hc = MemberNameGetHashCode(a.Name);
+			hc ^= GetHashCode(a.FieldType);
+			if (CompareDeclaringType)
+				hc ^= GetHashCode(a.DeclaringType);
+			return hc;
+		}
+
+		/// <summary>
+		/// Gets the hash code of a method or constructor
+		/// </summary>
+		/// <param name="a">Method or constructor</param>
+		/// <returns></returns>
+		public int GetHashCode(DmdMethodBase a) {
+			if ((object)a == null)
+				return 0;
+
+			int hc = MemberNameGetHashCode(a.Name);
+			hc ^= GetHashCode(a.GetMethodSignature());
+			if (CompareDeclaringType)
+				hc ^= GetHashCode(a.DeclaringType);
+			return hc;
+		}
+
+		/// <summary>
+		/// Gets the hash code of a property
+		/// </summary>
+		/// <param name="a">Property</param>
+		/// <returns></returns>
+		public int GetHashCode(DmdPropertyInfo a) {
+			if ((object)a == null)
+				return 0;
+
+			int hc = MemberNameGetHashCode(a.Name);
+			hc ^= GetHashCode(a.GetMethodSignature());
+			if (CompareDeclaringType)
+				hc ^= GetHashCode(a.DeclaringType);
+			return hc;
+		}
+
+		/// <summary>
+		/// Gets the hash code of an event
+		/// </summary>
+		/// <param name="a">Event</param>
+		/// <returns></returns>
+		public int GetHashCode(DmdEventInfo a) {
+			if ((object)a == null)
+				return 0;
+
+			int hc = MemberNameGetHashCode(a.Name);
+			hc ^= GetHashCode(a.EventHandlerType);
+			if (CompareDeclaringType)
+				hc ^= GetHashCode(a.DeclaringType);
+			return hc;
+		}
+
+		/// <summary>
+		/// Gets the hash code of a method parameter
+		/// </summary>
+		/// <param name="a">Method parameter</param>
+		/// <returns></returns>
+		public int GetHashCode(DmdParameterInfo a) {
+			if ((object)a == null)
+				return 0;
+
+			int hc = a.Position;
+			hc ^= GetHashCode(a.ParameterType);
+			if (CompareDeclaringType)
+				hc ^= GetHashCode(a.Member);
+			return hc;
+		}
+
+		/// <summary>
+		/// Gets the hash code of an assembly name
+		/// </summary>
+		/// <param name="a">Assembly name</param>
+		/// <returns></returns>
+		public int GetHashCode(DmdAssemblyName a) {
+			if ((object)a == null)
+				return 0;
+			return StringComparer.OrdinalIgnoreCase.GetHashCode(a.Name ?? string.Empty);
+		}
+
+		/// <summary>
+		/// Gets the hash code of a method signature
+		/// </summary>
+		/// <param name="a">Method signature</param>
+		/// <returns></returns>
+		public int GetHashCode(DmdMethodSignature a) {
+			if ((object)a == null)
+				return 0;
+			int hc = (int)a.Flags;
+			hc ^= a.GenericParameterCount;
+			if (!DontCompareReturnType)
+				hc ^= GetHashCode(a.ReturnType);
+			hc ^= GetHashCode(a.GetParameterTypes());
+			hc ^= GetHashCode(a.GetVarArgsParameterTypes());
+			return hc;
+		}
+
+		int GetHashCode(DmdType[] a) {
+			if (a == null)
+				return 0;
+			int hc = a.Length;
+			for (int i = 0; i < a.Length; i++)
+				hc ^= GetHashCode(a[i]);
+			return hc;
+		}
+
+		int GetHashCode(int[] a) {
+			if (a == null)
+				return 0;
+			int hc = a.Length;
+			for (int i = 0; i < a.Length; i++)
+				hc ^= a[i];
+			return hc;
+		}
 	}
 }

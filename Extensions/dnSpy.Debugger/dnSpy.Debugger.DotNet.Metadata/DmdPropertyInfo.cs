@@ -153,6 +153,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdMethodInfo GetSetMethod() => GetSetMethod(nonPublic: false);
 
 		/// <summary>
+		/// Gets the method signature
+		/// </summary>
+		/// <returns></returns>
+		public abstract DmdMethodSignature GetMethodSignature();
+
+		/// <summary>
 		/// Gets the property value
 		/// </summary>
 		/// <param name="context">Evaluation context</param>

@@ -90,6 +90,8 @@
     <Compile Include="DmdSignatureCallingConvention.cs" />
     <Compile Include="DmdType.cs" />
     <Compile Include="DmdTypeAttributes.cs" />
+    <Compile Include="DmdTypeScope.cs" />
+    <Compile Include="DmdTypeSignatureKind.cs" />
     <Compile Include="DmdWellKnownMember.cs" />
     <Compile Include="DmdWellKnownType.cs" />
     <Compile Include="HexUtils.cs" />
