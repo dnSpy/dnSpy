@@ -22,19 +22,184 @@ using System;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdMetadataReader {
 		public abstract Guid ModuleVersionId { get; }
-		public abstract int ModuleMetadataToken { get; }
-		public abstract DmdType GlobalType { get; }
 		public abstract int MDStreamVersion { get; }
 		public abstract string ModuleScopeName { get; }
 		public abstract string ImageRuntimeVersion { get; }
 		public abstract DmdMethodInfo EntryPoint { get; }
 		public abstract DmdType[] GetTypes();
-		public abstract DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments);
-		public abstract DmdFieldInfo ResolveField(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments);
-		public abstract DmdType ResolveType(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments);
-		public abstract DmdMemberInfo ResolveMember(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments);
-		public abstract byte[] ResolveSignature(int metadataToken);
-		public abstract string ResolveString(int metadataToken);
+
+		static DmdMemberInfo TryResolve(DmdMemberInfo member) => member.ResolveMemberNoThrow() ?? member;
+		static DmdType TryResolve(DmdType member) => member.ResolveNoThrow() ?? member;
+		static DmdFieldInfo TryResolve(DmdFieldInfo member) => member.ResolveNoThrow() ?? member;
+		static DmdMethodBase TryResolve(DmdMethodBase member) => member.ResolveMethodBaseNoThrow() ?? member;
+
+		public DmdMethodBase ResolveMethod(int metadataToken) {
+			uint rid = (uint)(metadataToken & 0x00FFFFFF);
+			switch ((uint)metadataToken >> 24) {
+			case 0x06:
+				var method = ResolveMethodDef(rid);
+				if (method != null)
+					return method;
+				break;
+
+			case 0x0A:
+				var mr = ResolveMemberRef(rid);
+				if (mr != null) {
+					if (mr is DmdMethodBase methodRef)
+						return TryResolve(methodRef);
+					throw new ArgumentException();
+				}
+				break;
+
+			case 0x2B:
+				var methodSpec = ResolveMethodSpec(rid);
+				if (methodSpec != null)
+					return TryResolve(methodSpec);
+				break;
+			}
+
+			throw new ArgumentOutOfRangeException(nameof(metadataToken));
+		}
+
+		public DmdFieldInfo ResolveField(int metadataToken) {
+			uint rid = (uint)(metadataToken & 0x00FFFFFF);
+			switch ((uint)metadataToken >> 24) {
+			case 0x04:
+				var field = ResolveFieldDef(rid);
+				if (field != null)
+					return field;
+				break;
+
+			case 0x0A:
+				var memberRef = ResolveMemberRef(rid);
+				if (memberRef != null) {
+					if (memberRef is DmdFieldInfo fieldRef)
+						return TryResolve(fieldRef);
+					throw new ArgumentException();
+				}
+				break;
+			}
+
+			throw new ArgumentOutOfRangeException(nameof(metadataToken));
+		}
+
+		public DmdType ResolveType(int metadataToken) {
+			uint rid = (uint)(metadataToken & 0x00FFFFFF);
+			switch ((uint)metadataToken >> 24) {
+			case 0x01:
+				var typeRef = ResolveTypeRef(rid);
+				if (typeRef != null)
+					return TryResolve(typeRef);
+				break;
+
+			case 0x02:
+				var typeDef = ResolveTypeDef(rid);
+				if (typeDef != null)
+					return typeDef;
+				break;
+
+			case 0x1B:
+				var typeSpec = ResolveTypeSpec(rid);
+				if (typeSpec != null)
+					return TryResolve(typeSpec);
+				break;
+			}
+
+			throw new ArgumentOutOfRangeException(nameof(metadataToken));
+		}
+
+		public DmdMemberInfo ResolveMember(int metadataToken) {
+			uint rid = (uint)(metadataToken & 0x00FFFFFF);
+			switch ((uint)metadataToken >> 24) {
+			case 0x01:
+				var typeRef = ResolveTypeRef(rid);
+				if (typeRef != null)
+					return TryResolve(typeRef);
+				break;
+
+			case 0x02:
+				var typeDef = ResolveTypeDef(rid);
+				if (typeDef != null)
+					return typeDef;
+				break;
+
+			case 0x04:
+				var field = ResolveFieldDef(rid);
+				if (field != null)
+					return field;
+				break;
+
+			case 0x06:
+				var method = ResolveMethodDef(rid);
+				if (method != null)
+					return method;
+				break;
+
+			case 0x0A:
+				var memberRef = ResolveMemberRef(rid);
+				if (memberRef != null)
+					return TryResolve(memberRef);
+				break;
+
+			case 0x1B:
+				var typeSpec = ResolveTypeSpec(rid);
+				if (typeSpec != null)
+					return TryResolve(typeSpec);
+				break;
+
+			case 0x2B:
+				var methodSpec = ResolveMethodSpec(rid);
+				if (methodSpec != null)
+					return TryResolve(methodSpec);
+				break;
+			}
+
+			throw new ArgumentOutOfRangeException(nameof(metadataToken));
+		}
+
+		internal abstract DmdType ResolveTypeRef(uint rid);
+		internal abstract DmdType ResolveTypeDef(uint rid);
+		internal abstract DmdFieldInfo ResolveFieldDef(uint rid);
+		internal abstract DmdMethodBase ResolveMethodDef(uint rid);
+		internal abstract DmdMemberInfo ResolveMemberRef(uint rid);
+		internal abstract DmdEventInfo ResolveEventDef(uint rid);
+		internal abstract DmdPropertyInfo ResolvePropertyDef(uint rid);
+		internal abstract DmdType ResolveTypeSpec(uint rid);
+		internal abstract DmdMethodBase ResolveMethodSpec(uint rid);
+
+		public byte[] ResolveSignature(int metadataToken) {
+			byte[] res;
+			uint rid = (uint)(metadataToken & 0x00FFFFFF);
+			switch ((uint)metadataToken >> 24) {
+			case 0x04: res = ResolveFieldSignature(rid); break;
+			case 0x06: res = ResolveMethodSignature(rid); break;
+			case 0x0A: res = ResolveMemberRefSignature(rid); break;
+			case 0x11: res = ResolveStandAloneSigSignature(rid); break;
+			case 0x1B: res = ResolveTypeSpecSignature(rid); break;
+			case 0x2B: res = ResolveMethodSpecSignature(rid); break;
+			default: res = null; break;
+			}
+			return res ?? throw new ArgumentOutOfRangeException(nameof(metadataToken));
+		}
+
+		internal abstract byte[] ResolveFieldSignature(uint rid);
+		internal abstract byte[] ResolveMethodSignature(uint rid);
+		internal abstract byte[] ResolveMemberRefSignature(uint rid);
+		internal abstract byte[] ResolveStandAloneSigSignature(uint rid);
+		internal abstract byte[] ResolveTypeSpecSignature(uint rid);
+		internal abstract byte[] ResolveMethodSpecSignature(uint rid);
+
+		public string ResolveString(int metadataToken) {
+			if (((uint)metadataToken >> 24) != 0x70)
+				throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			uint offset = (uint)metadataToken & 0x00FFFFFF;
+			if (offset == 0)
+				return string.Empty;
+			return ResolveStringCore(offset) ?? throw new ArgumentOutOfRangeException(nameof(offset));
+		}
+
+		internal abstract string ResolveStringCore(uint offset);
+
 		public abstract void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine);
 		public abstract DmdAssemblyName GetName();
 		public abstract DmdType[] GetExportedTypes();

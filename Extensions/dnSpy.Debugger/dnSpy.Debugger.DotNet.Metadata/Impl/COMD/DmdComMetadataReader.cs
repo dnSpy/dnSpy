@@ -22,8 +22,6 @@ using System;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdComMetadataReader : DmdMetadataReader {
 		public override Guid ModuleVersionId => throw new NotImplementedException();//TODO:
-		public override int ModuleMetadataToken => throw new NotImplementedException();//TODO:
-		public override DmdType GlobalType => throw new NotImplementedException();//TODO:
 		public override int MDStreamVersion => throw new NotImplementedException();//TODO:
 		public override string ModuleScopeName => throw new NotImplementedException();//TODO:
 		public override string ImageRuntimeVersion => throw new NotImplementedException();//TODO:
@@ -40,12 +38,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public override DmdType[] GetTypes() => throw new NotImplementedException();//TODO:
-		public override DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => throw new NotImplementedException();//TODO:
-		public override DmdFieldInfo ResolveField(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => throw new NotImplementedException();//TODO:
-		public override DmdType ResolveType(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => throw new NotImplementedException();//TODO:
-		public override DmdMemberInfo ResolveMember(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => throw new NotImplementedException();//TODO:
-		public override byte[] ResolveSignature(int metadataToken) => throw new NotImplementedException();//TODO:
-		public override string ResolveString(int metadataToken) => throw new NotImplementedException();//TODO:
+		internal override DmdType ResolveTypeRef(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdType ResolveTypeDef(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdFieldInfo ResolveFieldDef(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdMethodBase ResolveMethodDef(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdMemberInfo ResolveMemberRef(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdEventInfo ResolveEventDef(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdPropertyInfo ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdType ResolveTypeSpec(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdMethodBase ResolveMethodSpec(uint rid) => throw new NotImplementedException();//TODO:
+		internal override byte[] ResolveFieldSignature(uint rid) => throw new NotImplementedException();//TODO:
+		internal override byte[] ResolveMethodSignature(uint rid) => throw new NotImplementedException();//TODO:
+		internal override byte[] ResolveMemberRefSignature(uint rid) => throw new NotImplementedException();//TODO:
+		internal override byte[] ResolveStandAloneSigSignature(uint rid) => throw new NotImplementedException();//TODO:
+		internal override byte[] ResolveTypeSpecSignature(uint rid) => throw new NotImplementedException();//TODO:
+		internal override byte[] ResolveMethodSpecSignature(uint rid) => throw new NotImplementedException();//TODO:
+		internal override string ResolveStringCore(uint offset) => throw new NotImplementedException();//TODO:
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => throw new NotImplementedException();//TODO:
 		public override DmdAssemblyName GetName() => throw new NotImplementedException();//TODO:
 		public override DmdType[] GetExportedTypes() => throw new NotImplementedException();//TODO:

@@ -129,64 +129,28 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="metadataToken">Token</param>
 		/// <returns></returns>
-		public DmdMethodBase ResolveMethod(int metadataToken) => ResolveMethod(metadataToken, null, null);
-
-		/// <summary>
-		/// Resolves a method
-		/// </summary>
-		/// <param name="metadataToken">Token</param>
-		/// <param name="genericTypeArguments">Generic type arguments or null</param>
-		/// <param name="genericMethodArguments">Generic method arguments or null</param>
-		/// <returns></returns>
-		public abstract DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments);
+		public abstract DmdMethodBase ResolveMethod(int metadataToken);
 
 		/// <summary>
 		/// Resolves a field
 		/// </summary>
 		/// <param name="metadataToken">Token</param>
 		/// <returns></returns>
-		public DmdFieldInfo ResolveField(int metadataToken) => ResolveField(metadataToken, null, null);
-
-		/// <summary>
-		/// Resolves a field
-		/// </summary>
-		/// <param name="metadataToken">Token</param>
-		/// <param name="genericTypeArguments">Generic type arguments or null</param>
-		/// <param name="genericMethodArguments">Generic method arguments or null</param>
-		/// <returns></returns>
-		public abstract DmdFieldInfo ResolveField(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments);
+		public abstract DmdFieldInfo ResolveField(int metadataToken);
 
 		/// <summary>
 		/// Resolves a type
 		/// </summary>
 		/// <param name="metadataToken">Token</param>
 		/// <returns></returns>
-		public DmdType ResolveType(int metadataToken) => ResolveType(metadataToken, null, null);
-
-		/// <summary>
-		/// Resolves a type
-		/// </summary>
-		/// <param name="metadataToken">Token</param>
-		/// <param name="genericTypeArguments">Generic type arguments or null</param>
-		/// <param name="genericMethodArguments">Generic method arguments or null</param>
-		/// <returns></returns>
-		public abstract DmdType ResolveType(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments);
+		public abstract DmdType ResolveType(int metadataToken);
 
 		/// <summary>
 		/// Resolves a member
 		/// </summary>
 		/// <param name="metadataToken">Token</param>
 		/// <returns></returns>
-		public DmdMemberInfo ResolveMember(int metadataToken) => ResolveMember(metadataToken, null, null);
-
-		/// <summary>
-		/// Resolves a member
-		/// </summary>
-		/// <param name="metadataToken">Token</param>
-		/// <param name="genericTypeArguments">Generic type arguments or null</param>
-		/// <param name="genericMethodArguments">Generic method arguments or null</param>
-		/// <returns></returns>
-		public abstract DmdMemberInfo ResolveMember(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments);
+		public abstract DmdMemberInfo ResolveMember(int metadataToken);
 
 		/// <summary>
 		/// Resolves a signature

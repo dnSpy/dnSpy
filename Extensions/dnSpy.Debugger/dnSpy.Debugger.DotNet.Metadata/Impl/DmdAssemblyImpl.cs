@@ -86,7 +86,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdAssemblyName GetName() => metadataReader.GetName();
+		public override DmdAssemblyName GetName() => (asmName ?? (asmName = metadataReader.GetName())).Clone();
+		DmdAssemblyName asmName;
+
 		public override DmdType[] GetExportedTypes() => metadataReader.GetExportedTypes();
 		public override DmdAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
 		public override DmdType GetType(string name, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:

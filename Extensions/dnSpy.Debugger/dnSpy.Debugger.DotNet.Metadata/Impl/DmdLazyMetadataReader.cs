@@ -53,19 +53,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void SetModule(DmdModuleImpl module) => this.module = module;
 
 		public override Guid ModuleVersionId => MetadataReader.ModuleVersionId;
-		public override int ModuleMetadataToken => MetadataReader.ModuleMetadataToken;
-		public override DmdType GlobalType => MetadataReader.GlobalType;
 		public override int MDStreamVersion => MetadataReader.MDStreamVersion;
 		public override string ModuleScopeName => MetadataReader.ModuleScopeName;
 		public override string ImageRuntimeVersion => MetadataReader.ImageRuntimeVersion;
 		public override DmdMethodInfo EntryPoint => MetadataReader.EntryPoint;
 		public override DmdType[] GetTypes() => MetadataReader.GetTypes();
-		public override DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => MetadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments);
-		public override DmdFieldInfo ResolveField(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => MetadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments);
-		public override DmdType ResolveType(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => MetadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments);
-		public override DmdMemberInfo ResolveMember(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => MetadataReader.ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments);
-		public override byte[] ResolveSignature(int metadataToken) => MetadataReader.ResolveSignature(metadataToken);
-		public override string ResolveString(int metadataToken) => MetadataReader.ResolveString(metadataToken);
+
+		internal override DmdType ResolveTypeRef(uint rid) => MetadataReader.ResolveTypeRef(rid);
+		internal override DmdType ResolveTypeDef(uint rid) => MetadataReader.ResolveTypeDef(rid);
+		internal override DmdFieldInfo ResolveFieldDef(uint rid) => MetadataReader.ResolveFieldDef(rid);
+		internal override DmdMethodBase ResolveMethodDef(uint rid) => MetadataReader.ResolveMethodDef(rid);
+		internal override DmdMemberInfo ResolveMemberRef(uint rid) => MetadataReader.ResolveMemberRef(rid);
+		internal override DmdEventInfo ResolveEventDef(uint rid) => MetadataReader.ResolveEventDef(rid);
+		internal override DmdPropertyInfo ResolvePropertyDef(uint rid) => MetadataReader.ResolvePropertyDef(rid);
+		internal override DmdType ResolveTypeSpec(uint rid) => MetadataReader.ResolveTypeSpec(rid);
+		internal override DmdMethodBase ResolveMethodSpec(uint rid) => MetadataReader.ResolveMethodSpec(rid);
+		internal override byte[] ResolveFieldSignature(uint rid) => MetadataReader.ResolveFieldSignature(rid);
+		internal override byte[] ResolveMethodSignature(uint rid) => MetadataReader.ResolveMethodSignature(rid);
+		internal override byte[] ResolveMemberRefSignature(uint rid) => MetadataReader.ResolveMemberRefSignature(rid);
+		internal override byte[] ResolveStandAloneSigSignature(uint rid) => MetadataReader.ResolveStandAloneSigSignature(rid);
+		internal override byte[] ResolveTypeSpecSignature(uint rid) => MetadataReader.ResolveTypeSpecSignature(rid);
+		internal override byte[] ResolveMethodSpecSignature(uint rid) => MetadataReader.ResolveMethodSpecSignature(rid);
+		internal override string ResolveStringCore(uint offset) => MetadataReader.ResolveStringCore(offset);
+
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => MetadataReader.GetPEKind(out peKind, out machine);
 		public override DmdAssemblyName GetName() => MetadataReader.GetName();
 		public override DmdType[] GetExportedTypes() => MetadataReader.GetExportedTypes();
