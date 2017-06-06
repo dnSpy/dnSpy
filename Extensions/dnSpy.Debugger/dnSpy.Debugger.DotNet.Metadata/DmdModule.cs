@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) =>
+		public DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
 			ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, true);
 
 		/// <summary>
@@ -149,7 +149,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <param name="throwOnError">true to throw if the method couldn't be found</param>
 		/// <returns></returns>
-		public abstract DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError);
+		public abstract DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError);
 
 		/// <summary>
 		/// Resolves a field
@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdFieldInfo ResolveField(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) =>
+		public DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
 			ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, true);
 
 		/// <summary>
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <param name="throwOnError">true to throw if the field couldn't be found</param>
 		/// <returns></returns>
-		public abstract DmdFieldInfo ResolveField(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError);
+		public abstract DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError);
 
 		/// <summary>
 		/// Resolves a type
@@ -192,7 +192,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdType ResolveType(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) =>
+		public DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
 			ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, true);
 
 		/// <summary>
@@ -203,7 +203,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <param name="throwOnError">true to throw if the type couldn't be found</param>
 		/// <returns></returns>
-		public abstract DmdType ResolveType(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError);
+		public abstract DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError);
 
 		/// <summary>
 		/// Resolves a member
@@ -219,7 +219,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdMemberInfo ResolveMember(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) =>
+		public DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
 			ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, true);
 
 		/// <summary>
@@ -230,7 +230,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <param name="throwOnError">true to throw if the member couldn't be found</param>
 		/// <returns></returns>
-		public abstract DmdMemberInfo ResolveMember(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError);
+		public abstract DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError);
 
 		/// <summary>
 		/// Resolves a signature
@@ -327,7 +327,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="types">Method parameter types or null</param>
 		/// <param name="modifiers">Method parameter type modifiers or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, DmdType[] types, DmdParameterModifier[] modifiers) {
+		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types, IList<DmdParameterModifier> modifiers) {
 			if (types == null)
 				return GlobalType.GetMethod(name, bindingAttr);
 			return GlobalType.GetMethod(name, bindingAttr, callConvention, types, modifiers);
@@ -339,7 +339,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Method name</param>
 		/// <param name="types">Method parameter types</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdType[] types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types, null);
+		public DmdMethodInfo GetMethod(string name, IList<DmdType> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types, null);
 
 		/// <summary>
 		/// Gets a global public static or instance method

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
@@ -37,13 +38,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			if (ridList.Count == 0)
 				return null;
 
-			DmdType[] genericTypeArguments, genericMethodArguments;
+			IList<DmdType> genericTypeArguments, genericMethodArguments;
 			if (DeclaringMethod != null) {
-				genericTypeArguments = DeclaringMethod.DeclaringType.GetGenericArguments();
-				genericMethodArguments = DeclaringMethod.GetGenericArguments();
+				genericTypeArguments = DeclaringMethod.DeclaringType.GetReadOnlyGenericArguments();
+				genericMethodArguments = DeclaringMethod.GetReadOnlyGenericArguments();
 			}
 			else {
-				genericTypeArguments = DeclaringType.GetGenericArguments();
+				genericTypeArguments = DeclaringType.GetReadOnlyGenericArguments();
 				genericMethodArguments = null;
 			}
 

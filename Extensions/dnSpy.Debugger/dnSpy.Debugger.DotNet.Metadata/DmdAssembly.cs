@@ -194,9 +194,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="args">Constructor arguments or null</param>
 		/// <param name="argTypes">Constructor parameter types or null</param>
 		/// <returns></returns>
-		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args, DmdType[] argTypes) {
+		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args, IList<DmdType> argTypes) {
 			args = args ?? Array.Empty<object>();
-			if (argTypes != null && args.Length != argTypes.Length)
+			if (argTypes != null && args.Length != argTypes.Count)
 				throw new ArgumentException();
 			var type = GetType(typeName, false, ignoreCase);
 			if ((object)type == null)

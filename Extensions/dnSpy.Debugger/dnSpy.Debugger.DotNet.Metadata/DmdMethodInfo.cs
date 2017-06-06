@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -104,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all generic arguments if it's a generic method
 		/// </summary>
 		/// <returns></returns>
-		public abstract override DmdType[] GetGenericArguments();
+		public abstract override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments();
 
 		/// <summary>
 		/// Gets the generic method definition
@@ -117,7 +119,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="typeArguments">Generic arguments</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo MakeGenericMethod(params DmdType[] typeArguments);
+		public DmdMethodInfo MakeGenericMethod(params DmdType[] typeArguments) => MakeGenericMethod((IList<DmdType>)typeArguments);
+
+		/// <summary>
+		/// Creates a generic method
+		/// </summary>
+		/// <param name="typeArguments">Generic arguments</param>
+		/// <returns></returns>
+		public abstract DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments);
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdMethodInfo left, DmdMethodInfo right) => DmdMemberInfoEqualityComparer.Default.Equals(left, right);

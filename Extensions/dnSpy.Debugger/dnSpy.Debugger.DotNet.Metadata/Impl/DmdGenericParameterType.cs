@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
@@ -81,19 +82,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			GenericParameterAttributes = attributes;
 		}
 
-		DmdType[] GetOrCreateGenericParameterConstraints() {
+		ReadOnlyCollection<DmdType> GetOrCreateGenericParameterConstraints() {
 			if (__genericParameterConstraints_DONT_USE != null)
 				return __genericParameterConstraints_DONT_USE;
 			lock (LockObject) {
 				if (__genericParameterConstraints_DONT_USE != null)
 					return __genericParameterConstraints_DONT_USE;
-				__genericParameterConstraints_DONT_USE = CreateGenericParameterConstraints_NoLock() ?? Array.Empty<DmdType>();
+				var res = CreateGenericParameterConstraints_NoLock();
+				__genericParameterConstraints_DONT_USE = res == null || res.Length == 0 ? emptyReadOnlyCollection : new ReadOnlyCollection<DmdType>(res);
 				return __genericParameterConstraints_DONT_USE;
 			}
 		}
-		DmdType[] __genericParameterConstraints_DONT_USE;
+		ReadOnlyCollection<DmdType> __genericParameterConstraints_DONT_USE;
 		protected abstract DmdType[] CreateGenericParameterConstraints_NoLock();
-		public override DmdType[] GetGenericParameterConstraints() => GetOrCreateGenericParameterConstraints().CloneArray();
+		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericParameterConstraints() => GetOrCreateGenericParameterConstraints();
 
 		public override DmdType Resolve(bool throwOnError) => this;
 	}

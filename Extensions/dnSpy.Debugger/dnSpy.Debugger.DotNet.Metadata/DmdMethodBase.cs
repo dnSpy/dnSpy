@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -124,13 +126,25 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all parameters
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdParameterInfo[] GetParameters();
+		public DmdParameterInfo[] GetParameters() => GetReadOnlyParameters().ToArray();
+
+		/// <summary>
+		/// Gets all parameters
+		/// </summary>
+		/// <returns></returns>
+		public abstract ReadOnlyCollection<DmdParameterInfo> GetReadOnlyParameters();
 
 		/// <summary>
 		/// Gets all generic arguments if it's a generic method
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetGenericArguments();
+		public DmdType[] GetGenericArguments() => GetReadOnlyGenericArguments().ToArray();
+
+		/// <summary>
+		/// Gets all generic arguments if it's a generic method
+		/// </summary>
+		/// <returns></returns>
+		public abstract ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments();
 
 		/// <summary>
 		/// Gets the method body

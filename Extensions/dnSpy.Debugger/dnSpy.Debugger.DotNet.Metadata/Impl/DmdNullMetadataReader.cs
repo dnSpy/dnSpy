@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdNullMetadataReader : DmdMetadataReaderBase {
@@ -35,11 +36,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected override DmdType ResolveTypeDef(uint rid) => rid == 1 ? globalType : null;
 		protected override DmdFieldInfo ResolveFieldDef(uint rid) => null;
 		protected override DmdMethodBase ResolveMethodDef(uint rid) => null;
-		protected override DmdMemberInfo ResolveMemberRef(uint rid, DmdType[] genericTypeArguments) => null;
+		protected override DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments) => null;
 		protected override DmdEventInfo ResolveEventDef(uint rid) => null;
 		protected override DmdPropertyInfo ResolvePropertyDef(uint rid) => null;
-		protected override DmdType ResolveTypeSpec(uint rid, DmdType[] genericTypeArguments) => null;
-		protected override DmdMethodBase ResolveMethodSpec(uint rid, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => null;
+		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => null;
+		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => null;
 		protected override byte[] ResolveFieldSignature(uint rid) => null;
 		protected override byte[] ResolveMethodSignature(uint rid) => null;
 		protected override byte[] ResolveMemberRefSignature(uint rid) => null;

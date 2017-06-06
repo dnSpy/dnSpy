@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -104,7 +106,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the index parameters
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdParameterInfo[] GetIndexParameters();
+		public DmdParameterInfo[] GetIndexParameters() => GetReadOnlyIndexParameters().ToArray();
+
+		/// <summary>
+		/// Gets the index parameters
+		/// </summary>
+		/// <returns></returns>
+		public abstract ReadOnlyCollection<DmdParameterInfo> GetReadOnlyIndexParameters();
 
 		/// <summary>
 		/// Gets all required custom modifiers

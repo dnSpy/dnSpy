@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdMetadataReaderBase : DmdMetadataReader {
@@ -26,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		static DmdFieldInfo TryResolve(DmdFieldInfo member) => member.ResolveNoThrow() ?? member;
 		static DmdMethodBase TryResolve(DmdMethodBase member) => member.ResolveMethodBaseNoThrow() ?? member;
 
-		public override DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) {
+		public override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x06:
@@ -57,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdFieldInfo ResolveField(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) {
+		public override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x04:
@@ -82,7 +83,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdType ResolveType(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) {
+		public override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
@@ -109,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdMemberInfo ResolveMember(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) {
+		public override DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
@@ -164,11 +165,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdType ResolveTypeDef(uint rid);
 		protected abstract DmdFieldInfo ResolveFieldDef(uint rid);
 		protected abstract DmdMethodBase ResolveMethodDef(uint rid);
-		protected abstract DmdMemberInfo ResolveMemberRef(uint rid, DmdType[] genericTypeArguments);
+		protected abstract DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments);
 		protected abstract DmdEventInfo ResolveEventDef(uint rid);
 		protected abstract DmdPropertyInfo ResolvePropertyDef(uint rid);
-		protected abstract DmdType ResolveTypeSpec(uint rid, DmdType[] genericTypeArguments);
-		protected abstract DmdMethodBase ResolveMethodSpec(uint rid, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments);
+		protected abstract DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments);
+		protected abstract DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
 
 		public override byte[] ResolveSignature(int metadataToken) {
 			byte[] res;

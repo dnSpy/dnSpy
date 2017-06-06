@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdLazyMetadataReader : DmdMetadataReader {
@@ -58,10 +59,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string ImageRuntimeVersion => MetadataReader.ImageRuntimeVersion;
 		public override DmdMethodInfo EntryPoint => MetadataReader.EntryPoint;
 		public override DmdType[] GetTypes() => MetadataReader.GetTypes();
-		public override DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) => MetadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
-		public override DmdFieldInfo ResolveField(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) => MetadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
-		public override DmdType ResolveType(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) => MetadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
-		public override DmdMemberInfo ResolveMember(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) => MetadataReader.ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
+		public override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) => MetadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
+		public override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) => MetadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
+		public override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) => MetadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
+		public override DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) => MetadataReader.ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
 		public override byte[] ResolveSignature(int metadataToken) => MetadataReader.ResolveSignature(metadataToken);
 		public override string ResolveString(int metadataToken) => MetadataReader.ResolveString(metadataToken);
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => MetadataReader.GetPEKind(out peKind, out machine);
