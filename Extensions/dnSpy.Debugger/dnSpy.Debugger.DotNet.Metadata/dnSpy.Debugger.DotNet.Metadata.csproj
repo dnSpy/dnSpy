@@ -106,6 +106,7 @@
     <Compile Include="Impl\DmdGenericParameterType.cs" />
     <Compile Include="Impl\DmdLazyMetadataReader.cs" />
     <Compile Include="Impl\DmdMetadataReader.cs" />
+    <Compile Include="Impl\DmdMetadataReaderBase.cs" />
     <Compile Include="Impl\DmdModuleControllerImpl.cs" />
     <Compile Include="Impl\DmdModuleImpl.cs" />
     <Compile Include="Impl\DmdNullGlobalType.cs" />

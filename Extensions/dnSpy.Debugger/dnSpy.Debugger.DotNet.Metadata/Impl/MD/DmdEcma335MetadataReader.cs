@@ -23,7 +23,7 @@ using dnlib.DotNet.MD;
 using dnlib.PE;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
-	sealed class DmdEcma335MetadataReader : DmdMetadataReader {
+	sealed class DmdEcma335MetadataReader : DmdMetadataReaderBase {
 		public override Guid ModuleVersionId { get; }
 		public override int MDStreamVersion => ((TablesStream.Version & 0xFF00) << 8) | (TablesStream.Version & 0xFF);
 		public override string ModuleScopeName { get; }
@@ -79,59 +79,59 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return result;
 		}
 
-		internal override DmdType ResolveTypeRef(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdType ResolveTypeDef(uint rid) => typeDefList[rid - 1];
-		internal override DmdFieldInfo ResolveFieldDef(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdMethodBase ResolveMethodDef(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdMemberInfo ResolveMemberRef(uint rid, DmdType[] genericTypeArguments) => throw new NotImplementedException();//TODO:
-		internal override DmdEventInfo ResolveEventDef(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdPropertyInfo ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdType ResolveTypeSpec(uint rid, DmdType[] genericTypeArguments) => throw new NotImplementedException();//TODO:
-		internal override DmdMethodBase ResolveMethodSpec(uint rid, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => throw new NotImplementedException();//TODO:
+		protected override DmdType ResolveTypeRef(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdType ResolveTypeDef(uint rid) => typeDefList[rid - 1];
+		protected override DmdFieldInfo ResolveFieldDef(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdMethodBase ResolveMethodDef(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdMemberInfo ResolveMemberRef(uint rid, DmdType[] genericTypeArguments) => throw new NotImplementedException();//TODO:
+		protected override DmdEventInfo ResolveEventDef(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdPropertyInfo ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdType ResolveTypeSpec(uint rid, DmdType[] genericTypeArguments) => throw new NotImplementedException();//TODO:
+		protected override DmdMethodBase ResolveMethodSpec(uint rid, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => throw new NotImplementedException();//TODO:
 
-		internal override byte[] ResolveFieldSignature(uint rid) {
+		protected override byte[] ResolveFieldSignature(uint rid) {
 			var row = TablesStream.ReadFieldRow(rid);
 			if (row == null)
 				return null;
 			return Metadata.BlobStream.Read(row.Signature);
 		}
 
-		internal override byte[] ResolveMethodSignature(uint rid) {
+		protected override byte[] ResolveMethodSignature(uint rid) {
 			var row = TablesStream.ReadMethodRow(rid);
 			if (row == null)
 				return null;
 			return Metadata.BlobStream.Read(row.Signature);
 		}
 
-		internal override byte[] ResolveMemberRefSignature(uint rid) {
+		protected override byte[] ResolveMemberRefSignature(uint rid) {
 			var row = TablesStream.ReadMemberRefRow(rid);
 			if (row == null)
 				return null;
 			return Metadata.BlobStream.Read(row.Signature);
 		}
 
-		internal override byte[] ResolveStandAloneSigSignature(uint rid) {
+		protected override byte[] ResolveStandAloneSigSignature(uint rid) {
 			var row = TablesStream.ReadStandAloneSigRow(rid);
 			if (row == null)
 				return null;
 			return Metadata.BlobStream.Read(row.Signature);
 		}
 
-		internal override byte[] ResolveTypeSpecSignature(uint rid) {
+		protected override byte[] ResolveTypeSpecSignature(uint rid) {
 			var row = TablesStream.ReadTypeSpecRow(rid);
 			if (row == null)
 				return null;
 			return Metadata.BlobStream.Read(row.Signature);
 		}
 
-		internal override byte[] ResolveMethodSpecSignature(uint rid) {
+		protected override byte[] ResolveMethodSpecSignature(uint rid) {
 			var row = TablesStream.ReadMethodSpecRow(rid);
 			if (row == null)
 				return null;
 			return Metadata.BlobStream.Read(row.Instantiation);
 		}
 
-		internal override string ResolveStringCore(uint offset) => Metadata.USStream.Read(offset);
+		protected override string ResolveStringCore(uint offset) => Metadata.USStream.Read(offset);
 
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) {
 			machine = (DmdImageFileMachine)Metadata.PEImage.ImageNTHeaders.FileHeader.Machine;

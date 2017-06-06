@@ -20,7 +20,7 @@
 using System;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	sealed class DmdNullMetadataReader : DmdMetadataReader {
+	sealed class DmdNullMetadataReader : DmdMetadataReaderBase {
 		public override Guid ModuleVersionId => Guid.Empty;
 		public override int MDStreamVersion => 0x00020000;
 		public override string ModuleScopeName => string.Empty;
@@ -31,22 +31,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public DmdNullMetadataReader(DmdModule module) => globalType = new DmdNullGlobalType(module);
 
 		public override DmdType[] GetTypes() => new[] { globalType };
-		internal override DmdType ResolveTypeRef(uint rid) => null;
-		internal override DmdType ResolveTypeDef(uint rid) => rid == 1 ? globalType : null;
-		internal override DmdFieldInfo ResolveFieldDef(uint rid) => null;
-		internal override DmdMethodBase ResolveMethodDef(uint rid) => null;
-		internal override DmdMemberInfo ResolveMemberRef(uint rid, DmdType[] genericTypeArguments) => null;
-		internal override DmdEventInfo ResolveEventDef(uint rid) => null;
-		internal override DmdPropertyInfo ResolvePropertyDef(uint rid) => null;
-		internal override DmdType ResolveTypeSpec(uint rid, DmdType[] genericTypeArguments) => null;
-		internal override DmdMethodBase ResolveMethodSpec(uint rid, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => null;
-		internal override byte[] ResolveFieldSignature(uint rid) => null;
-		internal override byte[] ResolveMethodSignature(uint rid) => null;
-		internal override byte[] ResolveMemberRefSignature(uint rid) => null;
-		internal override byte[] ResolveStandAloneSigSignature(uint rid) => null;
-		internal override byte[] ResolveTypeSpecSignature(uint rid) => null;
-		internal override byte[] ResolveMethodSpecSignature(uint rid) => null;
-		internal override string ResolveStringCore(uint offset) => null;
+		protected override DmdType ResolveTypeRef(uint rid) => null;
+		protected override DmdType ResolveTypeDef(uint rid) => rid == 1 ? globalType : null;
+		protected override DmdFieldInfo ResolveFieldDef(uint rid) => null;
+		protected override DmdMethodBase ResolveMethodDef(uint rid) => null;
+		protected override DmdMemberInfo ResolveMemberRef(uint rid, DmdType[] genericTypeArguments) => null;
+		protected override DmdEventInfo ResolveEventDef(uint rid) => null;
+		protected override DmdPropertyInfo ResolvePropertyDef(uint rid) => null;
+		protected override DmdType ResolveTypeSpec(uint rid, DmdType[] genericTypeArguments) => null;
+		protected override DmdMethodBase ResolveMethodSpec(uint rid, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => null;
+		protected override byte[] ResolveFieldSignature(uint rid) => null;
+		protected override byte[] ResolveMethodSignature(uint rid) => null;
+		protected override byte[] ResolveMemberRefSignature(uint rid) => null;
+		protected override byte[] ResolveStandAloneSigSignature(uint rid) => null;
+		protected override byte[] ResolveTypeSpecSignature(uint rid) => null;
+		protected override byte[] ResolveMethodSpecSignature(uint rid) => null;
+		protected override string ResolveStringCore(uint offset) => null;
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) {
 			peKind = DmdPortableExecutableKinds.ILOnly;
 			machine = DmdImageFileMachine.I386;
