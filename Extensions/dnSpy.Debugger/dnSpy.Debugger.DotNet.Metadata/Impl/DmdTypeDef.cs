@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -38,8 +39,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (!baseTypeInitd) {
 					lock (LockObject) {
 						if (!baseTypeInitd) {
-							baseTypeInitd = true;
 							baseType = Module.ResolveType(GetBaseTypeToken(), GetOrCreateGenericParameters().ToArray(), null, throwOnError: false);
+							baseTypeInitd = true;
 						}
 					}
 				}
@@ -73,5 +74,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType Resolve(bool throwOnError) => this;
 		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => GetOrCreateGenericParameters();
 		public override DmdType GetGenericTypeDefinition() => IsGenericType ? this : throw new InvalidOperationException();
+
+		public abstract DmdFieldInfo[] ReadDeclaredFields(DmdType reflectedType, IList<DmdType> genericTypeArguments);
+		public abstract DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments);
+		public abstract DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments);
+		public abstract DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments);
+
+		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ReadDeclaredFields(reflectedType, GetReadOnlyGenericArguments());
+		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ReadDeclaredMethods(reflectedType, GetReadOnlyGenericArguments());
+		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(reflectedType, GetReadOnlyGenericArguments());
+		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(reflectedType, GetReadOnlyGenericArguments());
 	}
 }

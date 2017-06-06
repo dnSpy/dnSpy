@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
@@ -54,5 +55,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 			return genericParams;
 		}
+
+		public override DmdFieldInfo[] ReadDeclaredFields(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
+		public override DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
+		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
+		public override DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
 	}
 }

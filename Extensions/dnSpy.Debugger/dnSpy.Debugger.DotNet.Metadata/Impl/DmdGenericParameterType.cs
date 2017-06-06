@@ -47,11 +47,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						continue;
 					baseType = gpcType;
 				}
-				if (baseType == AppDomain.System_Object) {
-					var attrs = GenericParameterAttributes;
-					if ((attrs & DmdGenericParameterAttributes.NotNullableValueTypeConstraint) != 0)
-						baseType = AppDomain.System_ValueType;
-				}
+				if (baseType == AppDomain.System_Object && (GenericParameterAttributes & DmdGenericParameterAttributes.NotNullableValueTypeConstraint) != 0)
+					baseType = AppDomain.System_ValueType;
 				return baseType;
 			}
 		}

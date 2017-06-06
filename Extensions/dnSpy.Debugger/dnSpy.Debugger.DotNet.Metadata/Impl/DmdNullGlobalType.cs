@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdNullGlobalType : DmdTypeDef {
@@ -28,5 +29,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public DmdNullGlobalType(DmdModule module) : base(1) => Module = module ?? throw new ArgumentNullException(nameof(module));
 		protected override int GetBaseTypeToken() => 0;
 		protected override DmdType[] CreateGenericParameters_NoLock() => null;
+
+		public override DmdFieldInfo[] ReadDeclaredFields(DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
+		public override DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
+		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
+		public override DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
 	}
 }
