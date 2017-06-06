@@ -81,7 +81,6 @@
     <Compile Include="DmdObject.cs" />
     <Compile Include="DmdParameterAttributes.cs" />
     <Compile Include="DmdParameterInfo.cs" />
-    <Compile Include="DmdParameterModifier.cs" />
     <Compile Include="DmdPortableExecutableKinds.cs" />
     <Compile Include="DmdProcessorArchitecture.cs" />
     <Compile Include="DmdPropertyAttributes.cs" />
@@ -107,6 +106,7 @@
     <Compile Include="Impl\DmdAssemblyImpl.cs" />
     <Compile Include="Impl\DmdGenericParameterType.cs" />
     <Compile Include="Impl\DmdLazyMetadataReader.cs" />
+    <Compile Include="Impl\DmdMemberInfoComparer.cs" />
     <Compile Include="Impl\DmdMetadataReader.cs" />
     <Compile Include="Impl\DmdMetadataReaderBase.cs" />
     <Compile Include="Impl\DmdModuleControllerImpl.cs" />

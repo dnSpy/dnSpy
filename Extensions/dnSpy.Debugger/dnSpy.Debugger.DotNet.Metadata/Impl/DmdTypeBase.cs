@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdTypeBase : DmdType {
@@ -53,23 +54,231 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdType MakeArrayType() => throw new NotImplementedException();//TODO:
 		public sealed override DmdType MakeArrayType(int rank, IList<int> sizes, IList<int> lowerBounds) => throw new NotImplementedException();//TODO:
 		public sealed override DmdType MakeGenericType(IList<DmdType> typeArguments) => throw new NotImplementedException();//TODO:
-		public sealed override DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types, IList<DmdParameterModifier> modifiers) => throw new NotImplementedException();//TODO:
-		public sealed override DmdConstructorInfo[] GetConstructors(DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
-		public sealed override DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types, IList<DmdParameterModifier> modifiers) => throw new NotImplementedException();//TODO:
-		public sealed override DmdMethodInfo[] GetMethods(DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
-		public sealed override DmdFieldInfo GetField(string name, DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
-		public sealed override DmdFieldInfo[] GetFields(DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
-		public sealed override DmdType GetInterface(string name, bool ignoreCase) => throw new NotImplementedException();//TODO:
-		public sealed override ReadOnlyCollection<DmdType> GetReadOnlyInterfaces() => throw new NotImplementedException();//TODO:
-		public sealed override DmdEventInfo GetEvent(string name, DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
-		public sealed override DmdEventInfo[] GetEvents(DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
-		public sealed override DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types, IList<DmdParameterModifier> modifiers) => throw new NotImplementedException();//TODO:
-		public sealed override DmdPropertyInfo[] GetProperties(DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
+
+		public sealed override DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
+			if (types == null)
+				throw new ArgumentNullException(nameof(types));
+			foreach (var ctor in GetDeclaredConstructors()) {
+				if (DmdMemberInfoComparer.IsMatch(ctor, bindingAttr, callConvention, types))
+					return ctor;
+			}
+			return null;
+		}
+
+		public sealed override DmdConstructorInfo[] GetConstructors(DmdBindingFlags bindingAttr) {
+			List<DmdConstructorInfo> ctors = null;
+			foreach (var ctor in GetDeclaredConstructors()) {
+				if (DmdMemberInfoComparer.IsMatch(ctor, bindingAttr)) {
+					if (ctors == null)
+						ctors = new List<DmdConstructorInfo>();
+					ctors.Add(ctor);
+				}
+			}
+			return ctors?.ToArray() ?? Array.Empty<DmdConstructorInfo>();
+		}
+
+		public sealed override DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			if (types == null)
+				throw new ArgumentNullException(nameof(types));
+			foreach (var method in GetMethods(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
+				if (DmdMemberInfoComparer.IsMatch(method, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(method, bindingAttr, callConvention, types))
+					return method;
+			}
+			return null;
+		}
+
+		public sealed override DmdMethodInfo[] GetMethods(DmdBindingFlags bindingAttr) {
+			List<DmdMethodInfo> methods = null;
+			foreach (var method in GetMethods(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
+				if (DmdMemberInfoComparer.IsMatch(method, bindingAttr)) {
+					if (methods == null)
+						methods = new List<DmdMethodInfo>();
+					methods.Add(method);
+				}
+			}
+			return methods?.ToArray() ?? Array.Empty<DmdMethodInfo>();
+		}
+
+		public sealed override DmdFieldInfo GetField(string name, DmdBindingFlags bindingAttr) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			foreach (var field in GetFields(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
+				if (DmdMemberInfoComparer.IsMatch(field, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(field, bindingAttr))
+					return field;
+			}
+			return null;
+		}
+
+		public sealed override DmdFieldInfo[] GetFields(DmdBindingFlags bindingAttr) {
+			List<DmdFieldInfo> fields = null;
+			foreach (var field in GetFields(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
+				if (DmdMemberInfoComparer.IsMatch(field, bindingAttr)) {
+					if (fields == null)
+						fields = new List<DmdFieldInfo>();
+					fields.Add(field);
+				}
+			}
+			return fields?.ToArray() ?? Array.Empty<DmdFieldInfo>();
+		}
+
+		public sealed override DmdEventInfo GetEvent(string name, DmdBindingFlags bindingAttr) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			foreach (var @event in GetEvents(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
+				if (DmdMemberInfoComparer.IsMatch(@event, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(@event, bindingAttr))
+					return @event;
+			}
+			return null;
+		}
+
+		public sealed override DmdEventInfo[] GetEvents(DmdBindingFlags bindingAttr) {
+			List<DmdEventInfo> events = null;
+			foreach (var @event in GetEvents(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
+				if (DmdMemberInfoComparer.IsMatch(@event, bindingAttr)) {
+					if (events == null)
+						events = new List<DmdEventInfo>();
+					events.Add(@event);
+				}
+			}
+			return events?.ToArray() ?? Array.Empty<DmdEventInfo>();
+		}
+
+		public sealed override DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			if (returnType == null)
+				throw new ArgumentNullException(nameof(returnType));
+			if (types == null)
+				throw new ArgumentNullException(nameof(types));
+			foreach (var property in GetProperties(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
+				if (DmdMemberInfoComparer.IsMatch(property, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(property, bindingAttr, returnType, types))
+					return property;
+			}
+			return null;
+		}
+
+		public sealed override DmdPropertyInfo[] GetProperties(DmdBindingFlags bindingAttr) {
+			List<DmdPropertyInfo> properties = null;
+			foreach (var property in GetProperties(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
+				if (DmdMemberInfoComparer.IsMatch(property, bindingAttr)) {
+					if (properties == null)
+						properties = new List<DmdPropertyInfo>();
+					properties.Add(property);
+				}
+			}
+			return properties?.ToArray() ?? Array.Empty<DmdPropertyInfo>();
+		}
+
+		public sealed override DmdMemberInfo[] GetMember(string name, DmdMemberTypes type, DmdBindingFlags bindingAttr) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+
+			DmdConstructorInfo[] ctors = null;
+			if ((type & DmdMemberTypes.Constructor) != 0) {
+				ctors = GetConstructors(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
+				if (type == DmdMemberTypes.Constructor)
+					return ctors;
+			}
+
+			DmdMethodInfo[] methods = null;
+			if ((type & DmdMemberTypes.Method) != 0) {
+				methods = GetMethods(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
+				if (type == DmdMemberTypes.Method)
+					return methods;
+			}
+
+			DmdFieldInfo[] fields = null;
+			if ((type & DmdMemberTypes.Field) != 0) {
+				fields = GetFields(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
+				if (type == DmdMemberTypes.Field)
+					return fields;
+			}
+
+			DmdPropertyInfo[] properties = null;
+			if ((type & DmdMemberTypes.Property) != 0) {
+				properties = GetProperties(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
+				if (type == DmdMemberTypes.Property)
+					return properties;
+			}
+
+			DmdEventInfo[] events = null;
+			if ((type & DmdMemberTypes.Event) != 0) {
+				events = GetEvents(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
+				if (type == DmdMemberTypes.Event)
+					return events;
+			}
+
+			DmdType[] types = null;
+			if ((type & (DmdMemberTypes.TypeInfo | DmdMemberTypes.NestedType)) != 0) {
+				types = GetNestedTypes(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
+				// Matches Reflection behavior
+				if (type == DmdMemberTypes.TypeInfo || type == DmdMemberTypes.NestedType)
+					return types;
+			}
+
+			int len = (ctors?.Length ?? 0) + (methods?.Length ?? 0) + (fields?.Length ?? 0) + (properties?.Length ?? 0) + (events?.Length ?? 0) + (types?.Length ?? 0);
+			var res = type == (DmdMemberTypes.Method | DmdMemberTypes.Constructor) ? new DmdMethodBase[len] : new DmdMemberInfo[len];
+			int index = 0;
+			Copy(ctors, res, ref index);
+			Copy(methods, res, ref index);
+			Copy(fields, res, ref index);
+			Copy(properties, res, ref index);
+			Copy(events, res, ref index);
+			Copy(types, res, ref index);
+			if (index != res.Length)
+				throw new InvalidOperationException();
+			return res;
+		}
+
+		static void Copy(DmdMemberInfo[] src, DmdMemberInfo[] dst, ref int index) {
+			if (src == null)
+				return;
+			Array.Copy(src, 0, dst, index, src.Length);
+			index += src.Length;
+		}
+
+		public sealed override DmdMemberInfo[] GetMembers(DmdBindingFlags bindingAttr) {
+			var list = new List<DmdMemberInfo>();
+			list.AddRange(GetMethods(bindingAttr));
+			list.AddRange(GetConstructors(bindingAttr));
+			list.AddRange(GetProperties(bindingAttr));
+			list.AddRange(GetEvents(bindingAttr));
+			list.AddRange(GetFields(bindingAttr));
+			list.AddRange(GetNestedTypes(bindingAttr));
+			return list.ToArray();
+		}
+
 		public sealed override DmdType[] GetNestedTypes(DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
 		public sealed override DmdType GetNestedType(string name, DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
-		public sealed override DmdMemberInfo[] GetMember(string name, DmdMemberTypes type, DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
-		public sealed override DmdMemberInfo[] GetMembers(DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
-		public sealed override DmdMemberInfo[] GetDefaultMembers() => throw new NotImplementedException();//TODO:
+
+		public sealed override DmdType GetInterface(string name, bool ignoreCase) => throw new NotImplementedException();//TODO:
+		public sealed override ReadOnlyCollection<DmdType> GetReadOnlyInterfaces() => throw new NotImplementedException();//TODO:
+
+		public sealed override DmdMemberInfo[] GetDefaultMembers() {
+			var name = GetDefaultMemberName(this);
+			if (name == null)
+				return Array.Empty<DmdMemberInfo>();
+			return GetMember(name);
+		}
+
+		static string GetDefaultMemberName(DmdType type) {
+			var defaultMemberAttribute = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Reflection_DefaultMemberAttribute, isOptional: true);
+			if ((object)defaultMemberAttribute == null)
+				return null;
+			for (int i = 0; i < 100; i++) {
+				foreach (var ca in type.GetCustomAttributesData()) {
+					if (ca.AttributeType == defaultMemberAttribute)
+						return ca.ConstructorArguments.Count == 1 ? ca.ConstructorArguments[0].Value as string : null;
+				}
+				type = type.BaseType;
+				if (type == null)
+					break;
+			}
+			return null;
+		}
+
 		public sealed override string[] GetEnumNames() => throw new NotImplementedException();//TODO:
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
 		public sealed override ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => throw new NotImplementedException();//TODO:
@@ -82,7 +291,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected virtual DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => null;
 		protected virtual DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => null;
 
-		public ReadOnlyCollection<DmdFieldInfo> DeclaredFields {
+		ReadOnlyCollection<DmdFieldInfo> DeclaredFields {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredFields_DONT_USE != null)
@@ -97,7 +306,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public ReadOnlyCollection<DmdMethodBase> DeclaredMethods {
+		ReadOnlyCollection<DmdMethodBase> DeclaredMethods {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredMethods_DONT_USE != null)
@@ -112,7 +321,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public ReadOnlyCollection<DmdPropertyInfo> DeclaredProperties {
+		ReadOnlyCollection<DmdPropertyInfo> DeclaredProperties {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredProperties_DONT_USE != null)
@@ -127,7 +336,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public ReadOnlyCollection<DmdEventInfo> DeclaredEvents {
+		ReadOnlyCollection<DmdEventInfo> DeclaredEvents {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredEvents_DONT_USE != null)
@@ -288,32 +497,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		IEnumerable<DmdConstructorInfo> GetConstructors(bool inherit) {
+		IEnumerable<DmdConstructorInfo> GetDeclaredConstructors() {
 			foreach (var methodBase in DeclaredMethods) {
 				if (methodBase.MemberType == DmdMemberTypes.Constructor)
 					yield return (DmdConstructorInfo)methodBase;
-			}
-
-			if (inherit) {
-				var reader = BaseMethodsReader;
-				int index = 0;
-				for (;;) {
-					DmdConstructorInfo ctor = null;
-					lock (LockObject) {
-						for (;;) {
-							if (index >= reader.CurrentMembers.Count && !reader.AddMembersFromNextBaseType())
-								break;
-							var methodBase = reader.CurrentMembers[index++];
-							if (methodBase.MemberType != DmdMemberTypes.Constructor)
-								continue;
-							ctor = (DmdConstructorInfo)methodBase;
-							break;
-						}
-					}
-					if (ctor == null)
-						break;
-					yield return ctor;
-				}
 			}
 		}
 

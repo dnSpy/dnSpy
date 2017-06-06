@@ -301,25 +301,23 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <param name="callConvention">Calling convention</param>
 		/// <param name="types">Parameter types</param>
-		/// <param name="modifiers">Modifiers or null</param>
 		/// <returns></returns>
-		public abstract DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types, IList<DmdParameterModifier> modifiers);
+		public abstract DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types);
 
 		/// <summary>
 		/// Gets a constructor
 		/// </summary>
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <param name="types">Parameter types</param>
-		/// <param name="modifiers">Modifiers or null</param>
 		/// <returns></returns>
-		public DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, IList<DmdType> types, IList<DmdParameterModifier> modifiers) => GetConstructor(bindingAttr, DmdCallingConventions.Any, types, modifiers);
+		public DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, IList<DmdType> types) => GetConstructor(bindingAttr, DmdCallingConventions.Any, types);
 
 		/// <summary>
 		/// Gets a public constructor
 		/// </summary>
 		/// <param name="types">Parameter types</param>
 		/// <returns></returns>
-		public DmdConstructorInfo GetConstructor(IList<DmdType> types) => GetConstructor(DmdBindingFlags.Instance | DmdBindingFlags.Public, types, null);
+		public DmdConstructorInfo GetConstructor(IList<DmdType> types) => GetConstructor(DmdBindingFlags.Instance | DmdBindingFlags.Public, types);
 
 		/// <summary>
 		/// Gets all public constructors
@@ -337,7 +335,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the type initializer
 		/// </summary>
-		public DmdConstructorInfo TypeInitializer => GetConstructor(DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, DmdCallingConventions.Any, Array.Empty<DmdType>(), null);
+		public DmdConstructorInfo TypeInitializer => GetConstructor(DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, DmdCallingConventions.Any, Array.Empty<DmdType>());
 
 		/// <summary>
 		/// Gets a method
@@ -346,9 +344,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <param name="callConvention">Calling convention</param>
 		/// <param name="types">Parameter types or null</param>
-		/// <param name="modifiers">Modifiers or null</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types, IList<DmdParameterModifier> modifiers);
+		public abstract DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types);
 
 		/// <summary>
 		/// Gets a method
@@ -356,18 +353,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <param name="types">Parameter types or null</param>
-		/// <param name="modifiers">Modifiers or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, IList<DmdType> types, IList<DmdParameterModifier> modifiers) => GetMethod(name, bindingAttr, DmdCallingConventions.Any, types, modifiers);
-
-		/// <summary>
-		/// Gets a public static or instance method
-		/// </summary>
-		/// <param name="name">Name</param>
-		/// <param name="types">Parameter types or null</param>
-		/// <param name="modifiers">Modifiers or null</param>
-		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, IList<DmdType> types, IList<DmdParameterModifier> modifiers) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types, modifiers);
+		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, IList<DmdType> types) => GetMethod(name, bindingAttr, DmdCallingConventions.Any, types);
 
 		/// <summary>
 		/// Gets a public static or instance method
@@ -375,7 +362,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, IList<DmdType> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types, null);
+		public DmdMethodInfo GetMethod(string name, IList<DmdType> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types);
 
 		/// <summary>
 		/// Gets a method
@@ -383,14 +370,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr) => GetMethod(name, bindingAttr, DmdCallingConventions.Any, null, null);
+		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr) => GetMethod(name, bindingAttr, DmdCallingConventions.Any, null);
 
 		/// <summary>
 		/// Gets a public static or instance method
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, null, null);
+		public DmdMethodInfo GetMethod(string name) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, null);
 
 		/// <summary>
 		/// Gets all public static or instance methods
@@ -495,19 +482,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <param name="returnType">Return type</param>
 		/// <param name="types">Parameter types or null</param>
-		/// <param name="modifiers">Modifiers or null</param>
 		/// <returns></returns>
-		public abstract DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types, IList<DmdParameterModifier> modifiers);
-
-		/// <summary>
-		/// Gets a public static or instance property
-		/// </summary>
-		/// <param name="name">Name</param>
-		/// <param name="returnType">Return type</param>
-		/// <param name="types">Parameter types or null</param>
-		/// <param name="modifiers">Modifiers or null</param>
-		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, DmdType returnType, IList<DmdType> types, IList<DmdParameterModifier> modifiers) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, returnType, types, modifiers);
+		public abstract DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types);
 
 		/// <summary>
 		/// Gets a property
@@ -515,7 +491,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr) => GetProperty(name, bindingAttr, null, null, null);
+		public DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr) => GetProperty(name, bindingAttr, null, null);
 
 		/// <summary>
 		/// Gets a public static or instance property
@@ -524,7 +500,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="returnType">Return type</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, DmdType returnType, IList<DmdType> types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, returnType, types, null);
+		public DmdPropertyInfo GetProperty(string name, DmdType returnType, IList<DmdType> types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, returnType, types);
 
 		/// <summary>
 		/// Gets a public static or instance property
@@ -532,7 +508,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, IList<DmdType> types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, null, types, null);
+		public DmdPropertyInfo GetProperty(string name, IList<DmdType> types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, null, types);
 
 		/// <summary>
 		/// Gets a public static or instance property
@@ -540,14 +516,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="returnType">Return type</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, DmdType returnType) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, returnType, null, null);
+		public DmdPropertyInfo GetProperty(string name, DmdType returnType) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, returnType, null);
 
 		/// <summary>
 		/// Gets a public static or instance property
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, null, null, null);
+		public DmdPropertyInfo GetProperty(string name) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, null, null);
 
 		/// <summary>
 		/// Gets all properties

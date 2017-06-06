@@ -1,0 +1,122 @@
+﻿/*
+    Copyright (C) 2014-2017 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Collections.Generic;
+
+namespace dnSpy.Debugger.DotNet.Metadata.Impl {
+	static class DmdMemberInfoComparer {
+		public static bool IsMatch(DmdType type, DmdBindingFlags bindingAttr) {
+			var attr = DmdBindingFlags.Default;
+			if (type.IsVisible)
+				attr |= DmdBindingFlags.Public;
+			else
+				attr |= DmdBindingFlags.NonPublic;
+			return (attr & bindingAttr) == attr;
+		}
+
+		public static bool IsMatch(DmdMethodBase method, DmdBindingFlags bindingAttr) {
+			var attr = DmdBindingFlags.Default;
+			if (method.IsPublic)
+				attr |= DmdBindingFlags.Public;
+			else
+				attr |= DmdBindingFlags.NonPublic;
+			if (method.IsStatic)
+				attr |= DmdBindingFlags.Static;
+			else
+				attr |= DmdBindingFlags.Instance;
+			return (attr & bindingAttr) == attr;
+		}
+
+		public static bool IsMatch(DmdFieldInfo field, DmdBindingFlags bindingAttr) {
+			var attr = DmdBindingFlags.Default;
+			if (field.IsPublic)
+				attr |= DmdBindingFlags.Public;
+			else
+				attr |= DmdBindingFlags.NonPublic;
+			if (field.IsStatic)
+				attr |= DmdBindingFlags.Static;
+			else
+				attr |= DmdBindingFlags.Instance;
+			return (attr & bindingAttr) == attr;
+		}
+
+		public static bool IsMatch(DmdEventInfo @event, DmdBindingFlags bindingAttr) {
+			var attr = DmdBindingFlags.Default;
+			if (@event.AddMethod?.IsPublic == true || @event.RemoveMethod?.IsPublic == true || @event.RaiseMethod?.IsPublic == true)
+				attr |= DmdBindingFlags.Public;
+			else
+				attr |= DmdBindingFlags.NonPublic;
+			if (@event.AddMethod?.IsStatic == true || @event.RemoveMethod?.IsStatic == true || @event.RaiseMethod?.IsStatic == true)
+				attr |= DmdBindingFlags.Static;
+			else
+				attr |= DmdBindingFlags.Instance;
+			return (attr & bindingAttr) == attr;
+		}
+
+		public static bool IsMatch(DmdPropertyInfo property, DmdBindingFlags bindingAttr) {
+			var attr = DmdBindingFlags.Default;
+			if (property.GetMethod?.IsPublic == true || property.SetMethod?.IsPublic == true)
+				attr |= DmdBindingFlags.Public;
+			else
+				attr |= DmdBindingFlags.NonPublic;
+			if (property.GetMethod?.IsStatic == true || property.SetMethod?.IsStatic == true)
+				attr |= DmdBindingFlags.Static;
+			else
+				attr |= DmdBindingFlags.Instance;
+			return (attr & bindingAttr) == attr;
+		}
+
+		static bool IsMatch(DmdMethodBase method, DmdCallingConventions callConvention) =>
+			callConvention == DmdCallingConventions.Any ||
+			(method.CallingConvention & DmdCallingConventions.Any) == (callConvention & DmdCallingConventions.Any);
+
+		public static bool IsMatch(DmdMethodBase method, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
+			if (!IsMatch(method, bindingAttr))
+				return false;
+			if (!IsMatch(method, callConvention))
+				return false;
+			return IsMatch(method.GetReadOnlyParameters(), types);
+		}
+
+		static bool IsMatch(IList<DmdParameterInfo> p, IList<DmdType> types) {
+			if (p.Count != types.Count)
+				return false;
+			for (int i = 0; i < p.Count; i++) {
+				if (!DmdMemberInfoEqualityComparer.Default.Equals(p[i].ParameterType, types[i]))
+					return false;
+			}
+			return true;
+		}
+
+		public static bool IsMatch(DmdPropertyInfo property, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types) {
+			if (!IsMatch(property, bindingAttr))
+				return false;
+			if (!DmdMemberInfoEqualityComparer.Default.Equals(property.PropertyType, returnType))
+				return false;
+			return IsMatch(property.GetReadOnlyIndexParameters(), types);
+		}
+
+		public static bool IsMatch(DmdMemberInfo member, string name, DmdBindingFlags bindingAttr) {
+			if ((bindingAttr & DmdBindingFlags.IgnoreCase) != 0)
+				return StringComparer.OrdinalIgnoreCase.Equals(member.Name, name);
+			return StringComparer.Ordinal.Equals(member.Name, name);
+		}
+	}
+}

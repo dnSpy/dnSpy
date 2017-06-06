@@ -325,12 +325,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="bindingAttr">Binding attributes</param>
 		/// <param name="callConvention">Calling convention</param>
 		/// <param name="types">Method parameter types or null</param>
-		/// <param name="modifiers">Method parameter type modifiers or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types, IList<DmdParameterModifier> modifiers) {
+		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
 			if (types == null)
 				return GlobalType.GetMethod(name, bindingAttr);
-			return GlobalType.GetMethod(name, bindingAttr, callConvention, types, modifiers);
+			return GlobalType.GetMethod(name, bindingAttr, callConvention, types);
 		}
 
 		/// <summary>
@@ -339,14 +338,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Method name</param>
 		/// <param name="types">Method parameter types</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, IList<DmdType> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types, null);
+		public DmdMethodInfo GetMethod(string name, IList<DmdType> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types);
 
 		/// <summary>
 		/// Gets a global public static or instance method
 		/// </summary>
 		/// <param name="name">Method name</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, null, null);
+		public DmdMethodInfo GetMethod(string name) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, null);
 
 		/// <summary>
 		/// Returns the metadata name (<see cref="ScopeName"/>)

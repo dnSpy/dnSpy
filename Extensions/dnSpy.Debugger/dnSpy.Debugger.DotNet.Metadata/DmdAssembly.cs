@@ -203,7 +203,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return null;
 			DmdConstructorInfo ctor;
 			if (argTypes != null)
-				ctor = type.GetConstructor(bindingAttr, argTypes, null);
+				ctor = type.GetConstructor(bindingAttr, argTypes);
 			else {
 				ctor = null;
 				foreach (var c in type.GetConstructors(bindingAttr)) {
