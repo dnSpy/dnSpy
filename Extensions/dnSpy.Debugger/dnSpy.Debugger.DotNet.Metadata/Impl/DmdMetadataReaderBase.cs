@@ -32,13 +32,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			switch ((uint)metadataToken >> 24) {
 			case 0x06:
 				var method = ResolveMethodDef(rid);
-				if (method != null)
+				if ((object)method != null)
 					return method;
 				break;
 
 			case 0x0A:
 				var mr = ResolveMemberRef(rid, genericTypeArguments);
-				if (mr != null) {
+				if ((object)mr != null) {
 					if (mr is DmdMethodBase methodRef)
 						return TryResolve(methodRef);
 					if (throwOnError)
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			case 0x2B:
 				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
-				if (methodSpec != null)
+				if ((object)methodSpec != null)
 					return TryResolve(methodSpec);
 				break;
 			}
@@ -63,13 +63,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			switch ((uint)metadataToken >> 24) {
 			case 0x04:
 				var field = ResolveFieldDef(rid);
-				if (field != null)
+				if ((object)field != null)
 					return field;
 				break;
 
 			case 0x0A:
 				var memberRef = ResolveMemberRef(rid, genericTypeArguments);
-				if (memberRef != null) {
+				if ((object)memberRef != null) {
 					if (memberRef is DmdFieldInfo fieldRef)
 						return TryResolve(fieldRef);
 					if (throwOnError)
@@ -88,19 +88,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
 				var typeRef = ResolveTypeRef(rid);
-				if (typeRef != null)
+				if ((object)typeRef != null)
 					return TryResolve(typeRef);
 				break;
 
 			case 0x02:
 				var typeDef = ResolveTypeDef(rid);
-				if (typeDef != null)
+				if ((object)typeDef != null)
 					return typeDef;
 				break;
 
 			case 0x1B:
 				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments);
-				if (typeSpec != null)
+				if ((object)typeSpec != null)
 					return TryResolve(typeSpec);
 				break;
 			}
@@ -115,43 +115,43 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
 				var typeRef = ResolveTypeRef(rid);
-				if (typeRef != null)
+				if ((object)typeRef != null)
 					return TryResolve(typeRef);
 				break;
 
 			case 0x02:
 				var typeDef = ResolveTypeDef(rid);
-				if (typeDef != null)
+				if ((object)typeDef != null)
 					return typeDef;
 				break;
 
 			case 0x04:
 				var field = ResolveFieldDef(rid);
-				if (field != null)
+				if ((object)field != null)
 					return field;
 				break;
 
 			case 0x06:
 				var method = ResolveMethodDef(rid);
-				if (method != null)
+				if ((object)method != null)
 					return method;
 				break;
 
 			case 0x0A:
 				var memberRef = ResolveMemberRef(rid, genericTypeArguments);
-				if (memberRef != null)
+				if ((object)memberRef != null)
 					return TryResolve(memberRef);
 				break;
 
 			case 0x1B:
 				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments);
-				if (typeSpec != null)
+				if ((object)typeSpec != null)
 					return TryResolve(typeSpec);
 				break;
 
 			case 0x2B:
 				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
-				if (methodSpec != null)
+				if ((object)methodSpec != null)
 					return TryResolve(methodSpec);
 				break;
 			}

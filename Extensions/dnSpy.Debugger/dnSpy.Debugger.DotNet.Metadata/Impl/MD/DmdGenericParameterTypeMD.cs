@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				return null;
 
 			IList<DmdType> genericTypeArguments, genericMethodArguments;
-			if (DeclaringMethod != null) {
+			if ((object)DeclaringMethod != null) {
 				genericTypeArguments = DeclaringMethod.DeclaringType.GetReadOnlyGenericArguments();
 				genericMethodArguments = DeclaringMethod.GetReadOnlyGenericArguments();
 			}
@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				if (!CodedToken.TypeDefOrRef.Decode(row.Constraint, out uint token))
 					return null;
 				var type = Module.ResolveType((int)token, genericTypeArguments, genericMethodArguments, throwOnError: false);
-				if (type == null)
+				if ((object)type == null)
 					return null;
 				gpcList[i] = type;
 			}

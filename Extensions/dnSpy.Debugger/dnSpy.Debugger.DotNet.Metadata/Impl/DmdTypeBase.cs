@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override string FullName => throw new NotImplementedException();//TODO:
 		public sealed override string AssemblyQualifiedName => throw new NotImplementedException();//TODO:
 		public sealed override bool IsCOMObject => throw new NotImplementedException();//TODO:
-		public sealed override bool HasElementType => GetElementType() != null;
+		public sealed override bool HasElementType => (object)GetElementType() != null;
 		public override DmdGenericParameterAttributes GenericParameterAttributes => throw new InvalidOperationException();
 		public override bool IsGenericType => false;
 		public override bool IsGenericTypeDefinition => false;

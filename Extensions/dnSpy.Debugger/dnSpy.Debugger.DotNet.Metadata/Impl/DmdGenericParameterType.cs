@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdGenericParameterType : DmdTypeBase {
-		public override DmdTypeSignatureKind TypeSignatureKind => declaringType != null ? DmdTypeSignatureKind.TypeGenericParameter : DmdTypeSignatureKind.MethodGenericParameter;
+		public override DmdTypeSignatureKind TypeSignatureKind => (object)declaringType != null ? DmdTypeSignatureKind.TypeGenericParameter : DmdTypeSignatureKind.MethodGenericParameter;
 		public override DmdTypeScope TypeScope => new DmdTypeScope(Module);
 		public override DmdMethodBase DeclaringMethod => declaringMethod;
 		public override DmdType DeclaringType => declaringType;
@@ -63,13 +63,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected DmdGenericParameterType(uint rid, DmdType declaringType, string name, int position, DmdGenericParameterAttributes attributes)
 			: this(rid, declaringType, null, name, position, attributes) {
-			if (declaringType == null)
+			if ((object)declaringType == null)
 				throw new ArgumentNullException(nameof(declaringType));
 		}
 
 		protected DmdGenericParameterType(uint rid, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes)
 			: this(rid, null, declaringMethod, name, position, attributes) {
-			if (declaringMethod == null)
+			if ((object)declaringMethod == null)
 				throw new ArgumentNullException(nameof(declaringMethod));
 		}
 
