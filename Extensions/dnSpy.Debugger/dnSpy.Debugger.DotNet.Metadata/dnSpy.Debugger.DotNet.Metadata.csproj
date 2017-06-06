@@ -116,6 +116,7 @@
     <Compile Include="Impl\DmdTypeDef.cs" />
     <Compile Include="Impl\LazyList.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
+    <Compile Include="Impl\MD\DmdGenericParameterTypeMD.cs" />
     <Compile Include="Impl\MD\DmdTypeDefMD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

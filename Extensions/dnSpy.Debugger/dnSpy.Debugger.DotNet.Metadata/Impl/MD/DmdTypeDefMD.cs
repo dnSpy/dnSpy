@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdTypeDefMD : DmdTypeDef {
@@ -37,7 +38,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Attributes = (DmdTypeAttributes)row.Flags;
 		}
 
-		protected override int GetBaseTypeToken() => (int)reader.TablesStream.ReadTypeDefRow((uint)MetadataToken & 0x00FFFFFF).Extends;
-		protected override DmdType[] CreateGenericParameters_NoLock() => throw new NotImplementedException();
+		protected override int GetBaseTypeToken() => (int)reader.TablesStream.ReadTypeDefRow(Rid).Extends;
+
+		protected override DmdType[] CreateGenericParameters_NoLock() {
+			var ridList = reader.Metadata.GetGenericParamRidList(Table.TypeDef, Rid);
+			if (ridList.Count == 0)
+				return null;
+			var genericParams = new DmdType[ridList.Count];
+			for (int i = 0; i < genericParams.Length; i++) {
+				uint rid = ridList[i];
+				var row = reader.TablesStream.ReadGenericParamRow(rid) ?? new RawGenericParamRow();
+				var gpName = reader.StringsStream.ReadNoNull(row.Name);
+				var gpType = new DmdGenericParameterTypeMD(reader, rid, this, gpName, row.Number, (DmdGenericParameterAttributes)row.Flags);
+				genericParams[i] = gpType;
+			}
+			return genericParams;
+		}
 	}
 }

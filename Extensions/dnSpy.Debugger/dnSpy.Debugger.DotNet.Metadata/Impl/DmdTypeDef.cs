@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 using System;
 using System.Runtime.InteropServices;
 
@@ -63,6 +62,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		DmdType[] __genericParameters_DONT_USE;
 
+		protected uint Rid => rid;
 		readonly uint rid;
 
 		protected DmdTypeDef(uint rid) => this.rid = rid;

@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.Public;
 		public override int GenericParameterPosition { get; }
 		public override string Name { get; }
-		public override int MetadataToken { get; }
+		public override int MetadataToken => (int)(0x2A000000 + rid);
 		public override bool IsMetadataReference => false;
 
 		public override DmdType BaseType {
@@ -55,6 +55,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
+		protected uint Rid => rid;
+		readonly uint rid;
 		readonly DmdType declaringType;
 		readonly DmdMethodBase declaringMethod;
 
@@ -71,7 +73,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		DmdGenericParameterType(uint rid, DmdType declaringType, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes) {
-			MetadataToken = (int)(0x2A000000 + rid);
+			this.rid = rid;
 			this.declaringType = declaringType;
 			this.declaringMethod = declaringMethod;
 			Name = name ?? string.Empty;
