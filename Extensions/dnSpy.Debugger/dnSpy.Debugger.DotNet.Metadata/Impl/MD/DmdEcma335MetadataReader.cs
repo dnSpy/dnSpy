@@ -25,9 +25,9 @@ using dnlib.PE;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdEcma335MetadataReader : DmdMetadataReader {
 		public override Guid ModuleVersionId { get; }
-		public override int MDStreamVersion => ((metadata.TablesStream.Version & 0xFF00) << 8) | (metadata.TablesStream.Version & 0xFF);
+		public override int MDStreamVersion => ((TablesStream.Version & 0xFF00) << 8) | (TablesStream.Version & 0xFF);
 		public override string ModuleScopeName { get; }
-		public override string ImageRuntimeVersion => metadata.VersionString;
+		public override string ImageRuntimeVersion => Metadata.VersionString;
 		public override DmdMethodInfo EntryPoint => throw new NotImplementedException();//TODO:
 
 		public static DmdEcma335MetadataReader Create(DmdModuleImpl module, IntPtr address, uint size, bool isFileLayout) {
@@ -48,84 +48,101 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return new DmdEcma335MetadataReader(module, metadata);
 		}
 
+		internal DmdModule Module => module;
+		internal IMetaData Metadata { get; }
+		internal TablesStream TablesStream => Metadata.TablesStream;
+		internal StringsStream StringsStream => Metadata.StringsStream;
+		internal GuidStream GuidStream => Metadata.GuidStream;
+		internal BlobStream BlobStream => Metadata.BlobStream;
+
 		readonly DmdModuleImpl module;
-		readonly IMetaData metadata;
+		readonly LazyList<DmdType> typeDefList;
 
 		DmdEcma335MetadataReader(DmdModuleImpl module, IMetaData metadata) {
 			this.module = module;
-			this.metadata = metadata;
+			Metadata = metadata;
 
-			var row = metadata.TablesStream.ReadModuleRow(1);
+			var row = TablesStream.ReadModuleRow(1);
 			ModuleScopeName = metadata.StringsStream.ReadNoNull(row?.Name ?? 0);
 			ModuleVersionId = metadata.GuidStream.Read(row?.Mvid ?? 0) ?? Guid.Empty;
+
+			var ts = TablesStream;
+			typeDefList = new LazyList<DmdType>(ts.TypeDefTable.Rows, rid => new DmdTypeDefMD(this, rid));
 		}
 
-		public override DmdType[] GetTypes() => throw new NotImplementedException();//TODO:
+		public override DmdType[] GetTypes() {
+			var result = new DmdType[TablesStream.TypeDefTable.Rows];
+			for (int i = 0; i < result.Length; i++) {
+				var type = ResolveTypeDef((uint)i + 1);
+				result[i] = type ?? throw new InvalidOperationException();
+			}
+			return result;
+		}
 
 		internal override DmdType ResolveTypeRef(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdType ResolveTypeDef(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdType ResolveTypeDef(uint rid) => typeDefList[rid - 1];
 		internal override DmdFieldInfo ResolveFieldDef(uint rid) => throw new NotImplementedException();//TODO:
 		internal override DmdMethodBase ResolveMethodDef(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdMemberInfo ResolveMemberRef(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdMemberInfo ResolveMemberRef(uint rid, DmdType[] genericTypeArguments) => throw new NotImplementedException();//TODO:
 		internal override DmdEventInfo ResolveEventDef(uint rid) => throw new NotImplementedException();//TODO:
 		internal override DmdPropertyInfo ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdType ResolveTypeSpec(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdMethodBase ResolveMethodSpec(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdType ResolveTypeSpec(uint rid, DmdType[] genericTypeArguments) => throw new NotImplementedException();//TODO:
+		internal override DmdMethodBase ResolveMethodSpec(uint rid, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => throw new NotImplementedException();//TODO:
 
 		internal override byte[] ResolveFieldSignature(uint rid) {
-			var row = metadata.TablesStream.ReadFieldRow(rid);
+			var row = TablesStream.ReadFieldRow(rid);
 			if (row == null)
 				return null;
-			return metadata.BlobStream.Read(row.Signature);
+			return Metadata.BlobStream.Read(row.Signature);
 		}
 
 		internal override byte[] ResolveMethodSignature(uint rid) {
-			var row = metadata.TablesStream.ReadMethodRow(rid);
+			var row = TablesStream.ReadMethodRow(rid);
 			if (row == null)
 				return null;
-			return metadata.BlobStream.Read(row.Signature);
+			return Metadata.BlobStream.Read(row.Signature);
 		}
 
 		internal override byte[] ResolveMemberRefSignature(uint rid) {
-			var row = metadata.TablesStream.ReadMemberRefRow(rid);
+			var row = TablesStream.ReadMemberRefRow(rid);
 			if (row == null)
 				return null;
-			return metadata.BlobStream.Read(row.Signature);
+			return Metadata.BlobStream.Read(row.Signature);
 		}
 
 		internal override byte[] ResolveStandAloneSigSignature(uint rid) {
-			var row = metadata.TablesStream.ReadStandAloneSigRow(rid);
+			var row = TablesStream.ReadStandAloneSigRow(rid);
 			if (row == null)
 				return null;
-			return metadata.BlobStream.Read(row.Signature);
+			return Metadata.BlobStream.Read(row.Signature);
 		}
 
 		internal override byte[] ResolveTypeSpecSignature(uint rid) {
-			var row = metadata.TablesStream.ReadTypeSpecRow(rid);
+			var row = TablesStream.ReadTypeSpecRow(rid);
 			if (row == null)
 				return null;
-			return metadata.BlobStream.Read(row.Signature);
+			return Metadata.BlobStream.Read(row.Signature);
 		}
 
 		internal override byte[] ResolveMethodSpecSignature(uint rid) {
-			var row = metadata.TablesStream.ReadMethodSpecRow(rid);
+			var row = TablesStream.ReadMethodSpecRow(rid);
 			if (row == null)
 				return null;
-			return metadata.BlobStream.Read(row.Instantiation);
+			return Metadata.BlobStream.Read(row.Instantiation);
 		}
 
-		internal override string ResolveStringCore(uint offset) => metadata.USStream.Read(offset);
+		internal override string ResolveStringCore(uint offset) => Metadata.USStream.Read(offset);
 
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) {
-			machine = (DmdImageFileMachine)metadata.PEImage.ImageNTHeaders.FileHeader.Machine;
+			machine = (DmdImageFileMachine)Metadata.PEImage.ImageNTHeaders.FileHeader.Machine;
 			peKind = 0;
-			if ((metadata.ImageCor20Header.Flags & ComImageFlags.ILOnly) != 0)
+			if ((Metadata.ImageCor20Header.Flags & ComImageFlags.ILOnly) != 0)
 				peKind |= DmdPortableExecutableKinds.ILOnly;
-			if (metadata.PEImage.ImageNTHeaders.OptionalHeader.Magic != 0x010B)
+			if (Metadata.PEImage.ImageNTHeaders.OptionalHeader.Magic != 0x010B)
 				peKind |= DmdPortableExecutableKinds.PE32Plus;
-			if ((metadata.ImageCor20Header.Flags & ComImageFlags._32BitRequired) != 0)
+			if ((Metadata.ImageCor20Header.Flags & ComImageFlags._32BitRequired) != 0)
 				peKind |= DmdPortableExecutableKinds.Required32Bit;
-			if ((metadata.ImageCor20Header.Flags & ComImageFlags._32BitPreferred) != 0)
+			if ((Metadata.ImageCor20Header.Flags & ComImageFlags._32BitPreferred) != 0)
 				peKind |= DmdPortableExecutableKinds.Preferred32Bit;
 		}
 
@@ -133,18 +150,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public override DmdType[] GetExportedTypes() => throw new NotImplementedException();//TODO:
 
 		public override DmdAssemblyName[] GetReferencedAssemblies() {
-			var tbl = metadata.TablesStream.AssemblyRefTable;
+			var tbl = TablesStream.AssemblyRefTable;
 			if (tbl.Rows == 0)
 				return Array.Empty<DmdAssemblyName>();
 			var res = new DmdAssemblyName[tbl.Rows];
 			for (int i = 0; i < res.Length; i++) {
-				var row = metadata.TablesStream.ReadAssemblyRefRow((uint)i + 1);
+				var row = TablesStream.ReadAssemblyRefRow((uint)i + 1);
 				var asmName = new DmdAssemblyName();
-				asmName.Name = metadata.StringsStream.ReadNoNull(row.Name);
-				asmName.CultureName = metadata.StringsStream.ReadNoNull(row.Locale);
+				asmName.Name = Metadata.StringsStream.ReadNoNull(row.Name);
+				asmName.CultureName = Metadata.StringsStream.ReadNoNull(row.Locale);
 				asmName.Version = new Version(row.MajorVersion, row.MinorVersion, row.BuildNumber, row.RevisionNumber);
 				if (row.PublicKeyOrToken != 0) {
-					var bytes = metadata.BlobStream.ReadNoNull(row.PublicKeyOrToken);
+					var bytes = Metadata.BlobStream.ReadNoNull(row.PublicKeyOrToken);
 					if ((row.Flags & (int)DmdAssemblyNameFlags.PublicKey) != 0)
 						asmName.SetPublicKey(bytes);
 					else

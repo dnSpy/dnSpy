@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		static DmdFieldInfo TryResolve(DmdFieldInfo member) => member.ResolveNoThrow() ?? member;
 		static DmdMethodBase TryResolve(DmdMethodBase member) => member.ResolveMethodBaseNoThrow() ?? member;
 
-		public DmdMethodBase ResolveMethod(int metadataToken) {
+		public DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x06:
@@ -43,25 +43,28 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 
 			case 0x0A:
-				var mr = ResolveMemberRef(rid);
+				var mr = ResolveMemberRef(rid, genericTypeArguments);
 				if (mr != null) {
 					if (mr is DmdMethodBase methodRef)
 						return TryResolve(methodRef);
-					throw new ArgumentException();
+					if (throwOnError)
+						throw new ArgumentException();
 				}
 				break;
 
 			case 0x2B:
-				var methodSpec = ResolveMethodSpec(rid);
+				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
 				if (methodSpec != null)
 					return TryResolve(methodSpec);
 				break;
 			}
 
-			throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			if (throwOnError)
+				throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			return null;
 		}
 
-		public DmdFieldInfo ResolveField(int metadataToken) {
+		public DmdFieldInfo ResolveField(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x04:
@@ -71,19 +74,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 
 			case 0x0A:
-				var memberRef = ResolveMemberRef(rid);
+				var memberRef = ResolveMemberRef(rid, genericTypeArguments);
 				if (memberRef != null) {
 					if (memberRef is DmdFieldInfo fieldRef)
 						return TryResolve(fieldRef);
-					throw new ArgumentException();
+					if (throwOnError)
+						throw new ArgumentException();
 				}
 				break;
 			}
 
-			throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			if (throwOnError)
+				throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			return null;
 		}
 
-		public DmdType ResolveType(int metadataToken) {
+		public DmdType ResolveType(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
@@ -99,16 +105,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 
 			case 0x1B:
-				var typeSpec = ResolveTypeSpec(rid);
+				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments);
 				if (typeSpec != null)
 					return TryResolve(typeSpec);
 				break;
 			}
 
-			throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			if (throwOnError)
+				throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			return null;
 		}
 
-		public DmdMemberInfo ResolveMember(int metadataToken) {
+		public DmdMemberInfo ResolveMember(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
@@ -136,36 +144,38 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 
 			case 0x0A:
-				var memberRef = ResolveMemberRef(rid);
+				var memberRef = ResolveMemberRef(rid, genericTypeArguments);
 				if (memberRef != null)
 					return TryResolve(memberRef);
 				break;
 
 			case 0x1B:
-				var typeSpec = ResolveTypeSpec(rid);
+				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments);
 				if (typeSpec != null)
 					return TryResolve(typeSpec);
 				break;
 
 			case 0x2B:
-				var methodSpec = ResolveMethodSpec(rid);
+				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
 				if (methodSpec != null)
 					return TryResolve(methodSpec);
 				break;
 			}
 
-			throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			if (throwOnError)
+				throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			return null;
 		}
 
 		internal abstract DmdType ResolveTypeRef(uint rid);
 		internal abstract DmdType ResolveTypeDef(uint rid);
 		internal abstract DmdFieldInfo ResolveFieldDef(uint rid);
 		internal abstract DmdMethodBase ResolveMethodDef(uint rid);
-		internal abstract DmdMemberInfo ResolveMemberRef(uint rid);
+		internal abstract DmdMemberInfo ResolveMemberRef(uint rid, DmdType[] genericTypeArguments);
 		internal abstract DmdEventInfo ResolveEventDef(uint rid);
 		internal abstract DmdPropertyInfo ResolvePropertyDef(uint rid);
-		internal abstract DmdType ResolveTypeSpec(uint rid);
-		internal abstract DmdMethodBase ResolveMethodSpec(uint rid);
+		internal abstract DmdType ResolveTypeSpec(uint rid, DmdType[] genericTypeArguments);
+		internal abstract DmdMethodBase ResolveMethodSpec(uint rid, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments);
 
 		public byte[] ResolveSignature(int metadataToken) {
 			byte[] res;

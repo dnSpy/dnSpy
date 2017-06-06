@@ -46,12 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdTypeScope TypeScope { get; }
 
 		/// <summary>
-		/// Gets the declaring type. This is the type that declares the member, see also <see cref="ReflectedType"/>
-		/// </summary>
-		public override DmdType DeclaringType => throw new NotImplementedException();//TODO:
-
-		/// <summary>
-		/// Gets the reflected type. This is the type that owns this member, see also <see cref="DeclaringType"/>
+		/// Gets the reflected type. This is the type that owns this member, see also <see cref="DmdMemberInfo.DeclaringType"/>
 		/// </summary>
 		public override DmdType ReflectedType => DeclaringType;
 

@@ -51,10 +51,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
 		public override bool IsDefined(string attributeTypeFullName, bool inherit) => throw new NotImplementedException();//TODO:
 		public override bool IsDefined(DmdType attributeType, bool inherit) => throw new NotImplementedException();//TODO:
-		public override DmdMethodBase ResolveMethod(int metadataToken) => metadataReader.ResolveMethod(metadataToken);
-		public override DmdFieldInfo ResolveField(int metadataToken) => metadataReader.ResolveField(metadataToken);
-		public override DmdType ResolveType(int metadataToken) => metadataReader.ResolveType(metadataToken);
-		public override DmdMemberInfo ResolveMember(int metadataToken) => metadataReader.ResolveMember(metadataToken);
+		public override DmdMethodBase ResolveMethod(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) => metadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
+		public override DmdFieldInfo ResolveField(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) => metadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
+		public override DmdType ResolveType(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) => metadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
+		public override DmdMemberInfo ResolveMember(int metadataToken, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments, bool throwOnError) => metadataReader.ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
 		public override byte[] ResolveSignature(int metadataToken) => metadataReader.ResolveSignature(metadataToken);
 		public override string ResolveString(int metadataToken) => metadataReader.ResolveString(metadataToken);
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => metadataReader.GetPEKind(out peKind, out machine);

@@ -40,6 +40,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ArrayExtensions.cs" />
     <Compile Include="AssemblyHasher.cs" />
     <Compile Include="DmdAppDomain.cs" />
     <Compile Include="DmdAppDomainController.cs" />
@@ -102,15 +103,20 @@
     <Compile Include="Impl\DmdAppDomainImpl.cs" />
     <Compile Include="Impl\DmdAssemblyControllerImpl.cs" />
     <Compile Include="Impl\DmdAssemblyImpl.cs" />
+    <Compile Include="Impl\DmdGenericParameterType.cs" />
     <Compile Include="Impl\DmdLazyMetadataReader.cs" />
     <Compile Include="Impl\DmdMetadataReader.cs" />
     <Compile Include="Impl\DmdModuleControllerImpl.cs" />
     <Compile Include="Impl\DmdModuleImpl.cs" />
+    <Compile Include="Impl\DmdNullGlobalType.cs" />
     <Compile Include="Impl\DmdNullMetadataReader.cs" />
-    <Compile Include="Impl\DmdNullType.cs" />
     <Compile Include="Impl\DmdRuntimeControllerImpl.cs" />
     <Compile Include="Impl\DmdRuntimeImpl.cs" />
+    <Compile Include="Impl\DmdTypeBase.cs" />
+    <Compile Include="Impl\DmdTypeDef.cs" />
+    <Compile Include="Impl\LazyList.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
+    <Compile Include="Impl\MD\DmdTypeDefMD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

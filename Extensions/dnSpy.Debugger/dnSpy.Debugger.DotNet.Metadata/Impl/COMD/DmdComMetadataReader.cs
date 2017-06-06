@@ -42,11 +42,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal override DmdType ResolveTypeDef(uint rid) => throw new NotImplementedException();//TODO:
 		internal override DmdFieldInfo ResolveFieldDef(uint rid) => throw new NotImplementedException();//TODO:
 		internal override DmdMethodBase ResolveMethodDef(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdMemberInfo ResolveMemberRef(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdMemberInfo ResolveMemberRef(uint rid, DmdType[] genericTypeArguments) => throw new NotImplementedException();//TODO:
 		internal override DmdEventInfo ResolveEventDef(uint rid) => throw new NotImplementedException();//TODO:
 		internal override DmdPropertyInfo ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdType ResolveTypeSpec(uint rid) => throw new NotImplementedException();//TODO:
-		internal override DmdMethodBase ResolveMethodSpec(uint rid) => throw new NotImplementedException();//TODO:
+		internal override DmdType ResolveTypeSpec(uint rid, DmdType[] genericTypeArguments) => throw new NotImplementedException();//TODO:
+		internal override DmdMethodBase ResolveMethodSpec(uint rid, DmdType[] genericTypeArguments, DmdType[] genericMethodArguments) => throw new NotImplementedException();//TODO:
 		internal override byte[] ResolveFieldSignature(uint rid) => throw new NotImplementedException();//TODO:
 		internal override byte[] ResolveMethodSignature(uint rid) => throw new NotImplementedException();//TODO:
 		internal override byte[] ResolveMemberRefSignature(uint rid) => throw new NotImplementedException();//TODO:

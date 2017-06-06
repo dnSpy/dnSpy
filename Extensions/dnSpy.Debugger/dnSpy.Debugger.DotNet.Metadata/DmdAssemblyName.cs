@@ -125,16 +125,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			CultureName = other.CultureName;
 			Flags = other.Flags;
 			HashAlgorithm = other.HashAlgorithm;
-			publicKey = Clone(publicKey);
-			publicKeyToken = Clone(publicKeyToken);
-		}
-
-		static byte[] Clone(byte[] array) {
-			if (array == null)
-				return null;
-			var res = new byte[array.Length];
-			Array.Copy(array, res, res.Length);
-			return res;
+			publicKey = publicKey.CloneArray();
+			publicKeyToken = publicKeyToken.CloneArray();
 		}
 
 		/// <summary>
