@@ -19,9 +19,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdTypeBase : DmdType {
+		protected static readonly ReadOnlyCollection<DmdType> emptyReadOnlyCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
 		public override DmdMethodBase DeclaringMethod => null;
 		public sealed override Guid GUID => throw new NotImplementedException();//TODO:
 		public sealed override DmdAssembly Assembly => Module.Assembly;
@@ -33,14 +35,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsGenericType => false;
 		public override bool IsGenericTypeDefinition => false;
 		public override int GenericParameterPosition => throw new InvalidOperationException();
-		public override DmdType[] GetGenericArguments() => Array.Empty<DmdType>();
+		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => emptyReadOnlyCollection;
 		public override DmdType GetGenericTypeDefinition() => throw new InvalidOperationException();
 		public override DmdType[] GetGenericParameterConstraints() => throw new InvalidOperationException();
 		public override DmdMethodSignature GetFunctionPointerMethodSignature() => throw new InvalidOperationException();
 		public override DmdType GetElementType() => null;
 		public override int GetArrayRank() => throw new ArgumentException();
-		public override int[] GetArraySizes() => throw new ArgumentException();
-		public override int[] GetArrayLowerBounds() => throw new ArgumentException();
+		public override ReadOnlyCollection<int> GetReadOnlyArraySizes() => throw new ArgumentException();
+		public override ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds() => throw new ArgumentException();
 		public sealed override DmdType MakePointerType() => throw new NotImplementedException();//TODO:
 		public sealed override DmdType MakeByRefType() => throw new NotImplementedException();//TODO:
 		public sealed override DmdType MakeArrayType() => throw new NotImplementedException();//TODO:
@@ -67,7 +69,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
 		public sealed override DmdType[] GetRequiredCustomModifiers() => throw new NotImplementedException();//TODO:
 		public sealed override DmdType[] GetOptionalCustomModifiers() => throw new NotImplementedException();//TODO:
-		public sealed override DmdType[] GetCustomModifiers() => throw new NotImplementedException();//TODO:
+		public sealed override ReadOnlyCollection<DmdType> GetReadOnlyCustomModifiers() => throw new NotImplementedException();//TODO:
 		public sealed override bool IsDefined(string attributeTypeFullName, bool inherit) => throw new NotImplementedException();//TODO:
 		public sealed override bool IsDefined(DmdType attributeType, bool inherit) => throw new NotImplementedException();//TODO:
 		public sealed override string ToString() => throw new NotImplementedException();//TODO:

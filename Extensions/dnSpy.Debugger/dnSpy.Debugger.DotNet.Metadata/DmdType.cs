@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
@@ -628,14 +630,28 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// have less elements than the rank of the array.
 		/// </summary>
 		/// <returns></returns>
-		public abstract int[] GetArraySizes();
+		public int[] GetArraySizes() => GetReadOnlyArraySizes().ToArray();
+
+		/// <summary>
+		/// Gets the array sizes of each dimension of an array. The returned list could
+		/// have less elements than the rank of the array.
+		/// </summary>
+		/// <returns></returns>
+		public abstract ReadOnlyCollection<int> GetReadOnlyArraySizes();
 
 		/// <summary>
 		/// Gets the lower bounds of each dimension of an array. The returned array could
 		/// have less elements than the rank of the array.
 		/// </summary>
 		/// <returns></returns>
-		public abstract int[] GetArrayLowerBounds();
+		public int[] GetArrayLowerBounds() => GetReadOnlyArrayLowerBounds().ToArray();
+
+		/// <summary>
+		/// Gets the lower bounds of each dimension of an array. The returned list could
+		/// have less elements than the rank of the array.
+		/// </summary>
+		/// <returns></returns>
+		public abstract ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds();
 
 		/// <summary>
 		/// true if it's an array (SZ array or MD array)
@@ -782,7 +798,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the generic arguments
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetGenericArguments();
+		public DmdType[] GetGenericArguments() => GetReadOnlyGenericArguments().ToArray();
+
+		/// <summary>
+		/// Gets the generic arguments
+		/// </summary>
+		/// <returns></returns>
+		public abstract ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments();
 
 		/// <summary>
 		/// Gets all generic arguments if it's a constructed generic type (<see cref="IsConstructedGenericType"/>)
@@ -811,7 +833,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all custom modifiers
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetCustomModifiers();
+		public DmdType[] GetCustomModifiers() => GetReadOnlyCustomModifiers().ToArray();
+
+		/// <summary>
+		/// Gets all custom modifiers
+		/// </summary>
+		/// <returns></returns>
+		public abstract ReadOnlyCollection<DmdType> GetReadOnlyCustomModifiers();
 
 		/// <summary>
 		/// Returns the names of the members of the enum type

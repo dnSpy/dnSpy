@@ -17,6 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
+using System.Linq;
+
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// .NET method signature
@@ -56,12 +59,24 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the parameter types, see also <see cref="GetVarArgsParameterTypes"/>
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetParameterTypes();
+		public DmdType[] GetParameterTypes() => GetReadOnlyParameterTypes().ToArray();
+
+		/// <summary>
+		/// Gets the parameter types, see also <see cref="GetReadOnlyVarArgsParameterTypes"/>
+		/// </summary>
+		/// <returns></returns>
+		public abstract ReadOnlyCollection<DmdType> GetReadOnlyParameterTypes();
 
 		/// <summary>
 		/// Gets the var args parameter types
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetVarArgsParameterTypes();
+		public DmdType[] GetVarArgsParameterTypes() => GetReadOnlyVarArgsParameterTypes().ToArray();
+
+		/// <summary>
+		/// Gets the var args parameter types
+		/// </summary>
+		/// <returns></returns>
+		public abstract ReadOnlyCollection<DmdType> GetReadOnlyVarArgsParameterTypes();
 	}
 }

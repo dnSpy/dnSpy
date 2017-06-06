@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
@@ -25,8 +27,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Type;
 		public override DmdTypeScope TypeScope => new DmdTypeScope(Module);
 		public override bool IsMetadataReference => false;
-		public override bool IsGenericType => GetOrCreateGenericParameters().Length != 0;
-		public override bool IsGenericTypeDefinition => GetOrCreateGenericParameters().Length != 0;
+		public override bool IsGenericType => GetOrCreateGenericParameters().Count != 0;
+		public override bool IsGenericTypeDefinition => GetOrCreateGenericParameters().Count != 0;
 		public override int MetadataToken => (int)(0x02000000 + rid);
 		public override StructLayoutAttribute StructLayoutAttribute => throw new NotImplementedException();//TODO:
 		public override DmdType DeclaringType => throw new NotImplementedException();//TODO:
@@ -37,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					lock (LockObject) {
 						if (!baseTypeInitd) {
 							baseTypeInitd = true;
-							baseType = Module.ResolveType(GetBaseTypeToken(), GetOrCreateGenericParameters(), null, throwOnError: false);
+							baseType = Module.ResolveType(GetBaseTypeToken(), GetOrCreateGenericParameters().ToArray(), null, throwOnError: false);
 						}
 					}
 				}
@@ -50,17 +52,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract int GetBaseTypeToken();
 
 		protected abstract DmdType[] CreateGenericParameters_NoLock();
-		DmdType[] GetOrCreateGenericParameters() {
+		ReadOnlyCollection<DmdType> GetOrCreateGenericParameters() {
 			if (__genericParameters_DONT_USE != null)
 				return __genericParameters_DONT_USE;
 			lock (LockObject) {
 				if (__genericParameters_DONT_USE != null)
 					return __genericParameters_DONT_USE;
-				__genericParameters_DONT_USE = CreateGenericParameters_NoLock() ?? Array.Empty<DmdType>();
+				var res = CreateGenericParameters_NoLock();
+				__genericParameters_DONT_USE = res == null || res.Length == 0 ? emptyReadOnlyCollection : new ReadOnlyCollection<DmdType>(res);
 				return __genericParameters_DONT_USE;
 			}
 		}
-		DmdType[] __genericParameters_DONT_USE;
+		ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
 
 		protected uint Rid => rid;
 		readonly uint rid;
@@ -68,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected DmdTypeDef(uint rid) => this.rid = rid;
 
 		public override DmdType Resolve(bool throwOnError) => this;
-		public override DmdType[] GetGenericArguments() => GetOrCreateGenericParameters().CloneArray();
+		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => GetOrCreateGenericParameters();
 		public override DmdType GetGenericTypeDefinition() => IsGenericType ? this : throw new InvalidOperationException();
 	}
 }

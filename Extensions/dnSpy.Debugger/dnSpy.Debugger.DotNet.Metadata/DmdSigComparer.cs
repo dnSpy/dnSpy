@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
@@ -169,7 +170,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			var at = a.TypeSignatureKind;
 			if (at != b.TypeSignatureKind)
 				result = false;
-			else if (!Equals(a.GetCustomModifiers(), b.GetCustomModifiers()))
+			else if (!Equals(a.GetReadOnlyCustomModifiers(), b.GetReadOnlyCustomModifiers()))
 				result = false;
 			else {
 				switch (at) {
@@ -194,14 +195,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 				case DmdTypeSignatureKind.MDArray:
 					result = a.GetArrayRank() == b.GetArrayRank() &&
-						Equals(a.GetArraySizes(), b.GetArraySizes()) &&
-						Equals(a.GetArrayLowerBounds(), b.GetArrayLowerBounds()) &&
+						Equals(a.GetReadOnlyArraySizes(), b.GetReadOnlyArraySizes()) &&
+						Equals(a.GetReadOnlyArrayLowerBounds(), b.GetReadOnlyArrayLowerBounds()) &&
 						Equals(a.GetElementType(), b.GetElementType());
 					break;
 
 				case DmdTypeSignatureKind.GenericInstance:
 					result = Equals(a.GetGenericTypeDefinition(), b.GetGenericTypeDefinition()) &&
-							Equals(a.GetGenericArguments(), b.GetGenericArguments());
+							Equals(a.GetReadOnlyGenericArguments(), b.GetReadOnlyGenericArguments());
 					break;
 
 				case DmdTypeSignatureKind.FunctionPointer:
@@ -337,32 +338,32 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return a.Flags == b.Flags &&
 				a.GenericParameterCount == b.GenericParameterCount &&
 				(DontCompareReturnType || Equals(a.ReturnType, b.ReturnType)) &&
-				Equals(a.GetParameterTypes(), b.GetParameterTypes()) &&
-				Equals(a.GetVarArgsParameterTypes(), b.GetVarArgsParameterTypes());
+				Equals(a.GetReadOnlyParameterTypes(), b.GetReadOnlyParameterTypes()) &&
+				Equals(a.GetReadOnlyVarArgsParameterTypes(), b.GetReadOnlyVarArgsParameterTypes());
 		}
 
-		bool Equals(DmdType[] a, DmdType[] b) {
+		bool Equals(ReadOnlyCollection<DmdType> a, ReadOnlyCollection<DmdType> b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
 				return false;
-			if (a.Length != b.Length)
+			if (a.Count != b.Count)
 				return false;
-			for (int i = 0; i < a.Length; i++) {
+			for (int i = 0; i < a.Count; i++) {
 				if (!Equals(a[i], b[i]))
 					return false;
 			}
 			return true;
 		}
 
-		bool Equals(int[] a, int[] b) {
+		bool Equals(ReadOnlyCollection<int> a, ReadOnlyCollection<int> b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
 				return false;
-			if (a.Length != b.Length)
+			if (a.Count != b.Count)
 				return false;
-			for (int i = 0; i < a.Length; i++) {
+			for (int i = 0; i < a.Count; i++) {
 				if (a[i] != b[i])
 					return false;
 			}
@@ -490,7 +491,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (!IncrementRecursionCounter())
 				return 0;
 
-			int hc = GetHashCode(a.GetCustomModifiers());
+			int hc = GetHashCode(a.GetReadOnlyCustomModifiers());
 			switch (a.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
 				hc ^= (object)a.DeclaringType == null ? HASHCODE_MAGIC_TYPE : HASHCODE_MAGIC_NESTED_TYPE;
@@ -524,15 +525,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			case DmdTypeSignatureKind.MDArray:
 				hc ^= HASHCODE_MAGIC_ET_ARRAY;
 				hc ^= a.GetArrayRank();
-				hc ^= GetHashCode(a.GetArraySizes());
-				hc ^= GetHashCode(a.GetArrayLowerBounds());
+				hc ^= GetHashCode(a.GetReadOnlyArraySizes());
+				hc ^= GetHashCode(a.GetReadOnlyArrayLowerBounds());
 				hc ^= GetHashCode(a.GetElementType());
 				break;
 
 			case DmdTypeSignatureKind.GenericInstance:
 				hc ^= HASHCODE_MAGIC_ET_GENERICINST;
 				hc ^= GetHashCode(a.GetGenericTypeDefinition());
-				hc ^= GetHashCode(a.GetGenericArguments());
+				hc ^= GetHashCode(a.GetReadOnlyGenericArguments());
 				break;
 
 			case DmdTypeSignatureKind.FunctionPointer:
@@ -650,25 +651,25 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			hc ^= a.GenericParameterCount;
 			if (!DontCompareReturnType)
 				hc ^= GetHashCode(a.ReturnType);
-			hc ^= GetHashCode(a.GetParameterTypes());
-			hc ^= GetHashCode(a.GetVarArgsParameterTypes());
+			hc ^= GetHashCode(a.GetReadOnlyParameterTypes());
+			hc ^= GetHashCode(a.GetReadOnlyVarArgsParameterTypes());
 			return hc;
 		}
 
-		int GetHashCode(DmdType[] a) {
+		int GetHashCode(ReadOnlyCollection<DmdType> a) {
 			if (a == null)
 				return 0;
-			int hc = a.Length;
-			for (int i = 0; i < a.Length; i++)
+			int hc = a.Count;
+			for (int i = 0; i < a.Count; i++)
 				hc ^= GetHashCode(a[i]);
 			return hc;
 		}
 
-		int GetHashCode(int[] a) {
+		int GetHashCode(ReadOnlyCollection<int> a) {
 			if (a == null)
 				return 0;
-			int hc = a.Length;
-			for (int i = 0; i < a.Length; i++)
+			int hc = a.Count;
+			for (int i = 0; i < a.Count; i++)
 				hc ^= a[i];
 			return hc;
 		}
