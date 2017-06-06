@@ -118,19 +118,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all required custom modifiers
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetRequiredCustomModifiers();
+		public DmdType[] GetRequiredCustomModifiers() => DmdCustomModifierUtilities.GetModifiers(GetCustomModifiers(), requiredModifiers: true);
 
 		/// <summary>
 		/// Gets all optional custom modifiers
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetOptionalCustomModifiers();
+		public DmdType[] GetOptionalCustomModifiers() => DmdCustomModifierUtilities.GetModifiers(GetCustomModifiers(), requiredModifiers: false);
 
 		/// <summary>
 		/// Gets all custom modifiers
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetCustomModifiers();
+		public ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => PropertyType.GetCustomModifiers();
 
 		/// <summary>
 		/// Gets all public accessors

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -90,19 +91,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all required custom modifiers
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetRequiredCustomModifiers();
+		public DmdType[] GetRequiredCustomModifiers() => DmdCustomModifierUtilities.GetModifiers(GetCustomModifiers(), requiredModifiers: true);
 
 		/// <summary>
 		/// Gets all optional custom modifiers
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetOptionalCustomModifiers();
+		public DmdType[] GetOptionalCustomModifiers() => DmdCustomModifierUtilities.GetModifiers(GetCustomModifiers(), requiredModifiers: false);
 
 		/// <summary>
 		/// Gets all custom modifiers
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType[] GetCustomModifiers();
+		public ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => ParameterType.GetCustomModifiers();
 
 		/// <summary>
 		/// Gets the custom attributes

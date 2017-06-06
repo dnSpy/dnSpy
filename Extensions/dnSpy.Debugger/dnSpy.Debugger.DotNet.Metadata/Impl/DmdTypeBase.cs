@@ -67,9 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdMemberInfo[] GetDefaultMembers() => throw new NotImplementedException();//TODO:
 		public sealed override string[] GetEnumNames() => throw new NotImplementedException();//TODO:
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
-		public sealed override DmdType[] GetRequiredCustomModifiers() => throw new NotImplementedException();//TODO:
-		public sealed override DmdType[] GetOptionalCustomModifiers() => throw new NotImplementedException();//TODO:
-		public sealed override ReadOnlyCollection<DmdType> GetReadOnlyCustomModifiers() => throw new NotImplementedException();//TODO:
+		public sealed override ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => throw new NotImplementedException();//TODO:
 		public sealed override bool IsDefined(string attributeTypeFullName, bool inherit) => throw new NotImplementedException();//TODO:
 		public sealed override bool IsDefined(DmdType attributeType, bool inherit) => throw new NotImplementedException();//TODO:
 		public sealed override string ToString() => throw new NotImplementedException();//TODO:

@@ -56,6 +56,8 @@
     <Compile Include="DmdCallingConventions.cs" />
     <Compile Include="DmdConstructorInfo.cs" />
     <Compile Include="DmdCustomAttributeData.cs" />
+    <Compile Include="DmdCustomModifier.cs" />
+    <Compile Include="DmdCustomModifierUtilities.cs" />
     <Compile Include="DmdDispatcher.cs" />
     <Compile Include="DmdEvaluator.cs" />
     <Compile Include="DmdEventAttributes.cs" />

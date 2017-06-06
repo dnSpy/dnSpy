@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
@@ -27,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			IEqualityComparer<DmdMemberInfo>, IEqualityComparer<DmdType>, IEqualityComparer<DmdFieldInfo>,
 			IEqualityComparer<DmdMethodBase>, IEqualityComparer<DmdConstructorInfo>, IEqualityComparer<DmdMethodInfo>,
 			IEqualityComparer<DmdPropertyInfo>, IEqualityComparer<DmdEventInfo>, IEqualityComparer<DmdParameterInfo>,
-			IEqualityComparer<DmdMethodSignature>, IEqualityComparer<DmdAssemblyName> {
+			IEqualityComparer<DmdMethodSignature>, IEqualityComparer<DmdAssemblyName>, IEqualityComparer<DmdCustomModifier> {
 		/// <summary>
 		/// Gets an <see cref="IEqualityComparer{T}"/> that can be used to compare types, members and parameters using default
 		/// <see cref="DmdSigComparer"/> options (<see cref="DefaultOptions"/>)
@@ -75,6 +76,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public int GetHashCode(DmdMethodSignature obj) => new DmdSigComparer(options).GetHashCode(obj);
 		public bool Equals(DmdAssemblyName x, DmdAssemblyName y) => new DmdSigComparer(options).Equals(x, y);
 		public int GetHashCode(DmdAssemblyName obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdCustomModifier x, DmdCustomModifier y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdCustomModifier obj) => new DmdSigComparer(options).GetHashCode(obj);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

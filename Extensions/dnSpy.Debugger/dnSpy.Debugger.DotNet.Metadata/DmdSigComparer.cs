@@ -170,7 +170,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			var at = a.TypeSignatureKind;
 			if (at != b.TypeSignatureKind)
 				result = false;
-			else if (!Equals(a.GetReadOnlyCustomModifiers(), b.GetReadOnlyCustomModifiers()))
+			else if (!Equals(a.GetCustomModifiers(), b.GetCustomModifiers()))
 				result = false;
 			else {
 				switch (at) {
@@ -342,6 +342,28 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				Equals(a.GetReadOnlyVarArgsParameterTypes(), b.GetReadOnlyVarArgsParameterTypes());
 		}
 
+		/// <summary>
+		/// Compares two custom modifiers
+		/// </summary>
+		/// <param name="a">First custom modifier</param>
+		/// <param name="b">Second custom modifier</param>
+		/// <returns></returns>
+		public bool Equals(DmdCustomModifier a, DmdCustomModifier b) => a.IsRequired == b.IsRequired && Equals(a.Type, b.Type);
+
+		bool Equals(ReadOnlyCollection<DmdCustomModifier> a, ReadOnlyCollection<DmdCustomModifier> b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Count != b.Count)
+				return false;
+			for (int i = 0; i < a.Count; i++) {
+				if (!Equals(a[i], b[i]))
+					return false;
+			}
+			return true;
+		}
+
 		bool Equals(ReadOnlyCollection<DmdType> a, ReadOnlyCollection<DmdType> b) {
 			if (a == b)
 				return true;
@@ -491,7 +513,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (!IncrementRecursionCounter())
 				return 0;
 
-			int hc = GetHashCode(a.GetReadOnlyCustomModifiers());
+			int hc = GetHashCode(a.GetCustomModifiers());
 			switch (a.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
 				hc ^= (object)a.DeclaringType == null ? HASHCODE_MAGIC_TYPE : HASHCODE_MAGIC_NESTED_TYPE;
@@ -653,6 +675,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				hc ^= GetHashCode(a.ReturnType);
 			hc ^= GetHashCode(a.GetReadOnlyParameterTypes());
 			hc ^= GetHashCode(a.GetReadOnlyVarArgsParameterTypes());
+			return hc;
+		}
+
+		/// <summary>
+		/// Gets the hash code of a custom modifier
+		/// </summary>
+		/// <param name="a">Custom modifier</param>
+		/// <returns></returns>
+		public int GetHashCode(DmdCustomModifier a) => (a.IsRequired ? -1 : 0) ^ GetHashCode(a.Type);
+
+		int GetHashCode(ReadOnlyCollection<DmdCustomModifier> a) {
+			if (a == null)
+				return 0;
+			int hc = a.Count;
+			for (int i = 0; i < a.Count; i++)
+				hc ^= GetHashCode(a[i]);
 			return hc;
 		}
 
