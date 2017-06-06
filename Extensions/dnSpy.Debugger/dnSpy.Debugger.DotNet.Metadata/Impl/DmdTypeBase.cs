@@ -287,7 +287,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override string ToString() => throw new NotImplementedException();//TODO:
 
 		protected virtual DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => null;
-		protected virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => null;
+		protected virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => null;
 		protected virtual DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => null;
 		protected virtual DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => null;
 
@@ -314,7 +314,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				lock (LockObject) {
 					if (f.__declaredMethods_DONT_USE != null)
 						return f.__declaredMethods_DONT_USE;
-					var res = CreateDeclaredMethods(this);
+					var res = CreateDeclaredMethods(this, includeConstructors: true);
 					f.__declaredMethods_DONT_USE = res == null || res.Length == 0 ? emptyMethodBaseCollection : new ReadOnlyCollection<DmdMethodBase>(res);
 					return f.__declaredMethods_DONT_USE;
 				}
@@ -444,7 +444,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				lock (LockObject) {
 					if (f.__baseMethods_DONT_USE != null)
 						return f.__baseMethods_DONT_USE;
-					f.__baseMethods_DONT_USE = new DmdMemberReader<DmdMethodBase>(this, baseType => baseType.CreateDeclaredMethods(this));
+					f.__baseMethods_DONT_USE = new DmdMemberReader<DmdMethodBase>(this, baseType => baseType.CreateDeclaredMethods(this, includeConstructors: false));
 					return f.__baseMethods_DONT_USE;
 				}
 			}
