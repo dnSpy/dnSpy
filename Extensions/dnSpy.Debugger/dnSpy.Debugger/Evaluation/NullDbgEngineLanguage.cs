@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.Evaluation {
 	}
 
 	sealed class NullDbgEngineValueNodeFactory : DbgEngineValueNodeFactory {
-		public override DbgBaseEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new NullDbgEngineErrorValueNode();
+		public override DbgBaseEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new NullDbgEngineErrorValueNode(expression);
 		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgBaseEngineValueNode> callback, CancellationToken cancellationToken) => callback(Create(context, frame, expression, options, cancellationToken));
 		public override DbgBaseEngineValueNode[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => objectIds.Select(a => new NullDbgEngineErrorValueNode()).ToArray();
 		public override void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(Create(context, objectIds, options, cancellationToken));
@@ -89,7 +89,8 @@ namespace dnSpy.Debugger.Evaluation {
 
 	sealed class NullDbgEngineErrorValueNode : DbgEngineErrorValueNode {
 		public override string ErrorMessage => NullDbgEngineExpressionEvaluator.ERROR;
-		public override string Expression => string.Empty;
+		public override string Expression { get; }
+		public NullDbgEngineErrorValueNode(string expression = null) => Expression = expression ?? string.Empty;
 		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, CancellationToken cancellationToken) { }
 		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, Action callback, CancellationToken cancellationToken) => callback();
 		protected override void CloseCore() { }
