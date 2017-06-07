@@ -32,24 +32,51 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsGenericTypeDefinition => GetOrCreateGenericParameters().Count != 0;
 		public override int MetadataToken => (int)(0x02000000 + rid);
 		public override StructLayoutAttribute StructLayoutAttribute => throw new NotImplementedException();//TODO:
-		public override DmdType DeclaringType => throw new NotImplementedException();//TODO:
+
+		public override DmdType DeclaringType {
+			get {
+				if (!declaringTypeInitd) {
+					lock (LockObject) {
+						if (!declaringTypeInitd) {
+							int declTypeToken = GetDeclaringTypeToken();
+							if ((declTypeToken & 0x00FFFFFF) == 0)
+								__declaringType_DONT_USE = null;
+							else {
+								if (((uint)declTypeToken >> 24) != 0x02)
+									throw new InvalidOperationException();
+								__declaringType_DONT_USE = Module.ResolveType(declTypeToken, null, null, throwOnError: false);
+							}
+							declaringTypeInitd = true;
+						}
+					}
+				}
+				return __declaringType_DONT_USE;
+			}
+		}
+		DmdType __declaringType_DONT_USE;
+		bool declaringTypeInitd;
 
 		public override DmdType BaseType {
 			get {
 				if (!baseTypeInitd) {
 					lock (LockObject) {
 						if (!baseTypeInitd) {
-							baseType = Module.ResolveType(GetBaseTypeToken(), GetOrCreateGenericParameters().ToArray(), null, throwOnError: false);
+							int baseTypeToken = GetBaseTypeToken();
+							if ((baseTypeToken & 0x00FFFFFF) == 0)
+								__baseType_DONT_USE = null;
+							else
+								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetOrCreateGenericParameters().ToArray(), null, throwOnError: false);
 							baseTypeInitd = true;
 						}
 					}
 				}
-				return baseType;
+				return __baseType_DONT_USE;
 			}
 		}
-		DmdType baseType;
+		DmdType __baseType_DONT_USE;
 		bool baseTypeInitd;
 
+		protected abstract int GetDeclaringTypeToken();
 		protected abstract int GetBaseTypeToken();
 
 		protected abstract DmdType[] CreateGenericParameters_NoLock();

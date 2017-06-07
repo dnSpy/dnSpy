@@ -27,6 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string Name => "<Module>";
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.NotPublic;
 		public DmdNullGlobalType(DmdModule module) : base(1) => Module = module ?? throw new ArgumentNullException(nameof(module));
+		protected override int GetDeclaringTypeToken() => 0;
 		protected override int GetBaseTypeToken() => 0;
 		protected override DmdType[] CreateGenericParameters_NoLock() => null;
 

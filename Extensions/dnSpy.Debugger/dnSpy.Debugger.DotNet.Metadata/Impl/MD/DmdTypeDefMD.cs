@@ -39,7 +39,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Attributes = (DmdTypeAttributes)row.Flags;
 		}
 
-		protected override int GetBaseTypeToken() => (int)reader.TablesStream.ReadTypeDefRow(Rid).Extends;
+		protected override int GetDeclaringTypeToken() => 0x02000000 + (int)(reader.TablesStream.ReadNestedClassRow(reader.Metadata.GetNestedClassRid(Rid))?.EnclosingClass ?? 0);
+
+		protected override int GetBaseTypeToken() {
+			uint extends = reader.TablesStream.ReadTypeDefRow(Rid).Extends;
+			if (!CodedToken.TypeDefOrRef.Decode(extends, out uint token))
+				return 0;
+			return (int)token;
+		}
 
 		protected override DmdType[] CreateGenericParameters_NoLock() {
 			var ridList = reader.Metadata.GetGenericParamRidList(Table.TypeDef, Rid);
