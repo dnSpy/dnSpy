@@ -114,6 +114,7 @@
     <Compile Include="Impl\DmdModuleImpl.cs" />
     <Compile Include="Impl\DmdNullGlobalType.cs" />
     <Compile Include="Impl\DmdNullMetadataReader.cs" />
+    <Compile Include="Impl\DmdPointerType.cs" />
     <Compile Include="Impl\DmdRuntimeControllerImpl.cs" />
     <Compile Include="Impl\DmdRuntimeImpl.cs" />
     <Compile Include="Impl\DmdSZArrayType.cs" />

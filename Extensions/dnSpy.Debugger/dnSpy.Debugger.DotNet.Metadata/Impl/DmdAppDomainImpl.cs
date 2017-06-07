@@ -115,7 +115,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (et == null)
 				throw new ArgumentException();
 			et = et.FullResolve() ?? et;
-			throw new NotImplementedException();//TODO:
+
+			var res = new DmdPointerType(et);
+			lock (LockObject) {
+				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
+					return cachedType;
+				if (res.IsFullyResolved)
+					fullyResolvedTypes.Add(res, res);
+			}
+
+			return res;
 		}
 
 		public override DmdType MakeByRefType(DmdType elementType) {

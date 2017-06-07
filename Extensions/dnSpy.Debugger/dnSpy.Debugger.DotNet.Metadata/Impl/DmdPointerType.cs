@@ -18,18 +18,17 @@
 */
 
 using System;
-using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	sealed class DmdSZArrayType : DmdTypeBase {
-		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.SZArray;
+	sealed class DmdPointerType : DmdTypeBase {
+		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Pointer;
 		public override DmdTypeScope TypeScope => SkipElementTypes().TypeScope;
 		public override DmdModule Module => SkipElementTypes().Module;
 		public override string Namespace => SkipElementTypes().Namespace;
-		public override DmdType BaseType => AppDomain.System_Array;
+		public override DmdType BaseType => null;
 		public override StructLayoutAttribute StructLayoutAttribute => null;
-		public override DmdTypeAttributes Attributes => DmdTypeAttributes.Public | DmdTypeAttributes.AutoLayout | DmdTypeAttributes.Class | DmdTypeAttributes.Sealed | DmdTypeAttributes.AnsiClass | DmdTypeAttributes.Serializable;
+		public override DmdTypeAttributes Attributes => DmdTypeAttributes.NotPublic | DmdTypeAttributes.AutoLayout | DmdTypeAttributes.Class | DmdTypeAttributes.AnsiClass;
 		public override string Name => DmdMemberFormatter.FormatName(this);
 		public override DmdType DeclaringType => null;
 		public override int MetadataToken => 0x02000000;
@@ -37,16 +36,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdTypeBase elementType;
 
-		public DmdSZArrayType(DmdTypeBase elementType) {
+		public DmdPointerType(DmdTypeBase elementType) {
 			this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 			IsFullyResolved = elementType.IsFullyResolved;
 		}
 
 		public override DmdType GetElementType() => elementType;
-		public override int GetArrayRank() => 1;
-		public override ReadOnlyCollection<int> GetReadOnlyArraySizes() => emptyInt32Collection;
-		public override ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds() => emptyInt32Collection;
-		static readonly ReadOnlyCollection<int> emptyInt32Collection = new ReadOnlyCollection<int>(Array.Empty<int>());
 
 		protected override DmdType ResolveNoThrowCore() => this;
 		public override bool IsFullyResolved { get; }
@@ -55,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return this;
 			var et = elementType.FullResolve();
 			if (et != null)
-				return (DmdTypeBase)AppDomain.MakeArrayType(et);
+				return (DmdTypeBase)AppDomain.MakePointerType(et);
 			return null;
 		}
 	}
