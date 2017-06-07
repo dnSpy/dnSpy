@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"System.ValueTuple": "4.3.0",
+		"System.ValueTuple": "4.3.1",
 		"Microsoft.CodeAnalysis.CSharp.Features": "2.2.0",
 		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.2.0",
 		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.26201",
