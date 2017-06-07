@@ -123,6 +123,7 @@
     <Compile Include="Impl\DmdSZArrayType.cs" />
     <Compile Include="Impl\DmdTypeBase.cs" />
     <Compile Include="Impl\DmdTypeDef.cs" />
+    <Compile Include="Impl\DmdTypeRef.cs" />
     <Compile Include="Impl\DmdTypeUtilities.cs" />
     <Compile Include="Impl\LazyList.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />

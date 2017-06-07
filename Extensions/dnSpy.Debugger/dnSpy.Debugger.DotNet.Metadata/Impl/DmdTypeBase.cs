@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdType Resolve(bool throwOnError) {
 			var res = ResolveNoThrowCore();
 			if (res == null && throwOnError)
-				throw new TypeResolveException();
+				throw new TypeResolveException(this);
 			return res;
 		}
 		protected abstract DmdType ResolveNoThrowCore();
@@ -320,7 +320,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected virtual DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => null;
 		protected virtual DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => null;
 
-		ReadOnlyCollection<DmdFieldInfo> DeclaredFields {
+		internal ReadOnlyCollection<DmdFieldInfo> DeclaredFields {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredFields_DONT_USE != null)
@@ -335,7 +335,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		ReadOnlyCollection<DmdMethodBase> DeclaredMethods {
+		internal ReadOnlyCollection<DmdMethodBase> DeclaredMethods {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredMethods_DONT_USE != null)
@@ -350,7 +350,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		ReadOnlyCollection<DmdPropertyInfo> DeclaredProperties {
+		internal ReadOnlyCollection<DmdPropertyInfo> DeclaredProperties {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredProperties_DONT_USE != null)
@@ -365,7 +365,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		ReadOnlyCollection<DmdEventInfo> DeclaredEvents {
+		internal ReadOnlyCollection<DmdEventInfo> DeclaredEvents {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredEvents_DONT_USE != null)

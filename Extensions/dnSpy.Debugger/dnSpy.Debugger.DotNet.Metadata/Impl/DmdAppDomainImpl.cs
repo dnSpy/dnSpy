@@ -232,6 +232,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature) => throw new NotImplementedException();//TODO:
 		public override DmdType GetType(string typeName, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
 
+		internal DmdTypeDef Resolve(DmdTypeRef typeRef, bool throwOnError, bool ignoreCase) {
+			if ((object)typeRef == null)
+				throw new ArgumentNullException(nameof(typeRef));
+
+			//TODO:
+
+			if (throwOnError)
+				throw new TypeResolveException(typeRef);
+			return null;
+		}
+
 		public override object Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken) {
 			if ((object)method == null)
 				throw new ArgumentNullException(nameof(method));

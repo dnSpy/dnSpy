@@ -25,6 +25,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	[Serializable]
 	public class ResolveException : Exception {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="message">Message</param>
+		public ResolveException(string message) : base(message) { }
 	}
 
 	/// <summary>
@@ -32,5 +37,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	[Serializable]
 	public sealed class TypeResolveException : ResolveException {
+		/// <summary>
+		/// Gets the type that couldn't be resolved
+		/// </summary>
+		public DmdType Type { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="type">Type that couldn't be resolved</param>
+		public TypeResolveException(DmdType type) : base("Couldn't resolve type: " + type.ToString()) => Type = type;
 	}
 }
