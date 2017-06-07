@@ -216,7 +216,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentException();
 			if (gtDef.GetReadOnlyGenericArguments().Count != typeArguments.Count)
 				throw new ArgumentException();
-			throw new NotImplementedException();//TODO:
+			typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;
+
+			var res = new DmdGenericInstanceType(gtDef, typeArguments);
+			lock (LockObject) {
+				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
+					return cachedType;
+				if (res.IsFullyResolved)
+					fullyResolvedTypes.Add(res, res);
+			}
+
+			return res;
 		}
 
 		public override DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature) => throw new NotImplementedException();//TODO:

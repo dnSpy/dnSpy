@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		protected override int GetDeclaringTypeToken() => 0x02000000 + (int)(reader.TablesStream.ReadNestedClassRow(reader.Metadata.GetNestedClassRid(Rid))?.EnclosingClass ?? 0);
 
-		protected override int GetBaseTypeToken() {
+		protected override int GetBaseTypeTokenCore() {
 			uint extends = reader.TablesStream.ReadTypeDefRow(Rid).Extends;
 			if (!CodedToken.TypeDefOrRef.Decode(extends, out uint token))
 				return 0;

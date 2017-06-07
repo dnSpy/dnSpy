@@ -106,6 +106,7 @@
     <Compile Include="Impl\DmdAssemblyControllerImpl.cs" />
     <Compile Include="Impl\DmdAssemblyImpl.cs" />
     <Compile Include="Impl\DmdByRefType.cs" />
+    <Compile Include="Impl\DmdGenericInstanceType.cs" />
     <Compile Include="Impl\DmdGenericParameterType.cs" />
     <Compile Include="Impl\DmdLazyMetadataReader.cs" />
     <Compile Include="Impl\DmdMDArrayType.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Impl\DmdSZArrayType.cs" />
     <Compile Include="Impl\DmdTypeBase.cs" />
     <Compile Include="Impl\DmdTypeDef.cs" />
+    <Compile Include="Impl\DmdTypeUtilities.cs" />
     <Compile Include="Impl\LazyList.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
     <Compile Include="Impl\MD\DmdGenericParameterTypeMD.cs" />

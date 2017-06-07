@@ -24,7 +24,7 @@ using System.Linq;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdTypeBase : DmdType {
-		protected static readonly ReadOnlyCollection<DmdType> emptyReadOnlyCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
+		protected static readonly ReadOnlyCollection<DmdType> emptyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
 		static readonly ReadOnlyCollection<DmdFieldInfo> emptyFieldCollection = new ReadOnlyCollection<DmdFieldInfo>(Array.Empty<DmdFieldInfo>());
 		static readonly ReadOnlyCollection<DmdMethodBase> emptyMethodBaseCollection = new ReadOnlyCollection<DmdMethodBase>(Array.Empty<DmdMethodBase>());
 		static readonly ReadOnlyCollection<DmdPropertyInfo> emptyPropertyCollection = new ReadOnlyCollection<DmdPropertyInfo>(Array.Empty<DmdPropertyInfo>());
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsGenericType => false;
 		public override bool IsGenericTypeDefinition => false;
 		public override int GenericParameterPosition => throw new InvalidOperationException();
-		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => emptyReadOnlyCollection;
+		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => emptyTypeCollection;
 		public override DmdType GetGenericTypeDefinition() => throw new InvalidOperationException();
 		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericParameterConstraints() => throw new InvalidOperationException();
 		public override DmdMethodSignature GetFunctionPointerMethodSignature() => throw new InvalidOperationException();

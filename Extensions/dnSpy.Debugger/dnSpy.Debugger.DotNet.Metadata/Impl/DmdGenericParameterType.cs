@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (__genericParameterConstraints_DONT_USE != null)
 					return __genericParameterConstraints_DONT_USE;
 				var res = CreateGenericParameterConstraints_NoLock();
-				__genericParameterConstraints_DONT_USE = res == null || res.Length == 0 ? emptyReadOnlyCollection : new ReadOnlyCollection<DmdType>(res);
+				__genericParameterConstraints_DONT_USE = res == null || res.Length == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(res);
 				return __genericParameterConstraints_DONT_USE;
 			}
 		}

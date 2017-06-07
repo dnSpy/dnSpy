@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							if ((baseTypeToken & 0x00FFFFFF) == 0)
 								__baseType_DONT_USE = null;
 							else
-								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetOrCreateGenericParameters().ToArray(), null, throwOnError: false);
+								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetOrCreateGenericParameters(), null, throwOnError: false);
 							baseTypeInitd = true;
 						}
 					}
@@ -77,7 +77,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		bool baseTypeInitd;
 
 		protected abstract int GetDeclaringTypeToken();
-		protected abstract int GetBaseTypeToken();
+		protected abstract int GetBaseTypeTokenCore();
+
+		public int GetBaseTypeToken() {
+			if (baseTypeToken == -1) {
+				baseTypeToken = GetBaseTypeTokenCore();
+				Debug.Assert(baseTypeToken != -1);
+			}
+			return baseTypeToken;
+		}
+		int baseTypeToken = -1;
 
 		protected abstract DmdType[] CreateGenericParameters_NoLock();
 		ReadOnlyCollection<DmdType> GetOrCreateGenericParameters() {
@@ -87,7 +96,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (__genericParameters_DONT_USE != null)
 					return __genericParameters_DONT_USE;
 				var res = CreateGenericParameters_NoLock();
-				__genericParameters_DONT_USE = res == null || res.Length == 0 ? emptyReadOnlyCollection : new ReadOnlyCollection<DmdType>(res);
+				__genericParameters_DONT_USE = res == null || res.Length == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(res);
 				return __genericParameters_DONT_USE;
 			}
 		}
