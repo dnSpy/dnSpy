@@ -109,6 +109,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return formatter.FormatCore(parameter);
 		}
 
+		public static string FormatName(DmdType type) {
+			using (var formatter = new DmdMemberFormatter(GlobalFlags.None))
+				return formatter.FormatNameCore(type);
+		}
+
 		string FormatCore(DmdMemberInfo member) {
 			Write(member);
 			return writer.ToString();
@@ -141,6 +146,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		string FormatCore(DmdParameterInfo parameter) {
 			Write(parameter);
+			return writer.ToString();
+		}
+
+		string FormatNameCore(DmdType type) {
+			WriteName(type);
 			return writer.ToString();
 		}
 
@@ -334,6 +344,69 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Write(parameter.ParameterType, GetTypeFlags(true));
 			writer.Append(' ');
 			writer.Append(parameter.Name);
+		}
+
+		void WriteName(DmdType type) {
+			if ((object)type == null) {
+				writer.Append("???");
+				return;
+			}
+
+			if (!IncrementRecursionCounter()) {
+				writer.Append("???");
+				return;
+			}
+
+			switch (type.TypeSignatureKind) {
+			case DmdTypeSignatureKind.Type:
+				writer.Append(type.Name);
+				break;
+
+			case DmdTypeSignatureKind.Pointer:
+				WriteName(type.GetElementType());
+				writer.Append('*');
+				break;
+
+			case DmdTypeSignatureKind.ByRef:
+				WriteName(type.GetElementType());
+				writer.Append('&');
+				break;
+
+			case DmdTypeSignatureKind.TypeGenericParameter:
+			case DmdTypeSignatureKind.MethodGenericParameter:
+				writer.Append(type.Name);
+				break;
+
+			case DmdTypeSignatureKind.SZArray:
+				WriteName(type.GetElementType());
+				writer.Append("[]");
+				break;
+
+			case DmdTypeSignatureKind.MDArray:
+				WriteName(type.GetElementType());
+				writer.Append('[');
+				var rank = type.GetArrayRank();
+				if (rank <= 0)
+					writer.Append("???");
+				else if (rank == 1)
+					writer.Append('*');
+				else
+					writer.Append(',', rank - 1);
+				writer.Append(']');
+				break;
+
+			case DmdTypeSignatureKind.GenericInstance:
+				WriteName(type.GetGenericTypeDefinition());
+				break;
+
+			case DmdTypeSignatureKind.FunctionPointer:
+				WriteName(type.AppDomain.System_IntPtr);
+				break;
+
+			default: throw new InvalidOperationException();
+			}
+
+			DecrementRecursionCounter();
 		}
 	}
 }
