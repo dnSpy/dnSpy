@@ -47,11 +47,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int GetArrayRank() => throw new ArgumentException();
 		public override ReadOnlyCollection<int> GetReadOnlyArraySizes() => throw new ArgumentException();
 		public override ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds() => throw new ArgumentException();
-		public sealed override DmdType MakePointerType() => throw new NotImplementedException();//TODO:
-		public sealed override DmdType MakeByRefType() => throw new NotImplementedException();//TODO:
-		public sealed override DmdType MakeArrayType() => new DmdSZArrayType(this);
-		public sealed override DmdType MakeArrayType(int rank, IList<int> sizes, IList<int> lowerBounds) => throw new NotImplementedException();//TODO:
-		public sealed override DmdType MakeGenericType(IList<DmdType> typeArguments) => throw new NotImplementedException();//TODO:
+		public sealed override DmdType MakePointerType() => AppDomain.MakePointerType(this);
+		public sealed override DmdType MakeByRefType() => AppDomain.MakeByRefType(this);
+		public sealed override DmdType MakeArrayType() => AppDomain.MakeArrayType(this);
+		public sealed override DmdType MakeArrayType(int rank, IList<int> sizes, IList<int> lowerBounds) => AppDomain.MakeArrayType(this, rank, sizes, lowerBounds);
+		public sealed override DmdType MakeGenericType(IList<DmdType> typeArguments) => AppDomain.MakeGenericType(this, typeArguments);
 
 		protected DmdType SkipElementTypes() {
 			DmdType type = this;

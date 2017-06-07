@@ -105,6 +105,76 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdMemberInfo GetWellKnownMember(DmdWellKnownMember wellKnownMember, bool isOptional) => throw new NotImplementedException();//TODO:
 		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) => throw new NotImplementedException();//TODO:
+
+		public override DmdType MakePointerType(DmdType elementType) {
+			if (elementType == null)
+				throw new ArgumentNullException(nameof(elementType));
+			if (elementType.AppDomain != this)
+				throw new InvalidOperationException();
+			var et = (elementType.ResolveNoThrow() ?? elementType) as DmdTypeBase;
+			if (et == null)
+				throw new ArgumentException();
+			throw new NotImplementedException();//TODO:
+		}
+
+		public override DmdType MakeByRefType(DmdType elementType) {
+			if (elementType == null)
+				throw new ArgumentNullException(nameof(elementType));
+			if (elementType.AppDomain != this)
+				throw new InvalidOperationException();
+			var et = (elementType.ResolveNoThrow() ?? elementType) as DmdTypeBase;
+			if (et == null)
+				throw new ArgumentException();
+			throw new NotImplementedException();//TODO:
+		}
+
+		public override DmdType MakeArrayType(DmdType elementType) {
+			if (elementType == null)
+				throw new ArgumentNullException(nameof(elementType));
+			if (elementType.AppDomain != this)
+				throw new InvalidOperationException();
+			var et = (elementType.ResolveNoThrow() ?? elementType) as DmdTypeBase;
+			if (et == null)
+				throw new ArgumentException();
+			return new DmdSZArrayType(et);
+		}
+
+		public override DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds) {
+			if (elementType == null)
+				throw new ArgumentNullException(nameof(elementType));
+			if (elementType.AppDomain != this)
+				throw new InvalidOperationException();
+			if (sizes == null)
+				throw new ArgumentNullException(nameof(sizes));
+			if (lowerBounds == null)
+				throw new ArgumentNullException(nameof(lowerBounds));
+			var et = (elementType.ResolveNoThrow() ?? elementType) as DmdTypeBase;
+			if (et == null)
+				throw new ArgumentException();
+			throw new NotImplementedException();//TODO:
+		}
+
+		public override DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments) {
+			if (genericTypeDefinition == null)
+				throw new ArgumentNullException(nameof(genericTypeDefinition));
+			if (genericTypeDefinition.AppDomain != this)
+				throw new InvalidOperationException();
+			if (typeArguments == null)
+				throw new ArgumentNullException(nameof(typeArguments));
+			for (int i = 0; i < typeArguments.Count; i++) {
+				if (typeArguments[i].AppDomain != this)
+					throw new InvalidOperationException();
+			}
+			var gtDef = genericTypeDefinition.Resolve() as DmdTypeDef;
+			if (gtDef == null)
+				throw new ArgumentException();
+			if (!gtDef.IsGenericTypeDefinition)
+				throw new ArgumentException();
+			if (gtDef.GetReadOnlyGenericArguments().Count != typeArguments.Count)
+				throw new ArgumentException();
+			throw new NotImplementedException();//TODO:
+		}
+
 		public override DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature) => throw new NotImplementedException();//TODO:
 		public override DmdType GetType(string typeName, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
 

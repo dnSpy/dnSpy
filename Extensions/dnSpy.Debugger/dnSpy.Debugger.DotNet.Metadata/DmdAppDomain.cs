@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
@@ -241,6 +242,45 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdType System_AsyncCallback => GetWellKnownType(DmdWellKnownType.System_AsyncCallback);
 		public DmdType System_Type => GetWellKnownType(DmdWellKnownType.System_Type);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+
+		/// <summary>
+		/// Makes a pointer type
+		/// </summary>
+		/// <param name="elementType">Element type</param>
+		/// <returns></returns>
+		public abstract DmdType MakePointerType(DmdType elementType);
+
+		/// <summary>
+		/// Makes a by-ref type
+		/// </summary>
+		/// <param name="elementType">Element type</param>
+		/// <returns></returns>
+		public abstract DmdType MakeByRefType(DmdType elementType);
+
+		/// <summary>
+		/// Makes a SZ array type
+		/// </summary>
+		/// <param name="elementType">Element type</param>
+		/// <returns></returns>
+		public abstract DmdType MakeArrayType(DmdType elementType);
+
+		/// <summary>
+		/// Makes a multi-dimensional type
+		/// </summary>
+		/// <param name="elementType">Element type</param>
+		/// <param name="rank">Number of dimensions</param>
+		/// <param name="sizes">Sizes</param>
+		/// <param name="lowerBounds">Lower bounds</param>
+		/// <returns></returns>
+		public abstract DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds);
+
+		/// <summary>
+		/// Makes a generic type
+		/// </summary>
+		/// <param name="genericTypeDefinition">Generic type definition</param>
+		/// <param name="typeArguments">Generic arguments</param>
+		/// <returns></returns>
+		public abstract DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments);
 
 		/// <summary>
 		/// Makes a function pointer type
