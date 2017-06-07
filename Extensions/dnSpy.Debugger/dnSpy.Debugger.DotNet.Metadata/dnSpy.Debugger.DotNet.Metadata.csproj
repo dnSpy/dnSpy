@@ -67,6 +67,7 @@
     <Compile Include="DmdGenericParameterAttributes.cs" />
     <Compile Include="DmdImageFileMachine.cs" />
     <Compile Include="DmdLazyMetadataBytes.cs" />
+    <Compile Include="DmdMemberFormatter.cs" />
     <Compile Include="DmdMemberInfo.cs" />
     <Compile Include="DmdMemberInfoEqualityComparer.cs" />
     <Compile Include="DmdMemberTypes.cs" />

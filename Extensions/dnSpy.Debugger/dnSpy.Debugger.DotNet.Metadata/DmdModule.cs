@@ -351,6 +351,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Returns the metadata name (<see cref="ScopeName"/>)
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => ScopeName;
+		public sealed override string ToString() => ScopeName;
 	}
 }

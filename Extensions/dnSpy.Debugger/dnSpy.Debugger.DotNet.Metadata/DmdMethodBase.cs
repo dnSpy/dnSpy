@@ -201,5 +201,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public abstract override int GetHashCode();
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public sealed override string ToString() => DmdMemberFormatter.Format(this);
 	}
 }

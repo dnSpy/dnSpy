@@ -264,5 +264,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public override int GetHashCode() => DmdMemberInfoEqualityComparer.Default.GetHashCode(this);
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public sealed override string ToString() => DmdMemberFormatter.Format(this);
 	}
 }

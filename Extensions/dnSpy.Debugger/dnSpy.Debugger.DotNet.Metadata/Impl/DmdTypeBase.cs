@@ -33,8 +33,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdMethodBase DeclaringMethod => null;
 		public sealed override Guid GUID => throw new NotImplementedException();//TODO:
 		public sealed override DmdAssembly Assembly => Module.Assembly;
-		public sealed override string FullName => throw new NotImplementedException();//TODO:
-		public sealed override string AssemblyQualifiedName => throw new NotImplementedException();//TODO:
 		public sealed override bool IsCOMObject => throw new NotImplementedException();//TODO:
 		public sealed override bool HasElementType => (object)GetElementType() != null;
 		public override DmdGenericParameterAttributes GenericParameterAttributes => throw new InvalidOperationException();
@@ -284,7 +282,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => throw new NotImplementedException();//TODO:
 		public sealed override bool IsDefined(string attributeTypeFullName, bool inherit) => throw new NotImplementedException();//TODO:
 		public sealed override bool IsDefined(DmdType attributeType, bool inherit) => throw new NotImplementedException();//TODO:
-		public sealed override string ToString() => throw new NotImplementedException();//TODO:
 
 		protected virtual DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => null;
 		protected virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => null;

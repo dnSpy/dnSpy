@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the full name
 		/// </summary>
-		public abstract string FullName { get; }
+		public string FullName => DmdMemberFormatter.FormatFullName(this);
 
 		/// <summary>
 		/// Gets the namespace or null
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the assembly qualified name
 		/// </summary>
-		public abstract string AssemblyQualifiedName { get; }
+		public string AssemblyQualifiedName => DmdMemberFormatter.FormatAssemblyQualifiedName(this);
 
 		/// <summary>
 		/// Gets the base type or null if none
@@ -938,5 +938,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public override int GetHashCode() => DmdMemberInfoEqualityComparer.Default.GetHashCode(this);
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public sealed override string ToString() => DmdMemberFormatter.Format(this);
 	}
 }

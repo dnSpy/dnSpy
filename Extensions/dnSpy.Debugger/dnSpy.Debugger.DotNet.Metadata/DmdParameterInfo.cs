@@ -161,6 +161,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public abstract override string ToString();
+		public sealed override string ToString() => DmdMemberFormatter.Format(this);
 	}
 }

@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the full name of the assembly
 		/// </summary>
-		public abstract string FullName { get; }
+		public string FullName => GetName().ToString();
 
 		/// <summary>
 		/// Gets the assembly location or an empty string
@@ -251,6 +251,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the full name
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => FullName;
+		public sealed override string ToString() => FullName;
 	}
 }
