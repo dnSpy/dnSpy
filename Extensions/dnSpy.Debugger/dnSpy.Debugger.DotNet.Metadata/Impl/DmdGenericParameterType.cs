@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdType[] CreateGenericParameterConstraints_NoLock();
 		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericParameterConstraints() => GetOrCreateGenericParameterConstraints();
 
-		public override DmdType Resolve(bool throwOnError) => this;
+		protected override DmdType ResolveNoThrowCore() => this;
 
 		public override bool IsFullyResolved => true;
 		public override DmdTypeBase FullResolve() => this;

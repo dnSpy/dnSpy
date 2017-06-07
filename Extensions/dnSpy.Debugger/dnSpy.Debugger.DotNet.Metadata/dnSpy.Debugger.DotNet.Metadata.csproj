@@ -124,6 +124,7 @@
     <Compile Include="Impl\MD\DmdGenericParameterTypeMD.cs" />
     <Compile Include="Impl\MD\DmdTypeDefMD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResolveException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

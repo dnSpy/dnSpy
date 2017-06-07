@@ -47,6 +47,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		/// <returns></returns>
 		public abstract DmdTypeBase FullResolve();
 
+		public sealed override DmdType Resolve(bool throwOnError) {
+			var res = ResolveNoThrowCore();
+			if (res == null && throwOnError)
+				throw new TypeResolveException();
+			return res;
+		}
+		protected abstract DmdType ResolveNoThrowCore();
+
 		public override DmdMethodBase DeclaringMethod => throw new InvalidOperationException();
 		public sealed override Guid GUID => throw new NotImplementedException();//TODO:
 		public sealed override DmdAssembly Assembly => Module.Assembly;

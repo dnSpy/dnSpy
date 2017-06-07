@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType BaseType => AppDomain.System_Array;
 		public override StructLayoutAttribute StructLayoutAttribute => null;
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.Public | DmdTypeAttributes.AutoLayout | DmdTypeAttributes.Class | DmdTypeAttributes.Sealed | DmdTypeAttributes.AnsiClass | DmdTypeAttributes.Serializable;
-		public override DmdType Resolve(bool throwOnError) => this;
+		protected override DmdType ResolveNoThrowCore() => this;
 		public override string Name => DmdMemberFormatter.FormatName(this);
 		public override DmdType DeclaringType => null;
 		public override int MetadataToken => 0x02000000;

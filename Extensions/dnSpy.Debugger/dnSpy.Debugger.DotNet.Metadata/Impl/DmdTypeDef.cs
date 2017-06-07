@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected DmdTypeDef(uint rid) => this.rid = rid;
 
-		public override DmdType Resolve(bool throwOnError) => this;
+		protected override DmdType ResolveNoThrowCore() => this;
 		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => GetOrCreateGenericParameters();
 		public override DmdType GetGenericTypeDefinition() => IsGenericType ? this : throw new InvalidOperationException();
 
