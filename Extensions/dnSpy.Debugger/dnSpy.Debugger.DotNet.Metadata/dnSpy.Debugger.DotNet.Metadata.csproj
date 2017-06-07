@@ -108,6 +108,7 @@
     <Compile Include="Impl\DmdByRefType.cs" />
     <Compile Include="Impl\DmdFunctionPointerType.cs" />
     <Compile Include="Impl\DmdGenericInstanceType.cs" />
+    <Compile Include="Impl\DmdGenericInstanceTypeRef.cs" />
     <Compile Include="Impl\DmdGenericParameterType.cs" />
     <Compile Include="Impl\DmdLazyMetadataReader.cs" />
     <Compile Include="Impl\DmdMDArrayType.cs" />

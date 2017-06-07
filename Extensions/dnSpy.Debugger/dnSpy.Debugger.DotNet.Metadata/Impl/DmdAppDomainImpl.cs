@@ -208,17 +208,26 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (typeArguments[i].AppDomain != this)
 					throw new InvalidOperationException();
 			}
-			var gtDef = genericTypeDefinition.Resolve() as DmdTypeDef;
-			if ((object)gtDef == null)
-				throw new ArgumentException();
-			gtDef = (DmdTypeDef)gtDef.FullResolve() ?? gtDef;
-			if (!gtDef.IsGenericTypeDefinition)
-				throw new ArgumentException();
-			if (gtDef.GetReadOnlyGenericArguments().Count != typeArguments.Count)
-				throw new ArgumentException();
-			typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;
 
-			var res = new DmdGenericInstanceType(gtDef, typeArguments);
+			DmdTypeBase res;
+			var gtDef = genericTypeDefinition.Resolve() as DmdTypeDef;
+			if ((object)gtDef == null) {
+				var gtRef = genericTypeDefinition as DmdTypeRef;
+				if ((object)gtRef == null)
+					throw new ArgumentException();
+				typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;
+				res = new DmdGenericInstanceTypeRef(gtRef, typeArguments);
+			}
+			else {
+				gtDef = (DmdTypeDef)gtDef.FullResolve() ?? gtDef;
+				if (!gtDef.IsGenericTypeDefinition)
+					throw new ArgumentException();
+				if (gtDef.GetReadOnlyGenericArguments().Count != typeArguments.Count)
+					throw new ArgumentException();
+				typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;
+				res = new DmdGenericInstanceType(gtDef, typeArguments);
+			}
+
 			lock (LockObject) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
