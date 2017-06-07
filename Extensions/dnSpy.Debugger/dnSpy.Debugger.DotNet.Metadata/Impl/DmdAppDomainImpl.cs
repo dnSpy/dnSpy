@@ -170,6 +170,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds) {
+			// Allow 0, it's allowed in the MD
+			if (rank < 0)
+				throw new ArgumentOutOfRangeException(nameof(rank));
 			if (elementType == null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
@@ -182,7 +185,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (et == null)
 				throw new ArgumentException();
 			et = et.FullResolve() ?? et;
-			throw new NotImplementedException();//TODO:
+
+			var res = new DmdMDArrayType(et, rank, sizes, lowerBounds);
+			lock (LockObject) {
+				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
+					return cachedType;
+				if (res.IsFullyResolved)
+					fullyResolvedTypes.Add(res, res);
+			}
+
+			return res;
 		}
 
 		public override DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments) {

@@ -108,6 +108,7 @@
     <Compile Include="Impl\DmdByRefType.cs" />
     <Compile Include="Impl\DmdGenericParameterType.cs" />
     <Compile Include="Impl\DmdLazyMetadataReader.cs" />
+    <Compile Include="Impl\DmdMDArrayType.cs" />
     <Compile Include="Impl\DmdMemberInfoComparer.cs" />
     <Compile Include="Impl\DmdMetadataReader.cs" />
     <Compile Include="Impl\DmdMetadataReaderBase.cs" />
