@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		static readonly ReadOnlyCollection<DmdPropertyInfo> emptyPropertyCollection = new ReadOnlyCollection<DmdPropertyInfo>(Array.Empty<DmdPropertyInfo>());
 		static readonly ReadOnlyCollection<DmdEventInfo> emptyEventCollection = new ReadOnlyCollection<DmdEventInfo>(Array.Empty<DmdEventInfo>());
 
-		public override DmdMethodBase DeclaringMethod => null;
+		public override DmdMethodBase DeclaringMethod => throw new InvalidOperationException();
 		public sealed override Guid GUID => throw new NotImplementedException();//TODO:
 		public sealed override DmdAssembly Assembly => Module.Assembly;
 		public sealed override bool IsCOMObject => throw new NotImplementedException();//TODO:
@@ -49,9 +49,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds() => throw new ArgumentException();
 		public sealed override DmdType MakePointerType() => throw new NotImplementedException();//TODO:
 		public sealed override DmdType MakeByRefType() => throw new NotImplementedException();//TODO:
-		public sealed override DmdType MakeArrayType() => throw new NotImplementedException();//TODO:
+		public sealed override DmdType MakeArrayType() => new DmdSZArrayType(this);
 		public sealed override DmdType MakeArrayType(int rank, IList<int> sizes, IList<int> lowerBounds) => throw new NotImplementedException();//TODO:
 		public sealed override DmdType MakeGenericType(IList<DmdType> typeArguments) => throw new NotImplementedException();//TODO:
+
+		protected DmdType SkipElementTypes() {
+			DmdType type = this;
+			while (type.HasElementType)
+				type = type.GetElementType();
+			return type;
+		}
 
 		public sealed override DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
 			if (types == null)

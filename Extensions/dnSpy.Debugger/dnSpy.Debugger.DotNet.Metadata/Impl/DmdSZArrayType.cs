@@ -1,0 +1,49 @@
+﻿/*
+    Copyright (C) 2014-2017 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Collections.ObjectModel;
+using System.Runtime.InteropServices;
+
+namespace dnSpy.Debugger.DotNet.Metadata.Impl {
+	sealed class DmdSZArrayType : DmdTypeBase {
+		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.SZArray;
+		public override DmdTypeScope TypeScope => SkipElementTypes().TypeScope;
+		public override DmdModule Module => SkipElementTypes().Module;
+		public override string Namespace => SkipElementTypes().Namespace;
+		public override DmdType BaseType => AppDomain.System_Array;
+		public override StructLayoutAttribute StructLayoutAttribute => null;
+		public override DmdTypeAttributes Attributes => DmdTypeAttributes.Public | DmdTypeAttributes.AutoLayout | DmdTypeAttributes.Class | DmdTypeAttributes.Sealed | DmdTypeAttributes.AnsiClass | DmdTypeAttributes.Serializable;
+		public override DmdType Resolve(bool throwOnError) => this;
+		public override string Name => DmdMemberFormatter.FormatName(this);
+		public override DmdType DeclaringType => null;
+		public override int MetadataToken => 0x02000000;
+		public override bool IsMetadataReference => false;
+
+		readonly DmdTypeBase elementType;
+
+		public DmdSZArrayType(DmdTypeBase elementType) => this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
+
+		public override DmdType GetElementType() => elementType;
+		public override int GetArrayRank() => 1;
+		public override ReadOnlyCollection<int> GetReadOnlyArraySizes() => emptyInt32Collection;
+		public override ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds() => emptyInt32Collection;
+		static readonly ReadOnlyCollection<int> emptyInt32Collection = new ReadOnlyCollection<int>(Array.Empty<int>());
+	}
+}

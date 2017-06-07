@@ -116,6 +116,7 @@
     <Compile Include="Impl\DmdNullMetadataReader.cs" />
     <Compile Include="Impl\DmdRuntimeControllerImpl.cs" />
     <Compile Include="Impl\DmdRuntimeImpl.cs" />
+    <Compile Include="Impl\DmdSZArrayType.cs" />
     <Compile Include="Impl\DmdTypeBase.cs" />
     <Compile Include="Impl\DmdTypeDef.cs" />
     <Compile Include="Impl\LazyList.cs" />
