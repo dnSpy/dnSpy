@@ -147,7 +147,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				peKind |= DmdPortableExecutableKinds.Preferred32Bit;
 		}
 
-		public override DmdAssemblyName GetName() => throw new NotImplementedException();//TODO:
+		public override DmdAssemblyName GetName() {
+			var name = new DmdAssemblyName();
+			var row = TablesStream.ReadAssemblyRow(1);
+			if (row == null) {
+				name.Name = "no-asm-" + Guid.NewGuid().ToString();
+				return name;
+			}
+
+			name.Version = new Version(row.MajorVersion, row.MinorVersion, row.BuildNumber, row.RevisionNumber);
+			name.Name = StringsStream.ReadNoNull(row.Name);
+			name.CultureName = StringsStream.ReadNoNull(row.Locale);
+			name.HashAlgorithm = (DmdAssemblyHashAlgorithm)row.HashAlgId;
+			name.SetPublicKey(BlobStream.ReadNoNull(row.PublicKey));
+			name.Flags = (DmdAssemblyNameFlags)row.Flags;
+			return name;
+		}
+
 		public override DmdType[] GetExportedTypes() => throw new NotImplementedException();//TODO:
 
 		public override DmdAssemblyName[] GetReferencedAssemblies() {
