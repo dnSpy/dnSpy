@@ -105,6 +105,7 @@
     <Compile Include="Impl\DmdAppDomainImpl.cs" />
     <Compile Include="Impl\DmdAssemblyControllerImpl.cs" />
     <Compile Include="Impl\DmdAssemblyImpl.cs" />
+    <Compile Include="Impl\DmdByRefType.cs" />
     <Compile Include="Impl\DmdGenericParameterType.cs" />
     <Compile Include="Impl\DmdLazyMetadataReader.cs" />
     <Compile Include="Impl\DmdMemberInfoComparer.cs" />
