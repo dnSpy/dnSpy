@@ -30,6 +30,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		static readonly ReadOnlyCollection<DmdPropertyInfo> emptyPropertyCollection = new ReadOnlyCollection<DmdPropertyInfo>(Array.Empty<DmdPropertyInfo>());
 		static readonly ReadOnlyCollection<DmdEventInfo> emptyEventCollection = new ReadOnlyCollection<DmdEventInfo>(Array.Empty<DmdEventInfo>());
 
+		/// <summary>
+		/// true if there are no metadata references. This instance and any other <see cref="DmdType"/> that it
+		/// references directly or indirectly (element type, generic arguments) are all resolved types
+		/// (TypeDefs, and not TypeRefs).
+		/// 
+		/// Even if this property is true, it could still have metadata references:
+		/// optional/required modifiers, base type, types in custom attributes, etc could
+		/// contain one or more TypeRefs.
+		/// </summary>
+		public abstract bool IsFullyResolved { get; }
+
+		/// <summary>
+		/// Resolves a type whose <see cref="IsFullyResolved"/> property is true or returns null if the resolve failed
+		/// </summary>
+		/// <returns></returns>
+		public abstract DmdTypeBase FullResolve();
+
 		public override DmdMethodBase DeclaringMethod => throw new InvalidOperationException();
 		public sealed override Guid GUID => throw new NotImplementedException();//TODO:
 		public sealed override DmdAssembly Assembly => Module.Assembly;

@@ -111,5 +111,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => ReadDeclaredMethods(reflectedType, GetReadOnlyGenericArguments(), includeConstructors);
 		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(reflectedType, GetReadOnlyGenericArguments());
 		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(reflectedType, GetReadOnlyGenericArguments());
+
+		public override bool IsFullyResolved => true;
+		public override DmdTypeBase FullResolve() => this;
 	}
 }

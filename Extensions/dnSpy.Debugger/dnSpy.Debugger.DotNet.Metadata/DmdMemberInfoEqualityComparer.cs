@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			IEqualityComparer<DmdMethodSignature>, IEqualityComparer<DmdAssemblyName>, IEqualityComparer<DmdCustomModifier> {
 		/// <summary>
 		/// Gets an <see cref="IEqualityComparer{T}"/> that can be used to compare types, members and parameters using default
-		/// <see cref="DmdSigComparer"/> options (<see cref="DefaultOptions"/>)
+		/// <see cref="DmdSigComparer"/> options (<see cref="DefaultOptions"/> == <see cref="DmdSigComparerOptions.CompareDeclaringType"/>).
 		/// </summary>
 		public static readonly DmdMemberInfoEqualityComparer Default = new DmdMemberInfoEqualityComparer(DefaultOptions);
 

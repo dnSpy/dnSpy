@@ -31,17 +31,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdModule ManifestModule {
 			get {
-				lock (lockObj)
+				lock (LockObject)
 					return modules.Count == 0 ? null : modules[0];
 			}
 		}
 
-		readonly object lockObj;
 		readonly List<DmdModuleImpl> modules;
 		readonly DmdMetadataReader metadataReader;
 
 		public DmdAssemblyImpl(DmdAppDomainImpl appDomain, DmdMetadataReader metadataReader, string location) {
-			lockObj = new object();
 			modules = new List<DmdModuleImpl>();
 			AppDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			this.metadataReader = metadataReader ?? throw new ArgumentNullException(nameof(metadataReader));
@@ -51,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void Add(DmdModuleImpl module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
-			lock (lockObj) {
+			lock (LockObject) {
 				Debug.Assert(!modules.Contains(module));
 				modules.Add(module);
 			}
@@ -60,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void Remove(DmdModuleImpl module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
-			lock (lockObj) {
+			lock (LockObject) {
 				bool b = modules.Remove(module);
 				Debug.Assert(b);
 			}
@@ -68,14 +66,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdModule[] GetModules() => GetLoadedModules();
 		public override DmdModule[] GetLoadedModules() {
-			lock (lockObj)
+			lock (LockObject)
 				return modules.ToArray();
 		}
 
 		public override DmdModule GetModule(string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			lock (lockObj) {
+			lock (LockObject) {
 				foreach (var module in modules) {
 					// This is case insensitive, see AssemblyNative::GetModule(pAssembly,wszFileName,retModule) in coreclr/src/vm/assemblynative.cpp
 					if (StringComparer.OrdinalIgnoreCase.Equals(module.ScopeName, name))

@@ -29,20 +29,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdAssembly CorLib {
 			get {
-				lock (lockObj) {
+				lock (LockObject) {
 					// Assume that the first assembly is always the corlib. This is documented in DmdAppDomainController.CreateAssembly()
 					return assemblies.Count == 0 ? null : assemblies[0];
 				}
 			}
 		}
 
-		readonly object lockObj;
 		readonly DmdRuntimeImpl runtime;
 		readonly List<DmdAssemblyImpl> assemblies;
+		readonly Dictionary<DmdType, DmdType> fullyResolvedTypes;
 
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
-			lockObj = new object();
 			assemblies = new List<DmdAssemblyImpl>();
+			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(DmdMemberInfoEqualityComparer.Default);
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Id = id;
 		}
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void Add(DmdAssemblyImpl assembly) {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
-			lock (lockObj) {
+			lock (LockObject) {
 				Debug.Assert(!assemblies.Contains(assembly));
 				assemblies.Add(assembly);
 			}
@@ -59,21 +59,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void Remove(DmdAssemblyImpl assembly) {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
-			lock (lockObj) {
+			lock (LockObject) {
 				bool b = assemblies.Remove(assembly);
 				Debug.Assert(b);
 			}
 		}
 
 		public override DmdAssembly[] GetAssemblies() {
-			lock (lockObj)
+			lock (LockObject)
 				return assemblies.ToArray();
 		}
 
 		public override DmdAssembly GetAssembly(string simpleName) {
 			if (simpleName == null)
 				throw new ArgumentNullException(nameof(simpleName));
-			lock (lockObj) {
+			lock (LockObject) {
 				foreach (var assembly in assemblies) {
 					if (StringComparer.OrdinalIgnoreCase.Equals(assembly.GetName().Name, simpleName))
 						return assembly;
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdAssembly GetAssembly(DmdAssemblyName name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			lock (lockObj) {
+			lock (LockObject) {
 				foreach (var assembly in assemblies) {
 					if (DmdMemberInfoEqualityComparer.Default.Equals(assembly.GetName(), name))
 						return assembly;
@@ -111,9 +111,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
-			var et = (elementType.ResolveNoThrow() ?? elementType) as DmdTypeBase;
+			var et = elementType as DmdTypeBase;
 			if (et == null)
 				throw new ArgumentException();
+			et = et.FullResolve() ?? et;
 			throw new NotImplementedException();//TODO:
 		}
 
@@ -122,9 +123,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
-			var et = (elementType.ResolveNoThrow() ?? elementType) as DmdTypeBase;
+			var et = elementType as DmdTypeBase;
 			if (et == null)
 				throw new ArgumentException();
+			et = et.FullResolve() ?? et;
 			throw new NotImplementedException();//TODO:
 		}
 
@@ -133,10 +135,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
-			var et = (elementType.ResolveNoThrow() ?? elementType) as DmdTypeBase;
+			var et = elementType as DmdTypeBase;
 			if (et == null)
 				throw new ArgumentException();
-			return new DmdSZArrayType(et);
+			et = et.FullResolve() ?? et;
+
+			var res = new DmdSZArrayType(et);
+			lock (LockObject) {
+				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
+					return cachedType;
+				if (res.IsFullyResolved)
+					fullyResolvedTypes.Add(res, res);
+			}
+
+			return res;
 		}
 
 		public override DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds) {
@@ -148,9 +160,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(sizes));
 			if (lowerBounds == null)
 				throw new ArgumentNullException(nameof(lowerBounds));
-			var et = (elementType.ResolveNoThrow() ?? elementType) as DmdTypeBase;
+			var et = elementType as DmdTypeBase;
 			if (et == null)
 				throw new ArgumentException();
+			et = et.FullResolve() ?? et;
 			throw new NotImplementedException();//TODO:
 		}
 
@@ -168,6 +181,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var gtDef = genericTypeDefinition.Resolve() as DmdTypeDef;
 			if (gtDef == null)
 				throw new ArgumentException();
+			gtDef = (DmdTypeDef)gtDef.FullResolve() ?? gtDef;
 			if (!gtDef.IsGenericTypeDefinition)
 				throw new ArgumentException();
 			if (gtDef.GetReadOnlyGenericArguments().Count != typeArguments.Count)

@@ -23,13 +23,11 @@ using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdRuntimeImpl : DmdRuntime {
-		readonly object lockObj;
 		readonly List<DmdAppDomainImpl> appDomains;
 
 		internal DmdEvaluator Evaluator { get; }
 
 		public DmdRuntimeImpl(DmdEvaluator evaluator) {
-			lockObj = new object();
 			appDomains = new List<DmdAppDomainImpl>();
 			Evaluator = evaluator ?? throw new ArgumentNullException(nameof(evaluator));
 		}
@@ -37,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void Add(DmdAppDomainImpl appDomain) {
 			if (appDomain == null)
 				throw new ArgumentNullException(nameof(appDomain));
-			lock (lockObj) {
+			lock (LockObject) {
 				Debug.Assert(!appDomains.Contains(appDomain));
 				appDomains.Add(appDomain);
 			}
@@ -46,19 +44,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void Remove(DmdAppDomainImpl appDomain) {
 			if (appDomain == null)
 				throw new ArgumentNullException(nameof(appDomain));
-			lock (lockObj) {
+			lock (LockObject) {
 				bool b = appDomains.Remove(appDomain);
 				Debug.Assert(b);
 			}
 		}
 
 		public override DmdAppDomain[] GetAppDomains() {
-			lock (lockObj)
+			lock (LockObject)
 				return appDomains.ToArray();
 		}
 
 		public override DmdAppDomain GetAppDomain(int id) {
-			lock (lockObj) {
+			lock (LockObject) {
 				foreach (var appDomain in appDomains) {
 					if (appDomain.Id == id)
 						return appDomain;

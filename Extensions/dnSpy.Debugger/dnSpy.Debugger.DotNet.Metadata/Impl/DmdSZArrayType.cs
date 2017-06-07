@@ -38,12 +38,25 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdTypeBase elementType;
 
-		public DmdSZArrayType(DmdTypeBase elementType) => this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
+		public DmdSZArrayType(DmdTypeBase elementType) {
+			this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
+			IsFullyResolved = elementType.IsFullyResolved;
+		}
 
 		public override DmdType GetElementType() => elementType;
 		public override int GetArrayRank() => 1;
 		public override ReadOnlyCollection<int> GetReadOnlyArraySizes() => emptyInt32Collection;
 		public override ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds() => emptyInt32Collection;
 		static readonly ReadOnlyCollection<int> emptyInt32Collection = new ReadOnlyCollection<int>(Array.Empty<int>());
+
+		public override bool IsFullyResolved { get; }
+		public override DmdTypeBase FullResolve() {
+			if (IsFullyResolved)
+				return this;
+			var et = elementType.FullResolve();
+			if (et != null)
+				return (DmdTypeBase)AppDomain.MakeArrayType(et);
+			return null;
+		}
 	}
 }
