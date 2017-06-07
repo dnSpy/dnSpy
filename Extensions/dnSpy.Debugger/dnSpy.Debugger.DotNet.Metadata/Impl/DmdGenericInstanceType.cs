@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly ReadOnlyCollection<DmdType> typeArguments;
 
 		public DmdGenericInstanceType(DmdTypeDef genericTypeDefinition, IList<DmdType> typeArguments) {
-			if (genericTypeDefinition == null)
+			if ((object)genericTypeDefinition == null)
 				throw new ArgumentNullException(nameof(genericTypeDefinition));
 			if (typeArguments == null)
 				throw new ArgumentNullException(nameof(typeArguments));

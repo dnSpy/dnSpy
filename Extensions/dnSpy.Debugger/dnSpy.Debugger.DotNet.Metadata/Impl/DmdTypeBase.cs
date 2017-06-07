@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override DmdType Resolve(bool throwOnError) {
 			var res = ResolveNoThrowCore();
-			if (res == null && throwOnError)
+			if ((object)res == null && throwOnError)
 				throw new TypeResolveException(this);
 			return res;
 		}
@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			if (returnType == null)
+			if ((object)returnType == null)
 				throw new ArgumentNullException(nameof(returnType));
 			if (types == null)
 				throw new ArgumentNullException(nameof(types));
@@ -303,7 +303,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						return ca.ConstructorArguments.Count == 1 ? ca.ConstructorArguments[0].Value as string : null;
 				}
 				type = type.BaseType;
-				if (type == null)
+				if ((object)type == null)
 					break;
 			}
 			return null;
@@ -428,12 +428,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					// Could be bad MD with an infinite loop
 					if (baseTypeCounter >= MAX_BASE_TYPES)
 						break;
-					if (currentType == null)
+					if ((object)currentType == null)
 						break;
 					// We need a resolved type to get the members. Resolve it now and don't let the TypeRef
 					// resolve it later.
 					currentType = (DmdTypeBase)currentType.BaseType?.Resolve();
-					if (currentType == null)
+					if ((object)currentType == null)
 						break;
 					baseTypeCounter++;
 

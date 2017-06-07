@@ -285,9 +285,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Makes a function pointer type
 		/// </summary>
-		/// <param name="methodSignature">Method signature</param>
+		/// <param name="flags">Flags</param>
+		/// <param name="genericParameterCount">Number of generic parameters</param>
+		/// <param name="returnType">Return type</param>
+		/// <param name="parameterTypes">Parameter types</param>
+		/// <param name="varArgsParameterTypes">VarArgs parameter types</param>
 		/// <returns></returns>
-		public abstract DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature);
+		public abstract DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes);
 
 		/// <summary>
 		/// Gets a type

@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var res = new DmdType[list.Count];
 			for (int i = 0; i < res.Length; i++) {
 				var type = ((DmdTypeBase)list[i]).FullResolve();
-				if (type == null)
+				if ((object)type == null)
 					return null;
 				res[i] = type;
 			}

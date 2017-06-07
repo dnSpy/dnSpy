@@ -38,10 +38,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		DmdTypeDef ResolvedType => GetResolvedType(throwOnError: true);
 		DmdTypeDef GetResolvedType(bool throwOnError) {
-			if (__resolvedType_DONT_USE != null)
+			if ((object)__resolvedType_DONT_USE != null)
 				return __resolvedType_DONT_USE;
 			lock (LockObject) {
-				if (__resolvedType_DONT_USE != null)
+				if ((object)__resolvedType_DONT_USE != null)
 					return __resolvedType_DONT_USE;
 				__resolvedType_DONT_USE = appDomain.Resolve(this, throwOnError, ignoreCase: false);
 				return __resolvedType_DONT_USE;

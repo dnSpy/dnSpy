@@ -107,12 +107,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) => throw new NotImplementedException();//TODO:
 
 		public override DmdType MakePointerType(DmdType elementType) {
-			if (elementType == null)
+			if ((object)elementType == null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
 			var et = elementType as DmdTypeBase;
-			if (et == null)
+			if ((object)et == null)
 				throw new ArgumentException();
 			et = et.FullResolve() ?? et;
 
@@ -128,12 +128,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdType MakeByRefType(DmdType elementType) {
-			if (elementType == null)
+			if ((object)elementType == null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
 			var et = elementType as DmdTypeBase;
-			if (et == null)
+			if ((object)et == null)
 				throw new ArgumentException();
 			et = et.FullResolve() ?? et;
 
@@ -149,12 +149,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdType MakeArrayType(DmdType elementType) {
-			if (elementType == null)
+			if ((object)elementType == null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
 			var et = elementType as DmdTypeBase;
-			if (et == null)
+			if ((object)et == null)
 				throw new ArgumentException();
 			et = et.FullResolve() ?? et;
 
@@ -173,7 +173,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			// Allow 0, it's allowed in the MD
 			if (rank < 0)
 				throw new ArgumentOutOfRangeException(nameof(rank));
-			if (elementType == null)
+			if ((object)elementType == null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (lowerBounds == null)
 				throw new ArgumentNullException(nameof(lowerBounds));
 			var et = elementType as DmdTypeBase;
-			if (et == null)
+			if ((object)et == null)
 				throw new ArgumentException();
 			et = et.FullResolve() ?? et;
 
@@ -198,7 +198,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments) {
-			if (genericTypeDefinition == null)
+			if ((object)genericTypeDefinition == null)
 				throw new ArgumentNullException(nameof(genericTypeDefinition));
 			if (genericTypeDefinition.AppDomain != this)
 				throw new InvalidOperationException();
@@ -209,7 +209,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					throw new InvalidOperationException();
 			}
 			var gtDef = genericTypeDefinition.Resolve() as DmdTypeDef;
-			if (gtDef == null)
+			if ((object)gtDef == null)
 				throw new ArgumentException();
 			gtDef = (DmdTypeDef)gtDef.FullResolve() ?? gtDef;
 			if (!gtDef.IsGenericTypeDefinition)
@@ -229,7 +229,41 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature) => throw new NotImplementedException();//TODO:
+		public override DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes) {
+			if (genericParameterCount < 0)
+				throw new ArgumentOutOfRangeException(nameof(genericParameterCount));
+			if ((object)returnType == null)
+				throw new ArgumentNullException(nameof(returnType));
+			if (parameterTypes == null)
+				throw new ArgumentNullException(nameof(parameterTypes));
+			if (varArgsParameterTypes == null)
+				throw new ArgumentNullException(nameof(varArgsParameterTypes));
+			if (returnType.AppDomain != this)
+				throw new ArgumentException();
+			for (int i = 0; i < parameterTypes.Count; i++) {
+				if (parameterTypes[i].AppDomain != this)
+					throw new ArgumentException();
+			}
+			for (int i = 0; i < varArgsParameterTypes.Count; i++) {
+				if (varArgsParameterTypes[i].AppDomain != this)
+					throw new ArgumentException();
+			}
+			returnType = ((DmdTypeBase)returnType).FullResolve() ?? returnType;
+			parameterTypes = DmdTypeUtilities.FullResolve(parameterTypes) ?? parameterTypes;
+			varArgsParameterTypes = DmdTypeUtilities.FullResolve(varArgsParameterTypes) ?? varArgsParameterTypes;
+			var methodSignature = new DmdMethodSignatureImpl(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes);
+
+			var res = new DmdFunctionPointerType(methodSignature);
+			lock (LockObject) {
+				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
+					return cachedType;
+				if (res.IsFullyResolved)
+					fullyResolvedTypes.Add(res, res);
+			}
+
+			return res;
+		}
+
 		public override DmdType GetType(string typeName, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
 
 		internal DmdTypeDef Resolve(DmdTypeRef typeRef, bool throwOnError, bool ignoreCase) {

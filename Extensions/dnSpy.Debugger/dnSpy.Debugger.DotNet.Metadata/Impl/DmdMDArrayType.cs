@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (IsFullyResolved)
 				return this;
 			var et = elementType.FullResolve();
-			if (et != null)
+			if ((object)et != null)
 				return (DmdTypeBase)AppDomain.MakeArrayType(et, rank, sizes, lowerBounds);
 			return null;
 		}

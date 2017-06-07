@@ -106,6 +106,7 @@
     <Compile Include="Impl\DmdAssemblyControllerImpl.cs" />
     <Compile Include="Impl\DmdAssemblyImpl.cs" />
     <Compile Include="Impl\DmdByRefType.cs" />
+    <Compile Include="Impl\DmdFunctionPointerType.cs" />
     <Compile Include="Impl\DmdGenericInstanceType.cs" />
     <Compile Include="Impl\DmdGenericParameterType.cs" />
     <Compile Include="Impl\DmdLazyMetadataReader.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="Impl\DmdMemberInfoComparer.cs" />
     <Compile Include="Impl\DmdMetadataReader.cs" />
     <Compile Include="Impl\DmdMetadataReaderBase.cs" />
+    <Compile Include="Impl\DmdMethodSignatureImpl.cs" />
     <Compile Include="Impl\DmdModuleControllerImpl.cs" />
     <Compile Include="Impl\DmdModuleImpl.cs" />
     <Compile Include="Impl\DmdNullGlobalType.cs" />
