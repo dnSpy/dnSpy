@@ -42,12 +42,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly Dictionary<string, DmdAssemblyImpl> simpleNameToAssembly;
 		readonly Dictionary<DmdAssemblyName, DmdAssemblyImpl> assemblyNameToAssembly;
 		readonly Dictionary<DmdType, DmdType> fullyResolvedTypes;
+		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>> toModuleTypeDict;
+		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparer = new DmdMemberInfoEqualityComparer(DmdSigComparerOptions.DontCompareTypeScope | DmdSigComparerOptions.DontCompareCustomModifiers);
 
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
 			assemblies = new List<DmdAssemblyImpl>();
 			simpleNameToAssembly = new Dictionary<string, DmdAssemblyImpl>(StringComparer.OrdinalIgnoreCase);
 			assemblyNameToAssembly = new Dictionary<DmdAssemblyName, DmdAssemblyImpl>(DmdMemberInfoEqualityComparer.Default);
 			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(DmdMemberInfoEqualityComparer.Default);
+			toModuleTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Id = id;
 		}
@@ -324,10 +327,95 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if ((object)typeRef == null)
 				throw new ArgumentNullException(nameof(typeRef));
 
-			//TODO:
+			var type = ResolveCore(typeRef, ignoreCase);
+			if ((object)type != null)
+				return type;
 
 			if (throwOnError)
 				throw new TypeResolveException(typeRef);
+			return null;
+		}
+
+		DmdTypeDef ResolveCore(DmdTypeRef typeRef, bool ignoreCase) {
+			var nonNestedTypeRef = GetNonNestedTypeRef(typeRef);
+			if ((object)nonNestedTypeRef == null)
+				return null;
+
+			DmdModule module;
+			DmdAssembly assembly;
+			var typeScope = nonNestedTypeRef.TypeScope;
+			switch (typeScope.Kind) {
+			case DmdTypeScopeKind.Invalid:
+				Debug.Fail("Shouldn't be here");
+				return null;
+
+			case DmdTypeScopeKind.Module:
+				module = (DmdModule)typeScope.Data;
+				return Lookup(module, typeRef) ?? ResolveExportedType(new[] { module }, typeRef);
+
+			case DmdTypeScopeKind.ModuleRef:
+				assembly = GetAssembly((DmdAssemblyName)typeScope.Data2);
+				if (assembly == null)
+					return null;
+				module = assembly.GetModule((string)typeScope.Data);
+				if (module == null)
+					return null;
+				return Lookup(module, typeRef) ?? ResolveExportedType(new[] { module }, typeRef);
+
+			case DmdTypeScopeKind.AssemblyRef:
+				assembly = GetAssembly((DmdAssemblyName)typeScope.Data);
+				return Lookup(assembly, typeRef) ?? ResolveExportedType(assembly.GetModules(), typeRef);
+
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
+		DmdTypeDef ResolveExportedType(DmdModule[] modules, DmdTypeRef typeRef) => null;//TODO:
+
+		DmdTypeDef Lookup(DmdAssembly assembly, DmdTypeRef typeRef) {
+			// Most likely it's in the manifest module so we don't have to alloc an array (GetModules())
+			var manifestModule = assembly.ManifestModule;
+			if (manifestModule == null)
+				return null;
+			var type = Lookup(manifestModule, typeRef);
+			if ((object)type != null)
+				return type;
+
+			foreach (var module in assembly.GetModules()) {
+				if (manifestModule == module)
+					continue;
+				type = Lookup(module, typeRef);
+				if ((object)type != null)
+					return type;
+			}
+			return null;
+		}
+
+		Dictionary<DmdType, DmdTypeDef> GetModuleTypeDictionary(DmdModule module) {
+			lock (LockObject) {
+				if (toModuleTypeDict.TryGetValue(module, out var dict))
+					return dict;
+				dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparer);
+				foreach (var type in module.GetTypes())
+					dict[type] = (DmdTypeDef)type;
+				return dict;
+			}
+		}
+
+		DmdTypeDef Lookup(DmdModule module, DmdTypeRef typeRef) {
+			if (GetModuleTypeDictionary(module).TryGetValue(typeRef, out var typeDef))
+				return typeDef;
+			return null;
+		}
+
+		static DmdTypeRef GetNonNestedTypeRef(DmdTypeRef typeRef) {
+			for (int i = 0; i < 1000; i++) {
+				var next = typeRef.DeclaringTypeRef;
+				if ((object)next == null)
+					return typeRef;
+				typeRef = next;
+			}
 			return null;
 		}
 

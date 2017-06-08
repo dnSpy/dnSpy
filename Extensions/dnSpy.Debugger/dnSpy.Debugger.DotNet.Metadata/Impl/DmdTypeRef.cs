@@ -31,7 +31,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override StructLayoutAttribute StructLayoutAttribute => ResolvedType.StructLayoutAttribute;
 		public override DmdTypeAttributes Attributes => ResolvedType.Attributes;
 		public override string Name { get; }
-		public override DmdType DeclaringType { get; }
+		public override DmdType DeclaringType => DeclaringTypeRef;
+		public DmdTypeRef DeclaringTypeRef { get; }
 		public override int MetadataToken => ResolvedType.MetadataToken;
 		public override bool IsMetadataReference => true;
 
@@ -57,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			TypeScope = typeScope;
 			Namespace = string.IsNullOrEmpty(@namespace) ? null : @namespace;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
-			DeclaringType = declaringType;
+			DeclaringTypeRef = declaringType;
 		}
 
 		public override bool IsFullyResolved => false;
