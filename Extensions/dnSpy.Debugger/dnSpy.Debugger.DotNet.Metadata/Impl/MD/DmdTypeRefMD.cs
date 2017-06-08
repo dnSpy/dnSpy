@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
-	sealed class DmdExportedTypeMD : DmdTypeRef {
+	sealed class DmdTypeRefMD : DmdTypeRef {
 		public override DmdTypeScope TypeScope { get; }
 		public override string Namespace { get; }
 		public override string Name { get; }
@@ -30,30 +30,34 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly DmdEcma335MetadataReader reader;
 		readonly int baseTypeToken;
 
-		public DmdExportedTypeMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(reader.Module, rid, customModifiers) {
+		public DmdTypeRefMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(reader.Module, rid, customModifiers) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-			var row = reader.TablesStream.ReadExportedTypeRow(rid);
-			var ns = reader.StringsStream.Read(row.TypeNamespace);
+			var row = reader.TablesStream.ReadTypeRefRow(rid);
+			var ns = reader.StringsStream.Read(row.Namespace);
 			Namespace = string.IsNullOrEmpty(ns) ? null : ns;
-			Name = reader.StringsStream.ReadNoNull(row.TypeName);
+			Name = reader.StringsStream.ReadNoNull(row.Name);
 
-			if (!CodedToken.Implementation.Decode(row.Implementation, out uint implToken))
-				implToken = uint.MaxValue;
-			switch (implToken >> 24) {
-			case 0x23:
-				TypeScope = new DmdTypeScope(reader.ReadAssemblyName(implToken & 0x00FFFFFF));
+			if (!CodedToken.ResolutionScope.Decode(row.ResolutionScope, out uint resScopeToken))
+				resScopeToken = uint.MaxValue;
+			switch (resScopeToken >> 24) {
+			case 0x00:
+				TypeScope = new DmdTypeScope(reader.Module);
 				break;
 
-			case 0x26:
-				var fileRow = reader.TablesStream.ReadFileRow(implToken & 0x00FFFFFF) ?? new RawFileRow();
-				var moduleName = reader.StringsStream.ReadNoNull(fileRow.Name);
+			case 0x01:
+				TypeScope = DmdTypeScope.Invalid;
+				baseTypeToken = (int)resScopeToken;
+				break;
+
+			case 0x1A:
+				var moduleRefRow = reader.TablesStream.ReadModuleRefRow(resScopeToken & 0x00FFFFFF) ?? new RawModuleRefRow();
+				var moduleName = reader.StringsStream.ReadNoNull(moduleRefRow.Name);
 				TypeScope = new DmdTypeScope(reader.GetName(), moduleName);
 				break;
 
-			case 0x27:
-				TypeScope = DmdTypeScope.Invalid;
-				baseTypeToken = (int)implToken;
+			case 0x23:
+				TypeScope = new DmdTypeScope(reader.ReadAssemblyName(resScopeToken & 0x00FFFFFF));
 				break;
 
 			default:
@@ -64,8 +68,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		protected override int GetDeclaringTypeRefToken() => baseTypeToken;
 
-		// Don't intern exported type refs
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => new DmdExportedTypeMD(reader, Rid, customModifiers);
-		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : new DmdExportedTypeMD(reader, Rid, null);
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdTypeRefMD(reader, Rid, customModifiers));
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdTypeRefMD(reader, Rid, null));
 	}
 }

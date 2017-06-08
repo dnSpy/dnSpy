@@ -57,6 +57,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		internal BlobStream BlobStream => Metadata.BlobStream;
 
 		readonly DmdModuleImpl module;
+		readonly LazyList<DmdTypeRef> typeRefList;
 		readonly LazyList<DmdType> typeDefList;
 		readonly LazyList<DmdTypeRef> exportedTypeList;
 
@@ -69,6 +70,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			ModuleVersionId = metadata.GuidStream.Read(row?.Mvid ?? 0) ?? Guid.Empty;
 
 			var ts = TablesStream;
+			typeRefList = new LazyList<DmdTypeRef>(ts.TypeRefTable.Rows, rid => new DmdTypeRefMD(this, rid, null));
 			typeDefList = new LazyList<DmdType>(ts.TypeDefTable.Rows, rid => new DmdTypeDefMD(this, rid, null));
 			exportedTypeList = new LazyList<DmdTypeRef>(ts.ExportedTypeTable.Rows, rid => new DmdExportedTypeMD(this, rid, null));
 		}
@@ -93,7 +95,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return result;
 		}
 
-		protected override DmdType ResolveTypeRef(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdType ResolveTypeRef(uint rid) => typeRefList[rid - 1];
 		protected override DmdType ResolveTypeDef(uint rid) => typeDefList[rid - 1];
 		protected override DmdFieldInfo ResolveFieldDef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdMethodBase ResolveMethodDef(uint rid) => throw new NotImplementedException();//TODO:

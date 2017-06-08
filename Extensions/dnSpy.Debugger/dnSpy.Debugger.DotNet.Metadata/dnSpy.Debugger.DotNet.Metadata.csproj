@@ -133,6 +133,7 @@
     <Compile Include="Impl\MD\DmdExportedTypeMD.cs" />
     <Compile Include="Impl\MD\DmdGenericParameterTypeMD.cs" />
     <Compile Include="Impl\MD\DmdTypeDefMD.cs" />
+    <Compile Include="Impl\MD\DmdTypeRefMD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResolveException.cs" />
   </ItemGroup>

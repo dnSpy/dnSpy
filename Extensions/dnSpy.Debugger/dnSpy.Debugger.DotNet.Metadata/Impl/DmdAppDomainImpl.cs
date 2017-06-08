@@ -163,6 +163,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new InvalidOperationException();
 
 			var res = type as DmdTypeBase ?? throw new ArgumentException();
+			res = res.FullResolve() ?? res;
 			lock (LockObject) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
