@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdAssemblyImpl : DmdAssembly {
@@ -29,6 +30,25 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string ImageRuntimeVersion => metadataReader.ImageRuntimeVersion;
 		public override DmdMethodInfo EntryPoint => metadataReader.EntryPoint;
 		public override bool GlobalAssemblyCache => throw new NotImplementedException();//TODO:
+
+		internal string ApproximateSimpleName {
+			get {
+				if (approximateSimpleName == null)
+					approximateSimpleName = CalculateApproximateSimpleName();
+				return approximateSimpleName;
+			}
+		}
+		string approximateSimpleName;
+		string CalculateApproximateSimpleName() {
+			if (IsInMemory || IsDynamic)
+				return string.Empty;
+			try {
+				return Path.GetFileNameWithoutExtension(Location);
+			}
+			catch (ArgumentException) {
+			}
+			return string.Empty;
+		}
 
 		public override DmdModule ManifestModule {
 			get {

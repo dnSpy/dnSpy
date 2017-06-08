@@ -39,10 +39,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdRuntimeImpl runtime;
 		readonly List<DmdAssemblyImpl> assemblies;
+		readonly Dictionary<string, DmdAssemblyImpl> simpleNameToAssembly;
+		readonly Dictionary<DmdAssemblyName, DmdAssemblyImpl> assemblyNameToAssembly;
 		readonly Dictionary<DmdType, DmdType> fullyResolvedTypes;
 
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
 			assemblies = new List<DmdAssemblyImpl>();
+			simpleNameToAssembly = new Dictionary<string, DmdAssemblyImpl>(StringComparer.OrdinalIgnoreCase);
+			assemblyNameToAssembly = new Dictionary<DmdAssemblyName, DmdAssemblyImpl>(DmdMemberInfoEqualityComparer.Default);
 			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(DmdMemberInfoEqualityComparer.Default);
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Id = id;
@@ -74,23 +78,63 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdAssembly GetAssembly(string simpleName) {
 			if (simpleName == null)
 				throw new ArgumentNullException(nameof(simpleName));
-			lock (LockObject) {
-				foreach (var assembly in assemblies) {
-					if (StringComparer.OrdinalIgnoreCase.Equals(assembly.GetName().Name, simpleName))
-						return assembly;
-				}
-			}
-			return null;
+			return GetAssemblyCore(simpleName, null);
 		}
 
 		public override DmdAssembly GetAssembly(DmdAssemblyName name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
+			return GetAssemblyCore(name.Name, name);
+		}
+
+		DmdAssemblyImpl GetAssemblyCore(string simpleName, DmdAssemblyName name) {
 			lock (LockObject) {
-				foreach (var assembly in assemblies) {
-					if (DmdMemberInfoEqualityComparer.Default.Equals(assembly.GetName(), name))
+				if (name != null) {
+					if (assemblyNameToAssembly.TryGetValue(name, out var cached))
+						return cached;
+				}
+				else {
+					if (simpleNameToAssembly.TryGetValue(simpleName, out var cached))
+						return cached;
+				}
+
+				var assembly = GetAssemblySlowCore_NoLock(simpleName, name);
+				if (assembly != null) {
+					if (name != null)
+						assemblyNameToAssembly.Add(name.Clone(), assembly);
+					else
+						simpleNameToAssembly.Add(simpleName, assembly);
+				}
+				return assembly;
+			}
+		}
+
+		DmdAssemblyImpl GetAssemblySlowCore_NoLock(string simpleName, DmdAssemblyName name) {
+			// Try to avoid reading the metadata in case we're debugging a program with lots of assemblies.
+
+			// We first loop over all disk file assemblies since we can check simpleName without accessing metadata.
+			foreach (var assembly in assemblies) {
+				if (assembly.IsInMemory || assembly.IsDynamic)
+					continue;
+				if (!StringComparer.OrdinalIgnoreCase.Equals(simpleName, assembly.ApproximateSimpleName))
+					continue;
+
+				// Access metadata (when calling GetName())
+				if (name == null || DmdMemberInfoEqualityComparer.Default.Equals(assembly.GetName(), name))
+					return assembly;
+			}
+
+			// Check all in-memory and dynamic assemblies. We need to read their metadata.
+			foreach (var assembly in assemblies) {
+				if (!(assembly.IsInMemory || assembly.IsDynamic))
+					continue;
+
+				if (name == null) {
+					if (StringComparer.OrdinalIgnoreCase.Equals(simpleName, assembly.GetName().Name))
 						return assembly;
 				}
+				else if (DmdMemberInfoEqualityComparer.Default.Equals(assembly.GetName(), name))
+					return assembly;
 			}
 			return null;
 		}
