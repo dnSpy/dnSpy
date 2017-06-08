@@ -107,5 +107,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Data = assemblyRef ?? throw new ArgumentNullException(nameof(assemblyRef));
 			Data2 = null;
 		}
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() {
+			switch (Kind) {
+			case DmdTypeScopeKind.Invalid:		return "<invalid>";
+			case DmdTypeScopeKind.Module:		return "Module: " + Data.ToString();
+			case DmdTypeScopeKind.ModuleRef:	return "ModuleRef: " + Data.ToString() + ": " + Data2.ToString();
+			case DmdTypeScopeKind.AssemblyRef:	return "Assembly: " + Data.ToString();
+			default:							throw new InvalidOperationException();
+			}
+		}
 	}
 }

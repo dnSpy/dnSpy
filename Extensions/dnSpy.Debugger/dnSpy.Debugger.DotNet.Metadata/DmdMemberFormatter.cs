@@ -59,7 +59,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public void Dispose() => StringBuilderPool.Return(ref writer);
 
-		bool IncrementRecursionCounter() => recursionCounter++ < MAX_RECURSION_COUNT;
+		bool IncrementRecursionCounter() {
+			if (recursionCounter >= MAX_RECURSION_COUNT)
+				return false;
+			recursionCounter++;
+			return true;
+		}
 		void DecrementRecursionCounter() => recursionCounter--;
 
 		static DmdType GetNonNestedType(DmdType typeRef) {

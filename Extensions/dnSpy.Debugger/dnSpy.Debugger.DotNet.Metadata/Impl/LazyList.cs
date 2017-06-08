@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
@@ -37,16 +38,50 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			get {
 				if (index >= length)
 					return null;
-				if (elements[index] == null)
-					Interlocked.CompareExchange(ref elements[index], readElementByRID(index + 1), null);
-				return elements[index];
+				ref var elem = ref elements[index];
+				if (elem == null)
+					Interlocked.CompareExchange(ref elem, readElementByRID(index + 1), null);
+				return elem;
 			}
 		}
 
 		public LazyList(uint length, Func<uint, T> readElementByRID) {
 			this.length = length;
 			this.readElementByRID = readElementByRID;
-			this.elements = new T[length];
+			elements = new T[length];
+		}
+	}
+
+	[DebuggerDisplay("Count = {Length}")]
+	sealed class LazyList2<T> where T : class {
+		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+		readonly T[] elements;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Func<uint, IList<DmdType>, (T elem, bool containedGenericParams)> readElementByRID;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly uint length;
+
+		public uint Length => length;
+
+		public T this[uint index, IList<DmdType> genericTypeArguments] {
+			get {
+				if (index >= length)
+					return null;
+				ref var elem = ref elements[index];
+				if (elem == null) {
+					var info = readElementByRID(index + 1, genericTypeArguments);
+					if (info.containedGenericParams)
+						return info.elem;
+					Interlocked.CompareExchange(ref elem, info.elem, null);
+				}
+				return elem;
+			}
+		}
+
+		public LazyList2(uint length, Func<uint, IList<DmdType>, (T elem, bool containedGenericParams)> readElementByRID) {
+			this.length = length;
+			this.readElementByRID = readElementByRID;
+			elements = new T[length];
 		}
 	}
 }

@@ -106,7 +106,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			recursionCounter = 0;
 		}
 
-		bool IncrementRecursionCounter() => recursionCounter++ < MAX_RECURSION_COUNT;
+		bool IncrementRecursionCounter() {
+			if (recursionCounter >= MAX_RECURSION_COUNT)
+				return false;
+			recursionCounter++;
+			return true;
+		}
 		void DecrementRecursionCounter() => recursionCounter--;
 
 		bool MemberNameEquals(string a, string b) {

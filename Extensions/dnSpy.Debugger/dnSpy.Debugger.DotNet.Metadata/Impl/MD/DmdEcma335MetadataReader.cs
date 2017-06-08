@@ -59,6 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly DmdModuleImpl module;
 		readonly LazyList<DmdTypeRef> typeRefList;
 		readonly LazyList<DmdType> typeDefList;
+		readonly LazyList2<DmdType> typeSpecList;
 		readonly LazyList<DmdTypeRef> exportedTypeList;
 
 		DmdEcma335MetadataReader(DmdModuleImpl module, IMetaData metadata) {
@@ -72,7 +73,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var ts = TablesStream;
 			typeRefList = new LazyList<DmdTypeRef>(ts.TypeRefTable.Rows, rid => new DmdTypeRefMD(this, rid, null));
 			typeDefList = new LazyList<DmdType>(ts.TypeDefTable.Rows, rid => new DmdTypeDefMD(this, rid, null));
+			typeSpecList = new LazyList2<DmdType>(ts.TypeSpecTable.Rows, (rid, genericTypeArguments) => ReadTypeSpec(rid, genericTypeArguments));
 			exportedTypeList = new LazyList<DmdTypeRef>(ts.ExportedTypeTable.Rows, rid => new DmdExportedTypeMD(this, rid, null));
+		}
+
+		(DmdType type, bool containedGenericParams) ReadTypeSpec(uint rid, IList<DmdType> genericTypeArguments) {
+			var row = Metadata.TablesStream.ReadTypeSpecRow(rid);
+			var stream = BlobStream.CreateStream(row.Signature);
+			return DmdSignatureReader.ReadTypeSignature(module, new DmdSignatureStreamImpl(stream), genericTypeArguments);
 		}
 
 		public override DmdType[] GetTypes() {
@@ -102,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		protected override DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
 		protected override DmdEventInfo ResolveEventDef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdPropertyInfo ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
+		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => typeSpecList[rid - 1, genericTypeArguments];
 		protected override DmdTypeRef ResolveExportedType(uint rid) => exportedTypeList[rid - 1];
 		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => throw new NotImplementedException();//TODO:
 
