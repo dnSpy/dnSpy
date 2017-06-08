@@ -419,6 +419,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			case DmdTypeScopeKind.AssemblyRef:
 				assembly = GetAssembly((DmdAssemblyName)typeScope.Data);
+				if (assembly == null)
+					return null;
 				return Lookup(assembly, typeRef) ?? ResolveExportedType(assembly.GetModules(), typeRef);
 
 			default:

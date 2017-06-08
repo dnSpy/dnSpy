@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override StructLayoutAttribute StructLayoutAttribute => ResolvedType.StructLayoutAttribute;
 		public override DmdTypeAttributes Attributes => ResolvedType.Attributes;
 		// Always return the TypeRef and never the resolved type's DeclaringType so callers can get the reference
-		// in case it's an exported type.
+		// in case it's an exported type. Also, the member formatter shouldn't throw if the type can't be resolved.
 		public override DmdType DeclaringType => DeclaringTypeRef;
 		public override int MetadataToken => ResolvedType.MetadataToken;
 		public override bool IsMetadataReference => true;

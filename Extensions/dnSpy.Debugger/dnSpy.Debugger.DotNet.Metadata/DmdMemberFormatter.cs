@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
@@ -61,6 +62,91 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		bool IncrementRecursionCounter() => recursionCounter++ < MAX_RECURSION_COUNT;
 		void DecrementRecursionCounter() => recursionCounter--;
 
+		static DmdType GetNonNestedType(DmdType typeRef) {
+			for (int i = 0; i < 1000; i++) {
+				var next = typeRef.DeclaringType;
+				if ((object)next == null)
+					return typeRef;
+				typeRef = next;
+			}
+			return null;
+		}
+
+		static bool IsGenericTypeDefinition(DmdType type) {
+			if (!type.IsMetadataReference)
+				return type.IsGenericTypeDefinition;
+			// It's a TypeRef, make sure it won't throw if it can't resolve the type
+			var resolvedType = type.ResolveNoThrow();
+			if ((object)resolvedType != null)
+				return resolvedType.IsGenericTypeDefinition;
+			// Guess based on name
+			return type.Name.LastIndexOf('`') >= 0;
+		}
+
+		static string GetAssemblyFullName(DmdType type) {
+			if (!type.IsMetadataReference) {
+				if (type.TypeSignatureKind != DmdTypeSignatureKind.GenericInstance)
+					return type.Assembly.FullName;
+
+				// Won't throw
+				type = type.GetGenericTypeDefinition();
+			}
+
+			var nonNested = GetNonNestedType(type);
+			if ((object)nonNested != null) {
+				var typeScope = nonNested.TypeScope;
+				switch (typeScope.Kind) {
+				case DmdTypeScopeKind.Invalid:
+					break;
+
+				case DmdTypeScopeKind.Module:
+					return ((DmdModule)typeScope.Data).Assembly.FullName;
+
+				case DmdTypeScopeKind.ModuleRef:
+					return ((DmdAssemblyName)typeScope.Data2).FullName;
+
+				case DmdTypeScopeKind.AssemblyRef:
+					return ((DmdAssemblyName)typeScope.Data).FullName;
+				}
+			}
+			return "???";
+		}
+
+		static DmdType GetGenericTypeDefinition(DmdType type) {
+			if (!type.IsMetadataReference)
+				return type.GetGenericTypeDefinition();
+
+			var resolvedType = type.ResolveNoThrow();
+			if ((object)resolvedType != null)
+				return resolvedType.GetGenericTypeDefinition();
+
+			// Guess
+			return type.Name.LastIndexOf('`') >= 0 ? type : null;
+		}
+
+		static ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments(DmdType type) {
+			if (!type.IsMetadataReference)
+				return type.GetReadOnlyGenericArguments();
+
+			var resolvedType = type.ResolveNoThrow();
+			if ((object)resolvedType != null)
+				return resolvedType.GetReadOnlyGenericArguments();
+
+			return emtpyTypeCollection;
+		}
+		static readonly ReadOnlyCollection<DmdType> emtpyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
+
+		static DmdType[] GetGenericArguments(DmdMethodBase method) {
+			if (!method.IsMetadataReference)
+				return method.GetGenericArguments();
+
+			var resolvedMethod = method.ResolveMethodBaseNoThrow();
+			if ((object)resolvedMethod != null)
+				return resolvedMethod.GetGenericArguments();
+
+			return Array.Empty<DmdType>();
+		}
+
 		public static string FormatFullName(DmdType type) {
 			if (type.IsGenericParameter)
 				return null;
@@ -71,7 +157,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			var fullName = FormatFullName(type);
 			if (fullName == null)
 				return null;
-			return DmdAssembly.CreateQualifiedName(type.Assembly.FullName, fullName);
+			return DmdAssembly.CreateQualifiedName(GetAssemblyFullName(type), fullName);
 		}
 
 		public static string Format(DmdMemberInfo member, bool serializable = false) {
@@ -218,7 +304,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			switch (type.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
 				if ((flags & TypeFlags.NoDeclaringTypeNames) == 0 && type.DeclaringType is DmdType declType && !type.IsGenericParameter) {
-					Write(declType, flags | (type.IsGenericTypeDefinition ? TypeFlags.NoGenericDefParams : 0));
+					Write(declType, flags | (IsGenericTypeDefinition(type) ? TypeFlags.NoGenericDefParams : 0));
 					writer.Append('+');
 				}
 				if (type.Namespace is string ns && ns.Length > 0) {
@@ -229,7 +315,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				}
 				writer.Append(type.Name);
 				if ((flags & TypeFlags.NoGenericDefParams) == 0 && (globalFlags & GlobalFlags.Serializable) == 0)
-					WriteGenericArguments(type.GetReadOnlyGenericArguments(), flags & ~TypeFlags.NoGenericDefParams);
+					WriteGenericArguments(GetReadOnlyGenericArguments(type), flags & ~TypeFlags.NoGenericDefParams);
 				break;
 
 			case DmdTypeSignatureKind.Pointer:
@@ -269,8 +355,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				break;
 
 			case DmdTypeSignatureKind.GenericInstance:
-				Write(type.GetGenericTypeDefinition(), flags | TypeFlags.NoGenericDefParams);
-				WriteGenericArguments(type.GetReadOnlyGenericArguments(), flags);
+				Write(GetGenericTypeDefinition(type), flags | TypeFlags.NoGenericDefParams);
+				WriteGenericArguments(GetReadOnlyGenericArguments(type), flags);
 				break;
 
 			case DmdTypeSignatureKind.FunctionPointer:
@@ -311,7 +397,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			writer.Append(field.Name);
 		}
 
-		void Write(DmdMethodBase method) => WriteMethod(method.Name, method.GetMethodSignature(), method.GetGenericArguments(), true);
+		void Write(DmdMethodBase method) => WriteMethod(method.Name, method.GetMethodSignature(), GetGenericArguments(method), true);
 		void Write(DmdPropertyInfo property) => WriteMethod(property.Name, property.GetMethodSignature(), null, false);
 
 		void WriteMethod(string name, DmdMethodSignature sig, IList<DmdType> genericArguments, bool isMethod) {
@@ -396,7 +482,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				break;
 
 			case DmdTypeSignatureKind.GenericInstance:
-				WriteName(type.GetGenericTypeDefinition());
+				WriteName(GetGenericTypeDefinition(type));
 				break;
 
 			case DmdTypeSignatureKind.FunctionPointer:

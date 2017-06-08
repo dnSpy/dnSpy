@@ -67,7 +67,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override bool IsGenericType => true;
 		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => typeArguments;
-		public override DmdType GetGenericTypeDefinition() => ResolvedType.GetGenericTypeDefinition();
+
+		public override DmdType GetGenericTypeDefinition() {
+			var resolvedType = GetResolvedType(throwOnError: false);
+			if (resolvedType != null)
+				return resolvedType.GetGenericTypeDefinition();
+			return genericTypeRef;
+		}
 
 		protected override DmdType ResolveNoThrowCore() => GetResolvedType(throwOnError: false);
 		public override bool IsFullyResolved => false;
