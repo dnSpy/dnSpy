@@ -33,12 +33,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string Name => DmdMemberFormatter.FormatName(this);
 		public override DmdType DeclaringType => null;
 		public override int MetadataToken => 0x02000000;
-		public override bool IsMetadataReference => false;
+		public override bool IsMetadataReference { get; }
 
 		readonly DmdTypeBase elementType;
 
 		public DmdSZArrayType(DmdTypeBase elementType) {
 			this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
+			IsMetadataReference = elementType.IsMetadataReference;
 			IsFullyResolved = elementType.IsFullyResolved;
 		}
 
@@ -48,7 +49,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds() => emptyInt32Collection;
 		static readonly ReadOnlyCollection<int> emptyInt32Collection = new ReadOnlyCollection<int>(Array.Empty<int>());
 
-		protected override DmdType ResolveNoThrowCore() => this;
+		protected override DmdType ResolveNoThrowCore() {
+			if (!IsMetadataReference)
+				return this;
+			var newElementType = elementType.ResolveNoThrow();
+			if (newElementType != null)
+				return AppDomain.MakeArrayType(newElementType);
+			return null;
+		}
+
 		public override bool IsFullyResolved { get; }
 		public override DmdTypeBase FullResolve() {
 			if (IsFullyResolved)
