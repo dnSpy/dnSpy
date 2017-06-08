@@ -28,6 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract string ImageRuntimeVersion { get; }
 		public abstract DmdMethodInfo EntryPoint { get; }
 		public abstract DmdType[] GetTypes();
+		public abstract DmdType[] GetExportedTypes();
 		public abstract DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError);
 		public abstract DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError);
 		public abstract DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError);
@@ -36,7 +37,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract string ResolveString(int metadataToken);
 		public abstract void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine);
 		public abstract DmdAssemblyName GetName();
-		public abstract DmdType[] GetExportedTypes();
 		public abstract DmdAssemblyName[] GetReferencedAssemblies();
 	}
 }

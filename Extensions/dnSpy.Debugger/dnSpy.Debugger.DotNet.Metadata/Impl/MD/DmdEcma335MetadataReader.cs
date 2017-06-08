@@ -58,6 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		readonly DmdModuleImpl module;
 		readonly LazyList<DmdType> typeDefList;
+		readonly LazyList<DmdTypeRef> exportedTypeList;
 
 		DmdEcma335MetadataReader(DmdModuleImpl module, IMetaData metadata) {
 			this.module = module;
@@ -69,12 +70,24 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 			var ts = TablesStream;
 			typeDefList = new LazyList<DmdType>(ts.TypeDefTable.Rows, rid => new DmdTypeDefMD(this, rid, null));
+			exportedTypeList = new LazyList<DmdTypeRef>(ts.ExportedTypeTable.Rows, rid => new DmdExportedTypeMD(this, rid, null));
 		}
 
 		public override DmdType[] GetTypes() {
 			var result = new DmdType[TablesStream.TypeDefTable.Rows];
 			for (int i = 0; i < result.Length; i++) {
 				var type = ResolveTypeDef((uint)i + 1);
+				result[i] = type ?? throw new InvalidOperationException();
+			}
+			return result;
+		}
+
+		public override DmdType[] GetExportedTypes() {
+			if (TablesStream.ExportedTypeTable.Rows == 0)
+				return Array.Empty<DmdType>();
+			var result = new DmdType[TablesStream.ExportedTypeTable.Rows];
+			for (int i = 0; i < result.Length; i++) {
+				var type = ResolveExportedType((uint)i + 1);
 				result[i] = type ?? throw new InvalidOperationException();
 			}
 			return result;
@@ -88,6 +101,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		protected override DmdEventInfo ResolveEventDef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdPropertyInfo ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
+		protected override DmdTypeRef ResolveExportedType(uint rid) => exportedTypeList[rid - 1];
 		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => throw new NotImplementedException();//TODO:
 
 		protected override byte[] ResolveFieldSignature(uint rid) {
@@ -164,30 +178,31 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return name;
 		}
 
-		public override DmdType[] GetExportedTypes() => throw new NotImplementedException();//TODO:
-
 		public override DmdAssemblyName[] GetReferencedAssemblies() {
 			var tbl = TablesStream.AssemblyRefTable;
 			if (tbl.Rows == 0)
 				return Array.Empty<DmdAssemblyName>();
 			var res = new DmdAssemblyName[tbl.Rows];
-			for (int i = 0; i < res.Length; i++) {
-				var row = TablesStream.ReadAssemblyRefRow((uint)i + 1);
-				var asmName = new DmdAssemblyName();
-				asmName.Name = Metadata.StringsStream.ReadNoNull(row.Name);
-				asmName.CultureName = Metadata.StringsStream.ReadNoNull(row.Locale);
-				asmName.Version = new Version(row.MajorVersion, row.MinorVersion, row.BuildNumber, row.RevisionNumber);
-				if (row.PublicKeyOrToken != 0) {
-					var bytes = Metadata.BlobStream.ReadNoNull(row.PublicKeyOrToken);
-					if ((row.Flags & (int)DmdAssemblyNameFlags.PublicKey) != 0)
-						asmName.SetPublicKey(bytes);
-					else
-						asmName.SetPublicKeyToken(bytes);
-				}
-				asmName.Flags = (DmdAssemblyNameFlags)row.Flags;
-				res[i] = asmName;
-			}
+			for (int i = 0; i < res.Length; i++)
+				res[i] = ReadAssemblyName((uint)i + 1);
 			return res;
+		}
+
+		internal DmdAssemblyName ReadAssemblyName(uint rid) {
+			var asmName = new DmdAssemblyName();
+			var row = TablesStream.ReadAssemblyRefRow(rid) ?? new RawAssemblyRefRow();
+			asmName.Name = Metadata.StringsStream.ReadNoNull(row.Name);
+			asmName.CultureName = Metadata.StringsStream.ReadNoNull(row.Locale);
+			asmName.Version = new Version(row.MajorVersion, row.MinorVersion, row.BuildNumber, row.RevisionNumber);
+			if (row.PublicKeyOrToken != 0) {
+				var bytes = Metadata.BlobStream.ReadNoNull(row.PublicKeyOrToken);
+				if ((row.Flags & (int)DmdAssemblyNameFlags.PublicKey) != 0)
+					asmName.SetPublicKey(bytes);
+				else
+					asmName.SetPublicKeyToken(bytes);
+			}
+			asmName.Flags = (DmdAssemblyNameFlags)row.Flags;
+			return asmName;
 		}
 	}
 }

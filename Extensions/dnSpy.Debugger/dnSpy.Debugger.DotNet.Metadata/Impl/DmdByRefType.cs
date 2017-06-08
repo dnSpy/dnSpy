@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (!IsMetadataReference)
 				return this;
 			var newElementType = elementType.ResolveNoThrow();
-			if (newElementType != null)
+			if ((object)newElementType != null)
 				return AppDomain.MakeByRefType(newElementType, GetCustomModifiers());
 			return null;
 		}

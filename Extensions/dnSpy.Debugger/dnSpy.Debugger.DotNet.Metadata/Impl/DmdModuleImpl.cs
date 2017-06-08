@@ -49,6 +49,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void SetScopeName(string scopeName) => scopeNameOverride = scopeName;
 
 		public override DmdType[] GetTypes() => metadataReader.GetTypes();
+		public override DmdType[] GetExportedTypes() => metadataReader.GetExportedTypes();
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
 		public override bool IsDefined(string attributeTypeFullName, bool inherit) => throw new NotImplementedException();//TODO:
 		public override bool IsDefined(DmdType attributeType, bool inherit) => throw new NotImplementedException();//TODO:

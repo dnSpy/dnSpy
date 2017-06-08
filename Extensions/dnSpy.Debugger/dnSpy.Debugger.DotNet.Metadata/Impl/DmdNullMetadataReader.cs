@@ -32,6 +32,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public DmdNullMetadataReader(DmdModule module) => globalType = new DmdNullGlobalType(module, null);
 
 		public override DmdType[] GetTypes() => new[] { globalType };
+		public override DmdType[] GetExportedTypes() => Array.Empty<DmdType>();
 		protected override DmdType ResolveTypeRef(uint rid) => null;
 		protected override DmdType ResolveTypeDef(uint rid) => rid == 1 ? globalType : null;
 		protected override DmdFieldInfo ResolveFieldDef(uint rid) => null;
@@ -40,6 +41,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected override DmdEventInfo ResolveEventDef(uint rid) => null;
 		protected override DmdPropertyInfo ResolvePropertyDef(uint rid) => null;
 		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => null;
+		protected override DmdTypeRef ResolveExportedType(uint rid) => null;
 		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => null;
 		protected override byte[] ResolveFieldSignature(uint rid) => null;
 		protected override byte[] ResolveMethodSignature(uint rid) => null;
@@ -53,7 +55,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			machine = DmdImageFileMachine.I386;
 		}
 		public override DmdAssemblyName GetName() => new DmdAssemblyName("NullAssembly");
-		public override DmdType[] GetExportedTypes() => Array.Empty<DmdType>();
 		public override DmdAssemblyName[] GetReferencedAssemblies() => Array.Empty<DmdAssemblyName>();
 	}
 }

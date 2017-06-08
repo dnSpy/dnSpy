@@ -23,19 +23,41 @@ using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	sealed class DmdTypeRef : DmdTypeBase {
+	abstract class DmdTypeRef : DmdTypeBase {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Type;
-		public override DmdTypeScope TypeScope { get; }
+		public abstract override DmdTypeScope TypeScope { get; }
+		public abstract override string Namespace { get; }
+		public abstract override string Name { get; }
 		public override DmdModule Module => ResolvedType.Module;
-		public override string Namespace { get; }
 		public override DmdType BaseType => ResolvedType.BaseType;
 		public override StructLayoutAttribute StructLayoutAttribute => ResolvedType.StructLayoutAttribute;
 		public override DmdTypeAttributes Attributes => ResolvedType.Attributes;
-		public override string Name { get; }
+		// Always return the TypeRef and never the resolved type's DeclaringType so callers can get the reference
+		// in case it's an exported type.
 		public override DmdType DeclaringType => DeclaringTypeRef;
-		public DmdTypeRef DeclaringTypeRef { get; }
 		public override int MetadataToken => ResolvedType.MetadataToken;
 		public override bool IsMetadataReference => true;
+
+		public DmdTypeRef DeclaringTypeRef {
+			get {
+				if (!declaringTypeRefInitd) {
+					lock (LockObject) {
+						if (!declaringTypeRefInitd) {
+							int declTypeToken = GetDeclaringTypeRefToken();
+							if ((declTypeToken & 0x00FFFFFF) == 0)
+								__declaringTypeRef_DONT_USE = null;
+							else
+								__declaringTypeRef_DONT_USE = (DmdTypeRef)ownerModule.ResolveType(declTypeToken, null, null, throwOnError: false);
+							declaringTypeRefInitd = true;
+						}
+					}
+				}
+				return __declaringTypeRef_DONT_USE;
+			}
+		}
+		DmdTypeRef __declaringTypeRef_DONT_USE;
+		bool declaringTypeRefInitd;
+		protected abstract int GetDeclaringTypeRefToken();
 
 		internal DmdTypeDef ResolvedType => GetResolvedType(throwOnError: true);
 		internal DmdTypeDef GetResolvedType(bool throwOnError) {
@@ -44,6 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			lock (LockObject) {
 				if ((object)__resolvedType_DONT_USE != null)
 					return __resolvedType_DONT_USE;
+				var appDomain = (DmdAppDomainImpl)ownerModule.AppDomain;
 				var type = appDomain.Resolve(this, throwOnError, ignoreCase: false);
 				if (GetCustomModifiers().Count != 0)
 					type = (DmdTypeDef)appDomain.Intern(type.WithCustomModifiers(GetCustomModifiers()));
@@ -53,20 +76,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		DmdTypeDef __resolvedType_DONT_USE;
 
-		readonly DmdAppDomainImpl appDomain;
+		protected uint Rid => rid;
+		readonly uint rid;
+		readonly DmdModule ownerModule;
 
-		public DmdTypeRef(DmdAppDomainImpl appDomain, DmdTypeScope typeScope, DmdTypeRef declaringType, string @namespace, string name, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
-			if (typeScope.Kind == DmdTypeScopeKind.Invalid)
-				throw new ArgumentException();
-			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
-			TypeScope = typeScope;
-			Namespace = string.IsNullOrEmpty(@namespace) ? null : @namespace;
-			Name = name ?? throw new ArgumentNullException(nameof(name));
-			DeclaringTypeRef = declaringType;
+		public DmdTypeRef(DmdModule ownerModule, uint rid, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
+			this.ownerModule = ownerModule ?? throw new ArgumentNullException(nameof(ownerModule));
+			this.rid = rid;
 		}
-
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdTypeRef(appDomain, TypeScope, DeclaringTypeRef, Namespace, Name, customModifiers));
-		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdTypeRef(appDomain, TypeScope, DeclaringTypeRef, Namespace, Name, null));
 
 		public override bool IsFullyResolved => false;
 		protected override DmdType ResolveNoThrowCore() => GetResolvedType(throwOnError: false);

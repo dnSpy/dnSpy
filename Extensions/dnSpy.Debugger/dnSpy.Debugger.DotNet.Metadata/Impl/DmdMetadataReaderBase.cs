@@ -103,6 +103,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if ((object)typeSpec != null)
 					return TryResolve(typeSpec);
 				break;
+
+			case 0x27:
+				var exportedType = ResolveExportedType(rid);
+				if ((object)exportedType != null)
+					return exportedType;// Don't try to resolve it, callers want the actual reference
+				break;
 			}
 
 			if (throwOnError)
@@ -149,6 +155,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return TryResolve(typeSpec);
 				break;
 
+			case 0x27:
+				var exportedType = ResolveExportedType(rid);
+				if ((object)exportedType != null)
+					return exportedType;// Don't try to resolve it, callers want the actual reference
+				break;
+
 			case 0x2B:
 				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
 				if ((object)methodSpec != null)
@@ -169,6 +181,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdEventInfo ResolveEventDef(uint rid);
 		protected abstract DmdPropertyInfo ResolvePropertyDef(uint rid);
 		protected abstract DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments);
+		protected abstract DmdTypeRef ResolveExportedType(uint rid);
 		protected abstract DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
 
 		public override byte[] ResolveSignature(int metadataToken) {

@@ -48,6 +48,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdType[] GetTypes();
 
 		/// <summary>
+		/// Gets all types that exist in the ExportedType table. This includes types that have been
+		/// forwarded to other assemblies.
+		/// </summary>
+		/// <returns></returns>
+		public abstract DmdType[] GetExportedTypes();
+
+		/// <summary>
 		/// Gets the module version ID
 		/// </summary>
 		public abstract Guid ModuleVersionId { get; }

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdAssemblyImpl : DmdAssembly {
@@ -107,7 +108,36 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdAssemblyName GetName() => (asmName ?? (asmName = metadataReader.GetName())).Clone();
 		DmdAssemblyName asmName;
 
-		public override DmdType[] GetExportedTypes() => metadataReader.GetExportedTypes();
+		public override DmdType[] GetExportedTypes() {
+			var list = new List<DmdType>();
+			foreach (var type in metadataReader.GetTypes()) {
+				if (type.IsVisible)
+					list.Add(type);
+			}
+			foreach (var type in metadataReader.GetExportedTypes()) {
+				if (IsNotTypeForwarder(type))
+					list.Add(type);
+			}
+			return list.ToArray();
+		}
+
+		static bool IsNotTypeForwarder(DmdType type) {
+			var nonNested = GetNonNestedType(type);
+			if ((object)nonNested == null)
+				return false;
+			return nonNested.TypeScope.Kind == DmdTypeScopeKind.ModuleRef;
+		}
+
+		static DmdType GetNonNestedType(DmdType typeRef) {
+			for (int i = 0; i < 1000; i++) {
+				var next = typeRef.DeclaringType;
+				if ((object)next == null)
+					return typeRef;
+				typeRef = next;
+			}
+			return null;
+		}
+
 		public override DmdAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
 		public override DmdType GetType(string name, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:

@@ -39,6 +39,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public override DmdType[] GetTypes() => throw new NotImplementedException();//TODO:
+		public override DmdType[] GetExportedTypes() => throw new NotImplementedException();//TODO:
 		protected override DmdType ResolveTypeRef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdType ResolveTypeDef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdFieldInfo ResolveFieldDef(uint rid) => throw new NotImplementedException();//TODO:
@@ -47,6 +48,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		protected override DmdEventInfo ResolveEventDef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdPropertyInfo ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
+		protected override DmdTypeRef ResolveExportedType(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => throw new NotImplementedException();//TODO:
 		protected override byte[] ResolveFieldSignature(uint rid) => throw new NotImplementedException();//TODO:
 		protected override byte[] ResolveMethodSignature(uint rid) => throw new NotImplementedException();//TODO:
@@ -57,7 +59,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		protected override string ResolveStringCore(uint offset) => throw new NotImplementedException();//TODO:
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => throw new NotImplementedException();//TODO:
 		public override DmdAssemblyName GetName() => throw new NotImplementedException();//TODO:
-		public override DmdType[] GetExportedTypes() => throw new NotImplementedException();//TODO:
 		public override DmdAssemblyName[] GetReferencedAssemblies() => throw new NotImplementedException();//TODO:
 	}
 }

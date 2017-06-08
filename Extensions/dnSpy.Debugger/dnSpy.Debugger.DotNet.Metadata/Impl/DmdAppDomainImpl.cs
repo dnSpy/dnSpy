@@ -43,6 +43,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly Dictionary<DmdAssemblyName, DmdAssemblyImpl> assemblyNameToAssembly;
 		readonly Dictionary<DmdType, DmdType> fullyResolvedTypes;
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>> toModuleTypeDict;
+		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>> toModuleExportedTypeDict;
 		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparer = new DmdMemberInfoEqualityComparer(DmdSigComparerOptions.DontCompareTypeScope | DmdSigComparerOptions.DontCompareCustomModifiers);
 
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
@@ -51,6 +52,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			assemblyNameToAssembly = new Dictionary<DmdAssemblyName, DmdAssemblyImpl>(DmdMemberInfoEqualityComparer.Default);
 			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(DmdMemberInfoEqualityComparer.Default);
 			toModuleTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
+			toModuleExportedTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Id = id;
 		}
@@ -424,7 +426,50 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		DmdTypeDef ResolveExportedType(DmdModule[] modules, DmdTypeRef typeRef) => null;//TODO:
+		DmdTypeDef ResolveExportedType(DmdModule[] modules, DmdTypeRef typeRef) {
+			for (int i = 0; i < 30; i++) {
+				var exportedType = FindExportedType(modules, typeRef);
+				if ((object)exportedType == null)
+					return null;
+
+				var nonNested = GetNonNestedTypeRef(exportedType);
+				if ((object)nonNested == null)
+					return null;
+				var typeScope = nonNested.TypeScope;
+				if (typeScope.Kind != DmdTypeScopeKind.AssemblyRef)
+					return null;
+				var etAsm = GetAssembly((DmdAssemblyName)typeScope.Data);
+				if (etAsm == null)
+					return null;
+
+				var td = Lookup(etAsm, typeRef);
+				if ((object)td != null)
+					return td;
+
+				modules = etAsm.GetModules();
+			}
+
+			return null;
+		}
+
+		Dictionary<DmdType, DmdTypeRef> GetModuleExportedTypeDictionary(DmdModule module) {
+			lock (LockObject) {
+				if (toModuleExportedTypeDict.TryGetValue(module, out var dict))
+					return dict;
+				dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparer);
+				foreach (var type in module.GetTypes())
+					dict[type] = (DmdTypeRef)type;
+				return dict;
+			}
+		}
+
+		DmdTypeRef FindExportedType(IList<DmdModule> modules, DmdTypeRef typeRef) {
+			foreach (var module in modules) {
+				if (GetModuleExportedTypeDictionary(module).TryGetValue(typeRef, out var exportedType))
+					return exportedType;
+			}
+			return null;
+		}
 
 		DmdTypeDef Lookup(DmdAssembly assembly, DmdTypeRef typeRef) {
 			// Most likely it's in the manifest module so we don't have to alloc an array (GetModules())
