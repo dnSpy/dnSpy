@@ -30,6 +30,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		static readonly ReadOnlyCollection<DmdPropertyInfo> emptyPropertyCollection = new ReadOnlyCollection<DmdPropertyInfo>(Array.Empty<DmdPropertyInfo>());
 		static readonly ReadOnlyCollection<DmdEventInfo> emptyEventCollection = new ReadOnlyCollection<DmdEventInfo>(Array.Empty<DmdEventInfo>());
 
+		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
+
 		/// <summary>
 		/// true if there are no metadata references. This instance and any other <see cref="DmdType"/> that it
 		/// references directly or indirectly (element type, generic arguments) are all resolved types

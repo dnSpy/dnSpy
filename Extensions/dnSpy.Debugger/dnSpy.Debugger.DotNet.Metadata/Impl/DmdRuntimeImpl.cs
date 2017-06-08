@@ -23,6 +23,7 @@ using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdRuntimeImpl : DmdRuntime {
+		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 		readonly List<DmdAppDomainImpl> appDomains;
 
 		internal DmdEvaluator Evaluator { get; }

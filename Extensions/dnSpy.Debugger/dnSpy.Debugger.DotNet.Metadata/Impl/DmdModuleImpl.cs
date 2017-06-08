@@ -22,6 +22,7 @@ using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdModuleImpl : DmdModule {
+		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 		public override DmdAppDomain AppDomain => Assembly.AppDomain;
 		public override string FullyQualifiedName { get; }
 		public override DmdAssembly Assembly => assembly;

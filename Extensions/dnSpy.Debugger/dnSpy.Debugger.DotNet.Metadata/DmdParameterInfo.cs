@@ -27,6 +27,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	public abstract class DmdParameterInfo : DmdObject, IDmdCustomAttributeProvider, IEquatable<DmdParameterInfo> {
 		/// <summary>
+		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdParameterInfo"/>
+		/// </summary>
+		internal abstract void YouCantDeriveFromThisClass();
+
+		/// <summary>
 		/// Gets the parameter type
 		/// </summary>
 		public abstract DmdType ParameterType { get; }

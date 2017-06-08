@@ -27,6 +27,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	public abstract class DmdAppDomain : DmdObject {
 		/// <summary>
+		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdAppDomain"/>
+		/// </summary>
+		internal abstract void YouCantDeriveFromThisClass();
+
+		/// <summary>
 		/// Gets the runtime
 		/// </summary>
 		public abstract DmdRuntime Runtime { get; }

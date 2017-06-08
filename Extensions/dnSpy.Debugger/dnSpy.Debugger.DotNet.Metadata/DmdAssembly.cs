@@ -26,6 +26,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	public abstract class DmdAssembly : DmdObject, IDmdCustomAttributeProvider {
 		/// <summary>
+		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdAssembly"/>
+		/// </summary>
+		internal abstract void YouCantDeriveFromThisClass();
+
+		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
 		public abstract DmdAppDomain AppDomain { get; }
