@@ -249,25 +249,35 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
+		/// Returns a cached type if present else the input type
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
+		public abstract DmdType Intern(DmdType type);
+
+		/// <summary>
 		/// Makes a pointer type
 		/// </summary>
 		/// <param name="elementType">Element type</param>
+		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <returns></returns>
-		public abstract DmdType MakePointerType(DmdType elementType);
+		public abstract DmdType MakePointerType(DmdType elementType, IList<DmdCustomModifier> customModifiers);
 
 		/// <summary>
 		/// Makes a by-ref type
 		/// </summary>
 		/// <param name="elementType">Element type</param>
+		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <returns></returns>
-		public abstract DmdType MakeByRefType(DmdType elementType);
+		public abstract DmdType MakeByRefType(DmdType elementType, IList<DmdCustomModifier> customModifiers);
 
 		/// <summary>
 		/// Makes a SZ array type
 		/// </summary>
 		/// <param name="elementType">Element type</param>
+		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <returns></returns>
-		public abstract DmdType MakeArrayType(DmdType elementType);
+		public abstract DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier> customModifiers);
 
 		/// <summary>
 		/// Makes a multi-dimensional type
@@ -276,16 +286,18 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="rank">Number of dimensions</param>
 		/// <param name="sizes">Sizes</param>
 		/// <param name="lowerBounds">Lower bounds</param>
+		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <returns></returns>
-		public abstract DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds);
+		public abstract DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier> customModifiers);
 
 		/// <summary>
 		/// Makes a generic type
 		/// </summary>
 		/// <param name="genericTypeDefinition">Generic type definition</param>
 		/// <param name="typeArguments">Generic arguments</param>
+		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <returns></returns>
-		public abstract DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments);
+		public abstract DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers);
 
 		/// <summary>
 		/// Makes a function pointer type
@@ -295,8 +307,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="returnType">Return type</param>
 		/// <param name="parameterTypes">Parameter types</param>
 		/// <param name="varArgsParameterTypes">VarArgs parameter types</param>
+		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <returns></returns>
-		public abstract DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes);
+		public abstract DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier> customModifiers);
 
 		/// <summary>
 		/// Gets a type

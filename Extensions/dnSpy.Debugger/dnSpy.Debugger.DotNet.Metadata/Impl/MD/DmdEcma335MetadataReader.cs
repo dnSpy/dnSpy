@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			ModuleVersionId = metadata.GuidStream.Read(row?.Mvid ?? 0) ?? Guid.Empty;
 
 			var ts = TablesStream;
-			typeDefList = new LazyList<DmdType>(ts.TypeDefTable.Rows, rid => new DmdTypeDefMD(this, rid));
+			typeDefList = new LazyList<DmdType>(ts.TypeDefTable.Rows, rid => new DmdTypeDefMD(this, rid, null));
 		}
 
 		public override DmdType[] GetTypes() {

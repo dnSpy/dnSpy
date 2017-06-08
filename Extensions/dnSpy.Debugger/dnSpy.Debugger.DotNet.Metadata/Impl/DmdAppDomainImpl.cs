@@ -154,17 +154,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdMemberInfo GetWellKnownMember(DmdWellKnownMember wellKnownMember, bool isOptional) => throw new NotImplementedException();//TODO:
 		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) => throw new NotImplementedException();//TODO:
 
-		public override DmdType MakePointerType(DmdType elementType) {
-			if ((object)elementType == null)
-				throw new ArgumentNullException(nameof(elementType));
-			if (elementType.AppDomain != this)
+		public override DmdType Intern(DmdType type) {
+			if ((object)type == null)
+				throw new ArgumentNullException(nameof(type));
+			if (type.AppDomain != this)
 				throw new InvalidOperationException();
-			var et = elementType as DmdTypeBase;
-			if ((object)et == null)
-				throw new ArgumentException();
-			et = et.FullResolve() ?? et;
 
-			var res = new DmdPointerType(et);
+			var res = type as DmdTypeBase ?? throw new ArgumentException();
 			lock (LockObject) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
@@ -175,7 +171,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeByRefType(DmdType elementType) {
+		public override DmdType MakePointerType(DmdType elementType, IList<DmdCustomModifier> customModifiers) {
 			if ((object)elementType == null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
@@ -183,9 +179,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var et = elementType as DmdTypeBase;
 			if ((object)et == null)
 				throw new ArgumentException();
+			if (customModifiers != null) {
+				for (int i = 0; i < customModifiers.Count; i++) {
+					if (customModifiers[i].Type.AppDomain != this)
+						throw new ArgumentException();
+				}
+			}
 			et = et.FullResolve() ?? et;
 
-			var res = new DmdByRefType(et);
+			var res = new DmdPointerType(et, customModifiers);
 			lock (LockObject) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
@@ -196,7 +198,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeArrayType(DmdType elementType) {
+		public override DmdType MakeByRefType(DmdType elementType, IList<DmdCustomModifier> customModifiers) {
 			if ((object)elementType == null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
@@ -204,9 +206,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var et = elementType as DmdTypeBase;
 			if ((object)et == null)
 				throw new ArgumentException();
+			if (customModifiers != null) {
+				for (int i = 0; i < customModifiers.Count; i++) {
+					if (customModifiers[i].Type.AppDomain != this)
+						throw new ArgumentException();
+				}
+			}
 			et = et.FullResolve() ?? et;
 
-			var res = new DmdSZArrayType(et);
+			var res = new DmdByRefType(et, customModifiers);
 			lock (LockObject) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
@@ -217,7 +225,34 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds) {
+		public override DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier> customModifiers) {
+			if ((object)elementType == null)
+				throw new ArgumentNullException(nameof(elementType));
+			if (elementType.AppDomain != this)
+				throw new InvalidOperationException();
+			var et = elementType as DmdTypeBase;
+			if ((object)et == null)
+				throw new ArgumentException();
+			if (customModifiers != null) {
+				for (int i = 0; i < customModifiers.Count; i++) {
+					if (customModifiers[i].Type.AppDomain != this)
+						throw new ArgumentException();
+				}
+			}
+			et = et.FullResolve() ?? et;
+
+			var res = new DmdSZArrayType(et, customModifiers);
+			lock (LockObject) {
+				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
+					return cachedType;
+				if (res.IsFullyResolved)
+					fullyResolvedTypes.Add(res, res);
+			}
+
+			return res;
+		}
+
+		public override DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier> customModifiers) {
 			// Allow 0, it's allowed in the MD
 			if (rank < 0)
 				throw new ArgumentOutOfRangeException(nameof(rank));
@@ -232,9 +267,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var et = elementType as DmdTypeBase;
 			if ((object)et == null)
 				throw new ArgumentException();
+			if (customModifiers != null) {
+				for (int i = 0; i < customModifiers.Count; i++) {
+					if (customModifiers[i].Type.AppDomain != this)
+						throw new ArgumentException();
+				}
+			}
 			et = et.FullResolve() ?? et;
 
-			var res = new DmdMDArrayType(et, rank, sizes, lowerBounds);
+			var res = new DmdMDArrayType(et, rank, sizes, lowerBounds, customModifiers);
 			lock (LockObject) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
@@ -245,7 +286,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments) {
+		public override DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers) {
 			if ((object)genericTypeDefinition == null)
 				throw new ArgumentNullException(nameof(genericTypeDefinition));
 			if (genericTypeDefinition.AppDomain != this)
@@ -256,6 +297,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (typeArguments[i].AppDomain != this)
 					throw new InvalidOperationException();
 			}
+			if (customModifiers != null) {
+				for (int i = 0; i < customModifiers.Count; i++) {
+					if (customModifiers[i].Type.AppDomain != this)
+						throw new ArgumentException();
+				}
+			}
 
 			DmdTypeBase res;
 			var gtDef = genericTypeDefinition.Resolve() as DmdTypeDef;
@@ -264,7 +311,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if ((object)gtRef == null)
 					throw new ArgumentException();
 				typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;
-				res = new DmdGenericInstanceTypeRef(gtRef, typeArguments);
+				res = new DmdGenericInstanceTypeRef(gtRef, typeArguments, customModifiers);
 			}
 			else {
 				gtDef = (DmdTypeDef)gtDef.FullResolve() ?? gtDef;
@@ -273,7 +320,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (gtDef.GetReadOnlyGenericArguments().Count != typeArguments.Count)
 					throw new ArgumentException();
 				typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;
-				res = new DmdGenericInstanceType(gtDef, typeArguments);
+				res = new DmdGenericInstanceType(gtDef, typeArguments, customModifiers);
 			}
 
 			lock (LockObject) {
@@ -286,7 +333,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes) {
+		public override DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier> customModifiers) {
 			if (genericParameterCount < 0)
 				throw new ArgumentOutOfRangeException(nameof(genericParameterCount));
 			if ((object)returnType == null)
@@ -305,12 +352,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (varArgsParameterTypes[i].AppDomain != this)
 					throw new ArgumentException();
 			}
+			if (customModifiers != null) {
+				for (int i = 0; i < customModifiers.Count; i++) {
+					if (customModifiers[i].Type.AppDomain != this)
+						throw new ArgumentException();
+				}
+			}
 			returnType = ((DmdTypeBase)returnType).FullResolve() ?? returnType;
 			parameterTypes = DmdTypeUtilities.FullResolve(parameterTypes) ?? parameterTypes;
 			varArgsParameterTypes = DmdTypeUtilities.FullResolve(varArgsParameterTypes) ?? varArgsParameterTypes;
 			var methodSignature = new DmdMethodSignatureImpl(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes);
 
-			var res = new DmdFunctionPointerType(methodSignature);
+			var res = new DmdFunctionPointerType(methodSignature, customModifiers);
 			lock (LockObject) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;

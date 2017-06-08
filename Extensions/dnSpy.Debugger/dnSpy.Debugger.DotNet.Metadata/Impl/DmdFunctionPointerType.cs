@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
@@ -36,12 +37,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdMethodSignature methodSignature;
 
-		public DmdFunctionPointerType(DmdMethodSignature methodSignature) {
+		public DmdFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
 			this.methodSignature = methodSignature ?? throw new ArgumentNullException(nameof(methodSignature));
 			IsFullyResolved = ((DmdTypeBase)methodSignature.ReturnType).IsFullyResolved &&
 					DmdTypeUtilities.IsFullyResolved(methodSignature.GetReadOnlyParameterTypes()) &&
 					DmdTypeUtilities.IsFullyResolved(methodSignature.GetReadOnlyVarArgsParameterTypes());
 		}
+
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetReadOnlyParameterTypes(), methodSignature.GetReadOnlyVarArgsParameterTypes(), customModifiers);
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetReadOnlyParameterTypes(), methodSignature.GetReadOnlyVarArgsParameterTypes(), null);
 
 		public override DmdMethodSignature GetFunctionPointerMethodSignature() => methodSignature;
 
@@ -59,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var varArgsParameterTypes = DmdTypeUtilities.FullResolve(methodSignature.GetReadOnlyVarArgsParameterTypes());
 			if (varArgsParameterTypes == null)
 				return null;
-			return (DmdTypeBase)returnType.AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, returnType, parameterTypes, varArgsParameterTypes);
+			return (DmdTypeBase)returnType.AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, returnType, parameterTypes, varArgsParameterTypes, GetCustomModifiers());
 		}
 	}
 }

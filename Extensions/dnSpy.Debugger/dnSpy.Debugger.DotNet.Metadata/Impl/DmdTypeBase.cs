@@ -29,8 +29,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		static readonly ReadOnlyCollection<DmdMethodBase> emptyMethodBaseCollection = new ReadOnlyCollection<DmdMethodBase>(Array.Empty<DmdMethodBase>());
 		static readonly ReadOnlyCollection<DmdPropertyInfo> emptyPropertyCollection = new ReadOnlyCollection<DmdPropertyInfo>(Array.Empty<DmdPropertyInfo>());
 		static readonly ReadOnlyCollection<DmdEventInfo> emptyEventCollection = new ReadOnlyCollection<DmdEventInfo>(Array.Empty<DmdEventInfo>());
+		static readonly ReadOnlyCollection<DmdCustomModifier> emptyCustomModifiers = new ReadOnlyCollection<DmdCustomModifier>(Array.Empty<DmdCustomModifier>());
 
 		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
+
+		readonly ReadOnlyCollection<DmdCustomModifier> customModifiers;
+		public sealed override ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => customModifiers;
+		protected DmdTypeBase(IList<DmdCustomModifier> customModifiers) =>
+			this.customModifiers = customModifiers == null || customModifiers.Count == 0 ? emptyCustomModifiers : customModifiers as ReadOnlyCollection<DmdCustomModifier> ?? new ReadOnlyCollection<DmdCustomModifier>(customModifiers);
 
 		/// <summary>
 		/// true if there are no metadata references. This instance and any other <see cref="DmdType"/> that it
@@ -74,11 +80,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int GetArrayRank() => throw new ArgumentException();
 		public override ReadOnlyCollection<int> GetReadOnlyArraySizes() => throw new ArgumentException();
 		public override ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds() => throw new ArgumentException();
-		public sealed override DmdType MakePointerType() => AppDomain.MakePointerType(this);
-		public sealed override DmdType MakeByRefType() => AppDomain.MakeByRefType(this);
-		public sealed override DmdType MakeArrayType() => AppDomain.MakeArrayType(this);
-		public sealed override DmdType MakeArrayType(int rank, IList<int> sizes, IList<int> lowerBounds) => AppDomain.MakeArrayType(this, rank, sizes, lowerBounds);
-		public sealed override DmdType MakeGenericType(IList<DmdType> typeArguments) => AppDomain.MakeGenericType(this, typeArguments);
+		public sealed override DmdType MakePointerType() => AppDomain.MakePointerType(this, null);
+		public sealed override DmdType MakeByRefType() => AppDomain.MakeByRefType(this, null);
+		public sealed override DmdType MakeArrayType() => AppDomain.MakeArrayType(this, null);
+		public sealed override DmdType MakeArrayType(int rank, IList<int> sizes, IList<int> lowerBounds) => AppDomain.MakeArrayType(this, rank, sizes, lowerBounds, null);
+		public sealed override DmdType MakeGenericType(IList<DmdType> typeArguments) => AppDomain.MakeGenericType(this, typeArguments, null);
 
 		protected DmdType SkipElementTypes() {
 			DmdType type = this;
@@ -313,7 +319,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override string[] GetEnumNames() => throw new NotImplementedException();//TODO:
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
-		public sealed override ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => throw new NotImplementedException();//TODO:
 		public sealed override bool IsDefined(string attributeTypeFullName, bool inherit) => throw new NotImplementedException();//TODO:
 		public sealed override bool IsDefined(DmdType attributeType, bool inherit) => throw new NotImplementedException();//TODO:
 

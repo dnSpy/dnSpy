@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly ReadOnlyCollection<int> sizes;
 		readonly ReadOnlyCollection<int> lowerBounds;
 
-		public DmdMDArrayType(DmdTypeBase elementType, int rank, IList<int> sizes, IList<int> lowerBounds) {
+		public DmdMDArrayType(DmdTypeBase elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
 			// Allow 0, it's allowed in the MD
 			if (rank < 0)
 				throw new ArgumentOutOfRangeException(nameof(rank));
@@ -58,6 +58,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		static readonly ReadOnlyCollection<int> emptyInt32Collection = new ReadOnlyCollection<int>(Array.Empty<int>());
 
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeArrayType(elementType, rank, sizes, lowerBounds, customModifiers);
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeArrayType(elementType, rank, sizes, lowerBounds, null);
 		public override DmdType GetElementType() => elementType;
 		public override int GetArrayRank() => rank;
 		public override ReadOnlyCollection<int> GetReadOnlyArraySizes() => sizes;
@@ -68,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return this;
 			var newElementType = elementType.ResolveNoThrow();
 			if (newElementType != null)
-				return AppDomain.MakeArrayType(newElementType, rank, sizes, lowerBounds);
+				return AppDomain.MakeArrayType(newElementType, rank, sizes, lowerBounds, GetCustomModifiers());
 			return null;
 		}
 
@@ -78,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return this;
 			var et = elementType.FullResolve();
 			if ((object)et != null)
-				return (DmdTypeBase)AppDomain.MakeArrayType(et, rank, sizes, lowerBounds);
+				return (DmdTypeBase)AppDomain.MakeArrayType(et, rank, sizes, lowerBounds, GetCustomModifiers());
 			return null;
 		}
 	}

@@ -25,12 +25,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdGenericParameterTypeMD : DmdGenericParameterType {
 		readonly DmdEcma335MetadataReader reader;
 
-		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, string name, int position, DmdGenericParameterAttributes attributes)
-			: base(rid, declaringType, name, position, attributes) =>
+		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
+			: base(rid, declaringType, name, position, attributes, customModifiers) =>
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes)
-			: base(rid, declaringMethod, name, position, attributes) =>
+		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
+			: base(rid, declaringMethod, name, position, attributes, customModifiers) =>
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
 		protected override DmdType[] CreateGenericParameterConstraints_NoLock() {
@@ -61,5 +61,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 			return gpcList;
 		}
+
+		DmdGenericParameterTypeMD Clone(IList<DmdCustomModifier> customModifiers) =>
+			(object)DeclaringMethod != null ?
+			new DmdGenericParameterTypeMD(reader, Rid, DeclaringMethod, Name, GenericParameterPosition, GenericParameterAttributes, customModifiers) :
+			new DmdGenericParameterTypeMD(reader, Rid, DeclaringType, Name, GenericParameterPosition, GenericParameterAttributes, customModifiers);
+
+		// Don't intern these since only the generic parameter position is checked and not the decl type / method
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => Clone(customModifiers);
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : Clone(null);
 	}
 }

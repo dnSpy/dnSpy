@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdTypeDef genericTypeDefinition;
 		readonly ReadOnlyCollection<DmdType> typeArguments;
 
-		public DmdGenericInstanceType(DmdTypeDef genericTypeDefinition, IList<DmdType> typeArguments) {
+		public DmdGenericInstanceType(DmdTypeDef genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
 			if ((object)genericTypeDefinition == null)
 				throw new ArgumentNullException(nameof(genericTypeDefinition));
 			if (typeArguments == null)
@@ -69,6 +69,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			this.typeArguments = typeArguments.Count == 0 ? emptyTypeCollection : typeArguments as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(typeArguments);
 			IsFullyResolved = DmdTypeUtilities.IsFullyResolved(typeArguments);
 		}
+
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeGenericType(genericTypeDefinition, typeArguments, customModifiers);
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeGenericType(genericTypeDefinition, typeArguments, null);
 
 		public override bool IsGenericType => true;
 		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => typeArguments;
@@ -81,7 +84,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return this;
 			var newTypeArguments = DmdTypeUtilities.FullResolve(typeArguments);
 			if (newTypeArguments != null)
-				return (DmdTypeBase)AppDomain.MakeGenericType(genericTypeDefinition, newTypeArguments);
+				return (DmdTypeBase)AppDomain.MakeGenericType(genericTypeDefinition, newTypeArguments, GetCustomModifiers());
 			return null;
 		}
 

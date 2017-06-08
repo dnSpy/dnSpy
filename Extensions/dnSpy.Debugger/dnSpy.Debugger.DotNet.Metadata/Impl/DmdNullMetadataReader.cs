@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdMethodInfo EntryPoint => null;
 
 		readonly DmdType globalType;
-		public DmdNullMetadataReader(DmdModule module) => globalType = new DmdNullGlobalType(module);
+		public DmdNullMetadataReader(DmdModule module) => globalType = new DmdNullGlobalType(module, null);
 
 		public override DmdType[] GetTypes() => new[] { globalType };
 		protected override DmdType ResolveTypeRef(uint rid) => null;

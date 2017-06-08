@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected uint Rid => rid;
 		readonly uint rid;
 
-		protected DmdTypeDef(uint rid) => this.rid = rid;
+		protected DmdTypeDef(uint rid, IList<DmdCustomModifier> customModifiers) : base(customModifiers) => this.rid = rid;
 
 		protected override DmdType ResolveNoThrowCore() => this;
 		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => GetOrCreateGenericParameters();

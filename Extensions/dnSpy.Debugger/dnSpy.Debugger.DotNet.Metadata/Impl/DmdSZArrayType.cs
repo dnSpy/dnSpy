@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
@@ -37,12 +38,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdTypeBase elementType;
 
-		public DmdSZArrayType(DmdTypeBase elementType) {
+		public DmdSZArrayType(DmdTypeBase elementType, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
 			this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 			IsMetadataReference = elementType.IsMetadataReference;
 			IsFullyResolved = elementType.IsFullyResolved;
 		}
 
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeArrayType(elementType, customModifiers);
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeArrayType(elementType, null);
 		public override DmdType GetElementType() => elementType;
 		public override int GetArrayRank() => 1;
 		public override ReadOnlyCollection<int> GetReadOnlyArraySizes() => emptyInt32Collection;
@@ -54,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return this;
 			var newElementType = elementType.ResolveNoThrow();
 			if (newElementType != null)
-				return AppDomain.MakeArrayType(newElementType);
+				return AppDomain.MakeArrayType(newElementType, GetCustomModifiers());
 			return null;
 		}
 
@@ -64,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return this;
 			var et = elementType.FullResolve();
 			if ((object)et != null)
-				return (DmdTypeBase)AppDomain.MakeArrayType(et);
+				return (DmdTypeBase)AppDomain.MakeArrayType(et, GetCustomModifiers());
 			return null;
 		}
 	}

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
@@ -58,19 +59,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdType declaringType;
 		readonly DmdMethodBase declaringMethod;
 
-		protected DmdGenericParameterType(uint rid, DmdType declaringType, string name, int position, DmdGenericParameterAttributes attributes)
-			: this(rid, declaringType, null, name, position, attributes) {
+		protected DmdGenericParameterType(uint rid, DmdType declaringType, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
+			: this(rid, declaringType, null, name, position, attributes, customModifiers) {
 			if ((object)declaringType == null)
 				throw new ArgumentNullException(nameof(declaringType));
 		}
 
-		protected DmdGenericParameterType(uint rid, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes)
-			: this(rid, null, declaringMethod, name, position, attributes) {
+		protected DmdGenericParameterType(uint rid, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
+			: this(rid, null, declaringMethod, name, position, attributes, customModifiers) {
 			if ((object)declaringMethod == null)
 				throw new ArgumentNullException(nameof(declaringMethod));
 		}
 
-		DmdGenericParameterType(uint rid, DmdType declaringType, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes) {
+		DmdGenericParameterType(uint rid, DmdType declaringType, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
 			this.rid = rid;
 			this.declaringType = declaringType;
 			this.declaringMethod = declaringMethod;

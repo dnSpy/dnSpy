@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
@@ -43,7 +44,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			lock (LockObject) {
 				if ((object)__resolvedType_DONT_USE != null)
 					return __resolvedType_DONT_USE;
-				__resolvedType_DONT_USE = appDomain.Resolve(this, throwOnError, ignoreCase: false);
+				var type = appDomain.Resolve(this, throwOnError, ignoreCase: false);
+				if (GetCustomModifiers().Count != 0)
+					type = (DmdTypeDef)appDomain.Intern(type.WithCustomModifiers(GetCustomModifiers()));
+				__resolvedType_DONT_USE = type;
 				return __resolvedType_DONT_USE;
 			}
 		}
@@ -51,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdAppDomainImpl appDomain;
 
-		public DmdTypeRef(DmdAppDomainImpl appDomain, DmdTypeScope typeScope, DmdTypeRef declaringType, string @namespace, string name) {
+		public DmdTypeRef(DmdAppDomainImpl appDomain, DmdTypeScope typeScope, DmdTypeRef declaringType, string @namespace, string name, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
 			if (typeScope.Kind == DmdTypeScopeKind.Invalid)
 				throw new ArgumentException();
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
@@ -60,6 +64,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			DeclaringTypeRef = declaringType;
 		}
+
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdTypeRef(appDomain, TypeScope, DeclaringTypeRef, Namespace, Name, customModifiers));
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdTypeRef(appDomain, TypeScope, DeclaringTypeRef, Namespace, Name, null));
 
 		public override bool IsFullyResolved => false;
 		protected override DmdType ResolveNoThrowCore() => GetResolvedType(throwOnError: false);

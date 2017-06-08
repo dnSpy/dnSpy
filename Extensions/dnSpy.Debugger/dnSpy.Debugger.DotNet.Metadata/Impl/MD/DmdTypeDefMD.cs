@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		readonly DmdEcma335MetadataReader reader;
 
-		public DmdTypeDefMD(DmdEcma335MetadataReader reader, uint rid) : base(rid) {
+		public DmdTypeDefMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(rid, customModifiers) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			var row = reader.TablesStream.ReadTypeDefRow(rid);
 			string ns = reader.StringsStream.Read(row.Namespace);
@@ -38,6 +38,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Name = reader.StringsStream.ReadNoNull(row.Name);
 			Attributes = (DmdTypeAttributes)row.Flags;
 		}
+
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdTypeDefMD(reader, Rid, customModifiers));
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdTypeDefMD(reader, Rid, null));
 
 		protected override int GetDeclaringTypeToken() => 0x02000000 + (int)(reader.TablesStream.ReadNestedClassRow(reader.Metadata.GetNestedClassRid(Rid))?.EnclosingClass ?? 0);
 
@@ -57,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				uint rid = ridList[i];
 				var row = reader.TablesStream.ReadGenericParamRow(rid) ?? new RawGenericParamRow();
 				var gpName = reader.StringsStream.ReadNoNull(row.Name);
-				var gpType = new DmdGenericParameterTypeMD(reader, rid, this, gpName, row.Number, (DmdGenericParameterAttributes)row.Flags);
+				var gpType = new DmdGenericParameterTypeMD(reader, rid, this, gpName, row.Number, (DmdGenericParameterAttributes)row.Flags, GetCustomModifiers());
 				genericParams[i] = gpType;
 			}
 			return genericParams;

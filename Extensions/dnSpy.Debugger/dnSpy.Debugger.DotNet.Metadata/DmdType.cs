@@ -832,6 +832,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers();
 
 		/// <summary>
+		/// Returns a type with the specified custom modifiers
+		/// </summary>
+		/// <param name="customModifiers">New custom modifiers</param>
+		/// <returns></returns>
+		public abstract DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers);
+
+		/// <summary>
+		/// Returns a type without custom modifiers
+		/// </summary>
+		/// <returns></returns>
+		public abstract DmdType WithoutCustomModifiers();
+
+		/// <summary>
 		/// Returns the names of the members of the enum type
 		/// </summary>
 		/// <returns></returns>

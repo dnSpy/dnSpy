@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
@@ -36,12 +38,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdTypeBase elementType;
 
-		public DmdPointerType(DmdTypeBase elementType) {
+		public DmdPointerType(DmdTypeBase elementType, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
 			this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 			IsMetadataReference = elementType.IsMetadataReference;
 			IsFullyResolved = elementType.IsFullyResolved;
 		}
 
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakePointerType(elementType, customModifiers);
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakePointerType(elementType, null);
 		public override DmdType GetElementType() => elementType;
 
 		protected override DmdType ResolveNoThrowCore() {
@@ -49,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return this;
 			var newElementType = elementType.ResolveNoThrow();
 			if (newElementType != null)
-				return AppDomain.MakePointerType(newElementType);
+				return AppDomain.MakePointerType(newElementType, GetCustomModifiers());
 			return null;
 		}
 
@@ -59,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return this;
 			var et = elementType.FullResolve();
 			if ((object)et != null)
-				return (DmdTypeBase)AppDomain.MakePointerType(et);
+				return (DmdTypeBase)AppDomain.MakePointerType(et, GetCustomModifiers());
 			return null;
 		}
 	}

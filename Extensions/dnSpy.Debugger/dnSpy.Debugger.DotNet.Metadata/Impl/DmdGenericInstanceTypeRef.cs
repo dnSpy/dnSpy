@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var typeDef = genericTypeRef.GetResolvedType(throwOnError);
 				if ((object)typeDef == null)
 					return null;
-				__resolvedType_DONT_USE = (DmdGenericInstanceType)typeDef.AppDomain.MakeGenericType(typeDef, typeArguments);
+				__resolvedType_DONT_USE = (DmdGenericInstanceType)typeDef.AppDomain.MakeGenericType(typeDef, typeArguments, GetCustomModifiers());
 				return __resolvedType_DONT_USE;
 			}
 		}
@@ -55,12 +55,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdTypeRef genericTypeRef;
 		readonly ReadOnlyCollection<DmdType> typeArguments;
 
-		public DmdGenericInstanceTypeRef(DmdTypeRef genericTypeRef, IList<DmdType> typeArguments) {
+		public DmdGenericInstanceTypeRef(DmdTypeRef genericTypeRef, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
 			if (typeArguments == null)
 				throw new ArgumentNullException(nameof(typeArguments));
 			this.genericTypeRef = genericTypeRef ?? throw new ArgumentNullException(nameof(genericTypeRef));
 			this.typeArguments = typeArguments.Count == 0 ? emptyTypeCollection : typeArguments as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(typeArguments);
 		}
+
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeGenericType(genericTypeRef, typeArguments, customModifiers);
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeGenericType(genericTypeRef, typeArguments, null);
 
 		public override bool IsGenericType => true;
 		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => typeArguments;

@@ -26,7 +26,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string Namespace => null;
 		public override string Name => "<Module>";
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.NotPublic;
-		public DmdNullGlobalType(DmdModule module) : base(1) => Module = module ?? throw new ArgumentNullException(nameof(module));
+
+		public DmdNullGlobalType(DmdModule module, IList<DmdCustomModifier> customModifiers) : base(1, customModifiers) =>
+			Module = module ?? throw new ArgumentNullException(nameof(module));
+
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdNullGlobalType(Module, customModifiers));
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdNullGlobalType(Module, null));
+
 		protected override int GetDeclaringTypeToken() => 0;
 		protected override int GetBaseTypeTokenCore() => 0;
 		protected override DmdType[] CreateGenericParameters_NoLock() => null;
