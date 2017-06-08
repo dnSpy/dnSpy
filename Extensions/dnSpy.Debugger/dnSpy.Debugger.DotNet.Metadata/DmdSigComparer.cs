@@ -177,9 +177,18 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				case DmdTypeSignatureKind.Type:
 					result = MemberNameEquals(a.Name, b.Name) &&
 						MemberNameEquals(a.Namespace, b.Namespace) &&
-						Equals(a.DeclaringType, b.DeclaringType) &&
-						// Type scope only needs to be checked if it's a non-nested type
-						((object)a.DeclaringType != null || DontCompareTypeScope || TypeScopeEquals(a, b));
+						Equals(a.DeclaringType, b.DeclaringType);
+					// Type scope only needs to be checked if it's a non-nested type
+					if (result && !DontCompareTypeScope && (object)a.DeclaringType == null) {
+						result = TypeScopeEquals(a, b);
+						if (!result) {
+							// One or both of the types could be exported types. We need to
+							// resolve them and then compare again.
+							var ra = a.ResolveNoThrow();
+							var rb = (object)ra == null ? null : b.ResolveNoThrow();
+							result = (object)ra != null && (object)rb != null && TypeScopeEquals(ra, rb);
+						}
+					}
 					break;
 
 				case DmdTypeSignatureKind.Pointer:
