@@ -61,6 +61,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Check type equivalence
 		/// </summary>
 		CheckTypeEquivalence = 0x20,
+
+		/// <summary>
+		/// Don't compare optional and required C modifiers
+		/// </summary>
+		DontCompareCustomModifiers = 0x40,
 	}
 
 	/// <summary>
@@ -90,6 +95,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		bool ProjectWinMDReferences => (options & DmdSigComparerOptions.ProjectWinMDReferences) != 0;
 		//TODO: Use this option
 		bool CheckTypeEquivalence => (options & DmdSigComparerOptions.CheckTypeEquivalence) != 0;
+		bool DontCompareCustomModifiers => (options & DmdSigComparerOptions.DontCompareCustomModifiers) != 0;
 
 		/// <summary>
 		/// Constructor
@@ -170,7 +176,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			var at = a.TypeSignatureKind;
 			if (at != b.TypeSignatureKind)
 				result = false;
-			else if (!Equals(a.GetCustomModifiers(), b.GetCustomModifiers()))
+			else if (!DontCompareCustomModifiers && !Equals(a.GetCustomModifiers(), b.GetCustomModifiers()))
 				result = false;
 			else {
 				switch (at) {
@@ -522,7 +528,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (!IncrementRecursionCounter())
 				return 0;
 
-			int hc = GetHashCode(a.GetCustomModifiers());
+			int hc = DontCompareCustomModifiers ? 0 : GetHashCode(a.GetCustomModifiers());
 			switch (a.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
 				hc ^= (object)a.DeclaringType == null ? HASHCODE_MAGIC_TYPE : HASHCODE_MAGIC_NESTED_TYPE;
