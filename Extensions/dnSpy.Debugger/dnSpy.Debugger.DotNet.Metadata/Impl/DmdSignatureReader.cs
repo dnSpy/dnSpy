@@ -23,51 +23,8 @@ using System.IO;
 using DMD = dnlib.DotNet;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	abstract class DmdSignatureStream : IDisposable {
-		public abstract byte ReadByte();
-		public abstract uint ReadUInt32();
-		public abstract void Dispose();
-
-		public uint ReadCompressedUInt32() {
-			byte b = ReadByte();
-			if ((b & 0x80) == 0)
-				return b;
-
-			if ((b & 0xC0) == 0x80)
-				return (uint)(((b & 0x3F) << 8) | ReadByte());
-
-			return (uint)(((b & 0x1F) << 24) | (ReadByte() << 16) | (ReadByte() << 8) | ReadByte());
-		}
-
-		public int ReadCompressedInt32() {
-			byte b = ReadByte();
-			if ((b & 0x80) == 0) {
-				if ((b & 1) != 0)
-					return -0x40 | (b >> 1);
-				return b >> 1;
-			}
-
-			if ((b & 0xC0) == 0x80) {
-				uint tmp = (uint)(((b & 0x3F) << 8) | ReadByte());
-				if ((tmp & 1) != 0)
-					return -0x2000 | (int)(tmp >> 1);
-				return (int)(tmp >> 1);
-			}
-
-			if ((b & 0xE0) == 0xC0) {
-				uint tmp = (uint)(((b & 0x1F) << 24) | (ReadByte() << 16) |
-						(ReadByte() << 8) | ReadByte());
-				if ((tmp & 1) != 0)
-					return -0x10000000 | (int)(tmp >> 1);
-				return (int)(tmp >> 1);
-			}
-
-			throw new IOException();
-		}
-	}
-
 	struct DmdSignatureReader : IDisposable {
-		public static (DmdType type, bool containedGenericParams) ReadTypeSignature(DmdModule module, DmdSignatureStream reader, IList<DmdType> genericTypeArguments, bool resolve) {
+		public static (DmdType type, bool containedGenericParams) ReadTypeSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, bool resolve) {
 			try {
 				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, null, resolve)) {
 					var type = sigReader.ReadType().type;
@@ -84,14 +41,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		const int MAX_RECURSION_COUNT = 100;
 		int recursionCounter;
 		readonly DmdModule module;
-		readonly DmdSignatureStream reader;
+		readonly DmdDataStream reader;
 		readonly IList<DmdType> genericTypeArguments;
 		readonly IList<DmdType> genericMethodArguments;
 		readonly bool resolve;
 		List<DmdCustomModifier> customModifiers;
 		bool containedGenericParams;
 
-		DmdSignatureReader(DmdModule module, DmdSignatureStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
+		DmdSignatureReader(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
 			this.module = module;
 			this.reader = reader;
 			this.genericTypeArguments = genericTypeArguments ?? Array.Empty<DmdType>();

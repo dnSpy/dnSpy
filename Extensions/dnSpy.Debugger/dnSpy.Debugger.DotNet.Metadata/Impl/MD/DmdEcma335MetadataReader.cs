@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var row = Metadata.TablesStream.ReadTypeSpecRow(rid);
 			var stream = BlobStream.CreateStream(row.Signature);
 			const bool resolve = true;
-			return DmdSignatureReader.ReadTypeSignature(module, new DmdSignatureStreamImpl(stream), genericTypeArguments, resolve);
+			return DmdSignatureReader.ReadTypeSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, resolve);
 		}
 
 		public override DmdType[] GetTypes() {

@@ -105,6 +105,7 @@
     <Compile Include="Impl\DmdAssemblyControllerImpl.cs" />
     <Compile Include="Impl\DmdAssemblyImpl.cs" />
     <Compile Include="Impl\DmdByRefType.cs" />
+    <Compile Include="Impl\DmdDataStream.cs" />
     <Compile Include="Impl\DmdFunctionPointerType.cs" />
     <Compile Include="Impl\DmdGenericInstanceType.cs" />
     <Compile Include="Impl\DmdGenericInstanceTypeRef.cs" />
@@ -131,10 +132,10 @@
     <Compile Include="Impl\DmdTypeRef.cs" />
     <Compile Include="Impl\DmdTypeUtilities.cs" />
     <Compile Include="Impl\LazyList.cs" />
+    <Compile Include="Impl\MD\DmdDataStreamImpl.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
     <Compile Include="Impl\MD\DmdExportedTypeMD.cs" />
     <Compile Include="Impl\MD\DmdGenericParameterTypeMD.cs" />
-    <Compile Include="Impl\MD\DmdSignatureStreamImpl.cs" />
     <Compile Include="Impl\MD\DmdTypeDefMD.cs" />
     <Compile Include="Impl\MD\DmdTypeRefMD.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.cs" />

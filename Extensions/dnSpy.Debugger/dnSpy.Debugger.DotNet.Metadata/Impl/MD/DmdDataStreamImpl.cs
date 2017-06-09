@@ -20,9 +20,9 @@
 using dnlib.IO;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
-	sealed class DmdSignatureStreamImpl : DmdSignatureStream {
+	sealed class DmdDataStreamImpl : DmdDataStream {
 		readonly IImageStream stream;
-		public DmdSignatureStreamImpl(IImageStream stream) => this.stream = stream;
+		public DmdDataStreamImpl(IImageStream stream) => this.stream = stream;
 		public override byte ReadByte() => stream.ReadByte();
 		public override uint ReadUInt32() => stream.ReadUInt32();
 		public override void Dispose() => stream.Dispose();
