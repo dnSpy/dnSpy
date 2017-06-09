@@ -70,5 +70,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public override DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments, bool includeConstructors) => throw new NotImplementedException();//TODO:
 		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
 		public override DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
+
+		protected override DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments) {
+			var ridList = reader.Metadata.GetInterfaceImplRidList(Rid);
+			if (ridList.Count == 0)
+				return null;
+			var res = new DmdType[ridList.Count];
+			for (int i = 0; i < res.Length; i++) {
+				uint rid = ridList[i];
+				var row = reader.Metadata.TablesStream.ReadInterfaceImplRow(rid);
+				if (row == null || !CodedToken.TypeDefOrRef.Decode(row.Interface, out uint token))
+					return null;
+				res[i] = Module.ResolveType((int)token, genericTypeArguments, null, throwOnError: true);
+			}
+			return res;
+		}
 	}
 }

@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (!type.IsPublic)
 					return false;
 				if (IsConstructedGenericType) {
-					foreach (var genArg in GetGenericArguments()) {
+					foreach (var genArg in GetReadOnlyGenericArguments()) {
 						if (!genArg.IsVisible)
 							return false;
 					}
@@ -694,7 +694,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return true;
 			if (!type.IsGenericType)
 				return false;
-			foreach (var gaType in type.GetGenericArguments()) {
+			foreach (var gaType in type.GetReadOnlyGenericArguments()) {
 				if (gaType.ContainsGenericParameters)
 					return true;
 			}

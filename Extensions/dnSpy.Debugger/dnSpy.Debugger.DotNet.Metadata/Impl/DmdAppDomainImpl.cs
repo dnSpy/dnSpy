@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
 
@@ -163,7 +164,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) {
-			var type = wellKnownMemberResolver.GetWellKnownType(wellKnownType);
+			var type = wellKnownMemberResolver.GetWellKnownType(wellKnownType, onlyCorLib: false);
 			if (type == null && !isOptional)
 				throw new ResolveException("Couldn't resolve well known type: " + wellKnownType);
 			return type;
@@ -532,6 +533,46 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 			return null;
 		}
+
+		internal DmdType[] GetSZArrayInterfaces(DmdType elementType) {
+			var ifaces = defaultExistingWellKnownInterfaces;
+			if (ifaces == null) {
+				lock (LockObject) {
+					ifaces = defaultExistingWellKnownInterfaces;
+					if (ifaces == null) {
+						Debug.Assert(assemblies.Count != 0, "CorLib hasn't been loaded yet!");
+						if (assemblies.Count == 0)
+							return Array.Empty<DmdType>();
+						var list = new List<DmdType>(possibleWellKnownInterfaces.Length);
+						foreach (var wellKnownType in possibleWellKnownInterfaces) {
+							// These interfaces should only be in corlib since the CLR needs them.
+							// They're not always present so if we fail to find a type in the corlib, we don't
+							// want to search the remaining assemblies (could be hundreds of assemblies).
+							var iface = wellKnownMemberResolver.GetWellKnownType(wellKnownType, onlyCorLib: true);
+							if ((object)iface != null)
+								list.Add(iface);
+						}
+						defaultExistingWellKnownInterfaces = ifaces = list.ToArray();
+						// We don't support debugging .NET 1.x assemblies so this should contain at least IList<T>
+						Debug.Assert(defaultExistingWellKnownInterfaces.Length >= 1);
+					}
+				}
+			}
+			var res = new DmdType[ifaces.Length];
+			var typeArguments = new[] { elementType };
+			for (int i = 0; i < res.Length; i++)
+				res[i] = MakeGenericType(ifaces[i], typeArguments, null);
+			return res;
+		}
+		DmdType[] defaultExistingWellKnownInterfaces;
+		static readonly DmdWellKnownType[] possibleWellKnownInterfaces = new DmdWellKnownType[] {
+			// Available since .NET Framework 2.0
+			DmdWellKnownType.System_Collections_Generic_IList_T,
+			// Available since .NET Framework 4.5
+			DmdWellKnownType.System_Collections_Generic_IReadOnlyList_T,
+			// Available since .NET Framework 4.5
+			DmdWellKnownType.System_Collections_Generic_IReadOnlyCollection_T,
+		};
 
 		public override object Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken) {
 			if ((object)method == null)

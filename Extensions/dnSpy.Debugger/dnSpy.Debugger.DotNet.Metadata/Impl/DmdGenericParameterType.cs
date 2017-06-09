@@ -99,5 +99,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override bool IsFullyResolved => true;
 		public override DmdTypeBase FullResolve() => this;
+
+		protected override IList<DmdType> ReadDeclaredInterfaces() {
+			var list = new List<DmdType>();
+			foreach (var gpcType in GetOrCreateGenericParameterConstraints()) {
+				if (gpcType.IsInterface)
+					list.Add(gpcType);
+				list.AddRange(gpcType.GetReadOnlyInterfaces());
+			}
+			return list.ToArray();
+		}
 	}
 }

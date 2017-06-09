@@ -83,5 +83,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return (DmdTypeBase)AppDomain.MakeArrayType(et, rank, sizes, lowerBounds, GetCustomModifiers());
 			return null;
 		}
+
+		protected override IList<DmdType> ReadDeclaredInterfaces() => null;
 	}
 }

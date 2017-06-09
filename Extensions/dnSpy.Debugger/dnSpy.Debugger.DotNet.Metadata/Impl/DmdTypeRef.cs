@@ -98,5 +98,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => ResolvedType.CreateDeclaredMethods2(reflectedType, includeConstructors);
 		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ResolvedType.CreateDeclaredProperties2(reflectedType);
 		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ResolvedType.CreateDeclaredEvents2(reflectedType);
+
+		protected override IList<DmdType> ReadDeclaredInterfaces() => ResolvedType.ReadDeclaredInterfaces2();
 	}
 }

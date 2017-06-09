@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public DmdMemberInfo GetWellKnownMember(DmdWellKnownMember wellKnownMember) => throw new NotImplementedException();//TODO:
 
-		public DmdType GetWellKnownType(DmdWellKnownType wellKnownType) {
+		public DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool onlyCorLib) {
 			if ((uint)wellKnownType >= (uint)wellKnownTypes.Length)
 				return null;
 
@@ -45,7 +45,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return cachedType;
 
 			lock (lockObj) {
-				foreach (var assembly in appDomain.GetAssemblies()) {
+				DmdAssembly[] assemblies;
+				if (onlyCorLib) {
+					var corlib = appDomain.CorLib;
+					if (corlib == null)
+						return null;
+					assemblies = new[] { corlib };
+				}
+				else
+					assemblies = appDomain.GetAssemblies();
+				foreach (var assembly in assemblies) {
 					foreach (var module in assembly.GetModules()) {
 						if (checkedModules.Contains(module))
 							continue;

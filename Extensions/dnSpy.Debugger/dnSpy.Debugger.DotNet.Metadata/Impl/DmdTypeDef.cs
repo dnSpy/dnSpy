@@ -128,5 +128,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override bool IsFullyResolved => true;
 		public override DmdTypeBase FullResolve() => this;
+
+		protected override IList<DmdType> ReadDeclaredInterfaces() => ReadDeclaredInterfacesCore(GetReadOnlyGenericArguments());
+		internal IList<DmdType> ReadDeclaredInterfaces2() => ReadDeclaredInterfacesCore(GetReadOnlyGenericArguments());
+		internal IList<DmdType> ReadDeclaredInterfaces(IList<DmdType> genericTypeArguments) => ReadDeclaredInterfacesCore(genericTypeArguments);
+		protected abstract DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments);
 	}
 }

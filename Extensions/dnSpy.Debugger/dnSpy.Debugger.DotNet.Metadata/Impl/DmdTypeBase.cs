@@ -292,7 +292,68 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdType GetNestedType(string name, DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
 
 		public sealed override DmdType GetInterface(string name, bool ignoreCase) => throw new NotImplementedException();//TODO:
-		public sealed override ReadOnlyCollection<DmdType> GetReadOnlyInterfaces() => throw new NotImplementedException();//TODO:
+
+		public sealed override ReadOnlyCollection<DmdType> GetReadOnlyInterfaces() {
+			var f = ExtraFields;
+			if (f.__implementedInterfaces_DONT_USE != null)
+				return f.__implementedInterfaces_DONT_USE;
+
+			lock (LockObject) {
+				if (f.__implementedInterfaces_DONT_USE != null)
+					return f.__implementedInterfaces_DONT_USE;
+
+				var implIfaces = CreateInterfaces(this);
+				f.__implementedInterfaces_DONT_USE = implIfaces.Length == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(implIfaces);
+				return f.__implementedInterfaces_DONT_USE;
+			}
+		}
+		protected abstract IList<DmdType> ReadDeclaredInterfaces();
+
+		static DmdType[] CreateInterfaces(DmdTypeBase type) {
+			//TODO: Pool these?
+			var list = new List<DmdType>();
+			var hash = new HashSet<DmdType>(DmdMemberInfoEqualityComparer.Default);
+			var stack = new Stack<IEnumerator<DmdType>>();
+
+			IEnumerator<DmdType> tmpEnum = null;
+			try {
+				for (var t = type; ;) {
+					if (!hash.Add(t))
+						break;
+					stack.Push(tmpEnum = t.DeclaredInterfaces.GetEnumerator());
+					tmpEnum = null;
+					t = (DmdTypeBase)t.BaseType;
+					if ((object)t == null)
+						break;
+				}
+
+				while (stack.Count > 0) {
+					var enumerator = tmpEnum = stack.Pop();
+					for (;;) {
+						if (!enumerator.MoveNext()) {
+							tmpEnum = null;
+							enumerator.Dispose();
+							break;
+						}
+
+						var iface = (DmdTypeBase)enumerator.Current;
+						if (!hash.Add(iface))
+							continue;
+						list.Add(iface);
+						stack.Push(enumerator);
+						tmpEnum = null;
+						enumerator = tmpEnum = iface.DeclaredInterfaces.GetEnumerator();
+					}
+				}
+			}
+			finally {
+				tmpEnum?.Dispose();
+				while (stack.Count > 0)
+					stack.Pop().Dispose();
+			}
+
+			return list.ToArray();
+		}
 
 		public sealed override DmdMemberInfo[] GetDefaultMembers() {
 			var name = GetDefaultMemberName(this);
@@ -387,6 +448,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
+		internal ReadOnlyCollection<DmdType> DeclaredInterfaces {
+			get {
+				var f = ExtraFields;
+				if (f.__declaredInterfaces_DONT_USE != null)
+					return f.__declaredInterfaces_DONT_USE;
+				lock (LockObject) {
+					if (f.__declaredInterfaces_DONT_USE != null)
+						return f.__declaredInterfaces_DONT_USE;
+					var res = ReadDeclaredInterfaces();
+					f.__declaredInterfaces_DONT_USE = res == null || res.Count == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(res);
+					return f.__declaredInterfaces_DONT_USE;
+				}
+			}
+		}
+
 		ExtraFieldsImpl ExtraFields {
 			get {
 				if (__extraFields_DONT_USE != null)
@@ -403,6 +479,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		// Most of the fields aren't used so we alloc them when needed
 		sealed class ExtraFieldsImpl {
+			public ReadOnlyCollection<DmdType> __implementedInterfaces_DONT_USE;
+			public ReadOnlyCollection<DmdType> __declaredInterfaces_DONT_USE;
+
 			public ReadOnlyCollection<DmdFieldInfo>  __declaredFields_DONT_USE;
 			public ReadOnlyCollection<DmdMethodBase> __declaredMethods_DONT_USE;
 			public ReadOnlyCollection<DmdPropertyInfo> __declaredProperties_DONT_USE;

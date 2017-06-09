@@ -97,5 +97,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal DmdMethodBase[] CreateDeclaredMethods2(DmdType reflectedType, bool includeConstructors) => genericTypeDefinition.ReadDeclaredMethods(reflectedType, typeArguments, includeConstructors);
 		internal DmdPropertyInfo[] CreateDeclaredProperties2(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredProperties(reflectedType, typeArguments);
 		internal DmdEventInfo[] CreateDeclaredEvents2(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredEvents(reflectedType, typeArguments);
+
+		protected override IList<DmdType> ReadDeclaredInterfaces() => ReadDeclaredInterfaces2();
+		internal IList<DmdType> ReadDeclaredInterfaces2() => genericTypeDefinition.ReadDeclaredInterfaces(typeArguments);
 	}
 }

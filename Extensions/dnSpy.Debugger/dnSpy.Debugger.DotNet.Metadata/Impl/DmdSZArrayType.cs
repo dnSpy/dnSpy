@@ -70,5 +70,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return (DmdTypeBase)AppDomain.MakeArrayType(et, GetCustomModifiers());
 			return null;
 		}
+
+		protected override IList<DmdType> ReadDeclaredInterfaces() => ((DmdAppDomainImpl)AppDomain).GetSZArrayInterfaces(elementType);
 	}
 }
