@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Custom attribute data
 	/// </summary>
-	public abstract class DmdCustomAttributeData {
+	public sealed class DmdCustomAttributeData {
 		/// <summary>
 		/// Gets the custom attribute type
 		/// </summary>
@@ -35,17 +35,29 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the custom attribute constructor
 		/// </summary>
-		public abstract DmdConstructorInfo Constructor { get; }
+		public DmdConstructorInfo Constructor { get; }
 
 		/// <summary>
 		/// Gets the constructor arguments
 		/// </summary>
-		public abstract IList<DmdCustomAttributeTypedArgument> ConstructorArguments { get; }
+		public IList<DmdCustomAttributeTypedArgument> ConstructorArguments { get; }
 
 		/// <summary>
 		/// Gets all named arguments (properties and fields)
 		/// </summary>
-		public abstract IList<DmdCustomAttributeNamedArgument> NamedArguments { get; }
+		public IList<DmdCustomAttributeNamedArgument> NamedArguments { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="constructor">Custom attribute constructor</param>
+		/// <param name="constructorArguments">Constructor arguments</param>
+		/// <param name="namedArguments">Custom attribute named arguments (fields and properties)</param>
+		public DmdCustomAttributeData(DmdConstructorInfo constructor, IList<DmdCustomAttributeTypedArgument> constructorArguments, IList<DmdCustomAttributeNamedArgument> namedArguments) {
+			Constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
+			ConstructorArguments = constructorArguments ?? throw new ArgumentNullException(nameof(constructorArguments));
+			NamedArguments = namedArguments ?? throw new ArgumentNullException(nameof(namedArguments));
+		}
 	}
 
 	/// <summary>

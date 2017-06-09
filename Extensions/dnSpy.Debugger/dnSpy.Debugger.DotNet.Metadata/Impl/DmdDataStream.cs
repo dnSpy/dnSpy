@@ -23,11 +23,22 @@ using System.IO;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdDataStream : IDisposable {
 		public abstract byte ReadByte();
+		public sbyte ReadSByte() => (sbyte)ReadByte();
+		public abstract ushort ReadUInt16();
+		public short ReadInt16() => (short)ReadUInt16();
 		public abstract uint ReadUInt32();
+		public int ReadInt32() => (int)ReadUInt32();
+		public abstract ulong ReadUInt64();
+		public long ReadInt64() => (long)ReadUInt64();
+		public abstract float ReadSingle();
+		public abstract double ReadDouble();
+		public abstract byte[] ReadBytes(int length);
+		public abstract long Position { get; }
+		public abstract long Length { get; }
 		public abstract void Dispose();
 
-		public uint ReadCompressedUInt32() {
-			byte b = ReadByte();
+		public uint ReadCompressedUInt32() => ReadCompressedUInt32(ReadByte());
+		public uint ReadCompressedUInt32(byte b) {
 			if ((b & 0x80) == 0)
 				return b;
 

@@ -24,7 +24,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly IImageStream stream;
 		public DmdDataStreamImpl(IImageStream stream) => this.stream = stream;
 		public override byte ReadByte() => stream.ReadByte();
+		public override ushort ReadUInt16() => stream.ReadUInt16();
 		public override uint ReadUInt32() => stream.ReadUInt32();
+		public override ulong ReadUInt64() => stream.ReadUInt64();
+		public override float ReadSingle() => stream.ReadSingle();
+		public override double ReadDouble() => stream.ReadDouble();
+		public override byte[] ReadBytes(int length) => stream.ReadBytes(length);
+		public override long Position => stream.Position;
+		public override long Length => stream.Length;
 		public override void Dispose() => stream.Dispose();
 	}
 }
