@@ -61,6 +61,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly LazyList<DmdType> typeDefList;
 		readonly LazyList2<DmdType> typeSpecList;
 		readonly LazyList<DmdTypeRef> exportedTypeList;
+		readonly DmdNullGlobalType globalTypeIfThereAreNoTypes;
 
 		DmdEcma335MetadataReader(DmdModuleImpl module, IMetaData metadata) {
 			this.module = module;
@@ -75,6 +76,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			typeDefList = new LazyList<DmdType>(ts.TypeDefTable.Rows, rid => new DmdTypeDefMD(this, rid, null));
 			typeSpecList = new LazyList2<DmdType>(ts.TypeSpecTable.Rows, (rid, genericTypeArguments) => ReadTypeSpec(rid, genericTypeArguments));
 			exportedTypeList = new LazyList<DmdTypeRef>(ts.ExportedTypeTable.Rows, rid => new DmdExportedTypeMD(this, rid, null));
+
+			globalTypeIfThereAreNoTypes = new DmdNullGlobalType(module, null);
 		}
 
 		(DmdType type, bool containedGenericParams) ReadTypeSpec(uint rid, IList<DmdType> genericTypeArguments) {
@@ -85,7 +88,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		public override DmdType[] GetTypes() {
-			var result = new DmdType[TablesStream.TypeDefTable.Rows];
+			uint typeDefRows = TablesStream.TypeDefTable.Rows;
+			// This should never happen but we must return at least one type
+			if (typeDefRows == 0)
+				return new DmdType[] { globalTypeIfThereAreNoTypes };
+			var result = new DmdType[typeDefRows];
 			for (int i = 0; i < result.Length; i++) {
 				var type = ResolveTypeDef((uint)i + 1);
 				result[i] = type ?? throw new InvalidOperationException();
