@@ -416,6 +416,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_String__Format_IFormatProvider,
 
 		Microsoft_CodeAnalysis_Runtime_Instrumentation__CreatePayload,
+
+		// When adding more members, update WellKnownMemberResolver
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

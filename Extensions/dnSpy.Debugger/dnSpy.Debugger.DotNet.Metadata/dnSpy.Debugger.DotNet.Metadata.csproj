@@ -136,6 +136,8 @@
     <Compile Include="Impl\MD\DmdSignatureStreamImpl.cs" />
     <Compile Include="Impl\MD\DmdTypeDefMD.cs" />
     <Compile Include="Impl\MD\DmdTypeRefMD.cs" />
+    <Compile Include="Impl\WellKnownMemberResolver.cs" />
+    <Compile Include="Impl\WellKnownMemberResolver.Data.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResolveException.cs" />
   </ItemGroup>

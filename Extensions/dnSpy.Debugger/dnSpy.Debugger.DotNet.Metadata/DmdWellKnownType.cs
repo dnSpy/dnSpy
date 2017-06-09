@@ -147,7 +147,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_Func_T15,
 		System_Func_T16,
 		System_Func_T17,
-		System_Func_TMax = System_Func_T17,
 
 		System_Action,
 		System_Action_T,
@@ -166,7 +165,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_Action_T14,
 		System_Action_T15,
 		System_Action_T16,
-		System_Action_TMax = System_Action_T16,
 
 		System_AttributeUsageAttribute,
 		System_ParamArrayAttribute,
@@ -288,6 +286,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		Microsoft_CodeAnalysis_Runtime_Instrumentation,
 
 		System_ContextBoundObject,
+
+		// When adding more types, update WellKnownMemberResolver
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

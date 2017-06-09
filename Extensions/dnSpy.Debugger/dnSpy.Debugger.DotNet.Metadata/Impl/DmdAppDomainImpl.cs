@@ -44,6 +44,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly Dictionary<DmdType, DmdType> fullyResolvedTypes;
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>> toModuleTypeDict;
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>> toModuleExportedTypeDict;
+		readonly WellKnownMemberResolver wellKnownMemberResolver;
 		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparer = new DmdMemberInfoEqualityComparer(DmdSigComparerOptions.DontCompareTypeScope | DmdSigComparerOptions.DontCompareCustomModifiers);
 
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
@@ -53,6 +54,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(DmdMemberInfoEqualityComparer.Default);
 			toModuleTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			toModuleExportedTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>>();
+			wellKnownMemberResolver = new WellKnownMemberResolver(this);
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Id = id;
 		}
@@ -153,8 +155,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override DmdMemberInfo GetWellKnownMember(DmdWellKnownMember wellKnownMember, bool isOptional) => throw new NotImplementedException();//TODO:
-		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) => throw new NotImplementedException();//TODO:
+		public override DmdMemberInfo GetWellKnownMember(DmdWellKnownMember wellKnownMember, bool isOptional) {
+			var member = wellKnownMemberResolver.GetWellKnownMember(wellKnownMember);
+			if (member == null && !isOptional)
+				throw new ResolveException("Couldn't resolve well known member: " + wellKnownMember);
+			return member;
+		}
+
+		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) {
+			var type = wellKnownMemberResolver.GetWellKnownType(wellKnownType);
+			if (type == null && !isOptional)
+				throw new ResolveException("Couldn't resolve well known type: " + wellKnownType);
+			return type;
+		}
 
 		public override DmdType Intern(DmdType type) {
 			if ((object)type == null)
