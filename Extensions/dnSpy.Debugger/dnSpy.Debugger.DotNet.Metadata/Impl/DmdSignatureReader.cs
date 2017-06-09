@@ -67,9 +67,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	}
 
 	struct DmdSignatureReader : IDisposable {
-		public static (DmdType type, bool containedGenericParams) ReadTypeSignature(DmdModule module, DmdSignatureStream reader, IList<DmdType> genericTypeArguments) {
+		public static (DmdType type, bool containedGenericParams) ReadTypeSignature(DmdModule module, DmdSignatureStream reader, IList<DmdType> genericTypeArguments, bool resolve) {
 			try {
-				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, null)) {
+				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, null, resolve)) {
 					var type = sigReader.ReadType().type;
 					return (type, sigReader.containedGenericParams);
 				}
@@ -87,14 +87,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdSignatureStream reader;
 		readonly IList<DmdType> genericTypeArguments;
 		readonly IList<DmdType> genericMethodArguments;
+		readonly bool resolve;
 		List<DmdCustomModifier> customModifiers;
 		bool containedGenericParams;
 
-		DmdSignatureReader(DmdModule module, DmdSignatureStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		DmdSignatureReader(DmdModule module, DmdSignatureStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
 			this.module = module;
 			this.reader = reader;
 			this.genericTypeArguments = genericTypeArguments ?? Array.Empty<DmdType>();
 			this.genericMethodArguments = genericMethodArguments ?? Array.Empty<DmdType>();
+			this.resolve = resolve;
 			customModifiers = null;
 			containedGenericParams = false;
 			recursionCounter = 0;
@@ -158,12 +160,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			case DMD.ElementType.U:			result = module.AppDomain.System_UIntPtr; break;
 			case DMD.ElementType.Object:	result = module.AppDomain.System_Object; break;
 
-			case DMD.ElementType.Ptr:		result = module.AppDomain.MakePointerType(ReadType().type, null); break;
-			case DMD.ElementType.ByRef:		result = module.AppDomain.MakeByRefType(ReadType().type, null); break;
+			case DMD.ElementType.Ptr:		result = module.AppDomain.MakePointerType(ReadType().type, null, MakeTypeOptions.NoResolve); break;
+			case DMD.ElementType.ByRef:		result = module.AppDomain.MakeByRefType(ReadType().type, null, MakeTypeOptions.NoResolve); break;
 			case DMD.ElementType.ValueType:	result = ReadTypeDefOrRef(); break;
 			case DMD.ElementType.Class:		result = ReadTypeDefOrRef(); break;
 			case DMD.ElementType.FnPtr:		result = ReadMethodSignatureType(); break;
-			case DMD.ElementType.SZArray:	result = module.AppDomain.MakeArrayType(ReadType().type, null); break;
+			case DMD.ElementType.SZArray:	result = module.AppDomain.MakeArrayType(ReadType().type, null, MakeTypeOptions.NoResolve); break;
 
 			case DMD.ElementType.Pinned:
 				resultFlags |= TypeFlags.IsPinned;
@@ -203,14 +205,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var args = new DmdType[reader.ReadCompressedUInt32()];
 				for (int i = 0; i < args.Length; i++)
 					args[i] = ReadType().type;
-				result = module.AppDomain.MakeGenericType(nextType, args, null);
+				result = module.AppDomain.MakeGenericType(nextType, args, null, MakeTypeOptions.NoResolve);
 				break;
 
 			case DMD.ElementType.Array:
 				nextType = ReadType().type;
 				uint rank = reader.ReadCompressedUInt32();
 				if (rank == 0) {
-					result = module.AppDomain.MakeArrayType(nextType, (int)rank, Array.Empty<int>(), Array.Empty<int>(), null);
+					result = module.AppDomain.MakeArrayType(nextType, (int)rank, Array.Empty<int>(), Array.Empty<int>(), null, MakeTypeOptions.NoResolve);
 					break;
 				}
 				var sizes = new int[(int)reader.ReadCompressedUInt32()];
@@ -219,7 +221,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var lowerBounds = new int[(int)reader.ReadCompressedUInt32()];
 				for (int i = 0; i < lowerBounds.Length; i++)
 					lowerBounds[i] = reader.ReadCompressedInt32();
-				result = module.AppDomain.MakeArrayType(nextType, (int)rank, sizes, lowerBounds, null);
+				result = module.AppDomain.MakeArrayType(nextType, (int)rank, sizes, lowerBounds, null, MakeTypeOptions.NoResolve);
 				break;
 
 			case DMD.ElementType.ValueArray:
@@ -244,7 +246,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			// Assume it contains generic parameters if it's a TypeSpec
 			if ((token >> 24) == 0x1B)
 				containedGenericParams = true;
-			return module.ResolveType((int)token, genericTypeArguments, null, throwOnError: false) ?? module.AppDomain.System_Void;
+			var type = module.ResolveType((int)token, genericTypeArguments, null, throwOnError: false) ?? module.AppDomain.System_Void;
+			if (resolve)
+				return type.ResolveNoThrow() ?? type;
+			return type;
 		}
 
 		DmdType ReadMethodSignatureType() {
@@ -252,7 +257,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			customModifiers = null;
 
 			ReadMethodSignature(out var flags, out var genericParameterCount, out var returnType, out var parameterTypes, out var varArgsParameterTypes);
-			var fnPtrType = module.AppDomain.MakeFunctionPointerType(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes, null);
+			var fnPtrType = module.AppDomain.MakeFunctionPointerType(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes, null, resolve ? MakeTypeOptions.None : MakeTypeOptions.NoResolve);
 
 			customModifiers = origCustomModifiers;
 			return fnPtrType;

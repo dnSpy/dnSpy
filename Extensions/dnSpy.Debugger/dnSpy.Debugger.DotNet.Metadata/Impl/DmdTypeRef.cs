@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var appDomain = (DmdAppDomainImpl)ownerModule.AppDomain;
 				var type = appDomain.Resolve(this, throwOnError, ignoreCase: false);
 				if (GetCustomModifiers().Count != 0)
-					type = (DmdTypeDef)appDomain.Intern(type.WithCustomModifiers(GetCustomModifiers()));
+					type = (DmdTypeDef)appDomain.Intern(type.WithCustomModifiers(GetCustomModifiers()), MakeTypeOptions.None);
 				__resolvedType_DONT_USE = type;
 				return __resolvedType_DONT_USE;
 			}

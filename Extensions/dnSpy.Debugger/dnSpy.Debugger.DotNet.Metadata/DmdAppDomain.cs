@@ -23,6 +23,22 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
+	/// Options used when creating types
+	/// </summary>
+	[Flags]
+	public enum MakeTypeOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// Don't try to resolve a reference
+		/// </summary>
+		NoResolve			= 0x00000001,
+	}
+
+	/// <summary>
 	/// A .NET AppDomain
 	/// </summary>
 	public abstract class DmdAppDomain : DmdObject {
@@ -252,32 +268,36 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Returns a cached type if present else the input type
 		/// </summary>
 		/// <param name="type">Type</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType Intern(DmdType type);
+		public abstract DmdType Intern(DmdType type, MakeTypeOptions options = MakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a pointer type
 		/// </summary>
 		/// <param name="elementType">Element type</param>
 		/// <param name="customModifiers">Custom modifiers or null</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakePointerType(DmdType elementType, IList<DmdCustomModifier> customModifiers);
+		public abstract DmdType MakePointerType(DmdType elementType, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a by-ref type
 		/// </summary>
 		/// <param name="elementType">Element type</param>
 		/// <param name="customModifiers">Custom modifiers or null</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeByRefType(DmdType elementType, IList<DmdCustomModifier> customModifiers);
+		public abstract DmdType MakeByRefType(DmdType elementType, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a SZ array type
 		/// </summary>
 		/// <param name="elementType">Element type</param>
 		/// <param name="customModifiers">Custom modifiers or null</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier> customModifiers);
+		public abstract DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a multi-dimensional type
@@ -287,8 +307,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="sizes">Sizes</param>
 		/// <param name="lowerBounds">Lower bounds</param>
 		/// <param name="customModifiers">Custom modifiers or null</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier> customModifiers);
+		public abstract DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a generic type
@@ -296,8 +317,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeDefinition">Generic type definition</param>
 		/// <param name="typeArguments">Generic arguments</param>
 		/// <param name="customModifiers">Custom modifiers or null</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers);
+		public abstract DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a function pointer type
@@ -308,8 +330,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="parameterTypes">Parameter types</param>
 		/// <param name="varArgsParameterTypes">VarArgs parameter types</param>
 		/// <param name="customModifiers">Custom modifiers or null</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier> customModifiers);
+		public abstract DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type
