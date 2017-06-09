@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) {
 			var type = wellKnownMemberResolver.GetWellKnownType(wellKnownType, onlyCorLib: false);
-			if (type == null && !isOptional)
+			if ((object)type == null && !isOptional)
 				throw new ResolveException("Couldn't resolve well known type: " + wellKnownType);
 			return type;
 		}
@@ -487,6 +487,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
+		internal DmdTypeDef TryLookup(DmdAssemblyImpl assembly, DmdType type) {
+			if (type is DmdTypeRef typeRef)
+				return Lookup(assembly, typeRef);
+			return null;
+		}
+
 		DmdTypeDef Lookup(DmdAssembly assembly, DmdTypeRef typeRef) {
 			// Most likely it's in the manifest module so we don't have to alloc an array (GetModules())
 			var manifestModule = assembly.ManifestModule;
@@ -534,16 +540,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		internal DmdType[] GetSZArrayInterfaces(DmdType elementType) {
-			var ifaces = defaultExistingWellKnownInterfaces;
+			var ifaces = defaultExistingWellKnownSZArrayInterfaces;
 			if (ifaces == null) {
 				lock (LockObject) {
-					ifaces = defaultExistingWellKnownInterfaces;
+					ifaces = defaultExistingWellKnownSZArrayInterfaces;
 					if (ifaces == null) {
 						Debug.Assert(assemblies.Count != 0, "CorLib hasn't been loaded yet!");
 						if (assemblies.Count == 0)
 							return Array.Empty<DmdType>();
-						var list = new List<DmdType>(possibleWellKnownInterfaces.Length);
-						foreach (var wellKnownType in possibleWellKnownInterfaces) {
+						var list = new List<DmdType>(possibleWellKnownSZArrayInterfaces.Length);
+						foreach (var wellKnownType in possibleWellKnownSZArrayInterfaces) {
 							// These interfaces should only be in corlib since the CLR needs them.
 							// They're not always present so if we fail to find a type in the corlib, we don't
 							// want to search the remaining assemblies (could be hundreds of assemblies).
@@ -551,9 +557,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							if ((object)iface != null)
 								list.Add(iface);
 						}
-						defaultExistingWellKnownInterfaces = ifaces = list.ToArray();
-						// We don't support debugging .NET 1.x assemblies so this should contain at least IList<T>
-						Debug.Assert(defaultExistingWellKnownInterfaces.Length >= 1);
+						defaultExistingWellKnownSZArrayInterfaces = ifaces = list.ToArray();
+						// We don't support debugging CLR 1.x so this should contain at least IList<T>
+						Debug.Assert(defaultExistingWellKnownSZArrayInterfaces.Length >= 1);
 					}
 				}
 			}
@@ -563,8 +569,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				res[i] = MakeGenericType(ifaces[i], typeArguments, null);
 			return res;
 		}
-		DmdType[] defaultExistingWellKnownInterfaces;
-		static readonly DmdWellKnownType[] possibleWellKnownInterfaces = new DmdWellKnownType[] {
+		DmdType[] defaultExistingWellKnownSZArrayInterfaces;
+		static readonly DmdWellKnownType[] possibleWellKnownSZArrayInterfaces = new DmdWellKnownType[] {
 			// Available since .NET Framework 2.0
 			DmdWellKnownType.System_Collections_Generic_IList_T,
 			// Available since .NET Framework 4.5

@@ -67,16 +67,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 		void DecrementRecursionCounter() => recursionCounter--;
 
-		static DmdType GetNonNestedType(DmdType typeRef) {
-			for (int i = 0; i < 1000; i++) {
-				var next = typeRef.DeclaringType;
-				if ((object)next == null)
-					return typeRef;
-				typeRef = next;
-			}
-			return null;
-		}
-
 		static bool IsGenericTypeDefinition(DmdType type) {
 			if (!type.IsMetadataReference)
 				return type.IsGenericTypeDefinition;
@@ -97,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				type = type.GetGenericTypeDefinition();
 			}
 
-			var nonNested = GetNonNestedType(type);
+			var nonNested = Impl.DmdTypeUtilities.GetNonNestedType(type);
 			if ((object)nonNested != null) {
 				var typeScope = nonNested.TypeScope;
 				switch (typeScope.Kind) {

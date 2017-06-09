@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			for (int i = 0; i < res.Length; i++) {
 				uint rid = ridList[i];
 				var nestedType = Module.ResolveType(0x02000000 + (int)rid, null, null, throwOnError: false);
-				if (nestedType == null)
+				if ((object)nestedType == null)
 					return null;
 				res[i] = nestedType;
 			}

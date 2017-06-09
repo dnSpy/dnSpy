@@ -25,7 +25,7 @@ using System.IO;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdAssemblyImpl : DmdAssembly {
 		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
-		public override DmdAppDomain AppDomain { get; }
+		public override DmdAppDomain AppDomain => appDomain;
 		public override string Location { get; }
 		public override string ImageRuntimeVersion => metadataReader.ImageRuntimeVersion;
 		public override DmdMethodInfo EntryPoint => metadataReader.EntryPoint;
@@ -57,12 +57,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
+		readonly DmdAppDomainImpl appDomain;
 		readonly List<DmdModuleImpl> modules;
 		readonly DmdMetadataReader metadataReader;
 
 		public DmdAssemblyImpl(DmdAppDomainImpl appDomain, DmdMetadataReader metadataReader, string location) {
 			modules = new List<DmdModuleImpl>();
-			AppDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
+			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			this.metadataReader = metadataReader ?? throw new ArgumentNullException(nameof(metadataReader));
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 		}
@@ -121,23 +122,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		static bool IsNotTypeForwarder(DmdType type) {
-			var nonNested = GetNonNestedType(type);
+			var nonNested = DmdTypeUtilities.GetNonNestedType(type);
 			if ((object)nonNested == null)
 				return false;
 			return nonNested.TypeScope.Kind == DmdTypeScopeKind.ModuleRef;
 		}
 
-		static DmdType GetNonNestedType(DmdType typeRef) {
-			for (int i = 0; i < 1000; i++) {
-				var next = typeRef.DeclaringType;
-				if ((object)next == null)
-					return typeRef;
-				typeRef = next;
-			}
-			return null;
-		}
-
 		public override DmdAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
+		internal DmdType GetType(DmdType typeRef) => appDomain.TryLookup(this, typeRef);
 		public override DmdType GetType(string name, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
 		public override bool IsDefined(string attributeTypeFullName, bool inherit) => throw new NotImplementedException();//TODO:

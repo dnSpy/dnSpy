@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdAssemblyName(string assemblyName) {
 			if (assemblyName == null)
 				throw new ArgumentNullException(nameof(assemblyName));
-			DmdAssemblyNameParser.Parse(this, assemblyName);
+			Impl.DmdTypeNameParser.ParseAssemblyName(this, assemblyName);
 		}
 
 		/// <summary>

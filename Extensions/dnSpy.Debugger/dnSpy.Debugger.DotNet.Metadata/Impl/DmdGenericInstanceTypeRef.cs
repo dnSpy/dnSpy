@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdType GetGenericTypeDefinition() {
 			var resolvedType = GetResolvedType(throwOnError: false);
-			if (resolvedType != null)
+			if ((object)resolvedType != null)
 				return resolvedType.GetGenericTypeDefinition();
 			return genericTypeRef;
 		}

@@ -53,5 +53,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				name = fullName.Substring(index + 1);
 			}
 		}
+
+		public static DmdType GetNonNestedType(DmdType typeRef) {
+			for (int i = 0; i < 1000; i++) {
+				var next = typeRef.DeclaringType;
+				if ((object)next == null)
+					return typeRef;
+				typeRef = next;
+			}
+			return null;
+		}
 	}
 }

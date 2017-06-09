@@ -51,7 +51,6 @@
     <Compile Include="DmdAssemblyName.cs" />
     <Compile Include="DmdAssemblyNameFlags.cs" />
     <Compile Include="DmdAssemblyNameFormatter.cs" />
-    <Compile Include="DmdAssemblyNameParser.cs" />
     <Compile Include="DmdBindingFlags.cs" />
     <Compile Include="DmdCallingConventions.cs" />
     <Compile Include="DmdConstructorInfo.cs" />
@@ -120,6 +119,7 @@
     <Compile Include="Impl\DmdModuleImpl.cs" />
     <Compile Include="Impl\DmdNullGlobalType.cs" />
     <Compile Include="Impl\DmdNullMetadataReader.cs" />
+    <Compile Include="Impl\DmdParsedTypeRef.cs" />
     <Compile Include="Impl\DmdPointerType.cs" />
     <Compile Include="Impl\DmdRuntimeControllerImpl.cs" />
     <Compile Include="Impl\DmdRuntimeImpl.cs" />
@@ -127,6 +127,7 @@
     <Compile Include="Impl\DmdSZArrayType.cs" />
     <Compile Include="Impl\DmdTypeBase.cs" />
     <Compile Include="Impl\DmdTypeDef.cs" />
+    <Compile Include="Impl\DmdTypeNameParser.cs" />
     <Compile Include="Impl\DmdTypeRef.cs" />
     <Compile Include="Impl\DmdTypeUtilities.cs" />
     <Compile Include="Impl\LazyList.cs" />

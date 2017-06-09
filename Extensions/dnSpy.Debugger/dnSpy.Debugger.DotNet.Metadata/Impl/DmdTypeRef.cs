@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int MetadataToken => ResolvedType.MetadataToken;
 		public override bool IsMetadataReference => true;
 
-		public DmdTypeRef DeclaringTypeRef {
+		public virtual DmdTypeRef DeclaringTypeRef {
 			get {
 				if (!declaringTypeRefInitd) {
 					lock (LockObject) {
@@ -77,6 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdTypeDef __resolvedType_DONT_USE;
 
 		protected uint Rid => rid;
+		protected DmdModule OwnerModule => ownerModule;
 		readonly uint rid;
 		readonly DmdModule ownerModule;
 

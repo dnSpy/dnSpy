@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return null;
 
 			var cachedType = wellKnownTypes[(int)wellKnownType];
-			if (cachedType != null)
+			if ((object)cachedType != null)
 				return cachedType;
 
 			lock (lockObj) {
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							}
 							else if (type.IsNestedPublic && type.Namespace == null) {
 								var nonNested = type.DeclaringType;
-								if (nonNested == null || !nonNested.IsPublic)
+								if ((object)nonNested == null || !nonNested.IsPublic)
 									continue;
 								if (!toNonNestedWellKnownType.ContainsKey(new TypeName(nonNested.Namespace, nonNested.Name)))
 									continue;
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						checkedModules.Add(module);
 
 						cachedType = wellKnownTypes[(int)wellKnownType];
-						if (cachedType != null)
+						if ((object)cachedType != null)
 							return cachedType;
 					}
 				}
