@@ -43,5 +43,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
 
 		protected override DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments) => null;
+		protected override DmdType[] CreateNestedTypes() => null;
 	}
 }

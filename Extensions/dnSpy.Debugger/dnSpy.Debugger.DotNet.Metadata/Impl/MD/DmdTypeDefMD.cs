@@ -85,5 +85,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 			return res;
 		}
+
+		protected override DmdType[] CreateNestedTypes() {
+			var ridList = reader.Metadata.GetNestedClassRidList(Rid);
+			if (ridList.Count == 0)
+				return null;
+			var res = new DmdType[ridList.Count];
+			for (int i = 0; i < res.Length; i++) {
+				uint rid = ridList[i];
+				var nestedType = Module.ResolveType(0x02000000 + (int)rid, null, null, throwOnError: false);
+				if (nestedType == null)
+					return null;
+				res[i] = nestedType;
+			}
+			return res;
+		}
 	}
 }

@@ -288,10 +288,49 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return list.ToArray();
 		}
 
-		public sealed override DmdType[] GetNestedTypes(DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
-		public sealed override DmdType GetNestedType(string name, DmdBindingFlags bindingAttr) => throw new NotImplementedException();//TODO:
+		public sealed override DmdType[] GetNestedTypes(DmdBindingFlags bindingAttr) {
+			var nestedTypes = GetAllNestedTypes();
+			if (nestedTypes.Count == 0)
+				return Array.Empty<DmdType>();
+			var list = new List<DmdType>(nestedTypes.Count);
+			foreach (var type in nestedTypes) {
+				if (DmdMemberInfoComparer.IsMatch(type, bindingAttr))
+					list.Add(type);
+			}
+			return list.ToArray();
+		}
 
-		public sealed override DmdType GetInterface(string name, bool ignoreCase) => throw new NotImplementedException();//TODO:
+		public sealed override DmdType GetNestedType(string fullName, DmdBindingFlags bindingAttr) {
+			if (fullName == null)
+				throw new ArgumentNullException(nameof(fullName));
+			var nestedTypes = GetAllNestedTypes();
+			if (nestedTypes.Count == 0)
+				return null;
+			DmdTypeUtilities.SplitFullName(fullName, out var @namespace, out var name);
+			foreach (var type in nestedTypes) {
+				if (DmdMemberInfoComparer.IsMatch(type, bindingAttr) && DmdMemberInfoComparer.IsMatch(type, @namespace, name, bindingAttr))
+					return type;
+			}
+			return null;
+		}
+
+		public sealed override ReadOnlyCollection<DmdType> GetAllNestedTypes() => NestedTypes;
+		protected virtual DmdType[] CreateNestedTypes() => null;
+
+		public sealed override DmdType GetInterface(string fullName, bool ignoreCase) {
+			if (fullName == null)
+				throw new ArgumentNullException(nameof(fullName));
+			var ifaces = GetReadOnlyInterfaces();
+			if (ifaces.Count == 0)
+				return null;
+			DmdTypeUtilities.SplitFullName(fullName, out var @namespace, out var name);
+			var bindingAttr = ignoreCase ? DmdBindingFlags.IgnoreCase : DmdBindingFlags.Default;
+			foreach (var type in ifaces) {
+				if (DmdMemberInfoComparer.IsMatch(type, @namespace, name, bindingAttr))
+					return type;
+			}
+			return null;
+		}
 
 		public sealed override ReadOnlyCollection<DmdType> GetReadOnlyInterfaces() {
 			var f = ExtraFields;
@@ -448,6 +487,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
+		internal ReadOnlyCollection<DmdType> NestedTypes {
+			get {
+				var f = ExtraFields;
+				if (f.__nestedTypes_DONT_USE != null)
+					return f.__nestedTypes_DONT_USE;
+				lock (LockObject) {
+					if (f.__nestedTypes_DONT_USE != null)
+						return f.__nestedTypes_DONT_USE;
+					var res = CreateNestedTypes();
+					f.__nestedTypes_DONT_USE = res == null || res.Length == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(res);
+					return f.__nestedTypes_DONT_USE;
+				}
+			}
+		}
+
 		internal ReadOnlyCollection<DmdType> DeclaredInterfaces {
 			get {
 				var f = ExtraFields;
@@ -457,7 +511,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (f.__declaredInterfaces_DONT_USE != null)
 						return f.__declaredInterfaces_DONT_USE;
 					var res = ReadDeclaredInterfaces();
-					f.__declaredInterfaces_DONT_USE = res == null || res.Count == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(res);
+					f.__declaredInterfaces_DONT_USE = res == null || res.Count == 0 ? emptyTypeCollection : res as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(res);
 					return f.__declaredInterfaces_DONT_USE;
 				}
 			}
@@ -481,6 +535,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		sealed class ExtraFieldsImpl {
 			public ReadOnlyCollection<DmdType> __implementedInterfaces_DONT_USE;
 			public ReadOnlyCollection<DmdType> __declaredInterfaces_DONT_USE;
+
+			public ReadOnlyCollection<DmdType> __nestedTypes_DONT_USE;
 
 			public ReadOnlyCollection<DmdFieldInfo>  __declaredFields_DONT_USE;
 			public ReadOnlyCollection<DmdMethodBase> __declaredMethods_DONT_USE;

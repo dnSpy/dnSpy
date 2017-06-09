@@ -100,5 +100,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ResolvedType.CreateDeclaredEvents2(reflectedType);
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => ResolvedType.ReadDeclaredInterfaces2();
+		protected override DmdType[] CreateNestedTypes() => ResolvedType.CreateNestedTypes2();
 	}
 }

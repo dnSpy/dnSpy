@@ -24,7 +24,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	static class DmdMemberInfoComparer {
 		public static bool IsMatch(DmdType type, DmdBindingFlags bindingAttr) {
 			var attr = DmdBindingFlags.Default;
-			if (type.IsVisible)
+			if (type.IsPublic || type.IsNestedPublic)
 				attr |= DmdBindingFlags.Public;
 			else
 				attr |= DmdBindingFlags.NonPublic;
@@ -117,6 +117,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if ((bindingAttr & DmdBindingFlags.IgnoreCase) != 0)
 				return StringComparer.OrdinalIgnoreCase.Equals(member.Name, name);
 			return StringComparer.Ordinal.Equals(member.Name, name);
+		}
+
+		public static bool IsMatch(DmdType type, string @namespace, string name, DmdBindingFlags bindingAttr) {
+			if ((bindingAttr & DmdBindingFlags.IgnoreCase) != 0)
+				return StringComparer.OrdinalIgnoreCase.Equals(type.Name, name) && StringComparer.OrdinalIgnoreCase.Equals(type.Namespace, @namespace);
+			return StringComparer.Ordinal.Equals(type.Name, name) && StringComparer.Ordinal.Equals(type.Namespace, @namespace);
 		}
 	}
 }

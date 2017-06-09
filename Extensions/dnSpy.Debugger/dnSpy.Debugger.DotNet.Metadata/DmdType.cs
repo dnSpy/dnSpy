@@ -552,6 +552,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdType[] GetNestedTypes(DmdBindingFlags bindingAttr);
 
 		/// <summary>
+		/// Gets all nested types
+		/// </summary>
+		/// <returns></returns>
+		public abstract ReadOnlyCollection<DmdType> GetAllNestedTypes();
+
+		/// <summary>
 		/// Gets a public nested type
 		/// </summary>
 		/// <param name="name">Name</param>

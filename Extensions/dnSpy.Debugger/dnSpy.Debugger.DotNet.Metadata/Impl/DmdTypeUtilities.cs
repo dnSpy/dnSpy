@@ -41,5 +41,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 			return res;
 		}
+
+		public static void SplitFullName(string fullName, out string @namespace, out string name) {
+			int index = fullName.LastIndexOf('.');
+			if (index < 0) {
+				@namespace = null;
+				name = fullName;
+			}
+			else {
+				@namespace = index == 0 ? null : fullName.Substring(0, index);
+				name = fullName.Substring(index + 1);
+			}
+		}
 	}
 }
