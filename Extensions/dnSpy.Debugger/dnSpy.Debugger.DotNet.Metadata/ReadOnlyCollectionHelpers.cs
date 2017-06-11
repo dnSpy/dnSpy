@@ -18,15 +18,18 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
-	static class ArrayExtensions {
-		public static T[] CloneArray<T>(this T[] array) {
-			if (array == null)
-				return null;
-			var res = new T[array.Length];
-			Array.Copy(array, res, res.Length);
-			return res;
+	static class ReadOnlyCollectionHelpers {
+		public static ReadOnlyCollection<T> Empty<T>() => EmptyClass<T>.Empty;
+		public static ReadOnlyCollection<T> Create<T>(T[] array) =>
+			array == null || array.Length == 0 ? EmptyClass<T>.Empty : new ReadOnlyCollection<T>(array);
+		public static ReadOnlyCollection<T> Create<T>(IList<T> list) =>
+			list == null || list.Count == 0 ? EmptyClass<T>.Empty : list as ReadOnlyCollection<T> ?? new ReadOnlyCollection<T>(list);
+		static class EmptyClass<T> {
+			internal static readonly ReadOnlyCollection<T> Empty = new ReadOnlyCollection<T>(Array.Empty<T>());
 		}
 	}
 }

@@ -51,12 +51,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(lowerBounds));
 			this.rank = rank;
 			this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
-			this.sizes = sizes.Count == 0 ? emptyInt32Collection : sizes as ReadOnlyCollection<int> ?? new ReadOnlyCollection<int>(sizes);
-			this.lowerBounds = lowerBounds.Count == 0 ? emptyInt32Collection : lowerBounds as ReadOnlyCollection<int> ?? new ReadOnlyCollection<int>(lowerBounds);
+			this.sizes = ReadOnlyCollectionHelpers.Create(sizes);
+			this.lowerBounds = ReadOnlyCollectionHelpers.Create(lowerBounds);
 			IsMetadataReference = elementType.IsMetadataReference;
 			IsFullyResolved = elementType.IsFullyResolved;
 		}
-		static readonly ReadOnlyCollection<int> emptyInt32Collection = new ReadOnlyCollection<int>(Array.Empty<int>());
 
 		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeArrayType(elementType, rank, sizes, lowerBounds, customModifiers);
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeArrayType(elementType, rank, sizes, lowerBounds, null);

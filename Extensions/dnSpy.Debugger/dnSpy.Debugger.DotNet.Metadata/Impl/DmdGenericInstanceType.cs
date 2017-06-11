@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (genericTypeDefinition.GetGenericArguments().Count != typeArguments.Count)
 				throw new ArgumentException();
 			this.genericTypeDefinition = genericTypeDefinition;
-			this.typeArguments = typeArguments.Count == 0 ? emptyTypeCollection : typeArguments as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(typeArguments);
+			this.typeArguments = ReadOnlyCollectionHelpers.Create(typeArguments);
 			IsFullyResolved = DmdTypeUtilities.IsFullyResolved(typeArguments);
 		}
 

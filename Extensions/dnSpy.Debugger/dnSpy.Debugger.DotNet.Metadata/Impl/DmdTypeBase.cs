@@ -24,19 +24,12 @@ using System.Linq;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdTypeBase : DmdType {
-		internal static readonly ReadOnlyCollection<DmdType> emptyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
-		static readonly ReadOnlyCollection<DmdFieldInfo> emptyFieldCollection = new ReadOnlyCollection<DmdFieldInfo>(Array.Empty<DmdFieldInfo>());
-		static readonly ReadOnlyCollection<DmdMethodBase> emptyMethodBaseCollection = new ReadOnlyCollection<DmdMethodBase>(Array.Empty<DmdMethodBase>());
-		static readonly ReadOnlyCollection<DmdPropertyInfo> emptyPropertyCollection = new ReadOnlyCollection<DmdPropertyInfo>(Array.Empty<DmdPropertyInfo>());
-		static readonly ReadOnlyCollection<DmdEventInfo> emptyEventCollection = new ReadOnlyCollection<DmdEventInfo>(Array.Empty<DmdEventInfo>());
-		static readonly ReadOnlyCollection<DmdCustomModifier> emptyCustomModifiers = new ReadOnlyCollection<DmdCustomModifier>(Array.Empty<DmdCustomModifier>());
-
 		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 
 		readonly ReadOnlyCollection<DmdCustomModifier> customModifiers;
 		public sealed override ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => customModifiers;
 		protected DmdTypeBase(IList<DmdCustomModifier> customModifiers) =>
-			this.customModifiers = customModifiers == null || customModifiers.Count == 0 ? emptyCustomModifiers : customModifiers as ReadOnlyCollection<DmdCustomModifier> ?? new ReadOnlyCollection<DmdCustomModifier>(customModifiers);
+			this.customModifiers = ReadOnlyCollectionHelpers.Create(customModifiers);
 		protected IList<DmdCustomModifier> VerifyCustomModifiers(IList<DmdCustomModifier> customModifiers) {
 			if (customModifiers != null) {
 				for (int i = 0; i < customModifiers.Count; i++) {
@@ -81,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsGenericType => false;
 		public override bool IsGenericTypeDefinition => false;
 		public override int GenericParameterPosition => throw new InvalidOperationException();
-		public override ReadOnlyCollection<DmdType> GetGenericArguments() => emptyTypeCollection;
+		public override ReadOnlyCollection<DmdType> GetGenericArguments() => ReadOnlyCollectionHelpers.Empty<DmdType>();
 		public override DmdType GetGenericTypeDefinition() => throw new InvalidOperationException();
 		public override ReadOnlyCollection<DmdType> GetGenericParameterConstraints() => throw new InvalidOperationException();
 		public override DmdMethodSignature GetFunctionPointerMethodSignature() => throw new InvalidOperationException();
@@ -343,7 +336,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return f.__implementedInterfaces_DONT_USE;
 
 				var implIfaces = CreateInterfaces(this);
-				f.__implementedInterfaces_DONT_USE = implIfaces.Length == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(implIfaces);
+				f.__implementedInterfaces_DONT_USE = ReadOnlyCollectionHelpers.Create(implIfaces);
 				return f.__implementedInterfaces_DONT_USE;
 			}
 		}
@@ -448,7 +441,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (f.__declaredFields_DONT_USE != null)
 						return f.__declaredFields_DONT_USE;
 					var res = CreateDeclaredFields(this);
-					f.__declaredFields_DONT_USE = res == null || res.Length == 0 ? emptyFieldCollection : new ReadOnlyCollection<DmdFieldInfo>(res);
+					f.__declaredFields_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
 					return f.__declaredFields_DONT_USE;
 				}
 			}
@@ -463,7 +456,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (f.__declaredMethods_DONT_USE != null)
 						return f.__declaredMethods_DONT_USE;
 					var res = CreateDeclaredMethods(this, includeConstructors: true);
-					f.__declaredMethods_DONT_USE = res == null || res.Length == 0 ? emptyMethodBaseCollection : new ReadOnlyCollection<DmdMethodBase>(res);
+					f.__declaredMethods_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
 					return f.__declaredMethods_DONT_USE;
 				}
 			}
@@ -478,7 +471,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (f.__declaredProperties_DONT_USE != null)
 						return f.__declaredProperties_DONT_USE;
 					var res = CreateDeclaredProperties(this);
-					f.__declaredProperties_DONT_USE = res == null || res.Length == 0 ? emptyPropertyCollection : new ReadOnlyCollection<DmdPropertyInfo>(res);
+					f.__declaredProperties_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
 					return f.__declaredProperties_DONT_USE;
 				}
 			}
@@ -493,7 +486,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (f.__declaredEvents_DONT_USE != null)
 						return f.__declaredEvents_DONT_USE;
 					var res = CreateDeclaredEvents(this);
-					f.__declaredEvents_DONT_USE = res == null || res.Length == 0 ? emptyEventCollection : new ReadOnlyCollection<DmdEventInfo>(res);
+					f.__declaredEvents_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
 					return f.__declaredEvents_DONT_USE;
 				}
 			}
@@ -508,7 +501,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (f.__nestedTypes_DONT_USE != null)
 						return f.__nestedTypes_DONT_USE;
 					var res = CreateNestedTypes();
-					f.__nestedTypes_DONT_USE = res == null || res.Length == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(res);
+					f.__nestedTypes_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
 					return f.__nestedTypes_DONT_USE;
 				}
 			}
@@ -523,7 +516,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (f.__declaredInterfaces_DONT_USE != null)
 						return f.__declaredInterfaces_DONT_USE;
 					var res = ReadDeclaredInterfaces();
-					f.__declaredInterfaces_DONT_USE = res == null || res.Count == 0 ? emptyTypeCollection : res as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(res);
+					f.__declaredInterfaces_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
 					return f.__declaredInterfaces_DONT_USE;
 				}
 			}

@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (typeArguments == null)
 				throw new ArgumentNullException(nameof(typeArguments));
 			this.genericTypeRef = genericTypeRef ?? throw new ArgumentNullException(nameof(genericTypeRef));
-			this.typeArguments = typeArguments.Count == 0 ? emptyTypeCollection : typeArguments as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(typeArguments);
+			this.typeArguments = ReadOnlyCollectionHelpers.Create(typeArguments);
 		}
 
 		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeGenericType(genericTypeRef, typeArguments, customModifiers);

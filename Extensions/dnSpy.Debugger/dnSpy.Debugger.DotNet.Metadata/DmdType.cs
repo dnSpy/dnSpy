@@ -780,8 +780,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets all generic arguments if it's a constructed generic type (<see cref="IsConstructedGenericType"/>)
 		/// </summary>
-		public ReadOnlyCollection<DmdType> GenericTypeArguments => IsConstructedGenericType ? GetGenericArguments() : emptyTypeCollection;
-		static readonly ReadOnlyCollection<DmdType> emptyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
+		public ReadOnlyCollection<DmdType> GenericTypeArguments => IsConstructedGenericType ? GetGenericArguments() : ReadOnlyCollectionHelpers.Empty<DmdType>();
 
 		/// <summary>
 		/// Gets the generic type definition if it's a generic type

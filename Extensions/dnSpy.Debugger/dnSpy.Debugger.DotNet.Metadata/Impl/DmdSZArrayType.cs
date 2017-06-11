@@ -48,9 +48,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeArrayType(elementType, null);
 		public override DmdType GetElementType() => elementType;
 		public override int GetArrayRank() => 1;
-		public override ReadOnlyCollection<int> GetArraySizes() => emptyInt32Collection;
-		public override ReadOnlyCollection<int> GetArrayLowerBounds() => emptyInt32Collection;
-		static readonly ReadOnlyCollection<int> emptyInt32Collection = new ReadOnlyCollection<int>(Array.Empty<int>());
+		public override ReadOnlyCollection<int> GetArraySizes() => ReadOnlyCollectionHelpers.Empty<int>();
+		public override ReadOnlyCollection<int> GetArrayLowerBounds() => ReadOnlyCollectionHelpers.Empty<int>();
 
 		protected override DmdType ResolveNoThrowCore() {
 			if (!IsMetadataReference)

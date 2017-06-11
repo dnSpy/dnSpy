@@ -62,12 +62,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isPseudoCustomAttribute">true if this custom attribute was not part of the #Blob but created from some other info</param>
 		public DmdCustomAttributeData(DmdConstructorInfo constructor, IList<DmdCustomAttributeTypedArgument> constructorArguments, IList<DmdCustomAttributeNamedArgument> namedArguments, bool isPseudoCustomAttribute) {
 			Constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
-			ConstructorArguments = constructorArguments == null || constructorArguments.Count == 0 ? emptyTypedArgsCollection : constructorArguments as ReadOnlyCollection<DmdCustomAttributeTypedArgument> ?? new ReadOnlyCollection<DmdCustomAttributeTypedArgument>(constructorArguments);
-			NamedArguments = namedArguments == null || namedArguments.Count == 0 ? emptyNamedArgsCollection : namedArguments as ReadOnlyCollection<DmdCustomAttributeNamedArgument> ?? new ReadOnlyCollection<DmdCustomAttributeNamedArgument>(namedArguments);
+			ConstructorArguments = ReadOnlyCollectionHelpers.Create(constructorArguments);
+			NamedArguments = ReadOnlyCollectionHelpers.Create(namedArguments);
 			IsPseudoCustomAttribute = isPseudoCustomAttribute;
 		}
-		static readonly ReadOnlyCollection<DmdCustomAttributeTypedArgument> emptyTypedArgsCollection = new ReadOnlyCollection<DmdCustomAttributeTypedArgument>(Array.Empty<DmdCustomAttributeTypedArgument>());
-		static readonly ReadOnlyCollection<DmdCustomAttributeNamedArgument> emptyNamedArgsCollection = new ReadOnlyCollection<DmdCustomAttributeNamedArgument>(Array.Empty<DmdCustomAttributeNamedArgument>());
 
 		/// <summary>
 		/// ToString()

@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (__genericParameters_DONT_USE != null)
 					return __genericParameters_DONT_USE;
 				var res = CreateGenericParameters();
-				__genericParameters_DONT_USE = res == null || res.Length == 0 ? DmdTypeBase.emptyTypeCollection : new ReadOnlyCollection<DmdType>(res);
+				__genericParameters_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
 				return __genericParameters_DONT_USE;
 			}
 		}
@@ -79,10 +79,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var info = CreateParameters();
 				Debug.Assert(info.parameters.Length == GetMethodSignature().GetParameterTypes().Count);
 				__returnParameter_DONT_USE = info.returnParameter;
-				__parameters_DONT_USE = info.parameters.Length == 0 ? emptyParameterCollection : new ReadOnlyCollection<DmdParameterInfo>(info.parameters);
+				__parameters_DONT_USE = ReadOnlyCollectionHelpers.Create(info.parameters);
 			}
 		}
-		static readonly ReadOnlyCollection<DmdParameterInfo> emptyParameterCollection = new ReadOnlyCollection<DmdParameterInfo>(Array.Empty<DmdParameterInfo>());
 		ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
 		DmdParameterInfo __returnParameter_DONT_USE;
 		protected abstract (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters();

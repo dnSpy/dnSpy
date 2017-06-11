@@ -73,10 +73,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Flags = flags;
 			GenericParameterCount = genericParameterCount;
 			ReturnType = returnType ?? throw new ArgumentNullException(nameof(returnType));
-			this.parameterTypes = parameterTypes == null || parameterTypes.Count == 0 ? emptyTypeCollection : parameterTypes as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(parameterTypes);
-			this.varArgsParameterTypes = varArgsParameterTypes == null || varArgsParameterTypes.Count == 0 ? emptyTypeCollection : varArgsParameterTypes as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(varArgsParameterTypes);
+			this.parameterTypes = ReadOnlyCollectionHelpers.Create(parameterTypes);
+			this.varArgsParameterTypes = ReadOnlyCollectionHelpers.Create(varArgsParameterTypes);
 		}
-		static readonly ReadOnlyCollection<DmdType> emptyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
 
 		/// <summary>
 		/// Gets the parameter types, see also <see cref="GetVarArgsParameterTypes"/>

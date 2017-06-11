@@ -40,7 +40,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ArrayExtensions.cs" />
     <Compile Include="AssemblyHasher.cs" />
     <Compile Include="CustomAttributesHelper.cs" />
     <Compile Include="DmdAppDomain.cs" />
@@ -157,6 +156,7 @@
     <Compile Include="Impl\WellKnownMemberResolver.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.Data.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadOnlyCollectionHelpers.cs" />
     <Compile Include="ResolveException.cs" />
   </ItemGroup>
   <ItemGroup>

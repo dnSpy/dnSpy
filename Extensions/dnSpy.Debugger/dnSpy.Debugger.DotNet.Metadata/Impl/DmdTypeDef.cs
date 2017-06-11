@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (__genericParameters_DONT_USE != null)
 					return __genericParameters_DONT_USE;
 				var res = CreateGenericParameters();
-				__genericParameters_DONT_USE = res == null || res.Length == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(res);
+				__genericParameters_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
 				return __genericParameters_DONT_USE;
 			}
 		}

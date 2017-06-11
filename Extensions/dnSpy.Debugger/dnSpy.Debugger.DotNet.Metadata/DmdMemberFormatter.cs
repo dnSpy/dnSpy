@@ -127,9 +127,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if ((object)resolvedType != null)
 				return resolvedType.GetGenericArguments();
 
-			return emtpyTypeCollection;
+			return ReadOnlyCollectionHelpers.Empty<DmdType>();
 		}
-		static readonly ReadOnlyCollection<DmdType> emtpyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
 
 		static IList<DmdType> GetGenericArguments(DmdMethodBase method) {
 			if (!method.IsMetadataReference)
