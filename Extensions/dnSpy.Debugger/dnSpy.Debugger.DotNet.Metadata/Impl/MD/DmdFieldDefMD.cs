@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			FieldType = reader.ReadFieldType(row.Signature, genericTypeArguments);
 		}
 
-		public sealed override object GetRawConstantValue() => reader.ReadConstant(MetadataToken);
+		public sealed override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
 
 		protected override (DmdCustomAttributeData[] cas, uint? fieldOffset) CreateCustomAttributes() {
 			var cas = reader.ReadCustomAttributes(MetadataToken);

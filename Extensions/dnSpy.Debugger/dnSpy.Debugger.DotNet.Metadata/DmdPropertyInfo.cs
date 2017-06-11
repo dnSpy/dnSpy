@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>

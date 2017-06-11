@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdConstructorDef : DmdConstructorInfoBase {
@@ -56,7 +57,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
 
-		public sealed override ReadOnlyCollection<DmdParameterInfo> GetParameters() => throw new NotImplementedException();//TODO:
+		public sealed override ReadOnlyCollection<DmdParameterInfo> GetParameters() {
+			if (__parameters_DONT_USE != null)
+				return __parameters_DONT_USE;
+			lock (LockObject) {
+				if (__parameters_DONT_USE != null)
+					return __parameters_DONT_USE;
+				var info = CreateParameters();
+				Debug.Assert(info.Length == GetMethodSignature().GetParameterTypes().Count);
+				__parameters_DONT_USE = info.Length == 0 ? emptyParameterCollection : new ReadOnlyCollection<DmdParameterInfo>(info);
+				return __parameters_DONT_USE;
+			}
+		}
+		static readonly ReadOnlyCollection<DmdParameterInfo> emptyParameterCollection = new ReadOnlyCollection<DmdParameterInfo>(Array.Empty<DmdParameterInfo>());
+		ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
+		protected abstract DmdParameterInfo[] CreateParameters();
 
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (__customAttributes_DONT_USE != null)

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdMethodDef : DmdMethodInfoBase {
@@ -31,7 +32,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override bool IsGenericMethodDefinition => GetGenericArguments().Count != 0;
 		public sealed override bool IsGenericMethod => GetGenericArguments().Count != 0;
 
-		public sealed override DmdParameterInfo ReturnParameter => throw new NotImplementedException();//TODO:
+		public sealed override DmdParameterInfo ReturnParameter {
+			get {
+				if ((object)__returnParameter_DONT_USE == null)
+					InitializeParameters();
+				return __returnParameter_DONT_USE;
+			}
+		}
 
 		protected uint Rid => rid;
 		readonly uint rid;
@@ -58,7 +65,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
 
-		public sealed override ReadOnlyCollection<DmdParameterInfo> GetParameters() => throw new NotImplementedException();//TODO:
+		public sealed override ReadOnlyCollection<DmdParameterInfo> GetParameters() {
+			if (__parameters_DONT_USE == null)
+				InitializeParameters();
+			return __parameters_DONT_USE;
+		}
+		void InitializeParameters() {
+			if (__parameters_DONT_USE != null)
+				return;
+			lock (LockObject) {
+				if (__parameters_DONT_USE != null)
+					return;
+				var info = CreateParameters();
+				Debug.Assert(info.parameters.Length == GetMethodSignature().GetParameterTypes().Count);
+				__returnParameter_DONT_USE = info.returnParameter;
+				__parameters_DONT_USE = info.parameters.Length == 0 ? emptyParameterCollection : new ReadOnlyCollection<DmdParameterInfo>(info.parameters);
+			}
+		}
+		static readonly ReadOnlyCollection<DmdParameterInfo> emptyParameterCollection = new ReadOnlyCollection<DmdParameterInfo>(Array.Empty<DmdParameterInfo>());
+		ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
+		DmdParameterInfo __returnParameter_DONT_USE;
+		protected abstract (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters();
 
 		public sealed override DmdMethodInfo GetBaseDefinition() => GetParentDefinition() ?? this;
 		internal override DmdMethodInfo GetParentDefinition() => null;//TODO:

@@ -190,6 +190,38 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		(DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignatureCore(uint signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
 			DmdSignatureReader.ReadMethodSignature(module, new DmdDataStreamImpl(BlobStream.CreateStream(signature)), genericTypeArguments, genericMethodArguments, false, resolveTypes);
 
+		internal (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters(DmdMethodBase method, bool createReturnParameter) {
+			var ridList = Metadata.GetParamRidList((uint)method.MetadataToken & 0x00FFFFFF);
+			var sig = method.GetMethodSignature();
+			var sigParamTypes = sig.GetParameterTypes();
+			DmdParameterInfo returnParameter = null;
+			var parameters = sigParamTypes.Count == 0 ? Array.Empty<DmdParameterInfo>() : new DmdParameterInfo[sigParamTypes.Count];
+			for (int i = 0; i < ridList.Count; i++) {
+				uint rid = ridList[i];
+				var row = TablesStream.ReadParamRow(rid);
+				var name = StringsStream.Read(row.Name);
+				if (row.Sequence == 0) {
+					if (createReturnParameter && (object)returnParameter == null)
+						returnParameter = new DmdParameterDefMD(this, rid, name, (DmdParameterAttributes)row.Flags, method, -1, sig.ReturnType);
+				}
+				else {
+					int paramIndex = row.Sequence - 1;
+					if ((uint)paramIndex < (uint)parameters.Length) {
+						if ((object)parameters[paramIndex] == null)
+							parameters[paramIndex] = new DmdParameterDefMD(this, rid, name, (DmdParameterAttributes)row.Flags, method, paramIndex, sigParamTypes[paramIndex]);
+					}
+				}
+			}
+			for (int i = 0; i < parameters.Length; i++) {
+				if ((object)parameters[i] == null)
+					parameters[i] = new DmdCreatedParameterDef(method, i, sigParamTypes[i]);
+			}
+			if (createReturnParameter && (object)returnParameter == null)
+				returnParameter = new DmdCreatedParameterDef(method, -1, sig.ReturnType);
+
+			return (returnParameter, parameters);
+		}
+
 		internal DmdType[] CreateGenericParameters(DmdMethodBase method) {
 			var ridList = Metadata.GetGenericParamRidList(Table.Method, (uint)method.MetadataToken & 0x00FFFFFF);
 			if (ridList.Count == 0)
@@ -357,6 +389,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		protected override DmdCustomAttributeData[] ReadTypeDefCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.TypeDef, rid);
 		protected override DmdCustomAttributeData[] ReadFieldCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Field, rid);
 		protected override DmdCustomAttributeData[] ReadMethodCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Method, rid);
+		protected override DmdCustomAttributeData[] ReadParamCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Param, rid);
 		protected override DmdCustomAttributeData[] ReadEventCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Event, rid);
 		protected override DmdCustomAttributeData[] ReadPropertyCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Property, rid);
 
@@ -394,14 +427,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return ResolveMethod((int)ctorToken, genericTypeArguments, null, throwOnError: false)?.ResolveMemberNoThrow() as DmdConstructorInfo;
 		}
 
-		internal object ReadConstant(int metadataToken) {
+		internal (object value, bool hasValue) ReadConstant(int metadataToken) {
 			var constantRid = Metadata.GetConstantRid((Table)((uint)metadataToken >> 24), (uint)(metadataToken & 0x00FFFFFF));
 			if (constantRid == 0)
-				return null;
+				return (null, false);
 			var row = TablesStream.ReadConstantRow(constantRid);
 			if (row == null)
-				return null;
-			return MetadataConstantUtilities.GetValue((ElementType)row.Type, BlobStream.ReadNoNull(row.Value));
+				return (null, false);
+			return (MetadataConstantUtilities.GetValue((ElementType)row.Type, BlobStream.ReadNoNull(row.Value)), true);
 		}
 	}
 }

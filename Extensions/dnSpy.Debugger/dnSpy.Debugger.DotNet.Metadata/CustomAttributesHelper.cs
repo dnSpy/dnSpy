@@ -168,6 +168,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			readonly DmdConstructorInfo ctor;
 
 			public MarshalAsAttributeInfo(DmdFieldInfo field) => ctor = null;//TODO:
+			public MarshalAsAttributeInfo(DmdParameterInfo parameter) => ctor = null;//TODO:
 
 			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
 				if (Count == 0)
@@ -320,6 +321,69 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
+		struct InAttributeInfo {
+			public int Count => (object)ctor != null ? 1 : 0;
+			readonly DmdConstructorInfo ctor;
+
+			public InAttributeInfo(DmdParameterInfo parameter) {
+				if (parameter.IsIn) {
+					var caType = parameter.Member.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_InAttribute, isOptional: true);
+					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
+					Debug.Assert((object)caType == null || (object)ctor != null);
+				}
+				else
+					ctor = null;
+			}
+
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
+				if (Count == 0)
+					return;
+				destination[index++] = new DmdCustomAttributeData(ctor, null, null, isPseudoCustomAttribute: true);
+			}
+		}
+
+		struct OutAttributeInfo {
+			public int Count => (object)ctor != null ? 1 : 0;
+			readonly DmdConstructorInfo ctor;
+
+			public OutAttributeInfo(DmdParameterInfo parameter) {
+				if (parameter.IsOut) {
+					var caType = parameter.Member.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_OutAttribute, isOptional: true);
+					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
+					Debug.Assert((object)caType == null || (object)ctor != null);
+				}
+				else
+					ctor = null;
+			}
+
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
+				if (Count == 0)
+					return;
+				destination[index++] = new DmdCustomAttributeData(ctor, null, null, isPseudoCustomAttribute: true);
+			}
+		}
+
+		struct OptionalAttributeInfo {
+			public int Count => (object)ctor != null ? 1 : 0;
+			readonly DmdConstructorInfo ctor;
+
+			public OptionalAttributeInfo(DmdParameterInfo parameter) {
+				if (parameter.IsOptional) {
+					var caType = parameter.Member.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_OptionalAttribute, isOptional: true);
+					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
+					Debug.Assert((object)caType == null || (object)ctor != null);
+				}
+				else
+					ctor = null;
+			}
+
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
+				if (Count == 0)
+					return;
+				destination[index++] = new DmdCustomAttributeData(ctor, null, null, isPseudoCustomAttribute: true);
+			}
+		}
+
 		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdType type, DmdCustomAttributeData[] customAttributes) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
@@ -403,6 +467,32 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				dllImportAttributeInfo.CopyTo(cas, ref index, method, ref implMap);
 				preserveSigAttributeInfo.CopyTo(cas, ref index);
 				securityAttributeInfo.CopyTo(cas, ref index);
+				if (pseudoCount != index)
+					throw new InvalidOperationException();
+				Array.Copy(customAttributes, 0, cas, pseudoCount, customAttributes.Length);
+				customAttributes = cas;
+			}
+
+			return customAttributes.Length == 0 ? emptyCustomAttributeCollection : new ReadOnlyCollection<DmdCustomAttributeData>(customAttributes);
+		}
+
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdParameterInfo parameter, DmdCustomAttributeData[] customAttributes) {
+			if (customAttributes == null)
+				customAttributes = Array.Empty<DmdCustomAttributeData>();
+
+			var inAttributeInfo = new InAttributeInfo(parameter);
+			var outAttributeInfo = new OutAttributeInfo(parameter);
+			var optionalAttributeInfo = new OptionalAttributeInfo(parameter);
+			var marshalAsAttributeInfo = new MarshalAsAttributeInfo(parameter);
+
+			int pseudoCount = inAttributeInfo.Count + outAttributeInfo.Count + optionalAttributeInfo.Count + marshalAsAttributeInfo.Count;
+			if (pseudoCount != 0) {
+				var cas = new DmdCustomAttributeData[pseudoCount + customAttributes.Length];
+				int index = 0;
+				inAttributeInfo.CopyTo(cas, ref index);
+				outAttributeInfo.CopyTo(cas, ref index);
+				optionalAttributeInfo.CopyTo(cas, ref index);
+				marshalAsAttributeInfo.CopyTo(cas, ref index);
 				if (pseudoCount != index)
 					throw new InvalidOperationException();
 				Array.Copy(customAttributes, 0, cas, pseudoCount, customAttributes.Length);

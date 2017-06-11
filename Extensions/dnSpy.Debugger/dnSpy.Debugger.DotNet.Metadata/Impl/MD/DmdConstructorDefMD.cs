@@ -42,6 +42,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		public override DmdMethodBody GetMethodBody() => reader.GetMethodBody(this);
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
+		protected override DmdParameterInfo[] CreateParameters() => reader.CreateParameters(this, createReturnParameter: false).parameters;
 		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
 	}
 }

@@ -42,14 +42,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract string Name { get; }
 
 		/// <summary>
-		/// true if <see cref="DefaultValue"/> is valid
+		/// true if <see cref="RawDefaultValue"/> is valid
 		/// </summary>
 		public abstract bool HasDefaultValue { get; }
-
-		/// <summary>
-		/// Gets the default value, see also <see cref="HasDefaultValue"/>
-		/// </summary>
-		public abstract object DefaultValue { get; }
 
 		/// <summary>
 		/// Gets the default value, see also <see cref="HasDefaultValue"/>

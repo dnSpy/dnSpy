@@ -61,6 +61,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected override DmdCustomAttributeData[] ReadTypeDefCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
 		protected override DmdCustomAttributeData[] ReadFieldCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
 		protected override DmdCustomAttributeData[] ReadMethodCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
+		protected override DmdCustomAttributeData[] ReadParamCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
 		protected override DmdCustomAttributeData[] ReadEventCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
 		protected override DmdCustomAttributeData[] ReadPropertyCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
 	}
