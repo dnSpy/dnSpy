@@ -748,5 +748,157 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				}
 			}
 		}
+
+		public override DmdMethodBase GetMethod(int metadataToken, bool throwOnError) {
+			foreach (var method in GetMethods(inherit: true)) {
+				if (method.MetadataToken == metadataToken)
+					return method;
+			}
+
+			if (throwOnError)
+				throw new ArgumentException();
+			return null;
+		}
+
+		public override DmdFieldInfo GetField(int metadataToken, bool throwOnError) {
+			foreach (var field in GetFields(inherit: true)) {
+				if (field.MetadataToken == metadataToken)
+					return field;
+			}
+
+			if (throwOnError)
+				throw new ArgumentException();
+			return null;
+		}
+
+		public override DmdPropertyInfo GetProperty(int metadataToken, bool throwOnError) {
+			foreach (var property in GetProperties(inherit: true)) {
+				if (property.MetadataToken == metadataToken)
+					return property;
+			}
+
+			if (throwOnError)
+				throw new ArgumentException();
+			return null;
+		}
+
+		public override DmdEventInfo GetEvent(int metadataToken, bool throwOnError) {
+			foreach (var @event in GetEvents(inherit: true)) {
+				if (@event.MetadataToken == metadataToken)
+					return @event;
+			}
+
+			if (throwOnError)
+				throw new ArgumentException();
+			return null;
+		}
+
+		public sealed override DmdMethodBase GetMethod(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			if (parameterTypes == null)
+				throw new ArgumentNullException(nameof(parameterTypes));
+			foreach (var method in GetMethods(inherit: true)) {
+				if (method.Name != name)
+					continue;
+				var sig = method.GetMethodSignature();
+				if (sig.GetVarArgsParameterTypes().Count != 0)
+					continue;
+				var sigParamTypes = sig.GetParameterTypes();
+				if (sigParamTypes.Count != parameterTypes.Count)
+					continue;
+				if (sig.Flags != flags)
+					continue;
+				for (int i = 0; i < sigParamTypes.Count; i++) {
+					if (!DmdMemberInfoEqualityComparer.Default.Equals(sigParamTypes[i], parameterTypes[i]))
+						continue;
+				}
+				if (sig.GenericParameterCount != genericParameterCount)
+					continue;
+				if ((object)returnType != null) {
+					if (!DmdMemberInfoEqualityComparer.Default.Equals(returnType, sig.ReturnType))
+						continue;
+				}
+
+				return method;
+			}
+
+			if (throwOnError)
+				throw new ArgumentException();
+			return null;
+		}
+
+		public sealed override DmdFieldInfo GetField(string name, DmdType fieldType, bool throwOnError) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			if ((object)fieldType == null)
+				throw new ArgumentNullException(nameof(fieldType));
+			foreach (var field in GetFields(inherit: true)) {
+				if (field.Name != name)
+					continue;
+				if (!DmdMemberInfoEqualityComparer.Default.Equals(field.FieldType, fieldType))
+					continue;
+
+				return field;
+			}
+
+			if (throwOnError)
+				throw new ArgumentException();
+			return null;
+		}
+
+		public sealed override DmdPropertyInfo GetProperty(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			if (parameterTypes == null)
+				throw new ArgumentNullException(nameof(parameterTypes));
+			foreach (var property in GetProperties(inherit: true)) {
+				if (property.Name != name)
+					continue;
+				var sig = property.GetMethodSignature();
+				if (sig.GetVarArgsParameterTypes().Count != 0)
+					continue;
+				var sigParamTypes = sig.GetParameterTypes();
+				if (sigParamTypes.Count != parameterTypes.Count)
+					continue;
+				if (sig.Flags != flags)
+					continue;
+				for (int i = 0; i < sigParamTypes.Count; i++) {
+					if (!DmdMemberInfoEqualityComparer.Default.Equals(sigParamTypes[i], parameterTypes[i]))
+						continue;
+				}
+				if (sig.GenericParameterCount != genericParameterCount)
+					continue;
+				if ((object)returnType != null) {
+					if (!DmdMemberInfoEqualityComparer.Default.Equals(returnType, sig.ReturnType))
+						continue;
+				}
+
+				return property;
+			}
+
+			if (throwOnError)
+				throw new ArgumentException();
+			return null;
+		}
+
+		public sealed override DmdEventInfo GetEvent(string name, DmdType eventHandlerType, bool throwOnError) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			if ((object)eventHandlerType == null)
+				throw new ArgumentNullException(nameof(eventHandlerType));
+			foreach (var @event in GetEvents(inherit: true)) {
+				if (@event.Name != name)
+					continue;
+				if (!DmdMemberInfoEqualityComparer.Default.Equals(@event.EventHandlerType, eventHandlerType))
+					continue;
+
+				return @event;
+			}
+
+			if (throwOnError)
+				throw new ArgumentException();
+			return null;
+		}
 	}
 }

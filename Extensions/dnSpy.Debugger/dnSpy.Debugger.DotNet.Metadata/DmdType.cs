@@ -297,6 +297,134 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		/// <summary>
+		/// Gets method or returns null if it doesn't exist
+		/// </summary>
+		/// <param name="metadataToken">Metadata token</param>
+		/// <returns></returns>
+		public DmdMethodBase GetMethod(int metadataToken) => GetMethod(metadataToken, throwOnError: false);
+
+		/// <summary>
+		/// Gets a method
+		/// </summary>
+		/// <param name="metadataToken">Metadata token</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public abstract DmdMethodBase GetMethod(int metadataToken, bool throwOnError);
+
+		/// <summary>
+		/// Gets a field or returns null if it doesn't exist
+		/// </summary>
+		/// <param name="metadataToken">Metadata token</param>
+		/// <returns></returns>
+		public DmdFieldInfo GetField(int metadataToken) => GetField(metadataToken, throwOnError: false);
+
+		/// <summary>
+		/// Gets a field
+		/// </summary>
+		/// <param name="metadataToken">Metadata token</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public abstract DmdFieldInfo GetField(int metadataToken, bool throwOnError);
+
+		/// <summary>
+		/// Gets a property or returns null if it doesn't exist
+		/// </summary>
+		/// <param name="metadataToken">Metadata token</param>
+		/// <returns></returns>
+		public DmdPropertyInfo GetProperty(int metadataToken) => GetProperty(metadataToken, throwOnError: false);
+
+		/// <summary>
+		/// Gets a property
+		/// </summary>
+		/// <param name="metadataToken">Metadata token</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public abstract DmdPropertyInfo GetProperty(int metadataToken, bool throwOnError);
+
+		/// <summary>
+		/// Gets an event or returns null if it doesn't exist
+		/// </summary>
+		/// <param name="metadataToken">Metadata token</param>
+		/// <returns></returns>
+		public DmdEventInfo GetEvent(int metadataToken) => GetEvent(metadataToken, throwOnError: false);
+
+		/// <summary>
+		/// Gets an event
+		/// </summary>
+		/// <param name="metadataToken">Metadata token</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public abstract DmdEventInfo GetEvent(int metadataToken, bool throwOnError);
+
+		/// <summary>
+		/// Gets a method
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <param name="methodSignature">Method signature</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public DmdMethodBase GetMethod(string name, DmdMethodSignature methodSignature, bool throwOnError) {
+			if (methodSignature == null)
+				throw new ArgumentNullException(nameof(methodSignature));
+			return GetMethod(name, methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), throwOnError);
+		}
+
+		/// <summary>
+		/// Gets a method
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <param name="flags">Method signature flags</param>
+		/// <param name="genericParameterCount">Generic parameter count</param>
+		/// <param name="returnType">Return type or null to ignore it</param>
+		/// <param name="parameterTypes">Parameter types</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public abstract DmdMethodBase GetMethod(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError);
+
+		/// <summary>
+		/// Gets a field
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <param name="fieldType">Field type</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public abstract DmdFieldInfo GetField(string name, DmdType fieldType, bool throwOnError);
+
+		/// <summary>
+		/// Gets a property
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <param name="methodSignature">Method signature</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public DmdPropertyInfo GetProperty(string name, DmdMethodSignature methodSignature, bool throwOnError) {
+			if (methodSignature == null)
+				throw new ArgumentNullException(nameof(methodSignature));
+			return GetProperty(name, methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), throwOnError);
+		}
+
+		/// <summary>
+		/// Gets a property
+		/// </summary>
+		/// <param name="name">Property name</param>
+		/// <param name="flags">Property signature flags</param>
+		/// <param name="genericParameterCount">Generic parameter count</param>
+		/// <param name="returnType">Return type or null to ignore it</param>
+		/// <param name="parameterTypes">Parameter types</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public abstract DmdPropertyInfo GetProperty(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError);
+
+		/// <summary>
+		/// Gets an event
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <param name="eventHandlerType">Event handler type</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public abstract DmdEventInfo GetEvent(string name, DmdType eventHandlerType, bool throwOnError);
+
+		/// <summary>
 		/// Gets a constructor
 		/// </summary>
 		/// <param name="bindingAttr">Binding flags</param>
