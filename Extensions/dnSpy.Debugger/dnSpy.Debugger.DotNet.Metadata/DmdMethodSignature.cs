@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// .NET method signature
 	/// </summary>
-	public sealed class DmdMethodSignature {
+	public sealed class DmdMethodSignature : IEquatable<DmdMethodSignature> {
 		/// <summary>
 		/// Gets the flags
 		/// </summary>
@@ -88,5 +88,36 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public ReadOnlyCollection<DmdType> GetVarArgsParameterTypes() => varArgsParameterTypes;
+
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+		public static bool operator ==(DmdMethodSignature left, DmdMethodSignature right) => DmdMemberInfoEqualityComparer.Default.Equals(left, right);
+		public static bool operator !=(DmdMethodSignature left, DmdMethodSignature right) => !DmdMemberInfoEqualityComparer.Default.Equals(left, right);
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public bool Equals(DmdMethodSignature other) => DmdMemberInfoEqualityComparer.Default.Equals(this, other);
+
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj) => Equals(obj as DmdMethodSignature);
+
+		/// <summary>
+		/// GetHashCode()
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode() => DmdMemberInfoEqualityComparer.Default.GetHashCode(this);
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public sealed override string ToString() => DmdMemberFormatter.Format(this);
 	}
 }

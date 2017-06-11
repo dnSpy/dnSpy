@@ -189,6 +189,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return formatter.FormatCore(parameter);
 		}
 
+		public static string Format(DmdMethodSignature methodSignature, bool serializable = false) {
+			using (var formatter = new DmdMemberFormatter(serializable ? GlobalFlags.Serializable : GlobalFlags.None))
+				return formatter.FormatCore(methodSignature);
+		}
+
 		public static string FormatName(DmdType type) {
 			using (var formatter = new DmdMemberFormatter(GlobalFlags.None))
 				return formatter.FormatNameCore(type);
@@ -226,6 +231,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		string FormatCore(DmdParameterInfo parameter) {
 			Write(parameter);
+			return writer.ToString();
+		}
+
+		string FormatCore(DmdMethodSignature methodSignature) {
+			Write(methodSignature);
 			return writer.ToString();
 		}
 
@@ -391,8 +401,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			writer.Append(field.Name);
 		}
 
-		void Write(DmdMethodBase method) => WriteMethod(method.Name, method.GetMethodSignature(), GetGenericArguments(method), true);
-		void Write(DmdPropertyInfo property) => WriteMethod(property.Name, property.GetMethodSignature(), null, false);
+		void Write(DmdMethodBase method) => WriteMethod(method.Name, method.GetMethodSignature(), GetGenericArguments(method), isMethod: true);
+		void Write(DmdPropertyInfo property) => WriteMethod(property.Name, property.GetMethodSignature(), genericArguments: null, isMethod: false);
+		void Write(DmdMethodSignature methodSignature) => WriteMethod(null, methodSignature, genericArguments: null, isMethod: true);
 
 		void WriteMethod(string name, DmdMethodSignature sig, IList<DmdType> genericArguments, bool isMethod) {
 			var flags = GetTypeFlags(true);
