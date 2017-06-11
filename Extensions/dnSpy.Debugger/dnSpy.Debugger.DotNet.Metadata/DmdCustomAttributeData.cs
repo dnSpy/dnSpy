@@ -68,6 +68,32 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 		static readonly ReadOnlyCollection<DmdCustomAttributeTypedArgument> emptyTypedArgsCollection = new ReadOnlyCollection<DmdCustomAttributeTypedArgument>(Array.Empty<DmdCustomAttributeTypedArgument>());
 		static readonly ReadOnlyCollection<DmdCustomAttributeNamedArgument> emptyNamedArgsCollection = new ReadOnlyCollection<DmdCustomAttributeNamedArgument>(Array.Empty<DmdCustomAttributeNamedArgument>());
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() {
+			var sb = new StringBuilder();
+			sb.Append('[');
+			sb.Append(AttributeType.FullName);
+			sb.Append('(');
+			bool comma = false;
+			foreach (var arg in ConstructorArguments) {
+				if (comma)
+					sb.Append(", ");
+				comma = true;
+				sb.Append(arg.ToString());
+			}
+			foreach (var arg in NamedArguments) {
+				if (comma)
+					sb.Append(", ");
+				comma = true;
+				sb.Append(arg.ToString());
+			}
+			sb.Append(")]");
+			return sb.ToString();
+		}
 	}
 
 	/// <summary>
