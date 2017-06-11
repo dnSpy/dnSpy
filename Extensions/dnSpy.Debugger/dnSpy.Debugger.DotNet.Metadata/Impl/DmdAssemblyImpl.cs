@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 
@@ -131,6 +132,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
 		internal DmdType GetType(DmdType typeRef) => appDomain.TryLookup(this, typeRef);
 		public override DmdType GetType(string name, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
-		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
+
+		public override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+			if (customAttributes != null)
+				return customAttributes;
+			lock (LockObject) {
+				if (customAttributes != null)
+					return customAttributes;
+				var cas = metadataReader.ReadCustomAttributes(0x20000001);
+				customAttributes = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas);
+				return customAttributes;
+			}
+		}
+		ReadOnlyCollection<DmdCustomAttributeData> customAttributes;
 	}
 }
