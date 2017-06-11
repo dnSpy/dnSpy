@@ -403,11 +403,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (genericArguments != null)
 				WriteGenericArguments(genericArguments, flags);
 			flags |= TypeFlags.UseByRefString;
-			if (isMethod || sig.GetReadOnlyParameterTypes().Count != 0 || sig.GetReadOnlyVarArgsParameterTypes().Count != 0) {
+			if (isMethod || sig.GetParameterTypes().Count != 0 || sig.GetVarArgsParameterTypes().Count != 0) {
 				writer.Append(isMethod ? '(' : '[');
-				WriteParameters(sig.GetReadOnlyParameterTypes(), flags);
-				if (sig.GetReadOnlyVarArgsParameterTypes().Count != 0) {
-					if (sig.GetReadOnlyParameterTypes().Count > 0)
+				WriteParameters(sig.GetParameterTypes(), flags);
+				if (sig.GetVarArgsParameterTypes().Count != 0) {
+					if (sig.GetParameterTypes().Count > 0)
 						writer.Append(", ");
 					writer.Append("...");
 				}

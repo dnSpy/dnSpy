@@ -92,14 +92,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return false;
 			if (!IsMatch(method, callConvention))
 				return false;
-			return IsMatch(method.GetReadOnlyParameters(), types);
+			return IsMatch(method.GetMethodSignature().GetParameterTypes(), types ?? Array.Empty<DmdType>());
 		}
 
-		static bool IsMatch(IList<DmdParameterInfo> p, IList<DmdType> types) {
+		static bool IsMatch(IList<DmdType> p, IList<DmdType> types) {
 			if (p.Count != types.Count)
 				return false;
 			for (int i = 0; i < p.Count; i++) {
-				if (!DmdMemberInfoEqualityComparer.Default.Equals(p[i].ParameterType, types[i]))
+				if (!DmdMemberInfoEqualityComparer.Default.Equals(p[i], types[i]))
 					return false;
 			}
 			return true;
@@ -108,9 +108,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public static bool IsMatch(DmdPropertyInfo property, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types) {
 			if (!IsMatch(property, bindingAttr))
 				return false;
-			if (!DmdMemberInfoEqualityComparer.Default.Equals(property.PropertyType, returnType))
-				return false;
-			return IsMatch(property.GetReadOnlyIndexParameters(), types);
+			if ((object)returnType != null) {
+				var comparer = new DmdSigComparer(DmdSigComparerOptions.CheckTypeEquivalence | DmdMemberInfoEqualityComparer.DefaultOptions);
+				if (!comparer.Equals(property.PropertyType, returnType))
+					return false;
+			}
+			return IsMatch(property.GetMethodSignature().GetParameterTypes(), types ?? Array.Empty<DmdType>());
 		}
 
 		public static bool IsMatch(DmdMemberInfo member, string name, DmdBindingFlags bindingAttr) {

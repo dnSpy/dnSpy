@@ -17,18 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// .NET method signature
 	/// </summary>
-	public abstract class DmdMethodSignature {
+	public sealed class DmdMethodSignature {
 		/// <summary>
 		/// Gets the flags
 		/// </summary>
-		public abstract DmdSignatureCallingConvention Flags { get; }
+		public DmdSignatureCallingConvention Flags { get; }
 
 		/// <summary>
 		/// true if it's a generic method signature
@@ -48,35 +49,45 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Generic parameter count
 		/// </summary>
-		public abstract int GenericParameterCount { get; }
+		public int GenericParameterCount { get; }
 
 		/// <summary>
 		/// Gets the return type
 		/// </summary>
-		public abstract DmdType ReturnType { get; }
+		public DmdType ReturnType { get; }
+
+		readonly ReadOnlyCollection<DmdType> parameterTypes;
+		readonly ReadOnlyCollection<DmdType> varArgsParameterTypes;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="flags">Flags</param>
+		/// <param name="genericParameterCount">Number of generic parameters</param>
+		/// <param name="returnType">Return type</param>
+		/// <param name="parameterTypes">Parameter types or null</param>
+		/// <param name="varArgsParameterTypes">Var args parameter types or null</param>
+		public DmdMethodSignature(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes) {
+			if (genericParameterCount < 0)
+				throw new ArgumentOutOfRangeException(nameof(genericParameterCount));
+			Flags = flags;
+			GenericParameterCount = genericParameterCount;
+			ReturnType = returnType ?? throw new ArgumentNullException(nameof(returnType));
+			this.parameterTypes = parameterTypes == null || parameterTypes.Count == 0 ? emptyTypeCollection : parameterTypes as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(parameterTypes);
+			this.varArgsParameterTypes = varArgsParameterTypes == null || varArgsParameterTypes.Count == 0 ? emptyTypeCollection : varArgsParameterTypes as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(varArgsParameterTypes);
+		}
+		static readonly ReadOnlyCollection<DmdType> emptyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
 
 		/// <summary>
 		/// Gets the parameter types, see also <see cref="GetVarArgsParameterTypes"/>
 		/// </summary>
 		/// <returns></returns>
-		public DmdType[] GetParameterTypes() => GetReadOnlyParameterTypes().ToArray();
-
-		/// <summary>
-		/// Gets the parameter types, see also <see cref="GetReadOnlyVarArgsParameterTypes"/>
-		/// </summary>
-		/// <returns></returns>
-		public abstract ReadOnlyCollection<DmdType> GetReadOnlyParameterTypes();
+		public ReadOnlyCollection<DmdType> GetParameterTypes() => parameterTypes;
 
 		/// <summary>
 		/// Gets the var args parameter types
 		/// </summary>
 		/// <returns></returns>
-		public DmdType[] GetVarArgsParameterTypes() => GetReadOnlyVarArgsParameterTypes().ToArray();
-
-		/// <summary>
-		/// Gets the var args parameter types
-		/// </summary>
-		/// <returns></returns>
-		public abstract ReadOnlyCollection<DmdType> GetReadOnlyVarArgsParameterTypes();
+		public ReadOnlyCollection<DmdType> GetVarArgsParameterTypes() => varArgsParameterTypes;
 	}
 }

@@ -40,12 +40,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public DmdFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
 			this.methodSignature = methodSignature ?? throw new ArgumentNullException(nameof(methodSignature));
 			IsFullyResolved = ((DmdTypeBase)methodSignature.ReturnType).IsFullyResolved &&
-					DmdTypeUtilities.IsFullyResolved(methodSignature.GetReadOnlyParameterTypes()) &&
-					DmdTypeUtilities.IsFullyResolved(methodSignature.GetReadOnlyVarArgsParameterTypes());
+					DmdTypeUtilities.IsFullyResolved(methodSignature.GetParameterTypes()) &&
+					DmdTypeUtilities.IsFullyResolved(methodSignature.GetVarArgsParameterTypes());
 		}
 
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetReadOnlyParameterTypes(), methodSignature.GetReadOnlyVarArgsParameterTypes(), customModifiers);
-		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetReadOnlyParameterTypes(), methodSignature.GetReadOnlyVarArgsParameterTypes(), null);
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), methodSignature.GetVarArgsParameterTypes(), customModifiers);
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), methodSignature.GetVarArgsParameterTypes(), null);
 
 		public override DmdMethodSignature GetFunctionPointerMethodSignature() => methodSignature;
 
@@ -57,10 +57,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var returnType = ((DmdTypeBase)methodSignature.ReturnType).FullResolve();
 			if ((object)returnType == null)
 				return null;
-			var parameterTypes = DmdTypeUtilities.FullResolve(methodSignature.GetReadOnlyParameterTypes());
+			var parameterTypes = DmdTypeUtilities.FullResolve(methodSignature.GetParameterTypes());
 			if (parameterTypes == null)
 				return null;
-			var varArgsParameterTypes = DmdTypeUtilities.FullResolve(methodSignature.GetReadOnlyVarArgsParameterTypes());
+			var varArgsParameterTypes = DmdTypeUtilities.FullResolve(methodSignature.GetVarArgsParameterTypes());
 			if (varArgsParameterTypes == null)
 				return null;
 			return (DmdTypeBase)returnType.AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, returnType, parameterTypes, varArgsParameterTypes, GetCustomModifiers());

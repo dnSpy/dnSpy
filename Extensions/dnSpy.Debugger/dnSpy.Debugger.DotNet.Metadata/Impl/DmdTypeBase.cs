@@ -24,7 +24,7 @@ using System.Linq;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdTypeBase : DmdType {
-		protected static readonly ReadOnlyCollection<DmdType> emptyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
+		internal static readonly ReadOnlyCollection<DmdType> emptyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
 		static readonly ReadOnlyCollection<DmdFieldInfo> emptyFieldCollection = new ReadOnlyCollection<DmdFieldInfo>(Array.Empty<DmdFieldInfo>());
 		static readonly ReadOnlyCollection<DmdMethodBase> emptyMethodBaseCollection = new ReadOnlyCollection<DmdMethodBase>(Array.Empty<DmdMethodBase>());
 		static readonly ReadOnlyCollection<DmdPropertyInfo> emptyPropertyCollection = new ReadOnlyCollection<DmdPropertyInfo>(Array.Empty<DmdPropertyInfo>());
@@ -94,8 +94,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
-			if (types == null)
-				throw new ArgumentNullException(nameof(types));
 			foreach (var ctor in GetDeclaredConstructors()) {
 				if (DmdMemberInfoComparer.IsMatch(ctor, bindingAttr, callConvention, types))
 					return ctor;
@@ -118,8 +116,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			if (types == null)
-				throw new ArgumentNullException(nameof(types));
 			foreach (var method in GetMethods(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
 				if (DmdMemberInfoComparer.IsMatch(method, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(method, bindingAttr, callConvention, types))
 					return method;
@@ -186,10 +182,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			if ((object)returnType == null)
-				throw new ArgumentNullException(nameof(returnType));
-			if (types == null)
-				throw new ArgumentNullException(nameof(types));
 			foreach (var property in GetProperties(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
 				if (DmdMemberInfoComparer.IsMatch(property, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(property, bindingAttr, returnType, types))
 					return property;

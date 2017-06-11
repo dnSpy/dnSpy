@@ -358,8 +358,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return a.Flags == b.Flags &&
 				a.GenericParameterCount == b.GenericParameterCount &&
 				(DontCompareReturnType || Equals(a.ReturnType, b.ReturnType)) &&
-				Equals(a.GetReadOnlyParameterTypes(), b.GetReadOnlyParameterTypes()) &&
-				Equals(a.GetReadOnlyVarArgsParameterTypes(), b.GetReadOnlyVarArgsParameterTypes());
+				Equals(a.GetParameterTypes(), b.GetParameterTypes()) &&
+				Equals(a.GetVarArgsParameterTypes(), b.GetVarArgsParameterTypes());
 		}
 
 		/// <summary>
@@ -693,8 +693,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			hc ^= a.GenericParameterCount;
 			if (!DontCompareReturnType)
 				hc ^= GetHashCode(a.ReturnType);
-			hc ^= GetHashCode(a.GetReadOnlyParameterTypes());
-			hc ^= GetHashCode(a.GetReadOnlyVarArgsParameterTypes());
+			hc ^= GetHashCode(a.GetParameterTypes());
+			hc ^= GetHashCode(a.GetVarArgsParameterTypes());
 			return hc;
 		}
 

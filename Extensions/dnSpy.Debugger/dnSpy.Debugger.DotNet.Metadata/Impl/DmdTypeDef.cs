@@ -28,8 +28,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Type;
 		public override DmdTypeScope TypeScope => new DmdTypeScope(Module);
 		public override bool IsMetadataReference => false;
-		public override bool IsGenericType => GetOrCreateGenericParameters().Count != 0;
-		public override bool IsGenericTypeDefinition => GetOrCreateGenericParameters().Count != 0;
+		public override bool IsGenericType => GetReadOnlyGenericArguments().Count != 0;
+		public override bool IsGenericTypeDefinition => GetReadOnlyGenericArguments().Count != 0;
 		public override int MetadataToken => (int)(0x02000000 + rid);
 		public override StructLayoutAttribute StructLayoutAttribute => throw new NotImplementedException();//TODO:
 
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							if ((baseTypeToken & 0x00FFFFFF) == 0)
 								__baseType_DONT_USE = null;
 							else
-								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetOrCreateGenericParameters(), null, throwOnError: false);
+								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetReadOnlyGenericArguments(), null, throwOnError: false);
 							baseTypeInitd = true;
 						}
 					}
@@ -88,27 +88,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		int baseTypeToken = -1;
 
-		protected abstract DmdType[] CreateGenericParameters_NoLock();
-		ReadOnlyCollection<DmdType> GetOrCreateGenericParameters() {
-			if (__genericParameters_DONT_USE != null)
-				return __genericParameters_DONT_USE;
-			lock (LockObject) {
-				if (__genericParameters_DONT_USE != null)
-					return __genericParameters_DONT_USE;
-				var res = CreateGenericParameters_NoLock();
-				__genericParameters_DONT_USE = res == null || res.Length == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(res);
-				return __genericParameters_DONT_USE;
-			}
-		}
-		ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
-
 		protected uint Rid => rid;
 		readonly uint rid;
 
 		protected DmdTypeDef(uint rid, IList<DmdCustomModifier> customModifiers) : base(customModifiers) => this.rid = rid;
 
 		protected override DmdType ResolveNoThrowCore() => this;
-		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => GetOrCreateGenericParameters();
+
+		protected abstract DmdType[] CreateGenericParameters();
+		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() {
+			if (__genericParameters_DONT_USE != null)
+				return __genericParameters_DONT_USE;
+			lock (LockObject) {
+				if (__genericParameters_DONT_USE != null)
+					return __genericParameters_DONT_USE;
+				var res = CreateGenericParameters();
+				__genericParameters_DONT_USE = res == null || res.Length == 0 ? emptyTypeCollection : new ReadOnlyCollection<DmdType>(res);
+				return __genericParameters_DONT_USE;
+			}
+		}
+		ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
+
 		public override DmdType GetGenericTypeDefinition() => IsGenericType ? this : throw new InvalidOperationException();
 
 		public abstract DmdFieldInfo[] ReadDeclaredFields(DmdType reflectedType, IList<DmdType> genericTypeArguments);

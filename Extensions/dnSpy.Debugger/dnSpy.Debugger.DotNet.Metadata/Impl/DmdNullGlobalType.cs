@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected override int GetDeclaringTypeToken() => 0;
 		protected override int GetBaseTypeTokenCore() => 0;
-		protected override DmdType[] CreateGenericParameters_NoLock() => null;
+		protected override DmdType[] CreateGenericParameters() => null;
 
 		public override DmdFieldInfo[] ReadDeclaredFields(DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
 		public override DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments, bool includeConstructors) => null;

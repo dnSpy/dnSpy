@@ -392,7 +392,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				parameterTypes = DmdTypeUtilities.FullResolve(parameterTypes) ?? parameterTypes;
 				varArgsParameterTypes = DmdTypeUtilities.FullResolve(varArgsParameterTypes) ?? varArgsParameterTypes;
 			}
-			var methodSignature = new DmdMethodSignatureImpl(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes);
+			var methodSignature = new DmdMethodSignature(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes);
 
 			var res = new DmdFunctionPointerType(methodSignature, customModifiers);
 			lock (LockObject) {

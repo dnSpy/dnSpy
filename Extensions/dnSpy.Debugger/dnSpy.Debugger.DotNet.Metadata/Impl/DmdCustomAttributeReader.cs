@@ -90,14 +90,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void DecrementRecursionCounter() => recursionCounter--;
 
 		DmdCustomAttributeData Read() {
-			var ctorParams = ctor.GetReadOnlyParameters();
+			var ctorParams = ctor.GetMethodSignature().GetParameterTypes();
 			bool isEmpty = ctorParams.Count == 0 && reader.Position == reader.Length;
 			if (!isEmpty && reader.ReadUInt16() != 1)
 				throw new CABlobParserException("Invalid CA blob prolog");
 
 			var ctorArgs = new DmdCustomAttributeTypedArgument[ctorParams.Count];
 			for (int i = 0; i < ctorArgs.Length; i++)
-				ctorArgs[i] = ReadFixedArg(FixTypeSig(ctorParams[i].ParameterType));
+				ctorArgs[i] = ReadFixedArg(FixTypeSig(ctorParams[i]));
 
 			// Some tools don't write the next ushort if there are no named arguments.
 			int numNamedArgs = reader.Position == reader.Length ? 0 : reader.ReadUInt16();
@@ -281,6 +281,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return SerializationType.Undefined;
 			if (type.IsSZArray)
 				return SerializationType.SZArray;
+			if (type.IsEnum)
+				return (SerializationType)DMD.ElementType.ValueType;
 			return ToSerializationType(DmdType.GetTypeCode(type));
 		}
 

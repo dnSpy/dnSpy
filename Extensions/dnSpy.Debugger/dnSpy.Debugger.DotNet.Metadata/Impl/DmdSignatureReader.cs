@@ -52,6 +52,24 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (module.AppDomain.System_Void, false);
 		}
 
+		public static (DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool isProperty, bool resolve) {
+			try {
+				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, genericMethodArguments, resolve)) {
+					sigReader.ReadMethodSignature(out var flags, out var genericParameterCount, out var returnType, out var parameterTypes, out var varArgsParameterTypes);
+					if (((flags & DmdSignatureCallingConvention.Mask) == DmdSignatureCallingConvention.Property) == isProperty) {
+						var methodSignature = new DmdMethodSignature(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes);
+						return (methodSignature, sigReader.containedGenericParams);
+					}
+				}
+			}
+			catch (IOException) {
+			}
+			catch (OutOfMemoryException) {
+			}
+			var dummySig = new DmdMethodSignature(isProperty ? DmdSignatureCallingConvention.Property : DmdSignatureCallingConvention.Default, 0, module.AppDomain.System_Void, null, null);
+			return (dummySig, false);
+		}
+
 		const int MAX_RECURSION_COUNT = 100;
 		int recursionCounter;
 		readonly DmdModule module;
@@ -228,6 +246,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			customModifiers = null;
 
 			ReadMethodSignature(out var flags, out var genericParameterCount, out var returnType, out var parameterTypes, out var varArgsParameterTypes);
+			if ((flags & DmdSignatureCallingConvention.Mask) == DmdSignatureCallingConvention.Property)
+				throw new IOException();
 			var fnPtrType = module.AppDomain.MakeFunctionPointerType(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes, null, resolve ? MakeTypeOptions.None : MakeTypeOptions.NoResolve);
 
 			customModifiers = origCustomModifiers;
@@ -244,6 +264,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			case DmdSignatureCallingConvention.FastCall:
 			case DmdSignatureCallingConvention.VarArg:
 			case DmdSignatureCallingConvention.NativeVarArg:
+			case DmdSignatureCallingConvention.Property:
 				break;
 
 			default:

@@ -44,7 +44,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the calling convention flags
 		/// </summary>
-		public abstract DmdCallingConventions CallingConvention { get; }
+		public DmdCallingConventions CallingConvention {
+			get {
+				// See SignatureNative::SetCallingConvention() in coreclr/src/vm/runtimehandles.h
+				var sig = GetMethodSignature();
+				DmdCallingConventions res = 0;
+				if ((sig.Flags & DmdSignatureCallingConvention.Mask) == DmdSignatureCallingConvention.VarArg)
+					res |= DmdCallingConventions.VarArgs;
+				else
+					res |= DmdCallingConventions.Standard;
+				if (sig.HasThis)
+					res |= DmdCallingConventions.HasThis;
+				if (sig.ExplicitThis)
+					res |= DmdCallingConventions.ExplicitThis;
+				return res;
+			}
+		}
 
 		/// <summary>
 		/// true if it's a generic method definition
@@ -55,6 +70,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// true if it's a generic method
 		/// </summary>
 		public abstract bool IsGenericMethod { get; }
+
+		/// <summary>
+		/// true if it's a constructed generic method
+		/// </summary>
+		public bool IsConstructedGenericMethod => IsGenericMethod && !IsGenericMethodDefinition;
 
 		/// <summary>
 		/// true if it contains generic parameters
@@ -162,7 +182,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Calls the method
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="obj">Instance or null if it's a static method or a constructor</param>
+		/// <param name="obj">Instance or null if it's a static method</param>
 		/// <param name="parameters">Parameters</param>
 		/// <returns></returns>
 		public object Invoke(IDmdEvaluationContext context, object obj, object[] parameters) => Invoke(context, obj, DmdBindingFlags.Default, parameters);
@@ -171,7 +191,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Calls the method
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="obj">Instance or null if it's a static method or a constructor</param>
+		/// <param name="obj">Instance or null if it's a static method</param>
 		/// <param name="invokeAttr">Binding flags</param>
 		/// <param name="parameters">Parameters</param>
 		/// <returns></returns>

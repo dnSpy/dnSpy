@@ -66,6 +66,7 @@
     <Compile Include="DmdFieldInfo.cs" />
     <Compile Include="DmdGenericParameterAttributes.cs" />
     <Compile Include="DmdImageFileMachine.cs" />
+    <Compile Include="DmdImplMap.cs" />
     <Compile Include="DmdLazyMetadataBytes.cs" />
     <Compile Include="DmdMemberFormatter.cs" />
     <Compile Include="DmdMemberInfo.cs" />
@@ -106,6 +107,8 @@
     <Compile Include="Impl\DmdAssemblyControllerImpl.cs" />
     <Compile Include="Impl\DmdAssemblyImpl.cs" />
     <Compile Include="Impl\DmdByRefType.cs" />
+    <Compile Include="Impl\DmdConstructorDef.cs" />
+    <Compile Include="Impl\DmdConstructorInfoBase.cs" />
     <Compile Include="Impl\DmdCustomAttributeReader.cs" />
     <Compile Include="Impl\DmdDataStream.cs" />
     <Compile Include="Impl\DmdFieldDef.cs" />
@@ -119,7 +122,8 @@
     <Compile Include="Impl\DmdMemberInfoComparer.cs" />
     <Compile Include="Impl\DmdMetadataReader.cs" />
     <Compile Include="Impl\DmdMetadataReaderBase.cs" />
-    <Compile Include="Impl\DmdMethodSignatureImpl.cs" />
+    <Compile Include="Impl\DmdMethodDef.cs" />
+    <Compile Include="Impl\DmdMethodInfoBase.cs" />
     <Compile Include="Impl\DmdModuleControllerImpl.cs" />
     <Compile Include="Impl\DmdModuleImpl.cs" />
     <Compile Include="Impl\DmdNullGlobalType.cs" />
@@ -136,11 +140,13 @@
     <Compile Include="Impl\DmdTypeRef.cs" />
     <Compile Include="Impl\DmdTypeUtilities.cs" />
     <Compile Include="Impl\LazyList.cs" />
+    <Compile Include="Impl\MD\DmdConstructorDefMD.cs" />
     <Compile Include="Impl\MD\DmdDataStreamImpl.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
     <Compile Include="Impl\MD\DmdExportedTypeMD.cs" />
     <Compile Include="Impl\MD\DmdFieldDefMD.cs" />
     <Compile Include="Impl\MD\DmdGenericParameterTypeMD.cs" />
+    <Compile Include="Impl\MD\DmdMethodDefMD.cs" />
     <Compile Include="Impl\MD\DmdTypeDefMD.cs" />
     <Compile Include="Impl\MD\DmdTypeRefMD.cs" />
     <Compile Include="Impl\MD\MetadataConstantUtilities.cs" />

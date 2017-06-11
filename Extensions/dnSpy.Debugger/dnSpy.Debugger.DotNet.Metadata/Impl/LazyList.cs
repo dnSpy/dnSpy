@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	}
 
 	[DebuggerDisplay("Count = {Length}")]
-	sealed class LazyList3<TValue, TArg> where TValue : class where TArg : class {
+	sealed class LazyList<TValue, TArg> where TValue : class where TArg : class {
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 		readonly TValue[] elements;
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -107,7 +107,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public LazyList3(uint length, Func<uint, TArg, TValue> readElementByRID) {
+		public LazyList(uint length, Func<uint, TArg, TValue> readElementByRID) {
 			this.length = length;
 			this.readElementByRID = readElementByRID;
 			elements = new TValue[length];

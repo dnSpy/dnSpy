@@ -273,6 +273,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static TypeCode GetTypeCode(DmdType type) {
 			if ((object)type == null) return TypeCode.Empty;
 			const TypeCode defaultValue = TypeCode.Object;
+			if (type.IsEnum)
+				type = type.GetEnumUnderlyingType();
 			if (!type.IsNested && type.Namespace == "System") {
 				switch (type.Name) {
 				case "Boolean":	return type == type.AppDomain.System_Boolean	? TypeCode.Boolean	: defaultValue;

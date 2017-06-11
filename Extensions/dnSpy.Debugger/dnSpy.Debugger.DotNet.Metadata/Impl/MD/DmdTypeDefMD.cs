@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return (int)token;
 		}
 
-		protected override DmdType[] CreateGenericParameters_NoLock() {
+		protected override DmdType[] CreateGenericParameters() {
 			var ridList = reader.Metadata.GetGenericParamRidList(Table.TypeDef, Rid);
 			if (ridList.Count == 0)
 				return null;
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				uint rid = ridList[i];
 				var row = reader.TablesStream.ReadGenericParamRow(rid) ?? new RawGenericParamRow();
 				var gpName = reader.StringsStream.ReadNoNull(row.Name);
-				var gpType = new DmdGenericParameterTypeMD(reader, rid, this, gpName, row.Number, (DmdGenericParameterAttributes)row.Flags, GetCustomModifiers());
+				var gpType = new DmdGenericParameterTypeMD(reader, rid, this, gpName, row.Number, (DmdGenericParameterAttributes)row.Flags, null);
 				genericParams[i] = gpType;
 			}
 			return genericParams;
@@ -78,7 +78,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return fields;
 		}
 
-		public override DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments, bool includeConstructors) => throw new NotImplementedException();//TODO:
+		public override DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments, bool includeConstructors) {
+			var ridList = reader.Metadata.GetMethodRidList(Rid);
+			if (ridList.Count == 0)
+				return Array.Empty<DmdMethodBase>();
+			var fields = new DmdMethodBase[ridList.Count];
+			for (int i = 0; i < fields.Length; i++) {
+				uint rid = ridList[i];
+				fields[i] = reader.CreateMethodDef(rid, this, reflectedType, genericTypeArguments);
+			}
+			return fields;
+		}
+
 		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
 		public override DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
 
