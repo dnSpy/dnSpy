@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public DmdNullGlobalType(DmdModule module, IList<DmdCustomModifier> customModifiers) : base(1, customModifiers) =>
 			Module = module ?? throw new ArgumentNullException(nameof(module));
 
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdNullGlobalType(Module, customModifiers));
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdNullGlobalType(Module, VerifyCustomModifiers(customModifiers)));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdNullGlobalType(Module, null));
 
 		protected override int GetDeclaringTypeToken() => 0;

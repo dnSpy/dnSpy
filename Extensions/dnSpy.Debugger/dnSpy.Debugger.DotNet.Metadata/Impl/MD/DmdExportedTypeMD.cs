@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		protected override int GetDeclaringTypeRefToken() => baseTypeToken;
 
 		// Don't intern exported type refs
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => new DmdExportedTypeMD(reader, Rid, customModifiers);
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => new DmdExportedTypeMD(reader, Rid, VerifyCustomModifiers(customModifiers));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : new DmdExportedTypeMD(reader, Rid, null);
 	}
 }

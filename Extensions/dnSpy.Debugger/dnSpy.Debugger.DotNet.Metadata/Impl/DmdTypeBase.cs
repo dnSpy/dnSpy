@@ -37,6 +37,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => customModifiers;
 		protected DmdTypeBase(IList<DmdCustomModifier> customModifiers) =>
 			this.customModifiers = customModifiers == null || customModifiers.Count == 0 ? emptyCustomModifiers : customModifiers as ReadOnlyCollection<DmdCustomModifier> ?? new ReadOnlyCollection<DmdCustomModifier>(customModifiers);
+		protected IList<DmdCustomModifier> VerifyCustomModifiers(IList<DmdCustomModifier> customModifiers) {
+			if (customModifiers != null) {
+				for (int i = 0; i < customModifiers.Count; i++) {
+					if (customModifiers[i].Type.AppDomain != AppDomain)
+						throw new ArgumentException();
+				}
+			}
+			return customModifiers;
+		}
 
 		/// <summary>
 		/// true if there are no metadata references. This instance and any other <see cref="DmdType"/> that it

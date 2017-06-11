@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			new DmdGenericParameterTypeMD(reader, Rid, DeclaringType, Name, GenericParameterPosition, GenericParameterAttributes, customModifiers);
 
 		// Don't intern these since only the generic parameter position is checked and not the decl type / method
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => Clone(customModifiers);
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => Clone(VerifyCustomModifiers(customModifiers));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : Clone(null);
 	}
 }

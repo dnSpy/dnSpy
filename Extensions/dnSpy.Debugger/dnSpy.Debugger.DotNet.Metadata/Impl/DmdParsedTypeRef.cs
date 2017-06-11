@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void SetTypeScope(DmdTypeScope typeScope) => this.typeScope = typeScope;
 
 		protected override int GetDeclaringTypeRefToken() => throw new NotSupportedException();
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => new DmdParsedTypeRef(OwnerModule, declaringTypeRef, TypeScope, Namespace, Name, customModifiers);
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => new DmdParsedTypeRef(OwnerModule, declaringTypeRef, TypeScope, Namespace, Name, VerifyCustomModifiers(customModifiers));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : new DmdParsedTypeRef(OwnerModule, declaringTypeRef, TypeScope, Namespace, Name, null);
 	}
 }
