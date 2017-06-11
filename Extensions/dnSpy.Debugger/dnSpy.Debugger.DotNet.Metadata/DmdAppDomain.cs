@@ -324,6 +324,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Makes a function pointer type
 		/// </summary>
+		/// <param name="methodSignature">Method signature</param>
+		/// <param name="customModifiers">Custom modifiers or null</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+
+		/// <summary>
+		/// Makes a function pointer type
+		/// </summary>
 		/// <param name="flags">Flags</param>
 		/// <param name="genericParameterCount">Number of generic parameters</param>
 		/// <param name="returnType">Return type</param>

@@ -361,6 +361,39 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
+		public override DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options) {
+			if (methodSignature == null)
+				throw new ArgumentNullException(nameof(methodSignature));
+			if (methodSignature.ReturnType.AppDomain != this)
+				throw new ArgumentException();
+			var parameterTypes = methodSignature.GetParameterTypes();
+			for (int i = 0; i < parameterTypes.Count; i++) {
+				if (parameterTypes[i].AppDomain != this)
+					throw new ArgumentException();
+			}
+			var varArgsParameterTypes = methodSignature.GetVarArgsParameterTypes();
+			for (int i = 0; i < varArgsParameterTypes.Count; i++) {
+				if (varArgsParameterTypes[i].AppDomain != this)
+					throw new ArgumentException();
+			}
+			if (customModifiers != null) {
+				for (int i = 0; i < customModifiers.Count; i++) {
+					if (customModifiers[i].Type.AppDomain != this)
+						throw new ArgumentException();
+				}
+			}
+
+			var res = new DmdFunctionPointerType(methodSignature, customModifiers);
+			lock (LockObject) {
+				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
+					return cachedType;
+				if (res.IsFullyResolved)
+					fullyResolvedTypes.Add(res, res);
+			}
+
+			return res;
+		}
+
 		public override DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options) {
 			if (genericParameterCount < 0)
 				throw new ArgumentOutOfRangeException(nameof(genericParameterCount));
