@@ -54,12 +54,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// true if the property can be read
 		/// </summary>
-		public abstract bool CanRead { get; }
+		public bool CanRead => (object)GetMethod != null;
 
 		/// <summary>
 		/// true if the property can be written to
 		/// </summary>
-		public abstract bool CanWrite { get; }
+		public bool CanWrite => (object)SetMethod != null;
 
 		/// <summary>
 		/// Resolves a property reference
@@ -72,12 +72,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Returns false since there are no property references
 		/// </summary>
 		public sealed override bool IsMetadataReference => false;
-
-		/// <summary>
-		/// Gets the constant stored in metadata
-		/// </summary>
-		/// <returns></returns>
-		public abstract object GetConstantValue();
 
 		/// <summary>
 		/// Gets the constant stored in metadata

@@ -283,7 +283,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return SerializationType.SZArray;
 			if (type.IsEnum)
 				return (SerializationType)DMD.ElementType.ValueType;
-			return ToSerializationType(DmdType.GetTypeCode(type));
+			var typeCode = DmdType.GetTypeCode(type);
+			if (typeCode == TypeCode.Object)
+				return type.IsValueType ? (SerializationType)DMD.ElementType.ValueType : (SerializationType)DMD.ElementType.Class;
+			return ToSerializationType(typeCode);
 		}
 
 		static SerializationType ToSerializationType(TypeCode typeCode) {

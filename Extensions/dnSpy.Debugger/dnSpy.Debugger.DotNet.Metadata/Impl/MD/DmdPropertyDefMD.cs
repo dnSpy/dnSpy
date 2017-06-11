@@ -23,24 +23,26 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
-	sealed class DmdEventDefMD : DmdEventDef {
+	sealed class DmdPropertyDefMD : DmdPropertyDef {
 		public override string Name { get; }
-		public override DmdEventAttributes Attributes { get; }
-		public override DmdType EventHandlerType { get; }
+		public override DmdPropertyAttributes Attributes { get; }
 
 		readonly DmdEcma335MetadataReader reader;
+		readonly DmdMethodSignature methodSignature;
 
-		public DmdEventDefMD(DmdEcma335MetadataReader reader, uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdPropertyDefMD(DmdEcma335MetadataReader reader, uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
-			var row = reader.TablesStream.ReadEventRow(rid);
+			var row = reader.TablesStream.ReadPropertyRow(rid);
 			Name = reader.StringsStream.ReadNoNull(row.Name);
-			Attributes = (DmdEventAttributes)row.EventFlags;
-			if (!CodedToken.TypeDefOrRef.Decode(row.EventType, out uint token))
-				token = uint.MaxValue;
-			EventHandlerType = reader.ResolveType((int)token, genericTypeArguments, null, throwOnError: false) ?? reader.Module.AppDomain.System_Void;
+			Attributes = (DmdPropertyAttributes)row.PropFlags;
+			methodSignature = reader.ReadMethodSignature(row.Type, genericTypeArguments, null, isProperty: true);
 		}
 
-		static DmdMethodInfo GetMethod(DmdMethodInfo[] methods, uint rid) {
+		public override DmdMethodSignature GetMethodSignature() => methodSignature;
+		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
+		public override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
+
+		static new DmdMethodInfo GetMethod(DmdMethodInfo[] methods, uint rid) {
 			int token = 0x06000000 + (int)rid;
 			foreach (var method in methods) {
 				if (method.MetadataToken == token)
@@ -49,13 +51,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return null;
 		}
 
-		protected override void GetMethods(out DmdMethodInfo addMethod, out DmdMethodInfo removeMethod, out DmdMethodInfo raiseMethod, out DmdMethodInfo[] otherMethods) {
-			addMethod = null;
-			removeMethod = null;
-			raiseMethod = null;
+		protected override void GetMethods(out DmdMethodInfo getMethod, out DmdMethodInfo setMethod, out DmdMethodInfo[] otherMethods) {
+			getMethod = null;
+			setMethod = null;
 			List<DmdMethodInfo> otherMethodsList = null;
 
-			var ridList = reader.Metadata.GetMethodSemanticsRidList(Table.Event, Rid);
+			var ridList = reader.Metadata.GetMethodSemanticsRidList(Table.Property, Rid);
 			var allMethods = ReflectedType.GetMethods(DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance | DmdBindingFlags.Static);
 			for (uint i = 0; i < ridList.Length; i++) {
 				var row = reader.TablesStream.ReadMethodSemanticsRow(ridList[i]);
@@ -64,19 +65,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 					continue;
 
 				switch ((MethodSemanticsAttributes)row.Semantic) {
-				case MethodSemanticsAttributes.AddOn:
-					if ((object)addMethod == null)
-						addMethod = method;
+				case MethodSemanticsAttributes.Setter:
+					if ((object)setMethod == null)
+						setMethod = method;
 					break;
 
-				case MethodSemanticsAttributes.RemoveOn:
-					if ((object)removeMethod == null)
-						removeMethod = method;
-					break;
-
-				case MethodSemanticsAttributes.Fire:
-					if ((object)raiseMethod == null)
-						raiseMethod = method;
+				case MethodSemanticsAttributes.Getter:
+					if ((object)getMethod == null)
+						getMethod = method;
 					break;
 
 				case MethodSemanticsAttributes.Other:
@@ -89,7 +85,5 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 			otherMethods = otherMethodsList?.ToArray();
 		}
-
-		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
 	}
 }

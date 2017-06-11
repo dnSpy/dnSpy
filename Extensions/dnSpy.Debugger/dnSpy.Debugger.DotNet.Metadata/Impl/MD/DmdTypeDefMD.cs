@@ -90,7 +90,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return methods;
 		}
 
-		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
+		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			var mapRid = reader.Metadata.GetPropertyMapRid(Rid);
+			var ridList = reader.Metadata.GetPropertyRidList(mapRid);
+			if (ridList.Count == 0)
+				return Array.Empty<DmdPropertyInfo>();
+			var properties = new DmdPropertyInfo[ridList.Count];
+			for (int i = 0; i < properties.Length; i++) {
+				uint rid = ridList[i];
+				properties[i] = reader.CreatePropertyDef(rid, this, reflectedType, genericTypeArguments);
+			}
+			return properties;
+		}
 
 		public override DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments) {
 			var mapRid = reader.Metadata.GetEventMapRid(Rid);

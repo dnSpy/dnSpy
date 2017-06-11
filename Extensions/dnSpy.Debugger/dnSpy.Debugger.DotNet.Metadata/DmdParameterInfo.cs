@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
-		/// Gets the owner (the method)
+		/// Gets the owner method or property
 		/// </summary>
 		public abstract DmdMemberInfo Member { get; }
 

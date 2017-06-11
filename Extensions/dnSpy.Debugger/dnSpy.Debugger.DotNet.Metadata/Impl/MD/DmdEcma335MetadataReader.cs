@@ -66,6 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly LazyList<DmdTypeDef> typeDefList;
 		readonly LazyList<DmdMethodBase, DmdTypeDef> methodList;
 		readonly LazyList<DmdEventDef, DmdTypeDef> eventList;
+		readonly LazyList<DmdPropertyDef, DmdTypeDef> propertyList;
 		readonly LazyList2<DmdType> typeSpecList;
 		readonly LazyList<DmdTypeRef> exportedTypeList;
 		readonly DmdNullGlobalType globalTypeIfThereAreNoTypes;
@@ -91,6 +92,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			typeDefList = new LazyList<DmdTypeDef>(ts.TypeDefTable.Rows, rid => new DmdTypeDefMD(this, rid, null));
 			methodList = new LazyList<DmdMethodBase, DmdTypeDef>(ts.MethodTable.Rows, CreateResolvedMethod);
 			eventList = new LazyList<DmdEventDef, DmdTypeDef>(ts.EventTable.Rows, CreateResolvedEvent);
+			propertyList = new LazyList<DmdPropertyDef, DmdTypeDef>(ts.PropertyTable.Rows, CreateResolvedProperty);
 			typeSpecList = new LazyList2<DmdType>(ts.TypeSpecTable.Rows, ReadTypeSpec);
 			exportedTypeList = new LazyList<DmdTypeRef>(ts.ExportedTypeTable.Rows, rid => new DmdExportedTypeMD(this, rid, null));
 
@@ -168,18 +170,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return new DmdMethodDefMD(this, row, rid, name, declaringType, reflectedType, genericTypeArguments);
 		}
 
-		internal DmdMethodSignature ReadMethodSignature(uint signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		internal DmdMethodSignature ReadMethodSignature(uint signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool isProperty) {
 			lock (methodSignatureLock) {
 				(DmdMethodSignature methodSignature, bool containedGenericParams) info;
 				if (methodSignatureCache.TryGetValue(signature, out var methodSignature)) {
 					if ((object)methodSignature != null)
 						return methodSignature;
-					info = ReadMethodSignatureCore(signature, genericTypeArguments, genericMethodArguments);
+					info = ReadMethodSignatureCore(signature, genericTypeArguments, genericMethodArguments, isProperty);
 					Debug.Assert(info.containedGenericParams);
 					return info.methodSignature;
 				}
 				else {
-					info = ReadMethodSignatureCore(signature, genericTypeArguments, genericMethodArguments);
+					info = ReadMethodSignatureCore(signature, genericTypeArguments, genericMethodArguments, isProperty);
 					if (info.containedGenericParams)
 						methodSignatureCache.Add(signature, null);
 					else
@@ -189,13 +191,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 		}
 
-		(DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignatureCore(uint signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
-			DmdSignatureReader.ReadMethodSignature(module, new DmdDataStreamImpl(BlobStream.CreateStream(signature)), genericTypeArguments, genericMethodArguments, false, resolveTypes);
+		(DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignatureCore(uint signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool isProperty) =>
+			DmdSignatureReader.ReadMethodSignature(module, new DmdDataStreamImpl(BlobStream.CreateStream(signature)), genericTypeArguments, genericMethodArguments, isProperty, resolveTypes);
 
 		internal (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters(DmdMethodBase method, bool createReturnParameter) {
 			var ridList = Metadata.GetParamRidList((uint)method.MetadataToken & 0x00FFFFFF);
-			var sig = method.GetMethodSignature();
-			var sigParamTypes = sig.GetParameterTypes();
+			var methodSignature = method.GetMethodSignature();
+			var sigParamTypes = methodSignature.GetParameterTypes();
 			DmdParameterInfo returnParameter = null;
 			var parameters = sigParamTypes.Count == 0 ? Array.Empty<DmdParameterInfo>() : new DmdParameterInfo[sigParamTypes.Count];
 			for (int i = 0; i < ridList.Count; i++) {
@@ -204,7 +206,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				var name = StringsStream.Read(row.Name);
 				if (row.Sequence == 0) {
 					if (createReturnParameter && (object)returnParameter == null)
-						returnParameter = new DmdParameterDefMD(this, rid, name, (DmdParameterAttributes)row.Flags, method, -1, sig.ReturnType);
+						returnParameter = new DmdParameterDefMD(this, rid, name, (DmdParameterAttributes)row.Flags, method, -1, methodSignature.ReturnType);
 				}
 				else {
 					int paramIndex = row.Sequence - 1;
@@ -219,7 +221,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 					parameters[i] = new DmdCreatedParameterDef(method, i, sigParamTypes[i]);
 			}
 			if (createReturnParameter && (object)returnParameter == null)
-				returnParameter = new DmdCreatedParameterDef(method, -1, sig.ReturnType);
+				returnParameter = new DmdCreatedParameterDef(method, -1, methodSignature.ReturnType);
 
 			return (returnParameter, parameters);
 		}
@@ -240,6 +242,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		DmdEventDef CreateEventDefCore(uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
 			new DmdEventDefMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+
+		DmdPropertyDef CreateResolvedProperty(uint rid, DmdTypeDef declaringType) {
+			if ((object)declaringType == null)
+				declaringType = ResolveTypeDef(Metadata.GetOwnerTypeOfProperty(rid)) ?? globalTypeIfThereAreNoTypes;
+			return CreatePropertyDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+		}
+
+		internal DmdPropertyDef CreatePropertyDef(uint rid, DmdTypeDefMD declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			if ((object)declaringType == reflectedType) {
+				Debug.Assert(declaringType.GetGenericArguments() == genericTypeArguments);
+				return ResolvePropertyDef(rid, declaringType);
+			}
+			return CreatePropertyDefCore(rid, declaringType, reflectedType, genericTypeArguments);
+		}
+
+		DmdPropertyDef CreatePropertyDefCore(uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
+			new DmdPropertyDefMD(this, rid, declaringType, reflectedType, genericTypeArguments);
 
 		internal DmdType[] CreateGenericParameters(DmdMethodBase method) {
 			var ridList = Metadata.GetGenericParamRidList(Table.Method, (uint)method.MetadataToken & 0x00FFFFFF);
@@ -298,7 +317,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		protected override DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
 		protected override DmdEventDef ResolveEventDef(uint rid) => eventList[rid - 1, null];
 		DmdEventDef ResolveEventDef(uint rid, DmdTypeDef declaringType) => eventList[rid - 1, declaringType];
-		protected override DmdPropertyInfo ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdPropertyDef ResolvePropertyDef(uint rid) => propertyList[rid - 1, null];
+		DmdPropertyDef ResolvePropertyDef(uint rid, DmdTypeDef declaringType) => propertyList[rid - 1, declaringType];
 		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => typeSpecList[rid - 1, genericTypeArguments];
 		protected override DmdTypeRef ResolveExportedType(uint rid) => exportedTypeList[rid - 1];
 		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => throw new NotImplementedException();//TODO:

@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			MethodImplementationFlags = (DmdMethodImplAttributes)row.ImplFlags;
 			Attributes = (DmdMethodAttributes)row.Flags;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
-			methodSignature = reader.ReadMethodSignature(row.Signature, genericTypeArguments, GetGenericArguments());
+			methodSignature = reader.ReadMethodSignature(row.Signature, genericTypeArguments, GetGenericArguments(), isProperty: false);
 		}
 
 		protected override DmdType[] CreateGenericParameters() => reader.CreateGenericParameters(this);
