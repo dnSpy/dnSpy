@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			public int GetHashCode(TypeName obj) => StringComparer.Ordinal.GetHashCode(obj.Namespace) ^ StringComparer.Ordinal.GetHashCode(obj.Name);
 		}
 
-		const int WELL_KNOWN_NONNESTED_TYPES_COUNT = 253;
+		const int WELL_KNOWN_NONNESTED_TYPES_COUNT = 263;
 		const int WELL_KNOWN_NESTED_TYPES_COUNT = 2;
 		const int WELL_KNOWN_TYPES_COUNT = WELL_KNOWN_NONNESTED_TYPES_COUNT + WELL_KNOWN_NESTED_TYPES_COUNT;
 		static readonly Dictionary<TypeName, DmdWellKnownType> toNonNestedWellKnownType = new Dictionary<TypeName, DmdWellKnownType>(WELL_KNOWN_NONNESTED_TYPES_COUNT, TypeNameEqualityComparer.Instance) {
@@ -296,6 +296,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			{ new TypeName("System.Runtime.CompilerServices", "TupleElementNamesAttribute"), DmdWellKnownType.System_Runtime_CompilerServices_TupleElementNamesAttribute },
 			{ new TypeName("Microsoft.CodeAnalysis.Runtime", "Instrumentation"), DmdWellKnownType.Microsoft_CodeAnalysis_Runtime_Instrumentation },
 			{ new TypeName("System", "ContextBoundObject"), DmdWellKnownType.System_ContextBoundObject },
+			{ new TypeName("System.Runtime.CompilerServices", "TypeForwardedToAttribute"), DmdWellKnownType.System_Runtime_CompilerServices_TypeForwardedToAttribute },
+			{ new TypeName("System.Runtime.InteropServices", "ComImportAttribute"), DmdWellKnownType.System_Runtime_InteropServices_ComImportAttribute },
+			{ new TypeName("System.Runtime.InteropServices", "DllImportAttribute"), DmdWellKnownType.System_Runtime_InteropServices_DllImportAttribute },
+			{ new TypeName("System.Runtime.InteropServices", "FieldOffsetAttribute"), DmdWellKnownType.System_Runtime_InteropServices_FieldOffsetAttribute },
+			{ new TypeName("System.Runtime.InteropServices", "InAttribute"), DmdWellKnownType.System_Runtime_InteropServices_InAttribute },
+			{ new TypeName("System.Runtime.InteropServices", "MarshalAsAttribute"), DmdWellKnownType.System_Runtime_InteropServices_MarshalAsAttribute },
+			{ new TypeName("System.Runtime.InteropServices", "OptionalAttribute"), DmdWellKnownType.System_Runtime_InteropServices_OptionalAttribute },
+			{ new TypeName("System.Runtime.InteropServices", "OutAttribute"), DmdWellKnownType.System_Runtime_InteropServices_OutAttribute },
+			{ new TypeName("System.Runtime.InteropServices", "PreserveSigAttribute"), DmdWellKnownType.System_Runtime_InteropServices_PreserveSigAttribute },
+			{ new TypeName("System", "SerializableAttribute"), DmdWellKnownType.System_SerializableAttribute },
 		};
 		static readonly Dictionary<string, DmdWellKnownType> toNestedWellKnownType = new Dictionary<string, DmdWellKnownType>(WELL_KNOWN_NESTED_TYPES_COUNT, StringComparer.Ordinal) {
 			{ "ForLoopControl", DmdWellKnownType.Microsoft_VisualBasic_CompilerServices_ObjectFlowControl_ForLoopControl },

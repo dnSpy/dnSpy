@@ -287,6 +287,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		System_ContextBoundObject,
 
+		System_Runtime_CompilerServices_TypeForwardedToAttribute,
+		System_Runtime_InteropServices_ComImportAttribute,
+		System_Runtime_InteropServices_DllImportAttribute,
+		System_Runtime_InteropServices_FieldOffsetAttribute,
+		System_Runtime_InteropServices_InAttribute,
+		System_Runtime_InteropServices_MarshalAsAttribute,
+		System_Runtime_InteropServices_OptionalAttribute,
+		System_Runtime_InteropServices_OutAttribute,
+		System_Runtime_InteropServices_PreserveSigAttribute,
+		System_SerializableAttribute,
+
 		// When adding more types, update WellKnownMemberResolver
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
