@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdModuleImpl : DmdModule {
@@ -50,7 +51,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdType[] GetTypes() => metadataReader.GetTypes();
 		public override DmdType[] GetExportedTypes() => metadataReader.GetExportedTypes();
-		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
 		public override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) => metadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
 		public override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) => metadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
 		public override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) => metadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
@@ -59,5 +59,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string ResolveString(int metadataToken) => metadataReader.ResolveString(metadataToken);
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => metadataReader.GetPEKind(out peKind, out machine);
 		public override DmdType GetType(string className, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
+
+		public override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+			if (customAttributes != null)
+				return customAttributes;
+			lock (LockObject) {
+				if (customAttributes != null)
+					return customAttributes;
+				var cas = metadataReader.ReadCustomAttributes(0x00000001);
+				customAttributes = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas);
+				return customAttributes;
+			}
+		}
+		ReadOnlyCollection<DmdCustomAttributeData> customAttributes;
 	}
 }

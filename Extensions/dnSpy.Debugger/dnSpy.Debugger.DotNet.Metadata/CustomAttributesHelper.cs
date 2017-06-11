@@ -171,5 +171,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			return customAttributes.Length == 0 ? emptyCustomAttributeCollection : new ReadOnlyCollection<DmdCustomAttributeData>(customAttributes);
 		}
+
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdModule module, DmdCustomAttributeData[] customAttributes) =>
+			customAttributes == null || customAttributes.Length == 0 ? emptyCustomAttributeCollection : new ReadOnlyCollection<DmdCustomAttributeData>(customAttributes);
 	}
 }
