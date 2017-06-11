@@ -60,5 +60,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => throw new NotImplementedException();//TODO:
 		public override DmdAssemblyName GetName() => throw new NotImplementedException();//TODO:
 		public override DmdAssemblyName[] GetReferencedAssemblies() => throw new NotImplementedException();//TODO:
+		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdCustomAttributeData[] ReadModuleCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdCustomAttributeData[] ReadTypeDefCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdCustomAttributeData[] ReadFieldCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdCustomAttributeData[] ReadMethodCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdCustomAttributeData[] ReadEventCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdCustomAttributeData[] ReadPropertyCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
 	}
 }

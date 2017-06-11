@@ -222,5 +222,47 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			asmName.Flags = (DmdAssemblyNameFlags)row.Flags;
 			return asmName;
 		}
+
+		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Assembly, rid);
+		protected override DmdCustomAttributeData[] ReadModuleCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Module, rid);
+		protected override DmdCustomAttributeData[] ReadTypeDefCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.TypeDef, rid);
+		protected override DmdCustomAttributeData[] ReadFieldCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Field, rid);
+		protected override DmdCustomAttributeData[] ReadMethodCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Method, rid);
+		protected override DmdCustomAttributeData[] ReadEventCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Event, rid);
+		protected override DmdCustomAttributeData[] ReadPropertyCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Property, rid);
+
+		DmdCustomAttributeData[] ReadCustomAttributesCore(Table table, uint rid) {
+			var ridList = Metadata.GetCustomAttributeRidList(table, rid);
+			if (ridList.Count == 0)
+				return Array.Empty<DmdCustomAttributeData>();
+
+			var res = new DmdCustomAttributeData[ridList.Count];
+			int w = 0;
+			for (int i = 0; i < ridList.Count; i++) {
+				var row = TablesStream.ReadCustomAttributeRow(ridList[i]);
+				if (row == null)
+					continue;
+
+				var ctor = ResolveCustomAttributeType(row.Type, null);
+				if ((object)ctor == null)
+					continue;
+
+				var stream = new DmdDataStreamImpl(BlobStream.CreateStream(row.Value));
+				var ca = DmdCustomAttributeReader.Read(module, stream, ctor);
+				if (ca == null)
+					continue;
+
+				res[w++] = ca;
+			}
+			if (res.Length != w)
+				Array.Resize(ref res, w);
+			return res;
+		}
+
+		DmdConstructorInfo ResolveCustomAttributeType(uint caType, IList<DmdType> genericTypeArguments) {
+			if (!CodedToken.CustomAttributeType.Decode(caType, out uint ctorToken))
+				return null;
+			return ResolveMethod((int)ctorToken, genericTypeArguments, null, throwOnError: false)?.ResolveMemberNoThrow() as DmdConstructorInfo;
+		}
 	}
 }

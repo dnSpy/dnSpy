@@ -69,5 +69,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => MetadataReader.GetPEKind(out peKind, out machine);
 		public override DmdAssemblyName GetName() => MetadataReader.GetName();
 		public override DmdAssemblyName[] GetReferencedAssemblies() => MetadataReader.GetReferencedAssemblies();
+		public override DmdCustomAttributeData[] ReadCustomAttributes(int metadataToken) => MetadataReader.ReadCustomAttributes(metadataToken);
 	}
 }

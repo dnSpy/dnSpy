@@ -100,5 +100,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 			return res;
 		}
+
+		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
 	}
 }

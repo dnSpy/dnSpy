@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 
@@ -56,15 +57,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Constructor
 		/// </summary>
 		/// <param name="constructor">Custom attribute constructor</param>
-		/// <param name="constructorArguments">Constructor arguments</param>
-		/// <param name="namedArguments">Custom attribute named arguments (fields and properties)</param>
+		/// <param name="constructorArguments">Constructor arguments or null</param>
+		/// <param name="namedArguments">Custom attribute named arguments (fields and properties) or null</param>
 		/// <param name="isPseudoCustomAttribute">true if this custom attribute was not part of the #Blob but created from some other info</param>
 		public DmdCustomAttributeData(DmdConstructorInfo constructor, IList<DmdCustomAttributeTypedArgument> constructorArguments, IList<DmdCustomAttributeNamedArgument> namedArguments, bool isPseudoCustomAttribute) {
 			Constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
-			ConstructorArguments = constructorArguments ?? throw new ArgumentNullException(nameof(constructorArguments));
-			NamedArguments = namedArguments ?? throw new ArgumentNullException(nameof(namedArguments));
+			ConstructorArguments = constructorArguments == null || constructorArguments.Count == 0 ? emptyTypedArgsCollection : constructorArguments as ReadOnlyCollection<DmdCustomAttributeTypedArgument> ?? new ReadOnlyCollection<DmdCustomAttributeTypedArgument>(constructorArguments);
+			NamedArguments = namedArguments == null || namedArguments.Count == 0 ? emptyNamedArgsCollection : namedArguments as ReadOnlyCollection<DmdCustomAttributeNamedArgument> ?? new ReadOnlyCollection<DmdCustomAttributeNamedArgument>(namedArguments);
 			IsPseudoCustomAttribute = isPseudoCustomAttribute;
 		}
+		static readonly ReadOnlyCollection<DmdCustomAttributeTypedArgument> emptyTypedArgsCollection = new ReadOnlyCollection<DmdCustomAttributeTypedArgument>(Array.Empty<DmdCustomAttributeTypedArgument>());
+		static readonly ReadOnlyCollection<DmdCustomAttributeNamedArgument> emptyNamedArgsCollection = new ReadOnlyCollection<DmdCustomAttributeNamedArgument>(Array.Empty<DmdCustomAttributeNamedArgument>());
 	}
 
 	/// <summary>

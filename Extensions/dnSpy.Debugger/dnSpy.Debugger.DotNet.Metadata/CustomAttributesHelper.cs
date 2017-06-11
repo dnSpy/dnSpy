@@ -17,10 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	static class CustomAttributesHelper {
+		static readonly ReadOnlyCollection<DmdCustomAttributeData> emptyCustomAttributeCollection = new ReadOnlyCollection<DmdCustomAttributeData>(Array.Empty<DmdCustomAttributeData>());
+
 		public static bool IsDefined(IList<DmdCustomAttributeData> customAttributes, string attributeTypeFullName) {
 			for (int i = 0; i < customAttributes.Count; i++) {
 				if (customAttributes[i].AttributeType.FullName == attributeTypeFullName)
@@ -99,6 +103,64 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					break;
 			}
 			return false;
+		}
+
+		struct SerializableAttributeInfo {
+			public int Count => (object)ctor != null ? 1 : 0;
+			readonly DmdConstructorInfo ctor;
+
+			public SerializableAttributeInfo(DmdType type) {
+				if ((type.Attributes & DmdTypeAttributes.Serializable) != 0) {
+					var caType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_SerializableAttribute, isOptional: true);
+					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
+				}
+				else
+					ctor = null;
+			}
+
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) =>
+				destination[index++] = new DmdCustomAttributeData(ctor, null, null, isPseudoCustomAttribute: true);
+		}
+
+		struct ComImportAttributeInfo {
+			public int Count => (object)ctor != null ? 1 : 0;
+			readonly DmdConstructorInfo ctor;
+
+			public ComImportAttributeInfo(DmdType type) {
+				if ((type.Attributes & DmdTypeAttributes.Import) != 0) {
+					var caType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_ComImportAttribute, isOptional: true);
+					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
+				}
+				else
+					ctor = null;
+			}
+
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) =>
+				destination[index++] = new DmdCustomAttributeData(ctor, null, null, isPseudoCustomAttribute: true);
+		}
+
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdType type, DmdCustomAttributeData[] customAttributes) {
+			if (customAttributes == null)
+				customAttributes = Array.Empty<DmdCustomAttributeData>();
+
+			var serializableAttributeInfo = new SerializableAttributeInfo(type);
+			var comImportAttributeInfo = new ComImportAttributeInfo(type);
+
+			//TODO: security attributes
+
+			int pseudoCount = serializableAttributeInfo.Count + comImportAttributeInfo.Count;
+			if (pseudoCount != 0) {
+				var cas = new DmdCustomAttributeData[pseudoCount + customAttributes.Length];
+				int index = 0;
+				serializableAttributeInfo.CopyTo(cas, ref index);
+				comImportAttributeInfo.CopyTo(cas, ref index);
+				if (pseudoCount != index)
+					throw new InvalidOperationException();
+				Array.Copy(customAttributes, 0, cas, pseudoCount, customAttributes.Length);
+				customAttributes = cas;
+			}
+
+			return customAttributes.Length == 0 ? emptyCustomAttributeCollection : new ReadOnlyCollection<DmdCustomAttributeData>(customAttributes);
 		}
 	}
 }

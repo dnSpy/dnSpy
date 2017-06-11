@@ -418,7 +418,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override string[] GetEnumNames() => throw new NotImplementedException();//TODO:
-		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
+
+		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+			var f = ExtraFields;
+			if (f.__customAttributes_DONT_USE != null)
+				return f.__customAttributes_DONT_USE;
+			lock (LockObject) {
+				if (f.__customAttributes_DONT_USE != null)
+					return f.__customAttributes_DONT_USE;
+				var res = CreateCustomAttributes();
+				f.__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, res);
+				return f.__customAttributes_DONT_USE;
+			}
+		}
+		protected virtual DmdCustomAttributeData[] CreateCustomAttributes() => null;
 
 		protected virtual DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => null;
 		protected virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => null;
@@ -545,6 +558,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			public DmdMemberReader<DmdMethodBase> __baseMethods_DONT_USE;
 			public DmdMemberReader<DmdPropertyInfo> __baseProperties_DONT_USE;
 			public DmdMemberReader<DmdEventInfo> __baseEvents_DONT_USE;
+
+			public ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
 		}
 
 		sealed class DmdMemberReader<T> where T : DmdMemberInfo {

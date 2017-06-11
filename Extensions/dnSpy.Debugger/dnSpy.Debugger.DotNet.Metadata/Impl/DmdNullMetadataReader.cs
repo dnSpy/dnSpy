@@ -56,5 +56,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		public override DmdAssemblyName GetName() => new DmdAssemblyName("NullAssembly");
 		public override DmdAssemblyName[] GetReferencedAssemblies() => Array.Empty<DmdAssemblyName>();
+		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
+		protected override DmdCustomAttributeData[] ReadModuleCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
+		protected override DmdCustomAttributeData[] ReadTypeDefCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
+		protected override DmdCustomAttributeData[] ReadFieldCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
+		protected override DmdCustomAttributeData[] ReadMethodCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
+		protected override DmdCustomAttributeData[] ReadEventCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
+		protected override DmdCustomAttributeData[] ReadPropertyCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
 	}
 }

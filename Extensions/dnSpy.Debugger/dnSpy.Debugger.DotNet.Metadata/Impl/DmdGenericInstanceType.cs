@@ -102,5 +102,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal IList<DmdType> ReadDeclaredInterfaces2() => genericTypeDefinition.ReadDeclaredInterfaces(typeArguments);
 		protected override DmdType[] CreateNestedTypes() => CreateNestedTypes2();
 		internal DmdType[] CreateNestedTypes2() => genericTypeDefinition.CreateNestedTypes2();
+
+		protected override DmdCustomAttributeData[] CreateCustomAttributes() => CreateCustomAttributes2();
+		internal DmdCustomAttributeData[] CreateCustomAttributes2() => genericTypeDefinition.CreateCustomAttributes2();
 	}
 }

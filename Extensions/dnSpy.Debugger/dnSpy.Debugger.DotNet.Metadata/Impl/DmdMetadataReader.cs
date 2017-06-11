@@ -38,5 +38,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine);
 		public abstract DmdAssemblyName GetName();
 		public abstract DmdAssemblyName[] GetReferencedAssemblies();
+		public abstract DmdCustomAttributeData[] ReadCustomAttributes(int metadataToken);
 	}
 }

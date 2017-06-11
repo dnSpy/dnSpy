@@ -115,17 +115,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					list.Add(type);
 			}
 			foreach (var type in metadataReader.GetExportedTypes()) {
-				if (IsNotTypeForwarder(type))
+				if (!IsTypeForwarder(type))
 					list.Add(type);
 			}
 			return list.ToArray();
 		}
 
-		static bool IsNotTypeForwarder(DmdType type) {
+		static bool IsTypeForwarder(DmdType type) {
 			var nonNested = DmdTypeUtilities.GetNonNestedType(type);
 			if ((object)nonNested == null)
 				return false;
-			return nonNested.TypeScope.Kind == DmdTypeScopeKind.ModuleRef;
+			return nonNested.TypeScope.Kind == DmdTypeScopeKind.AssemblyRef;
 		}
 
 		public override DmdAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
