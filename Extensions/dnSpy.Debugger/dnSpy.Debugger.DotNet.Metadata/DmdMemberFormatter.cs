@@ -373,7 +373,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					// No whitespace is added
 					writer.Append(',');
 				}
-				Write(genericArguments[i], flags);
+				Write(genericArguments[i], flags & ~TypeFlags.ShortSpecialNames);
 			}
 			writer.Append(']');
 		}
