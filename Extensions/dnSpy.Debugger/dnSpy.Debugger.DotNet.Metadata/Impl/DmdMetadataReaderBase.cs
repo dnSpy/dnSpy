@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdFieldDef ResolveFieldDef(uint rid);
 		protected abstract DmdMethodBase ResolveMethodDef(uint rid);
 		protected abstract DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments);
-		protected abstract DmdEventInfo ResolveEventDef(uint rid);
+		protected abstract DmdEventDef ResolveEventDef(uint rid);
 		protected abstract DmdPropertyInfo ResolvePropertyDef(uint rid);
 		protected abstract DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments);
 		protected abstract DmdTypeRef ResolveExportedType(uint rid);

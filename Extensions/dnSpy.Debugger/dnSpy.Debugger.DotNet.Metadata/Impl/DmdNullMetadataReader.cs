@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected override DmdFieldDef ResolveFieldDef(uint rid) => null;
 		protected override DmdMethodBase ResolveMethodDef(uint rid) => null;
 		protected override DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments) => null;
-		protected override DmdEventInfo ResolveEventDef(uint rid) => null;
+		protected override DmdEventDef ResolveEventDef(uint rid) => null;
 		protected override DmdPropertyInfo ResolvePropertyDef(uint rid) => null;
 		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => null;
 		protected override DmdTypeRef ResolveExportedType(uint rid) => null;

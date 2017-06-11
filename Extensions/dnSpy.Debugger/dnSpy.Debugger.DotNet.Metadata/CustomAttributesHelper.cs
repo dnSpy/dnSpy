@@ -474,6 +474,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return ReadOnlyCollectionHelpers.Create(customAttributes);
 		}
 
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdPropertyInfo property, DmdCustomAttributeData[] customAttributes) =>
+			ReadOnlyCollectionHelpers.Create(customAttributes);
+
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdEventInfo @event, DmdCustomAttributeData[] customAttributes) =>
+			ReadOnlyCollectionHelpers.Create(customAttributes);
+
 		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdParameterInfo parameter, DmdCustomAttributeData[] customAttributes) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();

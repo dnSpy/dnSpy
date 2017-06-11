@@ -69,6 +69,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public sealed override DmdMemberInfo ResolveMember(bool throwOnError) => this;
 
 		/// <summary>
+		/// Returns false since there are no property references
+		/// </summary>
+		public sealed override bool IsMetadataReference => false;
+
+		/// <summary>
 		/// Gets the constant stored in metadata
 		/// </summary>
 		/// <returns></returns>

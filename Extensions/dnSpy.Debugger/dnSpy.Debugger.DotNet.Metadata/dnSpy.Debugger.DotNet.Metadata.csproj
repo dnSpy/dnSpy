@@ -111,6 +111,7 @@
     <Compile Include="Impl\DmdCreatedParameterDef.cs" />
     <Compile Include="Impl\DmdCustomAttributeReader.cs" />
     <Compile Include="Impl\DmdDataStream.cs" />
+    <Compile Include="Impl\DmdEventDef.cs" />
     <Compile Include="Impl\DmdFieldDef.cs" />
     <Compile Include="Impl\DmdFieldInfoBase.cs" />
     <Compile Include="Impl\DmdFunctionPointerType.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Impl\MD\DmdConstructorDefMD.cs" />
     <Compile Include="Impl\MD\DmdDataStreamImpl.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
+    <Compile Include="Impl\MD\DmdEventDefMD.cs" />
     <Compile Include="Impl\MD\DmdExportedTypeMD.cs" />
     <Compile Include="Impl\MD\DmdFieldDefMD.cs" />
     <Compile Include="Impl\MD\DmdGenericParameterTypeMD.cs" />

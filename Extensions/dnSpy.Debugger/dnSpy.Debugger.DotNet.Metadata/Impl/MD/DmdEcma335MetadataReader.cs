@@ -65,6 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly LazyList<DmdFieldDef, DmdTypeDef> fieldList;
 		readonly LazyList<DmdTypeDef> typeDefList;
 		readonly LazyList<DmdMethodBase, DmdTypeDef> methodList;
+		readonly LazyList<DmdEventDef, DmdTypeDef> eventList;
 		readonly LazyList2<DmdType> typeSpecList;
 		readonly LazyList<DmdTypeRef> exportedTypeList;
 		readonly DmdNullGlobalType globalTypeIfThereAreNoTypes;
@@ -89,6 +90,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			fieldList = new LazyList<DmdFieldDef, DmdTypeDef>(ts.FieldTable.Rows, CreateResolvedField);
 			typeDefList = new LazyList<DmdTypeDef>(ts.TypeDefTable.Rows, rid => new DmdTypeDefMD(this, rid, null));
 			methodList = new LazyList<DmdMethodBase, DmdTypeDef>(ts.MethodTable.Rows, CreateResolvedMethod);
+			eventList = new LazyList<DmdEventDef, DmdTypeDef>(ts.EventTable.Rows, CreateResolvedEvent);
 			typeSpecList = new LazyList2<DmdType>(ts.TypeSpecTable.Rows, ReadTypeSpec);
 			exportedTypeList = new LazyList<DmdTypeRef>(ts.ExportedTypeTable.Rows, rid => new DmdExportedTypeMD(this, rid, null));
 
@@ -222,6 +224,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return (returnParameter, parameters);
 		}
 
+		DmdEventDef CreateResolvedEvent(uint rid, DmdTypeDef declaringType) {
+			if ((object)declaringType == null)
+				declaringType = ResolveTypeDef(Metadata.GetOwnerTypeOfEvent(rid)) ?? globalTypeIfThereAreNoTypes;
+			return CreateEventDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+		}
+
+		internal DmdEventDef CreateEventDef(uint rid, DmdTypeDefMD declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			if ((object)declaringType == reflectedType) {
+				Debug.Assert(declaringType.GetGenericArguments() == genericTypeArguments);
+				return ResolveEventDef(rid, declaringType);
+			}
+			return CreateEventDefCore(rid, declaringType, reflectedType, genericTypeArguments);
+		}
+
+		DmdEventDef CreateEventDefCore(uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
+			new DmdEventDefMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+
 		internal DmdType[] CreateGenericParameters(DmdMethodBase method) {
 			var ridList = Metadata.GetGenericParamRidList(Table.Method, (uint)method.MetadataToken & 0x00FFFFFF);
 			if (ridList.Count == 0)
@@ -277,7 +296,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		protected override DmdMethodBase ResolveMethodDef(uint rid) => methodList[rid - 1, null];
 		DmdMethodBase ResolveMethodDef(uint rid, DmdTypeDef declaringType) => methodList[rid - 1, declaringType];
 		protected override DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
-		protected override DmdEventInfo ResolveEventDef(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdEventDef ResolveEventDef(uint rid) => eventList[rid - 1, null];
+		DmdEventDef ResolveEventDef(uint rid, DmdTypeDef declaringType) => eventList[rid - 1, declaringType];
 		protected override DmdPropertyInfo ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => typeSpecList[rid - 1, genericTypeArguments];
 		protected override DmdTypeRef ResolveExportedType(uint rid) => exportedTypeList[rid - 1];
