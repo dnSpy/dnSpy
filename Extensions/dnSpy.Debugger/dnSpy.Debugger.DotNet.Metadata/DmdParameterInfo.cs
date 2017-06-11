@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public abstract bool IsDefined(string attributeTypeFullName, bool inherit);
+		public bool IsDefined(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeTypeFullName);
 
 		/// <summary>
 		/// Checks if a custom attribute is present
@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public abstract bool IsDefined(DmdType attributeType, bool inherit);
+		public bool IsDefined(DmdType attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeType);
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdParameterInfo left, DmdParameterInfo right) => DmdMemberInfoEqualityComparer.Default.Equals(left, right);

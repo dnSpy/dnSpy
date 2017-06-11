@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			int numNamedArgs = reader.Position == reader.Length ? 0 : reader.ReadUInt16();
 			var namedArgs = ReadNamedArguments(numNamedArgs);
 
-			return new DmdCustomAttributeData(ctor, new ReadOnlyCollection<DmdCustomAttributeTypedArgument>(ctorArgs), new ReadOnlyCollection<DmdCustomAttributeNamedArgument>(namedArgs));
+			return new DmdCustomAttributeData(ctor, new ReadOnlyCollection<DmdCustomAttributeTypedArgument>(ctorArgs), new ReadOnlyCollection<DmdCustomAttributeNamedArgument>(namedArgs), isPseudoCustomAttribute: false);
 		}
 
 		DmdCustomAttributeNamedArgument[] ReadNamedArguments(int numNamedArgs) {

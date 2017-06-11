@@ -128,6 +128,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public abstract DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments);
 
+		/// <summary>
+		/// Checks if a custom attribute is present
+		/// </summary>
+		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		public sealed override bool IsDefined(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.IsDefined(this, attributeTypeFullName, inherit);
+
+		/// <summary>
+		/// Checks if a custom attribute is present
+		/// </summary>
+		/// <param name="attributeType">Custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		public sealed override bool IsDefined(DmdType attributeType, bool inherit) => CustomAttributesHelper.IsDefined(this, attributeType, inherit);
+
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdMethodInfo left, DmdMethodInfo right) => DmdMemberInfoEqualityComparer.Default.Equals(left, right);
 		public static bool operator !=(DmdMethodInfo left, DmdMethodInfo right) => !DmdMemberInfoEqualityComparer.Default.Equals(left, right);

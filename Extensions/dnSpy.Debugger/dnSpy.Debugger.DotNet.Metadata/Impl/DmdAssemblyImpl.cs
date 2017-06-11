@@ -132,7 +132,5 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal DmdType GetType(DmdType typeRef) => appDomain.TryLookup(this, typeRef);
 		public override DmdType GetType(string name, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
-		public override bool IsDefined(string attributeTypeFullName, bool inherit) => throw new NotImplementedException();//TODO:
-		public override bool IsDefined(DmdType attributeType, bool inherit) => throw new NotImplementedException();//TODO:
 	}
 }

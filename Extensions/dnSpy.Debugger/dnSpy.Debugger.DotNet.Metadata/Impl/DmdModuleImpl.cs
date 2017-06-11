@@ -51,8 +51,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType[] GetTypes() => metadataReader.GetTypes();
 		public override DmdType[] GetExportedTypes() => metadataReader.GetExportedTypes();
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
-		public override bool IsDefined(string attributeTypeFullName, bool inherit) => throw new NotImplementedException();//TODO:
-		public override bool IsDefined(DmdType attributeType, bool inherit) => throw new NotImplementedException();//TODO:
 		public override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) => metadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
 		public override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) => metadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);
 		public override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) => metadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, throwOnError);

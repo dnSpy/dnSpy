@@ -48,15 +48,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public IList<DmdCustomAttributeNamedArgument> NamedArguments { get; }
 
 		/// <summary>
+		/// true if this custom attribute was not part of the #Blob but created from some other info
+		/// </summary>
+		public bool IsPseudoCustomAttribute { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="constructor">Custom attribute constructor</param>
 		/// <param name="constructorArguments">Constructor arguments</param>
 		/// <param name="namedArguments">Custom attribute named arguments (fields and properties)</param>
-		public DmdCustomAttributeData(DmdConstructorInfo constructor, IList<DmdCustomAttributeTypedArgument> constructorArguments, IList<DmdCustomAttributeNamedArgument> namedArguments) {
+		/// <param name="isPseudoCustomAttribute">true if this custom attribute was not part of the #Blob but created from some other info</param>
+		public DmdCustomAttributeData(DmdConstructorInfo constructor, IList<DmdCustomAttributeTypedArgument> constructorArguments, IList<DmdCustomAttributeNamedArgument> namedArguments, bool isPseudoCustomAttribute) {
 			Constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
 			ConstructorArguments = constructorArguments ?? throw new ArgumentNullException(nameof(constructorArguments));
 			NamedArguments = namedArguments ?? throw new ArgumentNullException(nameof(namedArguments));
+			IsPseudoCustomAttribute = isPseudoCustomAttribute;
 		}
 	}
 

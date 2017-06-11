@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ArrayExtensions.cs" />
     <Compile Include="AssemblyHasher.cs" />
+    <Compile Include="CustomAttributesHelper.cs" />
     <Compile Include="DmdAppDomain.cs" />
     <Compile Include="DmdAppDomainController.cs" />
     <Compile Include="DmdAssembly.cs" />

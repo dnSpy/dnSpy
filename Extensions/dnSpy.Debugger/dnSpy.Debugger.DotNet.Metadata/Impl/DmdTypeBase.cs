@@ -419,8 +419,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override string[] GetEnumNames() => throw new NotImplementedException();//TODO:
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() => throw new NotImplementedException();//TODO:
-		public sealed override bool IsDefined(string attributeTypeFullName, bool inherit) => throw new NotImplementedException();//TODO:
-		public sealed override bool IsDefined(DmdType attributeType, bool inherit) => throw new NotImplementedException();//TODO:
 
 		protected virtual DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => null;
 		protected virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => null;
