@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	static class CustomAttributesHelper {
@@ -113,13 +114,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if ((type.Attributes & DmdTypeAttributes.Serializable) != 0) {
 					var caType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_SerializableAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
+					Debug.Assert((object)caType == null || (object)ctor != null);
 				}
 				else
 					ctor = null;
 			}
 
-			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) =>
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
+				if (Count == 0)
+					return;
 				destination[index++] = new DmdCustomAttributeData(ctor, null, null, isPseudoCustomAttribute: true);
+			}
 		}
 
 		struct ComImportAttributeInfo {
@@ -130,13 +135,77 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if ((type.Attributes & DmdTypeAttributes.Import) != 0) {
 					var caType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_ComImportAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
+					Debug.Assert((object)caType == null || (object)ctor != null);
 				}
 				else
 					ctor = null;
 			}
 
-			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) =>
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
+				if (Count == 0)
+					return;
 				destination[index++] = new DmdCustomAttributeData(ctor, null, null, isPseudoCustomAttribute: true);
+			}
+		}
+
+		struct MarshalAsAttributeInfo {
+			public int Count => (object)ctor != null ? 1 : 0;
+			readonly DmdConstructorInfo ctor;
+
+			public MarshalAsAttributeInfo(DmdFieldInfo field) => ctor = null;//TODO:
+
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
+				if (Count == 0)
+					return;
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		struct FieldOffsetAttributeInfo {
+			public int Count => (object)ctor != null ? 1 : 0;
+			readonly DmdConstructorInfo ctor;
+			readonly int offset;
+
+			public FieldOffsetAttributeInfo(DmdFieldInfo field, uint? offset) {
+				if (offset != null) {
+					this.offset = (int)offset.Value;
+					var caType = field.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_FieldOffsetAttribute, isOptional: true);
+					ctor = caType?.GetConstructor(new[] { field.AppDomain.System_Int32 });
+					Debug.Assert((object)caType == null || (object)ctor != null);
+				}
+				else {
+					ctor = null;
+					this.offset = 0;
+				}
+			}
+
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
+				if (Count == 0)
+					return;
+				var ctorArgs = new[] { new DmdCustomAttributeTypedArgument(ctor.AppDomain.System_Int32, offset) };
+				destination[index++] = new DmdCustomAttributeData(ctor, ctorArgs, null, isPseudoCustomAttribute: true);
+			}
+		}
+
+		struct NonSerializedAttributeInfo {
+			public int Count => (object)ctor != null ? 1 : 0;
+			readonly DmdConstructorInfo ctor;
+
+			public NonSerializedAttributeInfo(DmdFieldInfo field) {
+				if ((field.Attributes & DmdFieldAttributes.NotSerialized) != 0) {
+					var caType = field.AppDomain.GetWellKnownType(DmdWellKnownType.System_NonSerializedAttribute, isOptional: true);
+					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
+					Debug.Assert((object)caType == null || (object)ctor != null);
+				}
+				else
+					ctor = null;
+			}
+
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
+				if (Count == 0)
+					return;
+				destination[index++] = new DmdCustomAttributeData(ctor, null, null, isPseudoCustomAttribute: true);
+			}
 		}
 
 		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdType type, DmdCustomAttributeData[] customAttributes) {
@@ -154,6 +223,30 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				int index = 0;
 				serializableAttributeInfo.CopyTo(cas, ref index);
 				comImportAttributeInfo.CopyTo(cas, ref index);
+				if (pseudoCount != index)
+					throw new InvalidOperationException();
+				Array.Copy(customAttributes, 0, cas, pseudoCount, customAttributes.Length);
+				customAttributes = cas;
+			}
+
+			return customAttributes.Length == 0 ? emptyCustomAttributeCollection : new ReadOnlyCollection<DmdCustomAttributeData>(customAttributes);
+		}
+
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdFieldInfo field, DmdCustomAttributeData[] customAttributes, uint? fieldOffset) {
+			if (customAttributes == null)
+				customAttributes = Array.Empty<DmdCustomAttributeData>();
+
+			var marshalAsAttributeInfo = new MarshalAsAttributeInfo(field);
+			var fieldOffsetAttributeInfo = new FieldOffsetAttributeInfo(field, fieldOffset);
+			var nonSerializedAttributeInfo = new NonSerializedAttributeInfo(field);
+
+			int pseudoCount = marshalAsAttributeInfo.Count + fieldOffsetAttributeInfo.Count + nonSerializedAttributeInfo.Count;
+			if (pseudoCount != 0) {
+				var cas = new DmdCustomAttributeData[pseudoCount + customAttributes.Length];
+				int index = 0;
+				marshalAsAttributeInfo.CopyTo(cas, ref index);
+				fieldOffsetAttributeInfo.CopyTo(cas, ref index);
+				nonSerializedAttributeInfo.CopyTo(cas, ref index);
 				if (pseudoCount != index)
 					throw new InvalidOperationException();
 				Array.Copy(customAttributes, 0, cas, pseudoCount, customAttributes.Length);

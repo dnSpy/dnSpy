@@ -28,14 +28,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string ImageRuntimeVersion => string.Empty;
 		public override DmdMethodInfo EntryPoint => null;
 
-		readonly DmdType globalType;
+		readonly DmdTypeDef globalType;
 		public DmdNullMetadataReader(DmdModule module) => globalType = new DmdNullGlobalType(module, null);
 
 		public override DmdType[] GetTypes() => new[] { globalType };
 		public override DmdType[] GetExportedTypes() => Array.Empty<DmdType>();
-		protected override DmdType ResolveTypeRef(uint rid) => null;
-		protected override DmdType ResolveTypeDef(uint rid) => rid == 1 ? globalType : null;
-		protected override DmdFieldInfo ResolveFieldDef(uint rid) => null;
+		protected override DmdTypeRef ResolveTypeRef(uint rid) => null;
+		protected override DmdTypeDef ResolveTypeDef(uint rid) => rid == 1 ? globalType : null;
+		protected override DmdFieldDef ResolveFieldDef(uint rid) => null;
 		protected override DmdMethodBase ResolveMethodDef(uint rid) => null;
 		protected override DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments) => null;
 		protected override DmdEventInfo ResolveEventDef(uint rid) => null;

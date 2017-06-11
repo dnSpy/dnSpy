@@ -66,7 +66,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return genericParams;
 		}
 
-		public override DmdFieldInfo[] ReadDeclaredFields(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
+		public override DmdFieldInfo[] ReadDeclaredFields(DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			var ridList = reader.Metadata.GetFieldRidList(Rid);
+			if (ridList.Count == 0)
+				return Array.Empty<DmdFieldInfo>();
+			var fields = new DmdFieldInfo[ridList.Count];
+			for (int i = 0; i < fields.Length; i++) {
+				uint rid = ridList[i];
+				fields[i] = reader.CreateFieldDef(rid, this, reflectedType, genericTypeArguments);
+			}
+			return fields;
+		}
+
 		public override DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments, bool includeConstructors) => throw new NotImplementedException();//TODO:
 		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
 		public override DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:

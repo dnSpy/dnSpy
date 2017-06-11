@@ -84,4 +84,33 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			elements = new T[length];
 		}
 	}
+
+	[DebuggerDisplay("Count = {Length}")]
+	sealed class LazyList3<TValue, TArg> where TValue : class where TArg : class {
+		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+		readonly TValue[] elements;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Func<uint, TArg, TValue> readElementByRID;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly uint length;
+
+		uint Length => length;
+
+		public TValue this[uint index, TArg arg] {
+			get {
+				if (index >= length)
+					return null;
+				ref var elem = ref elements[index];
+				if (elem == null)
+					Interlocked.CompareExchange(ref elem, readElementByRID(index + 1, arg), null);
+				return elem;
+			}
+		}
+
+		public LazyList3(uint length, Func<uint, TArg, TValue> readElementByRID) {
+			this.length = length;
+			this.readElementByRID = readElementByRID;
+			elements = new TValue[length];
+		}
+	}
 }

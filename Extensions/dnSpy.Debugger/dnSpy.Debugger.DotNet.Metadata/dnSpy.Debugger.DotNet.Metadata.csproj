@@ -108,6 +108,8 @@
     <Compile Include="Impl\DmdByRefType.cs" />
     <Compile Include="Impl\DmdCustomAttributeReader.cs" />
     <Compile Include="Impl\DmdDataStream.cs" />
+    <Compile Include="Impl\DmdFieldDef.cs" />
+    <Compile Include="Impl\DmdFieldInfoBase.cs" />
     <Compile Include="Impl\DmdFunctionPointerType.cs" />
     <Compile Include="Impl\DmdGenericInstanceType.cs" />
     <Compile Include="Impl\DmdGenericInstanceTypeRef.cs" />
@@ -137,9 +139,11 @@
     <Compile Include="Impl\MD\DmdDataStreamImpl.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
     <Compile Include="Impl\MD\DmdExportedTypeMD.cs" />
+    <Compile Include="Impl\MD\DmdFieldDefMD.cs" />
     <Compile Include="Impl\MD\DmdGenericParameterTypeMD.cs" />
     <Compile Include="Impl\MD\DmdTypeDefMD.cs" />
     <Compile Include="Impl\MD\DmdTypeRefMD.cs" />
+    <Compile Include="Impl\MD\MetadataConstantUtilities.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.Data.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -173,9 +173,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		protected abstract DmdType ResolveTypeRef(uint rid);
-		protected abstract DmdType ResolveTypeDef(uint rid);
-		protected abstract DmdFieldInfo ResolveFieldDef(uint rid);
+		protected abstract DmdTypeRef ResolveTypeRef(uint rid);
+		protected abstract DmdTypeDef ResolveTypeDef(uint rid);
+		protected abstract DmdFieldDef ResolveFieldDef(uint rid);
 		protected abstract DmdMethodBase ResolveMethodDef(uint rid);
 		protected abstract DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments);
 		protected abstract DmdEventInfo ResolveEventDef(uint rid);

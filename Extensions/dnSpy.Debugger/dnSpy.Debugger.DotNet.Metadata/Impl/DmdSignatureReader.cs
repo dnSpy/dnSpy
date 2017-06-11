@@ -38,6 +38,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (module.AppDomain.System_Void, false);
 		}
 
+		public static (DmdType type, bool containedGenericParams) ReadFieldSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, bool resolve) {
+			try {
+				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, null, resolve)) {
+					var type = sigReader.ReadFieldSignature();
+					return (type, sigReader.containedGenericParams);
+				}
+			}
+			catch (IOException) {
+			}
+			catch (OutOfMemoryException) {
+			}
+			return (module.AppDomain.System_Void, false);
+		}
+
 		const int MAX_RECURSION_COUNT = 100;
 		int recursionCounter;
 		readonly DmdModule module;
@@ -268,6 +282,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				parameterTypes = parameterTypesArray;
 				varArgsParameterTypes = varArgsParameterTypesArray;
 			}
+		}
+
+		DmdType ReadFieldSignature() {
+			var flags = (DmdSignatureCallingConvention)reader.ReadByte();
+			if ((flags & DmdSignatureCallingConvention.Mask) != DmdSignatureCallingConvention.Field)
+				return module.AppDomain.System_Void;
+			return ReadType().type;
 		}
 
 		public void Dispose() => reader.Dispose();

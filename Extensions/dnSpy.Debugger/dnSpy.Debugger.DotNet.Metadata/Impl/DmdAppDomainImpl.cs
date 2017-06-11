@@ -331,7 +331,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (resolve)
 				gtDef = genericTypeDefinition.Resolve() as DmdTypeDef;
 			else
-				gtDef = null;
+				gtDef = genericTypeDefinition as DmdTypeDef;
 			if ((object)gtDef == null) {
 				var gtRef = genericTypeDefinition as DmdTypeRef;
 				if ((object)gtRef == null)
