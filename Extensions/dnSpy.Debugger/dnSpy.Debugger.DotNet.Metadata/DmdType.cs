@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (!type.IsPublic)
 					return false;
 				if (IsConstructedGenericType) {
-					foreach (var genArg in GetReadOnlyGenericArguments()) {
+					foreach (var genArg in GetGenericArguments()) {
 						if (!genArg.IsVisible)
 							return false;
 					}
@@ -441,13 +441,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all interfaces
 		/// </summary>
 		/// <returns></returns>
-		public DmdType[] GetInterfaces() => GetReadOnlyInterfaces().ToArray();
-
-		/// <summary>
-		/// Gets all interfaces
-		/// </summary>
-		/// <returns></returns>
-		public abstract ReadOnlyCollection<DmdType> GetReadOnlyInterfaces();
+		public abstract ReadOnlyCollection<DmdType> GetInterfaces();
 
 		/// <summary>
 		/// Gets a public static or instance event
@@ -624,32 +618,18 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract int GetArrayRank();
 
 		/// <summary>
-		/// Gets the array sizes of each dimension of an array. The returned array could
-		/// have less elements than the rank of the array.
-		/// </summary>
-		/// <returns></returns>
-		public int[] GetArraySizes() => GetReadOnlyArraySizes().ToArray();
-
-		/// <summary>
 		/// Gets the array sizes of each dimension of an array. The returned list could
 		/// have less elements than the rank of the array.
 		/// </summary>
 		/// <returns></returns>
-		public abstract ReadOnlyCollection<int> GetReadOnlyArraySizes();
-
-		/// <summary>
-		/// Gets the lower bounds of each dimension of an array. The returned array could
-		/// have less elements than the rank of the array.
-		/// </summary>
-		/// <returns></returns>
-		public int[] GetArrayLowerBounds() => GetReadOnlyArrayLowerBounds().ToArray();
+		public abstract ReadOnlyCollection<int> GetArraySizes();
 
 		/// <summary>
 		/// Gets the lower bounds of each dimension of an array. The returned list could
 		/// have less elements than the rank of the array.
 		/// </summary>
 		/// <returns></returns>
-		public abstract ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds();
+		public abstract ReadOnlyCollection<int> GetArrayLowerBounds();
 
 		/// <summary>
 		/// true if it's an array (SZ array or MD array)
@@ -702,7 +682,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return true;
 			if (!type.IsGenericType)
 				return false;
-			foreach (var gaType in type.GetReadOnlyGenericArguments()) {
+			foreach (var gaType in type.GetGenericArguments()) {
 				if (gaType.ContainsGenericParameters)
 					return true;
 			}
@@ -713,13 +693,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all generic parameter constraints
 		/// </summary>
 		/// <returns></returns>
-		public DmdType[] GetGenericParameterConstraints() => GetReadOnlyGenericParameterConstraints().ToArray();
-
-		/// <summary>
-		/// Gets all generic parameter constraints
-		/// </summary>
-		/// <returns></returns>
-		public abstract ReadOnlyCollection<DmdType> GetReadOnlyGenericParameterConstraints();
+		public abstract ReadOnlyCollection<DmdType> GetGenericParameterConstraints();
 
 		/// <summary>
 		/// true if this is a by-ref type
@@ -802,18 +776,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the generic arguments
 		/// </summary>
 		/// <returns></returns>
-		public DmdType[] GetGenericArguments() => GetReadOnlyGenericArguments().ToArray();
-
-		/// <summary>
-		/// Gets the generic arguments
-		/// </summary>
-		/// <returns></returns>
-		public abstract ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments();
+		public abstract ReadOnlyCollection<DmdType> GetGenericArguments();
 
 		/// <summary>
 		/// Gets all generic arguments if it's a constructed generic type (<see cref="IsConstructedGenericType"/>)
 		/// </summary>
-		public DmdType[] GenericTypeArguments => IsConstructedGenericType ? GetGenericArguments() : Array.Empty<DmdType>();
+		public ReadOnlyCollection<DmdType> GenericTypeArguments => IsConstructedGenericType ? GetGenericArguments() : emptyTypeCollection;
+		static readonly ReadOnlyCollection<DmdType> emptyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
 
 		/// <summary>
 		/// Gets the generic type definition if it's a generic type

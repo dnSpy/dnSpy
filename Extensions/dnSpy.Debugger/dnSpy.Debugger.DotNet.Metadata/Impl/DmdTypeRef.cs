@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override bool IsGenericType => ResolvedType.IsGenericType;
 		public override bool IsGenericTypeDefinition => ResolvedType.IsGenericTypeDefinition;
-		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => ResolvedType.GetReadOnlyGenericArguments();
+		public override ReadOnlyCollection<DmdType> GetGenericArguments() => ResolvedType.GetGenericArguments();
 		public override DmdType GetGenericTypeDefinition() => ResolvedType.GetGenericTypeDefinition();
 
 		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ResolvedType.CreateDeclaredFields2(reflectedType);

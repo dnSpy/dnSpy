@@ -146,25 +146,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all parameters
 		/// </summary>
 		/// <returns></returns>
-		public DmdParameterInfo[] GetParameters() => GetReadOnlyParameters().ToArray();
-
-		/// <summary>
-		/// Gets all parameters
-		/// </summary>
-		/// <returns></returns>
-		public abstract ReadOnlyCollection<DmdParameterInfo> GetReadOnlyParameters();
+		public abstract ReadOnlyCollection<DmdParameterInfo> GetParameters();
 
 		/// <summary>
 		/// Gets all generic arguments if it's a generic method
 		/// </summary>
 		/// <returns></returns>
-		public DmdType[] GetGenericArguments() => GetReadOnlyGenericArguments().ToArray();
-
-		/// <summary>
-		/// Gets all generic arguments if it's a generic method
-		/// </summary>
-		/// <returns></returns>
-		public abstract ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments();
+		public abstract ReadOnlyCollection<DmdType> GetGenericArguments();
 
 		/// <summary>
 		/// Gets the method body

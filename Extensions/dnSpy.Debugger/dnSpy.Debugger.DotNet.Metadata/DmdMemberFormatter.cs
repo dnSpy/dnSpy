@@ -119,19 +119,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return type.Name.LastIndexOf('`') >= 0 ? type : null;
 		}
 
-		static ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments(DmdType type) {
+		static ReadOnlyCollection<DmdType> GetGenericArguments(DmdType type) {
 			if (!type.IsMetadataReference)
-				return type.GetReadOnlyGenericArguments();
+				return type.GetGenericArguments();
 
 			var resolvedType = type.ResolveNoThrow();
 			if ((object)resolvedType != null)
-				return resolvedType.GetReadOnlyGenericArguments();
+				return resolvedType.GetGenericArguments();
 
 			return emtpyTypeCollection;
 		}
 		static readonly ReadOnlyCollection<DmdType> emtpyTypeCollection = new ReadOnlyCollection<DmdType>(Array.Empty<DmdType>());
 
-		static DmdType[] GetGenericArguments(DmdMethodBase method) {
+		static IList<DmdType> GetGenericArguments(DmdMethodBase method) {
 			if (!method.IsMetadataReference)
 				return method.GetGenericArguments();
 
@@ -310,7 +310,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				}
 				writer.Append(type.Name);
 				if ((flags & TypeFlags.NoGenericDefParams) == 0 && (globalFlags & GlobalFlags.Serializable) == 0)
-					WriteGenericArguments(GetReadOnlyGenericArguments(type), flags & ~TypeFlags.NoGenericDefParams);
+					WriteGenericArguments(GetGenericArguments(type), flags & ~TypeFlags.NoGenericDefParams);
 				break;
 
 			case DmdTypeSignatureKind.Pointer:
@@ -351,7 +351,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			case DmdTypeSignatureKind.GenericInstance:
 				Write(GetGenericTypeDefinition(type), flags | TypeFlags.NoGenericDefParams);
-				WriteGenericArguments(GetReadOnlyGenericArguments(type), flags);
+				WriteGenericArguments(GetGenericArguments(type), flags);
 				break;
 
 			case DmdTypeSignatureKind.FunctionPointer:

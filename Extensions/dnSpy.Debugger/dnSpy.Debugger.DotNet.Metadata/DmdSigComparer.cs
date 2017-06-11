@@ -215,14 +215,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 				case DmdTypeSignatureKind.MDArray:
 					result = a.GetArrayRank() == b.GetArrayRank() &&
-						Equals(a.GetReadOnlyArraySizes(), b.GetReadOnlyArraySizes()) &&
-						Equals(a.GetReadOnlyArrayLowerBounds(), b.GetReadOnlyArrayLowerBounds()) &&
+						Equals(a.GetArraySizes(), b.GetArraySizes()) &&
+						Equals(a.GetArrayLowerBounds(), b.GetArrayLowerBounds()) &&
 						Equals(a.GetElementType(), b.GetElementType());
 					break;
 
 				case DmdTypeSignatureKind.GenericInstance:
 					result = Equals(a.GetGenericTypeDefinition(), b.GetGenericTypeDefinition()) &&
-							Equals(a.GetReadOnlyGenericArguments(), b.GetReadOnlyGenericArguments());
+							Equals(a.GetGenericArguments(), b.GetGenericArguments());
 					break;
 
 				case DmdTypeSignatureKind.FunctionPointer:
@@ -567,15 +567,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			case DmdTypeSignatureKind.MDArray:
 				hc ^= HASHCODE_MAGIC_ET_ARRAY;
 				hc ^= a.GetArrayRank();
-				hc ^= GetHashCode(a.GetReadOnlyArraySizes());
-				hc ^= GetHashCode(a.GetReadOnlyArrayLowerBounds());
+				hc ^= GetHashCode(a.GetArraySizes());
+				hc ^= GetHashCode(a.GetArrayLowerBounds());
 				hc ^= GetHashCode(a.GetElementType());
 				break;
 
 			case DmdTypeSignatureKind.GenericInstance:
 				hc ^= HASHCODE_MAGIC_ET_GENERICINST;
 				hc ^= GetHashCode(a.GetGenericTypeDefinition());
-				hc ^= GetHashCode(a.GetReadOnlyGenericArguments());
+				hc ^= GetHashCode(a.GetGenericArguments());
 				break;
 
 			case DmdTypeSignatureKind.FunctionPointer:

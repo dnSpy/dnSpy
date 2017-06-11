@@ -28,8 +28,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override int MetadataToken => (int)(0x06000000 + rid);
 		public sealed override bool IsMetadataReference => false;
 
-		public sealed override bool IsGenericMethodDefinition => GetReadOnlyGenericArguments().Count != 0;
-		public sealed override bool IsGenericMethod => GetReadOnlyGenericArguments().Count != 0;
+		public sealed override bool IsGenericMethodDefinition => GetGenericArguments().Count != 0;
+		public sealed override bool IsGenericMethod => GetGenericArguments().Count != 0;
 
 		public sealed override DmdParameterInfo ReturnParameter => throw new NotImplementedException();//TODO:
 
@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdMethodInfo Resolve(bool throwOnError) => this;
 
 		protected abstract DmdType[] CreateGenericParameters();
-		public sealed override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() {
+		public sealed override ReadOnlyCollection<DmdType> GetGenericArguments() {
 			if (__genericParameters_DONT_USE != null)
 				return __genericParameters_DONT_USE;
 			lock (LockObject) {
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
 
-		public sealed override ReadOnlyCollection<DmdParameterInfo> GetReadOnlyParameters() => throw new NotImplementedException();//TODO:
+		public sealed override ReadOnlyCollection<DmdParameterInfo> GetParameters() => throw new NotImplementedException();//TODO:
 
 		public sealed override DmdMethodInfo GetBaseDefinition() => GetParentDefinition() ?? this;
 		internal override DmdMethodInfo GetParentDefinition() => null;//TODO:

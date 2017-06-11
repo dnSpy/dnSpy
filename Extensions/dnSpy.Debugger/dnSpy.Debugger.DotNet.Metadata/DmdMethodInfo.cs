@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return true;
 				if (!IsGenericMethod)
 					return false;
-				foreach (var genArg in GetReadOnlyGenericArguments()) {
+				foreach (var genArg in GetGenericArguments()) {
 					if (genArg.ContainsGenericParameters)
 						return true;
 				}
@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all generic arguments if it's a generic method
 		/// </summary>
 		/// <returns></returns>
-		public abstract override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments();
+		public abstract override ReadOnlyCollection<DmdType> GetGenericArguments();
 
 		/// <summary>
 		/// Gets the generic method definition

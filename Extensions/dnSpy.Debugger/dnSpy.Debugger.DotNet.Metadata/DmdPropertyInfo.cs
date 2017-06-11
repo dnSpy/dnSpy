@@ -106,13 +106,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the index parameters
 		/// </summary>
 		/// <returns></returns>
-		public DmdParameterInfo[] GetIndexParameters() => GetReadOnlyIndexParameters().ToArray();
-
-		/// <summary>
-		/// Gets the index parameters
-		/// </summary>
-		/// <returns></returns>
-		public abstract ReadOnlyCollection<DmdParameterInfo> GetReadOnlyIndexParameters();
+		public abstract ReadOnlyCollection<DmdParameterInfo> GetIndexParameters();
 
 		/// <summary>
 		/// Gets all required custom modifiers

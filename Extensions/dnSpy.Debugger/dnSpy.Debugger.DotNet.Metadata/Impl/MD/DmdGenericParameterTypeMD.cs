@@ -40,11 +40,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 			IList<DmdType> genericTypeArguments, genericMethodArguments;
 			if ((object)DeclaringMethod != null) {
-				genericTypeArguments = DeclaringMethod.DeclaringType.GetReadOnlyGenericArguments();
-				genericMethodArguments = DeclaringMethod.GetReadOnlyGenericArguments();
+				genericTypeArguments = DeclaringMethod.DeclaringType.GetGenericArguments();
+				genericMethodArguments = DeclaringMethod.GetGenericArguments();
 			}
 			else {
-				genericTypeArguments = DeclaringType.GetReadOnlyGenericArguments();
+				genericTypeArguments = DeclaringType.GetGenericArguments();
 				genericMethodArguments = null;
 			}
 

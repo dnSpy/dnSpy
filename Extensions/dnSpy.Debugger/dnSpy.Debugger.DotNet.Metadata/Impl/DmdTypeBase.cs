@@ -72,14 +72,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsGenericType => false;
 		public override bool IsGenericTypeDefinition => false;
 		public override int GenericParameterPosition => throw new InvalidOperationException();
-		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => emptyTypeCollection;
+		public override ReadOnlyCollection<DmdType> GetGenericArguments() => emptyTypeCollection;
 		public override DmdType GetGenericTypeDefinition() => throw new InvalidOperationException();
-		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericParameterConstraints() => throw new InvalidOperationException();
+		public override ReadOnlyCollection<DmdType> GetGenericParameterConstraints() => throw new InvalidOperationException();
 		public override DmdMethodSignature GetFunctionPointerMethodSignature() => throw new InvalidOperationException();
 		public override DmdType GetElementType() => null;
 		public override int GetArrayRank() => throw new ArgumentException();
-		public override ReadOnlyCollection<int> GetReadOnlyArraySizes() => throw new ArgumentException();
-		public override ReadOnlyCollection<int> GetReadOnlyArrayLowerBounds() => throw new ArgumentException();
+		public override ReadOnlyCollection<int> GetArraySizes() => throw new ArgumentException();
+		public override ReadOnlyCollection<int> GetArrayLowerBounds() => throw new ArgumentException();
 		public sealed override DmdType MakePointerType() => AppDomain.MakePointerType(this, null);
 		public sealed override DmdType MakeByRefType() => AppDomain.MakeByRefType(this, null);
 		public sealed override DmdType MakeArrayType() => AppDomain.MakeArrayType(this, null);
@@ -312,7 +312,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdType GetInterface(string fullName, bool ignoreCase) {
 			if (fullName == null)
 				throw new ArgumentNullException(nameof(fullName));
-			var ifaces = GetReadOnlyInterfaces();
+			var ifaces = GetInterfaces();
 			if (ifaces.Count == 0)
 				return null;
 			DmdTypeUtilities.SplitFullName(fullName, out var @namespace, out var name);
@@ -324,7 +324,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override ReadOnlyCollection<DmdType> GetReadOnlyInterfaces() {
+		public sealed override ReadOnlyCollection<DmdType> GetInterfaces() {
 			var f = ExtraFields;
 			if (f.__implementedInterfaces_DONT_USE != null)
 				return f.__implementedInterfaces_DONT_USE;

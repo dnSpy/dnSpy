@@ -318,7 +318,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var name = ReadUTF8String();
 			if (canReturnNull && name == null)
 				return null;
-			var type = DmdTypeNameParser.Parse(module, name ?? string.Empty, ctor.ReflectedType.GetReadOnlyGenericArguments());
+			var type = DmdTypeNameParser.Parse(module, name ?? string.Empty, ctor.ReflectedType.GetGenericArguments());
 			if ((object)type == null)
 				throw new CABlobParserException("Could not parse type");
 			return type;

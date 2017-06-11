@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		ReadOnlyCollection<DmdType> __genericParameterConstraints_DONT_USE;
 		protected abstract DmdType[] CreateGenericParameterConstraints_NoLock();
-		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericParameterConstraints() => GetOrCreateGenericParameterConstraints();
+		public override ReadOnlyCollection<DmdType> GetGenericParameterConstraints() => GetOrCreateGenericParameterConstraints();
 
 		protected override DmdType ResolveNoThrowCore() => this;
 
@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			foreach (var gpcType in GetOrCreateGenericParameterConstraints()) {
 				if (gpcType.IsInterface)
 					list.Add(gpcType);
-				list.AddRange(gpcType.GetReadOnlyInterfaces());
+				list.AddRange(gpcType.GetInterfaces());
 			}
 			return list.ToArray();
 		}

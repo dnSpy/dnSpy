@@ -344,7 +344,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				gtDef = (DmdTypeDef)gtDef.FullResolve() ?? gtDef;
 				if (!gtDef.IsGenericTypeDefinition)
 					throw new ArgumentException();
-				if (gtDef.GetReadOnlyGenericArguments().Count != typeArguments.Count)
+				if (gtDef.GetGenericArguments().Count != typeArguments.Count)
 					throw new ArgumentException();
 				if (resolve)
 					typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;

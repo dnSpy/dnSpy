@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(genericTypeDefinition));
 			if (typeArguments == null)
 				throw new ArgumentNullException(nameof(typeArguments));
-			if (genericTypeDefinition.GetReadOnlyGenericArguments().Count != typeArguments.Count)
+			if (genericTypeDefinition.GetGenericArguments().Count != typeArguments.Count)
 				throw new ArgumentException();
 			this.genericTypeDefinition = genericTypeDefinition;
 			this.typeArguments = typeArguments.Count == 0 ? emptyTypeCollection : typeArguments as ReadOnlyCollection<DmdType> ?? new ReadOnlyCollection<DmdType>(typeArguments);
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeGenericType(genericTypeDefinition, typeArguments, null);
 
 		public override bool IsGenericType => true;
-		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => typeArguments;
+		public override ReadOnlyCollection<DmdType> GetGenericArguments() => typeArguments;
 		public override DmdType GetGenericTypeDefinition() => genericTypeDefinition;
 
 		protected override DmdType ResolveNoThrowCore() => this;

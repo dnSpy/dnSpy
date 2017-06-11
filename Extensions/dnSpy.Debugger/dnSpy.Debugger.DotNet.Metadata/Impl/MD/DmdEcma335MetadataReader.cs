@@ -104,12 +104,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		DmdFieldDefMD CreateResolvedField(uint rid, DmdTypeDef declaringType) {
 			if ((object)declaringType == null)
 				declaringType = ResolveTypeDef(Metadata.GetOwnerTypeOfField(rid)) ?? globalTypeIfThereAreNoTypes;
-			return CreateFieldDefCore(rid, declaringType, declaringType, declaringType.GetReadOnlyGenericArguments());
+			return CreateFieldDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
 		}
 
 		internal DmdFieldDef CreateFieldDef(uint rid, DmdTypeDefMD declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
 			if ((object)declaringType == reflectedType) {
-				Debug.Assert(declaringType.GetReadOnlyGenericArguments() == genericTypeArguments);
+				Debug.Assert(declaringType.GetGenericArguments() == genericTypeArguments);
 				return ResolveFieldDef(rid, declaringType);
 			}
 			return CreateFieldDefCore(rid, declaringType, reflectedType, genericTypeArguments);
@@ -145,12 +145,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		DmdMethodBase CreateResolvedMethod(uint rid, DmdTypeDef declaringType) {
 			if ((object)declaringType == null)
 				declaringType = ResolveTypeDef(Metadata.GetOwnerTypeOfMethod(rid)) ?? globalTypeIfThereAreNoTypes;
-			return CreateMethodDefCore(rid, declaringType, declaringType, declaringType.GetReadOnlyGenericArguments());
+			return CreateMethodDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
 		}
 
 		internal DmdMethodBase CreateMethodDef(uint rid, DmdTypeDefMD declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
 			if ((object)declaringType == reflectedType) {
-				Debug.Assert(declaringType.GetReadOnlyGenericArguments() == genericTypeArguments);
+				Debug.Assert(declaringType.GetGenericArguments() == genericTypeArguments);
 				return ResolveMethodDef(rid, declaringType);
 			}
 			return CreateMethodDefCore(rid, declaringType, reflectedType, genericTypeArguments);

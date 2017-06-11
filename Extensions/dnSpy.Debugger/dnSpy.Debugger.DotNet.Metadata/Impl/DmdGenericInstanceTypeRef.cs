@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeGenericType(genericTypeRef, typeArguments, null);
 
 		public override bool IsGenericType => true;
-		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() => typeArguments;
+		public override ReadOnlyCollection<DmdType> GetGenericArguments() => typeArguments;
 
 		public override DmdType GetGenericTypeDefinition() {
 			var resolvedType = GetResolvedType(throwOnError: false);

@@ -28,8 +28,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Type;
 		public override DmdTypeScope TypeScope => new DmdTypeScope(Module);
 		public override bool IsMetadataReference => false;
-		public override bool IsGenericType => GetReadOnlyGenericArguments().Count != 0;
-		public override bool IsGenericTypeDefinition => GetReadOnlyGenericArguments().Count != 0;
+		public override bool IsGenericType => GetGenericArguments().Count != 0;
+		public override bool IsGenericTypeDefinition => GetGenericArguments().Count != 0;
 		public override int MetadataToken => (int)(0x02000000 + rid);
 		public override StructLayoutAttribute StructLayoutAttribute => throw new NotImplementedException();//TODO:
 
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							if ((baseTypeToken & 0x00FFFFFF) == 0)
 								__baseType_DONT_USE = null;
 							else
-								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetReadOnlyGenericArguments(), null, throwOnError: false);
+								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetGenericArguments(), null, throwOnError: false);
 							baseTypeInitd = true;
 						}
 					}
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected override DmdType ResolveNoThrowCore() => this;
 
 		protected abstract DmdType[] CreateGenericParameters();
-		public override ReadOnlyCollection<DmdType> GetReadOnlyGenericArguments() {
+		public override ReadOnlyCollection<DmdType> GetGenericArguments() {
 			if (__genericParameters_DONT_USE != null)
 				return __genericParameters_DONT_USE;
 			lock (LockObject) {
@@ -116,21 +116,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments);
 		public abstract DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments);
 
-		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ReadDeclaredFields(reflectedType, GetReadOnlyGenericArguments());
-		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => ReadDeclaredMethods(reflectedType, GetReadOnlyGenericArguments(), includeConstructors);
-		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(reflectedType, GetReadOnlyGenericArguments());
-		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(reflectedType, GetReadOnlyGenericArguments());
+		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ReadDeclaredFields(reflectedType, GetGenericArguments());
+		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => ReadDeclaredMethods(reflectedType, GetGenericArguments(), includeConstructors);
+		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(reflectedType, GetGenericArguments());
+		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(reflectedType, GetGenericArguments());
 
-		internal DmdFieldInfo[] CreateDeclaredFields2(DmdType reflectedType) => ReadDeclaredFields(reflectedType, GetReadOnlyGenericArguments());
-		internal DmdMethodBase[] CreateDeclaredMethods2(DmdType reflectedType, bool includeConstructors) => ReadDeclaredMethods(reflectedType, GetReadOnlyGenericArguments(), includeConstructors);
-		internal DmdPropertyInfo[] CreateDeclaredProperties2(DmdType reflectedType) => ReadDeclaredProperties(reflectedType, GetReadOnlyGenericArguments());
-		internal DmdEventInfo[] CreateDeclaredEvents2(DmdType reflectedType) => ReadDeclaredEvents(reflectedType, GetReadOnlyGenericArguments());
+		internal DmdFieldInfo[] CreateDeclaredFields2(DmdType reflectedType) => ReadDeclaredFields(reflectedType, GetGenericArguments());
+		internal DmdMethodBase[] CreateDeclaredMethods2(DmdType reflectedType, bool includeConstructors) => ReadDeclaredMethods(reflectedType, GetGenericArguments(), includeConstructors);
+		internal DmdPropertyInfo[] CreateDeclaredProperties2(DmdType reflectedType) => ReadDeclaredProperties(reflectedType, GetGenericArguments());
+		internal DmdEventInfo[] CreateDeclaredEvents2(DmdType reflectedType) => ReadDeclaredEvents(reflectedType, GetGenericArguments());
 
 		public override bool IsFullyResolved => true;
 		public override DmdTypeBase FullResolve() => this;
 
-		protected override IList<DmdType> ReadDeclaredInterfaces() => ReadDeclaredInterfacesCore(GetReadOnlyGenericArguments());
-		internal IList<DmdType> ReadDeclaredInterfaces2() => ReadDeclaredInterfacesCore(GetReadOnlyGenericArguments());
+		protected override IList<DmdType> ReadDeclaredInterfaces() => ReadDeclaredInterfacesCore(GetGenericArguments());
+		internal IList<DmdType> ReadDeclaredInterfaces2() => ReadDeclaredInterfacesCore(GetGenericArguments());
 		internal IList<DmdType> ReadDeclaredInterfaces(IList<DmdType> genericTypeArguments) => ReadDeclaredInterfacesCore(genericTypeArguments);
 		protected abstract DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments);
 

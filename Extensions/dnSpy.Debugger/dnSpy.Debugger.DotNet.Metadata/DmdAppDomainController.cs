@@ -140,14 +140,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Adds a module to an existing assembly
 		/// </summary>
 		/// <param name="assembly">Assembly</param>
-		/// <param name="assemblyBytes">Raw PE file bytes</param>
+		/// <param name="moduleBytes">Raw PE file bytes</param>
 		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
 		/// <returns></returns>
-		public DmdModuleController CreateModule(DmdAssembly assembly, byte[] assemblyBytes, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName) =>
-			CreateModule(assembly, () => new DmdLazyMetadataBytesArray(assemblyBytes, isFileLayout), isInMemory, isDynamic, fullyQualifiedName);
+		public DmdModuleController CreateModule(DmdAssembly assembly, byte[] moduleBytes, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName) =>
+			CreateModule(assembly, () => new DmdLazyMetadataBytesArray(moduleBytes, isFileLayout), isInMemory, isDynamic, fullyQualifiedName);
 
 		/// <summary>
 		/// Adds a module to an existing assembly
