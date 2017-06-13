@@ -87,12 +87,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			callConvention == DmdCallingConventions.Any ||
 			(method.CallingConvention & DmdCallingConventions.Any) == (callConvention & DmdCallingConventions.Any);
 
+		public static bool IsMatch(DmdMethodBase method, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention) =>
+			IsMatch(method, bindingAttr) && IsMatch(method, callConvention);
+
+		public static bool IsMatch(DmdMethodBase method, IList<DmdType> types) =>
+			IsMatch(method.GetMethodSignature().GetParameterTypes(), types ?? Array.Empty<DmdType>());
+
 		public static bool IsMatch(DmdMethodBase method, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
-			if (!IsMatch(method, bindingAttr))
+			if (!IsMatch(method, bindingAttr, callConvention))
 				return false;
-			if (!IsMatch(method, callConvention))
-				return false;
-			return IsMatch(method.GetMethodSignature().GetParameterTypes(), types ?? Array.Empty<DmdType>());
+			return IsMatch(method, types);
 		}
 
 		static bool IsMatch(IList<DmdType> p, IList<DmdType> types) {
@@ -105,16 +109,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return true;
 		}
 
-		public static bool IsMatch(DmdPropertyInfo property, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types) {
-			if (!IsMatch(property, bindingAttr))
-				return false;
+		public static bool IsMatch(DmdPropertyInfo property, DmdType returnType) {
 			if ((object)returnType != null) {
 				var comparer = new DmdSigComparer(DmdSigComparerOptions.CheckTypeEquivalence | DmdMemberInfoEqualityComparer.DefaultOptions);
 				if (!comparer.Equals(property.PropertyType, returnType))
 					return false;
 			}
-			return IsMatch(property.GetMethodSignature().GetParameterTypes(), types ?? Array.Empty<DmdType>());
+			return true;
 		}
+
+		public static bool IsMatch(DmdPropertyInfo property, IList<DmdType> types) =>
+			IsMatch(property.GetMethodSignature().GetParameterTypes(), types ?? Array.Empty<DmdType>());
 
 		public static bool IsMatch(DmdMemberInfo member, string name, DmdBindingFlags bindingAttr) {
 			if ((bindingAttr & DmdBindingFlags.IgnoreCase) != 0)

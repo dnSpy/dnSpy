@@ -96,6 +96,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
+			if (types == null)
+				throw new ArgumentNullException(nameof(types));
 			foreach (var ctor in GetDeclaredConstructors()) {
 				if (DmdMemberInfoComparer.IsMatch(ctor, bindingAttr, callConvention, types))
 					return ctor;
@@ -118,9 +120,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
+			DmdMethodInfo foundMethod = null;
+			int counter = 0;
 			foreach (var method in GetMethods(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
-				if (DmdMemberInfoComparer.IsMatch(method, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(method, bindingAttr, callConvention, types))
+				if (!DmdMemberInfoComparer.IsMatch(method, name, bindingAttr))
+					continue;
+				if (!DmdMemberInfoComparer.IsMatch(method, bindingAttr, callConvention))
+					continue;
+				if (types != null && DmdMemberInfoComparer.IsMatch(method, types))
 					return method;
+				foundMethod = method;
+				counter++;
+			}
+			if ((object)foundMethod != null && types == null) {
+				if (counter == 1)
+					return foundMethod;
+				throw new System.Reflection.AmbiguousMatchException();
 			}
 			return null;
 		}
@@ -184,9 +199,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
+			DmdPropertyInfo foundProperty = null;
+			int counter = 0;
 			foreach (var property in GetProperties(inherit: (bindingAttr & DmdBindingFlags.DeclaredOnly) == 0)) {
-				if (DmdMemberInfoComparer.IsMatch(property, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(property, bindingAttr, returnType, types))
+				if (!DmdMemberInfoComparer.IsMatch(property, name, bindingAttr))
+					continue;
+				if (!DmdMemberInfoComparer.IsMatch(property, bindingAttr))
+					continue;
+				if ((object)returnType != null && !DmdMemberInfoComparer.IsMatch(property, returnType))
+					continue;
+				if (types != null && !DmdMemberInfoComparer.IsMatch(property, types))
+					continue;
+				if ((object)returnType != null && types != null)
 					return property;
+				foundProperty = property;
+				counter++;
+			}
+			if ((object)foundProperty != null && types == null) {
+				if (counter == 1)
+					return foundProperty;
+				if ((object)returnType == null)
+					throw new System.Reflection.AmbiguousMatchException();
 			}
 			return null;
 		}
