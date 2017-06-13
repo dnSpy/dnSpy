@@ -38,13 +38,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			methodSignature = reader.ReadMethodSignature(row.Signature, genericTypeArguments, GetGenericArguments(), isProperty: false);
 
-			// Needed by GetMethodSignatureCore(). It's not always identical to ReflectedType.GetGenericArguments()
-			this.genericTypeArguments = methodSignature.GenericParameterCount == 0 ? null : genericTypeArguments;
+			// Needed by GetMethodSignatureCore() and GetMethodBody(). It's not always identical to ReflectedType.GetGenericArguments()
+			this.genericTypeArguments = genericTypeArguments;
 		}
 
 		protected override DmdType[] CreateGenericParameters() => reader.CreateGenericParameters(this);
 
-		public override DmdMethodBody GetMethodBody() => reader.GetMethodBody(this);
+		public override DmdMethodBody GetMethodBody() => reader.GetMethodBody(this, genericTypeArguments, GetGenericArguments());
+		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => reader.GetMethodBody(this, genericTypeArguments, genericMethodArguments);
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		protected override (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters() => reader.CreateParameters(this, createReturnParameter: true);
 		protected override (DmdCustomAttributeData[] cas, DmdImplMap? implMap) CreateCustomAttributes() {

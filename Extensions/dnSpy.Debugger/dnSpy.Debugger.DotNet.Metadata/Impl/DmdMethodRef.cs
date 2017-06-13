@@ -79,6 +79,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override ReadOnlyCollection<DmdParameterInfo> GetParameters() => ResolvedMethod.GetParameters();
 		public override ReadOnlyCollection<DmdType> GetGenericArguments() => methodSignature.GenericParameterCount == 0 ? ReadOnlyCollectionHelpers.Empty<DmdType>() : ResolvedMethod.GetGenericArguments();
 		public override DmdMethodBody GetMethodBody() => ResolvedMethod.GetMethodBody();
+		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => ResolvedMethod.GetMethodBody(genericMethodArguments);
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => ResolvedMethod.GetCustomAttributesData();
 		public override DmdParameterInfo ReturnParameter => ResolvedMethod.ReturnParameter;

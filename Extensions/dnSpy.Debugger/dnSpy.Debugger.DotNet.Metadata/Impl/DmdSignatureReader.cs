@@ -108,6 +108,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (Array.Empty<DmdType>(), false);
 		}
 
+		public static (DmdType type, bool isPinned)[] ReadLocalsSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
+			try {
+				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, genericMethodArguments, resolve))
+					return sigReader.ReadLocalsSignature();
+			}
+			catch (IOException) {
+			}
+			catch (OutOfMemoryException) {
+			}
+			return Array.Empty<(DmdType, bool)>();
+		}
+
 		const int MAX_RECURSION_COUNT = 100;
 		int recursionCounter;
 		readonly DmdModule module;
@@ -362,6 +374,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var res = new DmdType[args];
 			for (int i = 0; i < res.Length; i++)
 				res[i] = ReadType().type;
+			return res;
+		}
+
+		(DmdType type, bool isPinned)[] ReadLocalsSignature() {
+			var flags = (DmdSignatureCallingConvention)reader.ReadByte();
+			if ((flags & DmdSignatureCallingConvention.Mask) != DmdSignatureCallingConvention.LocalSig)
+				return Array.Empty<(DmdType, bool)>();
+			int count = (int)reader.ReadCompressedUInt32();
+			var res = new(DmdType, bool)[count];
+			for (int i = 0; i < res.Length; i++) {
+				var info = ReadType();
+				res[i] = (info.type, (info.flags & TypeFlags.IsPinned) != 0);
+			}
 			return res;
 		}
 

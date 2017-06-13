@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract float ReadSingle();
 		public abstract double ReadDouble();
 		public abstract byte[] ReadBytes(int length);
-		public abstract long Position { get; }
+		public abstract long Position { get; set; }
 		public abstract long Length { get; }
 		public abstract void Dispose();
 

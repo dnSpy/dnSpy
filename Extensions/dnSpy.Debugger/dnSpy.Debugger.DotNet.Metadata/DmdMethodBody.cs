@@ -60,21 +60,35 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Local variable info
 	/// </summary>
-	public abstract class DmdLocalVariableInfo {
+	public sealed class DmdLocalVariableInfo {
 		/// <summary>
 		/// Gets the type of the local
 		/// </summary>
-		public abstract DmdType LocalType { get; }
+		public DmdType LocalType { get; }
 
 		/// <summary>
 		/// true if it's a pinned local
 		/// </summary>
-		public abstract bool IsPinned { get; }
+		public bool IsPinned { get; }
 
 		/// <summary>
 		/// Index of the local in the locals signature
 		/// </summary>
-		public abstract int LocalIndex { get; }
+		public int LocalIndex { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="localType">Type of the local</param>
+		/// <param name="localIndex">Index of local</param>
+		/// <param name="isPinned">True if it's a pinned local</param>
+		public DmdLocalVariableInfo(DmdType localType, int localIndex, bool isPinned) {
+			if (localIndex < 0)
+				throw new ArgumentOutOfRangeException(nameof(localIndex));
+			LocalType = localType ?? throw new ArgumentNullException(nameof(localType));
+			LocalIndex = localIndex;
+			IsPinned = isPinned;
+		}
 
 		/// <summary>
 		/// ToString()
@@ -103,41 +117,61 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Exception clause
 	/// </summary>
-	public abstract class DmdExceptionHandlingClause {
+	public sealed class DmdExceptionHandlingClause {
 		/// <summary>
 		/// Gets the clause kind
 		/// </summary>
-		public abstract DmdExceptionHandlingClauseOptions Flags { get; }
+		public DmdExceptionHandlingClauseOptions Flags { get; }
 
 		/// <summary>
 		/// Try offset
 		/// </summary>
-		public abstract int TryOffset { get; }
+		public int TryOffset { get; }
 
 		/// <summary>
 		/// Try length
 		/// </summary>
-		public abstract int TryLength { get; }
+		public int TryLength { get; }
 
 		/// <summary>
 		/// Handler offset
 		/// </summary>
-		public abstract int HandlerOffset { get; }
+		public int HandlerOffset { get; }
 
 		/// <summary>
 		/// Handler length
 		/// </summary>
-		public abstract int HandlerLength { get; }
+		public int HandlerLength { get; }
 
 		/// <summary>
 		/// Filter offset
 		/// </summary>
-		public abstract int FilterOffset { get; }
+		public int FilterOffset { get; }
 
 		/// <summary>
 		/// Catch type
 		/// </summary>
-		public abstract DmdType CatchType { get; }
+		public DmdType CatchType { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="flags">Flags</param>
+		/// <param name="tryOffset">Try offset</param>
+		/// <param name="tryLength">Try length</param>
+		/// <param name="handlerOffset">Handler offset</param>
+		/// <param name="handlerLength">Handler length</param>
+		/// <param name="filterOffset">Filter offset</param>
+		/// <param name="catchType">Catch type</param>
+		public DmdExceptionHandlingClause(DmdExceptionHandlingClauseOptions flags, int tryOffset, int tryLength, int handlerOffset, int handlerLength, int filterOffset, DmdType catchType) {
+			Flags = flags;
+			TryOffset = tryOffset;
+			TryLength = tryLength;
+			HandlerOffset = handlerOffset;
+			HandlerLength = handlerLength;
+			FilterOffset = filterOffset;
+			CatchType = catchType;
+		}
 
 		/// <summary>
 		/// ToString()

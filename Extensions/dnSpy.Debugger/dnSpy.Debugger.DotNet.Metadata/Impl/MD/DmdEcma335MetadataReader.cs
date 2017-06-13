@@ -26,7 +26,7 @@ using dnlib.DotNet.MD;
 using dnlib.PE;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
-	sealed class DmdEcma335MetadataReader : DmdMetadataReaderBase {
+	sealed class DmdEcma335MetadataReader : DmdMetadataReaderBase, IMethodBodyResolver {
 		public override Guid ModuleVersionId { get; }
 		public override int MDStreamVersion => ((TablesStream.Version & 0xFF00) << 8) | (TablesStream.Version & 0xFF);
 		public override string ModuleScopeName { get; }
@@ -110,8 +110,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		(DmdType type, bool containedGenericParams) ReadTypeSpec(uint rid, IList<DmdType> genericTypeArguments) {
 			var row = Metadata.TablesStream.ReadTypeSpecRow(rid);
-			var stream = BlobStream.CreateStream(row.Signature);
-			return DmdSignatureReader.ReadTypeSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, resolveTypes);
+			using (var stream = BlobStream.CreateStream(row.Signature))
+				return DmdSignatureReader.ReadTypeSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, resolveTypes);
 		}
 
 		DmdFieldDefMD CreateResolvedField(uint rid, DmdTypeDef declaringType) {
@@ -153,8 +153,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 		}
 
-		(DmdType fieldType, bool containedGenericParams) ReadFieldTypeCore(uint signature, IList<DmdType> genericTypeArguments) =>
-			DmdSignatureReader.ReadFieldSignature(module, new DmdDataStreamImpl(BlobStream.CreateStream(signature)), genericTypeArguments, resolveTypes);
+		(DmdType fieldType, bool containedGenericParams) ReadFieldTypeCore(uint signature, IList<DmdType> genericTypeArguments) {
+			using (var stream = BlobStream.CreateStream(signature))
+				return DmdSignatureReader.ReadFieldSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, resolveTypes);
+		}
 
 		DmdMethodBase CreateResolvedMethod(uint rid, DmdTypeDef declaringType) {
 			if ((object)declaringType == null)
@@ -202,8 +204,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 		}
 
-		(DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignatureCore(uint signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool isProperty) =>
-			DmdSignatureReader.ReadMethodSignature(module, new DmdDataStreamImpl(BlobStream.CreateStream(signature)), genericTypeArguments, genericMethodArguments, isProperty, resolveTypes);
+		(DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignatureCore(uint signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool isProperty) {
+			using (var stream = BlobStream.CreateStream(signature))
+				return DmdSignatureReader.ReadMethodSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, genericMethodArguments, isProperty, resolveTypes);
+		}
 
 		internal (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters(DmdMethodBase method, bool createReturnParameter) {
 			var ridList = Metadata.GetParamRidList((uint)method.MetadataToken & 0x00FFFFFF);
@@ -363,33 +367,54 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 					return (info.fieldType, null, info.containedGenericParams);
 				}
 				else {
-					var info = DmdSignatureReader.ReadMethodSignatureOrFieldType(module, new DmdDataStreamImpl(BlobStream.CreateStream(signature)), genericTypeArguments, genericMethodArguments, resolveTypes);
-					if ((object)info.fieldType != null) {
-						if (info.containedGenericParams)
-							fieldTypeCache.Add(signature, null);
-						else
-							fieldTypeCache.Add(signature, info.fieldType);
-						return (info.fieldType, null, info.containedGenericParams);
-					}
-					else {
-						Debug.Assert((object)info.methodSignature != null);
-						if (info.containedGenericParams)
-							methodSignatureCache.Add(signature, null);
-						else
-							methodSignatureCache.Add(signature, info.methodSignature);
-						return (null, info.methodSignature, info.containedGenericParams);
+					using (var stream = BlobStream.CreateStream(signature)) {
+						var info = DmdSignatureReader.ReadMethodSignatureOrFieldType(module, new DmdDataStreamImpl(stream), genericTypeArguments, genericMethodArguments, resolveTypes);
+						if ((object)info.fieldType != null) {
+							if (info.containedGenericParams)
+								fieldTypeCache.Add(signature, null);
+							else
+								fieldTypeCache.Add(signature, info.fieldType);
+							return (info.fieldType, null, info.containedGenericParams);
+						}
+						else {
+							Debug.Assert((object)info.methodSignature != null);
+							if (info.containedGenericParams)
+								methodSignatureCache.Add(signature, null);
+							else
+								methodSignatureCache.Add(signature, info.methodSignature);
+							return (null, info.methodSignature, info.containedGenericParams);
+						}
 					}
 				}
 			}
 		}
 
-		internal DmdMethodBody GetMethodBody(DmdMethodBase method) {
+		internal DmdMethodBody GetMethodBody(DmdMethodBase method, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
 			if ((method.MethodImplementationFlags & DmdMethodImplAttributes.CodeTypeMask) != DmdMethodImplAttributes.IL)
 				return null;
 			var row = TablesStream.ReadMethodRow((uint)method.MetadataToken & 0x00FFFFFF);
-			if (row == null || row.RVA == 0)
+			if (row == null)
 				return null;
-			throw new NotImplementedException();//TODO:
+			if (row.RVA == 0)
+				return null;
+
+			using (var stream = Metadata.PEImage.CreateFullStream()) {
+				stream.Position = (long)Metadata.PEImage.ToFileOffset((RVA)row.RVA);
+				var body = DmdMethodBodyReader.Create(this, new DmdDataStreamImpl(stream), genericTypeArguments, genericMethodArguments);
+				Debug.Assert(body != null);
+				return body;
+			}
+		}
+
+		(DmdType type, bool isPinned)[] IMethodBodyResolver.ReadLocals(int localSignatureMetadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			if ((localSignatureMetadataToken & 0x00FFFFFF) == 0 || (byte)(localSignatureMetadataToken >> 24) != 0x11)
+				return Array.Empty<(DmdType, bool)>();
+			uint rid = (uint)localSignatureMetadataToken & 0x00FFFFFF;
+			var row = TablesStream.ReadStandAloneSigRow(rid);
+			if (row == null)
+				return Array.Empty<(DmdType, bool)>();
+			using (var stream = BlobStream.CreateStream(row.Signature))
+				return DmdSignatureReader.ReadLocalsSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, genericMethodArguments, resolveTypes);
 		}
 
 		public override DmdType[] GetTypes() {
@@ -433,8 +458,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var row = TablesStream.ReadMethodSpecRow(rid);
 			if (row == null)
 				return null;
-			var stream = BlobStream.CreateStream(row.Instantiation);
-			var instantiation = DmdSignatureReader.ReadMethodSpecSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, genericMethodArguments, resolveTypes).types;
+			DmdType[] instantiation;
+			using (var stream = BlobStream.CreateStream(row.Instantiation))
+				instantiation = DmdSignatureReader.ReadMethodSpecSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, genericMethodArguments, resolveTypes).types;
 			if (!CodedToken.MethodDefOrRef.Decode(row.Method, out uint token))
 				return null;
 			var genericMethod = ResolveMethod((int)token, genericTypeArguments, genericMethodArguments, DmdResolveOptions.None) as DmdMethodInfo;
@@ -569,8 +595,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				if ((object)ctor == null)
 					continue;
 
-				var stream = new DmdDataStreamImpl(BlobStream.CreateStream(row.Value));
-				var ca = DmdCustomAttributeReader.Read(module, stream, ctor);
+				DmdCustomAttributeData ca;
+				using (var stream = BlobStream.CreateStream(row.Value))
+					ca = DmdCustomAttributeReader.Read(module, new DmdDataStreamImpl(stream), ctor);
 				if (ca == null)
 					continue;
 

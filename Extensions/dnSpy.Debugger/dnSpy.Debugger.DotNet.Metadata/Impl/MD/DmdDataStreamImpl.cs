@@ -30,7 +30,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public override float ReadSingle() => stream.ReadSingle();
 		public override double ReadDouble() => stream.ReadDouble();
 		public override byte[] ReadBytes(int length) => stream.ReadBytes(length);
-		public override long Position => stream.Position;
+		public override long Position {
+			get => stream.Position;
+			set => stream.Position = value;
+		}
 		public override long Length => stream.Length;
 		public override void Dispose() => stream.Dispose();
 	}
