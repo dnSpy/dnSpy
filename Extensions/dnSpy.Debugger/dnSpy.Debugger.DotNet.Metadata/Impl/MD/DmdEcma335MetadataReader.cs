@@ -31,7 +31,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public override int MDStreamVersion => ((TablesStream.Version & 0xFF00) << 8) | (TablesStream.Version & 0xFF);
 		public override string ModuleScopeName { get; }
 		public override string ImageRuntimeVersion => Metadata.VersionString;
-		public override DmdMethodInfo EntryPoint => throw new NotImplementedException();//TODO:
+		public override DmdMethodInfo EntryPoint {
+			get {
+				if ((Metadata.ImageCor20Header.Flags & ComImageFlags.NativeEntryPoint) != 0)
+					return null;
+				uint token = Metadata.ImageCor20Header.EntryPointToken_or_RVA;
+				if ((token >> 24) != (uint)Table.File)
+					return ResolveMethod((int)token, null, null, DmdResolveOptions.None) as DmdMethodInfo;
+				return null;
+			}
+		}
 
 		public static DmdEcma335MetadataReader Create(DmdModuleImpl module, IntPtr address, uint size, bool isFileLayout) {
 			var peImage = new PEImage(address, size, isFileLayout ? ImageLayout.File : ImageLayout.Memory, true);
