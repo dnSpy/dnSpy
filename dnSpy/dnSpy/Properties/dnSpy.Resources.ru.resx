@@ -289,7 +289,7 @@
     <value>Токен _метаданных</value>
   </data>
   <data name="GoToToken_Title" xml:space="preserve">
-    <value>Перейти к токену метаданных</value>
+    <value>Переход к токену метаданных</value>
   </data>
   <data name="HideAllToolWindowsCommand" xml:space="preserve">
     <value>Ск_рыть все вкладки</value>
@@ -517,7 +517,7 @@
     <value>_Искать в сборках</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Поиск сборок</value>
+    <value>Искать в сборках</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Поиск...</value>
@@ -1122,7 +1122,7 @@
     <value>Сортировка (требуется перезагрузка)</value>
   </data>
   <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
-    <value>Одиночным щелчком мыши разворачивать узлы</value>
+    <value>Разворачивать узлы одиночным щелчком</value>
   </data>
   <data name="AssemblyExplorerSettings_SyntaxHighlight" xml:space="preserve">
     <value>Подсветка синтаксиса</value>
@@ -1137,7 +1137,7 @@
     <value>Табуляция</value>
   </data>
   <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
-    <value>Преобразовать табуляцию в пробелы</value>
+    <value>Преобразовывать табуляцию в _пробелы</value>
   </data>
   <data name="TextEditorLineNumbers" xml:space="preserve">
     <value>Номера строк</value>
@@ -1152,7 +1152,7 @@
     <value>Размер отступа</value>
   </data>
   <data name="TextEditorTabSize" xml:space="preserve">
-    <value>Размер интервала табуляции</value>
+    <value>Размер _табуляции</value>
   </data>
   <data name="TextViewerSettings" xml:space="preserve">
     <value>Просмотр текста</value>
@@ -1164,7 +1164,7 @@
     <value>Полосы прокрутки</value>
   </data>
   <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
-    <value>Сжатие пустые строки</value>
+    <value>Сжимать пустые строки</value>
   </data>
   <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
     <value>Сжимать строки, которые не имеют каких-либо буквенно-цифровых символов</value>
@@ -1173,16 +1173,16 @@
     <value>Индикатор полей</value>
   </data>
   <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
-    <value>Выделить текущую строку</value>
+    <value>Выделять текущую строку</value>
   </data>
   <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
-    <value>Выделение скобок</value>
+    <value>Выделять скобки</value>
   </data>
   <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
     <value>Подсветить связанные ключевые слова</value>
   </data>
   <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
-    <value>Показать горизонтальную полосу прокрутки</value>
+    <value>Показывать _горизонтальную полосу прокрутки</value>
   </data>
   <data name="TextEditorLineHeight" xml:space="preserve">
     <value>Высота строки</value>
@@ -1206,10 +1206,10 @@
     <value>Показывать вертикальную полосу прокрутки</value>
   </data>
   <data name="TextEditorShowStructureLines" xml:space="preserve">
-    <value>Показать границы отступа</value>
+    <value>Показывать границы отступа</value>
   </data>
   <data name="TextEditorVerticalScrollBar" xml:space="preserve">
-    <value>Показать вертикальную полосу прокрутки</value>
+    <value>Показывать _вертикальную полосу прокрутки</value>
   </data>
   <data name="TextEditorZoom" xml:space="preserve">
     <value>Масштаб</value>
@@ -1266,13 +1266,13 @@
     <value>Размер группы</value>
   </data>
   <data name="HexEditorHighlightCurrentValue" xml:space="preserve">
-    <value>Выделить текущее значение</value>
+    <value>Выделять текущее значение</value>
   </data>
   <data name="HexEditorOffsetFormat" xml:space="preserve">
     <value>Смещение</value>
   </data>
   <data name="HexEditorOffsetLowerCaseHex" xml:space="preserve">
-    <value>Hex в нижнем регистре (смещение)</value>
+    <value>Hex в нижнем регистре (смещения)</value>
   </data>
   <data name="HexEditorValuesLowerCaseHex" xml:space="preserve">
     <value>Hex в нижнем регистре (значения)</value>
@@ -1412,7 +1412,7 @@
     <value>Показать з_начения</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>_Стартовое смещение</value>
+    <value>_Смещение начала</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
     <value>Настройки локального Hex-редактора</value>
@@ -1539,7 +1539,7 @@
     <value>F12</value>
   </data>
   <data name="HexEditorHighlightStructureUnderMouseCursor" xml:space="preserve">
-    <value>Подсветить структуру под курсором</value>
+    <value>Выделять структуру под курсором мыши</value>
   </data>
   <data name="HexToolTipIndex" xml:space="preserve">
     <value>индекс</value>
@@ -1707,7 +1707,7 @@
     <value>Alt+R</value>
   </data>
   <data name="TimestampDateTimeFormat" xml:space="preserve">
-    <value>Формат отметки времени</value>
+    <value>Формат метки времени</value>
   </data>
   <data name="Window_Bookmarks" xml:space="preserve">
     <value>Закладки</value>
@@ -1752,22 +1752,22 @@
     <value>Перемещает курсор на выбранную закладку.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark in the current file.</value>
+    <value>Переместить курсор к следующей закладке в текущем файле.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark with the same label.</value>
+    <value>Переместить курсор к следующей закладке с той же меткой.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmark_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark.</value>
+    <value>Переместить курсор к следующей закладке.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark in the current file.</value>
+    <value>Переместить курсор к предыдущей закладке в текущем файле.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark with the same label.</value>
+    <value>Переместить курсор к предыдущей закладке с той же меткой.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmark_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark.</value>
+    <value>Переместить курсор к предыдущей закладке.</value>
   </data>
   <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
     <value>Импортирует закладки из файла</value>

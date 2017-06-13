@@ -127,13 +127,13 @@
     <value>В_ыключить оптимизатор JIT-компиляции</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
-    <value>Включить отслеживание компиляции _JIT</value>
+    <value>Включить отслеживание _JIT-компиляции</value>
   </data>
   <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
-    <value>Указана архитектура проц_ессора</value>
+    <value>Архитектура проц_ессора указана</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
-    <value>Открытый _ключ</value>
+    <value>Публичный _ключ</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
     <value>_Retargetable</value>
@@ -551,7 +551,7 @@
     <value>_BestFit</value>
   </data>
   <data name="ImplMap_CallingConvention" xml:space="preserve">
-    <value>Вызо_в</value>
+    <value>Согл_Выз</value>
   </data>
   <data name="ImplMap_CharacterSet" xml:space="preserve">
     <value>Кодировка</value>
@@ -578,7 +578,7 @@
     <value>Бросать исключение каждый раз, когда маршаллер не может преобразовать Unicode в ANSI</value>
   </data>
   <data name="MainTab" xml:space="preserve">
-    <value>Основное</value>
+    <value>Основные</value>
   </data>
   <data name="MarshalType" xml:space="preserve">
     <value>Маршаллинг: {0}</value>
@@ -695,7 +695,7 @@
     <value>Типы методов создания экземпляров</value>
   </data>
   <data name="MethodSig_CallingConv" xml:space="preserve">
-    <value>Вызов</value>
+    <value>Сог_л. о вызове</value>
   </data>
   <data name="MethodSig_ExplicitThis" xml:space="preserve">
     <value>E_xplicitThis</value>
@@ -1646,7 +1646,7 @@
     <value>Точка входа</value>
   </data>
   <data name="Module_EntryPoint_Managed" xml:space="preserve">
-    <value>Управ_ляемая</value>
+    <value>Mana_ged</value>
   </data>
   <data name="Module_EntryPoint_Native" xml:space="preserve">
     <value>Native</value>

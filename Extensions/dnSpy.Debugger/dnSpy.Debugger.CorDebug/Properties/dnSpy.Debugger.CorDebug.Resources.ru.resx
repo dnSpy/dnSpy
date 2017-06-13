@@ -257,7 +257,7 @@
     <value>Internal Frame ({0})</value>
   </data>
   <data name="StackFrame_JITCompilation" xml:space="preserve">
-    <value>JIT Compilation</value>
+    <value>JIT-компиляция</value>
   </data>
   <data name="StackFrame_LightweightFunction" xml:space="preserve">
     <value>Lightweight Function</value>
@@ -272,13 +272,13 @@
     <value>Security</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL offset {0}</value>
+    <value>Смещение IL {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>линия {0} символ {1}</value>
   </data>
   <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
-    <value>address {0}</value>
+    <value>адрес {0}</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Не могу установить следующую инструкцию.</value>
