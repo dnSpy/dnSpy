@@ -294,7 +294,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			{ new TypeName("System", "ValueTuple`7"), DmdWellKnownType.System_ValueTuple_T7 },
 			{ new TypeName("System", "ValueTuple`8"), DmdWellKnownType.System_ValueTuple_TRest },
 			{ new TypeName("System.Runtime.CompilerServices", "TupleElementNamesAttribute"), DmdWellKnownType.System_Runtime_CompilerServices_TupleElementNamesAttribute },
-			{ new TypeName("Microsoft.CodeAnalysis.Runtime", "Instrumentation"), DmdWellKnownType.Microsoft_CodeAnalysis_Runtime_Instrumentation },
+			{ new TypeName("System.Runtime.CompilerServices", "ReferenceAssemblyAttribute"), DmdWellKnownType.System_Runtime_CompilerServices_ReferenceAssemblyAttribute },
 			{ new TypeName("System", "ContextBoundObject"), DmdWellKnownType.System_ContextBoundObject },
 			{ new TypeName("System.Runtime.CompilerServices", "TypeForwardedToAttribute"), DmdWellKnownType.System_Runtime_CompilerServices_TypeForwardedToAttribute },
 			{ new TypeName("System.Runtime.InteropServices", "ComImportAttribute"), DmdWellKnownType.System_Runtime_InteropServices_ComImportAttribute },

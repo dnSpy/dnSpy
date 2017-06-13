@@ -283,7 +283,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		System_Runtime_CompilerServices_TupleElementNamesAttribute,
 
-		Microsoft_CodeAnalysis_Runtime_Instrumentation,
+		System_Runtime_CompilerServices_ReferenceAssemblyAttribute,
 
 		System_ContextBoundObject,
 
