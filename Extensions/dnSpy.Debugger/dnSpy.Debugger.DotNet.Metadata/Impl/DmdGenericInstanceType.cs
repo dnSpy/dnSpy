@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							if ((baseTypeToken & 0x00FFFFFF) == 0)
 								__baseType_DONT_USE = null;
 							else
-								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, typeArguments, null, throwOnError: false);
+								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, typeArguments, null, DmdResolveOptions.None);
 							baseTypeInitd = true;
 						}
 					}

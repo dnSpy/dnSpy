@@ -22,12 +22,12 @@ using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdMetadataReaderBase : DmdMetadataReader {
-		static DmdMemberInfo TryResolve(DmdMemberInfo member) => member.ResolveMemberNoThrow() ?? member;
-		static DmdType TryResolve(DmdType member) => member.ResolveNoThrow() ?? member;
-		static DmdFieldInfo TryResolve(DmdFieldInfo member) => member.ResolveNoThrow() ?? member;
-		static DmdMethodBase TryResolve(DmdMethodBase member) => member.ResolveMethodBaseNoThrow() ?? member;
+		static DmdMemberInfo TryResolve(DmdMemberInfo member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveMemberNoThrow() ?? member;
+		static DmdType TryResolve(DmdType member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveNoThrow() ?? member;
+		static DmdFieldInfo TryResolve(DmdFieldInfo member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveNoThrow() ?? member;
+		static DmdMethodBase TryResolve(DmdMethodBase member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveMethodBaseNoThrow() ?? member;
 
-		public override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) {
+		public override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x06:
@@ -37,11 +37,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 
 			case 0x0A:
-				var mr = ResolveMemberRef(rid, genericTypeArguments);
+				var mr = ResolveMemberRef(rid, genericTypeArguments, genericMethodArguments);
 				if ((object)mr != null) {
 					if (mr is DmdMethodBase methodRef)
-						return TryResolve(methodRef);
-					if (throwOnError)
+						return TryResolve(methodRef, options);
+					if ((options & DmdResolveOptions.ThrowOnError) != 0)
 						throw new ArgumentException();
 				}
 				break;
@@ -49,16 +49,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			case 0x2B:
 				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
 				if ((object)methodSpec != null)
-					return TryResolve(methodSpec);
+					return TryResolve(methodSpec, options);
 				break;
 			}
 
-			if (throwOnError)
+			if ((options & DmdResolveOptions.ThrowOnError) != 0)
 				throw new ArgumentOutOfRangeException(nameof(metadataToken));
 			return null;
 		}
 
-		public override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) {
+		public override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x04:
@@ -68,28 +68,28 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 
 			case 0x0A:
-				var memberRef = ResolveMemberRef(rid, genericTypeArguments);
+				var memberRef = ResolveMemberRef(rid, genericTypeArguments, genericMethodArguments);
 				if ((object)memberRef != null) {
 					if (memberRef is DmdFieldInfo fieldRef)
-						return TryResolve(fieldRef);
-					if (throwOnError)
+						return TryResolve(fieldRef, options);
+					if ((options & DmdResolveOptions.ThrowOnError) != 0)
 						throw new ArgumentException();
 				}
 				break;
 			}
 
-			if (throwOnError)
+			if ((options & DmdResolveOptions.ThrowOnError) != 0)
 				throw new ArgumentOutOfRangeException(nameof(metadataToken));
 			return null;
 		}
 
-		public override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) {
+		public override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
 				var typeRef = ResolveTypeRef(rid);
 				if ((object)typeRef != null)
-					return TryResolve(typeRef);
+					return TryResolve(typeRef, options);
 				break;
 
 			case 0x02:
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			case 0x1B:
 				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments);
 				if ((object)typeSpec != null)
-					return TryResolve(typeSpec);
+					return TryResolve(typeSpec, options);
 				break;
 
 			case 0x27:
@@ -111,18 +111,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 			}
 
-			if (throwOnError)
+			if ((options & DmdResolveOptions.ThrowOnError) != 0)
 				throw new ArgumentOutOfRangeException(nameof(metadataToken));
 			return null;
 		}
 
-		public override DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool throwOnError) {
+		public override DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
 				var typeRef = ResolveTypeRef(rid);
 				if ((object)typeRef != null)
-					return TryResolve(typeRef);
+					return TryResolve(typeRef, options);
 				break;
 
 			case 0x02:
@@ -144,15 +144,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 
 			case 0x0A:
-				var memberRef = ResolveMemberRef(rid, genericTypeArguments);
+				var memberRef = ResolveMemberRef(rid, genericTypeArguments, genericMethodArguments);
 				if ((object)memberRef != null)
-					return TryResolve(memberRef);
+					return TryResolve(memberRef, options);
 				break;
 
 			case 0x1B:
 				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments);
 				if ((object)typeSpec != null)
-					return TryResolve(typeSpec);
+					return TryResolve(typeSpec, options);
 				break;
 
 			case 0x27:
@@ -164,11 +164,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			case 0x2B:
 				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
 				if ((object)methodSpec != null)
-					return TryResolve(methodSpec);
+					return TryResolve(methodSpec, options);
 				break;
 			}
 
-			if (throwOnError)
+			if ((options & DmdResolveOptions.ThrowOnError) != 0)
 				throw new ArgumentOutOfRangeException(nameof(metadataToken));
 			return null;
 		}
@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdTypeDef ResolveTypeDef(uint rid);
 		protected abstract DmdFieldDef ResolveFieldDef(uint rid);
 		protected abstract DmdMethodBase ResolveMethodDef(uint rid);
-		protected abstract DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments);
+		protected abstract DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
 		protected abstract DmdEventDef ResolveEventDef(uint rid);
 		protected abstract DmdPropertyDef ResolvePropertyDef(uint rid);
 		protected abstract DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments);

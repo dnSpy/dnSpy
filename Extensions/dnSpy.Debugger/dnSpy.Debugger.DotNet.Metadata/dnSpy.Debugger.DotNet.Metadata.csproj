@@ -108,12 +108,15 @@
     <Compile Include="Impl\DmdByRefType.cs" />
     <Compile Include="Impl\DmdConstructorDef.cs" />
     <Compile Include="Impl\DmdConstructorInfoBase.cs" />
+    <Compile Include="Impl\DmdConstructorRef.cs" />
+    <Compile Include="Impl\DmdCreatedGenericParameterType.cs" />
     <Compile Include="Impl\DmdCreatedParameterDef.cs" />
     <Compile Include="Impl\DmdCustomAttributeReader.cs" />
     <Compile Include="Impl\DmdDataStream.cs" />
     <Compile Include="Impl\DmdEventDef.cs" />
     <Compile Include="Impl\DmdFieldDef.cs" />
     <Compile Include="Impl\DmdFieldInfoBase.cs" />
+    <Compile Include="Impl\DmdFieldRef.cs" />
     <Compile Include="Impl\DmdFunctionPointerType.cs" />
     <Compile Include="Impl\DmdGenericInstanceType.cs" />
     <Compile Include="Impl\DmdGenericInstanceTypeRef.cs" />
@@ -125,6 +128,7 @@
     <Compile Include="Impl\DmdMetadataReaderBase.cs" />
     <Compile Include="Impl\DmdMethodDef.cs" />
     <Compile Include="Impl\DmdMethodInfoBase.cs" />
+    <Compile Include="Impl\DmdMethodRef.cs" />
     <Compile Include="Impl\DmdModuleControllerImpl.cs" />
     <Compile Include="Impl\DmdModuleImpl.cs" />
     <Compile Include="Impl\DmdNullGlobalType.cs" />

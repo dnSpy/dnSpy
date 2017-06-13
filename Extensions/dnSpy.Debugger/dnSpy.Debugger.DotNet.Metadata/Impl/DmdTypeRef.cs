@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							if ((declTypeToken & 0x00FFFFFF) == 0)
 								__declaringTypeRef_DONT_USE = null;
 							else
-								__declaringTypeRef_DONT_USE = (DmdTypeRef)ownerModule.ResolveType(declTypeToken, null, null, throwOnError: false);
+								__declaringTypeRef_DONT_USE = (DmdTypeRef)ownerModule.ResolveType(declTypeToken, null, null, DmdResolveOptions.NoTryResolveRefs);
 							declaringTypeRefInitd = true;
 						}
 					}

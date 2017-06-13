@@ -131,6 +131,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		static IList<DmdType> GetGenericArguments(DmdMethodBase method) {
+			if (method.GetMethodSignature().GenericParameterCount == 0)
+				return Array.Empty<DmdType>();
 			if (!method.IsMetadataReference)
 				return method.GetGenericArguments();
 

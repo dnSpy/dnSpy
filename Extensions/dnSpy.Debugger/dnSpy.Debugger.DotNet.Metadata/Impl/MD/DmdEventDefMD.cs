@@ -37,16 +37,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Attributes = (DmdEventAttributes)row.EventFlags;
 			if (!CodedToken.TypeDefOrRef.Decode(row.EventType, out uint token))
 				token = uint.MaxValue;
-			EventHandlerType = reader.ResolveType((int)token, genericTypeArguments, null, throwOnError: false) ?? reader.Module.AppDomain.System_Void;
-		}
-
-		static DmdMethodInfo GetMethod(DmdMethodInfo[] methods, uint rid) {
-			int token = 0x06000000 + (int)rid;
-			foreach (var method in methods) {
-				if (method.MetadataToken == token)
-					return method;
-			}
-			return null;
+			EventHandlerType = reader.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.None) ?? reader.Module.AppDomain.System_Void;
 		}
 
 		protected override void GetMethods(out DmdMethodInfo addMethod, out DmdMethodInfo removeMethod, out DmdMethodInfo raiseMethod, out DmdMethodInfo[] otherMethods) {
@@ -56,10 +47,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			List<DmdMethodInfo> otherMethodsList = null;
 
 			var ridList = reader.Metadata.GetMethodSemanticsRidList(Table.Event, Rid);
-			var allMethods = ReflectedType.GetMethods(DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance | DmdBindingFlags.Static);
 			for (uint i = 0; i < ridList.Length; i++) {
 				var row = reader.TablesStream.ReadMethodSemanticsRow(ridList[i]);
-				var method = GetMethod(allMethods, row.Method);
+				var method = ReflectedType.GetMethod(0x06000000 + (int)row.Method) as DmdMethodInfo;
 				if ((object)method == null)
 					continue;
 

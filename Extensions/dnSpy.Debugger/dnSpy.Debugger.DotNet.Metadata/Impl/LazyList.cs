@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
@@ -53,40 +52,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	}
 
 	[DebuggerDisplay("Count = {Length}")]
-	sealed class LazyList2<T> where T : class {
-		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		readonly T[] elements;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Func<uint, IList<DmdType>, (T elem, bool containedGenericParams)> readElementByRID;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly uint length;
-
-		public uint Length => length;
-
-		public T this[uint index, IList<DmdType> genericTypeArguments] {
-			get {
-				if (index >= length)
-					return null;
-				ref var elem = ref elements[index];
-				if (elem == null) {
-					var info = readElementByRID(index + 1, genericTypeArguments);
-					if (info.containedGenericParams)
-						return info.elem;
-					Interlocked.CompareExchange(ref elem, info.elem, null);
-				}
-				return elem;
-			}
-		}
-
-		public LazyList2(uint length, Func<uint, IList<DmdType>, (T elem, bool containedGenericParams)> readElementByRID) {
-			this.length = length;
-			this.readElementByRID = readElementByRID;
-			elements = new T[length];
-		}
-	}
-
-	[DebuggerDisplay("Count = {Length}")]
-	sealed class LazyList<TValue, TArg> where TValue : class where TArg : class {
+	sealed class LazyList<TValue, TArg> where TValue : class {
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 		readonly TValue[] elements;
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -108,6 +74,72 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public LazyList(uint length, Func<uint, TArg, TValue> readElementByRID) {
+			this.length = length;
+			this.readElementByRID = readElementByRID;
+			elements = new TValue[length];
+		}
+	}
+
+	[DebuggerDisplay("Count = {Length}")]
+	sealed class LazyList2<TValue, TArg> where TValue : class {
+		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+		readonly TValue[] elements;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Func<uint, TArg, (TValue elem, bool containedGenericParams)> readElementByRID;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly uint length;
+
+		uint Length => length;
+
+		public TValue this[uint index, TArg arg] {
+			get {
+				if (index >= length)
+					return null;
+				ref var elem = ref elements[index];
+				if (elem == null) {
+					var info = readElementByRID(index + 1, arg);
+					if (info.containedGenericParams)
+						return info.elem;
+					Interlocked.CompareExchange(ref elem, info.elem, null);
+				}
+				return elem;
+			}
+		}
+
+		public LazyList2(uint length, Func<uint, TArg, (TValue elem, bool containedGenericParams)> readElementByRID) {
+			this.length = length;
+			this.readElementByRID = readElementByRID;
+			elements = new TValue[length];
+		}
+	}
+
+	[DebuggerDisplay("Count = {Length}")]
+	sealed class LazyList2<TValue, TArg1, TArg2> where TValue : class {
+		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+		readonly TValue[] elements;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly uint length;
+
+		uint Length => length;
+
+		public TValue this[uint index, TArg1 arg1, TArg2 arg2] {
+			get {
+				if (index >= length)
+					return null;
+				ref var elem = ref elements[index];
+				if (elem == null) {
+					var info = readElementByRID(index + 1, arg1, arg2);
+					if (info.containedGenericParams)
+						return info.elem;
+					Interlocked.CompareExchange(ref elem, info.elem, null);
+				}
+				return elem;
+			}
+		}
+
+		public LazyList2(uint length, Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID) {
 			this.length = length;
 			this.readElementByRID = readElementByRID;
 			elements = new TValue[length];

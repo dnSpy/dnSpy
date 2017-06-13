@@ -147,7 +147,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public override string ToString() => ToString(false);
 
-		string ToString(bool typed) {
+		internal string ToString(bool typed) {
 			if (Value == null)
 				return typed ? "null" : "(" + ArgumentType?.Name + ")null";
 			if (ArgumentType.IsEnum)
@@ -264,5 +264,16 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public override int GetHashCode() => (MemberInfo?.GetHashCode() ?? 0) ^ TypedValue.GetHashCode();
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() {
+			if ((object)MemberInfo == null)
+				return base.ToString();
+			var argType = MemberInfo is DmdFieldInfo field ? field.FieldType : MemberInfo is DmdPropertyInfo property ? property.PropertyType : null;
+			return MemberInfo.Name + " = " + TypedValue.ToString(argType != MemberInfo.AppDomain.System_Object);
+		}
 	}
 }

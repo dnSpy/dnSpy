@@ -57,10 +57,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			List<DmdMethodInfo> otherMethodsList = null;
 
 			var ridList = reader.Metadata.GetMethodSemanticsRidList(Table.Property, Rid);
-			var allMethods = ReflectedType.GetMethods(DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance | DmdBindingFlags.Static);
 			for (uint i = 0; i < ridList.Length; i++) {
 				var row = reader.TablesStream.ReadMethodSemanticsRow(ridList[i]);
-				var method = GetMethod(allMethods, row.Method);
+				var method = ReflectedType.GetMethod(0x06000000 + (int)row.Method) as DmdMethodInfo;
 				if ((object)method == null)
 					continue;
 

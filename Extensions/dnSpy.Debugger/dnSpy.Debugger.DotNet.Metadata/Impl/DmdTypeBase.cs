@@ -682,6 +682,25 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
+		IEnumerable<DmdMethodBase> GetMethodsAndConstructors(bool inherit) {
+			foreach (var method in DeclaredMethods)
+				yield return method;
+
+			if (inherit) {
+				var reader = BaseMethodsReader;
+				int index = 0;
+				for (;;) {
+					DmdMethodBase method;
+					lock (LockObject) {
+						if (index >= reader.CurrentMembers.Count && !reader.AddMembersFromNextBaseType())
+							break;
+						method = reader.CurrentMembers[index++];
+					}
+					yield return method;
+				}
+			}
+		}
+
 		IEnumerable<DmdMethodInfo> GetMethods(bool inherit) {
 			foreach (var methodBase in DeclaredMethods) {
 				if (methodBase.MemberType == DmdMemberTypes.Method)
@@ -750,7 +769,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdMethodBase GetMethod(int metadataToken, bool throwOnError) {
-			foreach (var method in GetMethods(inherit: true)) {
+			foreach (var method in GetMethodsAndConstructors(inherit: true)) {
 				if (method.MetadataToken == metadataToken)
 					return method;
 			}
@@ -798,7 +817,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(name));
 			if (parameterTypes == null)
 				throw new ArgumentNullException(nameof(parameterTypes));
-			foreach (var method in GetMethods(inherit: true)) {
+			foreach (var method in GetMethodsAndConstructors(inherit: true)) {
 				if (method.Name != name)
 					continue;
 				var sig = method.GetMethodSignature();

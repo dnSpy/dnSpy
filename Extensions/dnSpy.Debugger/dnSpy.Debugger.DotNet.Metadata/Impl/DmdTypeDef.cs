@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							else {
 								if (((uint)declTypeToken >> 24) != 0x02)
 									throw new InvalidOperationException();
-								__declaringType_DONT_USE = Module.ResolveType(declTypeToken, null, null, throwOnError: false);
+								__declaringType_DONT_USE = Module.ResolveType(declTypeToken, null, null, DmdResolveOptions.None);
 							}
 							declaringTypeInitd = true;
 						}
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							if ((baseTypeToken & 0x00FFFFFF) == 0)
 								__baseType_DONT_USE = null;
 							else
-								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetGenericArguments(), null, throwOnError: false);
+								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetGenericArguments(), null, DmdResolveOptions.None);
 							baseTypeInitd = true;
 						}
 					}

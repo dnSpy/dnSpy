@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			: base(rid, declaringMethod, name, position, attributes, customModifiers) =>
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-		protected override DmdType[] CreateGenericParameterConstraints_NoLock() {
+		protected override DmdType[] CreateGenericParameterConstraints() {
 			var ridList = reader.Metadata.GetGenericParamConstraintRidList(Rid);
 			if (ridList.Count == 0)
 				return null;
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				var row = reader.TablesStream.ReadGenericParamConstraintRow(rid);
 				if (!CodedToken.TypeDefOrRef.Decode(row.Constraint, out uint token))
 					return null;
-				var type = Module.ResolveType((int)token, genericTypeArguments, genericMethodArguments, throwOnError: false);
+				var type = Module.ResolveType((int)token, genericTypeArguments, genericMethodArguments, DmdResolveOptions.None);
 				if ((object)type == null)
 					return null;
 				gpcList[i] = type;

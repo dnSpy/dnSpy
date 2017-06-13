@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using DMD = dnlib.DotNet;
@@ -317,11 +318,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			throw new CABlobParserException("Couldn't resolve enum type");
 		}
 
+		static ReadOnlyCollection<DmdType> GetGenericArguments(DmdType type) {
+			if (!type.IsMetadataReference)
+				return type.GetGenericArguments();
+
+			var resolvedType = type.ResolveNoThrow();
+			if ((object)resolvedType != null)
+				return resolvedType.GetGenericArguments();
+
+			return ReadOnlyCollectionHelpers.Empty<DmdType>();
+		}
+
 		DmdType ReadType(bool canReturnNull) {
 			var name = ReadUTF8String();
 			if (canReturnNull && name == null)
 				return null;
-			var type = DmdTypeNameParser.Parse(module, name ?? string.Empty, ctor.ReflectedType.GetGenericArguments());
+			var type = DmdTypeNameParser.Parse(module, name ?? string.Empty, GetGenericArguments(ctor.ReflectedType));
 			if ((object)type == null)
 				throw new CABlobParserException("Could not parse type");
 			return type;

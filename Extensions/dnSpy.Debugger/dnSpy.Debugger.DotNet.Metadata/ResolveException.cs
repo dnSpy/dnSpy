@@ -48,4 +48,38 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="type">Type that couldn't be resolved</param>
 		public TypeResolveException(DmdType type) : base("Couldn't resolve type: " + type.ToString()) => Type = type;
 	}
+
+	/// <summary>
+	/// Thrown when a field couldn't be resolved
+	/// </summary>
+	[Serializable]
+	public sealed class FieldResolveException : ResolveException {
+		/// <summary>
+		/// Gets the field that couldn't be resolved
+		/// </summary>
+		public DmdFieldInfo Field { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="field">Field that couldn't be resolved</param>
+		public FieldResolveException(DmdFieldInfo field) : base("Couldn't resolve field: " + field.ToString() + ", type: " + field.DeclaringType.ToString()) => Field = field;
+	}
+
+	/// <summary>
+	/// Thrown when a method couldn't be resolved
+	/// </summary>
+	[Serializable]
+	public sealed class MethodResolveException : ResolveException {
+		/// <summary>
+		/// Gets the method that couldn't be resolved
+		/// </summary>
+		public DmdMethodBase Method { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="method">Method that couldn't be resolved</param>
+		public MethodResolveException(DmdMethodBase method) : base("Couldn't resolve method: " + method.ToString() + ", type: " + method.DeclaringType.ToString()) => Method = method;
+	}
 }

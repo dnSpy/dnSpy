@@ -38,11 +38,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (module.AppDomain.System_Void, false);
 		}
 
-		public static (DmdType type, bool containedGenericParams) ReadFieldSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, bool resolve) {
+		public static (DmdType fieldType, bool containedGenericParams) ReadFieldSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, bool resolve) {
 			try {
 				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, null, resolve)) {
-					var type = sigReader.ReadFieldSignature();
-					return (type, sigReader.containedGenericParams);
+					var fieldType = sigReader.ReadFieldSignature();
+					return (fieldType, sigReader.containedGenericParams);
 				}
 			}
 			catch (IOException) {
@@ -68,6 +68,30 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 			var dummySig = new DmdMethodSignature(isProperty ? DmdSignatureCallingConvention.Property : DmdSignatureCallingConvention.Default, 0, module.AppDomain.System_Void, null, null);
 			return (dummySig, false);
+		}
+
+		public static (DmdType fieldType, DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignatureOrFieldType(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
+			try {
+				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, genericMethodArguments, resolve)) {
+					var flags = (DmdSignatureCallingConvention)reader.ReadByte();
+					if ((flags & DmdSignatureCallingConvention.Mask) == DmdSignatureCallingConvention.Field) {
+						var fieldType = sigReader.ReadType().type;
+						return (fieldType, null, sigReader.containedGenericParams);
+					}
+					else {
+						sigReader.ReadMethodSignature(flags, out var genericParameterCount, out var returnType, out var parameterTypes, out var varArgsParameterTypes);
+						if ((flags & DmdSignatureCallingConvention.Mask) != DmdSignatureCallingConvention.Property) {
+							var methodSignature = new DmdMethodSignature(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes);
+							return (null, methodSignature, sigReader.containedGenericParams);
+						}
+					}
+				}
+			}
+			catch (IOException) {
+			}
+			catch (OutOfMemoryException) {
+			}
+			return (module.AppDomain.System_Void, null, false);
 		}
 
 		const int MAX_RECURSION_COUNT = 100;
@@ -178,13 +202,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			case DMD.ElementType.Var:
 				containedGenericParams = true;
 				num = reader.ReadCompressedUInt32();
-				result = num >= (uint)genericTypeArguments.Count ? module.AppDomain.System_Void : genericTypeArguments[(int)num];
+				result = num >= (uint)genericTypeArguments.Count ? new DmdCreatedGenericParameterType(module, true, (int)num, null) : genericTypeArguments[(int)num];
 				break;
 
 			case DMD.ElementType.MVar:
 				containedGenericParams = true;
 				num = reader.ReadCompressedUInt32();
-				result = num >= (uint)genericMethodArguments.Count ? module.AppDomain.System_Void : genericMethodArguments[(int)num];
+				result = num >= (uint)genericMethodArguments.Count ? new DmdCreatedGenericParameterType(module, false, (int)num, null) : genericMethodArguments[(int)num];
 				break;
 
 			case DMD.ElementType.GenericInst:
@@ -235,7 +259,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			// Assume it contains generic parameters if it's a TypeSpec
 			if ((token >> 24) == 0x1B)
 				containedGenericParams = true;
-			var type = module.ResolveType((int)token, genericTypeArguments, null, throwOnError: false) ?? module.AppDomain.System_Void;
+			var type = module.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.None) ?? module.AppDomain.System_Void;
 			if (resolve)
 				return type.ResolveNoThrow() ?? type;
 			return type;
@@ -256,6 +280,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		void ReadMethodSignature(out DmdSignatureCallingConvention flags, out int genericParameterCount, out DmdType returnType, out IList<DmdType> parameterTypes, out IList<DmdType> varArgsParameterTypes) {
 			flags = (DmdSignatureCallingConvention)reader.ReadByte();
+			ReadMethodSignature(flags, out genericParameterCount, out returnType, out parameterTypes, out varArgsParameterTypes);
+		}
+
+		void ReadMethodSignature(DmdSignatureCallingConvention flags, out int genericParameterCount, out DmdType returnType, out IList<DmdType> parameterTypes, out IList<DmdType> varArgsParameterTypes) {
 			switch (flags & DmdSignatureCallingConvention.Mask) {
 			case DmdSignatureCallingConvention.Default:
 			case DmdSignatureCallingConvention.C:

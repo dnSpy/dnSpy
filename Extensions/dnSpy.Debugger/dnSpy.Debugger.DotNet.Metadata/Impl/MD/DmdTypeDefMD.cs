@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				var row = reader.Metadata.TablesStream.ReadInterfaceImplRow(rid);
 				if (row == null || !CodedToken.TypeDefOrRef.Decode(row.Interface, out uint token))
 					return null;
-				res[i] = Module.ResolveType((int)token, genericTypeArguments, null, throwOnError: true);
+				res[i] = Module.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.ThrowOnError);
 			}
 			return res;
 		}
@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var res = new DmdType[ridList.Count];
 			for (int i = 0; i < res.Length; i++) {
 				uint rid = ridList[i];
-				var nestedType = Module.ResolveType(0x02000000 + (int)rid, null, null, throwOnError: false);
+				var nestedType = Module.ResolveType(0x02000000 + (int)rid, null, null, DmdResolveOptions.None);
 				if ((object)nestedType == null)
 					return null;
 				res[i] = nestedType;
