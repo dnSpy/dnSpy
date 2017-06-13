@@ -429,7 +429,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		DmdPropertyDef ResolvePropertyDef(uint rid, DmdTypeDef declaringType) => propertyList[rid - 1, declaringType];
 		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => typeSpecList[rid - 1, genericTypeArguments];
 		protected override DmdTypeRef ResolveExportedType(uint rid) => exportedTypeList[rid - 1];
-		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => throw new NotImplementedException();//TODO:
+		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			var row = TablesStream.ReadMethodSpecRow(rid);
+			if (row == null)
+				return null;
+			var stream = BlobStream.CreateStream(row.Instantiation);
+			var instantiation = DmdSignatureReader.ReadMethodSpecSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, genericMethodArguments, resolveTypes).types;
+			if (!CodedToken.MethodDefOrRef.Decode(row.Method, out uint token))
+				return null;
+			var genericMethod = ResolveMethod((int)token, genericTypeArguments, genericMethodArguments, DmdResolveOptions.None) as DmdMethodInfo;
+			if (genericMethod?.IsGenericMethodDefinition != true)
+				return null;
+			return genericMethod.MakeGenericMethod(instantiation);
+		}
 
 		protected override byte[] ResolveFieldSignature(uint rid) {
 			var row = TablesStream.ReadFieldRow(rid);

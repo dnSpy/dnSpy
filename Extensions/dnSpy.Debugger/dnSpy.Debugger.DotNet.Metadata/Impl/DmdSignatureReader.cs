@@ -94,6 +94,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (module.AppDomain.System_Void, null, false);
 		}
 
+		public static (DmdType[] types, bool containedGenericParams) ReadMethodSpecSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
+			try {
+				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, genericMethodArguments, resolve)) {
+					var types = sigReader.ReadInstantiation();
+					return (types, sigReader.containedGenericParams);
+				}
+			}
+			catch (IOException) {
+			}
+			catch (OutOfMemoryException) {
+			}
+			return (Array.Empty<DmdType>(), false);
+		}
+
 		const int MAX_RECURSION_COUNT = 100;
 		int recursionCounter;
 		readonly DmdModule module;
@@ -338,6 +352,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if ((flags & DmdSignatureCallingConvention.Mask) != DmdSignatureCallingConvention.Field)
 				return module.AppDomain.System_Void;
 			return ReadType().type;
+		}
+
+		DmdType[] ReadInstantiation() {
+			var flags = (DmdSignatureCallingConvention)reader.ReadByte();
+			if ((flags & DmdSignatureCallingConvention.Mask) != DmdSignatureCallingConvention.GenericInst)
+				return Array.Empty<DmdType>();
+			int args = (int)reader.ReadCompressedUInt32();
+			var res = new DmdType[args];
+			for (int i = 0; i < res.Length; i++)
+				res[i] = ReadType().type;
+			return res;
 		}
 
 		public void Dispose() => reader.Dispose();
