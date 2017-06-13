@@ -297,6 +297,51 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		/// <summary>
+		/// Gets all fields
+		/// </summary>
+		public abstract IEnumerable<DmdFieldInfo> Fields { get; }
+
+		/// <summary>
+		/// Gets all methods and constructors
+		/// </summary>
+		public abstract IEnumerable<DmdMethodBase> Methods { get; }
+
+		/// <summary>
+		/// Gets all properties
+		/// </summary>
+		public abstract IEnumerable<DmdPropertyInfo> Properties { get; }
+
+		/// <summary>
+		/// Gets all events
+		/// </summary>
+		public abstract IEnumerable<DmdEventInfo> Events { get; }
+
+		/// <summary>
+		/// Gets all declared fields
+		/// </summary>
+		public abstract ReadOnlyCollection<DmdFieldInfo> DeclaredFields { get; }
+
+		/// <summary>
+		/// Gets all declared methods and constructors
+		/// </summary>
+		public abstract ReadOnlyCollection<DmdMethodBase> DeclaredMethods { get; }
+
+		/// <summary>
+		/// Gets all declared properties
+		/// </summary>
+		public abstract ReadOnlyCollection<DmdPropertyInfo> DeclaredProperties { get; }
+
+		/// <summary>
+		/// Gets all declared events
+		/// </summary>
+		public abstract ReadOnlyCollection<DmdEventInfo> DeclaredEvents { get; }
+
+		/// <summary>
+		/// Gets all nested types
+		/// </summary>
+		public abstract ReadOnlyCollection<DmdType> NestedTypes { get; }
+
+		/// <summary>
 		/// Gets method or returns null if it doesn't exist
 		/// </summary>
 		/// <param name="metadataToken">Metadata token</param>
@@ -673,12 +718,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <returns></returns>
 		public abstract DmdType[] GetNestedTypes(DmdBindingFlags bindingAttr);
-
-		/// <summary>
-		/// Gets all nested types
-		/// </summary>
-		/// <returns></returns>
-		public abstract ReadOnlyCollection<DmdType> GetAllNestedTypes();
 
 		/// <summary>
 		/// Gets a public nested type

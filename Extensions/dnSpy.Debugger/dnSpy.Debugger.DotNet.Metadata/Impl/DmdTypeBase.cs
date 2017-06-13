@@ -283,7 +283,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override DmdType[] GetNestedTypes(DmdBindingFlags bindingAttr) {
-			var nestedTypes = GetAllNestedTypes();
+			var nestedTypes = NestedTypes;
 			if (nestedTypes.Count == 0)
 				return Array.Empty<DmdType>();
 			var list = new List<DmdType>(nestedTypes.Count);
@@ -297,7 +297,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdType GetNestedType(string fullName, DmdBindingFlags bindingAttr) {
 			if (fullName == null)
 				throw new ArgumentNullException(nameof(fullName));
-			var nestedTypes = GetAllNestedTypes();
+			var nestedTypes = NestedTypes;
 			if (nestedTypes.Count == 0)
 				return null;
 			DmdTypeUtilities.SplitFullName(fullName, out var @namespace, out var name);
@@ -308,7 +308,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override ReadOnlyCollection<DmdType> GetAllNestedTypes() => NestedTypes;
 		protected virtual DmdType[] CreateNestedTypes() => null;
 
 		public sealed override DmdType GetInterface(string fullName, bool ignoreCase) {
@@ -432,7 +431,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected virtual DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => null;
 		protected virtual DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => null;
 
-		internal ReadOnlyCollection<DmdFieldInfo> DeclaredFields {
+		public sealed override IEnumerable<DmdFieldInfo> Fields => GetFields(inherit: true);
+		public sealed override IEnumerable<DmdMethodBase> Methods => GetMethodsAndConstructors(inherit: true);
+		public sealed override IEnumerable<DmdPropertyInfo> Properties => GetProperties(inherit: true);
+		public sealed override IEnumerable<DmdEventInfo> Events => GetEvents(inherit: true);
+
+		public sealed override ReadOnlyCollection<DmdFieldInfo> DeclaredFields {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredFields_DONT_USE != null)
@@ -447,7 +451,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		internal ReadOnlyCollection<DmdMethodBase> DeclaredMethods {
+		public sealed override ReadOnlyCollection<DmdMethodBase> DeclaredMethods {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredMethods_DONT_USE != null)
@@ -462,7 +466,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		internal ReadOnlyCollection<DmdPropertyInfo> DeclaredProperties {
+		public sealed override ReadOnlyCollection<DmdPropertyInfo> DeclaredProperties {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredProperties_DONT_USE != null)
@@ -477,7 +481,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		internal ReadOnlyCollection<DmdEventInfo> DeclaredEvents {
+		public sealed override ReadOnlyCollection<DmdEventInfo> DeclaredEvents {
 			get {
 				var f = ExtraFields;
 				if (f.__declaredEvents_DONT_USE != null)
@@ -492,7 +496,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		internal ReadOnlyCollection<DmdType> NestedTypes {
+		public sealed override ReadOnlyCollection<DmdType> NestedTypes {
 			get {
 				var f = ExtraFields;
 				if (f.__nestedTypes_DONT_USE != null)
