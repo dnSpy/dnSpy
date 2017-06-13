@@ -478,6 +478,38 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
+		public override DmdType MakeGenericTypeParameter(int position, DmdType declaringType, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options) {
+			if (position < 0)
+				throw new ArgumentOutOfRangeException(nameof(position));
+			if ((object)declaringType == null)
+				throw new ArgumentNullException(nameof(declaringType));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			if (customModifiers != null) {
+				for (int i = 0; i < customModifiers.Count; i++) {
+					if (customModifiers[i].Type.AppDomain != this)
+						throw new ArgumentException();
+				}
+			}
+			return new DmdGenericParameterTypeImpl(this, declaringType, name, position, attributes, customModifiers);
+		}
+
+		public override DmdType MakeGenericMethodParameter(int position, DmdMethodBase declaringMethod, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options) {
+			if (position < 0)
+				throw new ArgumentOutOfRangeException(nameof(position));
+			if ((object)declaringMethod == null)
+				throw new ArgumentNullException(nameof(declaringMethod));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			if (customModifiers != null) {
+				for (int i = 0; i < customModifiers.Count; i++) {
+					if (customModifiers[i].Type.AppDomain != this)
+						throw new ArgumentException();
+				}
+			}
+			return new DmdGenericParameterTypeImpl(this, declaringMethod, name, position, attributes, customModifiers);
+		}
+
 		public override DmdType GetType(string typeName, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
 
 		internal DmdTypeDef Resolve(DmdTypeRef typeRef, bool throwOnError, bool ignoreCase) {
@@ -494,7 +526,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		DmdTypeDef ResolveCore(DmdTypeRef typeRef, bool ignoreCase) {
-			var nonNestedTypeRef = GetNonNestedTypeRef(typeRef);
+			var nonNestedTypeRef = DmdTypeUtilities.GetNonNestedType(typeRef);
 			if ((object)nonNestedTypeRef == null)
 				return null;
 
@@ -536,7 +568,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if ((object)exportedType == null)
 					return null;
 
-				var nonNested = GetNonNestedTypeRef(exportedType);
+				var nonNested = DmdTypeUtilities.GetNonNestedType(exportedType);
 				if ((object)nonNested == null)
 					return null;
 				var typeScope = nonNested.TypeScope;
@@ -614,16 +646,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdTypeDef Lookup(DmdModule module, DmdTypeRef typeRef) {
 			if (GetModuleTypeDictionary(module).TryGetValue(typeRef, out var typeDef))
 				return typeDef;
-			return null;
-		}
-
-		static DmdTypeRef GetNonNestedTypeRef(DmdTypeRef typeRef) {
-			for (int i = 0; i < 1000; i++) {
-				var next = typeRef.DeclaringTypeRef;
-				if ((object)next == null)
-					return typeRef;
-				typeRef = next;
-			}
 			return null;
 		}
 

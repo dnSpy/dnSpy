@@ -256,6 +256,46 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
 
 		/// <summary>
+		/// Makes a generic type parameter
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="declaringType">Declaring type</param>
+		/// <returns></returns>
+		public DmdType MakeGenericTypeParameter(int position, DmdType declaringType) => MakeGenericTypeParameter(position, declaringType, string.Empty, 0, null);
+
+		/// <summary>
+		/// Makes a generic type parameter
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="declaringType">Declaring type</param>
+		/// <param name="name">Name</param>
+		/// <param name="attributes">Attributes</param>
+		/// <param name="customModifiers">Custom modifiers or null</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdType MakeGenericTypeParameter(int position, DmdType declaringType, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+
+		/// <summary>
+		/// Makes a generic method parameter
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="declaringMethod">Declaring method</param>
+		/// <returns></returns>
+		public DmdType MakeGenericMethodParameter(int position, DmdMethodBase declaringMethod) => MakeGenericMethodParameter(position, declaringMethod, string.Empty, 0, null);
+
+		/// <summary>
+		/// Makes a generic method parameter
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="declaringMethod">Declaring method</param>
+		/// <param name="name">Name</param>
+		/// <param name="attributes">Attributes</param>
+		/// <param name="customModifiers">Custom modifiers or null</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdType MakeGenericMethodParameter(int position, DmdMethodBase declaringMethod, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+
+		/// <summary>
 		/// Gets a type
 		/// </summary>
 		/// <param name="typeName">Full type name</param>

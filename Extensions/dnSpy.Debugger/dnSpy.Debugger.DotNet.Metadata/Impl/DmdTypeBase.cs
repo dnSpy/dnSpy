@@ -760,7 +760,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							break;
 						}
 					}
-					if (method == null)
+					if ((object)method == null)
 						break;
 					yield return method;
 				}

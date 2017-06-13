@@ -123,6 +123,7 @@
     <Compile Include="Impl\DmdGenericInstanceType.cs" />
     <Compile Include="Impl\DmdGenericInstanceTypeRef.cs" />
     <Compile Include="Impl\DmdGenericParameterType.cs" />
+    <Compile Include="Impl\DmdGenericParameterTypeImpl.cs" />
     <Compile Include="Impl\DmdLazyMetadataReader.cs" />
     <Compile Include="Impl\DmdMDArrayType.cs" />
     <Compile Include="Impl\DmdMemberInfoComparer.cs" />
