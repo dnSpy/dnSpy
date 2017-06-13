@@ -109,7 +109,9 @@
     <Compile Include="Impl\DmdConstructorDef.cs" />
     <Compile Include="Impl\DmdConstructorInfoBase.cs" />
     <Compile Include="Impl\DmdConstructorRef.cs" />
+    <Compile Include="Impl\DmdCreatedConstructorDef.cs" />
     <Compile Include="Impl\DmdCreatedGenericParameterType.cs" />
+    <Compile Include="Impl\DmdCreatedMethodDef.cs" />
     <Compile Include="Impl\DmdCreatedParameterDef.cs" />
     <Compile Include="Impl\DmdCreatedParameterInfo.cs" />
     <Compile Include="Impl\DmdCustomAttributeReader.cs" />

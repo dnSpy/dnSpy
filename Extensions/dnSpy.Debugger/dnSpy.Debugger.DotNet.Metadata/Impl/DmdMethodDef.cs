@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected uint Rid => rid;
 		readonly uint rid;
 
-		protected DmdMethodDef(uint rid, DmdTypeDef declaringType, DmdType reflectedType) {
+		protected DmdMethodDef(uint rid, DmdType declaringType, DmdType reflectedType) {
 			this.rid = rid;
 			DeclaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
 			ReflectedType = reflectedType ?? throw new ArgumentNullException(nameof(reflectedType));

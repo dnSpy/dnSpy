@@ -27,6 +27,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	public abstract class DmdMethodBase : DmdMemberInfo, IEquatable<DmdMethodBase> {
 		/// <summary>
+		/// Gets the method kind
+		/// </summary>
+		public virtual DmdSpecialMethodKind SpecialMethodKind => DmdSpecialMethodKind.Metadata;
+
+		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
 		public override DmdAppDomain AppDomain => DeclaringType.AppDomain;
@@ -222,5 +227,43 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public sealed override string ToString() => DmdMemberFormatter.Format(this);
+	}
+
+	/// <summary>
+	/// Special methods created by the CLR
+	/// </summary>
+	public enum DmdSpecialMethodKind {
+		/// <summary>
+		/// It was read from metadata
+		/// </summary>
+		Metadata,
+
+		/// <summary>
+		/// SZArray/MDArray Set method
+		/// </summary>
+		Array_Set,
+
+		/// <summary>
+		/// SZArray/MDArray Address method
+		/// </summary>
+		Array_Address,
+
+		/// <summary>
+		/// SZArray/MDArray Get method
+		/// </summary>
+		Array_Get,
+
+		/// <summary>
+		/// SZArray/MDArray constructor that takes <see cref="int"/> args specifying the sizes of all dimensions.
+		/// Lower bound is assumed to be zero.
+		/// </summary>
+		Array_Constructor1,
+
+		/// <summary>
+		/// MDArray constructor that takes <see cref="int"/> args in pairs, one per dimension. The first
+		/// <see cref="int"/> is the lower bound for the dimension and the following <see cref="int"/> is
+		/// the size.
+		/// </summary>
+		Array_Constructor2,
 	}
 }

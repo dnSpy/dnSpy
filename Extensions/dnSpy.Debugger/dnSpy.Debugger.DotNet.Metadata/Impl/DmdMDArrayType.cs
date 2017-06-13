@@ -85,5 +85,50 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => null;
+
+		protected override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) {
+			var appDomain = AppDomain;
+			var res = new DmdMethodBase[includeConstructors ? 5 : 3];
+			res[0] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Set, "Set", appDomain.System_Void, CreateParameterTypes(elementType));
+			res[1] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Address, "Address", appDomain.MakeByRefType(elementType, null), CreateParameterTypes(null));
+			res[2] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Get, "Get", elementType, CreateParameterTypes(null));
+			if (includeConstructors) {
+				res[3] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor1, ".ctor", appDomain.System_Void, CreateParameterTypes(null));
+				res[4] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor2, ".ctor", appDomain.System_Void, CreateParameterTypesPair());
+			}
+			return res;
+		}
+
+		int SafeRank => (uint)rank <= 100 ? rank : 100;
+
+		DmdType[] CreateParameterTypes(DmdType lastType) {
+			var rank = SafeRank;
+			var types = new DmdType[rank + ((object)lastType == null ? 0 : 1)];
+			var int32Type = AppDomain.System_Int32;
+			for (int i = 0; i < rank; i++)
+				types[i] = int32Type;
+			if ((object)lastType != null)
+				types[types.Length - 1] = lastType;
+			return types;
+		}
+
+		DmdType[] CreateParameterTypesPair() {
+			var rank = SafeRank;
+			var types = new DmdType[rank * 2];
+			var int32Type = AppDomain.System_Int32;
+			for (int i = 0; i < rank; i++) {
+				types[i * 2 + 0] = int32Type;
+				types[i * 2 + 1] = int32Type;
+			}
+			return types;
+		}
+
+		DmdMethodBase CreateMethod(DmdType reflectedType, DmdSpecialMethodKind specialMethodKind, string name, DmdType returnType, params DmdType[] parameterTypes) {
+			var flags = DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis;
+			var sig = new DmdMethodSignature(flags, 0, returnType, parameterTypes, null);
+			if (name == DmdConstructorInfo.ConstructorName)
+				return new DmdCreatedConstructorDef(specialMethodKind, name, sig, this, reflectedType);
+			return new DmdCreatedMethodDef(specialMethodKind, name, sig, this, reflectedType);
+		}
 	}
 }

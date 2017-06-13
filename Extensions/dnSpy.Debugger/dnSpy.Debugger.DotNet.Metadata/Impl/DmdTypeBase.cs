@@ -768,7 +768,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public override DmdMethodBase GetMethod(int metadataToken, bool throwOnError) {
+		public sealed override DmdMethodBase GetMethod(int metadataToken, bool throwOnError) {
 			foreach (var method in GetMethodsAndConstructors(inherit: true)) {
 				if (method.MetadataToken == metadataToken)
 					return method;
@@ -779,7 +779,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdFieldInfo GetField(int metadataToken, bool throwOnError) {
+		public sealed override DmdFieldInfo GetField(int metadataToken, bool throwOnError) {
 			foreach (var field in GetFields(inherit: true)) {
 				if (field.MetadataToken == metadataToken)
 					return field;
@@ -790,7 +790,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdPropertyInfo GetProperty(int metadataToken, bool throwOnError) {
+		public sealed override DmdPropertyInfo GetProperty(int metadataToken, bool throwOnError) {
 			foreach (var property in GetProperties(inherit: true)) {
 				if (property.MetadataToken == metadataToken)
 					return property;
@@ -801,7 +801,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdEventInfo GetEvent(int metadataToken, bool throwOnError) {
+		public sealed override DmdEventInfo GetEvent(int metadataToken, bool throwOnError) {
 			foreach (var @event in GetEvents(inherit: true)) {
 				if (@event.MetadataToken == metadataToken)
 					return @event;

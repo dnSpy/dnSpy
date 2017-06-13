@@ -72,5 +72,24 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => ((DmdAppDomainImpl)AppDomain).GetSZArrayInterfaces(elementType);
+
+		protected override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) {
+			var appDomain = AppDomain;
+			var res = new DmdMethodBase[includeConstructors ? 4 : 3];
+			res[0] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Set, "Set", appDomain.System_Void, appDomain.System_Int32, elementType);
+			res[1] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Address, "Address", appDomain.MakeByRefType(elementType, null), appDomain.System_Int32);
+			res[2] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Get, "Get", elementType, appDomain.System_Int32);
+			if (includeConstructors)
+				res[3] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor1, ".ctor", appDomain.System_Void, appDomain.System_Int32);
+			return res;
+		}
+
+		DmdMethodBase CreateMethod(DmdType reflectedType, DmdSpecialMethodKind specialMethodKind, string name, DmdType returnType, params DmdType[] parameterTypes) {
+			var flags = DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis;
+			var sig = new DmdMethodSignature(flags, 0, returnType, parameterTypes, null);
+			if (name == DmdConstructorInfo.ConstructorName)
+				return new DmdCreatedConstructorDef(specialMethodKind, name, sig, this, reflectedType);
+			return new DmdCreatedMethodDef(specialMethodKind, name, sig, this, reflectedType);
+		}
 	}
 }
