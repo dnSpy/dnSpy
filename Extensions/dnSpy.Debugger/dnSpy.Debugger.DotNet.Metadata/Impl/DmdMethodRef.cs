@@ -23,7 +23,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	sealed class DmdMethodRef : DmdMethodInfoBase {
+	abstract class DmdMethodRef : DmdMethodInfoBase {
+		public override DmdAppDomain AppDomain => declaringTypeRef.AppDomain;
 		public override string Name { get; }
 		public override DmdType DeclaringType => __resolvedMethod_DONT_USE?.DeclaringType ?? declaringTypeRef;
 		public override DmdType ReflectedType => DeclaringType;
@@ -31,11 +32,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int MetadataToken => ResolvedMethod.MetadataToken;
 		public override DmdMethodImplAttributes MethodImplementationFlags => ResolvedMethod.MethodImplementationFlags;
 		public override DmdMethodAttributes Attributes => ResolvedMethod.Attributes;
-		public override bool IsGenericMethodDefinition => ResolvedMethod.IsGenericMethodDefinition;
-		public override bool IsGenericMethod => ResolvedMethod.IsGenericMethod;
+		public override bool IsGenericMethodDefinition => methodSignature.GenericParameterCount != 0;
+		public override bool IsGenericMethod => methodSignature.GenericParameterCount != 0;
 
-		DmdMethodInfo ResolvedMethod => GetResolvedMethod(throwOnError: true);
-		DmdMethodInfo GetResolvedMethod(bool throwOnError) {
+		DmdMethodDef ResolvedMethod => GetResolvedMethod(throwOnError: true);
+		DmdMethodDef GetResolvedMethod(bool throwOnError) {
 			if ((object)__resolvedMethod_DONT_USE != null)
 				return __resolvedMethod_DONT_USE;
 			lock (LockObject) {
@@ -61,13 +62,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return null;
 			}
 		}
-		DmdMethodInfo __resolvedMethod_DONT_USE;
+		DmdMethodDef __resolvedMethod_DONT_USE;
 
 		readonly DmdType declaringTypeRef;
 		readonly DmdMethodSignature rawMethodSignature;
 		readonly DmdMethodSignature methodSignature;
 
-		public DmdMethodRef(DmdType declaringTypeRef, string name, DmdMethodSignature rawMethodSignature, DmdMethodSignature methodSignature) {
+		protected DmdMethodRef(DmdType declaringTypeRef, string name, DmdMethodSignature rawMethodSignature, DmdMethodSignature methodSignature) {
 			this.declaringTypeRef = declaringTypeRef ?? throw new ArgumentNullException(nameof(declaringTypeRef));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			this.rawMethodSignature = rawMethodSignature ?? throw new ArgumentNullException(nameof(rawMethodSignature));
@@ -76,14 +77,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdMethodInfo Resolve(bool throwOnError) => GetResolvedMethod(throwOnError);
 		public override ReadOnlyCollection<DmdParameterInfo> GetParameters() => ResolvedMethod.GetParameters();
-		public override ReadOnlyCollection<DmdType> GetGenericArguments() => ResolvedMethod.GetGenericArguments();
+		public override ReadOnlyCollection<DmdType> GetGenericArguments() => methodSignature.GenericParameterCount == 0 ? ReadOnlyCollectionHelpers.Empty<DmdType>() : ResolvedMethod.GetGenericArguments();
 		public override DmdMethodBody GetMethodBody() => ResolvedMethod.GetMethodBody();
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => ResolvedMethod.GetCustomAttributesData();
 		public override DmdParameterInfo ReturnParameter => ResolvedMethod.ReturnParameter;
 		public override DmdMethodInfo GetBaseDefinition() => ResolvedMethod.GetBaseDefinition();
 		internal override DmdMethodInfo GetParentDefinition() => ResolvedMethod.GetParentDefinition();
-		public override DmdMethodInfo GetGenericMethodDefinition() => ResolvedMethod.GetGenericMethodDefinition();
-		public override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => ResolvedMethod.MakeGenericMethod(typeArguments);
+		public override DmdMethodInfo GetGenericMethodDefinition() => methodSignature.GenericParameterCount == 0 ? throw new InvalidOperationException() : (DmdMethodInfo)__resolvedMethod_DONT_USE ?? this;
+		public override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);
 	}
 }

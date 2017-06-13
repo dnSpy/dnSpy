@@ -167,7 +167,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var row = TablesStream.ReadMethodRow(rid);
 			string name = StringsStream.ReadNoNull(row.Name);
 			if ((row.Flags & (int)DmdMethodAttributes.RTSpecialName) != 0 && name.Length > 0 && name[0] == '.') {
-				if (name == ".ctor" || name == ".cctor")
+				if (name == DmdConstructorInfo.ConstructorName || name == DmdConstructorInfo.TypeConstructorName)
 					return new DmdConstructorDefMD(this, row, rid, name, declaringType, reflectedType, genericTypeArguments);
 			}
 			return new DmdMethodDefMD(this, row, rid, name, declaringType, reflectedType, genericTypeArguments);
@@ -302,7 +302,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 					return (ctorRef, info.containedGenericParams);
 				}
 				else {
-					var methodRef = new DmdMethodRef(reflectedTypeRef, name, rawInfo.methodSignature, info.methodSignature);
+					var methodRef = new DmdMethodRefMD(this, row.Signature, genericTypeArguments, reflectedTypeRef, name, rawInfo.methodSignature, info.methodSignature);
 					return (methodRef, info.containedGenericParams);
 				}
 			}

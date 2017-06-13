@@ -22,6 +22,7 @@ using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdCreatedGenericParameterType : DmdGenericParameterType {
+		public override DmdAppDomain AppDomain => module.AppDomain;
 		public override DmdTypeSignatureKind TypeSignatureKind => isGenericTypeParameter ? DmdTypeSignatureKind.TypeGenericParameter : DmdTypeSignatureKind.MethodGenericParameter;
 		public override DmdModule Module => module;
 

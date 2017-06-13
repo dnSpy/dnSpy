@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdMDArrayType : DmdTypeBase {
+		public override DmdAppDomain AppDomain => SkipElementTypes().AppDomain;
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.MDArray;
 		public override DmdTypeScope TypeScope => SkipElementTypes().TypeScope;
 		public override DmdModule Module => SkipElementTypes().Module;

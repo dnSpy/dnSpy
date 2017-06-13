@@ -24,6 +24,7 @@ using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdConstructorRef : DmdConstructorInfoBase {
+		public override DmdAppDomain AppDomain => declaringTypeRef.AppDomain;
 		public override string Name { get; }
 		public override DmdType DeclaringType => __resolvedConstructor_DONT_USE?.DeclaringType ?? declaringTypeRef;
 		public override DmdType ReflectedType => DeclaringType;
@@ -31,11 +32,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int MetadataToken => ResolvedConstructor.MetadataToken;
 		public override DmdMethodImplAttributes MethodImplementationFlags => ResolvedConstructor.MethodImplementationFlags;
 		public override DmdMethodAttributes Attributes => ResolvedConstructor.Attributes;
-		public override bool IsGenericMethodDefinition => ResolvedConstructor.IsGenericMethodDefinition;
-		public override bool IsGenericMethod => ResolvedConstructor.IsGenericMethod;
+		public override bool IsGenericMethodDefinition => methodSignature.GenericParameterCount != 0;
+		public override bool IsGenericMethod => methodSignature.GenericParameterCount != 0;
 
-		DmdConstructorInfo ResolvedConstructor => GetResolvedConstructor(throwOnError: true);
-		DmdConstructorInfo GetResolvedConstructor(bool throwOnError) {
+		DmdConstructorDef ResolvedConstructor => GetResolvedConstructor(throwOnError: true);
+		DmdConstructorDef GetResolvedConstructor(bool throwOnError) {
 			if ((object)__resolvedConstructor_DONT_USE != null)
 				return __resolvedConstructor_DONT_USE;
 			lock (LockObject) {
@@ -61,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return null;
 			}
 		}
-		DmdConstructorInfo __resolvedConstructor_DONT_USE;
+		DmdConstructorDef __resolvedConstructor_DONT_USE;
 
 		readonly DmdType declaringTypeRef;
 		readonly DmdMethodSignature rawMethodSignature;
@@ -76,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdConstructorInfo Resolve(bool throwOnError) => GetResolvedConstructor(throwOnError);
 		public override ReadOnlyCollection<DmdParameterInfo> GetParameters() => ResolvedConstructor.GetParameters();
-		public override ReadOnlyCollection<DmdType> GetGenericArguments() => ResolvedConstructor.GetGenericArguments();
+		public override ReadOnlyCollection<DmdType> GetGenericArguments() => methodSignature.GenericParameterCount == 0 ? ReadOnlyCollectionHelpers.Empty<DmdType>() : ResolvedConstructor.GetGenericArguments();
 		public override DmdMethodBody GetMethodBody() => ResolvedConstructor.GetMethodBody();
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => ResolvedConstructor.GetCustomAttributesData();

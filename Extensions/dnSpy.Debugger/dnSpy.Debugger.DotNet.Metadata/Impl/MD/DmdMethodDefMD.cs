@@ -29,6 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		readonly DmdEcma335MetadataReader reader;
 		readonly DmdMethodSignature methodSignature;
+		readonly IList<DmdType> genericTypeArguments;
 
 		public DmdMethodDefMD(DmdEcma335MetadataReader reader, RawMethodRow row, uint rid, string name, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
@@ -36,6 +37,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Attributes = (DmdMethodAttributes)row.Flags;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			methodSignature = reader.ReadMethodSignature(row.Signature, genericTypeArguments, GetGenericArguments(), isProperty: false);
+
+			// Needed by GetMethodSignatureCore(). It's not always identical to ReflectedType.GetGenericArguments()
+			this.genericTypeArguments = methodSignature.GenericParameterCount == 0 ? null : genericTypeArguments;
 		}
 
 		protected override DmdType[] CreateGenericParameters() => reader.CreateGenericParameters(this);
@@ -62,6 +66,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return (cas, implMap);
 		}
 
-		protected override DmdMethodInfo MakeGenericMethodCore(IList<DmdType> typeArguments) => throw new NotImplementedException();//TODO:
+		internal override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) {
+			var row = reader.TablesStream.ReadMethodRow(Rid);
+			return reader.ReadMethodSignature(row.Signature, genericTypeArguments, genericMethodArguments, isProperty: false);
+		}
 	}
 }

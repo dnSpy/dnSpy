@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
-		public sealed override DmdAppDomain AppDomain => DeclaringType.AppDomain;
+		public override DmdAppDomain AppDomain => DeclaringType.AppDomain;
 
 		/// <summary>
 		/// Gets the member type

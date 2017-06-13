@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdMethodInfoBase : DmdMethodInfo {
@@ -25,6 +26,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override DmdModule Module => DeclaringType.Module;
 		public sealed override DmdType ReturnType => GetMethodSignature().ReturnType;
+
+		public sealed override DmdMethodSignature GetMethodSignature(IList<DmdType> genericMethodArguments) {
+			if (genericMethodArguments == null)
+				throw new ArgumentNullException(nameof(genericMethodArguments));
+			if (!IsGenericMethodDefinition)
+				throw new ArgumentException();
+			var sig = GetMethodSignature();
+			if (genericMethodArguments.Count != sig.GenericParameterCount)
+				throw new ArgumentException();
+			return GetMethodSignatureCore(genericMethodArguments);
+		}
+
+		// Only overridden by DmdMethodDef and DmdMethodRef
+		internal virtual DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => throw new InvalidOperationException();
 
 		public sealed override object Invoke(IDmdEvaluationContext context, object obj, DmdBindingFlags invokeAttr, object[] parameters) =>
 			AppDomain.Invoke(context, this, obj, parameters);

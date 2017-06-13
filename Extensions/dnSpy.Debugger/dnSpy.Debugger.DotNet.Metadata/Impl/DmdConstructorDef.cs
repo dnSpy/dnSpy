@@ -29,8 +29,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override int MetadataToken => (int)(0x06000000 + rid);
 		public sealed override bool IsMetadataReference => false;
 
-		public sealed override bool IsGenericMethodDefinition => GetGenericArguments().Count != 0;
-		public sealed override bool IsGenericMethod => GetGenericArguments().Count != 0;
+		public sealed override bool IsGenericMethodDefinition => GetMethodSignature().GenericParameterCount != 0;
+		public sealed override bool IsGenericMethod => GetMethodSignature().GenericParameterCount != 0;
 
 		protected uint Rid => rid;
 		readonly uint rid;

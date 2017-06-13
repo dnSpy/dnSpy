@@ -23,6 +23,7 @@ using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdTypeDefMD : DmdTypeDef {
+		public override DmdAppDomain AppDomain => reader.Module.AppDomain;
 		public override DmdModule Module => reader.Module;
 		public override string Namespace { get; }
 		public override string Name { get; }

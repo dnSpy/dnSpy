@@ -341,7 +341,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				res = new DmdGenericInstanceTypeRef(gtRef, typeArguments, customModifiers);
 			}
 			else {
-				gtDef = (DmdTypeDef)gtDef.FullResolve() ?? gtDef;
+				if (resolve)
+					gtDef = (DmdTypeDef)gtDef.FullResolve() ?? gtDef;
 				if (!gtDef.IsGenericTypeDefinition)
 					throw new ArgumentException();
 				if (gtDef.GetGenericArguments().Count != typeArguments.Count)
@@ -356,6 +357,52 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return cachedType;
 				if (res.IsFullyResolved)
 					fullyResolvedTypes.Add(res, res);
+			}
+
+			return res;
+		}
+
+		public override DmdMethodInfo MakeGenericMethod(DmdMethodInfo genericMethodDefinition, IList<DmdType> typeArguments, MakeTypeOptions options) {
+			if ((object)genericMethodDefinition == null)
+				throw new ArgumentNullException(nameof(genericMethodDefinition));
+			if (genericMethodDefinition.AppDomain != this)
+				throw new ArgumentException();
+			if (!genericMethodDefinition.IsGenericMethodDefinition)
+				throw new ArgumentException();
+			if (typeArguments == null)
+				throw new ArgumentNullException(nameof(typeArguments));
+			if (typeArguments.Count == 0)
+				throw new ArgumentException();
+			for (int i = 0; i < typeArguments.Count; i++) {
+				if (typeArguments[i].AppDomain != this)
+					throw new InvalidOperationException();
+			}
+			var sig = genericMethodDefinition.GetMethodSignature();
+			if (sig.GenericParameterCount != typeArguments.Count)
+				throw new ArgumentException();
+
+			DmdMethodInfoBase res;
+			DmdMethodDef gmDef;
+			bool resolve = (options & MakeTypeOptions.NoResolve) == 0;
+			if (resolve)
+				gmDef = genericMethodDefinition.Resolve() as DmdMethodDef;
+			else
+				gmDef = genericMethodDefinition as DmdMethodDef;
+
+			if ((object)gmDef == null) {
+				var gmRef = genericMethodDefinition as DmdMethodRef;
+				if ((object)gmRef == null)
+					throw new ArgumentException();
+				if (resolve)
+					typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;
+				res = new DmdMethodSpecRef(gmRef, typeArguments);
+			}
+			else {
+				if (gmDef.GetGenericArguments().Count != typeArguments.Count)
+					throw new ArgumentException();
+				if (resolve)
+					typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;
+				res = new DmdMethodSpec(gmDef, typeArguments);
 			}
 
 			return res;
@@ -383,7 +430,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				}
 			}
 
-			var res = new DmdFunctionPointerType(methodSignature, customModifiers);
+			var res = new DmdFunctionPointerType(this, methodSignature, customModifiers);
 			lock (LockObject) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
@@ -427,7 +474,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 			var methodSignature = new DmdMethodSignature(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes);
 
-			var res = new DmdFunctionPointerType(methodSignature, customModifiers);
+			var res = new DmdFunctionPointerType(this, methodSignature, customModifiers);
 			lock (LockObject) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;

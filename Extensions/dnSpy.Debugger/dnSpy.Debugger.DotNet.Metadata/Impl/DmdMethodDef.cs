@@ -29,8 +29,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override int MetadataToken => (int)(0x06000000 + rid);
 		public sealed override bool IsMetadataReference => false;
 
-		public sealed override bool IsGenericMethodDefinition => GetGenericArguments().Count != 0;
-		public sealed override bool IsGenericMethod => GetGenericArguments().Count != 0;
+		public sealed override bool IsGenericMethodDefinition => GetMethodSignature().GenericParameterCount != 0;
+		public sealed override bool IsGenericMethod => GetMethodSignature().GenericParameterCount != 0;
 
 		public sealed override DmdParameterInfo ReturnParameter {
 			get {
@@ -90,15 +90,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal override DmdMethodInfo GetParentDefinition() => null;//TODO:
 
 		public sealed override DmdMethodInfo GetGenericMethodDefinition() => IsGenericMethodDefinition ? this : throw new InvalidOperationException();
-
-		public sealed override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) {
-			if (typeArguments == null)
-				throw new ArgumentNullException(nameof(typeArguments));
-			if (!IsGenericMethodDefinition)
-				throw new InvalidOperationException();
-			return MakeGenericMethodCore(typeArguments);
-		}
-		protected virtual DmdMethodInfo MakeGenericMethodCore(IList<DmdType> typeArguments) => throw new InvalidOperationException();
+		public sealed override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);
 
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (__customAttributes_DONT_USE != null)

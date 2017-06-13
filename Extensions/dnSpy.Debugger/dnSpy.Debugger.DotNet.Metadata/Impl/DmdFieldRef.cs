@@ -23,6 +23,7 @@ using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdFieldRef : DmdFieldInfoBase {
+		public override DmdAppDomain AppDomain => declaringTypeRef.AppDomain;
 		public override string Name { get; }
 		public override DmdType FieldType { get; }
 		public override bool IsMetadataReference => true;

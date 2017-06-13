@@ -23,6 +23,8 @@ using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdGenericParameterTypeMD : DmdGenericParameterType {
+		public override DmdAppDomain AppDomain => reader.Module.AppDomain;
+
 		readonly DmdEcma335MetadataReader reader;
 
 		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)

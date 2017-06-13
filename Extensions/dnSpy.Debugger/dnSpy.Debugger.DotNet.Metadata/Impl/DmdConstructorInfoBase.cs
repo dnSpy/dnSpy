@@ -18,12 +18,21 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdConstructorInfoBase : DmdConstructorInfo {
 		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 
 		public sealed override DmdModule Module => DeclaringType.Module;
+
+		public sealed override DmdMethodSignature GetMethodSignature(IList<DmdType> genericMethodArguments) {
+			if (genericMethodArguments == null)
+				throw new ArgumentNullException(nameof(genericMethodArguments));
+			if (genericMethodArguments.Count != 0)
+				throw new ArgumentException();
+			return GetMethodSignature();
+		}
 
 		public sealed override object Invoke(IDmdEvaluationContext context, object obj, DmdBindingFlags invokeAttr, object[] parameters) => AppDomain.Invoke(context, this, obj, parameters);
 		public sealed override object Invoke(IDmdEvaluationContext context, DmdBindingFlags invokeAttr, object[] parameters) => AppDomain.Invoke(context, this, null, parameters);

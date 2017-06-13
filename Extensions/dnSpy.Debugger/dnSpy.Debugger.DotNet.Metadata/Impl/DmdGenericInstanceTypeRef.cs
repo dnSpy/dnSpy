@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdGenericInstanceTypeRef : DmdTypeBase {
+		public override DmdAppDomain AppDomain => genericTypeRef.AppDomain;
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.GenericInstance;
 		public override DmdTypeScope TypeScope => ResolvedType.TypeScope;
 		public override DmdModule Module => ResolvedType.Module;

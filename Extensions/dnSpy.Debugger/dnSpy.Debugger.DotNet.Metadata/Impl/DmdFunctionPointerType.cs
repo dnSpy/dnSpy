@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdFunctionPointerType : DmdTypeBase {
+		public override DmdAppDomain AppDomain { get; }
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.FunctionPointer;
 		public override DmdTypeScope TypeScope => methodSignature.ReturnType.TypeScope;
 		public override DmdModule Module => methodSignature.ReturnType.Module;
@@ -37,7 +38,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdMethodSignature methodSignature;
 
-		public DmdFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
+		public DmdFunctionPointerType(DmdAppDomain appDomain, DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
+			AppDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			this.methodSignature = methodSignature ?? throw new ArgumentNullException(nameof(methodSignature));
 			IsFullyResolved = ((DmdTypeBase)methodSignature.ReturnType).IsFullyResolved &&
 					DmdTypeUtilities.IsFullyResolved(methodSignature.GetParameterTypes()) &&

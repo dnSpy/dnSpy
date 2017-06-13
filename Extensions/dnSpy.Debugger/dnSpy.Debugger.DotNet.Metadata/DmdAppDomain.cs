@@ -322,6 +322,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
 
 		/// <summary>
+		/// Makes a generic method
+		/// </summary>
+		/// <param name="genericMethodDefinition">Generic method definition</param>
+		/// <param name="typeArguments">Generic arguments</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdMethodInfo MakeGenericMethod(DmdMethodInfo genericMethodDefinition, IList<DmdType> typeArguments, MakeTypeOptions options = MakeTypeOptions.None);
+
+		/// <summary>
 		/// Makes a function pointer type
 		/// </summary>
 		/// <param name="methodSignature">Method signature</param>

@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdPointerType : DmdTypeBase {
+		public override DmdAppDomain AppDomain => SkipElementTypes().AppDomain;
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Pointer;
 		public override DmdTypeScope TypeScope => SkipElementTypes().TypeScope;
 		public override DmdModule Module => SkipElementTypes().Module;

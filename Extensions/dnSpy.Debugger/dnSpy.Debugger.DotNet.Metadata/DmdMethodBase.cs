@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
@@ -28,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
-		public sealed override DmdAppDomain AppDomain => DeclaringType.AppDomain;
+		public override DmdAppDomain AppDomain => DeclaringType.AppDomain;
 
 		/// <summary>
 		/// Gets the method impl flags
@@ -164,6 +165,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public abstract DmdMethodSignature GetMethodSignature();
+
+		/// <summary>
+		/// Gets the method signature
+		/// </summary>
+		/// <param name="genericMethodArguments">Generic method arguments</param>
+		/// <returns></returns>
+		public abstract DmdMethodSignature GetMethodSignature(IList<DmdType> genericMethodArguments);
 
 		/// <summary>
 		/// Calls the method

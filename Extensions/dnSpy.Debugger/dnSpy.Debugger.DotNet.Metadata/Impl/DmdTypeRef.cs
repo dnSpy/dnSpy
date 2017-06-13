@@ -24,19 +24,20 @@ using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdTypeRef : DmdTypeBase {
-		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Type;
+		public sealed override DmdAppDomain AppDomain => ownerModule.AppDomain;
+		public sealed override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Type;
 		public abstract override DmdTypeScope TypeScope { get; }
 		public abstract override string Namespace { get; }
 		public abstract override string Name { get; }
-		public override DmdModule Module => ResolvedType.Module;
-		public override DmdType BaseType => ResolvedType.BaseType;
-		public override StructLayoutAttribute StructLayoutAttribute => ResolvedType.StructLayoutAttribute;
-		public override DmdTypeAttributes Attributes => ResolvedType.Attributes;
+		public sealed override DmdModule Module => ResolvedType.Module;
+		public sealed override DmdType BaseType => ResolvedType.BaseType;
+		public sealed override StructLayoutAttribute StructLayoutAttribute => ResolvedType.StructLayoutAttribute;
+		public sealed override DmdTypeAttributes Attributes => ResolvedType.Attributes;
 		// Always return the TypeRef and never the resolved type's DeclaringType so callers can get the reference
 		// in case it's an exported type. Also, the member formatter shouldn't throw if the type can't be resolved.
-		public override DmdType DeclaringType => DeclaringTypeRef;
-		public override int MetadataToken => ResolvedType.MetadataToken;
-		public override bool IsMetadataReference => true;
+		public sealed override DmdType DeclaringType => DeclaringTypeRef;
+		public sealed override int MetadataToken => ResolvedType.MetadataToken;
+		public sealed override bool IsMetadataReference => true;
 
 		public virtual DmdTypeRef DeclaringTypeRef {
 			get {
@@ -86,14 +87,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			this.rid = rid;
 		}
 
-		public override bool IsFullyResolved => false;
+		public sealed override bool IsFullyResolved => false;
 		protected override DmdType ResolveNoThrowCore() => GetResolvedType(throwOnError: false);
-		public override DmdTypeBase FullResolve() => GetResolvedType(throwOnError: false);
+		public sealed override DmdTypeBase FullResolve() => GetResolvedType(throwOnError: false);
 
-		public override bool IsGenericType => ResolvedType.IsGenericType;
-		public override bool IsGenericTypeDefinition => ResolvedType.IsGenericTypeDefinition;
-		public override ReadOnlyCollection<DmdType> GetGenericArguments() => ResolvedType.GetGenericArguments();
-		public override DmdType GetGenericTypeDefinition() => ResolvedType.GetGenericTypeDefinition();
+		public sealed override bool IsGenericType => ResolvedType.IsGenericType;
+		public sealed override bool IsGenericTypeDefinition => ResolvedType.IsGenericTypeDefinition;
+		public sealed override ReadOnlyCollection<DmdType> GetGenericArguments() => ResolvedType.GetGenericArguments();
+		public sealed override DmdType GetGenericTypeDefinition() => ResolvedType.GetGenericTypeDefinition();
 
 		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ResolvedType.CreateDeclaredFields2(reflectedType);
 		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => ResolvedType.CreateDeclaredMethods2(reflectedType, includeConstructors);
