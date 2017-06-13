@@ -95,7 +95,6 @@
     <Compile Include="DmdTypeAttributes.cs" />
     <Compile Include="DmdTypeScope.cs" />
     <Compile Include="DmdTypeSignatureKind.cs" />
-    <Compile Include="DmdWellKnownMember.cs" />
     <Compile Include="DmdWellKnownType.cs" />
     <Compile Include="HexUtils.cs" />
     <Compile Include="IDmdCustomAttributeProvider.cs" />

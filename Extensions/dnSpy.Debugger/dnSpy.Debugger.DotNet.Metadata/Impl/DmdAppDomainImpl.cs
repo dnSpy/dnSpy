@@ -155,13 +155,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override DmdMemberInfo GetWellKnownMember(DmdWellKnownMember wellKnownMember, bool isOptional) {
-			var member = wellKnownMemberResolver.GetWellKnownMember(wellKnownMember);
-			if (member == null && !isOptional)
-				throw new ResolveException("Couldn't resolve well known member: " + wellKnownMember);
-			return member;
-		}
-
 		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) {
 			var type = wellKnownMemberResolver.GetWellKnownType(wellKnownType, onlyCorLib: false);
 			if ((object)type == null && !isOptional)

@@ -34,8 +34,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			wellKnownTypes = new DmdType[WELL_KNOWN_TYPES_COUNT];
 		}
 
-		public DmdMemberInfo GetWellKnownMember(DmdWellKnownMember wellKnownMember) => throw new NotImplementedException();//TODO:
-
 		public DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool onlyCorLib) {
 			if ((uint)wellKnownType >= (uint)wellKnownTypes.Length)
 				return null;
