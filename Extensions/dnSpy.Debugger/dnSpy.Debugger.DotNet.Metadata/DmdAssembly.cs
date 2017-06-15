@@ -65,11 +65,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract string ImageRuntimeVersion { get; }
 
 		/// <summary>
-		/// true if the assembly is in the GAC
-		/// </summary>
-		public abstract bool GlobalAssemblyCache { get; }
-
-		/// <summary>
 		/// true if it's a dynamic assembly (types can be added at runtime)
 		/// </summary>
 		public bool IsDynamic => ManifestModule.IsDynamic;

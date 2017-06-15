@@ -67,9 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdType ResolveNoThrowCore();
 
 		public override DmdMethodBase DeclaringMethod => throw new InvalidOperationException();
-		public sealed override Guid GUID => throw new NotImplementedException();//TODO:
 		public sealed override DmdAssembly Assembly => Module.Assembly;
-		public sealed override bool IsCOMObject => throw new NotImplementedException();//TODO:
 		public sealed override bool HasElementType => (object)GetElementType() != null;
 		public override DmdGenericParameterAttributes GenericParameterAttributes => throw new InvalidOperationException();
 		public override bool IsGenericType => false;

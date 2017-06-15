@@ -30,7 +30,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string Location { get; }
 		public override string ImageRuntimeVersion => metadataReader.ImageRuntimeVersion;
 		public override DmdMethodInfo EntryPoint => metadataReader.EntryPoint;
-		public override bool GlobalAssemblyCache => throw new NotImplementedException();//TODO:
 
 		internal string ApproximateSimpleName {
 			get {

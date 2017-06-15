@@ -58,11 +58,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdMethodBase DeclaringMethod { get; }
 
 		/// <summary>
-		/// Gets the GUID
-		/// </summary>
-		public abstract Guid GUID { get; }
-
-		/// <summary>
 		/// Gets the module
 		/// </summary>
 		public abstract override DmdModule Module { get; }
@@ -911,11 +906,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return false;
 			}
 		}
-
-		/// <summary>
-		/// true if this is a COM object
-		/// </summary>
-		public abstract bool IsCOMObject { get; }
 
 		/// <summary>
 		/// true if it has an element type, i.e., it's an array, a by-ref or a pointer type
