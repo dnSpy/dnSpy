@@ -31,7 +31,41 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsGenericType => GetGenericArguments().Count != 0;
 		public override bool IsGenericTypeDefinition => GetGenericArguments().Count != 0;
 		public override int MetadataToken => (int)(0x02000000 + rid);
-		public override StructLayoutAttribute StructLayoutAttribute => throw new NotImplementedException();//TODO:
+
+		public override StructLayoutAttribute StructLayoutAttribute {
+			get {
+				if (IsInterface || HasElementType || IsGenericParameter)
+					return null;
+				var (packingSize, classSize) = GetClassLayout();
+				if (packingSize <= 0)
+					packingSize = 8;
+
+				LayoutKind layoutKind;
+				switch (Attributes & DmdTypeAttributes.LayoutMask) {
+				default:
+				case DmdTypeAttributes.AutoLayout:			layoutKind = LayoutKind.Auto; break;
+				case DmdTypeAttributes.SequentialLayout:	layoutKind = LayoutKind.Sequential; break;
+				case DmdTypeAttributes.ExplicitLayout:		layoutKind = LayoutKind.Explicit; break;
+				}
+
+				CharSet charSet;
+				switch (Attributes & DmdTypeAttributes.StringFormatMask) {
+				case DmdTypeAttributes.AnsiClass:			charSet = CharSet.Ansi; break;
+				case DmdTypeAttributes.UnicodeClass:		charSet = CharSet.Unicode; break;
+				case DmdTypeAttributes.AutoClass:			charSet = CharSet.Auto; break;
+				default:
+				case DmdTypeAttributes.CustomFormatClass:	charSet = CharSet.None; break;
+				}
+
+				return new StructLayoutAttribute(layoutKind) {
+					CharSet = charSet,
+					Pack = packingSize,
+					Size = classSize,
+				};
+			}
+		}
+
+		protected abstract (int packingSize, int classSize) GetClassLayout();
 
 		public override DmdType DeclaringType {
 			get {

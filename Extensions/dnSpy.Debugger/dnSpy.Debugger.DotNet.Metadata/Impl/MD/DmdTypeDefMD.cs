@@ -148,5 +148,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
+
+		protected override (int packingSize, int classSize) GetClassLayout() {
+			var row = reader.TablesStream.ReadClassLayoutRow(reader.Metadata.GetClassLayoutRid(Rid));
+			if (row == null)
+				return (0, 0);
+			return (row.PackingSize, (int)row.ClassSize);
+		}
 	}
 }
