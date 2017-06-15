@@ -66,6 +66,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return new DmdAssemblyControllerImpl(appDomain, metadataReader, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
 		}
 
-		public override DmdModuleController CreateModule(DmdAssembly assembly, Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName) => throw new NotImplementedException();//TODO:
+		public override DmdModuleController CreateModule(DmdAssembly assembly, Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
+			if (assembly == null)
+				throw new ArgumentNullException(nameof(assembly));
+			if (getMetadata == null)
+				throw new ArgumentNullException(nameof(getMetadata));
+			if (fullyQualifiedName == null)
+				throw new ArgumentNullException(nameof(fullyQualifiedName));
+			var assemblyImpl = assembly as DmdAssemblyImpl;
+			if (assemblyImpl == null)
+				throw new ArgumentException();
+			var metadataReader = new DmdLazyMetadataReader(getMetadata, metadataReaderFactory);
+			return new DmdModuleControllerImpl(assemblyImpl, metadataReader, isInMemory, isDynamic, fullyQualifiedName);
+		}
 	}
 }
