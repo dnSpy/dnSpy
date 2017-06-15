@@ -58,6 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string ModuleScopeName => MetadataReader.ModuleScopeName;
 		public override string ImageRuntimeVersion => MetadataReader.ImageRuntimeVersion;
 		public override DmdMethodInfo EntryPoint => MetadataReader.EntryPoint;
+		public override DmdType GetNonNestedType(string @namespace, string name, bool ignoreCase) => MetadataReader.GetNonNestedType(@namespace, name, ignoreCase);
 		public override DmdType[] GetTypes() => MetadataReader.GetTypes();
 		public override DmdType[] GetExportedTypes() => MetadataReader.GetExportedTypes();
 		public override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, options);

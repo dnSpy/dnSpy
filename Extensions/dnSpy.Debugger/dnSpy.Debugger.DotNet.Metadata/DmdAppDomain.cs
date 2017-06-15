@@ -23,22 +23,6 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
-	/// Options used when creating types
-	/// </summary>
-	[Flags]
-	public enum MakeTypeOptions {
-		/// <summary>
-		/// No bit is set
-		/// </summary>
-		None				= 0,
-
-		/// <summary>
-		/// Don't try to resolve a reference
-		/// </summary>
-		NoResolve			= 0x00000001,
-	}
-
-	/// <summary>
 	/// A .NET AppDomain
 	/// </summary>
 	public abstract class DmdAppDomain : DmdObject {
@@ -298,26 +282,27 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets a type
 		/// </summary>
-		/// <param name="typeName">Full type name</param>
-		/// <param name="throwOnError">If true, an exception is thrown if the type couldn't be found</param>
-		/// <param name="ignoreCase">true to ignore case</param>
+		/// <param name="typeName">Full name of the type (<see cref="DmdType.FullName"/>) or the assembly qualified name (<see cref="DmdType.AssemblyQualifiedName"/>).
+		/// Version, public key token and culture are optional.</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType GetType(string typeName, bool throwOnError, bool ignoreCase);
+		public abstract DmdType GetType(string typeName, DmdGetTypeOptions options);
 
 		/// <summary>
 		/// Gets a type
 		/// </summary>
-		/// <param name="typeName">Full type name</param>
-		/// <param name="throwOnError">If true, an exception is thrown if the type couldn't be found</param>
+		/// <param name="typeName">Full name of the type (<see cref="DmdType.FullName"/>) or the assembly qualified name (<see cref="DmdType.AssemblyQualifiedName"/>).
+		/// Version, public key token and culture are optional.</param>
 		/// <returns></returns>
-		public DmdType GetType(string typeName, bool throwOnError) => GetType(typeName, throwOnError, false);
+		public DmdType GetType(string typeName) => GetType(typeName, DmdGetTypeOptions.None);
 
 		/// <summary>
-		/// Gets a type or null if it wasn't found
+		/// Gets a type and throws if it couldn't be found
 		/// </summary>
-		/// <param name="typeName">Full type name</param>
+		/// <param name="typeName">Full name of the type (<see cref="DmdType.FullName"/>) or the assembly qualified name (<see cref="DmdType.AssemblyQualifiedName"/>).
+		/// Version, public key token and culture are optional.</param>
 		/// <returns></returns>
-		public DmdType GetType(string typeName) => GetType(typeName, false, false);
+		public DmdType GetTypeThrow(string typeName) => GetType(typeName, DmdGetTypeOptions.ThrowOnError);
 
 		/// <summary>
 		/// Executes a method
@@ -381,5 +366,42 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="callback">Notified when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		public abstract void StoreField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, object value, Action callback, CancellationToken cancellationToken = default(CancellationToken));
+	}
+
+	/// <summary>
+	/// Options used when creating types
+	/// </summary>
+	[Flags]
+	public enum MakeTypeOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// Don't try to resolve a reference
+		/// </summary>
+		NoResolve			= 0x00000001,
+	}
+
+	/// <summary>
+	/// Options used when finding a type
+	/// </summary>
+	[Flags]
+	public enum DmdGetTypeOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// Throw if the type couldn't be found
+		/// </summary>
+		ThrowOnError		= 0x00000001,
+
+		/// <summary>
+		/// Ignore case
+		/// </summary>
+		IgnoreCase			= 0x00000002,
 	}
 }

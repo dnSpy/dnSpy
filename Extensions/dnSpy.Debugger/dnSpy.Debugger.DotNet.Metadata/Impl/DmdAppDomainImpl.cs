@@ -37,6 +37,50 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
+		sealed class AssemblyNameEqualityComparer : IEqualityComparer<DmdAssemblyName> {
+			public static readonly AssemblyNameEqualityComparer Instance = new AssemblyNameEqualityComparer();
+			AssemblyNameEqualityComparer() { }
+
+			public bool Equals(DmdAssemblyName x, DmdAssemblyName y) {
+				if (!StringComparer.OrdinalIgnoreCase.Equals(x.Name, y.Name))
+					return false;
+
+				if (x.Version != null && y.Version != null && x.Version != y.Version)
+					return false;
+
+				if (x.CultureName != null && y.CultureName != null && !StringComparer.OrdinalIgnoreCase.Equals(x.CultureName, y.CultureName))
+					return false;
+
+				if (x.GetPublicKeyToken() != null && y.GetPublicKeyToken() != null && !Equals(x.GetPublicKeyToken(), y.GetPublicKeyToken()))
+					return false;
+
+				return true;
+			}
+
+			bool Equals(byte[] a, byte[] b) {
+				if (a == b)
+					return true;
+				if (a == null || b == null)
+					return false;
+				if (a.Length != b.Length)
+					return false;
+				for (int i = 0; i < a.Length; i++) {
+					if (a[i] != b[i])
+						return false;
+				}
+				return true;
+			}
+
+			public int GetHashCode(DmdAssemblyName obj) {
+				int hc = StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Name ?? string.Empty);
+				if (obj.Version != null)
+					hc ^= obj.Version.GetHashCode();
+				if (obj.CultureName != null)
+					hc ^= obj.CultureName.GetHashCode();
+				return hc;
+			}
+		}
+
 		readonly DmdRuntimeImpl runtime;
 		readonly List<DmdAssemblyImpl> assemblies;
 		readonly Dictionary<string, DmdAssemblyImpl> simpleNameToAssembly;
@@ -50,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
 			assemblies = new List<DmdAssemblyImpl>();
 			simpleNameToAssembly = new Dictionary<string, DmdAssemblyImpl>(StringComparer.OrdinalIgnoreCase);
-			assemblyNameToAssembly = new Dictionary<DmdAssemblyName, DmdAssemblyImpl>(DmdMemberInfoEqualityComparer.Default);
+			assemblyNameToAssembly = new Dictionary<DmdAssemblyName, DmdAssemblyImpl>(AssemblyNameEqualityComparer.Instance);
 			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(DmdMemberInfoEqualityComparer.Default);
 			toModuleTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			toModuleExportedTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>>();
@@ -95,6 +139,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		DmdAssemblyImpl GetAssemblyCore(string simpleName, DmdAssemblyName name) {
+			bool onlySimpleName = name == null || (name.Version == null && name.CultureName == null && name.GetPublicKeyToken() == null);
+			if (onlySimpleName)
+				name = null;
 			lock (LockObject) {
 				if (name != null) {
 					if (assemblyNameToAssembly.TryGetValue(name, out var cached))
@@ -127,7 +174,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					continue;
 
 				// Access metadata (when calling GetName())
-				if (name == null || DmdMemberInfoEqualityComparer.Default.Equals(assembly.GetName(), name))
+				if (name == null || AssemblyNameEqualityComparer.Instance.Equals(assembly.GetName(), name))
 					return assembly;
 			}
 
@@ -140,7 +187,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (StringComparer.OrdinalIgnoreCase.Equals(simpleName, assembly.GetName().Name))
 						return assembly;
 				}
-				else if (DmdMemberInfoEqualityComparer.Default.Equals(assembly.GetName(), name))
+				else if (AssemblyNameEqualityComparer.Instance.Equals(assembly.GetName(), name))
 					return assembly;
 			}
 			return null;
@@ -510,7 +557,31 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return new DmdGenericParameterTypeImpl(this, declaringMethod, name, position, attributes, customModifiers);
 		}
 
-		public override DmdType GetType(string typeName, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
+		public override DmdType GetType(string typeName, DmdGetTypeOptions options) {
+			if (typeName == null)
+				throw new ArgumentNullException(nameof(typeName));
+			bool ignoreCase = (options & DmdGetTypeOptions.IgnoreCase) != 0;
+			int index = typeName.LastIndexOf(',');
+			if (index >= 0) {
+				var asmName = new DmdAssemblyName(typeName.Substring(0, index));
+				if (GetAssembly(asmName) is DmdAssembly assembly) {
+					var typeNameNoAssemblyName = typeName.Substring(index + 1).TrimStart();
+					var type = assembly.GetType(typeNameNoAssemblyName, throwOnError: false, ignoreCase: ignoreCase);
+					if ((object)type != null)
+						return type;
+				}
+			}
+			else {
+				foreach (var assembly in GetAssemblies()) {
+					var type = assembly.GetType(typeName, throwOnError: false, ignoreCase: ignoreCase);
+					if ((object)type != null)
+						return type;
+				}
+			}
+			if ((options & DmdGetTypeOptions.ThrowOnError) != 0)
+				throw new TypeNotFoundException(typeName);
+			return null;
+		}
 
 		internal DmdTypeDef Resolve(DmdTypeRef typeRef, bool throwOnError, bool ignoreCase) {
 			if ((object)typeRef == null)

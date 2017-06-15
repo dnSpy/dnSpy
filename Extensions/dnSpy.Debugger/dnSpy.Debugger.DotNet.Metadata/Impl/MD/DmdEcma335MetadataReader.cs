@@ -431,6 +431,32 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return ReadMethodSignature(row?.Signature ?? uint.MaxValue, null, null, isProperty: false);
 		}
 
+		public override DmdType GetNonNestedType(string @namespace, string name, bool ignoreCase) {
+			uint typeDefRows = TablesStream.TypeDefTable.Rows;
+			if (typeDefRows == 0)
+				typeDefRows = 1;
+
+			if (ignoreCase) {
+				for (uint rid = 1; rid <= typeDefRows; rid++) {
+					var type = ResolveTypeDef(rid);
+					if (type.IsNested)
+						continue;
+					if (StringComparer.OrdinalIgnoreCase.Equals(name, type.Name) && StringComparer.OrdinalIgnoreCase.Equals(@namespace, type.Namespace))
+						return type;
+				}
+			}
+			else {
+				for (uint rid = 1; rid <= typeDefRows; rid++) {
+					var type = ResolveTypeDef(rid);
+					if (type.IsNested)
+						continue;
+					if (StringComparer.Ordinal.Equals(name, type.Name) && StringComparer.Ordinal.Equals(@namespace, type.Namespace))
+						return type;
+				}
+			}
+			return null;
+		}
+
 		public override DmdType[] GetTypes() {
 			uint typeDefRows = TablesStream.TypeDefTable.Rows;
 			// This should never happen but we must return at least one type
@@ -456,7 +482,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		protected override DmdTypeRef ResolveTypeRef(uint rid) => typeRefList[rid - 1];
-		protected override DmdTypeDef ResolveTypeDef(uint rid) => typeDefList[rid - 1];
+		protected override DmdTypeDef ResolveTypeDef(uint rid) {
+			var type = typeDefList[rid - 1];
+			if ((object)type == null && rid == 1)
+				return globalTypeIfThereAreNoTypes;
+			return type;
+		}
 		protected override DmdFieldDef ResolveFieldDef(uint rid) => fieldList[rid - 1, null];
 		DmdFieldDef ResolveFieldDef(uint rid, DmdTypeDef declaringType) => fieldList[rid - 1, declaringType];
 		protected override DmdMethodBase ResolveMethodDef(uint rid) => methodList[rid - 1, null];

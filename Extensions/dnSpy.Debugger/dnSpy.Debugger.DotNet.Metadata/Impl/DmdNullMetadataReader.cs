@@ -31,6 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdTypeDef globalType;
 		public DmdNullMetadataReader(DmdModule module) => globalType = new DmdNullGlobalType(module, null);
 
+		public override DmdType GetNonNestedType(string @namespace, string name, bool ignoreCase) => null;
 		public override DmdType[] GetTypes() => new[] { globalType };
 		public override DmdType[] GetExportedTypes() => Array.Empty<DmdType>();
 		protected override DmdTypeRef ResolveTypeRef(uint rid) => null;

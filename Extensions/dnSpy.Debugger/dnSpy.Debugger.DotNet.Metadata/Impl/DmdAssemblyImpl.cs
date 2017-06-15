@@ -130,7 +130,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
 		internal DmdType GetType(DmdType typeRef) => appDomain.TryLookup(this, typeRef);
-		public override DmdType GetType(string name, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
+
+		public override DmdType GetType(string name, bool throwOnError, bool ignoreCase) {
+			foreach (var module in GetModules()) {
+				var type = module.GetType(name, throwOnError: false, ignoreCase: ignoreCase);
+				if ((object)type != null)
+					return type;
+			}
+			if (throwOnError)
+				throw new TypeNotFoundException(name);
+			return null;
+		}
 
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (customAttributes != null)

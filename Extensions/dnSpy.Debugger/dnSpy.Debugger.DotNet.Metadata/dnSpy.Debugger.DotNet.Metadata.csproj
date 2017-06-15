@@ -173,6 +173,7 @@
     <Compile Include="Impl\MD\MetadataConstantUtilities.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.Data.cs" />
+    <Compile Include="MemberNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadOnlyCollectionHelpers.cs" />
     <Compile Include="ResolveException.cs" />

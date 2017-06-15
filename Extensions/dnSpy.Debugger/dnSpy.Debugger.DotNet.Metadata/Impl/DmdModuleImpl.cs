@@ -58,7 +58,39 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override byte[] ResolveSignature(int metadataToken) => metadataReader.ResolveSignature(metadataToken);
 		public override string ResolveString(int metadataToken) => metadataReader.ResolveString(metadataToken);
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => metadataReader.GetPEKind(out peKind, out machine);
-		public override DmdType GetType(string className, bool throwOnError, bool ignoreCase) => throw new NotImplementedException();//TODO:
+
+		public override DmdType GetType(string className, bool throwOnError, bool ignoreCase) {
+			int index = className.IndexOf('+');
+			string nonNestedName;
+			string[] nestedClassNames;
+			if (index >= 0) {
+				nonNestedName = className.Substring(0, index);
+				nestedClassNames = className.Substring(index + 1).Split('+');
+			}
+			else {
+				nonNestedName = className;
+				nestedClassNames = Array.Empty<string>();
+			}
+
+			DmdTypeUtilities.SplitFullName(nonNestedName, out var @namespace, out var name);
+			var type = metadataReader.GetNonNestedType(@namespace, name, ignoreCase);
+			if (nestedClassNames.Length > 0 && (object)type != null) {
+				var flags = DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic;
+				if (ignoreCase)
+					flags |= DmdBindingFlags.IgnoreCase;
+				foreach (var nestedClassName in nestedClassNames) {
+					type = type.GetNestedType(nestedClassName, flags);
+					if ((object)type == null)
+						break;
+				}
+			}
+
+			if ((object)type != null)
+				return type;
+			if (throwOnError)
+				throw new TypeNotFoundException(className);
+			return null;
+		}
 
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (customAttributes != null)
