@@ -460,7 +460,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected virtual DmdCustomAttributeData[] CreateCustomAttributes() => null;
 
 		protected virtual DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => null;
-		protected virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => null;
+		protected virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => null;
 		protected virtual DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => null;
 		protected virtual DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => null;
 
@@ -492,7 +492,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				lock (LockObject) {
 					if (f.__declaredMethods_DONT_USE != null)
 						return f.__declaredMethods_DONT_USE;
-					var res = CreateDeclaredMethods(this, includeConstructors: true);
+					var res = CreateDeclaredMethods(this);
 					f.__declaredMethods_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
 					return f.__declaredMethods_DONT_USE;
 				}
@@ -580,34 +580,37 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			public ReadOnlyCollection<DmdType> __nestedTypes_DONT_USE;
 
-			public ReadOnlyCollection<DmdFieldInfo>  __declaredFields_DONT_USE;
+			public ReadOnlyCollection<DmdFieldInfo> __declaredFields_DONT_USE;
 			public ReadOnlyCollection<DmdMethodBase> __declaredMethods_DONT_USE;
 			public ReadOnlyCollection<DmdPropertyInfo> __declaredProperties_DONT_USE;
 			public ReadOnlyCollection<DmdEventInfo> __declaredEvents_DONT_USE;
 
-			public DmdMemberReader<DmdFieldInfo> __baseFields_DONT_USE;
-			public DmdMemberReader<DmdMethodBase> __baseMethods_DONT_USE;
-			public DmdMemberReader<DmdPropertyInfo> __baseProperties_DONT_USE;
-			public DmdMemberReader<DmdEventInfo> __baseEvents_DONT_USE;
+			public DmdFieldReader __baseFields_DONT_USE;
+			public DmdMethodReader __baseMethods_DONT_USE;
+			public DmdPropertyReader __baseProperties_DONT_USE;
+			public DmdEventReader __baseEvents_DONT_USE;
 
 			public ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
 		}
 
-		sealed class DmdMemberReader<T> where T : DmdMemberInfo {
+		abstract class DmdMemberReader<T> where T : DmdMemberInfo {
 			const int MAX_BASE_TYPES = 100;
-			readonly Func<DmdTypeBase, T[]> createDeclaredMembers;
+			readonly DmdTypeBase ownerType;
 			IList<T> members;
 			DmdTypeBase currentType;
 			int baseTypeCounter;
 
 			public IList<T> CurrentMembers => members;
 
-			public DmdMemberReader(DmdTypeBase owner, Func<DmdTypeBase, T[]> createDeclaredMembers) {
-				this.createDeclaredMembers = createDeclaredMembers ?? throw new ArgumentNullException(nameof(createDeclaredMembers));
+			protected DmdMemberReader(DmdTypeBase ownerType) {
 				members = new List<T>();
-				currentType = owner ?? throw new ArgumentNullException(nameof(owner));
+				this.ownerType = ownerType ?? throw new ArgumentNullException(nameof(ownerType));
+				currentType = ownerType;
 				baseTypeCounter = 0;
 			}
+
+			protected abstract IEnumerable<T> CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType);
+			protected abstract void OnCompleted();
 
 			public bool AddMembersFromNextBaseType() {
 				for (;;) {
@@ -623,21 +626,255 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						break;
 					baseTypeCounter++;
 
-					var newMembers = createDeclaredMembers(currentType);
-					if (newMembers == null || newMembers.Length == 0)
-						continue;
-
-					foreach (var member in newMembers)
+					int membersCount = members.Count;
+					foreach (var member in CreatedDeclaredMembers(ownerType, currentType))
 						members.Add(member);
-					return true;
+					if (membersCount != members.Count)
+						return true;
 				}
-				if (members is List<T> list)
+				if (members is List<T> list) {
 					members = list.ToArray();
+					OnCompleted();
+				}
 				return false;
 			}
 		}
 
-		DmdMemberReader<DmdFieldInfo> BaseFieldsReader {
+		sealed class DmdFieldReader : DmdMemberReader<DmdFieldInfo> {
+			public DmdFieldReader(DmdTypeBase owner) : base(owner) { }
+			protected override IEnumerable<DmdFieldInfo> CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredFields(ownerType);
+			protected override void OnCompleted() { }
+		}
+
+		sealed class DmdMethodReader : DmdMemberReader<DmdMethodBase> {
+			sealed class EqualityComparer : IEqualityComparer<Key> {
+				public static readonly EqualityComparer Instance = new EqualityComparer();
+				EqualityComparer() { }
+				public bool Equals(Key x, Key y) => x.Equals(y);
+				public int GetHashCode(Key obj) => obj.GetHashCode();
+			}
+			struct Key : IEquatable<Key> {
+				public string Name { get; }
+				public DmdMethodSignature Signature { get; }
+				public Key(string name, DmdMethodSignature signature) {
+					Name = name;
+					Signature = signature;
+				}
+				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.Default.Equals(Signature, other.Signature);
+				public override bool Equals(object obj) => obj is Key other && Equals(other);
+				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.Default.GetHashCode(Signature);
+				public override string ToString() => Name + ": " + Signature?.ToString();
+			}
+
+			internal IList<DmdMethodBase> HiddenMethods => hiddenMethods;
+
+			HashSet<Key> overriddenHash;
+			IList<DmdMethodBase> hiddenMethods;
+			public DmdMethodReader(DmdTypeBase owner) : base(owner) {
+				overriddenHash = new HashSet<Key>(EqualityComparer.Instance);
+				hiddenMethods = new List<DmdMethodBase>();
+				foreach (var method in owner.DeclaredMethods) {
+					if ((method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) != 0 && !method.IsNewSlot) {
+						var key = new Key(method.Name, method.GetOriginalMethodSignature());
+						overriddenHash.Add(key);
+					}
+				}
+			}
+
+			protected override IEnumerable<DmdMethodBase> CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) {
+				var methods = baseType.CreateDeclaredMethods(ownerType);
+				if (methods == null)
+					yield break;
+
+				foreach (var method in methods) {
+					bool hide;
+					if (method is DmdConstructorInfo)
+						hide = true;
+					else if ((method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) != 0) {
+						var key = new Key(method.Name, method.GetOriginalMethodSignature());
+						if (method.IsNewSlot) {
+							overriddenHash.Remove(key);
+							hide = false;
+						}
+						else
+							hide = !overriddenHash.Add(key);
+					}
+					else
+						hide = false;
+					if (hide)
+						hiddenMethods.Add(method);
+					else
+						yield return method;
+				}
+			}
+
+			protected override void OnCompleted() {
+				overriddenHash = null;
+				hiddenMethods = ((List<DmdMethodBase>)hiddenMethods).ToArray();
+			}
+		}
+
+		sealed class DmdPropertyReader : DmdMemberReader<DmdPropertyInfo> {
+			sealed class EqualityComparer : IEqualityComparer<Key> {
+				public static readonly EqualityComparer Instance = new EqualityComparer();
+				EqualityComparer() { }
+				public bool Equals(Key x, Key y) => x.Equals(y);
+				public int GetHashCode(Key obj) => obj.GetHashCode();
+			}
+			struct Key : IEquatable<Key> {
+				public string Name { get; }
+				public DmdMethodSignature Signature { get; }
+				public Key(string name, DmdMethodSignature signature) {
+					Name = name;
+					Signature = signature;
+				}
+				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.Default.Equals(Signature, other.Signature);
+				public override bool Equals(object obj) => obj is Key other && Equals(other);
+				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.Default.GetHashCode(Signature);
+				public override string ToString() => Name + ": " + Signature?.ToString();
+			}
+
+			internal IList<DmdPropertyInfo> HiddenProperties => hiddenProperties;
+
+			HashSet<Key> overriddenHash;
+			IList<DmdPropertyInfo> hiddenProperties;
+			public DmdPropertyReader(DmdTypeBase owner) : base(owner) {
+				overriddenHash = new HashSet<Key>(EqualityComparer.Instance);
+				hiddenProperties = new List<DmdPropertyInfo>();
+				foreach (var property in owner.DeclaredProperties) {
+					if (IsOverridable(property, out var isNewSlot) && !isNewSlot) {
+						var key = new Key(property.Name, property.GetOriginalMethodSignature());
+						overriddenHash.Add(key);
+					}
+				}
+			}
+
+			protected override IEnumerable<DmdPropertyInfo> CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) {
+				var properties = baseType.CreateDeclaredProperties(ownerType);
+				if (properties == null)
+					yield break;
+
+				foreach (var property in properties) {
+					bool hide;
+					if (IsOverridable(property, out var isNewSlot)) {
+						var key = new Key(property.Name, property.GetOriginalMethodSignature());
+						if (isNewSlot) {
+							overriddenHash.Remove(key);
+							hide = false;
+						}
+						else
+							hide = !overriddenHash.Add(key);
+					}
+					else
+						hide = false;
+					if (hide)
+						hiddenProperties.Add(property);
+					else
+						yield return property;
+				}
+			}
+
+			bool IsOverridable(DmdMethodBase method, ref bool isNewSlot) {
+				if (method == null || (method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) == 0)
+					return false;
+				isNewSlot = (method.Attributes & DmdMethodAttributes.VtableLayoutMask) == DmdMethodAttributes.NewSlot;
+				return true;
+			}
+
+			bool IsOverridable(DmdPropertyInfo property, out bool isNewSlot) {
+				isNewSlot = false;
+				foreach (var method in property.GetAccessors(nonPublic: true)) {
+					if (IsOverridable(method, ref isNewSlot))
+						return true;
+				}
+				return false;
+			}
+
+			protected override void OnCompleted() => overriddenHash = null;
+		}
+
+		sealed class DmdEventReader : DmdMemberReader<DmdEventInfo> {
+			sealed class EqualityComparer : IEqualityComparer<Key> {
+				public static readonly EqualityComparer Instance = new EqualityComparer();
+				EqualityComparer() { }
+				public bool Equals(Key x, Key y) => x.Equals(y);
+				public int GetHashCode(Key obj) => obj.GetHashCode();
+			}
+			struct Key : IEquatable<Key> {
+				public string Name { get; }
+				public DmdType Signature { get; }
+				public Key(string name, DmdType signature) {
+					Name = name;
+					Signature = signature;
+				}
+				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.Default.Equals(Signature, other.Signature);
+				public override bool Equals(object obj) => obj is Key other && Equals(other);
+				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.Default.GetHashCode(Signature);
+				public override string ToString() => Name + ": " + Signature?.ToString();
+			}
+
+			internal IList<DmdEventInfo> HiddenEvents => hiddenEvents;
+
+			HashSet<Key> overriddenHash;
+			IList<DmdEventInfo> hiddenEvents;
+			public DmdEventReader(DmdTypeBase owner) : base(owner) {
+				overriddenHash = new HashSet<Key>(EqualityComparer.Instance);
+				hiddenEvents = new List<DmdEventInfo>();
+				foreach (var @event in owner.DeclaredEvents) {
+					if (IsOverridable(@event, out var isNewSlot) && !isNewSlot) {
+						var key = new Key(@event.Name, @event.GetOriginalEventHandlerType());
+						overriddenHash.Add(key);
+					}
+				}
+			}
+
+			protected override IEnumerable<DmdEventInfo> CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) {
+				var events = baseType.CreateDeclaredEvents(ownerType);
+				if (events == null)
+					yield break;
+
+				foreach (var @event in events) {
+					bool hide;
+					if (IsOverridable(@event, out var isNewSlot)) {
+						var key = new Key(@event.Name, @event.GetOriginalEventHandlerType());
+						if (isNewSlot) {
+							overriddenHash.Remove(key);
+							hide = false;
+						}
+						else
+							hide = !overriddenHash.Add(key);
+					}
+					else
+						hide = false;
+					if (hide)
+						hiddenEvents.Add(@event);
+					else
+						yield return @event;
+				}
+			}
+
+			bool IsOverridable(DmdMethodBase method, ref bool isNewSlot) {
+				if (method == null || (method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) == 0)
+					return false;
+				isNewSlot = (method.Attributes & DmdMethodAttributes.VtableLayoutMask) == DmdMethodAttributes.NewSlot;
+				return true;
+			}
+
+			bool IsOverridable(DmdEventInfo @event, out bool isNewSlot) {
+				isNewSlot = false;
+				if (IsOverridable(@event.AddMethod, ref isNewSlot) || IsOverridable(@event.RemoveMethod, ref isNewSlot) || IsOverridable(@event.RaiseMethod, ref isNewSlot))
+					return true;
+				foreach (var method in @event.GetOtherMethods(nonPublic: true)) {
+					if (IsOverridable(method, ref isNewSlot))
+						return true;
+				}
+				return false;
+			}
+
+			protected override void OnCompleted() => overriddenHash = null;
+		}
+
+		DmdFieldReader BaseFieldsReader {
 			get {
 				var f = ExtraFields;
 				if (f.__baseFields_DONT_USE != null)
@@ -645,13 +882,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				lock (LockObject) {
 					if (f.__baseFields_DONT_USE != null)
 						return f.__baseFields_DONT_USE;
-					f.__baseFields_DONT_USE = new DmdMemberReader<DmdFieldInfo>(this, baseType => baseType.CreateDeclaredFields(this));
+					f.__baseFields_DONT_USE = new DmdFieldReader(this);
 					return f.__baseFields_DONT_USE;
 				}
 			}
 		}
 
-		DmdMemberReader<DmdMethodBase> BaseMethodsReader {
+		DmdMethodReader BaseMethodsReader {
 			get {
 				var f = ExtraFields;
 				if (f.__baseMethods_DONT_USE != null)
@@ -659,13 +896,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				lock (LockObject) {
 					if (f.__baseMethods_DONT_USE != null)
 						return f.__baseMethods_DONT_USE;
-					f.__baseMethods_DONT_USE = new DmdMemberReader<DmdMethodBase>(this, baseType => baseType.CreateDeclaredMethods(this, includeConstructors: false));
+					f.__baseMethods_DONT_USE = new DmdMethodReader(this);
 					return f.__baseMethods_DONT_USE;
 				}
 			}
 		}
 
-		DmdMemberReader<DmdPropertyInfo> BasePropertiesReader {
+		DmdPropertyReader BasePropertiesReader {
 			get {
 				var f = ExtraFields;
 				if (f.__baseProperties_DONT_USE != null)
@@ -673,13 +910,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				lock (LockObject) {
 					if (f.__baseProperties_DONT_USE != null)
 						return f.__baseProperties_DONT_USE;
-					f.__baseProperties_DONT_USE = new DmdMemberReader<DmdPropertyInfo>(this, baseType => baseType.CreateDeclaredProperties(this));
+					f.__baseProperties_DONT_USE = new DmdPropertyReader(this);
 					return f.__baseProperties_DONT_USE;
 				}
 			}
 		}
 
-		DmdMemberReader<DmdEventInfo> BaseEventsReader {
+		DmdEventReader BaseEventsReader {
 			get {
 				var f = ExtraFields;
 				if (f.__baseEvents_DONT_USE != null)
@@ -687,7 +924,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				lock (LockObject) {
 					if (f.__baseEvents_DONT_USE != null)
 						return f.__baseEvents_DONT_USE;
-					f.__baseEvents_DONT_USE = new DmdMemberReader<DmdEventInfo>(this, baseType => baseType.CreateDeclaredEvents(this));
+					f.__baseEvents_DONT_USE = new DmdEventReader(this);
 					return f.__baseEvents_DONT_USE;
 				}
 			}
@@ -811,6 +1048,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return method;
 			}
 
+			foreach (var method in BaseMethodsReader.HiddenMethods) {
+				if (method.MetadataToken == metadataToken)
+					return method;
+			}
+
 			if (throwOnError)
 				throw new ArgumentException();
 			return null;
@@ -833,6 +1075,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return property;
 			}
 
+			foreach (var property in BasePropertiesReader.HiddenProperties) {
+				if (property.MetadataToken == metadataToken)
+					return property;
+			}
+
 			if (throwOnError)
 				throw new ArgumentException();
 			return null;
@@ -840,6 +1087,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override DmdEventInfo GetEvent(int metadataToken, bool throwOnError) {
 			foreach (var @event in GetEvents(inherit: true)) {
+				if (@event.MetadataToken == metadataToken)
+					return @event;
+			}
+
+			foreach (var @event in BaseEventsReader.HiddenEvents) {
 				if (@event.MetadataToken == metadataToken)
 					return @event;
 			}

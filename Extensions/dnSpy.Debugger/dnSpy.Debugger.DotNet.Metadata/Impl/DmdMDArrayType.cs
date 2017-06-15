@@ -86,17 +86,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => null;
 
-		protected override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) {
+		protected override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) {
 			var appDomain = AppDomain;
-			var res = new DmdMethodBase[includeConstructors ? 5 : 3];
-			res[0] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Set, "Set", appDomain.System_Void, CreateParameterTypes(elementType));
-			res[1] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Address, "Address", appDomain.MakeByRefType(elementType, null), CreateParameterTypes(null));
-			res[2] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Get, "Get", elementType, CreateParameterTypes(null));
-			if (includeConstructors) {
-				res[3] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor1, ".ctor", appDomain.System_Void, CreateParameterTypes(null));
-				res[4] = CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor2, ".ctor", appDomain.System_Void, CreateParameterTypesPair());
-			}
-			return res;
+			return new DmdMethodBase[5] {
+				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor1, ".ctor", appDomain.System_Void, CreateParameterTypes(null)),
+				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor2, ".ctor", appDomain.System_Void, CreateParameterTypesPair()),
+				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Set, "Set", appDomain.System_Void, CreateParameterTypes(elementType)),
+				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Address, "Address", appDomain.MakeByRefType(elementType, null), CreateParameterTypes(null)),
+				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Get, "Get", elementType, CreateParameterTypes(null)),
+			};
 		}
 
 		int SafeRank => (uint)rank <= 100 ? rank : 100;

@@ -39,6 +39,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
+		internal override DmdMethodSignature GetOriginalMethodSignature() {
+			var row = reader.TablesStream.ReadPropertyRow(Rid);
+			return reader.ReadMethodSignature(row.Type, null, null, isProperty: true);
+		}
+
 		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
 		public override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
 

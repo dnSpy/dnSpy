@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if ((uint)wellKnownType >= (uint)wellKnownTypes.Length)
 				return null;
 
-			var cachedType = wellKnownTypes[(int)wellKnownType];
+			ref var cachedType = ref wellKnownTypes[(int)wellKnownType];
 			if ((object)cachedType != null)
 				return cachedType;
 
@@ -75,7 +75,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 						checkedModules.Add(module);
 
-						cachedType = wellKnownTypes[(int)wellKnownType];
 						if ((object)cachedType != null)
 							return cachedType;
 					}

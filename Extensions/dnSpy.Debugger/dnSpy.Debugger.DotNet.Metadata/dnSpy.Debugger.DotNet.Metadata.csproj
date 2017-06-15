@@ -157,6 +157,7 @@
     <Compile Include="Impl\DmdTypeUtilities.cs" />
     <Compile Include="Impl\LazyList.cs" />
     <Compile Include="Impl\MD\DmdConstructorDefMD.cs" />
+    <Compile Include="Impl\MD\DmdConstructorRefMD.cs" />
     <Compile Include="Impl\MD\DmdDataStreamImpl.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
     <Compile Include="Impl\MD\DmdEventDefMD.cs" />

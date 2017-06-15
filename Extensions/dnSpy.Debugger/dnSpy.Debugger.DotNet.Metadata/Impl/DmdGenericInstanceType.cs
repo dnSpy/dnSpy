@@ -90,12 +90,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredFields(reflectedType, typeArguments);
-		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => genericTypeDefinition.ReadDeclaredMethods(reflectedType, typeArguments, includeConstructors);
+		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredMethods(reflectedType, typeArguments);
 		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredProperties(reflectedType, typeArguments);
 		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredEvents(reflectedType, typeArguments);
 
 		internal DmdFieldInfo[] CreateDeclaredFields2(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredFields(reflectedType, typeArguments);
-		internal DmdMethodBase[] CreateDeclaredMethods2(DmdType reflectedType, bool includeConstructors) => genericTypeDefinition.ReadDeclaredMethods(reflectedType, typeArguments, includeConstructors);
+		internal DmdMethodBase[] CreateDeclaredMethods2(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredMethods(reflectedType, typeArguments);
 		internal DmdPropertyInfo[] CreateDeclaredProperties2(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredProperties(reflectedType, typeArguments);
 		internal DmdEventInfo[] CreateDeclaredEvents2(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredEvents(reflectedType, typeArguments);
 

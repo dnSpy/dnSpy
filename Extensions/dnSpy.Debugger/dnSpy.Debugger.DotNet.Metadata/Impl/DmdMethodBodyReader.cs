@@ -34,6 +34,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 			catch (IOException) {
 			}
+			catch (OutOfMemoryException) {
+			}
 			return null;
 		}
 

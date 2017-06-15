@@ -112,17 +112,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType GetGenericTypeDefinition() => IsGenericType ? this : throw new InvalidOperationException();
 
 		public abstract DmdFieldInfo[] ReadDeclaredFields(DmdType reflectedType, IList<DmdType> genericTypeArguments);
-		public abstract DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments, bool includeConstructors);
+		public abstract DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments);
 		public abstract DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments);
 		public abstract DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments);
 
 		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ReadDeclaredFields(reflectedType, GetGenericArguments());
-		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType, bool includeConstructors) => ReadDeclaredMethods(reflectedType, GetGenericArguments(), includeConstructors);
+		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ReadDeclaredMethods(reflectedType, GetGenericArguments());
 		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(reflectedType, GetGenericArguments());
 		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(reflectedType, GetGenericArguments());
 
 		internal DmdFieldInfo[] CreateDeclaredFields2(DmdType reflectedType) => ReadDeclaredFields(reflectedType, GetGenericArguments());
-		internal DmdMethodBase[] CreateDeclaredMethods2(DmdType reflectedType, bool includeConstructors) => ReadDeclaredMethods(reflectedType, GetGenericArguments(), includeConstructors);
+		internal DmdMethodBase[] CreateDeclaredMethods2(DmdType reflectedType) => ReadDeclaredMethods(reflectedType, GetGenericArguments());
 		internal DmdPropertyInfo[] CreateDeclaredProperties2(DmdType reflectedType) => ReadDeclaredProperties(reflectedType, GetGenericArguments());
 		internal DmdEventInfo[] CreateDeclaredEvents2(DmdType reflectedType) => ReadDeclaredEvents(reflectedType, GetGenericArguments());
 

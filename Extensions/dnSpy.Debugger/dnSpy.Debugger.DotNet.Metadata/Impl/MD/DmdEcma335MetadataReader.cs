@@ -311,7 +311,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			else {
 				Debug.Assert((object)info.methodSignature != null);
 				if (name == DmdConstructorInfo.ConstructorName || name == DmdConstructorInfo.TypeConstructorName) {
-					var ctorRef = new DmdConstructorRef(reflectedTypeRef, name, rawInfo.methodSignature, info.methodSignature);
+					var ctorRef = new DmdConstructorRefMD(this, reflectedTypeRef, name, rawInfo.methodSignature, info.methodSignature);
 					return (ctorRef, info.containedGenericParams);
 				}
 				else {
@@ -415,6 +415,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				return Array.Empty<(DmdType, bool)>();
 			using (var stream = BlobStream.CreateStream(row.Signature))
 				return DmdSignatureReader.ReadLocalsSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, genericMethodArguments, resolveTypes);
+		}
+
+		internal DmdMethodSignature GetOriginalMethodDefSignature(DmdMethodBase method) {
+			if ((method.MetadataToken >> 24) != 0x06)
+				throw new InvalidOperationException();
+			var row = TablesStream.ReadMethodRow((uint)method.MetadataToken & 0x00FFFFFF);
+			return ReadMethodSignature(row?.Signature ?? uint.MaxValue, null, null, isProperty: false);
+		}
+
+		internal DmdMethodSignature GetOriginalMethodRefSignature(DmdMethodBase method) {
+			if ((method.MetadataToken >> 24) != 0x0A)
+				throw new InvalidOperationException();
+			var row = TablesStream.ReadMemberRefRow((uint)method.MetadataToken & 0x00FFFFFF);
+			return ReadMethodSignature(row?.Signature ?? uint.MaxValue, null, null, isProperty: false);
 		}
 
 		public override DmdType[] GetTypes() {

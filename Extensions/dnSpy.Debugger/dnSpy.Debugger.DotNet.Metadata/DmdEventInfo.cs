@@ -50,6 +50,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdType EventHandlerType { get; }
 
 		/// <summary>
+		/// Gets the original event handler type which contains the original generic types (Var and MVar)
+		/// </summary>
+		internal abstract DmdType GetOriginalEventHandlerType();
+
+		/// <summary>
 		/// true if it's a multi-cast delegate
 		/// </summary>
 		public bool IsMulticast {

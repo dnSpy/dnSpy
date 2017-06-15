@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return fields;
 		}
 
-		public override DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments, bool includeConstructors) {
+		public override DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments) {
 			var ridList = reader.Metadata.GetMethodRidList(Rid);
 			if (ridList.Count == 0)
 				return Array.Empty<DmdMethodBase>();

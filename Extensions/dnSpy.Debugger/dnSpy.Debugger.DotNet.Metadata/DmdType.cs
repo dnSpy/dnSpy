@@ -342,7 +342,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract ReadOnlyCollection<DmdType> NestedTypes { get; }
 
 		/// <summary>
-		/// Gets method or returns null if it doesn't exist
+		/// Gets a method or returns null if it doesn't exist
 		/// </summary>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <returns></returns>
@@ -833,7 +833,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsGenericParameter => TypeSignatureKind == DmdTypeSignatureKind.TypeGenericParameter || TypeSignatureKind == DmdTypeSignatureKind.MethodGenericParameter;
 
 		/// <summary>
-		/// Gets the generic parameter position if this is a generic paramter
+		/// Gets the generic parameter position if this is a generic parameter
 		/// </summary>
 		public abstract int GenericParameterPosition { get; }
 

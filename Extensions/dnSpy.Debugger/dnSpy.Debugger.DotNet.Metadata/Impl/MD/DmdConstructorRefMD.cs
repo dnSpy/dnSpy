@@ -18,23 +18,13 @@
 */
 
 using System;
-using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
-	sealed class DmdMethodRefMD : DmdMethodRef {
+	sealed class DmdConstructorRefMD : DmdConstructorRef {
 		readonly DmdEcma335MetadataReader reader;
-		readonly IList<DmdType> genericTypeArguments;
-		readonly uint signature;
 
-		public DmdMethodRefMD(DmdEcma335MetadataReader reader, uint signature, IList<DmdType> genericTypeArguments, DmdType declaringTypeRef, string name, DmdMethodSignature rawMethodSignature, DmdMethodSignature methodSignature)
-			: base(declaringTypeRef, name, rawMethodSignature, methodSignature) {
+		public DmdConstructorRefMD(DmdEcma335MetadataReader reader, DmdType declaringTypeRef, string name, DmdMethodSignature rawMethodSignature, DmdMethodSignature methodSignature) : base(declaringTypeRef, name, rawMethodSignature, methodSignature) =>
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
-			this.genericTypeArguments = genericTypeArguments;
-			this.signature = signature;
-		}
-
-		internal override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) =>
-			reader.ReadMethodSignature(signature, genericTypeArguments, genericMethodArguments, isProperty: false);
 
 		internal override DmdMethodSignature GetOriginalMethodSignature() => reader.GetOriginalMethodRefSignature(this);
 	}

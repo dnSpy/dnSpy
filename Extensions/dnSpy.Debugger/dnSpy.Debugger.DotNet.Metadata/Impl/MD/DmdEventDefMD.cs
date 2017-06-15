@@ -81,5 +81,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
+
+		internal override DmdType GetOriginalEventHandlerType() {
+			var row = reader.TablesStream.ReadEventRow(Rid);
+			if (!CodedToken.TypeDefOrRef.Decode(row.EventType, out uint token))
+				token = uint.MaxValue;
+			return reader.ResolveType((int)token, null, null, DmdResolveOptions.None) ?? reader.Module.AppDomain.System_Void;
+		}
 	}
 }

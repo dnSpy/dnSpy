@@ -179,6 +179,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdMethodSignature GetMethodSignature(IList<DmdType> genericMethodArguments);
 
 		/// <summary>
+		/// Gets the original method signature which contains the original generic types (Var and MVar)
+		/// </summary>
+		/// <returns></returns>
+		internal abstract DmdMethodSignature GetOriginalMethodSignature();
+
+		/// <summary>
 		/// Calls the method
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
