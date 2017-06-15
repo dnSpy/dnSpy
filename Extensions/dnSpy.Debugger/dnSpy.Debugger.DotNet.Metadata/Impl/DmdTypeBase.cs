@@ -444,7 +444,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override string[] GetEnumNames() => throw new NotImplementedException();//TODO:
+		public sealed override string[] GetEnumNames() {
+			if (!IsEnum)
+				throw new ArgumentException();
+			// This isn't the same order as reflection but it's not important. The CLR sorts it
+			// by value (ulong comparison), see coreclr: ReflectionEnum::GetEnumValuesAndNames
+			return DeclaredFields.Where(a => a.IsStatic).Select(a => a.Name).ToArray();
+		}
 
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			var f = ExtraFields;
