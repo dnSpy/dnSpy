@@ -43,4 +43,52 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="typeName">Type that couldn't be found</param>
 		public TypeNotFoundException(string typeName) : base("Couldn't find type: " + typeName) { }
 	}
+
+	/// <summary>
+	/// Thrown when a field couldn't be found
+	/// </summary>
+	[Serializable]
+	public sealed class FieldNotFoundException : MemberNotFoundException {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="fieldName">Field that couldn't be found</param>
+		public FieldNotFoundException(string fieldName) : base("Couldn't find field: " + fieldName) { }
+	}
+
+	/// <summary>
+	/// Thrown when a method couldn't be found
+	/// </summary>
+	[Serializable]
+	public sealed class MethodNotFoundException : MemberNotFoundException {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="methodName">Method that couldn't be found</param>
+		public MethodNotFoundException(string methodName) : base("Couldn't find method: " + methodName) { }
+	}
+
+	/// <summary>
+	/// Thrown when a property couldn't be found
+	/// </summary>
+	[Serializable]
+	public sealed class PropertyNotFoundException : MemberNotFoundException {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="propertyName">Property that couldn't be found</param>
+		public PropertyNotFoundException(string propertyName) : base("Couldn't find property: " + propertyName) { }
+	}
+
+	/// <summary>
+	/// Thrown when an event couldn't be found
+	/// </summary>
+	[Serializable]
+	public sealed class EventNotFoundException : MemberNotFoundException {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="eventName">Event that couldn't be found</param>
+		public EventNotFoundException(string eventName) : base("Couldn't find event: " + eventName) { }
+	}
 }
