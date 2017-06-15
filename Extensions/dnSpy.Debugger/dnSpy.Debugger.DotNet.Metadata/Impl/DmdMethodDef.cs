@@ -86,8 +86,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdParameterInfo __returnParameter_DONT_USE;
 		protected abstract (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters();
 
-		public sealed override DmdMethodInfo GetBaseDefinition() => GetParentDefinition() ?? this;
-		internal override DmdMethodInfo GetParentDefinition() => null;//TODO:
+		internal override DmdMethodInfo GetParentDefinition() {
+			((DmdTypeBase)ReflectedType).InitializeParentDefinitions();
+			return parentDefinition;
+		}
+
+		internal DmdMethodInfo SetParentDefinition(DmdMethodInfo method) => parentDefinition = method;
+		DmdMethodInfo parentDefinition;
 
 		public sealed override DmdMethodInfo GetGenericMethodDefinition() => IsGenericMethodDefinition ? this : throw new InvalidOperationException();
 		public sealed override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);

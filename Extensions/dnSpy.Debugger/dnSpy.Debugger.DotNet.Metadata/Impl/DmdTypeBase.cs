@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
@@ -593,6 +594,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			public ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
 		}
 
+		internal void InitializeParentDefinitions() {
+			var reader = BaseMethodsReader;
+			if (reader.HasInitializedAllMethods)
+				return;
+			while (reader.AddMembersFromNextBaseType())
+				;
+		}
+
 		abstract class DmdMemberReader<T> where T : DmdMemberInfo {
 			const int MAX_BASE_TYPES = 100;
 			readonly DmdTypeBase ownerType;
@@ -667,16 +676,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			internal IList<DmdMethodBase> HiddenMethods => hiddenMethods;
+			internal bool HasInitializedAllMethods => overriddenHash == null;
 
-			HashSet<Key> overriddenHash;
+			Dictionary<Key, DmdMethodDef> overriddenHash;
 			IList<DmdMethodBase> hiddenMethods;
 			public DmdMethodReader(DmdTypeBase owner) : base(owner) {
-				overriddenHash = new HashSet<Key>(EqualityComparer.Instance);
+				overriddenHash = new Dictionary<Key, DmdMethodDef>(EqualityComparer.Instance);
 				hiddenMethods = new List<DmdMethodBase>();
 				foreach (var method in owner.DeclaredMethods) {
 					if ((method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) != 0 && !method.IsNewSlot) {
 						var key = new Key(method.Name, method.GetOriginalMethodSignature());
-						overriddenHash.Add(key);
+						overriddenHash[key] = (DmdMethodDef)method;
 					}
 				}
 			}
@@ -692,12 +702,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						hide = true;
 					else if ((method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) != 0) {
 						var key = new Key(method.Name, method.GetOriginalMethodSignature());
-						if (method.IsNewSlot) {
-							overriddenHash.Remove(key);
+						if (overriddenHash.TryGetValue(key, out var derivedTypeMethod)) {
+							var methodDef = (DmdMethodDef)method;
+							if (method.IsNewSlot)
+								overriddenHash.Remove(key);
+							else
+								overriddenHash[key] = methodDef;
+							derivedTypeMethod.SetParentDefinition(methodDef);
+							hide = true;
+						}
+						else {
+							if (method.IsNewSlot)
+								Debug.Assert(!overriddenHash.ContainsKey(key));
+							else
+								overriddenHash[key] = (DmdMethodDef)method;
 							hide = false;
 						}
-						else
-							hide = !overriddenHash.Add(key);
 					}
 					else
 						hide = false;

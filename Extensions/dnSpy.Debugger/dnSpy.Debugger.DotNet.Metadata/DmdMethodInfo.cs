@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -97,10 +98,24 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		/// <summary>
-		/// Gets the declared method
+		/// Gets the base method definition or itself if it doesn't override a method
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetBaseDefinition();
+		public DmdMethodInfo GetBaseDefinition() {
+			if (!IsVirtual && !IsAbstract)
+				return this;
+			if (DeclaringType.IsInterface)
+				return this;
+			var method = this;
+			for (;;) {
+				var parentMethod = method.GetParentDefinition();
+				if ((object)parentMethod == null) {
+					Debug.Assert((object)ReflectedType == method.ReflectedType);
+					return method;
+				}
+				method = parentMethod;
+			}
+		}
 
 		/// <summary>
 		/// Gets the parent method

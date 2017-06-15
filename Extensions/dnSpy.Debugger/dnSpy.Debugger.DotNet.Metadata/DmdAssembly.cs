@@ -212,7 +212,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			else {
 				ctor = null;
 				foreach (var c in type.GetConstructors(bindingAttr)) {
-					if (c.GetParameters().Count != args.Length)
+					if (c.GetMethodSignature().GetParameterTypes().Count != args.Length)
 						continue;
 					if ((object)ctor != null)
 						return null;
