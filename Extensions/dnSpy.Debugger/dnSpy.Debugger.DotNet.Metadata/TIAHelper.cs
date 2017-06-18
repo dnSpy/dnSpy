@@ -81,8 +81,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var name = td.Name;
 				if (string.IsNullOrEmpty(ns))
 					identifier = name;
-				else if (string.IsNullOrEmpty(name))
-					identifier = ns + ".";
 				else
 					identifier = ns + "." + name;
 			}
@@ -119,6 +117,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 
 			return false;
+		}
+
+		public static bool IsTypeDefEquivalent(DmdType td) {
+			Debug.Assert((object)td != null);
+			if (GetInfo(td) == null)
+				return false;
+			return CheckEquivalent(td);
 		}
 
 		static bool IsDelegate(DmdType td) => td.BaseType == td.AppDomain.System_MulticastDelegate;

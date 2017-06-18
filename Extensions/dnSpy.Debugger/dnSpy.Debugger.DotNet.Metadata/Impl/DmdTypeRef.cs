@@ -38,6 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdType DeclaringType => DeclaringTypeRef;
 		public sealed override int MetadataToken => ResolvedType.MetadataToken;
 		public sealed override bool IsMetadataReference => true;
+		internal override bool HasTypeEquivalence => ResolvedType.HasTypeEquivalence;
 
 		public virtual DmdTypeRef DeclaringTypeRef {
 			get {

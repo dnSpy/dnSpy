@@ -35,6 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType DeclaringType => null;
 		public override int MetadataToken => 0x02000000;
 		public override bool IsMetadataReference => false;
+		internal override bool HasTypeEquivalence => methodSignature.HasTypeEquivalence;
 
 		readonly DmdMethodSignature methodSignature;
 

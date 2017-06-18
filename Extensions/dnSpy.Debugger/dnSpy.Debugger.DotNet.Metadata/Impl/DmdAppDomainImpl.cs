@@ -256,8 +256,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return GetAssembly(name) ?? GetAssemblyByPath(assemblyFile);
 		}
 
-		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) {
-			var type = wellKnownMemberResolver.GetWellKnownType(wellKnownType, onlyCorLib: false);
+		internal override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional, bool onlyCorLib) {
+			var type = wellKnownMemberResolver.GetWellKnownType(wellKnownType, onlyCorLib);
 			if ((object)type == null && !isOptional)
 				throw new ResolveException("Couldn't resolve well known type: " + wellKnownType);
 			return type;
@@ -845,7 +845,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							// These interfaces should only be in corlib since the CLR needs them.
 							// They're not always present so if we fail to find a type in the corlib, we don't
 							// want to search the remaining assemblies (could be hundreds of assemblies).
-							var iface = wellKnownMemberResolver.GetWellKnownType(wellKnownType, onlyCorLib: true);
+							var iface = GetWellKnownType(wellKnownType, isOptional: true, onlyCorLib: true);
 							if ((object)iface != null)
 								list.Add(iface);
 						}

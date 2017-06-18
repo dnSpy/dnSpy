@@ -25,10 +25,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly DmdRuntimeImpl runtime;
 
-		public DmdRuntimeControllerImpl(DmdEvaluator evaluator) {
+		public DmdRuntimeControllerImpl(DmdEvaluator evaluator, DmdImageFileMachine machine) {
 			if (evaluator == null)
 				throw new ArgumentNullException(nameof(evaluator));
-			runtime = new DmdRuntimeImpl(evaluator);
+			runtime = new DmdRuntimeImpl(evaluator, machine);
 		}
 
 		public override DmdAppDomainController CreateAppDomain(int id) =>

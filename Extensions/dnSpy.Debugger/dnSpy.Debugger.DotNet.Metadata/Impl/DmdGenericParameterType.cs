@@ -37,6 +37,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override string Name { get; }
 		public sealed override int MetadataToken => (int)(0x2A000000 + rid);
 		public sealed override bool IsMetadataReference => false;
+		internal override bool HasTypeEquivalence => false;
 
 		public sealed override DmdType BaseType {
 			get {

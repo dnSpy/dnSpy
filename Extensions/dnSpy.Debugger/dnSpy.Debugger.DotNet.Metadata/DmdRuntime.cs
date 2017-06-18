@@ -28,6 +28,16 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		internal abstract void YouCantDeriveFromThisClass();
 
 		/// <summary>
+		/// Gets the size of a pointer in bytes
+		/// </summary>
+		public abstract int PointerSize { get; }
+
+		/// <summary>
+		/// Gets the machine
+		/// </summary>
+		public abstract DmdImageFileMachine Machine { get; }
+
+		/// <summary>
 		/// Gets all AppDomains
 		/// </summary>
 		/// <returns></returns>

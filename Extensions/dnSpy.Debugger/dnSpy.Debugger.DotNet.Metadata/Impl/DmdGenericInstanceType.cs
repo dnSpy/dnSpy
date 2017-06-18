@@ -36,6 +36,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int MetadataToken => genericTypeDefinition.MetadataToken;
 		public override bool IsMetadataReference => false;
 
+		internal override bool HasTypeEquivalence {
+			get {
+				const byte BoolBit = 1;
+				const byte InitializedBit = 2;
+				if ((hasTypeEquivalenceFlags & InitializedBit) == 0) {
+					byte result = InitializedBit;
+					if (genericTypeDefinition.HasTypeEquivalence)
+						result |= BoolBit;
+					else {
+						foreach (var gaType in typeArguments) {
+							if (gaType.HasTypeEquivalence) {
+								result |= BoolBit;
+								break;
+							}
+						}
+					}
+					hasTypeEquivalenceFlags = result;
+				}
+				return (hasTypeEquivalenceFlags & BoolBit) != 0;
+			}
+		}
+		byte hasTypeEquivalenceFlags;
+
 		public override DmdType BaseType {
 			get {
 				if (!baseTypeInitd) {

@@ -20,13 +20,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A .NET type
 	/// </summary>
-	public abstract class DmdType : DmdMemberInfo, IEquatable<DmdType> {
+	public abstract partial class DmdType : DmdMemberInfo, IEquatable<DmdType> {
 		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
@@ -169,6 +170,38 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
+		/// true if this type is <see cref="Nullable{T}"/>
+		/// </summary>
+		public bool IsNullable {
+			get {
+				switch (TypeSignatureKind) {
+				case DmdTypeSignatureKind.GenericInstance:
+					return GetGenericTypeDefinition() == AppDomain.System_Nullable_T;
+
+				case DmdTypeSignatureKind.Type:
+					return this == AppDomain.System_Nullable_T;
+
+				default:
+					return false;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the nullable value type, eg. <see cref="int"/> if it's a nullable <see cref="int"/>
+		/// </summary>
+		/// <returns></returns>
+		public DmdType GetNullableElementType() {
+			if (!IsNullable)
+				throw new ArgumentException();
+			var genArgs = GetGenericArguments();
+			Debug.Assert(genArgs.Count == 1);
+			if (genArgs.Count != 1)
+				throw new ArgumentException();
+			return genArgs[0];
+		}
+
+		/// <summary>
 		/// true if it's a serializable type
 		/// </summary>
 		public bool IsSerializable {
@@ -184,6 +217,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return false;
 			}
 		}
+
+		/// <summary>
+		/// Only used by CanCastTo(). true if it or any of the types it depends on (base type, generic args,
+		/// element type, interfaces) has the TypeIdentifierAttribute or similar attributes that enable type
+		/// equivalency checks.
+		/// </summary>
+		internal abstract bool HasTypeEquivalence { get; }
 
 		/// <summary>
 		/// Resolves a member reference
@@ -269,7 +309,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			const TypeCode defaultValue = TypeCode.Object;
 			if (type.IsEnum)
 				type = type.GetEnumUnderlyingType();
-			if (!type.IsNested && type.Namespace == "System") {
+			if (type.Namespace == "System" && !type.IsNested) {
 				switch (type.Name) {
 				case "Boolean":	return type == type.AppDomain.System_Boolean	? TypeCode.Boolean	: defaultValue;
 				case "Char":	return type == type.AppDomain.System_Char		? TypeCode.Char		: defaultValue;
@@ -896,7 +936,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public bool IsPrimitive {
 			get {
-				if (IsNested || Namespace != "System")
+				if (Namespace != "System" || IsNested)
 					return false;
 				switch (Name) {
 				case "Boolean":	return this == AppDomain.System_Boolean;
@@ -1032,35 +1072,39 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsAssignableFrom(DmdType c) {
 			if ((object)c == null)
 				return false;
-			if (IsEquivalentTo(c))
-				return true;
-			if (c.IsSubclassOf(this))
-				return true;
-			if (IsInterface)
-				return c.ImplementsInterface(this, 0);
-			if (!IsGenericParameter)
-				return false;
-			foreach (var gpConstraint in GetGenericParameterConstraints()) {
-				if (!gpConstraint.IsAssignableFrom(c))
-					return false;
-			}
-			return true;
+			return __CanCastTo(c, this);
 		}
 
-		bool ImplementsInterface(DmdType ifaceType, int recursionCounter) {
-			if (recursionCounter >= 100)
+		/// <summary>
+		/// Returns true if it's possible to cast this type to <paramref name="target"/>
+		/// </summary>
+		/// <param name="target">Target type</param>
+		/// <returns></returns>
+		public bool CanCastTo(DmdType target) {
+			if ((object)target == null)
 				return false;
-			var type = this;
-			for (;;) {
-				foreach (var iface in type.GetInterfaces()) {
-					if (iface == ifaceType || iface.ImplementsInterface(ifaceType, recursionCounter + 1))
-						return true;
+			return __CanCastTo(this, target);
+		}
+
+		internal static HashSet<DmdType> GetAllInterfaces(DmdType type) {
+			//TODO: Pool these?
+			var hash = new HashSet<DmdType>(DmdMemberInfoEqualityComparer.Default);
+			var stack = new Stack<DmdType>();
+			stack.Push(type);
+			while (stack.Count > 0) {
+				type = stack.Pop();
+				for (;;) {
+					var ifaces = type.GetInterfaces();
+					foreach (var iface in ifaces) {
+						if (hash.Add(iface))
+							stack.Push(iface);
+					}
+					type = type.BaseType;
+					if ((object)type == null)
+						break;
 				}
-				type = type.BaseType;
-				if ((object)type == null)
-					break;
 			}
-			return false;
+			return hash;
 		}
 
 		/// <summary>

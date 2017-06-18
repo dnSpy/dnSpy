@@ -118,7 +118,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="wellKnownType">Well known type</param>
 		/// <param name="isOptional">Used if the type couldn't be found. If true, null is returned, and if false, an exception is thrown</param>
 		/// <returns></returns>
-		public abstract DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional);
+		public DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) =>
+			GetWellKnownType(wellKnownType, isOptional, onlyCorlib: false);
+
+		internal abstract DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional, bool onlyCorlib);
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public DmdType System_Object => GetWellKnownType(DmdWellKnownType.System_Object);

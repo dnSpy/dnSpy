@@ -91,6 +91,7 @@
     <Compile Include="DmdRuntimeFactory.cs" />
     <Compile Include="DmdSigComparer.cs" />
     <Compile Include="DmdSignatureCallingConvention.cs" />
+    <Compile Include="DmdType.CanCastTo.cs" />
     <Compile Include="DmdType.cs" />
     <Compile Include="DmdTypeAttributes.cs" />
     <Compile Include="DmdTypeScope.cs" />

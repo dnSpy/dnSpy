@@ -31,6 +31,35 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsGenericType => GetGenericArguments().Count != 0;
 		public override bool IsGenericTypeDefinition => GetGenericArguments().Count != 0;
 		public override int MetadataToken => (int)(0x02000000 + rid);
+		internal override bool HasTypeEquivalence {
+			get {
+				const byte BoolBit = 1;
+				const byte InitializedBit = 2;
+				if ((hasTypeEquivalenceFlags & InitializedBit) == 0) {
+					byte result = InitializedBit;
+					if (CalculateHasTypeEquivalence())
+						result |= BoolBit;
+					hasTypeEquivalenceFlags = result;
+				}
+				return (hasTypeEquivalenceFlags & BoolBit) != 0;
+			}
+		}
+		byte hasTypeEquivalenceFlags;
+
+		bool CalculateHasTypeEquivalence() {
+			if (BaseType?.HasTypeEquivalence == true)
+				return true;
+
+			if (TIAHelper.IsTypeDefEquivalent(this))
+				return true;
+
+			foreach (var ifaceType in GetAllInterfaces(this)) {
+				if (ifaceType.HasTypeEquivalence)
+					return true;
+			}
+
+			return false;
+		}
 
 		public override StructLayoutAttribute StructLayoutAttribute {
 			get {

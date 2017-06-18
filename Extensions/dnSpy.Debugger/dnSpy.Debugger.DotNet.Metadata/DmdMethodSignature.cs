@@ -56,6 +56,24 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public DmdType ReturnType { get; }
 
+		internal bool HasTypeEquivalence {
+			get {
+				if (ReturnType.HasTypeEquivalence)
+					return true;
+				var list = parameterTypes;
+				for (int i = 0; i < list.Count; i++) {
+					if (list[i].HasTypeEquivalence)
+						return true;
+				}
+				list = varArgsParameterTypes;
+				for (int i = 0; i < list.Count; i++) {
+					if (list[i].HasTypeEquivalence)
+						return true;
+				}
+				return false;
+			}
+		}
+
 		readonly ReadOnlyCollection<DmdType> parameterTypes;
 		readonly ReadOnlyCollection<DmdType> varArgsParameterTypes;
 

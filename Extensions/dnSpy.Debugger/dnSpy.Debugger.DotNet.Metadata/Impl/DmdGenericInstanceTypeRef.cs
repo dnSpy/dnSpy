@@ -36,6 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType DeclaringType => ResolvedType.DeclaringType;
 		public override int MetadataToken => ResolvedType.MetadataToken;
 		public override bool IsMetadataReference => true;
+		internal override bool HasTypeEquivalence => ResolvedType.HasTypeEquivalence;
 
 		DmdGenericInstanceType ResolvedType => GetResolvedType(throwOnError: true);
 		DmdGenericInstanceType GetResolvedType(bool throwOnError) {

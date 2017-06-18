@@ -299,6 +299,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_SerializableAttribute,
 		System_Runtime_InteropServices_CharSet,
 		System_Reflection_Assembly,
+		System_RuntimeMethodHandleInternal,
+		System_ByReference_T,
 
 		// When adding more types, update WellKnownMemberResolver
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member

@@ -24,13 +24,30 @@ using System.Diagnostics;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdRuntimeImpl : DmdRuntime {
 		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
+		public override int PointerSize { get; }
+		public override DmdImageFileMachine Machine { get; }
+
 		readonly List<DmdAppDomainImpl> appDomains;
 
 		internal DmdEvaluator Evaluator { get; }
 
-		public DmdRuntimeImpl(DmdEvaluator evaluator) {
+		public DmdRuntimeImpl(DmdEvaluator evaluator, DmdImageFileMachine machine) {
 			appDomains = new List<DmdAppDomainImpl>();
 			Evaluator = evaluator ?? throw new ArgumentNullException(nameof(evaluator));
+			PointerSize = CalculatePointerSize(machine);
+			Machine = machine;
+		}
+
+		static int CalculatePointerSize(DmdImageFileMachine machine) {
+			switch (machine) {
+			case DmdImageFileMachine.IA64:
+			case DmdImageFileMachine.AMD64:
+			case DmdImageFileMachine.ARM64:
+			case DmdImageFileMachine.ALPHA64:
+				return 8;
+			default:
+				return 4;
+			}
 		}
 
 		internal void Add(DmdAppDomainImpl appDomain) {
