@@ -66,6 +66,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Don't compare optional and required C modifiers
 		/// </summary>
 		DontCompareCustomModifiers = 0x40,
+
+		/// <summary>
+		/// Compare generic type/method parameter's declaring member
+		/// </summary>
+		CompareGenericParameterDeclaringMember = 0x80,
 	}
 
 	/// <summary>
@@ -95,6 +100,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		bool ProjectWinMDReferences => (options & DmdSigComparerOptions.ProjectWinMDReferences) != 0;
 		bool CheckTypeEquivalence => (options & DmdSigComparerOptions.CheckTypeEquivalence) != 0;
 		bool DontCompareCustomModifiers => (options & DmdSigComparerOptions.DontCompareCustomModifiers) != 0;
+		bool CompareGenericParameterDeclaringMember => (options & DmdSigComparerOptions.CompareGenericParameterDeclaringMember) != 0;
 
 		/// <summary>
 		/// Constructor
@@ -210,8 +216,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					break;
 
 				case DmdTypeSignatureKind.TypeGenericParameter:
+					result = a.GenericParameterPosition == b.GenericParameterPosition;
+					if (result && CompareGenericParameterDeclaringMember)
+						result = Equals(a.DeclaringType, b.DeclaringType);
+					break;
+
 				case DmdTypeSignatureKind.MethodGenericParameter:
 					result = a.GenericParameterPosition == b.GenericParameterPosition;
+					if (result && CompareGenericParameterDeclaringMember)
+						result = Equals(a.DeclaringMethod, b.DeclaringMethod);
 					break;
 
 				case DmdTypeSignatureKind.MDArray:
@@ -559,10 +572,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			case DmdTypeSignatureKind.TypeGenericParameter:
 				hc ^= HASHCODE_MAGIC_ET_VAR ^ a.GenericParameterPosition;
+				if (CompareGenericParameterDeclaringMember)
+					hc ^= GetHashCode(a.DeclaringType);
 				break;
 
 			case DmdTypeSignatureKind.MethodGenericParameter:
 				hc ^= HASHCODE_MAGIC_ET_MVAR ^ a.GenericParameterPosition;
+				if (CompareGenericParameterDeclaringMember)
+					hc ^= GetHashCode(a.DeclaringMethod);
 				break;
 
 			case DmdTypeSignatureKind.MDArray:

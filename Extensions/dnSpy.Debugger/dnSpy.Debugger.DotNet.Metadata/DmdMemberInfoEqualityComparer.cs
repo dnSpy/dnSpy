@@ -44,6 +44,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public static readonly DmdMemberInfoEqualityComparer NoDeclaringTypes = new DmdMemberInfoEqualityComparer(DefaultOptions & ~DmdSigComparerOptions.CompareDeclaringType);
 
+		/// <summary>
+		/// Same as <see cref="Default"/> and compares generic type/method parameter's declaring type/method
+		/// </summary>
+		public static readonly DmdMemberInfoEqualityComparer CompareGenericParameterDeclaringMember = new DmdMemberInfoEqualityComparer(DefaultOptions | DmdSigComparerOptions.CompareGenericParameterDeclaringMember);
+
 		readonly DmdSigComparerOptions options;
 
 		/// <summary>
