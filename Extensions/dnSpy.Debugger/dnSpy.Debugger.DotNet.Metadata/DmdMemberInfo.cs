@@ -133,8 +133,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public virtual DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdMemberInfo left, DmdMemberInfo right) => DmdMemberInfoEqualityComparer.Default.Equals(left, right);
-		public static bool operator !=(DmdMemberInfo left, DmdMemberInfo right) => !DmdMemberInfoEqualityComparer.Default.Equals(left, right);
+		public static bool operator ==(DmdMemberInfo left, DmdMemberInfo right) => left is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator !=(DmdMemberInfo left, DmdMemberInfo right) => !(left is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right));
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -142,7 +142,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdMemberInfo other) => DmdMemberInfoEqualityComparer.Default.Equals(this, other);
+		public bool Equals(DmdMemberInfo other) => this is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(this, other) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
 
 		/// <summary>
 		/// Equals()

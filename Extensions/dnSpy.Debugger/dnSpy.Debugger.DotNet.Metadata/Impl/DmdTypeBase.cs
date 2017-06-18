@@ -376,7 +376,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		static DmdType[] CreateInterfaces(DmdTypeBase type) {
 			//TODO: Pool these?
 			var list = new List<DmdType>();
-			var hash = new HashSet<DmdType>(DmdMemberInfoEqualityComparer.Default);
+			var hash = new HashSet<DmdType>(DmdMemberInfoEqualityComparer.DefaultType);
 			var stack = new Stack<IEnumerator<DmdType>>();
 
 			IEnumerator<DmdType> tmpEnum = null;
@@ -673,9 +673,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					Name = name;
 					Signature = signature;
 				}
-				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.Default.Equals(Signature, other.Signature);
+				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.DefaultMember.Equals(Signature, other.Signature);
 				public override bool Equals(object obj) => obj is Key other && Equals(other);
-				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.Default.GetHashCode(Signature);
+				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.DefaultMember.GetHashCode(Signature);
 				public override string ToString() => Name + ": " + Signature?.ToString();
 			}
 
@@ -752,9 +752,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					Name = name;
 					Signature = signature;
 				}
-				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.Default.Equals(Signature, other.Signature);
+				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.DefaultMember.Equals(Signature, other.Signature);
 				public override bool Equals(object obj) => obj is Key other && Equals(other);
-				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.Default.GetHashCode(Signature);
+				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.DefaultMember.GetHashCode(Signature);
 				public override string ToString() => Name + ": " + Signature?.ToString();
 			}
 
@@ -799,7 +799,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			bool IsOverridable(DmdMethodBase method, ref bool isNewSlot) {
-				if (method == null || (method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) == 0)
+				if ((object)method == null || (method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) == 0)
 					return false;
 				isNewSlot = (method.Attributes & DmdMethodAttributes.VtableLayoutMask) == DmdMethodAttributes.NewSlot;
 				return true;
@@ -831,9 +831,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					Name = name;
 					Signature = signature;
 				}
-				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.Default.Equals(Signature, other.Signature);
+				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.DefaultMember.Equals(Signature, other.Signature);
 				public override bool Equals(object obj) => obj is Key other && Equals(other);
-				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.Default.GetHashCode(Signature);
+				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.DefaultMember.GetHashCode(Signature);
 				public override string ToString() => Name + ": " + Signature?.ToString();
 			}
 
@@ -878,7 +878,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			bool IsOverridable(DmdMethodBase method, ref bool isNewSlot) {
-				if (method == null || (method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) == 0)
+				if ((object)method == null || (method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) == 0)
 					return false;
 				isNewSlot = (method.Attributes & DmdMethodAttributes.VtableLayoutMask) == DmdMethodAttributes.NewSlot;
 				return true;
@@ -1142,13 +1142,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (sig.Flags != flags)
 					continue;
 				for (int i = 0; i < sigParamTypes.Count; i++) {
-					if (!DmdMemberInfoEqualityComparer.Default.Equals(sigParamTypes[i], parameterTypes[i]))
+					if (!DmdMemberInfoEqualityComparer.DefaultMember.Equals(sigParamTypes[i], parameterTypes[i]))
 						continue;
 				}
 				if (sig.GenericParameterCount != genericParameterCount)
 					continue;
 				if ((object)returnType != null) {
-					if (!DmdMemberInfoEqualityComparer.Default.Equals(returnType, sig.ReturnType))
+					if (!DmdMemberInfoEqualityComparer.DefaultMember.Equals(returnType, sig.ReturnType))
 						continue;
 				}
 
@@ -1168,7 +1168,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			foreach (var field in GetFields(inherit: true)) {
 				if (field.Name != name)
 					continue;
-				if (!DmdMemberInfoEqualityComparer.Default.Equals(field.FieldType, fieldType))
+				if (!DmdMemberInfoEqualityComparer.DefaultMember.Equals(field.FieldType, fieldType))
 					continue;
 
 				return field;
@@ -1196,13 +1196,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (sig.Flags != flags)
 					continue;
 				for (int i = 0; i < sigParamTypes.Count; i++) {
-					if (!DmdMemberInfoEqualityComparer.Default.Equals(sigParamTypes[i], parameterTypes[i]))
+					if (!DmdMemberInfoEqualityComparer.DefaultMember.Equals(sigParamTypes[i], parameterTypes[i]))
 						continue;
 				}
 				if (sig.GenericParameterCount != genericParameterCount)
 					continue;
 				if ((object)returnType != null) {
-					if (!DmdMemberInfoEqualityComparer.Default.Equals(returnType, sig.ReturnType))
+					if (!DmdMemberInfoEqualityComparer.DefaultMember.Equals(returnType, sig.ReturnType))
 						continue;
 				}
 
@@ -1222,7 +1222,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			foreach (var @event in GetEvents(inherit: true)) {
 				if (@event.Name != name)
 					continue;
-				if (!DmdMemberInfoEqualityComparer.Default.Equals(@event.EventHandlerType, eventHandlerType))
+				if (!DmdMemberInfoEqualityComparer.DefaultMember.Equals(@event.EventHandlerType, eventHandlerType))
 					continue;
 
 				return @event;

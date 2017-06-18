@@ -29,25 +29,34 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			IEqualityComparer<DmdPropertyInfo>, IEqualityComparer<DmdEventInfo>, IEqualityComparer<DmdParameterInfo>,
 			IEqualityComparer<DmdMethodSignature>, IEqualityComparer<DmdAssemblyName>, IEqualityComparer<DmdCustomModifier> {
 		/// <summary>
-		/// Gets an <see cref="IEqualityComparer{T}"/> that can be used to compare types, members and parameters using default
-		/// <see cref="DmdSigComparer"/> options (<see cref="DefaultOptions"/> == <see cref="DmdSigComparerOptions.CompareDeclaringType"/>).
+		/// Should be used when comparing types that aren't part of a member signature. Custom modifiers are ignored.
 		/// </summary>
-		public static readonly DmdMemberInfoEqualityComparer Default = new DmdMemberInfoEqualityComparer(DefaultOptions);
+		public static readonly DmdMemberInfoEqualityComparer DefaultType = new DmdMemberInfoEqualityComparer(DefaultTypeOptions);
 
 		/// <summary>
-		/// Gets the default options used by <see cref="Default"/>
+		/// Should be used when comparing member signatures or when comparing types in member signatures. Custom modifiers are compared.
 		/// </summary>
-		public const DmdSigComparerOptions DefaultOptions = DmdSigComparerOptions.CompareDeclaringType;
+		public static readonly DmdMemberInfoEqualityComparer DefaultMember = new DmdMemberInfoEqualityComparer(DefaultTypeOptions | DmdSigComparerOptions.CompareCustomModifiers);
 
 		/// <summary>
-		/// Doesn't compare declaring types
+		/// Should be used when comparing parameters
 		/// </summary>
-		public static readonly DmdMemberInfoEqualityComparer NoDeclaringTypes = new DmdMemberInfoEqualityComparer(DefaultOptions & ~DmdSigComparerOptions.CompareDeclaringType);
+		public static readonly DmdMemberInfoEqualityComparer DefaultParameter = new DmdMemberInfoEqualityComparer(DefaultTypeOptions);
 
 		/// <summary>
-		/// Same as <see cref="Default"/> and compares generic type/method parameter's declaring type/method
+		/// Should be used when comparing custom modifiers
 		/// </summary>
-		public static readonly DmdMemberInfoEqualityComparer CompareGenericParameterDeclaringMember = new DmdMemberInfoEqualityComparer(DefaultOptions | DmdSigComparerOptions.CompareGenericParameterDeclaringMember);
+		internal static readonly DmdMemberInfoEqualityComparer DefaultCustomModifier = new DmdMemberInfoEqualityComparer(DefaultTypeOptions);
+
+		/// <summary>
+		/// Should be used when comparing any other supported class, eg. <see cref="DmdAssemblyName"/>s
+		/// </summary>
+		internal static readonly DmdMemberInfoEqualityComparer DefaultOther = new DmdMemberInfoEqualityComparer(DefaultTypeOptions);
+
+		/// <summary>
+		/// Gets the default options used by <see cref="DefaultType"/>
+		/// </summary>
+		public const DmdSigComparerOptions DefaultTypeOptions = DmdSigComparerOptions.CompareDeclaringType;
 
 		readonly DmdSigComparerOptions options;
 

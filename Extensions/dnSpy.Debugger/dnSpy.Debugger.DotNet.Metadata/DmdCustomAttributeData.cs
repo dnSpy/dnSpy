@@ -188,7 +188,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdCustomAttributeTypedArgument other) => ArgumentType == other.ArgumentType && Equals(Value, other.Value);
+		public bool Equals(DmdCustomAttributeTypedArgument other) => DmdMemberInfoEqualityComparer.DefaultType.Equals(ArgumentType) && Equals(Value, other.Value);
 
 		/// <summary>
 		/// Equals()
@@ -201,7 +201,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => (ArgumentType?.GetHashCode() ?? 0) ^ (Value?.GetHashCode() ?? 0);
+		public override int GetHashCode() => DmdMemberInfoEqualityComparer.DefaultType.GetHashCode(ArgumentType) ^ (Value?.GetHashCode() ?? 0);
 	}
 
 	/// <summary>

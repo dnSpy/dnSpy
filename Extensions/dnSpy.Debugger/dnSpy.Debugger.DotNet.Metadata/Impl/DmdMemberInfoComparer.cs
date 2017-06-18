@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (p.Count != types.Count)
 				return false;
 			for (int i = 0; i < p.Count; i++) {
-				if (!DmdMemberInfoEqualityComparer.Default.Equals(p[i], types[i]))
+				if (!DmdMemberInfoEqualityComparer.DefaultType.Equals(p[i], types[i]))
 					return false;
 			}
 			return true;
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public static bool IsMatch(DmdPropertyInfo property, DmdType returnType) {
 			if ((object)returnType != null) {
-				var comparer = new DmdSigComparer(DmdSigComparerOptions.CheckTypeEquivalence | DmdMemberInfoEqualityComparer.DefaultOptions);
+				var comparer = new DmdSigComparer(DmdSigComparerOptions.CheckTypeEquivalence | DmdMemberInfoEqualityComparer.DefaultTypeOptions);
 				if (!comparer.Equals(property.PropertyType, returnType))
 					return false;
 			}

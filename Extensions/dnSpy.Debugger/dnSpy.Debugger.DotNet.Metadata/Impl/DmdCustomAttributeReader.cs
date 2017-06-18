@@ -389,14 +389,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			DmdMemberInfo memberInfo;
 			if (isField) {
 				var field = ctor.ReflectedType.GetField(name);
-				if ((object)field == null || !DmdMemberInfoEqualityComparer.Default.Equals(field.FieldType.WithoutCustomModifiers(), fieldPropType))
+				if ((object)field == null || !DmdMemberInfoEqualityComparer.DefaultMember.Equals(field.FieldType, fieldPropType))
 					memberInfo = null;
 				else
 					memberInfo = field;
 			}
 			else {
 				var property = ctor.ReflectedType.GetProperty(name);
-				if ((object)property == null || !DmdMemberInfoEqualityComparer.Default.Equals(property.PropertyType.WithoutCustomModifiers(), fieldPropType))
+				if ((object)property == null || !DmdMemberInfoEqualityComparer.DefaultMember.Equals(property.PropertyType, fieldPropType))
 					memberInfo = null;
 				else
 					memberInfo = property;

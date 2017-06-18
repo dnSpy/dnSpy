@@ -366,7 +366,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdType Resolve(DmdAssemblyName asmRef, DmdType typeRef) {
 			var asm = ownerModule.Assembly;
 			var asmName = asm.GetName();
-			if (!DmdMemberInfoEqualityComparer.Default.Equals(asmRef, asmName))
+			if (!DmdMemberInfoEqualityComparer.DefaultOther.Equals(asmRef, asmName))
 				return null;
 			var td = typeRef.ResolveNoThrow();
 			return td?.Module == ownerModule ? td : null;

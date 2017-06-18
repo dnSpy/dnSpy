@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					}
 				}
 				if ((object)__resolvedField_DONT_USE != null) {
-					Debug.Assert(__resolvedField_DONT_USE.ReflectedType == declaringTypeRef);
+					Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedField_DONT_USE.ReflectedType, declaringTypeRef));
 					return __resolvedField_DONT_USE;
 				}
 				if (throwOnError)

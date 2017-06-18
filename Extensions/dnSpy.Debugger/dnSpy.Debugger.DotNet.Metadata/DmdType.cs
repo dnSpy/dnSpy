@@ -444,7 +444,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
 		public DmdMethodBase GetMethod(string name, DmdMethodSignature methodSignature, bool throwOnError) {
-			if (methodSignature == null)
+			if ((object)methodSignature == null)
 				throw new ArgumentNullException(nameof(methodSignature));
 			return GetMethod(name, methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), throwOnError);
 		}
@@ -489,7 +489,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
 		public DmdPropertyInfo GetProperty(string name, DmdMethodSignature methodSignature, bool throwOnError) {
-			if (methodSignature == null)
+			if ((object)methodSignature == null)
 				throw new ArgumentNullException(nameof(methodSignature));
 			return GetProperty(name, methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), throwOnError);
 		}
@@ -1088,7 +1088,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		internal static HashSet<DmdType> GetAllInterfaces(DmdType type) {
 			//TODO: Pool these?
-			var hash = new HashSet<DmdType>(DmdMemberInfoEqualityComparer.Default);
+			var hash = new HashSet<DmdType>(DmdMemberInfoEqualityComparer.DefaultType);
 			var stack = new Stack<DmdType>();
 			stack.Push(type);
 			while (stack.Count > 0) {
@@ -1112,7 +1112,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other">Other types</param>
 		/// <returns></returns>
-		public bool IsEquivalentTo(DmdType other) => new DmdSigComparer(DmdMemberInfoEqualityComparer.DefaultOptions | DmdSigComparerOptions.CheckTypeEquivalence).Equals(this, other);
+		public bool IsEquivalentTo(DmdType other) => new DmdSigComparer(DmdMemberInfoEqualityComparer.DefaultTypeOptions | DmdSigComparerOptions.CheckTypeEquivalence).Equals(this, other);
 
 		/// <summary>
 		/// Checks if a custom attribute is present
@@ -1147,8 +1147,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public sealed override DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(this, attributeType, inherit);
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdType left, DmdType right) => DmdMemberInfoEqualityComparer.Default.Equals(left, right);
-		public static bool operator !=(DmdType left, DmdType right) => !DmdMemberInfoEqualityComparer.Default.Equals(left, right);
+		public static bool operator ==(DmdType left, DmdType right) => DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right);
+		public static bool operator !=(DmdType left, DmdType right) => !DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -1156,7 +1156,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdType other) => DmdMemberInfoEqualityComparer.Default.Equals(this, other);
+		public bool Equals(DmdType other) => DmdMemberInfoEqualityComparer.DefaultType.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
@@ -1169,7 +1169,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => DmdMemberInfoEqualityComparer.Default.GetHashCode(this);
+		public override int GetHashCode() => DmdMemberInfoEqualityComparer.DefaultType.GetHashCode(this);
 
 		/// <summary>
 		/// ToString()

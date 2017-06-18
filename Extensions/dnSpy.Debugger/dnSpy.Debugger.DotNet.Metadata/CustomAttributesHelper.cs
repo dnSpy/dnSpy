@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public static bool IsDefined(IList<DmdCustomAttributeData> customAttributes, DmdType attributeType) {
 			for (int i = 0; i < customAttributes.Count; i++) {
-				if (DmdMemberInfoEqualityComparer.Default.Equals(customAttributes[i].AttributeType, attributeType))
+				if (DmdMemberInfoEqualityComparer.DefaultType.Equals(customAttributes[i].AttributeType, attributeType))
 					return true;
 			}
 			return false;
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					var ca = customAttributes[i];
 					if ((object)currentType != type && ca.IsPseudoCustomAttribute)
 						continue;
-					if (DmdMemberInfoEqualityComparer.Default.Equals(ca.AttributeType, attributeType))
+					if (DmdMemberInfoEqualityComparer.DefaultType.Equals(ca.AttributeType, attributeType))
 						return true;
 				}
 				if (!inherit)
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					var ca = customAttributes[i];
 					if ((object)currentMethod != method && ca.IsPseudoCustomAttribute)
 						continue;
-					if (DmdMemberInfoEqualityComparer.Default.Equals(ca.AttributeType, attributeType))
+					if (DmdMemberInfoEqualityComparer.DefaultType.Equals(ca.AttributeType, attributeType))
 						return true;
 				}
 				if (!inherit)
@@ -117,7 +117,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static DmdCustomAttributeData Find(IList<DmdCustomAttributeData> customAttributes, DmdType attributeType) {
 			for (int i = 0; i < customAttributes.Count; i++) {
 				var ca = customAttributes[i];
-				if (DmdMemberInfoEqualityComparer.Default.Equals(ca.AttributeType, attributeType))
+				if (DmdMemberInfoEqualityComparer.DefaultType.Equals(ca.AttributeType, attributeType))
 					return ca;
 			}
 			return null;
@@ -146,7 +146,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					var ca = customAttributes[i];
 					if ((object)currentType != type && ca.IsPseudoCustomAttribute)
 						continue;
-					if (DmdMemberInfoEqualityComparer.Default.Equals(ca.AttributeType, attributeType))
+					if (DmdMemberInfoEqualityComparer.DefaultType.Equals(ca.AttributeType, attributeType))
 						return ca;
 				}
 				if (!inherit)
@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					var ca = customAttributes[i];
 					if ((object)currentMethod != method && ca.IsPseudoCustomAttribute)
 						continue;
-					if (DmdMemberInfoEqualityComparer.Default.Equals(ca.AttributeType, attributeType))
+					if (DmdMemberInfoEqualityComparer.DefaultType.Equals(ca.AttributeType, attributeType))
 						return ca;
 				}
 				if (!inherit)

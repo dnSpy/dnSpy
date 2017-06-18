@@ -657,7 +657,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return false;
 			var type = this;
 			for (;;) {
-				var comparer = new DmdSigComparer(recursionCounter < 0 ? DmdMemberInfoEqualityComparer.DefaultOptions | DmdSigComparerOptions.CheckTypeEquivalence : DmdMemberInfoEqualityComparer.DefaultOptions);
+				var comparer = new DmdSigComparer(recursionCounter < 0 ? DmdMemberInfoEqualityComparer.DefaultTypeOptions | DmdSigComparerOptions.CheckTypeEquivalence : DmdMemberInfoEqualityComparer.DefaultTypeOptions);
 				foreach (var iface in type.GetInterfaces()) {
 					if (comparer.Equals(iface, ifaceType) || iface.__ImplementsInterface(ifaceType, recursionCounter + 1))
 						return true;

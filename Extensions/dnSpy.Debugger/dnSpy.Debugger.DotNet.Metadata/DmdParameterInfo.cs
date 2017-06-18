@@ -149,8 +149,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdParameterInfo left, DmdParameterInfo right) => DmdMemberInfoEqualityComparer.Default.Equals(left, right);
-		public static bool operator !=(DmdParameterInfo left, DmdParameterInfo right) => !DmdMemberInfoEqualityComparer.Default.Equals(left, right);
+		public static bool operator ==(DmdParameterInfo left, DmdParameterInfo right) => DmdMemberInfoEqualityComparer.DefaultParameter.Equals(left, right);
+		public static bool operator !=(DmdParameterInfo left, DmdParameterInfo right) => !DmdMemberInfoEqualityComparer.DefaultParameter.Equals(left, right);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdParameterInfo other) => DmdMemberInfoEqualityComparer.Default.Equals(this, other);
+		public bool Equals(DmdParameterInfo other) => DmdMemberInfoEqualityComparer.DefaultParameter.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => DmdMemberInfoEqualityComparer.Default.GetHashCode(this);
+		public override int GetHashCode() => DmdMemberInfoEqualityComparer.DefaultParameter.GetHashCode(this);
 
 		/// <summary>
 		/// ToString()

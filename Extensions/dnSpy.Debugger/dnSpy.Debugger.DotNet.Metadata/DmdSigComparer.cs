@@ -63,9 +63,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		CheckTypeEquivalence = 0x20,
 
 		/// <summary>
-		/// Don't compare optional and required C modifiers
+		/// Compare optional and required C modifiers
 		/// </summary>
-		DontCompareCustomModifiers = 0x40,
+		CompareCustomModifiers = 0x40,
 
 		/// <summary>
 		/// Compare generic type/method parameter's declaring member
@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		//TODO: Use this option
 		bool ProjectWinMDReferences => (options & DmdSigComparerOptions.ProjectWinMDReferences) != 0;
 		bool CheckTypeEquivalence => (options & DmdSigComparerOptions.CheckTypeEquivalence) != 0;
-		bool DontCompareCustomModifiers => (options & DmdSigComparerOptions.DontCompareCustomModifiers) != 0;
+		bool CompareCustomModifiers => (options & DmdSigComparerOptions.CompareCustomModifiers) != 0;
 		bool CompareGenericParameterDeclaringMember => (options & DmdSigComparerOptions.CompareGenericParameterDeclaringMember) != 0;
 
 		/// <summary>
@@ -186,7 +186,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			var at = a.TypeSignatureKind;
 			if (at != b.TypeSignatureKind)
 				result = false;
-			else if (!DontCompareCustomModifiers && !Equals(a.GetCustomModifiers(), b.GetCustomModifiers()))
+			else if (CompareCustomModifiers && !Equals(a.GetCustomModifiers(), b.GetCustomModifiers()))
 				result = false;
 			else {
 				switch (at) {
@@ -547,7 +547,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (!IncrementRecursionCounter())
 				return 0;
 
-			int hc = DontCompareCustomModifiers ? 0 : GetHashCode(a.GetCustomModifiers());
+			int hc = CompareCustomModifiers ? GetHashCode(a.GetCustomModifiers()) : 0;
 			switch (a.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
 				hc ^= (object)a.DeclaringType == null ? HASHCODE_MAGIC_TYPE : HASHCODE_MAGIC_NESTED_TYPE;

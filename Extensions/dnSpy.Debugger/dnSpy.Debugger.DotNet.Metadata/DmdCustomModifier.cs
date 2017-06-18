@@ -50,8 +50,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdCustomModifier left, DmdCustomModifier right) => left.Equals(right);
-		public static bool operator !=(DmdCustomModifier left, DmdCustomModifier right) => !left.Equals(right);
+		public static bool operator ==(DmdCustomModifier left, DmdCustomModifier right) => DmdMemberInfoEqualityComparer.DefaultCustomModifier.Equals(left, right);
+		public static bool operator !=(DmdCustomModifier left, DmdCustomModifier right) => !DmdMemberInfoEqualityComparer.DefaultCustomModifier.Equals(left, right);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdCustomModifier other) => DmdMemberInfoEqualityComparer.Default.Equals(this, other);
+		public bool Equals(DmdCustomModifier other) => DmdMemberInfoEqualityComparer.DefaultCustomModifier.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => DmdMemberInfoEqualityComparer.Default.GetHashCode(this);
+		public override int GetHashCode() => DmdMemberInfoEqualityComparer.DefaultCustomModifier.GetHashCode(this);
 
 		/// <summary>
 		/// ToString()

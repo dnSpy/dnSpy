@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>> toModuleExportedTypeDictIgnoreCase;
 		readonly WellKnownMemberResolver wellKnownMemberResolver;
 		readonly List<AssemblyLoadedListener> assemblyLoadedListeners;
-		const DmdSigComparerOptions moduleTypeOptions = DmdSigComparerOptions.DontCompareTypeScope | DmdSigComparerOptions.DontCompareCustomModifiers;
+		const DmdSigComparerOptions moduleTypeOptions = DmdSigComparerOptions.DontCompareTypeScope;
 		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparer = new DmdMemberInfoEqualityComparer(moduleTypeOptions);
 		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparerIgnoreCase = new DmdMemberInfoEqualityComparer(moduleTypeOptions | DmdSigComparerOptions.CaseInsensitiveMemberNames);
 
@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			assemblies = new List<DmdAssemblyImpl>();
 			simpleNameToAssembly = new Dictionary<string, DmdAssemblyImpl>(StringComparer.OrdinalIgnoreCase);
 			assemblyNameToAssembly = new Dictionary<DmdAssemblyName, DmdAssemblyImpl>(AssemblyNameEqualityComparer.Instance);
-			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(DmdMemberInfoEqualityComparer.CompareGenericParameterDeclaringMember);
+			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(new DmdMemberInfoEqualityComparer(DmdMemberInfoEqualityComparer.DefaultTypeOptions | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CompareGenericParameterDeclaringMember));
 			toModuleTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			toModuleTypeDictIgnoreCase = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			toModuleExportedTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>>();
@@ -217,7 +217,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (asms.Length != 0) {
 					if (asms.Length != 1) {
 						foreach (var a in asms) {
-							if (DmdMemberInfoEqualityComparer.Default.Equals(a.GetName(), name))
+							if (DmdMemberInfoEqualityComparer.DefaultOther.Equals(a.GetName(), name))
 								return a;
 						}
 					}
@@ -503,7 +503,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options) {
-			if (methodSignature == null)
+			if ((object)methodSignature == null)
 				throw new ArgumentNullException(nameof(methodSignature));
 			if (methodSignature.ReturnType.AppDomain != this)
 				throw new ArgumentException();
