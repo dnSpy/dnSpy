@@ -43,7 +43,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (IsInMemory || IsDynamic)
 				return string.Empty;
 			try {
-				return Path.GetFileNameWithoutExtension(Location);
+				var res = Path.GetFileNameWithoutExtension(Location);
+				if (res.EndsWith(".ni"))
+					return Path.GetFileNameWithoutExtension(res);
+				return res;
 			}
 			catch (ArgumentException) {
 			}
