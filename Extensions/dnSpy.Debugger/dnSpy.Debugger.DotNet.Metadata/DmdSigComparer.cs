@@ -93,7 +93,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		bool CaseInsensitiveMemberNames => (options & DmdSigComparerOptions.CaseInsensitiveMemberNames) != 0;
 		//TODO: Use this option
 		bool ProjectWinMDReferences => (options & DmdSigComparerOptions.ProjectWinMDReferences) != 0;
-		//TODO: Use this option
 		bool CheckTypeEquivalence => (options & DmdSigComparerOptions.CheckTypeEquivalence) != 0;
 		bool DontCompareCustomModifiers => (options & DmdSigComparerOptions.DontCompareCustomModifiers) != 0;
 
@@ -198,6 +197,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 							var ra = a.ResolveNoThrow();
 							var rb = (object)ra == null ? null : b.ResolveNoThrow();
 							result = (object)ra != null && (object)rb != null && TypeScopeEquals(ra, rb);
+							if (!result && CheckTypeEquivalence)
+								result = TIAHelper.Equivalent(ra, rb);
 						}
 					}
 					break;
