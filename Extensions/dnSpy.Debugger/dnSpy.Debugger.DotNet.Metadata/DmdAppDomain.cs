@@ -78,6 +78,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdAssembly Load(IDmdEvaluationContext context, DmdAssemblyName name);
 
 		/// <summary>
+		/// Loads an assembly. Will fail on .NET Core 1.x (but not on .NET Core 2.x or later)
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="assemblyFile">Assembly name or path to assembly</param>
+		/// <returns></returns>
+		public abstract DmdAssembly LoadFrom(IDmdEvaluationContext context, string assemblyFile);
+
+		/// <summary>
+		/// Loads an assembly. Will fail on .NET Core 1.x (but not on .NET Core 2.x or later)
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="path">Path to assembly</param>
+		/// <returns></returns>
+		public abstract DmdAssembly LoadFile(IDmdEvaluationContext context, string path);
+
+		/// <summary>
 		/// Gets the core library (eg. mscorlib if it's .NET Framework)
 		/// </summary>
 		public abstract DmdAssembly CorLib { get; }

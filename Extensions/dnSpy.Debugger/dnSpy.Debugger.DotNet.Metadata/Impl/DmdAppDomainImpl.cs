@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
@@ -89,6 +90,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>> toModuleTypeDict;
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>> toModuleExportedTypeDict;
 		readonly WellKnownMemberResolver wellKnownMemberResolver;
+		readonly List<AssemblyLoadedListener> assemblyLoadedListeners;
 		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparer = new DmdMemberInfoEqualityComparer(DmdSigComparerOptions.DontCompareTypeScope | DmdSigComparerOptions.DontCompareCustomModifiers);
 
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
@@ -99,6 +101,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			toModuleTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			toModuleExportedTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>>();
 			wellKnownMemberResolver = new WellKnownMemberResolver(this);
+			assemblyLoadedListeners = new List<AssemblyLoadedListener>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Id = id;
 		}
@@ -109,6 +112,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			lock (LockObject) {
 				Debug.Assert(!assemblies.Contains(assembly));
 				assemblies.Add(assembly);
+				foreach (var listener in assemblyLoadedListeners)
+					listener.AssemblyLoaded(assembly);
 			}
 		}
 
@@ -193,13 +198,100 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
+		DmdAssembly GetAssemblyByPath(string path) {
+			if (path == null)
+				throw new ArgumentNullException(nameof(path));
+			lock (LockObject) {
+				foreach (var assembly in assemblies) {
+					if (assembly.IsDynamic || assembly.IsInMemory)
+						continue;
+					if (StringComparer.OrdinalIgnoreCase.Equals(assembly.Location, path))
+						return assembly;
+				}
+			}
+			return null;
+		}
+
+		sealed class AssemblyLoadedListener : IDisposable {
+			readonly DmdAppDomainImpl owner;
+			public List<DmdAssembly> LoadedAssemblies { get; }
+			public AssemblyLoadedListener(DmdAppDomainImpl owner) {
+				this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
+				LoadedAssemblies = new List<DmdAssembly>();
+				owner.AddAssemblyLoadedListener(this);
+			}
+			public void AssemblyLoaded(DmdAssembly assembly) => LoadedAssemblies.Add(assembly);
+			public void Dispose() => owner.RemoveAssemblyLoadedListener(this);
+		}
+
+		void AddAssemblyLoadedListener(AssemblyLoadedListener listener) {
+			lock (LockObject)
+				assemblyLoadedListeners.Add(listener);
+		}
+
+		void RemoveAssemblyLoadedListener(AssemblyLoadedListener listener) {
+			lock (LockObject)
+				assemblyLoadedListeners.Remove(listener);
+		}
+
 		public override DmdAssembly Load(IDmdEvaluationContext context, DmdAssemblyName name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 			var asm = GetAssembly(name);
 			if (asm != null)
 				return asm;
-			throw new NotImplementedException();//TODO:
+
+			var assemblyType = GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly);
+			var method = assemblyType.GetMethod("Load", assemblyType, new[] { System_String }, throwOnError: true);
+
+			// Load an assembly and then try to figure out which one of the 0 or more loaded assemblies
+			// is the one we want. This isn't guaranteed to succeed.
+			using (var listener = new AssemblyLoadedListener(this)) {
+				method.Invoke(context, null, new[] { name.ToString() });
+				// Dispose it so we can access its LoadedAssemblies prop
+				listener.Dispose();
+
+				var asms = listener.LoadedAssemblies.Where(a => StringComparer.OrdinalIgnoreCase.Equals(a.GetName().Name, name.Name)).ToArray();
+				if (asms.Length != 0) {
+					if (asms.Length != 1) {
+						foreach (var a in asms) {
+							if (DmdMemberInfoEqualityComparer.Default.Equals(a.GetName(), name))
+								return a;
+						}
+					}
+					return asms[0];
+				}
+
+				// It probably failed to load
+				return null;
+			}
+		}
+
+		public override DmdAssembly LoadFile(IDmdEvaluationContext context, string path) {
+			if (path == null)
+				throw new ArgumentNullException(nameof(path));
+			var asm = GetAssemblyByPath(path);
+			if (asm != null)
+				return asm;
+
+			var assemblyType = GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly);
+			var method = assemblyType.GetMethod("LoadFile", assemblyType, new[] { System_String }, throwOnError: true);
+			method.Invoke(context, null, new[] { path });
+			return GetAssemblyByPath(path);
+		}
+
+		public override DmdAssembly LoadFrom(IDmdEvaluationContext context, string assemblyFile) {
+			if (assemblyFile == null)
+				throw new ArgumentNullException(nameof(assemblyFile));
+			var name = new DmdAssemblyName(assemblyFile);
+			var asm = GetAssembly(name) ?? GetAssemblyByPath(assemblyFile);
+			if (asm != null)
+				return asm;
+
+			var assemblyType = GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly);
+			var method = assemblyType.GetMethod("LoadFrom", assemblyType, new[] { System_String }, throwOnError: true);
+			method.Invoke(context, null, new[] { name.ToString() });
+			return GetAssembly(name) ?? GetAssemblyByPath(assemblyFile);
 		}
 
 		public override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) {

@@ -422,6 +422,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdMethodBase GetMethod(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError);
 
 		/// <summary>
+		/// Gets a method
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <param name="returnType">Return type or null to ignore it</param>
+		/// <param name="parameterTypes">Parameter types</param>
+		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
+		/// <returns></returns>
+		public DmdMethodBase GetMethod(string name, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError) =>
+			GetMethod(name, DmdSignatureCallingConvention.Default, 0, returnType, parameterTypes, throwOnError);
+
+		/// <summary>
 		/// Gets a field
 		/// </summary>
 		/// <param name="name">Name</param>
