@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public DmdCreatedParameterDef(DmdMemberInfo member, int position, DmdType parameterType) : base(0, member, position, parameterType) {
 		}
 
-		protected override DmdCustomAttributeData[] CreateCustomAttributes() => null;
+		protected override (DmdCustomAttributeData[] cas, DmdMarshalType marshalType) CreateCustomAttributes() => (null, null);
 		protected override (object rawDefaultValue, bool hasDefaultValue) CreateDefaultValue() => (null, true);
 	}
 }

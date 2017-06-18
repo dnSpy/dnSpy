@@ -32,7 +32,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Attributes = attributes;
 		}
 
-		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
+		protected override (DmdCustomAttributeData[] cas, DmdMarshalType marshalType) CreateCustomAttributes() {
+			var cas = reader.ReadCustomAttributes(MetadataToken);
+			var marshalType = reader.ReadMarshalType(MetadataToken, Member.Module, null);
+			return (cas, marshalType);
+		}
+
 		protected override (object rawDefaultValue, bool hasDefaultValue) CreateDefaultValue() => reader.ReadConstant(MetadataToken);
 	}
 }

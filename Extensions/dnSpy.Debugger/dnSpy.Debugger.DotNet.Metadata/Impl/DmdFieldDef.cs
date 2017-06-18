@@ -46,12 +46,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (__customAttributes_DONT_USE != null)
 					return __customAttributes_DONT_USE;
 				var info = CreateCustomAttributes();
-				__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, info.fieldOffset);
+				__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, info.fieldOffset, info.marshalType);
 				return __customAttributes_DONT_USE;
 			}
 		}
 		ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
 
-		protected abstract (DmdCustomAttributeData[] cas, uint? fieldOffset) CreateCustomAttributes();
+		protected abstract (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType marshalType) CreateCustomAttributes();
 	}
 }

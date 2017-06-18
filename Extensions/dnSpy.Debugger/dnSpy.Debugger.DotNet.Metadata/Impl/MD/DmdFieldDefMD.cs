@@ -38,11 +38,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		public sealed override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
 
-		protected override (DmdCustomAttributeData[] cas, uint? fieldOffset) CreateCustomAttributes() {
+		protected override (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType marshalType) CreateCustomAttributes() {
+			var marshalType = reader.ReadMarshalType(MetadataToken, ReflectedType.Module, null);
 			var cas = reader.ReadCustomAttributes(MetadataToken);
 			var row = reader.TablesStream.ReadFieldLayoutRow(reader.Metadata.GetFieldLayoutRid(Rid));
 			var fieldOffset = row == null ? (uint?)null : row.OffSet;
-			return (cas, fieldOffset);
+			return (cas, fieldOffset, marshalType);
 		}
 	}
 }

@@ -247,13 +247,57 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 
-			public MarshalAsAttributeInfo(DmdFieldInfo field) => ctor = null;//TODO:
-			public MarshalAsAttributeInfo(DmdParameterInfo parameter) => ctor = null;//TODO:
+			public MarshalAsAttributeInfo(DmdFieldInfo field, DmdMarshalType marshalType) => ctor = Initialize(field.AppDomain, marshalType);
+			public MarshalAsAttributeInfo(DmdParameterInfo parameter, DmdMarshalType marshalType) => ctor = Initialize(parameter.Member.AppDomain, marshalType);
 
-			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
+			static DmdConstructorInfo Initialize(DmdAppDomain appDomain, DmdMarshalType marshalType) {
+				if (marshalType == null)
+					return null;
+				var caType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_MarshalAsAttribute, isOptional: true);
+				var unmanagedTypeType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_UnmanagedType, isOptional: true);
+				var varEnumType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_VarEnum, isOptional: true);
+				if ((object)caType == null || (object)unmanagedTypeType == null || (object)varEnumType == null)
+					return null;
+				var ctor = caType.GetConstructor(new[] { unmanagedTypeType });
+				Debug.Assert((object)ctor != null);
+				return ctor;
+			}
+
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index, DmdMarshalType marshalType) {
 				if (Count == 0)
 					return;
-				throw new NotImplementedException();//TODO:
+				int argsCount = 5;
+				if (marshalType.MarshalType != null)
+					argsCount++;
+				if ((object)marshalType.MarshalTypeRef != null)
+					argsCount++;
+				if (marshalType.MarshalCookie != null)
+					argsCount++;
+				if ((object)marshalType.SafeArrayUserDefinedSubType != null)
+					argsCount++;
+				var type = ctor.ReflectedType;
+				var appDomain = type.AppDomain;
+				var unmanagedTypeType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_UnmanagedType, isOptional: false);
+				var varEnumType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_VarEnum, isOptional: false);
+				var namedArgs = new DmdCustomAttributeNamedArgument[argsCount];
+				int w = 0;
+				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("ArraySubType"), new DmdCustomAttributeTypedArgument(unmanagedTypeType, (int)marshalType.ArraySubType));
+				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("SizeParamIndex"), new DmdCustomAttributeTypedArgument(appDomain.System_Int16, marshalType.SizeParamIndex));
+				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("SizeConst"), new DmdCustomAttributeTypedArgument(appDomain.System_Int32, marshalType.SizeConst));
+				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("IidParameterIndex"), new DmdCustomAttributeTypedArgument(appDomain.System_Int32, marshalType.IidParameterIndex));
+				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("SafeArraySubType"), new DmdCustomAttributeTypedArgument(varEnumType, (int)marshalType.SafeArraySubType));
+				if (marshalType.MarshalType != null)
+					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("MarshalType"), new DmdCustomAttributeTypedArgument(appDomain.System_String, marshalType.MarshalType));
+				if ((object)marshalType.MarshalTypeRef != null)
+					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("MarshalTypeRef"), new DmdCustomAttributeTypedArgument(appDomain.System_Type, marshalType.MarshalTypeRef));
+				if (marshalType.MarshalCookie != null)
+					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("MarshalCookie"), new DmdCustomAttributeTypedArgument(appDomain.System_String, marshalType.MarshalCookie));
+				if ((object)marshalType.SafeArrayUserDefinedSubType != null)
+					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("SafeArrayUserDefinedSubType"), new DmdCustomAttributeTypedArgument(appDomain.System_Type, marshalType.SafeArrayUserDefinedSubType));
+				if (namedArgs.Length != w)
+					throw new InvalidOperationException();
+				var ctorArgs = new[] { new DmdCustomAttributeTypedArgument(unmanagedTypeType, (int)marshalType.Value) };
+				destination[index++] = new DmdCustomAttributeData(ctor, ctorArgs, namedArgs, isPseudoCustomAttribute: true);
 			}
 		}
 
@@ -368,11 +412,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var ctorArgs = new DmdCustomAttributeTypedArgument[9] {
 					new DmdCustomAttributeTypedArgument(appDomain.System_String, im.Module),
 					new DmdCustomAttributeTypedArgument(appDomain.System_String, im.Name),
-					new DmdCustomAttributeTypedArgument(charSetType, charSet),
+					new DmdCustomAttributeTypedArgument(charSetType, (int)charSet),
 					new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.NoMangle) != 0),
 					new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.SupportsLastError) != 0),
 					new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, method.IsPreserveSig),
-					new DmdCustomAttributeTypedArgument(callingConventionType, callingConvention),
+					new DmdCustomAttributeTypedArgument(callingConventionType, (int)callingConvention),
 					new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.BestFitMask) == DmdPInvokeAttributes.BestFitEnabled),
 					new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.ThrowOnUnmappableCharMask) == DmdPInvokeAttributes.ThrowOnUnmappableCharEnabled),
 				};
@@ -488,11 +532,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return ReadOnlyCollectionHelpers.Create(customAttributes);
 		}
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdFieldInfo field, DmdCustomAttributeData[] customAttributes, uint? fieldOffset) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdFieldInfo field, DmdCustomAttributeData[] customAttributes, uint? fieldOffset, DmdMarshalType marshalType) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
-			var marshalAsAttributeInfo = new MarshalAsAttributeInfo(field);
+			var marshalAsAttributeInfo = new MarshalAsAttributeInfo(field, marshalType);
 			var fieldOffsetAttributeInfo = new FieldOffsetAttributeInfo(field, fieldOffset);
 			var nonSerializedAttributeInfo = new NonSerializedAttributeInfo(field);
 
@@ -500,7 +544,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (pseudoCount != 0) {
 				var cas = new DmdCustomAttributeData[pseudoCount + customAttributes.Length];
 				int index = 0;
-				marshalAsAttributeInfo.CopyTo(cas, ref index);
+				marshalAsAttributeInfo.CopyTo(cas, ref index, marshalType);
 				fieldOffsetAttributeInfo.CopyTo(cas, ref index);
 				nonSerializedAttributeInfo.CopyTo(cas, ref index);
 				if (pseudoCount != index)
@@ -562,14 +606,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdEventInfo @event, DmdCustomAttributeData[] customAttributes) =>
 			ReadOnlyCollectionHelpers.Create(customAttributes);
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdParameterInfo parameter, DmdCustomAttributeData[] customAttributes) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdParameterInfo parameter, DmdCustomAttributeData[] customAttributes, DmdMarshalType marshalType) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
 			var inAttributeInfo = new InAttributeInfo(parameter);
 			var outAttributeInfo = new OutAttributeInfo(parameter);
 			var optionalAttributeInfo = new OptionalAttributeInfo(parameter);
-			var marshalAsAttributeInfo = new MarshalAsAttributeInfo(parameter);
+			var marshalAsAttributeInfo = new MarshalAsAttributeInfo(parameter, marshalType);
 
 			int pseudoCount = inAttributeInfo.Count + outAttributeInfo.Count + optionalAttributeInfo.Count + marshalAsAttributeInfo.Count;
 			if (pseudoCount != 0) {
@@ -578,7 +622,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				inAttributeInfo.CopyTo(cas, ref index);
 				outAttributeInfo.CopyTo(cas, ref index);
 				optionalAttributeInfo.CopyTo(cas, ref index);
-				marshalAsAttributeInfo.CopyTo(cas, ref index);
+				marshalAsAttributeInfo.CopyTo(cas, ref index, marshalType);
 				if (pseudoCount != index)
 					throw new InvalidOperationException();
 				Array.Copy(customAttributes, 0, cas, pseudoCount, customAttributes.Length);

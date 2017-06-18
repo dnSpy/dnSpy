@@ -627,6 +627,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return res;
 		}
 
+		internal DmdMarshalType ReadMarshalType(int metadataToken, DmdModule module, IList<DmdType> genericTypeArguments) {
+			var row = TablesStream.ReadFieldMarshalRow(Metadata.GetFieldMarshalRid((Table)((uint)metadataToken >> 24), (uint)metadataToken & 0x00FFFFFF));
+			if (row == null)
+				return null;
+			using (var stream = BlobStream.CreateStream(row.NativeType))
+				return DmdMarshalBlobReader.Read(module, new DmdDataStreamImpl(stream), genericTypeArguments);
+		}
+
 		DmdConstructorInfo ResolveCustomAttributeType(uint caType, IList<DmdType> genericTypeArguments) {
 			if (!CodedToken.CustomAttributeType.Decode(caType, out uint ctorToken))
 				return null;

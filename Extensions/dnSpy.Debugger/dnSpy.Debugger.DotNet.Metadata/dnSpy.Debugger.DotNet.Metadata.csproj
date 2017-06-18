@@ -67,6 +67,7 @@
     <Compile Include="DmdImageFileMachine.cs" />
     <Compile Include="DmdImplMap.cs" />
     <Compile Include="DmdLazyMetadataBytes.cs" />
+    <Compile Include="DmdMarshalType.cs" />
     <Compile Include="DmdMemberFormatter.cs" />
     <Compile Include="DmdMemberInfo.cs" />
     <Compile Include="DmdMemberInfoEqualityComparer.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Impl\DmdGenericParameterType.cs" />
     <Compile Include="Impl\DmdGenericParameterTypeImpl.cs" />
     <Compile Include="Impl\DmdLazyMetadataReader.cs" />
+    <Compile Include="Impl\DmdMarshalBlobReader.cs" />
     <Compile Include="Impl\DmdMDArrayType.cs" />
     <Compile Include="Impl\DmdMemberInfoComparer.cs" />
     <Compile Include="Impl\DmdMetadataReader.cs" />
