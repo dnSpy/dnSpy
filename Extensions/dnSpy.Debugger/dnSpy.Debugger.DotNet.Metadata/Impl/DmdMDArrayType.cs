@@ -89,8 +89,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) {
 			var appDomain = AppDomain;
 			return new DmdMethodBase[5] {
-				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor1, ".ctor", appDomain.System_Void, CreateParameterTypes(null)),
-				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor2, ".ctor", appDomain.System_Void, CreateParameterTypesPair()),
+				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor1, DmdConstructorInfo.ConstructorName, appDomain.System_Void, CreateParameterTypes(null)),
+				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor2, DmdConstructorInfo.ConstructorName, appDomain.System_Void, CreateParameterTypesPair()),
 				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Set, "Set", appDomain.System_Void, CreateParameterTypes(elementType)),
 				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Address, "Address", appDomain.MakeByRefType(elementType, null), CreateParameterTypes(null)),
 				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Get, "Get", elementType, CreateParameterTypes(null)),

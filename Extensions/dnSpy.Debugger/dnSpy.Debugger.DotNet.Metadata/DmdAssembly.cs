@@ -160,6 +160,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsDefined(DmdType attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeType);
 
 		/// <summary>
+		/// Finds a custom attribute
+		/// </summary>
+		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		public DmdCustomAttributeData FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeTypeFullName);
+
+		/// <summary>
+		/// Finds a custom attribute
+		/// </summary>
+		/// <param name="attributeType">Custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		public DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
+
+		/// <summary>
 		/// Creates an instance of a type
 		/// </summary>
 		/// <param name="context">Evaluation context</param>

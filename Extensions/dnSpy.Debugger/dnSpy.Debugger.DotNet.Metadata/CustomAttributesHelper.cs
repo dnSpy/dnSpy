@@ -105,6 +105,88 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return false;
 		}
 
+		public static DmdCustomAttributeData Find(IList<DmdCustomAttributeData> customAttributes, string attributeTypeFullName) {
+			for (int i = 0; i < customAttributes.Count; i++) {
+				var ca = customAttributes[i];
+				if (ca.AttributeType.FullName == attributeTypeFullName)
+					return ca;
+			}
+			return null;
+		}
+
+		public static DmdCustomAttributeData Find(IList<DmdCustomAttributeData> customAttributes, DmdType attributeType) {
+			for (int i = 0; i < customAttributes.Count; i++) {
+				var ca = customAttributes[i];
+				if (DmdMemberInfoEqualityComparer.Default.Equals(ca.AttributeType, attributeType))
+					return ca;
+			}
+			return null;
+		}
+
+		public static DmdCustomAttributeData Find(DmdType type, string attributeTypeFullName, bool inherit) {
+			for (var currentType = type; (object)currentType != null; currentType = currentType.BaseType) {
+				var customAttributes = currentType.GetCustomAttributesData();
+				for (int i = 0; i < customAttributes.Count; i++) {
+					var ca = customAttributes[i];
+					if ((object)currentType != type && ca.IsPseudoCustomAttribute)
+						continue;
+					if (ca.AttributeType.FullName == attributeTypeFullName)
+						return ca;
+				}
+				if (!inherit)
+					break;
+			}
+			return null;
+		}
+
+		public static DmdCustomAttributeData Find(DmdType type, DmdType attributeType, bool inherit) {
+			for (var currentType = type; (object)currentType != null; currentType = currentType.BaseType) {
+				var customAttributes = currentType.GetCustomAttributesData();
+				for (int i = 0; i < customAttributes.Count; i++) {
+					var ca = customAttributes[i];
+					if ((object)currentType != type && ca.IsPseudoCustomAttribute)
+						continue;
+					if (DmdMemberInfoEqualityComparer.Default.Equals(ca.AttributeType, attributeType))
+						return ca;
+				}
+				if (!inherit)
+					break;
+			}
+			return null;
+		}
+
+		public static DmdCustomAttributeData Find(DmdMethodInfo method, string attributeTypeFullName, bool inherit) {
+			for (var currentMethod = method; (object)currentMethod != null; currentMethod = currentMethod.GetParentDefinition()) {
+				var customAttributes = currentMethod.GetCustomAttributesData();
+				for (int i = 0; i < customAttributes.Count; i++) {
+					var ca = customAttributes[i];
+					if ((object)currentMethod != method && ca.IsPseudoCustomAttribute)
+						continue;
+					if (ca.AttributeType.FullName == attributeTypeFullName)
+						return ca;
+				}
+				if (!inherit)
+					break;
+			}
+			return null;
+		}
+
+		public static DmdCustomAttributeData Find(DmdMethodInfo method, DmdType attributeType, bool inherit) {
+			for (var currentMethod = method; (object)currentMethod != null; currentMethod = currentMethod.GetParentDefinition()) {
+				var customAttributes = currentMethod.GetCustomAttributesData();
+				for (int i = 0; i < customAttributes.Count; i++) {
+					var ca = customAttributes[i];
+					if ((object)currentMethod != method && ca.IsPseudoCustomAttribute)
+						continue;
+					if (DmdMemberInfoEqualityComparer.Default.Equals(ca.AttributeType, attributeType))
+						return ca;
+				}
+				if (!inherit)
+					break;
+			}
+			return null;
+		}
+
 		struct SecurityAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
