@@ -27,8 +27,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract string ModuleScopeName { get; }
 		public abstract string ImageRuntimeVersion { get; }
 		public abstract DmdMethodInfo EntryPoint { get; }
-		public abstract DmdType[] GetTypes();
-		public abstract DmdType[] GetExportedTypes();
+		public abstract DmdTypeDef[] GetTypes();
+		public abstract DmdTypeRef[] GetExportedTypes();
 		public abstract DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
 		public abstract DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
 		public abstract DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
@@ -39,6 +39,5 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract DmdAssemblyName GetName();
 		public abstract DmdAssemblyName[] GetReferencedAssemblies();
 		public abstract DmdCustomAttributeData[] ReadCustomAttributes(int metadataToken);
-		public abstract DmdType GetNonNestedType(string @namespace, string name, bool ignoreCase);
 	}
 }

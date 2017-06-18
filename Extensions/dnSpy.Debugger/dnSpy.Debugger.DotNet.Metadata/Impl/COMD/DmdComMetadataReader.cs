@@ -38,9 +38,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}
 
-		public override DmdType GetNonNestedType(string @namespace, string name, bool ignoreCase) => throw new NotImplementedException();//TODO:
-		public override DmdType[] GetTypes() => throw new NotImplementedException();//TODO:
-		public override DmdType[] GetExportedTypes() => throw new NotImplementedException();//TODO:
+		public override DmdTypeDef[] GetTypes() => throw new NotImplementedException();//TODO:
+		public override DmdTypeRef[] GetExportedTypes() => throw new NotImplementedException();//TODO:
 		protected override DmdTypeRef ResolveTypeRef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdTypeDef ResolveTypeDef(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdFieldDef ResolveFieldDef(uint rid) => throw new NotImplementedException();//TODO:

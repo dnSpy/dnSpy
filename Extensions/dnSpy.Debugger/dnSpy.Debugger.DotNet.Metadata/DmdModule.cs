@@ -287,14 +287,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="className">Name of type</param>
 		/// <param name="ignoreCase">true to ignore case</param>
 		/// <returns></returns>
-		public DmdType GetType(string className, bool ignoreCase) => GetType(className, false, ignoreCase);
+		public DmdType GetType(string className, bool ignoreCase) => GetType(className, ignoreCase ? DmdGetTypeOptions.IgnoreCase : 0);
 
 		/// <summary>
 		/// Gets a type
 		/// </summary>
 		/// <param name="className">Name of type</param>
 		/// <returns></returns>
-		public DmdType GetType(string className) => GetType(className, false, false);
+		public DmdType GetType(string className) => GetType(className, DmdGetTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type
@@ -303,7 +303,16 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="throwOnError">true to throw if the type couldn't be found</param>
 		/// <param name="ignoreCase">true to ignore case</param>
 		/// <returns></returns>
-		public abstract DmdType GetType(string className, bool throwOnError, bool ignoreCase);
+		public DmdType GetType(string className, bool throwOnError, bool ignoreCase) =>
+			GetType(className, (throwOnError ? DmdGetTypeOptions.ThrowOnError : 0) | (ignoreCase ? DmdGetTypeOptions.IgnoreCase : 0));
+
+		/// <summary>
+		/// Gets a type
+		/// </summary>
+		/// <param name="typeName">Full name of the type (<see cref="DmdType.FullName"/>)</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdType GetType(string typeName, DmdGetTypeOptions options);
 
 		/// <summary>
 		/// Gets all global public static and instance fields

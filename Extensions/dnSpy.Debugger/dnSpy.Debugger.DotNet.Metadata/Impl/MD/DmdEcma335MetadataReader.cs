@@ -431,38 +431,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return ReadMethodSignature(row?.Signature ?? uint.MaxValue, null, null, isProperty: false);
 		}
 
-		public override DmdType GetNonNestedType(string @namespace, string name, bool ignoreCase) {
-			uint typeDefRows = TablesStream.TypeDefTable.Rows;
-			if (typeDefRows == 0)
-				typeDefRows = 1;
-
-			if (ignoreCase) {
-				for (uint rid = 1; rid <= typeDefRows; rid++) {
-					var type = ResolveTypeDef(rid);
-					if (type.IsNested)
-						continue;
-					if (StringComparer.OrdinalIgnoreCase.Equals(name, type.Name) && StringComparer.OrdinalIgnoreCase.Equals(@namespace, type.Namespace))
-						return type;
-				}
-			}
-			else {
-				for (uint rid = 1; rid <= typeDefRows; rid++) {
-					var type = ResolveTypeDef(rid);
-					if (type.IsNested)
-						continue;
-					if (StringComparer.Ordinal.Equals(name, type.Name) && StringComparer.Ordinal.Equals(@namespace, type.Namespace))
-						return type;
-				}
-			}
-			return null;
-		}
-
-		public override DmdType[] GetTypes() {
+		public override DmdTypeDef[] GetTypes() {
 			uint typeDefRows = TablesStream.TypeDefTable.Rows;
 			// This should never happen but we must return at least one type
 			if (typeDefRows == 0)
-				return new DmdType[] { globalTypeIfThereAreNoTypes };
-			var result = new DmdType[typeDefRows];
+				return new DmdTypeDef[] { globalTypeIfThereAreNoTypes };
+			var result = new DmdTypeDef[typeDefRows];
 			for (int i = 0; i < result.Length; i++) {
 				var type = ResolveTypeDef((uint)i + 1);
 				result[i] = type ?? throw new InvalidOperationException();
@@ -470,10 +444,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return result;
 		}
 
-		public override DmdType[] GetExportedTypes() {
+		public override DmdTypeRef[] GetExportedTypes() {
 			if (TablesStream.ExportedTypeTable.Rows == 0)
-				return Array.Empty<DmdType>();
-			var result = new DmdType[TablesStream.ExportedTypeTable.Rows];
+				return Array.Empty<DmdTypeRef>();
+			var result = new DmdTypeRef[TablesStream.ExportedTypeTable.Rows];
 			for (int i = 0; i < result.Length; i++) {
 				var type = ResolveExportedType((uint)i + 1);
 				result[i] = type ?? throw new InvalidOperationException();

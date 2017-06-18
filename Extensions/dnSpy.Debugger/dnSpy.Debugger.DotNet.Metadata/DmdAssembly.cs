@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Name of type</param>
 		/// <returns></returns>
-		public DmdType GetType(string name) => GetType(name, false, false);
+		public DmdType GetType(string name) => GetType(name, DmdGetTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type in this assembly
@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name of type</param>
 		/// <param name="throwOnError">true to throw if the type doesn't exist</param>
 		/// <returns></returns>
-		public DmdType GetType(string name, bool throwOnError) => GetType(name, throwOnError, false);
+		public DmdType GetType(string name, bool throwOnError) => GetType(name, throwOnError ? DmdGetTypeOptions.ThrowOnError : DmdGetTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type in this assembly
@@ -106,7 +106,16 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="throwOnError">true to throw if the type doesn't exist</param>
 		/// <param name="ignoreCase">true if case insensitive comparisons</param>
 		/// <returns></returns>
-		public abstract DmdType GetType(string name, bool throwOnError, bool ignoreCase);
+		public DmdType GetType(string name, bool throwOnError, bool ignoreCase) =>
+			GetType(name, (throwOnError ? DmdGetTypeOptions.ThrowOnError : 0) | (ignoreCase ? DmdGetTypeOptions.IgnoreCase : 0));
+
+		/// <summary>
+		/// Gets a type
+		/// </summary>
+		/// <param name="typeName">Full name of the type (<see cref="DmdType.FullName"/>)</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdType GetType(string typeName, DmdGetTypeOptions options);
 
 		/// <summary>
 		/// Gets all public types in this assembly

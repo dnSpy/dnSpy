@@ -38,60 +38,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		sealed class AssemblyNameEqualityComparer : IEqualityComparer<DmdAssemblyName> {
-			public static readonly AssemblyNameEqualityComparer Instance = new AssemblyNameEqualityComparer();
-			AssemblyNameEqualityComparer() { }
-
-			public bool Equals(DmdAssemblyName x, DmdAssemblyName y) {
-				if (!StringComparer.OrdinalIgnoreCase.Equals(x.Name, y.Name))
-					return false;
-
-				if (x.Version != null && y.Version != null && x.Version != y.Version)
-					return false;
-
-				if (x.CultureName != null && y.CultureName != null && !StringComparer.OrdinalIgnoreCase.Equals(x.CultureName, y.CultureName))
-					return false;
-
-				if (x.GetPublicKeyToken() != null && y.GetPublicKeyToken() != null && !Equals(x.GetPublicKeyToken(), y.GetPublicKeyToken()))
-					return false;
-
-				return true;
-			}
-
-			bool Equals(byte[] a, byte[] b) {
-				if (a == b)
-					return true;
-				if (a == null || b == null)
-					return false;
-				if (a.Length != b.Length)
-					return false;
-				for (int i = 0; i < a.Length; i++) {
-					if (a[i] != b[i])
-						return false;
-				}
-				return true;
-			}
-
-			public int GetHashCode(DmdAssemblyName obj) {
-				int hc = StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Name ?? string.Empty);
-				if (obj.Version != null)
-					hc ^= obj.Version.GetHashCode();
-				if (obj.CultureName != null)
-					hc ^= obj.CultureName.GetHashCode();
-				return hc;
-			}
-		}
-
 		readonly DmdRuntimeImpl runtime;
 		readonly List<DmdAssemblyImpl> assemblies;
 		readonly Dictionary<string, DmdAssemblyImpl> simpleNameToAssembly;
 		readonly Dictionary<DmdAssemblyName, DmdAssemblyImpl> assemblyNameToAssembly;
 		readonly Dictionary<DmdType, DmdType> fullyResolvedTypes;
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>> toModuleTypeDict;
+		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>> toModuleTypeDictIgnoreCase;
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>> toModuleExportedTypeDict;
+		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>> toModuleExportedTypeDictIgnoreCase;
 		readonly WellKnownMemberResolver wellKnownMemberResolver;
 		readonly List<AssemblyLoadedListener> assemblyLoadedListeners;
-		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparer = new DmdMemberInfoEqualityComparer(DmdSigComparerOptions.DontCompareTypeScope | DmdSigComparerOptions.DontCompareCustomModifiers);
+		const DmdSigComparerOptions moduleTypeOptions = DmdSigComparerOptions.DontCompareTypeScope | DmdSigComparerOptions.DontCompareCustomModifiers;
+		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparer = new DmdMemberInfoEqualityComparer(moduleTypeOptions);
+		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparerIgnoreCase = new DmdMemberInfoEqualityComparer(moduleTypeOptions | DmdSigComparerOptions.CaseInsensitiveMemberNames);
 
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
 			assemblies = new List<DmdAssemblyImpl>();
@@ -99,7 +59,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			assemblyNameToAssembly = new Dictionary<DmdAssemblyName, DmdAssemblyImpl>(AssemblyNameEqualityComparer.Instance);
 			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(DmdMemberInfoEqualityComparer.Default);
 			toModuleTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
+			toModuleTypeDictIgnoreCase = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			toModuleExportedTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>>();
+			toModuleExportedTypeDictIgnoreCase = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>>();
 			wellKnownMemberResolver = new WellKnownMemberResolver(this);
 			assemblyLoadedListeners = new List<AssemblyLoadedListener>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
@@ -649,27 +611,63 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return new DmdGenericParameterTypeImpl(this, declaringMethod, name, position, attributes, customModifiers);
 		}
 
+		sealed class TypeDefResolver : ITypeDefResolver {
+			readonly DmdAppDomain appDomain;
+			readonly bool ignoreCase;
+
+			public TypeDefResolver(DmdAppDomain appDomain, bool ignoreCase) {
+				this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
+				this.ignoreCase = ignoreCase;
+			}
+
+			public DmdTypeDef GetTypeDef(DmdAssemblyName assemblyName, List<string> typeNames) {
+				if (typeNames.Count == 0)
+					return null;
+				DmdTypeDef type;
+				DmdTypeUtilities.SplitFullName(typeNames[0], out string @namespace, out string name);
+				if (assemblyName != null) {
+					var assembly = (DmdAssemblyImpl)appDomain.GetAssembly(assemblyName);
+					var module = assembly?.ManifestModule;
+					if (module == null)
+						return null;
+					var typeRef = new DmdParsedTypeRef(module, null, DmdTypeScope.Invalid, @namespace, name, null);
+					type = assembly.GetType(typeRef, ignoreCase);
+				}
+				else {
+					type = null;
+					foreach (DmdAssemblyImpl assembly in appDomain.GetAssemblies()) {
+						var module = assembly.ManifestModule;
+						if (module == null)
+							continue;
+						var typeRef = new DmdParsedTypeRef(module, null, DmdTypeScope.Invalid, @namespace, name, null);
+						type = assembly.GetType(typeRef, ignoreCase);
+						if ((object)type != null)
+							break;
+					}
+				}
+				if ((object)type == null)
+					return null;
+				for (int i = 1; i < typeNames.Count; i++) {
+					var flags = DmdBindingFlags.Public | DmdBindingFlags.NonPublic;
+					if (ignoreCase)
+						flags |= DmdBindingFlags.IgnoreCase;
+					type = (DmdTypeDef)type.GetNestedType(typeNames[i], flags);
+					if ((object)type == null)
+						return null;
+				}
+				return type;
+			}
+		}
+
 		public override DmdType GetType(string typeName, DmdGetTypeOptions options) {
 			if (typeName == null)
 				throw new ArgumentNullException(nameof(typeName));
-			bool ignoreCase = (options & DmdGetTypeOptions.IgnoreCase) != 0;
-			int index = typeName.LastIndexOf(',');
-			if (index >= 0) {
-				var asmName = new DmdAssemblyName(typeName.Substring(0, index));
-				if (GetAssembly(asmName) is DmdAssembly assembly) {
-					var typeNameNoAssemblyName = typeName.Substring(index + 1).TrimStart();
-					var type = assembly.GetType(typeNameNoAssemblyName, throwOnError: false, ignoreCase: ignoreCase);
-					if ((object)type != null)
-						return type;
-				}
-			}
-			else {
-				foreach (var assembly in GetAssemblies()) {
-					var type = assembly.GetType(typeName, throwOnError: false, ignoreCase: ignoreCase);
-					if ((object)type != null)
-						return type;
-				}
-			}
+
+			var resolver = new TypeDefResolver(this, (options & DmdGetTypeOptions.IgnoreCase) != 0);
+			var type = DmdTypeNameParser.Parse(resolver, typeName);
+			if ((object)type != null)
+				return type;
+
 			if ((options & DmdGetTypeOptions.ThrowOnError) != 0)
 				throw new TypeNotFoundException(typeName);
 			return null;
@@ -703,7 +701,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			case DmdTypeScopeKind.Module:
 				module = (DmdModule)typeScope.Data;
-				return Lookup(module, typeRef) ?? ResolveExportedType(new[] { module }, typeRef);
+				return Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);
 
 			case DmdTypeScopeKind.ModuleRef:
 				assembly = GetAssembly((DmdAssemblyName)typeScope.Data2);
@@ -712,22 +710,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				module = assembly.GetModule((string)typeScope.Data);
 				if (module == null)
 					return null;
-				return Lookup(module, typeRef) ?? ResolveExportedType(new[] { module }, typeRef);
+				return Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);
 
 			case DmdTypeScopeKind.AssemblyRef:
 				assembly = GetAssembly((DmdAssemblyName)typeScope.Data);
 				if (assembly == null)
 					return null;
-				return Lookup(assembly, typeRef) ?? ResolveExportedType(assembly.GetModules(), typeRef);
+				return Lookup(assembly, typeRef, ignoreCase) ?? ResolveExportedType(assembly.GetModules(), typeRef, ignoreCase);
 
 			default:
 				throw new InvalidOperationException();
 			}
 		}
 
-		DmdTypeDef ResolveExportedType(DmdModule[] modules, DmdTypeRef typeRef) {
+		DmdTypeDef ResolveExportedType(DmdModule[] modules, DmdTypeRef typeRef, bool ignoreCase) {
 			for (int i = 0; i < 30; i++) {
-				var exportedType = FindExportedType(modules, typeRef);
+				var exportedType = FindExportedType(modules, typeRef, ignoreCase);
 				if ((object)exportedType == null)
 					return null;
 
@@ -741,7 +739,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (etAsm == null)
 					return null;
 
-				var td = Lookup(etAsm, typeRef);
+				var td = Lookup(etAsm, typeRef, ignoreCase);
 				if ((object)td != null)
 					return td;
 
@@ -751,63 +749,84 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		Dictionary<DmdType, DmdTypeRef> GetModuleExportedTypeDictionary(DmdModule module) {
+		Dictionary<DmdType, DmdTypeRef> GetModuleExportedTypeDictionary(DmdModule module, bool ignoreCase) {
 			lock (LockObject) {
-				if (toModuleExportedTypeDict.TryGetValue(module, out var dict))
+				if (ignoreCase) {
+					if (toModuleExportedTypeDictIgnoreCase.TryGetValue(module, out var dict))
+						return dict;
+					dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparerIgnoreCase);
+					foreach (var type in (DmdTypeRef[])module.GetExportedTypes())
+						dict[type] = type;
 					return dict;
-				dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparer);
-				foreach (var type in module.GetTypes())
-					dict[type] = (DmdTypeRef)type;
-				return dict;
+				}
+				else {
+					if (toModuleExportedTypeDict.TryGetValue(module, out var dict))
+						return dict;
+					dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparer);
+					foreach (var type in (DmdTypeRef[])module.GetExportedTypes())
+						dict[type] = type;
+					return dict;
+				}
 			}
 		}
 
-		DmdTypeRef FindExportedType(IList<DmdModule> modules, DmdTypeRef typeRef) {
+		DmdTypeRef FindExportedType(IList<DmdModule> modules, DmdTypeRef typeRef, bool ignoreCase) {
 			foreach (var module in modules) {
-				if (GetModuleExportedTypeDictionary(module).TryGetValue(typeRef, out var exportedType))
+				if (GetModuleExportedTypeDictionary(module, ignoreCase).TryGetValue(typeRef, out var exportedType))
 					return exportedType;
 			}
 			return null;
 		}
 
-		internal DmdTypeDef TryLookup(DmdAssemblyImpl assembly, DmdType type) {
-			if (type is DmdTypeRef typeRef)
-				return Lookup(assembly, typeRef);
-			return null;
-		}
+		internal DmdTypeDef TryLookup(DmdAssemblyImpl assembly, DmdTypeRef typeRef, bool ignoreCase) =>
+			Lookup(assembly, typeRef, ignoreCase) ?? ResolveExportedType(assembly.GetModules(), typeRef, ignoreCase);
 
-		DmdTypeDef Lookup(DmdAssembly assembly, DmdTypeRef typeRef) {
+
+		internal DmdTypeDef TryLookup(DmdModuleImpl module, DmdTypeRef typeRef, bool ignoreCase) =>
+			Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);
+
+		DmdTypeDef Lookup(DmdAssembly assembly, DmdTypeRef typeRef, bool ignoreCase) {
 			// Most likely it's in the manifest module so we don't have to alloc an array (GetModules())
 			var manifestModule = assembly.ManifestModule;
 			if (manifestModule == null)
 				return null;
-			var type = Lookup(manifestModule, typeRef);
+			var type = Lookup(manifestModule, typeRef, ignoreCase);
 			if ((object)type != null)
 				return type;
 
 			foreach (var module in assembly.GetModules()) {
 				if (manifestModule == module)
 					continue;
-				type = Lookup(module, typeRef);
+				type = Lookup(module, typeRef, ignoreCase);
 				if ((object)type != null)
 					return type;
 			}
 			return null;
 		}
 
-		Dictionary<DmdType, DmdTypeDef> GetModuleTypeDictionary(DmdModule module) {
+		Dictionary<DmdType, DmdTypeDef> GetModuleTypeDictionary(DmdModule module, bool ignoreCase) {
 			lock (LockObject) {
-				if (toModuleTypeDict.TryGetValue(module, out var dict))
+				if (ignoreCase) {
+					if (toModuleTypeDictIgnoreCase.TryGetValue(module, out var dict))
+						return dict;
+					dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparerIgnoreCase);
+					foreach (var type in (DmdTypeDef[])module.GetTypes())
+						dict[type] = type;
 					return dict;
-				dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparer);
-				foreach (var type in module.GetTypes())
-					dict[type] = (DmdTypeDef)type;
-				return dict;
+				}
+				else {
+					if (toModuleTypeDict.TryGetValue(module, out var dict))
+						return dict;
+					dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparer);
+					foreach (var type in (DmdTypeDef[])module.GetTypes())
+						dict[type] = type;
+					return dict;
+				}
 			}
 		}
 
-		DmdTypeDef Lookup(DmdModule module, DmdTypeRef typeRef) {
-			if (GetModuleTypeDictionary(module).TryGetValue(typeRef, out var typeDef))
+		DmdTypeDef Lookup(DmdModule module, DmdTypeRef typeRef, bool ignoreCase) {
+			if (GetModuleTypeDictionary(module, ignoreCase).TryGetValue(typeRef, out var typeDef))
 				return typeDef;
 			return null;
 		}

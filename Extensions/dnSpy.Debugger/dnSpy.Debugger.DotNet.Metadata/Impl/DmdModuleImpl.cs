@@ -59,38 +59,57 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string ResolveString(int metadataToken) => metadataReader.ResolveString(metadataToken);
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => metadataReader.GetPEKind(out peKind, out machine);
 
-		public override DmdType GetType(string className, bool throwOnError, bool ignoreCase) {
-			int index = className.IndexOf('+');
-			string nonNestedName;
-			string[] nestedClassNames;
-			if (index >= 0) {
-				nonNestedName = className.Substring(0, index);
-				nestedClassNames = className.Substring(index + 1).Split('+');
-			}
-			else {
-				nonNestedName = className;
-				nestedClassNames = Array.Empty<string>();
+		sealed class TypeDefResolver : ITypeDefResolver {
+			readonly DmdModuleImpl module;
+			readonly bool ignoreCase;
+
+			public TypeDefResolver(DmdModuleImpl module, bool ignoreCase) {
+				this.module = module ?? throw new ArgumentNullException(nameof(module));
+				this.ignoreCase = ignoreCase;
 			}
 
-			DmdTypeUtilities.SplitFullName(nonNestedName, out var @namespace, out var name);
-			var type = metadataReader.GetNonNestedType(@namespace, name, ignoreCase);
-			if (nestedClassNames.Length > 0 && (object)type != null) {
-				var flags = DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic;
-				if (ignoreCase)
-					flags |= DmdBindingFlags.IgnoreCase;
-				foreach (var nestedClassName in nestedClassNames) {
-					type = type.GetNestedType(nestedClassName, flags);
+			public DmdTypeDef GetTypeDef(DmdAssemblyName assemblyName, List<string> typeNames) {
+				if (typeNames.Count == 0)
+					return null;
+
+				if (assemblyName != null && !AssemblyNameEqualityComparer.Instance.Equals(module.Assembly.GetName(), assemblyName))
+					return null;
+
+				DmdTypeDef type;
+				DmdTypeUtilities.SplitFullName(typeNames[0], out string @namespace, out string name);
+
+				var typeRef = new DmdParsedTypeRef(module, null, DmdTypeScope.Invalid, @namespace, name, null);
+				type = module.GetType(typeRef, ignoreCase);
+
+				if ((object)type == null)
+					return null;
+				for (int i = 1; i < typeNames.Count; i++) {
+					var flags = DmdBindingFlags.Public | DmdBindingFlags.NonPublic;
+					if (ignoreCase)
+						flags |= DmdBindingFlags.IgnoreCase;
+					type = (DmdTypeDef)type.GetNestedType(typeNames[i], flags);
 					if ((object)type == null)
-						break;
+						return null;
 				}
+				return type;
 			}
+		}
 
+		public override DmdType GetType(string typeName, DmdGetTypeOptions options) {
+			if (typeName == null)
+				throw new ArgumentNullException(nameof(typeName));
+
+			var resolver = new TypeDefResolver(this, (options & DmdGetTypeOptions.IgnoreCase) != 0);
+			var type = DmdTypeNameParser.Parse(resolver, typeName);
 			if ((object)type != null)
 				return type;
-			if (throwOnError)
-				throw new TypeNotFoundException(className);
+
+			if ((options & DmdGetTypeOptions.ThrowOnError) != 0)
+				throw new TypeNotFoundException(typeName);
 			return null;
 		}
+
+		DmdTypeDef GetType(DmdTypeRef typeRef, bool ignoreCase) => assembly.AppDomainImpl.TryLookup(this, typeRef, ignoreCase);
 
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (customAttributes != null)
