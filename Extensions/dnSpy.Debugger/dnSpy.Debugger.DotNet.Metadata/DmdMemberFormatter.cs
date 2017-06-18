@@ -44,6 +44,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		StringBuilder writer;
 		const int MAX_RECURSION_COUNT = 100;
 		int recursionCounter;
+		bool seenGenericType;
 
 		[Flags]
 		enum GlobalFlags {
@@ -55,6 +56,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			globalFlags = flags;
 			writer = StringBuilderPool.Alloc();
 			recursionCounter = 0;
+			seenGenericType = false;
 		}
 
 		public void Dispose() => StringBuilderPool.Return(ref writer);
@@ -143,17 +145,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return Array.Empty<DmdType>();
 		}
 
-		public static string FormatFullName(DmdType type) {
-			if (type.IsGenericParameter)
-				return null;
-			return Format(type, serializable: true);
-		}
+		public static string FormatFullName(DmdType type) => Format(type, serializable: true);
 
 		public static string FormatAssemblyQualifiedName(DmdType type) {
-			var fullName = FormatFullName(type);
-			if (fullName == null)
-				return null;
-			return DmdAssembly.CreateQualifiedName(GetAssemblyFullName(type), fullName);
+			using (var formatter = new DmdMemberFormatter(GlobalFlags.Serializable)) {
+				formatter.Write(type);
+				formatter.writer.Append(", ");
+				formatter.writer.Append(GetAssemblyFullName(type));
+				if (formatter.seenGenericType)
+					return null;
+				return formatter.writer.ToString();
+			}
 		}
 
 		public static string Format(DmdMemberInfo member, bool serializable = false) {
@@ -208,6 +210,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		string FormatCore(DmdType type) {
 			Write(type);
+			if (seenGenericType && (globalFlags & GlobalFlags.Serializable) != 0)
+				return null;
 			return writer.ToString();
 		}
 
@@ -288,11 +292,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		[Flags]
 		enum TypeFlags {
 			None						= 0,
-			UseByRefString				= 0x00000001,
-			ShortSpecialNames			= 0x00000002,
-			NoDeclaringTypeNames		= 0x00000004,
-			NoGenericDefParams			= 0x00000008,
-			MethodGenericArgumentType	= 0x00000010,
+			ShortSpecialNames			= 0x00000001,
+			NoDeclaringTypeNames		= 0x00000002,
+			NoGenericDefParams			= 0x00000004,
+			MethodGenericArgumentType	= 0x00000008,
 		}
 
 		static bool IsShortNameType(DmdType type) => type.IsPrimitive || type == type.AppDomain.System_Void || type == type.AppDomain.System_TypedReference;
@@ -333,14 +336,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			case DmdTypeSignatureKind.ByRef:
 				Write(type.GetElementType(), flags);
-				if ((flags & TypeFlags.UseByRefString) != 0)
-					writer.Append(" ByRef");
-				else
-					writer.Append('&');
+				writer.Append('&');
 				break;
 
 			case DmdTypeSignatureKind.TypeGenericParameter:
 			case DmdTypeSignatureKind.MethodGenericParameter:
+				seenGenericType = true;
 				writer.Append(type.Name);
 				break;
 
@@ -378,7 +379,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			DecrementRecursionCounter();
 		}
 
-		void WriteTypeGenericArguments(IList<DmdType> genericArguments, TypeFlags flags) => WriteGenericArguments(genericArguments, flags & ~TypeFlags.ShortSpecialNames);
+		void WriteTypeGenericArguments(IList<DmdType> genericArguments, TypeFlags flags) => WriteGenericArguments(genericArguments, flags & ~(TypeFlags.ShortSpecialNames | TypeFlags.NoDeclaringTypeNames));
 		void WriteMethodGenericArguments(IList<DmdType> genericArguments, TypeFlags flags) => WriteGenericArguments(genericArguments, flags | TypeFlags.MethodGenericArgumentType);
 
 		void WriteGenericArguments(IList<DmdType> genericArguments, TypeFlags flags) {
@@ -390,7 +391,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					// No whitespace is added
 					writer.Append(',');
 				}
-				Write(genericArguments[i], flags);
+				if ((globalFlags & GlobalFlags.Serializable) != 0)
+					writer.Append('[');
+				var gaType = genericArguments[i];
+				Write(gaType, flags);
+				if ((globalFlags & GlobalFlags.Serializable) != 0) {
+					writer.Append(", ");
+					writer.Append(GetAssemblyFullName(gaType));
+					writer.Append(']');
+				}
 			}
 			writer.Append(']');
 		}
@@ -399,12 +408,20 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			for (int i = 0; i < parameters.Count; i++) {
 				if (i > 0)
 					writer.Append(", ");
-				Write(parameters[i], flags);
+				int origLen = writer.Length;
+				var type = parameters[i];
+				FormatTypeName(type, flags);
+
+				if (type.IsByRef && (globalFlags & GlobalFlags.Serializable) == 0) {
+					while (writer.Length > origLen && writer[writer.Length - 1] == '&')
+						writer.Length--;
+					writer.Append(" ByRef");
+				}
 			}
 		}
 
 		void Write(DmdFieldInfo field) {
-			Write(field.FieldType, GetTypeFlags(true));
+			FormatTypeName(field.FieldType, GetTypeFlags(true));
 			writer.Append(' ');
 			writer.Append(field.Name);
 		}
@@ -415,13 +432,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		void WriteMethod(string name, DmdMethodSignature sig, IList<DmdType> genericArguments, bool isMethod) {
 			var flags = GetTypeFlags(true);
-			Write(sig.ReturnType, flags);
+			FormatTypeName(sig.ReturnType, flags);
 			writer.Append(' ');
 			writer.Append(name);
 			if (genericArguments != null)
 				WriteMethodGenericArguments(genericArguments, flags);
-			if ((globalFlags & GlobalFlags.Serializable) == 0)
-				flags |= TypeFlags.UseByRefString;
 			if (isMethod || sig.GetParameterTypes().Count != 0 || sig.GetVarArgsParameterTypes().Count != 0) {
 				if (!isMethod)
 					writer.Append(' ');
@@ -436,14 +451,28 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
+		void FormatTypeName(DmdType type, TypeFlags flags) {
+			if ((globalFlags & GlobalFlags.Serializable) != 0)
+				Write(type, flags);
+			else {
+				var rootType = type;
+				while (rootType.GetElementType() is DmdType elementType)
+					rootType = elementType;
+				if (rootType.IsNested)
+					WriteName(type);
+				else
+					Write(type, flags | TypeFlags.ShortSpecialNames);
+			}
+		}
+
 		void Write(DmdEventInfo @event) {
-			Write(@event.EventHandlerType, GetTypeFlags(true));
+			FormatTypeName(@event.EventHandlerType, GetTypeFlags(true));
 			writer.Append(' ');
 			writer.Append(@event.Name);
 		}
 
 		void Write(DmdParameterInfo parameter) {
-			Write(parameter.ParameterType, GetTypeFlags(true));
+			FormatTypeName(parameter.ParameterType, GetTypeFlags(true));
 			writer.Append(' ');
 			writer.Append(parameter.Name);
 		}
@@ -476,6 +505,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			case DmdTypeSignatureKind.TypeGenericParameter:
 			case DmdTypeSignatureKind.MethodGenericParameter:
+				seenGenericType = true;
 				writer.Append(type.Name);
 				break;
 
