@@ -29,8 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (!StringComparer.OrdinalIgnoreCase.Equals(x.Name, y.Name))
 				return false;
 
-			if (x.Version != null && y.Version != null && x.Version != y.Version)
-				return false;
+			// Version number is ignored since an assembly reference can be redirected to any other version at runtime
 
 			if (x.CultureName != null && y.CultureName != null && !StringComparer.OrdinalIgnoreCase.Equals(x.CultureName, y.CultureName))
 				return false;
@@ -57,8 +56,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public int GetHashCode(DmdAssemblyName obj) {
 			int hc = StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Name ?? string.Empty);
-			if (obj.Version != null)
-				hc ^= obj.Version.GetHashCode();
+			// Version number is ignored, see Equals()
 			if (obj.CultureName != null)
 				hc ^= obj.CultureName.GetHashCode();
 			return hc;

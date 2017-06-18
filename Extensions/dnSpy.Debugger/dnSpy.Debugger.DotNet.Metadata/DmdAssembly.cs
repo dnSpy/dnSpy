@@ -85,11 +85,44 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdModule ManifestModule { get; }
 
 		/// <summary>
+		/// Gets a type
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
+		public DmdType GetType(Type type) => GetType(type, DmdGetTypeOptions.None);
+
+		/// <summary>
+		/// Gets a type and throws if it couldn't be found
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public DmdType GetTypeThrow(Type type) => GetType(type, DmdGetTypeOptions.ThrowOnError);
+
+		/// <summary>
+		/// Gets a type
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public DmdType GetType(Type type, DmdGetTypeOptions options) {
+			if ((object)type == null)
+				throw new ArgumentNullException(nameof(type));
+			return GetType(type.FullName, options);
+		}
+
+		/// <summary>
 		/// Gets a type in this assembly or null if it doesn't exist
 		/// </summary>
 		/// <param name="name">Name of type</param>
 		/// <returns></returns>
 		public DmdType GetType(string name) => GetType(name, DmdGetTypeOptions.None);
+
+		/// <summary>
+		/// Gets a type and throws if it couldn't be found
+		/// </summary>
+		/// <param name="name">Name of type</param>
+		/// <returns></returns>
+		public DmdType GetTypeThrow(string name) => GetType(name, DmdGetTypeOptions.ThrowOnError);
 
 		/// <summary>
 		/// Gets a type in this assembly
