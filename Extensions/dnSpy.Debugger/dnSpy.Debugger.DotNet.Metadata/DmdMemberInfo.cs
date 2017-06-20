@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using dnSpy.Debugger.DotNet.Metadata.Impl;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -117,6 +118,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public virtual bool IsDefined(DmdType attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeType);
 
 		/// <summary>
+		/// Checks if a custom attribute is present
+		/// </summary>
+		/// <param name="attributeType">Custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		public virtual bool IsDefined(Type attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
+
+		/// <summary>
 		/// Finds a custom attribute
 		/// </summary>
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
@@ -131,6 +140,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
 		public virtual DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
+
+		/// <summary>
+		/// Finds a custom attribute
+		/// </summary>
+		/// <param name="attributeType">Custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		public virtual DmdCustomAttributeData FindCustomAttribute(Type attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdMemberInfo left, DmdMemberInfo right) => left is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);

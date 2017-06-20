@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using dnSpy.Debugger.DotNet.Metadata.Impl;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -147,7 +148,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="typeArguments">Generic arguments</param>
 		/// <returns></returns>
+		public DmdMethodInfo MakeGenericMethod(params Type[] typeArguments) => MakeGenericMethod((IList<Type>)typeArguments);
+
+		/// <summary>
+		/// Creates a generic method
+		/// </summary>
+		/// <param name="typeArguments">Generic arguments</param>
+		/// <returns></returns>
 		public abstract DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments);
+
+		/// <summary>
+		/// Creates a generic method
+		/// </summary>
+		/// <param name="typeArguments">Generic arguments</param>
+		/// <returns></returns>
+		public DmdMethodInfo MakeGenericMethod(IList<Type> typeArguments) => MakeGenericMethod(typeArguments.ToDmdType(AppDomain));
 
 		/// <summary>
 		/// Checks if a custom attribute is present

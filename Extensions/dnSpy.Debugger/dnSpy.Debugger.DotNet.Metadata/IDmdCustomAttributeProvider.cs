@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
@@ -52,6 +53,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		bool IsDefined(DmdType attributeType, bool inherit);
 
 		/// <summary>
+		/// Checks if a custom attribute is present
+		/// </summary>
+		/// <param name="attributeType">Custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		bool IsDefined(Type attributeType, bool inherit);
+
+		/// <summary>
 		/// Finds a custom attribute
 		/// </summary>
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
@@ -66,5 +75,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
 		DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit);
+
+		/// <summary>
+		/// Finds a custom attribute
+		/// </summary>
+		/// <param name="attributeType">Custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		DmdCustomAttributeData FindCustomAttribute(Type attributeType, bool inherit);
 	}
 }

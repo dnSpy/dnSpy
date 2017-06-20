@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using dnSpy.Debugger.DotNet.Metadata.Impl;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -207,6 +208,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsDefined(DmdType attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeType);
 
 		/// <summary>
+		/// Checks if a custom attribute is present
+		/// </summary>
+		/// <param name="attributeType">Custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		public bool IsDefined(Type attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
+
+		/// <summary>
 		/// Finds a custom attribute
 		/// </summary>
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
@@ -223,11 +232,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
 
 		/// <summary>
+		/// Finds a custom attribute
+		/// </summary>
+		/// <param name="attributeType">Custom attribute type</param>
+		/// <param name="inherit">true to check custom attributes in all base classes</param>
+		/// <returns></returns>
+		public DmdCustomAttributeData FindCustomAttribute(Type attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
+
+		/// <summary>
 		/// Creates an instance of a type
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="typeName">Fully qualified name of type to create</param>
-		public object CreateInstance(IDmdEvaluationContext context, string typeName) => CreateInstance(context, typeName, false, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, null);
+		public object CreateInstance(IDmdEvaluationContext context, string typeName) => CreateInstance(context, typeName, false, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, (IList<DmdType>)null);
 
 		/// <summary>
 		/// Creates an instance of a type
@@ -235,7 +252,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="typeName">Fully qualified name of type to create</param>
 		/// <param name="ignoreCase">true to ignore case</param>
-		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase) => CreateInstance(context, typeName, ignoreCase, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, null);
+		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase) => CreateInstance(context, typeName, ignoreCase, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, (IList<DmdType>)null);
 
 		/// <summary>
 		/// Creates an instance of a type
@@ -245,7 +262,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="ignoreCase">true to ignore case</param>
 		/// <param name="bindingAttr">Binding attributes</param>
 		/// <param name="args">Constructor arguments or null</param>
-		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args) => CreateInstance(context, typeName, ignoreCase, bindingAttr, args, null);
+		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args) => CreateInstance(context, typeName, ignoreCase, bindingAttr, args, (IList<DmdType>)null);
 
 		/// <summary>
 		/// Creates an instance of a type
@@ -279,6 +296,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 			return ctor?.Invoke(context, args);
 		}
+
+		/// <summary>
+		/// Creates an instance of a type
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="typeName">Fully qualified name of type to create</param>
+		/// <param name="ignoreCase">true to ignore case</param>
+		/// <param name="bindingAttr">Binding attributes</param>
+		/// <param name="args">Constructor arguments or null</param>
+		/// <param name="argTypes">Constructor parameter types or null</param>
+		/// <returns></returns>
+		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args, IList<Type> argTypes) =>
+			CreateInstance(context, typeName, ignoreCase, bindingAttr, args, argTypes.ToDmdType(AppDomain));
 
 		/// <summary>
 		/// Gets all loaded modules

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
@@ -62,6 +63,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				typeRef = next;
 			}
 			return null;
+		}
+
+		public static DmdType[] ToDmdType(this IList<Type> types, DmdAppDomain appDomain) {
+			if (types == null)
+				return null;
+			if (types.Count == 0)
+				return Array.Empty<DmdType>();
+			var newTypes = new DmdType[types.Count];
+			for (int i = 0; i < newTypes.Length; i++)
+				newTypes[i] = appDomain.GetTypeThrow(types[i]);
+			return newTypes;
+		}
+
+		public static DmdType ToDmdType(Type type, DmdAppDomain appDomain) {
+			if ((object)type == null)
+				return null;
+			return appDomain.GetTypeThrow(type);
 		}
 	}
 }

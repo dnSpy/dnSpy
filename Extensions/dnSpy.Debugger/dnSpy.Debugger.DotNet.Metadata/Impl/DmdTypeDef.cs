@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							else {
 								if (((uint)declTypeToken >> 24) != 0x02)
 									throw new InvalidOperationException();
-								__declaringType_DONT_USE = Module.ResolveType(declTypeToken, null, null, DmdResolveOptions.None);
+								__declaringType_DONT_USE = Module.ResolveType(declTypeToken, (IList<DmdType>)null, null, DmdResolveOptions.None);
 							}
 							declaringTypeInitd = true;
 						}

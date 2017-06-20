@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using dnSpy.Debugger.DotNet.Metadata.Impl;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -178,6 +179,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments</param>
 		/// <returns></returns>
 		public abstract DmdMethodSignature GetMethodSignature(IList<DmdType> genericMethodArguments);
+
+		/// <summary>
+		/// Gets the method signature
+		/// </summary>
+		/// <param name="genericMethodArguments">Generic method arguments</param>
+		/// <returns></returns>
+		public DmdMethodSignature GetMethodSignature(IList<Type> genericMethodArguments) => GetMethodSignature(genericMethodArguments.ToDmdType(AppDomain));
 
 		/// <summary>
 		/// Calls the method

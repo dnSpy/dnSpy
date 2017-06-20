@@ -227,7 +227,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			readonly DmdConstructorInfo ctor;
 
 			public ComImportAttributeInfo(DmdType type) {
-				if ((type.Attributes & DmdTypeAttributes.Import) != 0) {
+				if (type.IsImport) {
 					var caType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_ComImportAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
 					Debug.Assert((object)caType == null || (object)ctor != null);

@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		List<(Type key, object data)> dataList;
 
 		/// <summary>
-		/// Gets the lock object used
+		/// Gets the lock object used by this instance
 		/// </summary>
 		protected object LockObject => lockObj;
 

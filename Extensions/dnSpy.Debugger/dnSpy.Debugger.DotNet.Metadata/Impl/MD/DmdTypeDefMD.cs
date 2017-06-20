@@ -139,7 +139,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var res = new DmdType[ridList.Count];
 			for (int i = 0; i < res.Length; i++) {
 				uint rid = ridList[i];
-				var nestedType = Module.ResolveType(0x02000000 + (int)rid, null, null, DmdResolveOptions.None);
+				var nestedType = Module.ResolveType(0x02000000 + (int)rid, (IList<DmdType>)null, null, DmdResolveOptions.None);
 				if ((object)nestedType == null)
 					return null;
 				res[i] = nestedType;
