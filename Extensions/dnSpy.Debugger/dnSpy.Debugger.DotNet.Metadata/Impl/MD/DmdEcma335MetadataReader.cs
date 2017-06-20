@@ -122,15 +122,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return CreateFieldDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
 		}
 
-		internal DmdFieldDef CreateFieldDef(uint rid, DmdTypeDefMD declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
-			if ((object)declaringType == reflectedType) {
-				Debug.Assert(declaringType.GetGenericArguments() == genericTypeArguments);
-				return ResolveFieldDef(rid, declaringType);
+		internal DmdFieldDef CreateFieldDef(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
+				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+				return ResolveFieldDef(rid, declaringTypeDef);
 			}
 			return CreateFieldDefCore(rid, declaringType, reflectedType, genericTypeArguments);
 		}
 
-		DmdFieldDefMD CreateFieldDefCore(uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
+		DmdFieldDefMD CreateFieldDefCore(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
 			new DmdFieldDefMD(this, rid, declaringType, reflectedType, genericTypeArguments);
 
 		internal DmdType ReadFieldType(uint signature, IList<DmdType> genericTypeArguments) {
@@ -166,15 +166,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return CreateMethodDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
 		}
 
-		internal DmdMethodBase CreateMethodDef(uint rid, DmdTypeDefMD declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
-			if ((object)declaringType == reflectedType) {
-				Debug.Assert(declaringType.GetGenericArguments() == genericTypeArguments);
-				return ResolveMethodDef(rid, declaringType);
+		internal DmdMethodBase CreateMethodDef(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
+				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+				return ResolveMethodDef(rid, declaringTypeDef);
 			}
 			return CreateMethodDefCore(rid, declaringType, reflectedType, genericTypeArguments);
 		}
 
-		DmdMethodBase CreateMethodDefCore(uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		DmdMethodBase CreateMethodDefCore(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
 			var row = TablesStream.ReadMethodRow(rid);
 			string name = StringsStream.ReadNoNull(row.Name);
 			if ((row.Flags & (int)DmdMethodAttributes.RTSpecialName) != 0 && name.Length > 0 && name[0] == '.') {
@@ -249,15 +249,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return CreateEventDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
 		}
 
-		internal DmdEventDef CreateEventDef(uint rid, DmdTypeDefMD declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
-			if ((object)declaringType == reflectedType) {
-				Debug.Assert(declaringType.GetGenericArguments() == genericTypeArguments);
-				return ResolveEventDef(rid, declaringType);
+		internal DmdEventDef CreateEventDef(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
+				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+				return ResolveEventDef(rid, declaringTypeDef);
 			}
 			return CreateEventDefCore(rid, declaringType, reflectedType, genericTypeArguments);
 		}
 
-		DmdEventDef CreateEventDefCore(uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
+		DmdEventDef CreateEventDefCore(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
 			new DmdEventDefMD(this, rid, declaringType, reflectedType, genericTypeArguments);
 
 		DmdPropertyDef CreateResolvedProperty(uint rid, DmdTypeDef declaringType) {
@@ -268,15 +268,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return CreatePropertyDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
 		}
 
-		internal DmdPropertyDef CreatePropertyDef(uint rid, DmdTypeDefMD declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
-			if ((object)declaringType == reflectedType) {
-				Debug.Assert(declaringType.GetGenericArguments() == genericTypeArguments);
-				return ResolvePropertyDef(rid, declaringType);
+		internal DmdPropertyDef CreatePropertyDef(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
+				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+				return ResolvePropertyDef(rid, declaringTypeDef);
 			}
 			return CreatePropertyDefCore(rid, declaringType, reflectedType, genericTypeArguments);
 		}
 
-		DmdPropertyDef CreatePropertyDefCore(uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
+		DmdPropertyDef CreatePropertyDefCore(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
 			new DmdPropertyDefMD(this, rid, declaringType, reflectedType, genericTypeArguments);
 
 		internal DmdType[] CreateGenericParameters(DmdMethodBase method) {
@@ -311,7 +311,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			else {
 				Debug.Assert((object)info.methodSignature != null);
 				if (name == DmdConstructorInfo.ConstructorName || name == DmdConstructorInfo.TypeConstructorName) {
-					var ctorRef = new DmdConstructorRefMD(this, reflectedTypeRef, name, rawInfo.methodSignature, info.methodSignature);
+					var ctorRef = new DmdConstructorRef(reflectedTypeRef, name, rawInfo.methodSignature, info.methodSignature);
 					return (ctorRef, info.containedGenericParams);
 				}
 				else {
@@ -417,20 +417,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				return DmdSignatureReader.ReadLocalsSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, genericMethodArguments, resolveTypes);
 		}
 
-		internal DmdMethodSignature GetOriginalMethodDefSignature(DmdMethodBase method) {
-			if ((method.MetadataToken >> 24) != 0x06)
-				throw new InvalidOperationException();
-			var row = TablesStream.ReadMethodRow((uint)method.MetadataToken & 0x00FFFFFF);
-			return ReadMethodSignature(row?.Signature ?? uint.MaxValue, null, null, isProperty: false);
-		}
-
-		internal DmdMethodSignature GetOriginalMethodRefSignature(DmdMethodBase method) {
-			if ((method.MetadataToken >> 24) != 0x0A)
-				throw new InvalidOperationException();
-			var row = TablesStream.ReadMemberRefRow((uint)method.MetadataToken & 0x00FFFFFF);
-			return ReadMethodSignature(row?.Signature ?? uint.MaxValue, null, null, isProperty: false);
-		}
-
 		public override DmdTypeDef[] GetTypes() {
 			uint typeDefRows = TablesStream.TypeDefTable.Rows;
 			// This should never happen but we must return at least one type
@@ -533,16 +519,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		protected override string ResolveStringCore(uint offset) => Metadata.USStream.Read(offset);
 
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) {
+			// coreclr: PEDecoder::GetPEKindAndMachine
 			machine = (DmdImageFileMachine)Metadata.PEImage.ImageNTHeaders.FileHeader.Machine;
 			peKind = 0;
-			if ((Metadata.ImageCor20Header.Flags & ComImageFlags.ILOnly) != 0)
-				peKind |= DmdPortableExecutableKinds.ILOnly;
 			if (Metadata.PEImage.ImageNTHeaders.OptionalHeader.Magic != 0x010B)
 				peKind |= DmdPortableExecutableKinds.PE32Plus;
-			if ((Metadata.ImageCor20Header.Flags & ComImageFlags._32BitRequired) != 0)
+			if ((Metadata.ImageCor20Header.Flags & ComImageFlags.ILOnly) != 0)
+				peKind |= DmdPortableExecutableKinds.ILOnly;
+			// Hack for NGEN'd images
+			if ((Metadata.ImageCor20Header.Flags & ComImageFlags.ILLibrary) != 0)
+				peKind |= DmdPortableExecutableKinds.ILOnly;
+			if ((Metadata.ImageCor20Header.Flags & (ComImageFlags._32BitRequired | ComImageFlags._32BitPreferred)) == ComImageFlags._32BitRequired)
 				peKind |= DmdPortableExecutableKinds.Required32Bit;
-			if ((Metadata.ImageCor20Header.Flags & ComImageFlags._32BitPreferred) != 0)
+			else if ((Metadata.ImageCor20Header.Flags & (ComImageFlags._32BitRequired | ComImageFlags._32BitPreferred)) == (ComImageFlags._32BitRequired | ComImageFlags._32BitPreferred))
 				peKind |= DmdPortableExecutableKinds.Preferred32Bit;
+			if (peKind == 0)
+				peKind = DmdPortableExecutableKinds.Required32Bit;
 		}
 
 		public override DmdAssemblyName GetName() {

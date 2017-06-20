@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdSpecialMethodKind SpecialMethodKind { get; }
 		public override string Name { get; }
 		public override DmdMethodImplAttributes MethodImplementationFlags => DmdMethodImplAttributes.IL | DmdMethodImplAttributes.Managed;
-		public override DmdMethodAttributes Attributes => DmdMethodAttributes.Public | DmdMethodAttributes.ReuseSlot;
+		public override DmdMethodAttributes Attributes => DmdMethodAttributes.Public | DmdMethodAttributes.ReuseSlot | DmdMethodAttributes.RTSpecialName;
 
 		readonly DmdMethodSignature methodSignature;
 
@@ -48,6 +48,5 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdMethodBody GetMethodBody() => null;
 		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => null;
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
-		internal override DmdMethodSignature GetOriginalMethodSignature() => methodSignature;
 	}
 }

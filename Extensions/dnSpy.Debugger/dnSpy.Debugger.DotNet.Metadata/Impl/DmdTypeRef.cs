@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdAppDomain AppDomain => ownerModule.AppDomain;
 		public sealed override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Type;
 		public abstract override DmdTypeScope TypeScope { get; }
-		public abstract override string Namespace { get; }
+		public abstract override string MetadataNamespace { get; }
 		public abstract override string Name { get; }
 		public sealed override DmdModule Module => ResolvedType.Module;
 		public sealed override DmdType BaseType => ResolvedType.BaseType;
@@ -94,13 +94,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override bool IsGenericType => ResolvedType.IsGenericType;
 		public sealed override bool IsGenericTypeDefinition => ResolvedType.IsGenericTypeDefinition;
-		public sealed override ReadOnlyCollection<DmdType> GetGenericArguments() => ResolvedType.GetGenericArguments();
+		protected sealed override ReadOnlyCollection<DmdType> GetGenericArgumentsCore() => ResolvedType.GetGenericArguments();
 		public sealed override DmdType GetGenericTypeDefinition() => ResolvedType.GetGenericTypeDefinition();
 
-		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ResolvedType.CreateDeclaredFields2(reflectedType);
-		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ResolvedType.CreateDeclaredMethods2(reflectedType);
-		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ResolvedType.CreateDeclaredProperties2(reflectedType);
-		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ResolvedType.CreateDeclaredEvents2(reflectedType);
+		public sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ResolvedType.CreateDeclaredFields(reflectedType);
+		public sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ResolvedType.CreateDeclaredMethods(reflectedType);
+		public sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ResolvedType.CreateDeclaredProperties(reflectedType);
+		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ResolvedType.CreateDeclaredEvents(reflectedType);
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => ResolvedType.ReadDeclaredInterfaces2();
 		protected override DmdType[] CreateNestedTypes() => ResolvedType.CreateNestedTypes2();

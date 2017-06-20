@@ -34,41 +34,40 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected uint Rid => rid;
 		readonly uint rid;
 
-		protected DmdPropertyDef(uint rid, DmdTypeDef declaringType, DmdType reflectedType) {
+		protected DmdPropertyDef(uint rid, DmdType declaringType, DmdType reflectedType) {
 			this.rid = rid;
 			DeclaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
 			ReflectedType = reflectedType ?? throw new ArgumentNullException(nameof(reflectedType));
 		}
 
-		public sealed override DmdMethodInfo[] GetAccessors(bool nonPublic) {
+		public sealed override DmdMethodInfo[] GetAccessors(DmdGetAccessorOptions options) {
 			if (__otherMethods_DONT_USE == null)
 				InitializePropertyMethods();
 			var list = new List<DmdMethodInfo>();
-			if ((object)__getMethod_DONT_USE != null && (nonPublic || __getMethod_DONT_USE.IsPublic))
-				list.Add(__getMethod_DONT_USE);
-			if ((object)__setMethod_DONT_USE != null && (nonPublic || __setMethod_DONT_USE.IsPublic))
-				list.Add(__setMethod_DONT_USE);
+			var accessor = AccessorUtils.FilterAccessor(options, __getMethod_DONT_USE);
+			if ((object)accessor != null)
+				list.Add(accessor);
+			accessor = AccessorUtils.FilterAccessor(options, __setMethod_DONT_USE);
+			if ((object)accessor != null)
+				list.Add(accessor);
 			foreach (var method in __otherMethods_DONT_USE) {
-				if (nonPublic || method.IsPublic)
-					list.Add(method);
+				accessor = AccessorUtils.FilterAccessor(options, method);
+				if ((object)accessor != null)
+					list.Add(accessor);
 			}
 			return list.ToArray();
 		}
 
-		public sealed override DmdMethodInfo GetGetMethod(bool nonPublic) {
+		public sealed override DmdMethodInfo GetGetMethod(DmdGetAccessorOptions options) {
 			if (__otherMethods_DONT_USE == null)
 				InitializePropertyMethods();
-			if (nonPublic)
-				return __getMethod_DONT_USE;
-			return __getMethod_DONT_USE?.IsPublic == true ? __getMethod_DONT_USE : null;
+			return AccessorUtils.FilterAccessor(options, __getMethod_DONT_USE);
 		}
 
-		public sealed override DmdMethodInfo GetSetMethod(bool nonPublic) {
+		public sealed override DmdMethodInfo GetSetMethod(DmdGetAccessorOptions options) {
 			if (__otherMethods_DONT_USE == null)
 				InitializePropertyMethods();
-			if (nonPublic)
-				return __setMethod_DONT_USE;
-			return __setMethod_DONT_USE?.IsPublic == true ? __setMethod_DONT_USE : null;
+			return AccessorUtils.FilterAccessor(options, __setMethod_DONT_USE);
 		}
 
 		void InitializePropertyMethods() {
@@ -107,14 +106,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		ReadOnlyCollection<DmdParameterInfo> __indexParameters_DONT_USE;
 
 		DmdParameterInfo[] CreateIndexParameters() {
-			if (GetMethod is DmdMethodInfo getMethod) {
+			if (GetGetMethod(DmdGetAccessorOptions.All) is DmdMethodInfo getMethod) {
 				var ps = getMethod.GetParameters();
 				var res = new DmdParameterInfo[ps.Count];
 				for (int i = 0; i < res.Length; i++)
 					res[i] = new DmdPropertyParameter(this, ps[i]);
 				return res;
 			}
-			else if (SetMethod is DmdMethodInfo setMethod) {
+			else if (GetSetMethod(DmdGetAccessorOptions.All) is DmdMethodInfo setMethod) {
 				var ps = setMethod.GetParameters();
 				if (ps.Count == 0)
 					return Array.Empty<DmdParameterInfo>();

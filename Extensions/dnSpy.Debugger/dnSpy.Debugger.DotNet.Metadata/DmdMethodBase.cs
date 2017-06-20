@@ -107,6 +107,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsAssembly => (Attributes & DmdMethodAttributes.MemberAccessMask) == DmdMethodAttributes.Assembly;
 		public bool IsFamilyAndAssembly => (Attributes & DmdMethodAttributes.MemberAccessMask) == DmdMethodAttributes.FamANDAssem;
 		public bool IsFamilyOrAssembly => (Attributes & DmdMethodAttributes.MemberAccessMask) == DmdMethodAttributes.FamORAssem;
+		public bool IsPrivateScope => (Attributes & DmdMethodAttributes.MemberAccessMask) == DmdMethodAttributes.PrivateScope;
 		public bool IsStatic => (Attributes & DmdMethodAttributes.Static) != 0;
 		public bool IsFinal => (Attributes & DmdMethodAttributes.Final) != 0;
 		public bool IsVirtual => (Attributes & DmdMethodAttributes.Virtual) != 0;
@@ -177,12 +178,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments</param>
 		/// <returns></returns>
 		public abstract DmdMethodSignature GetMethodSignature(IList<DmdType> genericMethodArguments);
-
-		/// <summary>
-		/// Gets the original method signature which contains the original generic types (Var and MVar)
-		/// </summary>
-		/// <returns></returns>
-		internal abstract DmdMethodSignature GetOriginalMethodSignature();
 
 		/// <summary>
 		/// Calls the method

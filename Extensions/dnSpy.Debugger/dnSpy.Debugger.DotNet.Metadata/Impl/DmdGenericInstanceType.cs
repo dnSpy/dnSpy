@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.GenericInstance;
 		public override DmdTypeScope TypeScope => genericTypeDefinition.TypeScope;
 		public override DmdModule Module => genericTypeDefinition.Module;
-		public override string Namespace => genericTypeDefinition.Namespace;
+		public override string MetadataNamespace => genericTypeDefinition.MetadataNamespace;
 		public override StructLayoutAttribute StructLayoutAttribute => genericTypeDefinition.StructLayoutAttribute;
 		public override DmdTypeAttributes Attributes => genericTypeDefinition.Attributes;
 		public override string Name => DmdMemberFormatter.FormatName(this);
@@ -40,19 +40,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			get {
 				const byte BoolBit = 1;
 				const byte InitializedBit = 2;
-				if ((hasTypeEquivalenceFlags & InitializedBit) == 0) {
-					byte result = InitializedBit;
-					if (genericTypeDefinition.HasTypeEquivalence)
-						result |= BoolBit;
-					else {
-						foreach (var gaType in typeArguments) {
-							if (gaType.HasTypeEquivalence) {
+				const byte CalculatingBit = 4;
+				if ((hasTypeEquivalenceFlags & (InitializedBit | CalculatingBit)) == 0) {
+					lock (LockObject) {
+						if ((hasTypeEquivalenceFlags & (InitializedBit | CalculatingBit)) == 0) {
+							// In case we get called recursively
+							hasTypeEquivalenceFlags |= CalculatingBit;
+
+							byte result = InitializedBit;
+							if (genericTypeDefinition.HasTypeEquivalence)
 								result |= BoolBit;
-								break;
+							else {
+								foreach (var gaType in typeArguments) {
+									if (gaType.HasTypeEquivalence) {
+										result |= BoolBit;
+										break;
+									}
+								}
 							}
+							hasTypeEquivalenceFlags = result;
 						}
 					}
-					hasTypeEquivalenceFlags = result;
 				}
 				return (hasTypeEquivalenceFlags & BoolBit) != 0;
 			}
@@ -98,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeGenericType(genericTypeDefinition, typeArguments, null);
 
 		public override bool IsGenericType => true;
-		public override ReadOnlyCollection<DmdType> GetGenericArguments() => typeArguments;
+		protected override ReadOnlyCollection<DmdType> GetGenericArgumentsCore() => typeArguments;
 		public override DmdType GetGenericTypeDefinition() => genericTypeDefinition;
 
 		protected override DmdType ResolveNoThrowCore() => this;
@@ -112,15 +120,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredFields(reflectedType, typeArguments);
-		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredMethods(reflectedType, typeArguments);
-		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredProperties(reflectedType, typeArguments);
-		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredEvents(reflectedType, typeArguments);
-
-		internal DmdFieldInfo[] CreateDeclaredFields2(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredFields(reflectedType, typeArguments);
-		internal DmdMethodBase[] CreateDeclaredMethods2(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredMethods(reflectedType, typeArguments);
-		internal DmdPropertyInfo[] CreateDeclaredProperties2(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredProperties(reflectedType, typeArguments);
-		internal DmdEventInfo[] CreateDeclaredEvents2(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredEvents(reflectedType, typeArguments);
+		public sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredFields(this, reflectedType, typeArguments);
+		public sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredMethods(this, reflectedType, typeArguments);
+		public sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredProperties(this, reflectedType, typeArguments);
+		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredEvents(this, reflectedType, typeArguments);
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => ReadDeclaredInterfaces2();
 		internal IList<DmdType> ReadDeclaredInterfaces2() => genericTypeDefinition.ReadDeclaredInterfaces(typeArguments);

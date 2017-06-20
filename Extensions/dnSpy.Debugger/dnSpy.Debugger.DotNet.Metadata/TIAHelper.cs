@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (gca.ConstructorArguments[0].ArgumentType != td.AppDomain.System_String)
 					return null;
 				scope = gca.ConstructorArguments[0].Value as string;
-				var ns = td.Namespace;
+				var ns = td.MetadataNamespace;
 				var name = td.Name;
 				if (string.IsNullOrEmpty(ns))
 					identifier = name;

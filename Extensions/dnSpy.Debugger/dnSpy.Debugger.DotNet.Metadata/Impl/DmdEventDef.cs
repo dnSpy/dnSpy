@@ -34,50 +34,45 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected uint Rid => rid;
 		readonly uint rid;
 
-		protected DmdEventDef(uint rid, DmdTypeDef declaringType, DmdType reflectedType) {
+		protected DmdEventDef(uint rid, DmdType declaringType, DmdType reflectedType) {
 			this.rid = rid;
 			DeclaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
 			ReflectedType = reflectedType ?? throw new ArgumentNullException(nameof(reflectedType));
 		}
 
-		public sealed override DmdMethodInfo[] GetOtherMethods(bool nonPublic) {
+		public sealed override DmdMethodInfo[] GetOtherMethods(DmdGetAccessorOptions options) {
 			if (__otherMethods_DONT_USE == null)
 				InitializeEventMethods();
 			var otherMethods = __otherMethods_DONT_USE;
 			if (otherMethods.Count == 0)
 				return Array.Empty<DmdMethodInfo>();
-			if (nonPublic)
+			if ((options & DmdGetAccessorOptions.All) != 0)
 				return otherMethods.ToArray();
 			var list = new List<DmdMethodInfo>(otherMethods.Count);
 			foreach (var method in otherMethods) {
-				if (method.IsPublic)
-					list.Add(method);
+				var accessor = AccessorUtils.FilterAccessor(options, method);
+				if ((object)accessor != null)
+					list.Add(accessor);
 			}
 			return list.Count == 0 ? Array.Empty<DmdMethodInfo>() : list.ToArray();
 		}
 
-		public sealed override DmdMethodInfo GetAddMethod(bool nonPublic) {
+		public sealed override DmdMethodInfo GetAddMethod(DmdGetAccessorOptions options) {
 			if (__otherMethods_DONT_USE == null)
 				InitializeEventMethods();
-			if (nonPublic)
-				return __addMethod_DONT_USE;
-			return __addMethod_DONT_USE?.IsPublic == true ? __addMethod_DONT_USE : null;
+			return AccessorUtils.FilterAccessor(options, __addMethod_DONT_USE);
 		}
 
-		public sealed override DmdMethodInfo GetRemoveMethod(bool nonPublic) {
+		public sealed override DmdMethodInfo GetRemoveMethod(DmdGetAccessorOptions options) {
 			if (__otherMethods_DONT_USE == null)
 				InitializeEventMethods();
-			if (nonPublic)
-				return __removeMethod_DONT_USE;
-			return __removeMethod_DONT_USE?.IsPublic == true ? __removeMethod_DONT_USE : null;
+			return AccessorUtils.FilterAccessor(options, __removeMethod_DONT_USE);
 		}
 
-		public sealed override DmdMethodInfo GetRaiseMethod(bool nonPublic) {
+		public sealed override DmdMethodInfo GetRaiseMethod(DmdGetAccessorOptions options) {
 			if (__otherMethods_DONT_USE == null)
 				InitializeEventMethods();
-			if (nonPublic)
-				return __raiseMethod_DONT_USE;
-			return __raiseMethod_DONT_USE?.IsPublic == true ? __raiseMethod_DONT_USE : null;
+			return AccessorUtils.FilterAccessor(options, __raiseMethod_DONT_USE);
 		}
 
 		void InitializeEventMethods() {

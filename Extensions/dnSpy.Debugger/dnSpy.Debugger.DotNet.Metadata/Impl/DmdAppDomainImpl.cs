@@ -592,7 +592,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						throw new ArgumentException();
 				}
 			}
-			return new DmdGenericParameterTypeImpl(this, declaringType, name, position, attributes, customModifiers);
+			var declTypeBase = declaringType as DmdTypeBase;
+			if ((object)declTypeBase == null)
+				throw new ArgumentException();
+			return new DmdGenericParameterTypeImpl(this, declTypeBase, name, position, attributes, customModifiers);
 		}
 
 		public override DmdType MakeGenericMethodParameter(int position, DmdMethodBase declaringMethod, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options) {

@@ -23,7 +23,7 @@ using System.Collections.Generic;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdNullGlobalType : DmdTypeDef {
 		public override DmdModule Module { get; }
-		public override string Namespace => null;
+		public override string MetadataNamespace => null;
 		public override string Name => "<Module>";
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.NotPublic;
 
@@ -37,10 +37,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected override int GetBaseTypeTokenCore() => 0;
 		protected override DmdType[] CreateGenericParameters() => null;
 
-		public override DmdFieldInfo[] ReadDeclaredFields(DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
-		public override DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
-		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
-		public override DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
+		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
+		public override DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
+		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
+		public override DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
 
 		protected override DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments) => null;
 		protected override DmdType[] CreateNestedTypes() => null;

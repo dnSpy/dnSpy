@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.MDArray;
 		public override DmdTypeScope TypeScope => SkipElementTypes().TypeScope;
 		public override DmdModule Module => SkipElementTypes().Module;
-		public override string Namespace => SkipElementTypes().Namespace;
+		public override string MetadataNamespace => null;
 		public override DmdType BaseType => AppDomain.System_Array;
 		public override StructLayoutAttribute StructLayoutAttribute => null;
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.Public | DmdTypeAttributes.AutoLayout | DmdTypeAttributes.Class | DmdTypeAttributes.Sealed | DmdTypeAttributes.AnsiClass | DmdTypeAttributes.Serializable;
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => null;
 
-		protected override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) {
+		public override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) {
 			var appDomain = AppDomain;
 			return new DmdMethodBase[5] {
 				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor1, DmdConstructorInfo.ConstructorName, appDomain.System_Void, CreateParameterTypes(null)),

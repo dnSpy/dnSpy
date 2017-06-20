@@ -303,6 +303,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_ByReference_T,
 		System_Runtime_InteropServices_UnmanagedType,
 		System_Runtime_InteropServices_VarEnum,
+		System___ComObject,
+		System_Runtime_InteropServices_WindowsRuntime_RuntimeClass,
+		System_DBNull,
 
 		// When adding more types, update WellKnownMemberResolver
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member

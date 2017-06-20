@@ -109,8 +109,54 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdAssemblyName GetName() => (asmName ?? (asmName = metadataReader.GetName())).Clone();
+		public override DmdAssemblyName GetName() {
+			if (asmName == null) {
+				var newAsmName = metadataReader.GetName();
+				newAsmName.Flags |= DmdAssemblyNameFlags.PublicKey;
+				if (metadataReader.MDStreamVersion >= 0x00010000) {
+					metadataReader.GetPEKind(out var peKind, out var machine);
+					if ((newAsmName.Flags & DmdAssemblyNameFlags.PA_FullMask) == DmdAssemblyNameFlags.PA_NoPlatform)
+						newAsmName.Flags = (newAsmName.Flags & ~DmdAssemblyNameFlags.PA_FullMask) | DmdAssemblyNameFlags.PA_None;
+					else
+						newAsmName.Flags = (newAsmName.Flags & ~DmdAssemblyNameFlags.PA_FullMask) | GetProcessorArchitecture(peKind, machine);
+				}
+				asmName = newAsmName;
+			}
+			return asmName.Clone();
+		}
 		DmdAssemblyName asmName;
+
+		static DmdAssemblyNameFlags GetProcessorArchitecture(DmdPortableExecutableKinds peKind, DmdImageFileMachine machine) {
+			if ((peKind & DmdPortableExecutableKinds.PE32Plus) == 0) {
+				switch (machine) {
+				case DmdImageFileMachine.I386:
+					if ((peKind & DmdPortableExecutableKinds.Required32Bit) != 0)
+						return DmdAssemblyNameFlags.PA_x86;
+					if ((peKind & DmdPortableExecutableKinds.ILOnly) != 0)
+						return DmdAssemblyNameFlags.PA_MSIL;
+					return DmdAssemblyNameFlags.PA_x86;
+
+				case DmdImageFileMachine.ARM:
+					return DmdAssemblyNameFlags.PA_ARM;
+				}
+			}
+			else {
+				switch (machine) {
+				case DmdImageFileMachine.I386:
+					if ((peKind & DmdPortableExecutableKinds.ILOnly) != 0)
+						return DmdAssemblyNameFlags.PA_MSIL;
+					break;
+
+				case DmdImageFileMachine.AMD64:
+					return DmdAssemblyNameFlags.PA_AMD64;
+
+				case DmdImageFileMachine.IA64:
+					return DmdAssemblyNameFlags.PA_IA64;
+				}
+			}
+
+			return DmdAssemblyNameFlags.PA_None;
+		}
 
 		public override DmdType[] GetExportedTypes() {
 			var list = new List<DmdType>();

@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdMethodBase DeclaringMethod => declaringMethod;
 		public sealed override DmdType DeclaringType => declaringType;
 		public override DmdModule Module => ((DmdMemberInfo)declaringType ?? declaringMethod).Module;
-		public sealed override string Namespace => declaringType?.Namespace;
+		public sealed override string MetadataNamespace => declaringType?.MetadataNamespace;
 		public sealed override StructLayoutAttribute StructLayoutAttribute => null;
 		public sealed override DmdGenericParameterAttributes GenericParameterAttributes { get; }
 		public sealed override DmdTypeAttributes Attributes => DmdTypeAttributes.Public;
@@ -57,10 +57,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected uint Rid => rid;
 		readonly uint rid;
-		readonly DmdType declaringType;
+		readonly DmdTypeBase declaringType;
 		readonly DmdMethodBase declaringMethod;
 
-		protected DmdGenericParameterType(uint rid, DmdType declaringType, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
+		protected DmdGenericParameterType(uint rid, DmdTypeBase declaringType, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
 			: this(rid, declaringType, null, name, position, attributes, customModifiers) {
 			if ((object)declaringType == null)
 				throw new ArgumentNullException(nameof(declaringType));
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(declaringMethod));
 		}
 
-		DmdGenericParameterType(uint rid, DmdType declaringType, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
+		DmdGenericParameterType(uint rid, DmdTypeBase declaringType, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
 			this.rid = rid;
 			this.declaringType = declaringType;
 			this.declaringMethod = declaringMethod;

@@ -52,6 +52,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsAssembly => (Attributes & DmdFieldAttributes.FieldAccessMask) == DmdFieldAttributes.Assembly;
 		public bool IsFamilyAndAssembly => (Attributes & DmdFieldAttributes.FieldAccessMask) == DmdFieldAttributes.FamANDAssem;
 		public bool IsFamilyOrAssembly => (Attributes & DmdFieldAttributes.FieldAccessMask) == DmdFieldAttributes.FamORAssem;
+		public bool IsPrivateScope => (Attributes & DmdFieldAttributes.FieldAccessMask) == DmdFieldAttributes.PrivateScope;
 		public bool IsStatic => (Attributes & DmdFieldAttributes.Static) != 0;
 		public bool IsInitOnly => (Attributes & DmdFieldAttributes.InitOnly) != 0;
 		public bool IsLiteral => (Attributes & DmdFieldAttributes.Literal) != 0;

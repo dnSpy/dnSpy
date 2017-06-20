@@ -73,7 +73,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsGenericType => false;
 		public override bool IsGenericTypeDefinition => false;
 		public override int GenericParameterPosition => throw new InvalidOperationException();
-		public override ReadOnlyCollection<DmdType> GetGenericArguments() => ReadOnlyCollectionHelpers.Empty<DmdType>();
 		public override DmdType GetGenericTypeDefinition() => throw new InvalidOperationException();
 		public override ReadOnlyCollection<DmdType> GetGenericParameterConstraints() => throw new InvalidOperationException();
 		public override DmdMethodSignature GetFunctionPointerMethodSignature() => throw new InvalidOperationException();
@@ -87,10 +86,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdType MakeArrayType(int rank, IList<int> sizes, IList<int> lowerBounds) => AppDomain.MakeArrayType(this, rank, sizes, lowerBounds, null);
 		public sealed override DmdType MakeGenericType(IList<DmdType> typeArguments) => AppDomain.MakeGenericType(this, typeArguments, null);
 
-		protected DmdType SkipElementTypes() {
-			DmdType type = this;
-			while (type.HasElementType)
-				type = type.GetElementType();
+		public sealed override ReadOnlyCollection<DmdType> GetGenericArguments() => SkipElementTypes()?.GetGenericArgumentsCore() ?? ReadOnlyCollectionHelpers.Empty<DmdType>();
+		protected virtual ReadOnlyCollection<DmdType> GetGenericArgumentsCore() => ReadOnlyCollectionHelpers.Empty<DmdType>();
+
+		public sealed override string Namespace {
+			get {
+				DmdType type = SkipElementTypes();
+				while (type.DeclaringType is DmdType declType)
+					type = declType;
+				var ns = type.MetadataNamespace;
+				return ns == null || ns.Length == 0 ? null : ns;
+			}
+		}
+
+		protected DmdTypeBase SkipElementTypes() {
+			var type = this;
+			while (type.GetElementType() is DmdTypeBase elementType)
+				type = elementType;
 			return type;
 		}
 
@@ -464,10 +476,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		protected virtual DmdCustomAttributeData[] CreateCustomAttributes() => null;
 
-		protected virtual DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => null;
-		protected virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => null;
-		protected virtual DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => null;
-		protected virtual DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => null;
+		public virtual DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => null;
+		public virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => null;
+		public virtual DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => null;
+		public virtual DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => null;
 
 		public sealed override IEnumerable<DmdFieldInfo> Fields => GetFields(inherit: true);
 		public sealed override IEnumerable<DmdMethodBase> Methods => GetMethodsAndConstructors(inherit: true);
@@ -689,7 +701,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				hiddenMethods = new List<DmdMethodBase>();
 				foreach (var method in owner.DeclaredMethods) {
 					if ((method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) != 0 && !method.IsNewSlot) {
-						var key = new Key(method.Name, method.GetOriginalMethodSignature());
+						var key = new Key(method.Name, method.GetMethodSignature());
 						overriddenHash[key] = (DmdMethodDef)method;
 					}
 				}
@@ -705,7 +717,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (method is DmdConstructorInfo)
 						hide = true;
 					else if ((method.Attributes & (DmdMethodAttributes.Virtual | DmdMethodAttributes.Abstract)) != 0) {
-						var key = new Key(method.Name, method.GetOriginalMethodSignature());
+						var key = new Key(method.Name, method.GetMethodSignature());
 						if (overriddenHash.TryGetValue(key, out var derivedTypeMethod)) {
 							var methodDef = (DmdMethodDef)method;
 							if (method.IsNewSlot)
@@ -766,8 +778,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				overriddenHash = new HashSet<Key>(EqualityComparer.Instance);
 				hiddenProperties = new List<DmdPropertyInfo>();
 				foreach (var property in owner.DeclaredProperties) {
-					if (IsOverridable(property, out var isNewSlot) && !isNewSlot) {
-						var key = new Key(property.Name, property.GetOriginalMethodSignature());
+					if (IsOverridable(property, out var isNewSlot, out _) && !isNewSlot) {
+						var key = new Key(property.Name, property.GetMethodSignature());
 						overriddenHash.Add(key);
 					}
 				}
@@ -780,17 +792,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 				foreach (var property in properties) {
 					bool hide;
-					if (IsOverridable(property, out var isNewSlot)) {
-						var key = new Key(property.Name, property.GetOriginalMethodSignature());
-						if (isNewSlot) {
+					if (IsOverridable(property, out var isNewSlot, out bool isAccessible)) {
+						var key = new Key(property.Name, property.GetMethodSignature());
+						if (!isAccessible) {
 							overriddenHash.Remove(key);
-							hide = false;
+							hide = true;
 						}
+						else if (isNewSlot)
+							hide = overriddenHash.Remove(key);
 						else
 							hide = !overriddenHash.Add(key);
 					}
 					else
-						hide = false;
+						hide = !isAccessible;
 					if (hide)
 						hiddenProperties.Add(property);
 					else
@@ -805,9 +819,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return true;
 			}
 
-			bool IsOverridable(DmdPropertyInfo property, out bool isNewSlot) {
+			void UpdateIsPrivate(DmdMethodInfo method, ref bool? isPrivate) {
+				if ((object)method == null)
+					return;
+				if (method.IsPrivate && isPrivate == null)
+					isPrivate = true;
+				else
+					isPrivate &= method.IsPrivate;
+			}
+
+			bool IsOverridable(DmdPropertyInfo property, out bool isNewSlot, out bool isAccessible) {
 				isNewSlot = false;
-				foreach (var method in property.GetAccessors(nonPublic: true)) {
+				var accessors = property.GetAccessors(DmdGetAccessorOptions.All);
+
+				bool? isPrivate = null;
+				foreach (var method in accessors)
+					UpdateIsPrivate(method, ref isPrivate);
+
+				bool isDeclaredProperty = (object)property.DeclaringType == property.ReflectedType;
+				isAccessible = isDeclaredProperty || isPrivate != true;
+
+				foreach (var method in accessors) {
 					if (IsOverridable(method, ref isNewSlot))
 						return true;
 				}
@@ -845,8 +877,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				overriddenHash = new HashSet<Key>(EqualityComparer.Instance);
 				hiddenEvents = new List<DmdEventInfo>();
 				foreach (var @event in owner.DeclaredEvents) {
-					if (IsOverridable(@event, out var isNewSlot) && !isNewSlot) {
-						var key = new Key(@event.Name, @event.GetOriginalEventHandlerType());
+					if (IsOverridable(@event, out var isNewSlot, out _) && !isNewSlot) {
+						var key = new Key(@event.Name, @event.EventHandlerType);
 						overriddenHash.Add(key);
 					}
 				}
@@ -859,17 +891,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 				foreach (var @event in events) {
 					bool hide;
-					if (IsOverridable(@event, out var isNewSlot)) {
-						var key = new Key(@event.Name, @event.GetOriginalEventHandlerType());
-						if (isNewSlot) {
+					if (IsOverridable(@event, out var isNewSlot, out bool isAccessible)) {
+						var key = new Key(@event.Name, @event.EventHandlerType);
+						if (!isAccessible) {
 							overriddenHash.Remove(key);
-							hide = false;
+							hide = true;
 						}
+						else if (isNewSlot)
+							hide = overriddenHash.Remove(key);
 						else
 							hide = !overriddenHash.Add(key);
 					}
 					else
-						hide = false;
+						hide = !isAccessible;
 					if (hide)
 						hiddenEvents.Add(@event);
 					else
@@ -884,11 +918,35 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return true;
 			}
 
-			bool IsOverridable(DmdEventInfo @event, out bool isNewSlot) {
+			void UpdateIsPrivate(DmdMethodInfo method, ref bool? isPrivate) {
+				if ((object)method == null)
+					return;
+				if (method.IsPrivate && isPrivate == null)
+					isPrivate = true;
+				else
+					isPrivate &= method.IsPrivate;
+			}
+
+			bool IsOverridable(DmdEventInfo @event, out bool isNewSlot, out bool isAccessible) {
 				isNewSlot = false;
-				if (IsOverridable(@event.AddMethod, ref isNewSlot) || IsOverridable(@event.RemoveMethod, ref isNewSlot) || IsOverridable(@event.RaiseMethod, ref isNewSlot))
+				var addMethod = @event.GetAddMethod(DmdGetAccessorOptions.All);
+				var removeMethod = @event.GetRemoveMethod(DmdGetAccessorOptions.All);
+				var raiseMethod = @event.GetRaiseMethod(DmdGetAccessorOptions.All);
+				var otherMethods = @event.GetOtherMethods(DmdGetAccessorOptions.All);
+
+				bool? isPrivate = null;
+				UpdateIsPrivate(addMethod, ref isPrivate);
+				UpdateIsPrivate(removeMethod, ref isPrivate);
+				UpdateIsPrivate(raiseMethod, ref isPrivate);
+				foreach (var otherMethod in otherMethods)
+					UpdateIsPrivate(otherMethod, ref isPrivate);
+
+				bool isDeclaredEvent = (object)@event.DeclaringType == @event.ReflectedType;
+				isAccessible = isDeclaredEvent || isPrivate != true;
+
+				if (IsOverridable(addMethod, ref isNewSlot) || IsOverridable(removeMethod, ref isNewSlot) || IsOverridable(raiseMethod, ref isNewSlot))
 					return true;
-				foreach (var method in @event.GetOtherMethods(nonPublic: true)) {
+				foreach (var method in otherMethods) {
 					if (IsOverridable(method, ref isNewSlot))
 						return true;
 				}

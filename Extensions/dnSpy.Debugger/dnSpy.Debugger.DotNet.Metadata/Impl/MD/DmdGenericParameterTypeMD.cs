@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		readonly DmdEcma335MetadataReader reader;
 
-		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
+		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdTypeBase declaringType, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
 			: base(rid, declaringType, name, position, attributes, customModifiers) =>
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		DmdGenericParameterTypeMD Clone(IList<DmdCustomModifier> customModifiers) =>
 			(object)DeclaringMethod != null ?
 			new DmdGenericParameterTypeMD(reader, Rid, DeclaringMethod, Name, GenericParameterPosition, GenericParameterAttributes, customModifiers) :
-			new DmdGenericParameterTypeMD(reader, Rid, DeclaringType, Name, GenericParameterPosition, GenericParameterAttributes, customModifiers);
+			new DmdGenericParameterTypeMD(reader, Rid, (DmdTypeBase)DeclaringType, Name, GenericParameterPosition, GenericParameterAttributes, customModifiers);
 
 		// Don't intern these since only the generic parameter position is checked and not the decl type / method
 		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => Clone(VerifyCustomModifiers(customModifiers));

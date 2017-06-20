@@ -23,7 +23,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	abstract class DmdConstructorRef : DmdConstructorInfoBase {
+	sealed class DmdConstructorRef : DmdConstructorInfoBase {
 		public override DmdAppDomain AppDomain => declaringTypeRef.AppDomain;
 		public override string Name { get; }
 		public override DmdType DeclaringType => __resolvedConstructor_DONT_USE?.DeclaringType ?? declaringTypeRef;

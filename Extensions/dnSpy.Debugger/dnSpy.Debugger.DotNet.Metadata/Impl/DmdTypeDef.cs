@@ -35,11 +35,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			get {
 				const byte BoolBit = 1;
 				const byte InitializedBit = 2;
-				if ((hasTypeEquivalenceFlags & InitializedBit) == 0) {
-					byte result = InitializedBit;
-					if (CalculateHasTypeEquivalence())
-						result |= BoolBit;
-					hasTypeEquivalenceFlags = result;
+				const byte CalculatingBit = 4;
+				if ((hasTypeEquivalenceFlags & (InitializedBit | CalculatingBit)) == 0) {
+					lock (LockObject) {
+						if ((hasTypeEquivalenceFlags & (InitializedBit | CalculatingBit)) == 0) {
+							// In case we get called recursively
+							hasTypeEquivalenceFlags |= CalculatingBit;
+
+							byte result = InitializedBit;
+							if (CalculateHasTypeEquivalence())
+								result |= BoolBit;
+							hasTypeEquivalenceFlags = result;
+						}
+					}
 				}
 				return (hasTypeEquivalenceFlags & BoolBit) != 0;
 			}
@@ -127,8 +135,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							int baseTypeToken = GetBaseTypeToken();
 							if ((baseTypeToken & 0x00FFFFFF) == 0)
 								__baseType_DONT_USE = null;
-							else
+							else {
 								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetGenericArguments(), null, DmdResolveOptions.None);
+								var bt = __baseType_DONT_USE;
+								if (IsImport && !IsInterface && bt != AppDomain.System_ValueType && bt != AppDomain.System_Enum && bt != AppDomain.System_MulticastDelegate) {
+									if (bt == AppDomain.System_Object) {
+										if (IsWindowsRuntime)
+											__baseType_DONT_USE = AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_WindowsRuntime_RuntimeClass, isOptional: false, onlyCorlib: true) ?? bt;
+										else
+											__baseType_DONT_USE = AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject, isOptional: false, onlyCorlib: true) ?? bt;
+									}
+								}
+							}
 							baseTypeInitd = true;
 						}
 					}
@@ -156,10 +174,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected DmdTypeDef(uint rid, IList<DmdCustomModifier> customModifiers) : base(customModifiers) => this.rid = rid;
 
+		protected DmdTypeAttributes FixAttributes(DmdTypeAttributes flags) {
+			if (Module.IsCorLib) {
+				// See coreclr: RuntimeTypeHandle::GetAttributes
+				if (Name == "__ComObject" && MetadataNamespace == "System") {
+					// This matches the original C++ code and should not be "& ~"
+					flags = (flags & DmdTypeAttributes.VisibilityMask) | DmdTypeAttributes.Public;
+				}
+			}
+			return flags;
+		}
+
 		protected override DmdType ResolveNoThrowCore() => this;
 
 		protected abstract DmdType[] CreateGenericParameters();
-		public override ReadOnlyCollection<DmdType> GetGenericArguments() {
+		protected override ReadOnlyCollection<DmdType> GetGenericArgumentsCore() {
 			if (__genericParameters_DONT_USE != null)
 				return __genericParameters_DONT_USE;
 			lock (LockObject) {
@@ -174,20 +203,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdType GetGenericTypeDefinition() => IsGenericType ? this : throw new InvalidOperationException();
 
-		public abstract DmdFieldInfo[] ReadDeclaredFields(DmdType reflectedType, IList<DmdType> genericTypeArguments);
-		public abstract DmdMethodBase[] ReadDeclaredMethods(DmdType reflectedType, IList<DmdType> genericTypeArguments);
-		public abstract DmdPropertyInfo[] ReadDeclaredProperties(DmdType reflectedType, IList<DmdType> genericTypeArguments);
-		public abstract DmdEventInfo[] ReadDeclaredEvents(DmdType reflectedType, IList<DmdType> genericTypeArguments);
+		public abstract DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments);
+		public abstract DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments);
+		public abstract DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments);
+		public abstract DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments);
 
-		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ReadDeclaredFields(reflectedType, GetGenericArguments());
-		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ReadDeclaredMethods(reflectedType, GetGenericArguments());
-		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(reflectedType, GetGenericArguments());
-		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(reflectedType, GetGenericArguments());
-
-		internal DmdFieldInfo[] CreateDeclaredFields2(DmdType reflectedType) => ReadDeclaredFields(reflectedType, GetGenericArguments());
-		internal DmdMethodBase[] CreateDeclaredMethods2(DmdType reflectedType) => ReadDeclaredMethods(reflectedType, GetGenericArguments());
-		internal DmdPropertyInfo[] CreateDeclaredProperties2(DmdType reflectedType) => ReadDeclaredProperties(reflectedType, GetGenericArguments());
-		internal DmdEventInfo[] CreateDeclaredEvents2(DmdType reflectedType) => ReadDeclaredEvents(reflectedType, GetGenericArguments());
+		public sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ReadDeclaredFields(this, reflectedType, GetGenericArguments());
+		public sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ReadDeclaredMethods(this, reflectedType, GetGenericArguments());
+		public sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(this, reflectedType, GetGenericArguments());
+		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(this, reflectedType, GetGenericArguments());
 
 		public override bool IsFullyResolved => true;
 		public override DmdTypeBase FullResolve() => this;

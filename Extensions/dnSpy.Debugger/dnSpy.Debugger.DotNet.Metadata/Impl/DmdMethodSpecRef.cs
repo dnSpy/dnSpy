@@ -64,7 +64,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdMethodSpec __resolvedMethod_DONT_USE;
 
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
-		internal override DmdMethodSignature GetOriginalMethodSignature() => genericMethodRef.GetOriginalMethodSignature();
 		internal override DmdMethodInfo GetParentDefinition() => genericMethodRef.GetParentDefinition();
 		public override ReadOnlyCollection<DmdType> GetGenericArguments() => genericArguments;
 		public override DmdMethodInfo GetGenericMethodDefinition() => genericMethodRef;

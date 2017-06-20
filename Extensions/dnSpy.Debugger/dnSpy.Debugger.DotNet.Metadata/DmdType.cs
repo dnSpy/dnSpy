@@ -79,6 +79,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract string Namespace { get; }
 
 		/// <summary>
+		/// Gets the namespace or null. This is the namespace stored in the metadata. <see cref="Namespace"/>
+		/// is the namespace of the non-declaring type.
+		/// </summary>
+		public abstract string MetadataNamespace { get; }
+
+		/// <summary>
 		/// Gets the assembly qualified name
 		/// </summary>
 		public string AssemblyQualifiedName => DmdMemberFormatter.FormatAssemblyQualifiedName(this);
@@ -111,8 +117,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (IsGenericParameter)
 					return true;
 				var type = this;
-				while (type.HasElementType)
-					type = GetElementType();
+				while (type.GetElementType() is DmdType elementType)
+					type = elementType;
 				for (;;) {
 					var declType = type.DeclaringType;
 					if ((object)declType == null)
@@ -309,7 +315,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			const TypeCode defaultValue = TypeCode.Object;
 			if (type.IsEnum)
 				type = type.GetEnumUnderlyingType();
-			if (type.Namespace == "System" && !type.IsNested) {
+			if (type.MetadataNamespace == "System" && !type.IsNested) {
 				switch (type.Name) {
 				case "Boolean":	return type == type.AppDomain.System_Boolean	? TypeCode.Boolean	: defaultValue;
 				case "Char":	return type == type.AppDomain.System_Char		? TypeCode.Char		: defaultValue;
@@ -326,6 +332,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				case "Decimal":	return type == type.AppDomain.System_Decimal	? TypeCode.Decimal	: defaultValue;
 				case "DateTime":return type == type.AppDomain.System_DateTime	? TypeCode.DateTime	: defaultValue;
 				case "String":	return type == type.AppDomain.System_String		? TypeCode.String	: defaultValue;
+				case "DBNull":
+					if (type == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_DBNull))
+						return TypeCode.DBNull;
+					break;
 				}
 			}
 			return defaultValue;
@@ -888,8 +898,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public bool ContainsGenericParameters => CalculateContainsGenericParameters(this);
 		static bool CalculateContainsGenericParameters(DmdType type) {
-			while (type.HasElementType)
-				type = type.GetElementType();
+			while (type.GetElementType() is DmdType elementType)
+				type = elementType;
 			if (type.IsGenericParameter)
 				return true;
 			if (!type.IsGenericType)
@@ -936,7 +946,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public bool IsPrimitive {
 			get {
-				if (Namespace != "System" || IsNested)
+				if (MetadataNamespace != "System" || IsNested)
 					return false;
 				switch (Name) {
 				case "Boolean":	return this == AppDomain.System_Boolean;

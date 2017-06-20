@@ -84,21 +84,42 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="nonPublic">true to include all accessors, false to only include public accessors</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo[] GetAccessors(bool nonPublic);
+		public DmdMethodInfo[] GetAccessors(bool nonPublic) => GetAccessors(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+
+		/// <summary>
+		/// Gets all accessors
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdMethodInfo[] GetAccessors(DmdGetAccessorOptions options);
 
 		/// <summary>
 		/// Gets the get method
 		/// </summary>
 		/// <param name="nonPublic">true to return any get method, false to only return a public get method</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetGetMethod(bool nonPublic);
+		public DmdMethodInfo GetGetMethod(bool nonPublic) => GetGetMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+
+		/// <summary>
+		/// Gets the get method
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdMethodInfo GetGetMethod(DmdGetAccessorOptions options);
 
 		/// <summary>
 		/// Gets the set method
 		/// </summary>
 		/// <param name="nonPublic">true to return any set method, false to only return a public set method</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetSetMethod(bool nonPublic);
+		public DmdMethodInfo GetSetMethod(bool nonPublic) => GetSetMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+
+		/// <summary>
+		/// Gets the set method
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdMethodInfo GetSetMethod(DmdGetAccessorOptions options);
 
 		/// <summary>
 		/// Gets the index parameters
@@ -157,12 +178,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public abstract DmdMethodSignature GetMethodSignature();
-
-		/// <summary>
-		/// Gets the original method signature which contains the original generic types (Var and MVar)
-		/// </summary>
-		/// <returns></returns>
-		internal abstract DmdMethodSignature GetOriginalMethodSignature();
 
 		/// <summary>
 		/// Gets the property value

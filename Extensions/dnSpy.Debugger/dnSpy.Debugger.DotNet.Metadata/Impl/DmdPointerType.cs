@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Pointer;
 		public override DmdTypeScope TypeScope => SkipElementTypes().TypeScope;
 		public override DmdModule Module => SkipElementTypes().Module;
-		public override string Namespace => SkipElementTypes().Namespace;
+		public override string MetadataNamespace => null;
 		public override DmdType BaseType => null;
 		public override StructLayoutAttribute StructLayoutAttribute => null;
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.NotPublic | DmdTypeAttributes.AutoLayout | DmdTypeAttributes.Class | DmdTypeAttributes.AnsiClass;

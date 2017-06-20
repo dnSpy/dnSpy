@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.GenericInstance;
 		public override DmdTypeScope TypeScope => ResolvedType.TypeScope;
 		public override DmdModule Module => ResolvedType.Module;
-		public override string Namespace => ResolvedType.Namespace;
+		public override string MetadataNamespace => ResolvedType.MetadataNamespace;
 		public override DmdType BaseType => ResolvedType.BaseType;
 		public override StructLayoutAttribute StructLayoutAttribute => ResolvedType.StructLayoutAttribute;
 		public override DmdTypeAttributes Attributes => ResolvedType.Attributes;
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeGenericType(genericTypeRef, typeArguments, null);
 
 		public override bool IsGenericType => true;
-		public override ReadOnlyCollection<DmdType> GetGenericArguments() => typeArguments;
+		protected override ReadOnlyCollection<DmdType> GetGenericArgumentsCore() => typeArguments;
 
 		public override DmdType GetGenericTypeDefinition() {
 			var resolvedType = GetResolvedType(throwOnError: false);
@@ -81,10 +81,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsFullyResolved => false;
 		public override DmdTypeBase FullResolve() => GetResolvedType(throwOnError: false)?.FullResolve();
 
-		protected sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ResolvedType.CreateDeclaredFields2(reflectedType);
-		protected sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ResolvedType.CreateDeclaredMethods2(reflectedType);
-		protected sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ResolvedType.CreateDeclaredProperties2(reflectedType);
-		protected sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ResolvedType.CreateDeclaredEvents2(reflectedType);
+		public sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ResolvedType.CreateDeclaredFields(reflectedType);
+		public sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ResolvedType.CreateDeclaredMethods(reflectedType);
+		public sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ResolvedType.CreateDeclaredProperties(reflectedType);
+		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ResolvedType.CreateDeclaredEvents(reflectedType);
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => ResolvedType.ReadDeclaredInterfaces2();
 		protected override DmdType[] CreateNestedTypes() => ResolvedType.CreateNestedTypes2();

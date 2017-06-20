@@ -36,6 +36,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdAppDomain AppDomain { get; }
 
 		/// <summary>
+		/// true if this is the corlib assembly
+		/// </summary>
+		public bool IsCorLib => this == AppDomain.CorLib;
+
+		/// <summary>
 		/// Creates a qualified type name
 		/// </summary>
 		/// <param name="assemblyName">Full assembly name of the type</param>

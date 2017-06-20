@@ -42,6 +42,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract string FullyQualifiedName { get; }
 
 		/// <summary>
+		/// true if this is the corlib module
+		/// </summary>
+		public bool IsCorLib => this == AppDomain.CorLib.ManifestModule;
+
+		/// <summary>
 		/// Gets all types in this module
 		/// </summary>
 		/// <returns></returns>
@@ -88,7 +93,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				// Don't use Path.GetFileName() since fqn could contain invalid characters
 				int index = fqn.LastIndexOfAny(dirSepChars);
 				if (index >= 0)
-					return fqn.Substring(index + 1);
+					fqn = fqn.Substring(index + 1);
+				if (fqn.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase))
+					fqn = fqn.Substring(0, fqn.Length - ".ni.dll".Length) + fqn.Substring(fqn.Length - ".dll".Length);
+				else if (fqn.EndsWith(".ni.exe", StringComparison.OrdinalIgnoreCase))
+					fqn = fqn.Substring(0, fqn.Length - ".ni.exe".Length) + fqn.Substring(fqn.Length - ".exe".Length);
 				return fqn;
 			}
 		}

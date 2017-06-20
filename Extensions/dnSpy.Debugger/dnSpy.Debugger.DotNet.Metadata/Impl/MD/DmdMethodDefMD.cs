@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly DmdMethodSignature methodSignature;
 		readonly IList<DmdType> genericTypeArguments;
 
-		public DmdMethodDefMD(DmdEcma335MetadataReader reader, RawMethodRow row, uint rid, string name, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdMethodDefMD(DmdEcma335MetadataReader reader, RawMethodRow row, uint rid, string name, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			MethodImplementationFlags = (DmdMethodImplAttributes)row.ImplFlags;
 			Attributes = (DmdMethodAttributes)row.Flags;
@@ -47,7 +47,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public override DmdMethodBody GetMethodBody() => reader.GetMethodBody(this, genericTypeArguments, GetGenericArguments());
 		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => reader.GetMethodBody(this, genericTypeArguments, genericMethodArguments);
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
-		internal override DmdMethodSignature GetOriginalMethodSignature() => reader.GetOriginalMethodDefSignature(this);
 		protected override (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters() => reader.CreateParameters(this, createReturnParameter: true);
 		protected override (DmdCustomAttributeData[] cas, DmdImplMap? implMap) CreateCustomAttributes() {
 			var cas = reader.ReadCustomAttributes(MetadataToken);

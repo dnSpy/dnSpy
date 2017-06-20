@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly DmdEcma335MetadataReader reader;
 		readonly DmdMethodSignature methodSignature;
 
-		public DmdPropertyDefMD(DmdEcma335MetadataReader reader, uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdPropertyDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			var row = reader.TablesStream.ReadPropertyRow(rid);
 			Name = reader.StringsStream.ReadNoNull(row.Name);
@@ -39,11 +39,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
-		internal override DmdMethodSignature GetOriginalMethodSignature() {
-			var row = reader.TablesStream.ReadPropertyRow(Rid);
-			return reader.ReadMethodSignature(row.Type, null, null, isProperty: true);
-		}
-
 		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
 		public override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
 

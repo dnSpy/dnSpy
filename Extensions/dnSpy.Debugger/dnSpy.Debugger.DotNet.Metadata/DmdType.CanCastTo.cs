@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		bool __IsImplicitInterfaceOfSZArray(DmdType @interface) {
 			var appDomain = AppDomain;
-			if (@interface.GetGenericArguments().Count == 0 || @interface.Assembly != appDomain.CorLib)
+			if (@interface.GetGenericArguments().Count == 0 || !@interface.Assembly.IsCorLib)
 				return false;
 
 			var token = @interface.MetadataToken;
@@ -386,7 +386,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			switch (TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
 			case DmdTypeSignatureKind.GenericInstance:
-				if (Namespace == "System" && !IsNested) {
+				if (MetadataNamespace == "System" && !IsNested) {
 					switch (Name) {
 					case "Void":	if (this == AppDomain.System_Void)		return DDN.ElementType.Void; break;
 					case "Boolean":	if (this == AppDomain.System_Boolean)	return DDN.ElementType.Boolean; break;

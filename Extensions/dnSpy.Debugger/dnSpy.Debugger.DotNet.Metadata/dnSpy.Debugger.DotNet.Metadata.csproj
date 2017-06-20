@@ -64,6 +64,7 @@
     <Compile Include="DmdFieldAttributes.cs" />
     <Compile Include="DmdFieldInfo.cs" />
     <Compile Include="DmdGenericParameterAttributes.cs" />
+    <Compile Include="DmdGetAccessorOptions.cs" />
     <Compile Include="DmdImageFileMachine.cs" />
     <Compile Include="DmdImplMap.cs" />
     <Compile Include="DmdLazyMetadataBytes.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="HexUtils.cs" />
     <Compile Include="IDmdCustomAttributeProvider.cs" />
     <Compile Include="IDmdEvaluationContext.cs" />
+    <Compile Include="Impl\AccessorUtils.cs" />
     <Compile Include="Impl\AssemblyNameEqualityComparer.cs" />
     <Compile Include="Impl\COMD\DmdComMetadataReader.cs" />
     <Compile Include="Impl\DmdAppDomainControllerImpl.cs" />
@@ -161,7 +163,6 @@
     <Compile Include="Impl\DmdTypeUtilities.cs" />
     <Compile Include="Impl\LazyList.cs" />
     <Compile Include="Impl\MD\DmdConstructorDefMD.cs" />
-    <Compile Include="Impl\MD\DmdConstructorRefMD.cs" />
     <Compile Include="Impl\MD\DmdDataStreamImpl.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
     <Compile Include="Impl\MD\DmdEventDefMD.cs" />

@@ -17,15 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
-	sealed class DmdConstructorRefMD : DmdConstructorRef {
-		readonly DmdEcma335MetadataReader reader;
-
-		public DmdConstructorRefMD(DmdEcma335MetadataReader reader, DmdType declaringTypeRef, string name, DmdMethodSignature rawMethodSignature, DmdMethodSignature methodSignature) : base(declaringTypeRef, name, rawMethodSignature, methodSignature) =>
-			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
-
-		internal override DmdMethodSignature GetOriginalMethodSignature() => reader.GetOriginalMethodRefSignature(this);
+namespace dnSpy.Debugger.DotNet.Metadata.Impl {
+	static class AccessorUtils {
+		public static DmdMethodInfo FilterAccessor(DmdGetAccessorOptions options, DmdMethodInfo method) {
+			if ((options & DmdGetAccessorOptions.All) != 0)
+				return method;
+			if ((object)method == null)
+				return null;
+			if (method.IsPrivate && (object)method.DeclaringType != method.ReflectedType)
+				return null;
+			if (method.IsPublic || (options & DmdGetAccessorOptions.NonPublic) != 0)
+				return method;
+			return null;
+		}
 	}
 }

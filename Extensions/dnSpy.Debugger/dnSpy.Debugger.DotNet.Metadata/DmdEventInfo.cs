@@ -50,11 +50,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdType EventHandlerType { get; }
 
 		/// <summary>
-		/// Gets the original event handler type which contains the original generic types (Var and MVar)
-		/// </summary>
-		internal abstract DmdType GetOriginalEventHandlerType();
-
-		/// <summary>
 		/// true if it's a multi-cast delegate
 		/// </summary>
 		public bool IsMulticast {
@@ -120,28 +115,56 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="nonPublic">true to include all methods, false to only include public methods</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo[] GetOtherMethods(bool nonPublic);
+		public DmdMethodInfo[] GetOtherMethods(bool nonPublic) => GetOtherMethods(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+
+		/// <summary>
+		/// Gets 'other' methods
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdMethodInfo[] GetOtherMethods(DmdGetAccessorOptions options);
 
 		/// <summary>
 		/// Gets the add method
 		/// </summary>
 		/// <param name="nonPublic">true to return any method, false to only return a public method</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetAddMethod(bool nonPublic);
+		public DmdMethodInfo GetAddMethod(bool nonPublic) => GetAddMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+
+		/// <summary>
+		/// Gets the add method
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdMethodInfo GetAddMethod(DmdGetAccessorOptions options);
 
 		/// <summary>
 		/// Gets the remove method
 		/// </summary>
 		/// <param name="nonPublic">true to return any method, false to only return a public method</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetRemoveMethod(bool nonPublic);
+		public DmdMethodInfo GetRemoveMethod(bool nonPublic) => GetRemoveMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+
+		/// <summary>
+		/// Gets the remove method
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdMethodInfo GetRemoveMethod(DmdGetAccessorOptions options);
 
 		/// <summary>
 		/// Gets the raise method
 		/// </summary>
 		/// <param name="nonPublic">true to return any method, false to only return a public method</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetRaiseMethod(bool nonPublic);
+		public DmdMethodInfo GetRaiseMethod(bool nonPublic) => GetRaiseMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+
+		/// <summary>
+		/// Gets the raise method
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DmdMethodInfo GetRaiseMethod(DmdGetAccessorOptions options);
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdEventInfo left, DmdEventInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);

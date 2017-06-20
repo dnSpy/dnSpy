@@ -41,6 +41,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				attr |= DmdBindingFlags.Static;
 			else
 				attr |= DmdBindingFlags.Instance;
+			if ((object)method.ReflectedType != method.DeclaringType) {
+				if (method.IsStatic) {
+					if (method.IsPrivate)
+						return false;
+					attr |= DmdBindingFlags.FlattenHierarchy;
+				}
+				else {
+					if (!(method.IsVirtual || method.IsAbstract) && method.IsPrivate)
+						return false;
+				}
+			}
 			return (attr & bindingAttr) == attr;
 		}
 
@@ -54,6 +65,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				attr |= DmdBindingFlags.Static;
 			else
 				attr |= DmdBindingFlags.Instance;
+			if ((object)field.ReflectedType != field.DeclaringType) {
+				if (field.IsStatic) {
+					if (field.IsPrivate)
+						return false;
+					attr |= DmdBindingFlags.FlattenHierarchy;
+				}
+				else {
+					if (field.IsPrivate)
+						return false;
+				}
+			}
 			return (attr & bindingAttr) == attr;
 		}
 
@@ -67,6 +89,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				attr |= DmdBindingFlags.Static;
 			else
 				attr |= DmdBindingFlags.Instance;
+			if ((object)@event.ReflectedType != @event.DeclaringType) {
+				var method = @event.AddMethod;
+				if ((object)method != null) {
+					if (method.IsStatic) {
+						if (method.IsPrivate)
+							return false;
+						attr |= DmdBindingFlags.FlattenHierarchy;
+					}
+					else {
+						if (!(method.IsVirtual || method.IsAbstract) && method.IsPrivate)
+							return false;
+					}
+				}
+			}
 			return (attr & bindingAttr) == attr;
 		}
 
@@ -80,6 +116,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				attr |= DmdBindingFlags.Static;
 			else
 				attr |= DmdBindingFlags.Instance;
+			if ((object)property.ReflectedType != property.DeclaringType) {
+				var method = property.GetMethod;
+				if ((object)method != null) {
+					if (method.IsStatic) {
+						if (method.IsPrivate)
+							return false;
+						attr |= DmdBindingFlags.FlattenHierarchy;
+					}
+					else {
+						if (!(method.IsVirtual || method.IsAbstract) && method.IsPrivate)
+							return false;
+					}
+				}
+			}
 			return (attr & bindingAttr) == attr;
 		}
 
@@ -128,9 +178,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public static bool IsMatch(DmdType type, string @namespace, string name, DmdBindingFlags bindingAttr) {
+			// Namespace comparison is exact
+			if (@namespace != null && type.Namespace != @namespace)
+				return false;
 			if ((bindingAttr & DmdBindingFlags.IgnoreCase) != 0)
-				return StringComparer.OrdinalIgnoreCase.Equals(type.Name, name) && StringComparer.OrdinalIgnoreCase.Equals(type.Namespace, @namespace);
-			return StringComparer.Ordinal.Equals(type.Name, name) && StringComparer.Ordinal.Equals(type.Namespace, @namespace);
+				return StringComparer.OrdinalIgnoreCase.Equals(type.Name, name);
+			return StringComparer.Ordinal.Equals(type.Name, name);
 		}
 	}
 }

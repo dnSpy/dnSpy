@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		readonly DmdEcma335MetadataReader reader;
 
-		public DmdEventDefMD(DmdEcma335MetadataReader reader, uint rid, DmdTypeDef declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdEventDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			var row = reader.TablesStream.ReadEventRow(rid);
 			Name = reader.StringsStream.ReadNoNull(row.Name);
@@ -81,12 +81,5 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
-
-		internal override DmdType GetOriginalEventHandlerType() {
-			var row = reader.TablesStream.ReadEventRow(Rid);
-			if (!CodedToken.TypeDefOrRef.Decode(row.EventType, out uint token))
-				token = uint.MaxValue;
-			return reader.ResolveType((int)token, null, null, DmdResolveOptions.None) ?? reader.Module.AppDomain.System_Void;
-		}
 	}
 }
