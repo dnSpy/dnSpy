@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (name == null)
 				return string.Empty;
 
-			var sb = new StringBuilder();
+			var sb = ObjectPools.AllocStringBuilder();
 
 			foreach (var c in name) {
 				if (c == ',' || c == '=')
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if ((attributes & DmdAssemblyNameFlags.ContentType_Mask) == DmdAssemblyNameFlags.ContentType_WindowsRuntime)
 				sb.Append(", ContentType=WindowsRuntime");
 
-			return sb.ToString();
+			return ObjectPools.FreeAndToString(ref sb);
 		}
 
 		static void WritHex(StringBuilder sb, byte[] bytes, bool upper) {

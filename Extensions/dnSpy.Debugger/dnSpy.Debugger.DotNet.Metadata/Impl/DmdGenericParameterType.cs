@@ -110,13 +110,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdTypeBase FullResolve() => this;
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() {
-			var list = new List<DmdType>();
+			var list = ObjectPools.AllocListOfType();
 			foreach (var gpcType in GetGenericParameterConstraints()) {
 				if (gpcType.IsInterface)
 					list.Add(gpcType);
 				list.AddRange(gpcType.GetInterfaces());
 			}
-			return list.ToArray();
+			return ObjectPools.FreeAndToArray(ref list);
 		}
 	}
 }

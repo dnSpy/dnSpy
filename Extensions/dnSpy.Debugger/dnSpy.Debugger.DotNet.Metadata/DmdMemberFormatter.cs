@@ -26,20 +26,6 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	struct DmdMemberFormatter : IDisposable {
-		static class StringBuilderPool {
-			const int MAX_LEN = 0x200;
-			static StringBuilder sb;
-			public static StringBuilder Alloc() => Interlocked.Exchange(ref sb, null) ?? new StringBuilder();
-			public static void Return(ref StringBuilder builder) {
-				var returnedBuilder = builder;
-				builder = null;
-				if (returnedBuilder.Capacity <= MAX_LEN) {
-					returnedBuilder.Clear();
-					sb = returnedBuilder;
-				}
-			}
-		}
-
 		readonly GlobalFlags globalFlags;
 		StringBuilder writer;
 		const int MAX_RECURSION_COUNT = 100;
@@ -54,12 +40,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		DmdMemberFormatter(GlobalFlags flags) {
 			globalFlags = flags;
-			writer = StringBuilderPool.Alloc();
+			writer = ObjectPools.AllocStringBuilder();
 			recursionCounter = 0;
 			seenGenericType = false;
 		}
 
-		public void Dispose() => StringBuilderPool.Return(ref writer);
+		public void Dispose() => ObjectPools.FreeNoToString(ref writer);
 
 		bool IncrementRecursionCounter() {
 			if (recursionCounter >= MAX_RECURSION_COUNT)

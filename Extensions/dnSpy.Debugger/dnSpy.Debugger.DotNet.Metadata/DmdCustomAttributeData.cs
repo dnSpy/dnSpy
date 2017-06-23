@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			var sb = new StringBuilder();
+			var sb = ObjectPools.AllocStringBuilder();
 			sb.Append('[');
 			sb.Append(AttributeType.FullName);
 			sb.Append('(');
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				sb.Append(arg.ToString());
 			}
 			sb.Append(")]");
-			return sb.ToString();
+			return ObjectPools.FreeAndToString(ref sb);
 		}
 	}
 
@@ -161,7 +161,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (ArgumentType.IsArray) {
 				var list = (IList<DmdCustomAttributeTypedArgument>)Value;
 				var elementType = ArgumentType.GetElementType();
-				var sb = new StringBuilder();
+				var sb = ObjectPools.AllocStringBuilder();
 				sb.Append("new ");
 				sb.Append(elementType.IsEnum ? elementType.FullName : elementType.Name);
 				sb.Append('[');
@@ -173,7 +173,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					sb.Append(list[i].ToString(elementType != elementType.AppDomain.System_Object));
 				}
 				sb.Append(" }");
-				return sb.ToString();
+				return ObjectPools.FreeAndToString(ref sb);
 			}
 			return typed ? Value.ToString() : "(" + ArgumentType.Name + ")" + Value.ToString();
 		}

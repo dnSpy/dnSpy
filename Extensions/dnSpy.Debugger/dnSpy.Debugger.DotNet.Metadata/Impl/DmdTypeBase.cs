@@ -330,12 +330,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var nestedTypes = NestedTypes;
 			if (nestedTypes.Count == 0)
 				return Array.Empty<DmdType>();
-			var list = new List<DmdType>(nestedTypes.Count);
+			var list = ObjectPools.AllocListOfType();
 			foreach (var type in nestedTypes) {
 				if (DmdMemberInfoComparer.IsMatch(type, bindingAttr))
 					list.Add(type);
 			}
-			return list.ToArray();
+			return ObjectPools.FreeAndToArray(ref list);
 		}
 
 		public sealed override DmdType GetNestedType(string fullName, DmdBindingFlags bindingAttr) {
@@ -386,10 +386,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract IList<DmdType> ReadDeclaredInterfaces();
 
 		static DmdType[] CreateInterfaces(DmdTypeBase type) {
-			//TODO: Pool these?
-			var list = new List<DmdType>();
-			var hash = new HashSet<DmdType>(DmdMemberInfoEqualityComparer.DefaultType);
-			var stack = new Stack<IEnumerator<DmdType>>();
+			var list = ObjectPools.AllocListOfType();
+			var hash = ObjectPools.AllocHashSetOfType();
+			var stack = ObjectPools.AllocStackOfIEnumeratorOfType();
 
 			IEnumerator<DmdType> tmpEnum = null;
 			try {
@@ -427,8 +426,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				while (stack.Count > 0)
 					stack.Pop().Dispose();
 			}
-
-			return list.ToArray();
+			var res = ObjectPools.FreeAndToArray(ref list);
+			ObjectPools.Free(ref hash);
+			ObjectPools.Free(ref stack);
+			return res;
 		}
 
 		public sealed override DmdMemberInfo[] GetDefaultMembers() {

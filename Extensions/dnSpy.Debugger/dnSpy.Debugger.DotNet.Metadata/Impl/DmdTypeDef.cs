@@ -61,10 +61,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (TIAHelper.IsTypeDefEquivalent(this))
 				return true;
 
-			foreach (var ifaceType in GetAllInterfaces(this)) {
-				if (ifaceType.HasTypeEquivalence)
+			var hash = GetAllInterfaces(this);
+			foreach (var ifaceType in hash) {
+				if (ifaceType.HasTypeEquivalence) {
+					ObjectPools.Free(ref hash);
 					return true;
+				}
 			}
+			ObjectPools.Free(ref hash);
 
 			return false;
 		}

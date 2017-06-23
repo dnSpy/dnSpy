@@ -295,12 +295,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		string ReadId(bool ignoreWhiteSpace) {
 			SkipWhite();
-			var sb = new StringBuilder();
+			var sb = ObjectPools.AllocStringBuilder();
 			int c;
 			while ((c = GetIdChar(ignoreWhiteSpace)) != -1)
 				sb.Append((char)c);
 			Verify(sb.Length > 0, "Expected an id");
-			return sb.ToString();
+			return ObjectPools.FreeAndToString(ref sb);
 		}
 
 		int PeekChar() => reader.Peek();
@@ -578,11 +578,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		string ReadAssemblyNameId() {
 			SkipWhite();
-			var sb = new StringBuilder();
+			var sb = ObjectPools.AllocStringBuilder();
 			int c;
 			while ((c = GetAsmNameChar()) != -1)
 				sb.Append((char)c);
-			var name = sb.ToString().Trim();
+			var name = ObjectPools.FreeAndToString(ref sb).Trim();
 			Verify(name.Length > 0, "Expected an assembly name");
 			return name;
 		}

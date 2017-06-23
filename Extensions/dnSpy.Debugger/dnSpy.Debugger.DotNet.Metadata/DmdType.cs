@@ -1280,9 +1280,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool CanCastTo(Type target) => CanCastTo(DmdTypeUtilities.ToDmdType(target, AppDomain));
 
 		internal static HashSet<DmdType> GetAllInterfaces(DmdType type) {
-			//TODO: Pool these?
-			var hash = new HashSet<DmdType>(DmdMemberInfoEqualityComparer.DefaultType);
-			var stack = new Stack<DmdType>();
+			var hash = ObjectPools.AllocHashSetOfType();
+			var stack = ObjectPools.AllocStackOfType();
 			stack.Push(type);
 			while (stack.Count > 0) {
 				type = stack.Pop();
@@ -1297,6 +1296,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 						break;
 				}
 			}
+			ObjectPools.Free(ref stack);
+			// Callers free the hash
 			return hash;
 		}
 

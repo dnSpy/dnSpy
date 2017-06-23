@@ -843,7 +843,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						Debug.Assert(assemblies.Count != 0, "CorLib hasn't been loaded yet!");
 						if (assemblies.Count == 0)
 							return Array.Empty<DmdType>();
-						var list = new List<DmdType>(possibleWellKnownSZArrayInterfaces.Length);
+						var list = ObjectPools.AllocListOfType();
 						foreach (var wellKnownType in possibleWellKnownSZArrayInterfaces) {
 							// These interfaces should only be in corlib since the CLR needs them.
 							// They're not always present so if we fail to find a type in the corlib, we don't
@@ -852,7 +852,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							if ((object)iface != null)
 								list.Add(iface);
 						}
-						defaultExistingWellKnownSZArrayInterfaces = ifaces = list.ToArray();
+						defaultExistingWellKnownSZArrayInterfaces = ifaces = ObjectPools.FreeAndToArray(ref list);
 						// We don't support debugging CLR 1.x so this should contain at least IList<T>
 						Debug.Assert(defaultExistingWellKnownSZArrayInterfaces.Length >= 1);
 					}

@@ -473,10 +473,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (__CanCastByVarianceToInterfaceOrDelegate(target))
 					return true;
 
-				foreach (var iface in GetAllInterfaces(this)) {
-					if (iface.__CanCastByVarianceToInterfaceOrDelegate(target))
+				var hash = GetAllInterfaces(this);
+				foreach (var iface in hash) {
+					if (iface.__CanCastByVarianceToInterfaceOrDelegate(target)) {
+						ObjectPools.Free(ref hash);
 						return true;
+					}
 				}
+				ObjectPools.Free(ref hash);
 			}
 			return false;
 		}
