@@ -174,6 +174,24 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return list.ToArray();
 		}
 
+		public override DmdType[] GetForwardedTypes() {
+			var exportedTypes = metadataReader.GetExportedTypes();
+			if (exportedTypes.Length == 0)
+				return Array.Empty<DmdType>();
+			var res = new DmdType[exportedTypes.Length];
+			int w = 0;
+			foreach (var type in exportedTypes) {
+				if (IsTypeForwarder(type))
+					res[w++] = type;
+			}
+			if (res.Length != w) {
+				if (w == 0)
+					return Array.Empty<DmdType>();
+				Array.Resize(ref res, w);
+			}
+			return res;
+		}
+
 		static bool IsTypeForwarder(DmdType type) {
 			var nonNested = DmdTypeUtilities.GetNonNestedType(type);
 			if ((object)nonNested == null)

@@ -167,6 +167,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdType[] GetExportedTypes();
 
 		/// <summary>
+		/// Gets all forwarded types (types that now exist in another assembly)
+		/// </summary>
+		/// <returns></returns>
+		public abstract DmdType[] GetForwardedTypes();
+
+		/// <summary>
 		/// Gets all types in this assembly
 		/// </summary>
 		/// <returns></returns>
