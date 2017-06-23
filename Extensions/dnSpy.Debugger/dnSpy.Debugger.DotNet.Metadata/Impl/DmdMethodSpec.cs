@@ -47,7 +47,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		internal override DmdMethodInfo GetParentDefinition() => genericMethodDefinition.GetParentDefinition();
 		public override ReadOnlyCollection<DmdType> GetGenericArguments() => genericArguments;
-		public override DmdMethodInfo GetGenericMethodDefinition() => genericMethodDefinition;
+		public override DmdMethodInfo GetGenericMethodDefinition() {
+			var method = genericMethodDefinition;
+			if ((object)method.ReflectedType == method.DeclaringType)
+				return method;
+			return method.DeclaringType.GetMethod(method.MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
+		}
 		public override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);
 		public override DmdMethodBody GetMethodBody() => genericMethodDefinition.GetMethodBody(genericArguments);
 		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => genericMethodDefinition.GetMethodBody(genericMethodArguments);

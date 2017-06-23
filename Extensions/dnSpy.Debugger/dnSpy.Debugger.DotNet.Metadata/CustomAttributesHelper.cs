@@ -361,18 +361,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					if ((object)charSetType == null || (object)callingConventionType == null || (object)caType == null)
 						ctor = null;
 					else {
-						var sig = new DmdType[9] {
-							appDomain.System_String,
-							appDomain.System_String,
-							charSetType,
-							appDomain.System_Boolean,
-							appDomain.System_Boolean,
-							appDomain.System_Boolean,
-							callingConventionType,
-							appDomain.System_Boolean,
-							appDomain.System_Boolean,
-						};
-						ctor = caType.GetConstructor(DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance, sig);
+						ctor = caType.GetConstructor(DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance, new[] { appDomain.System_String });
 						Debug.Assert((object)ctor != null);
 					}
 				}
@@ -409,18 +398,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				default:										callingConvention = CallingConvention.Cdecl; break;
 				}
 
-				var ctorArgs = new DmdCustomAttributeTypedArgument[9] {
-					new DmdCustomAttributeTypedArgument(appDomain.System_String, im.Module),
-					new DmdCustomAttributeTypedArgument(appDomain.System_String, im.Name),
-					new DmdCustomAttributeTypedArgument(charSetType, (int)charSet),
-					new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.NoMangle) != 0),
-					new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.SupportsLastError) != 0),
-					new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, method.IsPreserveSig),
-					new DmdCustomAttributeTypedArgument(callingConventionType, (int)callingConvention),
-					new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.BestFitMask) == DmdPInvokeAttributes.BestFitEnabled),
-					new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.ThrowOnUnmappableCharMask) == DmdPInvokeAttributes.ThrowOnUnmappableCharEnabled),
+				var ctorArgs = new[] { new DmdCustomAttributeTypedArgument(appDomain.System_String, im.Module) };
+				var type = ctor.ReflectedType;
+				var namedArgs = new DmdCustomAttributeNamedArgument[8] {
+					new DmdCustomAttributeNamedArgument(type.GetField("EntryPoint"), new DmdCustomAttributeTypedArgument(appDomain.System_String, im.Name)),
+					new DmdCustomAttributeNamedArgument(type.GetField("CharSet"), new DmdCustomAttributeTypedArgument(charSetType, (int)charSet)),
+					new DmdCustomAttributeNamedArgument(type.GetField("ExactSpelling"), new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.NoMangle) != 0)),
+					new DmdCustomAttributeNamedArgument(type.GetField("SetLastError"), new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.SupportsLastError) != 0)),
+					new DmdCustomAttributeNamedArgument(type.GetField("PreserveSig"), new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, method.IsPreserveSig)),
+					new DmdCustomAttributeNamedArgument(type.GetField("CallingConvention"), new DmdCustomAttributeTypedArgument(callingConventionType, (int)callingConvention)),
+					new DmdCustomAttributeNamedArgument(type.GetField("BestFitMapping"), new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.BestFitMask) == DmdPInvokeAttributes.BestFitEnabled)),
+					new DmdCustomAttributeNamedArgument(type.GetField("ThrowOnUnmappableChar"), new DmdCustomAttributeTypedArgument(appDomain.System_Boolean, (attributes & DmdPInvokeAttributes.ThrowOnUnmappableCharMask) == DmdPInvokeAttributes.ThrowOnUnmappableCharEnabled)),
 				};
-				destination[index++] = new DmdCustomAttributeData(ctor, ctorArgs, null, isPseudoCustomAttribute: true);
+				destination[index++] = new DmdCustomAttributeData(ctor, ctorArgs, namedArgs, isPseudoCustomAttribute: true);
 			}
 		}
 

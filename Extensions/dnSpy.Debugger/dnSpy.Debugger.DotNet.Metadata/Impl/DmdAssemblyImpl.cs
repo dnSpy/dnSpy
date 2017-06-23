@@ -112,14 +112,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdAssemblyName GetName() {
 			if (asmName == null) {
 				var newAsmName = metadataReader.GetName();
-				newAsmName.Flags |= DmdAssemblyNameFlags.PublicKey;
+				newAsmName.RawFlags |= DmdAssemblyNameFlags.PublicKey;
 				if (metadataReader.MDStreamVersion >= 0x00010000) {
 					metadataReader.GetPEKind(out var peKind, out var machine);
-					if ((newAsmName.Flags & DmdAssemblyNameFlags.PA_FullMask) == DmdAssemblyNameFlags.PA_NoPlatform)
-						newAsmName.Flags = (newAsmName.Flags & ~DmdAssemblyNameFlags.PA_FullMask) | DmdAssemblyNameFlags.PA_None;
+					if ((newAsmName.RawFlags & DmdAssemblyNameFlags.PA_FullMask) == DmdAssemblyNameFlags.PA_NoPlatform)
+						newAsmName.RawFlags = (newAsmName.RawFlags & ~DmdAssemblyNameFlags.PA_FullMask) | DmdAssemblyNameFlags.PA_None;
 					else
-						newAsmName.Flags = (newAsmName.Flags & ~DmdAssemblyNameFlags.PA_FullMask) | GetProcessorArchitecture(peKind, machine);
+						newAsmName.RawFlags = (newAsmName.RawFlags & ~DmdAssemblyNameFlags.PA_FullMask) | GetProcessorArchitecture(peKind, machine);
 				}
+				// PERF: Make sure the public key token is created once so it doesn't have to be recreated
+				// for each caller.
+				newAsmName.GetPublicKeyToken();
 				asmName = newAsmName;
 			}
 			return asmName.Clone();

@@ -94,7 +94,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal DmdMethodInfo SetParentDefinition(DmdMethodInfo method) => parentDefinition = method;
 		DmdMethodInfo parentDefinition;
 
-		public sealed override DmdMethodInfo GetGenericMethodDefinition() => IsGenericMethodDefinition ? this : throw new InvalidOperationException();
+		public sealed override DmdMethodInfo GetGenericMethodDefinition() {
+			if (!IsGenericMethodDefinition)
+				throw new InvalidOperationException();
+			if ((object)ReflectedType == DeclaringType)
+				return this;
+			return DeclaringType.GetMethod(MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
+		}
+
 		public sealed override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);
 
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {

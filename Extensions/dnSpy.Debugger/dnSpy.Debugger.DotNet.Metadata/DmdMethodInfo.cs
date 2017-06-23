@@ -112,7 +112,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var parentMethod = method.GetParentDefinition();
 				if ((object)parentMethod == null) {
 					Debug.Assert((object)ReflectedType == method.ReflectedType);
-					return method;
+					if ((object)method.DeclaringType == method.ReflectedType)
+						return method;
+					return method.DeclaringType.GetMethod(method.MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
 				}
 				method = parentMethod;
 			}

@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => ResolvedMethod.GetCustomAttributesData();
 		public override DmdParameterInfo ReturnParameter => ResolvedMethod.ReturnParameter;
 		internal override DmdMethodInfo GetParentDefinition() => ResolvedMethod.GetParentDefinition();
-		public override DmdMethodInfo GetGenericMethodDefinition() => methodSignature.GenericParameterCount == 0 ? throw new InvalidOperationException() : (DmdMethodInfo)__resolvedMethod_DONT_USE ?? this;
+		public override DmdMethodInfo GetGenericMethodDefinition() => methodSignature.GenericParameterCount == 0 ? throw new InvalidOperationException() : ResolvedMethod.GetGenericMethodDefinition();
 		public override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);
 	}
 }

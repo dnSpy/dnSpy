@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		const int HASHCODE_MAGIC_ET_PTR = 1976400808;
 		const int HASHCODE_MAGIC_ET_FNPTR = 68439620;
 
-		readonly DmdSigComparerOptions options;
+		DmdSigComparerOptions options;
 		const int MAX_RECURSION_COUNT = 100;
 		int recursionCounter;
 
@@ -223,8 +223,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 				case DmdTypeSignatureKind.MethodGenericParameter:
 					result = a.GenericParameterPosition == b.GenericParameterPosition;
-					if (result && CompareGenericParameterDeclaringMember)
+					if (result && CompareGenericParameterDeclaringMember) {
+						options &= ~DmdSigComparerOptions.CompareGenericParameterDeclaringMember;
 						result = Equals(a.DeclaringMethod, b.DeclaringMethod);
+						options |= DmdSigComparerOptions.CompareGenericParameterDeclaringMember;
+					}
 					break;
 
 				case DmdTypeSignatureKind.MDArray:
@@ -351,7 +354,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			// We do not compare the version number. The runtime can redirect an assembly
 			// reference from a requested version to any other version.
 			const DmdAssemblyNameFlags flagsMask = DmdAssemblyNameFlags.ContentType_Mask;
-			return (a.Flags & flagsMask) == (b.Flags & flagsMask) &&
+			return (a.RawFlags & flagsMask) == (b.RawFlags & flagsMask) &&
 				StringComparer.OrdinalIgnoreCase.Equals(a.Name, b.Name) &&
 				StringComparer.OrdinalIgnoreCase.Equals(a.CultureName, b.CultureName) &&
 				Equals(a.GetPublicKeyToken(), b.GetPublicKeyToken());
@@ -578,8 +581,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			case DmdTypeSignatureKind.MethodGenericParameter:
 				hc ^= HASHCODE_MAGIC_ET_MVAR ^ a.GenericParameterPosition;
-				if (CompareGenericParameterDeclaringMember)
+				if (CompareGenericParameterDeclaringMember) {
+					options &= ~DmdSigComparerOptions.CompareGenericParameterDeclaringMember;
 					hc ^= GetHashCode(a.DeclaringMethod);
+					options |= DmdSigComparerOptions.CompareGenericParameterDeclaringMember;
+				}
 				break;
 
 			case DmdTypeSignatureKind.MDArray:

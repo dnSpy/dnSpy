@@ -778,7 +778,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				overriddenHash = new HashSet<Key>(EqualityComparer.Instance);
 				hiddenProperties = new List<DmdPropertyInfo>();
 				foreach (var property in owner.DeclaredProperties) {
-					if (IsOverridable(property, out var isNewSlot, out _) && !isNewSlot) {
+					if (IsOverridable(property, out _, out _)) {
 						var key = new Key(property.Name, property.GetMethodSignature());
 						overriddenHash.Add(key);
 					}
@@ -792,14 +792,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 				foreach (var property in properties) {
 					bool hide;
-					if (IsOverridable(property, out var isNewSlot, out bool isAccessible)) {
+					if (IsOverridable(property, out _, out bool isAccessible)) {
 						var key = new Key(property.Name, property.GetMethodSignature());
 						if (!isAccessible) {
 							overriddenHash.Remove(key);
 							hide = true;
 						}
-						else if (isNewSlot)
-							hide = overriddenHash.Remove(key);
 						else
 							hide = !overriddenHash.Add(key);
 					}
@@ -877,7 +875,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				overriddenHash = new HashSet<Key>(EqualityComparer.Instance);
 				hiddenEvents = new List<DmdEventInfo>();
 				foreach (var @event in owner.DeclaredEvents) {
-					if (IsOverridable(@event, out var isNewSlot, out _) && !isNewSlot) {
+					if (IsOverridable(@event, out _, out _)) {
 						var key = new Key(@event.Name, @event.EventHandlerType);
 						overriddenHash.Add(key);
 					}
@@ -891,14 +889,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 				foreach (var @event in events) {
 					bool hide;
-					if (IsOverridable(@event, out var isNewSlot, out bool isAccessible)) {
+					if (IsOverridable(@event, out _, out bool isAccessible)) {
 						var key = new Key(@event.Name, @event.EventHandlerType);
 						if (!isAccessible) {
 							overriddenHash.Remove(key);
 							hide = true;
 						}
-						else if (isNewSlot)
-							hide = overriddenHash.Remove(key);
 						else
 							hide = !overriddenHash.Add(key);
 					}

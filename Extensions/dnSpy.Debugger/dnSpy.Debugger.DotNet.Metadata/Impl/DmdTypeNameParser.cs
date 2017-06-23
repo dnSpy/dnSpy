@@ -535,16 +535,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 				case "CONTENTTYPE":
 					if (StringComparer.OrdinalIgnoreCase.Equals(value, "WindowsRuntime"))
-						asmName.Flags = (asmName.Flags & ~DmdAssemblyNameFlags.ContentType_Mask) | DmdAssemblyNameFlags.ContentType_WindowsRuntime;
+						asmName.RawFlags = (asmName.RawFlags & ~DmdAssemblyNameFlags.ContentType_Mask) | DmdAssemblyNameFlags.ContentType_WindowsRuntime;
 					else
-						asmName.Flags = (asmName.Flags & ~DmdAssemblyNameFlags.ContentType_Mask) | DmdAssemblyNameFlags.ContentType_Default;
+						asmName.RawFlags = (asmName.RawFlags & ~DmdAssemblyNameFlags.ContentType_Mask) | DmdAssemblyNameFlags.ContentType_Default;
 					break;
 
 				case "RETARGETABLE":
 					if (StringComparer.OrdinalIgnoreCase.Equals(value, "Yes"))
-						asmName.Flags |= DmdAssemblyNameFlags.Retargetable;
+						asmName.RawFlags |= DmdAssemblyNameFlags.Retargetable;
 					else
-						asmName.Flags &= ~DmdAssemblyNameFlags.Retargetable;
+						asmName.RawFlags &= ~DmdAssemblyNameFlags.Retargetable;
 					break;
 
 				case "PUBLICKEY":

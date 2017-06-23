@@ -146,12 +146,26 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Filter offset
 		/// </summary>
-		public int FilterOffset { get; }
+		public int FilterOffset {
+			get {
+				if (Flags != DmdExceptionHandlingClauseOptions.Filter)
+					throw new InvalidOperationException();
+				return filterOffset;
+			}
+		}
+		readonly int filterOffset;
 
 		/// <summary>
 		/// Catch type
 		/// </summary>
-		public DmdType CatchType { get; }
+		public DmdType CatchType {
+			get {
+				if (Flags != DmdExceptionHandlingClauseOptions.Clause)
+					throw new InvalidOperationException();
+				return catchType;
+			}
+		}
+		readonly DmdType catchType;
 
 		/// <summary>
 		/// Constructor
@@ -169,8 +183,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			TryLength = tryLength;
 			HandlerOffset = handlerOffset;
 			HandlerLength = handlerLength;
-			FilterOffset = filterOffset;
-			CatchType = catchType;
+			this.filterOffset = filterOffset;
+			this.catchType = catchType;
 		}
 
 		/// <summary>

@@ -104,7 +104,25 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			int numNamedArgs = reader.Position == reader.Length ? 0 : reader.ReadUInt16();
 			var namedArgs = ReadNamedArguments(numNamedArgs);
 
+			// Match reflection named argument order: fields before properties,
+			// and order of fields/properties is identical to the order returned
+			// by GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) and
+			// GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).
+			Array.Sort(namedArgs, ReflectionNamedArgumentComparer);
+
 			return new DmdCustomAttributeData(ctor, ctorArgs, namedArgs, isPseudoCustomAttribute: false);
+		}
+
+		int ReflectionNamedArgumentComparer(DmdCustomAttributeNamedArgument x, DmdCustomAttributeNamedArgument y) {
+			bool xf = x.IsField;
+			bool yf = y.IsField;
+			if (xf != yf)
+				return xf ? -1 : 1;
+
+			// It's a good approximation of the order returned by GetFields()/GetProperties().
+			// It will fail if it uses two fields/props from different classes, eg. a declared
+			// field and a field in a base class.
+			return x.MemberInfo.MetadataToken - y.MemberInfo.MetadataToken;
 		}
 
 		DmdCustomAttributeNamedArgument[] ReadNamedArguments(int numNamedArgs) {

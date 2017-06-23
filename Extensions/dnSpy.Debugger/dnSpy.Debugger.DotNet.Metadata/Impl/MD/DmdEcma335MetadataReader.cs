@@ -550,7 +550,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			name.CultureName = StringsStream.ReadNoNull(row.Locale);
 			name.HashAlgorithm = (DmdAssemblyHashAlgorithm)row.HashAlgId;
 			name.SetPublicKey(BlobStream.ReadNoNull(row.PublicKey));
-			name.Flags = (DmdAssemblyNameFlags)row.Flags;
+			name.RawFlags = (DmdAssemblyNameFlags)row.Flags;
 			return name;
 		}
 
@@ -577,7 +577,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				else
 					asmName.SetPublicKeyToken(bytes);
 			}
-			asmName.Flags = (DmdAssemblyNameFlags)row.Flags;
+			asmName.RawFlags = (DmdAssemblyNameFlags)row.Flags;
 			return asmName;
 		}
 

@@ -43,17 +43,31 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets/sets the flags
 		/// </summary>
-		public DmdAssemblyNameFlags Flags { get; set; }
+		public DmdAssemblyNameFlags RawFlags { get; set; }
 
 		/// <summary>
-		/// Gets the processor architecture
+		/// Gets/sets the flags. The content type and processor architecture bits are ignored, use <see cref="RawFlags"/> instead
 		/// </summary>
-		public DmdProcessorArchitecture ProcessorArchitecture => (DmdProcessorArchitecture)((int)(Flags & DmdAssemblyNameFlags.PA_Mask) >> 4);
+		public DmdAssemblyNameFlags Flags {
+			get => RawFlags & ~(DmdAssemblyNameFlags.ContentType_Mask | DmdAssemblyNameFlags.PA_FullMask);
+			set => RawFlags = (RawFlags & (DmdAssemblyNameFlags.ContentType_Mask | DmdAssemblyNameFlags.PA_FullMask)) | (value & ~(DmdAssemblyNameFlags.ContentType_Mask | DmdAssemblyNameFlags.PA_FullMask));
+		}
 
 		/// <summary>
-		/// Gets the content type
+		/// Gets/sets the processor architecture
 		/// </summary>
-		public DmdAssemblyContentType ContentType => (DmdAssemblyContentType)((int)(Flags & DmdAssemblyNameFlags.ContentType_Mask) >> 9);
+		public DmdProcessorArchitecture ProcessorArchitecture {
+			get => (DmdProcessorArchitecture)((int)(RawFlags & DmdAssemblyNameFlags.PA_Mask) >> 4);
+			set => RawFlags = (RawFlags & ~DmdAssemblyNameFlags.PA_FullMask) | ((DmdAssemblyNameFlags)((int)value << 4) & DmdAssemblyNameFlags.PA_Mask);
+		}
+
+		/// <summary>
+		/// Gets/sets the content type
+		/// </summary>
+		public DmdAssemblyContentType ContentType {
+			get => (DmdAssemblyContentType)((int)(RawFlags & DmdAssemblyNameFlags.ContentType_Mask) >> 9);
+			set => RawFlags = (RawFlags & ~DmdAssemblyNameFlags.ContentType_Mask) | ((DmdAssemblyNameFlags)((int)value << 9) & DmdAssemblyNameFlags.ContentType_Mask);
+		}
 
 		/// <summary>
 		/// Gets the public key
@@ -69,9 +83,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public void SetPublicKey(byte[] publicKey) {
 			this.publicKey = publicKey;
 			if (publicKey == null)
-				Flags &= ~DmdAssemblyNameFlags.PublicKey;
+				RawFlags &= ~DmdAssemblyNameFlags.PublicKey;
 			else
-				Flags |= DmdAssemblyNameFlags.PublicKey;
+				RawFlags |= DmdAssemblyNameFlags.PublicKey;
 		}
 
 		/// <summary>
@@ -103,7 +117,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the full assembly name
 		/// </summary>
-		public string FullName => DmdAssemblyNameFormatter.Format(Name, Version, CultureName, GetPublicKeyToken(), Flags, isPublicKeyToken: true);
+		public string FullName => DmdAssemblyNameFormatter.Format(Name, Version, CultureName, GetPublicKeyToken(), RawFlags, isPublicKeyToken: true);
 
 		/// <summary>
 		/// Gets the full assembly name
@@ -116,14 +130,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public DmdAssemblyName() {
 			HashAlgorithm = DmdAssemblyHashAlgorithm.None;
-			Flags = DmdAssemblyNameFlags.None;
+			RawFlags = DmdAssemblyNameFlags.None;
 		}
 
 		DmdAssemblyName(DmdAssemblyName other) {
 			Name = other.Name;
 			Version = other.Version;
 			CultureName = other.CultureName;
-			Flags = other.Flags;
+			RawFlags = other.RawFlags;
 			HashAlgorithm = other.HashAlgorithm;
 			publicKey = CloneArray(other.publicKey);
 			publicKeyToken = CloneArray(other.publicKeyToken);

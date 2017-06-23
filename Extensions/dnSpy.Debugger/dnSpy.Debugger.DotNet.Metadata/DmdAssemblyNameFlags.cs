@@ -24,7 +24,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// Assembly name flags
 	/// </summary>
 	[Flags]
-	public enum DmdAssemblyNameFlags : uint {
+	public enum DmdAssemblyNameFlags {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		None						= 0,
 		PublicKey					= 1,
