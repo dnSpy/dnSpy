@@ -70,5 +70,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdAssemblyName GetName() => MetadataReader.GetName();
 		public override DmdAssemblyName[] GetReferencedAssemblies() => MetadataReader.GetReferencedAssemblies();
 		public override DmdCustomAttributeData[] ReadCustomAttributes(int metadataToken) => MetadataReader.ReadCustomAttributes(metadataToken);
+		public override DmdCustomAttributeData[] ReadSecurityAttributes(int metadataToken) => MetadataReader.ReadSecurityAttributes(metadataToken);
 	}
 }

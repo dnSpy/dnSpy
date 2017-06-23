@@ -224,7 +224,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract override DmdType[] CreateNestedTypes();
 		internal DmdType[] CreateNestedTypes2() => CreateNestedTypes();
 
-		protected abstract override DmdCustomAttributeData[] CreateCustomAttributes();
-		internal DmdCustomAttributeData[] CreateCustomAttributes2() => CreateCustomAttributes();
+		public abstract override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes();
 	}
 }

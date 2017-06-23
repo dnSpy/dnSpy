@@ -130,7 +130,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected override DmdType[] CreateNestedTypes() => CreateNestedTypes2();
 		internal DmdType[] CreateNestedTypes2() => genericTypeDefinition.CreateNestedTypes2();
 
-		protected override DmdCustomAttributeData[] CreateCustomAttributes() => CreateCustomAttributes2();
-		internal DmdCustomAttributeData[] CreateCustomAttributes2() => genericTypeDefinition.CreateCustomAttributes2();
+		public override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => genericTypeDefinition.CreateCustomAttributes();
 	}
 }

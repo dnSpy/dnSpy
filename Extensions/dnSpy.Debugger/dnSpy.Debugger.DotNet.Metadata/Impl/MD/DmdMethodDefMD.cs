@@ -48,8 +48,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => reader.GetMethodBody(this, genericTypeArguments, genericMethodArguments);
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		protected override (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters() => reader.CreateParameters(this, createReturnParameter: true);
-		protected override (DmdCustomAttributeData[] cas, DmdImplMap? implMap) CreateCustomAttributes() {
+		protected override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas, DmdImplMap? implMap) CreateCustomAttributes() {
 			var cas = reader.ReadCustomAttributes(MetadataToken);
+			var sas = reader.ReadSecurityAttributes(MetadataToken);
 			DmdImplMap? implMap;
 			if (IsPinvokeImpl) {
 				var row = reader.TablesStream.ReadImplMapRow(reader.Metadata.GetImplMapRid(Table.Method, Rid));
@@ -64,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 			else
 				implMap = null;
-			return (cas, implMap);
+			return (cas, sas, implMap);
 		}
 
 		internal override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) {

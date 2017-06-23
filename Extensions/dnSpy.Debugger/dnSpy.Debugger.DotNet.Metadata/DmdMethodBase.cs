@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Base class of .NET methods
 	/// </summary>
-	public abstract class DmdMethodBase : DmdMemberInfo, IEquatable<DmdMethodBase> {
+	public abstract class DmdMethodBase : DmdMemberInfo, IDmdSecurityAttributeProvider, IEquatable<DmdMethodBase> {
 		/// <summary>
 		/// Gets the method kind
 		/// </summary>
@@ -186,6 +186,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments</param>
 		/// <returns></returns>
 		public DmdMethodSignature GetMethodSignature(IList<Type> genericMethodArguments) => GetMethodSignature(genericMethodArguments.ToDmdType(AppDomain));
+
+		/// <summary>
+		/// Gets the security attributes
+		/// </summary>
+		/// <returns></returns>
+		public abstract override IList<DmdCustomAttributeData> GetSecurityAttributesData();
 
 		/// <summary>
 		/// Calls the method

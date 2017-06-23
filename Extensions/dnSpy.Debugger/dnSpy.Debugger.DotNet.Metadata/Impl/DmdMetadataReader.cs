@@ -39,5 +39,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract DmdAssemblyName GetName();
 		public abstract DmdAssemblyName[] GetReferencedAssemblies();
 		public abstract DmdCustomAttributeData[] ReadCustomAttributes(int metadataToken);
+		public abstract DmdCustomAttributeData[] ReadSecurityAttributes(int metadataToken);
 	}
 }

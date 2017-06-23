@@ -48,6 +48,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => reader.GetMethodBody(this, genericTypeArguments, genericMethodArguments);
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		protected override DmdParameterInfo[] CreateParameters() => reader.CreateParameters(this, createReturnParameter: false).parameters;
-		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
+
+		protected override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() {
+			var cas = reader.ReadCustomAttributes(MetadataToken);
+			var sas = reader.ReadSecurityAttributes(MetadataToken);
+			return (cas, sas);
+		}
 	}
 }

@@ -464,17 +464,30 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			var f = ExtraFields;
+			if (f.__customAttributes_DONT_USE == null)
+				InitializeCustomAttributes(f);
+			return f.__customAttributes_DONT_USE;
+		}
+
+		void InitializeCustomAttributes(ExtraFieldsImpl f) {
 			if (f.__customAttributes_DONT_USE != null)
-				return f.__customAttributes_DONT_USE;
+				return;
 			lock (LockObject) {
 				if (f.__customAttributes_DONT_USE != null)
-					return f.__customAttributes_DONT_USE;
-				var res = CreateCustomAttributes();
-				f.__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, res);
-				return f.__customAttributes_DONT_USE;
+					return;
+				var info = CreateCustomAttributes();
+				f.__securityAttributes_DONT_USE = ReadOnlyCollectionHelpers.Create(info.sas);
+				f.__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, f.__securityAttributes_DONT_USE);
 			}
 		}
-		protected virtual DmdCustomAttributeData[] CreateCustomAttributes() => null;
+		public virtual (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => (null, null);
+
+		public sealed override IList<DmdCustomAttributeData> GetSecurityAttributesData() {
+			var f = ExtraFields;
+			if (f.__customAttributes_DONT_USE == null)
+				InitializeCustomAttributes(f);
+			return f.__securityAttributes_DONT_USE;
+		}
 
 		public virtual DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => null;
 		public virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => null;
@@ -608,6 +621,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			public DmdEventReader __baseEvents_DONT_USE;
 
 			public ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+			public ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
 		}
 
 		internal void InitializeParentDefinitions() {

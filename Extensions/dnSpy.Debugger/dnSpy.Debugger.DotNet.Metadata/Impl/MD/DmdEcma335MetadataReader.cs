@@ -619,6 +619,40 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return res;
 		}
 
+		protected override DmdCustomAttributeData[] ReadAssemblySecurityAttributes(uint rid) => ReadSecurityAttributesCore(Table.Assembly, rid);
+		protected override DmdCustomAttributeData[] ReadTypeDefSecurityAttributes(uint rid) => ReadSecurityAttributesCore(Table.TypeDef, rid);
+		protected override DmdCustomAttributeData[] ReadMethodSecurityAttributes(uint rid) => ReadSecurityAttributesCore(Table.Method, rid);
+
+		DmdCustomAttributeData[] ReadSecurityAttributesCore(Table table, uint rid) {
+			var ridList = Metadata.GetDeclSecurityRidList(table, rid);
+			if (ridList.Count == 0)
+				return Array.Empty<DmdCustomAttributeData>();
+			IList<DmdType> genericTypeArguments = null;
+			DmdCustomAttributeData[] firstData = null;
+			List<DmdCustomAttributeData> res = null;
+			for (int i = 0; i < ridList.Count; i++) {
+				var row = TablesStream.ReadDeclSecurityRow(ridList[i]);
+				if (row == null)
+					continue;
+				DmdCustomAttributeData[] cas;
+				using (var stream = BlobStream.CreateStream(row.PermissionSet))
+					cas = DmdDeclSecurityReader.Read(module, new DmdDataStreamImpl(stream), (System.Security.Permissions.SecurityAction)(row.Action & 0x1F), genericTypeArguments);
+				if (cas.Length == 0)
+					continue;
+				if (res == null && firstData == null)
+					firstData = cas;
+				else {
+					if (res == null) {
+						res = new List<DmdCustomAttributeData>(firstData.Length + cas.Length);
+						res.AddRange(firstData);
+						firstData = null;
+					}
+					res.AddRange(cas);
+				}
+			}
+			return firstData ?? res?.ToArray() ?? Array.Empty<DmdCustomAttributeData>();
+		}
+
 		internal DmdMarshalType ReadMarshalType(int metadataToken, DmdModule module, IList<DmdType> genericTypeArguments) {
 			var row = TablesStream.ReadFieldMarshalRow(Metadata.GetFieldMarshalRid((Table)((uint)metadataToken >> 24), (uint)metadataToken & 0x00FFFFFF));
 			if (row == null)

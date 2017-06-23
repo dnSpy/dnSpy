@@ -255,6 +255,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
+		public override IList<DmdCustomAttributeData> GetSecurityAttributesData() {
+			if (securityAttributes != null)
+				return securityAttributes;
+			lock (LockObject) {
+				if (securityAttributes != null)
+					return securityAttributes;
+				var cas = metadataReader.ReadSecurityAttributes(0x20000001);
+				securityAttributes = ReadOnlyCollectionHelpers.Create(cas);
+				return securityAttributes;
+			}
+		}
+		ReadOnlyCollection<DmdCustomAttributeData> securityAttributes;
+
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (customAttributes != null)
 				return customAttributes;
@@ -262,7 +275,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (customAttributes != null)
 					return customAttributes;
 				var cas = metadataReader.ReadCustomAttributes(0x20000001);
-				customAttributes = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas);
+				customAttributes = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas, GetSecurityAttributesData());
 				return customAttributes;
 			}
 		}

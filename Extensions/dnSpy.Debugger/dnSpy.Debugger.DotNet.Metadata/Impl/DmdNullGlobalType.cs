@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected override DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments) => null;
 		protected override DmdType[] CreateNestedTypes() => null;
-		protected override DmdCustomAttributeData[] CreateCustomAttributes() => null;
+		public override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => (null, null);
 		protected override (int packingSize, int classSize) GetClassLayout() => (0, 0);
 	}
 }

@@ -102,6 +102,7 @@
     <Compile Include="HexUtils.cs" />
     <Compile Include="IDmdCustomAttributeProvider.cs" />
     <Compile Include="IDmdEvaluationContext.cs" />
+    <Compile Include="IDmdSecurityAttributeProvider.cs" />
     <Compile Include="Impl\AccessorUtils.cs" />
     <Compile Include="Impl\AssemblyNameEqualityComparer.cs" />
     <Compile Include="Impl\COMD\DmdComMetadataReader.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Impl\DmdCreatedParameterInfo.cs" />
     <Compile Include="Impl\DmdCustomAttributeReader.cs" />
     <Compile Include="Impl\DmdDataStream.cs" />
+    <Compile Include="Impl\DmdDeclSecurityReader.cs" />
     <Compile Include="Impl\DmdEventDef.cs" />
     <Compile Include="Impl\DmdFieldDef.cs" />
     <Compile Include="Impl\DmdFieldInfoBase.cs" />

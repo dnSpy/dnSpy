@@ -105,18 +105,31 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);
 
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+			if (__customAttributes_DONT_USE == null)
+				InitializeCustomAttributes();
+			return __customAttributes_DONT_USE;
+		}
+
+		void InitializeCustomAttributes() {
 			if (__customAttributes_DONT_USE != null)
-				return __customAttributes_DONT_USE;
+				return;
 			lock (LockObject) {
 				if (__customAttributes_DONT_USE != null)
-					return __customAttributes_DONT_USE;
+					return;
 				var info = CreateCustomAttributes();
-				__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, info.implMap);
-				return __customAttributes_DONT_USE;
+				__securityAttributes_DONT_USE = ReadOnlyCollectionHelpers.Create(info.sas);
+				__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, __securityAttributes_DONT_USE, info.implMap);
 			}
 		}
 		ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+		ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
 
-		protected abstract (DmdCustomAttributeData[] cas, DmdImplMap? implMap) CreateCustomAttributes();
+		protected abstract (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas, DmdImplMap? implMap) CreateCustomAttributes();
+
+		public sealed override IList<DmdCustomAttributeData> GetSecurityAttributesData() {
+			if (__customAttributes_DONT_USE == null)
+				InitializeCustomAttributes();
+			return __securityAttributes_DONT_USE;
+		}
 	}
 }

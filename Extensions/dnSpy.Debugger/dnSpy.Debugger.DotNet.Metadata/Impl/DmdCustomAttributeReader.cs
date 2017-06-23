@@ -56,14 +56,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	struct DmdCustomAttributeReader : IDisposable {
 		readonly DmdModule module;
 		readonly DmdDataStream reader;
-		readonly DmdConstructorInfo ctor;
+		readonly DmdType ctorReflectedType;
+		readonly IList<DmdType> genericTypeArguments;
+		readonly bool ownsReader;
 		const int MAX_RECURSION_COUNT = 100;
 		int recursionCounter;
 
 		public static DmdCustomAttributeData Read(DmdModule module, DmdDataStream stream, DmdConstructorInfo ctor) {
-			using (var reader = new DmdCustomAttributeReader(module, stream, ctor)) {
+			using (var reader = new DmdCustomAttributeReader(module, stream, ctor.ReflectedType, GetGenericArguments(ctor.ReflectedType), ownsReader: true)) {
 				try {
-					return reader.Read();
+					return reader.Read(ctor);
 				}
 				catch (CABlobParserException) {
 				}
@@ -75,10 +77,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		DmdCustomAttributeReader(DmdModule module, DmdDataStream reader, DmdConstructorInfo ctor) {
+		DmdCustomAttributeReader(DmdModule module, DmdDataStream reader, DmdType ctorReflectedType, IList<DmdType> genericTypeArguments, bool ownsReader) {
 			this.module = module;
 			this.reader = reader;
-			this.ctor = ctor;
+			this.ctorReflectedType = ctorReflectedType;
+			this.genericTypeArguments = genericTypeArguments;
+			this.ownsReader = ownsReader;
 			recursionCounter = 0;
 		}
 
@@ -90,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		void DecrementRecursionCounter() => recursionCounter--;
 
-		DmdCustomAttributeData Read() {
+		DmdCustomAttributeData Read(DmdConstructorInfo ctor) {
 			var ctorParams = ctor.GetMethodSignature().GetParameterTypes();
 			bool isEmpty = ctorParams.Count == 0 && reader.Position == reader.Length;
 			if (!isEmpty && reader.ReadUInt16() != 1)
@@ -123,6 +127,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			// It will fail if it uses two fields/props from different classes, eg. a declared
 			// field and a field in a base class.
 			return x.MemberInfo.MetadataToken - y.MemberInfo.MetadataToken;
+		}
+
+		internal static DmdCustomAttributeNamedArgument[] ReadNamedArguments(DmdModule module, DmdDataStream stream, DmdType ctorReflectedType, int numNamedArgs, IList<DmdType> genericTypeArguments) {
+			using (var reader = new DmdCustomAttributeReader(module, stream, ctorReflectedType, genericTypeArguments, ownsReader: false)) {
+				try {
+					return reader.ReadNamedArguments(numNamedArgs);
+				}
+				catch (CABlobParserException) {
+				}
+				catch (ResolveException) {
+				}
+				catch (IOException) {
+				}
+				return null;
+			}
 		}
 
 		DmdCustomAttributeNamedArgument[] ReadNamedArguments(int numNamedArgs) {
@@ -351,7 +370,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var name = ReadUTF8String();
 			if (canReturnNull && name == null)
 				return null;
-			var type = DmdTypeNameParser.Parse(module, name ?? string.Empty, GetGenericArguments(ctor.ReflectedType));
+			var type = DmdTypeNameParser.Parse(module, name ?? string.Empty, genericTypeArguments);
 			if ((object)type == null)
 				throw new CABlobParserException("Could not parse type");
 			return type;
@@ -406,14 +425,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			DmdMemberInfo memberInfo;
 			if (isField) {
-				var field = ctor.ReflectedType.GetField(name);
+				var field = ctorReflectedType.GetField(name);
 				if ((object)field == null || !DmdMemberInfoEqualityComparer.DefaultMember.Equals(field.FieldType, fieldPropType))
 					memberInfo = null;
 				else
 					memberInfo = field;
 			}
 			else {
-				var property = ctor.ReflectedType.GetProperty(name);
+				var property = ctorReflectedType.GetProperty(name);
 				if ((object)property == null || !DmdMemberInfoEqualityComparer.DefaultMember.Equals(property.PropertyType, fieldPropType))
 					memberInfo = null;
 				else
@@ -464,6 +483,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return Encoding.UTF8.GetString(reader.ReadBytes((int)len));
 		}
 
-		public void Dispose() => reader?.Dispose();
+		public void Dispose() {
+			if (ownsReader)
+				reader?.Dispose();
+		}
 	}
 }

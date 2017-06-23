@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A .NET assembly
 	/// </summary>
-	public abstract class DmdAssembly : DmdObject, IDmdCustomAttributeProvider {
+	public abstract class DmdAssembly : DmdObject, IDmdCustomAttributeProvider, IDmdSecurityAttributeProvider {
 		/// <summary>
 		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdAssembly"/>
 		/// </summary>
@@ -185,6 +185,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				list.AddRange(module.GetTypes());
 			return list.ToArray();
 		}
+
+		/// <summary>
+		/// Gets the security attributes
+		/// </summary>
+		public IEnumerable<DmdCustomAttributeData> SecurityAttributes => GetSecurityAttributesData();
+
+		/// <summary>
+		/// Gets the security attributes
+		/// </summary>
+		/// <returns></returns>
+		public abstract IList<DmdCustomAttributeData> GetSecurityAttributesData();
 
 		/// <summary>
 		/// Gets the custom attributes

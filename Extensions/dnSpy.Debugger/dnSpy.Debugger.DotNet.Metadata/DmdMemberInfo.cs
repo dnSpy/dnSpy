@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Base class of all types, fields, methods, constructors, properties, events
 	/// </summary>
-	public abstract class DmdMemberInfo : DmdObject, IDmdCustomAttributeProvider, IEquatable<DmdMemberInfo> {
+	public abstract class DmdMemberInfo : DmdObject, IDmdCustomAttributeProvider, IDmdSecurityAttributeProvider, IEquatable<DmdMemberInfo> {
 		/// <summary>
 		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdMemberInfo"/>
 		/// </summary>
@@ -89,6 +89,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// true if it's a reference to another type or member, eg. a TypeRef, MemberRef
 		/// </summary>
 		public abstract bool IsMetadataReference { get; }
+
+		/// <summary>
+		/// Gets the security attributes
+		/// </summary>
+		public IEnumerable<DmdCustomAttributeData> SecurityAttributes => GetSecurityAttributesData();
+
+		/// <summary>
+		/// Gets the security attributes
+		/// </summary>
+		/// <returns></returns>
+		public virtual IList<DmdCustomAttributeData> GetSecurityAttributesData() => ReadOnlyCollectionHelpers.Empty<DmdCustomAttributeData>();
 
 		/// <summary>
 		/// Gets the custom attributes

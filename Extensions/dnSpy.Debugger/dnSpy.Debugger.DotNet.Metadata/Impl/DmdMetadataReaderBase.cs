@@ -240,5 +240,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdCustomAttributeData[] ReadParamCustomAttributes(uint rid);
 		protected abstract DmdCustomAttributeData[] ReadEventCustomAttributes(uint rid);
 		protected abstract DmdCustomAttributeData[] ReadPropertyCustomAttributes(uint rid);
+
+		public sealed override DmdCustomAttributeData[] ReadSecurityAttributes(int metadataToken) {
+			uint rid = (uint)(metadataToken & 0x00FFFFFF);
+			switch ((uint)metadataToken >> 24) {
+			case 0x02: return ReadTypeDefSecurityAttributes(rid);
+			case 0x06: return ReadMethodSecurityAttributes(rid);
+			case 0x20: return ReadAssemblySecurityAttributes(rid);
+			default: throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			}
+		}
+
+		protected abstract DmdCustomAttributeData[] ReadAssemblySecurityAttributes(uint rid);
+		protected abstract DmdCustomAttributeData[] ReadTypeDefSecurityAttributes(uint rid);
+		protected abstract DmdCustomAttributeData[] ReadMethodSecurityAttributes(uint rid);
 	}
 }

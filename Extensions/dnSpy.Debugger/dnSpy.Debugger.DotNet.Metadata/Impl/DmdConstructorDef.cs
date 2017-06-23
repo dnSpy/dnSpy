@@ -73,18 +73,31 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdParameterInfo[] CreateParameters();
 
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+			if (__customAttributes_DONT_USE == null)
+				InitializeCustomAttributes();
+			return __customAttributes_DONT_USE;
+		}
+
+		void InitializeCustomAttributes() {
 			if (__customAttributes_DONT_USE != null)
-				return __customAttributes_DONT_USE;
+				return;
 			lock (LockObject) {
 				if (__customAttributes_DONT_USE != null)
-					return __customAttributes_DONT_USE;
-				var res = CreateCustomAttributes();
-				__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, res);
-				return __customAttributes_DONT_USE;
+					return;
+				var info = CreateCustomAttributes();
+				__securityAttributes_DONT_USE = ReadOnlyCollectionHelpers.Create(info.sas);
+				__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, __securityAttributes_DONT_USE);
 			}
 		}
 		ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+		ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
 
-		protected abstract DmdCustomAttributeData[] CreateCustomAttributes();
+		protected abstract (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes();
+
+		public sealed override IList<DmdCustomAttributeData> GetSecurityAttributesData() {
+			if (__customAttributes_DONT_USE == null)
+				InitializeCustomAttributes();
+			return __securityAttributes_DONT_USE;
+		}
 	}
 }

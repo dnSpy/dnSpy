@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
@@ -188,16 +189,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		struct SecurityAttributeInfo {
-			public int Count => (object)ctor != null ? 1 : 0;
-			readonly DmdConstructorInfo ctor;
+			public int Count { get; }
 
-			public SecurityAttributeInfo(DmdMemberInfo member) => ctor = null;//TODO:
-			public SecurityAttributeInfo(DmdAssembly assembly) => ctor = null;//TODO:
+			public SecurityAttributeInfo(IList<DmdCustomAttributeData> securityAttributes) => Count = securityAttributes.Count;
 
-			public void CopyTo(DmdCustomAttributeData[] destination, ref int index) {
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index, IList<DmdCustomAttributeData> securityAttributes) {
 				if (Count == 0)
 					return;
-				throw new NotImplementedException();//TODO:
+				for (int i = 0; i < securityAttributes.Count; i++) {
+					var sa = securityAttributes[i];
+					// Reflection uses the first public constructor it finds and uses empty ctor args and named args
+					var ctor = sa.AttributeType.GetConstructors().FirstOrDefault() ?? sa.Constructor;
+					destination[index++] = new DmdCustomAttributeData(ctor, null, null, isPseudoCustomAttribute: true);
+				}
 			}
 		}
 
@@ -498,13 +502,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdType type, DmdCustomAttributeData[] customAttributes) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdType type, DmdCustomAttributeData[] customAttributes, IList<DmdCustomAttributeData> securityAttributes) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
 			var serializableAttributeInfo = new SerializableAttributeInfo(type);
 			var comImportAttributeInfo = new ComImportAttributeInfo(type);
-			var securityAttributeInfo = new SecurityAttributeInfo(type);
+			var securityAttributeInfo = new SecurityAttributeInfo(securityAttributes);
 
 			int pseudoCount = serializableAttributeInfo.Count + comImportAttributeInfo.Count + securityAttributeInfo.Count;
 			if (pseudoCount != 0) {
@@ -512,7 +516,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				int index = 0;
 				serializableAttributeInfo.CopyTo(cas, ref index);
 				comImportAttributeInfo.CopyTo(cas, ref index);
-				securityAttributeInfo.CopyTo(cas, ref index);
+				securityAttributeInfo.CopyTo(cas, ref index, securityAttributes);
 				if (pseudoCount != index)
 					throw new InvalidOperationException();
 				Array.Copy(customAttributes, 0, cas, pseudoCount, customAttributes.Length);
@@ -546,17 +550,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return ReadOnlyCollectionHelpers.Create(customAttributes);
 		}
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdConstructorInfo ctor, DmdCustomAttributeData[] customAttributes) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdConstructorInfo ctor, DmdCustomAttributeData[] customAttributes, IList<DmdCustomAttributeData> securityAttributes) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
-			var securityAttributeInfo = new SecurityAttributeInfo(ctor);
+			var securityAttributeInfo = new SecurityAttributeInfo(securityAttributes);
 
 			int pseudoCount = securityAttributeInfo.Count;
 			if (pseudoCount != 0) {
 				var cas = new DmdCustomAttributeData[pseudoCount + customAttributes.Length];
 				int index = 0;
-				securityAttributeInfo.CopyTo(cas, ref index);
+				securityAttributeInfo.CopyTo(cas, ref index, securityAttributes);
 				if (pseudoCount != index)
 					throw new InvalidOperationException();
 				Array.Copy(customAttributes, 0, cas, pseudoCount, customAttributes.Length);
@@ -566,13 +570,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return ReadOnlyCollectionHelpers.Create(customAttributes);
 		}
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdMethodInfo method, DmdCustomAttributeData[] customAttributes, DmdImplMap? implMap) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdMethodInfo method, DmdCustomAttributeData[] customAttributes, IList<DmdCustomAttributeData> securityAttributes, DmdImplMap? implMap) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
 			var dllImportAttributeInfo = new DllImportAttributeInfo(method, ref implMap);
 			var preserveSigAttributeInfo = new PreserveSigAttributeInfo(method);
-			var securityAttributeInfo = new SecurityAttributeInfo(method);
+			var securityAttributeInfo = new SecurityAttributeInfo(securityAttributes);
 
 			int pseudoCount = dllImportAttributeInfo.Count + preserveSigAttributeInfo.Count + securityAttributeInfo.Count;
 			if (pseudoCount != 0) {
@@ -580,7 +584,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				int index = 0;
 				dllImportAttributeInfo.CopyTo(cas, ref index, method, ref implMap);
 				preserveSigAttributeInfo.CopyTo(cas, ref index);
-				securityAttributeInfo.CopyTo(cas, ref index);
+				securityAttributeInfo.CopyTo(cas, ref index, securityAttributes);
 				if (pseudoCount != index)
 					throw new InvalidOperationException();
 				Array.Copy(customAttributes, 0, cas, pseudoCount, customAttributes.Length);
@@ -622,17 +626,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return ReadOnlyCollectionHelpers.Create(customAttributes);
 		}
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdAssembly assembly, DmdCustomAttributeData[] customAttributes) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdAssembly assembly, DmdCustomAttributeData[] customAttributes, IList<DmdCustomAttributeData> securityAttributes) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
-			var securityAttributeInfo = new SecurityAttributeInfo(assembly);
+			var securityAttributeInfo = new SecurityAttributeInfo(securityAttributes);
 
 			int pseudoCount = securityAttributeInfo.Count;
 			if (pseudoCount != 0) {
 				var cas = new DmdCustomAttributeData[pseudoCount + customAttributes.Length];
 				int index = 0;
-				securityAttributeInfo.CopyTo(cas, ref index);
+				securityAttributeInfo.CopyTo(cas, ref index, securityAttributes);
 				if (pseudoCount != index)
 					throw new InvalidOperationException();
 				Array.Copy(customAttributes, 0, cas, pseudoCount, customAttributes.Length);
