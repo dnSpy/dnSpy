@@ -206,7 +206,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
 
 		/// <summary>
-		/// Makes a multi-dimensional type
+		/// Makes a multi-dimensional array type
 		/// </summary>
 		/// <param name="elementType">Element type</param>
 		/// <param name="rank">Number of dimensions</param>

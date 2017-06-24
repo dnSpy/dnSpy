@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.Type;
 		public abstract override DmdTypeScope TypeScope { get; }
 		public abstract override string MetadataNamespace { get; }
-		public abstract override string Name { get; }
+		public abstract override string MetadataName { get; }
 		public sealed override DmdModule Module => ResolvedType.Module;
 		public sealed override DmdType BaseType => ResolvedType.BaseType;
 		public sealed override StructLayoutAttribute StructLayoutAttribute => ResolvedType.StructLayoutAttribute;

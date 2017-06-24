@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
-using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	struct DmdMemberFormatter : IDisposable {
@@ -30,7 +29,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		StringBuilder writer;
 		const int MAX_RECURSION_COUNT = 100;
 		int recursionCounter;
-		bool seenGenericType;
 
 		[Flags]
 		enum GlobalFlags {
@@ -42,7 +40,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			globalFlags = flags;
 			writer = ObjectPools.AllocStringBuilder();
 			recursionCounter = 0;
-			seenGenericType = false;
 		}
 
 		public void Dispose() => ObjectPools.FreeNoToString(ref writer);
@@ -63,7 +60,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if ((object)resolvedType != null)
 				return resolvedType.IsGenericTypeDefinition;
 			// Guess based on name
-			return type.Name.LastIndexOf('`') >= 0;
+			return type.MetadataName.LastIndexOf('`') >= 0;
+		}
+
+		static bool ContainsGenericParameters(DmdType type) {
+			if (!type.IsMetadataReference)
+				return type.ContainsGenericParameters;
+			// It's a TypeRef, make sure it won't throw if it can't resolve the type
+			var resolvedType = type.ResolveNoThrow();
+			if ((object)resolvedType != null)
+				return resolvedType.ContainsGenericParameters;
+			if (type is Impl.DmdTypeRef)
+				return type.MetadataName.LastIndexOf('`') >= 0;
+			return type.ContainsGenericParameters;
 		}
 
 		static string GetAssemblyFullName(DmdType type) {
@@ -104,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return resolvedType.GetGenericTypeDefinition();
 
 			// Guess
-			return type.Name.LastIndexOf('`') >= 0 ? type : null;
+			return type.MetadataName.LastIndexOf('`') >= 0 ? type : null;
 		}
 
 		static ReadOnlyCollection<DmdType> GetGenericArguments(DmdType type) {
@@ -134,12 +143,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static string FormatFullName(DmdType type) => Format(type, serializable: true);
 
 		public static string FormatAssemblyQualifiedName(DmdType type) {
+			var t = type;
+			while (t.GetElementType() is DmdType elementType)
+				t = elementType;
+			if (!IsGenericTypeDefinition(t) && ContainsGenericParameters(t))
+				return null;
 			using (var formatter = new DmdMemberFormatter(GlobalFlags.Serializable)) {
 				formatter.Write(type);
 				formatter.writer.Append(", ");
 				formatter.writer.Append(GetAssemblyFullName(type));
-				if (formatter.seenGenericType)
-					return null;
 				return formatter.writer.ToString();
 			}
 		}
@@ -150,6 +162,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static string Format(DmdType type, bool serializable = false) {
+			if (serializable) {
+				var t = type;
+				while (t.GetElementType() is DmdType elementType)
+					t = elementType;
+				if (!IsGenericTypeDefinition(t) && ContainsGenericParameters(t))
+					return null;
+			}
 			using (var formatter = new DmdMemberFormatter(serializable ? GlobalFlags.Serializable : GlobalFlags.None))
 				return formatter.FormatCore(type);
 		}
@@ -185,6 +204,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static string FormatName(DmdType type) {
+			if (type.MetadataName is string name && name.IndexOfAny(escapeChars) < 0)
+				return name;
 			using (var formatter = new DmdMemberFormatter(GlobalFlags.None))
 				return formatter.FormatNameCore(type);
 		}
@@ -196,8 +217,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		string FormatCore(DmdType type) {
 			Write(type);
-			if (seenGenericType && (globalFlags & GlobalFlags.Serializable) != 0)
-				return null;
 			return writer.ToString();
 		}
 
@@ -232,7 +251,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		string FormatNameCore(DmdType type) {
-			WriteName(type);
+			WriteName(type, GetTypeFlags(shortTypeNames: false) | TypeFlags.FnPtrIsIntPtr);
 			return writer.ToString();
 		}
 
@@ -273,7 +292,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return flags;
 		}
 
-		void Write(DmdType type) => Write(type, GetTypeFlags(false));
+		void Write(DmdType type) => Write(type, GetTypeFlags(false) | TypeFlags.FnPtrIsIntPtr);
 
 		[Flags]
 		enum TypeFlags {
@@ -282,7 +301,42 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			NoDeclaringTypeNames		= 0x00000002,
 			NoGenericDefParams			= 0x00000004,
 			MethodGenericArgumentType	= 0x00000008,
+			FnPtrIsIntPtr				= 0x00000010,
 		}
+
+		void WriteIdentifier(string id) {
+			if (id.IndexOfAny(escapeChars) < 0)
+				writer.Append(id);
+			else {
+				int start = 0;
+				for (int i = 0; i < id.Length; i++) {
+					var c = id[i];
+					switch (c) {
+					// coreclr: IsTypeNameReservedChar()
+					case ',':
+					case '[':
+					case ']':
+					case '&':
+					case '*':
+					case '+':
+					case '\\':
+						writer.Append(id, start, i - start);
+						writer.Append('\\');
+						writer.Append(c);
+						start = i + 1;
+						break;
+					}
+				}
+				if (start != id.Length) {
+					if (start == 0)
+						writer.Append(id);
+					else
+						writer.Append(id, start, id.Length - start);
+				}
+			}
+		}
+		// coreclr: IsTypeNameReservedChar()
+		static readonly char[] escapeChars = new[] { ',', '[', ']', '&', '*', '+', '\\' };
 
 		static bool IsShortNameType(DmdType type) => type.IsPrimitive || type == type.AppDomain.System_Void || type == type.AppDomain.System_TypedReference;
 
@@ -306,11 +360,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (!type.IsNested && type.Namespace is string ns && ns.Length > 0) {
 					if ((globalFlags & GlobalFlags.Serializable) != 0 ||
 						((flags & TypeFlags.MethodGenericArgumentType) == 0 && ((flags & TypeFlags.ShortSpecialNames) == 0 || !IsShortNameType(type)))) {
-						writer.Append(ns);
+						WriteIdentifier(ns);
 						writer.Append('.');
 					}
 				}
-				writer.Append(type.Name);
+				WriteIdentifier(type.MetadataName);
 				if ((flags & TypeFlags.NoGenericDefParams) == 0 && (globalFlags & GlobalFlags.Serializable) == 0)
 					WriteTypeGenericArguments(GetGenericArguments(type), flags & ~TypeFlags.NoGenericDefParams);
 				break;
@@ -327,8 +381,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			case DmdTypeSignatureKind.TypeGenericParameter:
 			case DmdTypeSignatureKind.MethodGenericParameter:
-				seenGenericType = true;
-				writer.Append(type.Name);
+				WriteIdentifier(type.MetadataName);
 				break;
 
 			case DmdTypeSignatureKind.SZArray:
@@ -356,7 +409,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				break;
 
 			case DmdTypeSignatureKind.FunctionPointer:
-				Write(type.AppDomain.System_IntPtr, flags);
+				if ((flags & TypeFlags.FnPtrIsIntPtr) != 0)
+					Write(type.AppDomain.System_IntPtr, flags);
+				else
+					writer.Append("(fnptr)");
 				break;
 
 			default: throw new InvalidOperationException();
@@ -407,7 +463,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		void Write(DmdFieldInfo field) {
-			FormatTypeName(field.FieldType, GetTypeFlags(true));
+			FormatTypeName(field.FieldType, GetTypeFlags(true) | TypeFlags.FnPtrIsIntPtr);
 			writer.Append(' ');
 			writer.Append(field.Name);
 		}
@@ -417,7 +473,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		void Write(DmdMethodSignature methodSignature) => WriteMethod(null, methodSignature, genericArguments: null, isMethod: true);
 
 		void WriteMethod(string name, DmdMethodSignature sig, IList<DmdType> genericArguments, bool isMethod) {
-			var flags = GetTypeFlags(true);
+			var flags = GetTypeFlags(true) | TypeFlags.FnPtrIsIntPtr;
 			FormatTypeName(sig.ReturnType, flags);
 			writer.Append(' ');
 			writer.Append(name);
@@ -445,25 +501,25 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				while (rootType.GetElementType() is DmdType elementType)
 					rootType = elementType;
 				if (rootType.IsNested)
-					WriteName(type);
+					WriteName(type, flags);
 				else
 					Write(type, flags | TypeFlags.ShortSpecialNames);
 			}
 		}
 
 		void Write(DmdEventInfo @event) {
-			FormatTypeName(@event.EventHandlerType, GetTypeFlags(true));
+			FormatTypeName(@event.EventHandlerType, GetTypeFlags(true) | TypeFlags.FnPtrIsIntPtr);
 			writer.Append(' ');
 			writer.Append(@event.Name);
 		}
 
 		void Write(DmdParameterInfo parameter) {
-			FormatTypeName(parameter.ParameterType, GetTypeFlags(true));
+			FormatTypeName(parameter.ParameterType, GetTypeFlags(true) | TypeFlags.FnPtrIsIntPtr);
 			writer.Append(' ');
 			writer.Append(parameter.Name);
 		}
 
-		void WriteName(DmdType type) {
+		void WriteName(DmdType type, TypeFlags flags) {
 			if ((object)type == null) {
 				writer.Append("???");
 				return;
@@ -476,32 +532,31 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			switch (type.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
-				writer.Append(type.Name);
+				WriteIdentifier(type.MetadataName);
 				break;
 
 			case DmdTypeSignatureKind.Pointer:
-				WriteName(type.GetElementType());
+				WriteName(type.GetElementType(), flags);
 				writer.Append('*');
 				break;
 
 			case DmdTypeSignatureKind.ByRef:
-				WriteName(type.GetElementType());
+				WriteName(type.GetElementType(), flags);
 				writer.Append('&');
 				break;
 
 			case DmdTypeSignatureKind.TypeGenericParameter:
 			case DmdTypeSignatureKind.MethodGenericParameter:
-				seenGenericType = true;
-				writer.Append(type.Name);
+				WriteIdentifier(type.MetadataName);
 				break;
 
 			case DmdTypeSignatureKind.SZArray:
-				WriteName(type.GetElementType());
+				WriteName(type.GetElementType(), flags);
 				writer.Append("[]");
 				break;
 
 			case DmdTypeSignatureKind.MDArray:
-				WriteName(type.GetElementType());
+				WriteName(type.GetElementType(), flags);
 				writer.Append('[');
 				var rank = type.GetArrayRank();
 				if (rank <= 0)
@@ -514,11 +569,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				break;
 
 			case DmdTypeSignatureKind.GenericInstance:
-				WriteName(GetGenericTypeDefinition(type));
+				WriteName(GetGenericTypeDefinition(type), flags);
 				break;
 
 			case DmdTypeSignatureKind.FunctionPointer:
-				WriteName(type.AppDomain.System_IntPtr);
+				if ((flags & TypeFlags.FnPtrIsIntPtr) != 0)
+					WriteName(type.AppDomain.System_IntPtr, flags);
+				else
+					writer.Append("(fnptr)");
 				break;
 
 			default: throw new InvalidOperationException();

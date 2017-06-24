@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if ((object)nonGenericInstDeclTypeField != null) {
 						__resolvedField_DONT_USE = (object)nonGenericInstDeclTypeField.DeclaringType == declType ?
 							nonGenericInstDeclTypeField :
-							(DmdFieldDef)declType.GetField(nonGenericInstDeclTypeField.MetadataToken);
+							(DmdFieldDef)declType.GetField(nonGenericInstDeclTypeField.Module, nonGenericInstDeclTypeField.MetadataToken);
 						Debug.Assert((object)__resolvedField_DONT_USE != null);
 					}
 				}

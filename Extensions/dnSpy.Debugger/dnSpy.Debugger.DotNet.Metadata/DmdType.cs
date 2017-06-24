@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the member type
 		/// </summary>
-		public sealed override DmdMemberTypes MemberType => IsPublic || IsNotPublic ? DmdMemberTypes.TypeInfo : DmdMemberTypes.NestedType;
+		public sealed override DmdMemberTypes MemberType => (TypeSignatureKind == DmdTypeSignatureKind.Type || TypeSignatureKind == DmdTypeSignatureKind.GenericInstance) && (object)DeclaringType != null ? DmdMemberTypes.NestedType : DmdMemberTypes.TypeInfo;
 
 		/// <summary>
 		/// Gets the type signature kind
@@ -80,10 +80,20 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract string Namespace { get; }
 
 		/// <summary>
+		/// Gets the name
+		/// </summary>
+		public sealed override string Name => DmdMemberFormatter.FormatName(this);
+
+		/// <summary>
 		/// Gets the namespace or null. This is the namespace stored in the metadata. <see cref="Namespace"/>
 		/// is the namespace of the non-declaring type.
 		/// </summary>
 		public abstract string MetadataNamespace { get; }
+
+		/// <summary>
+		/// Gets the name stored in the metadata. It's not escaped like <see cref="DmdMemberInfo.Name"/>
+		/// </summary>
+		public abstract string MetadataName { get; }
 
 		/// <summary>
 		/// Gets the assembly qualified name
@@ -331,7 +341,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (type.IsEnum)
 				type = type.GetEnumUnderlyingType();
 			if (type.MetadataNamespace == "System" && !type.IsNested) {
-				switch (type.Name) {
+				switch (type.MetadataName) {
 				case "Boolean":	return type == type.AppDomain.System_Boolean	? TypeCode.Boolean	: defaultValue;
 				case "Char":	return type == type.AppDomain.System_Char		? TypeCode.Char		: defaultValue;
 				case "SByte":	return type == type.AppDomain.System_SByte		? TypeCode.SByte	: defaultValue;
@@ -404,62 +414,70 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets a method or returns null if it doesn't exist
 		/// </summary>
+		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <returns></returns>
-		public DmdMethodBase GetMethod(int metadataToken) => GetMethod(metadataToken, throwOnError: false);
+		public DmdMethodBase GetMethod(DmdModule module, int metadataToken) => GetMethod(module, metadataToken, throwOnError: false);
 
 		/// <summary>
 		/// Gets a method
 		/// </summary>
+		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdMethodBase GetMethod(int metadataToken, bool throwOnError);
+		public abstract DmdMethodBase GetMethod(DmdModule module, int metadataToken, bool throwOnError);
 
 		/// <summary>
 		/// Gets a field or returns null if it doesn't exist
 		/// </summary>
+		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <returns></returns>
-		public DmdFieldInfo GetField(int metadataToken) => GetField(metadataToken, throwOnError: false);
+		public DmdFieldInfo GetField(DmdModule module, int metadataToken) => GetField(module, metadataToken, throwOnError: false);
 
 		/// <summary>
 		/// Gets a field
 		/// </summary>
+		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdFieldInfo GetField(int metadataToken, bool throwOnError);
+		public abstract DmdFieldInfo GetField(DmdModule module, int metadataToken, bool throwOnError);
 
 		/// <summary>
 		/// Gets a property or returns null if it doesn't exist
 		/// </summary>
+		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(int metadataToken) => GetProperty(metadataToken, throwOnError: false);
+		public DmdPropertyInfo GetProperty(DmdModule module, int metadataToken) => GetProperty(module, metadataToken, throwOnError: false);
 
 		/// <summary>
 		/// Gets a property
 		/// </summary>
+		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdPropertyInfo GetProperty(int metadataToken, bool throwOnError);
+		public abstract DmdPropertyInfo GetProperty(DmdModule module, int metadataToken, bool throwOnError);
 
 		/// <summary>
 		/// Gets an event or returns null if it doesn't exist
 		/// </summary>
+		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <returns></returns>
-		public DmdEventInfo GetEvent(int metadataToken) => GetEvent(metadataToken, throwOnError: false);
+		public DmdEventInfo GetEvent(DmdModule module, int metadataToken) => GetEvent(module, metadataToken, throwOnError: false);
 
 		/// <summary>
 		/// Gets an event
 		/// </summary>
+		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdEventInfo GetEvent(int metadataToken, bool throwOnError);
+		public abstract DmdEventInfo GetEvent(DmdModule module, int metadataToken, bool throwOnError);
 
 		/// <summary>
 		/// Gets a method
@@ -1109,7 +1127,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			get {
 				if (MetadataNamespace != "System" || IsNested)
 					return false;
-				switch (Name) {
+				switch (MetadataName) {
 				case "Boolean":	return this == AppDomain.System_Boolean;
 				case "Char":	return this == AppDomain.System_Char;
 				case "SByte":	return this == AppDomain.System_SByte;

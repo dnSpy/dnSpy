@@ -112,12 +112,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			// and order of fields/properties is identical to the order returned
 			// by GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) and
 			// GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).
-			Array.Sort(namedArgs, ReflectionNamedArgumentComparer);
+			Array.Sort(namedArgs, ReflectionNamedArgumentComparerDelegate);
 
 			return new DmdCustomAttributeData(ctor, ctorArgs, namedArgs, isPseudoCustomAttribute: false);
 		}
 
-		int ReflectionNamedArgumentComparer(DmdCustomAttributeNamedArgument x, DmdCustomAttributeNamedArgument y) {
+		static readonly Comparison<DmdCustomAttributeNamedArgument> ReflectionNamedArgumentComparerDelegate = ReflectionNamedArgumentComparer;
+		static int ReflectionNamedArgumentComparer(DmdCustomAttributeNamedArgument x, DmdCustomAttributeNamedArgument y) {
 			bool xf = x.IsField;
 			bool yf = y.IsField;
 			if (xf != yf)
@@ -339,6 +340,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			case TypeCode.UInt32:	return SerializationType.U4;
 			case TypeCode.Int64:	return SerializationType.I8;
 			case TypeCode.UInt64:	return SerializationType.U8;
+			case TypeCode.Single:	return SerializationType.R4;
+			case TypeCode.Double:	return SerializationType.R8;
 			case TypeCode.String:	return SerializationType.String;
 			default:				return SerializationType.Undefined;
 			}
@@ -401,10 +404,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new CABlobParserException("Array is too big");
 			else {
 				var array = new DmdCustomAttributeTypedArgument[arrayCount];
-				argValue = array;
 				var elemType = FixTypeSig(arrayType.GetElementType());
 				for (int i = 0; i < array.Length; i++)
 					array[i] = ReadFixedArg(elemType);
+				argValue = ReadOnlyCollectionHelpers.Create(array);
 			}
 
 			DecrementRecursionCounter();

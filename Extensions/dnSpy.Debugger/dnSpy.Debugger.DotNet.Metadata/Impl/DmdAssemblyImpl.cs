@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return string.Empty;
 			try {
 				var res = Path.GetFileNameWithoutExtension(Location);
-				if (res.EndsWith(".ni"))
+				if (res.EndsWith(".ni", StringComparison.OrdinalIgnoreCase))
 					return Path.GetFileNameWithoutExtension(res);
 				return res;
 			}

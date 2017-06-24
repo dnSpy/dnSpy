@@ -29,10 +29,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeScope TypeScope => SkipElementTypes().TypeScope;
 		public override DmdModule Module => SkipElementTypes().Module;
 		public override string MetadataNamespace => null;
+		public override string MetadataName => null;
 		public override DmdType BaseType => AppDomain.System_Array;
 		public override StructLayoutAttribute StructLayoutAttribute => null;
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.Public | DmdTypeAttributes.AutoLayout | DmdTypeAttributes.Class | DmdTypeAttributes.Sealed | DmdTypeAttributes.AnsiClass | DmdTypeAttributes.Serializable;
-		public override string Name => DmdMemberFormatter.FormatName(this);
 		public override DmdType DeclaringType => null;
 		public override int MetadataToken => 0x02000000;
 		public override bool IsMetadataReference { get; }

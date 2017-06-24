@@ -66,10 +66,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					nt = CanRead ? (UnmanagedType)reader.ReadCompressedUInt32() : DEFAULT;
 					int paramNum = CanRead ? (int)reader.ReadCompressedUInt32() : DEFAULT;
 					size = CanRead ? (int)reader.ReadCompressedUInt32() : DEFAULT;
-					int flags = CanRead ? (int)reader.ReadCompressedUInt32() : DEFAULT;
+					bool hasFlags = CanRead;
+					int flags = hasFlags ? (int)reader.ReadCompressedUInt32() : DEFAULT;
 					const int ntaSizeParamIndexSpecified = 1;
-					if (flags >= 0 && (flags & ntaSizeParamIndexSpecified) == 0)
-						size = 0;
+					if (hasFlags && (flags & ntaSizeParamIndexSpecified) == 0)
+						paramNum = 0;
 					return DmdMarshalType.CreateArray(nt, (short)paramNum, size);
 
 				case UnmanagedType.CustomMarshaler:

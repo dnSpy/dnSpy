@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if ((object)nonGenericInstDeclTypeMethod != null) {
 						__resolvedMethod_DONT_USE = (object)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
 							nonGenericInstDeclTypeMethod :
-							declType.GetMethod(nonGenericInstDeclTypeMethod.MetadataToken) as DmdMethodDef;
+							declType.GetMethod(nonGenericInstDeclTypeMethod.Module, nonGenericInstDeclTypeMethod.MetadataToken) as DmdMethodDef;
 						Debug.Assert((object)__resolvedMethod_DONT_USE != null);
 					}
 				}

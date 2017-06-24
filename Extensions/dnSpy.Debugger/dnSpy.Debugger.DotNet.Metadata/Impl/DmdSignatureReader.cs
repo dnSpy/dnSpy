@@ -159,9 +159,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var customModifiers = this.customModifiers;
 			if (customModifiers == null || customModifiers.Count == 0)
 				return Array.Empty<DmdCustomModifier>();
+			// Reflection reverses the custom modifiers
+			customModifiers.Reverse();
 			var res = customModifiers.ToArray();
 			customModifiers.Clear();
 			return res;
+		}
+
+		DmdType AddCustomModifiers(DmdCustomModifier[] customModifiers, DmdType type) {
+			if (customModifiers.Length == 0)
+				return type;
+			return type.WithCustomModifiers(customModifiers);
 		}
 
 		[Flags]
@@ -180,78 +188,78 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			TypeFlags resultFlags = TypeFlags.None;
 			var et = (DMD.ElementType)reader.ReadByte();
 			switch (et) {
-			case DMD.ElementType.Void:		result = module.AppDomain.System_Void; break;
-			case DMD.ElementType.Boolean:	result = module.AppDomain.System_Boolean; break;
-			case DMD.ElementType.Char:		result = module.AppDomain.System_Char; break;
-			case DMD.ElementType.I1:		result = module.AppDomain.System_SByte; break;
-			case DMD.ElementType.U1:		result = module.AppDomain.System_Byte; break;
-			case DMD.ElementType.I2:		result = module.AppDomain.System_Int16; break;
-			case DMD.ElementType.U2:		result = module.AppDomain.System_UInt16; break;
-			case DMD.ElementType.I4:		result = module.AppDomain.System_Int32; break;
-			case DMD.ElementType.U4:		result = module.AppDomain.System_UInt32; break;
-			case DMD.ElementType.I8:		result = module.AppDomain.System_Int64; break;
-			case DMD.ElementType.U8:		result = module.AppDomain.System_UInt64; break;
-			case DMD.ElementType.R4:		result = module.AppDomain.System_Single; break;
-			case DMD.ElementType.R8:		result = module.AppDomain.System_Double; break;
-			case DMD.ElementType.String:	result = module.AppDomain.System_String; break;
-			case DMD.ElementType.TypedByRef:result = module.AppDomain.System_TypedReference; break;
-			case DMD.ElementType.I:			result = module.AppDomain.System_IntPtr; break;
-			case DMD.ElementType.U:			result = module.AppDomain.System_UIntPtr; break;
-			case DMD.ElementType.Object:	result = module.AppDomain.System_Object; break;
+			case DMD.ElementType.Void:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Void); break;
+			case DMD.ElementType.Boolean:	result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Boolean); break;
+			case DMD.ElementType.Char:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Char); break;
+			case DMD.ElementType.I1:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_SByte); break;
+			case DMD.ElementType.U1:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Byte); break;
+			case DMD.ElementType.I2:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Int16); break;
+			case DMD.ElementType.U2:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_UInt16); break;
+			case DMD.ElementType.I4:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Int32); break;
+			case DMD.ElementType.U4:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_UInt32); break;
+			case DMD.ElementType.I8:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Int64); break;
+			case DMD.ElementType.U8:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_UInt64); break;
+			case DMD.ElementType.R4:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Single); break;
+			case DMD.ElementType.R8:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Double); break;
+			case DMD.ElementType.String:	result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_String); break;
+			case DMD.ElementType.TypedByRef:result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_TypedReference); break;
+			case DMD.ElementType.I:			result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_IntPtr); break;
+			case DMD.ElementType.U:			result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_UIntPtr); break;
+			case DMD.ElementType.Object:	result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Object); break;
 
-			case DMD.ElementType.Ptr:		result = module.AppDomain.MakePointerType(ReadType().type, null, MakeTypeOptions.NoResolve); break;
-			case DMD.ElementType.ByRef:		result = module.AppDomain.MakeByRefType(ReadType().type, null, MakeTypeOptions.NoResolve); break;
-			case DMD.ElementType.ValueType:	result = ReadTypeDefOrRef(); break;
-			case DMD.ElementType.Class:		result = ReadTypeDefOrRef(); break;
-			case DMD.ElementType.FnPtr:		result = ReadMethodSignatureType(); break;
-			case DMD.ElementType.SZArray:	result = module.AppDomain.MakeArrayType(ReadType().type, null, MakeTypeOptions.NoResolve); break;
+			case DMD.ElementType.Ptr:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakePointerType(ReadType().type, null, MakeTypeOptions.NoResolve)); break;
+			case DMD.ElementType.ByRef:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeByRefType(ReadType().type, null, MakeTypeOptions.NoResolve)); break;
+			case DMD.ElementType.ValueType:	result = AddCustomModifiers(GetCustomModifiers(), ReadTypeDefOrRef()); break;
+			case DMD.ElementType.Class:		result = AddCustomModifiers(GetCustomModifiers(), ReadTypeDefOrRef()); break;
+			case DMD.ElementType.FnPtr:		result = AddCustomModifiers(GetCustomModifiers(), ReadMethodSignatureType()); break;
+			case DMD.ElementType.SZArray:	result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeArrayType(ReadType().type, null, MakeTypeOptions.NoResolve)); break;
 
 			case DMD.ElementType.Pinned:
 				resultFlags |= TypeFlags.IsPinned;
-				result = ReadType().type;
+				result = AddCustomModifiers(GetCustomModifiers(), ReadType().type);
 				break;
 
 			case DMD.ElementType.Sentinel:
 				resultFlags |= TypeFlags.IsSentinel;
-				result = module.AppDomain.System_Void;
+				result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Void);
 				break;
 
 			case DMD.ElementType.CModReqd:
 			case DMD.ElementType.CModOpt:
 				AddCustomModifier(ReadTypeDefOrRef(), isRequired: et == DMD.ElementType.CModReqd);
-				result = ReadType().type;
-				var customModifiers = GetCustomModifiers();
-				if (customModifiers.Length != 0)
-					result = result.WithCustomModifiers(customModifiers);
+				(result, resultFlags) = ReadType();
 				break;
 
 			case DMD.ElementType.Var:
 				containedGenericParams = true;
 				num = reader.ReadCompressedUInt32();
 				result = num >= (uint)genericTypeArguments.Count ? new DmdCreatedGenericParameterType(module, true, (int)num, null) : genericTypeArguments[(int)num];
+				result = AddCustomModifiers(GetCustomModifiers(), result);
 				break;
 
 			case DMD.ElementType.MVar:
 				containedGenericParams = true;
 				num = reader.ReadCompressedUInt32();
 				result = num >= (uint)genericMethodArguments.Count ? new DmdCreatedGenericParameterType(module, false, (int)num, null) : genericMethodArguments[(int)num];
+				result = AddCustomModifiers(GetCustomModifiers(), result);
 				break;
 
 			case DMD.ElementType.GenericInst:
+				var customModifiers = GetCustomModifiers();
 				nextType = ReadType().type;
 				if (!(nextType is DmdTypeDef || nextType is DmdTypeRef))
 					throw new IOException();
 				var args = new DmdType[reader.ReadCompressedUInt32()];
 				for (int i = 0; i < args.Length; i++)
 					args[i] = ReadType().type;
-				result = module.AppDomain.MakeGenericType(nextType, args, null, MakeTypeOptions.NoResolve);
+				result = AddCustomModifiers(customModifiers, module.AppDomain.MakeGenericType(nextType, args, null, MakeTypeOptions.NoResolve));
 				break;
 
 			case DMD.ElementType.Array:
 				nextType = ReadType().type;
 				uint rank = reader.ReadCompressedUInt32();
 				if (rank == 0) {
-					result = module.AppDomain.MakeArrayType(nextType, (int)rank, Array.Empty<int>(), Array.Empty<int>(), null, MakeTypeOptions.NoResolve);
+					result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeArrayType(nextType, (int)rank, Array.Empty<int>(), Array.Empty<int>(), null, MakeTypeOptions.NoResolve));
 					break;
 				}
 				var sizes = new int[(int)reader.ReadCompressedUInt32()];
@@ -260,7 +268,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var lowerBounds = new int[(int)reader.ReadCompressedUInt32()];
 				for (int i = 0; i < lowerBounds.Length; i++)
 					lowerBounds[i] = reader.ReadCompressedInt32();
-				result = module.AppDomain.MakeArrayType(nextType, (int)rank, sizes, lowerBounds, null, MakeTypeOptions.NoResolve);
+				result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeArrayType(nextType, (int)rank, sizes, lowerBounds, null, MakeTypeOptions.NoResolve));
 				break;
 
 			case DMD.ElementType.ValueArray:
@@ -269,7 +277,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			case DMD.ElementType.End:
 			case DMD.ElementType.R:
 			default:
-				result = module.AppDomain.System_Void;
+				result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Void);
 				break;
 			}
 
@@ -292,16 +300,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		DmdType ReadMethodSignatureType() {
-			var origCustomModifiers = customModifiers;
-			customModifiers = null;
-
 			ReadMethodSignature(out var flags, out var genericParameterCount, out var returnType, out var parameterTypes, out var varArgsParameterTypes);
 			if ((flags & DmdSignatureCallingConvention.Mask) == DmdSignatureCallingConvention.Property)
 				throw new IOException();
-			var fnPtrType = module.AppDomain.MakeFunctionPointerType(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes, null, resolve ? MakeTypeOptions.None : MakeTypeOptions.NoResolve);
-
-			customModifiers = origCustomModifiers;
-			return fnPtrType;
+			return module.AppDomain.MakeFunctionPointerType(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes, null, resolve ? MakeTypeOptions.None : MakeTypeOptions.NoResolve);
 		}
 
 		void ReadMethodSignature(out DmdSignatureCallingConvention flags, out int genericParameterCount, out DmdType returnType, out IList<DmdType> parameterTypes, out IList<DmdType> varArgsParameterTypes) {

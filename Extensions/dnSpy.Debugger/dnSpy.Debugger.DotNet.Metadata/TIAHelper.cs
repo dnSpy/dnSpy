@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return null;
 				scope = gca.ConstructorArguments[0].Value as string;
 				var ns = td.MetadataNamespace;
-				var name = td.Name;
+				var name = td.MetadataName;
 				if (string.IsNullOrEmpty(ns))
 					identifier = name;
 				else

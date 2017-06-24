@@ -24,6 +24,7 @@ using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
+using SSP = System.Security.Permissions;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdEcma335MetadataReader : DmdMetadataReaderBase, IMethodBodyResolver {
@@ -628,29 +629,50 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			if (ridList.Count == 0)
 				return Array.Empty<DmdCustomAttributeData>();
 			IList<DmdType> genericTypeArguments = null;
-			DmdCustomAttributeData[] firstData = null;
-			List<DmdCustomAttributeData> res = null;
+			DmdCustomAttributeData[] firstCas = null;
+			SSP.SecurityAction firstAction = 0;
+			List<(DmdCustomAttributeData[] cas, SSP.SecurityAction action)> res = null;
 			for (int i = 0; i < ridList.Count; i++) {
 				var row = TablesStream.ReadDeclSecurityRow(ridList[i]);
 				if (row == null)
 					continue;
+				var action = (SSP.SecurityAction)(row.Action & 0x1F);
 				DmdCustomAttributeData[] cas;
 				using (var stream = BlobStream.CreateStream(row.PermissionSet))
-					cas = DmdDeclSecurityReader.Read(module, new DmdDataStreamImpl(stream), (System.Security.Permissions.SecurityAction)(row.Action & 0x1F), genericTypeArguments);
+					cas = DmdDeclSecurityReader.Read(module, new DmdDataStreamImpl(stream), action, genericTypeArguments);
 				if (cas.Length == 0)
 					continue;
-				if (res == null && firstData == null)
-					firstData = cas;
+				if (res == null && firstCas == null) {
+					firstAction = action;
+					firstCas = cas;
+				}
 				else {
 					if (res == null) {
-						res = new List<DmdCustomAttributeData>(firstData.Length + cas.Length);
-						res.AddRange(firstData);
-						firstData = null;
+						res = new List<(DmdCustomAttributeData[], SSP.SecurityAction)>(firstCas.Length + cas.Length);
+						res.Add((firstCas, firstAction));
+						firstCas = null;
 					}
-					res.AddRange(cas);
+					res.Add((cas, action));
 				}
 			}
-			return firstData ?? res?.ToArray() ?? Array.Empty<DmdCustomAttributeData>();
+			if (firstCas != null)
+				return firstCas;
+			if (res == null)
+				return Array.Empty<DmdCustomAttributeData>();
+			// Reflection sorts it by action
+			res.Sort((a, b) => (int)a.action - (int)b.action);
+			int count = 0;
+			for (int i = 0; i < res.Count; i++)
+				count += res[i].cas.Length;
+			var sas = new DmdCustomAttributeData[count];
+			int w = 0;
+			for (int i = 0; i < res.Count; i++) {
+				foreach (var ca in res[i].cas)
+					sas[w++] = ca;
+			}
+			if (sas.Length != w)
+				throw new InvalidOperationException();
+			return sas;
 		}
 
 		internal DmdMarshalType ReadMarshalType(int metadataToken, DmdModule module, IList<DmdType> genericTypeArguments) {

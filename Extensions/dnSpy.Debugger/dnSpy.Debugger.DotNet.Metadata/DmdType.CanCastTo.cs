@@ -387,7 +387,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			case DmdTypeSignatureKind.Type:
 			case DmdTypeSignatureKind.GenericInstance:
 				if (MetadataNamespace == "System" && !IsNested) {
-					switch (Name) {
+					switch (MetadataName) {
 					case "Void":	if (this == AppDomain.System_Void)		return DDN.ElementType.Void; break;
 					case "Boolean":	if (this == AppDomain.System_Boolean)	return DDN.ElementType.Boolean; break;
 					case "Char":	if (this == AppDomain.System_Char)		return DDN.ElementType.Char; break;

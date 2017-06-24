@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdAppDomainControllerImpl : DmdAppDomainController {
@@ -48,6 +49,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				}
 			}
 			catch {
+				Debug.Fail("Failed to create metadata");
 				return new DmdNullMetadataReader(module);
 			}
 			throw new NotSupportedException($"Unknown lazy metadata: {lzmd.GetType()}");

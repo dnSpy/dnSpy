@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new InvalidOperationException();
 			if ((object)ReflectedType == DeclaringType)
 				return this;
-			return DeclaringType.GetMethod(MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
+			return DeclaringType.GetMethod(Module, MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
 		}
 
 		public sealed override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);

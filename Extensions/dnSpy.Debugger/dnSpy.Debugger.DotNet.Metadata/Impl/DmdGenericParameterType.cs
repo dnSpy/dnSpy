@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdGenericParameterAttributes GenericParameterAttributes { get; }
 		public sealed override DmdTypeAttributes Attributes => DmdTypeAttributes.Public;
 		public sealed override int GenericParameterPosition { get; }
-		public sealed override string Name { get; }
+		public sealed override string MetadataName { get; }
 		public sealed override int MetadataToken => (int)(0x2A000000 + rid);
 		public sealed override bool IsMetadataReference => false;
 		internal override bool HasTypeEquivalence => false;
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			this.rid = rid;
 			this.declaringType = declaringType;
 			this.declaringMethod = declaringMethod;
-			Name = name ?? string.Empty;
+			MetadataName = name ?? string.Empty;
 			GenericParameterPosition = position;
 			GenericParameterAttributes = attributes;
 		}
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			rid = 0;
 			declaringType = null;
 			declaringMethod = null;
-			Name = string.Empty;
+			MetadataName = string.Empty;
 			GenericParameterPosition = position;
 			GenericParameterAttributes = 0;
 		}

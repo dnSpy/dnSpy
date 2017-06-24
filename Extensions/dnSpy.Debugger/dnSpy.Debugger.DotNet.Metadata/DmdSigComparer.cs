@@ -191,7 +191,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			else {
 				switch (at) {
 				case DmdTypeSignatureKind.Type:
-					result = MemberNameEquals(a.Name, b.Name) &&
+					result = MemberNameEquals(a.MetadataName, b.MetadataName) &&
 						MemberNameEquals(a.MetadataNamespace, b.MetadataNamespace) &&
 						Equals(a.DeclaringType, b.DeclaringType);
 					// Type scope only needs to be checked if it's a non-nested type
@@ -554,7 +554,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			switch (a.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
 				hc ^= (object)a.DeclaringType == null ? HASHCODE_MAGIC_TYPE : HASHCODE_MAGIC_NESTED_TYPE;
-				hc ^= MemberNameGetHashCode(a.Name);
+				hc ^= MemberNameGetHashCode(a.MetadataName);
 				hc ^= MemberNameGetHashCode(a.MetadataNamespace);
 				hc ^= GetHashCode(a.DeclaringType);
 				// Don't include the type scope in the hash since it can be one of Module, ModuleRef, AssemblyRef

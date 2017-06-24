@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					Debug.Assert((object)ReflectedType == method.ReflectedType);
 					if ((object)method.DeclaringType == method.ReflectedType)
 						return method;
-					return method.DeclaringType.GetMethod(method.MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
+					return method.DeclaringType.GetMethod(method.Module, method.MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
 				}
 				method = parentMethod;
 			}

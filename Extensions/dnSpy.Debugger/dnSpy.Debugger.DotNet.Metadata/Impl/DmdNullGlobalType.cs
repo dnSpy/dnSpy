@@ -24,7 +24,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdNullGlobalType : DmdTypeDef {
 		public override DmdModule Module { get; }
 		public override string MetadataNamespace => null;
-		public override string Name => "<Module>";
+		public override string MetadataName => "<Module>";
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.NotPublic;
 
 		public DmdNullGlobalType(DmdModule module, IList<DmdCustomModifier> customModifiers) : base(1, customModifiers) =>

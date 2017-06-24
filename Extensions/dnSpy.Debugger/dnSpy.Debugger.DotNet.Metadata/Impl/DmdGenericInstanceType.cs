@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string MetadataNamespace => genericTypeDefinition.MetadataNamespace;
 		public override StructLayoutAttribute StructLayoutAttribute => genericTypeDefinition.StructLayoutAttribute;
 		public override DmdTypeAttributes Attributes => genericTypeDefinition.Attributes;
-		public override string Name => DmdMemberFormatter.FormatName(this);
+		public override string MetadataName => genericTypeDefinition.MetadataName;
 		public override DmdType DeclaringType => genericTypeDefinition.DeclaringType;
 		public override int MetadataToken => genericTypeDefinition.MetadataToken;
 		public override bool IsMetadataReference => false;

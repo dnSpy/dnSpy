@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdTypeRefMD : DmdTypeRef {
 		public override DmdTypeScope TypeScope { get; }
 		public override string MetadataNamespace { get; }
-		public override string Name { get; }
+		public override string MetadataName { get; }
 
 		readonly DmdEcma335MetadataReader reader;
 		readonly int baseTypeToken;
@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var row = reader.TablesStream.ReadTypeRefRow(rid);
 			var ns = reader.StringsStream.Read(row.Namespace);
 			MetadataNamespace = string.IsNullOrEmpty(ns) ? null : ns;
-			Name = reader.StringsStream.ReadNoNull(row.Name);
+			MetadataName = reader.StringsStream.ReadNoNull(row.Name);
 
 			if (!CodedToken.ResolutionScope.Decode(row.ResolutionScope, out uint resScopeToken))
 				resScopeToken = uint.MaxValue;

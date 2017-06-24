@@ -34,9 +34,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static readonly DmdMemberInfoEqualityComparer DefaultType = new DmdMemberInfoEqualityComparer(DefaultTypeOptions);
 
 		/// <summary>
-		/// Should be used when comparing member signatures or when comparing types in member signatures. Custom modifiers are compared.
+		/// Should be used when comparing member signatures or when comparing types in member signatures.
+		/// Custom modifiers are compared and types are checked for equivalence.
 		/// </summary>
-		public static readonly DmdMemberInfoEqualityComparer DefaultMember = new DmdMemberInfoEqualityComparer(DefaultTypeOptions | DmdSigComparerOptions.CompareCustomModifiers);
+		public static readonly DmdMemberInfoEqualityComparer DefaultMember = new DmdMemberInfoEqualityComparer(DefaultTypeOptions | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CheckTypeEquivalence);
 
 		/// <summary>
 		/// Should be used when comparing parameters

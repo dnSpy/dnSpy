@@ -34,8 +34,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		DmdGenericParameterTypeImpl Clone(IList<DmdCustomModifier> customModifiers) =>
 			(object)DeclaringMethod != null ?
-			new DmdGenericParameterTypeImpl(AppDomain, DeclaringMethod, Name, GenericParameterPosition, GenericParameterAttributes, customModifiers) :
-			new DmdGenericParameterTypeImpl(AppDomain, (DmdTypeBase)DeclaringType, Name, GenericParameterPosition, GenericParameterAttributes, customModifiers);
+			new DmdGenericParameterTypeImpl(AppDomain, DeclaringMethod, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers) :
+			new DmdGenericParameterTypeImpl(AppDomain, (DmdTypeBase)DeclaringType, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers);
 
 		// Don't intern these since only the generic parameter position is checked and not the decl type / method
 		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => Clone(VerifyCustomModifiers(customModifiers));

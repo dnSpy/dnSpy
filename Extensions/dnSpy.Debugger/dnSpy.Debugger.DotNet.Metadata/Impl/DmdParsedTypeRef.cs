@@ -24,7 +24,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdParsedTypeRef : DmdTypeRef {
 		public override DmdTypeScope TypeScope => typeScope;
 		public override string MetadataNamespace { get; }
-		public override string Name { get; }
+		public override string MetadataName { get; }
 
 		public override DmdTypeRef DeclaringTypeRef => declaringTypeRef;
 		readonly DmdParsedTypeRef declaringTypeRef;
@@ -34,13 +34,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			this.typeScope = typeScope;
 			this.declaringTypeRef = declaringTypeRef;
 			MetadataNamespace = @namespace;
-			Name = name ?? throw new ArgumentNullException(nameof(name));
+			MetadataName = name ?? throw new ArgumentNullException(nameof(name));
 		}
 
 		internal void SetTypeScope(DmdTypeScope typeScope) => this.typeScope = typeScope;
 
 		protected override int GetDeclaringTypeRefToken() => throw new NotSupportedException();
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => new DmdParsedTypeRef(OwnerModule, declaringTypeRef, TypeScope, MetadataNamespace, Name, VerifyCustomModifiers(customModifiers));
-		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : new DmdParsedTypeRef(OwnerModule, declaringTypeRef, TypeScope, MetadataNamespace, Name, null);
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => new DmdParsedTypeRef(OwnerModule, declaringTypeRef, TypeScope, MetadataNamespace, MetadataName, VerifyCustomModifiers(customModifiers));
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : new DmdParsedTypeRef(OwnerModule, declaringTypeRef, TypeScope, MetadataNamespace, MetadataName, null);
 	}
 }

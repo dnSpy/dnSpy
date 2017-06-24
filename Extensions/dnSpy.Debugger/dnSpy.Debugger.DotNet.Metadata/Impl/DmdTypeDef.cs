@@ -181,7 +181,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected DmdTypeAttributes FixAttributes(DmdTypeAttributes flags) {
 			if (Module.IsCorLib) {
 				// See coreclr: RuntimeTypeHandle::GetAttributes
-				if (Name == "__ComObject" && MetadataNamespace == "System") {
+				if (MetadataName == "__ComObject" && MetadataNamespace == "System") {
 					// This matches the original C++ code and should not be "& ~"
 					flags = (flags & DmdTypeAttributes.VisibilityMask) | DmdTypeAttributes.Public;
 				}

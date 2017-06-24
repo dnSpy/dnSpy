@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var method = genericMethodDefinition;
 			if ((object)method.ReflectedType == method.DeclaringType)
 				return method;
-			return method.DeclaringType.GetMethod(method.MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
+			return method.DeclaringType.GetMethod(method.Module, method.MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
 		}
 		public override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);
 		public override DmdMethodBody GetMethodBody() => genericMethodDefinition.GetMethodBody(genericArguments);

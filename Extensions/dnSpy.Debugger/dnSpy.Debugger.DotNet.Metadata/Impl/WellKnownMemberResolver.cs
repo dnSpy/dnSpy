@@ -61,16 +61,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						foreach (var type in module.GetTypes()) {
 							// Only allow private types in corlib
 							if (isCorLib ? (type.Attributes & DmdTypeAttributes.VisibilityMask) <= DmdTypeAttributes.Public : type.IsPublic) {
-								if (toNonNestedWellKnownType.TryGetValue(new TypeName(type.MetadataNamespace, type.Name), out var wkt))
+								if (toNonNestedWellKnownType.TryGetValue(new TypeName(type.MetadataNamespace, type.MetadataName), out var wkt))
 									wellKnownTypes[(int)wkt] = type;
 							}
 							else if (type.IsNestedPublic && type.MetadataNamespace == null) {
 								var nonNested = type.DeclaringType;
 								if ((object)nonNested == null || !nonNested.IsPublic)
 									continue;
-								if (!toNonNestedWellKnownType.ContainsKey(new TypeName(nonNested.MetadataNamespace, nonNested.Name)))
+								if (!toNonNestedWellKnownType.ContainsKey(new TypeName(nonNested.MetadataNamespace, nonNested.MetadataName)))
 									continue;
-								if (toNestedWellKnownType.TryGetValue(type.Name, out var wkt))
+								if (toNestedWellKnownType.TryGetValue(type.MetadataName, out var wkt))
 									wellKnownTypes[(int)wkt] = type;
 							}
 						}
