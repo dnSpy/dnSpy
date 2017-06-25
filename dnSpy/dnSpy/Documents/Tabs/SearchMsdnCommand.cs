@@ -29,9 +29,7 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Documents.Tabs {
 	static class SearchMsdnCtxMenuCommand {
-		// URL is from "Pro Power Tools" PeekF1: https://github.com/Microsoft/VS-PPT
-		// More args: ";k(TargetFrameworkMoniker-{0})", ";k(DevLang-{0})"
-		const string msdnAddress = "https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k({0})&rd=true#content";
+		const string searchUrl = "https://docs.microsoft.com/dotnet/api/{0}";
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
@@ -235,14 +233,14 @@ namespace dnSpy.Documents.Tabs {
 			else
 				memberName = string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name);
 
-			return string.Format(msdnAddress, memberName.Replace('/', '.'));
+			return string.Format(searchUrl, memberName.Replace('/', '.'));
 		}
 
 		static void ExecuteInternal(IEnumerable<TreeNodeData> nodes) {
 			foreach (var node in nodes) {
 				var nsNode = node as NamespaceNode;
 				if (nsNode != null) {
-					SearchMsdn(string.Format(msdnAddress, nsNode.Name));
+					SearchMsdn(string.Format(searchUrl, nsNode.Name));
 					continue;
 				}
 
