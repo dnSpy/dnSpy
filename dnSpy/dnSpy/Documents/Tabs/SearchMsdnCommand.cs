@@ -219,11 +219,6 @@ namespace dnSpy.Documents.Tabs {
 			if (member == null)
 				return string.Empty;
 
-			//TODO: This code doesn't work with:
-			//	- constructors
-			if (member is MethodDef && ((MethodDef)member).IsConstructor)
-				member = member.DeclaringType;  //TODO: Use declaring type until we can search for constructors
-
 			if (member.DeclaringType != null && member.DeclaringType.IsEnum && member is FieldDef && ((FieldDef)member).IsLiteral)
 				member = member.DeclaringType;
 
@@ -231,9 +226,9 @@ namespace dnSpy.Documents.Tabs {
 			if (member.DeclaringType == null)
 				memberName = member.FullName;
 			else
-				memberName = string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name);
+				memberName = string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name.Replace('.', '-'));
 
-			return string.Format(searchUrl, memberName.Replace('/', '.'));
+			return string.Format(searchUrl, memberName.Replace('/', '.').Replace('`', '-'));
 		}
 
 		static void ExecuteInternal(IEnumerable<TreeNodeData> nodes) {
