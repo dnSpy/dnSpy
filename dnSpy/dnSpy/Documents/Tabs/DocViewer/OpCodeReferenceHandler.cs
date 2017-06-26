@@ -28,7 +28,7 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.Tabs.DocViewer {
 	[ExportReferenceHandler]
 	sealed class OpCodeReferenceHandler : IReferenceHandler {
-		const string msdnUrlFormat = "https://msdn.microsoft.com/library/system.reflection.emit.opcodes.{0}.aspx";
+		const string opCodesUrl = "https://docs.microsoft.com/dotnet/api/system.reflection.emit.opcodes.{0}";
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
@@ -39,7 +39,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public bool OnFollowReference(IReferenceHandlerContext context) {
 			var opCode = (context.Reference as TextReference)?.Reference as OpCode;
 			if (opCode != null) {
-				var url = string.Format(msdnUrlFormat, GetMsdnOpCode(opCode));
+				var url = string.Format(opCodesUrl, GetMsdnOpCode(opCode));
 				StartBrowser(url);
 				return true;
 			}
