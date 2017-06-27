@@ -106,7 +106,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				throw new ArgumentNullException(nameof(comMetadata));
 			if (dispatcher == null)
 				throw new ArgumentNullException(nameof(dispatcher));
-			return CreateAssembly(() => new DmdLazyMetadataBytesCom(comMetadata, dispatcher), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation ?? string.Empty);
+			var mdi = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
+			return CreateAssembly(() => new DmdLazyMetadataBytesCom(mdi, dispatcher), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation ?? string.Empty);
 		}
 
 		/// <summary>
@@ -181,7 +182,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				throw new ArgumentNullException(nameof(comMetadata));
 			if (dispatcher == null)
 				throw new ArgumentNullException(nameof(dispatcher));
-			return CreateModule(assembly, () => new DmdLazyMetadataBytesCom(comMetadata, dispatcher), isInMemory, isDynamic, fullyQualifiedName);
+			var mdi = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
+			return CreateModule(assembly, () => new DmdLazyMetadataBytesCom(mdi, dispatcher), isInMemory, isDynamic, fullyQualifiedName);
 		}
 	}
 }

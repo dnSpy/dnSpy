@@ -23,7 +23,7 @@ using System.Security;
 
 #pragma warning disable 0108 // Member hides inherited member; missing new keyword
 #pragma warning disable 0649
-namespace dndbg.COM.MetaData {
+namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	[Flags]
 	enum CorPEKind {
 		/// <summary>not a PE file</summary>
@@ -87,117 +87,9 @@ namespace dndbg.COM.MetaData {
 		[PreserveSig]
 		int FindAssembliesByName([MarshalAs(UnmanagedType.LPWStr)] string szAppBase, [MarshalAs(UnmanagedType.LPWStr)] string szPrivateBin, [MarshalAs(UnmanagedType.LPWStr)] string szAssemblyName, IntPtr ppIUnk, uint cMax, IntPtr pcAssemblies);
 	}
-	[Guid("7DAC8207-D3AE-4C75-9B67-92801A497D44"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), ComImport]
-	[SuppressUnmanagedCodeSecurity]
-	interface IMetaDataImport {
-		[PreserveSig]
-		int CloseEnum(IntPtr hEnum);
-		[PreserveSig]
-		int CountEnum(IntPtr hEnum, ref uint pulCount);
-		[PreserveSig]
-		int ResetEnum(IntPtr hEnum, uint ulPos);
-		[PreserveSig]
-		int EnumTypeDefs(ref IntPtr phEnum, IntPtr rTypeDefs, uint cMax, out uint pcTypeDefs);
-		[PreserveSig]
-		int EnumInterfaceImpls(ref IntPtr phEnum, uint td, IntPtr rImpls, uint cMax, out uint pcImpls);
-		void EnumTypeRefs(ref IntPtr phEnum, uint[] rTypeRefs, uint cMax, ref uint pcTypeRefs);
-		void FindTypeDefByName([In, MarshalAs(UnmanagedType.LPWStr)] string szTypeDef, [In] uint tkEnclosingClass, [Out] out uint ptd);
-		[PreserveSig]
-		int GetScopeProps([Out] IntPtr szName, [In] uint cchName, IntPtr pchName, IntPtr pmvid);
-		void GetModuleFromScope([Out] out uint pmd);
-		[PreserveSig]
-		int GetTypeDefProps([In] uint td, [In] IntPtr szTypeDef, [In] uint cchTypeDef, IntPtr pchTypeDef, IntPtr pdwTypeDefFlags, IntPtr ptkExtends);
-		[PreserveSig]
-		int GetInterfaceImplProps(uint iiImpl, IntPtr pClass, IntPtr ptkIface);
-		[PreserveSig]
-		int GetTypeRefProps([In] uint tr, IntPtr ptkResolutionScope, IntPtr szName, uint cchName, IntPtr pchName);
-		void ResolveTypeRef(uint tr, ref Guid riid, [MarshalAs(UnmanagedType.IUnknown)] out object ppIScope, out uint ptd);
-		void EnumMembers([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] uint[] rMembers, [In] uint cMax, [Out] out uint pcTokens);
-		void EnumMembersWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] uint[] rMembers, [In] uint cMax, [Out] out uint pcTokens);
-		[PreserveSig]
-		int EnumMethods([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] IntPtr rMethods, [In] uint cMax, [Out] out uint pcTokens);
-		void EnumMethodsWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, uint[] rMethods, [In] uint cMax, [Out] out uint pcTokens);
-		[PreserveSig]
-		int EnumFields([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] IntPtr rFields, [In] uint cMax, [Out] out uint pcTokens);
-		void EnumFieldsWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] uint[] rFields, [In] uint cMax, [Out] out uint pcTokens);
-		[PreserveSig]
-		int EnumParams([In, Out] ref IntPtr phEnum, [In] uint mb, [Out] IntPtr rParams, [In] uint cMax, [Out] out uint pcTokens);
-		void EnumMemberRefs([In, Out] ref IntPtr phEnum, [In] uint tkParent, [Out] uint[] rMemberRefs, [In] uint cMax, [Out] out uint pcTokens);
-		[PreserveSig]
-		int EnumMethodImpls(ref IntPtr phEnum, uint td, IntPtr rMethodBody, IntPtr rMethodDecl, uint cMax, out uint pcTokens);
-		[PreserveSig]
-		int EnumPermissionSets(ref IntPtr phEnum, uint tk, uint dwActions, IntPtr rPermission, uint cMax, out uint pcTokens);
-		void FindMember([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
-		[PreserveSig]
-		int FindMethod([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
-		void FindField([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
-		void FindMemberRef([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmr);
-		[PreserveSig]
-		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, IntPtr pchMethod, IntPtr pdwAttr, IntPtr ppvSigBlob, IntPtr pcbSigBlob, IntPtr pulCodeRVA, IntPtr pdwImplFlags);
-		[PreserveSig]
-		int GetMemberRefProps(uint mr, IntPtr ptk, IntPtr szMember, uint cchMember, IntPtr pchMember, IntPtr ppvSigBlob, IntPtr pbSig);
-		[PreserveSig]
-		int EnumProperties([In, Out] ref IntPtr phEnum, [In] uint td, [Out] IntPtr rProperties, [In] uint cMax, [Out] out uint pcProperties);
-		[PreserveSig]
-		int EnumEvents(ref IntPtr phEnum, uint td, IntPtr rEvents, uint cMax, out uint pcEvents);
-		[PreserveSig]
-		int GetEventProps(uint ev, IntPtr pClass, IntPtr szEvent, uint cchEvent, IntPtr pchEvent, IntPtr pdwEventFlags, IntPtr ptkEventType, IntPtr pmdAddOn, IntPtr pmdRemoveOn, IntPtr pmdFire, IntPtr rmdOtherMethod, uint cMax, IntPtr pcOtherMethod);
-		[PreserveSig]
-		int EnumMethodSemantics(ref IntPtr phEnum, uint mb, IntPtr rEventProp, uint cMax, out uint pcEventProp);
-		[PreserveSig]
-		int GetMethodSemantics([In] uint mb, [In] uint tkEventProp, [Out] out uint pdwSemanticsFlags);
-		[PreserveSig]
-		int GetClassLayout([In] uint td, IntPtr pdwPackSize, [Out] [MarshalAs(UnmanagedType.LPArray)] COR_FIELD_OFFSET[] rFieldOffset, [In] int cMax, IntPtr pcFieldOffset, IntPtr pulClassSize);
-		[PreserveSig]
-		int GetFieldMarshal([In] uint tk, [Out] out IntPtr ppvNativeType, [Out] out uint pcbNativeType);
-		[PreserveSig]
-		int GetRVA(uint tk, out uint pulCodeRVA, IntPtr pdwImplFlags);
-		[PreserveSig]
-		int GetPermissionSetProps([In] uint pm, IntPtr pdwAction, IntPtr ppvPermission, IntPtr pcbPermission);
-		[PreserveSig]
-		int GetSigFromToken([In] uint mdSig, [Out] out IntPtr ppvSig, [Out] out uint pcbSig);
-		[PreserveSig]
-		int GetModuleRefProps([In] uint mur, [Out] IntPtr szName, [In] uint cchName, [Out] out uint pchName);
-		void EnumModuleRefs([In, Out] ref IntPtr phEnum, [Out] uint[] rModuleRefs, [In] uint cmax, [Out] out uint pcModuleRefs);
-		[PreserveSig]
-		int GetTypeSpecFromToken([In] uint typespec, [Out] out IntPtr ppvSig, [Out] out uint pcbSig);
-		[PreserveSig]
-		int GetNameFromToken([In] uint tk, [Out] out IntPtr pszUtf8NamePtr);
-		void EnumUnresolvedMethods([In, Out] ref IntPtr phEnum, [Out] uint[] rMethods, [In] uint cMax, [Out] out uint pcTokens);
-		[PreserveSig]
-		int GetUserString([In] uint stk, [Out] IntPtr szString, [In] uint cchString, [Out] out uint pchString);
-		[PreserveSig]
-		int GetPinvokeMap(uint tk, IntPtr pdwMappingFlags, IntPtr szImportName, uint cchImportName, IntPtr pchImportName, IntPtr pmrImportDLL);
-		void EnumSignatures([In, Out] ref IntPtr phEnum, [Out] uint[] rSignatures, [In] uint cmax, [Out] out uint pcSignatures);
-		void EnumTypeSpecs([In, Out] ref IntPtr phEnum, [Out] uint[] rTypeSpecs, [In] uint cmax, [Out] out uint pcTypeSpecs);
-		void EnumUserStrings([In, Out] ref IntPtr phEnum, [Out] uint[] rStrings, [In] uint cmax, [Out] out uint pcStrings);
-		void GetParamForMethodIndex([In] uint md, [In] uint ulParamSeq, [Out] out uint ppd);
-		[PreserveSig]
-		int EnumCustomAttributes([In, Out] ref IntPtr phEnum, [In] uint tk, [In] uint tkType, IntPtr rCustomAttributes, [In] uint cMax, [Out] out uint pcCustomAttributes);
-		[PreserveSig]
-		int GetCustomAttributeProps([In] uint cv, [Out] IntPtr ptkObj, [Out] out uint ptkType, [Out] out IntPtr ppBlob, [Out] out uint pcbSize);
-		void FindTypeRef([In] uint tkResolutionScope, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] out uint ptr);
-		void GetMemberProps(uint mb, out uint pClass, IntPtr szMember, uint cchMember, out uint pchMember, out uint pdwAttr, [Out] out IntPtr ppvSigBlob, [Out] out uint pcbSigBlob, [Out] out uint pulCodeRVA, [Out] out uint pdwImplFlags, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppValue, [Out] out uint pcchValue);
-		[PreserveSig]
-		int GetFieldProps(uint mb, IntPtr pClass, IntPtr szField, uint cchField, IntPtr pchField, IntPtr pdwAttr, [Out] IntPtr ppvSigBlob, [Out] IntPtr pcbSigBlob, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppValue, [Out] IntPtr pcchValue);
-		[PreserveSig]
-		int GetPropertyProps(uint prop, IntPtr pClass, IntPtr szProperty, uint cchProperty, IntPtr pchProperty, IntPtr pdwPropFlags, IntPtr ppvSig, IntPtr pbSig, IntPtr pdwCPlusTypeFlag, IntPtr ppDefaultValue, IntPtr pcchDefaultValue, IntPtr pmdSetter, IntPtr pmdGetter, IntPtr rmdOtherMethod, uint cMax, IntPtr pcOtherMethod);
-		[PreserveSig]
-		int GetParamProps([In] uint tk, IntPtr pmd, IntPtr pulSequence, IntPtr szName, uint cchName, IntPtr pchName, IntPtr pdwAttr, IntPtr pdwCPlusTypeFlag, IntPtr ppValue, IntPtr pcchValue);
-		[PreserveSig]
-		int GetCustomAttributeByName([In] uint tkObj, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, IntPtr ppData, IntPtr pcbData);
-		[PreserveSig]
-		bool IsValidToken([In] uint tk);
-		[PreserveSig]
-		int GetNestedClassProps([In] uint tdNestedClass, out uint ptdEnclosingClass);
-		void GetNativeCallConvFromSig([In] IntPtr pvSig, [In] uint cbSig, [Out] out uint pCallConv);
-		[PreserveSig]
-		int IsGlobal([In] uint pd, [Out] out int pbGlobal);
-	}
 	[Guid("FCE5EFA0-8BBA-4f8e-A036-8F2022B08466"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), ComImport]
 	[SuppressUnmanagedCodeSecurity]
-	interface IMetaDataImport2 : IMetaDataImport {
-		// IMetaDataImport members
+	interface IMetaDataImport2 {
 		[PreserveSig]
 		int CloseEnum(IntPtr hEnum);
 		[PreserveSig]
@@ -301,7 +193,6 @@ namespace dndbg.COM.MetaData {
 		void GetNativeCallConvFromSig([In] IntPtr pvSig, [In] uint cbSig, [Out] out uint pCallConv);
 		[PreserveSig]
 		int IsGlobal([In] uint pd, [Out] out int pbGlobal);
-		// end of inherited members
 
 		[PreserveSig]
 		int EnumGenericParams([In] [Out] ref IntPtr phEnum, [In] uint tk, [Out] IntPtr rGenericParams, [In] uint cMax, out uint pcGenericParams);

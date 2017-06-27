@@ -75,6 +75,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public IDebugMessageDispatcher CreateDebugMessageDispatcher() => new WpfDebugMessageDispatcher(Dispatcher);
 
 		public bool HasShutdownStarted => Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished;
+		public bool CheckAccess() => Dispatcher.CheckAccess();
 		public void VerifyAccess() => Dispatcher.VerifyAccess();
 		const DispatcherPriority DispPriority = DispatcherPriority.Send;
 		public T Invoke<T>(Func<T> callback) {

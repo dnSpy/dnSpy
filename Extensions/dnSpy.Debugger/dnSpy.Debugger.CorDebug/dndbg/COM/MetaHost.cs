@@ -19,6 +19,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using dndbg.COM.CorDebug;
 
@@ -33,7 +34,7 @@ namespace dndbg.COM.MetaHost {
 		METAHOST_POLICY_IGNORE_ERROR_MODE = 4096
 	}
 	[Guid("00000100-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[ComImport]
+	[ComImport, SuppressUnmanagedCodeSecurity]
 	interface IEnumUnknown {
 		[PreserveSig]
 		int Next([In] uint celt, [MarshalAs(UnmanagedType.IUnknown)] out object rgelt, out uint pceltFetched);
@@ -42,7 +43,7 @@ namespace dndbg.COM.MetaHost {
 		void Clone([MarshalAs(UnmanagedType.Interface)] out IEnumUnknown ppenum);
 	}
 	[Guid("D332DB9E-B9B3-4125-8207-A14884F53216"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[ComImport]
+	[ComImport, SuppressUnmanagedCodeSecurity]
 	interface ICLRMetaHost {
 		[return: MarshalAs(UnmanagedType.Interface)]
 		object GetRuntime([MarshalAs(UnmanagedType.LPWStr)] [In] string pwzVersion, [In] ref Guid riid);
@@ -56,7 +57,7 @@ namespace dndbg.COM.MetaHost {
 		void ExitProcess([In] int iExitCode);
 	}
 	[Guid("BD39D1D2-BA2F-486A-89B0-B4B0CB466891"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[ComImport]
+	[ComImport, SuppressUnmanagedCodeSecurity]
 	interface ICLRRuntimeInfo {
 		[PreserveSig]
 		int GetVersionString([MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzBuffer, [In] [Out] ref uint pcchBuffer);
@@ -76,7 +77,7 @@ namespace dndbg.COM.MetaHost {
 		void IsStarted(out int pbStarted, out uint pdwStartupFlags);
 	}
 	[Guid("E2190695-77B2-492E-8E14-C4B3A7FDD593"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[ComImport]
+	[ComImport, SuppressUnmanagedCodeSecurity]
 	interface ICLRMetaHostPolicy {
 		[return: MarshalAs(UnmanagedType.Interface)]
 		object GetRequestedRuntime([In] METAHOST_POLICY_FLAGS dwPolicyFlags, [MarshalAs(UnmanagedType.LPWStr)] [In] string pwzBinary, [MarshalAs(UnmanagedType.Interface)] [In] IStream pCfgStream, [MarshalAs(UnmanagedType.LPWStr)] [In] [Out] StringBuilder pwzVersion, [In] [Out] ref uint pcchVersion, [MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzImageVersion, [In] [Out] ref uint pcchImageVersion, out uint pdwConfigFlags, [In] ref Guid riid);

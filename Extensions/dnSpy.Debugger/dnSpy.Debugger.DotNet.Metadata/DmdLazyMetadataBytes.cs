@@ -119,7 +119,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the COM <c>IMetaDataImport</c> instance
 		/// </summary>
-		public object ComMetadata { get; }
+		public object ComMetadata => MetaDataImport;
+
+		internal Impl.COMD.IMetaDataImport2 MetaDataImport { get; }
 
 		/// <summary>
 		/// Gets the dispatcher to use when accessing <see cref="ComMetadata"/>
@@ -132,7 +134,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="comMetadata">COM <c>IMetaDataImport</c> instance</param>
 		/// <param name="dispatcher">Dispatcher to use when accessing <paramref name="comMetadata"/></param>
 		public DmdLazyMetadataBytesCom(object comMetadata, DmdDispatcher dispatcher) {
-			ComMetadata = comMetadata ?? throw new ArgumentNullException(nameof(comMetadata));
+			MetaDataImport = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
+			Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+		}
+
+		internal DmdLazyMetadataBytesCom(Impl.COMD.IMetaDataImport2 metaDataImport, DmdDispatcher dispatcher) {
+			MetaDataImport = metaDataImport ?? throw new ArgumentNullException(nameof(metaDataImport));
 			Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}
 	}

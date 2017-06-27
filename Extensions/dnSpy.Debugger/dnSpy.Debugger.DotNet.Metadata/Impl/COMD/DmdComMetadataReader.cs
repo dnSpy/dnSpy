@@ -22,21 +22,83 @@ using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdComMetadataReader : DmdMetadataReaderBase {
-		public override Guid ModuleVersionId => throw new NotImplementedException();//TODO:
-		public override int MDStreamVersion => throw new NotImplementedException();//TODO:
-		public override string ModuleScopeName => throw new NotImplementedException();//TODO:
-		public override string ImageRuntimeVersion => throw new NotImplementedException();//TODO:
+		public override Guid ModuleVersionId {
+			get {
+				if (!modulePropsInitd)
+					InitializeModuleProperties();
+				return __moduleVersionId_DONT_USE;
+			}
+		}
+
+		public override int MDStreamVersion {
+			get {
+				if (!modulePropsInitd)
+					InitializeModuleProperties();
+				return __mdStreamVersion_DONT_USE;
+			}
+		}
+
+		public override string ModuleScopeName {
+			get {
+				if (!modulePropsInitd)
+					InitializeModuleProperties();
+				return __moduleScopeName_DONT_USE;
+			}
+		}
+
+		public override string ImageRuntimeVersion {
+			get {
+				if (!modulePropsInitd)
+					InitializeModuleProperties();
+				return __imageRuntimeVersion_DONT_USE;
+			}
+		}
+
+		void InitializeModuleProperties() {
+			if (modulePropsInitd)
+				return;
+			COMThread(() => {
+				if (modulePropsInitd)
+					return;
+
+				__imageRuntimeVersion_DONT_USE = MDAPI.GetModuleVersionString(MetaDataImport) ?? string.Empty;
+				__moduleVersionId_DONT_USE = MDAPI.GetModuleMvid(MetaDataImport) ?? Guid.Empty;
+				__moduleScopeName_DONT_USE = MDAPI.GetModuleName(MetaDataImport) ?? string.Empty;
+				__machine_DONT_USE = (DmdImageFileMachine)(MDAPI.GetModuleMachineAndPEKind(MetaDataImport, out var peKind) ?? dnlib.PE.Machine.I386);
+				__peKind_DONT_USE = (DmdPortableExecutableKinds)peKind;
+
+				if (__imageRuntimeVersion_DONT_USE.StartsWith("v1."))
+					__mdStreamVersion_DONT_USE = 0x00010000;
+				else
+					__mdStreamVersion_DONT_USE = 0x00020000;
+
+				modulePropsInitd = true;
+			});
+		}
+		bool modulePropsInitd;
+		Guid __moduleVersionId_DONT_USE;
+		int __mdStreamVersion_DONT_USE;
+		string __moduleScopeName_DONT_USE;
+		string __imageRuntimeVersion_DONT_USE;
+		DmdPortableExecutableKinds __peKind_DONT_USE;
+		DmdImageFileMachine __machine_DONT_USE;
+
 		public override DmdMethodInfo EntryPoint => throw new NotImplementedException();//TODO:
 
-		readonly object comMetadata;
-		readonly DmdDispatcher dispatcher;
-		readonly DmdModuleImpl module;
+		IMetaDataImport2 MetaDataImport { get; }
+		IMetaDataAssemblyImport MetaDataAssemblyImport { get; }
 
-		public DmdComMetadataReader(DmdModuleImpl module, object comMetadata, DmdDispatcher dispatcher) {
+		readonly DmdModuleImpl module;
+		readonly DmdDispatcher dispatcher;
+
+		public DmdComMetadataReader(DmdModuleImpl module, IMetaDataImport2 metaDataImport, DmdDispatcher dispatcher) {
 			this.module = module ?? throw new ArgumentNullException(nameof(module));
-			this.comMetadata = comMetadata ?? throw new ArgumentNullException(nameof(comMetadata));
+			MetaDataImport = metaDataImport ?? throw new ArgumentNullException(nameof(metaDataImport));
+			MetaDataAssemblyImport = (IMetaDataAssemblyImport)metaDataImport;
 			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}
+
+		void COMThread(Action action) => dispatcher.Invoke(action);
 
 		public override DmdTypeDef[] GetTypes() => throw new NotImplementedException();//TODO:
 		public override DmdTypeRef[] GetExportedTypes() => throw new NotImplementedException();//TODO:
@@ -57,7 +119,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		protected override byte[] ResolveTypeSpecSignature(uint rid) => throw new NotImplementedException();//TODO:
 		protected override byte[] ResolveMethodSpecSignature(uint rid) => throw new NotImplementedException();//TODO:
 		protected override string ResolveStringCore(uint offset) => throw new NotImplementedException();//TODO:
-		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => throw new NotImplementedException();//TODO:
+
+		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) {
+			if (!modulePropsInitd)
+				InitializeModuleProperties();
+			peKind = __peKind_DONT_USE;
+			machine = __machine_DONT_USE;
+		}
+
 		public override DmdAssemblyName GetName() => throw new NotImplementedException();//TODO:
 		public override DmdAssemblyName[] GetReferencedAssemblies() => throw new NotImplementedException();//TODO:
 		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
