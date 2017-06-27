@@ -1486,18 +1486,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		public unsafe static byte[] GetCustomAttributeBlob(IMetaDataImport2 mdi, uint token, out uint typeToken) {
-			typeToken = 0;
+		public unsafe static (IntPtr addr, int size, int typeToken) GetCustomAttributeBlob(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
-				return null;
+				return (IntPtr.Zero, 0, 0);
 
-			int hr = mdi.GetCustomAttributeProps(token, IntPtr.Zero, out typeToken, out var pBlob, out uint cbSize);
+			int hr = mdi.GetCustomAttributeProps(token, IntPtr.Zero, out var typeToken, out var pBlob, out uint cbSize);
 			if (hr != 0 || pBlob == IntPtr.Zero)
-				return null;
+				return (IntPtr.Zero, 0, 0);
 
-			var caBlob = new byte[cbSize];
-			Marshal.Copy(pBlob, caBlob, 0, caBlob.Length);
-			return caBlob;
+			return (pBlob, (int)cbSize, (int)typeToken);
 		}
 
 		public unsafe static FileAttributes? GetFileAttributes(IMetaDataAssemblyImport mdai, uint token) {

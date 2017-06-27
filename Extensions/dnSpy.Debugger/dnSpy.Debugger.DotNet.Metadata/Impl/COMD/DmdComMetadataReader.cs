@@ -222,14 +222,46 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return asmName;
 		}
 
-		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdCustomAttributeData[] ReadModuleCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdCustomAttributeData[] ReadTypeDefCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdCustomAttributeData[] ReadFieldCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdCustomAttributeData[] ReadMethodCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdCustomAttributeData[] ReadParamCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdCustomAttributeData[] ReadEventCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdCustomAttributeData[] ReadPropertyCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => ReadCustomAttributesCore(0x20000000 + rid);
+		protected override DmdCustomAttributeData[] ReadModuleCustomAttributes(uint rid) => ReadCustomAttributesCore(0x00000000 + rid);
+		protected override DmdCustomAttributeData[] ReadTypeDefCustomAttributes(uint rid) => ReadCustomAttributesCore(0x02000000 + rid);
+		protected override DmdCustomAttributeData[] ReadFieldCustomAttributes(uint rid) => ReadCustomAttributesCore(0x04000000 + rid);
+		protected override DmdCustomAttributeData[] ReadMethodCustomAttributes(uint rid) => ReadCustomAttributesCore(0x06000000 + rid);
+		protected override DmdCustomAttributeData[] ReadParamCustomAttributes(uint rid) => ReadCustomAttributesCore(0x08000000 + rid);
+		protected override DmdCustomAttributeData[] ReadEventCustomAttributes(uint rid) => ReadCustomAttributesCore(0x14000000 + rid);
+		protected override DmdCustomAttributeData[] ReadPropertyCustomAttributes(uint rid) => ReadCustomAttributesCore(0x17000000 + rid);
+
+		DmdCustomAttributeData[] ReadCustomAttributesCore(uint token) => COMThread(() => ReadCustomAttributesCore_COMThread(token));
+
+		DmdCustomAttributeData[] ReadCustomAttributesCore_COMThread(uint token) {
+			dispatcher.VerifyAccess();
+
+			var tokens = MDAPI.GetCustomAttributeTokens(MetaDataImport, token);
+			if (tokens.Length == 0)
+				return Array.Empty<DmdCustomAttributeData>();
+
+			var res = new DmdCustomAttributeData[tokens.Length];
+			int w = 0;
+			for (int i = 0; i < tokens.Length; i++) {
+				var info = MDAPI.GetCustomAttributeBlob(MetaDataImport, tokens[i]);
+				if (info.addr == IntPtr.Zero)
+					continue;
+
+				var ctor = ResolveMethod(info.typeToken, null, null, DmdResolveOptions.None) as DmdConstructorInfo;
+				if ((object)ctor == null)
+					continue;
+
+				var ca = DmdCustomAttributeReader.Read(module, new DmdPointerDataStream(info.addr, info.size), ctor);
+				if (ca == null)
+					continue;
+
+				res[w++] = ca;
+			}
+			if (res.Length != w)
+				Array.Resize(ref res, w);
+			return res;
+		}
+
 		protected override DmdCustomAttributeData[] ReadAssemblySecurityAttributes(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdCustomAttributeData[] ReadTypeDefSecurityAttributes(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdCustomAttributeData[] ReadMethodSecurityAttributes(uint rid) => throw new NotImplementedException();//TODO:
