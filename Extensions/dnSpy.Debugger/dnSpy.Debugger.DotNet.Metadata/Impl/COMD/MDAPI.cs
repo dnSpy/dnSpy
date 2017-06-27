@@ -1309,27 +1309,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new Version(data.usMajorVersion, data.usMinorVersion, data.usBuildNumber, data.usRevisionNumber);
 		}
 
-		public unsafe static AssemblyHashAlgorithm? GetAssemblyHashAlgorithm(IMetaDataAssemblyImport mdai, uint token) {
+		public unsafe static DmdAssemblyHashAlgorithm? GetAssemblyHashAlgorithm(IMetaDataAssemblyImport mdai, uint token) {
 			if (mdai == null)
 				return null;
 			uint ulHashAlgId;
 			int hr = mdai.GetAssemblyProps(token, IntPtr.Zero, IntPtr.Zero, new IntPtr(&ulHashAlgId), IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (hr != 0)
 				return null;
-			return (AssemblyHashAlgorithm)ulHashAlgId;
+			return (DmdAssemblyHashAlgorithm)ulHashAlgId;
 		}
 
-		public unsafe static AssemblyAttributes? GetAssemblyAttributes(IMetaDataAssemblyImport mdai, uint token) {
+		public unsafe static DmdAssemblyNameFlags? GetAssemblyAttributes(IMetaDataAssemblyImport mdai, uint token) {
 			if (mdai == null)
 				return null;
 			uint dwAssemblyFlags;
 			int hr = mdai.GetAssemblyProps(token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&dwAssemblyFlags));
 			if (hr != 0)
 				return null;
-			return (AssemblyAttributes)dwAssemblyFlags;
+			return (DmdAssemblyNameFlags)dwAssemblyFlags;
 		}
 
-		public unsafe static PublicKey GetAssemblyPublicKey(IMetaDataAssemblyImport mdai, uint token) {
+		public unsafe static byte[] GetAssemblyPublicKey(IMetaDataAssemblyImport mdai, uint token) {
 			if (mdai == null)
 				return null;
 			IntPtr pbPublicKey;
@@ -1339,18 +1339,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				return null;
 			var data = new byte[cbPublicKey];
 			Marshal.Copy(pbPublicKey, data, 0, data.Length);
-			return new PublicKey(data);
+			return data;
 		}
 
-		public static Machine? GetModuleMachineAndPEKind(IMetaDataImport2 mdi2, out CorPEKind peKind) {
+		public static DmdImageFileMachine? GetModuleMachineAndPEKind(IMetaDataImport2 mdi2, out DmdPortableExecutableKinds peKind) {
 			peKind = 0;
 			if (mdi2 == null)
 				return null;
 			int hr = mdi2.GetPEKind(out uint dwPEKind, out uint dwMachine);
 			if (hr != 0)
 				return null;
-			peKind = (CorPEKind)dwPEKind;
-			return (Machine)dwMachine;
+			peKind = (DmdPortableExecutableKinds)dwPEKind;
+			return (DmdImageFileMachine)dwMachine;
 		}
 
 		public unsafe static string GetModuleVersionString(IMetaDataImport2 mdi2) {

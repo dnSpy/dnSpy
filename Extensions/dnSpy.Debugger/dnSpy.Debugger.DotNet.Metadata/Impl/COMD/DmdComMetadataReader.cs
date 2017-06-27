@@ -64,8 +64,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				__imageRuntimeVersion_DONT_USE = MDAPI.GetModuleVersionString(MetaDataImport) ?? string.Empty;
 				__moduleVersionId_DONT_USE = MDAPI.GetModuleMvid(MetaDataImport) ?? Guid.Empty;
 				__moduleScopeName_DONT_USE = MDAPI.GetModuleName(MetaDataImport) ?? string.Empty;
-				__machine_DONT_USE = (DmdImageFileMachine)(MDAPI.GetModuleMachineAndPEKind(MetaDataImport, out var peKind) ?? dnlib.PE.Machine.I386);
-				__peKind_DONT_USE = (DmdPortableExecutableKinds)peKind;
+				__machine_DONT_USE = MDAPI.GetModuleMachineAndPEKind(MetaDataImport, out __peKind_DONT_USE) ?? DmdImageFileMachine.I386;
 
 				if (__imageRuntimeVersion_DONT_USE.StartsWith("v1."))
 					__mdStreamVersion_DONT_USE = 0x00010000;
@@ -127,7 +126,40 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			machine = __machine_DONT_USE;
 		}
 
-		public override DmdAssemblyName GetName() => throw new NotImplementedException();//TODO:
+		public override DmdAssemblyName GetName() {
+			if (assemblyName == null)
+				InitializeAssemblyName();
+			return assemblyName.Clone();
+		}
+		DmdAssemblyName assemblyName;
+
+		void InitializeAssemblyName() {
+			if (assemblyName != null)
+				return;
+			COMThread(InitializeAssemblyName_COMThread);
+		}
+
+		void InitializeAssemblyName_COMThread() {
+			dispatcher.VerifyAccess();
+			if (assemblyName != null)
+				return;
+			var name = new DmdAssemblyName();
+
+			const uint token = 0x20000001;
+			name.Version = MDAPI.GetAssemblyVersionAndLocale(MetaDataAssemblyImport, token, out string locale) ?? new Version(0, 0, 0, 0);
+			name.Name = MDAPI.GetAssemblySimpleName(MetaDataAssemblyImport, token) ?? string.Empty;
+			name.CultureName = locale ?? string.Empty;
+			name.HashAlgorithm = MDAPI.GetAssemblyHashAlgorithm(MetaDataAssemblyImport, token) ?? DmdAssemblyHashAlgorithm.SHA1;
+			name.SetPublicKey(MDAPI.GetAssemblyPublicKey(MetaDataAssemblyImport, token) ?? Array.Empty<byte>());
+			name.RawFlags = MDAPI.GetAssemblyAttributes(MetaDataAssemblyImport, token) ?? DmdAssemblyNameFlags.None;
+
+			// PERF: Make sure the public key token is created once so it doesn't have to be recreated
+			// for each caller.
+			name.GetPublicKeyToken();
+
+			assemblyName = name;
+		}
+
 		public override DmdAssemblyName[] GetReferencedAssemblies() => throw new NotImplementedException();//TODO:
 		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdCustomAttributeData[] ReadModuleCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
