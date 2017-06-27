@@ -193,7 +193,35 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			assemblyName = name;
 		}
 
-		public override DmdAssemblyName[] GetReferencedAssemblies() => throw new NotImplementedException();//TODO:
+		public override DmdAssemblyName[] GetReferencedAssemblies() => COMThread(() => {
+			var list = new List<DmdAssemblyName>();
+			for (uint token = 0x23000001; ; token++) {
+				if (!MDAPI.IsValidToken(MetaDataImport, token))
+					break;
+				list.Add(ReadAssemblyName_COMThread(token & 0x00FFFFFF));
+			}
+			return list.ToArray();
+		});
+
+		DmdAssemblyName ReadAssemblyName_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			var asmName = new DmdAssemblyName();
+
+			uint token = 0x23000000 + rid;
+			asmName.Name = MDAPI.GetAssemblyRefSimpleName(MetaDataAssemblyImport, token) ?? string.Empty;
+			asmName.Version = MDAPI.GetAssemblyRefVersionAndLocale(MetaDataAssemblyImport, token, out string locale) ?? new Version(0, 0, 0, 0);
+			asmName.CultureName = locale ?? string.Empty;
+			var publicKeyOrToken = MDAPI.GetAssemblyRefPublicKeyOrToken(MetaDataAssemblyImport, token, out var attrs);
+			if (publicKeyOrToken != null) {
+				if ((attrs & DmdAssemblyNameFlags.PublicKey) != 0)
+					asmName.SetPublicKey(publicKeyOrToken);
+				else
+					asmName.SetPublicKeyToken(publicKeyOrToken);
+			}
+			asmName.RawFlags = attrs;
+			return asmName;
+		}
+
 		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdCustomAttributeData[] ReadModuleCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdCustomAttributeData[] ReadTypeDefCustomAttributes(uint rid) => throw new NotImplementedException();//TODO:

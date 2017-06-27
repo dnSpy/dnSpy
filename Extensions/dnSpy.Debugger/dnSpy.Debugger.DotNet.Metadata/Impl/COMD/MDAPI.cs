@@ -1250,7 +1250,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return data;
 		}
 
-		public unsafe static PublicKeyBase GetAssemblyRefPublicKeyOrToken(IMetaDataAssemblyImport mdai, uint token, out AssemblyAttributes attrs) {
+		public unsafe static byte[] GetAssemblyRefPublicKeyOrToken(IMetaDataAssemblyImport mdai, uint token, out DmdAssemblyNameFlags attrs) {
 			attrs = 0;
 			if (mdai == null)
 				return null;
@@ -1259,14 +1259,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			int hr = mdai.GetAssemblyRefProps(token, new IntPtr(&pbPublicKeyOrToken), new IntPtr(&cbPublicKeyOrToken), IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(&dwAssemblyFlags));
 			if (hr != 0)
 				return null;
-			attrs = (AssemblyAttributes)dwAssemblyFlags;
+			attrs = (DmdAssemblyNameFlags)dwAssemblyFlags;
 			if (pbPublicKeyOrToken == IntPtr.Zero)
 				return null;
 			var data = new byte[cbPublicKeyOrToken];
 			Marshal.Copy(pbPublicKeyOrToken, data, 0, data.Length);
-			if ((dwAssemblyFlags & (uint)AssemblyAttributes.PublicKey) != 0)
-				return new PublicKey(data);
-			return new PublicKeyToken(data);
+			return data;
 		}
 
 		public unsafe static string GetAssemblySimpleName(IMetaDataAssemblyImport mdai, uint token) {
