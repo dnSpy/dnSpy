@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Switches to a dispatcher thread and executes <paramref name="callback"/>
 		/// </summary>
 		/// <param name="callback">Code to execute</param>
-		public void Invoke(Action callback) => Invoke<object>(() => { callback(); return null; });
+		public abstract void Invoke(Action callback);
 
 		/// <summary>
 		/// Switches to a dispatcher thread and executes <paramref name="callback"/>

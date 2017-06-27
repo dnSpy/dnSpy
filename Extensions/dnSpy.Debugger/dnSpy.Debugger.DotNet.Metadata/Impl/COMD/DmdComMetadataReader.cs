@@ -98,6 +98,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		void COMThread(Action action) => dispatcher.Invoke(action);
+		T COMThread<T>(Func<T> action) => dispatcher.Invoke(action);
 
 		public override DmdTypeDef[] GetTypes() => throw new NotImplementedException();//TODO:
 		public override DmdTypeRef[] GetExportedTypes() => throw new NotImplementedException();//TODO:
@@ -111,13 +112,45 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
 		protected override DmdTypeRef ResolveExportedType(uint rid) => throw new NotImplementedException();//TODO:
 		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => throw new NotImplementedException();//TODO:
-		protected override byte[] ResolveFieldSignature(uint rid) => throw new NotImplementedException();//TODO:
-		protected override byte[] ResolveMethodSignature(uint rid) => throw new NotImplementedException();//TODO:
-		protected override byte[] ResolveMemberRefSignature(uint rid) => throw new NotImplementedException();//TODO:
-		protected override byte[] ResolveStandAloneSigSignature(uint rid) => throw new NotImplementedException();//TODO:
-		protected override byte[] ResolveTypeSpecSignature(uint rid) => throw new NotImplementedException();//TODO:
-		protected override byte[] ResolveMethodSpecSignature(uint rid) => throw new NotImplementedException();//TODO:
-		protected override string ResolveStringCore(uint offset) => throw new NotImplementedException();//TODO:
+
+		protected override byte[] ResolveFieldSignature(uint rid) => COMThread(() => ResolveFieldSignature_COMThread(rid));
+		protected override byte[] ResolveMethodSignature(uint rid) => COMThread(() => ResolveMethodSignature_COMThread(rid));
+		protected override byte[] ResolveMemberRefSignature(uint rid) => COMThread(() => ResolveMemberRefSignature_COMThread(rid));
+		protected override byte[] ResolveStandAloneSigSignature(uint rid) => COMThread(() => ResolveStandAloneSigSignature_COMThread(rid));
+		protected override byte[] ResolveTypeSpecSignature(uint rid) => COMThread(() => ResolveTypeSpecSignature_COMThread(rid));
+		protected override byte[] ResolveMethodSpecSignature(uint rid) => COMThread(() => ResolveMethodSpecSignature_COMThread(rid));
+
+		byte[] ResolveFieldSignature_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			return MDAPI.GetFieldSignatureBlob(MetaDataImport, 0x04000000 + rid) ?? Array.Empty<byte>();
+		}
+
+		byte[] ResolveMethodSignature_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			return MDAPI.GetMethodSignatureBlob(MetaDataImport, 0x06000000 + rid) ?? Array.Empty<byte>();
+		}
+
+		byte[] ResolveMemberRefSignature_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			return MDAPI.GetMemberRefSignatureBlob(MetaDataImport, 0x0A000000 + rid) ?? Array.Empty<byte>();
+		}
+
+		byte[] ResolveStandAloneSigSignature_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			return MDAPI.GetStandAloneSigBlob(MetaDataImport, 0x11000000 + rid) ?? Array.Empty<byte>();
+		}
+
+		byte[] ResolveTypeSpecSignature_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			return MDAPI.GetTypeSpecSignatureBlob(MetaDataImport, 0x1B000000 + rid) ?? Array.Empty<byte>();
+		}
+
+		byte[] ResolveMethodSpecSignature_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			return MDAPI.GetMethodSpecProps(MetaDataImport, 0x2B000000 + rid, out _) ?? Array.Empty<byte>();
+		}
+
+		protected override string ResolveStringCore(uint offset) => COMThread(() => MDAPI.GetUserString(MetaDataImport, 0x70000000 + offset));
 
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) {
 			if (!modulePropsInitd)
