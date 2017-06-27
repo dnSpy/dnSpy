@@ -132,18 +132,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return hr != 0 ? 0 : (SecurityAction)dwAction;
 		}
 
-		public unsafe static byte[] GetPermissionSetBlob(IMetaDataImport2 mdi, uint token) {
+		public unsafe static (IntPtr addr, uint size, uint action) GetPermissionSetBlob(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
-				return null;
+				return (IntPtr.Zero, 0, 0);
 			IntPtr pvPermission;
 			uint cbPermission;
-			int hr = mdi.GetPermissionSetProps(token, IntPtr.Zero, new IntPtr(&pvPermission), new IntPtr(&cbPermission));
+			uint dwAction;
+			int hr = mdi.GetPermissionSetProps(token, new IntPtr(&dwAction), new IntPtr(&pvPermission), new IntPtr(&cbPermission));
 			if (hr != 0 || pvPermission == IntPtr.Zero)
-				return null;
+				return (IntPtr.Zero, 0, 0);
 
-			var sig = new byte[cbPermission];
-			Marshal.Copy(pvPermission, sig, 0, sig.Length);
-			return sig;
+			return (pvPermission, cbPermission, dwAction);
 		}
 
 		public unsafe static bool GetPinvokeMapProps(IMetaDataImport2 mdi, uint token, out PInvokeAttributes attrs, out uint moduleToken) {

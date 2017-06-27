@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using SSP = System.Security.Permissions;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdComMetadataReader : DmdMetadataReaderBase {
@@ -84,16 +86,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		public override DmdMethodInfo EntryPoint => throw new NotImplementedException();//TODO:
 
-		IMetaDataImport2 MetaDataImport { get; }
-		IMetaDataAssemblyImport MetaDataAssemblyImport { get; }
+		IMetaDataImport2 MetaDataImport {
+			get {
+				Debug.Assert(dispatcher.CheckAccess());
+				return __metaDataImport_DONT_USE;
+			}
+		}
+
+		IMetaDataAssemblyImport MetaDataAssemblyImport {
+			get {
+				Debug.Assert(dispatcher.CheckAccess());
+				return __metaDataAssemblyImport_DONT_USE;
+			}
+		}
 
 		readonly DmdModuleImpl module;
+		readonly IMetaDataImport2 __metaDataImport_DONT_USE;
+		readonly IMetaDataAssemblyImport __metaDataAssemblyImport_DONT_USE;
 		readonly DmdDispatcher dispatcher;
 
 		public DmdComMetadataReader(DmdModuleImpl module, IMetaDataImport2 metaDataImport, DmdDispatcher dispatcher) {
 			this.module = module ?? throw new ArgumentNullException(nameof(module));
-			MetaDataImport = metaDataImport ?? throw new ArgumentNullException(nameof(metaDataImport));
-			MetaDataAssemblyImport = (IMetaDataAssemblyImport)metaDataImport;
+			__metaDataImport_DONT_USE = metaDataImport ?? throw new ArgumentNullException(nameof(metaDataImport));
+			__metaDataAssemblyImport_DONT_USE = (IMetaDataAssemblyImport)metaDataImport;
 			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}
 
@@ -235,7 +250,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		DmdCustomAttributeData[] ReadCustomAttributesCore_COMThread(uint token) {
 			dispatcher.VerifyAccess();
-
 			var tokens = MDAPI.GetCustomAttributeTokens(MetaDataImport, token);
 			if (tokens.Length == 0)
 				return Array.Empty<DmdCustomAttributeData>();
@@ -262,8 +276,62 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return res;
 		}
 
-		protected override DmdCustomAttributeData[] ReadAssemblySecurityAttributes(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdCustomAttributeData[] ReadTypeDefSecurityAttributes(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdCustomAttributeData[] ReadMethodSecurityAttributes(uint rid) => throw new NotImplementedException();//TODO:
+		protected override DmdCustomAttributeData[] ReadAssemblySecurityAttributes(uint rid) => ReadSecurityAttributesCore(0x20000000 + rid);
+		protected override DmdCustomAttributeData[] ReadTypeDefSecurityAttributes(uint rid) => ReadSecurityAttributesCore(0x02000000 + rid);
+		protected override DmdCustomAttributeData[] ReadMethodSecurityAttributes(uint rid) => ReadSecurityAttributesCore(0x06000000 + rid);
+
+		DmdCustomAttributeData[] ReadSecurityAttributesCore(uint token) => COMThread(() => ReadSecurityAttributesCore_COMThread(token));
+
+		DmdCustomAttributeData[] ReadSecurityAttributesCore_COMThread(uint token) {
+			dispatcher.VerifyAccess();
+			var tokens = MDAPI.GetPermissionSetTokens(MetaDataImport, token);
+			if (tokens.Length == 0)
+				return Array.Empty<DmdCustomAttributeData>();
+			IList<DmdType> genericTypeArguments = null;
+			DmdCustomAttributeData[] firstCas = null;
+			SSP.SecurityAction firstAction = 0;
+			List<(DmdCustomAttributeData[] cas, SSP.SecurityAction action)> res = null;
+			for (int i = 0; i < tokens.Length; i++) {
+				if (!MDAPI.IsValidToken(MetaDataImport, tokens[i]))
+					continue;
+				var info = MDAPI.GetPermissionSetBlob(MetaDataImport, token);
+				if (info.addr == IntPtr.Zero)
+					continue;
+				var action = (SSP.SecurityAction)(info.action & 0x1F);
+				var cas = DmdDeclSecurityReader.Read(module, new DmdPointerDataStream(info.addr, (int)info.size), action, genericTypeArguments);
+				if (cas.Length == 0)
+					continue;
+				if (res == null && firstCas == null) {
+					firstAction = action;
+					firstCas = cas;
+				}
+				else {
+					if (res == null) {
+						res = new List<(DmdCustomAttributeData[], SSP.SecurityAction)>(firstCas.Length + cas.Length);
+						res.Add((firstCas, firstAction));
+						firstCas = null;
+					}
+					res.Add((cas, action));
+				}
+			}
+			if (firstCas != null)
+				return firstCas;
+			if (res == null)
+				return Array.Empty<DmdCustomAttributeData>();
+			// Reflection sorts it by action
+			res.Sort((a, b) => (int)a.action - (int)b.action);
+			int count = 0;
+			for (int i = 0; i < res.Count; i++)
+				count += res[i].cas.Length;
+			var sas = new DmdCustomAttributeData[count];
+			int w = 0;
+			for (int i = 0; i < res.Count; i++) {
+				foreach (var ca in res[i].cas)
+					sas[w++] = ca;
+			}
+			if (sas.Length != w)
+				throw new InvalidOperationException();
+			return sas;
+		}
 	}
 }
