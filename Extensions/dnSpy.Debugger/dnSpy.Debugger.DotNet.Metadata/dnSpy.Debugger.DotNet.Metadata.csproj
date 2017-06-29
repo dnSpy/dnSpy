@@ -108,6 +108,7 @@
     <Compile Include="Impl\COMD\DmdComMetadataReader.cs" />
     <Compile Include="Impl\COMD\DmdPointerDataStream.cs" />
     <Compile Include="Impl\COMD\DmdTypeDefCOMD.cs" />
+    <Compile Include="Impl\COMD\DmdTypeRefCOMD.cs" />
     <Compile Include="Impl\COMD\LazyList.cs" />
     <Compile Include="Impl\COMD\MDAPI.cs" />
     <Compile Include="Impl\COMD\MetaData.cs" />
@@ -183,6 +184,7 @@
     <Compile Include="Impl\MD\DmdTypeRefMD.cs" />
     <Compile Include="Impl\MD\LazyList.cs" />
     <Compile Include="Impl\MD\MetadataConstantUtilities.cs" />
+    <Compile Include="Impl\ReflectionTests.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.Data.cs" />
     <Compile Include="MemberNotFoundException.cs" />

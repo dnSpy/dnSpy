@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			__metaDataAssemblyImport_DONT_USE = (IMetaDataAssemblyImport)metaDataImport;
 			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
-			typeRefList = null;//TODO: new LazyList<DmdTypeRef>(rid => new DmdTypeRefCOMD(this, rid, null));
+			typeRefList = new LazyList<DmdTypeRef>(TryCreateTypeRefCOMD_COMThread);
 			fieldList = null;//TODO: new LazyList<DmdFieldDef, DmdTypeDef>(CreateResolvedField);
 			typeDefList = new LazyList<DmdTypeDef>(TryCreateTypeDefCOMD_COMThread);
 			methodList = null;//TODO: new LazyList<DmdMethodBase, DmdTypeDef>(CreateResolvedMethod);
@@ -184,7 +184,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 		T COMThread<T>(Func<T> action) {
 			Debug.Assert(!IsCOMThread);
-			return dispatcher.Invoke(action); ;
+			return dispatcher.Invoke(action);
+		}
+
+		DmdTypeRefCOMD TryCreateTypeRefCOMD_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			if (!MDAPI.IsValidToken(MetaDataImport, 0x01000000 + rid))
+				return null;
+			return new DmdTypeRefCOMD(this, rid, null);
 		}
 
 		DmdTypeDefCOMD TryCreateTypeDefCOMD_COMThread(uint rid) {
@@ -547,7 +554,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return list.ToArray();
 		}
 
-		DmdAssemblyName ReadAssemblyName_COMThread(uint rid) {
+		internal DmdAssemblyName ReadAssemblyName_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			var asmName = new DmdAssemblyName();
 

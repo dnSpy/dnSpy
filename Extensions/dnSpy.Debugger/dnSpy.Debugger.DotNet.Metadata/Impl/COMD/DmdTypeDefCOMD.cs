@@ -42,7 +42,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
 
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(COMThread(() => new DmdTypeDefCOMD(reader, Rid, VerifyCustomModifiers(customModifiers))));
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) {
+			VerifyCustomModifiers(customModifiers);
+			return AppDomain.Intern(COMThread(() => new DmdTypeDefCOMD(reader, Rid, customModifiers)));
+		}
+
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(COMThread(() => new DmdTypeDefCOMD(reader, Rid, null)));
 
 		protected override DmdType GetDeclaringType() {

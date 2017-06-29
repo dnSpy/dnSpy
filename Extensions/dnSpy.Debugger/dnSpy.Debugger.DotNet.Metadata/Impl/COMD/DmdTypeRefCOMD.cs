@@ -19,27 +19,25 @@
 
 using System;
 using System.Collections.Generic;
-using dnlib.DotNet.MD;
 
-namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
-	sealed class DmdTypeRefMD : DmdTypeRef {
+namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
+	sealed class DmdTypeRefCOMD : DmdTypeRef {
 		public override DmdTypeScope TypeScope { get; }
 		public override string MetadataNamespace { get; }
 		public override string MetadataName { get; }
 
-		readonly DmdEcma335MetadataReader reader;
+		readonly DmdComMetadataReader reader;
 		readonly int declTypeToken;
 
-		public DmdTypeRefMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(reader.Module, rid, customModifiers) {
+		public DmdTypeRefCOMD(DmdComMetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(reader.Module, rid, customModifiers) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
+			reader.Dispatcher.VerifyAccess();
+			uint token = 0x01000000 + rid;
+			DmdTypeUtilities.SplitFullName(MDAPI.GetTypeRefName(reader.MetaDataImport, token) ?? string.Empty, out var @namespace, out var name);
+			MetadataNamespace = @namespace;
+			MetadataName = name;
 
-			var row = reader.TablesStream.ReadTypeRefRow(rid);
-			var ns = reader.StringsStream.Read(row.Namespace);
-			MetadataNamespace = string.IsNullOrEmpty(ns) ? null : ns;
-			MetadataName = reader.StringsStream.ReadNoNull(row.Name);
-
-			if (!CodedToken.ResolutionScope.Decode(row.ResolutionScope, out uint resScopeToken))
-				resScopeToken = uint.MaxValue;
+			var resScopeToken = MDAPI.GetTypeRefResolutionScope(reader.MetaDataImport, token);
 			switch (resScopeToken >> 24) {
 			case 0x00:
 				TypeScope = new DmdTypeScope(reader.Module);
@@ -51,13 +49,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				break;
 
 			case 0x1A:
-				var moduleRefRow = reader.TablesStream.ReadModuleRefRow(resScopeToken & 0x00FFFFFF) ?? new RawModuleRefRow();
-				var moduleName = reader.StringsStream.ReadNoNull(moduleRefRow.Name);
+				var moduleName = MDAPI.GetModuleRefName(reader.MetaDataImport, resScopeToken) ?? string.Empty;
 				TypeScope = new DmdTypeScope(reader.GetName(), moduleName);
 				break;
 
 			case 0x23:
-				TypeScope = new DmdTypeScope(reader.ReadAssemblyName(resScopeToken & 0x00FFFFFF));
+				TypeScope = new DmdTypeScope(reader.ReadAssemblyName_COMThread(resScopeToken & 0x00FFFFFF));
 				break;
 
 			default:
@@ -66,8 +63,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 		}
 
+		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
+
 		protected override int GetDeclaringTypeRefToken() => declTypeToken;
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdTypeRefMD(reader, Rid, VerifyCustomModifiers(customModifiers)));
-		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdTypeRefMD(reader, Rid, null));
+
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) {
+			VerifyCustomModifiers(customModifiers);
+			return AppDomain.Intern(COMThread(() => new DmdTypeRefCOMD(reader, Rid, customModifiers)));
+		}
+
+		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(COMThread(() => new DmdTypeRefCOMD(reader, Rid, null)));
 	}
 }

@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
