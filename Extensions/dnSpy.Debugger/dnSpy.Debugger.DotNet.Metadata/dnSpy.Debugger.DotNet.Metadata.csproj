@@ -166,7 +166,6 @@
     <Compile Include="Impl\DmdTypeNameParser.cs" />
     <Compile Include="Impl\DmdTypeRef.cs" />
     <Compile Include="Impl\DmdTypeUtilities.cs" />
-    <Compile Include="Impl\LazyList.cs" />
     <Compile Include="Impl\MD\DmdConstructorDefMD.cs" />
     <Compile Include="Impl\MD\DmdDataStreamImpl.cs" />
     <Compile Include="Impl\MD\DmdEcma335MetadataReader.cs" />
@@ -180,6 +179,7 @@
     <Compile Include="Impl\MD\DmdPropertyDefMD.cs" />
     <Compile Include="Impl\MD\DmdTypeDefMD.cs" />
     <Compile Include="Impl\MD\DmdTypeRefMD.cs" />
+    <Compile Include="Impl\MD\LazyList.cs" />
     <Compile Include="Impl\MD\MetadataConstantUtilities.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.Data.cs" />

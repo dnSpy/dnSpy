@@ -21,7 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 
-namespace dnSpy.Debugger.DotNet.Metadata.Impl {
+namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	[DebuggerDisplay("Count = {Length}")]
 	sealed class LazyList<T> where T : class {
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
