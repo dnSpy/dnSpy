@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		IMetaDataAssemblyImport MetaDataAssemblyImport {
+		internal IMetaDataAssemblyImport MetaDataAssemblyImport {
 			get {
 				Debug.Assert(IsCOMThread);
 				return __metaDataAssemblyImport_DONT_USE;
@@ -173,7 +173,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			eventList = null;//TODO: new LazyList<DmdEventDef, DmdTypeDef>(CreateResolvedEvent);
 			propertyList = null;//TODO: new LazyList<DmdPropertyDef, DmdTypeDef>(CreateResolvedProperty);
 			typeSpecList = new LazyList2<DmdType, IList<DmdType>>(TryCreateTypeSpecCOMD_COMThread);
-			exportedTypeList = null;//TODO: new LazyList<DmdTypeRef>(rid => new DmdExportedTypeCOMD(this, rid, null));
+			exportedTypeList = new LazyList<DmdTypeRef>(TryCreateExportedTypeCOMD_COMThread);
 
 			globalTypeIfThereAreNoTypes = new DmdNullGlobalType(module, null);
 		}
@@ -200,6 +200,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			if (!MDAPI.IsValidToken(MetaDataImport, 0x02000000 + rid))
 				return null;
 			return new DmdTypeDefCOMD(this, rid, null);
+		}
+
+		DmdExportedTypeCOMD TryCreateExportedTypeCOMD_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			if (!MDAPI.IsValidToken(MetaDataImport, 0x27000000 + rid))
+				return null;
+			return new DmdExportedTypeCOMD(this, rid, null);
 		}
 
 		internal uint GetEnclosingTypeDefRid_COMThread(uint typeDefRid) {
@@ -275,7 +282,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			dispatcher.VerifyAccess();
 			var result = new List<DmdTypeDef>();
 			for (uint rid = 1; rid <= 0x00FFFFFF; rid++) {
-				var type = ResolveTypeDef(rid);
+				var type = ResolveTypeDef_COMThread(rid);
 				if ((object)type == null)
 					break;
 				result.Add(type);
@@ -295,7 +302,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		DmdTypeRef[] GetExportedTypes_COMThread() {
 			dispatcher.VerifyAccess();
-			throw new NotImplementedException();//TODO:
+			List<DmdTypeRef> result = null;
+			for (uint rid = 1; rid <= 0x00FFFFFF; rid++) {
+				var type = ResolveExportedType_COMThread(rid);
+				if ((object)type == null)
+					break;
+				if (result == null)
+					result = new List<DmdTypeRef>();
+				result.Add(type);
+			}
+			return result?.ToArray() ?? Array.Empty<DmdTypeRef>();
 		}
 
 		protected override DmdTypeRef ResolveTypeRef(uint rid) {

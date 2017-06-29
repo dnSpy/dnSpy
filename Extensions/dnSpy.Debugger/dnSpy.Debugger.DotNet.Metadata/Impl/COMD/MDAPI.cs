@@ -1567,7 +1567,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
 		}
 
-		public unsafe static bool GetExportedTypeProps(IMetaDataAssemblyImport mdai, uint token, out uint implementation, out uint typeDefId, out TypeAttributes attrs) {
+		public unsafe static bool GetExportedTypeProps(IMetaDataAssemblyImport mdai, uint token, out uint implementation, out uint typeDefId, out DmdTypeAttributes attrs) {
 			implementation = 0;
 			typeDefId = 0;
 			attrs = 0;
@@ -1581,7 +1581,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 			implementation = tkImplementation;
 			typeDefId = tkTypeDef;
-			attrs = (TypeAttributes)dwExportedTypeFlags;
+			attrs = (DmdTypeAttributes)dwExportedTypeFlags;
 			return true;
 		}
 
