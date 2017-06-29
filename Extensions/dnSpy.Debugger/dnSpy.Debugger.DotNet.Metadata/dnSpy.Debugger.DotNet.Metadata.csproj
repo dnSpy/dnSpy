@@ -107,6 +107,8 @@
     <Compile Include="Impl\AssemblyNameEqualityComparer.cs" />
     <Compile Include="Impl\COMD\DmdComMetadataReader.cs" />
     <Compile Include="Impl\COMD\DmdPointerDataStream.cs" />
+    <Compile Include="Impl\COMD\DmdTypeDefCOMD.cs" />
+    <Compile Include="Impl\COMD\LazyList.cs" />
     <Compile Include="Impl\COMD\MDAPI.cs" />
     <Compile Include="Impl\COMD\MetaData.cs" />
     <Compile Include="Impl\DmdAppDomainControllerImpl.cs" />

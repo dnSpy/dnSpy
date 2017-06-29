@@ -22,6 +22,8 @@ using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdMetadataReaderBase : DmdMetadataReader {
+		protected const bool resolveTypes = true;
+
 		static DmdMemberInfo TryResolve(DmdMemberInfo member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveMemberNoThrow() ?? member;
 		static DmdType TryResolve(DmdType member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveNoThrow() ?? member;
 		static DmdFieldInfo TryResolve(DmdFieldInfo member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveNoThrow() ?? member;

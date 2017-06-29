@@ -82,7 +82,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly DmdNullGlobalType globalTypeIfThereAreNoTypes;
 		readonly Dictionary<uint, DmdType> fieldTypeCache;
 		readonly Dictionary<uint, DmdMethodSignature> methodSignatureCache;
-		const bool resolveTypes = true;
 
 		DmdEcma335MetadataReader(DmdModuleImpl module, IMetaData metadata) {
 			signatureLock = new object();

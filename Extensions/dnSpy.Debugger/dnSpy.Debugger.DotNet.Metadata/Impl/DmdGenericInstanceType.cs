@@ -72,11 +72,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (!baseTypeInitd) {
 					lock (LockObject) {
 						if (!baseTypeInitd) {
-							int baseTypeToken = genericTypeDefinition.GetBaseTypeToken();
-							if ((baseTypeToken & 0x00FFFFFF) == 0)
-								__baseType_DONT_USE = null;
-							else
-								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, typeArguments, null, DmdResolveOptions.None);
+							__baseType_DONT_USE = genericTypeDefinition.GetBaseType(typeArguments);
 							baseTypeInitd = true;
 						}
 					}

@@ -43,13 +43,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdTypeDefMD(reader, Rid, VerifyCustomModifiers(customModifiers)));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdTypeDefMD(reader, Rid, null));
 
-		protected override int GetDeclaringTypeToken() => 0x02000000 + (int)(reader.TablesStream.ReadNestedClassRow(reader.Metadata.GetNestedClassRid(Rid))?.EnclosingClass ?? 0);
+		protected override DmdType GetDeclaringType() =>
+			Module.ResolveType(0x02000000 + (int)(reader.TablesStream.ReadNestedClassRow(reader.Metadata.GetNestedClassRid(Rid))?.EnclosingClass ?? 0), (IList<DmdType>)null, null, DmdResolveOptions.None);
 
-		protected override int GetBaseTypeTokenCore() {
+		protected override DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments) {
 			uint extends = reader.TablesStream.ReadTypeDefRow(Rid).Extends;
 			if (!CodedToken.TypeDefOrRef.Decode(extends, out uint token))
-				return 0;
-			return (int)token;
+				return null;
+			return reader.Module.ResolveType((int)extends, genericTypeArguments, null, DmdResolveOptions.None);
 		}
 
 		protected override DmdType[] CreateGenericParameters() {

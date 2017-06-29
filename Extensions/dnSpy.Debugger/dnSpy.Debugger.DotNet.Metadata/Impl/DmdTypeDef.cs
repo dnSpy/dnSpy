@@ -113,14 +113,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (!declaringTypeInitd) {
 					lock (LockObject) {
 						if (!declaringTypeInitd) {
-							int declTypeToken = GetDeclaringTypeToken();
-							if ((declTypeToken & 0x00FFFFFF) == 0)
-								__declaringType_DONT_USE = null;
-							else {
-								if (((uint)declTypeToken >> 24) != 0x02)
-									throw new InvalidOperationException();
-								__declaringType_DONT_USE = Module.ResolveType(declTypeToken, (IList<DmdType>)null, null, DmdResolveOptions.None);
-							}
+							__declaringType_DONT_USE = GetDeclaringType();
 							declaringTypeInitd = true;
 						}
 					}
@@ -136,20 +129,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (!baseTypeInitd) {
 					lock (LockObject) {
 						if (!baseTypeInitd) {
-							int baseTypeToken = GetBaseTypeToken();
-							if ((baseTypeToken & 0x00FFFFFF) == 0)
-								__baseType_DONT_USE = null;
-							else {
-								__baseType_DONT_USE = Module.ResolveType(baseTypeToken, GetGenericArguments(), null, DmdResolveOptions.None);
-								var bt = __baseType_DONT_USE;
-								if (IsImport && !IsInterface && bt != AppDomain.System_ValueType && bt != AppDomain.System_Enum && bt != AppDomain.System_MulticastDelegate) {
-									if (bt == AppDomain.System_Object) {
-										if (IsWindowsRuntime)
-											__baseType_DONT_USE = AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_WindowsRuntime_RuntimeClass, isOptional: false, onlyCorlib: true) ?? bt;
-										else
-											__baseType_DONT_USE = AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject, isOptional: false, onlyCorlib: true) ?? bt;
-									}
-								}
+							__baseType_DONT_USE = GetBaseType(GetGenericArguments());
+							if (IsImport && !IsInterface && __baseType_DONT_USE is DmdType bt && bt == AppDomain.System_Object) {
+								if (IsWindowsRuntime)
+									__baseType_DONT_USE = AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_WindowsRuntime_RuntimeClass, isOptional: false, onlyCorlib: true) ?? bt;
+								else
+									__baseType_DONT_USE = AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject, isOptional: false, onlyCorlib: true) ?? bt;
 							}
 							baseTypeInitd = true;
 						}
@@ -161,17 +146,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdType __baseType_DONT_USE;
 		bool baseTypeInitd;
 
-		protected abstract int GetDeclaringTypeToken();
-		protected abstract int GetBaseTypeTokenCore();
-
-		public int GetBaseTypeToken() {
-			if (baseTypeToken == -1) {
-				baseTypeToken = GetBaseTypeTokenCore();
-				Debug.Assert(baseTypeToken != -1);
-			}
-			return baseTypeToken;
-		}
-		int baseTypeToken = -1;
+		protected abstract DmdType GetDeclaringType();
+		protected abstract DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments);
+		public DmdType GetBaseType(IList<DmdType> genericTypeArguments) => GetBaseTypeCore(genericTypeArguments);
 
 		protected uint Rid => rid;
 		readonly uint rid;

@@ -610,12 +610,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new string(nameBuf, 0, (int)chTypeDef - 1);
 		}
 
-		public static unsafe TypeAttributes? GetTypeDefAttributes(IMetaDataImport2 mdi, uint token) {
+		public static unsafe DmdTypeAttributes? GetTypeDefAttributes(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
 				return null;
 			uint dwTypeDefFlags;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwTypeDefFlags), IntPtr.Zero);
-			return hr == 0 ? (TypeAttributes)dwTypeDefFlags : (TypeAttributes?)null;
+			return hr == 0 ? (DmdTypeAttributes)dwTypeDefFlags : (DmdTypeAttributes?)null;
 		}
 
 		public static unsafe uint GetTypeDefEnclosingType(IMetaDataImport2 mdi, uint token) {

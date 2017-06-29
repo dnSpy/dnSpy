@@ -33,8 +33,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdNullGlobalType(Module, VerifyCustomModifiers(customModifiers)));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdNullGlobalType(Module, null));
 
-		protected override int GetDeclaringTypeToken() => 0;
-		protected override int GetBaseTypeTokenCore() => 0;
+		protected override DmdType GetDeclaringType() => null;
+		protected override DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments) => null;
 		protected override DmdType[] CreateGenericParameters() => null;
 
 		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
