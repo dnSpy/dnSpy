@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.IO;
 using dnlib.DotNet.MD;
 using dnlib.PE;
 
@@ -36,18 +37,26 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public bool MakePublic() {
 			try {
-				md = MetaDataCreator.CreateMetaData(new PEImage(data));
-			}
-			catch (BadImageFormatException) {
-				return false;
-			}
+				try {
+					md = MetaDataCreator.CreateMetaData(new PEImage(data));
+				}
+				catch (IOException) {
+					return false;
+				}
+				catch (BadImageFormatException) {
+					return false;
+				}
 
-			UpdateTypeDefTable();
-			UpdateFieldTable();
-			UpdateMethodTable();
-			UpdateExportedTypeTable();
+				UpdateTypeDefTable();
+				UpdateFieldTable();
+				UpdateMethodTable();
+				UpdateExportedTypeTable();
 
-			return true;
+				return true;
+			}
+			finally {
+				md?.Dispose();
+			}
 		}
 
 		void UpdateTypeDefTable() {
