@@ -344,7 +344,6 @@ namespace dnSpy.Documents {
 					dict[n] = i++;
 				var list = new List<(IDsDocument document, int index)>(documents.Select(a => {
 					bool b = dict.TryGetValue(a, out int j);
-					Debug.Assert(b);
 					return (a, (b ? j : -1));
 				}));
 				list.Sort((a, b) => b.index.CompareTo(a.index));
