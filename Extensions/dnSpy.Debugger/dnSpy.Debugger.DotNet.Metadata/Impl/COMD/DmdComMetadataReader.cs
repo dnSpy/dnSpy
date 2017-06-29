@@ -60,26 +60,32 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		void InitializeModuleProperties() {
 			if (modulePropsInitd)
 				return;
-			COMThread(() => {
-				if (modulePropsInitd)
-					return;
+			if (IsCOMThread)
+				InitializeModuleProperties_COMThread();
+			else
+				COMThread(InitializeModuleProperties_COMThread);
+		}
 
-				__imageRuntimeVersion_DONT_USE = MDAPI.GetModuleVersionString(MetaDataImport) ?? string.Empty;
-				__moduleVersionId_DONT_USE = MDAPI.GetModuleMvid(MetaDataImport) ?? Guid.Empty;
-				__moduleScopeName_DONT_USE = MDAPI.GetModuleName(MetaDataImport) ?? string.Empty;
-				__machine_DONT_USE = MDAPI.GetModuleMachineAndPEKind(MetaDataImport, out __peKind_DONT_USE) ?? DmdImageFileMachine.I386;
+		void InitializeModuleProperties_COMThread() {
+			dispatcher.VerifyAccess();
+			if (modulePropsInitd)
+				return;
 
-				bool isV1x =
-					__imageRuntimeVersion_DONT_USE.StartsWith("v1.", StringComparison.OrdinalIgnoreCase) ||
-					StringComparer.OrdinalIgnoreCase.Equals(__imageRuntimeVersion_DONT_USE, MDHeaderRuntimeVersion.MS_CLR_10_RETAIL) ||
-					StringComparer.OrdinalIgnoreCase.Equals(__imageRuntimeVersion_DONT_USE, MDHeaderRuntimeVersion.MS_CLR_10_COMPLUS);
-				if (isV1x)
-					__mdStreamVersion_DONT_USE = 0x00010000;
-				else
-					__mdStreamVersion_DONT_USE = 0x00020000;
+			__imageRuntimeVersion_DONT_USE = MDAPI.GetModuleVersionString(MetaDataImport) ?? string.Empty;
+			__moduleVersionId_DONT_USE = MDAPI.GetModuleMvid(MetaDataImport) ?? Guid.Empty;
+			__moduleScopeName_DONT_USE = MDAPI.GetModuleName(MetaDataImport) ?? string.Empty;
+			__machine_DONT_USE = MDAPI.GetModuleMachineAndPEKind(MetaDataImport, out __peKind_DONT_USE) ?? DmdImageFileMachine.I386;
 
-				modulePropsInitd = true;
-			});
+			bool isV1x =
+				__imageRuntimeVersion_DONT_USE.StartsWith("v1.", StringComparison.OrdinalIgnoreCase) ||
+				StringComparer.OrdinalIgnoreCase.Equals(__imageRuntimeVersion_DONT_USE, MDHeaderRuntimeVersion.MS_CLR_10_RETAIL) ||
+				StringComparer.OrdinalIgnoreCase.Equals(__imageRuntimeVersion_DONT_USE, MDHeaderRuntimeVersion.MS_CLR_10_COMPLUS);
+			if (isV1x)
+				__mdStreamVersion_DONT_USE = 0x00010000;
+			else
+				__mdStreamVersion_DONT_USE = 0x00020000;
+
+			modulePropsInitd = true;
 		}
 		bool modulePropsInitd;
 		Guid __moduleVersionId_DONT_USE;
@@ -89,18 +95,44 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		DmdPortableExecutableKinds __peKind_DONT_USE;
 		DmdImageFileMachine __machine_DONT_USE;
 
-		public override DmdMethodInfo EntryPoint => throw new NotImplementedException();//TODO:
+		public override DmdMethodInfo EntryPoint {
+			get {
+				if (!entryPointInitd)
+					InitializeEntryPoint();
+				return entryPoint;
+			}
+		}
+
+		void InitializeEntryPoint() {
+			if (entryPointInitd)
+				return;
+			if (IsCOMThread)
+				InitializeEntryPoint_COMThread();
+			else
+				COMThread(InitializeEntryPoint_COMThread);
+		}
+
+		void InitializeEntryPoint_COMThread() {
+			dispatcher.VerifyAccess();
+			if (entryPointInitd)
+				return;
+			entryPoint = null;//TODO:
+			entryPointInitd = false;//TODO:
+			throw new NotImplementedException();//TODO:
+		}
+		DmdMethodInfo entryPoint;
+		bool entryPointInitd;
 
 		IMetaDataImport2 MetaDataImport {
 			get {
-				Debug.Assert(dispatcher.CheckAccess());
+				Debug.Assert(IsCOMThread);
 				return __metaDataImport_DONT_USE;
 			}
 		}
 
 		IMetaDataAssemblyImport MetaDataAssemblyImport {
 			get {
-				Debug.Assert(dispatcher.CheckAccess());
+				Debug.Assert(IsCOMThread);
 				return __metaDataAssemblyImport_DONT_USE;
 			}
 		}
@@ -117,28 +149,201 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}
 
-		void COMThread(Action action) => dispatcher.Invoke(action);
-		T COMThread<T>(Func<T> action) => dispatcher.Invoke(action);
+		bool IsCOMThread => dispatcher.CheckAccess();
+		void COMThread(Action action) {
+			Debug.Assert(!IsCOMThread);
+			dispatcher.Invoke(action);
+		}
+		T COMThread<T>(Func<T> action) {
+			Debug.Assert(!IsCOMThread);
+			return dispatcher.Invoke(action); ;
+		}
 
-		public override DmdTypeDef[] GetTypes() => throw new NotImplementedException();//TODO:
-		public override DmdTypeRef[] GetExportedTypes() => throw new NotImplementedException();//TODO:
-		protected override DmdTypeRef ResolveTypeRef(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdTypeDef ResolveTypeDef(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdFieldDef ResolveFieldDef(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdMethodBase ResolveMethodDef(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => throw new NotImplementedException();//TODO:
-		protected override DmdEventDef ResolveEventDef(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdPropertyDef ResolvePropertyDef(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => throw new NotImplementedException();//TODO:
-		protected override DmdTypeRef ResolveExportedType(uint rid) => throw new NotImplementedException();//TODO:
-		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => throw new NotImplementedException();//TODO:
+		public override DmdTypeDef[] GetTypes() {
+			if (IsCOMThread)
+				return GetTypes_COMThread();
+			else
+				return COMThread(GetTypes_COMThread);
+		}
 
-		protected override byte[] ResolveFieldSignature(uint rid) => COMThread(() => ResolveFieldSignature_COMThread(rid));
-		protected override byte[] ResolveMethodSignature(uint rid) => COMThread(() => ResolveMethodSignature_COMThread(rid));
-		protected override byte[] ResolveMemberRefSignature(uint rid) => COMThread(() => ResolveMemberRefSignature_COMThread(rid));
-		protected override byte[] ResolveStandAloneSigSignature(uint rid) => COMThread(() => ResolveStandAloneSigSignature_COMThread(rid));
-		protected override byte[] ResolveTypeSpecSignature(uint rid) => COMThread(() => ResolveTypeSpecSignature_COMThread(rid));
-		protected override byte[] ResolveMethodSpecSignature(uint rid) => COMThread(() => ResolveMethodSpecSignature_COMThread(rid));
+		DmdTypeDef[] GetTypes_COMThread() {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		public override DmdTypeRef[] GetExportedTypes() {
+			if (IsCOMThread)
+				return GetExportedTypes_COMThread();
+			else
+				return COMThread(GetExportedTypes_COMThread);
+		}
+
+		DmdTypeRef[] GetExportedTypes_COMThread() {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override DmdTypeRef ResolveTypeRef(uint rid) {
+			if (IsCOMThread)
+				return ResolveTypeRef_COMThread(rid);
+			else
+				return COMThread(() => ResolveTypeRef_COMThread(rid));
+		}
+
+		DmdTypeRef ResolveTypeRef_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override DmdTypeDef ResolveTypeDef(uint rid) {
+			if (IsCOMThread)
+				return ResolveTypeDef_COMThread(rid);
+			else
+				return COMThread(() => ResolveTypeDef_COMThread(rid));
+		}
+
+		DmdTypeDef ResolveTypeDef_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override DmdFieldDef ResolveFieldDef(uint rid) {
+			if (IsCOMThread)
+				return ResolveFieldDef_COMThread(rid);
+			else
+				return COMThread(() => ResolveFieldDef_COMThread(rid));
+		}
+
+		DmdFieldDef ResolveFieldDef_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override DmdMethodBase ResolveMethodDef(uint rid) {
+			if (IsCOMThread)
+				return ResolveMethodDef_COMThread(rid);
+			else
+				return COMThread(() => ResolveMethodDef_COMThread(rid));
+		}
+
+		DmdMethodBase ResolveMethodDef_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			if (IsCOMThread)
+				return ResolveMemberRef_COMThread(rid, genericTypeArguments, genericMethodArguments);
+			else
+				return COMThread(() => ResolveMemberRef_COMThread(rid, genericTypeArguments, genericMethodArguments));
+		}
+
+		DmdMemberInfo ResolveMemberRef_COMThread(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override DmdEventDef ResolveEventDef(uint rid) {
+			if (IsCOMThread)
+				return ResolveEventDef_COMThread(rid);
+			else
+				return COMThread(() => ResolveEventDef_COMThread(rid));
+		}
+
+		DmdEventDef ResolveEventDef_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override DmdPropertyDef ResolvePropertyDef(uint rid) {
+			if (IsCOMThread)
+				return ResolvePropertyDef_COMThread(rid);
+			else
+				return COMThread(() => ResolvePropertyDef_COMThread(rid));
+		}
+
+		DmdPropertyDef ResolvePropertyDef_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) {
+			if (IsCOMThread)
+				return ResolveTypeSpec_COMThread(rid, genericTypeArguments);
+			else
+				return COMThread(() => ResolveTypeSpec_COMThread(rid, genericTypeArguments));
+		}
+
+		DmdType ResolveTypeSpec_COMThread(uint rid, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override DmdTypeRef ResolveExportedType(uint rid) {
+			if (IsCOMThread)
+				return ResolveExportedType_COMThread(rid);
+			else
+				return COMThread(() => ResolveExportedType_COMThread(rid));
+		}
+
+		DmdTypeRef ResolveExportedType_COMThread(uint rid) {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			if (IsCOMThread)
+				return ResolveMethodSpec_COMThread(rid, genericTypeArguments, genericMethodArguments);
+			else
+				return COMThread(() => ResolveMethodSpec_COMThread(rid, genericTypeArguments, genericMethodArguments));
+		}
+
+		DmdMethodBase ResolveMethodSpec_COMThread(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			dispatcher.VerifyAccess();
+			throw new NotImplementedException();//TODO:
+		}
+
+		protected override byte[] ResolveFieldSignature(uint rid) {
+			if (IsCOMThread)
+				return ResolveFieldSignature_COMThread(rid);
+			else
+				return COMThread(() => ResolveFieldSignature_COMThread(rid));
+		}
+
+		protected override byte[] ResolveMethodSignature(uint rid) {
+			if (IsCOMThread)
+				return ResolveMethodSignature_COMThread(rid);
+			else
+				return COMThread(() => ResolveMethodSignature_COMThread(rid));
+		}
+
+		protected override byte[] ResolveMemberRefSignature(uint rid) {
+			if (IsCOMThread)
+				return ResolveMemberRefSignature_COMThread(rid);
+			else
+				return COMThread(() => ResolveMemberRefSignature_COMThread(rid));
+		}
+
+		protected override byte[] ResolveStandAloneSigSignature(uint rid) {
+			if (IsCOMThread)
+				return ResolveStandAloneSigSignature_COMThread(rid);
+			else
+				return COMThread(() => ResolveStandAloneSigSignature_COMThread(rid));
+		}
+
+		protected override byte[] ResolveTypeSpecSignature(uint rid) {
+			if (IsCOMThread)
+				return ResolveTypeSpecSignature_COMThread(rid);
+			else
+				return COMThread(() => ResolveTypeSpecSignature_COMThread(rid));
+		}
+
+		protected override byte[] ResolveMethodSpecSignature(uint rid) {
+			if (IsCOMThread)
+				return ResolveMethodSpecSignature_COMThread(rid);
+			else
+				return COMThread(() => ResolveMethodSpecSignature_COMThread(rid));
+		}
 
 		byte[] ResolveFieldSignature_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
@@ -170,7 +375,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return MDAPI.GetMethodSpecProps(MetaDataImport, 0x2B000000 + rid, out _) ?? Array.Empty<byte>();
 		}
 
-		protected override string ResolveStringCore(uint offset) => COMThread(() => MDAPI.GetUserString(MetaDataImport, 0x70000000 + offset));
+		protected override string ResolveStringCore(uint offset) {
+			if (IsCOMThread)
+				return ResolveStringCore_COMThread(offset);
+			else
+				return COMThread(() => ResolveStringCore_COMThread(offset));
+		}
+
+		string ResolveStringCore_COMThread(uint offset) {
+			dispatcher.VerifyAccess();
+			return MDAPI.GetUserString(MetaDataImport, 0x70000000 + offset);
+		}
 
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) {
 			if (!modulePropsInitd)
@@ -189,7 +404,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		void InitializeAssemblyName() {
 			if (assemblyName != null)
 				return;
-			COMThread(InitializeAssemblyName_COMThread);
+			if (IsCOMThread)
+				InitializeAssemblyName_COMThread();
+			else
+				COMThread(InitializeAssemblyName_COMThread);
 		}
 
 		void InitializeAssemblyName_COMThread() {
@@ -213,7 +431,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			assemblyName = name;
 		}
 
-		public override DmdAssemblyName[] GetReferencedAssemblies() => COMThread(() => {
+		public override DmdAssemblyName[] GetReferencedAssemblies() {
+			if (IsCOMThread)
+				return GetReferencedAssemblies_COMThread();
+			else
+				return COMThread(GetReferencedAssemblies_COMThread);
+		}
+
+		DmdAssemblyName[] GetReferencedAssemblies_COMThread() {
 			var list = new List<DmdAssemblyName>();
 			for (uint token = 0x23000001; ; token++) {
 				if (!MDAPI.IsValidToken(MetaDataImport, token))
@@ -221,7 +446,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				list.Add(ReadAssemblyName_COMThread(token & 0x00FFFFFF));
 			}
 			return list.ToArray();
-		});
+		}
 
 		DmdAssemblyName ReadAssemblyName_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
@@ -251,7 +476,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		protected override DmdCustomAttributeData[] ReadEventCustomAttributes(uint rid) => ReadCustomAttributesCore(0x14000000 + rid);
 		protected override DmdCustomAttributeData[] ReadPropertyCustomAttributes(uint rid) => ReadCustomAttributesCore(0x17000000 + rid);
 
-		DmdCustomAttributeData[] ReadCustomAttributesCore(uint token) => COMThread(() => ReadCustomAttributesCore_COMThread(token));
+		DmdCustomAttributeData[] ReadCustomAttributesCore(uint token) {
+			if (IsCOMThread)
+				return ReadCustomAttributesCore_COMThread(token);
+			else
+				return COMThread(() => ReadCustomAttributesCore_COMThread(token));
+		}
 
 		DmdCustomAttributeData[] ReadCustomAttributesCore_COMThread(uint token) {
 			dispatcher.VerifyAccess();
@@ -285,7 +515,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		protected override DmdCustomAttributeData[] ReadTypeDefSecurityAttributes(uint rid) => ReadSecurityAttributesCore(0x02000000 + rid);
 		protected override DmdCustomAttributeData[] ReadMethodSecurityAttributes(uint rid) => ReadSecurityAttributesCore(0x06000000 + rid);
 
-		DmdCustomAttributeData[] ReadSecurityAttributesCore(uint token) => COMThread(() => ReadSecurityAttributesCore_COMThread(token));
+		DmdCustomAttributeData[] ReadSecurityAttributesCore(uint token) {
+			if (IsCOMThread)
+				return ReadSecurityAttributesCore_COMThread(token);
+			else
+				return COMThread(() => ReadSecurityAttributesCore_COMThread(token));
+		}
 
 		DmdCustomAttributeData[] ReadSecurityAttributesCore_COMThread(uint token) {
 			dispatcher.VerifyAccess();

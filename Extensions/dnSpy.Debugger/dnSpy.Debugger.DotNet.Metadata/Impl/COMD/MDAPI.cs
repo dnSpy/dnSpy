@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
-using dnlib.PE;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	struct MethodOverrideInfo {
