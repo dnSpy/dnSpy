@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnlib.DotNet.MD;
 using SSP = System.Security.Permissions;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
@@ -68,7 +69,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				__moduleScopeName_DONT_USE = MDAPI.GetModuleName(MetaDataImport) ?? string.Empty;
 				__machine_DONT_USE = MDAPI.GetModuleMachineAndPEKind(MetaDataImport, out __peKind_DONT_USE) ?? DmdImageFileMachine.I386;
 
-				if (__imageRuntimeVersion_DONT_USE.StartsWith("v1."))
+				bool isV1x =
+					__imageRuntimeVersion_DONT_USE.StartsWith("v1.", StringComparison.OrdinalIgnoreCase) ||
+					StringComparer.OrdinalIgnoreCase.Equals(__imageRuntimeVersion_DONT_USE, MDHeaderRuntimeVersion.MS_CLR_10_RETAIL) ||
+					StringComparer.OrdinalIgnoreCase.Equals(__imageRuntimeVersion_DONT_USE, MDHeaderRuntimeVersion.MS_CLR_10_COMPLUS);
+				if (isV1x)
 					__mdStreamVersion_DONT_USE = 0x00010000;
 				else
 					__mdStreamVersion_DONT_USE = 0x00020000;
