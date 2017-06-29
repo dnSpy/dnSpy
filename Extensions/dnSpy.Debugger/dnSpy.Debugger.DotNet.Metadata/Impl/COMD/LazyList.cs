@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		public LazyList(uint length, Func<uint, TArg, TValue> readElementByRID) {
+		public LazyList(Func<uint, TArg, TValue> readElementByRID) {
 			this.readElementByRID = readElementByRID;
 			dict = new Dictionary<uint, TValue>();
 		}
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		public LazyList2(uint length, Func<uint, TArg, (TValue elem, bool containedGenericParams)> readElementByRID) {
+		public LazyList2(Func<uint, TArg, (TValue elem, bool containedGenericParams)> readElementByRID) {
 			this.readElementByRID = readElementByRID;
 			dict = new Dictionary<uint, TValue>();
 		}
@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		public LazyList2(uint length, Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID) {
+		public LazyList2(Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID) {
 			this.readElementByRID = readElementByRID;
 			dict = new Dictionary<uint, TValue>();
 		}

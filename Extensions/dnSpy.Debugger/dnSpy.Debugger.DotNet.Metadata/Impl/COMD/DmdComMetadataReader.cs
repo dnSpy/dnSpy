@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using SSP = System.Security.Permissions;
@@ -171,7 +172,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			memberRefList = null;//TODO: new LazyList2<DmdMemberInfo, IList<DmdType>, IList<DmdType>>(CreateResolvedMemberRef);
 			eventList = null;//TODO: new LazyList<DmdEventDef, DmdTypeDef>(CreateResolvedEvent);
 			propertyList = null;//TODO: new LazyList<DmdPropertyDef, DmdTypeDef>(CreateResolvedProperty);
-			typeSpecList = null;//TODO: new LazyList2<DmdType, IList<DmdType>>(ReadTypeSpec);
+			typeSpecList = new LazyList2<DmdType, IList<DmdType>>(TryCreateTypeSpecCOMD_COMThread);
 			exportedTypeList = null;//TODO: new LazyList<DmdTypeRef>(rid => new DmdExportedTypeCOMD(this, rid, null));
 
 			globalTypeIfThereAreNoTypes = new DmdNullGlobalType(module, null);
@@ -250,6 +251,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				ridToNested[rid] = null;
 				ridToEnclosing[rid] = enclTypeRid;
 			}
+		}
+
+		(DmdType type, bool containedGenericParams) TryCreateTypeSpecCOMD_COMThread(uint rid, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			uint token = 0x1B000000 + rid;
+			if (!MDAPI.IsValidToken(MetaDataImport, token))
+				return (null, containedGenericParams: true);
+			var blob = MDAPI.GetTypeSpecSignatureBlob(MetaDataImport, token);
+			if (blob.addr == IntPtr.Zero)
+				return (null, containedGenericParams: true);
+			return DmdSignatureReader.ReadTypeSignature(module, new DmdPointerDataStream(blob), genericTypeArguments, resolveTypes);
 		}
 
 		public override DmdTypeDef[] GetTypes() {
@@ -451,34 +463,42 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				return COMThread(() => ResolveMethodSpecSignature_COMThread(rid));
 		}
 
+		static byte[] GetData((IntPtr addr, uint size) info) {
+			if (info.addr == IntPtr.Zero)
+				return Array.Empty<byte>();
+			var sig = new byte[info.size];
+			Marshal.Copy(info.addr, sig, 0, sig.Length);
+			return sig;
+		}
+
 		byte[] ResolveFieldSignature_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
-			return MDAPI.GetFieldSignatureBlob(MetaDataImport, 0x04000000 + rid) ?? Array.Empty<byte>();
+			return GetData(MDAPI.GetFieldSignatureBlob(MetaDataImport, 0x04000000 + rid));
 		}
 
 		byte[] ResolveMethodSignature_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
-			return MDAPI.GetMethodSignatureBlob(MetaDataImport, 0x06000000 + rid) ?? Array.Empty<byte>();
+			return GetData(MDAPI.GetMethodSignatureBlob(MetaDataImport, 0x06000000 + rid));
 		}
 
 		byte[] ResolveMemberRefSignature_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
-			return MDAPI.GetMemberRefSignatureBlob(MetaDataImport, 0x0A000000 + rid) ?? Array.Empty<byte>();
+			return GetData(MDAPI.GetMemberRefSignatureBlob(MetaDataImport, 0x0A000000 + rid));
 		}
 
 		byte[] ResolveStandAloneSigSignature_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
-			return MDAPI.GetStandAloneSigBlob(MetaDataImport, 0x11000000 + rid) ?? Array.Empty<byte>();
+			return GetData(MDAPI.GetStandAloneSigBlob(MetaDataImport, 0x11000000 + rid));
 		}
 
 		byte[] ResolveTypeSpecSignature_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
-			return MDAPI.GetTypeSpecSignatureBlob(MetaDataImport, 0x1B000000 + rid) ?? Array.Empty<byte>();
+			return GetData(MDAPI.GetTypeSpecSignatureBlob(MetaDataImport, 0x1B000000 + rid));
 		}
 
 		byte[] ResolveMethodSpecSignature_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
-			return MDAPI.GetMethodSpecProps(MetaDataImport, 0x2B000000 + rid, out _) ?? Array.Empty<byte>();
+			return GetData(MDAPI.GetMethodSpecProps(MetaDataImport, 0x2B000000 + rid, out _));
 		}
 
 		protected override string ResolveStringCore(uint offset) {

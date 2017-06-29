@@ -34,6 +34,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		readonly byte* end;
 		byte* pos;
 
+		public DmdPointerDataStream((IntPtr addr, uint size) info) : this(info.addr, (int)info.size) { }
+
 		public DmdPointerDataStream(IntPtr data, int length) {
 			var d = (byte*)data;
 			pos = d;

@@ -201,18 +201,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return hr != 0 ? 0 : tk;
 		}
 
-		public unsafe static byte[] GetMemberRefSignatureBlob(IMetaDataImport2 mdi, uint token) {
+		public unsafe static (IntPtr addr, uint size) GetMemberRefSignatureBlob(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
-				return null;
+				return (IntPtr.Zero, 0);
 			IntPtr pvSigBlob;
 			uint cbSig;
 			int hr = mdi.GetMemberRefProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&pvSigBlob), new IntPtr(&cbSig));
 			if (hr != 0 || pvSigBlob == IntPtr.Zero)
-				return null;
+				return (IntPtr.Zero, 0);
 
-			var sig = new byte[cbSig];
-			Marshal.Copy(pvSigBlob, sig, 0, sig.Length);
-			return sig;
+			return (pvSigBlob, cbSig);
 		}
 
 		public unsafe static uint GetMethodOwnerRid(IMetaDataImport2 mdi, uint token) {
@@ -259,18 +257,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		public unsafe static byte[] GetMethodSignatureBlob(IMetaDataImport2 mdi, uint token) {
+		public unsafe static (IntPtr addr, uint size) GetMethodSignatureBlob(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
-				return null;
+				return (IntPtr.Zero, 0);
 			uint cbSigBlob;
 			IntPtr pvSigBlob;
 			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&pvSigBlob), new IntPtr(&cbSigBlob), IntPtr.Zero, IntPtr.Zero);
 			if (hr < 0 || pvSigBlob == IntPtr.Zero)
-				return null;
+				return (IntPtr.Zero, 0);
 
-			var sig = new byte[cbSigBlob];
-			Marshal.Copy(pvSigBlob, sig, 0, sig.Length);
-			return sig;
+			return (pvSigBlob, cbSigBlob);
 		}
 
 		public static unsafe string GetMethodName(IMetaDataImport2 mdi, uint token) {
@@ -767,16 +763,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		public static unsafe byte[] GetStandAloneSigBlob(IMetaDataImport2 mdi, uint token) {
+		public static unsafe (IntPtr addr, uint size) GetStandAloneSigBlob(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
-				return null;
+				return (IntPtr.Zero, 0);
 
 			int hr = mdi.GetSigFromToken(token, out var pvSig, out uint cbSig);
 			if (hr < 0 || pvSig == IntPtr.Zero)
-				return null;
-			var sig = new byte[cbSig];
-			Marshal.Copy(pvSig, sig, 0, sig.Length);
-			return sig;
+				return (IntPtr.Zero, 0);
+			return (pvSig, cbSig);
 		}
 
 		public unsafe static COR_FIELD_OFFSET[] GetFieldOffsets(IMetaDataImport2 mdi, uint token) {
@@ -792,18 +786,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return hr != 0 ? null : fieldOffsets;
 		}
 
-		public unsafe static byte[] GetFieldMarshalBlob(IMetaDataImport2 mdi, uint token) {
+		public unsafe static (IntPtr addr, uint size) GetFieldMarshalBlob(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
-				return null;
+				return (IntPtr.Zero, 0);
 
 			int hr = mdi.GetFieldMarshal(token, out var pvNativeType, out uint cbNativeType);
 			Debug.Assert(hr == 0 || hr == CLDB_E_RECORD_NOTFOUND);
 			if (hr != 0)
-				return null;
+				return (IntPtr.Zero, 0);
 
-			var data = new byte[cbNativeType];
-			Marshal.Copy(pvNativeType, data, 0, data.Length);
-			return data;
+			return (pvNativeType, cbNativeType);
 		}
 
 		public unsafe static uint GetFieldOwnerRid(IMetaDataImport2 mdi, uint token) {
@@ -869,19 +861,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		public static unsafe byte[] GetFieldSignatureBlob(IMetaDataImport2 mdi, uint token) {
+		public static unsafe (IntPtr addr, uint size) GetFieldSignatureBlob(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
-				return null;
+				return (IntPtr.Zero, 0);
 
 			uint sigLen = 0;
 			IntPtr sigAddr;
 			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&sigAddr), new IntPtr(&sigLen), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (hr < 0 || sigAddr == IntPtr.Zero)
-				return null;
+				return (IntPtr.Zero, 0);
 
-			var buf = new byte[sigLen];
-			Marshal.Copy(sigAddr, buf, 0, buf.Length);
-			return buf;
+			return (sigAddr, sigLen);
 		}
 
 		public unsafe static FieldAttributes GetFieldAttributes(IMetaDataImport2 mdi, uint token) {
@@ -1139,18 +1129,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return hr == 0 ? (PropertyAttributes)dwPropFlags : 0;
 		}
 
-		public unsafe static byte[] GetPropertySignatureBlob(IMetaDataImport2 mdi, uint token) {
+		public unsafe static (IntPtr addr, uint size) GetPropertySignatureBlob(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
-				return null;
+				return (IntPtr.Zero, 0);
 			IntPtr pvSig;
 			uint cbSig;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&pvSig), new IntPtr(&cbSig), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
 			if (hr != 0)
-				return null;
+				return (IntPtr.Zero, 0);
 
-			var data = new byte[cbSig];
-			Marshal.Copy(pvSig, data, 0, data.Length);
-			return data;
+			return (pvSig, cbSig);
 		}
 
 		public unsafe static object GetPropertyConstant(IMetaDataImport2 mdi, uint token, out ElementType constantType) {
@@ -1167,31 +1155,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return ReadConstant(pDefaultValue, cchDefaultValue, constantType);
 		}
 
-		public unsafe static byte[] GetTypeSpecSignatureBlob(IMetaDataImport2 mdi, uint token) {
+		public unsafe static (IntPtr addr, uint size) GetTypeSpecSignatureBlob(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
-				return null;
+				return (IntPtr.Zero, 0);
 
 			int hr = mdi.GetTypeSpecFromToken(token, out var pvSig, out uint cbSig);
 			if (hr != 0 || pvSig == IntPtr.Zero)
-				return null;
+				return (IntPtr.Zero, 0);
 
-			var sig = new byte[cbSig];
-			Marshal.Copy(pvSig, sig, 0, sig.Length);
-			return sig;
+			return (pvSig, cbSig);
 		}
 
-		public unsafe static byte[] GetMethodSpecProps(IMetaDataImport2 mdi2, uint token, out uint method) {
+		public unsafe static (IntPtr addr, uint size) GetMethodSpecProps(IMetaDataImport2 mdi2, uint token, out uint method) {
 			method = 0;
 			if (mdi2 == null)
-				return null;
+				return (IntPtr.Zero, 0);
 
 			int hr = mdi2.GetMethodSpecProps(token, out method, out var pvSigBlob, out uint cbSigBlob);
 			if (hr != 0 || pvSigBlob == IntPtr.Zero)
-				return null;
+				return (IntPtr.Zero, 0);
 
-			var sig = new byte[cbSigBlob];
-			Marshal.Copy(pvSigBlob, sig, 0, sig.Length);
-			return sig;
+			return (pvSigBlob, cbSigBlob);
 		}
 
 		public unsafe static string GetAssemblyRefSimpleName(IMetaDataAssemblyImport mdai, uint token) {
