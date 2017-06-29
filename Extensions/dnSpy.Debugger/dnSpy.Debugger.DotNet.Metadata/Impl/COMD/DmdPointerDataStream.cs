@@ -44,13 +44,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public override byte ReadByte() {
-			if (pos >= end)
+			if (pos < start || pos >= end)
 				throw new IOException();
 			return *pos++;
 		}
 
 		public override ushort ReadUInt16() {
-			if (pos + 1 >= end)
+			if (pos < start || pos + 1 >= end)
 				throw new IOException();
 			var res = *(ushort*)pos;
 			pos += 2;
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public override uint ReadUInt32() {
-			if (pos + 3 >= end)
+			if (pos < start || pos + 3 >= end)
 				throw new IOException();
 			var res = *(uint*)pos;
 			pos += 4;
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public override ulong ReadUInt64() {
-			if (pos + 7 >= end)
+			if (pos < start || pos + 7 >= end)
 				throw new IOException();
 			var res = *(ulong*)pos;
 			pos += 8;
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public override float ReadSingle() {
-			if (pos + 3 >= end)
+			if (pos < start || pos + 3 >= end)
 				throw new IOException();
 			var res = *(float*)pos;
 			pos += 4;
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public override double ReadDouble() {
-			if (pos + 7 >= end)
+			if (pos < start || pos + 7 >= end)
 				throw new IOException();
 			var res = *(double*)pos;
 			pos += 8;
@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public override byte[] ReadBytes(int length) {
-			if (pos + length > end)
+			if (pos < start || pos + length > end)
 				throw new IOException();
 			var res = new byte[length];
 			Marshal.Copy(new IntPtr(pos), res, 0, length);
