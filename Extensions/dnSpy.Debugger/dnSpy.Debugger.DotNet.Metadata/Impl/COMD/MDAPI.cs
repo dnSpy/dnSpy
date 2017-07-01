@@ -945,12 +945,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return ownerMdToken.Table == Table.TypeDef ? ownerMdToken.Rid : 0;
 		}
 
-		public unsafe static EventAttributes GetEventAttributes(IMetaDataImport2 mdi, uint token) {
+		public unsafe static DmdEventAttributes GetEventAttributes(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
 				return 0;
 			uint dwEventFlags;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwEventFlags), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
-			return hr == 0 ? (EventAttributes)dwEventFlags : 0;
+			return hr == 0 ? (DmdEventAttributes)dwEventFlags : 0;
 		}
 
 		public unsafe static string GetEventName(IMetaDataImport2 mdi, uint token) {

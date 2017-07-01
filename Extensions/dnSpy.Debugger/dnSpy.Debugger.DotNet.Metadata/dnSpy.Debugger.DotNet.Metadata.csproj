@@ -108,6 +108,7 @@
     <Compile Include="Impl\AssemblyNameEqualityComparer.cs" />
     <Compile Include="Impl\COMD\DmdComMetadataReader.cs" />
     <Compile Include="Impl\COMD\DmdConstructorDefCOMD.cs" />
+    <Compile Include="Impl\COMD\DmdEventDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdExportedTypeCOMD.cs" />
     <Compile Include="Impl\COMD\DmdFieldDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdGenericParameterTypeCOMD.cs" />

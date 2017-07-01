@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			typeDefList = new LazyList<DmdTypeDef>(TryCreateTypeDefCOMD_COMThread);
 			methodList = new LazyList<DmdMethodBase, DmdTypeDef>(CreateResolvedMethod_COMThread);
 			memberRefList = null;//TODO: new LazyList2<DmdMemberInfo, IList<DmdType>, IList<DmdType>>(CreateResolvedMemberRef);
-			eventList = null;//TODO: new LazyList<DmdEventDef, DmdTypeDef>(CreateResolvedEvent);
+			eventList = new LazyList<DmdEventDef, DmdTypeDef>(CreateResolvedEvent_COMThread);
 			propertyList = null;//TODO: new LazyList<DmdPropertyDef, DmdTypeDef>(CreateResolvedProperty);
 			typeSpecList = new LazyList2<DmdType, IList<DmdType>>(TryCreateTypeSpecCOMD_COMThread);
 			exportedTypeList = new LazyList<DmdTypeRef>(TryCreateExportedTypeCOMD_COMThread);
@@ -391,6 +391,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (returnParameter, parameters);
 		}
 
+		DmdEventDef CreateResolvedEvent_COMThread(uint rid, DmdTypeDef declaringType) {
+			dispatcher.VerifyAccess();
+			if ((object)declaringType == null)
+				declaringType = ResolveTypeDef_COMThread(MDAPI.GetEventOwnerRid(MetaDataImport, 0x14000000 + rid)) ?? globalTypeIfThereAreNoTypes;
+			else
+				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetEventOwnerRid(MetaDataImport, 0x14000000 + rid)));
+			return CreateEventDefCore_COMThread(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+		}
+
+		internal DmdEventDef CreateEventDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
+				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+				return ResolveEventDef_COMThread(rid, declaringTypeDef);
+			}
+			return CreateEventDefCore_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+		}
+
+		DmdEventDef CreateEventDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			return new DmdEventDefCOMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+		}
+
 		internal DmdType[] CreateGenericParameters_COMThread(DmdMethodBase method) {
 			dispatcher.VerifyAccess();
 			var tokens = MDAPI.GetGenericParamTokens(MetaDataImport, (uint)method.MetadataToken);
@@ -573,6 +596,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		DmdEventDef ResolveEventDef_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			return eventList[rid - 1, null];
+		}
+
+		DmdEventDef ResolveEventDef_COMThread(uint rid, DmdTypeDef declaringType) {
+			dispatcher.VerifyAccess();
+			return eventList[rid - 1, declaringType];
 		}
 
 		protected override DmdPropertyDef ResolvePropertyDef(uint rid) {

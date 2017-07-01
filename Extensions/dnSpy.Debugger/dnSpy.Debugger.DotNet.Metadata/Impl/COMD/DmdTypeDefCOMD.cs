@@ -114,7 +114,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			COMThread(() => ReadDeclaredEvents_COMThread(declaringType, reflectedType, genericTypeArguments));
 		DmdEventInfo[] ReadDeclaredEvents_COMThread(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
 			reader.Dispatcher.VerifyAccess();
-			throw new NotImplementedException();//TODO:
+			var tokens = MDAPI.GetEventTokens(reader.MetaDataImport, (uint)MetadataToken);
+			if (tokens.Length == 0)
+				return Array.Empty<DmdEventInfo>();
+			var events = new DmdEventInfo[tokens.Length];
+			for (int i = 0; i < events.Length; i++) {
+				uint rid = tokens[i] & 0x00FFFFFF;
+				events[i] = reader.CreateEventDef_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+			}
+			return events;
 		}
 
 		protected override DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments) =>
