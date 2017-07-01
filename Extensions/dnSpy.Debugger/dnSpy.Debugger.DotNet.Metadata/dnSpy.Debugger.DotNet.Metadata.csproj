@@ -58,6 +58,7 @@
     <Compile Include="DmdCustomModifier.cs" />
     <Compile Include="DmdCustomModifierUtilities.cs" />
     <Compile Include="DmdDispatcher.cs" />
+    <Compile Include="DmdDynamicModuleHelper.cs" />
     <Compile Include="DmdEvaluator.cs" />
     <Compile Include="DmdEventAttributes.cs" />
     <Compile Include="DmdEventInfo.cs" />
@@ -106,8 +107,12 @@
     <Compile Include="Impl\AccessorUtils.cs" />
     <Compile Include="Impl\AssemblyNameEqualityComparer.cs" />
     <Compile Include="Impl\COMD\DmdComMetadataReader.cs" />
+    <Compile Include="Impl\COMD\DmdConstructorDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdExportedTypeCOMD.cs" />
     <Compile Include="Impl\COMD\DmdFieldDefCOMD.cs" />
+    <Compile Include="Impl\COMD\DmdGenericParameterTypeCOMD.cs" />
+    <Compile Include="Impl\COMD\DmdMethodDefCOMD.cs" />
+    <Compile Include="Impl\COMD\DmdParameterDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdPointerDataStream.cs" />
     <Compile Include="Impl\COMD\DmdTypeDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdTypeRefCOMD.cs" />

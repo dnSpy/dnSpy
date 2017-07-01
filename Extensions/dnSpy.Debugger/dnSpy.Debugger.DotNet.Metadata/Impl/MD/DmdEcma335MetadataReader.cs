@@ -407,7 +407,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		(DmdType type, bool isPinned)[] IMethodBodyResolver.ReadLocals(int localSignatureMetadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
-			if ((localSignatureMetadataToken & 0x00FFFFFF) == 0 || (byte)(localSignatureMetadataToken >> 24) != 0x11)
+			if ((localSignatureMetadataToken & 0x00FFFFFF) == 0 || (localSignatureMetadataToken >> 24) != 0x11)
 				return Array.Empty<(DmdType, bool)>();
 			uint rid = (uint)localSignatureMetadataToken & 0x00FFFFFF;
 			var row = TablesStream.ReadStandAloneSigRow(rid);

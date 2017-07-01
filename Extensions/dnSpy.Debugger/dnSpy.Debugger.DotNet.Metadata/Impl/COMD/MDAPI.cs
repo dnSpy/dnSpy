@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (pvPermission, cbPermission, dwAction);
 		}
 
-		public unsafe static bool GetPinvokeMapProps(IMetaDataImport2 mdi, uint token, out PInvokeAttributes attrs, out uint moduleToken) {
+		public unsafe static bool GetPinvokeMapProps(IMetaDataImport2 mdi, uint token, out DmdPInvokeAttributes attrs, out uint moduleToken) {
 			attrs = 0;
 			moduleToken = 0;
 			if (mdi == null)
@@ -154,7 +154,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			int hr = mdi.GetPinvokeMap(token, new IntPtr(&dwMappingFlags), IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&mrImportDLL));
 			if (hr != 0)
 				return false;
-			attrs = (PInvokeAttributes)dwMappingFlags;
+			attrs = (DmdPInvokeAttributes)dwMappingFlags;
 			moduleToken = mrImportDLL;
 			return true;
 		}
@@ -288,7 +288,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new string(nameBuf, 0, (int)chMethod - 1);
 		}
 
-		public static unsafe bool GetMethodAttributes(IMetaDataImport2 mdi, uint token, out MethodAttributes dwAttr, out MethodImplAttributes dwImplFlags) {
+		public static unsafe bool GetMethodAttributes(IMetaDataImport2 mdi, uint token, out DmdMethodAttributes dwAttr, out DmdMethodImplAttributes dwImplFlags) {
 			dwAttr = 0;
 			dwImplFlags = 0;
 			if (mdi == null)
@@ -297,8 +297,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwAttr2), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(&dwImplFlags2));
 			if (hr < 0)
 				return false;
-			dwAttr = (MethodAttributes)dwAttr2;
-			dwImplFlags = (MethodImplAttributes)dwImplFlags2;
+			dwAttr = (DmdMethodAttributes)dwAttr2;
+			dwImplFlags = (DmdMethodImplAttributes)dwImplFlags2;
 			return true;
 		}
 
@@ -475,7 +475,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
 		}
 
-		public unsafe static bool GetParamSeqAndAttrs(IMetaDataImport2 mdi, uint token, out uint seq, out ParamAttributes attrs) {
+		public unsafe static bool GetParamSeqAndAttrs(IMetaDataImport2 mdi, uint token, out uint seq, out DmdParameterAttributes attrs) {
 			seq = uint.MaxValue;
 			attrs = 0;
 			if (mdi == null)
@@ -487,7 +487,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				return false;
 
 			seq = ulSequence;
-			attrs = (ParamAttributes)dwAttr;
+			attrs = (DmdParameterAttributes)dwAttr;
 			return true;
 		}
 
@@ -662,7 +662,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new string(nameBuf, 0, (int)chName - 1);
 		}
 
-		public static unsafe bool GetGenericParamNumAndAttrs(IMetaDataImport2 mdi2, uint token, out ushort number, out GenericParamAttributes attrs) {
+		public static unsafe bool GetGenericParamNumAndAttrs(IMetaDataImport2 mdi2, uint token, out ushort number, out DmdGenericParameterAttributes attrs) {
 			number = ushort.MaxValue;
 			attrs = 0;
 			if (mdi2 == null)
@@ -674,7 +674,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				return false;
 
 			number = (ushort)ulParamSeq;
-			attrs = (GenericParamAttributes)dwParamFlags;
+			attrs = (DmdGenericParameterAttributes)dwParamFlags;
 			return true;
 		}
 

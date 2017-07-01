@@ -129,17 +129,25 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdDispatcher Dispatcher { get; }
 
 		/// <summary>
+		/// Gets the helper class
+		/// </summary>
+		public DmdDynamicModuleHelper DynamicModuleHelper { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="comMetadata">COM <c>IMetaDataImport</c> instance</param>
+		/// <param name="dynamicModuleHelper">Helper class</param>
 		/// <param name="dispatcher">Dispatcher to use when accessing <paramref name="comMetadata"/></param>
-		public DmdLazyMetadataBytesCom(object comMetadata, DmdDispatcher dispatcher) {
+		public DmdLazyMetadataBytesCom(object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher) {
 			MetaDataImport = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
+			DynamicModuleHelper = dynamicModuleHelper ?? throw new ArgumentNullException(nameof(dynamicModuleHelper));
 			Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}
 
-		internal DmdLazyMetadataBytesCom(Impl.COMD.IMetaDataImport2 metaDataImport, DmdDispatcher dispatcher) {
+		internal DmdLazyMetadataBytesCom(Impl.COMD.IMetaDataImport2 metaDataImport, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher) {
 			MetaDataImport = metaDataImport ?? throw new ArgumentNullException(nameof(metaDataImport));
+			DynamicModuleHelper = dynamicModuleHelper ?? throw new ArgumentNullException(nameof(dynamicModuleHelper));
 			Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}
 	}

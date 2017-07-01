@@ -95,19 +95,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
 		/// </summary>
 		/// <param name="comMetadata">COM <c>IMetaDataImport</c> instance</param>
+		/// <param name="dynamicModuleHelper">Helper class</param>
 		/// <param name="dispatcher">Dispatcher to use when accessing <paramref name="comMetadata"/></param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
-		public DmdAssemblyController CreateAssembly(object comMetadata, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation = null) {
+		public DmdAssemblyController CreateAssembly(object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation = null) {
 			if (comMetadata == null)
 				throw new ArgumentNullException(nameof(comMetadata));
+			if (dynamicModuleHelper == null)
+				throw new ArgumentNullException(nameof(dynamicModuleHelper));
 			if (dispatcher == null)
 				throw new ArgumentNullException(nameof(dispatcher));
 			var mdi = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
-			return CreateAssembly(() => new DmdLazyMetadataBytesCom(mdi, dispatcher), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation ?? string.Empty);
+			return CreateAssembly(() => new DmdLazyMetadataBytesCom(mdi, dynamicModuleHelper, dispatcher), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation ?? string.Empty);
 		}
 
 		/// <summary>
@@ -172,18 +175,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="assembly">Assembly</param>
 		/// <param name="comMetadata">COM <c>IMetaDataImport</c> instance</param>
+		/// <param name="dynamicModuleHelper">Helper class</param>
 		/// <param name="dispatcher">Dispatcher to use when accessing <paramref name="comMetadata"/></param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
 		/// <returns></returns>
-		public DmdModuleController CreateModule(DmdAssembly assembly, object comMetadata, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
+		public DmdModuleController CreateModule(DmdAssembly assembly, object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
 			if (comMetadata == null)
 				throw new ArgumentNullException(nameof(comMetadata));
+			if (dynamicModuleHelper == null)
+				throw new ArgumentNullException(nameof(dynamicModuleHelper));
 			if (dispatcher == null)
 				throw new ArgumentNullException(nameof(dispatcher));
 			var mdi = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
-			return CreateModule(assembly, () => new DmdLazyMetadataBytesCom(mdi, dispatcher), isInMemory, isDynamic, fullyQualifiedName);
+			return CreateModule(assembly, () => new DmdLazyMetadataBytesCom(mdi, dynamicModuleHelper, dispatcher), isInMemory, isDynamic, fullyQualifiedName);
 		}
 	}
 }
