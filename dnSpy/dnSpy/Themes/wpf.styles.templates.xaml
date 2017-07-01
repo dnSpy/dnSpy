@@ -2085,6 +2085,56 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style x:Key="SortableColumnHeaderStyle"
+           BasedOn="{StaticResource {x:Type GridViewColumnHeader}}"
+           TargetType="{x:Type GridViewColumnHeader}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    </Style>
+
+    <DataTemplate x:Key="SortableColumnHeaderTemplate">
+        <DataTemplate.Resources>
+            <Style TargetType="Path">
+                <Setter Property="Margin" Value="10,0,0,0" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="Fill" Value="{DynamicResource HeaderDefaultText}" />
+            </Style>
+        </DataTemplate.Resources>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" TextAlignment="Left" Text="{Binding}" />
+            <Path Grid.Column="1" Name="DownArrow" Data="M 0,0 10,0 5,5 Z" />
+            <Path Grid.Column="1" Name="UpArrow" Data="M 0,5 10,5 5,0 Z" />
+        </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Column.SortDirection, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}}"
+                         Value="{x:Null}">
+                <DataTrigger.Setters>
+                    <Setter TargetName="UpArrow" Property="Visibility" Value="Hidden" />
+                    <Setter TargetName="DownArrow" Property="Visibility" Value="Collapsed" />
+                </DataTrigger.Setters>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Column.SortDirection, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}}"
+                         Value="{x:Static mvvm:SortDirection.Ascending}">
+                <DataTrigger.Setters>
+                    <Setter TargetName="UpArrow" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="DownArrow" Property="Visibility" Value="Collapsed" />
+                </DataTrigger.Setters>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Column.SortDirection, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}}"
+                         Value="{x:Static mvvm:SortDirection.Descending}">
+                <DataTrigger.Setters>
+                    <Setter TargetName="UpArrow" Property="Visibility" Value="Collapsed" />
+                    <Setter TargetName="DownArrow" Property="Visibility" Value="Visible" />
+                </DataTrigger.Setters>
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
     <Style x:Key="{x:Static GridView.GridViewStyleKey}"
            TargetType="{x:Type ListView}">
         <Setter Property="FocusVisualStyle"

@@ -29,6 +29,7 @@ using System.Windows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.References;
 using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Modules;
@@ -63,6 +64,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public abstract void Save();
 		public abstract bool CanResetSearchSettings { get; }
 		public abstract void ResetSearchSettings();
+		public abstract void Sort(SortInfo sortInfo);
 	}
 
 	[Export(typeof(ModulesOperations))]
@@ -227,5 +229,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		public override bool CanResetSearchSettings => true;
 		public override void ResetSearchSettings() => modulesVM.ResetSearchSettings();
+
+		public override void Sort(SortInfo sortInfo) => modulesVM.Sort(sortInfo);
 	}
 }

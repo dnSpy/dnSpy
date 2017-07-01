@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.ToolWindows.Modules"
+             xmlns:ctrl="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Contracts.Controls.ToolWindows;assembly=dnSpy.Contracts.DnSpy"
@@ -76,6 +77,7 @@
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
+            ctrl:GridViewSortableColumn.SortCommand="{Binding SortCommand}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
@@ -102,83 +104,83 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}" SortBy="NameObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_OptimizedModule}">
+                    </ctrl:GridViewSortableColumn>
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_OptimizedModule}" SortBy="OptimizedObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding OptimizedObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_DynamicModule}">
+                    </ctrl:GridViewSortableColumn>
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_DynamicModule}" SortBy="DynamicObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding DynamicObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_InMemoryModule}">
+                    </ctrl:GridViewSortableColumn>
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_InMemoryModule}" SortBy="InMemoryObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding InMemoryObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Order}">
+                    </ctrl:GridViewSortableColumn>
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Order}" SortBy="OrderObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding OrderObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" HorizontalAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Version}">
+                    </ctrl:GridViewSortableColumn>
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Version}" SortBy="VersionObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding VersionObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Timestamp}">
+                    </ctrl:GridViewSortableColumn>
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Timestamp}" SortBy="TimestampObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding TimestampObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Address}">
+                    </ctrl:GridViewSortableColumn>
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Address}" SortBy="AddressObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding AddressObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}">
+                    </ctrl:GridViewSortableColumn>
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}" SortBy="ProcessObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ProcessObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}">
+                    </ctrl:GridViewSortableColumn>
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}" SortBy="AppDomainObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding AppDomainObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Path}">
+                    </ctrl:GridViewSortableColumn>
+                    <ctrl:GridViewSortableColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Path}" SortBy="PathObject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding PathObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                    </ctrl:GridViewSortableColumn>
                 </GridView>
             </ListView.View>
         </ListView>

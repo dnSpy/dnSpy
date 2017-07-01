@@ -256,6 +256,7 @@
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointVM.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\TextViewTaggers.cs" />
+    <Compile Include="ToolWindows\Modules\ModuleComparer.cs" />
     <Compile Include="ToolWindows\Modules\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\SearchConstants.cs" />
     <Compile Include="ToolWindows\SimpleProcessVM.cs" />
