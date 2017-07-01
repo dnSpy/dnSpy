@@ -792,7 +792,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		DmdMethodBase ResolveMethodSpec_COMThread(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
 			dispatcher.VerifyAccess();
-			throw new NotImplementedException();//TODO:
+			uint token = 0x2B000000 + rid;
+			if (!MDAPI.IsValidToken(MetaDataImport, token))
+				return null;
+			var signature = MDAPI.GetMethodSpecProps(MetaDataImport, token, out var methodToken);
+			var instantiation = DmdSignatureReader.ReadMethodSpecSignature(module, new DmdPointerDataStream(signature), genericTypeArguments, genericMethodArguments, resolveTypes).types;
+			var genericMethod = ResolveMethod((int)methodToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.None) as DmdMethodInfo;
+			if (genericMethod?.IsGenericMethodDefinition != true)
+				return null;
+			return genericMethod.MakeGenericMethod(instantiation);
 		}
 
 		protected override byte[] ResolveFieldSignature(uint rid) {
