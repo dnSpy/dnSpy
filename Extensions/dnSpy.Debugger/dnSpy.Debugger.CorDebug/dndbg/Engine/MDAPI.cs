@@ -782,7 +782,7 @@ namespace dndbg.Engine {
 			int cFieldOffset = 0;
 			int hr = mdi.GetClassLayout(token, IntPtr.Zero, null, 0, new IntPtr(&cFieldOffset), IntPtr.Zero);
 			Debug.Assert(hr == 0 || hr == CordbgErrors.CLDB_E_RECORD_NOTFOUND);
-			var fieldOffsets = new COR_FIELD_OFFSET[cFieldOffset];
+			var fieldOffsets = cFieldOffset == 0 ? Array.Empty<COR_FIELD_OFFSET>() : new COR_FIELD_OFFSET[cFieldOffset];
 			if (hr == 0 && fieldOffsets.Length != 0)
 				hr = mdi.GetClassLayout(token, IntPtr.Zero, fieldOffsets, fieldOffsets.Length, new IntPtr(&cFieldOffset), IntPtr.Zero);
 			return hr != 0 ? null : fieldOffsets;

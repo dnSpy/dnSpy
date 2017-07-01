@@ -780,10 +780,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			int cFieldOffset = 0;
 			int hr = mdi.GetClassLayout(token, IntPtr.Zero, null, 0, new IntPtr(&cFieldOffset), IntPtr.Zero);
 			Debug.Assert(hr == 0 || hr == CLDB_E_RECORD_NOTFOUND);
-			var fieldOffsets = new COR_FIELD_OFFSET[cFieldOffset];
+			var fieldOffsets = cFieldOffset == 0 ? Array.Empty<COR_FIELD_OFFSET>() : new COR_FIELD_OFFSET[cFieldOffset];
 			if (hr == 0 && fieldOffsets.Length != 0)
 				hr = mdi.GetClassLayout(token, IntPtr.Zero, fieldOffsets, fieldOffsets.Length, new IntPtr(&cFieldOffset), IntPtr.Zero);
 			return hr != 0 ? null : fieldOffsets;
+		}
+
+		public static uint? GetFieldOffset(IMetaDataImport2 mdi, uint token, uint fieldToken) {
+			var offsets = GetFieldOffsets(mdi, token);
+			if (offsets == null)
+				return null;
+			foreach (var info in offsets) {
+				if (info.FieldToken == fieldToken)
+					return info.Offset;
+			}
+			return null;
 		}
 
 		public unsafe static (IntPtr addr, uint size) GetFieldMarshalBlob(IMetaDataImport2 mdi, uint token) {
@@ -874,13 +885,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (sigAddr, sigLen);
 		}
 
-		public unsafe static FieldAttributes GetFieldAttributes(IMetaDataImport2 mdi, uint token) {
+		public unsafe static DmdFieldAttributes GetFieldAttributes(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
 				return 0;
 			uint dwAttr;
 			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwAttr), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			Debug.Assert(hr == 0);
-			return hr < 0 ? 0 : (FieldAttributes)dwAttr;
+			return hr < 0 ? 0 : (DmdFieldAttributes)dwAttr;
 		}
 
 		public unsafe static object GetFieldConstant(IMetaDataImport2 mdi, uint token, out ElementType constantType) {

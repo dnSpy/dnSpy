@@ -97,33 +97,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		DmdPortableExecutableKinds __peKind_DONT_USE;
 		DmdImageFileMachine __machine_DONT_USE;
 
-		public override DmdMethodInfo EntryPoint {
-			get {
-				if (!entryPointInitd)
-					InitializeEntryPoint();
-				return entryPoint;
-			}
-		}
-
-		void InitializeEntryPoint() {
-			if (entryPointInitd)
-				return;
-			if (IsCOMThread)
-				InitializeEntryPoint_COMThread();
-			else
-				COMThread(InitializeEntryPoint_COMThread);
-		}
-
-		void InitializeEntryPoint_COMThread() {
-			dispatcher.VerifyAccess();
-			if (entryPointInitd)
-				return;
-			entryPoint = null;//TODO:
-			entryPointInitd = false;//TODO:
-			throw new NotImplementedException();//TODO:
-		}
-		DmdMethodInfo entryPoint;
-		bool entryPointInitd;
+		// It doesn't seem to be possible to get the entry point from the COM MetaData API
+		public override DmdMethodInfo EntryPoint => null;
 
 		internal IMetaDataImport2 MetaDataImport {
 			get {
@@ -158,6 +133,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		readonly LazyList2<DmdType, IList<DmdType>> typeSpecList;
 		readonly LazyList<DmdTypeRef> exportedTypeList;
 		readonly DmdNullGlobalType globalTypeIfThereAreNoTypes;
+		readonly Dictionary<IntPtr, DmdType> fieldTypeCache;
+		readonly Dictionary<IntPtr, DmdMethodSignature> methodSignatureCache;
 
 		public DmdComMetadataReader(DmdModuleImpl module, IMetaDataImport2 metaDataImport, DmdDispatcher dispatcher) {
 			this.module = module ?? throw new ArgumentNullException(nameof(module));
@@ -165,8 +142,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			__metaDataAssemblyImport_DONT_USE = (IMetaDataAssemblyImport)metaDataImport;
 			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
+			fieldTypeCache = new Dictionary<IntPtr, DmdType>();
+			methodSignatureCache = new Dictionary<IntPtr, DmdMethodSignature>();
+
 			typeRefList = new LazyList<DmdTypeRef>(TryCreateTypeRefCOMD_COMThread);
-			fieldList = null;//TODO: new LazyList<DmdFieldDef, DmdTypeDef>(CreateResolvedField);
+			fieldList = new LazyList<DmdFieldDef, DmdTypeDef>(CreateResolvedField_COMThread);
 			typeDefList = new LazyList<DmdTypeDef>(TryCreateTypeDefCOMD_COMThread);
 			methodList = null;//TODO: new LazyList<DmdMethodBase, DmdTypeDef>(CreateResolvedMethod);
 			memberRefList = null;//TODO: new LazyList2<DmdMemberInfo, IList<DmdType>, IList<DmdType>>(CreateResolvedMemberRef);
@@ -271,6 +251,55 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return DmdSignatureReader.ReadTypeSignature(module, new DmdPointerDataStream(blob), genericTypeArguments, resolveTypes);
 		}
 
+		DmdFieldDefCOMD CreateResolvedField_COMThread(uint rid, DmdTypeDef declaringType) {
+			dispatcher.VerifyAccess();
+			if ((object)declaringType == null)
+				declaringType = ResolveTypeDef_COMThread(MDAPI.GetFieldOwnerRid(MetaDataImport, 0x04000000 + rid)) ?? globalTypeIfThereAreNoTypes;
+			else
+				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetFieldOwnerRid(MetaDataImport, 0x04000000 + rid)));
+			return CreateFieldDefCore_COMThread(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+		}
+
+		internal DmdFieldDef CreateFieldDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
+				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+				return ResolveFieldDef_COMThread(rid, declaringTypeDef);
+			}
+			return CreateFieldDefCore_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+		}
+
+		DmdFieldDefCOMD CreateFieldDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			return new DmdFieldDefCOMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+		}
+
+		internal DmdType ReadFieldType_COMThread((IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			if (fieldTypeCache.TryGetValue(signature.addr, out var fieldType)) {
+				if ((object)fieldType != null)
+					return fieldType;
+				var info = ReadFieldTypeCore_COMThread(signature, genericTypeArguments);
+				Debug.Assert(info.containedGenericParams);
+				return info.fieldType;
+			}
+			else {
+				var info = ReadFieldTypeCore_COMThread(signature, genericTypeArguments);
+				if (info.containedGenericParams)
+					fieldTypeCache.Add(signature.addr, null);
+				else
+					fieldTypeCache.Add(signature.addr, info.fieldType);
+				return info.fieldType;
+			}
+		}
+
+		(DmdType fieldType, bool containedGenericParams) ReadFieldTypeCore_COMThread((IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			if (signature.addr == IntPtr.Zero)
+				return (module.AppDomain.System_Void, false);
+			return DmdSignatureReader.ReadFieldSignature(module, new DmdPointerDataStream(signature), genericTypeArguments, resolveTypes);
+		}
+
 		public override DmdTypeDef[] GetTypes() {
 			if (IsCOMThread)
 				return GetTypes_COMThread();
@@ -351,6 +380,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		DmdFieldDef ResolveFieldDef_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			return fieldList[rid - 1, null];
+		}
+
+		DmdFieldDef ResolveFieldDef_COMThread(uint rid, DmdTypeDef declaringType) {
+			dispatcher.VerifyAccess();
+			return fieldList[rid - 1, declaringType];
 		}
 
 		protected override DmdMethodBase ResolveMethodDef(uint rid) {
@@ -625,7 +659,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				return COMThread(() => ReadCustomAttributesCore_COMThread(token));
 		}
 
-		DmdCustomAttributeData[] ReadCustomAttributesCore_COMThread(uint token) {
+		internal DmdCustomAttributeData[] ReadCustomAttributesCore_COMThread(uint token) {
 			dispatcher.VerifyAccess();
 			var tokens = MDAPI.GetCustomAttributeTokens(MetaDataImport, token);
 			if (tokens.Length == 0)
@@ -714,6 +748,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			if (sas.Length != w)
 				throw new InvalidOperationException();
 			return sas;
+		}
+
+		internal DmdMarshalType ReadFieldMarshalType_COMThread(int metadataToken, DmdModule module, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			var signature = MDAPI.GetFieldMarshalBlob(MetaDataImport, (uint)metadataToken);
+			if (signature.addr == IntPtr.Zero)
+				return null;
+			return DmdMarshalBlobReader.Read(module, new DmdPointerDataStream(signature), genericTypeArguments);
+		}
+
+		internal (object value, bool hasValue) ReadFieldConstant_COMThread(int metadataToken) {
+			dispatcher.VerifyAccess();
+			var c = MDAPI.GetFieldConstant(MetaDataImport, (uint)metadataToken, out var etype);
+			if (etype == ElementType.End)
+				return (null, false);
+			return (c, true);
 		}
 	}
 }

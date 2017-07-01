@@ -77,7 +77,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			COMThread(() => ReadDeclaredFields_COMThread(declaringType, reflectedType, genericTypeArguments));
 		DmdFieldInfo[] ReadDeclaredFields_COMThread(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
 			reader.Dispatcher.VerifyAccess();
-			throw new NotImplementedException();//TODO:
+			var tokens = MDAPI.GetFieldTokens(reader.MetaDataImport, (uint)MetadataToken);
+			if (tokens.Length == 0)
+				return Array.Empty<DmdFieldInfo>();
+			var fields = new DmdFieldInfo[tokens.Length];
+			for (int i = 0; i < fields.Length; i++) {
+				uint rid = tokens[i];
+				fields[i] = reader.CreateFieldDef_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+			}
+			return fields;
 		}
 
 		public override DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>

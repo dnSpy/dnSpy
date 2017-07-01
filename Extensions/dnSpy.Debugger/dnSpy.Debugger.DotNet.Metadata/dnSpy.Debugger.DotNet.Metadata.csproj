@@ -107,6 +107,7 @@
     <Compile Include="Impl\AssemblyNameEqualityComparer.cs" />
     <Compile Include="Impl\COMD\DmdComMetadataReader.cs" />
     <Compile Include="Impl\COMD\DmdExportedTypeCOMD.cs" />
+    <Compile Include="Impl\COMD\DmdFieldDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdPointerDataStream.cs" />
     <Compile Include="Impl\COMD\DmdTypeDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdTypeRefCOMD.cs" />
