@@ -194,7 +194,7 @@
     <Compile Include="Impl\MD\DmdTypeRefMD.cs" />
     <Compile Include="Impl\MD\LazyList.cs" />
     <Compile Include="Impl\MD\MetadataConstantUtilities.cs" />
-    <Compile Include="Impl\ReflectionTests.cs" />
+    <None Include="Impl\ReflectionTests.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.Data.cs" />
     <Compile Include="MemberNotFoundException.cs" />
