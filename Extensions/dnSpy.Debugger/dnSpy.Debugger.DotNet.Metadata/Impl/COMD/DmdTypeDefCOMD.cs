@@ -107,7 +107,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			COMThread(() => ReadDeclaredProperties_COMThread(declaringType, reflectedType, genericTypeArguments));
 		DmdPropertyInfo[] ReadDeclaredProperties_COMThread(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
 			reader.Dispatcher.VerifyAccess();
-			throw new NotImplementedException();//TODO:
+			var tokens = MDAPI.GetPropertyTokens(reader.MetaDataImport, (uint)MetadataToken);
+			if (tokens.Length == 0)
+				return Array.Empty<DmdPropertyInfo>();
+			var properties = new DmdPropertyInfo[tokens.Length];
+			for (int i = 0; i < properties.Length; i++) {
+				uint rid = tokens[i] & 0x00FFFFFF;
+				properties[i] = reader.CreatePropertyDef_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+			}
+			return properties;
 		}
 
 		public override DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>

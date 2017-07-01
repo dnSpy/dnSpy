@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			methodList = new LazyList<DmdMethodBase, DmdTypeDef>(CreateResolvedMethod_COMThread);
 			memberRefList = null;//TODO: new LazyList2<DmdMemberInfo, IList<DmdType>, IList<DmdType>>(CreateResolvedMemberRef);
 			eventList = new LazyList<DmdEventDef, DmdTypeDef>(CreateResolvedEvent_COMThread);
-			propertyList = null;//TODO: new LazyList<DmdPropertyDef, DmdTypeDef>(CreateResolvedProperty);
+			propertyList = new LazyList<DmdPropertyDef, DmdTypeDef>(CreateResolvedProperty_COMThread);
 			typeSpecList = new LazyList2<DmdType, IList<DmdType>>(TryCreateTypeSpecCOMD_COMThread);
 			exportedTypeList = new LazyList<DmdTypeRef>(TryCreateExportedTypeCOMD_COMThread);
 
@@ -255,10 +255,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		DmdFieldDefCOMD CreateResolvedField_COMThread(uint rid, DmdTypeDef declaringType) {
 			dispatcher.VerifyAccess();
+			uint token = 0x04000000 + rid;
+			if (!MDAPI.IsValidToken(MetaDataImport, token))
+				return null;
 			if ((object)declaringType == null)
-				declaringType = ResolveTypeDef_COMThread(MDAPI.GetFieldOwnerRid(MetaDataImport, 0x04000000 + rid)) ?? globalTypeIfThereAreNoTypes;
+				declaringType = ResolveTypeDef_COMThread(MDAPI.GetFieldOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
-				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetFieldOwnerRid(MetaDataImport, 0x04000000 + rid)));
+				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetFieldOwnerRid(MetaDataImport, token)));
 			return CreateFieldDefCore_COMThread(rid, declaringType, declaringType, declaringType.GetGenericArguments());
 		}
 
@@ -304,10 +307,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		DmdMethodBase CreateResolvedMethod_COMThread(uint rid, DmdTypeDef declaringType) {
 			dispatcher.VerifyAccess();
+			uint token = 0x06000000 + rid;
+			if (!MDAPI.IsValidToken(MetaDataImport, token))
+				return null;
 			if ((object)declaringType == null)
-				declaringType = ResolveTypeDef_COMThread(MDAPI.GetMethodOwnerRid(MetaDataImport, 0x06000000 + rid)) ?? globalTypeIfThereAreNoTypes;
+				declaringType = ResolveTypeDef_COMThread(MDAPI.GetMethodOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
-				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetMethodOwnerRid(MetaDataImport, 0x06000000 + rid)));
+				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetMethodOwnerRid(MetaDataImport, token)));
 			return CreateMethodDefCore_COMThread(rid, declaringType, declaringType, declaringType.GetGenericArguments());
 		}
 
@@ -393,10 +399,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		DmdEventDef CreateResolvedEvent_COMThread(uint rid, DmdTypeDef declaringType) {
 			dispatcher.VerifyAccess();
+			uint token = 0x14000000 + rid;
+			if (!MDAPI.IsValidToken(MetaDataImport, token))
+				return null;
 			if ((object)declaringType == null)
-				declaringType = ResolveTypeDef_COMThread(MDAPI.GetEventOwnerRid(MetaDataImport, 0x14000000 + rid)) ?? globalTypeIfThereAreNoTypes;
+				declaringType = ResolveTypeDef_COMThread(MDAPI.GetEventOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
-				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetEventOwnerRid(MetaDataImport, 0x14000000 + rid)));
+				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetEventOwnerRid(MetaDataImport, token)));
 			return CreateEventDefCore_COMThread(rid, declaringType, declaringType, declaringType.GetGenericArguments());
 		}
 
@@ -412,6 +421,32 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		DmdEventDef CreateEventDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
 			dispatcher.VerifyAccess();
 			return new DmdEventDefCOMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+		}
+
+		DmdPropertyDef CreateResolvedProperty_COMThread(uint rid, DmdTypeDef declaringType) {
+			dispatcher.VerifyAccess();
+			uint token = 0x17000000 + rid;
+			if (!MDAPI.IsValidToken(MetaDataImport, token))
+				return null;
+			if ((object)declaringType == null)
+				declaringType = ResolveTypeDef_COMThread(MDAPI.GetPropertyOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
+			else
+				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetPropertyOwnerRid(MetaDataImport, token)));
+			return CreatePropertyDefCore_COMThread(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+		}
+
+		internal DmdPropertyDef CreatePropertyDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
+				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+				return ResolvePropertyDef_COMThread(rid, declaringTypeDef);
+			}
+			return CreatePropertyDefCore_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+		}
+
+		DmdPropertyDef CreatePropertyDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+			dispatcher.VerifyAccess();
+			return new DmdPropertyDefCOMD(this, rid, declaringType, reflectedType, genericTypeArguments);
 		}
 
 		internal DmdType[] CreateGenericParameters_COMThread(DmdMethodBase method) {
@@ -613,6 +648,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		DmdPropertyDef ResolvePropertyDef_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			return propertyList[rid - 1, null];
+		}
+
+		DmdPropertyDef ResolvePropertyDef_COMThread(uint rid, DmdTypeDef declaringType) {
+			dispatcher.VerifyAccess();
+			return propertyList[rid - 1, declaringType];
 		}
 
 		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) {
@@ -949,6 +989,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal (object value, bool hasValue) ReadParamConstant_COMThread(int metadataToken) {
 			dispatcher.VerifyAccess();
 			var c = MDAPI.GetParamConstant(MetaDataImport, (uint)metadataToken, out var etype);
+			if (etype == ElementType.End)
+				return (null, false);
+			return (c, true);
+		}
+
+		internal (object value, bool hasValue) ReadPropertyConstant_COMThread(int metadataToken) {
+			dispatcher.VerifyAccess();
+			var c = MDAPI.GetPropertyConstant(MetaDataImport, (uint)metadataToken, out var etype);
 			if (etype == ElementType.End)
 				return (null, false);
 			return (c, true);

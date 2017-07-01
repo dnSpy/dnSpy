@@ -42,15 +42,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
 		public override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
 
-		static new DmdMethodInfo GetMethod(DmdMethodInfo[] methods, uint rid) {
-			int token = 0x06000000 + (int)rid;
-			foreach (var method in methods) {
-				if (method.MetadataToken == token)
-					return method;
-			}
-			return null;
-		}
-
 		protected override void GetMethods(out DmdMethodInfo getMethod, out DmdMethodInfo setMethod, out DmdMethodInfo[] otherMethods) {
 			getMethod = null;
 			setMethod = null;

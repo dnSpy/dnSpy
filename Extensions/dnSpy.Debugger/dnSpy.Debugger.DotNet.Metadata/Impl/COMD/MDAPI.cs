@@ -1132,12 +1132,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return tokens ?? Array.Empty<uint>();
 		}
 
-		public unsafe static PropertyAttributes GetPropertyAttributes(IMetaDataImport2 mdi, uint token) {
+		public unsafe static DmdPropertyAttributes GetPropertyAttributes(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
 				return 0;
 			uint dwPropFlags;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwPropFlags), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
-			return hr == 0 ? (PropertyAttributes)dwPropFlags : 0;
+			return hr == 0 ? (DmdPropertyAttributes)dwPropFlags : 0;
 		}
 
 		public unsafe static (IntPtr addr, uint size) GetPropertySignatureBlob(IMetaDataImport2 mdi, uint token) {

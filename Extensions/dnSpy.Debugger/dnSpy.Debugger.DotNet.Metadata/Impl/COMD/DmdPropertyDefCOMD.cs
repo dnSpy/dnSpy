@@ -22,40 +22,42 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
-	sealed class DmdEventDefCOMD : DmdEventDef {
+	sealed class DmdPropertyDefCOMD : DmdPropertyDef {
 		public override string Name { get; }
-		public override DmdEventAttributes Attributes { get; }
-		public override DmdType EventHandlerType { get; }
+		public override DmdPropertyAttributes Attributes { get; }
 
 		readonly DmdComMetadataReader reader;
+		readonly DmdMethodSignature methodSignature;
 
-		public DmdEventDefCOMD(DmdComMetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdPropertyDefCOMD(DmdComMetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			reader.Dispatcher.VerifyAccess();
-			uint token = 0x14000000 + rid;
-			Name = MDAPI.GetEventName(reader.MetaDataImport, token) ?? string.Empty;
-			Attributes = MDAPI.GetEventAttributes(reader.MetaDataImport, token);
-			var eventTypeToken = MDAPI.GetEventTypeToken(reader.MetaDataImport, token);
-			EventHandlerType = reader.ResolveType((int)eventTypeToken, genericTypeArguments, null, DmdResolveOptions.None) ?? reader.Module.AppDomain.System_Void;
+			uint token = 0x17000000 + rid;
+			Name = MDAPI.GetPropertyName(reader.MetaDataImport, token) ?? string.Empty;
+			Attributes = MDAPI.GetPropertyAttributes(reader.MetaDataImport, token);
+			methodSignature = reader.ReadMethodSignature_COMThread(MDAPI.GetPropertySignatureBlob(reader.MetaDataImport, token), genericTypeArguments, null, isProperty: true);
 		}
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
 
-		protected override void GetMethods(out DmdMethodInfo addMethod, out DmdMethodInfo removeMethod, out DmdMethodInfo raiseMethod, out DmdMethodInfo[] otherMethods) {
+		public override DmdMethodSignature GetMethodSignature() => methodSignature;
+		protected override DmdCustomAttributeData[] CreateCustomAttributes() => COMThread(() => reader.ReadCustomAttributesCore_COMThread((uint)MetadataToken));
+		public override object GetRawConstantValue() => COMThread(() => reader.ReadPropertyConstant_COMThread(MetadataToken).value);
+
+		protected override void GetMethods(out DmdMethodInfo getMethod, out DmdMethodInfo setMethod, out DmdMethodInfo[] otherMethods) {
 			var info = COMThread(GetMethods_COMThread);
-			addMethod = info.addMethod;
-			removeMethod = info.removeMethod;
-			raiseMethod = info.raiseMethod;
+			getMethod = info.getMethod;
+			setMethod = info.setMethod;
 			otherMethods = info.otherMethods;
 		}
 
-		(DmdMethodInfo addMethod, DmdMethodInfo removeMethod, DmdMethodInfo raiseMethod, DmdMethodInfo[] otherMethods) GetMethods_COMThread() {
+		(DmdMethodInfo getMethod, DmdMethodInfo setMethod, DmdMethodInfo[] otherMethods) GetMethods_COMThread() {
 			reader.Dispatcher.VerifyAccess();
-			MDAPI.GetEventAddRemoveFireTokens(reader.MetaDataImport, (uint)MetadataToken, out uint addToken, out uint removeToken, out uint fireToken);
-			var otherMethodTokens = MDAPI.GetEventOtherMethodTokens(reader.MetaDataImport, (uint)MetadataToken);
-			var addMethod = Lookup_COMThread(addToken);
-			var removeMethod = Lookup_COMThread(removeToken);
-			var raiseMethod = Lookup_COMThread(fireToken);
+			uint token = 0x17000000 + Rid;
+			MDAPI.GetPropertyGetterSetter(reader.MetaDataImport, token, out uint getToken, out uint setToken);
+			var otherMethodTokens = MDAPI.GetPropertyOtherMethodTokens(reader.MetaDataImport, token);
+			var getMethod = Lookup_COMThread(getToken);
+			var setMethod = Lookup_COMThread(setToken);
 			var otherMethods = otherMethodTokens.Length == 0 ? Array.Empty<DmdMethodInfo>() : new DmdMethodInfo[otherMethodTokens.Length];
 			for (int i = 0; i < otherMethods.Length; i++) {
 				var otherMethod = Lookup_COMThread(otherMethodTokens[i]);
@@ -65,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				}
 				otherMethods[i] = otherMethod;
 			}
-			return (addMethod, removeMethod, raiseMethod, otherMethods);
+			return (getMethod, setMethod, otherMethods);
 		}
 
 		DmdMethodInfo Lookup_COMThread(uint token) {
@@ -75,7 +77,5 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			Debug.Assert((object)method != null);
 			return method;
 		}
-
-		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
 	}
 }

@@ -115,6 +115,7 @@
     <Compile Include="Impl\COMD\DmdMethodDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdParameterDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdPointerDataStream.cs" />
+    <Compile Include="Impl\COMD\DmdPropertyDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdTypeDefCOMD.cs" />
     <Compile Include="Impl\COMD\DmdTypeRefCOMD.cs" />
     <Compile Include="Impl\COMD\LazyList.cs" />
