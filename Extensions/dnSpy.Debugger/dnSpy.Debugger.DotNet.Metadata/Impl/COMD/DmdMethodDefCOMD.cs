@@ -71,10 +71,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (cas, sas, implMap);
 		}
 
-		internal override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => COMThread(() => GetMethodSignatureCore_COMThread(genericMethodArguments));
-		DmdMethodSignature GetMethodSignatureCore_COMThread(IList<DmdType> genericMethodArguments) {
-			reader.Dispatcher.VerifyAccess();
-			return reader.ReadMethodSignature_COMThread(MDAPI.GetMethodSignatureBlob(reader.MetaDataImport, 0x06000000 + Rid), genericTypeArguments, genericMethodArguments, isProperty: false);
-		}
+		internal override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => COMThread(() => reader.ReadMethodSignature_COMThread(MDAPI.GetMethodSignatureBlob(reader.MetaDataImport, 0x06000000 + Rid), genericTypeArguments, genericMethodArguments, isProperty: false));
 	}
 }

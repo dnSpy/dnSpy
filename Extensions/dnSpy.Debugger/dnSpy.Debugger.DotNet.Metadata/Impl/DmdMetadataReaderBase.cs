@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 
 			case 0x1B:
-				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments);
+				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments, genericMethodArguments);
 				if ((object)typeSpec != null)
 					return TryResolve(typeSpec, options);
 				break;
@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 
 			case 0x1B:
-				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments);
+				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments, genericMethodArguments);
 				if ((object)typeSpec != null)
 					return TryResolve(typeSpec, options);
 				break;
@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
 		protected abstract DmdEventDef ResolveEventDef(uint rid);
 		protected abstract DmdPropertyDef ResolvePropertyDef(uint rid);
-		protected abstract DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments);
+		protected abstract DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
 		protected abstract DmdTypeRef ResolveExportedType(uint rid);
 		protected abstract DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
 

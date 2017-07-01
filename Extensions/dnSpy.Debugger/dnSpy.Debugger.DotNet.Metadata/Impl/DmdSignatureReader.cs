@@ -24,9 +24,9 @@ using DMD = dnlib.DotNet;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	struct DmdSignatureReader : IDisposable {
-		public static (DmdType type, bool containedGenericParams) ReadTypeSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, bool resolve) {
+		public static (DmdType type, bool containedGenericParams) ReadTypeSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
 			try {
-				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, null, resolve)) {
+				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, genericMethodArguments, resolve)) {
 					var type = sigReader.ReadType().type;
 					return (type, sigReader.containedGenericParams);
 				}

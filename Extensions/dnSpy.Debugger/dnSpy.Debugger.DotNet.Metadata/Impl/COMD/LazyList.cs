@@ -63,27 +63,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 	}
 
-	sealed class LazyList2<TValue, TArg> where TValue : class {
-		readonly Dictionary<uint, TValue> dict;
-		readonly Func<uint, TArg, (TValue elem, bool containedGenericParams)> readElementByRID;
-
-		public TValue this[uint index, TArg arg] {
-			get {
-				if (dict.TryGetValue(index, out var elem))
-					return elem;
-				var info = readElementByRID(index + 1, arg);
-				if (!info.containedGenericParams && (elem = info.elem) != null)
-					dict[index] = elem;
-				return elem;
-			}
-		}
-
-		public LazyList2(Func<uint, TArg, (TValue elem, bool containedGenericParams)> readElementByRID) {
-			this.readElementByRID = readElementByRID;
-			dict = new Dictionary<uint, TValue>();
-		}
-	}
-
 	sealed class LazyList2<TValue, TArg1, TArg2> where TValue : class {
 		readonly Dictionary<uint, TValue> dict;
 		readonly Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID;

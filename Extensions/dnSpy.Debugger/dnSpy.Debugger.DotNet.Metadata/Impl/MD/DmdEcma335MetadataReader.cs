@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly LazyList2<DmdMemberInfo, IList<DmdType>, IList<DmdType>> memberRefList;
 		readonly LazyList<DmdEventDef, DmdTypeDef> eventList;
 		readonly LazyList<DmdPropertyDef, DmdTypeDef> propertyList;
-		readonly LazyList2<DmdType, IList<DmdType>> typeSpecList;
+		readonly LazyList2<DmdType, IList<DmdType>, IList<DmdType>> typeSpecList;
 		readonly LazyList<DmdTypeRef> exportedTypeList;
 		readonly DmdNullGlobalType globalTypeIfThereAreNoTypes;
 		readonly Dictionary<uint, DmdType> fieldTypeCache;
@@ -102,16 +102,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			memberRefList = new LazyList2<DmdMemberInfo, IList<DmdType>, IList<DmdType>>(ts.MemberRefTable.Rows, CreateResolvedMemberRef);
 			eventList = new LazyList<DmdEventDef, DmdTypeDef>(ts.EventTable.Rows, CreateResolvedEvent);
 			propertyList = new LazyList<DmdPropertyDef, DmdTypeDef>(ts.PropertyTable.Rows, CreateResolvedProperty);
-			typeSpecList = new LazyList2<DmdType, IList<DmdType>>(ts.TypeSpecTable.Rows, ReadTypeSpec);
+			typeSpecList = new LazyList2<DmdType, IList<DmdType>, IList<DmdType>>(ts.TypeSpecTable.Rows, ReadTypeSpec);
 			exportedTypeList = new LazyList<DmdTypeRef>(ts.ExportedTypeTable.Rows, rid => new DmdExportedTypeMD(this, rid, null));
 
 			globalTypeIfThereAreNoTypes = new DmdNullGlobalType(module, null);
 		}
 
-		(DmdType type, bool containedGenericParams) ReadTypeSpec(uint rid, IList<DmdType> genericTypeArguments) {
+		(DmdType type, bool containedGenericParams) ReadTypeSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
 			var row = Metadata.TablesStream.ReadTypeSpecRow(rid);
 			using (var stream = BlobStream.CreateStream(row.Signature))
-				return DmdSignatureReader.ReadTypeSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, resolveTypes);
+				return DmdSignatureReader.ReadTypeSignature(module, new DmdDataStreamImpl(stream), genericTypeArguments, genericMethodArguments, resolveTypes);
 		}
 
 		DmdFieldDefMD CreateResolvedField(uint rid, DmdTypeDef declaringType) {
@@ -322,10 +322,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		DmdType GetMemberRefParent(uint classToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			uint rid = classToken & 0x00FFFFFF;
 			switch ((Table)(classToken >> 24)) {
-			case Table.TypeDef:
 			case Table.TypeRef:
-				return ResolveType((int)classToken, null, null, DmdResolveOptions.None) ?? Module.AppDomain.System_Void;
+				return ResolveTypeRef(rid) ?? Module.AppDomain.System_Void;
+
+			case Table.TypeDef:
+				return ResolveTypeDef(rid) ?? Module.AppDomain.System_Void;
 
 			case Table.ModuleRef:
 				var moduleRefRow = TablesStream.ReadModuleRefRow(classToken & 0x00FFFFFF);
@@ -336,10 +339,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				return referencedModule?.GlobalType ?? Module.AppDomain.System_Void;
 
 			case Table.Method:
-				return ResolveMethod((int)classToken, null, null, DmdResolveOptions.None)?.DeclaringType ?? Module.AppDomain.System_Void;
+				return ResolveMethodDef(rid)?.DeclaringType ?? Module.AppDomain.System_Void;
 
 			case Table.TypeSpec:
-				return ResolveType((int)classToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.None) ?? Module.AppDomain.System_Void;
+				return ResolveTypeSpec(rid, genericTypeArguments, genericMethodArguments) ?? Module.AppDomain.System_Void;
 
 			default:
 				return Module.AppDomain.System_Void;
@@ -457,7 +460,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		DmdEventDef ResolveEventDef(uint rid, DmdTypeDef declaringType) => eventList[rid - 1, declaringType];
 		protected override DmdPropertyDef ResolvePropertyDef(uint rid) => propertyList[rid - 1, null];
 		DmdPropertyDef ResolvePropertyDef(uint rid, DmdTypeDef declaringType) => propertyList[rid - 1, declaringType];
-		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments) => typeSpecList[rid - 1, genericTypeArguments];
+		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) => typeSpecList[rid - 1, genericTypeArguments, genericMethodArguments];
 		protected override DmdTypeRef ResolveExportedType(uint rid) => exportedTypeList[rid - 1];
 		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
 			var row = TablesStream.ReadMethodSpecRow(rid);

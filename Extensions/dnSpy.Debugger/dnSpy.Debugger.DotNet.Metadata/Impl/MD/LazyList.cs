@@ -81,39 +81,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	}
 
 	[DebuggerDisplay("Count = {Length}")]
-	sealed class LazyList2<TValue, TArg> where TValue : class {
-		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		readonly TValue[] elements;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Func<uint, TArg, (TValue elem, bool containedGenericParams)> readElementByRID;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly uint length;
-
-		uint Length => length;
-
-		public TValue this[uint index, TArg arg] {
-			get {
-				if (index >= length)
-					return null;
-				ref var elem = ref elements[index];
-				if (elem == null) {
-					var info = readElementByRID(index + 1, arg);
-					if (info.containedGenericParams)
-						return info.elem;
-					Interlocked.CompareExchange(ref elem, info.elem, null);
-				}
-				return elem;
-			}
-		}
-
-		public LazyList2(uint length, Func<uint, TArg, (TValue elem, bool containedGenericParams)> readElementByRID) {
-			this.length = length;
-			this.readElementByRID = readElementByRID;
-			elements = new TValue[length];
-		}
-	}
-
-	[DebuggerDisplay("Count = {Length}")]
 	sealed class LazyList2<TValue, TArg1, TArg2> where TValue : class {
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 		readonly TValue[] elements;
