@@ -35,6 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 	static class MDAPI {
 		const int CLDB_E_RECORD_NOTFOUND = unchecked((int)0x80131130);
+		const int CLDB_E_INDEX_NOTFOUND = unchecked((int)0x80131124);
 
 		static bool IsGlobal(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
@@ -776,10 +777,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		public unsafe static COR_FIELD_OFFSET[] GetFieldOffsets(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
 				return null;
+			if ((token & 0x00FFFFFF) == 0)
+				return null;
 
 			int cFieldOffset = 0;
 			int hr = mdi.GetClassLayout(token, IntPtr.Zero, null, 0, new IntPtr(&cFieldOffset), IntPtr.Zero);
-			Debug.Assert(hr == 0 || hr == CLDB_E_RECORD_NOTFOUND);
+			Debug.Assert(hr == 0 || hr == CLDB_E_RECORD_NOTFOUND || hr == CLDB_E_INDEX_NOTFOUND);
 			var fieldOffsets = cFieldOffset == 0 ? Array.Empty<COR_FIELD_OFFSET>() : new COR_FIELD_OFFSET[cFieldOffset];
 			if (hr == 0 && fieldOffsets.Length != 0)
 				hr = mdi.GetClassLayout(token, IntPtr.Zero, fieldOffsets, fieldOffsets.Length, new IntPtr(&cFieldOffset), IntPtr.Zero);
@@ -791,14 +794,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			if (offsets == null)
 				return null;
 			foreach (var info in offsets) {
-				if (info.FieldToken == fieldToken)
-					return info.Offset;
+				if (info.FieldToken == fieldToken) {
+					if (info.Offset != uint.MaxValue)
+						return info.Offset;
+					return null;
+				}
 			}
 			return null;
 		}
 
 		public unsafe static (IntPtr addr, uint size) GetFieldMarshalBlob(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
+				return (IntPtr.Zero, 0);
+			if ((token & 0x00FFFFFF) == 0)
 				return (IntPtr.Zero, 0);
 
 			int hr = mdi.GetFieldMarshal(token, out var pvNativeType, out uint cbNativeType);

@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			uint extends = reader.TablesStream.ReadTypeDefRow(Rid).Extends;
 			if (!CodedToken.TypeDefOrRef.Decode(extends, out uint token))
 				return null;
-			return reader.Module.ResolveType((int)extends, genericTypeArguments, null, DmdResolveOptions.None);
+			return reader.Module.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.None);
 		}
 
 		protected override DmdType[] CreateGenericParameters() {

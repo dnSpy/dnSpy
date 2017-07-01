@@ -123,31 +123,29 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// true if this is a public type and all its declaring types are public
 		/// </summary>
-		public bool IsVisible {
-			get {
-				if (IsGenericParameter)
-					return true;
-				var type = this;
-				while (type.GetElementType() is DmdType elementType)
-					type = elementType;
-				for (;;) {
-					var declType = type.DeclaringType;
-					if ((object)declType == null)
-						break;
-					if (!type.IsNestedPublic)
-						return false;
-					type = declType;
-				}
-				if (!type.IsPublic)
-					return false;
-				if (IsConstructedGenericType) {
-					foreach (var genArg in GetGenericArguments()) {
-						if (!genArg.IsVisible)
-							return false;
-					}
-				}
+		public bool IsVisible => CalculateIsVisible(this);
+		static bool CalculateIsVisible(DmdType type) {
+			while (type.GetElementType() is DmdType elementType)
+				type = elementType;
+			if (type.IsGenericParameter)
 				return true;
+			for (;;) {
+				var declType = type.DeclaringType;
+				if ((object)declType == null)
+					break;
+				if (!type.IsNestedPublic)
+					return false;
+				type = declType;
 			}
+			if (!type.IsPublic)
+				return false;
+			if (type.IsConstructedGenericType) {
+				foreach (var genArg in type.GetGenericArguments()) {
+					if (!genArg.IsVisible)
+						return false;
+				}
+			}
+			return true;
 		}
 
 		/// <summary>

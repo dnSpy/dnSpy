@@ -256,5 +256,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdCustomAttributeData[] ReadAssemblySecurityAttributes(uint rid);
 		protected abstract DmdCustomAttributeData[] ReadTypeDefSecurityAttributes(uint rid);
 		protected abstract DmdCustomAttributeData[] ReadMethodSecurityAttributes(uint rid);
+
+		public override event EventHandler<DmdTypesUpdatedEventArgs> TypesUpdated { add { } remove { } }
 	}
 }

@@ -304,19 +304,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				classToken = uint.MaxValue;
 			var reflectedTypeRef = GetMemberRefParent(classToken, genericTypeArguments, genericMethodArguments);
 
+			bool containedGenericParams = info.containedGenericParams;
+			if ((classToken >> 24) == 0x1B)
+				containedGenericParams = true;
+
 			if ((object)info.fieldType != null) {
 				var fieldRef = new DmdFieldRef(reflectedTypeRef, name, rawInfo.fieldType, info.fieldType);
-				return (fieldRef, info.containedGenericParams);
+				return (fieldRef, containedGenericParams);
 			}
 			else {
 				Debug.Assert((object)info.methodSignature != null);
 				if (name == DmdConstructorInfo.ConstructorName || name == DmdConstructorInfo.TypeConstructorName) {
 					var ctorRef = new DmdConstructorRef(reflectedTypeRef, name, rawInfo.methodSignature, info.methodSignature);
-					return (ctorRef, info.containedGenericParams);
+					return (ctorRef, containedGenericParams);
 				}
 				else {
 					var methodRef = new DmdMethodRefMD(this, row.Signature, genericTypeArguments, reflectedTypeRef, name, rawInfo.methodSignature, info.methodSignature);
-					return (methodRef, info.containedGenericParams);
+					return (methodRef, containedGenericParams);
 				}
 			}
 		}
@@ -325,10 +329,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			uint rid = classToken & 0x00FFFFFF;
 			switch ((Table)(classToken >> 24)) {
 			case Table.TypeRef:
-				return ResolveTypeRef(rid) ?? Module.AppDomain.System_Void;
-
 			case Table.TypeDef:
-				return ResolveTypeDef(rid) ?? Module.AppDomain.System_Void;
+			case Table.TypeSpec:
+				return ResolveType((int)classToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.None) ?? Module.AppDomain.System_Void;
 
 			case Table.ModuleRef:
 				var moduleRefRow = TablesStream.ReadModuleRefRow(classToken & 0x00FFFFFF);
@@ -340,9 +343,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 			case Table.Method:
 				return ResolveMethodDef(rid)?.DeclaringType ?? Module.AppDomain.System_Void;
-
-			case Table.TypeSpec:
-				return ResolveTypeSpec(rid, genericTypeArguments, genericMethodArguments) ?? Module.AppDomain.System_Void;
 
 			default:
 				return Module.AppDomain.System_Void;

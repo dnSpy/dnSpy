@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ResolvedType.CreateDeclaredEvents(reflectedType);
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => ResolvedType.ReadDeclaredInterfaces2();
-		protected override DmdType[] CreateNestedTypes() => ResolvedType.CreateNestedTypes2();
+		public sealed override ReadOnlyCollection<DmdType> NestedTypes => ResolvedType.NestedTypes;
 		public override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => ResolvedType.CreateCustomAttributes();
 	}
 }

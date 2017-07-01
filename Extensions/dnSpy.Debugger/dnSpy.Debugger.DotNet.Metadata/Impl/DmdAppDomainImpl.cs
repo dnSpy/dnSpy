@@ -752,31 +752,31 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		Dictionary<DmdType, DmdTypeRef> GetModuleExportedTypeDictionary(DmdModule module, bool ignoreCase) {
-			lock (LockObject) {
-				if (ignoreCase) {
-					if (toModuleExportedTypeDictIgnoreCase.TryGetValue(module, out var dict))
-						return dict;
-					dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparerIgnoreCase);
-					foreach (var type in (DmdTypeRef[])module.GetExportedTypes())
-						dict[type] = type;
+		Dictionary<DmdType, DmdTypeRef> GetModuleExportedTypeDictionary_NoLock(DmdModule module, bool ignoreCase) {
+			Dictionary<DmdType, DmdTypeRef> dict;
+			if (ignoreCase) {
+				if (toModuleExportedTypeDictIgnoreCase.TryGetValue(module, out dict))
 					return dict;
-				}
-				else {
-					if (toModuleExportedTypeDict.TryGetValue(module, out var dict))
-						return dict;
-					dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparer);
-					foreach (var type in (DmdTypeRef[])module.GetExportedTypes())
-						dict[type] = type;
-					return dict;
-				}
+				dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparerIgnoreCase);
+				toModuleExportedTypeDictIgnoreCase[module] = dict;
 			}
+			else {
+				if (toModuleExportedTypeDict.TryGetValue(module, out dict))
+					return dict;
+				dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparer);
+				toModuleExportedTypeDict[module] = dict;
+			}
+			foreach (var type in (DmdTypeRef[])module.GetExportedTypes())
+				dict[type] = type;
+			return dict;
 		}
 
 		DmdTypeRef FindExportedType(IList<DmdModule> modules, DmdTypeRef typeRef, bool ignoreCase) {
-			foreach (var module in modules) {
-				if (GetModuleExportedTypeDictionary(module, ignoreCase).TryGetValue(typeRef, out var exportedType))
-					return exportedType;
+			lock (LockObject) {
+				foreach (var module in modules) {
+					if (GetModuleExportedTypeDictionary_NoLock(module, ignoreCase).TryGetValue(typeRef, out var exportedType))
+						return exportedType;
+				}
 			}
 			return null;
 		}
@@ -807,30 +807,59 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		Dictionary<DmdType, DmdTypeDef> GetModuleTypeDictionary(DmdModule module, bool ignoreCase) {
-			lock (LockObject) {
-				if (ignoreCase) {
-					if (toModuleTypeDictIgnoreCase.TryGetValue(module, out var dict))
-						return dict;
-					dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparerIgnoreCase);
-					foreach (var type in (DmdTypeDef[])module.GetTypes())
-						dict[type] = type;
+		Dictionary<DmdType, DmdTypeDef> GetModuleTypeDictionary_NoLock(DmdModule module, bool ignoreCase) {
+			Dictionary<DmdType, DmdTypeDef> dict;
+			if (ignoreCase) {
+				if (toModuleTypeDictIgnoreCase.TryGetValue(module, out dict))
 					return dict;
+				dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparerIgnoreCase);
+				toModuleTypeDictIgnoreCase[module] = dict;
+			}
+			else {
+				if (toModuleTypeDict.TryGetValue(module, out dict))
+					return dict;
+				dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparer);
+				toModuleTypeDict[module] = dict;
+			}
+
+			// Only dynamic modules can add more types at runtime
+			if (module.IsDynamic) {
+				// If it's the first time this code gets executed with this module
+				if (toModuleTypeDictIgnoreCase.ContainsKey(module) != toModuleTypeDict.ContainsKey(module)) {
+					var moduleImpl = (DmdModuleImpl)module;
+					moduleImpl.MetadataReader.TypesUpdated += (s, e) => DmdMetadataReader_TypesUpdated(module, e);
 				}
-				else {
-					if (toModuleTypeDict.TryGetValue(module, out var dict))
-						return dict;
-					dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparer);
-					foreach (var type in (DmdTypeDef[])module.GetTypes())
-						dict[type] = type;
-					return dict;
+			}
+
+			foreach (var type in (DmdTypeDef[])module.GetTypes())
+				dict[type] = type;
+			return dict;
+		}
+
+		void DmdMetadataReader_TypesUpdated(DmdModule module, DmdTypesUpdatedEventArgs e) {
+			lock (LockObject) {
+				Dictionary<DmdType, DmdTypeDef> dict1 = null, dict2 = null;
+				toModuleTypeDictIgnoreCase?.TryGetValue(module, out dict1);
+				toModuleTypeDict?.TryGetValue(module, out dict2);
+				Debug.Assert(dict1 != null || dict2 != null);
+				foreach (var token in e.Tokens) {
+					var type = module.ResolveType((int)token, (IList<DmdType>)null, null, DmdResolveOptions.None) as DmdTypeDef;
+					Debug.Assert((object)type != null);
+					if ((object)type == null)
+						continue;
+					if (dict1 != null)
+						dict1[type] = type;
+					if (dict2 != null)
+						dict2[type] = type;
 				}
 			}
 		}
 
 		DmdTypeDef Lookup(DmdModule module, DmdTypeRef typeRef, bool ignoreCase) {
-			if (GetModuleTypeDictionary(module, ignoreCase).TryGetValue(typeRef, out var typeDef))
-				return typeDef;
+			lock (LockObject) {
+				if (GetModuleTypeDictionary_NoLock(module, ignoreCase).TryGetValue(typeRef, out var typeDef))
+					return typeDef;
+			}
 			return null;
 		}
 

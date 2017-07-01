@@ -57,6 +57,7 @@
     <Compile Include="DmdCustomAttributeData.cs" />
     <Compile Include="DmdCustomModifier.cs" />
     <Compile Include="DmdCustomModifierUtilities.cs" />
+    <Compile Include="DmdDataStream.cs" />
     <Compile Include="DmdDispatcher.cs" />
     <Compile Include="DmdDynamicModuleHelper.cs" />
     <Compile Include="DmdEvaluator.cs" />
@@ -136,7 +137,6 @@
     <Compile Include="Impl\DmdCreatedParameterDef.cs" />
     <Compile Include="Impl\DmdCreatedParameterInfo.cs" />
     <Compile Include="Impl\DmdCustomAttributeReader.cs" />
-    <Compile Include="Impl\DmdDataStream.cs" />
     <Compile Include="Impl\DmdDeclSecurityReader.cs" />
     <Compile Include="Impl\DmdEventDef.cs" />
     <Compile Include="Impl\DmdFieldDef.cs" />

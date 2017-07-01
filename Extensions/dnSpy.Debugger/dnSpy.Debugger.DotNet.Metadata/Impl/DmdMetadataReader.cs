@@ -40,5 +40,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract DmdAssemblyName[] GetReferencedAssemblies();
 		public abstract DmdCustomAttributeData[] ReadCustomAttributes(int metadataToken);
 		public abstract DmdCustomAttributeData[] ReadSecurityAttributes(int metadataToken);
+		public abstract event EventHandler<DmdTypesUpdatedEventArgs> TypesUpdated;
+	}
+
+	struct DmdTypesUpdatedEventArgs {
+		/// <summary>
+		/// Tokens of updated types
+		/// </summary>
+		public uint[] Tokens { get; }
+		public DmdTypesUpdatedEventArgs(uint[] tokens) => Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
 	}
 }

@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdTypeDefCOMD : DmdTypeDef {
@@ -166,7 +165,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		protected override DmdType[] CreateNestedTypes() => COMThread(CreateNestedTypes_COMThread);
 		DmdType[] CreateNestedTypes_COMThread() {
 			reader.Dispatcher.VerifyAccess();
-			var nestedRids = reader.GetTypeDefNestedClassRids_COMThread((uint)MetadataToken);
+			var nestedRids = reader.GetTypeDefNestedClassRids_COMThread(Rid);
 			if (nestedRids.Length == 0)
 				return null;
 			var res = new DmdType[nestedRids.Length];

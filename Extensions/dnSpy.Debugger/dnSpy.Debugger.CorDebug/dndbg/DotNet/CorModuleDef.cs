@@ -294,9 +294,8 @@ namespace dndbg.DotNet {
 
 		CorTypeDef Initialize(CorTypeDef td, bool created, bool calledFromLoadClass) {
 			td.Initialize(corModuleDefHelper.IsDynamic ? calledFromLoadClass : true);
-			if (corModuleDefHelper.IsDynamic) {
+			if (corModuleDefHelper.IsDynamic)
 				TypeUpdated?.Invoke(this, new TypeUpdatedEventArgs(td, created, calledFromLoadClass));
-			}
 			return td;
 		}
 
@@ -1035,9 +1034,8 @@ namespace dndbg.DotNet {
 				bool b;
 				CorTypeDef td;
 				uint rid = token & 0x00FFFFFF;
-				if (token == type.OriginalToken.Raw) {
+				if (token == type.OriginalToken.Raw)
 					td = type;
-				}
 				else {
 					b = ridToType.ContainsKey(rid);
 					Debug.Assert(!b);
@@ -1057,9 +1055,8 @@ namespace dndbg.DotNet {
 						td.PrepareAutoInsert();
 						var enclType = ridToType[enclTypeRid];
 						enclType.NestedTypes.Add(td);
-						if (corModuleDefHelper.IsDynamic) {
+						if (corModuleDefHelper.IsDynamic)
 							TypeUpdated?.Invoke(this, new TypeUpdatedEventArgs(enclType, false, false));
-						}
 					}
 				}
 				else {
@@ -1074,9 +1071,8 @@ namespace dndbg.DotNet {
 			for (;;) {
 				if (ridToEnclosing.ContainsKey(rid))
 					break;
-				if (rid == 0 || hash.Contains(rid))
+				if (rid == 0 || !hash.Add(rid))
 					break;
-				hash.Add(rid);
 				rid = MDAPI.GetTypeDefEnclosingType(mdi, new MDToken(Table.TypeDef, rid).Raw) & 0x00FFFFFF;
 			}
 			var tokens = new uint[hash.Count];

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
@@ -70,5 +71,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => null;
+		public override ReadOnlyCollection<DmdType> NestedTypes => ReadOnlyCollectionHelpers.Empty<DmdType>();
 	}
 }

@@ -290,7 +290,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			codedToken = reader.ReadCompressedUInt32();
 			if (!DMD.MD.CodedToken.TypeDefOrRef.Decode(codedToken, out uint token))
 				return module.AppDomain.System_Void;
-			// Assume it contains generic parameters if it's a TypeSpec
 			if ((token >> 24) == 0x1B)
 				containedGenericParams = true;
 			var type = module.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.None) ?? module.AppDomain.System_Void;

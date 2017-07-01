@@ -46,10 +46,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				module = null;
 				getMetadata = null;
 				metadataReaderFactory = null;
+				reader.TypesUpdated += DmdMetadataReader_TypesUpdated;
 				__metadataReader_DONT_USE = reader;
 				return reader;
 			}
 		}
+
+		void DmdMetadataReader_TypesUpdated(object sender, DmdTypesUpdatedEventArgs e) => typesUpdated?.Invoke(this, e);
+		public override event EventHandler<DmdTypesUpdatedEventArgs> TypesUpdated {
+			add => typesUpdated += value;
+			remove => typesUpdated -= value;
+		}
+		EventHandler<DmdTypesUpdatedEventArgs> typesUpdated;
 
 		internal void SetModule(DmdModuleImpl module) => this.module = module;
 

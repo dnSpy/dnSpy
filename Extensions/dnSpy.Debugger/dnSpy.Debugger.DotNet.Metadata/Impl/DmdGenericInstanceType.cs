@@ -123,8 +123,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected override IList<DmdType> ReadDeclaredInterfaces() => ReadDeclaredInterfaces2();
 		internal IList<DmdType> ReadDeclaredInterfaces2() => genericTypeDefinition.ReadDeclaredInterfaces(typeArguments);
-		protected override DmdType[] CreateNestedTypes() => CreateNestedTypes2();
-		internal DmdType[] CreateNestedTypes2() => genericTypeDefinition.CreateNestedTypes2();
+		public override ReadOnlyCollection<DmdType> NestedTypes => genericTypeDefinition.NestedTypes;
 
 		public override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => genericTypeDefinition.CreateCustomAttributes();
 	}

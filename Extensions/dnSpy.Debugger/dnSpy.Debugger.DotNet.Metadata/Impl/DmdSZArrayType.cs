@@ -91,5 +91,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return new DmdCreatedConstructorDef(specialMethodKind, name, sig, this, reflectedType);
 			return new DmdCreatedMethodDef(specialMethodKind, name, sig, this, reflectedType);
 		}
+
+		public override ReadOnlyCollection<DmdType> NestedTypes => ReadOnlyCollectionHelpers.Empty<DmdType>();
 	}
 }

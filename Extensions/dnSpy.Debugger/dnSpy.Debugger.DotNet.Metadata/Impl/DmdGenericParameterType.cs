@@ -118,5 +118,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 			return ObjectPools.FreeAndToArray(ref list);
 		}
+
+		public sealed override ReadOnlyCollection<DmdType> NestedTypes => ReadOnlyCollectionHelpers.Empty<DmdType>();
 	}
 }

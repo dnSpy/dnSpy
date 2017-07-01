@@ -352,8 +352,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		protected virtual DmdType[] CreateNestedTypes() => null;
-
 		public sealed override DmdType GetInterface(string fullName, bool ignoreCase) {
 			if (fullName == null)
 				throw new ArgumentNullException(nameof(fullName));
@@ -560,7 +558,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public sealed override ReadOnlyCollection<DmdType> NestedTypes {
+		protected virtual DmdType[] CreateNestedTypes() => null;
+		protected ReadOnlyCollection<DmdType> NestedTypesCore {
 			get {
 				var f = ExtraFields;
 				if (f.__nestedTypes_DONT_USE != null)
@@ -573,6 +572,31 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return f.__nestedTypes_DONT_USE;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Invalidates all cached nested types.
+		/// 
+		/// Used by dynamic modules when the debugger sends a LoadClass event.
+		/// </summary>
+		internal void DynamicType_InvalidateCachedNestedTypes() {
+			Debug.Assert(Module.IsDynamic);
+			var f = __extraFields_DONT_USE;
+			if (f == null)
+				return;
+			lock (LockObject)
+				f.__nestedTypes_DONT_USE = null;
+		}
+
+		/// <summary>
+		/// Invalidates all cached collections of types and members.
+		/// 
+		/// Used by dynamic modules when the debugger sends a LoadClass event.
+		/// </summary>
+		internal void DynamicType_InvalidateCachedMembers() {
+			Debug.Assert(Module.IsDynamic);
+			lock (LockObject)
+				__extraFields_DONT_USE = null;
 		}
 
 		internal ReadOnlyCollection<DmdType> DeclaredInterfaces {

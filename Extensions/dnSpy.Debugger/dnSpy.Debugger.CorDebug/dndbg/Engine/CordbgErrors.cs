@@ -32,6 +32,7 @@ namespace dndbg.Engine {
 		public const int CORDBG_E_UNRECOVERABLE_ERROR = unchecked((int)0x80131300);
 		public const int CORDBG_E_PROCESS_NOT_SYNCHRONIZED = unchecked((int)0x80131302);
 		public const int CLDB_E_RECORD_NOTFOUND = unchecked((int)0x80131130);
+		public const int CLDB_E_INDEX_NOTFOUND = unchecked((int)0x80131124);
 
 		public static bool IsCantEvaluateError(int hr) => hr == CORDBG_E_ILLEGAL_IN_NATIVE_CODE ||
 					hr == CORDBG_E_ILLEGAL_AT_GC_UNSAFE_POINT ||

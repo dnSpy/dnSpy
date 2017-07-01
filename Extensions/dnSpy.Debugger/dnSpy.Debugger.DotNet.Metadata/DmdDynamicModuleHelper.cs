@@ -25,15 +25,37 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	public abstract class DmdDynamicModuleHelper {
 		/// <summary>
-		/// Called to get the address of the method body. Returns true on success. This method should use the
-		/// CLR debugger API to get the address of the method body. This method is only called on the COM thread.
+		/// Called to get the method body stream or null if there's no method body.
+		/// 
+		/// This method should use the CLR debugger API to get the address of the method body.
+		/// 
+		/// This method is only called on the COM thread.
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token of the method</param>
 		/// <param name="rva">RVA of method body</param>
-		/// <param name="body">Updated with address of body</param>
-		/// <param name="bodySize">Updated with size of body</param>
 		/// <returns></returns>
-		public abstract bool TryGetMethodBody(DmdModule module, int metadataToken, uint rva, out IntPtr body, out int bodySize);
+		public abstract DmdDataStream TryGetMethodBody(DmdModule module, int metadataToken, uint rva);
+
+		/// <summary>
+		/// Raised when a new type in this module is loaded. It must be raised on the COM thread.
+		/// </summary>
+		public abstract event EventHandler<DmdTypeLoadedEventArgs> TypeLoaded;
+	}
+
+	/// <summary>
+	/// Class loaded event args
+	/// </summary>
+	public struct DmdTypeLoadedEventArgs {
+		/// <summary>
+		/// Gets the metadata token of the type that got loaded
+		/// </summary>
+		public int MetadataToken { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="metadataToken">Metadata token of the type that got loaded</param>
+		public DmdTypeLoadedEventArgs(int metadataToken) => MetadataToken = metadataToken;
 	}
 }

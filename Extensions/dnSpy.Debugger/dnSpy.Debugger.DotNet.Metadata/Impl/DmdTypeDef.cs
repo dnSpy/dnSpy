@@ -201,9 +201,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal IList<DmdType> ReadDeclaredInterfaces(IList<DmdType> genericTypeArguments) => ReadDeclaredInterfacesCore(genericTypeArguments);
 		protected abstract DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments);
 
-		protected abstract override DmdType[] CreateNestedTypes();
-		internal DmdType[] CreateNestedTypes2() => CreateNestedTypes();
+		public sealed override ReadOnlyCollection<DmdType> NestedTypes => NestedTypesCore;
 
+		protected abstract override DmdType[] CreateNestedTypes();
 		public abstract override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes();
+
+		internal new void DynamicType_InvalidateCachedMembers() {
+			lock (LockObject) {
+				declaringTypeInitd = false;
+				hasTypeEquivalenceFlags = 0;
+				baseTypeInitd = false;
+				__genericParameters_DONT_USE = null;
+				base.DynamicType_InvalidateCachedMembers();
+			}
+		}
 	}
 }

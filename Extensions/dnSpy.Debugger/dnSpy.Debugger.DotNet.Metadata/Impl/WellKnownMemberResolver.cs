@@ -54,7 +54,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					assemblies = appDomain.GetAssemblies();
 				foreach (var assembly in assemblies) {
 					foreach (var module in assembly.GetModules()) {
-						if (checkedModules.Contains(module))
+						if (!checkedModules.Add(module))
+							continue;
+
+						// There are no well known types in dynamic assemblies
+						if (module.IsDynamic)
 							continue;
 
 						bool isCorLib = module.IsCorLib;
@@ -74,8 +78,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 									wellKnownTypes[(int)wkt] = type;
 							}
 						}
-
-						checkedModules.Add(module);
 
 						if ((object)cachedType != null)
 							return cachedType;

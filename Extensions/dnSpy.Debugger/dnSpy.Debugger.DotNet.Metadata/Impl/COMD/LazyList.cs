@@ -36,6 +36,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
+		public T TryGet(uint index) {
+			dict.TryGetValue(index, out var elem);
+			return elem;
+		}
+
 		public LazyList(Func<uint, T> readElementByRID) {
 			this.readElementByRID = readElementByRID;
 			dict = new Dictionary<uint, T>();
@@ -72,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				if (dict.TryGetValue(index, out var elem))
 					return elem;
 				var info = readElementByRID(index + 1, arg1, arg2);
-				if (!info.containedGenericParams && (elem = info.elem) != null)
+				if ((elem = info.elem) != null && !info.containedGenericParams)
 					dict[index] = elem;
 				return elem;
 			}
