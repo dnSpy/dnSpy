@@ -979,7 +979,7 @@ namespace dndbg.DotNet {
 			nestedListInitd.Add(ctd.OriginalToken.Rid);
 			bool b = ridToNested.TryGetValue(ctd.OriginalToken.Rid, out var list);
 			Debug.Assert(b);
-			return list == null ? Array.Empty<uint>() : list.ToArray();
+			return list == null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
 		}
 
 		void InitializeTypeTables() {

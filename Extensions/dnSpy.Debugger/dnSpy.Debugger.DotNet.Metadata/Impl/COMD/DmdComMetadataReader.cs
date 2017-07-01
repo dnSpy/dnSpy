@@ -124,6 +124,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		readonly DmdDispatcher dispatcher;
 		Dictionary<uint, List<uint>> ridToNested;
 		Dictionary<uint, uint> ridToEnclosing;
+		HashSet<uint> nestedListInitd;
 		readonly LazyList<DmdTypeRef> typeRefList;
 		readonly LazyList<DmdFieldDef, DmdTypeDef> fieldList;
 		readonly LazyList<DmdTypeDef> typeDefList;
@@ -199,6 +200,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return enclTypeRid;
 		}
 
+		internal uint[] GetTypeDefNestedClassRids_COMThread(uint metadataToken) {
+			Debug.Assert(!nestedListInitd.Contains(metadataToken));
+			nestedListInitd.Add(metadataToken);
+			bool b = ridToNested.TryGetValue(metadataToken, out var list);
+			Debug.Assert(b);
+			return list == null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
+		}
+
 		void InitializeTypeTables_COMThread() {
 			dispatcher.VerifyAccess();
 			if (ridToNested != null)
@@ -208,6 +217,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			int capacity = allTypes.Length;
 			ridToNested = new Dictionary<uint, List<uint>>(capacity);
 			ridToEnclosing = new Dictionary<uint, uint>(capacity);
+			nestedListInitd = new HashSet<uint>();
 			UpdateTypeTables_COMThread(allTypes);
 		}
 

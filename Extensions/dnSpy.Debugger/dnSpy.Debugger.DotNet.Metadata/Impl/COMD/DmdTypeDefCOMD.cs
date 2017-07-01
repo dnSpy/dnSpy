@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdTypeDefCOMD : DmdTypeDef {
@@ -70,7 +71,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		protected override DmdType[] CreateGenericParameters() => COMThread(CreateGenericParameters_COMThread);
 		DmdType[] CreateGenericParameters_COMThread() {
 			reader.Dispatcher.VerifyAccess();
-			throw new NotImplementedException();//TODO:
+			var tokens = MDAPI.GetGenericParamTokens(reader.MetaDataImport, (uint)MetadataToken);
+			if (tokens.Length == 0)
+				return null;
+			var genericParams = new DmdType[tokens.Length];
+			for (int i = 0; i < genericParams.Length; i++) {
+				uint token = tokens[i];
+				uint rid = token & 0x00FFFFFF;
+				var gpName = MDAPI.GetGenericParamName(reader.MetaDataImport, token) ?? string.Empty;
+				if (!MDAPI.GetGenericParamNumAndAttrs(reader.MetaDataImport, token, out var gpNumber, out var gpAttrs))
+					return null;
+				var gpType = new DmdGenericParameterTypeCOMD(reader, rid, this, gpName, gpNumber, gpAttrs, null);
+				genericParams[i] = gpType;
+			}
+			return genericParams;
 		}
 
 		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
@@ -137,13 +151,33 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			COMThread(() => ReadDeclaredInterfacesCore_COMThread(genericTypeArguments));
 		DmdType[] ReadDeclaredInterfacesCore_COMThread(IList<DmdType> genericTypeArguments) {
 			reader.Dispatcher.VerifyAccess();
-			throw new NotImplementedException();//TODO:
+			var tokens = MDAPI.GetInterfaceImplTokens(reader.MetaDataImport, (uint)MetadataToken);
+			if (tokens.Length == 0)
+				return null;
+			var res = new DmdType[tokens.Length];
+			for (int i = 0; i < res.Length; i++) {
+				uint token = tokens[i];
+				uint ifaceToken = MDAPI.GetInterfaceImplInterfaceToken(reader.MetaDataImport, token);
+				res[i] = reader.ResolveType((int)ifaceToken, genericTypeArguments, null, DmdResolveOptions.ThrowOnError);
+			}
+			return res;
 		}
 
 		protected override DmdType[] CreateNestedTypes() => COMThread(CreateNestedTypes_COMThread);
 		DmdType[] CreateNestedTypes_COMThread() {
 			reader.Dispatcher.VerifyAccess();
-			throw new NotImplementedException();//TODO:
+			var nestedRids = reader.GetTypeDefNestedClassRids_COMThread((uint)MetadataToken);
+			if (nestedRids.Length == 0)
+				return null;
+			var res = new DmdType[nestedRids.Length];
+			for (int i = 0; i < res.Length; i++) {
+				uint rid = nestedRids[i];
+				var nestedType = Module.ResolveType(0x02000000 + (int)rid, (IList<DmdType>)null, null, DmdResolveOptions.None);
+				if ((object)nestedType == null)
+					return null;
+				res[i] = nestedType;
+			}
+			return res;
 		}
 
 		public override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => COMThread(CreateCustomAttributes_COMThread);
