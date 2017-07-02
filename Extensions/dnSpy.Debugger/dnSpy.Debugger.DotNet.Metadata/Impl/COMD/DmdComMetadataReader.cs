@@ -982,12 +982,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			machine = __machine_DONT_USE;
 		}
 
-		public override DmdAssemblyName GetName() {
+		public override DmdReadOnlyAssemblyName GetName() {
 			if (assemblyName == null)
 				InitializeAssemblyName();
-			return assemblyName.Clone();
+			return assemblyName;
 		}
-		DmdAssemblyName assemblyName;
+		DmdReadOnlyAssemblyName assemblyName;
 
 		void InitializeAssemblyName() {
 			if (assemblyName != null)
@@ -1002,32 +1002,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			dispatcher.VerifyAccess();
 			if (assemblyName != null)
 				return;
-			var name = new DmdAssemblyName();
 
 			const uint token = 0x20000001;
-			name.Version = MDAPI.GetAssemblyVersionAndLocale(MetaDataAssemblyImport, token, out string locale) ?? new Version(0, 0, 0, 0);
-			name.Name = MDAPI.GetAssemblySimpleName(MetaDataAssemblyImport, token) ?? string.Empty;
-			name.CultureName = locale ?? string.Empty;
-			name.HashAlgorithm = MDAPI.GetAssemblyHashAlgorithm(MetaDataAssemblyImport, token) ?? DmdAssemblyHashAlgorithm.SHA1;
-			name.SetPublicKey(MDAPI.GetAssemblyPublicKey(MetaDataAssemblyImport, token) ?? Array.Empty<byte>());
-			name.RawFlags = MDAPI.GetAssemblyAttributes(MetaDataAssemblyImport, token) ?? DmdAssemblyNameFlags.None;
+			var version = MDAPI.GetAssemblyVersionAndLocale(MetaDataAssemblyImport, token, out string locale) ?? new Version(0, 0, 0, 0);
+			var name = MDAPI.GetAssemblySimpleName(MetaDataAssemblyImport, token) ?? string.Empty;
+			var cultureName = locale ?? string.Empty;
+			var hashAlgorithm = MDAPI.GetAssemblyHashAlgorithm(MetaDataAssemblyImport, token) ?? DmdAssemblyHashAlgorithm.SHA1;
+			var publicKey = MDAPI.GetAssemblyPublicKey(MetaDataAssemblyImport, token) ?? Array.Empty<byte>();
+			var flags = MDAPI.GetAssemblyAttributes(MetaDataAssemblyImport, token) ?? DmdAssemblyNameFlags.None;
 
-			// PERF: Make sure the public key token is created once so it doesn't have to be recreated
-			// for each caller.
-			name.GetPublicKeyToken();
-
-			assemblyName = name;
+			assemblyName = new DmdReadOnlyAssemblyName(name, version, cultureName, flags, publicKey, null, hashAlgorithm);
 		}
 
-		public override DmdAssemblyName[] GetReferencedAssemblies() {
+		public override DmdReadOnlyAssemblyName[] GetReferencedAssemblies() {
 			if (IsCOMThread)
 				return GetReferencedAssemblies_COMThread();
 			else
 				return COMThread(GetReferencedAssemblies_COMThread);
 		}
 
-		DmdAssemblyName[] GetReferencedAssemblies_COMThread() {
-			var list = new List<DmdAssemblyName>();
+		DmdReadOnlyAssemblyName[] GetReferencedAssemblies_COMThread() {
+			var list = new List<DmdReadOnlyAssemblyName>();
 			for (uint token = 0x23000001; ; token++) {
 				if (!MDAPI.IsValidToken(MetaDataImport, token))
 					break;
@@ -1036,23 +1031,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return list.ToArray();
 		}
 
-		internal DmdAssemblyName ReadAssemblyName_COMThread(uint rid) {
+		internal DmdReadOnlyAssemblyName ReadAssemblyName_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
-			var asmName = new DmdAssemblyName();
-
 			uint token = 0x23000000 + rid;
-			asmName.Name = MDAPI.GetAssemblyRefSimpleName(MetaDataAssemblyImport, token) ?? string.Empty;
-			asmName.Version = MDAPI.GetAssemblyRefVersionAndLocale(MetaDataAssemblyImport, token, out string locale) ?? new Version(0, 0, 0, 0);
-			asmName.CultureName = locale ?? string.Empty;
-			var publicKeyOrToken = MDAPI.GetAssemblyRefPublicKeyOrToken(MetaDataAssemblyImport, token, out var attrs);
-			if (publicKeyOrToken != null) {
-				if ((attrs & DmdAssemblyNameFlags.PublicKey) != 0)
-					asmName.SetPublicKey(publicKeyOrToken);
-				else
-					asmName.SetPublicKeyToken(publicKeyOrToken);
-			}
-			asmName.RawFlags = attrs;
-			return asmName;
+			var name = MDAPI.GetAssemblyRefSimpleName(MetaDataAssemblyImport, token) ?? string.Empty;
+			var version = MDAPI.GetAssemblyRefVersionAndLocale(MetaDataAssemblyImport, token, out string locale) ?? new Version(0, 0, 0, 0);
+			var cultureName = locale ?? string.Empty;
+			var publicKeyOrToken = MDAPI.GetAssemblyRefPublicKeyOrToken(MetaDataAssemblyImport, token, out var flags);
+			return new DmdReadOnlyAssemblyName(name, version, cultureName, flags, publicKeyOrToken, DmdAssemblyHashAlgorithm.None);
 		}
 
 		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => ReadCustomAttributesCore(0x20000000 + rid);

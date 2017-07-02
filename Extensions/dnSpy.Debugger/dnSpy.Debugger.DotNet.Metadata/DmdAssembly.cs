@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the assembly name
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdAssemblyName GetName();
+		public abstract DmdReadOnlyAssemblyName GetName();
 
 		/// <summary>
 		/// Gets the full name of the assembly
@@ -355,7 +355,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all referenced assemblies
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdAssemblyName[] GetReferencedAssemblies();
+		public abstract DmdReadOnlyAssemblyName[] GetReferencedAssemblies();
 
 		/// <summary>
 		/// Gets the full name

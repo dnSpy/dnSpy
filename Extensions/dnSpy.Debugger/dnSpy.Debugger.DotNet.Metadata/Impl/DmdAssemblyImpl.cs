@@ -112,25 +112,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdAssemblyName GetName() {
+		public override DmdReadOnlyAssemblyName GetName() {
 			if (asmName == null) {
 				var newAsmName = metadataReader.GetName();
-				newAsmName.RawFlags |= DmdAssemblyNameFlags.PublicKey;
+				var flags = newAsmName.RawFlags;
+				flags |= DmdAssemblyNameFlags.PublicKey;
 				if (metadataReader.MDStreamVersion >= 0x00010000) {
 					metadataReader.GetPEKind(out var peKind, out var machine);
-					if ((newAsmName.RawFlags & DmdAssemblyNameFlags.PA_FullMask) == DmdAssemblyNameFlags.PA_NoPlatform)
-						newAsmName.RawFlags = (newAsmName.RawFlags & ~DmdAssemblyNameFlags.PA_FullMask) | DmdAssemblyNameFlags.PA_None;
+					if ((flags & DmdAssemblyNameFlags.PA_FullMask) == DmdAssemblyNameFlags.PA_NoPlatform)
+						flags = (flags & ~DmdAssemblyNameFlags.PA_FullMask) | DmdAssemblyNameFlags.PA_None;
 					else
-						newAsmName.RawFlags = (newAsmName.RawFlags & ~DmdAssemblyNameFlags.PA_FullMask) | GetProcessorArchitecture(peKind, machine);
+						flags = (flags & ~DmdAssemblyNameFlags.PA_FullMask) | GetProcessorArchitecture(peKind, machine);
 				}
-				// PERF: Make sure the public key token is created once so it doesn't have to be recreated
-				// for each caller.
-				newAsmName.GetPublicKeyToken();
-				asmName = newAsmName;
+				asmName = new DmdReadOnlyAssemblyName(newAsmName.Name, newAsmName.Version, newAsmName.CultureName, flags, newAsmName.GetPublicKey(), newAsmName.GetPublicKeyToken(), newAsmName.HashAlgorithm);
 			}
-			return asmName.Clone();
+			return asmName;
 		}
-		DmdAssemblyName asmName;
+		DmdReadOnlyAssemblyName asmName;
 
 		static DmdAssemblyNameFlags GetProcessorArchitecture(DmdPortableExecutableKinds peKind, DmdImageFileMachine machine) {
 			if ((peKind & DmdPortableExecutableKinds.PE32Plus) == 0) {
@@ -202,7 +200,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return nonNested.TypeScope.Kind == DmdTypeScopeKind.AssemblyRef;
 		}
 
-		public override DmdAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
+		public override DmdReadOnlyAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
 		internal DmdTypeDef GetType(DmdTypeRef typeRef, bool ignoreCase) => appDomain.TryLookup(this, typeRef, ignoreCase);
 
 		sealed class TypeDefResolver : ITypeDefResolver {
@@ -214,7 +212,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				this.ignoreCase = ignoreCase;
 			}
 
-			public DmdTypeDef GetTypeDef(DmdAssemblyName assemblyName, List<string> typeNames) {
+			public DmdTypeDef GetTypeDef(IDmdAssemblyName assemblyName, List<string> typeNames) {
 				if (typeNames.Count == 0)
 					return null;
 

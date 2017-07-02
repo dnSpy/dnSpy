@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Assembly name</param>
 		/// <returns></returns>
-		public abstract DmdAssembly GetAssembly(DmdAssemblyName name);
+		public abstract DmdAssembly GetAssembly(IDmdAssemblyName name);
 
 		/// <summary>
 		/// Loads an assembly
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="assemblyName">Full assembly name</param>
 		/// <returns></returns>
-		public DmdAssembly Load(IDmdEvaluationContext context, string assemblyName) => Load(context, new DmdAssemblyName(assemblyName));
+		public DmdAssembly Load(IDmdEvaluationContext context, string assemblyName) => Load(context, new DmdReadOnlyAssemblyName(assemblyName));
 
 		/// <summary>
 		/// Loads an assembly
@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="name">Assembly name</param>
 		/// <returns></returns>
-		public abstract DmdAssembly Load(IDmdEvaluationContext context, DmdAssemblyName name);
+		public abstract DmdAssembly Load(IDmdEvaluationContext context, IDmdAssemblyName name);
 
 		/// <summary>
 		/// Loads an assembly. Will fail on .NET Core 1.x (but not on .NET Core 2.x or later)

@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Assembly name
 	/// </summary>
-	public sealed class DmdAssemblyName {
+	public sealed class DmdAssemblyName : IDmdAssemblyName {
 		/// <summary>
 		/// Gets/sets the simple name
 		/// </summary>
@@ -120,8 +120,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public string FullName => DmdAssemblyNameFormatter.Format(Name, Version, CultureName, GetPublicKeyToken(), RawFlags, isPublicKeyToken: true);
 
-		internal void FormatFullNameTo(StringBuilder sb) => DmdAssemblyNameFormatter.Format(sb, Name, Version, CultureName, GetPublicKeyToken(), RawFlags, isPublicKeyToken: true);
-
 		/// <summary>
 		/// Gets the full assembly name
 		/// </summary>
@@ -146,7 +144,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			publicKeyToken = CloneArray(other.publicKeyToken);
 		}
 
-		static T[] CloneArray<T>(T[] array) {
+		internal static T[] CloneArray<T>(T[] array) {
 			if (array == null)
 				return null;
 			var res = new T[array.Length];
@@ -161,8 +159,35 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdAssemblyName(string assemblyName) {
 			if (assemblyName == null)
 				throw new ArgumentNullException(nameof(assemblyName));
-			Impl.DmdTypeNameParser.ParseAssemblyName(this, assemblyName);
+			Impl.DmdTypeNameParser.ParseAssemblyName(assemblyName, out string name, out Version version, out string cultureName, out DmdAssemblyNameFlags flags, out this.publicKey, out this.publicKeyToken, out DmdAssemblyHashAlgorithm hashAlgorithm);
+			Name = name;
+			Version = version;
+			CultureName = cultureName;
+			RawFlags = flags;
+			HashAlgorithm = hashAlgorithm;
 		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="name">Assembly name</param>
+		public DmdAssemblyName(IDmdAssemblyName name) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			Name = name.Name;
+			Version = name.Version;
+			CultureName = name.CultureName;
+			RawFlags = name.RawFlags;
+			publicKey = CloneArray(name.GetPublicKey());
+			publicKeyToken = CloneArray(name.GetPublicKeyToken());
+			HashAlgorithm = name.HashAlgorithm;
+		}
+
+		/// <summary>
+		/// Creates a read only assembly name
+		/// </summary>
+		/// <returns></returns>
+		public DmdReadOnlyAssemblyName AsReadOnly() => new DmdReadOnlyAssemblyName(this);
 
 		/// <summary>
 		/// Clones this instance

@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly object assembliesLockObj;
 		readonly List<DmdAssemblyImpl> assemblies;
 		readonly Dictionary<string, DmdAssemblyImpl> simpleNameToAssembly;
-		readonly Dictionary<DmdAssemblyName, DmdAssemblyImpl> assemblyNameToAssembly;
+		readonly Dictionary<IDmdAssemblyName, DmdAssemblyImpl> assemblyNameToAssembly;
 		readonly List<AssemblyLoadedListener> assemblyLoadedListeners;
 
 		// Fully resolved type lock fields
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			exportedTypeLockObj = new object();
 			assemblies = new List<DmdAssemblyImpl>();
 			simpleNameToAssembly = new Dictionary<string, DmdAssemblyImpl>(StringComparer.OrdinalIgnoreCase);
-			assemblyNameToAssembly = new Dictionary<DmdAssemblyName, DmdAssemblyImpl>(AssemblyNameEqualityComparer.Instance);
+			assemblyNameToAssembly = new Dictionary<IDmdAssemblyName, DmdAssemblyImpl>(AssemblyNameEqualityComparer.Instance);
 			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(new DmdMemberInfoEqualityComparer(DmdMemberInfoEqualityComparer.DefaultTypeOptions | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CompareGenericParameterDeclaringMember));
 			toModuleTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			toModuleTypeDictIgnoreCase = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
@@ -118,13 +118,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return GetAssemblyCore(simpleName, null);
 		}
 
-		public override DmdAssembly GetAssembly(DmdAssemblyName name) {
+		public override DmdAssembly GetAssembly(IDmdAssemblyName name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 			return GetAssemblyCore(name.Name, name);
 		}
 
-		DmdAssemblyImpl GetAssemblyCore(string simpleName, DmdAssemblyName name) {
+		DmdAssemblyImpl GetAssemblyCore(string simpleName, IDmdAssemblyName name) {
 			bool onlySimpleName = name == null || (name.Version == null && name.CultureName == null && name.GetPublicKeyToken() == null);
 			if (onlySimpleName)
 				name = null;
@@ -150,7 +150,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (name != null) {
 						if (assemblyNameToAssembly.TryGetValue(name, out var cached))
 							return cached;
-						assemblyNameToAssembly[name.Clone()] = assembly;
+						assemblyNameToAssembly[name.AsReadOnly()] = assembly;
 					}
 					else {
 						if (simpleNameToAssembly.TryGetValue(simpleName, out var cached))
@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return assembly;
 		}
 
-		static DmdAssemblyImpl GetAssemblySlowCore(DmdAssemblyImpl[] assemblies, string simpleName, DmdAssemblyName name) {
+		static DmdAssemblyImpl GetAssemblySlowCore(DmdAssemblyImpl[] assemblies, string simpleName, IDmdAssemblyName name) {
 			// Try to avoid reading the metadata in case we're debugging a program with lots of assemblies.
 
 			// We first loop over all disk file assemblies since we can check simpleName without accessing metadata.
@@ -228,7 +228,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				assemblyLoadedListeners.Remove(listener);
 		}
 
-		public override DmdAssembly Load(IDmdEvaluationContext context, DmdAssemblyName name) {
+		public override DmdAssembly Load(IDmdEvaluationContext context, IDmdAssemblyName name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 			var asm = GetAssembly(name);
@@ -277,7 +277,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdAssembly LoadFrom(IDmdEvaluationContext context, string assemblyFile) {
 			if (assemblyFile == null)
 				throw new ArgumentNullException(nameof(assemblyFile));
-			var name = new DmdAssemblyName(assemblyFile);
+			var name = new DmdReadOnlyAssemblyName(assemblyFile);
 			var asm = GetAssembly(name) ?? GetAssemblyByPath(assemblyFile);
 			if (asm != null)
 				return asm;
@@ -655,7 +655,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				this.ignoreCase = ignoreCase;
 			}
 
-			public DmdTypeDef GetTypeDef(DmdAssemblyName assemblyName, List<string> typeNames) {
+			public DmdTypeDef GetTypeDef(IDmdAssemblyName assemblyName, List<string> typeNames) {
 				if (typeNames.Count == 0)
 					return null;
 				DmdTypeDef type;
@@ -739,7 +739,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);
 
 			case DmdTypeScopeKind.ModuleRef:
-				assembly = GetAssembly((DmdAssemblyName)typeScope.Data2);
+				assembly = GetAssembly((IDmdAssemblyName)typeScope.Data2);
 				if (assembly == null)
 					return null;
 				module = assembly.GetModule((string)typeScope.Data);
@@ -748,7 +748,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);
 
 			case DmdTypeScopeKind.AssemblyRef:
-				assembly = GetAssembly((DmdAssemblyName)typeScope.Data);
+				assembly = GetAssembly((IDmdAssemblyName)typeScope.Data);
 				if (assembly == null)
 					return null;
 				return Lookup(assembly, typeRef, ignoreCase) ?? ResolveExportedType(assembly.GetModules(), typeRef, ignoreCase);
@@ -770,7 +770,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var typeScope = nonNested.TypeScope;
 				if (typeScope.Kind != DmdTypeScopeKind.AssemblyRef)
 					return null;
-				var etAsm = GetAssembly((DmdAssemblyName)typeScope.Data);
+				var etAsm = GetAssembly((IDmdAssemblyName)typeScope.Data);
 				if (etAsm == null)
 					return null;
 

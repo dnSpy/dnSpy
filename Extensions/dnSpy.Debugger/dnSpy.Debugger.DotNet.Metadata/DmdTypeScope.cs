@@ -60,12 +60,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdTypeScopeKind Kind { get; }
 
 		/// <summary>
-		/// Gets the data: <see cref="DmdModule"/>, <see cref="string"/> (<see cref="DmdTypeScopeKind.ModuleRef"/>), <see cref="DmdAssemblyName"/>
+		/// Gets the data: <see cref="DmdModule"/>, <see cref="string"/> (<see cref="DmdTypeScopeKind.ModuleRef"/>), <see cref="IDmdAssemblyName"/>
 		/// </summary>
 		public object Data { get; }
 
 		/// <summary>
-		/// Used if it's a module reference. This is the assembly name (<see cref="DmdAssemblyName"/>)
+		/// Used if it's a module reference. This is the assembly name (<see cref="IDmdAssemblyName"/>)
 		/// </summary>
 		public object Data2 { get; }
 
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="assembly">Assembly</param>
 		/// <param name="moduleName">Module name</param>
-		public DmdTypeScope(DmdAssemblyName assembly, string moduleName) {
+		public DmdTypeScope(IDmdAssemblyName assembly, string moduleName) {
 			Kind = DmdTypeScopeKind.ModuleRef;
 			Data = moduleName ?? throw new ArgumentNullException(nameof(moduleName));
 			Data2 = assembly ?? throw new ArgumentNullException(nameof(assembly));
@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Constructor
 		/// </summary>
 		/// <param name="assemblyRef">Assembly reference</param>
-		public DmdTypeScope(DmdAssemblyName assemblyRef) {
+		public DmdTypeScope(IDmdAssemblyName assemblyRef) {
 			Kind = DmdTypeScopeKind.AssemblyRef;
 			Data = assemblyRef ?? throw new ArgumentNullException(nameof(assemblyRef));
 			Data2 = null;

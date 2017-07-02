@@ -503,8 +503,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var comObjType = appDomain.GetWellKnownType(DmdWellKnownType.System___ComObject);
 			return t1.Where(a => (object)a != comObjType).ToArray();
 		}
-		static void Test(DmdAssemblyName n1, AssemblyName n2) => Test(n1, n2, true);
-		static void Test(DmdAssemblyName n1, AssemblyName n2, bool checkProcArch) {
+		static void Test(IDmdAssemblyName n1, AssemblyName n2) => Test(n1, n2, true);
+		static void Test(IDmdAssemblyName n1, AssemblyName n2, bool checkProcArch) {
 			Verify(n1.ToString() == n2.ToString());
 			Verify(n1.Name == n2.Name);
 			Verify(n1.Version == n2.Version);
@@ -567,7 +567,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					SimpleTest(t1[i], t2t);
 			}
 		}
-		static void Test(DmdAssemblyName[] n1, AssemblyName[] n2) {
+		static void Test(IDmdAssemblyName[] n1, AssemblyName[] n2) {
 			if (!Verify(n1.Length == n2.Length))
 				return;
 			for (int i = 0; i < n1.Length; i++)

@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			IEqualityComparer<DmdMemberInfo>, IEqualityComparer<DmdType>, IEqualityComparer<DmdFieldInfo>,
 			IEqualityComparer<DmdMethodBase>, IEqualityComparer<DmdConstructorInfo>, IEqualityComparer<DmdMethodInfo>,
 			IEqualityComparer<DmdPropertyInfo>, IEqualityComparer<DmdEventInfo>, IEqualityComparer<DmdParameterInfo>,
-			IEqualityComparer<DmdMethodSignature>, IEqualityComparer<DmdAssemblyName>, IEqualityComparer<DmdCustomModifier> {
+			IEqualityComparer<DmdMethodSignature>, IEqualityComparer<IDmdAssemblyName>, IEqualityComparer<DmdCustomModifier> {
 		/// <summary>
 		/// Should be used when comparing types that aren't part of a member signature. Custom modifiers are ignored.
 		/// </summary>
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		internal static readonly DmdMemberInfoEqualityComparer DefaultCustomModifier = new DmdMemberInfoEqualityComparer(DefaultTypeOptions);
 
 		/// <summary>
-		/// Should be used when comparing any other supported class, eg. <see cref="DmdAssemblyName"/>s
+		/// Should be used when comparing any other supported class, eg. <see cref="IDmdAssemblyName"/>s
 		/// </summary>
 		internal static readonly DmdMemberInfoEqualityComparer DefaultOther = new DmdMemberInfoEqualityComparer(DefaultTypeOptions);
 
@@ -88,8 +88,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public int GetHashCode(DmdParameterInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
 		public bool Equals(DmdMethodSignature x, DmdMethodSignature y) => new DmdSigComparer(options).Equals(x, y);
 		public int GetHashCode(DmdMethodSignature obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdAssemblyName x, DmdAssemblyName y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdAssemblyName obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(IDmdAssemblyName x, IDmdAssemblyName y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(IDmdAssemblyName obj) => new DmdSigComparer(options).GetHashCode(obj);
 		public bool Equals(DmdCustomModifier x, DmdCustomModifier y) => new DmdSigComparer(options).Equals(x, y);
 		public int GetHashCode(DmdCustomModifier obj) => new DmdSigComparer(options).GetHashCode(obj);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member

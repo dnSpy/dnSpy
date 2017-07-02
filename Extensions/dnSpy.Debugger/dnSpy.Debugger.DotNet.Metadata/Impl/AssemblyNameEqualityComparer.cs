@@ -21,11 +21,11 @@ using System;
 using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	sealed class AssemblyNameEqualityComparer : IEqualityComparer<DmdAssemblyName> {
+	sealed class AssemblyNameEqualityComparer : IEqualityComparer<IDmdAssemblyName> {
 		public static readonly AssemblyNameEqualityComparer Instance = new AssemblyNameEqualityComparer();
 		AssemblyNameEqualityComparer() { }
 
-		public bool Equals(DmdAssemblyName x, DmdAssemblyName y) {
+		public bool Equals(IDmdAssemblyName x, IDmdAssemblyName y) {
 			if (!StringComparer.OrdinalIgnoreCase.Equals(x.Name, y.Name))
 				return false;
 
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return true;
 		}
 
-		public int GetHashCode(DmdAssemblyName obj) {
+		public int GetHashCode(IDmdAssemblyName obj) {
 			int hc = StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Name ?? string.Empty);
 			// Version number is ignored, see Equals()
 			if (obj.CultureName != null)

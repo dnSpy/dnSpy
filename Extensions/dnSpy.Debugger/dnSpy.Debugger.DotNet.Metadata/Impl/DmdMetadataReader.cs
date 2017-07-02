@@ -36,8 +36,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract byte[] ResolveSignature(int metadataToken);
 		public abstract string ResolveString(int metadataToken);
 		public abstract void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine);
-		public abstract DmdAssemblyName GetName();
-		public abstract DmdAssemblyName[] GetReferencedAssemblies();
+		public abstract DmdReadOnlyAssemblyName GetName();
+		public abstract DmdReadOnlyAssemblyName[] GetReferencedAssemblies();
 		public abstract DmdCustomAttributeData[] ReadCustomAttributes(int metadataToken);
 		public abstract DmdCustomAttributeData[] ReadSecurityAttributes(int metadataToken);
 		public abstract event EventHandler<DmdTypesUpdatedEventArgs> TypesUpdated;

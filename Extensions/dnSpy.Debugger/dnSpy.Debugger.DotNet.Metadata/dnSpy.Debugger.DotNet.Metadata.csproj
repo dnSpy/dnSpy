@@ -90,6 +90,7 @@
     <Compile Include="DmdProcessorArchitecture.cs" />
     <Compile Include="DmdPropertyAttributes.cs" />
     <Compile Include="DmdPropertyInfo.cs" />
+    <Compile Include="DmdReadOnlyAssemblyName.cs" />
     <Compile Include="DmdRuntime.cs" />
     <Compile Include="DmdRuntimeController.cs" />
     <Compile Include="DmdRuntimeFactory.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="DmdTypeSignatureKind.cs" />
     <Compile Include="DmdWellKnownType.cs" />
     <Compile Include="HexUtils.cs" />
+    <Compile Include="IDmdAssemblyName.cs" />
     <Compile Include="IDmdCustomAttributeProvider.cs" />
     <Compile Include="IDmdEvaluationContext.cs" />
     <Compile Include="IDmdSecurityAttributeProvider.cs" />

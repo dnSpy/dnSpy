@@ -100,11 +100,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return;
 
 				case DmdTypeScopeKind.ModuleRef:
-					((DmdAssemblyName)typeScope.Data2).FormatFullNameTo(sb);
+					((IDmdAssemblyName)typeScope.Data2).FormatFullNameTo(sb);
 					return;
 
 				case DmdTypeScopeKind.AssemblyRef:
-					((DmdAssemblyName)typeScope.Data).FormatFullNameTo(sb);
+					((IDmdAssemblyName)typeScope.Data).FormatFullNameTo(sb);
 					return;
 				}
 			}

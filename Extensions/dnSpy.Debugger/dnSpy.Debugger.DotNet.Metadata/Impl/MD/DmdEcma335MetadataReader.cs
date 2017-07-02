@@ -540,48 +540,40 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				peKind = DmdPortableExecutableKinds.Required32Bit;
 		}
 
-		public override DmdAssemblyName GetName() {
-			var name = new DmdAssemblyName();
+		public override DmdReadOnlyAssemblyName GetName() {
 			var row = TablesStream.ReadAssemblyRow(1);
-			if (row == null) {
-				name.Name = "no-asm-" + Guid.NewGuid().ToString();
-				return name;
-			}
+			if (row == null)
+				return new DmdReadOnlyAssemblyName("no-asm-" + Guid.NewGuid().ToString(), null, null, 0, null, null, 0);
 
-			name.Version = new Version(row.MajorVersion, row.MinorVersion, row.BuildNumber, row.RevisionNumber);
-			name.Name = StringsStream.ReadNoNull(row.Name);
-			name.CultureName = StringsStream.ReadNoNull(row.Locale);
-			name.HashAlgorithm = (DmdAssemblyHashAlgorithm)row.HashAlgId;
-			name.SetPublicKey(BlobStream.ReadNoNull(row.PublicKey));
-			name.RawFlags = (DmdAssemblyNameFlags)row.Flags;
-			return name;
+			var version = new Version(row.MajorVersion, row.MinorVersion, row.BuildNumber, row.RevisionNumber);
+			var name = StringsStream.ReadNoNull(row.Name);
+			var cultureName = StringsStream.ReadNoNull(row.Locale);
+			var hashAlgorithm = (DmdAssemblyHashAlgorithm)row.HashAlgId;
+			var publicKey = BlobStream.ReadNoNull(row.PublicKey);
+			var flags = (DmdAssemblyNameFlags)row.Flags;
+			return new DmdReadOnlyAssemblyName(name, version, cultureName, flags, publicKey, null, hashAlgorithm);
 		}
 
-		public override DmdAssemblyName[] GetReferencedAssemblies() {
+		public override DmdReadOnlyAssemblyName[] GetReferencedAssemblies() {
 			var tbl = TablesStream.AssemblyRefTable;
 			if (tbl.Rows == 0)
-				return Array.Empty<DmdAssemblyName>();
-			var res = new DmdAssemblyName[tbl.Rows];
+				return Array.Empty<DmdReadOnlyAssemblyName>();
+			var res = new DmdReadOnlyAssemblyName[tbl.Rows];
 			for (int i = 0; i < res.Length; i++)
 				res[i] = ReadAssemblyName((uint)i + 1);
 			return res;
 		}
 
-		internal DmdAssemblyName ReadAssemblyName(uint rid) {
-			var asmName = new DmdAssemblyName();
+		internal DmdReadOnlyAssemblyName ReadAssemblyName(uint rid) {
 			var row = TablesStream.ReadAssemblyRefRow(rid) ?? new RawAssemblyRefRow();
-			asmName.Name = Metadata.StringsStream.ReadNoNull(row.Name);
-			asmName.CultureName = Metadata.StringsStream.ReadNoNull(row.Locale);
-			asmName.Version = new Version(row.MajorVersion, row.MinorVersion, row.BuildNumber, row.RevisionNumber);
-			if (row.PublicKeyOrToken != 0) {
-				var bytes = Metadata.BlobStream.ReadNoNull(row.PublicKeyOrToken);
-				if ((row.Flags & (int)DmdAssemblyNameFlags.PublicKey) != 0)
-					asmName.SetPublicKey(bytes);
-				else
-					asmName.SetPublicKeyToken(bytes);
-			}
-			asmName.RawFlags = (DmdAssemblyNameFlags)row.Flags;
-			return asmName;
+			var name = Metadata.StringsStream.ReadNoNull(row.Name);
+			var cultureName = Metadata.StringsStream.ReadNoNull(row.Locale);
+			var version = new Version(row.MajorVersion, row.MinorVersion, row.BuildNumber, row.RevisionNumber);
+			byte[] publicKeyOrToken = null;
+			if (row.PublicKeyOrToken != 0)
+				publicKeyOrToken = Metadata.BlobStream.ReadNoNull(row.PublicKeyOrToken);
+			var flags = (DmdAssemblyNameFlags)row.Flags;
+			return new DmdReadOnlyAssemblyName(name, version, cultureName, flags, publicKeyOrToken, DmdAssemblyHashAlgorithm.None);
 		}
 
 		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => ReadCustomAttributesCore(Table.Assembly, rid);

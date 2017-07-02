@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	}
 
 	interface ITypeDefResolver {
-		DmdTypeDef GetTypeDef(DmdAssemblyName assemblyName, List<string> typeNames);
+		DmdTypeDef GetTypeDef(IDmdAssemblyName assemblyName, List<string> typeNames);
 	}
 
 	struct DmdTypeNameParser : IDisposable {
@@ -213,14 +213,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return new DmdParsedTypeRef(ownerModule, declaringTypeRef, DmdTypeScope.Invalid, ns, name, null);
 		}
 
-		DmdAssemblyName FindAssemblyRef(DmdParsedTypeRef nonNestedTypeRef) {
-			DmdAssemblyName asmRef = null;
+		IDmdAssemblyName FindAssemblyRef(DmdParsedTypeRef nonNestedTypeRef) {
+			IDmdAssemblyName asmRef = null;
 			if ((object)nonNestedTypeRef != null)
 				asmRef = FindAssemblyRefCore(nonNestedTypeRef);
 			return asmRef ?? ownerModule.Assembly.GetName();
 		}
 
-		DmdAssemblyName FindAssemblyRefCore(DmdParsedTypeRef nonNestedTypeRef) {
+		IDmdAssemblyName FindAssemblyRefCore(DmdParsedTypeRef nonNestedTypeRef) {
 			var modAsm = (DmdAssemblyImpl)ownerModule.Assembly;
 			var type = modAsm.GetType(nonNestedTypeRef, ignoreCase: false);
 			if ((object)type != null)
@@ -335,7 +335,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var typeNames = ReadTypeRefAndNestedNoAssembly('+');
 				var tspecs = ReadTSpecs();
 
-				DmdAssemblyName asmRef;
+				IDmdAssemblyName asmRef;
 				if (typeDefResolver == null) {
 					Debug.Assert(ownerModule != null);
 					var typeRef = CreateTypeRef(typeNames);
@@ -344,7 +344,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						asmRef = ReadOptionalAssemblyRef() ?? FindAssemblyRef(nonNestedTypeRef);
 					else
 						asmRef = FindAssemblyRef(nonNestedTypeRef);
-					nonNestedTypeRef.SetTypeScope(new DmdTypeScope(asmRef ?? new DmdAssemblyName()));
+					nonNestedTypeRef.SetTypeScope(new DmdTypeScope(asmRef ?? new DmdReadOnlyAssemblyName(string.Empty)));
 					result = Resolve(asmRef, typeRef) ?? typeRef;
 				}
 				else {
@@ -362,7 +362,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return result;
 		}
 
-		DmdType Resolve(DmdAssemblyName asmRef, DmdType typeRef) {
+		DmdType Resolve(IDmdAssemblyName asmRef, DmdType typeRef) {
 			var asm = ownerModule.Assembly;
 			var asmName = asm.GetName();
 			if (!DmdMemberInfoEqualityComparer.DefaultOther.Equals(asmRef, asmName))
@@ -371,11 +371,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return td?.Module == ownerModule ? td : null;
 		}
 
-		DmdAssemblyName ReadOptionalAssemblyRef() {
+		DmdReadOnlyAssemblyName ReadOptionalAssemblyRef() {
 			SkipWhite();
 			if (PeekChar() == ',') {
 				ReadChar();
-				return ReadAssemblyRef(new DmdAssemblyName());
+				ReadAssemblyRef(out var name, out var version, out var cultureName, out var flags, out var publicKey, out var publicKeyToken, out var hashAlgorithm);
+				return new DmdReadOnlyAssemblyName(name, version, cultureName, flags, publicKey, publicKeyToken, hashAlgorithm);
 			}
 			return null;
 		}
@@ -490,24 +491,36 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public static void ParseAssemblyName(DmdAssemblyName result, string asmFullName) {
-			if (result == null)
-				throw new ArgumentNullException(nameof(result));
+		public static void ParseAssemblyName(string asmFullName, out string name, out Version version, out string cultureName, out DmdAssemblyNameFlags flags, out byte[] publicKey, out byte[] publicKeyToken, out DmdAssemblyHashAlgorithm hashAlgorithm) {
 			if (asmFullName == null)
 				throw new ArgumentNullException(nameof(asmFullName));
 			try {
 				using (var parser = new DmdTypeNameParser((DmdModule)null, asmFullName, null))
-					parser.ReadAssemblyRef(result);
+					parser.ReadAssemblyRef(out name, out version, out cultureName, out flags, out publicKey, out publicKeyToken, out hashAlgorithm);
+				return;
 			}
 			catch {
 			}
+			name = null;
+			version = null;
+			cultureName = null;
+			flags = 0;
+			publicKey = null;
+			publicKeyToken = null;
+			hashAlgorithm = 0;
 		}
 
-		DmdAssemblyName ReadAssemblyRef(DmdAssemblyName asmName) {
-			asmName.Name = ReadAssemblyNameId();
+		void ReadAssemblyRef(out string name, out Version version, out string cultureName, out DmdAssemblyNameFlags flags, out byte[] publicKey, out byte[] publicKeyToken, out DmdAssemblyHashAlgorithm hashAlgorithm) {
+			name = ReadAssemblyNameId();
+			version = null;
+			cultureName = null;
+			flags = 0;
+			publicKey = null;
+			publicKeyToken = null;
+			hashAlgorithm = DmdAssemblyHashAlgorithm.None;
 			SkipWhite();
 			if (PeekChar() != ',')
-				return asmName;
+				return;
 			ReadChar();
 
 			while (true) {
@@ -529,50 +542,50 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 				switch (key.ToUpperInvariant()) {
 				case "VERSION":
-					asmName.Version = Version.TryParse(value, out var version) ? version : null;
+					if (!Version.TryParse(value, out version))
+						version = null;
 					break;
 
 				case "CONTENTTYPE":
 					if (StringComparer.OrdinalIgnoreCase.Equals(value, "WindowsRuntime"))
-						asmName.RawFlags = (asmName.RawFlags & ~DmdAssemblyNameFlags.ContentType_Mask) | DmdAssemblyNameFlags.ContentType_WindowsRuntime;
+						flags = (flags & ~DmdAssemblyNameFlags.ContentType_Mask) | DmdAssemblyNameFlags.ContentType_WindowsRuntime;
 					else
-						asmName.RawFlags = (asmName.RawFlags & ~DmdAssemblyNameFlags.ContentType_Mask) | DmdAssemblyNameFlags.ContentType_Default;
+						flags = (flags & ~DmdAssemblyNameFlags.ContentType_Mask) | DmdAssemblyNameFlags.ContentType_Default;
 					break;
 
 				case "RETARGETABLE":
 					if (StringComparer.OrdinalIgnoreCase.Equals(value, "Yes"))
-						asmName.RawFlags |= DmdAssemblyNameFlags.Retargetable;
+						flags |= DmdAssemblyNameFlags.Retargetable;
 					else
-						asmName.RawFlags &= ~DmdAssemblyNameFlags.Retargetable;
+						flags &= ~DmdAssemblyNameFlags.Retargetable;
 					break;
 
 				case "PUBLICKEY":
+					flags |= DmdAssemblyNameFlags.PublicKey;
 					if (StringComparer.OrdinalIgnoreCase.Equals(value, "null") ||
 						StringComparer.OrdinalIgnoreCase.Equals(value, "neutral"))
-						asmName.SetPublicKey(Array.Empty<byte>());
+						publicKey = Array.Empty<byte>();
 					else
-						asmName.SetPublicKey(HexUtils.ParseBytes(value));
+						publicKey = HexUtils.ParseBytes(value);
 					break;
 
 				case "PUBLICKEYTOKEN":
 					if (StringComparer.OrdinalIgnoreCase.Equals(value, "null") ||
 						StringComparer.OrdinalIgnoreCase.Equals(value, "neutral"))
-						asmName.SetPublicKeyToken(Array.Empty<byte>());
+						publicKeyToken = Array.Empty<byte>();
 					else
-						asmName.SetPublicKeyToken(HexUtils.ParseBytes(value));
+						publicKeyToken = HexUtils.ParseBytes(value);
 					break;
 
 				case "CULTURE":
 				case "LANGUAGE":
 					if (StringComparer.OrdinalIgnoreCase.Equals(value, "neutral"))
-						asmName.CultureName = string.Empty;
+						cultureName = string.Empty;
 					else
-						asmName.CultureName = value;
+						cultureName = value;
 					break;
 				}
 			}
-
-			return asmName;
 		}
 
 		string ReadAssemblyNameId() {

@@ -54,8 +54,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			peKind = DmdPortableExecutableKinds.ILOnly;
 			machine = DmdImageFileMachine.I386;
 		}
-		public override DmdAssemblyName GetName() => new DmdAssemblyName("NullAssembly");
-		public override DmdAssemblyName[] GetReferencedAssemblies() => Array.Empty<DmdAssemblyName>();
+		public override DmdReadOnlyAssemblyName GetName() => new DmdReadOnlyAssemblyName("NullAssembly");
+		public override DmdReadOnlyAssemblyName[] GetReferencedAssemblies() => Array.Empty<DmdReadOnlyAssemblyName>();
 		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
 		protected override DmdCustomAttributeData[] ReadModuleCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
 		protected override DmdCustomAttributeData[] ReadTypeDefCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();

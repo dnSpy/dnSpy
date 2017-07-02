@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				this.ignoreCase = ignoreCase;
 			}
 
-			public DmdTypeDef GetTypeDef(DmdAssemblyName assemblyName, List<string> typeNames) {
+			public DmdTypeDef GetTypeDef(IDmdAssemblyName assemblyName, List<string> typeNames) {
 				if (typeNames.Count == 0)
 					return null;
 

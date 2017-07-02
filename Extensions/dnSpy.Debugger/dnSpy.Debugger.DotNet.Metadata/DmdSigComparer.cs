@@ -345,7 +345,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="a">First assembly name</param>
 		/// <param name="b">Second assembly name</param>
 		/// <returns></returns>
-		public bool Equals(DmdAssemblyName a, DmdAssemblyName b) {
+		public bool Equals(IDmdAssemblyName a, IDmdAssemblyName b) {
 			if ((object)a == b)
 				return true;
 			if ((object)a == null || (object)b == null)
@@ -464,9 +464,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return at.Data == bt.Data;
 				case DmdTypeScopeKind.ModuleRef:
 					return StringComparer.OrdinalIgnoreCase.Equals(((DmdModule)at.Data).ScopeName, (string)bt.Data) &&
-						Equals(((DmdModule)at.Data).Assembly.GetName(), (DmdAssemblyName)bt.Data2);
+						Equals(((DmdModule)at.Data).Assembly.GetName(), (IDmdAssemblyName)bt.Data2);
 				case DmdTypeScopeKind.AssemblyRef:
-					return Equals(((DmdModule)at.Data).Assembly.GetName(), (DmdAssemblyName)bt.Data);
+					return Equals(((DmdModule)at.Data).Assembly.GetName(), (IDmdAssemblyName)bt.Data);
 				default:
 					throw new InvalidOperationException();
 				}
@@ -477,12 +477,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return false;
 				case DmdTypeScopeKind.Module:
 					return StringComparer.OrdinalIgnoreCase.Equals((string)at.Data, ((DmdModule)bt.Data).ScopeName) &&
-						Equals((DmdAssemblyName)at.Data2, ((DmdModule)bt.Data).Assembly.GetName());
+						Equals((IDmdAssemblyName)at.Data2, ((DmdModule)bt.Data).Assembly.GetName());
 				case DmdTypeScopeKind.ModuleRef:
 					return StringComparer.OrdinalIgnoreCase.Equals((string)at.Data, (string)bt.Data) &&
-						Equals((DmdAssemblyName)at.Data2, (DmdAssemblyName)bt.Data2);
+						Equals((IDmdAssemblyName)at.Data2, (IDmdAssemblyName)bt.Data2);
 				case DmdTypeScopeKind.AssemblyRef:
-					return Equals((DmdAssemblyName)at.Data2, (DmdAssemblyName)bt.Data);
+					return Equals((IDmdAssemblyName)at.Data2, (IDmdAssemblyName)bt.Data);
 				default:
 					throw new InvalidOperationException();
 				}
@@ -492,11 +492,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				case DmdTypeScopeKind.Invalid:
 					return false;
 				case DmdTypeScopeKind.Module:
-					return Equals((DmdAssemblyName)at.Data, ((DmdModule)bt.Data).Assembly.GetName());
+					return Equals((IDmdAssemblyName)at.Data, ((DmdModule)bt.Data).Assembly.GetName());
 				case DmdTypeScopeKind.ModuleRef:
-					return Equals((DmdAssemblyName)at.Data, (DmdAssemblyName)bt.Data2);
+					return Equals((IDmdAssemblyName)at.Data, (IDmdAssemblyName)bt.Data2);
 				case DmdTypeScopeKind.AssemblyRef:
-					return Equals((DmdAssemblyName)at.Data, (DmdAssemblyName)bt.Data);
+					return Equals((IDmdAssemblyName)at.Data, (IDmdAssemblyName)bt.Data);
 				default:
 					throw new InvalidOperationException();
 				}
@@ -699,7 +699,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="a">Assembly name</param>
 		/// <returns></returns>
-		public int GetHashCode(DmdAssemblyName a) {
+		public int GetHashCode(IDmdAssemblyName a) {
 			if ((object)a == null)
 				return 0;
 			return StringComparer.OrdinalIgnoreCase.GetHashCode(a.Name ?? string.Empty);
