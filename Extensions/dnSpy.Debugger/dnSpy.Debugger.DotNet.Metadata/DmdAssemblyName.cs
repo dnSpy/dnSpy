@@ -19,7 +19,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>

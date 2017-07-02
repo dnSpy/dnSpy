@@ -22,22 +22,21 @@ using System.Diagnostics;
 using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
-	[DebuggerDisplay("Count = {Length}")]
-	sealed class LazyList<T> where T : class {
-		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		readonly T[] elements;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Func<uint, T> readElementByRID;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly uint length;
+	static class LazyListConstants {
+		// Max number of elements to make sure it doesn't land in the large object heap.
+		public static readonly int MaxArrayObjectElements = (85000 - 100) / IntPtr.Size;
+	}
 
-		uint Length => length;
+	sealed class LazyList<T> where T : class {
+		readonly T[][] allElements;
+		readonly Func<uint, T> readElementByRID;
+		readonly uint length;
 
 		public T this[uint index] {
 			get {
 				if (index >= length)
 					return null;
-				ref var elem = ref elements[index];
+				ref var elem = ref allElements[((int)index / LazyListConstants.MaxArrayObjectElements)][((int)index % LazyListConstants.MaxArrayObjectElements)];
 				if (elem == null)
 					Interlocked.CompareExchange(ref elem, readElementByRID(index + 1), null);
 				return elem;
@@ -47,26 +46,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public LazyList(uint length, Func<uint, T> readElementByRID) {
 			this.length = length;
 			this.readElementByRID = readElementByRID;
-			elements = new T[length];
+			allElements = new T[((int)length + LazyListConstants.MaxArrayObjectElements - 1) / LazyListConstants.MaxArrayObjectElements][];
+			for (int i = 0; i < allElements.Length; i++) {
+				var partLen = Math.Min((int)length, LazyListConstants.MaxArrayObjectElements);
+				allElements[i] = new T[partLen];
+				length -= (uint)partLen;
+			}
+			if (length != 0)
+				throw new InvalidOperationException();
 		}
 	}
 
-	[DebuggerDisplay("Count = {Length}")]
 	sealed class LazyList<TValue, TArg> where TValue : class {
-		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		readonly TValue[] elements;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly TValue[][] allElements;
 		readonly Func<uint, TArg, TValue> readElementByRID;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly uint length;
-
-		uint Length => length;
 
 		public TValue this[uint index, TArg arg] {
 			get {
 				if (index >= length)
 					return null;
-				ref var elem = ref elements[index];
+				ref var elem = ref allElements[((int)index / LazyListConstants.MaxArrayObjectElements)][((int)index % LazyListConstants.MaxArrayObjectElements)];
 				if (elem == null)
 					Interlocked.CompareExchange(ref elem, readElementByRID(index + 1, arg), null);
 				return elem;
@@ -76,26 +76,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public LazyList(uint length, Func<uint, TArg, TValue> readElementByRID) {
 			this.length = length;
 			this.readElementByRID = readElementByRID;
-			elements = new TValue[length];
+			allElements = new TValue[((int)length + LazyListConstants.MaxArrayObjectElements - 1) / LazyListConstants.MaxArrayObjectElements][];
+			for (int i = 0; i < allElements.Length; i++) {
+				var partLen = Math.Min((int)length, LazyListConstants.MaxArrayObjectElements);
+				allElements[i] = new TValue[partLen];
+				length -= (uint)partLen;
+			}
+			if (length != 0)
+				throw new InvalidOperationException();
 		}
 	}
 
-	[DebuggerDisplay("Count = {Length}")]
 	sealed class LazyList2<TValue, TArg1, TArg2> where TValue : class {
-		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		readonly TValue[] elements;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly TValue[][] allElements;
 		readonly Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly uint length;
-
-		uint Length => length;
 
 		public TValue this[uint index, TArg1 arg1, TArg2 arg2] {
 			get {
 				if (index >= length)
 					return null;
-				ref var elem = ref elements[index];
+				ref var elem = ref allElements[((int)index / LazyListConstants.MaxArrayObjectElements)][((int)index % LazyListConstants.MaxArrayObjectElements)];
 				if (elem == null) {
 					var info = readElementByRID(index + 1, arg1, arg2);
 					if (info.containedGenericParams)
@@ -109,7 +110,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public LazyList2(uint length, Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID) {
 			this.length = length;
 			this.readElementByRID = readElementByRID;
-			elements = new TValue[length];
+			allElements = new TValue[((int)length + LazyListConstants.MaxArrayObjectElements - 1) / LazyListConstants.MaxArrayObjectElements][];
+			for (int i = 0; i < allElements.Length; i++) {
+				var partLen = Math.Min((int)length, LazyListConstants.MaxArrayObjectElements);
+				allElements[i] = new TValue[partLen];
+				length -= (uint)partLen;
+			}
+			if (length != 0)
+				throw new InvalidOperationException();
 		}
 	}
 }
