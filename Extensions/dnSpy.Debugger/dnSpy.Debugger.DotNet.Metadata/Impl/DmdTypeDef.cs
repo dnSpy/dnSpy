@@ -36,21 +36,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				const byte BoolBit = 1;
 				const byte InitializedBit = 2;
 				const byte CalculatingBit = 4;
-				var f = hasTypeEquivalenceFlags;
-				if ((f & (InitializedBit | CalculatingBit)) == 0) {
+				var f = ExtraFields;
+				var flags = f.hasTypeEquivalenceFlags;
+				if ((flags & (InitializedBit | CalculatingBit)) == 0) {
 					// In case we get called recursively
-					hasTypeEquivalenceFlags |= CalculatingBit;
+					f.hasTypeEquivalenceFlags |= CalculatingBit;
 
 					byte result = InitializedBit;
 					if (CalculateHasTypeEquivalence())
 						result |= BoolBit;
-					hasTypeEquivalenceFlags = result;
-					f = result;
+					f.hasTypeEquivalenceFlags = result;
+					flags = result;
 				}
-				return (f & BoolBit) != 0;
+				return (flags & BoolBit) != 0;
 			}
 		}
-		volatile byte hasTypeEquivalenceFlags;
 
 		bool CalculateHasTypeEquivalence() {
 			if (BaseType?.HasTypeEquivalence == true)
@@ -108,24 +108,24 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdType DeclaringType {
 			get {
-				if (!declaringTypeInitd) {
+				var f = ExtraFields;
+				if (!f.declaringTypeInitd) {
 					var declType = GetDeclaringType();
 					lock (LockObject) {
-						if (!declaringTypeInitd) {
-							__declaringType_DONT_USE = declType;
-							declaringTypeInitd = true;
+						if (!f.declaringTypeInitd) {
+							f.__declaringType_DONT_USE = declType;
+							f.declaringTypeInitd = true;
 						}
 					}
 				}
-				return __declaringType_DONT_USE;
+				return f.__declaringType_DONT_USE;
 			}
 		}
-		volatile DmdType __declaringType_DONT_USE;
-		volatile bool declaringTypeInitd;
 
 		public override DmdType BaseType {
 			get {
-				if (!baseTypeInitd) {
+				var f = ExtraFields;
+				if (!f.baseTypeInitd) {
 					var newBT = GetBaseType(GetGenericArguments());
 					if (IsImport && !IsInterface && newBT == AppDomain.System_Object) {
 						if (IsWindowsRuntime)
@@ -135,17 +135,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					}
 
 					lock (LockObject) {
-						if (!baseTypeInitd) {
-							__baseType_DONT_USE = newBT;
-							baseTypeInitd = true;
+						if (!f.baseTypeInitd) {
+							f.__baseType_DONT_USE = newBT;
+							f.baseTypeInitd = true;
 						}
 					}
 				}
-				return __baseType_DONT_USE;
+				return f.__baseType_DONT_USE;
 			}
 		}
-		volatile DmdType __baseType_DONT_USE;
-		volatile bool baseTypeInitd;
 
 		protected abstract DmdType GetDeclaringType();
 		protected abstract DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments);
@@ -171,16 +169,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected abstract DmdType[] CreateGenericParameters();
 		protected override ReadOnlyCollection<DmdType> GetGenericArgumentsCore() {
+			var f = ExtraFields;
 			// We loop here because the field could be cleared if it's a dynamic type
 			for (;;) {
-				var gps = __genericParameters_DONT_USE;
+				var gps = f.__genericParameters_DONT_USE;
 				if (gps != null)
 					return gps;
 				var res = CreateGenericParameters();
-				Interlocked.CompareExchange(ref __genericParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
+				Interlocked.CompareExchange(ref f.__genericParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
 			}
 		}
-		volatile ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
 
 		public override DmdType GetGenericTypeDefinition() => IsGenericType ? this : throw new InvalidOperationException();
 
@@ -208,14 +206,36 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes();
 
 		internal new void DynamicType_InvalidateCachedMembers() {
-			lock (LockObject) {
-				declaringTypeInitd = false;
-				baseTypeInitd = false;
+			if (__extraFields_DONT_USE is ExtraFieldsImpl f) {
+				lock (LockObject) {
+					f.declaringTypeInitd = false;
+					f.baseTypeInitd = false;
+				}
+				// These aren't protected by a lock
+				f.hasTypeEquivalenceFlags = 0;
+				f.__genericParameters_DONT_USE = null;
 			}
-			// These aren't protected by a lock
-			hasTypeEquivalenceFlags = 0;
-			__genericParameters_DONT_USE = null;
 			base.DynamicType_InvalidateCachedMembers();
+		}
+
+		ExtraFieldsImpl ExtraFields {
+			get {
+				if (__extraFields_DONT_USE is ExtraFieldsImpl f)
+					return f;
+				Interlocked.CompareExchange(ref __extraFields_DONT_USE, new ExtraFieldsImpl(), null);
+				return __extraFields_DONT_USE;
+			}
+		}
+		volatile ExtraFieldsImpl __extraFields_DONT_USE;
+
+		// Most of the fields aren't used so we alloc them when needed
+		sealed class ExtraFieldsImpl {
+			public volatile byte hasTypeEquivalenceFlags;
+			public volatile DmdType __declaringType_DONT_USE;
+			public volatile bool declaringTypeInitd;
+			public volatile DmdType __baseType_DONT_USE;
+			public volatile bool baseTypeInitd;
+			public volatile ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
 		}
 	}
 }
