@@ -1146,6 +1146,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		/// <summary>
+		/// true if it's a COM object
+		/// </summary>
+		public bool IsCOMObject => AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject).IsAssignableFrom(this);
+
+		/// <summary>
 		/// true if it has an element type, i.e., it's an array, a by-ref or a pointer type
 		/// </summary>
 		public abstract bool HasElementType { get; }

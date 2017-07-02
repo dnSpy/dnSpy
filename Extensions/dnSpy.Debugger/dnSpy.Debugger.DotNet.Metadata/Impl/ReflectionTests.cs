@@ -696,6 +696,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			Verify(t1.IsPointer == t2.IsPointer);
 			Verify(t1.IsPrimitive == t2.IsPrimitive);
 			Verify(t1.HasElementType == t2.HasElementType);
+			Verify(t1.IsCOMObject == t2.IsCOMObject);
 			Verify(t1.IsContextful == t2.IsContextful);
 			Verify(t1.IsMarshalByRef == t2.IsMarshalByRef);
 			VerifyTypes(t1.GenericTypeArguments, t2.GenericTypeArguments);
