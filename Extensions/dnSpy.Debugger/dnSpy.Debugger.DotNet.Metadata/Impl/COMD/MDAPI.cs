@@ -76,23 +76,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return ulCodeRVA;
 		}
 
-		public unsafe static UTF8String GetUtf8Name(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
-				return null;
-			int hr = mdi.GetNameFromToken(token, out var pszUtf8NamePtr);
-			if (hr != 0 || pszUtf8NamePtr == IntPtr.Zero)
-				return null;
-			const int MAX_LEN = 0x1000;
-			var p = (byte*)pszUtf8NamePtr;
-			for (int i = 0; i < MAX_LEN; i++, p++) {
-				if (*p == 0)
-					break;
-			}
-			var buf = new byte[p - (byte*)pszUtf8NamePtr];
-			Marshal.Copy(pszUtf8NamePtr, buf, 0, buf.Length);
-			return new UTF8String(buf);
-		}
-
 		public unsafe static uint[] GetPermissionSetTokens(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
 				return Array.Empty<uint>();
@@ -122,14 +105,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				if (iter != IntPtr.Zero)
 					mdi.CloseEnum(iter);
 			}
-		}
-
-		public unsafe static SecurityAction GetPermissionSetAction(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
-				return 0;
-			uint dwAction;
-			int hr = mdi.GetPermissionSetProps(token, new IntPtr(&dwAction), IntPtr.Zero, IntPtr.Zero);
-			return hr != 0 ? 0 : (SecurityAction)dwAction;
 		}
 
 		public unsafe static (IntPtr addr, uint size, uint action) GetPermissionSetBlob(IMetaDataImport2 mdi, uint token) {
@@ -303,91 +278,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return true;
 		}
 
-		public unsafe static MethodOverrideInfo[] GetMethodOverrides(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
-				return Array.Empty<MethodOverrideInfo>();
-			var iter = IntPtr.Zero;
-			try {
-				int hr = mdi.EnumMethodImpls(ref iter, token, IntPtr.Zero, IntPtr.Zero, 0, out uint cTokens);
-				if (hr < 0)
-					return Array.Empty<MethodOverrideInfo>();
-
-				uint ulCount = 0;
-				hr = mdi.CountEnum(iter, ref ulCount);
-				if (hr < 0 || ulCount == 0)
-					return Array.Empty<MethodOverrideInfo>();
-
-				hr = mdi.ResetEnum(iter, 0);
-				if (hr < 0)
-					return Array.Empty<MethodOverrideInfo>();
-
-				var bodyTokens = new uint[ulCount];
-				var declTokens = new uint[ulCount];
-				fixed (uint* b = &bodyTokens[0]) {
-					fixed (uint* d = &declTokens[0])
-						hr = mdi.EnumMethodImpls(ref iter, token, new IntPtr(b), new IntPtr(d), (uint)bodyTokens.Length, out cTokens);
-				}
-				if (hr < 0)
-					return Array.Empty<MethodOverrideInfo>();
-				var infos = new MethodOverrideInfo[ulCount];
-				for (int i = 0; i < infos.Length; i++)
-					infos[i] = new MethodOverrideInfo(bodyTokens[i], declTokens[i]);
-				return infos;
-			}
-			finally {
-				if (iter != IntPtr.Zero)
-					mdi.CloseEnum(iter);
-			}
-		}
-
-		public unsafe static uint[] GetMethodSemanticsTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
-				return Array.Empty<uint>();
-			var iter = IntPtr.Zero;
-			try {
-				int hr = mdi.EnumMethodSemantics(ref iter, token, IntPtr.Zero, 0, out uint cTokens);
-				if (hr < 0)
-					return Array.Empty<uint>();
-
-				uint ulCount = 0;
-				hr = mdi.CountEnum(iter, ref ulCount);
-				if (hr < 0 || ulCount == 0)
-					return Array.Empty<uint>();
-
-				hr = mdi.ResetEnum(iter, 0);
-				if (hr < 0)
-					return Array.Empty<uint>();
-
-				var tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0])
-					hr = mdi.EnumMethodSemantics(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				if (hr < 0)
-					return Array.Empty<uint>();
-				return tokens;
-			}
-			finally {
-				if (iter != IntPtr.Zero)
-					mdi.CloseEnum(iter);
-			}
-		}
-
-		public unsafe static MethodSemanticsAttributes GetMethodSemanticsAttributes(IMetaDataImport2 mdi, uint token, uint tkPropEvent) {
-			if (mdi == null)
-				return 0;
-			int hr = mdi.GetMethodSemantics(token, tkPropEvent, out uint dwSemanticsFlags);
-			return hr == 0 ? (MethodSemanticsAttributes)dwSemanticsFlags : 0;
-		}
-
-		public unsafe static uint GetInterfaceImplOwnerRid(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
-				return 0;
-
-			uint ownerToken;
-			int hr = mdi.GetInterfaceImplProps(token, new IntPtr(&ownerToken), IntPtr.Zero);
-			var ownerMdToken = new MDToken(ownerToken);
-			return ownerMdToken.Table == Table.TypeDef ? ownerMdToken.Rid : 0;
-		}
-
 		public unsafe static uint[] GetInterfaceImplTokens(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
 				return Array.Empty<uint>();
@@ -506,17 +396,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return ReadConstant(pValue, cchValue, constantType);
 		}
 
-		public unsafe static uint GetParamOwnerRid(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
-				return 0;
-			uint ownerToken;
-			int hr = mdi.GetParamProps(token, new IntPtr(&ownerToken), IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			if (hr != 0)
-				return 0;
-			var ownerMdToken = new MDToken(ownerToken);
-			return ownerMdToken.Table == Table.Method ? ownerMdToken.Rid : 0;
-		}
-
 		public static unsafe string GetTypeRefName(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
 				return null;
@@ -632,17 +511,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return 0;
 		}
 
-		public unsafe static uint GetGenericParamOwner(IMetaDataImport2 mdi2, uint token) {
-			if (mdi2 == null)
-				return 0;
-			uint ownerToken;
-			int hr = mdi2.GetGenericParamProps(token, IntPtr.Zero, IntPtr.Zero, new IntPtr(&ownerToken), IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
-			if (hr != 0)
-				return 0;
-			var ownerMdToken = new MDToken(ownerToken);
-			return ownerMdToken.Table == Table.TypeDef || ownerMdToken.Table == Table.Method ? ownerMdToken.Raw : 0;
-		}
-
 		public static unsafe string GetGenericParamName(IMetaDataImport2 mdi2, uint token) {
 			if (mdi2 == null)
 				return null;
@@ -709,17 +577,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				if (iter != IntPtr.Zero)
 					mdi2.CloseEnum(iter);
 			}
-		}
-
-		public unsafe static uint GetGenericParamConstraintOwnerRid(IMetaDataImport2 mdi2, uint token) {
-			if (mdi2 == null)
-				return 0;
-			uint ownerToken;
-			int hr = mdi2.GetGenericParamConstraintProps(token, new IntPtr(&ownerToken), IntPtr.Zero);
-			if (hr != 0)
-				return 0;
-			var ownerMdToken = new MDToken(ownerToken);
-			return ownerMdToken.Table == Table.GenericParam ? ownerMdToken.Rid : 0;
 		}
 
 		public unsafe static uint GetGenericParamConstraintTypeToken(IMetaDataImport2 mdi2, uint token) {
@@ -1237,20 +1094,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new Version(data.usMajorVersion, data.usMinorVersion, data.usBuildNumber, data.usRevisionNumber);
 		}
 
-		public unsafe static byte[] GetAssemblyRefHash(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
-				return null;
-			IntPtr pbHashValue;
-			uint cbHashValue;
-			int hr = mdai.GetAssemblyRefProps(token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&pbHashValue), new IntPtr(&cbHashValue), IntPtr.Zero);
-			if (hr != 0 || pbHashValue == IntPtr.Zero)
-				return null;
-
-			var data = new byte[cbHashValue];
-			Marshal.Copy(pbHashValue, data, 0, data.Length);
-			return data;
-		}
-
 		public unsafe static byte[] GetAssemblyRefPublicKeyOrToken(IMetaDataAssemblyImport mdai, uint token, out DmdAssemblyNameFlags attrs) {
 			attrs = 0;
 			if (mdai == null)
@@ -1436,26 +1279,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new string(stringBuf, 0, (int)chString);
 		}
 
-		public unsafe static byte[] GetCustomAttributeByName(IMetaDataImport2 mdi, uint token, string name) {
-			if (mdi == null)
-				return null;
-			IntPtr addr;
-			uint size;
-			int hr = mdi.GetCustomAttributeByName(token, name, new IntPtr(&addr), new IntPtr(&size));
-			if (hr < 0 || addr == IntPtr.Zero)
-				return null;
-
-			var data = new byte[size];
-			Marshal.Copy(addr, data, 0, data.Length);
-			return data;
-		}
-
-		public static bool HasAttribute(IMetaDataImport2 mdi, uint token, string attributeName) {
-			if (mdi == null)
-				return false;
-			return mdi.GetCustomAttributeByName(token, attributeName, IntPtr.Zero, IntPtr.Zero) == 0;
-		}
-
 		public unsafe static uint[] GetCustomAttributeTokens(IMetaDataImport2 mdi, uint token) {
 			if (mdi == null)
 				return Array.Empty<uint>();
@@ -1498,14 +1321,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (pBlob, (int)cbSize, (int)typeToken);
 		}
 
-		public unsafe static FileAttributes? GetFileAttributes(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
-				return null;
-			uint dwFileFlags;
-			int hr = mdai.GetFileProps(token, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(&dwFileFlags));
-			return hr != 0 ? null : (FileAttributes?)dwFileFlags;
-		}
-
 		public unsafe static string GetFileName(IMetaDataAssemblyImport mdai, uint token) {
 			if (mdai == null)
 				return null;
@@ -1521,52 +1336,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				return null;
 
 			return chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
-		}
-
-		public unsafe static byte[] GetFileHash(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
-				return null;
-			IntPtr pbHashValue;
-			uint cbHashValue;
-			int hr = mdai.GetFileProps(token, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&pbHashValue), new IntPtr(&cbHashValue), IntPtr.Zero);
-			if (hr != 0)
-				return null;
-
-			var sig = new byte[cbHashValue];
-			Marshal.Copy(pbHashValue, sig, 0, sig.Length);
-			return sig;
-		}
-
-		public unsafe static uint[] GetExportedTypeRids(IMetaDataAssemblyImport mdai) {
-			var mdi = mdai as IMetaDataImport2;
-			if (mdi == null)
-				return Array.Empty<uint>();
-			var iter = IntPtr.Zero;
-			try {
-				int hr = mdai.EnumExportedTypes(ref iter, IntPtr.Zero, 0, out uint cTokens);
-				if (hr < 0)
-					return Array.Empty<uint>();
-
-				uint ulCount = 0;
-				hr = mdi.CountEnum(iter, ref ulCount);
-				if (hr < 0 || ulCount == 0)
-					return Array.Empty<uint>();
-
-				hr = mdi.ResetEnum(iter, 0);
-				if (hr < 0)
-					return Array.Empty<uint>();
-
-				var tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0])
-					hr = mdai.EnumExportedTypes(ref iter, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				if (hr < 0)
-					return Array.Empty<uint>();
-				return tokens;
-			}
-			finally {
-				if (iter != IntPtr.Zero)
-					mdai.CloseEnum(iter);
-			}
 		}
 
 		public unsafe static string GetExportedTypeName(IMetaDataAssemblyImport mdai, uint token) {
@@ -1602,81 +1371,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			typeDefId = tkTypeDef;
 			attrs = (DmdTypeAttributes)dwExportedTypeFlags;
 			return true;
-		}
-
-		public unsafe static uint[] GetManifestResourceRids(IMetaDataAssemblyImport mdai) {
-			var mdi = mdai as IMetaDataImport2;
-			if (mdi == null)
-				return Array.Empty<uint>();
-			var iter = IntPtr.Zero;
-			try {
-				int hr = mdai.EnumManifestResources(ref iter, IntPtr.Zero, 0, out uint cTokens);
-				if (hr < 0)
-					return Array.Empty<uint>();
-
-				uint ulCount = 0;
-				hr = mdi.CountEnum(iter, ref ulCount);
-				if (hr < 0 || ulCount == 0)
-					return Array.Empty<uint>();
-
-				hr = mdi.ResetEnum(iter, 0);
-				if (hr < 0)
-					return Array.Empty<uint>();
-
-				var tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0])
-					hr = mdai.EnumManifestResources(ref iter, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				if (hr < 0)
-					return Array.Empty<uint>();
-				return tokens;
-			}
-			finally {
-				if (iter != IntPtr.Zero)
-					mdai.CloseEnum(iter);
-			}
-		}
-
-		public unsafe static string GetManifestResourceName(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
-				return null;
-			char[] nameBuf = null;
-			uint chName;
-			int hr = mdai.GetManifestResourceProps(token, IntPtr.Zero, 0, new IntPtr(&chName), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			if (hr >= 0 && chName != 0) {
-				nameBuf = new char[chName];
-				fixed (char* p = &nameBuf[0])
-					hr = mdai.GetManifestResourceProps(token, new IntPtr(p), (uint)nameBuf.Length, new IntPtr(&chName), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			}
-			if (hr < 0)
-				return null;
-
-			return chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
-		}
-
-		public unsafe static bool GetManifestResourceProps(IMetaDataAssemblyImport mdai, uint token, out uint offset, out uint implementation, out ManifestResourceAttributes attrs) {
-			offset = 0;
-			implementation = 0;
-			attrs = 0;
-			if (mdai == null)
-				return false;
-
-			uint tkImplementation, dwOffset, dwResourceFlags;
-			int hr = mdai.GetManifestResourceProps(token, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&tkImplementation), new IntPtr(&dwOffset), new IntPtr(&dwResourceFlags));
-			if (hr != 0)
-				return false;
-
-			implementation = tkImplementation;
-			offset = dwOffset;
-			attrs = (ManifestResourceAttributes)dwResourceFlags;
-			return true;
-		}
-
-		public unsafe static uint? GetManifestResourceImplementationToken(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
-				return null;
-			uint tkImplementation;
-			int hr = mdai.GetManifestResourceProps(token, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&tkImplementation), IntPtr.Zero, IntPtr.Zero);
-			return hr == 0 ? tkImplementation : (uint?)null;
 		}
 	}
 }
