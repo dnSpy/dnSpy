@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdConstructorDef : DmdConstructorInfoBase {
@@ -47,29 +48,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override ReadOnlyCollection<DmdType> GetGenericArguments() {
 			if (__genericParameters_DONT_USE != null)
 				return __genericParameters_DONT_USE;
-			lock (LockObject) {
-				if (__genericParameters_DONT_USE != null)
-					return __genericParameters_DONT_USE;
-				var res = CreateGenericParameters();
-				__genericParameters_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
-				return __genericParameters_DONT_USE;
-			}
+			var res = CreateGenericParameters();
+			Interlocked.CompareExchange(ref __genericParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
+			return __genericParameters_DONT_USE;
 		}
-		ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
+		volatile ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
 
 		public sealed override ReadOnlyCollection<DmdParameterInfo> GetParameters() {
 			if (__parameters_DONT_USE != null)
 				return __parameters_DONT_USE;
-			lock (LockObject) {
-				if (__parameters_DONT_USE != null)
-					return __parameters_DONT_USE;
-				var info = CreateParameters();
-				Debug.Assert(info.Length == GetMethodSignature().GetParameterTypes().Count);
-				__parameters_DONT_USE = ReadOnlyCollectionHelpers.Create(info);
-				return __parameters_DONT_USE;
-			}
+			var info = CreateParameters();
+			Debug.Assert(info.Length == GetMethodSignature().GetParameterTypes().Count);
+			Interlocked.CompareExchange(ref __parameters_DONT_USE, ReadOnlyCollectionHelpers.Create(info), null);
+			return __parameters_DONT_USE;
 		}
-		ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
+		volatile ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
 		protected abstract DmdParameterInfo[] CreateParameters();
 
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
@@ -81,16 +74,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void InitializeCustomAttributes() {
 			if (__customAttributes_DONT_USE != null)
 				return;
+			var info = CreateCustomAttributes();
+			var newSAs = ReadOnlyCollectionHelpers.Create(info.sas);
+			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, newSAs);
 			lock (LockObject) {
-				if (__customAttributes_DONT_USE != null)
-					return;
-				var info = CreateCustomAttributes();
-				__securityAttributes_DONT_USE = ReadOnlyCollectionHelpers.Create(info.sas);
-				__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, __securityAttributes_DONT_USE);
+				if (__customAttributes_DONT_USE == null) {
+					__securityAttributes_DONT_USE = newSAs;
+					__customAttributes_DONT_USE = newCAs;
+				}
 			}
 		}
-		ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
-		ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
+		volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+		volatile ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
 
 		protected abstract (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes();
 

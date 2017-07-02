@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdTypeDef : DmdTypeBase {
@@ -35,23 +36,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				const byte BoolBit = 1;
 				const byte InitializedBit = 2;
 				const byte CalculatingBit = 4;
-				if ((hasTypeEquivalenceFlags & (InitializedBit | CalculatingBit)) == 0) {
-					lock (LockObject) {
-						if ((hasTypeEquivalenceFlags & (InitializedBit | CalculatingBit)) == 0) {
-							// In case we get called recursively
-							hasTypeEquivalenceFlags |= CalculatingBit;
+				var f = hasTypeEquivalenceFlags;
+				if ((f & (InitializedBit | CalculatingBit)) == 0) {
+					// In case we get called recursively
+					hasTypeEquivalenceFlags |= CalculatingBit;
 
-							byte result = InitializedBit;
-							if (CalculateHasTypeEquivalence())
-								result |= BoolBit;
-							hasTypeEquivalenceFlags = result;
-						}
-					}
+					byte result = InitializedBit;
+					if (CalculateHasTypeEquivalence())
+						result |= BoolBit;
+					hasTypeEquivalenceFlags = result;
+					f = result;
 				}
-				return (hasTypeEquivalenceFlags & BoolBit) != 0;
+				return (f & BoolBit) != 0;
 			}
 		}
-		byte hasTypeEquivalenceFlags;
+		volatile byte hasTypeEquivalenceFlags;
 
 		bool CalculateHasTypeEquivalence() {
 			if (BaseType?.HasTypeEquivalence == true)
@@ -110,9 +109,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType DeclaringType {
 			get {
 				if (!declaringTypeInitd) {
+					var declType = GetDeclaringType();
 					lock (LockObject) {
 						if (!declaringTypeInitd) {
-							__declaringType_DONT_USE = GetDeclaringType();
+							__declaringType_DONT_USE = declType;
 							declaringTypeInitd = true;
 						}
 					}
@@ -120,21 +120,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return __declaringType_DONT_USE;
 			}
 		}
-		DmdType __declaringType_DONT_USE;
-		bool declaringTypeInitd;
+		volatile DmdType __declaringType_DONT_USE;
+		volatile bool declaringTypeInitd;
 
 		public override DmdType BaseType {
 			get {
 				if (!baseTypeInitd) {
+					var newBT = GetBaseType(GetGenericArguments());
+					if (IsImport && !IsInterface && newBT == AppDomain.System_Object) {
+						if (IsWindowsRuntime)
+							newBT = AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_WindowsRuntime_RuntimeClass, isOptional: false, onlyCorlib: true) ?? newBT;
+						else
+							newBT = AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject, isOptional: false, onlyCorlib: true) ?? newBT;
+					}
+
 					lock (LockObject) {
 						if (!baseTypeInitd) {
-							__baseType_DONT_USE = GetBaseType(GetGenericArguments());
-							if (IsImport && !IsInterface && __baseType_DONT_USE is DmdType bt && bt == AppDomain.System_Object) {
-								if (IsWindowsRuntime)
-									__baseType_DONT_USE = AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_WindowsRuntime_RuntimeClass, isOptional: false, onlyCorlib: true) ?? bt;
-								else
-									__baseType_DONT_USE = AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject, isOptional: false, onlyCorlib: true) ?? bt;
-							}
+							__baseType_DONT_USE = newBT;
 							baseTypeInitd = true;
 						}
 					}
@@ -142,8 +144,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return __baseType_DONT_USE;
 			}
 		}
-		DmdType __baseType_DONT_USE;
-		bool baseTypeInitd;
+		volatile DmdType __baseType_DONT_USE;
+		volatile bool baseTypeInitd;
 
 		protected abstract DmdType GetDeclaringType();
 		protected abstract DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments);
@@ -169,17 +171,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected abstract DmdType[] CreateGenericParameters();
 		protected override ReadOnlyCollection<DmdType> GetGenericArgumentsCore() {
-			if (__genericParameters_DONT_USE != null)
-				return __genericParameters_DONT_USE;
-			lock (LockObject) {
-				if (__genericParameters_DONT_USE != null)
-					return __genericParameters_DONT_USE;
+			// We loop here because the field could be cleared if it's a dynamic type
+			for (;;) {
+				var gps = __genericParameters_DONT_USE;
+				if (gps != null)
+					return gps;
 				var res = CreateGenericParameters();
-				__genericParameters_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
-				return __genericParameters_DONT_USE;
+				Interlocked.CompareExchange(ref __genericParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
 			}
 		}
-		ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
+		volatile ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
 
 		public override DmdType GetGenericTypeDefinition() => IsGenericType ? this : throw new InvalidOperationException();
 
@@ -209,11 +210,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal new void DynamicType_InvalidateCachedMembers() {
 			lock (LockObject) {
 				declaringTypeInitd = false;
-				hasTypeEquivalenceFlags = 0;
 				baseTypeInitd = false;
-				__genericParameters_DONT_USE = null;
-				base.DynamicType_InvalidateCachedMembers();
 			}
+			// These aren't protected by a lock
+			hasTypeEquivalenceFlags = 0;
+			__genericParameters_DONT_USE = null;
+			base.DynamicType_InvalidateCachedMembers();
 		}
 	}
 }

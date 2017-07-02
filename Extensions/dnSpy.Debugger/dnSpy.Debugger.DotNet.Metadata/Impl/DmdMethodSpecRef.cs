@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdMethodSpecRef : DmdMethodInfoBase {
@@ -47,13 +48,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdMethodInfo Resolve(bool throwOnError) {
 			if ((object)__resolvedMethod_DONT_USE != null)
 				return __resolvedMethod_DONT_USE;
-			lock (LockObject) {
-				if ((object)__resolvedMethod_DONT_USE != null)
-					return __resolvedMethod_DONT_USE;
 
-				var genericMethodDef = (DmdMethodDef)genericMethodRef.Resolve(throwOnError);
-				if ((object)genericMethodDef != null) {
-					__resolvedMethod_DONT_USE = (DmdMethodSpec)AppDomain.MakeGenericMethod(genericMethodDef, genericArguments, MakeTypeOptions.None);
+			var genericMethodDef = (DmdMethodDef)genericMethodRef.Resolve(throwOnError);
+			if ((object)genericMethodDef != null) {
+				var newResolvedMethod = (DmdMethodSpec)AppDomain.MakeGenericMethod(genericMethodDef, genericArguments, MakeTypeOptions.None);
+				if ((object)newResolvedMethod != null) {
+					Interlocked.CompareExchange(ref __resolvedMethod_DONT_USE, newResolvedMethod, null);
 					return __resolvedMethod_DONT_USE;
 				}
 			}
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new MethodResolveException(this);
 			return null;
 		}
-		DmdMethodSpec __resolvedMethod_DONT_USE;
+		volatile DmdMethodSpec __resolvedMethod_DONT_USE;
 
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		internal override DmdMethodInfo GetParentDefinition() => genericMethodRef.GetParentDefinition();

@@ -110,6 +110,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal IMetaDataAssemblyImport MetaDataAssemblyImport {
 			get {
 				Debug.Assert(IsCOMThread);
+				// It's initialized lazily and not in the ctor because the ctor is not necessarily running
+				// on the COM thread.
+				if (__metaDataAssemblyImport_DONT_USE == null)
+					__metaDataAssemblyImport_DONT_USE = (IMetaDataAssemblyImport)__metaDataImport_DONT_USE;
 				return __metaDataAssemblyImport_DONT_USE;
 			}
 		}
@@ -119,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		readonly DmdModuleImpl module;
 		readonly IMetaDataImport2 __metaDataImport_DONT_USE;
-		readonly IMetaDataAssemblyImport __metaDataAssemblyImport_DONT_USE;
+		IMetaDataAssemblyImport __metaDataAssemblyImport_DONT_USE;
 		readonly DmdDynamicModuleHelper dynamicModuleHelper;
 		readonly DmdDispatcher dispatcher;
 		Dictionary<uint, List<uint>> ridToNested;
@@ -140,7 +144,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		public DmdComMetadataReader(DmdModuleImpl module, IMetaDataImport2 metaDataImport, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher) {
 			this.module = module ?? throw new ArgumentNullException(nameof(module));
 			__metaDataImport_DONT_USE = metaDataImport ?? throw new ArgumentNullException(nameof(metaDataImport));
-			__metaDataAssemblyImport_DONT_USE = (IMetaDataAssemblyImport)metaDataImport;
 			this.dynamicModuleHelper = dynamicModuleHelper ?? throw new ArgumentNullException(nameof(dynamicModuleHelper));
 			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 

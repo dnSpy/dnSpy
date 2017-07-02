@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdFieldRef : DmdFieldInfoBase {
@@ -36,30 +37,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdFieldDef GetResolvedField(bool throwOnError) {
 			if ((object)__resolvedField_DONT_USE != null)
 				return __resolvedField_DONT_USE;
-			lock (LockObject) {
-				if ((object)__resolvedField_DONT_USE != null)
-					return __resolvedField_DONT_USE;
-				var declType = declaringTypeRef.Resolve(throwOnError);
-				if ((object)declType != null) {
-					var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
-					var nonGenericInstDeclTypeField = (DmdFieldDef)nonGenericInstDeclType?.GetField(Name, rawFieldType, throwOnError: false);
-					if ((object)nonGenericInstDeclTypeField != null) {
-						__resolvedField_DONT_USE = (object)nonGenericInstDeclTypeField.DeclaringType == declType ?
-							nonGenericInstDeclTypeField :
-							(DmdFieldDef)declType.GetField(nonGenericInstDeclTypeField.Module, nonGenericInstDeclTypeField.MetadataToken);
-						Debug.Assert((object)__resolvedField_DONT_USE != null);
-					}
+
+			DmdFieldDef newResolvedField = null;
+			var declType = declaringTypeRef.Resolve(throwOnError);
+			if ((object)declType != null) {
+				var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
+				var nonGenericInstDeclTypeField = (DmdFieldDef)nonGenericInstDeclType?.GetField(Name, rawFieldType, throwOnError: false);
+				if ((object)nonGenericInstDeclTypeField != null) {
+					newResolvedField = (object)nonGenericInstDeclTypeField.DeclaringType == declType ?
+						nonGenericInstDeclTypeField :
+						(DmdFieldDef)declType.GetField(nonGenericInstDeclTypeField.Module, nonGenericInstDeclTypeField.MetadataToken);
+					Debug.Assert((object)newResolvedField != null);
 				}
-				if ((object)__resolvedField_DONT_USE != null) {
-					Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedField_DONT_USE.ReflectedType, declaringTypeRef));
-					return __resolvedField_DONT_USE;
-				}
-				if (throwOnError)
-					throw new FieldResolveException(this);
-				return null;
 			}
+			if ((object)newResolvedField != null) {
+				Interlocked.CompareExchange(ref __resolvedField_DONT_USE, newResolvedField, null);
+				Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedField_DONT_USE.ReflectedType, declaringTypeRef));
+				return __resolvedField_DONT_USE;
+			}
+			if (throwOnError)
+				throw new FieldResolveException(this);
+			return null;
 		}
-		DmdFieldDef __resolvedField_DONT_USE;
+		volatile DmdFieldDef __resolvedField_DONT_USE;
 
 		readonly DmdType declaringTypeRef;
 		readonly DmdType rawFieldType;

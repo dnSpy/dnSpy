@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdAssemblyImpl : DmdAssembly {
@@ -99,12 +100,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdModule GetModule(string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			lock (LockObject) {
-				foreach (var module in modules) {
-					// This is case insensitive, see AssemblyNative::GetModule(pAssembly,wszFileName,retModule) in coreclr/src/vm/assemblynative.cpp
-					if (StringComparer.OrdinalIgnoreCase.Equals(module.ScopeName, name))
-						return module;
-				}
+			// Make a copy of it so we don't hold a lock while calling module.ScopeName
+			DmdModule[] modulesCopy;
+			lock (LockObject)
+				modulesCopy = modules.ToArray();
+			foreach (var module in modulesCopy) {
+				// This is case insensitive, see AssemblyNative::GetModule(pAssembly,wszFileName,retModule) in coreclr/src/vm/assemblynative.cpp
+				if (StringComparer.OrdinalIgnoreCase.Equals(module.ScopeName, name))
+					return module;
 			}
 			return null;
 		}
@@ -258,27 +261,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override IList<DmdCustomAttributeData> GetSecurityAttributesData() {
 			if (securityAttributes != null)
 				return securityAttributes;
-			lock (LockObject) {
-				if (securityAttributes != null)
-					return securityAttributes;
-				var cas = metadataReader.ReadSecurityAttributes(0x20000001);
-				securityAttributes = ReadOnlyCollectionHelpers.Create(cas);
-				return securityAttributes;
-			}
+			var cas = metadataReader.ReadSecurityAttributes(0x20000001);
+			Interlocked.CompareExchange(ref securityAttributes, ReadOnlyCollectionHelpers.Create(cas), null);
+			return securityAttributes;
 		}
-		ReadOnlyCollection<DmdCustomAttributeData> securityAttributes;
+		volatile ReadOnlyCollection<DmdCustomAttributeData> securityAttributes;
 
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (customAttributes != null)
 				return customAttributes;
-			lock (LockObject) {
-				if (customAttributes != null)
-					return customAttributes;
-				var cas = metadataReader.ReadCustomAttributes(0x20000001);
-				customAttributes = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas, GetSecurityAttributesData());
-				return customAttributes;
-			}
+			var cas = metadataReader.ReadCustomAttributes(0x20000001);
+			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas, GetSecurityAttributesData());
+			Interlocked.CompareExchange(ref customAttributes, newCAs, null);
+			return customAttributes;
 		}
-		ReadOnlyCollection<DmdCustomAttributeData> customAttributes;
+		volatile ReadOnlyCollection<DmdCustomAttributeData> customAttributes;
 	}
 }

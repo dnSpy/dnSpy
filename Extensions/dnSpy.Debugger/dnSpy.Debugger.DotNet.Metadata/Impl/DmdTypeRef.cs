@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdTypeRef : DmdTypeBase {
@@ -43,13 +44,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public virtual DmdTypeRef DeclaringTypeRef {
 			get {
 				if (!declaringTypeRefInitd) {
+					int declTypeToken = GetDeclaringTypeRefToken();
+					DmdTypeRef newDT;
+					if ((declTypeToken & 0x00FFFFFF) == 0)
+						newDT = null;
+					else
+						newDT = (DmdTypeRef)ownerModule.ResolveType(declTypeToken, (IList<DmdType>)null, null, DmdResolveOptions.NoTryResolveRefs);
+
 					lock (LockObject) {
 						if (!declaringTypeRefInitd) {
-							int declTypeToken = GetDeclaringTypeRefToken();
-							if ((declTypeToken & 0x00FFFFFF) == 0)
-								__declaringTypeRef_DONT_USE = null;
-							else
-								__declaringTypeRef_DONT_USE = (DmdTypeRef)ownerModule.ResolveType(declTypeToken, (IList<DmdType>)null, null, DmdResolveOptions.NoTryResolveRefs);
+							__declaringTypeRef_DONT_USE = newDT;
 							declaringTypeRefInitd = true;
 						}
 					}
@@ -57,26 +61,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return __declaringTypeRef_DONT_USE;
 			}
 		}
-		DmdTypeRef __declaringTypeRef_DONT_USE;
-		bool declaringTypeRefInitd;
+		volatile DmdTypeRef __declaringTypeRef_DONT_USE;
+		volatile bool declaringTypeRefInitd;
 		protected abstract int GetDeclaringTypeRefToken();
 
 		internal DmdTypeDef ResolvedType => GetResolvedType(throwOnError: true);
 		internal DmdTypeDef GetResolvedType(bool throwOnError) {
 			if ((object)__resolvedType_DONT_USE != null)
 				return __resolvedType_DONT_USE;
-			lock (LockObject) {
-				if ((object)__resolvedType_DONT_USE != null)
-					return __resolvedType_DONT_USE;
-				var appDomain = (DmdAppDomainImpl)ownerModule.AppDomain;
-				var type = appDomain.Resolve(this, throwOnError, ignoreCase: false);
-				if (GetCustomModifiers().Count != 0)
-					type = (DmdTypeDef)appDomain.Intern(type.WithCustomModifiers(GetCustomModifiers()), MakeTypeOptions.None);
-				__resolvedType_DONT_USE = type;
-				return __resolvedType_DONT_USE;
-			}
+			var appDomain = (DmdAppDomainImpl)ownerModule.AppDomain;
+			var type = appDomain.Resolve(this, throwOnError, ignoreCase: false);
+			if ((object)type != null && GetCustomModifiers().Count != 0)
+				type = (DmdTypeDef)appDomain.Intern(type.WithCustomModifiers(GetCustomModifiers()), MakeTypeOptions.None);
+			Interlocked.CompareExchange(ref __resolvedType_DONT_USE, type, null);
+			return __resolvedType_DONT_USE;
 		}
-		DmdTypeDef __resolvedType_DONT_USE;
+		volatile DmdTypeDef __resolvedType_DONT_USE;
 
 		protected uint Rid => rid;
 		protected DmdModule OwnerModule => ownerModule;

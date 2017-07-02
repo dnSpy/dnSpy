@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdGenericParameterType : DmdTypeBase {
@@ -93,15 +94,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override ReadOnlyCollection<DmdType> GetGenericParameterConstraints() {
 			if (__genericParameterConstraints_DONT_USE != null)
 				return __genericParameterConstraints_DONT_USE;
-			lock (LockObject) {
-				if (__genericParameterConstraints_DONT_USE != null)
-					return __genericParameterConstraints_DONT_USE;
-				var res = CreateGenericParameterConstraints();
-				__genericParameterConstraints_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
-				return __genericParameterConstraints_DONT_USE;
-			}
+			var res = CreateGenericParameterConstraints();
+			Interlocked.CompareExchange(ref __genericParameterConstraints_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
+			return __genericParameterConstraints_DONT_USE;
 		}
-		ReadOnlyCollection<DmdType> __genericParameterConstraints_DONT_USE;
+		volatile ReadOnlyCollection<DmdType> __genericParameterConstraints_DONT_USE;
 		protected abstract DmdType[] CreateGenericParameterConstraints();
 
 		protected override DmdType ResolveNoThrowCore() => this;

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdConstructorRef : DmdConstructorInfoBase {
@@ -39,30 +40,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdConstructorDef GetResolvedConstructor(bool throwOnError) {
 			if ((object)__resolvedConstructor_DONT_USE != null)
 				return __resolvedConstructor_DONT_USE;
-			lock (LockObject) {
-				if ((object)__resolvedConstructor_DONT_USE != null)
-					return __resolvedConstructor_DONT_USE;
-				var declType = declaringTypeRef.Resolve(throwOnError);
-				if ((object)declType != null) {
-					var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
-					var nonGenericInstDeclTypeMethod = nonGenericInstDeclType?.GetMethod(Name, rawMethodSignature, throwOnError: false) as DmdConstructorDef;
-					if ((object)nonGenericInstDeclTypeMethod != null) {
-						__resolvedConstructor_DONT_USE = (object)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
-							nonGenericInstDeclTypeMethod :
-							declType.GetMethod(nonGenericInstDeclTypeMethod.Module, nonGenericInstDeclTypeMethod.MetadataToken) as DmdConstructorDef;
-						Debug.Assert((object)__resolvedConstructor_DONT_USE != null);
-					}
+
+			DmdConstructorDef newResolvedCtor = null;
+			var declType = declaringTypeRef.Resolve(throwOnError);
+			if ((object)declType != null) {
+				var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
+				var nonGenericInstDeclTypeMethod = nonGenericInstDeclType?.GetMethod(Name, rawMethodSignature, throwOnError: false) as DmdConstructorDef;
+				if ((object)nonGenericInstDeclTypeMethod != null) {
+					newResolvedCtor = (object)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
+						nonGenericInstDeclTypeMethod :
+						declType.GetMethod(nonGenericInstDeclTypeMethod.Module, nonGenericInstDeclTypeMethod.MetadataToken) as DmdConstructorDef;
+					Debug.Assert((object)newResolvedCtor != null);
 				}
-				if ((object)__resolvedConstructor_DONT_USE != null) {
-					Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedConstructor_DONT_USE.ReflectedType, declaringTypeRef));
-					return __resolvedConstructor_DONT_USE;
-				}
-				if (throwOnError)
-					throw new MethodResolveException(this);
-				return null;
 			}
+			if ((object)newResolvedCtor != null) {
+				Interlocked.CompareExchange(ref __resolvedConstructor_DONT_USE, newResolvedCtor, null);
+				Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedConstructor_DONT_USE.ReflectedType, declaringTypeRef));
+				return __resolvedConstructor_DONT_USE;
+			}
+			if (throwOnError)
+				throw new MethodResolveException(this);
+			return null;
 		}
-		DmdConstructorDef __resolvedConstructor_DONT_USE;
+		volatile DmdConstructorDef __resolvedConstructor_DONT_USE;
 
 		readonly DmdType declaringTypeRef;
 		readonly DmdMethodSignature rawMethodSignature;

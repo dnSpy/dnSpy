@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdEventDef : DmdEventInfo {
@@ -78,34 +79,31 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void InitializeEventMethods() {
 			if (__otherMethods_DONT_USE != null)
 				return;
+			GetMethods(out var addMethod, out var removeMethod, out var raiseMethod, out var otherMethods);
 			lock (LockObject) {
-				if (__otherMethods_DONT_USE != null)
-					return;
-				GetMethods(out var addMethod, out var removeMethod, out var raiseMethod, out var otherMethods);
-				__addMethod_DONT_USE = addMethod;
-				__removeMethod_DONT_USE = removeMethod;
-				__raiseMethod_DONT_USE = raiseMethod;
-				__otherMethods_DONT_USE = ReadOnlyCollectionHelpers.Create(otherMethods);
+				if (__otherMethods_DONT_USE == null) {
+					__addMethod_DONT_USE = addMethod;
+					__removeMethod_DONT_USE = removeMethod;
+					__raiseMethod_DONT_USE = raiseMethod;
+					__otherMethods_DONT_USE = ReadOnlyCollectionHelpers.Create(otherMethods);
+				}
 			}
 		}
-		DmdMethodInfo __addMethod_DONT_USE;
-		DmdMethodInfo __removeMethod_DONT_USE;
-		DmdMethodInfo __raiseMethod_DONT_USE;
-		ReadOnlyCollection<DmdMethodInfo> __otherMethods_DONT_USE;
+		volatile DmdMethodInfo __addMethod_DONT_USE;
+		volatile DmdMethodInfo __removeMethod_DONT_USE;
+		volatile DmdMethodInfo __raiseMethod_DONT_USE;
+		volatile ReadOnlyCollection<DmdMethodInfo> __otherMethods_DONT_USE;
 		protected abstract void GetMethods(out DmdMethodInfo addMethod, out DmdMethodInfo removeMethod, out DmdMethodInfo raiseMethod, out DmdMethodInfo[] otherMethods);
 
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (__customAttributes_DONT_USE != null)
 				return __customAttributes_DONT_USE;
-			lock (LockObject) {
-				if (__customAttributes_DONT_USE != null)
-					return __customAttributes_DONT_USE;
-				var info = CreateCustomAttributes();
-				__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info);
-				return __customAttributes_DONT_USE;
-			}
+			var info = CreateCustomAttributes();
+			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info);
+			Interlocked.CompareExchange(ref __customAttributes_DONT_USE, newCAs, null);
+			return __customAttributes_DONT_USE;
 		}
-		ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+		volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
 
 		protected abstract DmdCustomAttributeData[] CreateCustomAttributes();
 	}

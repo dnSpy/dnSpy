@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdMethodRef : DmdMethodInfoBase {
@@ -39,30 +40,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdMethodDef GetResolvedMethod(bool throwOnError) {
 			if ((object)__resolvedMethod_DONT_USE != null)
 				return __resolvedMethod_DONT_USE;
-			lock (LockObject) {
-				if ((object)__resolvedMethod_DONT_USE != null)
-					return __resolvedMethod_DONT_USE;
-				var declType = declaringTypeRef.Resolve(throwOnError);
-				if ((object)declType != null) {
-					var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
-					var nonGenericInstDeclTypeMethod = nonGenericInstDeclType?.GetMethod(Name, rawMethodSignature, throwOnError: false) as DmdMethodDef;
-					if ((object)nonGenericInstDeclTypeMethod != null) {
-						__resolvedMethod_DONT_USE = (object)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
-							nonGenericInstDeclTypeMethod :
-							declType.GetMethod(nonGenericInstDeclTypeMethod.Module, nonGenericInstDeclTypeMethod.MetadataToken) as DmdMethodDef;
-						Debug.Assert((object)__resolvedMethod_DONT_USE != null);
-					}
+
+			DmdMethodDef newResolvedMethod = null;
+			var declType = declaringTypeRef.Resolve(throwOnError);
+			if ((object)declType != null) {
+				var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
+				var nonGenericInstDeclTypeMethod = nonGenericInstDeclType?.GetMethod(Name, rawMethodSignature, throwOnError: false) as DmdMethodDef;
+				if ((object)nonGenericInstDeclTypeMethod != null) {
+					newResolvedMethod = (object)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
+						nonGenericInstDeclTypeMethod :
+						declType.GetMethod(nonGenericInstDeclTypeMethod.Module, nonGenericInstDeclTypeMethod.MetadataToken) as DmdMethodDef;
+					Debug.Assert((object)newResolvedMethod != null);
 				}
-				if ((object)__resolvedMethod_DONT_USE != null) {
-					Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedMethod_DONT_USE.ReflectedType, declaringTypeRef));
-					return __resolvedMethod_DONT_USE;
-				}
-				if (throwOnError)
-					throw new MethodResolveException(this);
-				return null;
 			}
+			if ((object)newResolvedMethod != null) {
+				Interlocked.CompareExchange(ref __resolvedMethod_DONT_USE, newResolvedMethod, null);
+				Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedMethod_DONT_USE.ReflectedType, declaringTypeRef));
+				return __resolvedMethod_DONT_USE;
+			}
+			if (throwOnError)
+				throw new MethodResolveException(this);
+			return null;
 		}
-		DmdMethodDef __resolvedMethod_DONT_USE;
+		volatile DmdMethodDef __resolvedMethod_DONT_USE;
 
 		readonly DmdType declaringTypeRef;
 		readonly DmdMethodSignature rawMethodSignature;

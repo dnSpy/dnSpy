@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dndbg.COM.CorDebug;
-
 namespace dndbg.Engine {
 	enum DebuggerPauseReason {
 		/// <summary>

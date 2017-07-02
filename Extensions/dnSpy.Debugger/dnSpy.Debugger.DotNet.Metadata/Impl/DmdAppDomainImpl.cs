@@ -31,29 +31,46 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdAssembly CorLib {
 			get {
-				lock (LockObject) {
+				lock (assembliesLockObj) {
 					// Assume that the first assembly is always the corlib. This is documented in DmdAppDomainController.CreateAssembly()
 					return assemblies.Count == 0 ? null : assemblies[0];
 				}
 			}
 		}
 
-		readonly DmdRuntimeImpl runtime;
+		// Assemblies lock fields
+		readonly object assembliesLockObj;
 		readonly List<DmdAssemblyImpl> assemblies;
 		readonly Dictionary<string, DmdAssemblyImpl> simpleNameToAssembly;
 		readonly Dictionary<DmdAssemblyName, DmdAssemblyImpl> assemblyNameToAssembly;
+		readonly List<AssemblyLoadedListener> assemblyLoadedListeners;
+
+		// Fully resolved type lock fields
+		readonly object fullyResolvedTypesLockObj;
 		readonly Dictionary<DmdType, DmdType> fullyResolvedTypes;
+
+		// Module type lock fields
+		readonly object moduleTypeLockObj;
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>> toModuleTypeDict;
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>> toModuleTypeDictIgnoreCase;
+
+		// Exported type lock fields
+		readonly object exportedTypeLockObj;
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>> toModuleExportedTypeDict;
 		readonly Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>> toModuleExportedTypeDictIgnoreCase;
+
+		// No locks required
+		readonly DmdRuntimeImpl runtime;
 		readonly WellKnownMemberResolver wellKnownMemberResolver;
-		readonly List<AssemblyLoadedListener> assemblyLoadedListeners;
 		const DmdSigComparerOptions moduleTypeOptions = DmdSigComparerOptions.DontCompareTypeScope;
 		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparer = new DmdMemberInfoEqualityComparer(moduleTypeOptions);
 		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparerIgnoreCase = new DmdMemberInfoEqualityComparer(moduleTypeOptions | DmdSigComparerOptions.CaseInsensitiveMemberNames);
 
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
+			assembliesLockObj = new object();
+			fullyResolvedTypesLockObj = new object();
+			moduleTypeLockObj = new object();
+			exportedTypeLockObj = new object();
 			assemblies = new List<DmdAssemblyImpl>();
 			simpleNameToAssembly = new Dictionary<string, DmdAssemblyImpl>(StringComparer.OrdinalIgnoreCase);
 			assemblyNameToAssembly = new Dictionary<DmdAssemblyName, DmdAssemblyImpl>(AssemblyNameEqualityComparer.Instance);
@@ -71,25 +88,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void Add(DmdAssemblyImpl assembly) {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
-			lock (LockObject) {
+			AssemblyLoadedListener[] listeners;
+			lock (assembliesLockObj) {
 				Debug.Assert(!assemblies.Contains(assembly));
 				assemblies.Add(assembly);
-				foreach (var listener in assemblyLoadedListeners)
-					listener.AssemblyLoaded(assembly);
+				listeners = assemblyLoadedListeners.Count == 0 ? Array.Empty<AssemblyLoadedListener>() : assemblyLoadedListeners.ToArray();
 			}
+			foreach (var listener in listeners)
+				listener.AssemblyLoaded(assembly);
 		}
 
 		internal void Remove(DmdAssemblyImpl assembly) {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
-			lock (LockObject) {
+			lock (assembliesLockObj) {
 				bool b = assemblies.Remove(assembly);
 				Debug.Assert(b);
 			}
 		}
 
 		public override DmdAssembly[] GetAssemblies() {
-			lock (LockObject)
+			lock (assembliesLockObj)
 				return assemblies.ToArray();
 		}
 
@@ -109,7 +128,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			bool onlySimpleName = name == null || (name.Version == null && name.CultureName == null && name.GetPublicKeyToken() == null);
 			if (onlySimpleName)
 				name = null;
-			lock (LockObject) {
+
+			DmdAssemblyImpl[] assembliesCopy;
+			lock (assembliesLockObj) {
 				if (name != null) {
 					if (assemblyNameToAssembly.TryGetValue(name, out var cached))
 						return cached;
@@ -119,18 +140,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						return cached;
 				}
 
-				var assembly = GetAssemblySlowCore_NoLock(simpleName, name);
-				if (assembly != null) {
-					if (name != null)
-						assemblyNameToAssembly.Add(name.Clone(), assembly);
-					else
-						simpleNameToAssembly.Add(simpleName, assembly);
-				}
-				return assembly;
+				assembliesCopy = assemblies.ToArray();
 			}
+
+			var assembly = GetAssemblySlowCore(assembliesCopy, simpleName, name);
+
+			if (assembly != null) {
+				lock (assembliesLockObj) {
+					if (name != null) {
+						if (assemblyNameToAssembly.TryGetValue(name, out var cached))
+							return cached;
+						assemblyNameToAssembly[name.Clone()] = assembly;
+					}
+					else {
+						if (simpleNameToAssembly.TryGetValue(simpleName, out var cached))
+							return cached;
+						simpleNameToAssembly[simpleName] = assembly;
+					}
+				}
+			}
+			return assembly;
 		}
 
-		DmdAssemblyImpl GetAssemblySlowCore_NoLock(string simpleName, DmdAssemblyName name) {
+		static DmdAssemblyImpl GetAssemblySlowCore(DmdAssemblyImpl[] assemblies, string simpleName, DmdAssemblyName name) {
 			// Try to avoid reading the metadata in case we're debugging a program with lots of assemblies.
 
 			// We first loop over all disk file assemblies since we can check simpleName without accessing metadata.
@@ -163,7 +195,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdAssembly GetAssemblyByPath(string path) {
 			if (path == null)
 				throw new ArgumentNullException(nameof(path));
-			lock (LockObject) {
+			lock (assembliesLockObj) {
 				foreach (var assembly in assemblies) {
 					if (assembly.IsDynamic || assembly.IsInMemory)
 						continue;
@@ -187,12 +219,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		void AddAssemblyLoadedListener(AssemblyLoadedListener listener) {
-			lock (LockObject)
+			lock (assembliesLockObj)
 				assemblyLoadedListeners.Add(listener);
 		}
 
 		void RemoveAssemblyLoadedListener(AssemblyLoadedListener listener) {
-			lock (LockObject)
+			lock (assembliesLockObj)
 				assemblyLoadedListeners.Remove(listener);
 		}
 
@@ -272,7 +304,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var res = type as DmdTypeBase ?? throw new ArgumentException();
 			if ((options & MakeTypeOptions.NoResolve) == 0)
 				res = res.FullResolve() ?? res;
-			lock (LockObject) {
+			lock (fullyResolvedTypesLockObj) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
 				if (res.IsFullyResolved)
@@ -300,7 +332,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				et = et.FullResolve() ?? et;
 
 			var res = new DmdPointerType(et, customModifiers);
-			lock (LockObject) {
+			lock (fullyResolvedTypesLockObj) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
 				if (res.IsFullyResolved)
@@ -328,7 +360,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				et = et.FullResolve() ?? et;
 
 			var res = new DmdByRefType(et, customModifiers);
-			lock (LockObject) {
+			lock (fullyResolvedTypesLockObj) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
 				if (res.IsFullyResolved)
@@ -356,7 +388,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				et = et.FullResolve() ?? et;
 
 			var res = new DmdSZArrayType(et, customModifiers);
-			lock (LockObject) {
+			lock (fullyResolvedTypesLockObj) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
 				if (res.IsFullyResolved)
@@ -391,7 +423,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				et = et.FullResolve() ?? et;
 
 			var res = new DmdMDArrayType(et, rank, sizes, lowerBounds, customModifiers);
-			lock (LockObject) {
+			lock (fullyResolvedTypesLockObj) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
 				if (res.IsFullyResolved)
@@ -446,7 +478,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				res = new DmdGenericInstanceType(gtDef, typeArguments, customModifiers);
 			}
 
-			lock (LockObject) {
+			lock (fullyResolvedTypesLockObj) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
 				if (res.IsFullyResolved)
@@ -525,7 +557,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			var res = new DmdFunctionPointerType(this, methodSignature, customModifiers);
-			lock (LockObject) {
+			lock (fullyResolvedTypesLockObj) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
 				if (res.IsFullyResolved)
@@ -569,7 +601,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var methodSignature = new DmdMethodSignature(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes);
 
 			var res = new DmdFunctionPointerType(this, methodSignature, customModifiers);
-			lock (LockObject) {
+			lock (fullyResolvedTypesLockObj) {
 				if (fullyResolvedTypes.TryGetValue(res, out var cachedType))
 					return cachedType;
 				if (res.IsFullyResolved)
@@ -752,29 +784,35 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		Dictionary<DmdType, DmdTypeRef> GetModuleExportedTypeDictionary_NoLock(DmdModule module, bool ignoreCase) {
-			Dictionary<DmdType, DmdTypeRef> dict;
-			if (ignoreCase) {
-				if (toModuleExportedTypeDictIgnoreCase.TryGetValue(module, out dict))
-					return dict;
-				dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparerIgnoreCase);
-				toModuleExportedTypeDictIgnoreCase[module] = dict;
-			}
-			else {
-				if (toModuleExportedTypeDict.TryGetValue(module, out dict))
-					return dict;
-				dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparer);
-				toModuleExportedTypeDict[module] = dict;
-			}
-			foreach (var type in (DmdTypeRef[])module.GetExportedTypes())
-				dict[type] = type;
-			return dict;
-		}
-
 		DmdTypeRef FindExportedType(IList<DmdModule> modules, DmdTypeRef typeRef, bool ignoreCase) {
-			lock (LockObject) {
-				foreach (var module in modules) {
-					if (GetModuleExportedTypeDictionary_NoLock(module, ignoreCase).TryGetValue(typeRef, out var exportedType))
+			foreach (var module in modules) {
+				Dictionary<DmdType, DmdTypeRef> dict;
+				do {
+					lock (exportedTypeLockObj) {
+						if (ignoreCase) {
+							if (toModuleExportedTypeDictIgnoreCase.TryGetValue(module, out dict))
+								break;
+							dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparerIgnoreCase);
+							toModuleExportedTypeDictIgnoreCase[module] = dict;
+						}
+						else {
+							if (toModuleExportedTypeDict.TryGetValue(module, out dict))
+								break;
+							dict = new Dictionary<DmdType, DmdTypeRef>(moduleTypeDictComparer);
+							toModuleExportedTypeDict[module] = dict;
+						}
+					}
+
+					var types = (DmdTypeRef[])module.GetExportedTypes();
+
+					lock (exportedTypeLockObj) {
+						foreach (var type in types)
+							dict[type] = type;
+					}
+				} while (false);
+
+				lock (exportedTypeLockObj) {
+					if (dict.TryGetValue(typeRef, out var exportedType))
 						return exportedType;
 				}
 			}
@@ -807,44 +845,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		Dictionary<DmdType, DmdTypeDef> GetModuleTypeDictionary_NoLock(DmdModule module, bool ignoreCase) {
-			Dictionary<DmdType, DmdTypeDef> dict;
-			if (ignoreCase) {
-				if (toModuleTypeDictIgnoreCase.TryGetValue(module, out dict))
-					return dict;
-				dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparerIgnoreCase);
-				toModuleTypeDictIgnoreCase[module] = dict;
-			}
-			else {
-				if (toModuleTypeDict.TryGetValue(module, out dict))
-					return dict;
-				dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparer);
-				toModuleTypeDict[module] = dict;
-			}
-
-			// Only dynamic modules can add more types at runtime
-			if (module.IsDynamic) {
-				// If it's the first time this code gets executed with this module
-				if (toModuleTypeDictIgnoreCase.ContainsKey(module) != toModuleTypeDict.ContainsKey(module)) {
-					var moduleImpl = (DmdModuleImpl)module;
-					moduleImpl.MetadataReader.TypesUpdated += (s, e) => DmdMetadataReader_TypesUpdated(module, e);
-				}
-			}
-
-			foreach (var type in (DmdTypeDef[])module.GetTypes())
-				dict[type] = type;
-			return dict;
-		}
-
 		void DmdMetadataReader_TypesUpdated(DmdModule module, DmdTypesUpdatedEventArgs e) {
-			lock (LockObject) {
+			var types = new DmdTypeDef[e.Tokens.Length];
+			for (int i = 0; i < types.Length; i++)
+				types[i] = module.ResolveType((int)e.Tokens[i], (IList<DmdType>)null, null, DmdResolveOptions.None) as DmdTypeDef;
+
+			lock (moduleTypeLockObj) {
 				Dictionary<DmdType, DmdTypeDef> dict1 = null, dict2 = null;
 				toModuleTypeDictIgnoreCase?.TryGetValue(module, out dict1);
 				toModuleTypeDict?.TryGetValue(module, out dict2);
 				Debug.Assert(dict1 != null || dict2 != null);
-				foreach (var token in e.Tokens) {
-					var type = module.ResolveType((int)token, (IList<DmdType>)null, null, DmdResolveOptions.None) as DmdTypeDef;
-					Debug.Assert((object)type != null);
+				foreach (var type in types) {
 					if ((object)type == null)
 						continue;
 					if (dict1 != null)
@@ -856,8 +867,43 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		DmdTypeDef Lookup(DmdModule module, DmdTypeRef typeRef, bool ignoreCase) {
-			lock (LockObject) {
-				if (GetModuleTypeDictionary_NoLock(module, ignoreCase).TryGetValue(typeRef, out var typeDef))
+			Dictionary<DmdType, DmdTypeDef> dict;
+			do {
+				lock (moduleTypeLockObj) {
+					if (ignoreCase) {
+						if (toModuleTypeDictIgnoreCase.TryGetValue(module, out dict))
+							break;
+						dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparerIgnoreCase);
+						toModuleTypeDictIgnoreCase[module] = dict;
+					}
+					else {
+						if (toModuleTypeDict.TryGetValue(module, out dict))
+							break;
+						dict = new Dictionary<DmdType, DmdTypeDef>(moduleTypeDictComparer);
+						toModuleTypeDict[module] = dict;
+					}
+
+					// Only dynamic modules can add more types at runtime
+					if (module.IsDynamic) {
+						// If it's the first time this code gets executed with this module
+						if (toModuleTypeDictIgnoreCase.ContainsKey(module) != toModuleTypeDict.ContainsKey(module)) {
+							var moduleImpl = (DmdModuleImpl)module;
+							moduleImpl.MetadataReader.TypesUpdated += (s, e) => DmdMetadataReader_TypesUpdated(module, e);
+						}
+					}
+				}
+
+				var types = (DmdTypeDef[])module.GetTypes();
+
+				lock (moduleTypeLockObj) {
+					foreach (var type in types)
+						dict[type] = type;
+				}
+
+			} while (false);
+
+			lock (moduleTypeLockObj) {
+				if (dict.TryGetValue(typeRef, out var typeDef))
 					return typeDef;
 			}
 			return null;
@@ -866,26 +912,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal DmdType[] GetSZArrayInterfaces(DmdType elementType) {
 			var ifaces = defaultExistingWellKnownSZArrayInterfaces;
 			if (ifaces == null) {
-				lock (LockObject) {
-					ifaces = defaultExistingWellKnownSZArrayInterfaces;
-					if (ifaces == null) {
-						Debug.Assert(assemblies.Count != 0, "CorLib hasn't been loaded yet!");
-						if (assemblies.Count == 0)
-							return Array.Empty<DmdType>();
-						var list = ObjectPools.AllocListOfType();
-						foreach (var wellKnownType in possibleWellKnownSZArrayInterfaces) {
-							// These interfaces should only be in corlib since the CLR needs them.
-							// They're not always present so if we fail to find a type in the corlib, we don't
-							// want to search the remaining assemblies (could be hundreds of assemblies).
-							var iface = GetWellKnownType(wellKnownType, isOptional: true, onlyCorLib: true);
-							if ((object)iface != null)
-								list.Add(iface);
-						}
-						defaultExistingWellKnownSZArrayInterfaces = ifaces = ObjectPools.FreeAndToArray(ref list);
-						// We don't support debugging CLR 1.x so this should contain at least IList<T>
-						Debug.Assert(defaultExistingWellKnownSZArrayInterfaces.Length >= 1);
-					}
+				lock (assembliesLockObj) {
+					Debug.Assert(assemblies.Count != 0, "CorLib hasn't been loaded yet!");
+					if (assemblies.Count == 0)
+						return Array.Empty<DmdType>();
 				}
+				var list = ObjectPools.AllocListOfType();
+				foreach (var wellKnownType in possibleWellKnownSZArrayInterfaces) {
+					// These interfaces should only be in corlib since the CLR needs them.
+					// They're not always present so if we fail to find a type in the corlib, we don't
+					// want to search the remaining assemblies (could be hundreds of assemblies).
+					var iface = GetWellKnownType(wellKnownType, isOptional: true, onlyCorLib: true);
+					if ((object)iface != null)
+						list.Add(iface);
+				}
+				Interlocked.CompareExchange(ref defaultExistingWellKnownSZArrayInterfaces, ObjectPools.FreeAndToArray(ref list), null);
+				ifaces = defaultExistingWellKnownSZArrayInterfaces;
 			}
 			var res = new DmdType[ifaces.Length];
 			var typeArguments = new[] { elementType };
@@ -893,7 +935,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				res[i] = MakeGenericType(ifaces[i], typeArguments, null, MakeTypeOptions.None);
 			return res;
 		}
-		DmdType[] defaultExistingWellKnownSZArrayInterfaces;
+		volatile DmdType[] defaultExistingWellKnownSZArrayInterfaces;
 		static readonly DmdWellKnownType[] possibleWellKnownSZArrayInterfaces = new DmdWellKnownType[] {
 			// Available since .NET Framework 2.0
 			DmdWellKnownType.System_Collections_Generic_IList_T,

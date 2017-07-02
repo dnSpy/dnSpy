@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdTypeBase : DmdType {
@@ -372,14 +373,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (f.__implementedInterfaces_DONT_USE != null)
 				return f.__implementedInterfaces_DONT_USE;
 
-			lock (LockObject) {
-				if (f.__implementedInterfaces_DONT_USE != null)
-					return f.__implementedInterfaces_DONT_USE;
-
-				var implIfaces = CreateInterfaces(this);
-				f.__implementedInterfaces_DONT_USE = ReadOnlyCollectionHelpers.Create(implIfaces);
-				return f.__implementedInterfaces_DONT_USE;
-			}
+			var implIfaces = CreateInterfaces(this);
+			Interlocked.CompareExchange(ref f.__implementedInterfaces_DONT_USE, ReadOnlyCollectionHelpers.Create(implIfaces), null);
+			return f.__implementedInterfaces_DONT_USE;
 		}
 		protected abstract IList<DmdType> ReadDeclaredInterfaces();
 
@@ -471,12 +467,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void InitializeCustomAttributes(ExtraFieldsImpl f) {
 			if (f.__customAttributes_DONT_USE != null)
 				return;
+			var info = CreateCustomAttributes();
+			var newSAs = ReadOnlyCollectionHelpers.Create(info.sas);
+			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, newSAs);
 			lock (LockObject) {
-				if (f.__customAttributes_DONT_USE != null)
-					return;
-				var info = CreateCustomAttributes();
-				f.__securityAttributes_DONT_USE = ReadOnlyCollectionHelpers.Create(info.sas);
-				f.__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, f.__securityAttributes_DONT_USE);
+				if (f.__customAttributes_DONT_USE == null) {
+					f.__securityAttributes_DONT_USE = newSAs;
+					f.__customAttributes_DONT_USE = newCAs;
+				}
 			}
 		}
 		public virtual (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => (null, null);
@@ -503,13 +501,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var f = ExtraFields;
 				if (f.__declaredFields_DONT_USE != null)
 					return f.__declaredFields_DONT_USE;
-				lock (LockObject) {
-					if (f.__declaredFields_DONT_USE != null)
-						return f.__declaredFields_DONT_USE;
-					var res = CreateDeclaredFields(this);
-					f.__declaredFields_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
-					return f.__declaredFields_DONT_USE;
-				}
+				var res = CreateDeclaredFields(this);
+				Interlocked.CompareExchange(ref f.__declaredFields_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
+				return f.__declaredFields_DONT_USE;
 			}
 		}
 
@@ -518,13 +512,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var f = ExtraFields;
 				if (f.__declaredMethods_DONT_USE != null)
 					return f.__declaredMethods_DONT_USE;
-				lock (LockObject) {
-					if (f.__declaredMethods_DONT_USE != null)
-						return f.__declaredMethods_DONT_USE;
-					var res = CreateDeclaredMethods(this);
-					f.__declaredMethods_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
-					return f.__declaredMethods_DONT_USE;
-				}
+				var res = CreateDeclaredMethods(this);
+				Interlocked.CompareExchange(ref f.__declaredMethods_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
+				return f.__declaredMethods_DONT_USE;
 			}
 		}
 
@@ -533,13 +523,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var f = ExtraFields;
 				if (f.__declaredProperties_DONT_USE != null)
 					return f.__declaredProperties_DONT_USE;
-				lock (LockObject) {
-					if (f.__declaredProperties_DONT_USE != null)
-						return f.__declaredProperties_DONT_USE;
-					var res = CreateDeclaredProperties(this);
-					f.__declaredProperties_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
-					return f.__declaredProperties_DONT_USE;
-				}
+				var res = CreateDeclaredProperties(this);
+				Interlocked.CompareExchange(ref f.__declaredProperties_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
+				return f.__declaredProperties_DONT_USE;
 			}
 		}
 
@@ -548,28 +534,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var f = ExtraFields;
 				if (f.__declaredEvents_DONT_USE != null)
 					return f.__declaredEvents_DONT_USE;
-				lock (LockObject) {
-					if (f.__declaredEvents_DONT_USE != null)
-						return f.__declaredEvents_DONT_USE;
-					var res = CreateDeclaredEvents(this);
-					f.__declaredEvents_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
-					return f.__declaredEvents_DONT_USE;
-				}
+				var res = CreateDeclaredEvents(this);
+				Interlocked.CompareExchange(ref f.__declaredEvents_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
+				return f.__declaredEvents_DONT_USE;
 			}
 		}
 
 		protected virtual DmdType[] CreateNestedTypes() => null;
 		protected ReadOnlyCollection<DmdType> NestedTypesCore {
 			get {
-				var f = ExtraFields;
-				if (f.__nestedTypes_DONT_USE != null)
-					return f.__nestedTypes_DONT_USE;
-				lock (LockObject) {
-					if (f.__nestedTypes_DONT_USE != null)
-						return f.__nestedTypes_DONT_USE;
+				// We loop here because the field could be cleared if it's a dynamic type
+				for (;;) {
+					var f = ExtraFields;
+					var nestedTypes = f.__nestedTypes_DONT_USE;
+					if (nestedTypes != null)
+						return nestedTypes;
 					var res = CreateNestedTypes();
-					f.__nestedTypes_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
-					return f.__nestedTypes_DONT_USE;
+					Interlocked.CompareExchange(ref f.__nestedTypes_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
 				}
 			}
 		}
@@ -584,8 +565,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var f = __extraFields_DONT_USE;
 			if (f == null)
 				return;
-			lock (LockObject)
-				f.__nestedTypes_DONT_USE = null;
+			f.__nestedTypes_DONT_USE = null;
 		}
 
 		/// <summary>
@@ -595,8 +575,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		/// </summary>
 		internal void DynamicType_InvalidateCachedMembers() {
 			Debug.Assert(Module.IsDynamic);
-			lock (LockObject)
-				__extraFields_DONT_USE = null;
+			__extraFields_DONT_USE = null;
 		}
 
 		internal ReadOnlyCollection<DmdType> DeclaredInterfaces {
@@ -604,81 +583,88 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var f = ExtraFields;
 				if (f.__declaredInterfaces_DONT_USE != null)
 					return f.__declaredInterfaces_DONT_USE;
-				lock (LockObject) {
-					if (f.__declaredInterfaces_DONT_USE != null)
-						return f.__declaredInterfaces_DONT_USE;
-					var res = ReadDeclaredInterfaces();
-					f.__declaredInterfaces_DONT_USE = ReadOnlyCollectionHelpers.Create(res);
-					return f.__declaredInterfaces_DONT_USE;
-				}
+				var res = ReadDeclaredInterfaces();
+				Interlocked.CompareExchange(ref f.__declaredInterfaces_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
+				return f.__declaredInterfaces_DONT_USE;
 			}
 		}
 
 		ExtraFieldsImpl ExtraFields {
 			get {
-				if (__extraFields_DONT_USE != null)
-					return __extraFields_DONT_USE;
-				lock (LockObject) {
-					if (__extraFields_DONT_USE != null)
-						return __extraFields_DONT_USE;
-					__extraFields_DONT_USE = new ExtraFieldsImpl();
-					return __extraFields_DONT_USE;
+				// We loop here because the field could be cleared if it's a dynamic type
+				for (;;) {
+					var f = __extraFields_DONT_USE;
+					if (f != null)
+						return f;
+					Interlocked.CompareExchange(ref __extraFields_DONT_USE, new ExtraFieldsImpl(), null);
 				}
 			}
 		}
-		ExtraFieldsImpl __extraFields_DONT_USE;
+		volatile ExtraFieldsImpl __extraFields_DONT_USE;
 
 		// Most of the fields aren't used so we alloc them when needed
 		sealed class ExtraFieldsImpl {
-			public ReadOnlyCollection<DmdType> __implementedInterfaces_DONT_USE;
-			public ReadOnlyCollection<DmdType> __declaredInterfaces_DONT_USE;
+			public volatile ReadOnlyCollection<DmdType> __implementedInterfaces_DONT_USE;
+			public volatile ReadOnlyCollection<DmdType> __declaredInterfaces_DONT_USE;
 
-			public ReadOnlyCollection<DmdType> __nestedTypes_DONT_USE;
+			public volatile ReadOnlyCollection<DmdType> __nestedTypes_DONT_USE;
 
-			public ReadOnlyCollection<DmdFieldInfo> __declaredFields_DONT_USE;
-			public ReadOnlyCollection<DmdMethodBase> __declaredMethods_DONT_USE;
-			public ReadOnlyCollection<DmdPropertyInfo> __declaredProperties_DONT_USE;
-			public ReadOnlyCollection<DmdEventInfo> __declaredEvents_DONT_USE;
+			public volatile ReadOnlyCollection<DmdFieldInfo> __declaredFields_DONT_USE;
+			public volatile ReadOnlyCollection<DmdMethodBase> __declaredMethods_DONT_USE;
+			public volatile ReadOnlyCollection<DmdPropertyInfo> __declaredProperties_DONT_USE;
+			public volatile ReadOnlyCollection<DmdEventInfo> __declaredEvents_DONT_USE;
 
-			public DmdFieldReader __baseFields_DONT_USE;
-			public DmdMethodReader __baseMethods_DONT_USE;
-			public DmdPropertyReader __baseProperties_DONT_USE;
-			public DmdEventReader __baseEvents_DONT_USE;
+			public volatile DmdFieldReader __baseFields_DONT_USE;
+			public volatile DmdMethodReader __baseMethods_DONT_USE;
+			public volatile DmdPropertyReader __baseProperties_DONT_USE;
+			public volatile DmdEventReader __baseEvents_DONT_USE;
 
-			public ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
-			public ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
+			public volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+			public volatile ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
 		}
 
 		static bool IsVtblGap(DmdMethodBase method) => method.IsRTSpecialName && method.Name.StartsWith("_VtblGap");
-
-		internal void InitializeParentDefinitions() {
-			var reader = BaseMethodsReader;
-			if (reader.HasInitializedAllMethods)
-				return;
-			while (reader.AddMembersFromNextBaseType())
-				;
-		}
+		internal void InitializeParentDefinitions() => BaseMethodsReader.InitializeAll();
 
 		abstract class DmdMemberReader<T> where T : DmdMemberInfo {
 			const int MAX_BASE_TYPES = 100;
+			readonly object lockObj;
 			readonly DmdTypeBase ownerType;
 			IList<T> members;
 			DmdTypeBase currentType;
 			int baseTypeCounter;
 
-			public IList<T> CurrentMembers => members;
-
 			protected DmdMemberReader(DmdTypeBase ownerType) {
+				lockObj = new object();
 				members = new List<T>();
 				this.ownerType = ownerType ?? throw new ArgumentNullException(nameof(ownerType));
 				currentType = ownerType;
 				baseTypeCounter = 0;
 			}
 
-			protected abstract IEnumerable<T> CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType);
+			protected abstract T[] CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType);
+			protected abstract IEnumerable<T> FilterDeclaredMembers(T[] members);
 			protected abstract void OnCompleted();
 
-			public bool AddMembersFromNextBaseType() {
+			public T GetNext(ref int index) {
+				T member;
+				lock (lockObj) {
+					if (index >= members.Count && !AddMembersFromNextBaseType())
+						return null;
+					member = members[index++];
+				}
+				return member;
+			}
+
+			protected void InitializeAllCore() {
+				lock (lockObj) {
+					int index = members.Count;
+					while (GetNext(ref index) != null)
+						index = members.Count;
+				}
+			}
+
+			bool AddMembersFromNextBaseType() {
 				for (;;) {
 					// Could be bad MD with an infinite loop
 					if (baseTypeCounter >= MAX_BASE_TYPES)
@@ -693,7 +679,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					baseTypeCounter++;
 
 					int membersCount = members.Count;
-					foreach (var member in CreatedDeclaredMembers(ownerType, currentType))
+					var createdMembers = CreatedDeclaredMembers(ownerType, currentType) ?? Array.Empty<T>();
+					foreach (var member in FilterDeclaredMembers(createdMembers))
 						members.Add(member);
 					if (membersCount != members.Count)
 						return true;
@@ -708,7 +695,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		sealed class DmdFieldReader : DmdMemberReader<DmdFieldInfo> {
 			public DmdFieldReader(DmdTypeBase owner) : base(owner) { }
-			protected override IEnumerable<DmdFieldInfo> CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredFields(ownerType);
+			protected override DmdFieldInfo[] CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredFields(ownerType);
+			protected override IEnumerable<DmdFieldInfo> FilterDeclaredMembers(DmdFieldInfo[] fields) => fields;
 			protected override void OnCompleted() { }
 		}
 
@@ -733,7 +721,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			internal IList<DmdMethodBase> HiddenMethods => hiddenMethods;
-			internal bool HasInitializedAllMethods => overriddenHash == null;
+			bool HasInitializedAllMethods => overriddenHash == null;
 
 			Dictionary<Key, DmdMethodDef> overriddenHash;
 			IList<DmdMethodBase> hiddenMethods;
@@ -750,11 +738,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				}
 			}
 
-			protected override IEnumerable<DmdMethodBase> CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) {
-				var methods = baseType.CreateDeclaredMethods(ownerType);
-				if (methods == null)
-					yield break;
+			public void InitializeAll() {
+				if (HasInitializedAllMethods)
+					return;
+				InitializeAllCore();
+			}
 
+			protected override DmdMethodBase[] CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredMethods(ownerType);
+			protected override IEnumerable<DmdMethodBase> FilterDeclaredMembers(DmdMethodBase[] methods) {
 				foreach (var method in methods) {
 					bool hide;
 					if (method is DmdConstructorInfo)
@@ -828,11 +819,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				}
 			}
 
-			protected override IEnumerable<DmdPropertyInfo> CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) {
-				var properties = baseType.CreateDeclaredProperties(ownerType);
-				if (properties == null)
-					yield break;
-
+			protected override DmdPropertyInfo[] CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredProperties(ownerType);
+			protected override IEnumerable<DmdPropertyInfo> FilterDeclaredMembers(DmdPropertyInfo[] properties) {
 				foreach (var property in properties) {
 					bool hide;
 					if (!IsAccessible(property))
@@ -881,11 +869,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					overriddenHash.Add(@event.Name);
 			}
 
-			protected override IEnumerable<DmdEventInfo> CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) {
-				var events = baseType.CreateDeclaredEvents(ownerType);
-				if (events == null)
-					yield break;
-
+			protected override DmdEventInfo[] CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredEvents(ownerType);
+			protected override IEnumerable<DmdEventInfo> FilterDeclaredMembers(DmdEventInfo[] events) {
 				foreach (var @event in events) {
 					bool hide;
 					if (!IsAccessible(@event))
@@ -933,12 +918,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var f = ExtraFields;
 				if (f.__baseFields_DONT_USE != null)
 					return f.__baseFields_DONT_USE;
-				lock (LockObject) {
-					if (f.__baseFields_DONT_USE != null)
-						return f.__baseFields_DONT_USE;
-					f.__baseFields_DONT_USE = new DmdFieldReader(this);
-					return f.__baseFields_DONT_USE;
-				}
+				Interlocked.CompareExchange(ref f.__baseFields_DONT_USE, new DmdFieldReader(this), null);
+				return f.__baseFields_DONT_USE;
 			}
 		}
 
@@ -947,12 +928,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var f = ExtraFields;
 				if (f.__baseMethods_DONT_USE != null)
 					return f.__baseMethods_DONT_USE;
-				lock (LockObject) {
-					if (f.__baseMethods_DONT_USE != null)
-						return f.__baseMethods_DONT_USE;
-					f.__baseMethods_DONT_USE = new DmdMethodReader(this);
-					return f.__baseMethods_DONT_USE;
-				}
+				Interlocked.CompareExchange(ref f.__baseMethods_DONT_USE, new DmdMethodReader(this), null);
+				return f.__baseMethods_DONT_USE;
 			}
 		}
 
@@ -961,12 +938,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var f = ExtraFields;
 				if (f.__baseProperties_DONT_USE != null)
 					return f.__baseProperties_DONT_USE;
-				lock (LockObject) {
-					if (f.__baseProperties_DONT_USE != null)
-						return f.__baseProperties_DONT_USE;
-					f.__baseProperties_DONT_USE = new DmdPropertyReader(this);
-					return f.__baseProperties_DONT_USE;
-				}
+				Interlocked.CompareExchange(ref f.__baseProperties_DONT_USE, new DmdPropertyReader(this), null);
+				return f.__baseProperties_DONT_USE;
 			}
 		}
 
@@ -975,12 +948,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var f = ExtraFields;
 				if (f.__baseEvents_DONT_USE != null)
 					return f.__baseEvents_DONT_USE;
-				lock (LockObject) {
-					if (f.__baseEvents_DONT_USE != null)
-						return f.__baseEvents_DONT_USE;
-					f.__baseEvents_DONT_USE = new DmdEventReader(this);
-					return f.__baseEvents_DONT_USE;
-				}
+				Interlocked.CompareExchange(ref f.__baseEvents_DONT_USE, new DmdEventReader(this), null);
+				return f.__baseEvents_DONT_USE;
 			}
 		}
 
@@ -992,12 +961,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var reader = BaseFieldsReader;
 				int index = 0;
 				for (;;) {
-					DmdFieldInfo field;
-					lock (LockObject) {
-						if (index >= reader.CurrentMembers.Count && !reader.AddMembersFromNextBaseType())
-							break;
-						field = reader.CurrentMembers[index++];
-					}
+					var field = reader.GetNext(ref index);
+					if ((object)field == null)
+						break;
 					yield return field;
 				}
 			}
@@ -1020,12 +986,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var reader = BaseMethodsReader;
 				int index = 0;
 				for (;;) {
-					DmdMethodBase method;
-					lock (LockObject) {
-						if (index >= reader.CurrentMembers.Count && !reader.AddMembersFromNextBaseType())
-							break;
-						method = reader.CurrentMembers[index++];
-					}
+					var method = reader.GetNext(ref index);
+					if ((object)method == null)
+						break;
 					yield return method;
 				}
 			}
@@ -1043,21 +1006,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var reader = BaseMethodsReader;
 				int index = 0;
 				for (;;) {
-					DmdMethodInfo method = null;
-					lock (LockObject) {
-						for (;;) {
-							if (index >= reader.CurrentMembers.Count && !reader.AddMembersFromNextBaseType())
-								break;
-							var methodBase = reader.CurrentMembers[index++];
-							if (methodBase.MemberType != DmdMemberTypes.Method)
-								continue;
-							method = (DmdMethodInfo)methodBase;
-							break;
-						}
-					}
+					var method = reader.GetNext(ref index);
 					if ((object)method == null)
 						break;
-					yield return method;
+					if (method is DmdMethodInfo methodInfo)
+						yield return methodInfo;
 				}
 			}
 		}
@@ -1070,12 +1023,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var reader = BasePropertiesReader;
 				int index = 0;
 				for (;;) {
-					DmdPropertyInfo property;
-					lock (LockObject) {
-						if (index >= reader.CurrentMembers.Count && !reader.AddMembersFromNextBaseType())
-							break;
-						property = reader.CurrentMembers[index++];
-					}
+					var property = reader.GetNext(ref index);
+					if ((object)property == null)
+						break;
 					yield return property;
 				}
 			}
@@ -1089,12 +1039,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var reader = BaseEventsReader;
 				int index = 0;
 				for (;;) {
-					DmdEventInfo @event;
-					lock (LockObject) {
-						if (index >= reader.CurrentMembers.Count && !reader.AddMembersFromNextBaseType())
-							break;
-						@event = reader.CurrentMembers[index++];
-					}
+					var @event = reader.GetNext(ref index);
+					if ((object)@event == null)
+						break;
 					yield return @event;
 				}
 			}

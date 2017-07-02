@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdGenericInstanceTypeRef : DmdTypeBase {
@@ -42,17 +43,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdGenericInstanceType GetResolvedType(bool throwOnError) {
 			if ((object)__resolvedType_DONT_USE != null)
 				return __resolvedType_DONT_USE;
-			lock (LockObject) {
-				if ((object)__resolvedType_DONT_USE != null)
-					return __resolvedType_DONT_USE;
-				var typeDef = genericTypeRef.GetResolvedType(throwOnError);
-				if ((object)typeDef == null)
-					return null;
-				__resolvedType_DONT_USE = (DmdGenericInstanceType)typeDef.AppDomain.MakeGenericType(typeDef, typeArguments, GetCustomModifiers());
-				return __resolvedType_DONT_USE;
-			}
+			var typeDef = genericTypeRef.GetResolvedType(throwOnError);
+			var newRT = (DmdGenericInstanceType)typeDef?.AppDomain.MakeGenericType(typeDef, typeArguments, GetCustomModifiers());
+			Interlocked.CompareExchange(ref __resolvedType_DONT_USE, newRT, null);
+			return __resolvedType_DONT_USE;
 		}
-		DmdGenericInstanceType __resolvedType_DONT_USE;
+		volatile DmdGenericInstanceType __resolvedType_DONT_USE;
 
 		readonly DmdTypeRef genericTypeRef;
 		readonly ReadOnlyCollection<DmdType> typeArguments;

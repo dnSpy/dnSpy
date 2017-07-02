@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdModuleImpl : DmdModule {
@@ -115,14 +116,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (customAttributes != null)
 				return customAttributes;
-			lock (LockObject) {
-				if (customAttributes != null)
-					return customAttributes;
-				var cas = metadataReader.ReadCustomAttributes(0x00000001);
-				customAttributes = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas);
-				return customAttributes;
-			}
+			var cas = metadataReader.ReadCustomAttributes(0x00000001);
+			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas);
+			Interlocked.CompareExchange(ref customAttributes, newCAs, null);
+			return customAttributes;
 		}
-		ReadOnlyCollection<DmdCustomAttributeData> customAttributes;
+		volatile ReadOnlyCollection<DmdCustomAttributeData> customAttributes;
 	}
 }

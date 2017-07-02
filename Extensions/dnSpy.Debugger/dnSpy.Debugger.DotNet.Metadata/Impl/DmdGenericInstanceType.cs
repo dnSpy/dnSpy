@@ -42,37 +42,35 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				const byte InitializedBit = 2;
 				const byte CalculatingBit = 4;
 				if ((hasTypeEquivalenceFlags & (InitializedBit | CalculatingBit)) == 0) {
-					lock (LockObject) {
-						if ((hasTypeEquivalenceFlags & (InitializedBit | CalculatingBit)) == 0) {
-							// In case we get called recursively
-							hasTypeEquivalenceFlags |= CalculatingBit;
+					// In case we get called recursively
+					hasTypeEquivalenceFlags |= CalculatingBit;
 
-							byte result = InitializedBit;
-							if (genericTypeDefinition.HasTypeEquivalence)
+					byte result = InitializedBit;
+					if (genericTypeDefinition.HasTypeEquivalence)
+						result |= BoolBit;
+					else {
+						foreach (var gaType in typeArguments) {
+							if (gaType.HasTypeEquivalence) {
 								result |= BoolBit;
-							else {
-								foreach (var gaType in typeArguments) {
-									if (gaType.HasTypeEquivalence) {
-										result |= BoolBit;
-										break;
-									}
-								}
+								break;
 							}
-							hasTypeEquivalenceFlags = result;
 						}
 					}
+
+					hasTypeEquivalenceFlags = result;
 				}
 				return (hasTypeEquivalenceFlags & BoolBit) != 0;
 			}
 		}
-		byte hasTypeEquivalenceFlags;
+		volatile byte hasTypeEquivalenceFlags;
 
 		public override DmdType BaseType {
 			get {
 				if (!baseTypeInitd) {
+					var newBT = genericTypeDefinition.GetBaseType(typeArguments);
 					lock (LockObject) {
 						if (!baseTypeInitd) {
-							__baseType_DONT_USE = genericTypeDefinition.GetBaseType(typeArguments);
+							__baseType_DONT_USE = newBT;
 							baseTypeInitd = true;
 						}
 					}
@@ -80,8 +78,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return __baseType_DONT_USE;
 			}
 		}
-		DmdType __baseType_DONT_USE;
-		bool baseTypeInitd;
+		volatile DmdType __baseType_DONT_USE;
+		volatile bool baseTypeInitd;
 
 		readonly DmdTypeDef genericTypeDefinition;
 		readonly ReadOnlyCollection<DmdType> typeArguments;

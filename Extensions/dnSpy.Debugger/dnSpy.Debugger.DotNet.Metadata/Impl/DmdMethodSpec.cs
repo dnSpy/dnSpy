@@ -76,20 +76,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void InitializeParameters() {
 			if (__parameters_DONT_USE != null)
 				return;
+
+			var newRP = new DmdCreatedParameterInfo(this, genericMethodDefinition.ReturnParameter, methodSignature.ReturnType);
+			var defParameters = genericMethodDefinition.GetParameters();
+			var paramTypes = methodSignature.GetParameterTypes();
+			var parameters = defParameters.Count == 0 ? Array.Empty<DmdParameterInfo>() : new DmdParameterInfo[Math.Min(paramTypes.Count, defParameters.Count)];
+			for (int i = 0; i < parameters.Length; i++)
+				parameters[i] = new DmdCreatedParameterInfo(this, defParameters[i], paramTypes[i]);
+
 			lock (LockObject) {
-				if (__parameters_DONT_USE != null)
-					return;
-				__returnParameter_DONT_USE = new DmdCreatedParameterInfo(this, genericMethodDefinition.ReturnParameter, methodSignature.ReturnType);
-				var defParameters = genericMethodDefinition.GetParameters();
-				var paramTypes = methodSignature.GetParameterTypes();
-				var parameters = defParameters.Count == 0 ? Array.Empty<DmdParameterInfo>() : new DmdParameterInfo[Math.Min(paramTypes.Count, defParameters.Count)];
-				for (int i = 0; i < parameters.Length; i++)
-					parameters[i] = new DmdCreatedParameterInfo(this, defParameters[i], paramTypes[i]);
-				__parameters_DONT_USE = ReadOnlyCollectionHelpers.Create(parameters);
-				return;
+				if (__parameters_DONT_USE == null) {
+					__returnParameter_DONT_USE = newRP;
+					__parameters_DONT_USE = ReadOnlyCollectionHelpers.Create(parameters);
+				}
 			}
 		}
-		ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
-		DmdParameterInfo __returnParameter_DONT_USE;
+		volatile ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
+		volatile DmdParameterInfo __returnParameter_DONT_USE;
 	}
 }

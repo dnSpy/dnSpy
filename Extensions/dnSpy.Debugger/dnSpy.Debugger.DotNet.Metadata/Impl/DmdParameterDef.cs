@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdParameterDef : DmdParameterInfoBase {
@@ -57,33 +58,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void InitializeDefaultValue() {
 			if (hasInitializedDefaultValue)
 				return;
+			var info = CreateDefaultValue();
 			lock (LockObject) {
-				if (hasInitializedDefaultValue)
-					return;
-
-				var info = CreateDefaultValue();
-				__rawDefaultValue_DONT_USE = info.rawDefaultValue;
-				__hasDefaultValue_DONT_USE = info.hasDefaultValue;
-				hasInitializedDefaultValue = true;
+				if (!hasInitializedDefaultValue) {
+					__rawDefaultValue_DONT_USE = info.rawDefaultValue;
+					__hasDefaultValue_DONT_USE = info.hasDefaultValue;
+					hasInitializedDefaultValue = true;
+				}
 			}
 		}
-		object __rawDefaultValue_DONT_USE;
-		bool __hasDefaultValue_DONT_USE;
-		bool hasInitializedDefaultValue;
+		volatile object __rawDefaultValue_DONT_USE;
+		volatile bool __hasDefaultValue_DONT_USE;
+		volatile bool hasInitializedDefaultValue;
 		protected abstract (object rawDefaultValue, bool hasDefaultValue) CreateDefaultValue();
 
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (__customAttributes_DONT_USE != null)
 				return __customAttributes_DONT_USE;
-			lock (LockObject) {
-				if (__customAttributes_DONT_USE != null)
-					return __customAttributes_DONT_USE;
-				var info = CreateCustomAttributes();
-				__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, info.marshalType);
-				return __customAttributes_DONT_USE;
-			}
+			var info = CreateCustomAttributes();
+			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, info.marshalType);
+			Interlocked.CompareExchange(ref __customAttributes_DONT_USE, newCAs, null);
+			return __customAttributes_DONT_USE;
 		}
-		ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+		volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
 
 		protected abstract (DmdCustomAttributeData[] cas, DmdMarshalType marshalType) CreateCustomAttributes();
 	}

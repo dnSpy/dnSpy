@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdPropertyDef : DmdPropertyInfo {
@@ -73,18 +74,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void InitializePropertyMethods() {
 			if (__otherMethods_DONT_USE != null)
 				return;
+			GetMethods(out var getMethod, out var setMethod, out var otherMethods);
 			lock (LockObject) {
-				if (__otherMethods_DONT_USE != null)
-					return;
-				GetMethods(out var getMethod, out var setMethod, out var otherMethods);
-				__getMethod_DONT_USE = getMethod;
-				__setMethod_DONT_USE = setMethod;
-				__otherMethods_DONT_USE = ReadOnlyCollectionHelpers.Create(otherMethods);
+				if (__otherMethods_DONT_USE == null) {
+					__getMethod_DONT_USE = getMethod;
+					__setMethod_DONT_USE = setMethod;
+					__otherMethods_DONT_USE = ReadOnlyCollectionHelpers.Create(otherMethods);
+				}
 			}
 		}
-		DmdMethodInfo __getMethod_DONT_USE;
-		DmdMethodInfo __setMethod_DONT_USE;
-		ReadOnlyCollection<DmdMethodInfo> __otherMethods_DONT_USE;
+		volatile DmdMethodInfo __getMethod_DONT_USE;
+		volatile DmdMethodInfo __setMethod_DONT_USE;
+		volatile ReadOnlyCollection<DmdMethodInfo> __otherMethods_DONT_USE;
 		protected abstract void GetMethods(out DmdMethodInfo getMethod, out DmdMethodInfo setMethod, out DmdMethodInfo[] otherMethods);
 
 		public sealed override ReadOnlyCollection<DmdParameterInfo> GetIndexParameters() {
@@ -96,14 +97,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void InitializeIndexParameters() {
 			if (__indexParameters_DONT_USE != null)
 				return;
-			lock (LockObject) {
-				if (__indexParameters_DONT_USE != null)
-					return;
-				var info = CreateIndexParameters();
-				__indexParameters_DONT_USE = ReadOnlyCollectionHelpers.Create(info);
-			}
+			var info = CreateIndexParameters();
+			Interlocked.CompareExchange(ref __indexParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(info), null);
 		}
-		ReadOnlyCollection<DmdParameterInfo> __indexParameters_DONT_USE;
+		volatile ReadOnlyCollection<DmdParameterInfo> __indexParameters_DONT_USE;
 
 		DmdParameterInfo[] CreateIndexParameters() {
 			if (GetGetMethod(DmdGetAccessorOptions.All) is DmdMethodInfo getMethod) {
@@ -134,15 +131,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (__customAttributes_DONT_USE != null)
 				return __customAttributes_DONT_USE;
-			lock (LockObject) {
-				if (__customAttributes_DONT_USE != null)
-					return __customAttributes_DONT_USE;
-				var info = CreateCustomAttributes();
-				__customAttributes_DONT_USE = CustomAttributesHelper.AddPseudoCustomAttributes(this, info);
-				return __customAttributes_DONT_USE;
-			}
+			var info = CreateCustomAttributes();
+			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info);
+			Interlocked.CompareExchange(ref __customAttributes_DONT_USE, newCAs, null);
+			return __customAttributes_DONT_USE;
 		}
-		ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+		volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
 
 		protected abstract DmdCustomAttributeData[] CreateCustomAttributes();
 	}

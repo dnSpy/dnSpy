@@ -198,7 +198,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					asmc = adc.CreateAssembly(moduleNameProvider.GetModuleFilename(dmod), true, dmod.IsInMemory, dmod.IsDynamic, dmod.Filename, dmod.Filename);
 				asmc.ModuleController.Module.GetOrCreateData<DbgModule>(() => dmod);
 			}
-			ReflectionTests.Test(adc.AppDomain);
+			// Run it on the UI thread to test the COM MD code
+			System.Windows.Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() => {
+				ReflectionTests.Test(adc.AppDomain);
+			}));
 		}
 		*/
 

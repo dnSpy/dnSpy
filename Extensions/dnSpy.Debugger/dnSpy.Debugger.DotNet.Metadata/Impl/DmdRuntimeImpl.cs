@@ -27,11 +27,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int PointerSize { get; }
 		public override DmdImageFileMachine Machine { get; }
 
+		readonly object appDomainsLockObj;
 		readonly List<DmdAppDomainImpl> appDomains;
 
 		internal DmdEvaluator Evaluator { get; }
 
 		public DmdRuntimeImpl(DmdEvaluator evaluator, DmdImageFileMachine machine) {
+			appDomainsLockObj = new object();
 			appDomains = new List<DmdAppDomainImpl>();
 			Evaluator = evaluator ?? throw new ArgumentNullException(nameof(evaluator));
 			PointerSize = CalculatePointerSize(machine);
@@ -53,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void Add(DmdAppDomainImpl appDomain) {
 			if (appDomain == null)
 				throw new ArgumentNullException(nameof(appDomain));
-			lock (LockObject) {
+			lock (appDomainsLockObj) {
 				Debug.Assert(!appDomains.Contains(appDomain));
 				appDomains.Add(appDomain);
 			}
@@ -62,19 +64,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void Remove(DmdAppDomainImpl appDomain) {
 			if (appDomain == null)
 				throw new ArgumentNullException(nameof(appDomain));
-			lock (LockObject) {
+			lock (appDomainsLockObj) {
 				bool b = appDomains.Remove(appDomain);
 				Debug.Assert(b);
 			}
 		}
 
 		public override DmdAppDomain[] GetAppDomains() {
-			lock (LockObject)
+			lock (appDomainsLockObj)
 				return appDomains.ToArray();
 		}
 
 		public override DmdAppDomain GetAppDomain(int id) {
-			lock (LockObject) {
+			lock (appDomainsLockObj) {
 				foreach (var appDomain in appDomains) {
 					if (appDomain.Id == id)
 						return appDomain;
