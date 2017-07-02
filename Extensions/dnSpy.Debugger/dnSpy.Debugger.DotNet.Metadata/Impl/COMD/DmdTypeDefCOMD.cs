@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		DmdType GetDeclaringType_COMThread() {
 			reader.Dispatcher.VerifyAccess();
-			return reader.Module.ResolveType((int)(0x02000000 + reader.GetEnclosingTypeDefRid_COMThread(Rid)), (IList<DmdType>)null, null, DmdResolveOptions.None);
+			return reader.Module.ResolveType((int)(0x02000000 + reader.GetEnclosingTypeDefRid_COMThread(Rid)), DmdResolveOptions.None);
 		}
 
 		protected override DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments) => COMThread(() => GetBaseTypeCore_COMThread(genericTypeArguments));
@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			var res = new DmdType[nestedRids.Length];
 			for (int i = 0; i < res.Length; i++) {
 				uint rid = nestedRids[i];
-				var nestedType = Module.ResolveType(0x02000000 + (int)rid, (IList<DmdType>)null, null, DmdResolveOptions.None);
+				var nestedType = Module.ResolveType(0x02000000 + (int)rid, DmdResolveOptions.None);
 				if ((object)nestedType == null)
 					return null;
 				res[i] = nestedType;

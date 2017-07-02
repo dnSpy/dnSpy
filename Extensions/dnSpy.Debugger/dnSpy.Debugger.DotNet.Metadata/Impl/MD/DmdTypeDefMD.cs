@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdTypeDefMD(reader, Rid, null));
 
 		protected override DmdType GetDeclaringType() =>
-			Module.ResolveType(0x02000000 + (int)(reader.TablesStream.ReadNestedClassRow(reader.Metadata.GetNestedClassRid(Rid))?.EnclosingClass ?? 0), (IList<DmdType>)null, null, DmdResolveOptions.None);
+			Module.ResolveType(0x02000000 + (int)(reader.TablesStream.ReadNestedClassRow(reader.Metadata.GetNestedClassRid(Rid))?.EnclosingClass ?? 0), DmdResolveOptions.None);
 
 		protected override DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments) {
 			uint extends = reader.TablesStream.ReadTypeDefRow(Rid).Extends;
@@ -140,7 +140,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var res = new DmdType[ridList.Count];
 			for (int i = 0; i < res.Length; i++) {
 				uint rid = ridList[i];
-				var nestedType = Module.ResolveType(0x02000000 + (int)rid, (IList<DmdType>)null, null, DmdResolveOptions.None);
+				var nestedType = Module.ResolveType(0x02000000 + (int)rid, DmdResolveOptions.None);
 				if ((object)nestedType == null)
 					return null;
 				res[i] = nestedType;

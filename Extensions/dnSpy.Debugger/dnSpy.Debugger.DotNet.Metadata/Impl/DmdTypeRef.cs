@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if ((declTypeToken & 0x00FFFFFF) == 0)
 						newDT = null;
 					else
-						newDT = (DmdTypeRef)ownerModule.ResolveType(declTypeToken, (IList<DmdType>)null, null, DmdResolveOptions.NoTryResolveRefs);
+						newDT = (DmdTypeRef)ownerModule.ResolveType(declTypeToken, DmdResolveOptions.NoTryResolveRefs);
 
 					lock (LockObject) {
 						if (!declaringTypeRefInitd) {

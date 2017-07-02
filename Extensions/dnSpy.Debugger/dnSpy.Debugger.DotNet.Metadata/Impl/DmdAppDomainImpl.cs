@@ -848,7 +848,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void DmdMetadataReader_TypesUpdated(DmdModule module, DmdTypesUpdatedEventArgs e) {
 			var types = new DmdTypeDef[e.Tokens.Length];
 			for (int i = 0; i < types.Length; i++)
-				types[i] = module.ResolveType((int)e.Tokens[i], (IList<DmdType>)null, null, DmdResolveOptions.None) as DmdTypeDef;
+				types[i] = module.ResolveType((int)e.Tokens[i], DmdResolveOptions.None) as DmdTypeDef;
 
 			lock (moduleTypeLockObj) {
 				Dictionary<DmdType, DmdTypeDef> dict1 = null, dict2 = null;

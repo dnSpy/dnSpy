@@ -441,7 +441,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			Test(mod1, mod2);
 
 			for (int rid = 2; ; rid++) {
-				var t1 = mod1.ResolveType(0x02000000 + rid, (IList<DmdType>)null, null, DmdResolveOptions.None);
+				var t1 = mod1.ResolveType(0x02000000 + rid, DmdResolveOptions.None);
 				Type t2;
 				try {
 					t2 = mod2.ResolveType(0x02000000 + rid);
