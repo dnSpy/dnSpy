@@ -19,6 +19,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -118,6 +119,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the full assembly name
 		/// </summary>
 		public string FullName => DmdAssemblyNameFormatter.Format(Name, Version, CultureName, GetPublicKeyToken(), RawFlags, isPublicKeyToken: true);
+
+		internal void FormatFullNameTo(StringBuilder sb) => DmdAssemblyNameFormatter.Format(sb, Name, Version, CultureName, GetPublicKeyToken(), RawFlags, isPublicKeyToken: true);
 
 		/// <summary>
 		/// Gets the full assembly name

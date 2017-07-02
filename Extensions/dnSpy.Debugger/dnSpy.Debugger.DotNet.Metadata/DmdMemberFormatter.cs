@@ -75,10 +75,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return type.ContainsGenericParameters;
 		}
 
-		static string GetAssemblyFullName(DmdType type) {
+		static void WriteAssemblyFullName(StringBuilder sb, DmdType type) {
 			if (!type.IsMetadataReference) {
-				if (type.TypeSignatureKind != DmdTypeSignatureKind.GenericInstance)
-					return type.Assembly.FullName;
+				if (type.TypeSignatureKind != DmdTypeSignatureKind.GenericInstance) {
+					type.Assembly.GetName().FormatFullNameTo(sb);
+					return;
+				}
 
 				// Won't throw
 				type = type.GetGenericTypeDefinition();
@@ -88,20 +90,24 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if ((object)nonNested != null) {
 				var typeScope = nonNested.TypeScope;
 				switch (typeScope.Kind) {
+				default:
 				case DmdTypeScopeKind.Invalid:
-					break;
+					sb.Append("???");
+					return;
 
 				case DmdTypeScopeKind.Module:
-					return ((DmdModule)typeScope.Data).Assembly.FullName;
+					((DmdModule)typeScope.Data).Assembly.GetName().FormatFullNameTo(sb);
+					return;
 
 				case DmdTypeScopeKind.ModuleRef:
-					return ((DmdAssemblyName)typeScope.Data2).FullName;
+					((DmdAssemblyName)typeScope.Data2).FormatFullNameTo(sb);
+					return;
 
 				case DmdTypeScopeKind.AssemblyRef:
-					return ((DmdAssemblyName)typeScope.Data).FullName;
+					((DmdAssemblyName)typeScope.Data).FormatFullNameTo(sb);
+					return;
 				}
 			}
-			return "???";
 		}
 
 		static DmdType GetGenericTypeDefinition(DmdType type) {
@@ -151,7 +157,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			using (var formatter = new DmdMemberFormatter(GlobalFlags.Serializable)) {
 				formatter.Write(type);
 				formatter.writer.Append(", ");
-				formatter.writer.Append(GetAssemblyFullName(type));
+				WriteAssemblyFullName(formatter.writer, type);
 				return formatter.writer.ToString();
 			}
 		}
@@ -439,7 +445,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				Write(gaType, flags);
 				if ((globalFlags & GlobalFlags.Serializable) != 0) {
 					writer.Append(", ");
-					writer.Append(GetAssemblyFullName(gaType));
+					WriteAssemblyFullName(writer, gaType);
 					writer.Append(']');
 				}
 			}
