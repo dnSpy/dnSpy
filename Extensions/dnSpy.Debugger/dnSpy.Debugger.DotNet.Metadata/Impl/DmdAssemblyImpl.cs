@@ -256,7 +256,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override IList<DmdCustomAttributeData> GetSecurityAttributesData() {
+		public override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() {
 			if (securityAttributes != null)
 				return securityAttributes;
 			var cas = metadataReader.ReadSecurityAttributes(0x20000001);
@@ -265,7 +265,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		volatile ReadOnlyCollection<DmdCustomAttributeData> securityAttributes;
 
-		public override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (customAttributes != null)
 				return customAttributes;
 			var cas = metadataReader.ReadCustomAttributes(0x20000001);

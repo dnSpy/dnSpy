@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		volatile ReadOnlyCollection<DmdMethodInfo> __otherMethods_DONT_USE;
 		protected abstract void GetMethods(out DmdMethodInfo addMethod, out DmdMethodInfo removeMethod, out DmdMethodInfo raiseMethod, out DmdMethodInfo[] otherMethods);
 
-		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (__customAttributes_DONT_USE != null)
 				return __customAttributes_DONT_USE;
 			var info = CreateCustomAttributes();

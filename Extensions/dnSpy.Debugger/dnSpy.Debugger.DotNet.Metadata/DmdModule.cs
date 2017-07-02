@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using dnSpy.Debugger.DotNet.Metadata.Impl;
 
@@ -122,13 +123,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the custom attributes
 		/// </summary>
-		public IEnumerable<DmdCustomAttributeData> CustomAttributes => GetCustomAttributesData();
+		public ReadOnlyCollection<DmdCustomAttributeData> CustomAttributes => GetCustomAttributesData();
 
 		/// <summary>
 		/// Gets the custom attributes
 		/// </summary>
 		/// <returns></returns>
-		public abstract IList<DmdCustomAttributeData> GetCustomAttributesData();
+		public abstract ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData();
 
 		/// <summary>
 		/// Checks if a custom attribute is present

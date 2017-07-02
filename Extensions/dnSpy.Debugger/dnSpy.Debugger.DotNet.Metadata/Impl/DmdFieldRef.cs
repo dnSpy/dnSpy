@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
 
@@ -73,6 +74,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdFieldInfo Resolve(bool throwOnError) => GetResolvedField(throwOnError);
 		public override object GetRawConstantValue() => ResolvedField.GetRawConstantValue();
-		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => ResolvedField.GetCustomAttributesData();
+		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() => ResolvedField.GetCustomAttributesData();
 	}
 }

@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);
 
-		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (__customAttributes_DONT_USE == null)
 				InitializeCustomAttributes();
 			return __customAttributes_DONT_USE;
@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected abstract (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas, DmdImplMap? implMap) CreateCustomAttributes();
 
-		public sealed override IList<DmdCustomAttributeData> GetSecurityAttributesData() {
+		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() {
 			if (__customAttributes_DONT_USE == null)
 				InitializeCustomAttributes();
 			return __securityAttributes_DONT_USE;

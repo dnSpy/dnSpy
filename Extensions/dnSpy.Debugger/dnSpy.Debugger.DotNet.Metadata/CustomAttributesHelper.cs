@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	static class CustomAttributesHelper {
-		public static bool IsDefined(IList<DmdCustomAttributeData> customAttributes, string attributeTypeFullName) {
+		public static bool IsDefined(ReadOnlyCollection<DmdCustomAttributeData> customAttributes, string attributeTypeFullName) {
 			for (int i = 0; i < customAttributes.Count; i++) {
 				if (customAttributes[i].AttributeType.FullName == attributeTypeFullName)
 					return true;
@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return false;
 		}
 
-		public static bool IsDefined(IList<DmdCustomAttributeData> customAttributes, DmdType attributeType) {
+		public static bool IsDefined(ReadOnlyCollection<DmdCustomAttributeData> customAttributes, DmdType attributeType) {
 			for (int i = 0; i < customAttributes.Count; i++) {
 				if (DmdMemberInfoEqualityComparer.DefaultType.Equals(customAttributes[i].AttributeType, attributeType))
 					return true;
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return false;
 		}
 
-		public static DmdCustomAttributeData Find(IList<DmdCustomAttributeData> customAttributes, string attributeTypeFullName) {
+		public static DmdCustomAttributeData Find(ReadOnlyCollection<DmdCustomAttributeData> customAttributes, string attributeTypeFullName) {
 			for (int i = 0; i < customAttributes.Count; i++) {
 				var ca = customAttributes[i];
 				if (ca.AttributeType.FullName == attributeTypeFullName)
@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return null;
 		}
 
-		public static DmdCustomAttributeData Find(IList<DmdCustomAttributeData> customAttributes, DmdType attributeType) {
+		public static DmdCustomAttributeData Find(ReadOnlyCollection<DmdCustomAttributeData> customAttributes, DmdType attributeType) {
 			for (int i = 0; i < customAttributes.Count; i++) {
 				var ca = customAttributes[i];
 				if (DmdMemberInfoEqualityComparer.DefaultType.Equals(ca.AttributeType, attributeType))
@@ -191,9 +191,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		struct SecurityAttributeInfo {
 			public int Count { get; }
 
-			public SecurityAttributeInfo(IList<DmdCustomAttributeData> securityAttributes) => Count = securityAttributes.Count;
+			public SecurityAttributeInfo(ReadOnlyCollection<DmdCustomAttributeData> securityAttributes) => Count = securityAttributes.Count;
 
-			public void CopyTo(DmdCustomAttributeData[] destination, ref int index, IList<DmdCustomAttributeData> securityAttributes) {
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes) {
 				if (Count == 0)
 					return;
 				for (int i = 0; i < securityAttributes.Count; i++) {
@@ -502,7 +502,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdType type, DmdCustomAttributeData[] customAttributes, IList<DmdCustomAttributeData> securityAttributes) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdType type, DmdCustomAttributeData[] customAttributes, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
@@ -550,7 +550,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return ReadOnlyCollectionHelpers.Create(customAttributes);
 		}
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdConstructorInfo ctor, DmdCustomAttributeData[] customAttributes, IList<DmdCustomAttributeData> securityAttributes) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdConstructorInfo ctor, DmdCustomAttributeData[] customAttributes, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
@@ -570,7 +570,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return ReadOnlyCollectionHelpers.Create(customAttributes);
 		}
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdMethodInfo method, DmdCustomAttributeData[] customAttributes, IList<DmdCustomAttributeData> securityAttributes, DmdImplMap? implMap) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdMethodInfo method, DmdCustomAttributeData[] customAttributes, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes, DmdImplMap? implMap) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
@@ -626,7 +626,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return ReadOnlyCollectionHelpers.Create(customAttributes);
 		}
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdAssembly assembly, DmdCustomAttributeData[] customAttributes, IList<DmdCustomAttributeData> securityAttributes) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdAssembly assembly, DmdCustomAttributeData[] customAttributes, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 

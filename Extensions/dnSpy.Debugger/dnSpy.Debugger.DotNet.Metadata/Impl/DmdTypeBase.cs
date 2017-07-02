@@ -457,7 +457,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return DeclaredFields.Where(a => a.IsStatic).Select(a => a.Name).ToArray();
 		}
 
-		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			var f = ExtraFields;
 			if (f.__customAttributes_DONT_USE == null)
 				InitializeCustomAttributes(f);
@@ -479,7 +479,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		public virtual (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => (null, null);
 
-		public sealed override IList<DmdCustomAttributeData> GetSecurityAttributesData() {
+		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() {
 			var f = ExtraFields;
 			if (f.__customAttributes_DONT_USE == null)
 				InitializeCustomAttributes(f);

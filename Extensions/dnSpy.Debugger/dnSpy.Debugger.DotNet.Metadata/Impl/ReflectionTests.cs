@@ -603,7 +603,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			TestModule(m1.Module, m2.Module);
 			Test(m1.MemberType == DmdMemberTypes.Constructor ? FilterOutSecurityAttributes(m1.AppDomain, m1.GetCustomAttributesData()) : m1.GetCustomAttributesData(), m2.GetCustomAttributesData());
 		}
-		static DmdCustomAttributeData[] FilterOutSecurityAttributes(DmdAppDomain appDomain, IEnumerable<DmdCustomAttributeData> c) {
+		static IList<DmdCustomAttributeData> FilterOutSecurityAttributes(DmdAppDomain appDomain, IEnumerable<DmdCustomAttributeData> c) {
 			var saType = appDomain.GetWellKnownType(DmdWellKnownType.System_Security_Permissions_SecurityAttribute);
 			return c.Where(a => !saType.IsAssignableFrom(a.AttributeType)).ToArray();
 		}

@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		volatile ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
 		protected abstract DmdParameterInfo[] CreateParameters();
 
-		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (__customAttributes_DONT_USE == null)
 				InitializeCustomAttributes();
 			return __customAttributes_DONT_USE;
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected abstract (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes();
 
-		public sealed override IList<DmdCustomAttributeData> GetSecurityAttributesData() {
+		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() {
 			if (__customAttributes_DONT_USE == null)
 				InitializeCustomAttributes();
 			return __securityAttributes_DONT_USE;

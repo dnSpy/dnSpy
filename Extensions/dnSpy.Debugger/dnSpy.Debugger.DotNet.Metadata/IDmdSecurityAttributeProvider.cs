@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -27,12 +28,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the security attributes
 		/// </summary>
-		IEnumerable<DmdCustomAttributeData> SecurityAttributes { get; }
+		ReadOnlyCollection<DmdCustomAttributeData> SecurityAttributes { get; }
 
 		/// <summary>
 		/// Gets the security attributes
 		/// </summary>
 		/// <returns></returns>
-		IList<DmdCustomAttributeData> GetSecurityAttributesData();
+		ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData();
 	}
 }

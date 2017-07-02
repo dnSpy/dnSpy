@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdCreatedParameterInfo : DmdParameterInfoBase {
@@ -39,6 +40,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			ParameterType = parameterType ?? throw new ArgumentNullException(nameof(parameterType));
 		}
 
-		public override IList<DmdCustomAttributeData> GetCustomAttributesData() => originalParameter.GetCustomAttributesData();
+		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() => originalParameter.GetCustomAttributesData();
 	}
 }

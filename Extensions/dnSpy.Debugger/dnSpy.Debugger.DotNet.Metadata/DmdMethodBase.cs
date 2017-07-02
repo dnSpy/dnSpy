@@ -191,7 +191,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the security attributes
 		/// </summary>
 		/// <returns></returns>
-		public abstract override IList<DmdCustomAttributeData> GetSecurityAttributesData();
+		public abstract override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData();
 
 		/// <summary>
 		/// Calls the method

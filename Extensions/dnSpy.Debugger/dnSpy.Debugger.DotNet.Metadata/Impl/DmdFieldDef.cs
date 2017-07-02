@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override DmdFieldInfo Resolve(bool throwOnError) => this;
 
-		public sealed override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (__customAttributes_DONT_USE != null)
 				return __customAttributes_DONT_USE;
 			var info = CreateCustomAttributes();

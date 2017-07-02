@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		DmdTypeDef GetType(DmdTypeRef typeRef, bool ignoreCase) => assembly.AppDomainImpl.TryLookup(this, typeRef, ignoreCase);
 
-		public override IList<DmdCustomAttributeData> GetCustomAttributesData() {
+		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (customAttributes != null)
 				return customAttributes;
 			var cas = metadataReader.ReadCustomAttributes(0x00000001);
