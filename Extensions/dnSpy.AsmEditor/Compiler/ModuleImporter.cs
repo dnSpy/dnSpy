@@ -730,7 +730,6 @@ namespace dnSpy.AsmEditor.Compiler {
 					throw new InvalidOperationException();
 
 				foreach (var nestedTargetType in targetType.NestedTypes) {
-					targetTypes.Remove(nestedTargetType);
 					TypeDef nestedNewType;
 					if (newTypes.TryGetValue(nestedTargetType, out nestedNewType)) {
 						// If it's a state machine type, it's a new type
