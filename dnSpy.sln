@@ -85,6 +85,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Roslyn", "Roslyn", "{379DB0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.DotNet.Metadata", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj", "{FCD8913D-85A0-479E-9689-70FEA52C6DCB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.DotNet.Interpreter", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Interpreter\dnSpy.Debugger.DotNet.Interpreter.csproj", "{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -503,6 +505,18 @@ Global
 		{FCD8913D-85A0-479E-9689-70FEA52C6DCB}.Release|x64.Build.0 = Release|Any CPU
 		{FCD8913D-85A0-479E-9689-70FEA52C6DCB}.Release|x86.ActiveCfg = Release|Any CPU
 		{FCD8913D-85A0-479E-9689-70FEA52C6DCB}.Release|x86.Build.0 = Release|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Debug|x64.Build.0 = Debug|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Debug|x86.Build.0 = Debug|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Release|x64.ActiveCfg = Release|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Release|x64.Build.0 = Release|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Release|x86.ActiveCfg = Release|Any CPU
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -546,5 +560,6 @@ Global
 		{2376E072-101F-4900-8770-79C6DFFBD0FB} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{379DB01F-CA3E-4E34-85F1-586EB20583E0} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{FCD8913D-85A0-479E-9689-70FEA52C6DCB} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
+		{B89E5078-FF71-4FB2-B99F-A790BD94AFD7} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
 	EndGlobalSection
 EndGlobal
