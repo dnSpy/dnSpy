@@ -69,7 +69,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn.EditorFeatures
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Images", "dnSpy\dnSpy.Images\dnSpy.Images.csproj", "{83BBD76B-4ECD-42E1-BF9C-AF8114E52317}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.CorDebug", "Extensions\dnSpy.Debugger\dnSpy.Debugger.CorDebug\dnSpy.Debugger.CorDebug.csproj", "{AD6EE4B9-7EE6-4FF0-869E-32DADCAA1E4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.DotNet.CorDebug", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.CorDebug\dnSpy.Debugger.DotNet.CorDebug.csproj", "{AD6EE4B9-7EE6-4FF0-869E-32DADCAA1E4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Debugger", "dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj", "{C92217E8-A68E-4F8D-9B98-D7328E89DAF1}"
 EndProject
