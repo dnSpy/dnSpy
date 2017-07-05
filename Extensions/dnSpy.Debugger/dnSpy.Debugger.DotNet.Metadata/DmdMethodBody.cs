@@ -18,7 +18,7 @@
 */
 
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets all locals
 		/// </summary>
-		public abstract IList<DmdLocalVariableInfo> LocalVariables { get; }
+		public abstract ReadOnlyCollection<DmdLocalVariableInfo> LocalVariables { get; }
 
 		/// <summary>
 		/// Gets max stack size
@@ -54,7 +54,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the exception clauses
 		/// </summary>
-		public abstract IList<DmdExceptionHandlingClause> ExceptionHandlingClauses { get; }
+		public abstract ReadOnlyCollection<DmdExceptionHandlingClause> ExceptionHandlingClauses { get; }
+
+		/// <summary>
+		/// Gets the generic type arguments
+		/// </summary>
+		public abstract ReadOnlyCollection<DmdType> GenericTypeArguments { get; }
+
+		/// <summary>
+		/// Gets the generic method arguments
+		/// </summary>
+		public abstract ReadOnlyCollection<DmdType> GenericMethodArguments { get; }
 	}
 
 	/// <summary>

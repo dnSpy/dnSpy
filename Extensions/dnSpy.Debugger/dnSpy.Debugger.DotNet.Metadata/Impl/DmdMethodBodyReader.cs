@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			else
 				exceptionHandlingClauses = Array.Empty<DmdExceptionHandlingClause>();
 
-			return new DmdMethodBodyImpl(localSignatureMetadataToken, maxStackSize, initLocals, localVariables, exceptionHandlingClauses, ilBytes);
+			return new DmdMethodBodyImpl(localSignatureMetadataToken, maxStackSize, initLocals, localVariables, exceptionHandlingClauses, genericTypeArguments, genericMethodArguments, ilBytes);
 		}
 
 		bool ReadHeader(out int localSignatureMetadataToken, out int maxStackSize, out bool initLocals, out int codeSize, out bool hasExceptionHandlers) {

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
@@ -38,9 +39,16 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				totalInstructionCount = 0;
 				return ExecuteLoop(method);
 			}
-			catch (ArgumentOutOfRangeException ex) {
+			catch (IndexOutOfRangeException ex) {
+				// Possible reasons:
+				//	- We access an invalid index in method body
+				throw new InvalidMethodBodyInterpreterException(ex);
+			}
+			catch (ArgumentException ex) {
 				// Possible reasons:
 				//	- IL value stack underflow (we let the List<T> check for invalid indexes)
+				//	- BitConverter throws when reading eg. a Single
+				//	- ResolveString() gets called with an invalid offset
 				throw new InvalidMethodBodyInterpreterException(ex);
 			}
 			finally {
@@ -66,6 +74,17 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			ilValueStack.RemoveAt(index);
 		}
 
+		void ThrowInvalidMethodBodyInterpreterException() => throw new InvalidMethodBodyInterpreterException();
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		int ToUInt16(byte[] a, ref int pos) => a[pos++] | (a[pos++] << 8);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		int ToInt32(byte[] a, ref int pos) => a[pos++] | (a[pos++] << 8) | (a[pos++] << 16) | (a[pos++] << 24);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		long ToInt64(byte[] a, ref int pos) => (uint)(a[pos++] | (a[pos++] << 8) | (a[pos++] << 16) | (a[pos++] << 24)) | ((long)a[pos++] << 32) | ((long)a[pos++] << 40) | ((long)a[pos++] << 48) | ((long)a[pos++] << 56);
+
 		ILValue ExecuteLoop(DmdMethodBase method) {
 			var body = method.GetMethodBody();
 			if (body == null)
@@ -77,15 +96,61 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				if (totalInstructionCount++ >= MAX_INTERPRETED_INSTRUCTIONS)
 					throw new TooManyInstructionsInterpreterException();
 
-				if ((uint)methodBodyPos >= (uint)bodyBytes.Length)
-					throw new InvalidMethodBodyInterpreterException();
-				byte b = bodyBytes[methodBodyPos++];
-				switch ((OpCode)b) {
+				int i;
+				ILValue v1;
+				DmdType type;
+
+				i = bodyBytes[methodBodyPos++];
+				switch ((OpCode)i) {
 				case OpCode.Prefix1:
-					if ((uint)methodBodyPos >= (uint)bodyBytes.Length)
-						throw new InvalidMethodBodyInterpreterException();
-					b = bodyBytes[methodBodyPos++];
-					switch ((OpCodeFE)b) {
+					i = bodyBytes[methodBodyPos++];
+					switch ((OpCodeFE)i) {
+					case OpCodeFE.Ldarg:
+						v1 = debuggerRuntime.GetArgument(ToUInt16(bodyBytes, ref methodBodyPos));
+						if (v1 == null)
+							ThrowInvalidMethodBodyInterpreterException();
+						ilValueStack.Add(v1);
+						break;
+
+					case OpCodeFE.Ldarga:
+						v1 = debuggerRuntime.GetArgumentAddress(ToUInt16(bodyBytes, ref methodBodyPos));
+						if (v1 == null)
+							ThrowInvalidMethodBodyInterpreterException();
+						ilValueStack.Add(v1);
+						break;
+
+					case OpCodeFE.Ldloc:
+						v1 = debuggerRuntime.GetLocal(ToUInt16(bodyBytes, ref methodBodyPos));
+						if (v1 == null)
+							ThrowInvalidMethodBodyInterpreterException();
+						ilValueStack.Add(v1);
+						break;
+
+					case OpCodeFE.Ldloca:
+						v1 = debuggerRuntime.GetLocalAddress(ToUInt16(bodyBytes, ref methodBodyPos));
+						if (v1 == null)
+							ThrowInvalidMethodBodyInterpreterException();
+						ilValueStack.Add(v1);
+						break;
+
+					case OpCodeFE.Starg:
+						if (!debuggerRuntime.SetArgument(ToUInt16(bodyBytes, ref methodBodyPos), Pop1()))
+							ThrowInvalidMethodBodyInterpreterException();
+						break;
+
+					case OpCodeFE.Stloc:
+						if (!debuggerRuntime.SetLocal(ToUInt16(bodyBytes, ref methodBodyPos), Pop1()))
+							ThrowInvalidMethodBodyInterpreterException();
+						break;
+
+					case OpCodeFE.Sizeof:
+						type = method.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+						if (type.IsValueType)
+							goto default;//TODO: Calculate value type size, it's probably PointerSize aligned
+						else
+							ilValueStack.Add(ILValueConstants.GetInt32Constant(method.AppDomain.Runtime.PointerSize));
+						break;
+
 					case OpCodeFE.Arglist:
 					case OpCodeFE.Ceq:
 					case OpCodeFE.Cgt:
@@ -97,26 +162,156 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case OpCodeFE.Endfilter:
 					case OpCodeFE.Initblk:
 					case OpCodeFE.Initobj:
-					case OpCodeFE.Ldarg:
-					case OpCodeFE.Ldarga:
 					case OpCodeFE.Ldftn:
-					case OpCodeFE.Ldloc:
-					case OpCodeFE.Ldloca:
 					case OpCodeFE.Ldvirtftn:
 					case OpCodeFE.Localloc:
 					case OpCodeFE.No:
 					case OpCodeFE.Readonly:
 					case OpCodeFE.Refanytype:
 					case OpCodeFE.Rethrow:
-					case OpCodeFE.Sizeof:
-					case OpCodeFE.Starg:
-					case OpCodeFE.Stloc:
 					case OpCodeFE.Tailcall:
 					case OpCodeFE.Unaligned:
 					case OpCodeFE.Volatile:
 					default:
-						throw new InstructionNotSupportedInterpreterException("Unsupported IL opcode 0xFE" + b.ToString("X2"));
+						throw new InstructionNotSupportedInterpreterException("Unsupported IL opcode 0xFE" + i.ToString("X2"));
 					}
+					break;
+
+				case OpCode.Ldc_I4:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(ToInt32(bodyBytes, ref methodBodyPos)));
+					break;
+
+				case OpCode.Ldc_I4_S:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant((sbyte)bodyBytes[methodBodyPos++]));
+					break;
+
+				case OpCode.Ldc_I4_0:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(0));
+					break;
+
+				case OpCode.Ldc_I4_1:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(1));
+					break;
+
+				case OpCode.Ldc_I4_2:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(2));
+					break;
+
+				case OpCode.Ldc_I4_3:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(3));
+					break;
+
+				case OpCode.Ldc_I4_4:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(4));
+					break;
+
+				case OpCode.Ldc_I4_5:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(5));
+					break;
+
+				case OpCode.Ldc_I4_6:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(6));
+					break;
+
+				case OpCode.Ldc_I4_7:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(7));
+					break;
+
+				case OpCode.Ldc_I4_8:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(8));
+					break;
+
+				case OpCode.Ldc_I4_M1:
+					ilValueStack.Add(ILValueConstants.GetInt32Constant(-1));
+					break;
+
+				case OpCode.Ldc_I8:
+					ilValueStack.Add(new ConstantInt64ILValue(ToInt64(bodyBytes, ref methodBodyPos)));
+					break;
+
+				case OpCode.Ldc_R4:
+					ilValueStack.Add(new ConstantFloatILValue(BitConverter.ToSingle(bodyBytes, methodBodyPos)));
+					methodBodyPos += 4;
+					break;
+
+				case OpCode.Ldc_R8:
+					ilValueStack.Add(new ConstantFloatILValue(BitConverter.ToDouble(bodyBytes, methodBodyPos)));
+					methodBodyPos += 8;
+					break;
+
+				case OpCode.Ldstr:
+					ilValueStack.Add(new ConstantStringILValue(method.Module.ResolveString(ToInt32(bodyBytes, ref methodBodyPos))));
+					break;
+
+				case OpCode.Ldnull:
+					ilValueStack.Add(NullObjectRefILValue.Instance);
+					break;
+
+				case OpCode.Ldarg_0:
+				case OpCode.Ldarg_1:
+				case OpCode.Ldarg_2:
+				case OpCode.Ldarg_3:
+					v1 = debuggerRuntime.GetArgument(i - (int)OpCode.Ldarg_0);
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldarg_S:
+					v1 = debuggerRuntime.GetArgument(bodyBytes[methodBodyPos++]);
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldarga_S:
+					v1 = debuggerRuntime.GetArgumentAddress(bodyBytes[methodBodyPos++]);
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldloc_0:
+				case OpCode.Ldloc_1:
+				case OpCode.Ldloc_2:
+				case OpCode.Ldloc_3:
+					v1 = debuggerRuntime.GetLocal(i - (int)OpCode.Ldloc_0);
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldloc_S:
+					v1 = debuggerRuntime.GetLocal(bodyBytes[methodBodyPos++]);
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldloca_S:
+					v1 = debuggerRuntime.GetLocalAddress(bodyBytes[methodBodyPos++]);
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Stloc_0:
+				case OpCode.Stloc_1:
+				case OpCode.Stloc_2:
+				case OpCode.Stloc_3:
+					if (!debuggerRuntime.SetLocal(i - (int)OpCode.Stloc_0, Pop1()))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Starg_S:
+					if (!debuggerRuntime.SetArgument(bodyBytes[methodBodyPos++], Pop1()))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Stloc_S:
+					if (!debuggerRuntime.SetLocal(bodyBytes[methodBodyPos++], Pop1()))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
 
 				case OpCode.Add:
 				case OpCode.Add_Ovf:
@@ -195,27 +390,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Endfinally:
 				case OpCode.Isinst:
 				case OpCode.Jmp:
-				case OpCode.Ldarg_0:
-				case OpCode.Ldarg_1:
-				case OpCode.Ldarg_2:
-				case OpCode.Ldarg_3:
-				case OpCode.Ldarg_S:
-				case OpCode.Ldarga_S:
-				case OpCode.Ldc_I4:
-				case OpCode.Ldc_I4_0:
-				case OpCode.Ldc_I4_1:
-				case OpCode.Ldc_I4_2:
-				case OpCode.Ldc_I4_3:
-				case OpCode.Ldc_I4_4:
-				case OpCode.Ldc_I4_5:
-				case OpCode.Ldc_I4_6:
-				case OpCode.Ldc_I4_7:
-				case OpCode.Ldc_I4_8:
-				case OpCode.Ldc_I4_M1:
-				case OpCode.Ldc_I4_S:
-				case OpCode.Ldc_I8:
-				case OpCode.Ldc_R4:
-				case OpCode.Ldc_R8:
 				case OpCode.Ldelem:
 				case OpCode.Ldelem_I:
 				case OpCode.Ldelem_I1:
@@ -243,17 +417,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Ldind_U2:
 				case OpCode.Ldind_U4:
 				case OpCode.Ldlen:
-				case OpCode.Ldloc_0:
-				case OpCode.Ldloc_1:
-				case OpCode.Ldloc_2:
-				case OpCode.Ldloc_3:
-				case OpCode.Ldloc_S:
-				case OpCode.Ldloca_S:
-				case OpCode.Ldnull:
 				case OpCode.Ldobj:
 				case OpCode.Ldsfld:
 				case OpCode.Ldsflda:
-				case OpCode.Ldstr:
 				case OpCode.Ldtoken:
 				case OpCode.Leave:
 				case OpCode.Leave_S:
@@ -282,7 +448,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Shl:
 				case OpCode.Shr:
 				case OpCode.Shr_Un:
-				case OpCode.Starg_S:
 				case OpCode.Stelem:
 				case OpCode.Stelem_I:
 				case OpCode.Stelem_I1:
@@ -301,11 +466,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Stind_R4:
 				case OpCode.Stind_R8:
 				case OpCode.Stind_Ref:
-				case OpCode.Stloc_0:
-				case OpCode.Stloc_1:
-				case OpCode.Stloc_2:
-				case OpCode.Stloc_3:
-				case OpCode.Stloc_S:
 				case OpCode.Stobj:
 				case OpCode.Stsfld:
 				case OpCode.Sub:
@@ -317,7 +477,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Unbox_Any:
 				case OpCode.Xor:
 				default:
-					throw new InstructionNotSupportedInterpreterException("Unsupported IL opcode 0x" + b.ToString("X2"));
+					throw new InstructionNotSupportedInterpreterException("Unsupported IL opcode 0x" + i.ToString("X2"));
 				}
 			}
 		}

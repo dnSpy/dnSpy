@@ -19,23 +19,28 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdMethodBodyImpl : DmdMethodBody {
 		public override int LocalSignatureMetadataToken { get; }
 		public override int MaxStackSize { get; }
 		public override bool InitLocals { get; }
-		public override IList<DmdLocalVariableInfo> LocalVariables { get; }
-		public override IList<DmdExceptionHandlingClause> ExceptionHandlingClauses { get; }
+		public override ReadOnlyCollection<DmdLocalVariableInfo> LocalVariables { get; }
+		public override ReadOnlyCollection<DmdExceptionHandlingClause> ExceptionHandlingClauses { get; }
+		public override ReadOnlyCollection<DmdType> GenericTypeArguments { get; }
+		public override ReadOnlyCollection<DmdType> GenericMethodArguments { get; }
 
 		readonly byte[] ilBytes;
 
-		public DmdMethodBodyImpl(int localSignatureMetadataToken, int maxStackSize, bool initLocals, DmdLocalVariableInfo[] localVariables, DmdExceptionHandlingClause[] exceptionHandlingClauses, byte[] ilBytes) {
+		public DmdMethodBodyImpl(int localSignatureMetadataToken, int maxStackSize, bool initLocals, DmdLocalVariableInfo[] localVariables, DmdExceptionHandlingClause[] exceptionHandlingClauses, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, byte[] ilBytes) {
 			LocalSignatureMetadataToken = localSignatureMetadataToken;
 			MaxStackSize = maxStackSize;
 			InitLocals = initLocals;
 			LocalVariables = ReadOnlyCollectionHelpers.Create(localVariables);
 			ExceptionHandlingClauses = ReadOnlyCollectionHelpers.Create(exceptionHandlingClauses);
+			GenericTypeArguments = ReadOnlyCollectionHelpers.Create(genericTypeArguments);
+			GenericMethodArguments = ReadOnlyCollectionHelpers.Create(genericMethodArguments);
 			this.ilBytes = ilBytes ?? throw new ArgumentNullException(nameof(ilBytes));
 		}
 
