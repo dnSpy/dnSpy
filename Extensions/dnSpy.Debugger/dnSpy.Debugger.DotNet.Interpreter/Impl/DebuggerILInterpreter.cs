@@ -32,12 +32,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 		public DebuggerILInterpreter() => ilValueStack = new List<ILValue>();
 
-		public ILValue Execute(DebuggerRuntime debuggerRuntime, DmdMethodBase method) {
+		public ILValue Execute(DebuggerRuntime debuggerRuntime, ILVMExecuteStateImpl state) {
 			try {
 				Debug.Assert(ilValueStack.Count == 0);
 				this.debuggerRuntime = debuggerRuntime;
 				totalInstructionCount = 0;
-				return ExecuteLoop(method);
+				return ExecuteLoop(state);
 			}
 			catch (IndexOutOfRangeException ex) {
 				// Possible reasons:
@@ -85,11 +85,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		long ToInt64(byte[] a, ref int pos) => (uint)(a[pos++] | (a[pos++] << 8) | (a[pos++] << 16) | (a[pos++] << 24)) | ((long)a[pos++] << 32) | ((long)a[pos++] << 40) | ((long)a[pos++] << 48) | ((long)a[pos++] << 56);
 
-		ILValue ExecuteLoop(DmdMethodBase method) {
-			var body = method.GetMethodBody();
+		ILValue ExecuteLoop(ILVMExecuteStateImpl state) {
+			var method = state.Method;
+			var body = state.Body;
 			if (body == null)
-				throw new InvalidMethodBodyInterpreterException();
-			var bodyBytes = body.GetILAsByteArray();
+				ThrowInvalidMethodBodyInterpreterException();
+			var bodyBytes = state.ILBytes;
 			var exceptionHandlingClauses = body.ExceptionHandlingClauses;
 			int methodBodyPos = 0;
 			for (;;) {

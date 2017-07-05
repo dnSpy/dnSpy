@@ -25,11 +25,24 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	/// </summary>
 	public abstract class ILVM {
 		/// <summary>
+		/// Creates state that can be passed in to <see cref="Execute(DebuggerRuntime, ILVMExecuteState)"/>
+		/// </summary>
+		/// <param name="method">Method to execute</param>
+		/// <returns></returns>
+		public abstract ILVMExecuteState CreateExecuteState(DmdMethodBase method);
+
+		/// <summary>
 		/// Interprets the IL instructions in the method body. All calls are handled by <paramref name="debuggerRuntime"/>
 		/// </summary>
 		/// <param name="debuggerRuntime">Debugger class that can call methods in the debugged process</param>
-		/// <param name="method">Method</param>
+		/// <param name="state">State created by <see cref="CreateExecuteState(DmdMethodBase)"/></param>
 		/// <returns></returns>
-		public abstract ILValue Execute(DebuggerRuntime debuggerRuntime, DmdMethodBase method);
+		public abstract ILValue Execute(DebuggerRuntime debuggerRuntime, ILVMExecuteState state);
+	}
+
+	/// <summary>
+	/// State created by <see cref="ILVM"/> to speed up executing a method
+	/// </summary>
+	public abstract class ILVMExecuteState {
 	}
 }

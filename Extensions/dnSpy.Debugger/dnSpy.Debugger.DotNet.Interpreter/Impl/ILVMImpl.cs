@@ -26,12 +26,32 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 		public ILVMImpl() => debuggerILInterpreter = new DebuggerILInterpreter();
 
-		public override ILValue Execute(DebuggerRuntime debuggerRuntime, DmdMethodBase method) {
-			if (debuggerRuntime == null)
-				throw new ArgumentNullException(nameof(debuggerRuntime));
+		public override ILVMExecuteState CreateExecuteState(DmdMethodBase method) {
 			if ((object)method == null)
 				throw new ArgumentNullException(nameof(method));
-			return debuggerILInterpreter.Execute(debuggerRuntime, method);
+			return new ILVMExecuteStateImpl(method);
+		}
+
+		public override ILValue Execute(DebuggerRuntime debuggerRuntime, ILVMExecuteState state) {
+			if (debuggerRuntime == null)
+				throw new ArgumentNullException(nameof(debuggerRuntime));
+			var stateImpl = state as ILVMExecuteStateImpl;
+			if (stateImpl == null)
+				throw new ArgumentException();
+			return debuggerILInterpreter.Execute(debuggerRuntime, stateImpl);
+		}
+	}
+
+	sealed class ILVMExecuteStateImpl : ILVMExecuteState {
+		public DmdMethodBase Method { get; }
+		public DmdMethodBody Body { get; }
+		public byte[] ILBytes { get; }
+
+		public ILVMExecuteStateImpl(DmdMethodBase method) {
+			Method = method;
+			// Don't throw here, do it later
+			Body = method.GetMethodBody();
+			ILBytes = Body?.GetILAsByteArray();
 		}
 	}
 }
