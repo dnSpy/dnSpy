@@ -40,12 +40,15 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DebuggerRuntime.cs" />
+    <Compile Include="ILValue.cs" />
     <Compile Include="ILVM.cs" />
     <Compile Include="ILVMFactory.cs" />
+    <Compile Include="Impl\DebuggerILInterpreter.cs" />
     <Compile Include="Impl\ILVMImpl.cs" />
+    <Compile Include="Impl\OpCodes.cs" />
     <Compile Include="InterpreterException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VariablesProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

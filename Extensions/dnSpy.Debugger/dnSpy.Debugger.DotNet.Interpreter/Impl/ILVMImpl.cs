@@ -22,13 +22,16 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 	sealed class ILVMImpl : ILVM {
-		public override object Execute(IDmdEvaluationContext context, DmdMethodBase method, VariablesProvider variablesProvider, ExecuteOptions options) {
+		readonly DebuggerILInterpreter debuggerILInterpreter;
+
+		public ILVMImpl() => debuggerILInterpreter = new DebuggerILInterpreter();
+
+		public override ILValue Execute(DebuggerRuntime debuggerRuntime, DmdMethodBase method) {
+			if (debuggerRuntime == null)
+				throw new ArgumentNullException(nameof(debuggerRuntime));
 			if ((object)method == null)
 				throw new ArgumentNullException(nameof(method));
-			if (variablesProvider == null)
-				throw new ArgumentNullException(nameof(variablesProvider));
-
-			throw new NotImplementedException();//TODO:
+			return debuggerILInterpreter.Execute(debuggerRuntime, method);
 		}
 	}
 }

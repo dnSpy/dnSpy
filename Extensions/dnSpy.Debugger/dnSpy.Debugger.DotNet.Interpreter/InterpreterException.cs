@@ -20,12 +20,92 @@
 using System;
 
 namespace dnSpy.Debugger.DotNet.Interpreter {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+	public enum InterpreterExceptionKind {
+		TooManyInstructions,
+		InvalidMethodBody,
+		InstructionNotSupported,
+	}
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+
 	/// <summary>
 	/// Interpreter exception
 	/// </summary>
 	[Serializable]
-	internal class InterpreterException : Exception {
-		public InterpreterException(string message) : base(message) { }
-		public InterpreterException(string message, Exception innerException) : base(message, innerException) { }
+	public abstract class InterpreterException : Exception {
+		/// <summary>
+		/// Gets the exception kind
+		/// </summary>
+		public abstract InterpreterExceptionKind Kind { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="message">Message</param>
+		protected InterpreterException(string message) : base(message) { }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="message">Message</param>
+		/// <param name="innerException">Inner exception</param>
+		protected InterpreterException(string message, Exception innerException) : base(message, innerException) { }
+	}
+
+	/// <summary>
+	/// Thrown when too many instructions have been interpreted
+	/// </summary>
+	[Serializable]
+	public class TooManyInstructionsInterpreterException : InterpreterException {
+		/// <summary>
+		/// Returns <see cref="InterpreterExceptionKind.TooManyInstructions"/>
+		/// </summary>
+		public override InterpreterExceptionKind Kind => InterpreterExceptionKind.TooManyInstructions;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public TooManyInstructionsInterpreterException() : base("Too many instructions have been executed") { }
+	}
+
+	/// <summary>
+	/// Invalid method body, eg. last instruction isn't an unconditional branch instruction (eg. ret/throw)
+	/// </summary>
+	[Serializable]
+	public class InvalidMethodBodyInterpreterException : InterpreterException {
+		/// <summary>
+		/// Returns <see cref="InterpreterExceptionKind.InvalidMethodBody"/>
+		/// </summary>
+		public override InterpreterExceptionKind Kind => InterpreterExceptionKind.InvalidMethodBody;
+
+		const string MESSAGE = "Invalid method body";
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public InvalidMethodBodyInterpreterException() : base(MESSAGE) { }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="innerException">Inner exception</param>
+		public InvalidMethodBodyInterpreterException(Exception innerException) : base(MESSAGE, innerException) { }
+	}
+
+	/// <summary>
+	/// Unsupported IL instruction
+	/// </summary>
+	[Serializable]
+	public class InstructionNotSupportedInterpreterException : InterpreterException {
+		/// <summary>
+		/// Returns <see cref="InterpreterExceptionKind.InstructionNotSupported"/>
+		/// </summary>
+		public override InterpreterExceptionKind Kind => InterpreterExceptionKind.InstructionNotSupported;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="message">Message</param>
+		public InstructionNotSupportedInterpreterException(string message) : base(message) { }
 	}
 }

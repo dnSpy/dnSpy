@@ -17,33 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Interpreter {
 	/// <summary>
 	/// Interprets IL code and returns the result
 	/// </summary>
-	internal abstract class ILVM {
+	public abstract class ILVM {
 		/// <summary>
-		/// Interprets the IL instructions in the method body
+		/// Interprets the IL instructions in the method body. All calls are handled by <paramref name="debuggerRuntime"/>
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
+		/// <param name="debuggerRuntime">Debugger class that can call methods in the debugged process</param>
 		/// <param name="method">Method</param>
-		/// <param name="variablesProvider">Variables provider</param>
-		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract object Execute(IDmdEvaluationContext context, DmdMethodBase method, VariablesProvider variablesProvider, ExecuteOptions options);
-	}
-
-	/// <summary>
-	/// <see cref="ILVM"/> execute options
-	/// </summary>
-	[Flags]
-	internal enum ExecuteOptions {
-		/// <summary>
-		/// No bit is set
-		/// </summary>
-		None						= 0,
+		public abstract ILValue Execute(DebuggerRuntime debuggerRuntime, DmdMethodBase method);
 	}
 }

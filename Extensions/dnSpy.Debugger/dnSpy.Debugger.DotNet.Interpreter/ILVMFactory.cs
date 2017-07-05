@@ -23,7 +23,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	/// <summary>
 	/// Creates <see cref="ILVM"/> instances
 	/// </summary>
-	internal static class ILVMFactory {
+	public static class ILVMFactory {
+		/// <summary>
+		/// Creates a new <see cref="ILVM"/> instance
+		/// </summary>
+		/// <returns></returns>
 		public static ILVM Create() => new ILVMImpl();
 	}
 }
