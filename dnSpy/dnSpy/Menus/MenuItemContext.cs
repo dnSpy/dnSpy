@@ -72,6 +72,7 @@ namespace dnSpy.Menus {
 			// eg. IDocumentViewer. Those instances could throw ObjectDisposedException
 			guidObjects.Clear();
 			guidObjects.Add(new GuidObject(Guid.Empty, disposedObject));
+			state.Clear();
 		}
 		static readonly object disposedObject = new object();
 	}

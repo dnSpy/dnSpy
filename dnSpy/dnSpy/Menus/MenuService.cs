@@ -311,7 +311,7 @@ namespace dnSpy.Menus {
 
 			if (metadata.Guid != null) {
 				var itemGuid = Guid.Parse(metadata.Guid);
-				if (guidToGroups.TryGetValue(itemGuid, out var list)) {
+				if (guidToGroups.ContainsKey(itemGuid)) {
 					menuItem.Items.Add(new MenuItem());
 					menuItem.SubmenuOpened += (s, e) => {
 						if (e.Source == menuItem)
