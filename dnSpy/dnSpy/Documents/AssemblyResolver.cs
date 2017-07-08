@@ -135,7 +135,7 @@ namespace dnSpy.Documents {
 
 			var document = LookupFromSearchPaths(assembly, sourceModule, true);
 			if (document != null)
-				return documentService.GetOrAddCanDispose(document);
+				return documentService.GetOrAddCanDispose(document, null);
 
 			var gacFile = GacInfo.FindInGac(assembly);
 			if (gacFile != null)
@@ -143,12 +143,12 @@ namespace dnSpy.Documents {
 			foreach (var path in GacInfo.OtherGacPaths) {
 				document = TryLoadFromDir(assembly, true, path);
 				if (document != null)
-					return documentService.GetOrAddCanDispose(document);
+					return documentService.GetOrAddCanDispose(document, assembly);
 			}
 
 			document = LookupFromSearchPaths(assembly, sourceModule, false);
 			if (document != null)
-				return documentService.GetOrAddCanDispose(document);
+				return documentService.GetOrAddCanDispose(document, assembly);
 
 			return null;
 		}

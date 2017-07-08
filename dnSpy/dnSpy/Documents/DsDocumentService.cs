@@ -32,9 +32,33 @@ namespace dnSpy.Documents {
 	[Export(typeof(IDsDocumentService))]
 	sealed class DsDocumentService : IDsDocumentService {
 		readonly object lockObj;
-		readonly List<IDsDocument> documents;
+		readonly List<DocumentInfo> documents;
 		readonly List<IDsDocument> tempCache;
 		readonly IDsDocumentProvider[] documentProviders;
+
+		// PERF: Must be a struct; class is 9% slower (decompile mscorlib+dnSpy = 83 files)
+		struct DocumentInfo {
+			readonly List<AssemblyRef> alternativeAssemblyNames;
+			public readonly IDsDocument Document;
+
+			public DocumentInfo(IDsDocument document) {
+				alternativeAssemblyNames = new List<AssemblyRef>();
+				Document = document;
+			}
+
+			public bool IsAlternativeAssemblyName(IAssembly asm) {
+				foreach (var asmRef in alternativeAssemblyNames) {
+					if (AssemblyNameComparer.CompareAll.Equals(asmRef, asm))
+						return true;
+				}
+				return false;
+			}
+
+			public void AddAlternativeAssemblyName(IAssembly asm) {
+				if (!IsAlternativeAssemblyName(asm))
+					alternativeAssemblyNames.Add(asm.ToAssemblyRef());
+			}
+		}
 
 		public IAssemblyResolver AssemblyResolver { get; }
 
@@ -63,7 +87,7 @@ namespace dnSpy.Documents {
 		[ImportingConstructor]
 		public DsDocumentService(IDsDocumentServiceSettings documentServiceSettings, [ImportMany] IDsDocumentProvider[] documentProviders) {
 			lockObj = new object();
-			documents = new List<IDsDocument>();
+			documents = new List<DocumentInfo>();
 			tempCache = new List<IDsDocument>();
 			AssemblyResolver = new AssemblyResolver(this);
 			this.documentProviders = documentProviders.OrderBy(a => a.Order).ToArray();
@@ -82,13 +106,13 @@ namespace dnSpy.Documents {
 
 		public IDsDocument[] GetDocuments() {
 			lock (lockObj)
-				return documents.ToArray();
+				return documents.Select(a => a.Document).ToArray();
 		}
 
 		public void Clear() {
 			IDsDocument[] oldDocuments;
 			lock (lockObj) {
-				oldDocuments = documents.ToArray();
+				oldDocuments = documents.Select(a => a.Document).ToArray();
 				documents.Clear();
 			}
 			if (oldDocuments.Length != 0)
@@ -98,9 +122,13 @@ namespace dnSpy.Documents {
 		public IDsDocument FindAssembly(IAssembly assembly) {
 			var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
 			lock (lockObj) {
-				foreach (var document in documents) {
-					if (comparer.Equals(document.AssemblyDef, assembly))
-						return document;
+				foreach (var info in documents) {
+					if (comparer.Equals(info.Document.AssemblyDef, assembly))
+						return info.Document;
+				}
+				foreach (var info in documents) {
+					if (info.IsAlternativeAssemblyName(assembly))
+						return info.Document;
 				}
 			}
 			lock (tempCache) {
@@ -124,18 +152,18 @@ namespace dnSpy.Documents {
 
 		public IDsDocument Find(IDsDocumentNameKey key) {
 			lock (lockObj)
-				return Find_NoLock(key);
+				return Find_NoLock(key).Document;
 		}
 
-		IDsDocument Find_NoLock(IDsDocumentNameKey key) {
+		DocumentInfo Find_NoLock(IDsDocumentNameKey key) {
 			Debug.Assert(key != null);
 			if (key == null)
-				return null;
-			foreach (var document in documents) {
-				if (key.Equals(document.Key))
-					return document;
+				return default(DocumentInfo);
+			foreach (var info in documents) {
+				if (key.Equals(info.Document.Key))
+					return info;
 			}
-			return null;
+			return default(DocumentInfo);
 		}
 
 		public IDsDocument GetOrAdd(IDsDocument document) {
@@ -155,15 +183,23 @@ namespace dnSpy.Documents {
 				throw new ArgumentNullException(nameof(document));
 
 			lock (lockObj)
-				documents.Add(document);
+				documents.Add(new DocumentInfo(document));
 
 			CallCollectionChanged(NotifyDocumentCollectionChangedEventArgs.CreateAdd(document, data), delayLoad);
 			return document;
 		}
 
-		internal IDsDocument GetOrAddCanDispose(IDsDocument document) {
+		internal IDsDocument GetOrAddCanDispose(IDsDocument document, IAssembly origAssemblyRef) {
 			document.IsAutoLoaded = true;
-			var result = Find(document.Key);
+			IDsDocument result;
+			lock (lockObj) {
+				var info = Find_NoLock(document.Key);
+				if (info.Document != null && origAssemblyRef != null && document.AssemblyDef is AssemblyDef asm) {
+					if (!AssemblyNameComparer.CompareAll.Equals(origAssemblyRef, asm))
+						info.AddAlternativeAssemblyName(origAssemblyRef);
+				}
+				result = info.Document;
+			}
 			if (result == null) {
 				if (!AssemblyLoadEnabled)
 					return AddTempCachedDocument(document);
@@ -206,11 +242,11 @@ namespace dnSpy.Documents {
 		}
 
 		IDsDocument GetOrAdd_NoLock(IDsDocument document) {
-			var existing = Find_NoLock(document.Key);
+			var existing = Find_NoLock(document.Key).Document;
 			if (existing != null)
 				return existing;
 
-			documents.Add(document);
+			documents.Add(new DocumentInfo(document));
 			return document;
 		}
 
@@ -326,9 +362,10 @@ namespace dnSpy.Documents {
 				return null;
 
 			for (int i = 0; i < documents.Count; i++) {
-				if (key.Equals(documents[i].Key)) {
+				var info = documents[i];
+				if (key.Equals(info.Document.Key)) {
 					documents.RemoveAt(i);
-					return documents[i];
+					return info.Document;
 				}
 			}
 
@@ -341,7 +378,7 @@ namespace dnSpy.Documents {
 				var dict = new Dictionary<IDsDocument, int>();
 				int i = 0;
 				foreach (var n in this.documents)
-					dict[n] = i++;
+					dict[n.Document] = i++;
 				var list = new List<(IDsDocument document, int index)>(documents.Select(a => {
 					bool b = dict.TryGetValue(a, out int j);
 					return (a, (b ? j : -1));
@@ -351,7 +388,7 @@ namespace dnSpy.Documents {
 					if (t.index < 0)
 						continue;
 					Debug.Assert((uint)t.index < (uint)this.documents.Count);
-					Debug.Assert(this.documents[t.index] == t.document);
+					Debug.Assert(this.documents[t.index].Document == t.document);
 					this.documents.RemoveAt(t.index);
 					removedDocuments.Add(t.document);
 				}
