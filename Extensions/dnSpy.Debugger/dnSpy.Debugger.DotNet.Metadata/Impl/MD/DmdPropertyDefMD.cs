@@ -30,12 +30,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly DmdEcma335MetadataReader reader;
 		readonly DmdMethodSignature methodSignature;
 
-		public DmdPropertyDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdPropertyDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			var row = reader.TablesStream.ReadPropertyRow(rid);
 			Name = reader.StringsStream.ReadNoNull(row.Name);
 			Attributes = (DmdPropertyAttributes)row.PropFlags;
-			methodSignature = reader.ReadMethodSignature(row.Type, genericTypeArguments, null, isProperty: true);
+			methodSignature = reader.ReadMethodSignature(row.Type, DeclaringType.GetGenericArguments(), null, isProperty: true);
 		}
 
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;

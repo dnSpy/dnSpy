@@ -182,22 +182,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdType GetGenericTypeDefinition() => IsGenericType ? this : throw new InvalidOperationException();
 
-		public abstract DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments);
-		public abstract DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments);
-		public abstract DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments);
-		public abstract DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments);
+		public abstract DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType);
+		public abstract DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType);
+		public abstract DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType);
+		public abstract DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType);
 
-		public sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ReadDeclaredFields(this, reflectedType, GetGenericArguments());
-		public sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ReadDeclaredMethods(this, reflectedType, GetGenericArguments());
-		public sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(this, reflectedType, GetGenericArguments());
-		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(this, reflectedType, GetGenericArguments());
+		public sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ReadDeclaredFields(this, reflectedType);
+		public sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ReadDeclaredMethods(this, reflectedType);
+		public sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(this, reflectedType);
+		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(this, reflectedType);
 
 		public override bool IsFullyResolved => true;
 		public override DmdTypeBase FullResolve() => this;
 
-		protected override IList<DmdType> ReadDeclaredInterfaces() => ReadDeclaredInterfacesCore(GetGenericArguments());
-		internal IList<DmdType> ReadDeclaredInterfaces2() => ReadDeclaredInterfacesCore(GetGenericArguments());
-		internal IList<DmdType> ReadDeclaredInterfaces(IList<DmdType> genericTypeArguments) => ReadDeclaredInterfacesCore(genericTypeArguments);
+		public sealed override DmdType[] ReadDeclaredInterfaces() => ReadDeclaredInterfacesCore(GetGenericArguments());
+		public DmdType[] ReadDeclaredInterfaces(IList<DmdType> genericTypeArguments) => ReadDeclaredInterfacesCore(genericTypeArguments);
 		protected abstract DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments);
 
 		public sealed override ReadOnlyCollection<DmdType> NestedTypes => NestedTypesCore;

@@ -68,31 +68,31 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return genericParams;
 		}
 
-		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType) {
 			var ridList = reader.Metadata.GetFieldRidList(Rid);
 			if (ridList.Count == 0)
 				return Array.Empty<DmdFieldInfo>();
 			var fields = new DmdFieldInfo[ridList.Count];
 			for (int i = 0; i < fields.Length; i++) {
 				uint rid = ridList[i];
-				fields[i] = reader.CreateFieldDef(rid, declaringType, reflectedType, genericTypeArguments);
+				fields[i] = reader.CreateFieldDef(rid, declaringType, reflectedType);
 			}
 			return fields;
 		}
 
-		public override DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		public override DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType) {
 			var ridList = reader.Metadata.GetMethodRidList(Rid);
 			if (ridList.Count == 0)
 				return Array.Empty<DmdMethodBase>();
 			var methods = new DmdMethodBase[ridList.Count];
 			for (int i = 0; i < methods.Length; i++) {
 				uint rid = ridList[i];
-				methods[i] = reader.CreateMethodDef(rid, declaringType, reflectedType, genericTypeArguments);
+				methods[i] = reader.CreateMethodDef(rid, declaringType, reflectedType);
 			}
 			return methods;
 		}
 
-		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType) {
 			var mapRid = reader.Metadata.GetPropertyMapRid(Rid);
 			var ridList = reader.Metadata.GetPropertyRidList(mapRid);
 			if (ridList.Count == 0)
@@ -100,12 +100,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var properties = new DmdPropertyInfo[ridList.Count];
 			for (int i = 0; i < properties.Length; i++) {
 				uint rid = ridList[i];
-				properties[i] = reader.CreatePropertyDef(rid, declaringType, reflectedType, genericTypeArguments);
+				properties[i] = reader.CreatePropertyDef(rid, declaringType, reflectedType);
 			}
 			return properties;
 		}
 
-		public override DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		public override DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType) {
 			var mapRid = reader.Metadata.GetEventMapRid(Rid);
 			var ridList = reader.Metadata.GetEventRidList(mapRid);
 			if (ridList.Count == 0)
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var events = new DmdEventInfo[ridList.Count];
 			for (int i = 0; i < events.Length; i++) {
 				uint rid = ridList[i];
-				events[i] = reader.CreateEventDef(rid, declaringType, reflectedType, genericTypeArguments);
+				events[i] = reader.CreateEventDef(rid, declaringType, reflectedType);
 			}
 			return events;
 		}

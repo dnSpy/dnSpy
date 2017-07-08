@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		protected override IList<DmdType> ReadDeclaredInterfaces() => ((DmdAppDomainImpl)AppDomain).GetSZArrayInterfaces(elementType);
+		public override DmdType[] ReadDeclaredInterfaces() => ((DmdAppDomainImpl)AppDomain).GetSZArrayInterfaces(elementType);
 
 		public override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) {
 			var appDomain = AppDomain;

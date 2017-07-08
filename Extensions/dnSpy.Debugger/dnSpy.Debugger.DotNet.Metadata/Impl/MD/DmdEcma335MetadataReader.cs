@@ -119,19 +119,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				declaringType = ResolveTypeDef(Metadata.GetOwnerTypeOfField(rid)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef(Metadata.GetOwnerTypeOfField(rid)));
-			return CreateFieldDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+			return CreateFieldDefCore(rid, declaringType, declaringType);
 		}
 
-		internal DmdFieldDef CreateFieldDef(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
-			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
-				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+		internal DmdFieldDef CreateFieldDef(uint rid, DmdType declaringType, DmdType reflectedType) {
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
 				return ResolveFieldDef(rid, declaringTypeDef);
-			}
-			return CreateFieldDefCore(rid, declaringType, reflectedType, genericTypeArguments);
+			return CreateFieldDefCore(rid, declaringType, reflectedType);
 		}
 
-		DmdFieldDefMD CreateFieldDefCore(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
-			new DmdFieldDefMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+		DmdFieldDefMD CreateFieldDefCore(uint rid, DmdType declaringType, DmdType reflectedType) =>
+			new DmdFieldDefMD(this, rid, declaringType, reflectedType);
 
 		internal DmdType ReadFieldType(uint signature, IList<DmdType> genericTypeArguments) {
 			lock (signatureLock) {
@@ -163,25 +161,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				declaringType = ResolveTypeDef(Metadata.GetOwnerTypeOfMethod(rid)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef(Metadata.GetOwnerTypeOfMethod(rid)));
-			return CreateMethodDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+			return CreateMethodDefCore(rid, declaringType, declaringType);
 		}
 
-		internal DmdMethodBase CreateMethodDef(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
-			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
-				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+		internal DmdMethodBase CreateMethodDef(uint rid, DmdType declaringType, DmdType reflectedType) {
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
 				return ResolveMethodDef(rid, declaringTypeDef);
-			}
-			return CreateMethodDefCore(rid, declaringType, reflectedType, genericTypeArguments);
+			return CreateMethodDefCore(rid, declaringType, reflectedType);
 		}
 
-		DmdMethodBase CreateMethodDefCore(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		DmdMethodBase CreateMethodDefCore(uint rid, DmdType declaringType, DmdType reflectedType) {
 			var row = TablesStream.ReadMethodRow(rid);
 			string name = StringsStream.ReadNoNull(row.Name);
 			if ((row.Flags & (int)DmdMethodAttributes.RTSpecialName) != 0 && name.Length > 0 && name[0] == '.') {
 				if (name == DmdConstructorInfo.ConstructorName || name == DmdConstructorInfo.TypeConstructorName)
-					return new DmdConstructorDefMD(this, row, rid, name, declaringType, reflectedType, genericTypeArguments);
+					return new DmdConstructorDefMD(this, row, rid, name, declaringType, reflectedType);
 			}
-			return new DmdMethodDefMD(this, row, rid, name, declaringType, reflectedType, genericTypeArguments);
+			return new DmdMethodDefMD(this, row, rid, name, declaringType, reflectedType);
 		}
 
 		internal DmdMethodSignature ReadMethodSignature(uint signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool isProperty) {
@@ -246,38 +242,34 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				declaringType = ResolveTypeDef(Metadata.GetOwnerTypeOfEvent(rid)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef(Metadata.GetOwnerTypeOfEvent(rid)));
-			return CreateEventDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+			return CreateEventDefCore(rid, declaringType, declaringType);
 		}
 
-		internal DmdEventDef CreateEventDef(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
-			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
-				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+		internal DmdEventDef CreateEventDef(uint rid, DmdType declaringType, DmdType reflectedType) {
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
 				return ResolveEventDef(rid, declaringTypeDef);
-			}
-			return CreateEventDefCore(rid, declaringType, reflectedType, genericTypeArguments);
+			return CreateEventDefCore(rid, declaringType, reflectedType);
 		}
 
-		DmdEventDef CreateEventDefCore(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
-			new DmdEventDefMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+		DmdEventDef CreateEventDefCore(uint rid, DmdType declaringType, DmdType reflectedType) =>
+			new DmdEventDefMD(this, rid, declaringType, reflectedType);
 
 		DmdPropertyDef CreateResolvedProperty(uint rid, DmdTypeDef declaringType) {
 			if ((object)declaringType == null)
 				declaringType = ResolveTypeDef(Metadata.GetOwnerTypeOfProperty(rid)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef(Metadata.GetOwnerTypeOfProperty(rid)));
-			return CreatePropertyDefCore(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+			return CreatePropertyDefCore(rid, declaringType, declaringType);
 		}
 
-		internal DmdPropertyDef CreatePropertyDef(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
-			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
-				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+		internal DmdPropertyDef CreatePropertyDef(uint rid, DmdType declaringType, DmdType reflectedType) {
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
 				return ResolvePropertyDef(rid, declaringTypeDef);
-			}
-			return CreatePropertyDefCore(rid, declaringType, reflectedType, genericTypeArguments);
+			return CreatePropertyDefCore(rid, declaringType, reflectedType);
 		}
 
-		DmdPropertyDef CreatePropertyDefCore(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
-			new DmdPropertyDefMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+		DmdPropertyDef CreatePropertyDefCore(uint rid, DmdType declaringType, DmdType reflectedType) =>
+			new DmdPropertyDefMD(this, rid, declaringType, reflectedType);
 
 		internal DmdType[] CreateGenericParameters(DmdMethodBase method) {
 			var ridList = Metadata.GetGenericParamRidList(Table.Method, (uint)method.MetadataToken & 0x00FFFFFF);

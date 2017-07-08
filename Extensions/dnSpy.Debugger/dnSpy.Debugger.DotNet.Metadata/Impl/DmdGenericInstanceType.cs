@@ -114,13 +114,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredFields(this, reflectedType, typeArguments);
-		public sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredMethods(this, reflectedType, typeArguments);
-		public sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredProperties(this, reflectedType, typeArguments);
-		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredEvents(this, reflectedType, typeArguments);
+		public sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredFields(this, reflectedType);
+		public sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredMethods(this, reflectedType);
+		public sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredProperties(this, reflectedType);
+		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => genericTypeDefinition.ReadDeclaredEvents(this, reflectedType);
 
-		protected override IList<DmdType> ReadDeclaredInterfaces() => ReadDeclaredInterfaces2();
-		internal IList<DmdType> ReadDeclaredInterfaces2() => genericTypeDefinition.ReadDeclaredInterfaces(typeArguments);
+		public override DmdType[] ReadDeclaredInterfaces() => genericTypeDefinition.ReadDeclaredInterfaces(typeArguments);
 		public override ReadOnlyCollection<DmdType> NestedTypes => genericTypeDefinition.NestedTypes;
 
 		public override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => genericTypeDefinition.CreateCustomAttributes();

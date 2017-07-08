@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override bool IsFullyResolved => true;
 		public sealed override DmdTypeBase FullResolve() => this;
 
-		protected override IList<DmdType> ReadDeclaredInterfaces() {
+		public override DmdType[] ReadDeclaredInterfaces() {
 			var list = ObjectPools.AllocListOfType();
 			foreach (var gpcType in GetGenericParameterConstraints()) {
 				if (gpcType.IsInterface)

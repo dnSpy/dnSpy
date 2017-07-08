@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
@@ -29,14 +28,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		readonly DmdComMetadataReader reader;
 
-		public DmdEventDefCOMD(DmdComMetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdEventDefCOMD(DmdComMetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			reader.Dispatcher.VerifyAccess();
 			uint token = 0x14000000 + rid;
 			Name = MDAPI.GetEventName(reader.MetaDataImport, token) ?? string.Empty;
 			Attributes = MDAPI.GetEventAttributes(reader.MetaDataImport, token);
 			var eventTypeToken = MDAPI.GetEventTypeToken(reader.MetaDataImport, token);
-			EventHandlerType = reader.ResolveType((int)eventTypeToken, genericTypeArguments, null, DmdResolveOptions.None) ?? reader.Module.AppDomain.System_Void;
+			EventHandlerType = reader.ResolveType((int)eventTypeToken, DeclaringType.GetGenericArguments(), null, DmdResolveOptions.None) ?? reader.Module.AppDomain.System_Void;
 		}
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);

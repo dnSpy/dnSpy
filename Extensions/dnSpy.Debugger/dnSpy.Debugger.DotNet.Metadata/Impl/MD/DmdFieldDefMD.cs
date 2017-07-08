@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdFieldDefMD : DmdFieldDef {
@@ -28,12 +27,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		readonly DmdEcma335MetadataReader reader;
 
-		public DmdFieldDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdFieldDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			var row = reader.TablesStream.ReadFieldRow(rid);
 			Attributes = (DmdFieldAttributes)row.Flags;
 			Name = reader.StringsStream.ReadNoNull(row.Name);
-			FieldType = reader.ReadFieldType(row.Signature, genericTypeArguments);
+			FieldType = reader.ReadFieldType(row.Signature, DeclaringType.GetGenericArguments());
 		}
 
 		public sealed override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;

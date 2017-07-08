@@ -377,7 +377,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			Interlocked.CompareExchange(ref f.__implementedInterfaces_DONT_USE, ReadOnlyCollectionHelpers.Create(implIfaces), null);
 			return f.__implementedInterfaces_DONT_USE;
 		}
-		protected abstract IList<DmdType> ReadDeclaredInterfaces();
+		public abstract DmdType[] ReadDeclaredInterfaces();
 
 		static DmdType[] CreateInterfaces(DmdTypeBase type) {
 			var list = ObjectPools.AllocListOfType();

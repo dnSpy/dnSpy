@@ -86,9 +86,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return genericParams;
 		}
 
-		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
-			COMThread(() => ReadDeclaredFields_COMThread(declaringType, reflectedType, genericTypeArguments));
-		DmdFieldInfo[] ReadDeclaredFields_COMThread(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType) =>
+			COMThread(() => ReadDeclaredFields_COMThread(declaringType, reflectedType));
+		DmdFieldInfo[] ReadDeclaredFields_COMThread(DmdType declaringType, DmdType reflectedType) {
 			reader.Dispatcher.VerifyAccess();
 			var tokens = MDAPI.GetFieldTokens(reader.MetaDataImport, (uint)MetadataToken);
 			if (tokens.Length == 0)
@@ -96,14 +96,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			var fields = new DmdFieldInfo[tokens.Length];
 			for (int i = 0; i < fields.Length; i++) {
 				uint rid = tokens[i] & 0x00FFFFFF;
-				fields[i] = reader.CreateFieldDef_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+				fields[i] = reader.CreateFieldDef_COMThread(rid, declaringType, reflectedType);
 			}
 			return fields;
 		}
 
-		public override DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
-			COMThread(() => ReadDeclaredMethods_COMThread(declaringType, reflectedType, genericTypeArguments));
-		DmdMethodBase[] ReadDeclaredMethods_COMThread(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		public override DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType) =>
+			COMThread(() => ReadDeclaredMethods_COMThread(declaringType, reflectedType));
+		DmdMethodBase[] ReadDeclaredMethods_COMThread(DmdType declaringType, DmdType reflectedType) {
 			reader.Dispatcher.VerifyAccess();
 			var tokens = MDAPI.GetMethodTokens(reader.MetaDataImport, (uint)MetadataToken);
 			if (tokens.Length == 0)
@@ -111,14 +111,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			var methods = new DmdMethodBase[tokens.Length];
 			for (int i = 0; i < methods.Length; i++) {
 				uint rid = tokens[i] & 0x00FFFFFF;
-				methods[i] = reader.CreateMethodDef_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+				methods[i] = reader.CreateMethodDef_COMThread(rid, declaringType, reflectedType);
 			}
 			return methods;
 		}
 
-		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
-			COMThread(() => ReadDeclaredProperties_COMThread(declaringType, reflectedType, genericTypeArguments));
-		DmdPropertyInfo[] ReadDeclaredProperties_COMThread(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType) =>
+			COMThread(() => ReadDeclaredProperties_COMThread(declaringType, reflectedType));
+		DmdPropertyInfo[] ReadDeclaredProperties_COMThread(DmdType declaringType, DmdType reflectedType) {
 			reader.Dispatcher.VerifyAccess();
 			var tokens = MDAPI.GetPropertyTokens(reader.MetaDataImport, (uint)MetadataToken);
 			if (tokens.Length == 0)
@@ -126,14 +126,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			var properties = new DmdPropertyInfo[tokens.Length];
 			for (int i = 0; i < properties.Length; i++) {
 				uint rid = tokens[i] & 0x00FFFFFF;
-				properties[i] = reader.CreatePropertyDef_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+				properties[i] = reader.CreatePropertyDef_COMThread(rid, declaringType, reflectedType);
 			}
 			return properties;
 		}
 
-		public override DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) =>
-			COMThread(() => ReadDeclaredEvents_COMThread(declaringType, reflectedType, genericTypeArguments));
-		DmdEventInfo[] ReadDeclaredEvents_COMThread(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		public override DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType) =>
+			COMThread(() => ReadDeclaredEvents_COMThread(declaringType, reflectedType));
+		DmdEventInfo[] ReadDeclaredEvents_COMThread(DmdType declaringType, DmdType reflectedType) {
 			reader.Dispatcher.VerifyAccess();
 			var tokens = MDAPI.GetEventTokens(reader.MetaDataImport, (uint)MetadataToken);
 			if (tokens.Length == 0)
@@ -141,7 +141,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			var events = new DmdEventInfo[tokens.Length];
 			for (int i = 0; i < events.Length; i++) {
 				uint rid = tokens[i] & 0x00FFFFFF;
-				events[i] = reader.CreateEventDef_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+				events[i] = reader.CreateEventDef_COMThread(rid, declaringType, reflectedType);
 			}
 			return events;
 		}

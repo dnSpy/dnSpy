@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdFieldDefCOMD : DmdFieldDef {
@@ -28,14 +27,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		readonly DmdComMetadataReader reader;
 
-		public DmdFieldDefCOMD(DmdComMetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdFieldDefCOMD(DmdComMetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			reader.Dispatcher.VerifyAccess();
 
 			uint token = 0x04000000 + rid;
 			Attributes = MDAPI.GetFieldAttributes(reader.MetaDataImport, token);
 			Name = MDAPI.GetFieldName(reader.MetaDataImport, token) ?? string.Empty;
-			FieldType = reader.ReadFieldType_COMThread(MDAPI.GetFieldSignatureBlob(reader.MetaDataImport, token), genericTypeArguments);
+			FieldType = reader.ReadFieldType_COMThread(MDAPI.GetFieldSignatureBlob(reader.MetaDataImport, token), DeclaringType.GetGenericArguments());
 		}
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);

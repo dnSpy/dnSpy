@@ -30,14 +30,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		readonly DmdEcma335MetadataReader reader;
 
-		public DmdEventDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdEventDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			var row = reader.TablesStream.ReadEventRow(rid);
 			Name = reader.StringsStream.ReadNoNull(row.Name);
 			Attributes = (DmdEventAttributes)row.EventFlags;
 			if (!CodedToken.TypeDefOrRef.Decode(row.EventType, out uint token))
 				token = uint.MaxValue;
-			EventHandlerType = reader.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.None) ?? reader.Module.AppDomain.System_Void;
+			EventHandlerType = reader.ResolveType((int)token, DeclaringType.GetGenericArguments(), null, DmdResolveOptions.None) ?? reader.Module.AppDomain.System_Void;
 		}
 
 		protected override void GetMethods(out DmdMethodInfo addMethod, out DmdMethodInfo removeMethod, out DmdMethodInfo raiseMethod, out DmdMethodInfo[] otherMethods) {

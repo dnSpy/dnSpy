@@ -37,10 +37,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected override DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments) => null;
 		protected override DmdType[] CreateGenericParameters() => null;
 
-		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
-		public override DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
-		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
-		public override DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) => null;
+		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType) => null;
+		public override DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType) => null;
+		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType) => null;
+		public override DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType) => null;
 
 		protected override DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments) => null;
 		protected override DmdType[] CreateNestedTypes() => null;

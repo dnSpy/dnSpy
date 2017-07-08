@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
@@ -29,13 +28,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		readonly DmdComMetadataReader reader;
 		readonly DmdMethodSignature methodSignature;
 
-		public DmdPropertyDefCOMD(DmdComMetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) : base(rid, declaringType, reflectedType) {
+		public DmdPropertyDefCOMD(DmdComMetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			reader.Dispatcher.VerifyAccess();
 			uint token = 0x17000000 + rid;
 			Name = MDAPI.GetPropertyName(reader.MetaDataImport, token) ?? string.Empty;
 			Attributes = MDAPI.GetPropertyAttributes(reader.MetaDataImport, token);
-			methodSignature = reader.ReadMethodSignature_COMThread(MDAPI.GetPropertySignatureBlob(reader.MetaDataImport, token), genericTypeArguments, null, isProperty: true);
+			methodSignature = reader.ReadMethodSignature_COMThread(MDAPI.GetPropertySignatureBlob(reader.MetaDataImport, token), DeclaringType.GetGenericArguments(), null, isProperty: true);
 		}
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);

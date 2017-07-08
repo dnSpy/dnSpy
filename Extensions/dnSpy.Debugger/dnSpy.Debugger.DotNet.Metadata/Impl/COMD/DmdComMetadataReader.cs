@@ -347,21 +347,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				declaringType = ResolveTypeDef_COMThread(MDAPI.GetFieldOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetFieldOwnerRid(MetaDataImport, token)));
-			return CreateFieldDefCore_COMThread(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+			return CreateFieldDefCore_COMThread(rid, declaringType, declaringType);
 		}
 
-		internal DmdFieldDef CreateFieldDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		internal DmdFieldDef CreateFieldDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
-			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
-				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
 				return ResolveFieldDef_COMThread(rid, declaringTypeDef);
-			}
-			return CreateFieldDefCore_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+			return CreateFieldDefCore_COMThread(rid, declaringType, reflectedType);
 		}
 
-		DmdFieldDefCOMD CreateFieldDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		DmdFieldDefCOMD CreateFieldDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
-			return new DmdFieldDefCOMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+			return new DmdFieldDefCOMD(this, rid, declaringType, reflectedType);
 		}
 
 		internal DmdType ReadFieldType_COMThread((IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments) {
@@ -399,28 +397,26 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				declaringType = ResolveTypeDef_COMThread(MDAPI.GetMethodOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetMethodOwnerRid(MetaDataImport, token)));
-			return CreateMethodDefCore_COMThread(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+			return CreateMethodDefCore_COMThread(rid, declaringType, declaringType);
 		}
 
-		internal DmdMethodBase CreateMethodDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		internal DmdMethodBase CreateMethodDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
-			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
-				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
 				return ResolveMethodDef_COMThread(rid, declaringTypeDef);
-			}
-			return CreateMethodDefCore_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+			return CreateMethodDefCore_COMThread(rid, declaringType, reflectedType);
 		}
 
-		DmdMethodBase CreateMethodDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		DmdMethodBase CreateMethodDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
 			uint token = 0x06000000 + rid;
 			var name = MDAPI.GetMethodName(MetaDataImport, token) ?? string.Empty;
 			MDAPI.GetMethodAttributes(MetaDataImport, token, out var attrs, out var implAttrs);
 			if ((attrs & DmdMethodAttributes.RTSpecialName) != 0 && name.Length > 0 && name[0] == '.') {
 				if (name == DmdConstructorInfo.ConstructorName || name == DmdConstructorInfo.TypeConstructorName)
-					return new DmdConstructorDefCOMD(this, attrs, implAttrs, rid, name, declaringType, reflectedType, genericTypeArguments);
+					return new DmdConstructorDefCOMD(this, attrs, implAttrs, rid, name, declaringType, reflectedType);
 			}
-			return new DmdMethodDefCOMD(this, attrs, implAttrs, rid, name, declaringType, reflectedType, genericTypeArguments);
+			return new DmdMethodDefCOMD(this, attrs, implAttrs, rid, name, declaringType, reflectedType);
 		}
 
 		internal DmdMethodSignature ReadMethodSignature_COMThread((IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool isProperty) {
@@ -491,21 +487,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				declaringType = ResolveTypeDef_COMThread(MDAPI.GetEventOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetEventOwnerRid(MetaDataImport, token)));
-			return CreateEventDefCore_COMThread(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+			return CreateEventDefCore_COMThread(rid, declaringType, declaringType);
 		}
 
-		internal DmdEventDef CreateEventDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		internal DmdEventDef CreateEventDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
-			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
-				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
 				return ResolveEventDef_COMThread(rid, declaringTypeDef);
-			}
-			return CreateEventDefCore_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+			return CreateEventDefCore_COMThread(rid, declaringType, reflectedType);
 		}
 
-		DmdEventDef CreateEventDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		DmdEventDef CreateEventDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
-			return new DmdEventDefCOMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+			return new DmdEventDefCOMD(this, rid, declaringType, reflectedType);
 		}
 
 		DmdPropertyDef CreateResolvedProperty_COMThread(uint rid, DmdTypeDef declaringType) {
@@ -517,21 +511,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				declaringType = ResolveTypeDef_COMThread(MDAPI.GetPropertyOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetPropertyOwnerRid(MetaDataImport, token)));
-			return CreatePropertyDefCore_COMThread(rid, declaringType, declaringType, declaringType.GetGenericArguments());
+			return CreatePropertyDefCore_COMThread(rid, declaringType, declaringType);
 		}
 
-		internal DmdPropertyDef CreatePropertyDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		internal DmdPropertyDef CreatePropertyDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
-			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef) {
-				Debug.Assert(declaringTypeDef.GetGenericArguments() == genericTypeArguments);
+			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
 				return ResolvePropertyDef_COMThread(rid, declaringTypeDef);
-			}
-			return CreatePropertyDefCore_COMThread(rid, declaringType, reflectedType, genericTypeArguments);
+			return CreatePropertyDefCore_COMThread(rid, declaringType, reflectedType);
 		}
 
-		DmdPropertyDef CreatePropertyDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType, IList<DmdType> genericTypeArguments) {
+		DmdPropertyDef CreatePropertyDefCore_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
-			return new DmdPropertyDefCOMD(this, rid, declaringType, reflectedType, genericTypeArguments);
+			return new DmdPropertyDefCOMD(this, rid, declaringType, reflectedType);
 		}
 
 		internal DmdType[] CreateGenericParameters_COMThread(DmdMethodBase method) {

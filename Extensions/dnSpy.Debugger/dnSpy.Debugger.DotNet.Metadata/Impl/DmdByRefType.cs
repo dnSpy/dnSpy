@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		protected override IList<DmdType> ReadDeclaredInterfaces() => null;
+		public override DmdType[] ReadDeclaredInterfaces() => null;
 		public override ReadOnlyCollection<DmdType> NestedTypes => ReadOnlyCollectionHelpers.Empty<DmdType>();
 	}
 }
