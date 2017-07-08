@@ -31,7 +31,8 @@ using dnSpy.Contracts.Documents;
 namespace dnSpy.Documents {
 	[Export(typeof(IDsDocumentService))]
 	sealed class DsDocumentService : IDsDocumentService {
-		readonly object lockObj;
+		// PERF: Most of the time we only read from the assembly list so use a ReaderWriterLockSlim instead of a normal lock
+		readonly ReaderWriterLockSlim rwLock;
 		readonly List<DocumentInfo> documents;
 		readonly List<IDsDocument> tempCache;
 		readonly IDsDocumentProvider[] documentProviders;
@@ -47,8 +48,10 @@ namespace dnSpy.Documents {
 			}
 
 			public bool IsAlternativeAssemblyName(IAssembly asm) {
-				foreach (var asmRef in alternativeAssemblyNames) {
-					if (AssemblyNameComparer.CompareAll.Equals(asmRef, asm))
+				var list = alternativeAssemblyNames;
+				int count = list.Count;
+				for (int i = 0; i < count; i++) {
+					if (AssemblyNameComparer.CompareAll.Equals(list[i], asm))
 						return true;
 				}
 				return false;
@@ -86,7 +89,7 @@ namespace dnSpy.Documents {
 
 		[ImportingConstructor]
 		public DsDocumentService(IDsDocumentServiceSettings documentServiceSettings, [ImportMany] IDsDocumentProvider[] documentProviders) {
-			lockObj = new object();
+			rwLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 			documents = new List<DocumentInfo>();
 			tempCache = new List<IDsDocument>();
 			AssemblyResolver = new AssemblyResolver(this);
@@ -105,15 +108,24 @@ namespace dnSpy.Documents {
 			CollectionChanged?.Invoke(this, eventArgs);
 
 		public IDsDocument[] GetDocuments() {
-			lock (lockObj)
+			rwLock.EnterReadLock();
+			try {
 				return documents.Select(a => a.Document).ToArray();
+			}
+			finally {
+				rwLock.ExitReadLock();
+			}
 		}
 
 		public void Clear() {
 			IDsDocument[] oldDocuments;
-			lock (lockObj) {
+			rwLock.EnterWriteLock();
+			try {
 				oldDocuments = documents.Select(a => a.Document).ToArray();
 				documents.Clear();
+			}
+			finally {
+				rwLock.ExitWriteLock();
 			}
 			if (oldDocuments.Length != 0)
 				CallCollectionChanged(NotifyDocumentCollectionChangedEventArgs.CreateClear(oldDocuments, null));
@@ -121,7 +133,8 @@ namespace dnSpy.Documents {
 
 		public IDsDocument FindAssembly(IAssembly assembly) {
 			var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
-			lock (lockObj) {
+			rwLock.EnterReadLock();
+			try {
 				foreach (var info in documents) {
 					if (comparer.Equals(info.Document.AssemblyDef, assembly))
 						return info.Document;
@@ -130,6 +143,9 @@ namespace dnSpy.Documents {
 					if (info.IsAlternativeAssemblyName(assembly))
 						return info.Document;
 				}
+			}
+			finally {
+				rwLock.ExitReadLock();
 			}
 			lock (tempCache) {
 				foreach (var document in tempCache) {
@@ -151,8 +167,13 @@ namespace dnSpy.Documents {
 		}
 
 		public IDsDocument Find(IDsDocumentNameKey key) {
-			lock (lockObj)
+			rwLock.EnterReadLock();
+			try {
 				return Find_NoLock(key).Document;
+			}
+			finally {
+				rwLock.ExitReadLock();
+			}
 		}
 
 		DocumentInfo Find_NoLock(IDsDocumentNameKey key) {
@@ -171,8 +192,26 @@ namespace dnSpy.Documents {
 				throw new ArgumentNullException(nameof(document));
 
 			IDsDocument result;
-			lock (lockObj)
-				result = GetOrAdd_NoLock(document);
+			rwLock.EnterUpgradeableReadLock();
+			try {
+				var existing = Find_NoLock(document.Key).Document;
+				if (existing != null)
+					result = existing;
+				else {
+					rwLock.EnterWriteLock();
+					try {
+						documents.Add(new DocumentInfo(document));
+						result = document;
+					}
+					finally {
+						rwLock.ExitWriteLock();
+					}
+				}
+			}
+			finally {
+				rwLock.ExitUpgradeableReadLock();
+			}
+
 			if (result == document)
 				CallCollectionChanged(NotifyDocumentCollectionChangedEventArgs.CreateAdd(result, null));
 			return result;
@@ -182,8 +221,13 @@ namespace dnSpy.Documents {
 			if (document == null)
 				throw new ArgumentNullException(nameof(document));
 
-			lock (lockObj)
+			rwLock.EnterWriteLock();
+			try {
 				documents.Add(new DocumentInfo(document));
+			}
+			finally {
+				rwLock.ExitWriteLock();
+			}
 
 			CallCollectionChanged(NotifyDocumentCollectionChangedEventArgs.CreateAdd(document, data), delayLoad);
 			return document;
@@ -192,21 +236,34 @@ namespace dnSpy.Documents {
 		internal IDsDocument GetOrAddCanDispose(IDsDocument document, IAssembly origAssemblyRef) {
 			document.IsAutoLoaded = true;
 			IDsDocument result;
-			lock (lockObj) {
-				var info = Find_NoLock(document.Key);
-				if (info.Document != null && origAssemblyRef != null && document.AssemblyDef is AssemblyDef asm) {
-					if (!AssemblyNameComparer.CompareAll.Equals(origAssemblyRef, asm))
-						info.AddAlternativeAssemblyName(origAssemblyRef);
-				}
+			DocumentInfo info;
+			rwLock.EnterReadLock();
+			try {
+				info = Find_NoLock(document.Key);
 				result = info.Document;
+			}
+			finally {
+				rwLock.ExitReadLock();
 			}
 			if (result == null) {
 				if (!AssemblyLoadEnabled)
 					return AddTempCachedDocument(document);
 				result = GetOrAdd(document);
 			}
-			if (result != document)
+			if (result != document) {
+				if (info.Document != null && origAssemblyRef != null && document.AssemblyDef is AssemblyDef asm) {
+					if (!AssemblyNameComparer.CompareAll.Equals(origAssemblyRef, asm)) {
+						rwLock.EnterWriteLock();
+						try {
+							info.AddAlternativeAssemblyName(origAssemblyRef);
+						}
+						finally {
+							rwLock.ExitWriteLock();
+						}
+					}
+				}
 				Dispose(document);
+			}
 			return result;
 		}
 
@@ -238,15 +295,6 @@ namespace dnSpy.Documents {
 		// better to disable mmap'd I/O as soon as possible. The document must've been created by us.
 		static IDsDocument DisableMMapdIO(IDsDocument document) {
 			MemoryMappedIOHelper.DisableMemoryMappedIO(document);
-			return document;
-		}
-
-		IDsDocument GetOrAdd_NoLock(IDsDocument document) {
-			var existing = Find_NoLock(document.Key).Document;
-			if (existing != null)
-				return existing;
-
-			documents.Add(new DocumentInfo(document));
 			return document;
 		}
 
@@ -349,8 +397,13 @@ namespace dnSpy.Documents {
 				return;
 
 			IDsDocument removedDocument;
-			lock (lockObj)
+			rwLock.EnterWriteLock();
+			try {
 				removedDocument = Remove_NoLock(key);
+			}
+			finally {
+				rwLock.ExitWriteLock();
+			}
 			Debug.Assert(removedDocument != null);
 
 			if (removedDocument != null)
@@ -374,7 +427,8 @@ namespace dnSpy.Documents {
 
 		public void Remove(IEnumerable<IDsDocument> documents) {
 			var removedDocuments = new List<IDsDocument>();
-			lock (lockObj) {
+			rwLock.EnterWriteLock();
+			try {
 				var dict = new Dictionary<IDsDocument, int>();
 				int i = 0;
 				foreach (var n in this.documents)
@@ -392,6 +446,9 @@ namespace dnSpy.Documents {
 					this.documents.RemoveAt(t.index);
 					removedDocuments.Add(t.document);
 				}
+			}
+			finally {
+				rwLock.ExitWriteLock();
 			}
 
 			if (removedDocuments.Count > 0)
