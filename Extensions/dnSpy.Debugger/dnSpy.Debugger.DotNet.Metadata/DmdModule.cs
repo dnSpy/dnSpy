@@ -404,6 +404,47 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			ResolveMember(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), options);
 
 		/// <summary>
+		/// Resolves a method signature
+		/// </summary>
+		/// <param name="metadataToken">StandaloneSig token from a method body</param>
+		/// <param name="genericTypeArguments">Generic type arguments or null</param>
+		/// <param name="genericMethodArguments">Generic method arguments or null</param>
+		/// <returns></returns>
+		public DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
+			ResolveMethodSignature(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError);
+
+		/// <summary>
+		/// Resolves a method signature
+		/// </summary>
+		/// <param name="metadataToken">StandaloneSig token from a method body</param>
+		/// <param name="genericTypeArguments">Generic type arguments or null</param>
+		/// <param name="genericMethodArguments">Generic method arguments or null</param>
+		/// <returns></returns>
+		public DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments) =>
+			ResolveMethodSignature(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), DmdResolveOptions.ThrowOnError);
+
+		/// <summary>
+		/// Resolves a method signature
+		/// </summary>
+		/// <param name="metadataToken">StandaloneSig token from a method body</param>
+		/// <param name="genericTypeArguments">Generic type arguments or null</param>
+		/// <param name="genericMethodArguments">Generic method arguments or null</param>
+		/// <param name="options">Resolve options</param>
+		/// <returns></returns>
+		public abstract DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
+
+		/// <summary>
+		/// Resolves a method signature
+		/// </summary>
+		/// <param name="metadataToken">StandaloneSig token from a method body</param>
+		/// <param name="genericTypeArguments">Generic type arguments or null</param>
+		/// <param name="genericMethodArguments">Generic method arguments or null</param>
+		/// <param name="options">Resolve options</param>
+		/// <returns></returns>
+		public DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments, DmdResolveOptions options) =>
+			ResolveMethodSignature(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), options);
+
+		/// <summary>
 		/// Resolves a signature
 		/// </summary>
 		/// <param name="metadataToken">Token</param>

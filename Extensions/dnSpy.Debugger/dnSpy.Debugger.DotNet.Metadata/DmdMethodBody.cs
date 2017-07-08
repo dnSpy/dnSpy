@@ -57,12 +57,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract ReadOnlyCollection<DmdExceptionHandlingClause> ExceptionHandlingClauses { get; }
 
 		/// <summary>
-		/// Gets the generic type arguments
+		/// Gets the generic type arguments that were used to create this method body
 		/// </summary>
 		public abstract ReadOnlyCollection<DmdType> GenericTypeArguments { get; }
 
 		/// <summary>
-		/// Gets the generic method arguments
+		/// Gets the generic method arguments that were used to create this method body
 		/// </summary>
 		public abstract ReadOnlyCollection<DmdType> GenericMethodArguments { get; }
 	}

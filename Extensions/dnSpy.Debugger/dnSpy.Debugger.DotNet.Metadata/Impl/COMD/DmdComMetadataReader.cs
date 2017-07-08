@@ -875,6 +875,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return genericMethod.MakeGenericMethod(instantiation);
 		}
 
+		protected override DmdMethodSignature ResolveMethodSignature(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			if (IsCOMThread)
+				return ResolveMethodSignature_COMThread(rid, genericTypeArguments, genericMethodArguments);
+			else
+				return COMThread(() => ResolveMethodSignature_COMThread(rid, genericTypeArguments, genericMethodArguments));
+		}
+
+		DmdMethodSignature ResolveMethodSignature_COMThread(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			dispatcher.VerifyAccess();
+			var signature = MDAPI.GetStandAloneSigBlob(MetaDataImport, 0x11000000 + rid);
+			if (signature.addr == IntPtr.Zero)
+				return null;
+			return ReadMethodSignature_COMThread(signature, genericTypeArguments, genericMethodArguments, isProperty: false);
+		}
+
 		protected override byte[] ResolveFieldSignature(uint rid) {
 			if (IsCOMThread)
 				return ResolveFieldSignature_COMThread(rid);

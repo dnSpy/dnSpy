@@ -469,6 +469,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return genericMethod.MakeGenericMethod(instantiation);
 		}
 
+		protected override DmdMethodSignature ResolveMethodSignature(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			var row = TablesStream.ReadStandAloneSigRow(rid);
+			if (row == null)
+				return null;
+			return ReadMethodSignature(row.Signature, genericTypeArguments, genericMethodArguments, isProperty: false);
+		}
+
 		protected override byte[] ResolveFieldSignature(uint rid) {
 			var row = TablesStream.ReadFieldRow(rid);
 			if (row == null)

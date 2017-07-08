@@ -72,6 +72,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, options);
 		public override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, options);
 		public override DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveMethodSignature(metadataToken, genericTypeArguments, genericMethodArguments, options);
 		public override byte[] ResolveSignature(int metadataToken) => MetadataReader.ResolveSignature(metadataToken);
 		public override string ResolveString(int metadataToken) => MetadataReader.ResolveString(metadataToken);
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => MetadataReader.GetPEKind(out peKind, out machine);

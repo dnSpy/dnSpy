@@ -21,17 +21,18 @@ using System;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
-	/// Dispatches to the owner thread. It's used if the underlying .NET metadata reader is a COM interface
+	/// Invokes code on another thread.
+	/// It's used if the underlying .NET metadata reader is a COM interface.
 	/// </summary>
 	public abstract class DmdDispatcher {
 		/// <summary>
-		/// Returns true if the current thread is a supported dispatcher thread
+		/// Returns true if the current thread is the dispatcher thread
 		/// </summary>
 		/// <returns></returns>
 		public abstract bool CheckAccess();
 
 		/// <summary>
-		/// Throws if the current thread isn't a dispatcher thread
+		/// Throws if the current thread isn't the dispatcher thread
 		/// </summary>
 		public void VerifyAccess() {
 			if (!CheckAccess())
@@ -39,13 +40,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		/// <summary>
-		/// Switches to a dispatcher thread and executes <paramref name="callback"/>
+		/// Switches to the dispatcher thread and executes <paramref name="callback"/>
 		/// </summary>
 		/// <param name="callback">Code to execute</param>
 		public abstract void Invoke(Action callback);
 
 		/// <summary>
-		/// Switches to a dispatcher thread and executes <paramref name="callback"/>
+		/// Switches to the dispatcher thread and executes <paramref name="callback"/>
 		/// </summary>
 		/// <typeparam name="T">Type of return data</typeparam>
 		/// <param name="callback">Code to execute</param>

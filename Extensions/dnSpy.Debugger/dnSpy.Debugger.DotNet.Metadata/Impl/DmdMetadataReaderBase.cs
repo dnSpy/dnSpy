@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		static DmdFieldInfo TryResolve(DmdFieldInfo member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveNoThrow() ?? member;
 		static DmdMethodBase TryResolve(DmdMethodBase member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveMethodBaseNoThrow() ?? member;
 
-		public override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
+		public sealed override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x06:
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
+		public sealed override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x04:
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
+		public sealed override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public override DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
+		public sealed override DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
@@ -175,6 +175,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
+		public sealed override DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
+			uint rid = (uint)(metadataToken & 0x00FFFFFF);
+			switch ((uint)metadataToken >> 24) {
+			case 0x11:
+				var methodSig = ResolveMethodSignature(rid, genericTypeArguments, genericMethodArguments);
+				if (methodSig != null)
+					return methodSig;
+				break;
+			}
+
+			if ((options & DmdResolveOptions.ThrowOnError) != 0)
+				throw new ArgumentOutOfRangeException(nameof(metadataToken));
+			return null;
+		}
+
 		protected abstract DmdTypeRef ResolveTypeRef(uint rid);
 		protected abstract DmdTypeDef ResolveTypeDef(uint rid);
 		protected abstract DmdFieldDef ResolveFieldDef(uint rid);
@@ -185,8 +200,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
 		protected abstract DmdTypeRef ResolveExportedType(uint rid);
 		protected abstract DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
+		protected abstract DmdMethodSignature ResolveMethodSignature(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
 
-		public override byte[] ResolveSignature(int metadataToken) {
+		public sealed override byte[] ResolveSignature(int metadataToken) {
 			byte[] res;
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
@@ -208,7 +224,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract byte[] ResolveTypeSpecSignature(uint rid);
 		protected abstract byte[] ResolveMethodSpecSignature(uint rid);
 
-		public override string ResolveString(int metadataToken) {
+		public sealed override string ResolveString(int metadataToken) {
 			if (((uint)metadataToken >> 24) != 0x70)
 				throw new ArgumentOutOfRangeException(nameof(metadataToken));
 			uint offset = (uint)metadataToken & 0x00FFFFFF;
