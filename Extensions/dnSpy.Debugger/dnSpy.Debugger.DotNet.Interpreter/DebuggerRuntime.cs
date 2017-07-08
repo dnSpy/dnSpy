@@ -189,21 +189,21 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract bool WritePointer(PointerOpCodeType pointerType, ILValue address, ILValue value);
 
 		/// <summary>
-		/// Loads a value type (ldobj instruction) or returns null on failure
+		/// Loads a type (ldobj instruction) or returns null on failure
 		/// </summary>
-		/// <param name="address">Address of value type object</param>
-		/// <param name="type">Value type</param>
+		/// <param name="address">Address of type object</param>
+		/// <param name="type">Type to load</param>
 		/// <returns></returns>
-		public abstract ILValue LoadValueTypeObject(ILValue address, DmdType type);
+		public abstract ILValue LoadTypeObject(ILValue address, DmdType type);
 
 		/// <summary>
-		/// Writes a value type (stobj instruction) or returns false on failure
+		/// Writes a type (stobj instruction) or returns false on failure
 		/// </summary>
-		/// <param name="address">Address of value type object</param>
-		/// <param name="type">Value type</param>
+		/// <param name="address">Address of type object</param>
+		/// <param name="type">Type to store</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool StoreValueTypeObject(ILValue address, DmdType type, ILValue value);
+		public abstract bool StoreTypeObject(ILValue address, DmdType type, ILValue value);
 	}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member

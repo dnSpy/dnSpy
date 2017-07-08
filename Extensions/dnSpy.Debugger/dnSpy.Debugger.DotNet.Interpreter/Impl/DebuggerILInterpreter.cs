@@ -98,8 +98,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					throw new TooManyInstructionsInterpreterException();
 
 				int i;
-				ILValue v1;
+				long l;
+				ILValue v1, v2;
 				DmdType type;
+				DmdFieldInfo field;
 
 				i = bodyBytes[methodBodyPos++];
 				switch ((OpCode)i) {
@@ -314,6 +316,294 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
+				case OpCode.Ldlen:
+					if (!debuggerRuntime.GetSZArrayLength(Pop1(), out l))
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(new ConstantNativeIntILValue(l));
+					break;
+
+				case OpCode.Ldelem:
+					// type token
+					methodBodyPos += 4;
+					Pop2(out v1, out v2);
+					v1 = debuggerRuntime.GetSZArrayElement(v1, GetInt32OrNativeInt(v2));
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldelem_I:
+				case OpCode.Ldelem_I1:
+				case OpCode.Ldelem_I2:
+				case OpCode.Ldelem_I4:
+				case OpCode.Ldelem_I8:
+				case OpCode.Ldelem_R4:
+				case OpCode.Ldelem_R8:
+				case OpCode.Ldelem_Ref:
+				case OpCode.Ldelem_U1:
+				case OpCode.Ldelem_U2:
+				case OpCode.Ldelem_U4:
+					Pop2(out v1, out v2);
+					v1 = debuggerRuntime.GetSZArrayElement(v1, GetInt32OrNativeInt(v2));
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldelema:
+					// type token
+					methodBodyPos += 4;
+					Pop2(out v1, out v2);
+					v1 = debuggerRuntime.GetSZArrayElementAddress(v1, GetInt32OrNativeInt(v2));
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Stelem:
+					// type token
+					methodBodyPos += 4;
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.SetSZArrayElement(Pop1(), GetInt32OrNativeInt(v1), v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Stelem_I:
+				case OpCode.Stelem_I1:
+				case OpCode.Stelem_I2:
+				case OpCode.Stelem_I4:
+				case OpCode.Stelem_I8:
+				case OpCode.Stelem_R4:
+				case OpCode.Stelem_R8:
+				case OpCode.Stelem_Ref:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.SetSZArrayElement(Pop1(), GetInt32OrNativeInt(v1), v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Ldfld:
+					field = method.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					if (field.IsStatic)
+						ThrowInvalidMethodBodyInterpreterException();
+					v1 = debuggerRuntime.GetField(field, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldflda:
+					field = method.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					if (field.IsStatic)
+						ThrowInvalidMethodBodyInterpreterException();
+					v1 = debuggerRuntime.GetFieldAddress(field, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldsfld:
+					field = method.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					if (!field.IsStatic)
+						ThrowInvalidMethodBodyInterpreterException();
+					v1 = debuggerRuntime.GetField(field, null);
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldsflda:
+					field = method.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					if (!field.IsStatic)
+						ThrowInvalidMethodBodyInterpreterException();
+					v1 = debuggerRuntime.GetFieldAddress(field, null);
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Stfld:
+					field = method.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					if (field.IsStatic)
+						ThrowInvalidMethodBodyInterpreterException();
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.SetField(field, v1, v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Stsfld:
+					field = method.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					if (!field.IsStatic)
+						ThrowInvalidMethodBodyInterpreterException();
+					if (!debuggerRuntime.SetField(field, null, Pop1()))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Ldind_I:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.I, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldind_I1:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.I1, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldind_I2:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.I2, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldind_I4:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.I4, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldind_I8:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.I8, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldind_R4:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.R4, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldind_R8:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.R8, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldind_Ref:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.Ref, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldind_U1:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.U1, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldind_U2:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.U2, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Ldind_U4:
+					v1 = debuggerRuntime.ReadPointer(PointerOpCodeType.U4, Pop1());
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Stind_I:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.WritePointer(PointerOpCodeType.I, v1, v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Stind_I1:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.WritePointer(PointerOpCodeType.I1, v1, v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Stind_I2:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.WritePointer(PointerOpCodeType.I2, v1, v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Stind_I4:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.WritePointer(PointerOpCodeType.I4, v1, v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Stind_I8:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.WritePointer(PointerOpCodeType.I8, v1, v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Stind_R4:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.WritePointer(PointerOpCodeType.R4, v1, v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Stind_R8:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.WritePointer(PointerOpCodeType.R8, v1, v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Stind_Ref:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.WritePointer(PointerOpCodeType.Ref, v1, v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Ldobj:
+					type = method.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					v1 = debuggerRuntime.LoadTypeObject(Pop1(), type);
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
+				case OpCode.Stobj:
+					type = method.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.StoreTypeObject(v1, type, v2))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
+				case OpCode.Ldtoken:
+					var member = method.Module.ResolveMember(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					switch (member.MemberType) {
+					case DmdMemberTypes.TypeInfo:
+					case DmdMemberTypes.NestedType:
+						v1 = debuggerRuntime.CreateRuntimeTypeHandle((DmdType)member);
+						break;
+
+					case DmdMemberTypes.Field:
+						v1 = debuggerRuntime.CreateRuntimeFieldHandle((DmdFieldInfo)member);
+						break;
+
+					case DmdMemberTypes.Method:
+					case DmdMemberTypes.Constructor:
+						v1 = debuggerRuntime.CreateRuntimeMethodHandle((DmdMethodBase)member);
+						break;
+
+					default:
+						v1 = null;
+						break;
+					}
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
+					break;
+
 				case OpCode.Add:
 				case OpCode.Add_Ovf:
 				case OpCode.Add_Ovf_Un:
@@ -391,37 +681,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Endfinally:
 				case OpCode.Isinst:
 				case OpCode.Jmp:
-				case OpCode.Ldelem:
-				case OpCode.Ldelem_I:
-				case OpCode.Ldelem_I1:
-				case OpCode.Ldelem_I2:
-				case OpCode.Ldelem_I4:
-				case OpCode.Ldelem_I8:
-				case OpCode.Ldelem_R4:
-				case OpCode.Ldelem_R8:
-				case OpCode.Ldelem_Ref:
-				case OpCode.Ldelem_U1:
-				case OpCode.Ldelem_U2:
-				case OpCode.Ldelem_U4:
-				case OpCode.Ldelema:
-				case OpCode.Ldfld:
-				case OpCode.Ldflda:
-				case OpCode.Ldind_I:
-				case OpCode.Ldind_I1:
-				case OpCode.Ldind_I2:
-				case OpCode.Ldind_I4:
-				case OpCode.Ldind_I8:
-				case OpCode.Ldind_R4:
-				case OpCode.Ldind_R8:
-				case OpCode.Ldind_Ref:
-				case OpCode.Ldind_U1:
-				case OpCode.Ldind_U2:
-				case OpCode.Ldind_U4:
-				case OpCode.Ldlen:
-				case OpCode.Ldobj:
-				case OpCode.Ldsfld:
-				case OpCode.Ldsflda:
-				case OpCode.Ldtoken:
 				case OpCode.Leave:
 				case OpCode.Leave_S:
 				case OpCode.Mkrefany:
@@ -449,26 +708,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Shl:
 				case OpCode.Shr:
 				case OpCode.Shr_Un:
-				case OpCode.Stelem:
-				case OpCode.Stelem_I:
-				case OpCode.Stelem_I1:
-				case OpCode.Stelem_I2:
-				case OpCode.Stelem_I4:
-				case OpCode.Stelem_I8:
-				case OpCode.Stelem_R4:
-				case OpCode.Stelem_R8:
-				case OpCode.Stelem_Ref:
-				case OpCode.Stfld:
-				case OpCode.Stind_I:
-				case OpCode.Stind_I1:
-				case OpCode.Stind_I2:
-				case OpCode.Stind_I4:
-				case OpCode.Stind_I8:
-				case OpCode.Stind_R4:
-				case OpCode.Stind_R8:
-				case OpCode.Stind_Ref:
-				case OpCode.Stobj:
-				case OpCode.Stsfld:
 				case OpCode.Sub:
 				case OpCode.Sub_Ovf:
 				case OpCode.Sub_Ovf_Un:
@@ -481,6 +720,21 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					throw new InstructionNotSupportedInterpreterException("Unsupported IL opcode 0x" + i.ToString("X2"));
 				}
 			}
+		}
+
+		long GetInt32OrNativeInt(ILValue v) {
+			switch (v.Kind) {
+			case ILValueKind.Int32:
+				return ((ConstantInt32ILValue)v).Value;
+
+			case ILValueKind.NativeInt:
+				var cv = v as ConstantNativeIntILValue;
+				if (cv != null)
+					return cv.Value;
+				break;
+			}
+
+			throw new InvalidMethodBodyInterpreterException();
 		}
 	}
 }
