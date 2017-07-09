@@ -181,6 +181,42 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	}
 
 	/// <summary>
+	/// Function pointer, created by the ldftn/ldvirtftn instructions
+	/// </summary>
+	public sealed class FunctionPointerILValue : NativeIntILValue {
+		/// <summary>
+		/// true if it was created by a ldvirtftn instruction, false it was created by a ldftn instruction
+		/// </summary>
+		public bool IsVirtual => VirtualThisObject != null;
+
+		/// <summary>
+		/// Gets the this value if and only if this was created by a ldvirtftn instruction, otherwise it's null
+		/// </summary>
+		public ILValue VirtualThisObject { get; }
+
+		/// <summary>
+		/// Gets the method
+		/// </summary>
+		public DmdMethodBase Method { get; }
+
+		/// <summary>
+		/// Constructor (used by ldftn instruction)
+		/// </summary>
+		/// <param name="method">Method</param>
+		public FunctionPointerILValue(DmdMethodBase method) => Method = method;
+
+		/// <summary>
+		/// Constructor (used by ldvirtftn instruction)
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <param name="thisValue">This object</param>
+		public FunctionPointerILValue(DmdMethodBase method, ILValue thisValue) {
+			Method = method;
+			VirtualThisObject = thisValue;
+		}
+	}
+
+	/// <summary>
 	/// Managed pointer
 	/// </summary>
 	public abstract class ByRefILValue : ILValue {

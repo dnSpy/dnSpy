@@ -223,13 +223,39 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract bool StoreTypeObject(ILValue address, DmdType type, ILValue value);
 
 		/// <summary>
-		/// Copies data from <paramref name="source"/> to <paramref name="destination"/>
+		/// Copies data from <paramref name="source"/> to <paramref name="destination"/> or returns false on failure
 		/// </summary>
 		/// <param name="destination">Destination pointer</param>
 		/// <param name="source">Source pointer</param>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
 		public abstract bool CopyObject(ILValue destination, ILValue source, DmdType type);
+
+		/// <summary>
+		/// Initializes an address with a default value or returns false on failure
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="type">Type of data</param>
+		/// <returns></returns>
+		public abstract bool InitializeObject(ILValue address, DmdType type);
+
+		/// <summary>
+		/// Copies memory or returns false on failure
+		/// </summary>
+		/// <param name="destination">Destination address</param>
+		/// <param name="source">Source address</param>
+		/// <param name="size">Size in bytes</param>
+		/// <returns></returns>
+		public abstract bool CopyMemory(ILValue destination, ILValue source, long size);
+
+		/// <summary>
+		/// Initializes memory or returns false on failure
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value to write to <paramref name="address"/></param>
+		/// <param name="size">Size of data</param>
+		/// <returns></returns>
+		public abstract bool InitializeMemory(ILValue address, byte value, long size);
 
 		/// <summary>
 		/// Boxes a value type (inluding a nullable value type) or returns null on failure

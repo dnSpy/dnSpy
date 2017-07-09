@@ -122,12 +122,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				int i, j;
 				long l;
 				ILValue v1, v2, v3;
-				DmdType type;
+				DmdType type, constrainedType = null;
 				DmdFieldInfo field;
 				DmdMethodBase method;
 				DmdMethodSignature methodSig;
 				ILValue[] args;
+				bool isPrefix;
 
+				isPrefix = false;
 				i = bodyBytes[methodBodyPos++];
 				switch ((OpCode)i) {
 				case OpCode.Prefix1:
@@ -201,23 +203,62 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						ilValueStack.Add(ILValueConstants.GetInt32Constant(CompareUnsigned(v1, v2) < 0 ? 1 : 0));
 						break;
 
-					case OpCodeFE.Arglist:
 					case OpCodeFE.Cpblk:
-					case OpCodeFE.Endfilter:
+						Pop2(out v2, out v3);
+						v1 = Pop1();
+						if (!debuggerRuntime.CopyMemory(v1, v2, GetInt32OrNativeInt(v3)))
+							ThrowInvalidMethodBodyInterpreterException();
+						break;
+
 					case OpCodeFE.Initblk:
+						Pop2(out v2, out v3);
+						v1 = Pop1();
+						if (!debuggerRuntime.InitializeMemory(v1, GetByte(v2), GetInt32OrNativeInt(v3)))
+							ThrowInvalidMethodBodyInterpreterException();
+						break;
+
 					case OpCodeFE.Initobj:
+						type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+						v1 = Pop1();
+						if (!debuggerRuntime.InitializeObject(v1, type))
+							ThrowInvalidMethodBodyInterpreterException();
+						break;
+
 					case OpCodeFE.Ldftn:
+						method = currentMethod.Module.ResolveMethod(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+						ilValueStack.Add(new FunctionPointerILValue(method));
+						break;
+
 					case OpCodeFE.Ldvirtftn:
+						method = currentMethod.Module.ResolveMethod(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+						ilValueStack.Add(new FunctionPointerILValue(method, Pop1()));
+						break;
+
+					case OpCodeFE.Readonly:
+					case OpCodeFE.Tailcall:
+					case OpCodeFE.Volatile:
+						isPrefix = true;
+						break;
+
+					case OpCodeFE.Unaligned:
+						isPrefix = true;
+						methodBodyPos++;
+						break;
+
+					case OpCodeFE.Constrained:
+						isPrefix = true;
+						constrainedType = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+						break;
+
+					case OpCodeFE.No:
+						isPrefix = true;
+						goto default;
+
+					case OpCodeFE.Arglist:
+					case OpCodeFE.Endfilter:
 					case OpCodeFE.Localloc:
 					case OpCodeFE.Refanytype:
 					case OpCodeFE.Rethrow:
-
-					case OpCodeFE.Constrained:
-					case OpCodeFE.No:
-					case OpCodeFE.Readonly:
-					case OpCodeFE.Tailcall:
-					case OpCodeFE.Unaligned:
-					case OpCodeFE.Volatile:
 					default:
 						throw new InstructionNotSupportedInterpreterException("Unsupported IL opcode 0xFE" + i.ToString("X2"));
 					}
@@ -664,6 +705,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					methodSig = method.GetMethodSignature();
 					args = PopMethodArguments(methodSig);
 					v1 = methodSig.HasThis ? Pop1() : null;
+					if ((object)constrainedType != null) {
+						if (i != (int)OpCode.Callvirt)
+							ThrowInvalidMethodBodyInterpreterException();
+						v1 = FixConstrainedType(constrainedType, method, v1);
+					}
 					if (!debuggerRuntime.Call(i == (int)OpCode.Callvirt, method, v1, args, out v1))
 						ThrowInvalidMethodBodyInterpreterException();
 					if (methodSig.ReturnType != currentMethod.AppDomain.System_Void)
@@ -2287,6 +2333,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				default:
 					throw new InstructionNotSupportedInterpreterException("Unsupported IL opcode 0x" + i.ToString("X2"));
 				}
+				if (!isPrefix)
+					constrainedType = null;
 			}
 		}
 
@@ -2579,16 +2627,54 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			case ILValueKind.NativeInt:
 				var cv = v as ConstantNativeIntILValue;
 				if (cv != null) {
-					if (debuggerRuntime.PointerSize == 32)
+					if (debuggerRuntime.PointerSize == 4)
 						return (int)cv.Value;
 					return cv.Value;
 				}
 				break;
 			}
 
-			ThrowInvalidMethodBodyInterpreterException();
-			Debug.Fail("Not reachable");
-			return -1;
+			throw new InvalidMethodBodyInterpreterException();
+		}
+
+		byte GetByte(ILValue v) {
+			switch (v.Kind) {
+			case ILValueKind.Int32:
+				return (byte)((ConstantInt32ILValue)v).Value;
+
+			default:
+				throw new InvalidMethodBodyInterpreterException();
+			}
+		}
+
+		ILValue FixConstrainedType(DmdType constrainedType, DmdMethodBase method, ILValue v1) {
+			Debug.Assert((object)constrainedType != null);
+			Debug.Assert((object)method != null);
+			if (v1 == null)
+				ThrowInvalidMethodBodyInterpreterException();
+			if (constrainedType.IsValueType) {
+				if (ImplementsMethod(constrainedType, method.Name, method.GetMethodSignature()))
+					return v1;
+				else
+					return debuggerRuntime.Box(debuggerRuntime.ReadPointer(PointerOpCodeType.Ref, v1), constrainedType);
+			}
+			else
+				return debuggerRuntime.ReadPointer(PointerOpCodeType.Ref, v1);
+		}
+
+		static bool ImplementsMethod(DmdType type, string name, DmdMethodSignature methodSig) {
+			foreach (var m in type.DeclaredMethods) {
+				if (!m.IsVirtual)
+					continue;
+				if (m.Name != name)
+					continue;
+				if (m.GetMethodSignature() != methodSig)
+					continue;
+
+				return true;
+			}
+
+			return false;
 		}
 	}
 }
