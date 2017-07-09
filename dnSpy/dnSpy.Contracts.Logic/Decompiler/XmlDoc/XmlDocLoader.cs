@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
@@ -179,36 +180,25 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			return runtime.Substring(0, min);
 		}
 
-		static string LookupLocalizedXmlDoc(string fileName) {
-			if (string.IsNullOrEmpty(fileName))
+		static string LookupLocalizedXmlDoc(string assemblyFileName) {
+			if (string.IsNullOrEmpty(assemblyFileName))
 				return null;
 
-			string xmlFileName = Path.ChangeExtension(fileName, ".xml");
-			string currentCulture = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
-			string localizedXmlDocFile = GetLocalizedName(xmlFileName, currentCulture);
-
-			//Debug.WriteLine("Try find XMLDoc @" + localizedXmlDocFile);
-			if (File.Exists(localizedXmlDocFile)) {
-				return localizedXmlDocFile;
-			}
-			//Debug.WriteLine("Try find XMLDoc @" + xmlFileName);
-			if (File.Exists(xmlFileName)) {
-				return xmlFileName;
-			}
-			if (currentCulture != "en") {
-				string englishXmlDocFile = GetLocalizedName(xmlFileName, "en");
-				//Debug.WriteLine("Try find XMLDoc @" + englishXmlDocFile);
-				if (File.Exists(englishXmlDocFile)) {
-					return englishXmlDocFile;
-				}
-			}
-			return null;
+			var xmlDocFileCandidates = GetXmlDocFileCandidates(assemblyFileName);
+			return xmlDocFileCandidates.FirstOrDefault(File.Exists);
 		}
 
-		static string GetLocalizedName(string fileName, string language) {
-			string localizedXmlDocFile = Path.GetDirectoryName(fileName);
-			localizedXmlDocFile = Path.Combine(localizedXmlDocFile, language);
-			localizedXmlDocFile = Path.Combine(localizedXmlDocFile, Path.GetFileName(fileName));
+		static IEnumerable<string> GetXmlDocFileCandidates(string assemblyFileName) {
+			var xmlFileName = Path.ChangeExtension(assemblyFileName, ".xml");
+			yield return GetLocalizedXmlDocFile(xmlFileName, Thread.CurrentThread.CurrentUICulture.Name);
+			yield return GetLocalizedXmlDocFile(xmlFileName, Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName);
+			yield return xmlFileName;
+			yield return GetLocalizedXmlDocFile(xmlFileName, "en");
+		}
+
+		static string GetLocalizedXmlDocFile(string xmlFileName, string language) {
+			var localizedDirectory = Path.Combine(Path.GetDirectoryName(xmlFileName), language);
+			var localizedXmlDocFile = Path.Combine(localizedDirectory, Path.GetFileName(xmlFileName));
 			return localizedXmlDocFile;
 		}
 	}
