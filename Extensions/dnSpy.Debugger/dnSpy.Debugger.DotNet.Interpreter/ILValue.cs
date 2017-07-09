@@ -176,7 +176,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// Constructor
 		/// </summary>
 		/// <param name="value">Value</param>
-		public ConstantNativeIntILValue(long value) => Value = value;
+		/// <param name="pointerSize">Size of a pointer</param>
+		public ConstantNativeIntILValue(long value, int pointerSize) => Value = pointerSize == 4 ? (int)value : value;
 	}
 
 	/// <summary>

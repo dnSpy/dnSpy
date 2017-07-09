@@ -27,6 +27,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	/// </summary>
 	public abstract class DebuggerRuntime {
 		/// <summary>
+		/// Gets the size of a pointer in bytes
+		/// </summary>
+		public abstract int PointerSize { get; }
+
+		/// <summary>
 		/// Gets an argument value or returns null on failure
 		/// </summary>
 		/// <param name="index">Argument index</param>
@@ -232,6 +237,24 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="type">Unboxed type</param>
 		/// <returns></returns>
 		public abstract ILValue UnboxAny(ILValue value, DmdType type);
+
+		/// <summary>
+		/// Calculates <paramref name="left"/> + <paramref name="right"/>. This method is called if
+		/// one of the inputs is a non-constant native int or by-ref.
+		/// </summary>
+		/// <param name="left">Left operand</param>
+		/// <param name="right">Right operand</param>
+		/// <returns></returns>
+		public abstract ILValue BinaryAdd(ILValue left, ILValue right);
+
+		/// <summary>
+		/// Calculates <paramref name="left"/> - <paramref name="right"/>. This method is called if
+		/// one of the inputs is a non-constant native int or by-ref.
+		/// </summary>
+		/// <param name="left">Left operand</param>
+		/// <param name="right">Right operand</param>
+		/// <returns></returns>
+		public abstract ILValue BinarySub(ILValue left, ILValue right);
 	}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
