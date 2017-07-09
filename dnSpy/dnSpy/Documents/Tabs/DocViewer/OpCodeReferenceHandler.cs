@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public bool OnFollowReference(IReferenceHandlerContext context) {
 			if ((context.Reference as TextReference)?.Reference is OpCode opCode) {
-				var url = string.Format(msdnUrlFormat, GetMsdnOpCode(opCode));
+				var url = string.Format(opCodesUrl, GetMsdnOpCode(opCode));
 				StartBrowser(url);
 				return true;
 			}

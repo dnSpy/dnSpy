@@ -199,14 +199,16 @@ namespace dnSpy.Documents.Tabs {
 		static bool IsAccessible(FieldDef field) =>
 			field != null && (field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly);
 
-		static bool IsAccessible(PropertyDef prop) => prop.GetMethods.Any(m => IsAccessible(m)) ||
-	prop.SetMethods.Any(m => IsAccessible(m)) ||
-	prop.OtherMethods.Any(m => IsAccessible(m));
+		static bool IsAccessible(PropertyDef prop) =>
+			prop.GetMethods.Any(m => IsAccessible(m)) ||
+			prop.SetMethods.Any(m => IsAccessible(m)) ||
+			prop.OtherMethods.Any(m => IsAccessible(m));
 
-		static bool IsAccessible(EventDef evt) => IsAccessible(evt.AddMethod) ||
-	IsAccessible(evt.InvokeMethod) ||
-	IsAccessible(evt.RemoveMethod) ||
-	evt.OtherMethods.Any(m => IsAccessible(m));
+		static bool IsAccessible(EventDef evt) =>
+			IsAccessible(evt.AddMethod) ||
+			IsAccessible(evt.InvokeMethod) ||
+			IsAccessible(evt.RemoveMethod) ||
+			evt.OtherMethods.Any(m => IsAccessible(m));
 
 		static string GetAddress(IMemberRef memberRef) {
 			var member = Resolve(memberRef);
@@ -228,7 +230,7 @@ namespace dnSpy.Documents.Tabs {
 		static void ExecuteInternal(IEnumerable<TreeNodeData> nodes) {
 			foreach (var node in nodes) {
 				if (node is NamespaceNode nsNode) {
-					SearchMsdn(string.Format(msdnAddress, nsNode.Name));
+					SearchMsdn(string.Format(searchUrl, nsNode.Name));
 					continue;
 				}
 
