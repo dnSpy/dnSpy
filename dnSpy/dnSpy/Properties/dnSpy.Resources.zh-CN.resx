@@ -1143,13 +1143,13 @@
     <value>行号(_L)</value>
   </data>
   <data name="TextEditorVirtualSpace" xml:space="preserve">
-    <value>_Virtual space</value>
+    <value>虚拟空格(_V)</value>
   </data>
   <data name="TextEditorWordWrap" xml:space="preserve">
     <value>自动换行(_W)</value>
   </data>
   <data name="TextEditorIndentSize" xml:space="preserve">
-    <value>_Indent size</value>
+    <value>缩进大小(_I)</value>
   </data>
   <data name="TextEditorTabSize" xml:space="preserve">
     <value>_Tab宽度</value>
@@ -1364,10 +1364,10 @@
     <value>保存选中(_L)...</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
-    <value>选择(&amp;S)...</value>
+    <value>选择...</value>
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
-    <value>设置(&amp;S)...</value>
+    <value>设置...</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
     <value>_16 Bytes</value>
@@ -1638,7 +1638,7 @@
     <value>_Index</value>
   </data>
   <data name="HexFollowFieldValueReference" xml:space="preserve">
-    <value>Follow Reference</value>
+    <value>跟随地址引用</value>
   </data>
   <data name="ShortCutKeyCtrlF12" xml:space="preserve">
     <value>Ctrl+F12</value>
@@ -1650,7 +1650,7 @@
     <value>Select Nested File</value>
   </data>
   <data name="SelectSpecialCommand" xml:space="preserve">
-    <value>Select Special</value>
+    <value>特殊选择</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlF" xml:space="preserve">
     <value>Ctrl+E, Ctrl+F</value>
@@ -1719,10 +1719,10 @@
     <value>语法高亮</value>
   </data>
   <data name="SearchHelp_ToolTip" xml:space="preserve">
-    <value>Help</value>
+    <value>帮助</value>
   </data>
   <data name="Column_Labels" xml:space="preserve">
-    <value>Labels</value>
+    <value>标签</value>
   </data>
   <data name="Column_Location" xml:space="preserve">
     <value>位置</value>
@@ -1734,16 +1734,16 @@
     <value>名称</value>
   </data>
   <data name="Bookmarks_NoMatch" xml:space="preserve">
-    <value>No bookmarks match your search filter.</value>
+    <value>没有能匹配搜索过滤器的书签。</value>
   </data>
   <data name="Bookmarks_Search" xml:space="preserve">
     <value>搜索</value>
   </data>
   <data name="BookmarksCommand" xml:space="preserve">
-    <value>Boo_kmarks</value>
+    <value>书签(_K)</value>
   </data>
   <data name="BookmarksWindowCommand" xml:space="preserve">
-    <value>_Bookmark Window</value>
+    <value>书签窗口(_B)</value>
   </data>
   <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
     <value>Export all bookmarks matching the current search criteria</value>
@@ -1770,10 +1770,10 @@
     <value>Move the caret to the previous bookmark.</value>
   </data>
   <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
-    <value>Import bookmarks from a file</value>
+    <value>从文件导入书签</value>
   </data>
   <data name="Bookmarks_RemoveBookmark_ToolTip" xml:space="preserve">
-    <value>Remove bookmark</value>
+    <value>删除书签</value>
   </data>
   <data name="Bookmarks_RemoveMatchingBookmarks_ToolTip" xml:space="preserve">
     <value>Remove all bookmarks matching the current search criteria</value>
@@ -1791,34 +1791,34 @@
     <value>Enable or disable all bookmarks matching the current search criteria</value>
   </data>
   <data name="BookmarkDefaultName" xml:space="preserve">
-    <value>Bookmark{0}</value>
+    <value>书签{0}</value>
   </data>
   <data name="RenameCommand" xml:space="preserve">
     <value>重命名</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
-    <value>Go To Bookmark</value>
+    <value>转到书签</value>
   </data>
   <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
     <value>Ctrl+{0}</value>
   </data>
   <data name="DisableBookmarkCommand3" xml:space="preserve">
-    <value>Disable Bookmark</value>
+    <value>禁用书签</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
-    <value>Edit Labels</value>
+    <value>编辑标签</value>
   </data>
   <data name="EnableBookmarkCommand3" xml:space="preserve">
-    <value>Enable Bookmark</value>
+    <value>启用书签</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
-    <value>_Export Selected...</value>
+    <value>导出选中项(_E)...</value>
   </data>
   <data name="RemoveAllBookmarksCommand" xml:space="preserve">
-    <value>Remove All Bookmarks</value>
+    <value>删除所有书签</value>
   </data>
   <data name="RemoveBookmarkCommand" xml:space="preserve">
-    <value>Remove Bookmark</value>
+    <value>删除书签</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
     <value>全选(_A)</value>
@@ -1836,7 +1836,7 @@
     <value>F2</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>Show Declaring Types</value>
+    <value>显示声明类型</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
     <value>Show Intrinsic Type Keywords</value>
@@ -1863,7 +1863,7 @@
     <value>Ctrl+K, Ctrl+W</value>
   </data>
   <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
-    <value>Clear All Bookmarks In Document</value>
+    <value>清除此文档中的所有书签</value>
   </data>
   <data name="ClearBookmarksCommand" xml:space="preserve">
     <value>清除书签(_C)</value>

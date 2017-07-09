@@ -145,10 +145,10 @@
     <value>区域(_U)</value>
   </data>
   <data name="AssemblyDlg_Main_DotNetVersion" xml:space="preserve">
-    <value>.NET 版本</value>
+    <value>.NET 版本(_V)</value>
   </data>
   <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
-    <value>Hash 运算法则</value>
+    <value>_Hash算法</value>
   </data>
   <data name="AssemblyDlg_Main_Name" xml:space="preserve">
     <value>名称(_N)</value>
@@ -160,7 +160,7 @@
     <value>公钥(_P)</value>
   </data>
   <data name="AssemblyDlg_Main_Version" xml:space="preserve">
-    <value>版本</value>
+    <value>版本(_V)</value>
   </data>
   <data name="Button_Add" xml:space="preserve">
     <value>添加(_A)</value>
@@ -1640,7 +1640,7 @@
     <value>名称(_N)</value>
   </data>
   <data name="Module_DotNetVersion" xml:space="preserve">
-    <value>.NET 版本</value>
+    <value>.NET 版本(_V)</value>
   </data>
   <data name="Module_EntryPoint" xml:space="preserve">
     <value>入口点</value>
@@ -1673,7 +1673,7 @@
     <value>名称(_N)</value>
   </data>
   <data name="NetModule_DotNetVersion" xml:space="preserve">
-    <value>.NET 版本</value>
+    <value>.NET 版本(_V)</value>
   </data>
   <data name="NetModule_Name" xml:space="preserve">
     <value>名称(_N)</value>

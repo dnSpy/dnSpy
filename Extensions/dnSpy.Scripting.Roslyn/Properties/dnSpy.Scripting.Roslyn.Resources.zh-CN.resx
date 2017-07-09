@@ -127,7 +127,7 @@
     <value>复制(_Y)</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
-    <value>剪切</value>
+    <value>剪切(_T)</value>
   </data>
   <data name="HelpAltDown" xml:space="preserve">
     <value>显示下一命令</value>
@@ -277,7 +277,7 @@
     <value>自动换行(_W)</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap</value>
+    <value>切换自动换行</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>所有文件</value>

@@ -130,7 +130,7 @@
     <value>_Host</value>
   </data>
   <data name="DbgAsm_HostArgs" xml:space="preserve">
-    <value>Host-Ar_gumente</value>
+    <value>Host Ar_gumente</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Arbeitsverzeichnis</value>
@@ -145,22 +145,22 @@
     <value>Einstiegspunkt</value>
   </data>
   <data name="DbgBreak_ExeFirstLoadClassEvent" xml:space="preserve">
-    <value>Exes erstes LoadClass-Ereignis</value>
+    <value>Exe's erstes LoadClass Ereignis</value>
   </data>
   <data name="DbgBreak_ExeLoadModuleEvent" xml:space="preserve">
-    <value>Exes LoadModule-Ereignis</value>
+    <value>Exe's LoadModule Ereignis</value>
   </data>
   <data name="DbgBreak_FirstCreateAppDomainEvent" xml:space="preserve">
-    <value>Erstes CreateAppDomain-Ereignis</value>
+    <value>Erstes CreateAppDomain Ereignis</value>
   </data>
   <data name="DbgBreak_FirstCreateThreadEvent" xml:space="preserve">
-    <value>Erstes CreateThread-Ereignis</value>
+    <value>Erstes CreateThread Ereignis</value>
   </data>
   <data name="DbgBreak_FirstLoadClassEvent" xml:space="preserve">
-    <value>Erstes LoadClass-Ereignis</value>
+    <value>Erstes LoadClass Ereignis</value>
   </data>
   <data name="DbgBreak_FirstLoadModuleEvent" xml:space="preserve">
-    <value>Erstes LoadModule-Ereignis</value>
+    <value>Erstes LoadModule Ereignis</value>
   </data>
   <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
     <value>Modul .cctor oder Einstiegspunkt</value>
@@ -198,7 +198,7 @@ Fehler: {1}</value>
     <value>Beenden angefordert</value>
   </data>
   <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Angehalten</value>
+    <value>Ausgesetzt</value>
   </data>
   <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
     <value>Anhalten angefordert</value>
@@ -216,10 +216,10 @@ Fehler: {1}</value>
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Verwende dnSpy-x86.exe zum Debuggen von 32-Bit-Applikationen.</value>
+    <value>Verwende dnSpy-x86.exe zum Debuggen von 32-Bit Applikationen.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Verwende dnSpy.exe zum Debuggen von 64-Bit-Applikationen.</value>
+    <value>Verwende dnSpy.exe zum Debuggen von 64-Bit Applikationen.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;keine Ausnahmemeldung&gt;"</value>

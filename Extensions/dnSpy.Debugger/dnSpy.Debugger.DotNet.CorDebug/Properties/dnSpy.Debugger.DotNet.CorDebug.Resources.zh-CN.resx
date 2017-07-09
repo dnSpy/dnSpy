@@ -166,7 +166,7 @@
     <value>模块的静态构造函数或入口点</value>
   </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Couldn't find .NET Core host '{0}'</value>
+    <value>无法找到.NET Core宿主 '{0}'</value>
   </data>
   <data name="Error_CouldNotStartDebugger" xml:space="preserve">
     <value>无法启动调试器。{0}</value>
@@ -222,7 +222,7 @@
     <value>请改用 dnSpy.exe 调试 64 位应用程序。</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;no exception message&gt;"</value>
+    <value>"&lt; 没有异常消息 &gt;"</value>
   </data>
   <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
     <value>无法启动调试器。
@@ -230,10 +230,10 @@
 错误：{0}</value>
   </data>
   <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Could not attach to process {0}</value>
+    <value>不能附加到进程{0}</value>
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Some other process is already debugging process {0}</value>
+    <value>其它程序正在调试进程{0}</value>
   </data>
   <data name="StackFrame_NativeFrame" xml:space="preserve">
     <value>Native Frame {0}</value>

@@ -142,10 +142,10 @@
     <value>字段</value>
   </data>
   <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
-    <value>Compiled expression threw an exception: {0}</value>
+    <value>已编译的表达式抛出了异常: {0}</value>
   </data>
   <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
-    <value>Expression is invalid</value>
+    <value>表达式无效</value>
   </data>
   <data name="InterfacesToolTip" xml:space="preserve">
     <value>接口</value>

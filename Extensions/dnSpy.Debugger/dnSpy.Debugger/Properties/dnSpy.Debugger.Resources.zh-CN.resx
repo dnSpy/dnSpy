@@ -994,7 +994,7 @@ HResult: 0x{3:X8}</value>
     <value>显示下一语句(_H)</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>Show Declaring Types</value>
+    <value>显示声明类型</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
     <value>显示参数名称(_P)</value>
@@ -1126,7 +1126,7 @@ HResult: 0x{3:X8}</value>
     <value>设置/取消断点(_G)</value>
   </data>
   <data name="ToolBarBreakAllToolTip" xml:space="preserve">
-    <value>Break All</value>
+    <value>全部中断</value>
   </data>
   <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
     <value>继续</value>
@@ -1135,13 +1135,13 @@ HResult: 0x{3:X8}</value>
     <value>继续</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
-    <value>Debug a Program</value>
+    <value>调试程序</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
-    <value>Restart</value>
+    <value>重新开始</value>
   </data>
   <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
-    <value>Show Next Statement</value>
+    <value>显示下一语句</value>
   </data>
   <data name="ToolBarStartDebuggingButton" xml:space="preserve">
     <value>启动</value>
@@ -1267,16 +1267,16 @@ HResult: 0x{3:X8}</value>
     <value>线程 0x{0:x} 已退出，返回值为 {1} (0x{1:x})。</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
-    <value>Loaded '{0}'.</value>
+    <value>已加载 '{0}'</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
     <value>Managed Debugging Assistant '{0}' has detected a problem in '{1}'.</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>Unloaded '{0}'.</value>
+    <value>已卸载 '{0}'</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;no exception message&gt;"</value>
+    <value>"&lt; 没有异常消息 &gt;"</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
     <value>IL偏移 0x{0}</value>
@@ -1363,16 +1363,16 @@ HResult: 0x{3:X8}</value>
     <value>附加到进程</value>
   </data>
   <data name="Processes_DetachToolTip" xml:space="preserve">
-    <value>Detach Process</value>
+    <value>分离进程</value>
   </data>
   <data name="Processes_TerminateToolTip" xml:space="preserve">
-    <value>Terminate Process</value>
+    <value>终止进程</value>
   </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Ctrl+F</value>
   </data>
   <data name="DetachProcessCommand" xml:space="preserve">
-    <value>_Detach Process</value>
+    <value>分离进程(_D)</value>
   </data>
   <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
     <value>Detach _When Debugging Stopped</value>
@@ -1387,13 +1387,13 @@ HResult: 0x{3:X8}</value>
     <value>Process Name</value>
   </data>
   <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
-    <value>&lt;All {0} not in this list&gt;</value>
+    <value>&lt;不在此列表中的所有 {0} &gt;</value>
   </data>
   <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
     <value>Edit conditions</value>
   </data>
   <data name="Column_Conditions" xml:space="preserve">
-    <value>Conditions</value>
+    <value>条件</value>
   </data>
   <data name="Column_BreakWhenThrown" xml:space="preserve">
     <value>引发异常时中断</value>
@@ -1405,28 +1405,28 @@ HResult: 0x{3:X8}</value>
     <value>And</value>
   </data>
   <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
-    <value>Module name equals</value>
+    <value>模块名称等于</value>
   </data>
   <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
-    <value>Module name not equals</value>
+    <value>模块名称不等于</value>
   </data>
   <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all exceptions are shown</value>
+    <value>重置所有搜索条件以显示所有异常</value>
   </data>
   <data name="Exceptions_AllCategories" xml:space="preserve">
     <value>全部</value>
   </data>
   <data name="EditConditionsCommand" xml:space="preserve">
-    <value>Edit Conditions...</value>
+    <value>编辑条件...</value>
   </data>
   <data name="ExceptionsCommand" xml:space="preserve">
-    <value>Exceptions</value>
+    <value>异常</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
     <value>查找(_F)</value>
   </data>
   <data name="Exceptions_NoMatch" xml:space="preserve">
-    <value>No exception types match your search filter.</value>
+    <value>没有能匹配搜索过滤器的异常类型。</value>
   </data>
   <data name="AddExceptionButton" xml:space="preserve">
     <value>Add</value>
@@ -1615,28 +1615,28 @@ HResult: 0x{3:X8}</value>
     <value>when '{0}' has changed</value>
   </data>
   <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
-    <value>when '{0}' is true</value>
+    <value>当'{0}'为true时</value>
   </data>
   <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
     <value>(none)</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
-    <value>when hit count is a multiple of {0}</value>
+    <value>当命中次数是 {0} 的倍数</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
-    <value>when hit count is equal to {0}</value>
+    <value>当命中的次数等于 {0}</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
-    <value>when hit count is greater than or equal to {0}</value>
+    <value>当命中次数大于或等于 {0}</value>
   </data>
   <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
-    <value>break always</value>
+    <value>总是中断</value>
   </data>
   <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
-    <value>Break</value>
+    <value>中断</value>
   </data>
   <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
-    <value>Print message '{0}'</value>
+    <value>打印消息 '{0}'</value>
   </data>
   <data name="ShortCutKeyAltEnter" xml:space="preserve">
     <value>Alt+Enter</value>
@@ -1687,31 +1687,31 @@ HResult: 0x{3:X8}</value>
     <value>Filter: '{0}'</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
-    <value>Hit count is a multiple of {0}</value>
+    <value>命中的次数是 {0} 的倍数</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
-    <value>Hit count is equal to {0}</value>
+    <value>命中的次数等于 {0}</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
-    <value>Hit count is greater than or equal to {0}</value>
+    <value>命中次数大于或等于 {0}</value>
   </data>
   <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
-    <value>Log message '{0}', to Output window</value>
+    <value>将消息'{0}'，打印到“输出"窗口</value>
   </data>
   <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
-    <value>Disable breakpoint</value>
+    <value>禁用断点</value>
   </data>
   <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
-    <value>Enable breakpoint</value>
+    <value>启用断点</value>
   </data>
   <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
-    <value>设置(&amp;S)...</value>
+    <value>设置...</value>
   </data>
   <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
-    <value>Break</value>
+    <value>中断</value>
   </data>
   <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
-    <value>Continue execution</value>
+    <value>继续执行</value>
   </data>
   <data name="ExportCommand" xml:space="preserve">
     <value>E_xport...</value>
@@ -1723,37 +1723,37 @@ HResult: 0x{3:X8}</value>
     <value>Start Debugging</value>
   </data>
   <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
-    <value>Break and print message '{0}'</value>
+    <value>中断并打印消息 '{0}'</value>
   </data>
   <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
-    <value>The function cannot be found: {0}</value>
+    <value>无法找到方法： {0}</value>
   </data>
   <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
-    <value>The breakpoint will not currently be hit. {0}</value>
+    <value>当前不会命中断点。{0}</value>
   </data>
   <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
-    <value>The module hasn't been loaded or no symbols have been loaded for this module.</value>
+    <value>尚未加载模块或没有加载此模块的调试符号。</value>
   </data>
   <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
-    <value>Could not create the breakpoint.</value>
+    <value>无法创建断点。</value>
   </data>
   <data name="Column_Labels" xml:space="preserve">
-    <value>Labels</value>
+    <value>标签</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
-    <value>Edit Labels</value>
+    <value>编辑标签</value>
   </data>
   <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
-    <value>Freeze Threads</value>
+    <value>冻结线程</value>
   </data>
   <data name="Threads_NoMatch" xml:space="preserve">
-    <value>No threads match your search filter.</value>
+    <value>没有满足搜索条件的线程</value>
   </data>
   <data name="Threads_Process" xml:space="preserve">
     <value>进程</value>
   </data>
   <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all threads are shown</value>
+    <value>重置所有搜索条件，以便显示所有线程</value>
   </data>
   <data name="Threads_Search" xml:space="preserve">
     <value>搜索</value>
@@ -1768,10 +1768,10 @@ HResult: 0x{3:X8}</value>
     <value>全部</value>
   </data>
   <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
-    <value>Labels</value>
+    <value>标签</value>
   </data>
   <data name="EditLabelsTitle" xml:space="preserve">
-    <value>Edit Labels</value>
+    <value>编辑标签</value>
   </data>
   <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
     <value>currently {0}</value>
@@ -1780,7 +1780,7 @@ HResult: 0x{3:X8}</value>
     <value>Reset Hit Count</value>
   </data>
   <data name="HelpToolTip" xml:space="preserve">
-    <value>Help</value>
+    <value>帮助</value>
   </data>
   <data name="FilterExpression_AllVariables" xml:space="preserve">
     <value>Variables that can be used:</value>
@@ -1858,18 +1858,18 @@ HResult: 0x{3:X8}</value>
     <value>粘贴(_P)</value>
   </data>
   <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
-    <value>This expression causes side effects and will not be evaluated</value>
+    <value>此表达式可导致副作用，将不被计算</value>
   </data>
   <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
-    <value>Click this button to evaluate now.</value>
+    <value>单击按钮立即计算。</value>
   </data>
   <data name="ErrorEvaluatingExpression" xml:space="preserve">
-    <value>Couldn't evaluate the expression</value>
+    <value>无法计算表达式的值</value>
   </data>
   <data name="DeleteObjectIdCommand" xml:space="preserve">
-    <value>Delete Object ID</value>
+    <value>删除对象 ID</value>
   </data>
   <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
-    <value>Show raw structure of objects in variables windows</value>
+    <value>在变量窗口中显示对象的原始结构</value>
   </data>
 </root>
