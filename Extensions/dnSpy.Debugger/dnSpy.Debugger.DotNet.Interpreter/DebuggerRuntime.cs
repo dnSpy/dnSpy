@@ -223,6 +223,15 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract bool StoreTypeObject(ILValue address, DmdType type, ILValue value);
 
 		/// <summary>
+		/// Copies data from <paramref name="source"/> to <paramref name="destination"/>
+		/// </summary>
+		/// <param name="destination">Destination pointer</param>
+		/// <param name="source">Source pointer</param>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
+		public abstract bool CopyObject(ILValue destination, ILValue source, DmdType type);
+
+		/// <summary>
 		/// Boxes a value type (inluding a nullable value type) or returns null on failure
 		/// </summary>
 		/// <param name="value">Value</param>
@@ -262,6 +271,24 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="value">Value</param>
 		/// <returns></returns>
 		public abstract ILValue ConvI(ILValue value);
+
+		/// <summary>
+		/// Compares <paramref name="left"/> and <paramref name="right"/>, returning less than 0, 0 or greater than 0.
+		/// This method is called if one of the inputs is a non-constant native int or by-ref.
+		/// </summary>
+		/// <param name="left">Left operand</param>
+		/// <param name="right">Right operand</param>
+		/// <returns></returns>
+		public abstract int? CompareSigned(ILValue left, ILValue right);
+
+		/// <summary>
+		/// Compares <paramref name="left"/> and <paramref name="right"/>, returning less than 0, 0 or greater than 0.
+		/// This method is called if one of the inputs is a non-constant native int or by-ref.
+		/// </summary>
+		/// <param name="left">Left operand</param>
+		/// <param name="right">Right operand</param>
+		/// <returns></returns>
+		public abstract int? CompareUnsigned(ILValue left, ILValue right);
 	}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
