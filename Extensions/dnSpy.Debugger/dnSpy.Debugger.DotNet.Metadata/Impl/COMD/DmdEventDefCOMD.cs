@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			var otherMethods = otherMethodTokens.Length == 0 ? Array.Empty<DmdMethodInfo>() : new DmdMethodInfo[otherMethodTokens.Length];
 			for (int i = 0; i < otherMethods.Length; i++) {
 				var otherMethod = Lookup_COMThread(otherMethodTokens[i]);
-				if (otherMethod == null) {
+				if ((object)otherMethod == null) {
 					otherMethods = Array.Empty<DmdMethodInfo>();
 					break;
 				}

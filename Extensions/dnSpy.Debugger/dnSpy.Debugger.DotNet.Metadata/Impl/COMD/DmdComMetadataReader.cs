@@ -290,7 +290,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			foreach (var token in tokens) {
 				uint rid = token & 0x00FFFFFF;
 				if (token != typeToken) {
-					b = typeDefList.TryGet(rid) != null;
+					b = (object)typeDefList.TryGet(rid) != null;
 					Debug.Assert(!b);
 					if (b)
 						continue;
