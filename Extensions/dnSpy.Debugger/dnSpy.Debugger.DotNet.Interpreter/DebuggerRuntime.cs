@@ -138,14 +138,26 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract ILValue CreateTypeNoConstructor(DmdType type);
 
 		/// <summary>
-		/// Calls a method or returns null on failure. The method could be a CLR-generated method, eg. an array Address() method, see <see cref="DmdSpecialMethodKind"/>
+		/// Calls a method/constructor or returns false on failure. The method could be a CLR-generated method, eg. an array Address() method, see <see cref="DmdSpecialMethodKind"/>.
 		/// </summary>
 		/// <param name="isVirtual">true if it's a virtual call, false if it's a normal call</param>
 		/// <param name="method">Method to call</param>
 		/// <param name="obj">'this' pointer or null if it's a static method</param>
 		/// <param name="parameters">Method arguments</param>
+		/// <param name="returnValue">Return value. It's ignored if the method returns <see cref="void"/></param>
 		/// <returns></returns>
-		public abstract ILValue Call(bool isVirtual, DmdMethodBase method, ILValue obj, ILValue[] parameters);
+		public abstract bool Call(bool isVirtual, DmdMethodBase method, ILValue obj, ILValue[] parameters, out ILValue returnValue);
+
+		/// <summary>
+		/// Calls a method or returns false on failure
+		/// </summary>
+		/// <param name="methodAddress">Method address</param>
+		/// <param name="methodSig">Method signature</param>
+		/// <param name="obj">'this' pointer or null if it's a static method</param>
+		/// <param name="parameters">Method arguments</param>
+		/// <param name="returnValue">Return value. It's ignored if the method returns <see cref="void"/></param>
+		/// <returns></returns>
+		public abstract bool CallIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue obj, ILValue[] parameters, out ILValue returnValue);
 
 		/// <summary>
 		/// Returns the value of a field or returns null on failure
@@ -204,6 +216,22 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="value">New value</param>
 		/// <returns></returns>
 		public abstract bool StoreTypeObject(ILValue address, DmdType type, ILValue value);
+
+		/// <summary>
+		/// Boxes a value type (inluding a nullable value type) or returns null on failure
+		/// </summary>
+		/// <param name="value">Value</param>
+		/// <param name="type">Boxed type</param>
+		/// <returns></returns>
+		public abstract ILValue Box(ILValue value, DmdType type);
+
+		/// <summary>
+		/// Unboxes a boxed value type or returns null on failure
+		/// </summary>
+		/// <param name="value">Value</param>
+		/// <param name="type">Unboxed type</param>
+		/// <returns></returns>
+		public abstract ILValue UnboxAny(ILValue value, DmdType type);
 	}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member

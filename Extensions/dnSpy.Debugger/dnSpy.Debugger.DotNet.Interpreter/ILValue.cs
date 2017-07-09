@@ -70,6 +70,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract ILValueKind Kind { get; }
 
 		/// <summary>
+		/// true if this is a null value
+		/// </summary>
+		public bool IsNull => this == NullObjectRefILValue.Instance;
+
+		/// <summary>
 		/// Makes a copy of this instance so the new instance can be pushed onto the stack. The default implementation
 		/// returns itself. Only mutable value types need to override this method.
 		/// </summary>
