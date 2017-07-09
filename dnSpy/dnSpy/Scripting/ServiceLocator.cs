@@ -18,11 +18,13 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Threading;
 using dnSpy.Contracts.Scripting;
+using Microsoft.VisualStudio.Composition;
 
 namespace dnSpy.Scripting {
 	[Export, Export(typeof(IServiceLocator))]
@@ -32,24 +34,30 @@ namespace dnSpy.Scripting {
 		ServiceLocator() => dispatcher = Dispatcher.CurrentDispatcher;
 
 		public T Resolve<T>() {
-			Debug.Assert(compositionContainer != null);
-			if (compositionContainer == null)
+			Debug.Assert(exportProvider != null);
+			if (exportProvider == null)
 				throw new InvalidOperationException();
-			return dispatcher.UI(() => compositionContainer.GetExportedValue<T>());
+			return dispatcher.UI(() => exportProvider.GetExportedValue<T>());
 		}
 
 		public T TryResolve<T>() {
-			Debug.Assert(compositionContainer != null);
-			if (compositionContainer == null)
+			Debug.Assert(exportProvider != null);
+			if (exportProvider == null)
 				throw new InvalidOperationException();
-			return dispatcher.UI(() => compositionContainer.GetExportedValueOrDefault<T>());
+			return dispatcher.UI(() => {
+				// VS-MEF doesn't have GetExportedValueOrDefault()
+				var res = exportProvider.GetExports<T, IDictionary<string, object>>(null).SingleOrDefault();
+				if (res == null)
+					return default(T);
+				return res.Value;
+			});
 		}
 
-		public void SetCompositionContainer(CompositionContainer compositionContainer) {
-			if (this.compositionContainer != null)
+		public void SetExportProvider(ExportProvider exportProvider) {
+			if (this.exportProvider != null)
 				throw new InvalidOperationException();
-			this.compositionContainer = compositionContainer ?? throw new ArgumentNullException(nameof(compositionContainer));
+			this.exportProvider = exportProvider ?? throw new ArgumentNullException(nameof(exportProvider));
 		}
-		CompositionContainer compositionContainer;
+		ExportProvider exportProvider;
 	}
 }

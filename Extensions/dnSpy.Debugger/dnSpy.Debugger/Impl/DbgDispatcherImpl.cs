@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel.Composition;
 using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 
@@ -26,6 +27,7 @@ namespace dnSpy.Debugger.Impl {
 		public abstract T Invoke<T>(Func<T> callback);
 	}
 
+	[Export(typeof(DbgDispatcher))]
 	sealed class DbgDispatcherImpl : DbgDispatcher2 {
 		const DispatcherPriority execPriority = DispatcherPriority.Send;
 		readonly DebuggerThread debuggerThread;

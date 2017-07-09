@@ -20,13 +20,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,6 +48,7 @@ using dnSpy.Images;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
+using Microsoft.VisualStudio.Composition;
 
 namespace dnSpy.MainApp {
 	sealed partial class App : Application {
@@ -75,22 +77,32 @@ namespace dnSpy.MainApp {
 			MessageBox.Show(msg, "dnSpy", MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
-		[Import]
-		AppWindow appWindow = null;
-		[Import]
-		SettingsService settingsService = null;
-		[Import]
-		ExtensionService extensionService = null;
-		[Import]
-		IDsLoaderService dsLoaderService = null;
-		[Import]
-		Lazy<IDocumentTabService> documentTabService = null;
-		[Import]
-		Lazy<IDecompilerService> decompilerService = null;
-		[ImportMany]
-		IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers = null;
+		[Export]
+		sealed class AppState {
+			[Import]
+			public AppWindow appWindow = null;
+			[Import]
+			public SettingsService settingsService = null;
+			[Import]
+			public ExtensionService extensionService = null;
+			[Import]
+			public IDsLoaderService dsLoaderService = null;
+			[Import]
+			public Lazy<IDocumentTabService> documentTabService = null;
+			[Import]
+			public Lazy<IDecompilerService> decompilerService = null;
+			[ImportMany]
+			public IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers = null;
+		}
+
+		AppWindow appWindow;
+		SettingsService settingsService;
+		ExtensionService extensionService;
+		IDsLoaderService dsLoaderService;
+		Lazy<IDocumentTabService> documentTabService;
+		Lazy<IDecompilerService> decompilerService;
+		IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers;
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
-		CompositionContainer compositionContainer;
 
 		readonly IAppCommandLineArgs args;
 
@@ -105,8 +117,7 @@ namespace dnSpy.MainApp {
 			InitializeComponent();
 			UIFixes();
 
-			InitializeMEF(readSettings);
-			compositionContainer.ComposeParts(this);
+			InitializeMEF(readSettings, useCache: readSettings);
 			extensionService.LoadedExtensions = loadedExtensions;
 			appWindow.CommandLineArgs = args;
 
@@ -115,16 +126,22 @@ namespace dnSpy.MainApp {
 
 		// These can also be put in the App.config file (semicolon-separated) but I prefer code in
 		// this case.
-		void AddAppContextFixes() =>
+		void AddAppContextFixes() {
 			// This prevents a thin line between the tab item and its content when dpi is eg. 144.
 			// It's hard to miss if you check the Options dialog box.
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotApplyLayoutRoundingToMarginsAndBorderThickness", true);
+		}
 
-		void InitializeMEF(bool readSettings) {
-			compositionContainer = InitializeCompositionContainer();
-			compositionContainer.GetExportedValue<ServiceLocator>().SetCompositionContainer(compositionContainer);
+		void InitializeMEF(bool readSettings, bool useCache) {
+			var assemblies = GetAssemblies();
+			var resolver = Resolver.DefaultInstance;
+
+			var factory = TryCreateExportProviderFactoryCached(resolver, assemblies, useCache) ?? CreateExportProviderFactorySlow(resolver, assemblies);
+			var exportProvider = factory.CreateExportProvider();
+
+			exportProvider.GetExportedValue<ServiceLocator>().SetExportProvider(exportProvider);
 			if (readSettings) {
-				var settingsService = compositionContainer.GetExportedValue<ISettingsService>();
+				var settingsService = exportProvider.GetExportedValue<ISettingsService>();
 				try {
 					new XmlSettingsReader(settingsService).Read();
 				}
@@ -132,47 +149,260 @@ namespace dnSpy.MainApp {
 				}
 			}
 
-			var cultureService = compositionContainer.GetExportedValue<CultureService>();
+			var cultureService = exportProvider.GetExportedValue<CultureService>();
 			cultureService.Initialize(args);
 
 			// Make sure IDpiService gets created before any MetroWindows
-			compositionContainer.GetExportedValue<IDpiService>();
+			exportProvider.GetExportedValue<IDpiService>();
 
 			// It's needed very early, and an IAutoLoaded can't be used (it gets called too late for the first 64x64 image request)
-			DsImageConverter.imageService = compositionContainer.GetExportedValue<IImageService>();
+			DsImageConverter.imageService = exportProvider.GetExportedValue<IImageService>();
+
+			var state = exportProvider.GetExportedValue<AppState>();
+			appWindow = state.appWindow;
+			settingsService = state.settingsService;
+			extensionService = state.extensionService;
+			dsLoaderService = state.dsLoaderService;
+			documentTabService = state.documentTabService;
+			decompilerService = state.decompilerService;
+			appCommandLineArgsHandlers = state.appCommandLineArgsHandlers;
 		}
 
-		CompositionContainer InitializeCompositionContainer() {
-			var aggregateCatalog = new AggregateCatalog();
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(GetType().Assembly));
+		static string GetCachedCompositionConfigurationFilename() {
+			var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dnSpy", "Startup");
+			return Path.Combine(profileDir, "dnSpy-mef-info-" + (IntPtr.Size == 4 ? "32" : "64") + ".bin");
+		}
+
+		IExportProviderFactory TryCreateExportProviderFactoryCached(Resolver resolver, Assembly[] assemblies, bool useCache) {
+			if (!useCache)
+				return null;
+			try {
+				return TryCreateExportProviderFactoryCachedCore(resolver, assemblies);
+			}
+			catch (Exception ex) {
+				Debug.Fail(ex.ToString());
+				return null;
+			}
+		}
+
+		sealed class CachedMefInfo {
+			readonly Assembly[] assemblies;
+			readonly Stream stream;
+
+			const uint SIG = 0x577BC8FF;
+			const uint VERSION = 0;
+
+			public CachedMefInfo(Assembly[] assemblies, Stream stream) {
+				this.assemblies = assemblies;
+				this.stream = stream;
+			}
+
+			public void WriteFile() {
+				stream.Position = 0;
+				var writer = new BinaryWriter(stream);
+				writer.Write(SIG);
+				writer.Write(VERSION);
+				// The serialized data will probably only work on this machine
+				writer.Write(Environment.MachineName);
+				writer.Write(Environment.UserName);
+
+				// VS-MEF serializes metadata tokens. I don't know if eg. mscorlib tokens could be saved
+				// in the file so record some extra info in this file so we won't load it if eg. clr.dll
+				// or mscorlib.dll got updated.
+				WriteFile(writer, Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location), "clr.dll"));
+				WriteAssembly(writer, typeof(void).Assembly);
+
+				writer.Write(assemblies.Length);
+				foreach (var assembly in assemblies)
+					WriteAssembly(writer, assembly);
+
+				writer.Flush();
+			}
+
+			void WriteFile(BinaryWriter writer, string filename) {
+				Debug.Assert(File.Exists(filename));
+				writer.Write(filename);
+				if (File.Exists(filename)) {
+					var fileInfo = new FileInfo(filename);
+					writer.Write(fileInfo.LastWriteTimeUtc.ToFileTimeUtc());
+					writer.Write(fileInfo.CreationTimeUtc.ToFileTimeUtc());
+					writer.Write(fileInfo.Length);
+				}
+			}
+
+			void WriteAssembly(BinaryWriter writer, Assembly assembly) {
+				var filename = assembly.Location;
+				writer.Write(filename);
+				var fileInfo = new FileInfo(filename);
+				writer.Write(fileInfo.LastWriteTimeUtc.ToFileTimeUtc());
+				writer.Write(fileInfo.CreationTimeUtc.ToFileTimeUtc());
+				writer.Write(fileInfo.Length);
+				writer.Write(assembly.ManifestModule.ModuleVersionId.ToByteArray());
+			}
+
+			public bool CheckFile() {
+				stream.Position = 0;
+				var reader = new BinaryReader(stream);
+				if (reader.ReadUInt32() != SIG)
+					return false;
+				if (reader.ReadUInt32() != VERSION)
+					return false;
+				if (reader.ReadString() != Environment.MachineName)
+					return false;
+				if (reader.ReadString() != Environment.UserName)
+					return false;
+
+				if (!CheckFile(reader, Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location), "clr.dll")))
+					return false;
+				if (!CheckAssembly(reader, typeof(void).Assembly))
+					return false;
+
+				if (reader.ReadInt32() != assemblies.Length)
+					return false;
+				foreach (var assembly in assemblies) {
+					if (!CheckAssembly(reader, assembly))
+						return false;
+				}
+
+				return true;
+			}
+
+			bool CheckFile(BinaryReader reader, string filename) {
+				if (reader.ReadString() != filename)
+					return false;
+				Debug.Assert(File.Exists(filename));
+				if (File.Exists(filename)) {
+					var fileInfo = new FileInfo(filename);
+					if (reader.ReadInt64() != fileInfo.LastWriteTimeUtc.ToFileTimeUtc())
+						return false;
+					if (reader.ReadInt64() != fileInfo.CreationTimeUtc.ToFileTimeUtc())
+						return false;
+					if (reader.ReadInt64() != fileInfo.Length)
+						return false;
+				}
+				return true;
+			}
+
+			bool CheckAssembly(BinaryReader reader, Assembly assembly) {
+				var filename = assembly.Location;
+				if (reader.ReadString() != filename)
+					return false;
+				var fileInfo = new FileInfo(filename);
+				if (reader.ReadInt64() != fileInfo.LastWriteTimeUtc.ToFileTimeUtc())
+					return false;
+				if (reader.ReadInt64() != fileInfo.CreationTimeUtc.ToFileTimeUtc())
+					return false;
+				if (reader.ReadInt64() != fileInfo.Length)
+					return false;
+				if (new Guid(reader.ReadBytes(16)) != assembly.ManifestModule.ModuleVersionId)
+					return false;
+				return true;
+			}
+		}
+
+		IExportProviderFactory TryCreateExportProviderFactoryCachedCore(Resolver resolver, Assembly[] assemblies) {
+			var filename = GetCachedCompositionConfigurationFilename();
+			if (!File.Exists(filename))
+				return null;
+
+			Stream cachedStream = null;
+			try {
+				try {
+					cachedStream = File.OpenRead(filename);
+					if (!new CachedMefInfo(assemblies, cachedStream).CheckFile())
+						return null;
+				}
+				catch (Exception ex) when (IsFileIOException(ex)) {
+					return null;
+				}
+				try {
+					return new CachedComposition().LoadExportProviderFactoryAsync(cachedStream, resolver).Result;
+				}
+				catch (AggregateException ex) when (ex.InnerExceptions.Count == 1 && IsFileIOException(ex.InnerExceptions[0])) {
+					return null;
+				}
+			}
+			finally {
+				cachedStream?.Dispose();
+			}
+
+			bool IsFileIOException(Exception ex) => ex is IOException || ex is UnauthorizedAccessException || ex is SecurityException;
+		}
+
+		IExportProviderFactory CreateExportProviderFactorySlow(Resolver resolver, Assembly[] assemblies) {
+			var discovery = new AttributedPartDiscoveryV1(resolver);
+			var parts = discovery.CreatePartsAsync(assemblies).Result;
+			Debug.Assert(parts.ThrowOnErrors() == parts);
+
+			var catalog = ComposableCatalog.Create(resolver).AddParts(parts).WithDesktopSupport();
+			var config = CompositionConfiguration.Create(catalog);
+			Debug.Assert(config.ThrowOnErrors() == config);
+
+			Task.Run(() => SaveMefStateAsync(config, assemblies)).ContinueWith(t => {
+				var ex = t.Exception;
+				Debug.Assert(ex == null);
+			}, CancellationToken.None);
+
+			return config.CreateExportProviderFactory();
+		}
+
+		static async Task SaveMefStateAsync(CompositionConfiguration config, Assembly[] assemblies) {
+			string filename = GetCachedCompositionConfigurationFilename();
+			bool fileCreated = false;
+			bool deleteFile = true;
+			try {
+				using (var cachedStream = File.Create(filename)) {
+					fileCreated = true;
+					new CachedMefInfo(assemblies, cachedStream).WriteFile();
+					await new CachedComposition().SaveAsync(config, cachedStream);
+					deleteFile = false;
+				}
+			}
+			catch (IOException) {
+			}
+			catch (UnauthorizedAccessException) {
+			}
+			catch (SecurityException) {
+			}
+			finally {
+				if (fileCreated && deleteFile) {
+					try {
+						File.Delete(filename);
+					}
+					catch { }
+				}
+			}
+		}
+
+		Assembly[] GetAssemblies() {
+			var list = new List<Assembly>();
+			list.Add(GetType().Assembly);
 			// dnSpy.Contracts.DnSpy
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(MetroWindow).Assembly));
+			list.Add(typeof(MetroWindow).Assembly);
 			// dnSpy.Roslyn.Shared
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(RoslynClassifier).Assembly));
+			list.Add(typeof(RoslynClassifier).Assembly);
 			// Microsoft.VisualStudio.Text.Logic (needed for the editor option definitions)
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.ConvertTabsToSpaces).Assembly));
+			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.ConvertTabsToSpaces).Assembly);
 			// Microsoft.VisualStudio.Text.UI (needed for the editor option definitions)
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.AutoScrollEnabled).Assembly));
+			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.AutoScrollEnabled).Assembly);
 			// Microsoft.VisualStudio.Text.UI.Wpf (needed for the editor option definitions)
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.HighlightCurrentLineOption).Assembly));
+			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.HighlightCurrentLineOption).Assembly);
 			// dnSpy.Roslyn.EditorFeatures
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Roslyn.EditorFeatures.Dummy).Assembly));
+			list.Add(typeof(Roslyn.EditorFeatures.Dummy).Assembly);
 			// dnSpy.Roslyn.VisualBasic.EditorFeatures
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Roslyn.VisualBasic.EditorFeatures.Dummy).Assembly));
-			AddExtensionFiles(aggregateCatalog);
-			var options = CompositionOptions.IsThreadSafe;
-#if DEBUG
-			options |= CompositionOptions.DisableSilentRejection;
-#endif
-			return new CompositionContainer(aggregateCatalog, options);
+			list.Add(typeof(Roslyn.VisualBasic.EditorFeatures.Dummy).Assembly);
+			foreach (var asm in LoadExtensionAssemblies())
+				list.Add(asm);
+			return list.ToArray();
 		}
 
-		void AddExtensionFiles(AggregateCatalog aggregateCatalog) {
+		Assembly[] LoadExtensionAssemblies() {
 			var dir = Path.GetDirectoryName(GetType().Assembly.Location);
 			// Load the modules in a predictable order or multicore-JIT could stop recording. See
 			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
 			// in the PerfView docs for more info.
 			var files = GetExtensionFiles(dir).OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
+			var asms = new List<Assembly>();
 			foreach (var file in files) {
 				try {
 					if (!File.Exists(file))
@@ -184,13 +414,14 @@ namespace dnSpy.MainApp {
 						Debug.WriteLine($"Old extension detected ({file})");
 						continue;
 					}
-					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(asm));
+					asms.Add(asm);
 					loadedExtensions.Add(new LoadedExtension(asm));
 				}
 				catch (Exception ex) {
 					Debug.WriteLine($"Failed to load file '{file}', msg: {ex.Message}");
 				}
 			}
+			return asms.ToArray();
 		}
 
 		IEnumerable<string> GetExtensionFiles(string baseDir) {
@@ -340,7 +571,6 @@ namespace dnSpy.MainApp {
 			}
 			catch {
 			}
-			compositionContainer.Dispose();
 		}
 
 		void UIFixes() {
