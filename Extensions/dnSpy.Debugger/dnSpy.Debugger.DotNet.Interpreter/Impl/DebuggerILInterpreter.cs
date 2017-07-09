@@ -1657,38 +1657,451 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Conv_I:
-				case OpCode.Conv_I1:
-				case OpCode.Conv_I2:
-				case OpCode.Conv_I4:
-				case OpCode.Conv_I8:
+				case OpCode.Conv_U:
 				case OpCode.Conv_Ovf_I:
+				case OpCode.Conv_Ovf_U:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantNativeIntILValue(((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantNativeIntILValue(((ConstantInt64ILValue)v1).Value, debuggerRuntime.PointerSize);
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantNativeIntILValue((long)((ConstantFloatILValue)v1).Value, debuggerRuntime.PointerSize);
+						break;
+
+					case ILValueKind.NativeInt:
+						v3 = v1;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+						v3 = debuggerRuntime.ConvI(v1);
+						if (v3 == null)
+							ThrowInvalidMethodBodyInterpreterException();
+						break;
+
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
 				case OpCode.Conv_Ovf_I_Un:
+				case OpCode.Conv_Ovf_U_Un:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantNativeIntILValue((uint)((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantNativeIntILValue(((ConstantInt64ILValue)v1).Value, debuggerRuntime.PointerSize);
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantNativeIntILValue((long)((ConstantFloatILValue)v1).Value, debuggerRuntime.PointerSize);
+						break;
+
+					case ILValueKind.NativeInt:
+						v3 = v1;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+						v3 = debuggerRuntime.ConvI(v1);
+						if (v3 == null)
+							ThrowInvalidMethodBodyInterpreterException();
+						break;
+
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
+				case OpCode.Conv_I1:
 				case OpCode.Conv_Ovf_I1:
 				case OpCode.Conv_Ovf_I1_Un:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantInt32ILValue((sbyte)((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantInt32ILValue((sbyte)((ConstantInt64ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantInt32ILValue((sbyte)((ConstantFloatILValue)v1).Value);
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue)
+							v3 = new ConstantInt32ILValue((sbyte)((ConstantNativeIntILValue)v1).Value);
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
+				case OpCode.Conv_I2:
 				case OpCode.Conv_Ovf_I2:
 				case OpCode.Conv_Ovf_I2_Un:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantInt32ILValue((short)((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantInt32ILValue((short)((ConstantInt64ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantInt32ILValue((short)((ConstantFloatILValue)v1).Value);
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue)
+							v3 = new ConstantInt32ILValue((short)((ConstantNativeIntILValue)v1).Value);
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
+				case OpCode.Conv_I4:
 				case OpCode.Conv_Ovf_I4:
 				case OpCode.Conv_Ovf_I4_Un:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = v1;
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantInt32ILValue((int)((ConstantInt64ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantInt32ILValue((int)((ConstantFloatILValue)v1).Value);
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue)
+							v3 = new ConstantInt32ILValue((int)((ConstantNativeIntILValue)v1).Value);
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
+				case OpCode.Conv_I8:
 				case OpCode.Conv_Ovf_I8:
 				case OpCode.Conv_Ovf_I8_Un:
-				case OpCode.Conv_Ovf_U:
-				case OpCode.Conv_Ovf_U_Un:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantInt64ILValue(((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = v1;
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantInt64ILValue((long)((ConstantFloatILValue)v1).Value);
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue) {
+							if (debuggerRuntime.PointerSize == 4)
+								v3 = new ConstantInt64ILValue((int)((ConstantNativeIntILValue)v1).Value);
+							else
+								v3 = new ConstantInt64ILValue(((ConstantNativeIntILValue)v1).Value);
+						}
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
+				case OpCode.Conv_U1:
 				case OpCode.Conv_Ovf_U1:
 				case OpCode.Conv_Ovf_U1_Un:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantInt32ILValue((byte)((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantInt32ILValue((byte)((ConstantInt64ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantInt32ILValue((byte)((ConstantFloatILValue)v1).Value);
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue)
+							v3 = new ConstantInt32ILValue((byte)((ConstantNativeIntILValue)v1).Value);
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
+				case OpCode.Conv_U2:
 				case OpCode.Conv_Ovf_U2:
 				case OpCode.Conv_Ovf_U2_Un:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantInt32ILValue((ushort)((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantInt32ILValue((ushort)((ConstantInt64ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantInt32ILValue((ushort)((ConstantFloatILValue)v1).Value);
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue)
+							v3 = new ConstantInt32ILValue((ushort)((ConstantNativeIntILValue)v1).Value);
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
+				case OpCode.Conv_U4:
 				case OpCode.Conv_Ovf_U4:
 				case OpCode.Conv_Ovf_U4_Un:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = v1;
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantInt32ILValue((int)((ConstantInt64ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantInt32ILValue((int)(uint)((ConstantFloatILValue)v1).Value);
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue)
+							v3 = new ConstantInt32ILValue((int)((ConstantNativeIntILValue)v1).Value);
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
+				case OpCode.Conv_U8:
 				case OpCode.Conv_Ovf_U8:
 				case OpCode.Conv_Ovf_U8_Un:
-				case OpCode.Conv_R_Un:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantInt64ILValue((uint)((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = v1;
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantInt64ILValue((long)(ulong)((ConstantFloatILValue)v1).Value);
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue) {
+							if (debuggerRuntime.PointerSize == 4)
+								v3 = new ConstantInt64ILValue((uint)((ConstantNativeIntILValue)v1).Value);
+							else
+								v3 = new ConstantInt64ILValue(((ConstantNativeIntILValue)v1).Value);
+						}
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
 				case OpCode.Conv_R4:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantFloatILValue((float)((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantFloatILValue((float)((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Float:
+						v3 = new ConstantFloatILValue((float)((ConstantFloatILValue)v1).Value);
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue) {
+							if (debuggerRuntime.PointerSize == 4)
+								v3 = new ConstantFloatILValue((float)(int)((ConstantNativeIntILValue)v1).Value);
+							else
+								v3 = new ConstantFloatILValue((float)((ConstantNativeIntILValue)v1).Value);
+						}
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
 				case OpCode.Conv_R8:
-				case OpCode.Conv_U:
-				case OpCode.Conv_U1:
-				case OpCode.Conv_U2:
-				case OpCode.Conv_U4:
-				case OpCode.Conv_U8:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantFloatILValue(((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantFloatILValue(((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Float:
+						v3 = v1;
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue) {
+							if (debuggerRuntime.PointerSize == 4)
+								v3 = new ConstantFloatILValue((int)((ConstantNativeIntILValue)v1).Value);
+							else
+								v3 = new ConstantFloatILValue(((ConstantNativeIntILValue)v1).Value);
+						}
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
+
+				case OpCode.Conv_R_Un:
+					v1 = Pop1();
+					switch (v1.Kind) {
+					case ILValueKind.Int32:
+						v3 = new ConstantFloatILValue((uint)((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Int64:
+						v3 = new ConstantFloatILValue((ulong)((ConstantInt32ILValue)v1).Value);
+						break;
+
+					case ILValueKind.Float:
+						v3 = v1;
+						break;
+
+					case ILValueKind.NativeInt:
+						if (v1 is ConstantNativeIntILValue) {
+							if (debuggerRuntime.PointerSize == 4)
+								v3 = new ConstantFloatILValue((uint)((ConstantNativeIntILValue)v1).Value);
+							else
+								v3 = new ConstantFloatILValue((ulong)((ConstantNativeIntILValue)v1).Value);
+						}
+						else
+							goto case ILValueKind.ByRef;
+						break;
+
+					case ILValueKind.ByRef:
+					case ILValueKind.ObjectRef:
+					case ILValueKind.ValueType:
+					default:
+						throw new InvalidMethodBodyInterpreterException();
+					}
+					ilValueStack.Add(v3);
+					break;
 
 				case OpCode.Beq:
 				case OpCode.Beq_S:

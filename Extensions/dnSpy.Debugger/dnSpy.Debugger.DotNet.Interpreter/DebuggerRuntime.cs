@@ -255,6 +255,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="right">Right operand</param>
 		/// <returns></returns>
 		public abstract ILValue BinarySub(ILValue left, ILValue right);
+
+		/// <summary>
+		/// Converts the input to a native int or returns null on failure
+		/// </summary>
+		/// <param name="value">Value</param>
+		/// <returns></returns>
+		public abstract ILValue ConvI(ILValue value);
 	}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
