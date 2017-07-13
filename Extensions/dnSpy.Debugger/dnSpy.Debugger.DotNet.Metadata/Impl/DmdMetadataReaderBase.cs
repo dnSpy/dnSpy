@@ -180,7 +180,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			switch ((uint)metadataToken >> 24) {
 			case 0x11:
 				var methodSig = ResolveMethodSignature(rid, genericTypeArguments, genericMethodArguments);
-				if (methodSig != null)
+				if ((object)methodSig != null)
 					return methodSig;
 				break;
 			}
