@@ -50,6 +50,8 @@
     <Compile Include="Impl\OpCodes.cs" />
     <Compile Include="InterpreterException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Tests\FakeDebuggerRuntime.cs" />
+    <None Include="Tests\InterpreterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
@@ -58,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
+    <None Include="Tests\dbgintrptest.il" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
