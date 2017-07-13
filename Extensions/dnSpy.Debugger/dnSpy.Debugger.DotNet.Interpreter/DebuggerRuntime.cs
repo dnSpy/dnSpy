@@ -84,10 +84,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the value of an element in an SZ array or returns null on failure
 		/// </summary>
+		/// <param name="pointerType">Pointer type</param>
 		/// <param name="arrayValue">Array</param>
 		/// <param name="index">Index</param>
+		/// <param name="elementType">Optional element type (eg. it's the ldelem instruction)</param>
 		/// <returns></returns>
-		public abstract ILValue GetSZArrayElement(ILValue arrayValue, long index);
+		public abstract ILValue GetSZArrayElement(PointerOpCodeType pointerType, ILValue arrayValue, long index, DmdType elementType);
 
 		/// <summary>
 		/// Gets the address of an element in an SZ array or returns null on failure
@@ -266,7 +268,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract ILValue Box(ILValue value, DmdType type);
 
 		/// <summary>
-		/// Unboxes a boxed value type or returns null on failure
+		/// Unboxes a boxed value type or returns null if it's not a boxed value
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <param name="type">Unboxed type</param>
@@ -283,6 +285,24 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract ILValue BinaryAdd(ILValue left, ILValue right);
 
 		/// <summary>
+		/// Calculates <paramref name="left"/> + <paramref name="right"/>. This method is called if
+		/// one of the inputs is a non-constant native int or by-ref.
+		/// </summary>
+		/// <param name="left">Left operand</param>
+		/// <param name="right">Right operand</param>
+		/// <returns></returns>
+		public abstract ILValue BinaryAddOvf(ILValue left, ILValue right);
+
+		/// <summary>
+		/// Calculates <paramref name="left"/> + <paramref name="right"/>. This method is called if
+		/// one of the inputs is a non-constant native int or by-ref.
+		/// </summary>
+		/// <param name="left">Left operand</param>
+		/// <param name="right">Right operand</param>
+		/// <returns></returns>
+		public abstract ILValue BinaryAddOvfUn(ILValue left, ILValue right);
+
+		/// <summary>
 		/// Calculates <paramref name="left"/> - <paramref name="right"/>. This method is called if
 		/// one of the inputs is a non-constant native int or by-ref.
 		/// </summary>
@@ -292,11 +312,64 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract ILValue BinarySub(ILValue left, ILValue right);
 
 		/// <summary>
+		/// Calculates <paramref name="left"/> - <paramref name="right"/>. This method is called if
+		/// one of the inputs is a non-constant native int or by-ref.
+		/// </summary>
+		/// <param name="left">Left operand</param>
+		/// <param name="right">Right operand</param>
+		/// <returns></returns>
+		public abstract ILValue BinarySubOvf(ILValue left, ILValue right);
+
+		/// <summary>
+		/// Calculates <paramref name="left"/> - <paramref name="right"/>. This method is called if
+		/// one of the inputs is a non-constant native int or by-ref.
+		/// </summary>
+		/// <param name="left">Left operand</param>
+		/// <param name="right">Right operand</param>
+		/// <returns></returns>
+		public abstract ILValue BinarySubOvfUn(ILValue left, ILValue right);
+
+		/// <summary>
 		/// Converts the input to a native int or returns null on failure
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
 		public abstract ILValue ConvI(ILValue value);
+
+		/// <summary>
+		/// Converts the input to a native int or returns null on failure
+		/// </summary>
+		/// <param name="value">Value</param>
+		/// <returns></returns>
+		public abstract ILValue ConvOvfI(ILValue value);
+
+		/// <summary>
+		/// Converts the input to a native int or returns null on failure
+		/// </summary>
+		/// <param name="value">Value</param>
+		/// <returns></returns>
+		public abstract ILValue ConvOvfIUn(ILValue value);
+
+		/// <summary>
+		/// Converts the input to a native unsigned int or returns null on failure
+		/// </summary>
+		/// <param name="value">Value</param>
+		/// <returns></returns>
+		public abstract ILValue ConvU(ILValue value);
+
+		/// <summary>
+		/// Converts the input to a native unsigned int or returns null on failure
+		/// </summary>
+		/// <param name="value">Value</param>
+		/// <returns></returns>
+		public abstract ILValue ConvOvfU(ILValue value);
+
+		/// <summary>
+		/// Converts the input to a native unsigned int or returns null on failure
+		/// </summary>
+		/// <param name="value">Value</param>
+		/// <returns></returns>
+		public abstract ILValue ConvOvfUUn(ILValue value);
 
 		/// <summary>
 		/// Compares <paramref name="left"/> and <paramref name="right"/>, returning less than 0, 0 or greater than 0.
@@ -315,6 +388,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="right">Right operand</param>
 		/// <returns></returns>
 		public abstract int? CompareUnsigned(ILValue left, ILValue right);
+
+		/// <summary>
+		/// Checks if <paramref name="left"/> equals <paramref name="right"/> or returns null on failure
+		/// </summary>
+		/// <param name="left">Left operand</param>
+		/// <param name="right">Right operand</param>
+		/// <returns></returns>
+		public abstract bool? Equals(ILValue left, ILValue right);
 	}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
