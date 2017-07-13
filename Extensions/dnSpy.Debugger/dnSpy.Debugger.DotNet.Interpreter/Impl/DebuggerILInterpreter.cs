@@ -617,33 +617,66 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Ldelema:
-					// type token
-					methodBodyPos += 4;
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
 					Pop2(out v1, out v2);
-					v1 = debuggerRuntime.GetSZArrayElementAddress(v1, GetInt32OrNativeInt(v2));
+					v1 = debuggerRuntime.GetSZArrayElementAddress(v1, GetInt32OrNativeInt(v2), type);
 					if (v1 == null)
 						ThrowInvalidMethodBodyInterpreterException();
 					ilValueStack.Add(v1.Clone());
 					break;
 
 				case OpCode.Stelem:
-					// type token
-					methodBodyPos += 4;
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
 					Pop2(out v1, out v2);
-					if (!debuggerRuntime.SetSZArrayElement(Pop1(), GetInt32OrNativeInt(v1), v2))
+					if (!debuggerRuntime.SetSZArrayElement(PointerOpCodeType.Ref, Pop1(), GetInt32OrNativeInt(v1), v2, type))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Stelem_I:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.SetSZArrayElement(PointerOpCodeType.I, Pop1(), GetInt32OrNativeInt(v1), v2, null))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
 				case OpCode.Stelem_I1:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.SetSZArrayElement(PointerOpCodeType.I1, Pop1(), GetInt32OrNativeInt(v1), v2, null))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
 				case OpCode.Stelem_I2:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.SetSZArrayElement(PointerOpCodeType.I2, Pop1(), GetInt32OrNativeInt(v1), v2, null))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
 				case OpCode.Stelem_I4:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.SetSZArrayElement(PointerOpCodeType.I4, Pop1(), GetInt32OrNativeInt(v1), v2, null))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
 				case OpCode.Stelem_I8:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.SetSZArrayElement(PointerOpCodeType.I8, Pop1(), GetInt32OrNativeInt(v1), v2, null))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
 				case OpCode.Stelem_R4:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.SetSZArrayElement(PointerOpCodeType.R4, Pop1(), GetInt32OrNativeInt(v1), v2, null))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
 				case OpCode.Stelem_R8:
+					Pop2(out v1, out v2);
+					if (!debuggerRuntime.SetSZArrayElement(PointerOpCodeType.R8, Pop1(), GetInt32OrNativeInt(v1), v2, null))
+						ThrowInvalidMethodBodyInterpreterException();
+					break;
+
 				case OpCode.Stelem_Ref:
 					Pop2(out v1, out v2);
-					if (!debuggerRuntime.SetSZArrayElement(Pop1(), GetInt32OrNativeInt(v1), v2))
+					if (!debuggerRuntime.SetSZArrayElement(PointerOpCodeType.Ref, Pop1(), GetInt32OrNativeInt(v1), v2, null))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 

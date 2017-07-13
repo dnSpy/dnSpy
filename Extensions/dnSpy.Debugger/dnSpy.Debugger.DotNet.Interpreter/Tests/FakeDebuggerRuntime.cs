@@ -301,8 +301,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				return ar[index];
 			return null;
 		}
-		public override ILValue GetSZArrayElementAddress(ILValue arrayValue, long index) => new SZArrayAddress((SZArrayILValue)arrayValue, index);
-		public override bool SetSZArrayElement(ILValue arrayValue, long index, ILValue elementValue) {
+		public override ILValue GetSZArrayElementAddress(ILValue arrayValue, long index, DmdType elementType) => new SZArrayAddress((SZArrayILValue)arrayValue, index);
+		public override bool SetSZArrayElement(PointerOpCodeType pointerType, ILValue arrayValue, long index, ILValue elementValue, DmdType elementType) {
 			if (arrayValue is SZArrayILValue ar) {
 				ar[index] = elementValue;
 				return true;

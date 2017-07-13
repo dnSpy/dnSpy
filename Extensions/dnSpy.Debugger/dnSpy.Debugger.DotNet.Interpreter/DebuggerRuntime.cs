@@ -96,17 +96,20 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// </summary>
 		/// <param name="arrayValue">Array</param>
 		/// <param name="index">Index</param>
+		/// <param name="elementType">Element type</param>
 		/// <returns></returns>
-		public abstract ILValue GetSZArrayElementAddress(ILValue arrayValue, long index);
+		public abstract ILValue GetSZArrayElementAddress(ILValue arrayValue, long index, DmdType elementType);
 
 		/// <summary>
 		/// Sets the value of an element in an SZ array or returns false on failure
 		/// </summary>
+		/// <param name="pointerType">Pointer type</param>
 		/// <param name="arrayValue">Array</param>
 		/// <param name="index">Index</param>
 		/// <param name="elementValue">New value</param>
+		/// <param name="elementType">Optional element type (eg. it's the stelem instruction)</param>
 		/// <returns></returns>
-		public abstract bool SetSZArrayElement(ILValue arrayValue, long index, ILValue elementValue);
+		public abstract bool SetSZArrayElement(PointerOpCodeType pointerType, ILValue arrayValue, long index, ILValue elementValue, DmdType elementType);
 
 		/// <summary>
 		/// Returns the length of an SZ array. Returns false if the input is not an array
