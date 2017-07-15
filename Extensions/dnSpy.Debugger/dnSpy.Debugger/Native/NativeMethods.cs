@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Native {
 		public const int PROCESS_VM_WRITE = 0x0020;
 		public const int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
 
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32", SetLastError = true)]
 		public static extern SafeAccessTokenHandle OpenThread(int dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
 		public const int THREAD_TERMINATE = 0x0001;
 		public const int THREAD_SUSPEND_RESUME = 0x0002;

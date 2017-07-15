@@ -7831,7 +7831,7 @@ f5:
 		.locals		init (string)
 
 		ldc.i4.1
-		box		[mscorlib]System.Boolean
+		box			[mscorlib]System.Boolean
 		dup
 		brtrue	f1
 		pop
@@ -7846,7 +7846,7 @@ f1:
 f2:
 
 		ldc.i4.2
-		box		[mscorlib]System.Char
+		box			[mscorlib]System.Char
 		dup
 		brtrue	f3
 		pop
@@ -7861,7 +7861,7 @@ f3:
 f4:
 
 		ldc.i4.3
-		box		[mscorlib]System.SByte
+		box			[mscorlib]System.SByte
 		dup
 		brtrue	f5
 		pop
@@ -7876,7 +7876,7 @@ f5:
 f6:
 
 		ldc.i4.4
-		box		[mscorlib]System.Int16
+		box			[mscorlib]System.Int16
 		dup
 		brtrue	f7
 		pop
@@ -7891,7 +7891,7 @@ f7:
 f8:
 
 		ldc.i4.5
-		box		[mscorlib]System.Int32
+		box			[mscorlib]System.Int32
 		dup
 		brtrue	f9
 		pop
@@ -7907,7 +7907,7 @@ f10:
 
 		ldc.i4.6
 		conv.i8
-		box		[mscorlib]System.Int64
+		box			[mscorlib]System.Int64
 		dup
 		brtrue	f11
 		pop
@@ -7923,7 +7923,7 @@ f11:
 f12:
 
 		ldc.i4.7
-		box		[mscorlib]System.Byte
+		box			[mscorlib]System.Byte
 		dup
 		brtrue	f13
 		pop
@@ -7938,7 +7938,7 @@ f13:
 f14:
 
 		ldc.i4.8
-		box		[mscorlib]System.UInt16
+		box			[mscorlib]System.UInt16
 		dup
 		brtrue	f15
 		pop
@@ -7953,7 +7953,7 @@ f15:
 f16:
 
 		ldc.i4	9
-		box		[mscorlib]System.UInt32
+		box			[mscorlib]System.UInt32
 		dup
 		brtrue	f17
 		pop
@@ -7969,7 +7969,7 @@ f18:
 
 		ldc.i4	10
 		conv.u8
-		box		[mscorlib]System.UInt64
+		box			[mscorlib]System.UInt64
 		dup
 		brtrue	f19
 		pop
@@ -7985,7 +7985,7 @@ f19:
 f20:
 
 		ldc.r4	123.456
-		box		[mscorlib]System.Single
+		box			[mscorlib]System.Single
 		dup
 		brtrue	f21
 		pop
@@ -8000,7 +8000,7 @@ f21:
 f22:
 
 		ldc.r8	123.456
-		box		[mscorlib]System.Double
+		box			[mscorlib]System.Double
 		dup
 		brtrue	f23
 		pop
@@ -8017,7 +8017,7 @@ f24:
 		ldstr	"hello"
 		stloc.0
 		ldloc.0
-		box		[mscorlib]System.String
+		box			[mscorlib]System.String
 		dup
 		brtrue	f25
 		pop

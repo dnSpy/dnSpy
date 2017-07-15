@@ -4854,8 +4854,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				return ((ConstantInt32ILValue)v).Value;
 
 			case ILValueKind.NativeInt:
-				var cv = v as ConstantNativeIntILValue;
-				if (cv != null) {
+				if (v is ConstantNativeIntILValue cv) {
 					if (debuggerRuntime.PointerSize == 4)
 						return cv.Value32;
 					return cv.Value64;

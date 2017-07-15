@@ -427,7 +427,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 				return this;
 			if (pointerSize == 4) {
 				uint value2 = (uint)value;
-				return new NativeMemoryILValue(data, (int)checked((UnsignedOffset32 + value2)));
+				return new NativeMemoryILValue(data, (int)checked(UnsignedOffset32 + value2));
 			}
 			else {
 				ulong value2 = (ulong)value;
@@ -479,7 +479,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 				return this;
 			if (pointerSize == 4) {
 				uint value2 = (uint)value;
-				return new NativeMemoryILValue(data, (int)checked((UnsignedOffset32 - value2)));
+				return new NativeMemoryILValue(data, (int)checked(UnsignedOffset32 - value2));
 			}
 			else {
 				ulong value2 = (ulong)value;
