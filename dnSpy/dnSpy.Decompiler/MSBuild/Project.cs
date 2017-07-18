@@ -488,7 +488,8 @@ namespace dnSpy.Decompiler.MSBuild {
 			if (set == null)
 				return null;
 
-			var dir = Path.GetDirectoryName(nonSatFile.Filename).Substring(Directory.Length + 1);
+			var dirName = Path.GetDirectoryName(nonSatFile.Filename);
+			var dir = Directory.Length + 1 > dirName.Length ? string.Empty : dirName.Substring(Directory.Length + 1);
 			name = Path.GetFileNameWithoutExtension(nonSatFile.Filename);
 			ext = Path.GetExtension(nonSatFile.Filename);
 			var filename = filenameCreator.CreateFromRelativePath(Path.Combine(dir, name) + "." + asm.Culture, ext);
