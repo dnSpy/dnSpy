@@ -40,6 +40,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.ETW;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Resources;
 using dnSpy.Contracts.Settings;
 using dnSpy.Controls;
 using dnSpy.Culture;
@@ -96,6 +97,9 @@ namespace dnSpy.MainApp {
 			public IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers = null;
 		}
 
+		readonly ResourceManagerTokenCacheImpl resourceManagerTokenCacheImpl;
+		long resourceManagerTokensOffset;
+		Assembly[] mefAssemblies;
 		AppWindow appWindow;
 		SettingsService settingsService;
 		ExtensionService extensionService;
@@ -104,10 +108,12 @@ namespace dnSpy.MainApp {
 		Lazy<IDecompilerService> decompilerService;
 		IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers;
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
-
 		readonly IAppCommandLineArgs args;
 
 		public App(bool readSettings) {
+			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
+			resourceManagerTokenCacheImpl.TokensUpdated += ResourceManagerTokenCacheImpl_TokensUpdated;
+			ResourceHelper.SetresourceManagerTokenCache(resourceManagerTokenCacheImpl);
 			args = new AppCommandLineArgs();
 			AppDirectories.SetSettingsFilename(args.SettingsFilename);
 			if (args.SingleInstance)
@@ -134,10 +140,10 @@ namespace dnSpy.MainApp {
 		}
 
 		void InitializeMEF(bool readSettings, bool useCache) {
-			var assemblies = GetAssemblies();
+			mefAssemblies = GetAssemblies();
 			var resolver = Resolver.DefaultInstance;
 
-			var factory = TryCreateExportProviderFactoryCached(resolver, assemblies, useCache) ?? CreateExportProviderFactorySlow(resolver, assemblies);
+			var factory = TryCreateExportProviderFactoryCached(resolver, useCache, out resourceManagerTokensOffset) ?? CreateExportProviderFactorySlow(resolver);
 			var exportProvider = factory.CreateExportProvider();
 
 			exportProvider.GetExportedValue<ServiceLocator>().SetExportProvider(exportProvider);
@@ -174,11 +180,12 @@ namespace dnSpy.MainApp {
 			return Path.Combine(profileDir, "dnSpy-mef-info-" + (IntPtr.Size == 4 ? "32" : "64") + ".bin");
 		}
 
-		IExportProviderFactory TryCreateExportProviderFactoryCached(Resolver resolver, Assembly[] assemblies, bool useCache) {
+		IExportProviderFactory TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {
+			resourceManagerTokensOffset = -1;
 			if (!useCache)
 				return null;
 			try {
-				return TryCreateExportProviderFactoryCachedCore(resolver, assemblies);
+				return TryCreateExportProviderFactoryCachedCore(resolver, out resourceManagerTokensOffset);
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.ToString());
@@ -186,122 +193,8 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		sealed class CachedMefInfo {
-			readonly Assembly[] assemblies;
-			readonly Stream stream;
-
-			const uint SIG = 0x577BC8FF;
-			const uint VERSION = 0;
-
-			public CachedMefInfo(Assembly[] assemblies, Stream stream) {
-				this.assemblies = assemblies;
-				this.stream = stream;
-			}
-
-			public void WriteFile() {
-				stream.Position = 0;
-				var writer = new BinaryWriter(stream);
-				writer.Write(SIG);
-				writer.Write(VERSION);
-				// The serialized data will probably only work on this machine
-				writer.Write(Environment.MachineName);
-				writer.Write(Environment.UserName);
-
-				// VS-MEF serializes metadata tokens. I don't know if eg. mscorlib tokens could be saved
-				// in the file so record some extra info in this file so we won't load it if eg. clr.dll
-				// or mscorlib.dll got updated.
-				WriteFile(writer, Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location), "clr.dll"));
-				WriteAssembly(writer, typeof(void).Assembly);
-
-				writer.Write(assemblies.Length);
-				foreach (var assembly in assemblies)
-					WriteAssembly(writer, assembly);
-
-				writer.Flush();
-			}
-
-			void WriteFile(BinaryWriter writer, string filename) {
-				Debug.Assert(File.Exists(filename));
-				writer.Write(filename);
-				if (File.Exists(filename)) {
-					var fileInfo = new FileInfo(filename);
-					writer.Write(fileInfo.LastWriteTimeUtc.ToFileTimeUtc());
-					writer.Write(fileInfo.CreationTimeUtc.ToFileTimeUtc());
-					writer.Write(fileInfo.Length);
-				}
-			}
-
-			void WriteAssembly(BinaryWriter writer, Assembly assembly) {
-				var filename = assembly.Location;
-				writer.Write(filename);
-				var fileInfo = new FileInfo(filename);
-				writer.Write(fileInfo.LastWriteTimeUtc.ToFileTimeUtc());
-				writer.Write(fileInfo.CreationTimeUtc.ToFileTimeUtc());
-				writer.Write(fileInfo.Length);
-				writer.Write(assembly.ManifestModule.ModuleVersionId.ToByteArray());
-			}
-
-			public bool CheckFile() {
-				stream.Position = 0;
-				var reader = new BinaryReader(stream);
-				if (reader.ReadUInt32() != SIG)
-					return false;
-				if (reader.ReadUInt32() != VERSION)
-					return false;
-				if (reader.ReadString() != Environment.MachineName)
-					return false;
-				if (reader.ReadString() != Environment.UserName)
-					return false;
-
-				if (!CheckFile(reader, Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location), "clr.dll")))
-					return false;
-				if (!CheckAssembly(reader, typeof(void).Assembly))
-					return false;
-
-				if (reader.ReadInt32() != assemblies.Length)
-					return false;
-				foreach (var assembly in assemblies) {
-					if (!CheckAssembly(reader, assembly))
-						return false;
-				}
-
-				return true;
-			}
-
-			bool CheckFile(BinaryReader reader, string filename) {
-				if (reader.ReadString() != filename)
-					return false;
-				Debug.Assert(File.Exists(filename));
-				if (File.Exists(filename)) {
-					var fileInfo = new FileInfo(filename);
-					if (reader.ReadInt64() != fileInfo.LastWriteTimeUtc.ToFileTimeUtc())
-						return false;
-					if (reader.ReadInt64() != fileInfo.CreationTimeUtc.ToFileTimeUtc())
-						return false;
-					if (reader.ReadInt64() != fileInfo.Length)
-						return false;
-				}
-				return true;
-			}
-
-			bool CheckAssembly(BinaryReader reader, Assembly assembly) {
-				var filename = assembly.Location;
-				if (reader.ReadString() != filename)
-					return false;
-				var fileInfo = new FileInfo(filename);
-				if (reader.ReadInt64() != fileInfo.LastWriteTimeUtc.ToFileTimeUtc())
-					return false;
-				if (reader.ReadInt64() != fileInfo.CreationTimeUtc.ToFileTimeUtc())
-					return false;
-				if (reader.ReadInt64() != fileInfo.Length)
-					return false;
-				if (new Guid(reader.ReadBytes(16)) != assembly.ManifestModule.ModuleVersionId)
-					return false;
-				return true;
-			}
-		}
-
-		IExportProviderFactory TryCreateExportProviderFactoryCachedCore(Resolver resolver, Assembly[] assemblies) {
+		IExportProviderFactory TryCreateExportProviderFactoryCachedCore(Resolver resolver, out long resourceManagerTokensOffset) {
+			resourceManagerTokensOffset = -1;
 			var filename = GetCachedCompositionConfigurationFilename();
 			if (!File.Exists(filename))
 				return null;
@@ -310,7 +203,7 @@ namespace dnSpy.MainApp {
 			try {
 				try {
 					cachedStream = File.OpenRead(filename);
-					if (!new CachedMefInfo(assemblies, cachedStream).CheckFile())
+					if (!new CachedMefInfo(mefAssemblies, cachedStream).CheckFile(resourceManagerTokenCacheImpl, out resourceManagerTokensOffset))
 						return null;
 				}
 				catch (Exception ex) when (IsFileIOException(ex)) {
@@ -330,32 +223,37 @@ namespace dnSpy.MainApp {
 			bool IsFileIOException(Exception ex) => ex is IOException || ex is UnauthorizedAccessException || ex is SecurityException;
 		}
 
-		IExportProviderFactory CreateExportProviderFactorySlow(Resolver resolver, Assembly[] assemblies) {
+		IExportProviderFactory CreateExportProviderFactorySlow(Resolver resolver) {
 			var discovery = new AttributedPartDiscoveryV1(resolver);
-			var parts = discovery.CreatePartsAsync(assemblies).Result;
+			var parts = discovery.CreatePartsAsync(mefAssemblies).Result;
 			Debug.Assert(parts.ThrowOnErrors() == parts);
 
 			var catalog = ComposableCatalog.Create(resolver).AddParts(parts).WithDesktopSupport();
 			var config = CompositionConfiguration.Create(catalog);
 			Debug.Assert(config.ThrowOnErrors() == config);
 
-			Task.Run(() => SaveMefStateAsync(config, assemblies)).ContinueWith(t => {
+			writingCachedMefFile = true;
+			Task.Run(() => SaveMefStateAsync(config)).ContinueWith(t => {
 				var ex = t.Exception;
 				Debug.Assert(ex == null);
+				writingCachedMefFile = false;
 			}, CancellationToken.None);
 
 			return config.CreateExportProviderFactory();
 		}
 
-		static async Task SaveMefStateAsync(CompositionConfiguration config, Assembly[] assemblies) {
+		bool writingCachedMefFile;
+		async Task SaveMefStateAsync(CompositionConfiguration config) {
 			string filename = GetCachedCompositionConfigurationFilename();
 			bool fileCreated = false;
 			bool deleteFile = true;
 			try {
 				using (var cachedStream = File.Create(filename)) {
 					fileCreated = true;
-					new CachedMefInfo(assemblies, cachedStream).WriteFile();
+					long resourceManagerTokensOffsetTmp;
+					new CachedMefInfo(mefAssemblies, cachedStream).WriteFile(resourceManagerTokenCacheImpl.GetTokens(mefAssemblies), out resourceManagerTokensOffsetTmp);
 					await new CachedComposition().SaveAsync(config, cachedStream);
+					resourceManagerTokensOffset = resourceManagerTokensOffsetTmp;
 					deleteFile = false;
 				}
 			}
@@ -372,6 +270,43 @@ namespace dnSpy.MainApp {
 					}
 					catch { }
 				}
+			}
+		}
+
+		void ResourceManagerTokenCacheImpl_TokensUpdated(object sender, EventArgs e) => OnTokensUpdated();
+
+		void OnTokensUpdated() {
+			if (writingCachedMefFile)
+				Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(OnTokensUpdated));
+			else
+				UpdateResourceManagerTokens();
+		}
+
+		void UpdateResourceManagerTokens() {
+			var tokensOffset = resourceManagerTokensOffset;
+			if (tokensOffset < 0)
+				return;
+			string filename = GetCachedCompositionConfigurationFilename();
+			if (!File.Exists(filename))
+				return;
+			bool deleteFile = true;
+			try {
+				using (var cachedStream = File.OpenWrite(filename)) {
+					new CachedMefInfo(mefAssemblies, cachedStream).UpdateResourceManagerTokens(tokensOffset, resourceManagerTokenCacheImpl);
+					deleteFile = false;
+				}
+			}
+			catch (IOException) {
+			}
+			catch (UnauthorizedAccessException) {
+			}
+			catch (SecurityException) {
+			}
+			if (deleteFile) {
+				try {
+					File.Delete(filename);
+				}
+				catch { }
 			}
 		}
 

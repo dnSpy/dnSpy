@@ -716,6 +716,7 @@
       <DependentUpon>AskDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\AskVM.cs" />
+    <Compile Include="MainApp\CachedMefInfo.cs" />
     <Compile Include="MainApp\DevBuildWarning.cs" />
     <Compile Include="MainApp\DocumentTreeViewWindowContent.cs" />
     <Compile Include="MainApp\DsLoaderControl.xaml.cs">
@@ -732,6 +733,7 @@
       <DependentUpon>MsgBoxDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\MsgBoxVM.cs" />
+    <Compile Include="MainApp\ResourceManagerTokenCacheImpl.cs" />
     <Compile Include="MainApp\SavedWindowState.cs" />
     <Compile Include="MainApp\Settings\EnvironmentAppSettingsPageContainer.cs" />
     <Compile Include="MainApp\Settings\FontAppSettingsPage.cs" />

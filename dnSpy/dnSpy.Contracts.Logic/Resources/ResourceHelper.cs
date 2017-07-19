@@ -20,16 +20,33 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Resources;
 
 namespace dnSpy.Contracts.Resources {
 	/// <summary>
+	/// Caches the info so we don't have to call <see cref="Module.GetTypes"/> which is very slow
+	/// </summary>
+	abstract class ResourceManagerTokenCache {
+		public abstract bool TryGetResourceManagerGetMethodMetadataToken(Assembly assembly, out int getMethodMetadataToken);
+		public abstract void SetResourceManagerGetMethodMetadataToken(Assembly assembly, int getMethodMetadataToken);
+	}
+
+	/// <summary>
 	/// Converts strings to resource strings
 	/// </summary>
 	public static class ResourceHelper {
 		const string PREFIX = "res:";
+
+		static ResourceManagerTokenCache resourceManagerTokenCache;
+
+		internal static void SetresourceManagerTokenCache(ResourceManagerTokenCache tokenCache) {
+			if (tokenCache == null)
+				throw new ArgumentNullException(nameof(tokenCache));
+			if (resourceManagerTokenCache != null)
+				throw new InvalidOperationException();
+			resourceManagerTokenCache = tokenCache;
+		}
 
 		/// <summary>
 		/// Converts <paramref name="value"/> to a string in the resources if it has been prefixed with "res:"
@@ -38,6 +55,7 @@ namespace dnSpy.Contracts.Resources {
 		/// <param name="value">String</param>
 		/// <returns></returns>
 		public static string GetString(object obj, string value) {
+			Debug.Assert(resourceManagerTokenCache != null);
 			if (obj == null)
 				throw new ArgumentNullException(nameof(obj));
 			if (value == null || !value.StartsWith(PREFIX))
@@ -55,32 +73,61 @@ namespace dnSpy.Contracts.Resources {
 			if (asmToMgr.TryGetValue(assembly, out var mgr))
 				return mgr;
 
-			foreach (var type in assembly.ManifestModule.GetTypes().Where(a => a.Namespace != null && a.Namespace.EndsWith(".Properties", StringComparison.InvariantCultureIgnoreCase))) {
+			var tokenCache = resourceManagerTokenCache;
+			Debug.Assert(tokenCache != null);
+			if (tokenCache != null) {
+				if (tokenCache.TryGetResourceManagerGetMethodMetadataToken(assembly, out int getMethodMetadataToken)) {
+					MethodInfo method;
+					try {
+						method = assembly.ManifestModule.ResolveMethod(getMethodMetadataToken) as MethodInfo;
+					}
+					catch (ArgumentException) {
+						Debug.Fail("Couldn't resolve resource manager getter method");
+						method = null;
+					}
+					mgr = TrySetResourceManager(assembly, method, save: false);
+					if (mgr != null)
+						return mgr;
+				}
+			}
+
+			foreach (var type in assembly.ManifestModule.GetTypes()) {
+				if (type.Namespace == null || !type.Namespace.EndsWith(".Properties", StringComparison.InvariantCultureIgnoreCase))
+					continue;
 				var prop = type.GetProperty("ResourceManager", BindingFlags.Public | BindingFlags.Static);
 				if (prop == null)
 					continue;
 				var m = prop.GetGetMethod();
-				if (m == null)
-					continue;
-				if (m.ReturnType != typeof(ResourceManager))
-					continue;
-				if (m.GetParameters().Length != 0)
-					continue;
-
-				try {
-					mgr = m.Invoke(null, Array.Empty<object>()) as ResourceManager;
-				}
-				catch {
-					mgr = null;
-				}
-				if (mgr != null) {
-					asmToMgr[assembly] = mgr;
+				mgr = TrySetResourceManager(assembly, m, save: true);
+				if (mgr != null)
 					return mgr;
-				}
 			}
 
 			Debug.Fail($"Failed to find the class with the ResourceManager property in assembly {assembly}");
 			return null;
+		}
+
+		static ResourceManager TrySetResourceManager(Assembly assembly, MethodInfo m, bool save) {
+			if (m == null)
+				return null;
+			if (!m.IsStatic)
+				return null;
+			if (m.ReturnType != typeof(ResourceManager))
+				return null;
+			if (m.GetParameters().Length != 0)
+				return null;
+
+			ResourceManager mgr;
+			try {
+				mgr = m.Invoke(null, Array.Empty<object>()) as ResourceManager;
+			}
+			catch {
+				return null;
+			}
+			if (save)
+				resourceManagerTokenCache?.SetResourceManagerGetMethodMetadataToken(assembly, m.MetadataToken);
+			asmToMgr[assembly] = mgr;
+			return mgr;
 		}
 
 		static readonly Dictionary<Assembly, ResourceManager> asmToMgr = new Dictionary<Assembly, ResourceManager>();
