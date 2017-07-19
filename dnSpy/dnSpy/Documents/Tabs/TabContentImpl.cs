@@ -27,6 +27,7 @@ using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.ETW;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Tabs;
@@ -330,6 +331,7 @@ namespace dnSpy.Documents.Tabs {
 			Debug.Assert(tabContent.DocumentTab == this);
 
 			UpdateTitleAndToolTip();
+			DnSpyEventSource.Log.ShowDocumentTabContentStart();
 			var showCtx = new ShowContext(cachedUIContext, isRefresh);
 			tabContent.OnShow(showCtx);
 			bool asyncShow = false;
@@ -414,6 +416,7 @@ namespace dnSpy.Documents.Tabs {
 				onShownHandler?.Invoke(e);
 				showCtx.OnShown?.Invoke(e);
 			}
+			DnSpyEventSource.Log.ShowDocumentTabContentStop();
 		}
 
 		void RestoreUIState(object uiState) {

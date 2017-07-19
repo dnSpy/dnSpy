@@ -30,6 +30,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.ETW;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.MVVM;
 
@@ -240,6 +241,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		ModuleSaver moduleSaver;
 		void SaveAsync(SaveOptionsVM[] mods) {
+			DnSpyEventSource.Log.SaveDocumentsStart();
 			try {
 				moduleSaver = new ModuleSaver(mods);
 				moduleSaver.OnProgressUpdated += moduleSaver_OnProgressUpdated;
@@ -262,6 +264,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 			moduleSaver = null;
 
+			DnSpyEventSource.Log.SaveDocumentsStop();
 			ExecInOldThread(() => {
 				CurrentFileName = string.Empty;
 				State = SaveState.Saved;

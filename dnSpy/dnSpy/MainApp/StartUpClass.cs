@@ -22,6 +22,7 @@ using System.IO;
 using System.Runtime;
 using System.Windows;
 using System.Windows.Input;
+using dnSpy.Contracts.ETW;
 using dnSpy.Properties;
 
 namespace dnSpy.MainApp {
@@ -42,6 +43,7 @@ namespace dnSpy.MainApp {
 
 		[STAThread]
 		public static void Main() {
+			DnSpyEventSource.Log.StartupStart();
 			OptimizeStartup();
 
 			if (!dnlib.Settings.IsThreadSafe) {

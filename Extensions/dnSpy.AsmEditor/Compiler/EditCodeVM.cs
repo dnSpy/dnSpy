@@ -34,6 +34,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.ETW;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Editor;
@@ -333,8 +334,10 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 			CanCompile = false;
 
+			DnSpyEventSource.Log.CompileStart();
 			ProfileOptimizationHelper.StartProfile("compile-" + decompiler.UniqueGuid.ToString());
 			StartCompileAsync().ContinueWith(t => {
+				DnSpyEventSource.Log.CompileStop();
 				var ex = t.Exception;
 				Debug.Assert(ex == null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());

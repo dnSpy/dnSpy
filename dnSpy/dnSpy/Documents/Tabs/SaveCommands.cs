@@ -34,6 +34,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.ETW;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
@@ -151,6 +152,7 @@ namespace dnSpy.Documents.Tabs {
 				vm.ProgressMaximum = 1;
 				vm.TotalProgress = 0;
 				vm.IsIndeterminate = false;
+				DnSpyEventSource.Log.ExportToProjectStart();
 				Task.Factory.StartNew(() => {
 					var decompilationContext = new DecompilationContext {
 						CancellationToken = cancellationToken,
@@ -195,6 +197,7 @@ namespace dnSpy.Documents.Tabs {
 						fileToOpen = creator.ProjectFilenames.FirstOrDefault();
 				}, cancellationToken)
 				.ContinueWith(t => {
+					DnSpyEventSource.Log.ExportToProjectStop();
 					var ex = t.Exception;
 					if (ex != null)
 						Error(string.Format(dnSpy_Resources.ErrorExceptionOccurred, ex));

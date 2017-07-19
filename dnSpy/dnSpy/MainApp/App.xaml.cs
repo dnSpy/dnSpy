@@ -38,6 +38,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.ETW;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings;
 using dnSpy.Controls;
@@ -609,6 +610,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void DsLoaderService_OnAppLoaded(object sender, EventArgs e) {
+			DnSpyEventSource.Log.StartupStop();
 			dsLoaderService.OnAppLoaded -= DsLoaderService_OnAppLoaded;
 			appWindow.AppLoaded = true;
 			extensionService.OnAppLoaded();

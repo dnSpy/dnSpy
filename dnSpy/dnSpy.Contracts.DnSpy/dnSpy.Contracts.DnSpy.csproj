@@ -288,6 +288,7 @@
     <Compile Include="Documents\TreeView\Resources\UnknownSerializedResourceElementNode.cs" />
     <Compile Include="Documents\TreeView\TypeNode.cs" />
     <Compile Include="Documents\TreeView\UnknownDocumentNode.cs" />
+    <Compile Include="ETW\DnSpyEventSource.cs" />
     <Compile Include="Extension\ExtensionEvent.cs" />
     <Compile Include="Extension\ExtensionInfo.cs" />
     <Compile Include="Extension\IAutoLoaded.cs" />
