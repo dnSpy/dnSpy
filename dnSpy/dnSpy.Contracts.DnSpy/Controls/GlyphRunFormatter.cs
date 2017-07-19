@@ -36,10 +36,15 @@ namespace dnSpy.Contracts.Controls {
 	}
 
 	static class TextFormatterFactory {
-		public static ITextFormatter Create(DependencyObject owner, bool useNewFormatter) {
+		static readonly GlyphRunFormatter GlyphRunFormatter_Ideal = new GlyphRunFormatter(TextFormattingMode.Ideal);
+		static readonly GlyphRunFormatter GlyphRunFormatter_Display = new GlyphRunFormatter(TextFormattingMode.Display);
+		static readonly WpfTextFormatter WpfTextFormatter_Ideal = new WpfTextFormatter(TextFormattingMode.Ideal);
+		static readonly WpfTextFormatter WpfTextFormatter_Display = new WpfTextFormatter(TextFormattingMode.Display);
+
+		public static ITextFormatter GetTextFormatter(DependencyObject owner, bool useNewFormatter) {
 			if (useNewFormatter)
-				return new GlyphRunFormatter(TextOptions.GetTextFormattingMode(owner));
-			return new WpfTextFormatter(TextOptions.GetTextFormattingMode(owner));
+				return TextOptions.GetTextFormattingMode(owner) == TextFormattingMode.Ideal ? GlyphRunFormatter_Ideal : GlyphRunFormatter_Display;
+			return TextOptions.GetTextFormattingMode(owner) == TextFormattingMode.Ideal ? WpfTextFormatter_Ideal : WpfTextFormatter_Display;
 		}
 	}
 

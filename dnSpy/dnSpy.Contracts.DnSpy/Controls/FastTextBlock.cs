@@ -179,7 +179,7 @@ namespace dnSpy.Contracts.Controls {
 
 		void MakeNewText() {
 			if (fmt == null)
-				fmt = TextFormatterFactory.Create(this, useNewFormatter);
+				fmt = TextFormatterFactory.GetTextFormatter(this, useNewFormatter);
 
 			if (line != null)
 				line.Dispose();

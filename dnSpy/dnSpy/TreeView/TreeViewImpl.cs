@@ -220,14 +220,6 @@ namespace dnSpy.TreeView {
 			if (nodes.Length > 0) {
 				sharpTreeView.FocusNode(nodes[0].Node);
 				sharpTreeView.SelectedItem = nodes[0].Node;
-
-				// FocusNode() should already call ScrollIntoView() but for some reason,
-				// ScrollIntoView() does nothing so add another call.
-				// Background priority won't work, we need ContextIdle prio
-				sharpTreeView.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-					if (sharpTreeView.SelectedItem is SharpTreeNode item)
-						sharpTreeView.ScrollIntoView(item);
-				}));
 			}
 			foreach (var node in nodes) {
 				if (sharpTreeView.SelectionMode == SelectionMode.Single) {
