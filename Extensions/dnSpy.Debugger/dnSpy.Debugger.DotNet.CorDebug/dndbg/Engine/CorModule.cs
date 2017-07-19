@@ -67,10 +67,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string Name { get; }
 
-		/// <summary>
-		/// Gets the name from the MD, which is the same as <see cref="ModuleDef.Name"/>
-		/// </summary>
-		public string DnlibName {
+		string DnlibName {
 			get {
 				if (dnlibName == null)
 					Interlocked.CompareExchange(ref dnlibName, CalculateDnlibName(this), null);
@@ -128,15 +125,18 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsInMemory { get; }
 
-		string SerializedName {
-			get {
-				if (!IsInMemory)
-					return Name;	// filename
-				return DnlibName;
+		string GetSerializedName(uint id) {
+			if (IsInMemory || IsDynamic) {
+				// If it's a dynamic module or an in-memory module, it doesn't have a filename. The module ID
+				// won't necessarily be unique so we must use an extra id.
+				return DnlibName + " (id=" + id.ToString() + ")";
 			}
+
+			// Filename
+			return Name;
 		}
 
-		public DnModuleId DnModuleId => new DnModuleId(Assembly?.FullName ?? string.Empty, SerializedName, IsDynamic, IsInMemory, false);
+		public DnModuleId GetModuleId(uint id) => new DnModuleId(Assembly?.FullName ?? string.Empty, GetSerializedName(id), IsDynamic, IsInMemory, false);
 
 		/// <summary>
 		/// Gets/sets the JIT compiler flags. The setter can only be called from the

@@ -43,6 +43,7 @@ namespace dndbg.Engine {
 		readonly BreakpointList<DnILCodeBreakpoint> ilCodeBreakpointList = new BreakpointList<DnILCodeBreakpoint>();
 		readonly BreakpointList<DnNativeCodeBreakpoint> nativeCodeBreakpointList = new BreakpointList<DnNativeCodeBreakpoint>();
 		readonly Dictionary<CorStepper, StepInfo> stepInfos = new Dictionary<CorStepper, StepInfo>();
+		readonly Dictionary<CorModule, DnModule> toDnModule = new Dictionary<CorModule, DnModule>();
 		DebugOptions debugOptions;
 
 		sealed class StepInfo {
@@ -719,6 +720,8 @@ namespace dndbg.Engine {
 		}
 
 		void OnModuleUnloaded(DnModule module) {
+			bool b = toDnModule.Remove(module.CorModule);
+			Debug.Assert(b);
 			module.Assembly.ModuleUnloaded(module);
 			RemoveModuleFromBreakpoints(module);
 		}
@@ -836,6 +839,7 @@ namespace dndbg.Engine {
 				assembly = TryGetValidAssembly(lmArgs.AppDomain, lmArgs.Module);
 				if (assembly != null) {
 					var module = assembly.TryAdd(lmArgs.Module);
+					toDnModule.Add(module.CorModule, module);
 					module.CorModule.EnableJITDebugging(debugOptions.ModuleTrackJITInfo, debugOptions.ModuleAllowJitOptimizations);
 					module.CorModule.EnableClassLoadCallbacks(debugOptions.ModuleClassLoadCallbacks);
 					module.CorModule.JITCompilerFlags = debugOptions.JITCompilerFlags;
@@ -856,8 +860,8 @@ namespace dndbg.Engine {
 				assembly = TryGetValidAssembly(umArgs.AppDomain, umArgs.Module);
 				if (assembly != null) {
 					var module = assembly.TryGetModule(umArgs.Module);
-					OnModuleUnloaded(module);
 					if (module != null) {
+						OnModuleUnloaded(module);
 						CallOnModuleAdded(module, false, out shouldPause);
 						if (shouldPause)
 							e.AddPauseReason(DebuggerPauseReason.Other);
@@ -1483,12 +1487,19 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public DnNativeCodeBreakpoint CreateNativeBreakpoint(CorCode code, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
-			var bp = new DnNativeCodeBreakpoint(code, offset, cond);
-			var module = code.Function?.Module?.DnModuleId ?? new DnModuleId();
+			var module = TryGetModuleId(code.Function?.Module) ?? new DnModuleId();
+			var bp = new DnNativeCodeBreakpoint(module, code, offset, cond);
 			nativeCodeBreakpointList.Add(module, bp);
 			foreach (var dnMod in GetLoadedDnModules(module))
 				bp.AddBreakpoint(dnMod);
 			return bp;
+		}
+
+		public DnModuleId? TryGetModuleId(CorModule module) {
+			if (module != null && toDnModule.TryGetValue(module, out var dnModule))
+				return dnModule.DnModuleId;
+			Debug.Fail("Couldn't get module id");
+			return null;
 		}
 
 		IEnumerable<DnModule> GetLoadedDnModules(DnModuleId module) {

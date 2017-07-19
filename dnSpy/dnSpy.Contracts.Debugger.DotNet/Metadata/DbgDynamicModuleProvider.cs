@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -41,8 +42,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 		/// Gets the dynamic module's metadata or null if none is available
 		/// </summary>
 		/// <param name="module">Module</param>
+		/// <param name="moduleId">Module id</param>
 		/// <returns></returns>
-		public abstract ModuleDef GetDynamicMetadata(DbgModule module);
+		public abstract ModuleDef GetDynamicMetadata(DbgModule module, out ModuleId moduleId);
 
 		/// <summary>
 		/// Gets all modified types. This method is called on the engine thread (see <see cref="BeginInvoke(Action)"/>)

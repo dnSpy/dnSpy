@@ -34,18 +34,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public override IDsDocumentNameKey Key => CreateKey(DbgModule);
-		public ModuleId ModuleId => ModuleId.Create(ModuleDef, DbgModule.IsDynamic, DbgModule.IsInMemory);
+		public ModuleId ModuleId { get; }
 		public override DsDocumentInfo? SerializedDocument => null;
 		public DbgModule DbgModule { get; }
 		public static IDsDocumentNameKey CreateKey(DbgModule module) => new DocKey(module);
 		public override bool IsActive => !DbgModule.IsClosed;
 
-		public DynamicModuleDefDocument(DbgModule module, ModuleDef moduleDef, bool loadSyms)
-			: base(moduleDef, loadSyms) => DbgModule = module;
+		public DynamicModuleDefDocument(ModuleId moduleId, DbgModule module, ModuleDef moduleDef, bool loadSyms)
+			: base(moduleDef, loadSyms) {
+			ModuleId = moduleId;
+			DbgModule = module;
+		}
 
 		public static DynamicModuleDefDocument CreateAssembly(List<DynamicModuleDefDocument> files) {
 			var manifest = files[0];
-			var file = new DynamicModuleDefDocument(manifest.DbgModule, manifest.ModuleDef, false);
+			var file = new DynamicModuleDefDocument(manifest.ModuleId, manifest.DbgModule, manifest.ModuleDef, false);
 			file.files = new List<DynamicModuleDefDocument>(files);
 			return file;
 		}

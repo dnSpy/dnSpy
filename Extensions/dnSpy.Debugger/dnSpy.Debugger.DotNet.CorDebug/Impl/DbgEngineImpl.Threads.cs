@@ -337,12 +337,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (!TryGetLocation(location, out var moduleId, out uint token, out offset))
 				return dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotSetNextStatement;
 
-			var frameModuleId = corFrame.DnModuleId;
+			var frameModuleId = TryGetModuleId(corFrame);
 			if (frameModuleId == null || frameModuleId.Value.ToModuleId() != moduleId || corFrame.Token != token)
 				return dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotSetNextStatement;
 
 			return null;
 		}
+
+		internal DnModuleId? TryGetModuleId(CorFrame frame) => dnDebugger.TryGetModuleId(frame.Function?.Module);
 
 		bool TryGetFrame(DbgThread thread, out CorFrame frame) {
 			debuggerThread.VerifyAccess();

@@ -35,8 +35,8 @@ namespace dndbg.Engine {
 			: base(module, token, offset) => Condition = cond ?? defaultCond;
 		static readonly Func<NativeCodeBreakpointConditionContext, bool> defaultCond = a => true;
 
-		internal DnNativeCodeBreakpoint(CorCode code, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond)
-			: base(code, offset) => Condition = cond ?? defaultCond;
+		internal DnNativeCodeBreakpoint(DnModuleId module, CorCode code, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond)
+			: base(module, code, offset) => Condition = cond ?? defaultCond;
 
 		internal override CorCode GetCode(CorFunction func) => func.NativeCode;
 	}

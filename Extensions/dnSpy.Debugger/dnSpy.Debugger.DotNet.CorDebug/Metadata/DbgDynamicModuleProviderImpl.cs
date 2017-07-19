@@ -26,6 +26,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
@@ -57,22 +58,28 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 		sealed class DynamicModuleData {
 			public LastValidRids LastValidRids;
 			public CorModuleDef Metadata;
+			public ModuleId ModuleId;
 		}
 
-		public override ModuleDef GetDynamicMetadata(DbgModule module) {
+		public override ModuleDef GetDynamicMetadata(DbgModule module, out ModuleId moduleId) {
 			var data = module.GetOrCreateData<DynamicModuleData>();
-			if (data.Metadata != null)
+			if (data.Metadata != null) {
+				moduleId = data.ModuleId;
 				return data.Metadata;
-			data.Metadata = Invoke(() => {
+			}
+			var info = Invoke(() => {
 				if (data.Metadata != null)
-					return data.Metadata;
-				var md = engine.GetDynamicMetadata_EngineThread(module);
+					return (metadata: data.Metadata, moduleId: data.ModuleId);
+				var info2 = engine.GetDynamicMetadata_EngineThread(module);
 				// DsDotNetDocumentBase sets EnableTypeDefFindCache to true and that property accesses the
 				// Types property. It must be initialized in the correct thread.
-				var t = md.Types;
-				md.DisableMDAPICalls = true;
-				return md;
+				var t = info2.metadata.Types;
+				info2.metadata.DisableMDAPICalls = true;
+				return info2;
 			});
+			data.ModuleId = info.moduleId;
+			data.Metadata = info.metadata;
+			moduleId = info.moduleId;
 			return data.Metadata;
 		}
 

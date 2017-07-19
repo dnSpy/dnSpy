@@ -241,11 +241,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the module of the function or null
-		/// </summary>
-		public DnModuleId? DnModuleId => Function?.Module?.DnModuleId;
-
 		public CorFrame(ICorDebugFrame frame)
 			: base(frame) {
 			int hr = frame.GetFunctionToken(out token);

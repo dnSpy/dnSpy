@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			}
 			FunctionOffset = functionOffset;
 
-			var moduleId = corFrame.DnModuleId.GetValueOrDefault().ToModuleId();
+			var moduleId = engine.TryGetModuleId(corFrame).GetValueOrDefault().ToModuleId();
 			var nativeCode = corFrame.Code;
 			Debug.Assert(nativeCode?.IsIL == false);
 			if (nativeCode?.IsIL == false) {

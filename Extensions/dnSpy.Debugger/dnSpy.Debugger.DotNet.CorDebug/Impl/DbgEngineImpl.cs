@@ -470,13 +470,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		internal CorModuleDef GetDynamicMetadata_EngineThread(DbgModule module) {
+		internal (CorModuleDef metadata, ModuleId moduleId) GetDynamicMetadata_EngineThread(DbgModule module) {
 			debuggerThread.VerifyAccess();
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (!TryGetModuleData(module, out var data))
-				return null;
-			return data.DnModule.GetOrCreateCorModuleDef();
+				return (null, default(ModuleId));
+			return (data.DnModule.GetOrCreateCorModuleDef(), data.DnModule.DnModuleId.ToModuleId());
 		}
 
 		internal static ModuleId? TryGetModuleId(DbgModule module) {

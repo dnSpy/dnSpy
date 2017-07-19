@@ -180,10 +180,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					var moduleNode = asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>().FirstOrDefault(a => moduleKey.Equals(a.Document.Key));
 					Debug.Assert(moduleNode == null);
 					if (moduleNode == null) {
-						var md = info.DynamicModuleProvider.GetDynamicMetadata(module);
+						var md = info.DynamicModuleProvider.GetDynamicMetadata(module, out var moduleId);
 						if (md != null) {
 							UpdateResolver(md);
-							var newFile = new DynamicModuleDefDocument(module, md, UseDebugSymbols);
+							var newFile = new DynamicModuleDefDocument(moduleId, module, md, UseDebugSymbols);
 							asmNode.Document.Children.Add(newFile);
 							Initialize_UI(info, new[] { newFile });
 							asmNode.TreeNode.Children.Add(documentTreeView.Value.TreeView.Create(documentTreeView.Value.CreateNode(asmNode, newFile)));
@@ -287,11 +287,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var files = new List<DynamicModuleDefDocument>(modules.Length);
 				DynamicModuleDefDocument resDoc = null;
 				foreach (var m in modules) {
-					var md = info.DynamicModuleProvider.GetDynamicMetadata(m);
+					var md = info.DynamicModuleProvider.GetDynamicMetadata(m, out var moduleId);
 					if (md == null)
 						continue;
 					UpdateResolver(md);
-					var newDoc = new DynamicModuleDefDocument(m, md, UseDebugSymbols);
+					var newDoc = new DynamicModuleDefDocument(moduleId, m, md, UseDebugSymbols);
 					if (m == module)
 						resDoc = newDoc;
 					files.Add(newDoc);

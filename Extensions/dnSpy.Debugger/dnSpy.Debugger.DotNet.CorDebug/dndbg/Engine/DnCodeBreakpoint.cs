@@ -59,17 +59,14 @@ namespace dndbg.Engine {
 			error = DnCodeBreakpointError.OtherError;
 		}
 
-		internal DnCodeBreakpoint(CorCode code, uint offset) {
-			Module = GetModule(code);
+		internal DnCodeBreakpoint(DnModuleId module, CorCode code, uint offset) {
+			Module = module;
 			var func = code.Function;
 			Token = func?.Token ?? 0;
 			Offset = offset;
 			this.code = code;
 			error = DnCodeBreakpointError.OtherError;
 		}
-
-		static DnModuleId GetModule(CorCode code) =>
-			code.Function?.Module?.DnModuleId ?? new DnModuleId();
 
 		sealed protected override void OnIsEnabledChanged() {
 			foreach (var bp in rawBps)
@@ -99,7 +96,7 @@ namespace dndbg.Engine {
 				c = GetCode(func);
 			}
 			else {
-				if (GetModule(c) != module.DnModuleId)
+				if (c.Function?.Module != module.CorModule)
 					return DnCodeBreakpointError.OtherError;
 			}
 			if (c == null)

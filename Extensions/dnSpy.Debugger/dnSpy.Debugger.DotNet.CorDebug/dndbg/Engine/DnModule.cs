@@ -70,11 +70,6 @@ namespace dndbg.Engine {
 		public string Name => CorModule.Name;
 
 		/// <summary>
-		/// Gets the name from the MD, which is the same as <see cref="ModuleDef.Name"/>
-		/// </summary>
-		public string DnlibName => CorModule.DnlibName;
-
-		/// <summary>
 		/// true if the module has been unloaded
 		/// </summary>
 		public bool HasUnloaded { get; private set; }
@@ -124,7 +119,10 @@ namespace dndbg.Engine {
 		/// </summary>
 		public DnAssembly Assembly { get; }
 
-		public DnModuleId DnModuleId => CorModule.DnModuleId;
+		/// <summary>
+		/// Gets the module id
+		/// </summary>
+		public DnModuleId DnModuleId { get; }
 
 		/// <summary>
 		/// Gets the JIT compiler flags. This is a cached value and never gets updated
@@ -137,6 +135,7 @@ namespace dndbg.Engine {
 			UniqueId = uniqueId;
 			UniqueIdProcess = uniqueIdProcess;
 			UniqueIdAppDomain = uniqueIdAppDomain;
+			DnModuleId = CorModule.GetModuleId((uint)UniqueId);
 		}
 
 		internal void InitializeCachedValues() =>

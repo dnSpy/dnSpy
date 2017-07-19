@@ -149,7 +149,9 @@ namespace dndbg.Engine {
 				return false;
 			debugger.RemoveBreakpoint(breakpoint);
 			breakpoint = null;
-			var moduleId = mod.DnModuleId;
+			Debug.Assert(!mod.IsDynamic && !mod.IsInMemory);
+			// It's not a dyn/in-mem module so id isn't used
+			var moduleId = mod.GetModuleId(uint.MaxValue);
 
 			if (type == BreakProcessKind.ModuleCctorOrEntryPoint) {
 				uint cctorToken = MetaDataUtils.GetGlobalStaticConstructor(mod.GetMetaDataInterface<IMetaDataImport>());
@@ -193,7 +195,9 @@ namespace dndbg.Engine {
 
 			uint epToken = GetEntryPointToken(otherModuleFullName, out string otherModuleName);
 			if (epToken != 0 && (Table)(epToken >> 24) == Table.Method) {
-				SetILBreakpoint(mod.DnModuleId, epToken);
+				Debug.Assert(!mod.IsDynamic && !mod.IsInMemory);
+				// It's not a dyn/in-mem module so id isn't used
+				SetILBreakpoint(mod.GetModuleId(uint.MaxValue), epToken);
 				return false;
 			}
 
