@@ -126,7 +126,7 @@ namespace dnSpy.MainApp {
 			var factory = TryCreateExportProviderFactoryCached(resolver, useCache, out resourceManagerTokensOffset) ?? CreateExportProviderFactorySlow(resolver);
 			var exportProvider = factory.CreateExportProvider();
 
-			exportProvider.GetExportedValue<ServiceLocator>().SetExportProvider(exportProvider);
+			exportProvider.GetExportedValue<ServiceLocator>().SetExportProvider(Dispatcher, exportProvider);
 			if (readSettings) {
 				var settingsService = exportProvider.GetExportedValue<ISettingsService>();
 				try {

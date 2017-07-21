@@ -29,9 +29,7 @@ using Microsoft.VisualStudio.Composition;
 namespace dnSpy.Scripting {
 	[Export, Export(typeof(IServiceLocator))]
 	sealed class ServiceLocator : IServiceLocator {
-		readonly Dispatcher dispatcher;
-
-		ServiceLocator() => dispatcher = Dispatcher.CurrentDispatcher;
+		Dispatcher dispatcher;
 
 		public T Resolve<T>() {
 			Debug.Assert(exportProvider != null);
@@ -53,7 +51,8 @@ namespace dnSpy.Scripting {
 			});
 		}
 
-		public void SetExportProvider(ExportProvider exportProvider) {
+		public void SetExportProvider(Dispatcher dispatcher, ExportProvider exportProvider) {
+			this.dispatcher = dispatcher;
 			if (this.exportProvider != null)
 				throw new InvalidOperationException();
 			this.exportProvider = exportProvider ?? throw new ArgumentNullException(nameof(exportProvider));
