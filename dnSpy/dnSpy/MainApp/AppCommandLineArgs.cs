@@ -43,6 +43,7 @@ namespace dnSpy.MainApp {
 		public bool? FullScreen { get; }
 		public string ShowToolWindow { get; }
 		public string HideToolWindow { get; }
+		public bool ShowStartupTime { get; }
 
 		readonly Dictionary<string, string> userArgs = new Dictionary<string, string>();
 		readonly List<string> filenames = new List<string>();
@@ -67,6 +68,7 @@ namespace dnSpy.MainApp {
 			FullScreen = null;
 			ShowToolWindow = string.Empty;
 			HideToolWindow = string.Empty;
+			ShowStartupTime = false;
 
 			bool canParseCommands = true;
 			for (int i = 0; i < args.Length; i++) {
@@ -154,6 +156,10 @@ namespace dnSpy.MainApp {
 					case "--hide-tool-window":
 						HideToolWindow = next;
 						i++;
+						break;
+
+					case "--show-startup-time":
+						ShowStartupTime = true;
 						break;
 
 					default:

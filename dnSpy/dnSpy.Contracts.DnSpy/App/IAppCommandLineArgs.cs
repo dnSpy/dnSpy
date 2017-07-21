@@ -76,6 +76,9 @@ namespace dnSpy.Contracts.App {
 		/// <summary>Tool windows to hide</summary>
 		string HideToolWindow { get; }
 
+		/// <summary>Show start up time</summary>
+		bool ShowStartupTime { get; }
+
 		/// <summary>
 		/// Returns true if the argument is present
 		/// </summary>

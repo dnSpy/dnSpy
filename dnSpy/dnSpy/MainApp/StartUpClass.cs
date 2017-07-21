@@ -18,8 +18,10 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.ETW;
@@ -27,10 +29,13 @@ using dnSpy.Properties;
 
 namespace dnSpy.MainApp {
 	public static class StartUpClass {
-		static void OptimizeStartup() {
+		[STAThread]
+		public static void Main() {
+			DnSpyEventSource.Log.StartupStart();
+			var sw = Stopwatch.StartNew();
+
 			// Use multicore JIT.
 			// Simple test: x86: ~18% faster startup, x64: ~12% faster startup.
-
 			try {
 				var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dnSpy", "Startup");
 				Directory.CreateDirectory(profileDir);
@@ -39,28 +44,30 @@ namespace dnSpy.MainApp {
 			}
 			catch {
 			}
-		}
 
-		[STAThread]
-		public static void Main() {
-			DnSpyEventSource.Log.StartupStart();
-			OptimizeStartup();
-
-			if (!dnlib.Settings.IsThreadSafe) {
-				MessageBox.Show("dnlib wasn't compiled with THREAD_SAFE defined.");
-				Environment.Exit(1);
-			}
+			if (!dnlib.Settings.IsThreadSafe)
+				ErrorNotThreadSafe();
 
 			bool readSettings = (Keyboard.Modifiers & ModifierKeys.Shift) == 0;
-			if (!readSettings) {
-				// Need to use DefaultDesktopOnly or the dlg box is shown in the background...
-				var res = MessageBox.Show(dnSpy_Resources.AskReadSettings, "dnSpy", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, MessageBoxOptions.DefaultDesktopOnly);
-				readSettings = res != MessageBoxResult.No;
-			}
+			if (!readSettings)
+				readSettings = AskReadSettings();
 
-			var app = new App(readSettings);
-			app.InitializeComponent();
-			app.Run();
+			new App(readSettings, sw).Run();
+		}
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		static void ErrorNotThreadSafe() {
+			MessageBox.Show("dnlib wasn't compiled with THREAD_SAFE defined.");
+			Environment.Exit(1);
+		}
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		static bool AskReadSettings() {
+			bool readSettings;
+			// Need to use DefaultDesktopOnly or the dlg box is shown in the background...
+			var res = MessageBox.Show(dnSpy_Resources.AskReadSettings, "dnSpy", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, MessageBoxOptions.DefaultDesktopOnly);
+			readSettings = res != MessageBoxResult.No;
+			return readSettings;
 		}
 	}
 }

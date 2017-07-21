@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -54,13 +54,12 @@ using Microsoft.VisualStudio.Composition;
 
 namespace dnSpy.MainApp {
 	sealed partial class App : Application {
-		static App() {
+		static void NotExecuted() {
 			// Make sure we have a ref to the assembly. The file is copied to the correct location
 			// but unless we have a reference to it in the code (or XAML), it could easily happen
 			// that someone accidentally removes the reference. This code makes sure there'll be
 			// a compilation error if that ever happens.
 			var t = typeof(Images.Dummy);
-			InstallExceptionHandlers();
 		}
 
 		static void InstallExceptionHandlers() {
@@ -79,54 +78,35 @@ namespace dnSpy.MainApp {
 			MessageBox.Show(msg, "dnSpy", MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
-		[Export]
-		sealed class AppState {
-			[Import]
-			public AppWindow appWindow = null;
-			[Import]
-			public SettingsService settingsService = null;
-			[Import]
-			public ExtensionService extensionService = null;
-			[Import]
-			public IDsLoaderService dsLoaderService = null;
-			[Import]
-			public Lazy<IDocumentTabService> documentTabService = null;
-			[Import]
-			public Lazy<IDecompilerService> decompilerService = null;
-			[ImportMany]
-			public IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers = null;
-		}
-
 		readonly ResourceManagerTokenCacheImpl resourceManagerTokenCacheImpl;
 		long resourceManagerTokensOffset;
-		Assembly[] mefAssemblies;
+		volatile Assembly[] mefAssemblies;
 		AppWindow appWindow;
-		SettingsService settingsService;
 		ExtensionService extensionService;
 		IDsLoaderService dsLoaderService;
-		Lazy<IDocumentTabService> documentTabService;
-		Lazy<IDecompilerService> decompilerService;
-		IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers;
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
 		readonly IAppCommandLineArgs args;
+		ExportProvider exportProvider;
 
-		public App(bool readSettings) {
+		Task<ExportProvider> initializeMEFTask;
+		Stopwatch startupStopwatch;
+		public App(bool readSettings, Stopwatch startupStopwatch) {
+			// PERF: Init MEF on a BG thread. Results in slightly faster startup, eg. InitializeComponent() becomes a 'free' call on this UI thread
+			initializeMEFTask = Task.Run(() => InitializeMEF(readSettings, useCache: readSettings));
+			this.startupStopwatch = startupStopwatch;
+
 			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
 			resourceManagerTokenCacheImpl.TokensUpdated += ResourceManagerTokenCacheImpl_TokensUpdated;
-			ResourceHelper.SetresourceManagerTokenCache(resourceManagerTokenCacheImpl);
+			ResourceHelper.SetResourceManagerTokenCache(resourceManagerTokenCacheImpl);
 			args = new AppCommandLineArgs();
 			AppDirectories.SetSettingsFilename(args.SettingsFilename);
 			if (args.SingleInstance)
 				SwitchToOtherInstance();
 
 			AddAppContextFixes();
-
+			InstallExceptionHandlers();
 			InitializeComponent();
 			UIFixes();
-
-			InitializeMEF(readSettings, useCache: readSettings);
-			extensionService.LoadedExtensions = loadedExtensions;
-			appWindow.CommandLineArgs = args;
 
 			Exit += App_Exit;
 		}
@@ -139,7 +119,7 @@ namespace dnSpy.MainApp {
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotApplyLayoutRoundingToMarginsAndBorderThickness", true);
 		}
 
-		void InitializeMEF(bool readSettings, bool useCache) {
+		ExportProvider InitializeMEF(bool readSettings, bool useCache) {
 			mefAssemblies = GetAssemblies();
 			var resolver = Resolver.DefaultInstance;
 
@@ -156,23 +136,7 @@ namespace dnSpy.MainApp {
 				}
 			}
 
-			var cultureService = exportProvider.GetExportedValue<CultureService>();
-			cultureService.Initialize(args);
-
-			// Make sure IDpiService gets created before any MetroWindows
-			exportProvider.GetExportedValue<IDpiService>();
-
-			// It's needed very early, and an IAutoLoaded can't be used (it gets called too late for the first 64x64 image request)
-			DsImageConverter.imageService = exportProvider.GetExportedValue<IImageService>();
-
-			var state = exportProvider.GetExportedValue<AppState>();
-			appWindow = state.appWindow;
-			settingsService = state.settingsService;
-			extensionService = state.extensionService;
-			dsLoaderService = state.dsLoaderService;
-			documentTabService = state.documentTabService;
-			decompilerService = state.decompilerService;
-			appCommandLineArgsHandlers = state.appCommandLineArgsHandlers;
+			return exportProvider;
 		}
 
 		static string GetCachedCompositionConfigurationFilename() {
@@ -500,10 +464,12 @@ namespace dnSpy.MainApp {
 		}
 
 		void App_Exit(object sender, ExitEventArgs e) {
-			extensionService.OnAppExit();
-			dsLoaderService.Save();
+			extensionService?.OnAppExit();
+			dsLoaderService?.Save();
 			try {
-				new XmlSettingsWriter(settingsService).Write();
+				var settingsService = exportProvider?.GetExportedValue<SettingsService>();
+				if (settingsService != null)
+					new XmlSettingsWriter(settingsService).Write();
 			}
 			catch {
 			}
@@ -536,6 +502,24 @@ namespace dnSpy.MainApp {
 		protected override void OnStartup(StartupEventArgs e) {
 			base.OnStartup(e);
 
+			exportProvider = initializeMEFTask.GetAwaiter().GetResult();
+
+			var cultureService = exportProvider.GetExportedValue<CultureService>();
+			cultureService.Initialize(args);
+
+			// Make sure IDpiService gets created before any MetroWindows
+			exportProvider.GetExportedValue<IDpiService>();
+
+			// It's needed very early, and an IAutoLoaded can't be used (it gets called too late for the first 64x64 image request)
+			DsImageConverter.imageService = exportProvider.GetExportedValue<IImageService>();
+
+			appWindow = exportProvider.GetExportedValue<AppWindow>();
+			extensionService = exportProvider.GetExportedValue<ExtensionService>();
+			dsLoaderService = exportProvider.GetExportedValue<IDsLoaderService>();
+
+			extensionService.LoadedExtensions = loadedExtensions;
+			appWindow.CommandLineArgs = args;
+
 			var win = appWindow.InitializeMainWindow();
 			appWindow.MainWindow.SourceInitialized += MainWindow_SourceInitialized;
 			dsLoaderService.OnAppLoaded += DsLoaderService_OnAppLoaded;
@@ -545,12 +529,22 @@ namespace dnSpy.MainApp {
 		}
 
 		void DsLoaderService_OnAppLoaded(object sender, EventArgs e) {
+			startupStopwatch.Stop();
 			DnSpyEventSource.Log.StartupStop();
+			var sw = startupStopwatch;
+			startupStopwatch = null;
+
+			if (args.ShowStartupTime)
+				ShowElapsedTime(sw);
+
 			dsLoaderService.OnAppLoaded -= DsLoaderService_OnAppLoaded;
 			appWindow.AppLoaded = true;
 			extensionService.OnAppLoaded();
 			HandleAppArgs(args);
 		}
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		static void ShowElapsedTime(Stopwatch sw) => MsgBox.Instance.Show($"{sw.ElapsedMilliseconds} ms, {sw.ElapsedTicks} ticks");
 
 		void HandleAppArgs(IAppCommandLineArgs appArgs) {
 			if (appArgs.Activate && appWindow.MainWindow.WindowState == WindowState.Minimized)
@@ -558,17 +552,17 @@ namespace dnSpy.MainApp {
 
 			var decompiler = GetDecompiler(appArgs.Language);
 			if (decompiler != null)
-				decompilerService.Value.Decompiler = decompiler;
+				exportProvider.GetExportedValue<IDecompilerService>().Decompiler = decompiler;
 
 			if (appArgs.FullScreen != null)
 				appWindow.MainWindow.IsFullScreen = appArgs.FullScreen.Value;
 
 			if (appArgs.NewTab)
-				documentTabService.Value.OpenEmptyTab();
+				exportProvider.GetExportedValue<IDocumentTabService>().OpenEmptyTab();
 
 			var files = appArgs.Filenames.ToArray();
 			if (files.Length > 0)
-				OpenDocumentsHelper.OpenDocuments(documentTabService.Value.DocumentTreeView, appWindow.MainWindow, files, false);
+				OpenDocumentsHelper.OpenDocuments(exportProvider.GetExportedValue<IDocumentTabService>().DocumentTreeView, appWindow.MainWindow, files, false);
 
 			// The files were lazily added to the treeview. Make sure they've been added to the TV
 			// before we process the remaining command line args.
@@ -579,7 +573,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void HandleAppArgs2(IAppCommandLineArgs appArgs) {
-			foreach (var handler in appCommandLineArgsHandlers.OrderBy(a => a.Value.Order))
+			foreach (var handler in exportProvider.GetExports<IAppCommandLineArgsHandler>().OrderBy(a => a.Value.Order))
 				handler.Value.OnNewArgs(appArgs);
 		}
 
@@ -587,14 +581,15 @@ namespace dnSpy.MainApp {
 			if (string.IsNullOrEmpty(language))
 				return null;
 
+			var decompilerService = exportProvider.GetExportedValue<IDecompilerService>();
 			if (Guid.TryParse(language, out var guid)) {
-				var lang = decompilerService.Value.Find(guid);
+				var lang = decompilerService.Find(guid);
 				if (lang != null)
 					return lang;
 			}
 
-			return decompilerService.Value.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
-				decompilerService.Value.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
+			return decompilerService.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
+				decompilerService.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
 		}
 	}
 }

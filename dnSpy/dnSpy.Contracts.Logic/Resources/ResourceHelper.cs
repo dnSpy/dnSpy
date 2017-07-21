@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Resources {
 
 		static ResourceManagerTokenCache resourceManagerTokenCache;
 
-		internal static void SetresourceManagerTokenCache(ResourceManagerTokenCache tokenCache) {
+		internal static void SetResourceManagerTokenCache(ResourceManagerTokenCache tokenCache) {
 			if (tokenCache == null)
 				throw new ArgumentNullException(nameof(tokenCache));
 			if (resourceManagerTokenCache != null)
