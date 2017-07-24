@@ -44,6 +44,11 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FocusSearchtextBox()), Key.E, ModifierKeys.Control));
 		}
 
+		protected override void OnClosed(EventArgs e) {
+			progressBar.IsIndeterminate = false;
+			base.OnClosed(e);
+		}
+
 		void FocusSearchtextBox() {
 			searchTextBox.Focus();
 			searchTextBox.SelectAll();

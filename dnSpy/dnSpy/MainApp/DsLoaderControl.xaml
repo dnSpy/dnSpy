@@ -44,6 +44,6 @@
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    Text="{x:Static p:dnSpy_Resources.LoadingDnSpyPleaseWait}" />
-        <ProgressBar Grid.Row="3" Height="20" Width="150" Margin="0 5 0 0" IsIndeterminate="True" />
+        <ProgressBar Name="progressBar" Grid.Row="3" Height="20" Width="150" Margin="0 5 0 0" IsIndeterminate="True" />
     </Grid>
 </UserControl>

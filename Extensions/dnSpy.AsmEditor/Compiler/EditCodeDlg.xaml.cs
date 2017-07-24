@@ -71,6 +71,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		protected override void OnClosed(EventArgs e) {
+			progressBar.IsIndeterminate = false;
 			base.OnClosed(e);
 			if (DataContext is EditCodeVM vm)
 				vm.CodeCompiled -= EditCodeVM_CodeCompiled;

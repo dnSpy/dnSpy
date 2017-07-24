@@ -25,6 +25,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public ExportToProjectDlg() => InitializeComponent();
 
 		protected override void OnClosed(EventArgs e) {
+			progressBar.IsIndeterminate = false;
 			base.OnClosed(e);
 
 			if (DataContext is ExportToProjectVM vm)

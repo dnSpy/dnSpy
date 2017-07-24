@@ -34,6 +34,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			};
 		}
 
+		protected override void OnClosed(EventArgs e) {
+			progressBar.IsIndeterminate = false;
+			base.OnClosed(e);
+		}
+
 		protected override void OnClosing(CancelEventArgs e) {
 			base.OnClosing(e);
 

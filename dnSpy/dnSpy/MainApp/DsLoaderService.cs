@@ -123,6 +123,7 @@ namespace dnSpy.MainApp {
 			var sw = Stopwatch.StartNew();
 			do {
 				if (!loaderEnumerator.MoveNext()) {
+					dsLoaderControl.progressBar.IsIndeterminate = false;
 					LoadAllCodeFinished();
 					return;
 				}

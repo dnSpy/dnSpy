@@ -91,7 +91,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ProgressBar Grid.Column="0" IsIndeterminate="True" Margin="0 0 5 0" Visibility="{Binding SearchingForDefaultLists, Converter={StaticResource booleanToVisibilityConverter}}" />
+            <ProgressBar Name="progressBar" Grid.Column="0" IsIndeterminate="True" Margin="0 0 5 0" Visibility="{Binding SearchingForDefaultLists, Converter={StaticResource booleanToVisibilityConverter}}" />
             <Button Grid.Column="1" Content="{x:Static p:dnSpy_Resources.OpenList_Remove_Button}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding RemoveCommand}" />
             <Button Grid.Column="2" Content="{x:Static p:dnSpy_Resources.OpenList_New_Button}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding CreateListCommand}" />
             <Button Grid.Column="3" Content="{x:Static p:dnSpy_Resources.OpenList_Open_Button}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" IsDefault="True" Click="okButton_Click" />

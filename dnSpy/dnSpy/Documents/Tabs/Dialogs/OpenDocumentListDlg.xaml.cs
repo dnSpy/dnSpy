@@ -62,6 +62,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		protected override void OnClosed(EventArgs e) {
+			progressBar.IsIndeterminate = false;
+			base.OnClosed(e);
 			if (DataContext is IDisposable id)
 				id.Dispose();
 		}

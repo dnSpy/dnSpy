@@ -37,7 +37,7 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="1" Margin="0 0 0 0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{x:Static p:dnSpy_Debugger_DotNet_Resources.LoadModule_InfoText}" />
         <TextBlock Grid.Row="2" Margin="0 5 0 0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding CurrentItemName}" />
-        <ProgressBar Grid.Row="3" Margin="5 5 5 0" IsIndeterminate="True" Height="30" HorizontalAlignment="Stretch" />
+        <ProgressBar Name="progressBar" Grid.Row="3" Margin="5 5 5 0" IsIndeterminate="True" Height="30" HorizontalAlignment="Stretch" />
         <Grid Grid.Row="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

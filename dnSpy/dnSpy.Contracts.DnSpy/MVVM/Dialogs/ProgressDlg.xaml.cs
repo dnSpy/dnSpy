@@ -42,6 +42,12 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		}
 
 		/// <inheritdoc/>
+		protected override void OnClosed(EventArgs e) {
+			progressBar.IsIndeterminate = false;
+			base.OnClosed(e);
+		}
+
+		/// <inheritdoc/>
 		protected override void OnClosing(CancelEventArgs e) {
 			base.OnClosing(e);
 

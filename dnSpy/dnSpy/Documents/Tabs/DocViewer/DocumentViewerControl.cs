@@ -88,8 +88,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		WaitAdorner CurrentWaitAdorner {
 			get { return __currentWaitAdorner; }
 			set {
-				if (__currentWaitAdorner != null)
+				if (__currentWaitAdorner != null) {
+					__currentWaitAdorner.progressBar.IsIndeterminate = false;
 					Children.Remove(__currentWaitAdorner);
+				}
 				__currentWaitAdorner = value;
 				if (__currentWaitAdorner != null)
 					Children.Add(__currentWaitAdorner);
