@@ -24,6 +24,7 @@ using System.Text;
 using System.Xml;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Decompiler.XmlDoc;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.ILSpy.Core.Settings;
 using dnSpy.Decompiler.ILSpy.Core.Text;
@@ -249,6 +250,18 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 
 		internal static void AddXmlDocumentation(ref BuilderState state, DecompilerSettings settings, AstBuilder astBuilder) { 
 			if (settings.ShowXmlDocumentation) {
+				var module = state.AstBuilder.Context.CurrentModule;
+				var hasXmlDocFileTmp = state.State.HasXmlDocFile(module);
+				bool hasXmlDocFile;
+				if (hasXmlDocFileTmp == null) {
+					hasXmlDocFile = XmlDocLoader.LoadDocumentation(module) != null;
+					state.State.SetHasXmlDocFile(module, hasXmlDocFile);
+				}
+				else
+					hasXmlDocFile = hasXmlDocFileTmp.Value;
+				if (!hasXmlDocFile)
+					return;
+
 				try {
 					new AddXmlDocTransform(state.State.XmlDoc_StringBuilder).Run(astBuilder.SyntaxTree);
 				}

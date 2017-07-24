@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Text;
+using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
@@ -37,9 +39,31 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		/// </summary>
 		public readonly StringBuilder XmlDoc_StringBuilder;
 
+		readonly Dictionary<ModuleDef, bool> hasXmlDocFile;
+		ModuleDef lastModule;
+		bool lastModuleResult;
+
 		public AstBuilderState() {
 			AstBuilder = new AstBuilder(new DecompilerContext(null, null, true));
 			XmlDoc_StringBuilder = new StringBuilder();
+			hasXmlDocFile = new Dictionary<ModuleDef, bool>();
+		}
+
+		public bool? HasXmlDocFile(ModuleDef module) {
+			if (lastModule == module)
+				return lastModuleResult;
+			if (hasXmlDocFile.TryGetValue(module, out var res)) {
+				lastModule = module;
+				lastModuleResult = res;
+				return res;
+			}
+			return null;
+		}
+
+		public void SetHasXmlDocFile(ModuleDef module, bool value) {
+			lastModule = module;
+			lastModuleResult = value;
+			hasXmlDocFile.Add(module, value);
 		}
 
 		/// <summary>
