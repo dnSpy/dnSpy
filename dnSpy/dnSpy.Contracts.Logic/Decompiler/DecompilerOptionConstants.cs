@@ -203,5 +203,10 @@ namespace dnSpy.Contracts.Decompiler {
 		public static readonly Guid MemberAddPrivateModifier_GUID = new Guid("2E764781-2075-47DC-BEE5-7F5F560BA726");
 		/// <summary />
 		public static readonly string MemberAddPrivateModifier_NAME = "private-modifier-member";
+
+		/// <summary />
+		public static readonly Guid RemoveNewDelegateClass_GUID = new Guid("BEC534D0-A231-4F65-BE2E-5CCC4A7CE1B2");
+		/// <summary />
+		public static readonly string RemoveNewDelegateClass_NAME = "remove-new-delegate-class";
 	}
 }
