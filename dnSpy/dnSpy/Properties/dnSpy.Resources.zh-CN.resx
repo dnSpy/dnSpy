@@ -799,7 +799,7 @@
     <value>文件夹(_F)</value>
   </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
-    <value>一个文件将反编译。要反编译多个文件请选择多个程序集。</value>
+    <value>即将反编译一个文件。若要反编译多个文件，请选中多个程序集。</value>
   </data>
   <data name="ExportToProject_ExportNFilesMessage" xml:space="preserve">
     <value>{0:n0} 个文件将反编译。</value>
@@ -1101,7 +1101,7 @@
     <value>Alt+{0}</value>
   </data>
   <data name="SignatureHelp_Signature_N_of_TotalCount" xml:space="preserve">
-    <value>{0} of {1}</value>
+    <value>{0}/{1}</value>
   </data>
   <data name="UriFollowLinkMessage" xml:space="preserve">
     <value>CTRL + 单击以跟踪链接</value>
@@ -1391,7 +1391,7 @@
     <value>基础偏移量(_B)</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
-    <value>This value is added to start offset before it's shown on the screen</value>
+    <value>起始偏移量将显示为原值与此数值的和</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
     <value>每行的字节数(_Y)</value>
@@ -1542,7 +1542,7 @@
     <value>高亮光标指向的结构</value>
   </data>
   <data name="HexToolTipIndex" xml:space="preserve">
-    <value>index</value>
+    <value>索引</value>
   </data>
   <data name="HexToolTipOffset" xml:space="preserve">
     <value>偏移</value>
@@ -1632,7 +1632,7 @@
     <value>方法体</value>
   </data>
   <data name="GoToMetadataToken" xml:space="preserve">
-    <value>Metadata Token</value>
+    <value>元数据标记</value>
   </data>
   <data name="GoToMetadata_Index_Label" xml:space="preserve">
     <value>_Index</value>
@@ -1647,7 +1647,7 @@
     <value>选择文件</value>
   </data>
   <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
-    <value>Select Nested File</value>
+    <value>选择嵌套的文件</value>
   </data>
   <data name="SelectSpecialCommand" xml:space="preserve">
     <value>特殊选择</value>
@@ -1659,7 +1659,7 @@
     <value>Ctrl+E, Ctrl+N</value>
   </data>
   <data name="HexEditorSelectStructureCommand" xml:space="preserve">
-    <value>Select Structure</value>
+    <value>选择结构</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
     <value>Ctrl+E, Ctrl+S</value>
@@ -1746,28 +1746,28 @@
     <value>书签窗口(_B)</value>
   </data>
   <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Export all bookmarks matching the current search criteria</value>
+    <value>导出当前的搜索条件匹配的所有书签</value>
   </data>
   <data name="Bookmarks_GoToLocation_ToolTip" xml:space="preserve">
-    <value>Move the caret to the selected bookmark.</value>
+    <value>将插入符号移动到选定的书签。</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark in the current file.</value>
+    <value>将插入符号移动到当前文件中的下一个书签。</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark with the same label.</value>
+    <value>将插入符号移动到具有相同标签的下一个书签。</value>
   </data>
   <data name="Bookmarks_GoToNextBookmark_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark.</value>
+    <value>将插入符号移动到下一个书签。</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark in the current file.</value>
+    <value>将插入符号移动到当前文件中的上一个书签。</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark with the same label.</value>
+    <value>将插入符号移动到具有相同标签的上一个书签。</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmark_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark.</value>
+    <value>将插入符号移动到上一个书签。</value>
   </data>
   <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
     <value>从文件导入书签</value>
@@ -1776,19 +1776,19 @@
     <value>删除书签</value>
   </data>
   <data name="Bookmarks_RemoveMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Remove all bookmarks matching the current search criteria</value>
+    <value>删除与当前的搜索条件匹配的所有书签</value>
   </data>
   <data name="Bookmarks_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all bookmarks are shown</value>
+    <value>重置所有搜索条件，以便显示所有书签</value>
   </data>
   <data name="Bookmarks_Search_ToolTip" xml:space="preserve">
-    <value>Search for a bookmark</value>
+    <value>查找一个书签</value>
   </data>
   <data name="Bookmarks_ToggleCreateBookmark_ToolTip" xml:space="preserve">
-    <value>Toggle a bookmark on the current line.</value>
+    <value>在当前行上添加或移除书签。</value>
   </data>
   <data name="Bookmarks_ToggleMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Enable or disable all bookmarks matching the current search criteria</value>
+    <value>启用或禁用与当前的搜索条件匹配的所有书签</value>
   </data>
   <data name="BookmarkDefaultName" xml:space="preserve">
     <value>书签{0}</value>
@@ -1839,7 +1839,7 @@
     <value>显示声明类型</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>Show Intrinsic Type Keywords</value>
+    <value>显示内部类型关键字</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
     <value>显示模块名称(_M)</value>

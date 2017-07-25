@@ -189,6 +189,9 @@
   <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
     <value>删除空的默认构造函数</value>
   </data>
+  <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
+    <value>Replace 'new delegate-class(xxx)' with 'xxx'</value>
+  </data>
   <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
     <value>显示编译器生成的隐藏类型和方法</value>
   </data>

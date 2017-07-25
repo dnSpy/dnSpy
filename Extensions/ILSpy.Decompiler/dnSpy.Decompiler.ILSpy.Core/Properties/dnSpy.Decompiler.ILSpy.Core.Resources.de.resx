@@ -189,6 +189,9 @@
   <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
     <value>Leere Standardkonstruktoren entfernen</value>
   </data>
+  <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
+    <value>Replace 'new delegate-class(xxx)' with 'xxx'</value>
+  </data>
   <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
     <value>Versteckte Compiler generierte Typen und Methoden anzeigen</value>
   </data>

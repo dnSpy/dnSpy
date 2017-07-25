@@ -186,7 +186,7 @@
     <value>缺少文件名</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Debugger ({0})</value>
+    <value>调试器 ({0})</value>
   </data>
   <data name="Thread_UserState_Background" xml:space="preserve">
     <value>Background</value>
@@ -236,49 +236,49 @@
     <value>其它程序正在调试进程{0}</value>
   </data>
   <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Native Frame {0}</value>
+    <value>本机帧 {0}</value>
   </data>
   <data name="StackFrame_AppdomainTransition" xml:space="preserve">
     <value>Appdomain Transition</value>
   </data>
   <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Class Init</value>
+    <value>类初始化</value>
   </data>
   <data name="StackFrame_Exception" xml:space="preserve">
     <value>例外</value>
   </data>
   <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Function Evaluation</value>
+    <value>函数求值</value>
   </data>
   <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Internal Call</value>
+    <value>内部调用</value>
   </data>
   <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Internal Frame ({0})</value>
+    <value>内部帧 ({0})</value>
   </data>
   <data name="StackFrame_JITCompilation" xml:space="preserve">
-    <value>JIT Compilation</value>
+    <value>JIT 编译</value>
   </data>
   <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Lightweight Function</value>
+    <value>轻量级函数</value>
   </data>
   <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Managed to Native Transition</value>
+    <value>托管到本机的转换</value>
   </data>
   <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Native to Managed Transition</value>
+    <value>本机到托管的转换</value>
   </data>
   <data name="StackFrame_Security" xml:space="preserve">
-    <value>Security</value>
+    <value>安全</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL offset {0}</value>
+    <value>IL 偏移量 {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>行 {0} 字符 {1}</value>
   </data>
   <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
-    <value>address {0}</value>
+    <value>地址 {0}</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>无法设置下一条语句。</value>

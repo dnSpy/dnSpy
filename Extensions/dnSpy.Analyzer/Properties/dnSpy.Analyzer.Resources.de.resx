@@ -127,7 +127,7 @@
     <value>Angewendet auf</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Zugewiesen durch</value>
+    <value>Zugewiesen von</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>_Kopieren</value>

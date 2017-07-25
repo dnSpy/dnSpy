@@ -136,7 +136,7 @@
     <value>Cancel loading modules?</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL offset {0}</value>
+    <value>IL 偏移量 {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>行 {0} 字符 {1}</value>
