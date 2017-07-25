@@ -278,6 +278,15 @@ namespace dnSpy.Decompiler.ILSpy.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Replace &apos;new delegate-class(xxx)&apos; with &apos;xxx&apos;.
+        /// </summary>
+        public static string DecompilerSettings_RemoveNewDelegateClass {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_RemoveNewDelegateClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show hidden compiler generated types and methods.
         /// </summary>
         public static string DecompilerSettings_ShowCompilerGeneratedTypes {

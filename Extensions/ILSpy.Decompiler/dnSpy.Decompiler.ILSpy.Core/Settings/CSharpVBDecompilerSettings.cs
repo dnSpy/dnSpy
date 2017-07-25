@@ -208,7 +208,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			};
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.RemoveNewDelegateClass_GUID,
 						() => decompilerSettings.RemoveNewDelegateClass, a => decompilerSettings.RemoveNewDelegateClass = a) {
-				Description = "Don't create delegate classes",
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_RemoveNewDelegateClass,
 				Name = DecompilerOptionConstants.RemoveNewDelegateClass_NAME,
 			};
 		}
