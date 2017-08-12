@@ -24,6 +24,7 @@ namespace dnSpy.Roslyn.Internal {
 	static class GlyphExtensions {
 		public static Glyph ToOurGlyph(this MSCA.Glyph glyph) {
 			switch (glyph) {
+			case MSCA.Glyph.None: return Glyph.None;
 			case MSCA.Glyph.Assembly: return Glyph.Assembly;
 			case MSCA.Glyph.BasicFile: return Glyph.BasicFile;
 			case MSCA.Glyph.BasicProject: return Glyph.BasicProject;
@@ -45,8 +46,12 @@ namespace dnSpy.Roslyn.Internal {
 			case MSCA.Glyph.EnumProtected: return Glyph.EnumProtected;
 			case MSCA.Glyph.EnumPrivate: return Glyph.EnumPrivate;
 			case MSCA.Glyph.EnumInternal: return Glyph.EnumInternal;
-			case MSCA.Glyph.EnumMember: return Glyph.EnumMember;
+			case MSCA.Glyph.EnumMemberPublic: return Glyph.EnumMemberPublic;
+			case MSCA.Glyph.EnumMemberProtected: return Glyph.EnumMemberProtected;
+			case MSCA.Glyph.EnumMemberPrivate: return Glyph.EnumMemberPrivate;
+			case MSCA.Glyph.EnumMemberInternal: return Glyph.EnumMemberInternal;
 			case MSCA.Glyph.Error: return Glyph.Error;
+			case MSCA.Glyph.StatusInformation: return Glyph.StatusInformation;
 			case MSCA.Glyph.EventPublic: return Glyph.EventPublic;
 			case MSCA.Glyph.EventProtected: return Glyph.EventProtected;
 			case MSCA.Glyph.EventPrivate: return Glyph.EventPrivate;

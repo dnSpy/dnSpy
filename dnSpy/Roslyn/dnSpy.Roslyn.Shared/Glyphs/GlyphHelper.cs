@@ -25,6 +25,7 @@ namespace dnSpy.Roslyn.Shared.Glyphs {
 	static class GlyphHelper {
 		public static ImageReference? GetImageReference(this Glyph glyph) {
 			switch (glyph) {
+			case Glyph.None:					return null;
 			case Glyph.Assembly:				return DsImages.Assembly;
 			case Glyph.BasicFile:				return DsImages.VBFileNode;
 			case Glyph.BasicProject:			return DsImages.VBProjectNode;
@@ -46,8 +47,12 @@ namespace dnSpy.Roslyn.Shared.Glyphs {
 			case Glyph.EnumProtected:			return DsImages.EnumerationProtected;
 			case Glyph.EnumPrivate:				return DsImages.EnumerationPrivate;
 			case Glyph.EnumInternal:			return DsImages.EnumerationInternal;
-			case Glyph.EnumMember:				return DsImages.EnumerationItemPublic;
+			case Glyph.EnumMemberPublic:		return DsImages.EnumerationItemPublic;
+			case Glyph.EnumMemberProtected:		return DsImages.EnumerationItemProtected;
+			case Glyph.EnumMemberPrivate:		return DsImages.EnumerationItemPrivate;
+			case Glyph.EnumMemberInternal:		return DsImages.EnumerationItemInternal;
 			case Glyph.Error:					return DsImages.StatusError;
+			case Glyph.StatusInformation:		return DsImages.StatusInformation;
 			case Glyph.EventPublic:				return DsImages.EventPublic;
 			case Glyph.EventProtected:			return DsImages.EventProtected;
 			case Glyph.EventPrivate:			return DsImages.EventPrivate;

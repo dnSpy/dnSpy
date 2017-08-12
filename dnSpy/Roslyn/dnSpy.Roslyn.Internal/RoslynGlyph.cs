@@ -3,75 +3,111 @@
 namespace dnSpy.Roslyn.Internal {
 	// Copy of Microsoft.CodeAnalysis.Glyph
 	enum Glyph {
-		Assembly = 0,
-		BasicFile = 1,
-		BasicProject = 2,
-		ClassPublic = 3,
-		ClassProtected = 4,
-		ClassPrivate = 5,
-		ClassInternal = 6,
-		CSharpFile = 7,
-		CSharpProject = 8,
-		ConstantPublic = 9,
-		ConstantProtected = 10,
-		ConstantPrivate = 11,
-		ConstantInternal = 12,
-		DelegatePublic = 13,
-		DelegateProtected = 14,
-		DelegatePrivate = 15,
-		DelegateInternal = 16,
-		EnumPublic = 17,
-		EnumProtected = 18,
-		EnumPrivate = 19,
-		EnumInternal = 20,
-		EnumMember = 21,
-		Error = 22,
-		EventPublic = 23,
-		EventProtected = 24,
-		EventPrivate = 25,
-		EventInternal = 26,
-		ExtensionMethodPublic = 27,
-		ExtensionMethodProtected = 28,
-		ExtensionMethodPrivate = 29,
-		ExtensionMethodInternal = 30,
-		FieldPublic = 31,
-		FieldProtected = 32,
-		FieldPrivate = 33,
-		FieldInternal = 34,
-		InterfacePublic = 35,
-		InterfaceProtected = 36,
-		InterfacePrivate = 37,
-		InterfaceInternal = 38,
-		Intrinsic = 39,
-		Keyword = 40,
-		Label = 41,
-		Local = 42,
-		Namespace = 43,
-		MethodPublic = 44,
-		MethodProtected = 45,
-		MethodPrivate = 46,
-		MethodInternal = 47,
-		ModulePublic = 48,
-		ModuleProtected = 49,
-		ModulePrivate = 50,
-		ModuleInternal = 51,
-		OpenFolder = 52,
-		Operator = 53,
-		Parameter = 54,
-		PropertyPublic = 55,
-		PropertyProtected = 56,
-		PropertyPrivate = 57,
-		PropertyInternal = 58,
-		RangeVariable = 59,
-		Reference = 60,
-		StructurePublic = 61,
-		StructureProtected = 62,
-		StructurePrivate = 63,
-		StructureInternal = 64,
-		TypeParameter = 65,
-		Snippet = 66,
-		CompletionWarning = 67,
-		AddReference = 68,
-		NuGet = 69
+		None,
+
+		Assembly,
+
+		BasicFile,
+		BasicProject,
+
+		ClassPublic,
+		ClassProtected,
+		ClassPrivate,
+		ClassInternal,
+
+		CSharpFile,
+		CSharpProject,
+
+		ConstantPublic,
+		ConstantProtected,
+		ConstantPrivate,
+		ConstantInternal,
+
+		DelegatePublic,
+		DelegateProtected,
+		DelegatePrivate,
+		DelegateInternal,
+
+		EnumPublic,
+		EnumProtected,
+		EnumPrivate,
+		EnumInternal,
+
+		EnumMemberPublic,
+		EnumMemberProtected,
+		EnumMemberPrivate,
+		EnumMemberInternal,
+
+		Error,
+		StatusInformation,
+
+		EventPublic,
+		EventProtected,
+		EventPrivate,
+		EventInternal,
+
+		ExtensionMethodPublic,
+		ExtensionMethodProtected,
+		ExtensionMethodPrivate,
+		ExtensionMethodInternal,
+
+		FieldPublic,
+		FieldProtected,
+		FieldPrivate,
+		FieldInternal,
+
+		InterfacePublic,
+		InterfaceProtected,
+		InterfacePrivate,
+		InterfaceInternal,
+
+		Intrinsic,
+
+		Keyword,
+
+		Label,
+
+		Local,
+
+		Namespace,
+
+		MethodPublic,
+		MethodProtected,
+		MethodPrivate,
+		MethodInternal,
+
+		ModulePublic,
+		ModuleProtected,
+		ModulePrivate,
+		ModuleInternal,
+
+		OpenFolder,
+
+		Operator,
+
+		Parameter,
+
+		PropertyPublic,
+		PropertyProtected,
+		PropertyPrivate,
+		PropertyInternal,
+
+		RangeVariable,
+
+		Reference,
+
+		StructurePublic,
+		StructureProtected,
+		StructurePrivate,
+		StructureInternal,
+
+		TypeParameter,
+
+		Snippet,
+
+		CompletionWarning,
+
+		AddReference,
+		NuGet
 	}
 }

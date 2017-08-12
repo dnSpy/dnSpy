@@ -144,7 +144,7 @@ End Module
 					var info = CompletionInfo.Create(buffer.CurrentSnapshot);
 					Debug.Assert(info != null);
 					if (info != null) {
-						var completionTrigger = CompletionTrigger.Default;
+						var completionTrigger = CompletionTrigger.Invoke;
 						var completionList = await info.Value.CompletionService.GetCompletionsAsync(info.Value.Document, 0, completionTrigger);
 					}
 				}
