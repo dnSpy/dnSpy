@@ -57,8 +57,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						if (!checkedModules.Add(module))
 							continue;
 
-						// There are no well known types in dynamic assemblies
-						if (module.IsDynamic)
+						// There are no well known types in dynamic/in-memory assemblies
+						if (module.IsDynamic || module.IsInMemory)
 							continue;
 
 						bool isCorLib = module.IsCorLib;

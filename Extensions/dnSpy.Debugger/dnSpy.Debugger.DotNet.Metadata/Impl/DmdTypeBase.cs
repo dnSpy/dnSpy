@@ -1059,7 +1059,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			if (throwOnError)
-				throw new MethodNotFoundException("0x" + MetadataToken.ToString("X8"));
+				throw new MethodNotFoundException("0x" + MetadataToken.ToString("X8") + "(" + module.ToString() + ")");
 			return null;
 		}
 
@@ -1070,7 +1070,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			if (throwOnError)
-				throw new FieldNotFoundException("0x" + MetadataToken.ToString("X8"));
+				throw new FieldNotFoundException("0x" + MetadataToken.ToString("X8") + "(" + module.ToString() + ")");
 			return null;
 		}
 
@@ -1086,7 +1086,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			if (throwOnError)
-				throw new PropertyNotFoundException("0x" + MetadataToken.ToString("X8"));
+				throw new PropertyNotFoundException("0x" + MetadataToken.ToString("X8") + "(" + module.ToString() + ")");
 			return null;
 		}
 
@@ -1102,7 +1102,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			if (throwOnError)
-				throw new EventNotFoundException("0x" + MetadataToken.ToString("X8"));
+				throw new EventNotFoundException("0x" + MetadataToken.ToString("X8") + "(" + module.ToString() + ")");
 			return null;
 		}
 
