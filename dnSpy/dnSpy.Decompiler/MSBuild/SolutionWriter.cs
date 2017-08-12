@@ -114,8 +114,23 @@ namespace dnSpy.Decompiler.MSBuild {
 				case ProjectVersion.VS2017:
 					writer.Write("Microsoft Visual Studio Solution File, Format Version 12.00" + crlf);
 					writer.Write("# Visual Studio 15" + crlf);
-					// 2017 RTW = 15.0.26228.4
-					// 2017 15.1 = 15.0.26403.0
+					// https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes-v15.0
+					// 2017 RTW = 15.0.26228.4 (March 7, 2017)
+					// 2017 RTW = 15.0.26228.9 (March 14, 2017)
+					// 2017 RTW = 15.0.26228.10 (March 28, 2017)
+					// 2017 RTW = 15.0.26228.12 (March 31, 2017)
+					// https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes-v15.1
+					// 2017 15.1 = 15.0.26403.0 (April 5, 2017)
+					// 2017 15.1 = 15.0.26403.3 (April 10, 2017)
+					// 2017 15.1 = 15.0.26403.7 (April 17, 2017)
+					// https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes
+					// 2017 15.2 = 15.0.26430.4 (May 10, 2017)
+					// 2017 15.2 = 15.0.26430.6 (May 12, 2017)
+					// 2017 15.2 = 15.0.26430.12 (May 30, 2017)
+					// 2017 15.2 = 15.0.26430.13 (June 9, 2017)
+					// 2017 15.2 = 15.0.26430.14 (June 21, 2017)
+					// 2017 15.2 = 15.0.26430.15 (July 6, 2017)
+					// 2017 15.2 = 15.0.26430.16 (July 17, 2017)
 					writer.Write("VisualStudioVersion = 15.0.26228.4" + crlf);
 					writer.Write("MinimumVisualStudioVersion = 10.0.40219.1" + crlf);
 					break;
