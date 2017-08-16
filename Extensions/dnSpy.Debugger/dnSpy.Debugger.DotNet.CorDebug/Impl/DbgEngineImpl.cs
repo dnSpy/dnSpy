@@ -507,7 +507,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 				var env = new DbgEnvironment(options.Environment);
 				if (!debuggerSettings.EnableManagedDebuggingAssistants) {
-					// https://msdn.microsoft.com/en-us/library/d21c150d.aspx
+					// https://docs.microsoft.com/en-us/dotnet/framework/debug-trace-profile/diagnosing-errors-with-managed-debugging-assistants
 					env.Add("COMPLUS_MDA", "0");
 				}
 

@@ -71,7 +71,7 @@ namespace dnSpy.Hex.Editor {
 				Height = wpfHexView.VisualElement.ActualHeight;
 				if (layerKind == HexLayerKind.Normal) {
 					// Needed when HW acceleration isn't enabled (virtual machine or remote desktop).
-					// https://msdn.microsoft.com/en-us/library/system.windows.media.visual.visualscrollableareaclip(VS.100).aspx
+					// https://msdn.microsoft.com/en-us/library/system.windows.media.visual.visualscrollableareaclip(v=vs.110).aspx
 					// It's ignored if HW acceleration is enabled.
 					// This will reduce the number of bytes sent over the network and should speed up the display
 					// if it's a slow connection.

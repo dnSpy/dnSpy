@@ -356,7 +356,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				case "DateTime":return type == type.AppDomain.System_DateTime	? TypeCode.DateTime	: defaultValue;
 				case "String":	return type == type.AppDomain.System_String		? TypeCode.String	: defaultValue;
 				case "DBNull":
-					if (type == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_DBNull))
+					if (type == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_DBNull, isOptional: true))
 						return TypeCode.DBNull;
 					break;
 				}
@@ -1148,7 +1148,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// true if it's a COM object
 		/// </summary>
-		public bool IsCOMObject => CanCastTo(AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject));
+		public bool IsCOMObject => CanCastTo(AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject, isOptional: true));
 
 		/// <summary>
 		/// true if it has an element type, i.e., it's an array, a by-ref or a pointer type
@@ -1158,12 +1158,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// true if it's a <see cref="ContextBoundObject"/>
 		/// </summary>
-		public bool IsContextful => CanCastTo(AppDomain.GetWellKnownType(DmdWellKnownType.System_ContextBoundObject));
+		public bool IsContextful => CanCastTo(AppDomain.GetWellKnownType(DmdWellKnownType.System_ContextBoundObject, isOptional: true));
 
 		/// <summary>
 		/// true if it's a <see cref="MarshalByRefObject"/>
 		/// </summary>
-		public bool IsMarshalByRef => CanCastTo(AppDomain.GetWellKnownType(DmdWellKnownType.System_MarshalByRefObject));
+		public bool IsMarshalByRef => CanCastTo(AppDomain.GetWellKnownType(DmdWellKnownType.System_MarshalByRefObject, isOptional: true));
 
 		/// <summary>
 		/// Gets the element type if it's an array, a by-ref or a pointer type

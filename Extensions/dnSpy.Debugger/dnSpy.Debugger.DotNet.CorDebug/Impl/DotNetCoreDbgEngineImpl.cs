@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		string GetDbgShimAndVerify() {
 			var dbgShimFilename = DotNetCoreHelpers.GetDebugShimFilename(Bitness);
 			if (!File.Exists(dbgShimFilename))
-				throw new Exception("Couldn't find dbgshim.dll");
+				throw new Exception("Couldn't find dbgshim.dll: " + dbgShimFilename);
 			return dbgShimFilename;
 		}
 

@@ -36,12 +36,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		Version Version { get; }
 
 		/// <summary>
-		/// Gets/sets the culture name
+		/// Gets the culture name
 		/// </summary>
 		string CultureName { get; }
 
 		/// <summary>
-		/// Gets/sets the flags
+		/// Gets the flags
 		/// </summary>
 		DmdAssemblyNameFlags RawFlags { get; }
 

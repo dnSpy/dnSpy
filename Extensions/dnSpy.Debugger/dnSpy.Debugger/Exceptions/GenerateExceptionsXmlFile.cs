@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Exceptions {
 			File.WriteAllText(@"c:\XXXXXXXXXXXX\out.ex.xml", s);
 		}
 		[Flags]
-		enum ExceptionState : uint {// https://msdn.microsoft.com/en-us/library/vstudio/bb146192%28v=vs.140%29.aspx
+		enum ExceptionState : uint {// https://docs.microsoft.com/en-us/visualstudio/extensibility/debugger/reference/exception-state
 			EXCEPTION_NONE						= 0x0000,
 			EXCEPTION_STOP_FIRST_CHANCE			= 0x0001,
 			EXCEPTION_STOP_SECOND_CHANCE		= 0x0002,

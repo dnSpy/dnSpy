@@ -422,7 +422,7 @@ namespace dnSpy.Text.Editor {
 			tabSize = Math.Max(1, tabSize);
 			tabSize = Math.Min(60, tabSize);
 
-			// This value is what VS uses, see: https://msdn.microsoft.com/en-us/library/microsoft.visualstudio.text.formatting.iformattedlinesource.baseindentation.aspx
+			// This value is what VS uses, see: https://docs.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.text.formatting.iformattedlinesource.baseindentation
 			//	"This is generally a small value like 2.0, so that some characters (such as an italic
 			//	 slash) will not be clipped by the left edge of the view."
 			const double baseIndent = 2.0;

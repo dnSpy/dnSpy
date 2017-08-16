@@ -485,7 +485,7 @@ namespace dnSpy.Hex.Editor {
 			bool useDisplayMode = TextOptions.GetTextFormattingMode(canvas) == TextFormattingMode.Display;
 			var classifier = Options.IsColorizationEnabled() ? aggregateClassifier : NullHexClassifier.Instance;
 
-			// This value is what VS uses, see: https://msdn.microsoft.com/en-us/library/microsoft.visualstudio.text.formatting.iformattedlinesource.baseindentation.aspx
+			// This value is what VS uses, see: https://docs.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.text.formatting.iformattedlinesource.baseindentation
 			//	"This is generally a small value like 2.0, so that some characters (such as an italic
 			//	 slash) will not be clipped by the left edge of the view."
 			const double baseIndent = 2.0;
