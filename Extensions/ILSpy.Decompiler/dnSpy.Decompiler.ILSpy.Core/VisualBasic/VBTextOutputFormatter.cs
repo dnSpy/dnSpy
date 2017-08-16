@@ -123,13 +123,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			ILVariable variable = node.Annotation<ILVariable>();
 			if (variable == null && node.Parent is IdentifierExpression)
 				variable = node.Parent.Annotation<ILVariable>();
-			if (variable != null) {
-				if (variable.OriginalParameter != null)
-					return variable.OriginalParameter;
-				if (variable.OriginalVariable != null)
-					return variable.OriginalVariable;
-				return variable.Id;
-			}
+			if (variable != null)
+				return variable.GetTextReferenceObject();
 			var lbl = (node.Parent?.Parent as GoToStatement)?.Label ?? (node.Parent?.Parent as LabelDeclarationStatement)?.Label;
 			if (lbl != null) {
 				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null && mr.IsMethod);
@@ -155,24 +150,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 			if (node is VariableIdentifier) {
 				var variable = ((VariableIdentifier)node).Name.Annotation<ILVariable>();
-				if (variable != null) {
-					if (variable.OriginalParameter != null)
-						return variable.OriginalParameter;
-					if (variable.OriginalVariable != null)
-						return variable.OriginalVariable;
-					return variable.Id;
-				}
+				if (variable != null)
+					return variable.GetTextReferenceObject();
 				node = node.Parent ?? node;
 			}
 			if (node is VariableDeclaratorWithTypeAndInitializer || node is VariableInitializer || node is CatchBlock || node is ForEachStatement) {
 				var variable = node.Annotation<ILVariable>();
-				if (variable != null) {
-					if (variable.OriginalParameter != null)
-						return variable.OriginalParameter;
-					if (variable.OriginalVariable != null)
-						return variable.OriginalVariable;
-					return variable.Id;
-				}
+				if (variable != null)
+					return variable.GetTextReferenceObject();
 			}
 
 			if (node is LabelDeclarationStatement label) {

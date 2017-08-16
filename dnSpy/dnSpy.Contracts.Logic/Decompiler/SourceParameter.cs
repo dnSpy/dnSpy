@@ -19,45 +19,40 @@
 
 using System;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// A local present in decompiled code
+	/// A parameter present in decompiled code
 	/// </summary>
-	public sealed class SourceLocal : ISourceVariable {
+	public sealed class SourceParameter : ISourceVariable {
 		/// <summary>
-		/// The local or null if it's a decompiler generated local (see <see cref="IsDecompilerGenerated"/>)
+		/// The parameter
 		/// </summary>
-		public Local Local { get; }
+		public Parameter Parameter { get; }
 
-		IVariable ISourceVariable.Variable => Local;
-		bool ISourceVariable.IsLocal => true;
-		bool ISourceVariable.IsParameter => false;
+		IVariable ISourceVariable.Variable => Parameter;
+		bool ISourceVariable.IsLocal => false;
+		bool ISourceVariable.IsParameter => true;
+		bool ISourceVariable.IsDecompilerGenerated => false;
 
 		/// <summary>
-		/// Gets the name of the local the decompiler used. It could be different from the real name if the decompiler renamed it.
+		/// Gets the name of the parameter the decompiler used. It could be different from the real name if the decompiler renamed it.
 		/// </summary>
 		public string Name { get; }
 
 		/// <summary>
-		/// Gets the type of the local
+		/// Gets the type of the parameter
 		/// </summary>
 		public TypeSig Type { get; }
 
 		/// <summary>
-		/// true if this is a decompiler generated local
-		/// </summary>
-		public bool IsDecompilerGenerated => Local == null;
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="local">Local or null if it's a decompiler generated local</param>
+		/// <param name="parameter">Parameter</param>
 		/// <param name="name">Name used by the decompiler</param>
 		/// <param name="type">Type of local</param>
-		public SourceLocal(Local local, string name, TypeSig type) {
-			Local = local;
+		public SourceParameter(Parameter parameter, string name, TypeSig type) {
+			Parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 		}

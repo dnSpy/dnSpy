@@ -38,10 +38,9 @@ namespace dnSpy.Contracts.Decompiler {
 		public SourceStatement[] Statements { get; }
 
 		/// <summary>
-		/// Gets all locals used by the decompiler. This list can be a subset of the
-		/// real locals in the method.
+		/// Gets the root scope
 		/// </summary>
-		public SourceLocal[] Locals { get; }
+		public MethodDebugScope Scope { get; }
 
 		/// <summary>
 		/// Method span or the default value (position 0, length 0) if it's not known
@@ -58,16 +57,16 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <param name="statements">Statements</param>
-		/// <param name="locals">Locals</param>
+		/// <param name="scope">Root scope</param>
 		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
-		public MethodDebugInfo(MethodDef method, SourceStatement[] statements, SourceLocal[] locals, TextSpan? methodSpan) {
+		public MethodDebugInfo(MethodDef method, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan) {
 			if (statements == null)
 				throw new ArgumentNullException(nameof(statements));
 			Method = method ?? throw new ArgumentNullException(nameof(method));
 			if (statements.Length > 1)
 				Array.Sort(statements, SourceStatement.SpanStartComparer);
 			Statements = statements;
-			Locals = locals ?? throw new ArgumentNullException(nameof(locals));
+			Scope = scope ?? throw new ArgumentNullException(nameof(scope));
 			Span = methodSpan ?? CalculateMethodSpan(statements) ?? new TextSpan(0, 0);
 		}
 

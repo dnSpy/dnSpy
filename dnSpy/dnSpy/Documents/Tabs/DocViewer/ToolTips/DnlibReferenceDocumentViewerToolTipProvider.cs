@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -35,18 +34,18 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 	[ExportDocumentViewerToolTipProvider(TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTPROVIDER)]
 	sealed class DnlibReferenceDocumentViewerToolTipProvider : IDocumentViewerToolTipProvider {
 		public object Create(IDocumentViewerToolTipProviderContext context, object @ref) {
-			if (@ref is GenericParam)
-				return Create(context, (GenericParam)@ref);
-			if (@ref is IMemberRef)
-				return Create(context, (IMemberRef)@ref);
-			if (@ref is Parameter)
-				return Create(context, (Parameter)@ref);
-			if (@ref is Local)
-				return Create(context, (Local)@ref);
-			if (@ref is OpCode)
-				return Create(context, (OpCode)@ref);
-			if (@ref is NamespaceReference)
-				return Create(context, (NamespaceReference)@ref);
+			if (@ref is GenericParam gp)
+				return Create(context, gp);
+			if (@ref is IMemberRef mr)
+				return Create(context, mr);
+			if (@ref is Parameter p)
+				return Create(context, new SourceParameter(p, p.Name, p.Type));
+			if (@ref is SourceLocal l)
+				return Create(context, l);
+			if (@ref is OpCode opc)
+				return Create(context, opc);
+			if (@ref is NamespaceReference nsr)
+				return Create(context, nsr);
 			return null;
 		}
 
@@ -149,53 +148,35 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			return provider.Create();
 		}
 
-		object Create(IDocumentViewerToolTipProviderContext context, Local local) {
-			var name = GetDecompilerLocalName(context.DocumentViewer.Content.MethodDebugInfos, local) ?? local.Name;
-			return Create(context, local, name);
-		}
-
-		string GetDecompilerLocalName(IReadOnlyList<MethodDebugInfo> infos, Local local) {
-			foreach (var info in infos) {
-				foreach (var sourceLocal in info.Locals) {
-					if (sourceLocal.Local == local)
-						return sourceLocal.Name;
-				}
-			}
-			return null;
-		}
-
-		object Create(IDocumentViewerToolTipProviderContext context, Parameter p) => Create(context, p, null);
-		object Create(IDocumentViewerToolTipProviderContext context, IVariable v, string name) {
+		object Create(IDocumentViewerToolTipProviderContext context, SourceLocal local) {
 			var provider = context.Create();
-			provider.SetImage(v);
+			provider.SetImage(local);
+			context.Decompiler.WriteToolTip(provider.Output, local);
+			return provider.Create();
+		}
 
-			if (v == null) {
-				if (name == null)
-					return null;
-				provider.Output.Write(BoxedTextColor.Text, string.Format("(local variable) {0}", name));
-				return provider.Create();
-			}
+		object Create(IDocumentViewerToolTipProviderContext context, SourceParameter parameter) {
+			var provider = context.Create();
+			provider.SetImage(parameter);
 
-			context.Decompiler.WriteToolTip(provider.Output, v, name);
+			context.Decompiler.WriteToolTip(provider.Output, parameter);
 
 			provider.CreateNewOutput();
-			if (v is Parameter) {
-				var method = ((Parameter)v).Method;
-				try {
-					var docProvider = XmlDocLoader.LoadDocumentation(method.Module);
-					if (docProvider != null) {
-						if (!provider.Output.WriteXmlDocParameter(GetDocumentation(docProvider, method), v.Name)) {
-							var owner = method.DeclaringType;
-							while (owner != null) {
-								if (provider.Output.WriteXmlDocParameter(GetDocumentation(docProvider, owner), v.Name))
-									break;
-								owner = owner.DeclaringType;
-							}
+			var method = parameter.Parameter.Method;
+			try {
+				var docProvider = XmlDocLoader.LoadDocumentation(method.Module);
+				if (docProvider != null) {
+					if (!provider.Output.WriteXmlDocParameter(GetDocumentation(docProvider, method), parameter.Name)) {
+						var owner = method.DeclaringType;
+						while (owner != null) {
+							if (provider.Output.WriteXmlDocParameter(GetDocumentation(docProvider, owner), parameter.Name))
+								break;
+							owner = owner.DeclaringType;
 						}
 					}
 				}
-				catch (XmlException) {
-				}
+			}
+			catch (XmlException) {
 			}
 
 			return provider.Create();

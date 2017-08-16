@@ -181,8 +181,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="variable">Local or argument</param>
-		/// <param name="name">Name or null</param>
-		void WriteToolTip(ITextColorWriter output, IVariable variable, string name);
+		void WriteToolTip(ITextColorWriter output, ISourceVariable variable);
 
 		/// <summary>
 		/// Writes a namespace tooltip

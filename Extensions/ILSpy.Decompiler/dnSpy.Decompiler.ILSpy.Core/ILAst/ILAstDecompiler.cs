@@ -116,7 +116,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => v != null && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
-				output.Write(IdentifierEscaper.Escape(v.Name), (object)v.OriginalVariable ?? (object)v.OriginalParameter ?? v.Id, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedTextColor.Parameter : BoxedTextColor.Local);
+				output.Write(IdentifierEscaper.Escape(v.Name), v.GetTextReferenceObject(), DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedTextColor.Parameter : BoxedTextColor.Local);
 				if (v.Type != null) {
 					output.Write(" ", BoxedTextColor.Text);
 					output.Write(":", BoxedTextColor.Punctuation);
@@ -139,7 +139,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 				output.WriteLine();
 			}
 
-			var builder = new MethodDebugInfoBuilder(method);
+			var localVariables = new HashSet<ILVariable>(GetVariables(ilMethod));
+			var builder = new MethodDebugInfoBuilder(method, CreateSourceLocals(localVariables));
 			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output, builder);
 				if (!node.WritesNewLine)
@@ -147,6 +148,33 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 			output.AddDebugInfo(builder.Create());
 			EndKeywordBlock(output, bodyInfo, CodeBracesRangeFlags.MethodBraces, addLineSeparator: true);
+		}
+
+		IEnumerable<ILVariable> GetVariables(ILBlock ilMethod) {
+			foreach (var n in ilMethod.GetSelfAndChildrenRecursive(new List<ILNode>())) {
+				var expr = n as ILExpression;
+				if (expr != null) {
+					var v = expr.Operand as ILVariable;
+					if (v != null && !v.IsParameter)
+						yield return v;
+					continue;
+				}
+				var cb = n as ILTryCatchBlock.CatchBlockBase;
+				if (cb != null && cb.ExceptionVariable != null)
+					yield return cb.ExceptionVariable;
+			}
+		}
+
+		readonly List<SourceLocal> sourceLocalsList = new List<SourceLocal>();
+		SourceLocal[] CreateSourceLocals(HashSet<ILVariable> variables) {
+			foreach (var v in variables) {
+				if (v.IsParameter)
+					continue;
+				sourceLocalsList.Add(v.GetSourceLocal());
+			}
+			var array = sourceLocalsList.ToArray();
+			sourceLocalsList.Clear();
+			return array;
 		}
 
 		struct BraceInfo {

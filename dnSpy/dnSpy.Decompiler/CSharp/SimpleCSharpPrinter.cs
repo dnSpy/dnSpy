@@ -938,18 +938,18 @@ namespace dnSpy.Decompiler.CSharp {
 			return null;
 		}
 
-		public void WriteToolTip(IVariable variable, string name) {
+		public void WriteToolTip(ISourceVariable variable) {
 			if (variable == null) {
 				WriteError();
 				return;
 			}
 
-			var isLocal = variable is Local;
+			var isLocal = variable.IsLocal;
 			OutputWrite(string.Format("({0}) ", isLocal ? dnSpy_Decompiler_Resources.ToolTip_Local : dnSpy_Decompiler_Resources.ToolTip_Parameter), BoxedTextColor.Text);
-			Write(variable.Type, !isLocal ? ((Parameter)variable).ParamDef : null, null, null);
+			Write(variable.Type, !isLocal ? ((Parameter)variable.Variable).ParamDef : null, null, null);
 			WriteSpace();
-			WriteIdentifier(GetName(variable, name), isLocal ? BoxedTextColor.Local : BoxedTextColor.Parameter);
-			var p = variable as Parameter;
+			WriteIdentifier(GetName(variable), isLocal ? BoxedTextColor.Local : BoxedTextColor.Parameter);
+			var p = variable.Variable as Parameter;
 			var pd = p == null ? null : p.ParamDef;
 			if (pd != null)
 				WriteToken(pd);
@@ -1184,13 +1184,14 @@ namespace dnSpy.Decompiler.CSharp {
 			OutputWrite(">", BoxedTextColor.Punctuation);
 		}
 
-		static string GetName(IVariable variable, string name) {
-			if (!string.IsNullOrWhiteSpace(name))
-				return name;
+		static string GetName(ISourceVariable variable) {
 			var n = variable.Name;
 			if (!string.IsNullOrWhiteSpace(n))
 				return n;
-			return $"#{variable.Index}";
+			if (variable.Variable != null)
+				return $"#{variable.Variable.Index}";
+			Debug.Fail("Decompiler generated variable without a name");
+			return "???";
 		}
 
 		static bool IsSystemNullable(GenericInstSig gis) {

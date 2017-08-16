@@ -110,9 +110,9 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 			if (@ref is GenericParam)
 				return dotNetImageService.GetImageReferenceGenericParameter();
-			if (@ref is Local)
+			if (@ref is Local || @ref is SourceLocal)
 				return dotNetImageService.GetImageReferenceLocal();
-			if (@ref is Parameter)
+			if (@ref is Parameter || @ref is SourceParameter)
 				return dotNetImageService.GetImageReferenceParameter();
 			if (@ref is IType)
 				return dotNetImageService.GetImageReferenceType();

@@ -28,7 +28,11 @@ namespace dnSpy.Contracts.Decompiler {
 	public sealed class MethodDebugInfoBuilder {
 		readonly MethodDef method;
 		readonly List<SourceStatement> statements;
-		readonly SourceLocal[] locals;
+
+		/// <summary>
+		/// Gets the scope builder
+		/// </summary>
+		public MethodDebugScopeBuilder Scope { get; }
 
 		/// <summary>
 		/// Start of method (eg. position of the first character of the modifier or return type)
@@ -44,12 +48,20 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Constructor
 		/// </summary>
 		/// <param name="method">Method</param>
-		/// <param name="locals">Locals or null</param>
-		public MethodDebugInfoBuilder(MethodDef method, SourceLocal[] locals = null) {
+		public MethodDebugInfoBuilder(MethodDef method) {
 			this.method = method ?? throw new ArgumentNullException(nameof(method));
 			statements = new List<SourceStatement>();
-			this.locals = locals ?? Array.Empty<SourceLocal>();
+			Scope = new MethodDebugScopeBuilder();
+			Scope.Span = BinSpan.FromBounds(0, (uint)method.Body.GetCodeSize());
 		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <param name="locals">Locals</param>
+		public MethodDebugInfoBuilder(MethodDef method, SourceLocal[] locals)
+			: this(method) => Scope.Locals.AddRange(locals);
 
 		/// <summary>
 		/// Adds a <see cref="SourceStatement"/>
@@ -67,7 +79,7 @@ namespace dnSpy.Contracts.Decompiler {
 				methodSpan = TextSpan.FromBounds(StartPosition.Value, EndPosition.Value);
 			else
 				methodSpan = null;
-			return new MethodDebugInfo(method, statements.ToArray(), locals, methodSpan);
+			return new MethodDebugInfo(method, statements.ToArray(), Scope.ToScope(), methodSpan);
 		}
 	}
 }

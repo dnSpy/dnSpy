@@ -65,11 +65,14 @@
     <Compile Include="Decompiler\IInstructionBytesReader.cs" />
     <Compile Include="Decompiler\InstructionReference.cs" />
     <Compile Include="Decompiler\ISimpleILPrinter.cs" />
+    <Compile Include="Decompiler\ISourceVariable.cs" />
     <Compile Include="Decompiler\LineSeparator.cs" />
     <Compile Include="Decompiler\MemberComparer.cs" />
     <Compile Include="Decompiler\MetadataTextColorProvider.cs" />
     <Compile Include="Decompiler\MethodDebugInfo.cs" />
     <Compile Include="Decompiler\MethodDebugInfoBuilder.cs" />
+    <Compile Include="Decompiler\MethodDebugScope.cs" />
+    <Compile Include="Decompiler\MethodDebugScopeBuilder.cs" />
     <Compile Include="Decompiler\MethodSourceStatement.cs" />
     <Compile Include="Decompiler\MethodStatementReference.cs" />
     <Compile Include="Decompiler\NamespaceReference.cs" />
@@ -78,6 +81,7 @@
     <Compile Include="Decompiler\SimplePrinterFlags.cs" />
     <Compile Include="Decompiler\SimpleXmlParser.cs" />
     <Compile Include="Decompiler\SourceLocal.cs" />
+    <Compile Include="Decompiler\SourceParameter.cs" />
     <Compile Include="Decompiler\SourceStatement.cs" />
     <Compile Include="Decompiler\SpanReference.cs" />
     <Compile Include="Decompiler\StringBuilderDecompilerOutput.cs" />

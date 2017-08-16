@@ -219,8 +219,8 @@ namespace dnSpy.Decompiler {
 
 		public virtual void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
 			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(member);
-		public virtual void WriteToolTip(ITextColorWriter output, IVariable variable, string name) =>
-			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(variable, name);
+		public virtual void WriteToolTip(ITextColorWriter output, ISourceVariable variable) =>
+			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(variable);
 		public virtual void WriteNamespaceToolTip(ITextColorWriter output, string @namespace) =>
 			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteNamespaceToolTip(@namespace);
 		public virtual void Write(ITextColorWriter output, IMemberRef member, SimplePrinterFlags flags) =>
