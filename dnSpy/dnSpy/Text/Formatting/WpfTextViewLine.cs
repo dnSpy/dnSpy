@@ -796,7 +796,7 @@ namespace dnSpy.Text.Formatting {
 			foreach (var t in textLines)
 				t.Dispose();
 			bufferGraph = null;
-			extentIncludingLineBreak = default(SnapshotSpan);
+			extentIncludingLineBreak = default;
 			visualSnapshot = null;
 			linePartsCollection = null;
 			textLines = null;

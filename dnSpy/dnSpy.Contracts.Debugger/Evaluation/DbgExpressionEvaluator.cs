@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEvaluationResult Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgEvaluationResult Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Evaluates an expression. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEvaluationResult> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEvaluationResult> callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Assigns the value of an expression to another expression. It blocks the current thread until the evaluation is complete.
@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEEAssignmentResult Assign(DbgEvaluationContext context, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgEEAssignmentResult Assign(DbgEvaluationContext context, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Assigns the value of an expression to another expression
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Assign(DbgEvaluationContext context, string expression, string valueExpression, DbgEvaluationOptions options, Action<DbgEEAssignmentResult> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Assign(DbgEvaluationContext context, string expression, string valueExpression, DbgEvaluationOptions options, Action<DbgEEAssignmentResult> callback, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>

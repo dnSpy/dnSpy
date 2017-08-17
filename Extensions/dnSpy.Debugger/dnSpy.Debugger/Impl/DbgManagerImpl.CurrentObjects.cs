@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.Impl {
 			lock (lockObj) {
 				var newCurrentProcess = new CurrentObject<DbgProcessImpl>(newProcess, dbgCurrentProcess.currentProcess.Break);
 				var newCurrentRuntime = newProcess.CurrentRuntime;
-				var newCurrentThread = newCurrentRuntime.Current?.CurrentThread ?? default(CurrentObject<DbgThreadImpl>);
+				var newCurrentThread = newCurrentRuntime.Current?.CurrentThread ?? default;
 				processEventArgs = new DbgCurrentObjectChangedEventArgs<DbgProcess>(currentChanged: dbgCurrentProcess.currentProcess.Current != newCurrentProcess.Current, breakChanged: dbgCurrentProcess.currentProcess.Break != newCurrentProcess.Break);
 				runtimeEventArgs = new DbgCurrentObjectChangedEventArgs<DbgRuntime>(currentChanged: dbgCurrentRuntime.currentRuntime.Current != newCurrentRuntime.Current, breakChanged: dbgCurrentRuntime.currentRuntime.Break != newCurrentRuntime.Break);
 				threadEventArgs = new DbgCurrentObjectChangedEventArgs<DbgThread>(currentChanged: dbgCurrentThread.currentThread.Current != newCurrentThread.Current, breakChanged: dbgCurrentThread.currentThread.Break != newCurrentThread.Break);
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.Impl {
 				newProcess.SetCurrentRuntime_DbgThread(newRuntime);
 				var newCurrentRuntime = newProcess.CurrentRuntime;
 				Debug.Assert(newCurrentRuntime.Current == newRuntime);
-				var newCurrentThread = newCurrentRuntime.Current?.CurrentThread ?? default(CurrentObject<DbgThreadImpl>);
+				var newCurrentThread = newCurrentRuntime.Current?.CurrentThread ?? default;
 				processEventArgs = new DbgCurrentObjectChangedEventArgs<DbgProcess>(currentChanged: dbgCurrentProcess.currentProcess.Current != newCurrentProcess.Current, breakChanged: dbgCurrentProcess.currentProcess.Break != newCurrentProcess.Break);
 				runtimeEventArgs = new DbgCurrentObjectChangedEventArgs<DbgRuntime>(currentChanged: dbgCurrentRuntime.currentRuntime.Current != newCurrentRuntime.Current, breakChanged: dbgCurrentRuntime.currentRuntime.Break != newCurrentRuntime.Break);
 				threadEventArgs = new DbgCurrentObjectChangedEventArgs<DbgThread>(currentChanged: dbgCurrentThread.currentThread.Current != newCurrentThread.Current, breakChanged: dbgCurrentThread.currentThread.Break != newCurrentThread.Break);
@@ -232,8 +232,8 @@ namespace dnSpy.Debugger.Impl {
 				var currentProcess = GetProcess_NoLock(dbgCurrentProcess.currentProcess.Current, pausedProcess) ?? pausedProcess;
 				var breakProcess = GetProcess_NoLock(dbgCurrentProcess.currentProcess.Break, pausedProcess) ?? pausedProcess;
 				var newCurrentProcess = new CurrentObject<DbgProcessImpl>(currentProcess, breakProcess);
-				var newCurrentRuntime = currentProcess?.CurrentRuntime ?? default(CurrentObject<DbgRuntimeImpl>);
-				var newCurrentThread = newCurrentRuntime.Current?.CurrentThread ?? default(CurrentObject<DbgThreadImpl>);
+				var newCurrentRuntime = currentProcess?.CurrentRuntime ?? default;
+				var newCurrentThread = newCurrentRuntime.Current?.CurrentThread ?? default;
 				processEventArgs = new DbgCurrentObjectChangedEventArgs<DbgProcess>(currentChanged: dbgCurrentProcess.currentProcess.Current != newCurrentProcess.Current, breakChanged: dbgCurrentProcess.currentProcess.Break != newCurrentProcess.Break);
 				runtimeEventArgs = new DbgCurrentObjectChangedEventArgs<DbgRuntime>(currentChanged: dbgCurrentRuntime.currentRuntime.Current != newCurrentRuntime.Current, breakChanged: dbgCurrentRuntime.currentRuntime.Break != newCurrentRuntime.Break);
 				threadEventArgs = new DbgCurrentObjectChangedEventArgs<DbgThread>(currentChanged: dbgCurrentThread.currentThread.Current != newCurrentThread.Current, breakChanged: dbgCurrentThread.currentThread.Break != newCurrentThread.Break);

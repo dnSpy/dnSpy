@@ -64,7 +64,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		HexSpan GetMethodBodiesSpan(MethodBodyRvaAndRid[] methodBodyRvas) {
 			if (methodBodyRvas.Length == 0)
-				return default(HexSpan);
+				return default;
 			int index = methodBodyRvas.Length - 1;
 			var last = methodBodyRvas[index];
 			var info = ParseMethodBody(index + 1, new[] { last.Rid }, peHeaders.RvaToBufferPosition(last.Rva));
@@ -114,7 +114,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			endPos = HexPosition.Min(File.Span.End, peHeaders.RvaToBufferPosition(maxMethodBodyEndRva));
 			if (endPos < methodBodyPosition)
 				endPos = methodBodyPosition;
-			return new MethodBodyInfo(tokens, HexSpan.FromBounds(methodBodyPosition, endPos), HexSpan.FromBounds(endPos, endPos), default(HexSpan), MethodBodyInfoFlags.Invalid);
+			return new MethodBodyInfo(tokens, HexSpan.FromBounds(methodBodyPosition, endPos), HexSpan.FromBounds(endPos, endPos), default, MethodBodyInfoFlags.Invalid);
 		}
 
 		public override bool IsMethodPosition(HexPosition position) => methodBodiesSpan.Contains(position);

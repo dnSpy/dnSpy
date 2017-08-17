@@ -46,7 +46,7 @@ namespace dnSpy.Scripting {
 				// VS-MEF doesn't have GetExportedValueOrDefault()
 				var res = exportProvider.GetExports<T, IDictionary<string, object>>(null).SingleOrDefault();
 				if (res == null)
-					return default(T);
+					return default;
 				return res.Value;
 			});
 		}

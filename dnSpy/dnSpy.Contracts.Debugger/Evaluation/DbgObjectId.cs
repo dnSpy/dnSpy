@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValue GetValue(DbgEvaluationContext context, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgValue GetValue(DbgEvaluationContext context, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates a new value. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract void GetValue(DbgEvaluationContext context, Action<DbgValue> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void GetValue(DbgEvaluationContext context, Action<DbgValue> callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Removes and closes the object id

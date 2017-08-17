@@ -107,7 +107,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		// UI thread
 		internal void RefreshName_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			cachedOutput = default(ClassifiedTextCollection);
+			cachedOutput = default;
 			OnPropertyChanged(nameof(NameObject));
 		}
 

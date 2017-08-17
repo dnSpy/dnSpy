@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Scripting {
 				}
 				catch (Exception ex) {
 					exInfo = ExceptionDispatchInfo.Capture(ex);
-					return default(T);
+					return default;
 				}
 			}), DispatcherPriority.Send);
 			if (exInfo != null)
@@ -108,13 +108,13 @@ namespace dnSpy.Contracts.Scripting {
 						if (enumerator == null)
 							enumerator = getIter().GetEnumerator();
 						if (!(canContinue = enumerator.MoveNext()))
-							return default(T);
+							return default;
 						return enumerator.Current;
 					}
 					catch (Exception ex) {
 						canContinue = false;
 						exInfo = ExceptionDispatchInfo.Capture(ex);
-						return default(T);
+						return default;
 					}
 				}), DispatcherPriority.Send);
 				if (exInfo != null)

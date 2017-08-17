@@ -198,7 +198,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			OnPropertyChanged(nameof(ManagedIdObject));
 			OnPropertyChanged(nameof(CategoryTextObject));
 			OnPropertyChanged(nameof(NameObject));
-			locationCachedOutput = default(ClassifiedTextCollection);
+			locationCachedOutput = default;
 			OnPropertyChanged(nameof(LocationObject));
 			OnPropertyChanged(nameof(PriorityObject));
 			OnPropertyChanged(nameof(AffinityMaskObject));
@@ -213,7 +213,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			Context.UIDispatcher.VerifyAccess();
 			OnPropertyChanged(nameof(IdObject));
 			OnPropertyChanged(nameof(ManagedIdObject));
-			locationCachedOutput = default(ClassifiedTextCollection);
+			locationCachedOutput = default;
 			OnPropertyChanged(nameof(LocationObject));
 			OnPropertyChanged(nameof(SuspendedCountObject));
 		}
@@ -231,7 +231,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			if (hThread == null)
 				OpenThread_UI();
 
-			locationCachedOutput = default(ClassifiedTextCollection);
+			locationCachedOutput = default;
 			OnPropertyChanged(nameof(LocationObject));
 
 			var newPriority = CalculateThreadPriority_UI();

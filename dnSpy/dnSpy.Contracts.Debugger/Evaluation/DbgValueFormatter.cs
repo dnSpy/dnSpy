@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="value">Value to format</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Format(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Formats the value
@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the formatting is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, Action callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Format(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, Action callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Formats the value's type. The thread is blocked until the type has been formatted
@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="value">Value to format</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Formats the value's type
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the formatting is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, Action callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, Action callback, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>

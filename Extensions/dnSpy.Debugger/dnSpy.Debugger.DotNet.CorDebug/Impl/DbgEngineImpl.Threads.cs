@@ -376,7 +376,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return true;
 			}
 
-			moduleId = default(ModuleId);
+			moduleId = default;
 			token = 0;
 			offset = 0;
 			return false;

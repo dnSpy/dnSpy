@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// Gets an <see cref="ImageReference"/> which isn't referencing any image
 		/// </summary>
-		public static readonly ImageReference None = default(ImageReference);
+		public static readonly ImageReference None = default;
 
 		/// <summary>
 		/// true if it's the default instance
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="result">Result</param>
 		/// <returns></returns>
 		public static bool TryParse(string value, out ImageReference result) {
-			result = default(ImageReference);
+			result = default;
 			if (value == null)
 				return false;
 			if (value == string.Empty)

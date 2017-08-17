@@ -331,7 +331,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		static T ReadList<T>(IList<T> list, int index) {
 			if (list == null || index < 0 || index >= list.Count)
-				return default(T);
+				return default;
 			return list[index];
 		}
 

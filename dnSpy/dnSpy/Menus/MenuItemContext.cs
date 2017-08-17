@@ -60,7 +60,7 @@ namespace dnSpy.Menus {
 				if (o.Object is T)
 					return (T)o.Object;
 			}
-			return default(T);
+			return default;
 		}
 
 		public void Dispose() {

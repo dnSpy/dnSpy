@@ -1691,7 +1691,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public DefaultConverterVM(Action<DataFieldVM> onUpdated)
-			: this(default(T), onUpdated) {
+			: this(default, onUpdated) {
 		}
 
 		/// <summary>
@@ -1713,7 +1713,7 @@ namespace dnSpy.Contracts.MVVM {
 				error = string.Empty;
 			}
 			catch (Exception ex) {
-				value = default(T);
+				value = default;
 				error = string.Format(dnSpy_Contracts_DnSpy_Resources.ValueMustBeType, typeof(T).FullName, ex.Message);
 			}
 			return error;

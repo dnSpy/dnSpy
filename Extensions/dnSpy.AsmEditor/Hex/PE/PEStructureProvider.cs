@@ -137,7 +137,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		static HexSpan GetSpan(DotNetHeap heap) => heap?.Span.Span ?? default(HexSpan);
+		static HexSpan GetSpan(DotNetHeap heap) => heap?.Span.Span ?? default;
 
 		public override HexPosition RvaToBufferPosition(uint rva) =>
 			peHeaders.RvaToBufferPosition(rva);

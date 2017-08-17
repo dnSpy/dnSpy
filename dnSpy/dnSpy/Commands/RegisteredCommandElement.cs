@@ -147,7 +147,7 @@ namespace dnSpy.Commands {
 				if (keyShortcutCollection.IsTwoKeyCombo(keyInput)) {
 					waitForSecondKey = true;
 					prevKey = keyInput;
-					result = default(ProviderAndCommand);
+					result = default;
 				}
 				else {
 					waitForSecondKey = false;

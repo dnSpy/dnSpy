@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgCreateValueNodeResult Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgCreateValueNodeResult Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates a <see cref="DbgValueNode"/>. The returned <see cref="DbgValueNode"/> is automatically closed when its runtime continues.
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates <see cref="DbgValueNode"/>s. It blocks the current thread.
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNode[] Create(DbgEvaluationContext context, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgValueNode[] Create(DbgEvaluationContext context, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates <see cref="DbgValueNode"/>s. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgEvaluationContext context, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Create(DbgEvaluationContext context, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>

@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <returns></returns>
 		public bool TryGetCustomData<TData>(string id, out TData data) {
 			if (!customDataDict.TryGetValue(id, out object obj)) {
-				data = default(TData);
+				data = default;
 				return false;
 			}
 
@@ -93,7 +93,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <returns></returns>
 		public TData GetCustomData<TData>(string id) {
 			if (!customDataDict.TryGetValue(id, out object obj))
-				return default(TData);
+				return default;
 			return (TData)obj;
 		}
 	}

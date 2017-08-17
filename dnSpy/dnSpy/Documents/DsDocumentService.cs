@@ -179,12 +179,12 @@ namespace dnSpy.Documents {
 		DocumentInfo Find_NoLock(IDsDocumentNameKey key) {
 			Debug.Assert(key != null);
 			if (key == null)
-				return default(DocumentInfo);
+				return default;
 			foreach (var info in documents) {
 				if (key.Equals(info.Document.Key))
 					return info;
 			}
-			return default(DocumentInfo);
+			return default;
 		}
 
 		public IDsDocument GetOrAdd(IDsDocument document) {

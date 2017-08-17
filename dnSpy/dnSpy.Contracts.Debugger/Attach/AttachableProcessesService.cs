@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// </summary>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public Task<AttachableProcess[]> GetAttachableProcesses(CancellationToken cancellationToken = default(CancellationToken)) =>
+		public Task<AttachableProcess[]> GetAttachableProcesses(CancellationToken cancellationToken = default) =>
 			GetAttachableProcesses(null, null, cancellationToken);
 
 		/// <summary>
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <param name="processName">Process name. If it's empty or null, it matches any string. This can include wildcards (* and ?).</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public Task<AttachableProcess[]> GetAttachableProcesses(string processName, CancellationToken cancellationToken = default(CancellationToken)) =>
+		public Task<AttachableProcess[]> GetAttachableProcesses(string processName, CancellationToken cancellationToken = default) =>
 			GetAttachableProcesses(string.IsNullOrEmpty(processName) ? null : new[] { processName }, null, cancellationToken);
 
 		/// <summary>

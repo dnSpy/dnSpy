@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public static bool ReadValue<T>(CorValue thisRef, string fieldName, out T value) {
-			value = default(T);
+			value = default;
 			if (thisRef == null)
 				return false;
 

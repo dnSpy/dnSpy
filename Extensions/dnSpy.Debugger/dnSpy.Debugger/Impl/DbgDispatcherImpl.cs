@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Impl {
 		public override T Invoke<T>(Func<T> callback) {
 			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
 			if (WpfDispatcher.HasShutdownStarted || WpfDispatcher.HasShutdownFinished)
-				return default(T);
+				return default;
 			return WpfDispatcher.Invoke(callback, execPriority);
 		}
 	}

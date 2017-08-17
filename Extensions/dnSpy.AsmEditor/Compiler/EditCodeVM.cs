@@ -452,7 +452,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			Diagnostics.Clear();
 			Diagnostics.AddRange(diags.OrderBy(a => a, CompilerDiagnosticComparer.Instance).
 				Where(a => a.Severity != CompilerDiagnosticSeverity.Hidden).
-				Select(a => new CompilerDiagnosticVM(a, GetImageReference(a.Severity) ?? default(ImageReference))));
+				Select(a => new CompilerDiagnosticVM(a, GetImageReference(a.Severity) ?? default)));
 			SelectedCompilerDiagnosticVM = Diagnostics.FirstOrDefault();
 		}
 

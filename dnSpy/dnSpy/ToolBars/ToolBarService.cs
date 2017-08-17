@@ -190,7 +190,7 @@ namespace dnSpy.ToolBars {
 			header = item.GetHeader(ctx) ?? header;
 			toolTip = item.GetToolTip(ctx) ?? toolTip;
 
-			var imgRef = item.GetIcon(ctx) ?? ImageReferenceHelper.GetImageReference(item, icon) ?? default(ImageReference);
+			var imgRef = item.GetIcon(ctx) ?? ImageReferenceHelper.GetImageReference(item, icon) ?? default;
 			var toggleButtonCmd = item as IToolBarToggleButton;
 			Debug.Assert(md2.IsToggleButton == (toggleButtonCmd != null), "Implement IToolBarToggleButton if IsToggleButton is true");
 			if (toggleButtonCmd != null)

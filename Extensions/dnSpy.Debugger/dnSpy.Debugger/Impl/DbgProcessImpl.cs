@@ -477,7 +477,7 @@ namespace dnSpy.Debugger.Impl {
 		protected override void CloseCore() {
 			VerifyHasNoRuntimes();
 			hProcess.Dispose();
-			currentRuntime = default(CurrentObject<DbgRuntimeImpl>);
+			currentRuntime = default;
 		}
 
 		public override bool ShouldDetach {

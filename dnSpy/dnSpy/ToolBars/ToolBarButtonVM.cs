@@ -36,7 +36,7 @@ namespace dnSpy.ToolBars {
 			CommandTarget = commandTarget;
 			Header = string.IsNullOrEmpty(header) ? null : header;
 			ToolTip = string.IsNullOrEmpty(toolTip) ? null : toolTip;
-			ImageReference = imageReference ?? default(ImageReference);
+			ImageReference = imageReference ?? default;
 		}
 	}
 }

@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void ClearBreakThread() {
 			Dispatcher.VerifyAccess();
-			currentThread = default(CurrentObject<DbgThreadImpl>);
+			currentThread = default;
 		}
 
 		internal void Add_DbgThread(DbgAppDomainImpl appDomain) {
@@ -304,7 +304,7 @@ namespace dnSpy.Debugger.Impl {
 				appDomains.Clear();
 				closeOnContinueList.Clear();
 			}
-			currentThread = default(CurrentObject<DbgThreadImpl>);
+			currentThread = default;
 			if (removedThreads.Length != 0)
 				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(removedThreads, added: false));
 			if (removedModules.Length != 0)

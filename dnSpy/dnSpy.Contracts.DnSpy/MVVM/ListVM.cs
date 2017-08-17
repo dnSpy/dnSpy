@@ -104,7 +104,7 @@ namespace dnSpy.Contracts.MVVM {
 		public T SelectedItem {
 			get {
 				if (index < 0 || index >= list.Count)
-					return default(T);
+					return default;
 				return list[index];
 			}
 			set {

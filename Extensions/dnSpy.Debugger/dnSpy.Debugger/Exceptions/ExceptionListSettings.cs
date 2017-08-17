@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		bool ReadSettings(ISettingsSection section, out DbgExceptionSettings settings) {
-			settings = default(DbgExceptionSettings);
+			settings = default;
 			var flags = section.Attribute<DbgExceptionDefinitionFlags?>("Flags");
 			if (flags == null)
 				return false;

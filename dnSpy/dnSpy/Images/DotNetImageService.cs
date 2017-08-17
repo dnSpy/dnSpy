@@ -156,7 +156,7 @@ namespace dnSpy.Images {
 				}
 			}
 			Debug.Fail("Impossible to get here");
-			return default(ImageReference);
+			return default;
 		}
 
 		static bool IsDelegate(TypeDef type) =>

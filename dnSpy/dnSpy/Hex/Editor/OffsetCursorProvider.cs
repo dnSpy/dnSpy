@@ -64,7 +64,7 @@ namespace dnSpy.Hex.Editor {
 				ResetCursorInfo();
 		}
 
-		void ResetCursorInfo() => offsetCursorProvider.CursorInfo = default(HexCursorInfo);
+		void ResetCursorInfo() => offsetCursorProvider.CursorInfo = default;
 
 		public override void PostprocessMouseLeave(MouseEventArgs e) => ResetCursorInfo();
 	}

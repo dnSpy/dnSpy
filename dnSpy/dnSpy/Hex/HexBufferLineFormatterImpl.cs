@@ -281,9 +281,9 @@ namespace dnSpy.Hex {
 		}
 
 		void CalculateColumnSpans(out VST.Span offsetSpan, out VST.Span valuesSpan, out VST.Span asciiSpan) {
-			offsetSpan = default(VST.Span);
-			valuesSpan = default(VST.Span);
-			asciiSpan = default(VST.Span);
+			offsetSpan = default;
+			valuesSpan = default;
+			asciiSpan = default;
 
 			bool needSep = false;
 			int position = 0;
@@ -570,7 +570,7 @@ namespace dnSpy.Hex {
 						visEnd = CurrentTextIndex;
 					stringBuilder.Append(' ', valueFormatter.FormattedLength);
 					spaces = valueFormatter.FormattedLength;
-					bufferSpan = default(HexBufferSpan);
+					bufferSpan = default;
 				}
 				if (cellStart + valueFormatter.FormattedLength != CurrentTextIndex)
 					throw new InvalidOperationException();
@@ -591,7 +591,7 @@ namespace dnSpy.Hex {
 				throw new InvalidOperationException();
 			if (visStart != null && visEnd == null)
 				visEnd = CurrentTextIndex;
-			visibleSpan = visStart == null ? default(VST.Span) : VST.Span.FromBounds(visStart.Value, visEnd.Value);
+			visibleSpan = visStart == null ? default : VST.Span.FromBounds(visStart.Value, visEnd.Value);
 			fullSpan = VST.Span.FromBounds(fullStart, CurrentTextIndex);
 			if (ValuesSpan != fullSpan)
 				throw new InvalidOperationException();
@@ -629,7 +629,7 @@ namespace dnSpy.Hex {
 					if (visStart != null && visEnd == null)
 						visEnd = CurrentTextIndex;
 					stringBuilder.Append(' ');
-					bufferSpan = default(HexBufferSpan);
+					bufferSpan = default;
 				}
 				var cellSpan = VST.Span.FromBounds(cellStart, CurrentTextIndex);
 				var separatorSpan = new VST.Span(cellSpan.End, 0);
@@ -641,7 +641,7 @@ namespace dnSpy.Hex {
 				throw new InvalidOperationException();
 			if (visStart != null && visEnd == null)
 				visEnd = CurrentTextIndex;
-			visibleSpan = visStart == null ? default(VST.Span) : VST.Span.FromBounds(visStart.Value, visEnd.Value);
+			visibleSpan = visStart == null ? default : VST.Span.FromBounds(visStart.Value, visEnd.Value);
 			fullSpan = VST.Span.FromBounds(fullStart, CurrentTextIndex);
 			if (AsciiSpan != fullSpan)
 				throw new InvalidOperationException();

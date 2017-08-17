@@ -475,7 +475,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (!TryGetModuleData(module, out var data))
-				return (null, default(ModuleId));
+				return (null, default);
 			return (data.DnModule.GetOrCreateCorModuleDef(), data.DnModule.DnModuleId.ToModuleId());
 		}
 

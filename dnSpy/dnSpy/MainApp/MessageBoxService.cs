@@ -146,7 +146,7 @@ namespace dnSpy.MainApp {
 			if (!string.IsNullOrWhiteSpace(title))
 				win.Title = title;
 			if (win.ShowDialog() != true)
-				return default(T);
+				return default;
 			return (T)vm.Value;
 		}
 

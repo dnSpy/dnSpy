@@ -146,7 +146,7 @@ namespace dnSpy.Hex.Intellisense {
 		public HexToolTipServiceQuickInfoSource(HexToolTipService hexToolTipService) => this.hexToolTipService = hexToolTipService ?? throw new ArgumentNullException(nameof(hexToolTipService));
 
 		public override void AugmentQuickInfoSession(HexQuickInfoSession session, IList<object> quickInfoContent, out HexBufferSpanSelection applicableToSpan) {
-			applicableToSpan = default(HexBufferSpanSelection);
+			applicableToSpan = default;
 
 			RemoveToolTipInfo();
 

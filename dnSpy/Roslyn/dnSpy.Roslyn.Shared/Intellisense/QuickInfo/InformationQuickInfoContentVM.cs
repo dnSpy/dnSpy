@@ -61,9 +61,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			var sb = new StringBuilder();
 			if (content.SymbolGlyph != null)
-				SymbolImageReference = content.SymbolGlyph.Value.GetImageReference() ?? default(ImageReference);
+				SymbolImageReference = content.SymbolGlyph.Value.GetImageReference() ?? default;
 			if (content.WarningGlyph != null)
-				WarningImageReference = content.WarningGlyph.Value.GetImageReference() ?? default(ImageReference);
+				WarningImageReference = content.WarningGlyph.Value.GetImageReference() ?? default;
 			MainDescriptionObject = TryCreateObject(sb, content.MainDescription, classificationFormatMap, themeClassificationTypeService);
 			DocumentationObject = TryCreateObject(sb, content.Documentation, classificationFormatMap, themeClassificationTypeService);
 			UsageObject = TryCreateObject(sb, content.UsageText, classificationFormatMap, themeClassificationTypeService);

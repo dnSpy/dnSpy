@@ -44,7 +44,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 			this.s = s;
 			this.index = index;
 			end = index + length;
-			info = default(SubStringInfo);
+			info = default;
 			finished = false;
 		}
 

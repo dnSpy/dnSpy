@@ -185,10 +185,10 @@ namespace dnSpy.Debugger.DbgUI {
 		TextViewStatementLocationResult GetCurrentTextViewStatementLocation() {
 			var tab = documentTabService.Value.ActiveTab;
 			if (tab == null)
-				return default(TextViewStatementLocationResult);
+				return default;
 			var documentViewer = tab.TryGetDocumentViewer();
 			if (documentViewer == null)
-				return default(TextViewStatementLocationResult);
+				return default;
 			var textView = documentViewer.TextView;
 
 			var allLocations = new List<DbgCodeLocation>();

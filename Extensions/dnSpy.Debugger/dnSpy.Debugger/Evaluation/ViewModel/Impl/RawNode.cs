@@ -135,10 +135,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool? HasChildren => false;
 		public override ulong? ChildCount => 0;
 
-		protected override ClassifiedTextCollection CachedName => default(ClassifiedTextCollection);
-		protected override ClassifiedTextCollection CachedValue => default(ClassifiedTextCollection);
-		protected override ClassifiedTextCollection CachedExpectedType => default(ClassifiedTextCollection);
-		protected override ClassifiedTextCollection CachedActualType => default(ClassifiedTextCollection);
+		protected override ClassifiedTextCollection CachedName => default;
+		protected override ClassifiedTextCollection CachedValue => default;
+		protected override ClassifiedTextCollection CachedExpectedType => default;
+		protected override ClassifiedTextCollection CachedActualType => default;
 	}
 
 	sealed class CachedRawNode : CachedRawNodeBase {

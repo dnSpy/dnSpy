@@ -87,7 +87,7 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 				throw new InvalidOperationException();
 			IsActive = false;
 			// Don't hold a strong reference to the snapshot
-			CaretStartPosition = default(SnapshotPoint);
+			CaretStartPosition = default;
 		}
 
 		public IncrementalSearchResult AppendCharAndSearch(char toAppend) {

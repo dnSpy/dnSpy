@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.Exceptions {
 					return true;
 				}
 			}
-			definition = default(DbgExceptionDefinition);
+			definition = default;
 			return false;
 		}
 
@@ -184,7 +184,7 @@ namespace dnSpy.Debugger.Exceptions {
 					return true;
 				}
 			}
-			settings = default(DbgExceptionSettings);
+			settings = default;
 			return false;
 		}
 
@@ -211,7 +211,7 @@ namespace dnSpy.Debugger.Exceptions {
 					return true;
 				}
 			}
-			definition = default(DbgExceptionCategoryDefinition);
+			definition = default;
 			return false;
 		}
 	}

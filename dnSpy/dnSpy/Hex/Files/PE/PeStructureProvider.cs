@@ -69,7 +69,7 @@ namespace dnSpy.Hex.Files.PE {
 			}
 			if (start < end)
 				return HexSpan.FromBounds(start, end);
-			return default(HexSpan);
+			return default;
 		}
 
 		public override ComplexData GetStructure(HexPosition position) {

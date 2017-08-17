@@ -109,7 +109,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates new children. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
@@ -120,7 +120,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Formats the name. This method blocks the current thread until all requested values have been formatted
@@ -128,7 +128,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatName(DbgEvaluationContext context, ITextColorWriter output, CancellationToken cancellationToken = default(CancellationToken)) =>
+		public void FormatName(DbgEvaluationContext context, ITextColorWriter output, CancellationToken cancellationToken = default) =>
 			Format(context, new DbgValueNodeFormatParameters { NameOutput = output ?? throw new ArgumentNullException(nameof(output)) }, cancellationToken);
 
 		/// <summary>
@@ -138,7 +138,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgValueFormatterOptions options, CancellationToken cancellationToken = default(CancellationToken)) =>
+		public void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgValueFormatterOptions options, CancellationToken cancellationToken = default) =>
 			Format(context, new DbgValueNodeFormatParameters {
 				ValueOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ValueFormatterOptions = options,
@@ -151,7 +151,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatExpectedType(DbgEvaluationContext context, ITextColorWriter output, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken = default(CancellationToken)) =>
+		public void FormatExpectedType(DbgEvaluationContext context, ITextColorWriter output, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken = default) =>
 			Format(context, new DbgValueNodeFormatParameters {
 				ExpectedTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ExpectedTypeFormatterOptions = options,
@@ -164,7 +164,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatActualType(DbgEvaluationContext context, ITextColorWriter output, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken = default(CancellationToken)) =>
+		public void FormatActualType(DbgEvaluationContext context, ITextColorWriter output, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken = default) =>
 			Format(context, new DbgValueNodeFormatParameters {
 				ActualTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ActualTypeFormatterOptions = options,
@@ -176,7 +176,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Formats the name, value, and type
@@ -185,7 +185,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Writes a new value. It blocks the current thread until the assignment is complete.
@@ -195,7 +195,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Writes a new value
@@ -206,7 +206,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="callback">Called when this method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>

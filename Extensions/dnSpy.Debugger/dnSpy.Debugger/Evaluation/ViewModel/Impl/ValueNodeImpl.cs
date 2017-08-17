@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				cachedExpectedType = p.ExpectedTypeOutput.GetClassifiedText();
 				if (p.ActualTypeOutput.Equals(cachedExpectedType)) {
 					p.ActualTypeOutput.Clear();
-					cachedActualType = default(ClassifiedTextCollection);
+					cachedActualType = default;
 				}
 				else
 					cachedActualType = p.ActualTypeOutput.GetClassifiedText();
@@ -195,7 +195,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		public void Reuse(DbgValueNode rootValueNode, string rootId, string expression, string errorMessage) {
 			this.rootId = rootId;
-			oldCachedValue = default(ClassifiedTextCollection);
+			oldCachedValue = default;
 			disableHighlightingOnReuse = false;
 			if (rootValueNode == null) {
 				__rawNode_DONT_USE = new ErrorRawNode(expression, errorMessage);
@@ -326,12 +326,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		void RefreshControls(RefreshNodeOptions options) {
 			if ((options & RefreshNodeOptions.RefreshName) != 0)
-				cachedName = default(ClassifiedTextCollection);
+				cachedName = default;
 			if ((options & RefreshNodeOptions.RefreshValue) != 0)
-				cachedValue = default(ClassifiedTextCollection);
+				cachedValue = default;
 			if ((options & RefreshNodeOptions.RefreshType) != 0) {
-				cachedExpectedType = default(ClassifiedTextCollection);
-				cachedActualType = default(ClassifiedTextCollection);
+				cachedExpectedType = default;
+				cachedActualType = default;
 			}
 			if ((options & RefreshNodeOptions.RefreshNameControl) != 0)
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NameObject)));
@@ -383,7 +383,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			oldCachedValue = cachedValue;
 			// Don't show the value as changed if it's an error message
 			if (disableHighlightingOnReuse || __rawNode_DONT_USE is ErrorRawNode || (__rawNode_DONT_USE is DebuggerValueRawNode valueNode && valueNode.HasInitializedUnderlyingData && valueNode.DebuggerValueNode.HasError))
-				oldCachedValue = default(ClassifiedTextCollection);
+				oldCachedValue = default;
 			disableHighlightingOnReuse = false;
 			IsInvalid = true;
 
@@ -412,7 +412,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			__rawNode_DONT_USE = newNode;
 			oldCachedValue = cachedValue;
 			if (disableHighlightingOnReuse)
-				oldCachedValue = default(ClassifiedTextCollection);
+				oldCachedValue = default;
 			disableHighlightingOnReuse = false;
 			IsInvalid = false;
 
@@ -455,7 +455,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 							childNode.__rawNode_DONT_USE = new ChildDbgValueRawNode(debuggerValueNodeChanged, childNode, newNode, (uint)i, Context.ValueNodeReader);
 						childNode.oldCachedValue = childNode.cachedValue;
 						if (childNode.disableHighlightingOnReuse)
-							childNode.oldCachedValue = default(ClassifiedTextCollection);
+							childNode.oldCachedValue = default;
 						childNode.disableHighlightingOnReuse = false;
 						childNode.IsInvalid = false;
 						childNode.ResetForReuse();

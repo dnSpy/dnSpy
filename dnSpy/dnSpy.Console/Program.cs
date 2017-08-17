@@ -252,7 +252,7 @@ namespace dnSpy_Console {
 		static T TryCreateType<T>(string asmName, string typeFullName) {
 			var asm = TryLoad(asmName);
 			var type = asm?.GetType(typeFullName);
-			return type == null ? default(T) : (T)Activator.CreateInstance(type);
+			return type == null ? default : (T)Activator.CreateInstance(type);
 		}
 
 		public int Run(string[] args) {

@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var v = section.Attribute<T?>(name);
 			if (v == null) {
 				failed = true;
-				return default(T);
+				return default;
 			}
 			return v.Value;
 		}

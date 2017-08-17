@@ -72,7 +72,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 			readonly List<TaggedText> contentTagged;
 
 			public Builder(Signature signature, SignatureHelpItem item, int? selectedParameter) {
-				this = default(Builder);
+				this = default;
 				this.item = item;
 				content = new StringBuilder();
 				contentTagged = new List<TaggedText>();

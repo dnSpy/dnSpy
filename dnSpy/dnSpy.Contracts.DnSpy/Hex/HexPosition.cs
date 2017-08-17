@@ -200,7 +200,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="result">Result</param>
 		/// <returns></returns>
 		public static bool TryParse(string value, out HexPosition result) {
-			result = default(HexPosition);
+			result = default;
 			if (value == null)
 				throw new ArgumentNullException(nameof(value));
 			value = value.Trim();

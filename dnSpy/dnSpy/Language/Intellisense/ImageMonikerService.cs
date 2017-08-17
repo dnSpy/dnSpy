@@ -56,7 +56,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public ImageMoniker ToImageMoniker(ImageReference imageReference) {
 			if (imageReference.IsDefault)
-				return default(ImageMoniker);
+				return default;
 			lock (lockObj) {
 				if (toImageMonikerDict.TryGetValue(imageReference, out var imageMoniker))
 					return imageMoniker;
@@ -71,7 +71,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public ImageReference ToImageReference(ImageMoniker imageMoniker) {
 			if (imageMoniker.Id == 0 && imageMoniker.Guid == Guid.Empty)
-				return default(ImageReference);
+				return default;
 			lock (lockObj) {
 				bool b = toImageReferenceDict.TryGetValue(imageMoniker, out var imageReference);
 				Debug.Assert(b, $"{nameof(ToImageMoniker)}() hasn't been called yet");

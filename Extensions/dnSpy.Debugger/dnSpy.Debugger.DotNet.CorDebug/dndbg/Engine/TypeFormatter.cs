@@ -629,7 +629,7 @@ namespace dndbg.Engine {
 
 		static T Read<T>(IList<T> list, int index) {
 			if ((uint)index >= (uint)list.Count)
-				return default(T);
+				return default;
 			return list[index];
 		}
 
