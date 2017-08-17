@@ -123,7 +123,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					// 2017 15.1 = 15.0.26403.0 (April 5, 2017)
 					// 2017 15.1 = 15.0.26403.3 (April 10, 2017)
 					// 2017 15.1 = 15.0.26403.7 (April 17, 2017)
-					// https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes
+					// https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes-v15.2
 					// 2017 15.2 = 15.0.26430.4 (May 10, 2017)
 					// 2017 15.2 = 15.0.26430.6 (May 12, 2017)
 					// 2017 15.2 = 15.0.26430.12 (May 30, 2017)
@@ -131,6 +131,8 @@ namespace dnSpy.Decompiler.MSBuild {
 					// 2017 15.2 = 15.0.26430.14 (June 21, 2017)
 					// 2017 15.2 = 15.0.26430.15 (July 6, 2017)
 					// 2017 15.2 = 15.0.26430.16 (July 17, 2017)
+					// https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes
+					// 2017 15.3 = 15.0.26730.3 (August 14, 2017)
 					writer.Write("VisualStudioVersion = 15.0.26228.4" + crlf);
 					writer.Write("MinimumVisualStudioVersion = 10.0.40219.1" + crlf);
 					break;
