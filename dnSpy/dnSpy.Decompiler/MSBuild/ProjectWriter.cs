@@ -98,7 +98,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					writer.WriteElementString("TargetFrameworkIdentifier", fwkInfo.Framework);
 				writer.WriteElementString("FileAlignment", GetFileAlignment());
 				if (project.ProjectTypeGuids.Count != 0) {
-					var text = string.Join(";", project.ProjectTypeGuids.Select(a => a.ToString("B")).ToArray());
+					var text = string.Join(";", project.ProjectTypeGuids.Select(a => a.ToString("B").ToUpperInvariant()).ToArray());
 					writer.WriteElementString("ProjectTypeGuids", text);
 				}
 				//TODO: VB includes a "MyType"
