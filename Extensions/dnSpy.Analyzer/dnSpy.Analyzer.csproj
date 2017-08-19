@@ -76,6 +76,7 @@
     <Compile Include="TreeNodes\InterfaceMethodImplementedByNode.cs" />
     <Compile Include="TreeNodes\InterfacePropertyImplementedByNode.cs" />
     <Compile Include="TreeNodes\MethodNode.cs" />
+    <Compile Include="TreeNodes\MethodOverriddenNode.cs" />
     <Compile Include="TreeNodes\MethodOverridesNode.cs" />
     <Compile Include="TreeNodes\MethodUsedByNode.cs" />
     <Compile Include="TreeNodes\MethodUsesNode.cs" />
