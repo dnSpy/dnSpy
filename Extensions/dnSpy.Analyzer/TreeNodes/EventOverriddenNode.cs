@@ -45,7 +45,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public static bool CanShow(EventDef property) {
 			var accessor = property.AddMethod ?? property.RemoveMethod;
-			return accessor != null && accessor.IsVirtual && accessor.DeclaringType == null;
+			return accessor != null && accessor.IsVirtual && accessor.DeclaringType.BaseType != null;
 		}
 	}
 }
