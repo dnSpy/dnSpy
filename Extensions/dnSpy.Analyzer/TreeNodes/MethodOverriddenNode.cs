@@ -57,8 +57,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					if (baseType is TypeDef def) {
 						foreach (var method in def.Methods) {
 							if (TypesHierarchyHelpers.IsBaseMethod(method, analyzedMethod)) {
-								bool hidesParent = !method.IsVirtual ^ method.IsNewSlot;
-								newNode = new MethodNode(method, hidesParent) {Context = Context};
+								newNode = new MethodNode(method) {Context = Context};
 								break; //there can be only one
 							}
 						}

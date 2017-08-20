@@ -54,8 +54,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 							MethodDef anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
 							if (anyAccessor == null)
 								continue;
-							bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-							yield return new EventNode(eventDef, hidesParent) {Context = Context};
+							yield return new EventNode(eventDef) {Context = Context};
 							yield break;
 						}
 					}

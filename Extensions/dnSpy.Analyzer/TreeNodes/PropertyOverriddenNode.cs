@@ -54,8 +54,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 							MethodDef anyAccessor = property.GetMethod ?? property.SetMethod;
 							if (anyAccessor == null)
 								continue;
-							bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-							yield return new PropertyNode(property, hidesParent) {Context = Context};
+							yield return new PropertyNode(property) {Context = Context};
 							yield break;
 						}
 					}
