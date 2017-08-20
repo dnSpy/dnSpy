@@ -46,16 +46,25 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 			ITypeDefOrRef baseType = analyzedEvent.DeclaringType.BaseType;
 
-			//only typedef has a Events property
-			if (baseType is TypeDef def) {
-				foreach (EventDef eventDef in def.Events) {
-					if (TypesHierarchyHelpers.IsBaseEvent(eventDef, analyzedEvent)) {
-						MethodDef anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-						if (anyAccessor == null)
-							continue;
-						bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-						yield return new EventNode(eventDef, hidesParent) {Context = Context};
+			while (baseType != null) {
+				//only typedef has a Events property
+				if (baseType is TypeDef def) {
+					foreach (EventDef eventDef in def.Events) {
+						if (TypesHierarchyHelpers.IsBaseEvent(eventDef, analyzedEvent)) {
+							MethodDef anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
+							if (anyAccessor == null)
+								continue;
+							bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
+							yield return new EventNode(eventDef, hidesParent) {Context = Context};
+							yield break;
+						}
 					}
+					baseType = def.BaseType;
+				}
+				else {
+					//try to resolve the TypeRef
+					//will be null if resolving failed
+					baseType = baseType.Resolve();
 				}
 			}
 		}

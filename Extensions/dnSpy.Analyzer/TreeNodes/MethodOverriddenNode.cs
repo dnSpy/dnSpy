@@ -27,7 +27,7 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	/// <summary>
-	/// Searches methods that override by the analyzed method.
+	/// Searches methods that are overridden by the analyzed method.
 	/// </summary>
 	sealed class MethodOverriddenNode : SearchNode {
 		readonly MethodDef analyzedMethod;
@@ -52,14 +52,26 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 				ITypeDefOrRef baseType = analyzedMethod.DeclaringType.BaseType;
 
-				//only typedef has a Methods property
-				if (baseType is TypeDef def) {
-					foreach (var method in def.Methods) {
-						if (TypesHierarchyHelpers.IsBaseMethod(method, analyzedMethod)) {
-							bool hidesParent = !method.IsVirtual ^ method.IsNewSlot;
-							newNode = new MethodNode(method, hidesParent) {Context = Context};
-							break;	//there can be only one
+				while (baseType != null) { 
+					//only typedef has a Methods property
+					if (baseType is TypeDef def) {
+						foreach (var method in def.Methods) {
+							if (TypesHierarchyHelpers.IsBaseMethod(method, analyzedMethod)) {
+								bool hidesParent = !method.IsVirtual ^ method.IsNewSlot;
+								newNode = new MethodNode(method, hidesParent) {Context = Context};
+								break; //there can be only one
+							}
 						}
+						//escape from the while loop if we have a match (cannot yield return in try/catch)
+						if (newNode != null)
+							break;
+
+						baseType = def.BaseType;
+					}
+					else {
+						//try to resolve the TypeRef
+						//will be null if resolving failed
+						baseType = baseType.Resolve();
 					}
 				}
 			}
