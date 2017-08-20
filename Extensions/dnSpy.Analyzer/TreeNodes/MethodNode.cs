@@ -62,6 +62,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			else
 				yield return new MethodUsedByNode(analyzedMethod);
 
+			if (MethodOverriddenNode.CanShow(analyzedMethod))
+				yield return new MethodOverriddenNode(analyzedMethod);
+
 			if (MethodOverridesNode.CanShow(analyzedMethod))
 				yield return new MethodOverridesNode(analyzedMethod);
 
