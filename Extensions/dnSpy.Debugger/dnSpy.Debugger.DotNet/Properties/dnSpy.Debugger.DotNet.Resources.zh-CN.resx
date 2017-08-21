@@ -121,7 +121,7 @@
     <value>添加类断点</value>
   </data>
   <data name="AddClassTracepointCommand" xml:space="preserve">
-    <value>Add Class Tracepoint</value>
+    <value>添加类跟踪点</value>
   </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
     <value>添加方法断点</value>
@@ -133,7 +133,7 @@
     <value>取消(_C)</value>
   </data>
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
-    <value>Cancel loading modules?</value>
+    <value>取消加载模块吗？</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
     <value>IL 偏移量 {0}</value>

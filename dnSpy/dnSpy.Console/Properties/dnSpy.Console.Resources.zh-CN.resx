@@ -226,7 +226,7 @@
     <value>设置语言，默认是 C#。可以使用 Guid。</value>
   </data>
   <data name="CmdLineDescription_MDToken" xml:space="preserve">
-    <value>decompile the member with metadata token N to stdout</value>
+    <value>反编译元数据标记 N 的成员到输出窗口</value>
   </data>
   <data name="CmdLineDescription_NoBAML" xml:space="preserve">
     <value>不将BAML反编译为XAML</value>
@@ -280,7 +280,7 @@
     <value>名称</value>
   </data>
   <data name="CmdLineOutputDir" xml:space="preserve">
-    <value>outdir</value>
+    <value>退出路径</value>
   </data>
   <data name="CmdLinePath" xml:space="preserve">
     <value>路径</value>
@@ -295,7 +295,7 @@
     <value>反编译目录中所有.NET的dll文件并保存到C:\out\path</value>
   </data>
   <data name="ExampleDescription4" xml:space="preserve">
-    <value>Decompiles the member with token 0x06000123</value>
+    <value>反编译标识为0x06000123的成员</value>
   </data>
   <data name="ExampleDescription5" xml:space="preserve">
     <value>从 mscorlib 反编译 System.Int32</value>
@@ -304,13 +304,13 @@
     <value>例如：</value>
   </data>
   <data name="UsageHeader" xml:space="preserve">
-    <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>
+    <value>[选项] [文件或路径1] [文件或路径2] [...]</value>
   </data>
   <data name="CmdLineDescription_NoColor" xml:space="preserve">
     <value>不要高亮文本</value>
   </data>
   <data name="CmdLineDescription_Spaces" xml:space="preserve">
-    <value>Size of a tab in spaces or 0 to use one tab</value>
+    <value>Tab的长度（单位为空格），指定0则使用一个Tab</value>
   </data>
   <data name="InvalidSpacesArgument" xml:space="preserve">
     <value>空格的数量必须在 {0} 和 {1} 之间</value>

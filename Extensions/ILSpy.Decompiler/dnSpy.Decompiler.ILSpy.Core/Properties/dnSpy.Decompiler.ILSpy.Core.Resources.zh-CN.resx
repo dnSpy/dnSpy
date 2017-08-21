@@ -190,7 +190,7 @@
     <value>删除空的默认构造函数</value>
   </data>
   <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
-    <value>Replace 'new delegate-class(xxx)' with 'xxx'</value>
+    <value>将 “new delegate-class(xxx)” 替换为 “xxx”</value>
   </data>
   <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
     <value>显示编译器生成的隐藏类型和方法</value>
@@ -202,7 +202,7 @@
     <value>显示IL指令字节</value>
   </data>
   <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
-    <value>Show line numbers and filenames if available</value>
+    <value>显示行号和文件名（如果可用）</value>
   </data>
   <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
     <value>显示token，RVA和file offset</value>

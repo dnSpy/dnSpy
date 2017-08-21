@@ -337,7 +337,7 @@
     <value>Modul .cctor oder Einstiegspunkt</value>
   </data>
   <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
-    <value>Lokal-Fenster beim Start des Debuggers anzeigen</value>
+    <value>Locals-Fenster beim Start des Debuggers anzeigen</value>
   </data>
   <data name="DbgSettings_BreakAt" xml:space="preserve">
     <value>Unter_breche bei</value>
@@ -702,7 +702,7 @@ Wenn es einen Behandler für die Ausnahme gibt, könnte das Programm sicher fort
     <value>_Elternteil zuklappen</value>
   </data>
   <data name="LocalsCommand" xml:space="preserve">
-    <value>Fe_lder</value>
+    <value>_Locals</value>
   </data>
   <data name="LocalsCopyValueCommand" xml:space="preserve">
     <value>Wert _kopieren</value>

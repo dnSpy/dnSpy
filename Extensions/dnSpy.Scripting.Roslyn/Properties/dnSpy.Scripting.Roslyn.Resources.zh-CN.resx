@@ -190,10 +190,10 @@
     <value>清空屏幕</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>History Next</value>
+    <value>后一条历史记录</value>
   </data>
   <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>History Previous</value>
+    <value>前一条历史记录</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
     <value>重置</value>
@@ -298,7 +298,7 @@
     <value>Ctrl+S</value>
   </data>
   <data name="ShortCutKeyCtrlShiftS" xml:space="preserve">
-    <value>Ctrl + Shift + S</value>
+    <value>Ctrl+Shift+S</value>
   </data>
   <data name="CSharpScriptFiles" xml:space="preserve">
     <value>C#脚本文件</value>

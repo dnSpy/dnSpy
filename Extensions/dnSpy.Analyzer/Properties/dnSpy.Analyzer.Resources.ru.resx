@@ -171,6 +171,9 @@
   <data name="OverriddenByTreeNode" xml:space="preserve">
     <value>Перегружен в</value>
   </data>
+  <data name="OverridesTreeNode" xml:space="preserve">
+    <value>Переопределения</value>
+  </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Анализирует сборки</value>
   </data>

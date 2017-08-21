@@ -171,6 +171,9 @@
   <data name="OverriddenByTreeNode" xml:space="preserve">
     <value>Overridden Por</value>
   </data>
+  <data name="OverridesTreeNode" xml:space="preserve">
+    <value>Overrides</value>
+  </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Analisa os assemblies</value>
   </data>

@@ -171,6 +171,9 @@
   <data name="OverriddenByTreeNode" xml:space="preserve">
     <value>Überschrieben von</value>
   </data>
+  <data name="OverridesTreeNode" xml:space="preserve">
+    <value>Überschreibungen</value>
+  </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Analysiert Assemblys</value>
   </data>

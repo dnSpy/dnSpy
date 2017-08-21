@@ -171,6 +171,9 @@
   <data name="OverriddenByTreeNode" xml:space="preserve">
     <value>被重写</value>
   </data>
+  <data name="OverridesTreeNode" xml:space="preserve">
+    <value>重载</value>
+  </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>分析程序集</value>
   </data>

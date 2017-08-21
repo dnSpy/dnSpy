@@ -523,7 +523,7 @@
     <value>搜索中…</value>
   </data>
   <data name="SearchMsdnCommand" xml:space="preserve">
-    <value>搜索 MSDN</value>
+    <value>搜索 MSDN (_M)</value>
   </data>
   <data name="SearchWindow_Options" xml:space="preserve">
     <value>选项</value>
@@ -610,7 +610,7 @@
     <value>Ctrl+B</value>
   </data>
   <data name="SearchWindow_Assembly" xml:space="preserve">
-    <value>Assembly</value>
+    <value>程序集</value>
   </data>
   <data name="SearchWindow_AssemblyRef" xml:space="preserve">
     <value>AssemblyRef</value>
@@ -1248,7 +1248,7 @@
     <value>实线</value>
   </data>
   <data name="ShortCutKeyCtrlShiftK" xml:space="preserve">
-    <value>Ctrl + Shift + K</value>
+    <value>Ctrl+Shift+K</value>
   </data>
   <data name="BgImgDisplayName_HexEditor" xml:space="preserve">
     <value>HEX 编辑器</value>
@@ -1370,19 +1370,19 @@
     <value>设置...</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
-    <value>_16 Bytes</value>
+    <value>_16 字节</value>
   </data>
   <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
-    <value>_32 Bytes</value>
+    <value>_32 字节</value>
   </data>
   <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
-    <value>_48 Bytes</value>
+    <value>_48 字节</value>
   </data>
   <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
-    <value>_64 Bytes</value>
+    <value>_64 字节</value>
   </data>
   <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
-    <value>_8 Bytes</value>
+    <value>_8 字节</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
     <value>适合宽度(_F)</value>
@@ -1469,7 +1469,7 @@
     <value>Ctrl+Shift+C</value>
   </data>
   <data name="ShortCutKeyCtrlShiftD" xml:space="preserve">
-    <value>Ctrl + Shift + D</value>
+    <value>Ctrl+Shift+D</value>
   </data>
   <data name="ShortCutKeyCtrlShiftH" xml:space="preserve">
     <value>Ctrl+Shift+H</value>
@@ -1599,7 +1599,7 @@
     <value>Ctrl+4</value>
   </data>
   <data name="SelectToNewPosition" xml:space="preserve">
-    <value>_Select to new position</value>
+    <value>指向新的位置</value>
   </data>
   <data name="ShortCutKeyCtrlO" xml:space="preserve">
     <value>Ctrl+O</value>
@@ -1611,7 +1611,7 @@
     <value>转至元数据</value>
   </data>
   <data name="GoToMetadata_Token_Label" xml:space="preserve">
-    <value>_Token</value>
+    <value>标记</value>
   </data>
   <data name="ShortCutKeyCtrl5" xml:space="preserve">
     <value>Ctrl+5</value>
@@ -1635,7 +1635,7 @@
     <value>元数据标记</value>
   </data>
   <data name="GoToMetadata_Index_Label" xml:space="preserve">
-    <value>_Index</value>
+    <value>索引</value>
   </data>
   <data name="HexFollowFieldValueReference" xml:space="preserve">
     <value>跟随地址引用</value>

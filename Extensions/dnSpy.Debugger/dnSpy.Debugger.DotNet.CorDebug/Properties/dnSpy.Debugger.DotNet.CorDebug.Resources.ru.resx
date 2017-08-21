@@ -136,7 +136,7 @@
     <value>_Рабочий каталог</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>CreateProcess</value>
+    <value>Создать Процесс</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
     <value>Не прерывать</value>
@@ -242,19 +242,19 @@
     <value>Appdomain Transition</value>
   </data>
   <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Class Init</value>
+    <value>Инициализация Класса</value>
   </data>
   <data name="StackFrame_Exception" xml:space="preserve">
     <value>Исключение</value>
   </data>
   <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Function Evaluation</value>
+    <value>Вычисление функции</value>
   </data>
   <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Internal Call</value>
+    <value>Внутренний вызов</value>
   </data>
   <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Internal Frame ({0})</value>
+    <value>Внутренний фрейм({0})</value>
   </data>
   <data name="StackFrame_JITCompilation" xml:space="preserve">
     <value>JIT-компиляция</value>
@@ -266,10 +266,10 @@
     <value>Managed to Native Transition</value>
   </data>
   <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Native to Managed Transition</value>
+    <value>Переход от управляемого к управляемому</value>
   </data>
   <data name="StackFrame_Security" xml:space="preserve">
-    <value>Security</value>
+    <value>Безопасность</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
     <value>Смещение IL {0}</value>

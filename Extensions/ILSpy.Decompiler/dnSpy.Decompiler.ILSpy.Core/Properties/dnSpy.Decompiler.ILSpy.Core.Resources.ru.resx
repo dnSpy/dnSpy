@@ -190,7 +190,7 @@
     <value>Удалить пустые конструкторы по умолчанию</value>
   </data>
   <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
-    <value>Replace 'new delegate-class(xxx)' with 'xxx'</value>
+    <value>Заменить «new delegate-class(xxx)» на «xxx»</value>
   </data>
   <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
     <value>Показать скрытые типы и методы, созданные компилятором</value>
