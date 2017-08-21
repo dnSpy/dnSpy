@@ -29,42 +29,25 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventOverriddenNode : SearchNode {
 		readonly EventDef analyzedEvent;
 
-		public EventOverriddenNode(EventDef analyzedEvent) {
-			if (analyzedEvent == null)
-				throw new ArgumentNullException(nameof(analyzedEvent));
-
-			this.analyzedEvent = analyzedEvent;
-		}
+		public EventOverriddenNode(EventDef analyzedEvent) =>
+			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.OverridesTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			//get base type (if any)
-			if (analyzedEvent.DeclaringType.BaseType == null) {
-				yield break;
-			}
-			ITypeDefOrRef baseType = analyzedEvent.DeclaringType.BaseType;
-
-			while (baseType != null) {
-				//only typedef has a Events property
-				if (baseType is TypeDef def) {
-					foreach (EventDef eventDef in def.Events) {
-						if (TypesHierarchyHelpers.IsBaseEvent(eventDef, analyzedEvent)) {
-							MethodDef anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-							if (anyAccessor == null)
-								continue;
-							yield return new EventNode(eventDef) {Context = Context};
-							yield break;
-						}
+			var type = analyzedEvent.DeclaringType.BaseType.ResolveTypeDef();
+			while (type != null) {
+				foreach (var eventDef in type.Events) {
+					if (TypesHierarchyHelpers.IsBaseEvent(eventDef, analyzedEvent)) {
+						var anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
+						if (anyAccessor == null)
+							continue;
+						yield return new EventNode(eventDef) { Context = Context };
+						yield break;
 					}
-					baseType = def.BaseType;
 				}
-				else {
-					//try to resolve the TypeRef
-					//will be null if resolving failed
-					baseType = baseType.Resolve();
-				}
+				type = type.BaseType.ResolveTypeDef();
 			}
 		}
 

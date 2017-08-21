@@ -32,53 +32,23 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class MethodOverriddenNode : SearchNode {
 		readonly MethodDef analyzedMethod;
 
-		public MethodOverriddenNode(MethodDef analyzedMethod) {
-			if (analyzedMethod == null)
-				throw new ArgumentNullException(nameof(analyzedMethod));
-
-			this.analyzedMethod = analyzedMethod;
-		}
+		public MethodOverriddenNode(MethodDef analyzedMethod) =>
+			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.OverridesTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			//note: only goes up 1 level
-			AnalyzerTreeNodeData newNode = null;
-			try {
-				//get base type (if any)
-				if (analyzedMethod.DeclaringType.BaseType == null) {
-					yield break;
-				}
-				ITypeDefOrRef baseType = analyzedMethod.DeclaringType.BaseType;
-
-				while (baseType != null) { 
-					//only typedef has a Methods property
-					if (baseType is TypeDef def) {
-						foreach (var method in def.Methods) {
-							if (TypesHierarchyHelpers.IsBaseMethod(method, analyzedMethod)) {
-								newNode = new MethodNode(method) {Context = Context};
-								break; //there can be only one
-							}
-						}
-						//escape from the while loop if we have a match (cannot yield return in try/catch)
-						if (newNode != null)
-							break;
-
-						baseType = def.BaseType;
-					}
-					else {
-						//try to resolve the TypeRef
-						//will be null if resolving failed
-						baseType = baseType.Resolve();
+			var type = analyzedMethod.DeclaringType.BaseType.ResolveTypeDef();
+			while (type != null) {
+				foreach (var method in type.Methods) {
+					if (TypesHierarchyHelpers.IsBaseMethod(method, analyzedMethod)) {
+						yield return new MethodNode(method) { Context = Context };
+						yield break;
 					}
 				}
+				type = type.BaseType.ResolveTypeDef();
 			}
-			catch (ResolveException) {
-				//ignored
-			}
-			if (newNode != null)
-				yield return newNode;
 		}
 
 		public static bool CanShow(MethodDef method) =>

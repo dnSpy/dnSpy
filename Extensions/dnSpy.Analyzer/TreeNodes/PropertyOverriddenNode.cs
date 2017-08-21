@@ -29,42 +29,25 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class PropertyOverriddenNode : SearchNode {
 		readonly PropertyDef analyzedProperty;
 
-		public PropertyOverriddenNode(PropertyDef analyzedProperty) {
-			if (analyzedProperty == null)
-				throw new ArgumentNullException(nameof(analyzedProperty));
-
-			this.analyzedProperty = analyzedProperty;
-		}
+		public PropertyOverriddenNode(PropertyDef analyzedProperty) =>
+			this.analyzedProperty = analyzedProperty ?? throw new ArgumentNullException(nameof(analyzedProperty));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.OverridesTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			//get base type (if any)
-			if (analyzedProperty.DeclaringType.BaseType == null) {
-				yield break;
-			}
-			ITypeDefOrRef baseType = analyzedProperty.DeclaringType.BaseType;
-
-			while (baseType != null) {
-				//only typedef has a Properties property
-				if (baseType is TypeDef def) {
-					foreach (PropertyDef property in def.Properties) {
-						if (TypesHierarchyHelpers.IsBaseProperty(property, analyzedProperty)) {
-							MethodDef anyAccessor = property.GetMethod ?? property.SetMethod;
-							if (anyAccessor == null)
-								continue;
-							yield return new PropertyNode(property) {Context = Context};
-							yield break;
-						}
+			var type = analyzedProperty.DeclaringType.BaseType.ResolveTypeDef();
+			while (type != null) {
+				foreach (var property in type.Properties) {
+					if (TypesHierarchyHelpers.IsBaseProperty(property, analyzedProperty)) {
+						var anyAccessor = property.GetMethod ?? property.SetMethod;
+						if (anyAccessor == null)
+							continue;
+						yield return new PropertyNode(property) { Context = Context };
+						yield break;
 					}
-					baseType = def.BaseType;
 				}
-				else {
-					//try to resolve the TypeRef
-					//will be null if resolving failed
-					baseType = baseType.Resolve();
-				}
+				type = type.BaseType.ResolveTypeDef();
 			}
 		}
 
