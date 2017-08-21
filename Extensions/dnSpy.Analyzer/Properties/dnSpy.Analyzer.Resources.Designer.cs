@@ -223,6 +223,15 @@ namespace dnSpy.Analyzer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Overrides.
+        /// </summary>
+        public static string OverridesTreeNode {
+            get {
+                return ResourceManager.GetString("OverridesTreeNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Analyzes assemblies.
         /// </summary>
         public static string Plugin_ShortDescription {

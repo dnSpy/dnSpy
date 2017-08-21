@@ -66,6 +66,7 @@
     <Compile Include="TreeNodes\EventAccessorNode.cs" />
     <Compile Include="TreeNodes\EventFiredByNode.cs" />
     <Compile Include="TreeNodes\EventNode.cs" />
+    <Compile Include="TreeNodes\EventOverriddenNode.cs" />
     <Compile Include="TreeNodes\EventOverridesNode.cs" />
     <Compile Include="TreeNodes\FieldAccessNode.cs" />
     <Compile Include="TreeNodes\FieldNode.cs" />
@@ -76,12 +77,14 @@
     <Compile Include="TreeNodes\InterfaceMethodImplementedByNode.cs" />
     <Compile Include="TreeNodes\InterfacePropertyImplementedByNode.cs" />
     <Compile Include="TreeNodes\MethodNode.cs" />
+    <Compile Include="TreeNodes\MethodOverriddenNode.cs" />
     <Compile Include="TreeNodes\MethodOverridesNode.cs" />
     <Compile Include="TreeNodes\MethodUsedByNode.cs" />
     <Compile Include="TreeNodes\MethodUsesNode.cs" />
     <Compile Include="TreeNodes\ModuleNode.cs" />
     <Compile Include="TreeNodes\PropertyAccessorNode.cs" />
     <Compile Include="TreeNodes\PropertyNode.cs" />
+    <Compile Include="TreeNodes\PropertyOverriddenNode.cs" />
     <Compile Include="TreeNodes\PropertyOverridesNode.cs" />
     <Compile Include="TreeNodes\ScopedWhereUsedAnalyzer.cs" />
     <Compile Include="TreeNodes\SearchNode.cs" />

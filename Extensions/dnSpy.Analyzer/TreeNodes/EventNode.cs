@@ -66,6 +66,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (EventFiredByNode.CanShow(analyzedEvent))
 				yield return new EventFiredByNode(analyzedEvent);
 
+			if (EventOverriddenNode.CanShow(analyzedEvent))
+				yield return new EventOverriddenNode(analyzedEvent);
+
 			if (EventOverridesNode.CanShow(analyzedEvent))
 				yield return new EventOverridesNode(analyzedEvent);
 

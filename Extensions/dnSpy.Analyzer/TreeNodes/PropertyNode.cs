@@ -63,6 +63,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var accessor in analyzedProperty.OtherMethods)
 				yield return new PropertyAccessorNode(accessor, null);
 
+			if (PropertyOverriddenNode.CanShow(analyzedProperty))
+				yield return new PropertyOverriddenNode(analyzedProperty);
 			if (PropertyOverridesNode.CanShow(analyzedProperty))
 				yield return new PropertyOverridesNode(analyzedProperty);
 			if (InterfacePropertyImplementedByNode.CanShow(analyzedProperty))
