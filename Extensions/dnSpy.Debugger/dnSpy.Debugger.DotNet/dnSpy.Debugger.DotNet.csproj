@@ -62,6 +62,9 @@
     <Compile Include="Code\ReferenceConverterImpl.cs" />
     <Compile Include="Code\TextEditor\DbgTextViewCodeLocationProviderImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
+    <Compile Include="Evaluation\Engine\DbgDotNetLanguageServiceImpl.cs" />
+    <Compile Include="Evaluation\Engine\DbgEngineExpressionEvaluatorImpl.cs" />
+    <Compile Include="Evaluation\Engine\DbgEngineLanguageImpl.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />
     <Compile Include="Metadata\ClassLoader.cs" />

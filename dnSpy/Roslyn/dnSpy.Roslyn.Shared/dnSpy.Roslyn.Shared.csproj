@@ -46,6 +46,8 @@
     <Compile Include="Compiler\RoslynCodeDocument.cs" />
     <Compile Include="Compiler\RoslynLanguageCompiler.cs" />
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
+    <Compile Include="Debugger\ExpressionCompiler\CSharpExpressionCompiler.cs" />
+    <Compile Include="Debugger\ExpressionCompiler\VisualBasicExpressionCompiler.cs" />
     <Compile Include="Debugger\FilterExpressionEvaluator\DbgFilterExpressionEvaluatorImpl.cs" />
     <Compile Include="Debugger\FilterExpressionEvaluator\EvalDelegateCreator.cs" />
     <Compile Include="Documentation\IRoslynDocumentationProviderFactory.cs" />
@@ -127,6 +129,10 @@
     <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
+      <Project>{2376E072-101F-4900-8770-79C6DFFBD0FB}</Project>
+      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
       <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>

@@ -47,6 +47,14 @@
     <Compile Include="Code\DbgDotNetCodeLocationFactory.cs" />
     <Compile Include="Code\DbgDotNetCodeRangeService.cs" />
     <Compile Include="DbgDotNetInternalRuntime.cs" />
+    <Compile Include="Evaluation\DbgDotNetLanguageGuids.cs" />
+    <Compile Include="Evaluation\Engine\DbgDotNetEngineLanguageProvider.cs" />
+    <Compile Include="Evaluation\Engine\DbgDotNetLanguageService.cs" />
+    <Compile Include="Evaluation\ExpressionCompiler\DbgDotNetAlias.cs" />
+    <Compile Include="Evaluation\ExpressionCompiler\DbgDotNetCompilationResult.cs" />
+    <Compile Include="Evaluation\ExpressionCompiler\DbgDotNetExpressionCompiler.cs" />
+    <Compile Include="Evaluation\ExpressionCompiler\DbgModuleReference.cs" />
+    <Compile Include="Evaluation\ExpressionCompiler\PredefinedDecompilerGuids.cs" />
     <Compile Include="Extensions\DmdAppDomainExtensions.cs" />
     <Compile Include="Extensions\DmdModuleExtensions.cs" />
     <Compile Include="Extensions\DmdRuntimeExtensions.cs" />
@@ -60,6 +68,7 @@
     <Compile Include="PredefinedDotNetDbgRuntimeTags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtimes\DbgRuntimeDotNetExtensions.cs" />
+    <Compile Include="Text\DbgDotNetText.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">
@@ -71,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj">
