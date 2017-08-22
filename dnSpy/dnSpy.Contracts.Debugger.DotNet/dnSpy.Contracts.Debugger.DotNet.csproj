@@ -46,6 +46,7 @@
     <Compile Include="Code\DbgDotNetCodeLocation.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationFactory.cs" />
     <Compile Include="Code\DbgDotNetCodeRangeService.cs" />
+    <Compile Include="DbgDotNetInternalRuntime.cs" />
     <Compile Include="Extensions\DmdAppDomainExtensions.cs" />
     <Compile Include="Extensions\DmdModuleExtensions.cs" />
     <Compile Include="Extensions\DmdRuntimeExtensions.cs" />

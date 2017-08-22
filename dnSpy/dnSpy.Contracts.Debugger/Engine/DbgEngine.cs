@@ -65,6 +65,13 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract event EventHandler<DbgEngineMessage> Message;
 
 		/// <summary>
+		/// Creates a <see cref="DbgInternalRuntime"/> instance. It's called by the runtime constructor.
+		/// </summary>
+		/// <param name="runtime">Runtime instance</param>
+		/// <returns></returns>
+		public abstract DbgInternalRuntime CreateInternalRuntime(DbgRuntime runtime);
+
+		/// <summary>
 		/// Called when its connected message has been received by <see cref="DbgManager"/>
 		/// </summary>
 		/// <param name="objectFactory">Object factory</param>

@@ -52,6 +52,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract ReadOnlyCollection<string> Tags { get; }
 
 		/// <summary>
+		/// Gets the runtime object created by the debug engine
+		/// </summary>
+		public abstract DbgInternalRuntime InternalRuntime { get; }
+
+		/// <summary>
 		/// Gets all app domains
 		/// </summary>
 		public abstract DbgAppDomain[] AppDomains { get; }

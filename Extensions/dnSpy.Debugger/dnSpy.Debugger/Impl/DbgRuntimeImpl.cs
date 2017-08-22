@@ -38,6 +38,7 @@ namespace dnSpy.Debugger.Impl {
 		public override Guid Guid { get; }
 		public override string Name { get; }
 		public override ReadOnlyCollection<string> Tags { get; }
+		public override DbgInternalRuntime InternalRuntime { get; }
 
 		public override event EventHandler<DbgCollectionChangedEventArgs<DbgAppDomain>> AppDomainsChanged;
 		public override DbgAppDomain[] AppDomains {
@@ -90,6 +91,7 @@ namespace dnSpy.Debugger.Impl {
 			modules = new List<DbgModule>();
 			threads = new List<DbgThreadImpl>();
 			closeOnContinueList = new List<DbgObject>();
+			InternalRuntime = engine.CreateInternalRuntime(this) ?? throw new InvalidOperationException();
 		}
 
 		internal void SetCurrentThread_DbgThread(DbgThreadImpl thread) {
@@ -319,6 +321,7 @@ namespace dnSpy.Debugger.Impl {
 				module.Close(Dispatcher);
 			foreach (var appDomain in removedAppDomains)
 				appDomain.Close(Dispatcher);
+			InternalRuntime.Close(Dispatcher);
 		}
 	}
 }

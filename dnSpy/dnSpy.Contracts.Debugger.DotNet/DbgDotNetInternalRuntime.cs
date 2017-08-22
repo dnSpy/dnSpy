@@ -17,19 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
+namespace dnSpy.Contracts.Debugger.DotNet {
 	/// <summary>
-	/// <see cref="DbgCorDebugInternalRuntime"/> kind
+	/// Base class of a .NET runtime object implemented by the .NET debug engine
 	/// </summary>
-	public enum CorDebugRuntimeKind {
-		/// <summary>
-		/// .NET Framework
-		/// </summary>
-		DotNetFramework,
-
-		/// <summary>
-		/// .NET Core
-		/// </summary>
-		DotNetCore,
+	public abstract class DbgDotNetInternalRuntime : DbgInternalRuntime {
 	}
 }

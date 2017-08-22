@@ -633,11 +633,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
+		public override DbgInternalRuntime CreateInternalRuntime(DbgRuntime runtime) =>
+			new DbgCorDebugInternalRuntimeImpl(runtime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
+
 		public override void OnConnected(DbgObjectFactory objectFactory, DbgRuntime runtime) {
 			Debug.Assert(objectFactory.Runtime == runtime);
 			Debug.Assert(Array.IndexOf(objectFactory.Process.Runtimes, runtime) < 0);
 			this.objectFactory = objectFactory;
-			CorDebugRuntime.Add(new CorDebugRuntimeImpl(runtime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory));
 			runtime.GetOrCreateData(() => new RuntimeData(this));
 		}
 

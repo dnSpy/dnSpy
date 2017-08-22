@@ -46,16 +46,20 @@
     <Compile Include="CorDebugAttachToProgramOptions.cs" />
     <Compile Include="CorDebugStartDebuggingOptions.cs" />
     <Compile Include="CorThreadUserStates.cs" />
+    <Compile Include="DbgCorDebugInternalRuntime.cs" />
     <Compile Include="DotNetCoreAttachToProgramOptions.cs" />
     <Compile Include="DotNetCoreStartDebuggingOptions.cs" />
     <Compile Include="DotNetFrameworkAttachToProgramOptions.cs" />
     <Compile Include="DotNetFrameworkStartDebuggingOptions.cs" />
-    <Compile Include="CorDebugRuntime.cs" />
     <Compile Include="CorDebugRuntimeKind.cs" />
     <Compile Include="CorDebugRuntimeVersion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
+      <Project>{2376e072-101f-4900-8770-79c6dffbd0fb}</Project>
+      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
       <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>
       <Name>dnSpy.Contracts.Debugger</Name>

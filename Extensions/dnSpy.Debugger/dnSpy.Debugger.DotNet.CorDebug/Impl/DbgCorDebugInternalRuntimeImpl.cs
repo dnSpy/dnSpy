@@ -22,16 +22,19 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
-	sealed class CorDebugRuntimeImpl : CorDebugRuntime {
+	sealed class DbgCorDebugInternalRuntimeImpl : DbgCorDebugInternalRuntime {
 		public override DbgRuntime Runtime { get; }
 		public override CorDebugRuntimeVersion Version { get; }
 		public override string ClrFilename { get; }
 		public override string RuntimeDirectory { get; }
-		public CorDebugRuntimeImpl(DbgRuntime runtime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
+
+		public DbgCorDebugInternalRuntimeImpl(DbgRuntime runtime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Version = new CorDebugRuntimeVersion(kind, version ?? throw new ArgumentNullException(nameof(version)));
 			ClrFilename = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
 			RuntimeDirectory = runtimeDir ?? throw new ArgumentNullException(nameof(runtimeDir));
 		}
+
+		protected override void CloseCore() { }
 	}
 }
