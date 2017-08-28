@@ -29,13 +29,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override string Name { get; }
 		public override string DisplayName { get; }
 		public override DbgEngineExpressionEvaluator ExpressionEvaluator { get; }
-		public override DbgEngineValueFormatter ValueFormatter => throw new NotImplementedException();//TODO:
-		public override DbgEngineObjectIdFormatter ObjectIdFormatter => throw new NotImplementedException();//TODO:
-		public override DbgEngineValueNodeProvider LocalsProvider => throw new NotImplementedException();//TODO:
-		public override DbgEngineValueNodeProvider AutosProvider => throw new NotImplementedException();//TODO:
-		public override DbgEngineValueNodeProvider ExceptionsProvider => throw new NotImplementedException();//TODO:
-		public override DbgEngineValueNodeProvider ReturnValuesProvider => throw new NotImplementedException();//TODO:
-		public override DbgEngineValueNodeFactory ValueNodeFactory => throw new NotImplementedException();//TODO:
+		public override DbgEngineValueFormatter ValueFormatter { get; }
+		public override DbgEngineObjectIdFormatter ObjectIdFormatter { get; }
+		public override DbgEngineValueNodeProvider LocalsProvider { get; }
+		public override DbgEngineValueNodeProvider AutosProvider { get; }
+		public override DbgEngineValueNodeProvider ExceptionsProvider { get; }
+		public override DbgEngineValueNodeProvider ReturnValuesProvider { get; }
+		public override DbgEngineValueNodeFactory ValueNodeFactory { get; }
 
 		readonly IDecompiler decompiler;
 
@@ -46,6 +46,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 			ExpressionEvaluator = new DbgEngineExpressionEvaluatorImpl(expressionCompiler);
+			ValueFormatter = new DbgEngineValueFormatterImpl();
+			ObjectIdFormatter = new DbgEngineObjectIdFormatterImpl();
+			LocalsProvider = new DbgEngineLocalsProviderImpl();
+			AutosProvider = new DbgEngineAutosProviderImpl();
+			ExceptionsProvider = new DbgEngineExceptionsProviderImpl();
+			ReturnValuesProvider = new DbgEngineReturnValuesProviderImpl();
+			ValueNodeFactory = new DbgEngineValueNodeFactoryImpl();
 		}
 
 		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location) {
