@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
@@ -54,13 +55,13 @@ namespace dnSpy.Debugger.Evaluation {
 			ValueNodeFactory = new DbgValueNodeFactoryImpl(this, runtimeGuid, engineLanguage.ValueNodeFactory);
 		}
 
-		public override DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options) {
+		public override DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options, CancellationToken cancellationToken) {
 			if (runtime == null)
 				throw new ArgumentNullException(nameof(runtime));
 			if (runtime.Guid != RuntimeGuid)
 				throw new ArgumentException();
 			var context = new DbgEvaluationContextImpl(this, runtime, funcEvalTimeout, options);
-			engineLanguage.InitializeContext(context, location);
+			engineLanguage.InitializeContext(context, location, cancellationToken);
 			return context;
 		}
 	}

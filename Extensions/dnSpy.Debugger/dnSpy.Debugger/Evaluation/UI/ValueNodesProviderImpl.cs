@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -182,8 +183,11 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			evalContextInfo.Context?.Process.DbgManager.Close(evalContextInfo.Context);
 			evalContextInfo.Language = info.language;
 			evalContextInfo.Frame = info.frame;
-			if (info.frame != null)
-				evalContextInfo.Context = info.language.CreateContext(info.frame.Runtime, info.frame.Location, EvaluationConstants.DefaultFuncEvalTimeout, DbgEvaluationContextOptions.None);
+			if (info.frame != null) {
+				//TODO: Show a cancel button if the decompiler takes too long to decompile the method
+				var cancellationToken = CancellationToken.None;
+				evalContextInfo.Context = info.language.CreateContext(info.frame.Runtime, info.frame.Location, EvaluationConstants.DefaultFuncEvalTimeout, DbgEvaluationContextOptions.None, cancellationToken);
+			}
 			else
 				evalContextInfo.Context = null;
 			return evalContextInfo.Context;

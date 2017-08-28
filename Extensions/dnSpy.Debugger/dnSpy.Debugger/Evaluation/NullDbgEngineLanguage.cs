@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.Evaluation {
 			ValueNodeFactory = new NullDbgEngineValueNodeFactory();
 		}
 
-		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location) { }
+		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken) { }
 	}
 
 	sealed class NullDbgEngineExpressionEvaluator : DbgEngineExpressionEvaluator {

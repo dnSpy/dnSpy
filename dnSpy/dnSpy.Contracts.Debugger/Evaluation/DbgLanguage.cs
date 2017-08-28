@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 
@@ -88,8 +89,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="location">Location or null</param>
 		/// <param name="funcEvalTimeout">Func-eval timeout (func-eval = calling functions in the debugged process)</param>
 		/// <param name="options">Options</param>
+		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options);
+		public abstract DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates an evaluation context
@@ -97,11 +99,12 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="frame">Stack frame</param>
 		/// <param name="funcEvalTimeout">Func-eval timeout (func-eval = calling functions in the debugged process)</param>
 		/// <param name="options">Options</param>
+		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public DbgEvaluationContext CreateContext(DbgStackFrame frame, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options) {
+		public DbgEvaluationContext CreateContext(DbgStackFrame frame, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options, CancellationToken cancellationToken = default) {
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
-			return CreateContext(frame.Runtime, frame.Location, funcEvalTimeout, options);
+			return CreateContext(frame.Runtime, frame.Location, funcEvalTimeout, options, cancellationToken);
 		}
 	}
 

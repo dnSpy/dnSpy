@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
@@ -58,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			ValueNodeFactory = new DbgEngineValueNodeFactoryImpl();
 		}
 
-		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location) {
+		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken) {
 			//TODO:
 		}
 	}

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Threading;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Evaluation;
 
@@ -80,7 +81,8 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="location">Location or null</param>
+		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location);
+		public abstract void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken);
 	}
 }
