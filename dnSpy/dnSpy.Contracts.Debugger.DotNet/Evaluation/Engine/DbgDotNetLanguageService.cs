@@ -32,5 +32,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		/// <param name="runtimeGuid">Runtime guid, see <see cref="PredefinedDbgRuntimeGuids"/></param>
 		/// <returns></returns>
 		public abstract IEnumerable<DbgEngineLanguage> CreateLanguages(Guid runtimeGuid);
+
+		/// <summary>
+		/// Creates a <see cref="DbgEngineObjectIdFactory"/>
+		/// </summary>
+		/// <param name="runtimeGuid">Runtime guid, see <see cref="PredefinedDbgRuntimeGuids"/></param>
+		/// <returns></returns>
+		public abstract DbgEngineObjectIdFactory GetEngineObjectIdFactory(Guid runtimeGuid);
 	}
 }

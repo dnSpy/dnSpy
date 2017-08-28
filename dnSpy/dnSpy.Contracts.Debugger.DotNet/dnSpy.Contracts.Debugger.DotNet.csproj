@@ -49,6 +49,7 @@
     <Compile Include="DbgDotNetInternalRuntime.cs" />
     <Compile Include="Evaluation\DbgDotNetLanguageGuids.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineLanguageProvider.cs" />
+    <Compile Include="Evaluation\Engine\DbgDotNetEngineObjectIdFactory.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetLanguageService.cs" />
     <Compile Include="Evaluation\ExpressionCompiler\DbgDotNetAlias.cs" />
     <Compile Include="Evaluation\ExpressionCompiler\DbgDotNetCompilationResult.cs" />

@@ -194,6 +194,7 @@
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
     <Compile Include="Impl\EvalReflectionUtils.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetEngineLanguageProviderImpl.cs" />
+    <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />
     <Compile Include="Impl\ModuleIdExtensions.cs" />
     <Compile Include="Impl\ThreadProperties.cs" />

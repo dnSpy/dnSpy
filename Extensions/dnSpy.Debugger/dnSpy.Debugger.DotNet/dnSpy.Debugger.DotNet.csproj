@@ -68,6 +68,7 @@
     <Compile Include="Evaluation\Engine\DbgEngineExpressionEvaluatorImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineLanguageImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineLocalsProviderImpl.cs" />
+    <Compile Include="Evaluation\Engine\DbgEngineObjectIdFactoryImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineObjectIdFormatterImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineReturnValuesProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineValueFormatterImpl.cs" />

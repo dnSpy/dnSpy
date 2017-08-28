@@ -111,5 +111,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			formatter = formattersDict.Values.FirstOrDefault();
 			return formatter != null;
 		}
+
+		public override DbgEngineObjectIdFactory GetEngineObjectIdFactory(Guid runtimeGuid) =>
+			new DbgEngineObjectIdFactoryImpl(runtimeGuid);
 	}
 }
