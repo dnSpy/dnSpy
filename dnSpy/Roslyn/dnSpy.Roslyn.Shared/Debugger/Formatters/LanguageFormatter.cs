@@ -25,6 +25,6 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	abstract class LanguageFormatter : DbgDotNetFormatter {
 		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgEngineObjectId objectId) =>
-			output.Write(BoxedTextColor.Local, "$" + objectId.Id.ToString());
+			output.Write(BoxedTextColor.DebugObjectIdName, "$" + objectId.Id.ToString());
 	}
 }

@@ -1491,5 +1491,30 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.DebuggerValueChangedHighlight"/>
 		/// </summary>
 		public const string DebuggerValueChangedHighlight = "Theme-" + nameof(DebuggerValueChangedHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugExceptionName"/>
+		/// </summary>
+		public const string DebugExceptionName = "Theme-" + nameof(DebugExceptionName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugStowedExceptionName"/>
+		/// </summary>
+		public const string DebugStowedExceptionName = "Theme-" + nameof(DebugStowedExceptionName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugReturnValueName"/>
+		/// </summary>
+		public const string DebugReturnValueName = "Theme-" + nameof(DebugReturnValueName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugVariableName"/>
+		/// </summary>
+		public const string DebugVariableName = "Theme-" + nameof(DebugVariableName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugObjectIdName"/>
+		/// </summary>
+		public const string DebugObjectIdName = "Theme-" + nameof(DebugObjectIdName);
 	}
 }

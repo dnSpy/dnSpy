@@ -319,6 +319,11 @@ namespace dnSpy.Contracts.Text {
 		DebugLogTrace,
 		DebugLogExtensionMessage,
 		DebuggerValueChangedHighlight,
+		DebugExceptionName,
+		DebugStowedExceptionName,
+		DebugReturnValueName,
+		DebugVariableName,
+		DebugObjectIdName,
 
 		/// <summary>
 		/// Must be last
@@ -624,6 +629,11 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object DebugLogTrace = TextColor.DebugLogTrace;
 		public static readonly object DebugLogExtensionMessage = TextColor.DebugLogExtensionMessage;
 		public static readonly object DebuggerValueChangedHighlight = TextColor.DebuggerValueChangedHighlight;
+		public static readonly object DebugExceptionName = TextColor.DebugExceptionName;
+		public static readonly object DebugStowedExceptionName = TextColor.DebugStowedExceptionName;
+		public static readonly object DebugReturnValueName = TextColor.DebugReturnValueName;
+		public static readonly object DebugVariableName = TextColor.DebugVariableName;
+		public static readonly object DebugObjectIdName = TextColor.DebugObjectIdName;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -931,6 +941,11 @@ namespace dnSpy.Contracts.Text {
 			DebugLogTrace,
 			DebugLogExtensionMessage,
 			DebuggerValueChangedHighlight,
+			DebugExceptionName,
+			DebugStowedExceptionName,
+			DebugReturnValueName,
+			DebugVariableName,
+			DebugObjectIdName,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

@@ -324,6 +324,11 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugLogTrace),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugLogExtensionMessage),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebuggerValueChangedHighlight),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugExceptionName),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugStowedExceptionName),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugReturnValueName),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugVariableName),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugObjectIdName),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

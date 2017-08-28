@@ -1515,6 +1515,31 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.DebuggerValueChangedHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebuggerValueChangedHighlightClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugExceptionName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugExceptionNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugStowedExceptionName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugStowedExceptionNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugReturnValueName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugReturnValueNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugVariableName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugVariableNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugObjectIdName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugObjectIdNameClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -4147,6 +4172,51 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.High)]
 		sealed class DebuggerValueChangedHighlight : ThemeClassificationFormatDefinition {
 			DebuggerValueChangedHighlight() : base(TextColor.DebuggerValueChangedHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugExceptionName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugExceptionName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugExceptionName : ThemeClassificationFormatDefinition {
+			DebugExceptionName() : base(TextColor.DebugExceptionName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugStowedExceptionName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugStowedExceptionName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugStowedExceptionName : ThemeClassificationFormatDefinition {
+			DebugStowedExceptionName() : base(TextColor.DebugStowedExceptionName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugReturnValueName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugReturnValueName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugReturnValueName : ThemeClassificationFormatDefinition {
+			DebugReturnValueName() : base(TextColor.DebugReturnValueName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugVariableName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugVariableName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugVariableName : ThemeClassificationFormatDefinition {
+			DebugVariableName() : base(TextColor.DebugVariableName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugObjectIdName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugObjectIdName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugObjectIdName : ThemeClassificationFormatDefinition {
+			DebugObjectIdName() : base(TextColor.DebugObjectIdName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

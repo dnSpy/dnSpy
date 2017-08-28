@@ -317,6 +317,11 @@ namespace dnSpy.Contracts.Themes {
 		DebugLogTrace,
 		DebugLogExtensionMessage,
 		DebuggerValueChangedHighlight,
+		DebugExceptionName,
+		DebugStowedExceptionName,
+		DebugReturnValueName,
+		DebugVariableName,
+		DebugObjectIdName,
 
 		// Must be last in this group
 		LastNR,
