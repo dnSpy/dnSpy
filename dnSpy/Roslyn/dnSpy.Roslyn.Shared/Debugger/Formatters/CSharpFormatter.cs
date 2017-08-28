@@ -17,20 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
-using dnSpy.Contracts.Debugger.Engine.Evaluation;
-using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	sealed class DbgEngineObjectIdFormatterImpl : DbgEngineObjectIdFormatter {
-		readonly DbgDotNetFormatter formatter;
-
-		public DbgEngineObjectIdFormatterImpl(DbgDotNetFormatter formatter) =>
-			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
-
-		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgEngineObjectId objectId) =>
-			formatter.FormatName(context, output, objectId);
+namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
+	[ExportDbgDotNetFormatter(DbgDotNetLanguageGuids.CSharp)]
+	sealed class CSharpFormatter : LanguageFormatter {
 	}
 }

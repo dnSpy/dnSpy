@@ -20,6 +20,7 @@
 using System;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
@@ -39,15 +40,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		readonly IDecompiler decompiler;
 
-		public DbgEngineLanguageImpl(string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, IDecompiler decompiler) {
+		public DbgEngineLanguageImpl(string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, IDecompiler decompiler, DbgDotNetFormatter formatter) {
 			if (expressionCompiler == null)
 				throw new ArgumentNullException(nameof(expressionCompiler));
+			if (formatter == null)
+				throw new ArgumentNullException(nameof(formatter));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 			ExpressionEvaluator = new DbgEngineExpressionEvaluatorImpl(expressionCompiler);
 			ValueFormatter = new DbgEngineValueFormatterImpl();
-			ObjectIdFormatter = new DbgEngineObjectIdFormatterImpl();
+			ObjectIdFormatter = new DbgEngineObjectIdFormatterImpl(formatter);
 			LocalsProvider = new DbgEngineLocalsProviderImpl();
 			AutosProvider = new DbgEngineAutosProviderImpl();
 			ExceptionsProvider = new DbgEngineExceptionsProviderImpl();

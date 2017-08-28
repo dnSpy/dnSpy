@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Evaluation {
 		// The caller adds 'this' to the runtime so it's closed when the runtime is closed
 		public DbgRuntimeObjectIdServiceImpl(DbgRuntime runtime, DbgEngineObjectIdFactory dbgEngineObjectIdFactory) {
 			lockObj = new object();
-			objectIdCounter = 0;
+			objectIdCounter = 1;
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.dbgEngineObjectIdFactory = dbgEngineObjectIdFactory ?? throw new ArgumentNullException(nameof(dbgEngineObjectIdFactory));
 			objectIds = new Dictionary<object, DbgObjectId>(new ObjectIdComparer(dbgEngineObjectIdFactory));

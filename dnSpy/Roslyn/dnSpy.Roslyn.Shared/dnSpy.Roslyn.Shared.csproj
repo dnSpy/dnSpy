@@ -50,6 +50,9 @@
     <Compile Include="Debugger\ExpressionCompiler\VisualBasicExpressionCompiler.cs" />
     <Compile Include="Debugger\FilterExpressionEvaluator\DbgFilterExpressionEvaluatorImpl.cs" />
     <Compile Include="Debugger\FilterExpressionEvaluator\EvalDelegateCreator.cs" />
+    <Compile Include="Debugger\Formatters\CSharpFormatter.cs" />
+    <Compile Include="Debugger\Formatters\LanguageFormatter.cs" />
+    <Compile Include="Debugger\Formatters\VisualBasicFormatter.cs" />
     <Compile Include="Documentation\IRoslynDocumentationProviderFactory.cs" />
     <Compile Include="Documentation\RoslynDocumentationProvider.cs" />
     <Compile Include="Documentation\RoslynDocumentationProviderFactory.cs" />

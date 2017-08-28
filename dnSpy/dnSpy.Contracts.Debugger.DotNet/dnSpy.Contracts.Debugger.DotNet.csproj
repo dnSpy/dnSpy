@@ -55,6 +55,7 @@
     <Compile Include="Evaluation\ExpressionCompiler\DbgDotNetExpressionCompiler.cs" />
     <Compile Include="Evaluation\ExpressionCompiler\DbgModuleReference.cs" />
     <Compile Include="Evaluation\ExpressionCompiler\PredefinedDecompilerGuids.cs" />
+    <Compile Include="Evaluation\Formatters\DbgDotNetFormatter.cs" />
     <Compile Include="Extensions\DmdAppDomainExtensions.cs" />
     <Compile Include="Extensions\DmdModuleExtensions.cs" />
     <Compile Include="Extensions\DmdRuntimeExtensions.cs" />
