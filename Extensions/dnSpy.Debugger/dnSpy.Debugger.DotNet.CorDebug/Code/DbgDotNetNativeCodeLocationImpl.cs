@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 				output.WriteSpace();
 				if (location.ILOffsetMapping == DbgILOffsetMapping.Approximate)
 					output.Write(BoxedTextColor.Operator, "~");
-				WriteILOffset(output, location.ILOffset);
+				WriteILOffset(output, location.Offset);
 				break;
 
 			case DbgILOffsetMapping.Prolog:

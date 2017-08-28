@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Breakpoints.TextEditor {
 			case DbgILOffsetMapping.Exact:
 			case DbgILOffsetMapping.Approximate:
 				var prefix = location.ILOffsetMapping == DbgILOffsetMapping.Approximate ? "~0x" : "0x";
-				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, prefix + location.ILOffset.ToString("X4")));
+				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, prefix + location.Offset.ToString("X4")));
 				break;
 
 			case DbgILOffsetMapping.Prolog:
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Breakpoints.TextEditor {
 
 			var documentViewer = textView.TextBuffer.TryGetDocumentViewer();
 			Debug.Assert(documentViewer != null);
-			var statement = documentViewer?.GetMethodDebugService().FindByCodeOffset(new ModuleTokenId(location.Module, location.Token), location.ILOffset);
+			var statement = documentViewer?.GetMethodDebugService().FindByCodeOffset(new ModuleTokenId(location.Module, location.Token), location.Offset);
 			Debug.Assert((documentViewer != null) == (statement != null));
 			if (statement != null) {
 				output.Write(BoxedTextColor.Text, " ('");

@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Metadata;
@@ -28,6 +29,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		public override ModuleId Module { get; }
 		public override uint Token { get; }
 		public override uint Offset { get; }
+		public override DbgModule DbgModule => null;
 
 		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
 		readonly DbgDotNetCodeLocationFactoryImpl factory;

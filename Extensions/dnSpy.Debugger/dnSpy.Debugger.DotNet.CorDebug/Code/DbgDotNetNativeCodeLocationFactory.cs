@@ -27,7 +27,7 @@ using dnSpy.Debugger.DotNet.CorDebug.Impl;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 	abstract class DbgDotNetNativeCodeLocationFactory {
-		public abstract DbgDotNetNativeCodeLocation Create(ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode);
+		public abstract DbgDotNetNativeCodeLocation Create(DbgModule module, ModuleId moduleId, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode);
 	}
 
 	[Export(typeof(DbgDotNetNativeCodeLocationFactory))]
@@ -37,10 +37,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 		[ImportingConstructor]
 		DbgDotNetNativeCodeLocationFactoryImpl(Lazy<DbgManager> dbgManager) => DbgManager = dbgManager;
 
-		public override DbgDotNetNativeCodeLocation Create(ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
+		public override DbgDotNetNativeCodeLocation Create(DbgModule module, ModuleId moduleId, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
+			if (module == null)
+				throw new ArgumentNullException(nameof(module));
 			if (corCode == null)
 				throw new ArgumentNullException(nameof(corCode));
-			return new DbgDotNetNativeCodeLocationImpl(this, module, token, ilOffset, ilOffsetMapping, nativeMethodAddress, nativeMethodOffset, corCode);
+			return new DbgDotNetNativeCodeLocationImpl(this, module, moduleId, token, ilOffset, ilOffsetMapping, nativeMethodAddress, nativeMethodOffset, corCode);
 		}
 	}
 }

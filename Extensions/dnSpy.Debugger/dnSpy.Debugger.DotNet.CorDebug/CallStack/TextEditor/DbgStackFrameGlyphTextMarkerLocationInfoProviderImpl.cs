@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 					return null;
 				}
 
-				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(nativeLoc.Module, nativeLoc.Token, nativeLoc.ILOffset);
+				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(nativeLoc.Module, nativeLoc.Token, nativeLoc.Offset);
 
 			default:
 				return null;

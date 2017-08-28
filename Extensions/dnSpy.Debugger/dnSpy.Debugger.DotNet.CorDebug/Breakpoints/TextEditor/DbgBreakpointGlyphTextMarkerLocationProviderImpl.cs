@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Breakpoints.TextEditor {
 				switch (loc.ILOffsetMapping) {
 				case DbgILOffsetMapping.Exact:
 				case DbgILOffsetMapping.Approximate:
-					return new DotNetMethodBodyGlyphTextMarkerLocationInfo(loc.Module, loc.Token, loc.ILOffset);
+					return new DotNetMethodBodyGlyphTextMarkerLocationInfo(loc.Module, loc.Token, loc.Offset);
 
 				case DbgILOffsetMapping.Unknown:
 				case DbgILOffsetMapping.Prolog:

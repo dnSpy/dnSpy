@@ -372,7 +372,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					break;
 				moduleId = nativeLoc.Module;
 				token = nativeLoc.Token;
-				offset = nativeLoc.ILOffset;
+				offset = nativeLoc.Offset;
 				return true;
 			}
 

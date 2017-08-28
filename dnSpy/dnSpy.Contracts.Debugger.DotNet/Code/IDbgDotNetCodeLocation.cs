@@ -17,48 +17,31 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.Code;
-using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Metadata;
 
-namespace dnSpy.Contracts.Debugger.DotNet.CorDebug.Code {
+namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
-	/// A .NET method body location including an exact native address
+	/// .NET code location
 	/// </summary>
-	public abstract class DbgDotNetNativeCodeLocation : DbgCodeLocation, IDbgDotNetCodeLocation {
+	public interface IDbgDotNetCodeLocation {
 		/// <summary>
 		/// Gets the module
 		/// </summary>
-		public abstract ModuleId Module { get; }
+		ModuleId Module { get; }
 
 		/// <summary>
 		/// Gets the token of a method within the module
 		/// </summary>
-		public abstract uint Token { get; }
+		uint Token { get; }
 
 		/// <summary>
 		/// Gets the IL offset within the method body
 		/// </summary>
-		public abstract uint Offset { get; }
-
-		/// <summary>
-		/// Gets the IL offset mapping
-		/// </summary>
-		public abstract DbgILOffsetMapping ILOffsetMapping { get; }
-
-		/// <summary>
-		/// Gets the address of the native method
-		/// </summary>
-		public abstract ulong NativeMethodAddress { get; }
-
-		/// <summary>
-		/// Gets the offset of the native instruction within the native method body
-		/// </summary>
-		public abstract uint NativeMethodOffset { get; }
+		uint Offset { get; }
 
 		/// <summary>
 		/// Gets the debug module or null
 		/// </summary>
-		public abstract DbgModule DbgModule { get; }
+		DbgModule DbgModule { get; }
 	}
 }

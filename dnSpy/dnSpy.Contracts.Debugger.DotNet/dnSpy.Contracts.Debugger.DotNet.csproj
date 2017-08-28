@@ -46,6 +46,7 @@
     <Compile Include="Code\DbgDotNetCodeLocation.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationFactory.cs" />
     <Compile Include="Code\DbgDotNetCodeRangeService.cs" />
+    <Compile Include="Code\IDbgDotNetCodeLocation.cs" />
     <Compile Include="DbgDotNetInternalRuntime.cs" />
     <Compile Include="Evaluation\DbgDotNetLanguageGuids.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineLanguageProvider.cs" />

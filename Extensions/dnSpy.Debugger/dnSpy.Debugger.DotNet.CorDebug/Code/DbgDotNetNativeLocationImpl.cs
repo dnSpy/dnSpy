@@ -19,6 +19,7 @@
 
 using System;
 using dndbg.Engine;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Metadata;
@@ -29,29 +30,31 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 		public override string Type => PredefinedDbgCodeLocationTypes.DotNetCorDebugNative;
 		public override ModuleId Module { get; }
 		public override uint Token { get; }
-		public override uint ILOffset { get; }
+		public override uint Offset { get; }
 		public override DbgILOffsetMapping ILOffsetMapping { get; }
 		public override ulong NativeMethodAddress { get; }
 		public override uint NativeMethodOffset { get; }
 		public DnDebuggerObjectHolder<CorCode> CorCode { get; }
+		public override DbgModule DbgModule { get; }
 
 		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
 
 		readonly DbgDotNetNativeCodeLocationFactoryImpl owner;
 
-		public DbgDotNetNativeCodeLocationImpl(DbgDotNetNativeCodeLocationFactoryImpl owner, ModuleId module, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
+		public DbgDotNetNativeCodeLocationImpl(DbgDotNetNativeCodeLocationFactoryImpl owner, DbgModule module, ModuleId moduleId, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
-			Module = module;
+			Module = moduleId;
 			Token = token;
-			ILOffset = ilOffset;
+			Offset = offset;
 			ILOffsetMapping = ilOffsetMapping;
 			NativeMethodAddress = nativeMethodAddress;
 			NativeMethodOffset = nativeMethodOffset;
 			CorCode = corCode ?? throw new ArgumentNullException(nameof(corCode));
+			DbgModule = module ?? throw new ArgumentNullException(nameof(module));
 		}
 
 		public override DbgCodeLocation Clone() =>
-			owner.Create(Module, Token, ILOffset, ILOffsetMapping, NativeMethodAddress, NativeMethodOffset, CorCode.AddRef());
+			owner.Create(DbgModule, Module, Token, Offset, ILOffsetMapping, NativeMethodAddress, NativeMethodOffset, CorCode.AddRef());
 
 		public override void Close() => owner.DbgManager.Value.Close(this);
 		protected override void CloseCore() => CorCode.Close();
@@ -61,11 +64,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 			CorCode.Object == other.CorCode.Object &&
 			Module == other.Module &&
 			Token == other.Token &&
-			ILOffset == other.ILOffset &&
+			Offset == other.Offset &&
 			ILOffsetMapping == other.ILOffsetMapping &&
 			NativeMethodAddress == other.NativeMethodAddress &&
 			NativeMethodOffset == other.NativeMethodOffset;
 
-		public override int GetHashCode() => Module.GetHashCode() ^ (int)Token ^ (int)ILOffset ^ (int)ILOffsetMapping ^ NativeMethodAddress.GetHashCode() ^ (int)NativeMethodOffset ^ CorCode.HashCode;
+		public override int GetHashCode() => Module.GetHashCode() ^ (int)Token ^ (int)Offset ^ (int)ILOffsetMapping ^ NativeMethodAddress.GetHashCode() ^ (int)NativeMethodOffset ^ CorCode.HashCode;
 	}
 }

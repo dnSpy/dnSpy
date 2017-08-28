@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 					var key = new ModuleTokenId(nativeLoc.Module, nativeLoc.Token);
 					if (!dict.TryGetValue(key, out var list))
 						dict.Add(key, list = new List<uint>());
-					uint offset = nativeLoc.ILOffset;
+					uint offset = nativeLoc.Offset;
 					// The list should be small so Contains() should be fast
 					if (!list.Contains(offset))
 						list.Add(offset);

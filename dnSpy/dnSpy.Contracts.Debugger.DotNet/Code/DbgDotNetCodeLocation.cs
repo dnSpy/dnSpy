@@ -22,10 +22,9 @@ using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
-	/// .NET code breakpoint. It contains a weak module reference, a method token and
-	/// an IL offset.
+	/// .NET code location
 	/// </summary>
-	public abstract class DbgDotNetCodeLocation : DbgCodeLocation {
+	public abstract class DbgDotNetCodeLocation : DbgCodeLocation, IDbgDotNetCodeLocation {
 		/// <summary>
 		/// Gets the module
 		/// </summary>
@@ -37,8 +36,13 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		public abstract uint Token { get; }
 
 		/// <summary>
-		/// Gets the IL offset of the breakpoint within the method body
+		/// Gets the IL offset within the method body
 		/// </summary>
 		public abstract uint Offset { get; }
+
+		/// <summary>
+		/// Gets the debug module or null
+		/// </summary>
+		public abstract DbgModule DbgModule { get; }
 	}
 }
