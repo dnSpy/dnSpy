@@ -30,7 +30,7 @@ using dnSpy.Debugger.DotNet.CorDebug.Impl;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
-	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetCore_CorDebug)]
+	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetCore)]
 	sealed class DotNetCoreAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
 		public override AttachProgramOptionsProvider Create() => new DotNetCoreAttachProgramOptionsProvider();
 	}

@@ -23,13 +23,13 @@ namespace dnSpy.Contracts.Debugger.Attach {
 	/// </summary>
 	public static class PredefinedAttachProgramOptionsProviderNames {
 		/// <summary>
-		/// .NET Framework (CorDebug)
+		/// .NET Framework
 		/// </summary>
-		public const string DotNetFramework_CorDebug = nameof(DotNetFramework_CorDebug);
+		public const string DotNetFramework = nameof(DotNetFramework);
 
 		/// <summary>
-		/// .NET Core (CorDebug)
+		/// .NET Core
 		/// </summary>
-		public const string DotNetCore_CorDebug = nameof(DotNetCore_CorDebug);
+		public const string DotNetCore = nameof(DotNetCore);
 	}
 }

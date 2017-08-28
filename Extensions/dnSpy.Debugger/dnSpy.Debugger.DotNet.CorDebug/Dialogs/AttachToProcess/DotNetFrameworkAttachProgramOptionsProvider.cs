@@ -28,7 +28,7 @@ using dnSpy.Debugger.DotNet.CorDebug.Native;
 using DEMH = dndbg.COM.MetaHost;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
-	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetFramework_CorDebug)]
+	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetFramework)]
 	sealed class DotNetFrameworkAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
 		public override AttachProgramOptionsProvider Create() => new DotNetFrameworkAttachProgramOptionsProvider();
 	}

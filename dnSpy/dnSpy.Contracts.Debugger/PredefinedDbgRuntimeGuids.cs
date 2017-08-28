@@ -25,23 +25,23 @@ namespace dnSpy.Contracts.Debugger {
 	/// </summary>
 	public static class PredefinedDbgRuntimeGuids {
 		/// <summary>
-		/// .NET Framework (CorDebug)
+		/// .NET Framework
 		/// </summary>
-		public const string DotNetFramework_CorDebug = "CD03ACDD-4F3A-4736-8591-4902B4DCC8C1";
+		public const string DotNetFramework = "CD03ACDD-4F3A-4736-8591-4902B4DCC8C1";
 
 		/// <summary>
-		/// .NET Framework (CorDebug)
+		/// .NET Framework
 		/// </summary>
-		public static readonly Guid DotNetFramework_CorDebug_Guid = new Guid(DotNetFramework_CorDebug);
+		public static readonly Guid DotNetFramework_Guid = new Guid(DotNetFramework);
 
 		/// <summary>
-		/// .NET Core (CorDebug)
+		/// .NET Core
 		/// </summary>
-		public const string DotNetCore_CorDebug = "E0B4EB52-D1D9-42AB-B130-028CA31CF9F6";
+		public const string DotNetCore = "E0B4EB52-D1D9-42AB-B130-028CA31CF9F6";
 
 		/// <summary>
-		/// .NET Core (CorDebug)
+		/// .NET Core
 		/// </summary>
-		public static readonly Guid DotNetCore_CorDebug_Guid = new Guid(DotNetCore_CorDebug);
+		public static readonly Guid DotNetCore_Guid = new Guid(DotNetCore);
 	}
 }

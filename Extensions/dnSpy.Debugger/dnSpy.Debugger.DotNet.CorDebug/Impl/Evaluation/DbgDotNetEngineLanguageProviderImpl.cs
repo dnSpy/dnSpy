@@ -24,10 +24,10 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
-	[ExportDbgEngineLanguageProvider(PredefinedDbgRuntimeGuids.DotNetFramework_CorDebug)]
+	[ExportDbgEngineLanguageProvider(PredefinedDbgRuntimeGuids.DotNetFramework)]
 	sealed class DbgDotNetFrameworkEngineLanguageProviderImpl : DbgDotNetEngineLanguageProvider {
 		public override string RuntimeDisplayName => ".NET Framework";
-		protected override Guid RuntimeGuid => PredefinedDbgRuntimeGuids.DotNetFramework_CorDebug_Guid;
+		protected override Guid RuntimeGuid => PredefinedDbgRuntimeGuids.DotNetFramework_Guid;
 
 		[ImportingConstructor]
 		DbgDotNetFrameworkEngineLanguageProviderImpl(DbgDotNetLanguageService dbgDotNetLanguageService)
@@ -35,10 +35,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 	}
 
-	[ExportDbgEngineLanguageProvider(PredefinedDbgRuntimeGuids.DotNetCore_CorDebug)]
+	[ExportDbgEngineLanguageProvider(PredefinedDbgRuntimeGuids.DotNetCore)]
 	sealed class DbgDotNetCoreEngineLanguageProviderImpl : DbgDotNetEngineLanguageProvider {
 		public override string RuntimeDisplayName => ".NET Core";
-		protected override Guid RuntimeGuid => PredefinedDbgRuntimeGuids.DotNetCore_CorDebug_Guid;
+		protected override Guid RuntimeGuid => PredefinedDbgRuntimeGuids.DotNetCore_Guid;
 
 		[ImportingConstructor]
 		DbgDotNetCoreEngineLanguageProviderImpl(DbgDotNetLanguageService dbgDotNetLanguageService)

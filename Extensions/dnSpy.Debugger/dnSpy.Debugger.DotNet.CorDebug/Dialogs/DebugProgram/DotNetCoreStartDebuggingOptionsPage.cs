@@ -122,7 +122,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		public override bool SupportsDebugEngine(Guid engineGuid, out double order) {
 			if (engineGuid == PredefinedGenericDebugEngineGuids.DotNetCore) {
-				order = PredefinedGenericDebugEngineOrders.DotNetCore_CorDebug;
+				order = PredefinedGenericDebugEngineOrders.DotNetCore;
 				return true;
 			}
 

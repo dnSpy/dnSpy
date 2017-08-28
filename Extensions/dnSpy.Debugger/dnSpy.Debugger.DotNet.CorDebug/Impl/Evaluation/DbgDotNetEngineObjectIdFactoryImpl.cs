@@ -23,19 +23,19 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
-	[ExportDbgEngineObjectIdFactory(PredefinedDbgRuntimeGuids.DotNetFramework_CorDebug)]
+	[ExportDbgEngineObjectIdFactory(PredefinedDbgRuntimeGuids.DotNetFramework)]
 	sealed class DbgDotNetFrameworkEngineObjectIdFactoryImpl : DbgDotNetEngineObjectIdFactory {
 		[ImportingConstructor]
 		DbgDotNetFrameworkEngineObjectIdFactoryImpl(DbgDotNetLanguageService dbgDotNetLanguageService)
-			: base(PredefinedDbgRuntimeGuids.DotNetFramework_CorDebug_Guid, dbgDotNetLanguageService) {
+			: base(PredefinedDbgRuntimeGuids.DotNetFramework_Guid, dbgDotNetLanguageService) {
 		}
 	}
 
-	[ExportDbgEngineObjectIdFactory(PredefinedDbgRuntimeGuids.DotNetCore_CorDebug)]
+	[ExportDbgEngineObjectIdFactory(PredefinedDbgRuntimeGuids.DotNetCore)]
 	sealed class DbgDotNetCoreEngineObjectIdFactoryImpl : DbgDotNetEngineObjectIdFactory {
 		[ImportingConstructor]
 		DbgDotNetCoreEngineObjectIdFactoryImpl(DbgDotNetLanguageService dbgDotNetLanguageService)
-			: base(PredefinedDbgRuntimeGuids.DotNetCore_CorDebug_Guid, dbgDotNetLanguageService) {
+			: base(PredefinedDbgRuntimeGuids.DotNetCore_Guid, dbgDotNetLanguageService) {
 		}
 	}
 }

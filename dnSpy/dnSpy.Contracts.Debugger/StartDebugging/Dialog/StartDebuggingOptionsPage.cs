@@ -132,13 +132,13 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 	/// </summary>
 	public static class PredefinedGenericDebugEngineOrders {
 		/// <summary>
-		/// CorDebug: .NET Framework
+		/// .NET Framework
 		/// </summary>
-		public const double DotNetFramework_CorDebug = 1000000;
+		public const double DotNetFramework = 1000000;
 
 		/// <summary>
-		/// CorDebug: .NET Core
+		/// .NET Core
 		/// </summary>
-		public const double DotNetCore_CorDebug = 1000000;
+		public const double DotNetCore = 1000000;
 	}
 }
