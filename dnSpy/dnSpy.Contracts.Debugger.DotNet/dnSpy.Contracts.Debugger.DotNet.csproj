@@ -47,6 +47,8 @@
     <Compile Include="Code\DbgDotNetCodeLocationFactory.cs" />
     <Compile Include="Code\DbgDotNetCodeRangeService.cs" />
     <Compile Include="Code\IDbgDotNetCodeLocation.cs" />
+    <Compile Include="DbgDotNetInternalAppDomain.cs" />
+    <Compile Include="DbgDotNetInternalModule.cs" />
     <Compile Include="DbgDotNetInternalRuntime.cs" />
     <Compile Include="Evaluation\DbgDotNetEngineObjectId.cs" />
     <Compile Include="Evaluation\DbgDotNetLanguageGuids.cs" />
@@ -65,6 +67,9 @@
     <Compile Include="Evaluation\ExpressionCompiler\DbgModuleReference.cs" />
     <Compile Include="Evaluation\ExpressionCompiler\PredefinedDecompilerGuids.cs" />
     <Compile Include="Evaluation\Formatters\DbgDotNetFormatter.cs" />
+    <Compile Include="Extensions\DbgAppDomainExtensions.cs" />
+    <Compile Include="Extensions\DbgModuleExtensions.cs" />
+    <Compile Include="Extensions\DbgRuntimeExtensions.cs" />
     <Compile Include="Extensions\DmdAppDomainExtensions.cs" />
     <Compile Include="Extensions\DmdModuleExtensions.cs" />
     <Compile Include="Extensions\DmdRuntimeExtensions.cs" />
@@ -74,6 +79,8 @@
     <Compile Include="Metadata\DbgDynamicModuleProviderFactory.cs" />
     <Compile Include="Metadata\DbgMetadataService.cs" />
     <Compile Include="Metadata\DbgModuleIdProvider.cs" />
+    <Compile Include="Metadata\Internal\DbgRawMetadata.cs" />
+    <Compile Include="Metadata\Internal\DbgRawMetadataService.cs" />
     <Compile Include="Modules\DbgModuleDotNetExtensions.cs" />
     <Compile Include="PredefinedDotNetDbgRuntimeTags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

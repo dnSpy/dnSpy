@@ -34,6 +34,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		internal abstract void YouCantDeriveFromThisClass();
 
 		/// <summary>
+		/// Returns the fully qualified name
+		/// </summary>
+		/// <param name="isInMemory">true if the module is in memory</param>
+		/// <param name="isDynamic">true if it's a dynamic module</param>
+		/// <param name="fullyQualifiedName">Module filename or null</param>
+		/// <returns></returns>
+		public static string GetFullyQualifiedName(bool isInMemory, bool isDynamic, string fullyQualifiedName) {
+			if (isDynamic)
+				return "<In Memory Module>";
+			if (isInMemory)
+				return "<Unknown>";
+			return fullyQualifiedName ?? string.Empty;
+		}
+
+		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
 		public abstract DmdAppDomain AppDomain { get; }

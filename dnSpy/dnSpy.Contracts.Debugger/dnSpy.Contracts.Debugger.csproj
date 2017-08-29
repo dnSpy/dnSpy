@@ -83,6 +83,8 @@
     <Compile Include="DbgDispatcher.cs" />
     <Compile Include="DbgEnvironment.cs" />
     <Compile Include="DbgImageLayout.cs" />
+    <Compile Include="DbgInternalAppDomain.cs" />
+    <Compile Include="DbgInternalModule.cs" />
     <Compile Include="DbgInternalRuntime.cs" />
     <Compile Include="DbgManager.cs" />
     <Compile Include="DbgMessageEventArgs.cs" />

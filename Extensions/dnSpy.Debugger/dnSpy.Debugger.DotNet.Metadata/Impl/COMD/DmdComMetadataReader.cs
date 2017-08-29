@@ -1029,6 +1029,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		DmdReadOnlyAssemblyName[] GetReferencedAssemblies_COMThread() {
+			dispatcher.VerifyAccess();
 			var list = new List<DmdReadOnlyAssemblyName>();
 			for (uint token = 0x23000001; ; token++) {
 				if (!MDAPI.IsValidToken(MetaDataImport, token))

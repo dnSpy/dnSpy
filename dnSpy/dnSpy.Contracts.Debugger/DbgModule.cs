@@ -47,6 +47,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgAppDomain AppDomain { get; }
 
 		/// <summary>
+		/// Gets the module object created by the debug engine
+		/// </summary>
+		public abstract DbgInternalModule InternalModule { get; }
+
+		/// <summary>
 		/// true if it's an EXE file, false if it's a DLL file
 		/// </summary>
 		public abstract bool IsExe { get; }

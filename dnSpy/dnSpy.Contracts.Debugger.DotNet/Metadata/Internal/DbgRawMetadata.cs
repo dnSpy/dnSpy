@@ -17,47 +17,42 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
-using System.Linq;
+using System;
 
-namespace dnSpy.Contracts.Debugger {
+namespace dnSpy.Contracts.Debugger.DotNet.Metadata.Internal {
 	/// <summary>
-	/// An application domain
+	/// Raw .NET metadata stored in some memory location
 	/// </summary>
-	public abstract class DbgAppDomain : DbgObject, INotifyPropertyChanged {
+	public abstract class DbgRawMetadata {
 		/// <summary>
-		/// Raised when a property is changed
+		/// true if it's file layout, false if it's memory layout
 		/// </summary>
-		public abstract event PropertyChangedEventHandler PropertyChanged;
+		public abstract bool IsFileLayout { get; }
 
 		/// <summary>
-		/// Gets the runtime
+		/// true if it's memory layout, false if it's file layout
 		/// </summary>
-		public abstract DbgRuntime Runtime { get; }
+		public bool IsMemoryLayout => !IsFileLayout;
 
 		/// <summary>
-		/// Gets the process
+		/// Gets the address of the data (first byte of the PE file)
 		/// </summary>
-		public DbgProcess Process => Runtime.Process;
+		public abstract IntPtr Address { get; }
 
 		/// <summary>
-		/// Gets the name of the app domain
+		/// Gets the size of the data (size of the PE file in memory)
 		/// </summary>
-		public abstract string Name { get; }
+		public abstract int Size { get; }
 
 		/// <summary>
-		/// Gets the app domain id
+		/// Increments the reference count and returns the same instance
 		/// </summary>
-		public abstract int Id { get; }
+		/// <returns></returns>
+		public abstract DbgRawMetadata AddRef();
 
 		/// <summary>
-		/// Gets the app domain object created by the debug engine
+		/// Decrements the reference count
 		/// </summary>
-		public abstract DbgInternalAppDomain InternalAppDomain { get; }
-
-		/// <summary>
-		/// Gets all modules
-		/// </summary>
-		public DbgModule[] Modules => Runtime.Modules.Where(a => a.AppDomain == this).ToArray();
+		public abstract void Release();
 	}
 }

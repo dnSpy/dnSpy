@@ -140,7 +140,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="dynamicModuleHelper">Helper class</param>
 		/// <param name="dispatcher">Dispatcher to use when accessing <paramref name="comMetadata"/></param>
 		public DmdLazyMetadataBytesCom(object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher) {
-			MetaDataImport = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
+			MetaDataImport = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only " + nameof(Impl.COMD.IMetaDataImport2) + " is supported");
 			DynamicModuleHelper = dynamicModuleHelper ?? throw new ArgumentNullException(nameof(dynamicModuleHelper));
 			Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}

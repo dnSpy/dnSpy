@@ -17,16 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Debugger.DotNet.Metadata;
-
-namespace dnSpy.Contracts.Debugger.DotNet {
+namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// Base class of a .NET runtime object implemented by the .NET debug engine
+	/// Base class of a app domain object implemented by the debug engine
 	/// </summary>
-	public abstract class DbgDotNetInternalRuntime : DbgInternalRuntime {
+	public abstract class DbgInternalAppDomain : DbgObject {
 		/// <summary>
-		/// Gets the reflection runtime
+		/// Gets the app domain
 		/// </summary>
-		public abstract DmdRuntime ReflectionRuntime { get; }
+		public abstract DbgAppDomain AppDomain { get; }
 	}
 }

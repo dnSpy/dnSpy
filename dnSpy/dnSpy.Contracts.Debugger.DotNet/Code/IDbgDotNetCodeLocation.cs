@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		uint Offset { get; }
 
 		/// <summary>
-		/// Gets the debug module or null
+		/// Gets the debugger module or null
 		/// </summary>
 		DbgModule DbgModule { get; }
 	}

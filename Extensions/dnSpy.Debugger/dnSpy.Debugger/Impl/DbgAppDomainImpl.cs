@@ -26,6 +26,7 @@ namespace dnSpy.Debugger.Impl {
 		public override DbgRuntime Runtime => runtime;
 		public override string Name => name;
 		public override int Id => id;
+		public override DbgInternalAppDomain InternalAppDomain { get; }
 
 		DbgDispatcher Dispatcher => Process.DbgManager.Dispatcher;
 
@@ -33,8 +34,9 @@ namespace dnSpy.Debugger.Impl {
 		string name;
 		int id;
 
-		public DbgAppDomainImpl(DbgRuntimeImpl runtime, string name, int id) {
+		public DbgAppDomainImpl(DbgRuntimeImpl runtime, DbgInternalAppDomain internalAppDomain, string name, int id) {
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
+			InternalAppDomain = internalAppDomain ?? throw new ArgumentNullException(nameof(internalAppDomain));
 			this.name = name;
 			this.id = id;
 		}
@@ -63,6 +65,9 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void Remove(bool pause) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
 
-		protected override void CloseCore() => Dispatcher.VerifyAccess();
+		protected override void CloseCore() {
+			Dispatcher.VerifyAccess();
+			InternalAppDomain.Close(Dispatcher);
+		}
 	}
 }

@@ -17,16 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Contracts.Debugger.DotNet {
+namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// Base class of a .NET runtime object implemented by the .NET debug engine
+	/// Extension methods
 	/// </summary>
-	public abstract class DbgDotNetInternalRuntime : DbgInternalRuntime {
+	public static class DbgRuntimeExtensions {
 		/// <summary>
-		/// Gets the reflection runtime
+		/// Gets the reflection runtime or null if this isn't a managed runtime
 		/// </summary>
-		public abstract DmdRuntime ReflectionRuntime { get; }
+		/// <param name="runtime">Debugger runtime</param>
+		/// <returns></returns>
+		public static DmdRuntime GetReflectionRuntime(this DbgRuntime runtime) => (runtime.InternalRuntime as DbgDotNetInternalRuntime)?.ReflectionRuntime;
+
+		/// <summary>
+		/// Gets the internal .NET runtime or null if it's not a managed runtime
+		/// </summary>
+		/// <param name="runtime"></param>
+		/// <returns></returns>
+		public static DbgDotNetInternalRuntime GetDotNetInternalRuntime(this DbgRuntime runtime) => runtime.InternalRuntime as DbgDotNetInternalRuntime;
 	}
 }

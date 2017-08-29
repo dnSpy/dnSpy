@@ -29,6 +29,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="runtime">Debugger metadata runtime object</param>
 		/// <returns></returns>
-		public static DbgRuntime GetDbgRuntime(this DmdRuntime runtime) => runtime.GetData<DbgRuntime>();
+		public static DbgRuntime GetDebuggerRuntime(this DmdRuntime runtime) => runtime.GetData<DbgRuntime>();
 	}
 }

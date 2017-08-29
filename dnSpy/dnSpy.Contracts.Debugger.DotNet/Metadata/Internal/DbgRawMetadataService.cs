@@ -17,16 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Debugger.DotNet.Metadata;
-
-namespace dnSpy.Contracts.Debugger.DotNet {
+namespace dnSpy.Contracts.Debugger.DotNet.Metadata.Internal {
 	/// <summary>
-	/// Base class of a .NET runtime object implemented by the .NET debug engine
+	/// Creates <see cref="DbgRawMetadata"/> instances
 	/// </summary>
-	public abstract class DbgDotNetInternalRuntime : DbgInternalRuntime {
+	public abstract class DbgRawMetadataService {
 		/// <summary>
-		/// Gets the reflection runtime
+		/// Creates a <see cref="DbgRawMetadata"/>
 		/// </summary>
-		public abstract DmdRuntime ReflectionRuntime { get; }
+		/// <param name="runtime">Runtime</param>
+		/// <param name="isFileLayout">true if it's file layout, false if it's memory layout</param>
+		/// <param name="moduleAddress">Address of .NET module in the process' address space</param>
+		/// <param name="moduleSize">Size of module</param>
+		/// <returns></returns>
+		public abstract DbgRawMetadata Create(DbgRuntime runtime, bool isFileLayout, ulong moduleAddress, int moduleSize);
 	}
 }

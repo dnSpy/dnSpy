@@ -25,6 +25,7 @@ namespace dnSpy.Debugger.Impl {
 	sealed class DbgModuleImpl : DbgModule {
 		public override DbgRuntime Runtime => runtime;
 		public override DbgAppDomain AppDomain => appDomain;
+		public override DbgInternalModule InternalModule { get; }
 		public override bool IsExe => isExe;
 		public override uint Size => size;
 		public override DbgImageLayout ImageLayout => imageLayout;
@@ -74,10 +75,11 @@ namespace dnSpy.Debugger.Impl {
 		DateTime? timestamp;
 		string version;
 
-		public DbgModuleImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) {
+		public DbgModuleImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) {
 			lockObj = new object();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.appDomain = appDomain;
+			InternalModule = internalModule ?? throw new ArgumentNullException(nameof(internalModule));
 			this.isExe = isExe;
 			this.address = address;
 			this.size = size;
@@ -206,6 +208,9 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void Remove(bool pause) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
 
-		protected override void CloseCore() => Dispatcher.VerifyAccess();
+		protected override void CloseCore() {
+			Dispatcher.VerifyAccess();
+			InternalModule.Close(Dispatcher);
+		}
 	}
 }

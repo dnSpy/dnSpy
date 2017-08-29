@@ -180,6 +180,8 @@
     <Compile Include="dndbg\Engine\TypeFormatterUtils.cs" />
     <Compile Include="dndbg\Engine\Utils.cs" />
     <Compile Include="dndbg\Engine\Win32EnvironmentStringBuilder.cs" />
+    <Compile Include="Impl\DbgCorDebugInternalAppDomainImpl.cs" />
+    <Compile Include="Impl\DbgCorDebugInternalModuleImpl.cs" />
     <Compile Include="Impl\DbgCorDebugInternalRuntimeImpl.cs" />
     <Compile Include="Impl\DbgDotNetDispatcherImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
@@ -188,6 +190,9 @@
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DbgModuleMemoryRefreshedNotifierImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
+    <Compile Include="Impl\DmdDispatcherImpl.cs" />
+    <Compile Include="Impl\DmdDynamicModuleHelperImpl.cs" />
+    <Compile Include="Impl\DmdEvaluatorImpl.cs" />
     <Compile Include="Impl\DnDebuggerObjectHolder.cs" />
     <Compile Include="Impl\DnModuleIdExtensions.cs" />
     <Compile Include="Impl\DnThreadUtils.cs" />
@@ -247,6 +252,10 @@
     <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj">
+      <Project>{fcd8913d-85a0-479e-9689-70fea52c6dcb}</Project>
+      <Name>dnSpy.Debugger.DotNet.Metadata</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

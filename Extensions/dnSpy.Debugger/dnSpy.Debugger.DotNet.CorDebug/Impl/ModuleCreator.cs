@@ -21,15 +21,17 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using dndbg.COM.CorDebug;
+using dndbg.COM.MetaData;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	static class ModuleCreator {
-		public static DbgEngineModule CreateModule<T>(DbgObjectFactory objectFactory, DbgAppDomain appDomain, DnModule dnModule, T data) where T : class {
+		public static DbgEngineModule CreateModule<T>(DbgEngineImpl engine, DbgObjectFactory objectFactory, DbgAppDomain appDomain, DnModule dnModule, T data) where T : class {
 			ulong address = dnModule.Address;
 			uint size = dnModule.Size;
 			var imageLayout = CalculateImageLayout(dnModule);
@@ -40,7 +42,63 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			bool isOptimized = CalculateIsOptimized(dnModule);
 			int order = dnModule.UniqueId;
 			InitializeExeFields(dnModule, filename, imageLayout, out var isExe, out var timestamp, out var version);
-			return objectFactory.CreateModule(appDomain, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, pause: false, data: data);
+
+			var appDomainController = ((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).AppDomainController;
+
+			var closedListenerCollection = new ClosedListenerCollection();
+			var modules = dnModule.Assembly.Modules;
+			bool isManifestModule = modules[0] == dnModule;
+			var getMetadata = CreateGetMetadataDelegate(engine, objectFactory.Runtime, dnModule, closedListenerCollection, imageLayout);
+			var fullyQualifiedName = DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, dnModule.Name);
+			DmdAssemblyController assemblyController;
+			DmdModuleController moduleController;
+			if (isManifestModule) {
+				var assemblyLocation = isInMemory || isDynamic ? string.Empty : dnModule.Name;
+				assemblyController = appDomainController.CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
+				moduleController = assemblyController.ModuleController;
+			}
+			else {
+				var manifestModule = engine.TryGetModule(modules[0].CorModule);
+				if (manifestModule == null)
+					throw new InvalidOperationException();
+				assemblyController = ((DbgCorDebugInternalModuleImpl)manifestModule.InternalModule).AssemblyController;
+				moduleController = appDomainController.CreateModule(assemblyController.Assembly, getMetadata, isInMemory, isDynamic, fullyQualifiedName);
+			}
+
+			var internalModule = new DbgCorDebugInternalModuleImpl(assemblyController, moduleController, closedListenerCollection);
+			return objectFactory.CreateModule(appDomain, internalModule, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, pause: false, data: data, onCreated: engineModule => internalModule.SetModule(engineModule.Module));
+		}
+
+		static Func<DmdLazyMetadataBytes> CreateGetMetadataDelegate(DbgEngineImpl engine, DbgRuntime runtime, DnModule dnModule, ClosedListenerCollection closedListenerCollection, DbgImageLayout imageLayout) {
+			if (dnModule.IsDynamic)
+				return CreateDynamicGetMetadataDelegate(engine, dnModule);
+			else
+				return CreateNormalGetMetadataDelegate(engine, runtime, dnModule, closedListenerCollection, imageLayout);
+		}
+
+		static Func<DmdLazyMetadataBytes> CreateDynamicGetMetadataDelegate(DbgEngineImpl engine, DnModule dnModule) {
+			Debug.Assert(dnModule.IsDynamic);
+			var comMetadata = dnModule.CorModule.GetMetaDataInterface<IMetaDataImport2>();
+			if (comMetadata == null)
+				throw new InvalidOperationException();
+			var result = new DmdLazyMetadataBytesCom(comMetadata, engine.DynamicModuleHelper, engine.DmdDispatcher);
+			return () => result;
+		}
+
+		static Func<DmdLazyMetadataBytes> CreateNormalGetMetadataDelegate(DbgEngineImpl engine, DbgRuntime runtime, DnModule dnModule, ClosedListenerCollection closedListenerCollection, DbgImageLayout imageLayout) {
+			Debug.Assert(!dnModule.IsDynamic);
+
+			return () => {
+				var rawMd = engine.RawMetadataService.Create(runtime, imageLayout == DbgImageLayout.File, dnModule.Address, (int)dnModule.Size);
+				try {
+					closedListenerCollection.Closed += (s, e) => rawMd.Release();
+					return new DmdLazyMetadataBytesPtr(rawMd.Address, (uint)rawMd.Size, rawMd.IsFileLayout);
+				}
+				catch {
+					rawMd.Release();
+					throw;
+				}
+			};
 		}
 
 		static DbgImageLayout CalculateImageLayout(DnModule dnModule) {

@@ -17,16 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Debugger.DotNet.Metadata;
+using System;
+using System.Runtime.InteropServices;
 
-namespace dnSpy.Contracts.Debugger.DotNet {
-	/// <summary>
-	/// Base class of a .NET runtime object implemented by the .NET debug engine
-	/// </summary>
-	public abstract class DbgDotNetInternalRuntime : DbgInternalRuntime {
-		/// <summary>
-		/// Gets the reflection runtime
-		/// </summary>
-		public abstract DmdRuntime ReflectionRuntime { get; }
+namespace dnSpy.Debugger.DotNet.Metadata.Internal {
+	static class NativeMethods {
+		[DllImport("kernel32", SetLastError = true)]
+		public static extern IntPtr VirtualAlloc(IntPtr lpAddress, IntPtr dwSize, uint flAllocationType, uint flProtect);
+		public const uint MEM_COMMIT = 0x00001000;
+		public const uint PAGE_READWRITE = 0x04;
+
+		[DllImport("kernel32", SetLastError = true)]
+		public static extern bool VirtualFree(IntPtr lpAddress, IntPtr dwSize, uint dwFreeType);
+		public const uint MEM_RELEASE = 0x8000;
 	}
 }

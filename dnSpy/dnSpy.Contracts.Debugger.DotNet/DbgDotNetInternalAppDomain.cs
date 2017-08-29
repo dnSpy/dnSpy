@@ -21,12 +21,12 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet {
 	/// <summary>
-	/// Base class of a .NET runtime object implemented by the .NET debug engine
+	/// Base class of a .NET app domain object implemented by the .NET debug engine
 	/// </summary>
-	public abstract class DbgDotNetInternalRuntime : DbgInternalRuntime {
+	public abstract class DbgDotNetInternalAppDomain : DbgInternalAppDomain {
 		/// <summary>
-		/// Gets the reflection runtime
+		/// Gets the reflection app domain
 		/// </summary>
-		public abstract DmdRuntime ReflectionRuntime { get; }
+		public abstract DmdAppDomain ReflectionAppDomain { get; }
 	}
 }

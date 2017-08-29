@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug.Code {
 		public abstract uint NativeMethodOffset { get; }
 
 		/// <summary>
-		/// Gets the debug module or null
+		/// Gets the debugger module or null
 		/// </summary>
 		public abstract DbgModule DbgModule { get; }
 	}

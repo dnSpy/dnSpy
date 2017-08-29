@@ -87,6 +87,9 @@
     <Compile Include="Metadata\DsDocumentProvider.cs" />
     <Compile Include="Metadata\DynamicModuleDefDocument.cs" />
     <Compile Include="Metadata\IModuleIdHolder.cs" />
+    <Compile Include="Metadata\Internal\DbgRawMetadataImpl.cs" />
+    <Compile Include="Metadata\Internal\DbgRawMetadataServiceImpl.cs" />
+    <Compile Include="Metadata\Internal\NativeMethods.cs" />
     <Compile Include="Metadata\MemoryModuleDefDocument.cs" />
     <Compile Include="Metadata\ModuleIdFactoryProviderImpl.cs" />
     <Compile Include="Metadata\ModuleLoaderDlg.xaml.cs">

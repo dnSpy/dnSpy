@@ -29,6 +29,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="appDomain">Debugger metadata AppDomain object</param>
 		/// <returns></returns>
-		public static DbgAppDomain GetDbgAppDomain(this DmdAppDomain appDomain) => appDomain.GetData<DbgAppDomain>();
+		public static DbgAppDomain GetDebuggerAppDomain(this DmdAppDomain appDomain) => appDomain.GetData<DbgAppDomain>();
 	}
 }

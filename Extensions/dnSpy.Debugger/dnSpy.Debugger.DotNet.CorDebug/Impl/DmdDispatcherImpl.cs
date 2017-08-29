@@ -17,16 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Contracts.Debugger.DotNet {
-	/// <summary>
-	/// Base class of a .NET runtime object implemented by the .NET debug engine
-	/// </summary>
-	public abstract class DbgDotNetInternalRuntime : DbgInternalRuntime {
-		/// <summary>
-		/// Gets the reflection runtime
-		/// </summary>
-		public abstract DmdRuntime ReflectionRuntime { get; }
+namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
+	sealed class DmdDispatcherImpl : DmdDispatcher {
+		readonly DbgEngineImpl engine;
+
+		public DmdDispatcherImpl(DbgEngineImpl engine) => this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
+
+		public override bool CheckAccess() => engine.CheckCorDebugThread();
+		public override void Invoke(Action callback) => Invoke<object>(() => { callback(); return null; });
+
+		public override T Invoke<T>(Func<T> callback) {
+			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
+			return engine.InvokeCorDebugThread(callback);
+		}
 	}
 }

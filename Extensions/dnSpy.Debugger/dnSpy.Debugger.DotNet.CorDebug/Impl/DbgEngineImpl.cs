@@ -30,6 +30,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
+using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
 using dnSpy.Contracts.Debugger.Exceptions;
@@ -40,6 +41,7 @@ using dnSpy.Debugger.DotNet.CorDebug.DAC;
 using dnSpy.Debugger.DotNet.CorDebug.Properties;
 using dnSpy.Debugger.DotNet.CorDebug.Steppers;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	[Export(typeof(DbgEngineImplDependencies))]
@@ -50,15 +52,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public Lazy<DbgDotNetCodeLocationFactory> DbgDotNetCodeLocationFactory { get; }
 		public ClrDacProvider ClrDacProvider { get; }
 		public DbgModuleMemoryRefreshedNotifier2 DbgModuleMemoryRefreshedNotifier { get; }
+		public DbgRawMetadataService RawMetadataService { get; }
 
 		[ImportingConstructor]
-		DbgEngineImplDependencies(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DebuggerSettings debuggerSettings, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier) {
+		DbgEngineImplDependencies(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DebuggerSettings debuggerSettings, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgRawMetadataService rawMetadataService) {
 			DotNetCodeRangeService = dbgDotNetCodeRangeService;
 			DebuggerSettings = debuggerSettings;
 			DbgDotNetNativeCodeLocationFactory = dbgDotNetNativeCodeLocationFactory;
 			DbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
 			ClrDacProvider = clrDacProvider;
 			DbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier;
+			RawMetadataService = rawMetadataService;
 		}
 	}
 
@@ -93,6 +97,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		readonly Dictionary<DnAssembly, List<DnModule>> toAssemblyModules;
 		internal readonly StackFrameData stackFrameData;
 		readonly HashSet<DnDebuggerObjectHolder> objectHolders;
+		readonly DmdRuntimeController dmdRuntimeController;
+		internal DmdDynamicModuleHelperImpl DynamicModuleHelper { get; }
+		internal DmdDispatcherImpl DmdDispatcher { get; }
+		internal DbgRawMetadataService RawMetadataService { get; }
 
 		protected DbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, DbgStartKind startKind) {
 			if (deps == null)
@@ -115,6 +123,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			clrDac = NullClrDac.Instance;
 			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
+			dmdRuntimeController = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
+			DynamicModuleHelper = new DmdDynamicModuleHelperImpl(this);
+			DmdDispatcher = new DmdDispatcherImpl(this);
+			RawMetadataService = deps.RawMetadataService;
 		}
 
 		internal event EventHandler<ClassLoadedEventArgs> ClassLoaded;
@@ -181,6 +193,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var dnModule = dbg.TryGetModule(lcArgs.CorAppDomain, cls);
 					if (dnModule.IsDynamic) {
 						UpdateDynamicModuleIds(dnModule);
+						DynamicModuleHelper.RaiseTypeLoaded(new DmdTypeLoadedEventArgs((int)cls.Token));
 						if (dnModule?.CorModuleDef != null) {
 							var module = TryGetModule(dnModule.CorModule);
 							Debug.Assert(module != null);
@@ -343,7 +356,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			Debug.Assert(objectFactory != null);
 			if (e.Added) {
 				e.ShouldPause = true;
-				var engineAppDomain = objectFactory.CreateAppDomain(e.AppDomain.Name, e.AppDomain.Id, pause: false);
+				var appDomainController = dmdRuntimeController.CreateAppDomain(e.AppDomain.Id);
+				var internalAppDomain = new DbgCorDebugInternalAppDomainImpl(appDomainController);
+				var engineAppDomain = objectFactory.CreateAppDomain<object>(internalAppDomain, e.AppDomain.Name, e.AppDomain.Id, pause: false, data: null, onCreated: engineAppDomain2 => internalAppDomain.SetAppDomain(engineAppDomain2.AppDomain));
 				lock (lockObj)
 					toEngineAppDomain.Add(e.AppDomain, engineAppDomain);
 			}
@@ -353,6 +368,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					if (toEngineAppDomain.TryGetValue(e.AppDomain, out engineAppDomain)) {
 						toEngineAppDomain.Remove(e.AppDomain);
 						var appDomain = engineAppDomain.AppDomain;
+						((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).AppDomainController.Remove();
 						foreach (var kv in toEngineThread.ToArray()) {
 							if (kv.Value.Thread.AppDomain == appDomain)
 								toEngineThread.Remove(kv.Key);
@@ -392,6 +408,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (module.TryGetData(out data) && data.Engine == this)
 				return true;
 			data = null;
+			return false;
+		}
+
+		internal bool TryGetDnModule(DbgModule module, out DnModule dnModule) {
+			if (module.TryGetData(out DbgModuleData data) && data.Engine == this) {
+				dnModule = data.DnModule;
+				return true;
+			}
+			dnModule = null;
 			return false;
 		}
 
@@ -445,7 +470,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
 				var moduleId = e.Module.DnModuleId.ToModuleId();
 				var moduleData = new DbgModuleData(this, e.Module, moduleId);
-				var engineModule = ModuleCreator.CreateModule(objectFactory, appDomain, e.Module, moduleData);
+				var engineModule = ModuleCreator.CreateModule(this, objectFactory, appDomain, e.Module, moduleData);
 				lock (lockObj) {
 					if (!toAssemblyModules.TryGetValue(e.Module.Assembly, out var modules))
 						toAssemblyModules.Add(e.Module.Assembly, modules = new List<DnModule>());
@@ -461,8 +486,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						if (modules.Count == 0)
 							toAssemblyModules.Remove(e.Module.Assembly);
 					}
-					if (toEngineModule.TryGetValue(e.Module.CorModule, out engineModule))
+					if (toEngineModule.TryGetValue(e.Module.CorModule, out engineModule)) {
 						toEngineModule.Remove(e.Module.CorModule);
+						((DbgCorDebugInternalModuleImpl)engineModule.Module.InternalModule).Remove();
+					}
 				}
 				if (engineModule != null) {
 					e.ShouldPause = true;
@@ -635,7 +662,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public override DbgInternalRuntime CreateInternalRuntime(DbgRuntime runtime) =>
-			new DbgCorDebugInternalRuntimeImpl(this, runtime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
+			new DbgCorDebugInternalRuntimeImpl(this, runtime, dmdRuntimeController.Runtime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
 
 		public override void OnConnected(DbgObjectFactory objectFactory, DbgRuntime runtime) {
 			Debug.Assert(objectFactory.Runtime == runtime);

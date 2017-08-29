@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			public override DmdDataStream TryGetMethodBody(DmdModule module, int metadataToken, uint rva) {
 				engine.VerifyCorDebugThread();
 
-				var dbgModule = module.GetDbgModule();
+				var dbgModule = module.GetDebuggerModule();
 				if (!engine.TryGetModuleData(dbgModule, out var data))
 					throw new InvalidOperationException();
 

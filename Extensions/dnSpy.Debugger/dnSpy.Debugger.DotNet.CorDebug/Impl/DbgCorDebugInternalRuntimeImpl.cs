@@ -25,24 +25,28 @@ using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DbgCorDebugInternalRuntimeImpl : DbgCorDebugInternalRuntime, IDbgDotNetRuntime {
 		public override DbgRuntime Runtime { get; }
+		public override DmdRuntime ReflectionRuntime { get; }
 		public override CorDebugRuntimeVersion Version { get; }
 		public override string ClrFilename { get; }
 		public override string RuntimeDirectory { get; }
 		public DbgDotNetDispatcher Dispatcher { get; }
 		public bool SupportsObjectIds => false;//TODO:
 
-		public DbgCorDebugInternalRuntimeImpl(DbgEngineImpl owner, DbgRuntime runtime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
+		public DbgCorDebugInternalRuntimeImpl(DbgEngineImpl owner, DbgRuntime runtime, DmdRuntime reflectionRuntime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
 			if (owner == null)
 				throw new ArgumentNullException(nameof(owner));
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
+			ReflectionRuntime = reflectionRuntime ?? throw new ArgumentNullException(nameof(reflectionRuntime));
 			Version = new CorDebugRuntimeVersion(kind, version ?? throw new ArgumentNullException(nameof(version)));
 			ClrFilename = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
 			RuntimeDirectory = runtimeDir ?? throw new ArgumentNullException(nameof(runtimeDir));
 			Dispatcher = new DbgDotNetDispatcherImpl(owner);
+			reflectionRuntime.GetOrCreateData(() => runtime);
 		}
 
 		public DbgDotNetExceptionInfo[] GetExceptions(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
