@@ -26,6 +26,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
+using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Resources;
@@ -33,6 +34,7 @@ using dnSpy.Contracts.Resources;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	[Export(typeof(DbgDotNetLanguageService))]
 	sealed class DbgDotNetLanguageServiceImpl : DbgDotNetLanguageService {
+		readonly Lazy<DbgMetadataService> dbgMetadataService;
 		readonly Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>[] dbgDotNetExpressionCompilers;
 		readonly IDecompilerService decompilerService;
 		readonly Dictionary<Guid, Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>> formattersDict;
@@ -42,7 +44,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		static readonly Guid defaultLanguageGuid = new Guid(DbgDotNetLanguageGuids.CSharp);
 
 		[ImportingConstructor]
-		DbgDotNetLanguageServiceImpl([ImportMany] IEnumerable<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>> dbgDotNetExpressionCompilers, IDecompilerService decompilerService, [ImportMany] IEnumerable<Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>> dbgDotNetFormatters) {
+		DbgDotNetLanguageServiceImpl(Lazy<DbgMetadataService> dbgMetadataService, [ImportMany] IEnumerable<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>> dbgDotNetExpressionCompilers, IDecompilerService decompilerService, [ImportMany] IEnumerable<Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>> dbgDotNetFormatters) {
+			this.dbgMetadataService = dbgMetadataService;
 			this.decompilerService = decompilerService;
 			var eeList = new List<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>>();
 			var langGuids = new HashSet<Guid>();
@@ -91,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					continue;
 
 				var languageDisplayName = ResourceHelper.GetString(lz.Value, lz.Metadata.LanguageDisplayName);
-				yield return new DbgEngineLanguageImpl(lz.Metadata.LanguageName, languageDisplayName, lz.Value, decompiler, formatter.Value);
+				yield return new DbgEngineLanguageImpl(lz.Metadata.LanguageName, languageDisplayName, lz.Value, dbgMetadataService.Value, decompiler, formatter.Value);
 			}
 		}
 

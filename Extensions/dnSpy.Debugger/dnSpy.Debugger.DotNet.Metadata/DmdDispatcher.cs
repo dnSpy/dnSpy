@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	public abstract class DmdDispatcher {
 		/// <summary>
-		/// Returns true if the current thread is the dispatcher thread
+		/// Checks whether the current thread is the dispatcher thread
 		/// </summary>
 		/// <returns></returns>
 		public abstract bool CheckAccess();
@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public void VerifyAccess() {
 			if (!CheckAccess())
-				throw new InvalidOperationException();
+				throw new InvalidOperationException("Wrong dispatcher thread");
 		}
 
 		/// <summary>

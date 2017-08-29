@@ -146,6 +146,8 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// <param name="create">Creates the data if it doesn't exist</param>
 		/// <returns></returns>
 		public T GetOrCreateData<T>(Func<T> create) where T : class {
+			if (create == null)
+				throw new ArgumentNullException(nameof(create));
 			lock (lockObj) {
 				if (dataList == null)
 					dataList = new List<(Type, object)>();

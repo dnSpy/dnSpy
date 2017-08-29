@@ -21,12 +21,11 @@ using System;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// Executes code in a thread
+	/// Invokes code on another thread.
 	/// </summary>
 	public abstract class DbgDispatcher {
 		/// <summary>
-		/// Verifies that the current code is running in the dispatcher thread. <see cref="InvalidOperationException"/>
-		/// is thrown if it's the wrong thread.
+		/// Throws if the current thread isn't the dispatcher thread
 		/// </summary>
 		public void VerifyAccess() {
 			if (!CheckAccess())
@@ -40,8 +39,8 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract bool CheckAccess();
 
 		/// <summary>
-		/// Executes code asynchronously in the dispatcher thread. This method returns immediately even if
-		/// it happens to be called in the dispatcher thread.
+		/// Executes code asynchronously on the dispatcher thread. This method returns immediately even if
+		/// it happens to be called on the dispatcher thread.
 		/// </summary>
 		/// <param name="callback">Code to execute</param>
 		public abstract void BeginInvoke(Action callback);
