@@ -18,21 +18,75 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
+using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
-	sealed class DbgCorDebugInternalRuntimeImpl : DbgCorDebugInternalRuntime {
+	sealed class DbgCorDebugInternalRuntimeImpl : DbgCorDebugInternalRuntime, IDbgDotNetRuntime {
 		public override DbgRuntime Runtime { get; }
 		public override CorDebugRuntimeVersion Version { get; }
 		public override string ClrFilename { get; }
 		public override string RuntimeDirectory { get; }
+		public DbgDotNetDispatcher Dispatcher { get; }
+		public bool SupportsObjectIds => false;//TODO:
 
-		public DbgCorDebugInternalRuntimeImpl(DbgRuntime runtime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
+		public DbgCorDebugInternalRuntimeImpl(DbgEngineImpl owner, DbgRuntime runtime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Version = new CorDebugRuntimeVersion(kind, version ?? throw new ArgumentNullException(nameof(version)));
 			ClrFilename = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
 			RuntimeDirectory = runtimeDir ?? throw new ArgumentNullException(nameof(runtimeDir));
+			Dispatcher = new DbgDotNetDispatcherImpl(owner);
+		}
+
+		public DbgDotNetExceptionInfo[] GetExceptions(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			return Array.Empty<DbgDotNetExceptionInfo>();//TODO:
+		}
+
+		public DbgDotNetReturnValueInfo[] GetReturnValues(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			return Array.Empty<DbgDotNetReturnValueInfo>();//TODO:
+		}
+
+		public DbgDotNetValue GetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			return null;//TODO:
+		}
+
+		public DbgDotNetValue GetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			return null;//TODO:
+		}
+
+		public bool CanCreateObjectId(DbgDotNetValue value) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public DbgDotNetEngineObjectId CreateObjectId(DbgDotNetValue value, uint id) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public bool Equals(DbgDotNetEngineObjectId objectId, DbgDotNetValue value) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public int GetHashCode(DbgDotNetEngineObjectId objectId) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public int GetHashCode(DbgDotNetValue value) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public DbgDotNetValue GetValue(DbgEvaluationContext context, DbgDotNetEngineObjectId objectId, CancellationToken cancellationToken) {
+			throw new NotImplementedException();//TODO:
 		}
 
 		protected override void CloseCore() { }

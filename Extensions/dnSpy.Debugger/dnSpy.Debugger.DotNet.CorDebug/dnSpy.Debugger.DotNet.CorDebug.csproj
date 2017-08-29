@@ -181,6 +181,7 @@
     <Compile Include="dndbg\Engine\Utils.cs" />
     <Compile Include="dndbg\Engine\Win32EnvironmentStringBuilder.cs" />
     <Compile Include="Impl\DbgCorDebugInternalRuntimeImpl.cs" />
+    <Compile Include="Impl\DbgDotNetDispatcherImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.Threads.cs" />

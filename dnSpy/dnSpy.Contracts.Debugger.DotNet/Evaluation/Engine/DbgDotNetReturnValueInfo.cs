@@ -17,14 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
-using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
-	abstract class LanguageFormatter : DbgDotNetFormatter {
-		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgDotNetEngineObjectId objectId) =>
-			output.Write(BoxedTextColor.DebugObjectIdName, "$" + objectId.Id.ToString());
+namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
+	/// <summary>
+	/// Contains a method and its return value
+	/// </summary>
+	public struct DbgDotNetReturnValueInfo {
+		/// <summary>
+		/// Gets the return value id
+		/// </summary>
+		public uint Id { get; }
+
+		/// <summary>
+		/// Gets the value returned by the method
+		/// </summary>
+		public DbgDotNetValue Value { get; }
+
+		/// <summary>
+		/// Gets the method
+		/// </summary>
+		public DmdMethodInfo Method { get; }
 	}
 }

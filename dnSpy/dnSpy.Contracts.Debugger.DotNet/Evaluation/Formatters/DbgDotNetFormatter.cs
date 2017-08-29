@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 
@@ -35,7 +34,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Destination</param>
 		/// <param name="objectId">Object ID</param>
-		public abstract void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgEngineObjectId objectId);
+		public abstract void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgDotNetEngineObjectId objectId);
 	}
 
 	/// <summary>Metadata</summary>

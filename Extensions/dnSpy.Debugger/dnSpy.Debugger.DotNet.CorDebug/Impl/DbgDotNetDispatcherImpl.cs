@@ -17,14 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
-using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using System;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 
-namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
-	abstract class LanguageFormatter : DbgDotNetFormatter {
-		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgDotNetEngineObjectId objectId) =>
-			output.Write(BoxedTextColor.DebugObjectIdName, "$" + objectId.Id.ToString());
+namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
+	sealed class DbgDotNetDispatcherImpl : DbgDotNetDispatcher {
+		readonly DbgEngineImpl engine;
+
+		public DbgDotNetDispatcherImpl(DbgEngineImpl engine) =>
+			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
+
+		public override void BeginInvoke(Action callback) => engine.CorDebugThread(callback);
+		public override bool CheckAccess() => engine.CheckCorDebugThread();
+
+		public override T Invoke<T>(Func<T> callback) {
+			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
+			return engine.InvokeCorDebugThread(callback);
+		}
 	}
 }

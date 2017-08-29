@@ -119,6 +119,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		internal event EventHandler<ClassLoadedEventArgs> ClassLoaded;
 
+		internal bool CheckCorDebugThread() => debuggerThread.CheckAccess();
 		internal void VerifyCorDebugThread() => debuggerThread.VerifyAccess();
 		internal T InvokeCorDebugThread<T>(Func<T> callback) => debuggerThread.Invoke(callback);
 		internal void CorDebugThread(Action callback) => debuggerThread.BeginInvoke(callback);
@@ -634,7 +635,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public override DbgInternalRuntime CreateInternalRuntime(DbgRuntime runtime) =>
-			new DbgCorDebugInternalRuntimeImpl(runtime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
+			new DbgCorDebugInternalRuntimeImpl(this, runtime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
 
 		public override void OnConnected(DbgObjectFactory objectFactory, DbgRuntime runtime) {
 			Debug.Assert(objectFactory.Runtime == runtime);

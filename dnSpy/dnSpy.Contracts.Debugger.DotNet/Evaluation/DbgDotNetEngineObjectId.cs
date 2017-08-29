@@ -17,14 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
-using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using System;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 
-namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
-	abstract class LanguageFormatter : DbgDotNetFormatter {
-		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgDotNetEngineObjectId objectId) =>
-			output.Write(BoxedTextColor.DebugObjectIdName, "$" + objectId.Id.ToString());
+namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
+	/// <summary>
+	/// References a value in the debugged process
+	/// </summary>
+	public abstract class DbgDotNetEngineObjectId : IDisposable {
+		/// <summary>
+		/// Gets the unique id in the runtime
+		/// </summary>
+		public abstract uint Id { get; }
+
+		/// <summary>
+		/// Called when its owner (<see cref="DbgEngineObjectId"/>) gets closed
+		/// </summary>
+		public abstract void Dispose();
 	}
 }

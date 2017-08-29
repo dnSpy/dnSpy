@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -31,6 +32,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
 
 		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgEngineObjectId objectId) =>
-			formatter.FormatName(context, output, objectId);
+			formatter.FormatName(context, output, Convert(objectId));
+
+		DbgDotNetEngineObjectId Convert(DbgEngineObjectId objectId) {
+			throw new NotImplementedException();//TODO:
+		}
 	}
 }
