@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Module {
 		CLR20,
 
 		/// <summary>
-		/// .NET Framework 4 - 4.6
+		/// .NET Framework 4 - 4.7
 		/// </summary>
 		CLR40,
 
