@@ -18,13 +18,45 @@
 */
 
 using System;
-using System.Collections.ObjectModel;
+using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
+namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
+	/// <summary>
+	/// Alias
+	/// </summary>
+	public struct DbgDotNetAliasInfo {
+		/// <summary>
+		/// Alias kind
+		/// </summary>
+		public DbgDotNetAliasInfoKind Kind { get; }
+
+		/// <summary>
+		/// Alias type
+		/// </summary>
+		public DmdType Type { get; }
+
+		/// <summary>
+		/// Alias id
+		/// </summary>
+		public uint Id { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="kind">Alias kind</param>
+		/// <param name="type">Alias type</param>
+		/// <param name="id">Alias id</param>
+		public DbgDotNetAliasInfo(DbgDotNetAliasInfoKind kind, DmdType type, uint id) {
+			Kind = kind;
+			Type = type ?? throw new ArgumentNullException(nameof(type));
+			Id = id;
+		}
+	}
+
 	/// <summary>
 	/// Alias kind
 	/// </summary>
-	public enum DbgDotNetAliasKind {
+	public enum DbgDotNetAliasInfoKind {
 		/// <summary>
 		/// An exception, eg. "$exception"
 		/// </summary>
@@ -36,43 +68,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		StowedException,
 
 		/// <summary>
-		/// A return value, eg. "$ReturnValue", "$ReturnValue1"
+		/// A return value, eg. "$ReturnValue1"
 		/// </summary>
 		ReturnValue,
-
-		/// <summary>
-		/// A variable created by the user that doesn't exist in code
-		/// </summary>
-		Variable,
-
-		/// <summary>
-		/// An object ID, eg. "$1", "$3"
-		/// </summary>
-		ObjectId,
-	}
-
-	/// <summary>
-	/// An alias (eg. return value, object id, etc)
-	/// </summary>
-	public struct DbgDotNetAlias {
-		/// <summary>
-		/// Custom type info understood by the EE
-		/// </summary>
-		public ReadOnlyCollection<byte> CustomTypeInfo;
-
-		/// <summary>
-		/// Custom type info ID
-		/// </summary>
-		public Guid CustomTypeInfoId;
-
-		/// <summary>
-		/// Name, eg. "$ReturnValue", "$1"
-		/// </summary>
-		public string Name;
-
-		/// <summary>
-		/// Serialized type name, see <see cref="Type.AssemblyQualifiedName"/>
-		/// </summary>
-		public string Type;
 	}
 }

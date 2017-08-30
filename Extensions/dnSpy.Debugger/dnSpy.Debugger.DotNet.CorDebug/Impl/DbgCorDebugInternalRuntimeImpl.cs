@@ -49,6 +49,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			reflectionRuntime.GetOrCreateData(() => runtime);
 		}
 
+		public DbgDotNetAliasInfo[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			return Array.Empty<DbgDotNetAliasInfo>();//TODO:
+		}
+
 		public DbgDotNetExceptionInfo[] GetExceptions(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			return Array.Empty<DbgDotNetExceptionInfo>();//TODO:

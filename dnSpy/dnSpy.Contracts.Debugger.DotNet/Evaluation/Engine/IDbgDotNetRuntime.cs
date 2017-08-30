@@ -32,6 +32,15 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		DbgDotNetDispatcher Dispatcher { get; }
 
 		/// <summary>
+		/// Gets aliases
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetAliasInfo[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Gets all exceptions
 		/// </summary>
 		/// <param name="context">Context</param>
