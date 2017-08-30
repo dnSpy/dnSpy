@@ -124,7 +124,10 @@ namespace dnSpy.Culture {
 				return;
 			var langs = new HashSet<CultureInfo>();
 			foreach (var di in GetDirectories(AppDirectories.BinDirectory)) {
-				var files = GetFiles(di, "*.dll");
+				// The reason we check for a specific file name is that VS-MEF added a lot more
+				// localized sub dirs and we don't want to show them. They obviously contain no
+				// strings dnSpy can use.
+				var files = GetFiles(di, "dnSpy.resources.dll");
 				if (files.Length == 0)
 					continue;
 				var ci = TryCreateCultureInfo(Path.GetFileName(di));
