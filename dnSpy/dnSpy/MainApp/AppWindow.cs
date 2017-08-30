@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Reflection;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
@@ -31,6 +32,7 @@ using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Settings;
 using dnSpy.Controls;
 using dnSpy.Events;
+using dnSpy.Properties;
 
 namespace dnSpy.MainApp {
 	[Export, Export(typeof(IAppWindow))]
@@ -118,6 +120,8 @@ namespace dnSpy.MainApp {
 			sc.AddChild(statusBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
 			mainWindow = new MainWindow(sc.UIObject);
 			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
+			if (IsAdministrator())
+				AddTitleInfo(dnSpy_Resources.User_Administrator);
 			wpfCommandService.Add(ControlConstants.GUID_MAINWINDOW, mainWindow);
 			new SavedWindowStateRestorer(mainWindow, uiSettings.SavedWindowState, DefaultWindowLocation);
 			mainWindow.Closing += MainWindow_Closing;
@@ -125,6 +129,11 @@ namespace dnSpy.MainApp {
 			mainWindow.GotKeyboardFocus += MainWindow_GotKeyboardFocus;
 			RefreshToolBar();
 			return mainWindow;
+		}
+
+		static bool IsAdministrator() {
+			using (var id = WindowsIdentity.GetCurrent())
+				return new WindowsPrincipal(id).IsInRole(WindowsBuiltInRole.Administrator);
 		}
 
 		void IDsLoaderContentProvider.SetLoadingContent(object content) {

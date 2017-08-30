@@ -1917,4 +1917,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="EditLabelsTitle" xml:space="preserve">
     <value>Edit Labels</value>
   </data>
+  <data name="User_Administrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
 </root>
