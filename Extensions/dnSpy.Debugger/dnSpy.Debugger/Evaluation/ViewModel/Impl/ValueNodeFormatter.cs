@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					if (evalContext == null)
 						output.Write(BoxedTextColor.Error, "???");
 					else
-						Language.ObjectIdFormatter.FormatName(evalContext, output, objectId);
+						Language.Formatter.FormatObjectIdName(evalContext, output, objectId.Id);
 					output.Write(BoxedTextColor.Punctuation, "}");
 				}
 			}

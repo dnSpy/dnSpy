@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <summary>
 		/// Writes XML documentation
 		/// </summary>
-		/// <param name="output">Destination</param>
+		/// <param name="output">Output</param>
 		/// <param name="xmlDocumentation">XML documentation</param>
 		/// <returns></returns>
 		public static bool WriteXmlDoc(IXmlDocOutput output, string xmlDocumentation) {

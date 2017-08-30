@@ -17,14 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	abstract class LanguageFormatter : DbgDotNetFormatter {
-		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgDotNetEngineObjectId objectId) =>
-			output.Write(BoxedTextColor.DebugObjectIdName, "$" + objectId.Id.ToString());
+		public override void FormatExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
+			output.Write(BoxedTextColor.DebugExceptionName, "$exception");
+
+		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
+			output.Write(BoxedTextColor.DebugStowedExceptionName, "$stowedexception");
+
+		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id, bool isDefault) =>
+			output.Write(BoxedTextColor.DebugReturnValueName, isDefault ? "$ReturnValue" : "$ReturnValue" + id.ToString());
+
+		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
+			output.Write(BoxedTextColor.DebugObjectIdName, "$" + id.ToString());
 	}
 }

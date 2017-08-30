@@ -18,24 +18,28 @@
 */
 
 using System;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	sealed class DbgEngineObjectIdFormatterImpl : DbgEngineObjectIdFormatter {
+	sealed class DbgEngineFormatterImpl : DbgEngineFormatter {
 		readonly DbgDotNetFormatter formatter;
 
-		public DbgEngineObjectIdFormatterImpl(DbgDotNetFormatter formatter) =>
+		public DbgEngineFormatterImpl(DbgDotNetFormatter formatter) =>
 			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
 
-		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgEngineObjectId objectId) =>
-			formatter.FormatName(context, output, Convert(objectId));
+		public override void FormatExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
+			formatter.FormatExceptionName(context, output, id);
 
-		DbgDotNetEngineObjectId Convert(DbgEngineObjectId objectId) {
-			throw new NotImplementedException();//TODO:
-		}
+		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
+			formatter.FormatStowedExceptionName(context, output, id);
+
+		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id, bool isDefault) =>
+			formatter.FormatReturnValueName(context, output, id, isDefault);
+
+		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
+			formatter.FormatObjectIdName(context, output, id);
 	}
 }

@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 		/// <summary>
 		/// Writes all text and colors to <paramref name="output"/>
 		/// </summary>
-		/// <param name="output">Destination</param>
+		/// <param name="output">Output</param>
 		public void WriteTo(ITextColorWriter output) {
 			foreach (var part in Parts)
 				output.Write(part.Color, part.Text);

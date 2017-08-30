@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override string DisplayName { get; }
 		public override DbgEngineExpressionEvaluator ExpressionEvaluator { get; }
 		public override DbgEngineValueFormatter ValueFormatter { get; }
-		public override DbgEngineObjectIdFormatter ObjectIdFormatter { get; }
+		public override DbgEngineFormatter Formatter { get; }
 		public override DbgEngineValueNodeProvider LocalsProvider { get; }
 		public override DbgEngineValueNodeProvider AutosProvider { get; }
 		public override DbgEngineValueNodeProvider ExceptionsProvider { get; }
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 			ExpressionEvaluator = new DbgEngineExpressionEvaluatorImpl(expressionCompiler);
 			ValueFormatter = new DbgEngineValueFormatterImpl();
-			ObjectIdFormatter = new DbgEngineObjectIdFormatterImpl(formatter);
+			Formatter = new DbgEngineFormatterImpl(formatter);
 			LocalsProvider = new DbgEngineLocalsProviderImpl();
 			AutosProvider = new DbgEngineAutosProviderImpl();
 			ExceptionsProvider = new DbgEngineExceptionsProviderImpl();

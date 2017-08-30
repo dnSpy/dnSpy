@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override string DisplayName => "<no name>";
 		public override DbgEngineExpressionEvaluator ExpressionEvaluator { get; }
 		public override DbgEngineValueFormatter ValueFormatter { get; }
-		public override DbgEngineObjectIdFormatter ObjectIdFormatter { get; }
+		public override DbgEngineFormatter Formatter { get; }
 		public override DbgEngineValueNodeProvider LocalsProvider { get; }
 		public override DbgEngineValueNodeProvider AutosProvider { get; }
 		public override DbgEngineValueNodeProvider ExceptionsProvider { get; }
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Evaluation {
 		NullDbgEngineLanguage() {
 			ExpressionEvaluator = new NullDbgEngineExpressionEvaluator();
 			ValueFormatter = new NullDbgEngineValueFormatter();
-			ObjectIdFormatter = new NullDbgEngineObjectIdFormatter();
+			Formatter = new NullDbgEngineEngineFormatter();
 			LocalsProvider = new NullDbgEngineValueNodeProvider();
 			AutosProvider = new NullDbgEngineValueNodeProvider();
 			ExceptionsProvider = new NullDbgEngineValueNodeProvider();
@@ -71,8 +71,11 @@ namespace dnSpy.Debugger.Evaluation {
 		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, Action callback, CancellationToken cancellationToken) => callback();
 	}
 
-	sealed class NullDbgEngineObjectIdFormatter : DbgEngineObjectIdFormatter {
-		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, DbgEngineObjectId objectId) { }
+	sealed class NullDbgEngineEngineFormatter : DbgEngineFormatter {
+		public override void FormatExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
+		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
+		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id, bool isDefault) { }
+		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 	}
 
 	sealed class NullDbgEngineValueNodeProvider : DbgEngineValueNodeProvider {

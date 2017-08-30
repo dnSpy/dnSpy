@@ -17,17 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
+namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
-	/// Formats values, types, names. Use <see cref="ExportDbgDotNetFormatterAttribute"/>
-	/// to export an instance.
+	/// Formats names
 	/// </summary>
-	public abstract class DbgDotNetFormatter {
+	public abstract class DbgFormatter {
+		/// <summary>
+		/// Gets the language
+		/// </summary>
+		public abstract DbgLanguage Language { get; }
+
 		/// <summary>
 		/// Formats an exception name
 		/// </summary>
@@ -60,40 +61,5 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 		/// <param name="output">Output</param>
 		/// <param name="id">Object id</param>
 		public abstract void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id);
-	}
-
-	/// <summary>Metadata</summary>
-	public interface IDbgDotNetFormatterMetadata {
-		/// <summary>See <see cref="ExportDbgDotNetFormatterAttribute.LanguageGuid"/></summary>
-		string LanguageGuid { get; }
-		/// <summary>See <see cref="ExportDbgDotNetFormatterAttribute.Order"/></summary>
-		double Order { get; }
-	}
-
-	/// <summary>
-	/// Exports a <see cref="DbgDotNetFormatter"/> instance
-	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportDbgDotNetFormatterAttribute : ExportAttribute, IDbgDotNetFormatterMetadata {
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="languageGuid">Language GUID, see <see cref="DbgDotNetLanguageGuids"/></param>
-		/// <param name="order">Order</param>
-		public ExportDbgDotNetFormatterAttribute(string languageGuid, double order = double.MaxValue)
-			: base(typeof(DbgDotNetFormatter)) {
-			LanguageGuid = languageGuid ?? throw new ArgumentNullException(nameof(languageGuid));
-			Order = order;
-		}
-
-		/// <summary>
-		/// Language GUID, see <see cref="DbgDotNetLanguageGuids"/>
-		/// </summary>
-		public string LanguageGuid { get; }
-
-		/// <summary>
-		/// Order
-		/// </summary>
-		public double Order { get; }
 	}
 }
