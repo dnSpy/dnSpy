@@ -129,9 +129,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					var newBT = GetBaseType(GetGenericArguments());
 					if (IsImport && !IsInterface && newBT == AppDomain.System_Object) {
 						if (IsWindowsRuntime)
-							newBT = AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_WindowsRuntime_RuntimeClass, isOptional: false, onlyCorlib: true) ?? newBT;
+							newBT = AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_WindowsRuntime_RuntimeClass, isOptional: true, onlyCorlib: true) ?? newBT;
 						else
-							newBT = AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject, isOptional: false, onlyCorlib: true) ?? newBT;
+							newBT = AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject, isOptional: true, onlyCorlib: true) ?? newBT;
 					}
 
 					lock (LockObject) {
