@@ -43,15 +43,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 			lock (state.LockObj) {
 				if (state.Dict.TryGetValue(moduleAddress, out var rawMd)) {
 					if (rawMd.TryAddRef() != null) {
-						if (rawMd.IsFileLayout != isFileLayout || rawMd.Size != moduleSize)
+						if (rawMd.IsFileLayout != isFileLayout || rawMd.Size != moduleSize) {
+							rawMd.Release();
 							throw new InvalidOperationException();
+						}
 						return rawMd;
 					}
 					state.Dict.Remove(moduleAddress);
 				}
 
 				rawMd = new DbgRawMetadataImpl(runtime.Process, isFileLayout, moduleAddress, moduleSize);
-				state.Dict.Add(moduleAddress, rawMd);
+				try {
+					state.Dict.Add(moduleAddress, rawMd);
+				}
+				catch {
+					rawMd.Release();
+					throw;
+				}
 				return rawMd;
 			}
 		}

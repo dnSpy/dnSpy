@@ -135,6 +135,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					// 2017 15.3 = 15.0.26730.3 (August 14, 2017)
 					// 2017 15.3.1 = 15.0.26730.8 (August 18, 2017)
 					// 2017 15.3.2 = 15.0.26730.10 (August 22, 2017)
+					// 2017 15.3.3 = 15.0.26730.12 (August 29, 2017)
 					writer.Write("VisualStudioVersion = 15.0.26228.4" + crlf);
 					writer.Write("MinimumVisualStudioVersion = 10.0.40219.1" + crlf);
 					break;
