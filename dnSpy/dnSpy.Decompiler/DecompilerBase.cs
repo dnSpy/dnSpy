@@ -84,15 +84,24 @@ namespace dnSpy.Decompiler {
 			output.WriteLine();
 			PrintEntryPoint(asm.ManifestModule, output);
 			var peImage = TryGetPEImage(asm.ManifestModule);
-			if (peImage != null) {
-				WriteCommentBegin(output, true);
-				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+			if (peImage != null)
+				WriteTimestampComment(output, peImage);
+			output.WriteLine();
+		}
+
+		void WriteTimestampComment(IDecompilerOutput output, IPEImage peImage) {
+			WriteCommentBegin(output, true);
+			output.Write(dnSpy_Decompiler_Resources.Decompile_Timestamp, BoxedTextColor.Comment);
+			output.Write(" ", BoxedTextColor.Comment);
+			uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+			if (ts < 0x80000000) {
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(string.Format(dnSpy_Decompiler_Resources.Decompile_Timestamp, ts, dateString), BoxedTextColor.Comment);
-				WriteCommentEnd(output, true);
-				output.WriteLine();
+				output.Write($"{ts:X8} ({dateString})", BoxedTextColor.Comment);
 			}
+			else
+				output.Write(dnSpy_Decompiler_Resources.UnknownValue, BoxedTextColor.Comment);
+			WriteCommentEnd(output, true);
 			output.WriteLine();
 		}
 
@@ -115,15 +124,8 @@ namespace dnSpy.Decompiler {
 				this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_Runtime + " " + runtimeName);
 			}
 			var peImage = TryGetPEImage(mod);
-			if (peImage != null) {
-				WriteCommentBegin(output, true);
-				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
-				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
-				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(string.Format(dnSpy_Decompiler_Resources.Decompile_Timestamp, ts, dateString), BoxedTextColor.Comment);
-				WriteCommentEnd(output, true);
-				output.WriteLine();
-			}
+			if (peImage != null)
+				WriteTimestampComment(output, peImage);
 			output.WriteLine();
 		}
 

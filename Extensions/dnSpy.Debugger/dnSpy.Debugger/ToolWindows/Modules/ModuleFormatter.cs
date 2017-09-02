@@ -76,6 +76,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				var dateString = date.Value.ToLocalTime().ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
 				output.Write(BoxedTextColor.Text, dateString);
 			}
+			else
+				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.UnknownValue);
 		}
 
 		public void WriteAddress(ITextColorWriter output, DbgModule module) {

@@ -19,7 +19,7 @@ namespace dnSpy.Decompiler.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class dnSpy_Decompiler_Resources {
@@ -142,7 +142,7 @@ namespace dnSpy.Decompiler.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timestamp: {0:X8} ({1}).
+        ///   Looks up a localized string similar to Timestamp:.
         /// </summary>
         internal static string Decompile_Timestamp {
             get {
@@ -399,6 +399,15 @@ namespace dnSpy.Decompiler.Properties {
         internal static string ToolTip_Parameter {
             get {
                 return ResourceManager.GetString("ToolTip_Parameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Unknown&gt;.
+        /// </summary>
+        internal static string UnknownValue {
+            get {
+                return ResourceManager.GetString("UnknownValue", resourceCulture);
             }
         }
     }

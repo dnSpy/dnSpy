@@ -202,7 +202,7 @@
     <value>This assembly contains unmanaged code.</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
-    <value>Timestamp: {0:X8} ({1})</value>
+    <value>Timestamp:</value>
   </data>
   <data name="MSBuild_CreateResource" xml:space="preserve">
     <value>Create resource {0}</value>
@@ -230,5 +230,8 @@
   </data>
   <data name="MSBuild_CreateResXFile" xml:space="preserve">
     <value>Create ResX file</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Unknown&gt;</value>
   </data>
 </root>

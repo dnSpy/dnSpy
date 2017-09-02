@@ -170,8 +170,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		static void InitializeExeFieldsFrom(IPEImage peImage, out bool isExe, out DateTime? timestamp, ref string version) {
 			isExe = (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
-			//TODO: Roslyn sets bit 31 if /deterministic is used (the low 31 bits is not a timestamp)
-			timestamp = Epoch.AddSeconds(peImage.ImageNTHeaders.FileHeader.TimeDateStamp);
+
+			// Roslyn sets bit 31 if /deterministic is used (the low 31 bits is not a timestamp)
+			if (peImage.ImageNTHeaders.FileHeader.TimeDateStamp < 0x80000000)
+				timestamp = Epoch.AddSeconds(peImage.ImageNTHeaders.FileHeader.TimeDateStamp);
+			else
+				timestamp = null;
 
 			if (string.IsNullOrEmpty(version)) {
 				using (var mod = ModuleDefMD.Load(peImage))

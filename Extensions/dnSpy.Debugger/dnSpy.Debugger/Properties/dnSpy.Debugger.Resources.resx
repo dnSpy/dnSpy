@@ -1872,4 +1872,7 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
     <value>Show raw structure of objects in variables windows</value>
   </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Unknown&gt;</value>
+  </data>
 </root>
