@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using dndbg.COM.CorDebug;
+using dndbg.COM.MetaData;
 using dndbg.DotNet;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
@@ -98,6 +99,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal readonly StackFrameData stackFrameData;
 		readonly HashSet<DnDebuggerObjectHolder> objectHolders;
 		readonly DmdRuntimeController dmdRuntimeController;
+		readonly Dictionary<CorModule, DmdDynamicModuleHelperImpl> toDynamicModuleHelper;
 		internal DmdDispatcherImpl DmdDispatcher { get; }
 		internal DbgRawMetadataService RawMetadataService { get; }
 
@@ -123,6 +125,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
 			dmdRuntimeController = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
+			toDynamicModuleHelper = new Dictionary<CorModule, DmdDynamicModuleHelperImpl>();
 			DmdDispatcher = new DmdDispatcherImpl(this);
 			RawMetadataService = deps.RawMetadataService;
 		}
@@ -210,11 +213,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		internal DmdDynamicModuleHelperImpl GetDynamicModuleHelper(DnModule dnModule) {
 			Debug.Assert(dnModule.IsDynamic);
-			var module = TryGetModule(dnModule.CorModule);
-			Debug.Assert(module != null);
-			if (module == null)
-				return null;
-			return module.GetOrCreateData<DmdDynamicModuleHelperImpl>(() => new DmdDynamicModuleHelperImpl(this));
+			lock (lockObj) {
+				if (!toDynamicModuleHelper.TryGetValue(dnModule.CorModule, out var helper))
+					toDynamicModuleHelper.Add(dnModule.CorModule, helper = new DmdDynamicModuleHelperImpl(this));
+				return helper;
+			}
 		}
 
 		string TryGetExceptionName(CorValue exObj) => exObj?.ExactType?.Class?.ToReflectionString();
@@ -381,8 +384,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 								toEngineThread.Remove(kv.Key);
 						}
 						foreach (var kv in toEngineModule.ToArray()) {
-							if (kv.Value.Module.AppDomain == appDomain)
+							if (kv.Value.Module.AppDomain == appDomain) {
 								toEngineModule.Remove(kv.Key);
+								toDynamicModuleHelper.Remove(kv.Key);
+							}
 						}
 					}
 				}
@@ -440,7 +445,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var module = TryGetModule(dnModule.CorModule);
 			if (module == null || !TryGetModuleData(module, out var data) || data.HasUpdatedModuleId)
 				return;
-			List<DbgModule> updatedModules = null;
+			List<(DbgModule dbgModule, DnModule dnModule)> updatedModules = null;
 			lock (lockObj) {
 				if (toAssemblyModules.TryGetValue(dnModule.Assembly, out var modules)) {
 					for (int i = 0; i < modules.Count; i++) {
@@ -461,13 +466,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 							dnModule.CorModuleDef.Name = moduleId.ModuleName;
 						}
 						if (updatedModules == null)
-							updatedModules = new List<DbgModule>();
-						updatedModules.Add(em.Module);
+							updatedModules = new List<(DbgModule, DnModule)>();
+						updatedModules.Add((em.Module, dnModule));
 					}
 				}
 			}
-			if (updatedModules != null)
-				dbgModuleMemoryRefreshedNotifier.RaiseModulesRefreshed(updatedModules.ToArray());
+			if (updatedModules != null) {
+				foreach (var info in updatedModules) {
+					var mdi = info.dnModule.CorModule.GetMetaDataInterface<IMetaDataImport2>();
+					var scopeName = MDAPI.GetModuleName(mdi) ?? string.Empty;
+					((DbgCorDebugInternalModuleImpl)info.dbgModule.InternalModule).ModuleController.SetScopeName(scopeName);
+				}
+				dbgModuleMemoryRefreshedNotifier.RaiseModulesRefreshed(updatedModules.Select(a => a.dbgModule).ToArray());
+			}
 		}
 
 		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {
@@ -493,6 +504,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						if (modules.Count == 0)
 							toAssemblyModules.Remove(e.Module.Assembly);
 					}
+					toDynamicModuleHelper.Remove(e.Module.CorModule);
 					if (toEngineModule.TryGetValue(e.Module.CorModule, out engineModule)) {
 						toEngineModule.Remove(e.Module.CorModule);
 						((DbgCorDebugInternalModuleImpl)engineModule.Module.InternalModule).Remove();
@@ -686,6 +698,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				framesBuffer = null;
 				toEngineAppDomain.Clear();
 				toEngineModule.Clear();
+				toDynamicModuleHelper.Clear();
 				toEngineThread.Clear();
 				objHoldersToClose = objectHolders.ToArray();
 				objectHolders.Clear();
