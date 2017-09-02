@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var comMetadata = dnModule.CorModule.GetMetaDataInterface<IMetaDataImport2>();
 			if (comMetadata == null)
 				throw new InvalidOperationException();
-			var result = new DmdLazyMetadataBytesCom(comMetadata, engine.DynamicModuleHelper, engine.DmdDispatcher);
+			var result = new DmdLazyMetadataBytesCom(comMetadata, engine.GetDynamicModuleHelper(dnModule), engine.DmdDispatcher);
 			return () => result;
 		}
 

@@ -98,7 +98,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal readonly StackFrameData stackFrameData;
 		readonly HashSet<DnDebuggerObjectHolder> objectHolders;
 		readonly DmdRuntimeController dmdRuntimeController;
-		internal DmdDynamicModuleHelperImpl DynamicModuleHelper { get; }
 		internal DmdDispatcherImpl DmdDispatcher { get; }
 		internal DbgRawMetadataService RawMetadataService { get; }
 
@@ -124,7 +123,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
 			dmdRuntimeController = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
-			DynamicModuleHelper = new DmdDynamicModuleHelperImpl(this);
 			DmdDispatcher = new DmdDispatcherImpl(this);
 			RawMetadataService = deps.RawMetadataService;
 		}
@@ -193,7 +191,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var dnModule = dbg.TryGetModule(lcArgs.CorAppDomain, cls);
 					if (dnModule.IsDynamic) {
 						UpdateDynamicModuleIds(dnModule);
-						DynamicModuleHelper.RaiseTypeLoaded(new DmdTypeLoadedEventArgs((int)cls.Token));
+						GetDynamicModuleHelper(dnModule).RaiseTypeLoaded(new DmdTypeLoadedEventArgs((int)cls.Token));
 						if (dnModule?.CorModuleDef != null) {
 							var module = TryGetModule(dnModule.CorModule);
 							Debug.Assert(module != null);
@@ -208,6 +206,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				//TODO:
 				break;
 			}
+		}
+
+		internal DmdDynamicModuleHelperImpl GetDynamicModuleHelper(DnModule dnModule) {
+			Debug.Assert(dnModule.IsDynamic);
+			var module = TryGetModule(dnModule.CorModule);
+			Debug.Assert(module != null);
+			if (module == null)
+				return null;
+			return module.GetOrCreateData<DmdDynamicModuleHelperImpl>(() => new DmdDynamicModuleHelperImpl(this));
 		}
 
 		string TryGetExceptionName(CorValue exObj) => exObj?.ExactType?.Class?.ToReflectionString();
