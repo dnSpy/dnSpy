@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				output.Write(BoxedTextColor.Text, dateString);
 			}
 			else
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.UnknownValue);
+				output.Write(BoxedTextColor.Error, dnSpy_Debugger_Resources.UnknownValue);
 		}
 
 		public void WriteAddress(ITextColorWriter output, DbgModule module) {
