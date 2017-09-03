@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if ((object)resolvedType != null)
 				return resolvedType.IsGenericTypeDefinition;
 			// Guess based on name
-			return type.MetadataName.LastIndexOf('`') >= 0;
+			return type is Impl.DmdTypeRef && type.MetadataName.LastIndexOf('`') >= 0;
 		}
 
 		static bool ContainsGenericParameters(DmdType type) {
@@ -118,8 +118,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if ((object)resolvedType != null)
 				return resolvedType.GetGenericTypeDefinition();
 
-			// Guess
-			return type.MetadataName.LastIndexOf('`') >= 0 ? type : null;
+			if (type is Impl.DmdGenericInstanceTypeRef)
+				return type.GetGenericTypeDefinition();
+			if (type.MetadataName.LastIndexOf('`') >= 0)
+				return type;
+			return null;
 		}
 
 		static ReadOnlyCollection<DmdType> GetGenericArguments(DmdType type) {
@@ -130,6 +133,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if ((object)resolvedType != null)
 				return resolvedType.GetGenericArguments();
 
+			if (type is Impl.DmdGenericInstanceTypeRef)
+				return type.GetGenericArguments();
 			return ReadOnlyCollectionHelpers.Empty<DmdType>();
 		}
 

@@ -289,12 +289,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		(DmdMemberInfo member, bool containedGenericParams) CreateResolvedMemberRef(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
 			var row = TablesStream.ReadMemberRefRow(rid);
 			var name = StringsStream.ReadNoNull(row.Name);
-			var info = ReadMethodSignatureOrFieldType(row.Signature, genericTypeArguments, genericMethodArguments);
-			var rawInfo = info.containedGenericParams ? ReadMethodSignatureOrFieldType(row.Signature, null, null) : info;
 
 			if (!CodedToken.MemberRefParent.Decode(row.Class, out uint classToken))
 				classToken = uint.MaxValue;
 			var reflectedTypeRef = GetMemberRefParent(classToken, genericTypeArguments, genericMethodArguments);
+			if (reflectedTypeRef is DmdGenericInstanceType || reflectedTypeRef is DmdGenericInstanceTypeRef)
+				genericTypeArguments = reflectedTypeRef.GetGenericArguments();
+
+			var info = ReadMethodSignatureOrFieldType(row.Signature, genericTypeArguments, genericMethodArguments);
+			var rawInfo = info.containedGenericParams ? ReadMethodSignatureOrFieldType(row.Signature, null, null) : info;
 
 			bool containedGenericParams = info.containedGenericParams;
 			if ((classToken >> 24) == 0x1B)

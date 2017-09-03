@@ -549,11 +549,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			uint token = 0x0A000000 + rid;
 			var signature = MDAPI.GetMemberRefSignatureBlob(MetaDataImport, token);
 			var name = MDAPI.GetMemberRefName(MetaDataImport, token) ?? string.Empty;
-			var info = ReadMethodSignatureOrFieldType_COMThread(signature, genericTypeArguments, genericMethodArguments);
-			var rawInfo = info.containedGenericParams ? ReadMethodSignatureOrFieldType_COMThread(signature, null, null) : info;
 
 			uint classToken = MDAPI.GetMemberRefClassToken(MetaDataImport, token);
 			var reflectedTypeRef = GetMemberRefParent_COMThread(classToken, genericTypeArguments, genericMethodArguments);
+			if (reflectedTypeRef is DmdGenericInstanceType || reflectedTypeRef is DmdGenericInstanceTypeRef)
+				genericTypeArguments = reflectedTypeRef.GetGenericArguments();
+
+			var info = ReadMethodSignatureOrFieldType_COMThread(signature, genericTypeArguments, genericMethodArguments);
+			var rawInfo = info.containedGenericParams ? ReadMethodSignatureOrFieldType_COMThread(signature, null, null) : info;
 
 			bool containedGenericParams = info.containedGenericParams;
 			if ((classToken >> 24) == 0x1B)
