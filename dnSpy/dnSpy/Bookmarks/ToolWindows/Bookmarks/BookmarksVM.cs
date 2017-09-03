@@ -70,11 +70,10 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 					return;
 				filterText = value;
 				OnPropertyChanged(nameof(FilterText));
-				delayedSearch.Start();
+				FilterList_UI(filterText);
 			}
 		}
 		string filterText = string.Empty;
-		readonly DelayedAction delayedSearch;
 
 		public bool SomethingMatched => !nothingMatched;
 		public bool NothingMatched {
@@ -134,7 +133,6 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			AllItems = new BulkObservableCollection<BookmarkVM>();
 			SelectedItems = new ObservableCollection<BookmarkVM>();
 			bmToVM = new Dictionary<Bookmark, BookmarkVM>();
-			delayedSearch = new DelayedAction(uiDispatcher, SearchConstants.DefaultSearchDelayMilliSeconds, DelayStartSearch_UI);
 			this.bookmarkFormatterProvider = bookmarkFormatterProvider;
 			this.bookmarksSettings = bookmarksSettings;
 			this.bookmarkDisplaySettings = bookmarkDisplaySettings;
@@ -155,15 +153,6 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.BookmarksWindowLocation, "o", dnSpy_Resources.Column_Location),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.BookmarksWindowModule, "m", dnSpy_Resources.Column_Module),
 		};
-
-		// UI thread
-		void DelayStartSearch_UI() {
-			bookmarkContext.UIDispatcher.VerifyAccess();
-			delayedSearch.Cancel();
-			if (!IsOpen)
-				return;
-			FilterList_UI(filterText);
-		}
 
 		// UI thread
 		public string GetSearchHelpText() {
@@ -191,7 +180,6 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		void Initialize_UI(bool enable) {
 			bookmarkContext.UIDispatcher.VerifyAccess();
 			ResetSearchSettings();
-			delayedSearch.Cancel();
 			if (enable) {
 				bookmarkContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				bookmarksSettings.PropertyChanged += BookmarksSettings_PropertyChanged;
@@ -466,11 +454,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		// UI thread
 		public void ResetSearchSettings() {
 			bookmarkContext.UIDispatcher.VerifyAccess();
-			if (FilterText != string.Empty) {
-				FilterText = string.Empty;
-				delayedSearch.Cancel();
-				DelayStartSearch_UI();
-			}
+			FilterText = string.Empty;
 		}
 	}
 }

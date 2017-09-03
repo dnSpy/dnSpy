@@ -236,7 +236,6 @@
     <Compile Include="ToolWindows\CodeBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\Commands.cs" />
-    <Compile Include="ToolWindows\DelayedAction.cs" />
     <Compile Include="ToolWindows\Exceptions\ExceptionCategoryVM.cs" />
     <Compile Include="ToolWindows\Locals\AutoShowLocalsWindow.cs" />
     <Compile Include="ToolWindows\Locals\Commands.cs" />
@@ -258,7 +257,6 @@
     <Compile Include="ToolWindows\ModuleBreakpoints\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\TextViewTaggers.cs" />
     <Compile Include="ToolWindows\Modules\SearchTextClassifierProvider.cs" />
-    <Compile Include="ToolWindows\SearchConstants.cs" />
     <Compile Include="ToolWindows\SimpleProcessVM.cs" />
     <Compile Include="ToolWindows\TextView\DebuggerCommandConstants.cs" />
     <Compile Include="ToolWindows\TextView\DebuggerToolWindowIds.cs" />
