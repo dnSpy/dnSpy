@@ -364,6 +364,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdReadOnlyAssemblyName[] GetReferencedAssemblies();
 
 		/// <summary>
+		/// Removes a module from the assembly
+		/// </summary>
+		/// <param name="module">Module to remove</param>
+		public abstract void Remove(DmdModule module);
+
+		/// <summary>
 		/// Gets the full name
 		/// </summary>
 		/// <returns></returns>

@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		readonly Dictionary<DnAssembly, List<DnModule>> toAssemblyModules;
 		internal readonly StackFrameData stackFrameData;
 		readonly HashSet<DnDebuggerObjectHolder> objectHolders;
-		readonly DmdRuntimeController dmdRuntimeController;
+		readonly DmdRuntime dmdRuntime;
 		readonly Dictionary<CorModule, DmdDynamicModuleHelperImpl> toDynamicModuleHelper;
 		internal DmdDispatcherImpl DmdDispatcher { get; }
 		internal DbgRawMetadataService RawMetadataService { get; }
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			clrDac = NullClrDac.Instance;
 			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
-			dmdRuntimeController = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
+			dmdRuntime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			toDynamicModuleHelper = new Dictionary<CorModule, DmdDynamicModuleHelperImpl>();
 			DmdDispatcher = new DmdDispatcherImpl(this);
 			RawMetadataService = deps.RawMetadataService;
@@ -366,8 +366,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			Debug.Assert(objectFactory != null);
 			if (e.Added) {
 				e.ShouldPause = true;
-				var appDomainController = dmdRuntimeController.CreateAppDomain(e.AppDomain.Id);
-				var internalAppDomain = new DbgCorDebugInternalAppDomainImpl(appDomainController);
+				var appDomain = dmdRuntime.CreateAppDomain(e.AppDomain.Id);
+				var internalAppDomain = new DbgCorDebugInternalAppDomainImpl(appDomain);
 				var engineAppDomain = objectFactory.CreateAppDomain<object>(internalAppDomain, e.AppDomain.Name, e.AppDomain.Id, pause: false, data: null, onCreated: engineAppDomain2 => internalAppDomain.SetAppDomain(engineAppDomain2.AppDomain));
 				lock (lockObj)
 					toEngineAppDomain.Add(e.AppDomain, engineAppDomain);
@@ -378,7 +378,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					if (toEngineAppDomain.TryGetValue(e.AppDomain, out engineAppDomain)) {
 						toEngineAppDomain.Remove(e.AppDomain);
 						var appDomain = engineAppDomain.AppDomain;
-						((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).AppDomainController.Remove();
+						dmdRuntime.Remove(((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).ReflectionAppDomain);
 						foreach (var kv in toEngineThread.ToArray()) {
 							if (kv.Value.Thread.AppDomain == appDomain)
 								toEngineThread.Remove(kv.Key);
@@ -475,7 +475,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				foreach (var info in updatedModules) {
 					var mdi = info.dnModule.CorModule.GetMetaDataInterface<IMetaDataImport2>();
 					var scopeName = MDAPI.GetModuleName(mdi) ?? string.Empty;
-					((DbgCorDebugInternalModuleImpl)info.dbgModule.InternalModule).ModuleController.SetScopeName(scopeName);
+					((DbgCorDebugInternalModuleImpl)info.dbgModule.InternalModule).ReflectionModule.ScopeName = scopeName;
 				}
 				dbgModuleMemoryRefreshedNotifier.RaiseModulesRefreshed(updatedModules.Select(a => a.dbgModule).ToArray());
 			}
@@ -681,7 +681,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public override DbgInternalRuntime CreateInternalRuntime(DbgRuntime runtime) =>
-			new DbgCorDebugInternalRuntimeImpl(this, runtime, dmdRuntimeController.Runtime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
+			new DbgCorDebugInternalRuntimeImpl(this, runtime, dmdRuntime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
 
 		public override void OnConnected(DbgObjectFactory objectFactory, DbgRuntime runtime) {
 			Debug.Assert(objectFactory.Runtime == runtime);

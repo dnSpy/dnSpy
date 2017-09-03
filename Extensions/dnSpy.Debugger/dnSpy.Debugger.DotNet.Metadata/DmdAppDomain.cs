@@ -42,6 +42,202 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract int Id { get; }
 
 		/// <summary>
+		/// Creates an assembly and adds it to the AppDomain. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
+		/// </summary>
+		/// <param name="getMetadata">Called to provide the metadata</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <returns></returns>
+		public DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) =>
+			CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation, isSynthetic: false, addAssembly: true);
+
+		/// <summary>
+		/// Creates a synthetic assembly but does not add it to the AppDomain
+		/// </summary>
+		/// <param name="getMetadata">Called to provide the metadata</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <returns></returns>
+		public DmdAssembly CreateSyntheticAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) =>
+			CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation, isSynthetic: true, addAssembly: false);
+
+		/// <summary>
+		/// Creates an assembly and optionally adds it to the AppDomain. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
+		/// </summary>
+		/// <param name="getMetadata">Called to provide the metadata</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <param name="isSynthetic">true if it's a synthetic assembly; it's not loaded in the debugged process</param>
+		/// <param name="addAssembly">true if the assembly should be added to the AppDomain</param>
+		/// <returns></returns>
+		public abstract DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation, bool isSynthetic, bool addAssembly);
+
+		/// <summary>
+		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
+		/// </summary>
+		/// <param name="filename">Filename</param>
+		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <returns></returns>
+		public DmdAssembly CreateAssembly(string filename, bool isFileLayout = true, bool isInMemory = false, bool isDynamic = false, string fullyQualifiedName = null, string assemblyLocation = null) {
+			if (filename == null)
+				throw new ArgumentNullException(nameof(filename));
+			return CreateAssembly(() => new DmdLazyMetadataBytesFile(filename, isFileLayout), isInMemory, isDynamic, fullyQualifiedName ?? filename, assemblyLocation ?? filename);
+		}
+
+		/// <summary>
+		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
+		/// </summary>
+		/// <param name="address">Address of PE file</param>
+		/// <param name="size">Size of PE file</param>
+		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <returns></returns>
+		public DmdAssembly CreateAssembly(IntPtr address, uint size, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) =>
+			CreateAssembly(() => new DmdLazyMetadataBytesPtr(address, size, isFileLayout), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
+
+		/// <summary>
+		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
+		/// </summary>
+		/// <param name="assemblyBytes">Raw PE file bytes</param>
+		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <returns></returns>
+		public DmdAssembly CreateAssembly(byte[] assemblyBytes, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) {
+			if (assemblyBytes == null)
+				throw new ArgumentNullException(nameof(assemblyBytes));
+			return CreateAssembly(() => new DmdLazyMetadataBytesArray(assemblyBytes, isFileLayout), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
+		}
+
+		/// <summary>
+		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
+		/// </summary>
+		/// <param name="comMetadata">COM <c>IMetaDataImport</c> instance</param>
+		/// <param name="dynamicModuleHelper">Helper class</param>
+		/// <param name="dispatcher">Dispatcher to use when accessing <paramref name="comMetadata"/></param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <returns></returns>
+		public DmdAssembly CreateAssembly(object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation = null) {
+			if (comMetadata == null)
+				throw new ArgumentNullException(nameof(comMetadata));
+			if (dynamicModuleHelper == null)
+				throw new ArgumentNullException(nameof(dynamicModuleHelper));
+			if (dispatcher == null)
+				throw new ArgumentNullException(nameof(dispatcher));
+			var mdi = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
+			return CreateAssembly(() => new DmdLazyMetadataBytesCom(mdi, dynamicModuleHelper, dispatcher), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation ?? string.Empty);
+		}
+
+		/// <summary>
+		/// Adds a module to an existing assembly
+		/// </summary>
+		/// <param name="assembly">Assembly</param>
+		/// <param name="getMetadata">Called to provide the metadata</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <returns></returns>
+		public abstract DmdModule CreateModule(DmdAssembly assembly, Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName);
+
+		/// <summary>
+		/// Adds a module to an existing assembly
+		/// </summary>
+		/// <param name="assembly">Assembly</param>
+		/// <param name="filename">Filename</param>
+		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <returns></returns>
+		public DmdModule CreateModule(DmdAssembly assembly, string filename, bool isFileLayout = true, bool isInMemory = false, bool isDynamic = false, string fullyQualifiedName = null) {
+			if (filename == null)
+				throw new ArgumentNullException(nameof(filename));
+			return CreateModule(assembly, () => new DmdLazyMetadataBytesFile(filename, isFileLayout), isInMemory, isDynamic, fullyQualifiedName ?? filename);
+		}
+
+		/// <summary>
+		/// Adds a module to an existing assembly
+		/// </summary>
+		/// <param name="assembly">Assembly</param>
+		/// <param name="address">Address of the PE file</param>
+		/// <param name="size">Size of the PE file</param>
+		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <returns></returns>
+		public DmdModule CreateModule(DmdAssembly assembly, IntPtr address, uint size, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName) =>
+			CreateModule(assembly, () => new DmdLazyMetadataBytesPtr(address, size, isFileLayout), isInMemory, isDynamic, fullyQualifiedName);
+
+		/// <summary>
+		/// Adds a module to an existing assembly
+		/// </summary>
+		/// <param name="assembly">Assembly</param>
+		/// <param name="moduleBytes">Raw PE file bytes</param>
+		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <returns></returns>
+		public DmdModule CreateModule(DmdAssembly assembly, byte[] moduleBytes, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
+			if (moduleBytes == null)
+				throw new ArgumentNullException(nameof(moduleBytes));
+			return CreateModule(assembly, () => new DmdLazyMetadataBytesArray(moduleBytes, isFileLayout), isInMemory, isDynamic, fullyQualifiedName);
+		}
+
+		/// <summary>
+		/// Adds a module to an existing assembly
+		/// </summary>
+		/// <param name="assembly">Assembly</param>
+		/// <param name="comMetadata">COM <c>IMetaDataImport</c> instance</param>
+		/// <param name="dynamicModuleHelper">Helper class</param>
+		/// <param name="dispatcher">Dispatcher to use when accessing <paramref name="comMetadata"/></param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <returns></returns>
+		public DmdModule CreateModule(DmdAssembly assembly, object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
+			if (comMetadata == null)
+				throw new ArgumentNullException(nameof(comMetadata));
+			if (dynamicModuleHelper == null)
+				throw new ArgumentNullException(nameof(dynamicModuleHelper));
+			if (dispatcher == null)
+				throw new ArgumentNullException(nameof(dispatcher));
+			var mdi = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
+			return CreateModule(assembly, () => new DmdLazyMetadataBytesCom(mdi, dynamicModuleHelper, dispatcher), isInMemory, isDynamic, fullyQualifiedName);
+		}
+
+		/// <summary>
+		/// Adds an assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to add</param>
+		public abstract void Add(DmdAssembly assembly);
+
+		/// <summary>
+		/// Removes an assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to remove</param>
+		public abstract void Remove(DmdAssembly assembly);
+
+		/// <summary>
 		/// Gets all assemblies
 		/// </summary>
 		/// <returns></returns>

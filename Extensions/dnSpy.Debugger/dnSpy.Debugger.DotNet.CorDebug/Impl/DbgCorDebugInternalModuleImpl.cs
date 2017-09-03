@@ -24,25 +24,23 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DbgCorDebugInternalModuleImpl : DbgDotNetInternalModule {
-		public override DmdModule ReflectionModule => ModuleController.Module;
+		public override DmdModule ReflectionModule { get; }
 		public override DbgModule Module => module ?? throw new ArgumentNullException(nameof(module));
 		DbgModule module;
-		internal DmdAssemblyController AssemblyController { get; }
-		internal DmdModuleController ModuleController { get; }
 		readonly ClosedListenerCollection closedListenerCollection;
-		public DbgCorDebugInternalModuleImpl(DmdAssemblyController assemblyController, DmdModuleController moduleController, ClosedListenerCollection closedListenerCollection) {
-			AssemblyController = assemblyController ?? throw new ArgumentNullException(nameof(assemblyController));
-			ModuleController = moduleController ?? throw new ArgumentNullException(nameof(moduleController));
+		public DbgCorDebugInternalModuleImpl(DmdModule reflectionModule, ClosedListenerCollection closedListenerCollection) {
+			ReflectionModule = reflectionModule ?? throw new ArgumentNullException(nameof(reflectionModule));
 			this.closedListenerCollection = closedListenerCollection ?? throw new ArgumentNullException(nameof(closedListenerCollection));
 		}
 		internal void SetModule(DbgModule module) {
 			this.module = module ?? throw new ArgumentNullException(nameof(module));
-			ModuleController.Module.GetOrCreateData(() => module);
+			ReflectionModule.GetOrCreateData(() => module);
 		}
 		internal void Remove() {
-			ModuleController.Remove();
-			if (AssemblyController.Assembly.GetModules().Length == 0)
-				AssemblyController.Remove();
+			var asm = ReflectionModule.Assembly;
+			asm.Remove(ReflectionModule);
+			if (asm.GetModules().Length == 0)
+				asm.AppDomain.Remove(asm);
 		}
 		protected override void CloseCore() => closedListenerCollection.RaiseClosed();
 	}

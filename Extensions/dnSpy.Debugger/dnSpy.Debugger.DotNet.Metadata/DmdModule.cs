@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the metadata name of the module
 		/// </summary>
-		public abstract string ScopeName { get; }
+		public abstract string ScopeName { get; set; }
 
 		/// <summary>
 		/// Gets the module name

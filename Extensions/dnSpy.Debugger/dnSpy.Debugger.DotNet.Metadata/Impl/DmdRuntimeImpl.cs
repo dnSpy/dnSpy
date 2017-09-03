@@ -52,6 +52,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
+		public override DmdAppDomain CreateAppDomain(int id) {
+			var appDomain = new DmdAppDomainImpl(this, id);
+			Add(appDomain);
+			return appDomain;
+		}
+
 		internal void Add(DmdAppDomainImpl appDomain) {
 			if (appDomain == null)
 				throw new ArgumentNullException(nameof(appDomain));
@@ -61,11 +67,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		internal void Remove(DmdAppDomainImpl appDomain) {
+		public override void Remove(DmdAppDomain appDomain) {
 			if (appDomain == null)
 				throw new ArgumentNullException(nameof(appDomain));
+			var appDomainImpl = appDomain as DmdAppDomainImpl;
+			if (appDomainImpl == null)
+				throw new ArgumentException();
+			if (appDomainImpl.Runtime != this)
+				throw new ArgumentException();
 			lock (appDomainsLockObj) {
-				bool b = appDomains.Remove(appDomain);
+				bool b = appDomains.Remove(appDomainImpl);
 				Debug.Assert(b);
 			}
 		}

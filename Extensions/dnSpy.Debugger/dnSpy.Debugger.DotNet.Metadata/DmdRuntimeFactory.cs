@@ -31,10 +31,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="evaluator">Evaluator</param>
 		/// <param name="machine">Machine</param>
 		/// <returns></returns>
-		public static DmdRuntimeController CreateRuntime(DmdEvaluator evaluator, DmdImageFileMachine machine) {
+		public static DmdRuntime CreateRuntime(DmdEvaluator evaluator, DmdImageFileMachine machine) {
 			if (evaluator == null)
 				throw new ArgumentNullException(nameof(evaluator));
-			return new DmdRuntimeControllerImpl(evaluator, machine);
+			return new DmdRuntimeImpl(evaluator, machine);
 		}
 	}
 }

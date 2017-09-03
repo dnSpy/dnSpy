@@ -32,8 +32,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdAssembly CorLib {
 			get {
 				lock (assembliesLockObj) {
-					// Assume that the first assembly is always the corlib. This is documented in DmdAppDomainController.CreateAssembly()
-					return assemblies.Count == 0 ? null : assemblies[0];
+					// Assume that the first assembly is always the corlib. This is documented in DmdAppDomain.CreateAssembly()
+					var assemblies = this.assemblies;
+					for (int i = 0; i < assemblies.Count; i++) {
+						var asm = assemblies[i];
+						if (!asm.IsSynthetic)
+							return asm;
+					}
+					return null;
 				}
 			}
 		}
@@ -41,7 +47,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		// Assemblies lock fields
 		readonly object assembliesLockObj;
 		readonly List<DmdAssemblyImpl> assemblies;
-		readonly List<DmdAssemblyImpl> syntheticAssemblies;
 		readonly Dictionary<string, DmdAssemblyImpl> simpleNameToAssembly;
 		readonly Dictionary<IDmdAssemblyName, DmdAssemblyImpl> assemblyNameToAssembly;
 		readonly List<AssemblyLoadedListener> assemblyLoadedListeners;
@@ -66,6 +71,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		const DmdSigComparerOptions moduleTypeOptions = DmdSigComparerOptions.DontCompareTypeScope;
 		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparer = new DmdMemberInfoEqualityComparer(moduleTypeOptions);
 		static readonly DmdMemberInfoEqualityComparer moduleTypeDictComparerIgnoreCase = new DmdMemberInfoEqualityComparer(moduleTypeOptions | DmdSigComparerOptions.CaseInsensitiveMemberNames);
+		readonly Func<DmdModuleImpl, DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory;
 
 		public DmdAppDomainImpl(DmdRuntimeImpl runtime, int id) {
 			assembliesLockObj = new object();
@@ -73,7 +79,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			moduleTypeLockObj = new object();
 			exportedTypeLockObj = new object();
 			assemblies = new List<DmdAssemblyImpl>();
-			syntheticAssemblies = new List<DmdAssemblyImpl>();
 			simpleNameToAssembly = new Dictionary<string, DmdAssemblyImpl>(StringComparer.OrdinalIgnoreCase);
 			assemblyNameToAssembly = new Dictionary<IDmdAssemblyName, DmdAssemblyImpl>(AssemblyNameEqualityComparer.Instance);
 			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(new DmdMemberInfoEqualityComparer(DmdMemberInfoEqualityComparer.DefaultTypeOptions | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CompareGenericParameterDeclaringMember));
@@ -84,46 +89,99 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			wellKnownMemberResolver = new WellKnownMemberResolver(this);
 			assemblyLoadedListeners = new List<AssemblyLoadedListener>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
+			metadataReaderFactory = CreateDmdMetadataReader;
 			Id = id;
 		}
 
-		internal void Add(DmdAssemblyImpl assembly) {
+		DmdMetadataReader CreateDmdMetadataReader(DmdModuleImpl module, DmdLazyMetadataBytes lzmd) {
+			if (module == null)
+				throw new ArgumentNullException(nameof(module));
+			if (lzmd == null)
+				throw new ArgumentNullException(nameof(lzmd));
+			try {
+				switch (lzmd) {
+				case DmdLazyMetadataBytesPtr lzmdPtr:		return MD.DmdEcma335MetadataReader.Create(module, lzmdPtr.Address, lzmdPtr.Size, lzmdPtr.IsFileLayout);
+				case DmdLazyMetadataBytesArray lzmdArray:	return MD.DmdEcma335MetadataReader.Create(module, lzmdArray.Bytes, lzmdArray.IsFileLayout);
+				case DmdLazyMetadataBytesFile lzmdFile:		return MD.DmdEcma335MetadataReader.Create(module, lzmdFile.Filename, lzmdFile.IsFileLayout);
+				case DmdLazyMetadataBytesCom lzmdCom:		return new COMD.DmdComMetadataReader(module, lzmdCom.MetaDataImport, lzmdCom.DynamicModuleHelper, lzmdCom.Dispatcher);
+				}
+			}
+			catch {
+				Debug.Fail("Failed to create metadata");
+				return new DmdNullMetadataReader(module);
+			}
+			throw new NotSupportedException($"Unknown lazy metadata: {lzmd.GetType()}");
+		}
+
+		public override DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation, bool isSynthetic, bool addAssembly) {
+			if (getMetadata == null)
+				throw new ArgumentNullException(nameof(getMetadata));
+			if (fullyQualifiedName == null)
+				throw new ArgumentNullException(nameof(fullyQualifiedName));
+			if (assemblyLocation == null)
+				throw new ArgumentNullException(nameof(assemblyLocation));
+			var metadataReader = new DmdLazyMetadataReader(getMetadata, metadataReaderFactory);
+
+			var assembly = new DmdAssemblyImpl(this, metadataReader, assemblyLocation);
+			var module = new DmdModuleImpl(assembly, metadataReader, isInMemory, isDynamic, isSynthetic, fullyQualifiedName);
+			assembly.Add(module);
+			metadataReader.SetModule(module);
+			if (addAssembly)
+				Add(assembly);
+			return assembly;
+		}
+
+		public override DmdModule CreateModule(DmdAssembly assembly, Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
+			if (getMetadata == null)
+				throw new ArgumentNullException(nameof(getMetadata));
+			if (fullyQualifiedName == null)
+				throw new ArgumentNullException(nameof(fullyQualifiedName));
+			var assemblyImpl = assembly as DmdAssemblyImpl;
+			if (assemblyImpl == null)
+				throw new ArgumentException();
+			var metadataReader = new DmdLazyMetadataReader(getMetadata, metadataReaderFactory);
+			var module = new DmdModuleImpl(assemblyImpl, metadataReader, isInMemory, isDynamic, assemblyImpl.IsSynthetic, fullyQualifiedName);
+			assemblyImpl.Add(module);
+			return module;
+		}
+
+		public override void Add(DmdAssembly assembly) {
+			if (assembly == null)
+				throw new ArgumentNullException(nameof(assembly));
+			if (assembly.AppDomain != this)
+				throw new InvalidOperationException();
+			var assemblyImpl = assembly as DmdAssemblyImpl;
+			if (assemblyImpl == null)
+				throw new InvalidOperationException();
 			AssemblyLoadedListener[] listeners;
 			lock (assembliesLockObj) {
-				if (assembly.IsSynthetic) {
-					Debug.Assert(!syntheticAssemblies.Contains(assembly));
-					syntheticAssemblies.Add(assembly);
-				}
-				else {
-					Debug.Assert(!assemblies.Contains(assembly));
-					assemblies.Add(assembly);
-				}
+				Debug.Assert(!assemblies.Contains(assemblyImpl));
+				assemblies.Add(assemblyImpl);
 				listeners = assemblyLoadedListeners.Count == 0 ? Array.Empty<AssemblyLoadedListener>() : assemblyLoadedListeners.ToArray();
 			}
 			foreach (var listener in listeners)
-				listener.AssemblyLoaded(assembly);
+				listener.AssemblyLoaded(assemblyImpl);
 		}
 
-		internal void Remove(DmdAssemblyImpl assembly) {
+		public override void Remove(DmdAssembly assembly) {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
+			if (assembly.AppDomain != this)
+				throw new InvalidOperationException();
+			var assemblyImpl = assembly as DmdAssemblyImpl;
+			if (assemblyImpl == null)
+				throw new InvalidOperationException();
 			lock (assembliesLockObj) {
-				if (assembly.IsSynthetic) {
-					bool b = syntheticAssemblies.Remove(assembly);
-					Debug.Assert(b);
-				}
-				else {
-					bool b = assemblies.Remove(assembly);
-					Debug.Assert(b);
-				}
+				bool b = assemblies.Remove(assemblyImpl);
+				Debug.Assert(b);
 
-				simpleNameToAssembly.Remove(assembly.GetName().Name);
-				assemblyNameToAssembly.Remove(assembly.GetName());
+				simpleNameToAssembly.Remove(assemblyImpl.GetName().Name);
+				assemblyNameToAssembly.Remove(assemblyImpl.GetName());
 			}
 
-			var modules = assembly.GetModules();
+			var modules = assemblyImpl.GetModules();
 
 			lock (moduleTypeLockObj) {
 				foreach (var module in modules) {
@@ -142,15 +200,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			//TODO: Remove all its types from fullyResolvedTypes
 		}
 
-		public override DmdAssembly[] GetAssemblies(bool includeSyntheticAssemblies) => GetAssemblies2(includeSyntheticAssemblies);
-
-		DmdAssemblyImpl[] GetAssemblies2(bool includeSyntheticAssemblies) {
+		public override DmdAssembly[] GetAssemblies(bool includeSyntheticAssemblies) {
 			lock (assembliesLockObj) {
-				if (!includeSyntheticAssemblies)
+				if (includeSyntheticAssemblies)
 					return assemblies.ToArray();
-				var asms = new DmdAssemblyImpl[assemblies.Count + syntheticAssemblies.Count];
-				assemblies.CopyTo(asms, 0);
-				syntheticAssemblies.CopyTo(asms, assemblies.Count);
+				int count = 0;
+				foreach (var asm in assemblies) {
+					if (!asm.IsSynthetic)
+						count++;
+				}
+				var asms = new DmdAssemblyImpl[count];
+				int w = 0;
+				foreach (var asm in assemblies) {
+					if (!asm.IsSynthetic)
+						asms[w++] = asm;
+				}
+				if (w != count)
+					throw new InvalidOperationException();
 				return asms;
 			}
 		}
@@ -183,7 +249,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						return cached;
 				}
 
-				assembliesCopy = GetAssemblies2(includeSyntheticAssemblies: true);
+				assembliesCopy = assemblies.ToArray();
 			}
 
 			var assembly = GetAssemblySlowCore(assembliesCopy, simpleName, name);
@@ -241,7 +307,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			lock (assembliesLockObj) {
 				// We don't check synthetic assemblies, caller wants real assemblies
 				foreach (var assembly in assemblies) {
-					if (assembly.IsDynamic || assembly.IsInMemory)
+					if (assembly.IsDynamic || assembly.IsInMemory || assembly.IsSynthetic)
 						continue;
 					if (StringComparer.OrdinalIgnoreCase.Equals(assembly.Location, path))
 						return assembly;
@@ -957,8 +1023,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var ifaces = defaultExistingWellKnownSZArrayInterfaces;
 			if (ifaces == null) {
 				lock (assembliesLockObj) {
-					Debug.Assert(assemblies.Count != 0, "CorLib hasn't been loaded yet!");
-					if (assemblies.Count == 0)
+					Debug.Assert(CorLib != null, "CorLib hasn't been loaded yet!");
+					if (CorLib == null)
 						return Array.Empty<DmdType>();
 				}
 				var list = ObjectPools.AllocListOfType();

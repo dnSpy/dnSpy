@@ -43,29 +43,29 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			int order = dnModule.UniqueId;
 			InitializeExeFields(dnModule, filename, imageLayout, out var isExe, out var timestamp, out var version);
 
-			var appDomainController = ((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).AppDomainController;
+			var reflectionAppDomain = ((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).ReflectionAppDomain;
 
 			var closedListenerCollection = new ClosedListenerCollection();
 			var modules = dnModule.Assembly.Modules;
 			bool isManifestModule = modules[0] == dnModule;
 			var getMetadata = CreateGetMetadataDelegate(engine, objectFactory.Runtime, dnModule, closedListenerCollection, imageLayout);
 			var fullyQualifiedName = DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, dnModule.Name);
-			DmdAssemblyController assemblyController;
-			DmdModuleController moduleController;
+			DmdAssembly reflectionAssembly;
+			DmdModule reflectionModule;
 			if (isManifestModule) {
 				var assemblyLocation = isInMemory || isDynamic ? string.Empty : dnModule.Name;
-				assemblyController = appDomainController.CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
-				moduleController = assemblyController.ModuleController;
+				reflectionAssembly = reflectionAppDomain.CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
+				reflectionModule = reflectionAssembly.ManifestModule;
 			}
 			else {
 				var manifestModule = engine.TryGetModule(modules[0].CorModule);
 				if (manifestModule == null)
 					throw new InvalidOperationException();
-				assemblyController = ((DbgCorDebugInternalModuleImpl)manifestModule.InternalModule).AssemblyController;
-				moduleController = appDomainController.CreateModule(assemblyController.Assembly, getMetadata, isInMemory, isDynamic, fullyQualifiedName);
+				reflectionAssembly = ((DbgCorDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule.Assembly;
+				reflectionModule = reflectionAppDomain.CreateModule(reflectionAssembly, getMetadata, isInMemory, isDynamic, fullyQualifiedName);
 			}
 
-			var internalModule = new DbgCorDebugInternalModuleImpl(assemblyController, moduleController, closedListenerCollection);
+			var internalModule = new DbgCorDebugInternalModuleImpl(reflectionModule, closedListenerCollection);
 			return objectFactory.CreateModule(appDomain, internalModule, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, pause: false, data: data, onCreated: engineModule => internalModule.SetModule(engineModule.Module));
 		}
 

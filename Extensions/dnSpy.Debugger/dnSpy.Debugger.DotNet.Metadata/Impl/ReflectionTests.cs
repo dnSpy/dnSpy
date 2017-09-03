@@ -53,8 +53,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		8. If it fails, you'll hit a BP in Verify(). COM MD API doesn't have a way of getting the entry point
 		   token so it will fail when testing an exe file.
 
-
-		sealed class DmdEvaluatorImpl : DmdEvaluator {
+		sealed class DmdEvaluatorImpl2 : DmdEvaluator {
 			public override object Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
 			public override object LoadField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, CancellationToken cancellationToken) => throw new NotImplementedException();
 			public override void StoreField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, object value, CancellationToken cancellationToken) => throw new NotImplementedException();
@@ -78,13 +77,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return module.Filename;
 			}
 		}
-		sealed class DmdDispatcherImpl : DmdDispatcher {
-			readonly DebuggerThread debuggerThread;
-			public DmdDispatcherImpl(DebuggerThread debuggerThread) => this.debuggerThread = debuggerThread;
-			public override bool CheckAccess() => debuggerThread.CheckAccess();
-			public override void Invoke(Action callback) => debuggerThread.Invoke(callback);
-			public override T Invoke<T>(Func<T> callback) => debuggerThread.Invoke(callback);
-		}
 		sealed class DmdDataStreamImpl : DmdDataStream {
 			readonly IBinaryReader reader;
 			public DmdDataStreamImpl(IBinaryReader reader) => this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
@@ -99,108 +91,34 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			public override byte[] ReadBytes(int length) => reader.ReadBytes(length);
 			public override void Dispose() => reader.Dispose();
 		}
-		sealed class DmdDynamicModuleHelperImpl : DmdDynamicModuleHelper {
-			readonly DbgEngineImpl engine;
-			public DmdDynamicModuleHelperImpl(DbgEngineImpl engine) => this.engine = engine;
-			const ulong FAT_HEADER_SIZE = 3 * 4;
-			public override DmdDataStream TryGetMethodBody(DmdModule module, int metadataToken, uint rva) {
-				engine.VerifyCorDebugThread();
-
-				var dbgModule = module.GetDebuggerModule();
-				if (!engine.TryGetModuleData(dbgModule, out var data))
-					throw new InvalidOperationException();
-
-				// rva can be 0 if it's a dynamic module. this.module.Address will also be 0.
-				if (!module.IsDynamic && rva == 0)
-					return null;
-
-				var func = data.DnModule.CorModule.GetFunctionFromToken((uint)metadataToken);
-				var ilCode = func?.ILCode;
-				if (ilCode == null)
-					return null;
-				ulong addr = ilCode.Address;
-				if (addr == 0)
-					return null;
-
-				Debug.Assert(addr >= FAT_HEADER_SIZE);
-				if (addr < FAT_HEADER_SIZE)
-					return null;
-
-				ProcessBinaryReader reader;
-				if (module.IsDynamic) {
-					// It's always a fat header, see COMDynamicWrite::SetMethodIL() (coreclr/src/vm/comdynamic.cpp)
-					addr -= FAT_HEADER_SIZE;
-					reader = new ProcessBinaryReader(new CorProcessReader(data.DnModule.Process), 0);
-					Debug.Assert((reader.Position = (long)addr) == (long)addr);
-					Debug.Assert((reader.ReadByte() & 7) == 3);
-					Debug.Assert((reader.Position = (long)addr + 4) == (long)addr + 4);
-					Debug.Assert(reader.ReadUInt32() == ilCode.Size);
-
-					reader.Position = (long)addr;
-				}
-				else {
-					uint codeSize = ilCode.Size;
-					// The address to the code is returned but we want the header. Figure out whether
-					// it's the 1-byte or fat header.
-					reader = new ProcessBinaryReader(new CorProcessReader(data.DnModule.Process), 0);
-					uint locVarSigTok = func.LocalVarSigToken;
-					bool isBig = codeSize >= 0x40 || (locVarSigTok & 0x00FFFFFF) != 0;
-					if (!isBig) {
-						reader.Position = (long)addr - 1;
-						byte b = reader.ReadByte();
-						var type = b & 7;
-						if ((type == 2 || type == 6) && (b >> 2) == codeSize) {
-							// probably small header
-							isBig = false;
-						}
-						else {
-							reader.Position = (long)addr - (long)FAT_HEADER_SIZE + 4;
-							uint headerCodeSize = reader.ReadUInt32();
-							uint headerLocVarSigTok = reader.ReadUInt32();
-							bool valid = headerCodeSize == codeSize &&
-								(locVarSigTok & 0x00FFFFFF) == (headerLocVarSigTok & 0x00FFFFFF) &&
-								((locVarSigTok & 0x00FFFFFF) == 0 || locVarSigTok == headerLocVarSigTok);
-							Debug.Assert(valid);
-							if (!valid)
-								return null;
-							isBig = true;
-						}
-					}
-
-					reader.Position = (long)addr - (isBig ? (int)FAT_HEADER_SIZE : 1);
-				}
-				return new DmdDataStreamImpl(reader);
-			}
-			public override event EventHandler<DmdTypeLoadedEventArgs> TypeLoaded { add { } remove { } }
-		}
 		void Test() {
-			var runtime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
+			var runtime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl2(), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			var dad = TryGetEngineAppDomain(dnDebugger.Processes.First().AppDomains[0]).AppDomain;
-			var adc = runtime.CreateAppDomain(dad.Id);
+			var ad = runtime.CreateAppDomain(dad.Id);
 			var moduleNameProvider = new ModuleNameProvider();
 			bool useComMD = true;
 			useComMD = false;
-			var comMdDispatcher = useComMD ? new DmdDispatcherImpl(DebuggerThread) : null;
+			var comMdDispatcher = useComMD ? new DmdDispatcherImpl(this) : null;
 			foreach (var dmod in dad.Modules) {
 				if (!dmod.IsDotNetModule())
 					continue;
 				if (dmod.IsDynamic || dmod.IsInMemory)
 					continue;
-				DmdAssemblyController asmc;
+				DmdAssembly asm;
 				if (useComMD) {
 					if (!TryGetModuleData(dmod, out var data))
 						throw new InvalidOperationException();
 					var mdi = data.DnModule.CorModule.GetMetaDataInterface<dndbg.COM.MetaData.IMetaDataImport>();
 					var dynamicModuleHelper = new DmdDynamicModuleHelperImpl(this);
-					asmc = adc.CreateAssembly(mdi, dynamicModuleHelper, comMdDispatcher, dmod.IsInMemory, dmod.IsDynamic, dmod.Filename, dmod.Filename);
+					asm = ad.CreateAssembly(mdi, dynamicModuleHelper, comMdDispatcher, dmod.IsInMemory, dmod.IsDynamic, dmod.Filename, dmod.Filename);
 				}
 				else
-					asmc = adc.CreateAssembly(moduleNameProvider.GetModuleFilename(dmod), true, dmod.IsInMemory, dmod.IsDynamic, dmod.Filename, dmod.Filename);
-				asmc.ModuleController.Module.GetOrCreateData<DbgModule>(() => dmod);
+					asm = ad.CreateAssembly(moduleNameProvider.GetModuleFilename(dmod), true, dmod.IsInMemory, dmod.IsDynamic, dmod.Filename, dmod.Filename);
+				asm.ManifestModule.GetOrCreateData<DbgModule>(() => dmod);
 			}
 			// Run it on the UI thread to test the COM MD code
 			System.Windows.Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() => {
-				ReflectionTests.Test(adc.AppDomain);
+				ReflectionTests.Test(ad);
 			}));
 		}
 		*/

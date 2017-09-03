@@ -35,7 +35,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int MetadataToken => 0x00000001;
 		public override DmdType GlobalType => ResolveType(0x02000001);
 		public override int MDStreamVersion => metadataReader.MDStreamVersion;
-		public override string ScopeName => scopeNameOverride ?? metadataReader.ModuleScopeName;
+		public override string ScopeName {
+			get => scopeNameOverride ?? metadataReader.ModuleScopeName;
+			set => scopeNameOverride = value;
+		}
 
 		internal DmdMetadataReader MetadataReader => metadataReader;
 		readonly DmdAssemblyImpl assembly;
@@ -50,8 +53,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			IsInMemory = isInMemory;
 			IsSynthetic = isSynthetic;
 		}
-
-		internal void SetScopeName(string scopeName) => scopeNameOverride = scopeName;
 
 		public override DmdType[] GetTypes() => metadataReader.GetTypes();
 		public override DmdType[] GetExportedTypes() => metadataReader.GetExportedTypes();

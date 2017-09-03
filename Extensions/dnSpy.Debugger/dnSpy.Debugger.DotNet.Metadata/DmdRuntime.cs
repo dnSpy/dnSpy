@@ -49,5 +49,18 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="id">AppDomain id</param>
 		/// <returns></returns>
 		public abstract DmdAppDomain GetAppDomain(int id);
+
+		/// <summary>
+		/// Creates an app domain
+		/// </summary>
+		/// <param name="id">AppDomain id, must be a unique identifier</param>
+		/// <returns></returns>
+		public abstract DmdAppDomain CreateAppDomain(int id);
+
+		/// <summary>
+		/// Removes an app domain
+		/// </summary>
+		/// <param name="appDomain">App domain to remove</param>
+		public abstract void Remove(DmdAppDomain appDomain);
 	}
 }

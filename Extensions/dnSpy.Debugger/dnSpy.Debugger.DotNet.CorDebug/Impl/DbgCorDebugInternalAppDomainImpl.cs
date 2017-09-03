@@ -24,15 +24,14 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DbgCorDebugInternalAppDomainImpl : DbgDotNetInternalAppDomain {
-		public override DmdAppDomain ReflectionAppDomain => AppDomainController.AppDomain;
+		public override DmdAppDomain ReflectionAppDomain { get; }
 		public override DbgAppDomain AppDomain => appDomain ?? throw new InvalidOperationException();
 		DbgAppDomain appDomain;
-		internal DmdAppDomainController AppDomainController { get; }
-		public DbgCorDebugInternalAppDomainImpl(DmdAppDomainController appDomainController) =>
-			AppDomainController = appDomainController ?? throw new ArgumentNullException(nameof(appDomainController));
+		public DbgCorDebugInternalAppDomainImpl(DmdAppDomain reflectionAppDomain) =>
+			ReflectionAppDomain = reflectionAppDomain ?? throw new ArgumentNullException(nameof(reflectionAppDomain));
 		internal void SetAppDomain(DbgAppDomain appDomain) {
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
-			AppDomainController.AppDomain.GetOrCreateData(() => appDomain);
+			ReflectionAppDomain.GetOrCreateData(() => appDomain);
 		}
 		protected override void CloseCore() { }
 	}

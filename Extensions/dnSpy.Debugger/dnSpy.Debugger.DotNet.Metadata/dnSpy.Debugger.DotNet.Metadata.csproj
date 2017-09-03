@@ -44,10 +44,8 @@
     <Compile Include="AssemblyHasher.cs" />
     <Compile Include="CustomAttributesHelper.cs" />
     <Compile Include="DmdAppDomain.cs" />
-    <Compile Include="DmdAppDomainController.cs" />
     <Compile Include="DmdAssembly.cs" />
     <Compile Include="DmdAssemblyContentType.cs" />
-    <Compile Include="DmdAssemblyController.cs" />
     <Compile Include="DmdAssemblyHashAlgorithm.cs" />
     <Compile Include="DmdAssemblyName.cs" />
     <Compile Include="DmdAssemblyNameFlags.cs" />
@@ -83,7 +81,6 @@
     <Compile Include="DmdMethodInfo.cs" />
     <Compile Include="DmdMethodSignature.cs" />
     <Compile Include="DmdModule.cs" />
-    <Compile Include="DmdModuleController.cs" />
     <Compile Include="DmdObject.cs" />
     <Compile Include="DmdParameterAttributes.cs" />
     <Compile Include="DmdParameterInfo.cs" />
@@ -93,11 +90,9 @@
     <Compile Include="DmdPropertyInfo.cs" />
     <Compile Include="DmdReadOnlyAssemblyName.cs" />
     <Compile Include="DmdRuntime.cs" />
-    <Compile Include="DmdRuntimeController.cs" />
     <Compile Include="DmdRuntimeFactory.cs" />
     <Compile Include="DmdSigComparer.cs" />
     <Compile Include="DmdSignatureCallingConvention.cs" />
-    <Compile Include="DmdSyntheticAssemblyController.cs" />
     <Compile Include="DmdType.CanCastTo.cs" />
     <Compile Include="DmdType.cs" />
     <Compile Include="DmdTypeAttributes.cs" />
@@ -127,9 +122,7 @@
     <Compile Include="Impl\COMD\LazyList.cs" />
     <Compile Include="Impl\COMD\MDAPI.cs" />
     <Compile Include="Impl\COMD\MetaData.cs" />
-    <Compile Include="Impl\DmdAppDomainControllerImpl.cs" />
     <Compile Include="Impl\DmdAppDomainImpl.cs" />
-    <Compile Include="Impl\DmdAssemblyControllerImpl.cs" />
     <Compile Include="Impl\DmdAssemblyImpl.cs" />
     <Compile Include="Impl\DmdByRefType.cs" />
     <Compile Include="Impl\DmdConstructorDef.cs" />
@@ -164,7 +157,6 @@
     <Compile Include="Impl\DmdMethodRef.cs" />
     <Compile Include="Impl\DmdMethodSpec.cs" />
     <Compile Include="Impl\DmdMethodSpecRef.cs" />
-    <Compile Include="Impl\DmdModuleControllerImpl.cs" />
     <Compile Include="Impl\DmdModuleImpl.cs" />
     <Compile Include="Impl\DmdNullGlobalType.cs" />
     <Compile Include="Impl\DmdNullMetadataReader.cs" />
@@ -174,10 +166,8 @@
     <Compile Include="Impl\DmdPointerType.cs" />
     <Compile Include="Impl\DmdPropertyDef.cs" />
     <Compile Include="Impl\DmdPropertyParameter.cs" />
-    <Compile Include="Impl\DmdRuntimeControllerImpl.cs" />
     <Compile Include="Impl\DmdRuntimeImpl.cs" />
     <Compile Include="Impl\DmdSignatureReader.cs" />
-    <Compile Include="Impl\DmdSyntheticAssemblyControllerImpl.cs" />
     <Compile Include="Impl\DmdSZArrayType.cs" />
     <Compile Include="Impl\DmdTypeBase.cs" />
     <Compile Include="Impl\DmdTypeDef.cs" />

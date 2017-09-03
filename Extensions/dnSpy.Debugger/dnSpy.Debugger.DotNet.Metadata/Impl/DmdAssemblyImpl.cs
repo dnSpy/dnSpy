@@ -82,11 +82,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		internal void Remove(DmdModuleImpl module) {
+		public override void Remove(DmdModule module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
+			var moduleImpl = module as DmdModuleImpl;
+			if (moduleImpl == null)
+				throw new InvalidOperationException();
 			lock (LockObject) {
-				bool b = modules.Remove(module);
+				bool b = modules.Remove(moduleImpl);
 				Debug.Assert(b);
 			}
 		}
