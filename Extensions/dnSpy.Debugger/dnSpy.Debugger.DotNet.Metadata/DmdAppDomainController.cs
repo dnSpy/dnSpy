@@ -46,6 +46,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdAssemblyController CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation);
 
 		/// <summary>
+		/// Creates a synthetic assembly but does not add it to the AppDomain
+		/// </summary>
+		/// <param name="getMetadata">Called to provide the metadata</param>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <returns></returns>
+		public abstract DmdSyntheticAssemblyController CreateSyntheticAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation);
+
+		/// <summary>
 		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
 		/// </summary>
 		/// <param name="filename">Filename</param>

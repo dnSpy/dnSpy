@@ -27,13 +27,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdAssemblyImpl assembly;
 		readonly DmdModuleImpl module;
 
-		public DmdModuleControllerImpl(DmdAssemblyImpl assembly, DmdMetadataReader metadataReader, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
+		public DmdModuleControllerImpl(DmdAssemblyImpl assembly, DmdMetadataReader metadataReader, bool isInMemory, bool isDynamic, bool isSynthetic, string fullyQualifiedName) {
 			if (metadataReader == null)
 				throw new ArgumentNullException(nameof(metadataReader));
 			if (fullyQualifiedName == null)
 				throw new ArgumentNullException(nameof(fullyQualifiedName));
 			this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
-			module = new DmdModuleImpl(assembly, metadataReader, isInMemory, isDynamic, fullyQualifiedName);
+			module = new DmdModuleImpl(assembly, metadataReader, isInMemory, isDynamic, isSynthetic, fullyQualifiedName);
 			assembly.Add(module);
 		}
 

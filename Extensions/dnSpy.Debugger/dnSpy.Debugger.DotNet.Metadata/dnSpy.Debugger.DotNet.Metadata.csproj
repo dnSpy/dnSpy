@@ -97,6 +97,7 @@
     <Compile Include="DmdRuntimeFactory.cs" />
     <Compile Include="DmdSigComparer.cs" />
     <Compile Include="DmdSignatureCallingConvention.cs" />
+    <Compile Include="DmdSyntheticAssemblyController.cs" />
     <Compile Include="DmdType.CanCastTo.cs" />
     <Compile Include="DmdType.cs" />
     <Compile Include="DmdTypeAttributes.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="Impl\DmdRuntimeControllerImpl.cs" />
     <Compile Include="Impl\DmdRuntimeImpl.cs" />
     <Compile Include="Impl\DmdSignatureReader.cs" />
+    <Compile Include="Impl\DmdSyntheticAssemblyControllerImpl.cs" />
     <Compile Include="Impl\DmdSZArrayType.cs" />
     <Compile Include="Impl\DmdTypeBase.cs" />
     <Compile Include="Impl\DmdTypeDef.cs" />

@@ -20,7 +20,7 @@
 using System;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	sealed class DmdAssemblyControllerImpl : DmdAssemblyController {
+	sealed class DmdSyntheticAssemblyControllerImpl : DmdSyntheticAssemblyController {
 		public override DmdModuleController ModuleController => moduleController;
 		public override DmdAssembly Assembly => assembly;
 
@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdAssemblyImpl assembly;
 		readonly DmdModuleControllerImpl moduleController;
 
-		public DmdAssemblyControllerImpl(DmdAppDomainImpl appDomain, DmdLazyMetadataReader metadataReader, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) {
+		public DmdSyntheticAssemblyControllerImpl(DmdAppDomainImpl appDomain, DmdLazyMetadataReader metadataReader, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) {
 			if (metadataReader == null)
 				throw new ArgumentNullException(nameof(metadataReader));
 			if (fullyQualifiedName == null)
@@ -37,11 +37,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(assemblyLocation));
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			assembly = new DmdAssemblyImpl(appDomain, metadataReader, assemblyLocation);
-			moduleController = new DmdModuleControllerImpl(assembly, metadataReader, isInMemory, isDynamic, false, fullyQualifiedName);
+			moduleController = new DmdModuleControllerImpl(assembly, metadataReader, isInMemory, isDynamic, true, fullyQualifiedName);
 			metadataReader.SetModule(moduleController.ModuleImpl);
-			appDomain.Add(assembly);
 		}
 
+		public override void Add() => appDomain.Add(assembly);
 		public override void Remove() => appDomain.Remove(assembly);
 	}
 }

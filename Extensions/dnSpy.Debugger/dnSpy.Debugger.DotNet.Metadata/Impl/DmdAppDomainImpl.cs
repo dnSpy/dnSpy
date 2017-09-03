@@ -41,6 +41,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		// Assemblies lock fields
 		readonly object assembliesLockObj;
 		readonly List<DmdAssemblyImpl> assemblies;
+		readonly List<DmdAssemblyImpl> syntheticAssemblies;
 		readonly Dictionary<string, DmdAssemblyImpl> simpleNameToAssembly;
 		readonly Dictionary<IDmdAssemblyName, DmdAssemblyImpl> assemblyNameToAssembly;
 		readonly List<AssemblyLoadedListener> assemblyLoadedListeners;
@@ -72,6 +73,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			moduleTypeLockObj = new object();
 			exportedTypeLockObj = new object();
 			assemblies = new List<DmdAssemblyImpl>();
+			syntheticAssemblies = new List<DmdAssemblyImpl>();
 			simpleNameToAssembly = new Dictionary<string, DmdAssemblyImpl>(StringComparer.OrdinalIgnoreCase);
 			assemblyNameToAssembly = new Dictionary<IDmdAssemblyName, DmdAssemblyImpl>(AssemblyNameEqualityComparer.Instance);
 			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(new DmdMemberInfoEqualityComparer(DmdMemberInfoEqualityComparer.DefaultTypeOptions | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CompareGenericParameterDeclaringMember));
@@ -90,8 +92,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(assembly));
 			AssemblyLoadedListener[] listeners;
 			lock (assembliesLockObj) {
-				Debug.Assert(!assemblies.Contains(assembly));
-				assemblies.Add(assembly);
+				if (assembly.IsSynthetic) {
+					Debug.Assert(!syntheticAssemblies.Contains(assembly));
+					syntheticAssemblies.Add(assembly);
+				}
+				else {
+					Debug.Assert(!assemblies.Contains(assembly));
+					assemblies.Add(assembly);
+				}
 				listeners = assemblyLoadedListeners.Count == 0 ? Array.Empty<AssemblyLoadedListener>() : assemblyLoadedListeners.ToArray();
 			}
 			foreach (var listener in listeners)
@@ -102,14 +110,49 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
 			lock (assembliesLockObj) {
-				bool b = assemblies.Remove(assembly);
-				Debug.Assert(b);
+				if (assembly.IsSynthetic) {
+					bool b = syntheticAssemblies.Remove(assembly);
+					Debug.Assert(b);
+				}
+				else {
+					bool b = assemblies.Remove(assembly);
+					Debug.Assert(b);
+				}
+
+				simpleNameToAssembly.Remove(assembly.GetName().Name);
+				assemblyNameToAssembly.Remove(assembly.GetName());
 			}
+
+			var modules = assembly.GetModules();
+
+			lock (moduleTypeLockObj) {
+				foreach (var module in modules) {
+					toModuleTypeDict.Remove(module);
+					toModuleTypeDictIgnoreCase.Remove(module);
+				}
+			}
+
+			lock (exportedTypeLockObj) {
+				foreach (var module in modules) {
+					toModuleExportedTypeDict.Remove(module);
+					toModuleExportedTypeDictIgnoreCase.Remove(module);
+				}
+			}
+
+			//TODO: Remove all its types from fullyResolvedTypes
 		}
 
-		public override DmdAssembly[] GetAssemblies() {
-			lock (assembliesLockObj)
-				return assemblies.ToArray();
+		public override DmdAssembly[] GetAssemblies(bool includeSyntheticAssemblies) => GetAssemblies2(includeSyntheticAssemblies);
+
+		DmdAssemblyImpl[] GetAssemblies2(bool includeSyntheticAssemblies) {
+			lock (assembliesLockObj) {
+				if (!includeSyntheticAssemblies)
+					return assemblies.ToArray();
+				var asms = new DmdAssemblyImpl[assemblies.Count + syntheticAssemblies.Count];
+				assemblies.CopyTo(asms, 0);
+				syntheticAssemblies.CopyTo(asms, assemblies.Count);
+				return asms;
+			}
 		}
 
 		public override DmdAssembly GetAssembly(string simpleName) {
@@ -140,7 +183,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						return cached;
 				}
 
-				assembliesCopy = assemblies.ToArray();
+				assembliesCopy = GetAssemblies2(includeSyntheticAssemblies: true);
 			}
 
 			var assembly = GetAssemblySlowCore(assembliesCopy, simpleName, name);
@@ -196,6 +239,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (path == null)
 				throw new ArgumentNullException(nameof(path));
 			lock (assembliesLockObj) {
+				// We don't check synthetic assemblies, caller wants real assemblies
 				foreach (var assembly in assemblies) {
 					if (assembly.IsDynamic || assembly.IsInMemory)
 						continue;
@@ -245,7 +289,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				// Dispose it so we can access its LoadedAssemblies prop
 				listener.Dispose();
 
-				var asms = listener.LoadedAssemblies.Where(a => StringComparer.OrdinalIgnoreCase.Equals(a.GetName().Name, name.Name)).ToArray();
+				var asms = listener.LoadedAssemblies.Where(a => !a.IsSynthetic && StringComparer.OrdinalIgnoreCase.Equals(a.GetName().Name, name.Name)).ToArray();
 				if (asms.Length != 0) {
 					if (asms.Length != 1) {
 						foreach (var a in asms) {

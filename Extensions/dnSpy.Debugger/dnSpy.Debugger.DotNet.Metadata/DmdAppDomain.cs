@@ -45,7 +45,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets all assemblies
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdAssembly[] GetAssemblies();
+		public DmdAssembly[] GetAssemblies() => GetAssemblies(includeSyntheticAssemblies: true);
+
+		/// <summary>
+		/// Gets all assemblies
+		/// </summary>
+		/// <param name="includeSyntheticAssemblies">true to include synthetic assemblies</param>
+		/// <returns></returns>
+		public abstract DmdAssembly[] GetAssemblies(bool includeSyntheticAssemblies);
 
 		/// <summary>
 		/// Gets an assembly or returns null if there's no such assembly

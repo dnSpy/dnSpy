@@ -30,6 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdAssembly Assembly => assembly;
 		public override bool IsDynamic { get; }
 		public override bool IsInMemory { get; }
+		public override bool IsSynthetic { get; }
 		public override Guid ModuleVersionId => metadataReader.ModuleVersionId;
 		public override int MetadataToken => 0x00000001;
 		public override DmdType GlobalType => ResolveType(0x02000001);
@@ -41,12 +42,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdMetadataReader metadataReader;
 		string scopeNameOverride;
 
-		public DmdModuleImpl(DmdAssemblyImpl assembly, DmdMetadataReader metadataReader, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
+		public DmdModuleImpl(DmdAssemblyImpl assembly, DmdMetadataReader metadataReader, bool isInMemory, bool isDynamic, bool isSynthetic, string fullyQualifiedName) {
 			this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 			this.metadataReader = metadataReader ?? throw new ArgumentNullException(nameof(metadataReader));
 			FullyQualifiedName = fullyQualifiedName ?? throw new ArgumentNullException(nameof(fullyQualifiedName));
 			IsDynamic = isDynamic;
 			IsInMemory = isInMemory;
+			IsSynthetic = isSynthetic;
 		}
 
 		internal void SetScopeName(string scopeName) => scopeNameOverride = scopeName;

@@ -68,6 +68,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return new DmdAssemblyControllerImpl(appDomain, metadataReader, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
 		}
 
+		public override DmdSyntheticAssemblyController CreateSyntheticAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) {
+			if (getMetadata == null)
+				throw new ArgumentNullException(nameof(getMetadata));
+			if (fullyQualifiedName == null)
+				throw new ArgumentNullException(nameof(fullyQualifiedName));
+			if (assemblyLocation == null)
+				throw new ArgumentNullException(nameof(assemblyLocation));
+			var metadataReader = new DmdLazyMetadataReader(getMetadata, metadataReaderFactory);
+			return new DmdSyntheticAssemblyControllerImpl(appDomain, metadataReader, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
+		}
+
 		public override DmdModuleController CreateModule(DmdAssembly assembly, Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
@@ -79,7 +90,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (assemblyImpl == null)
 				throw new ArgumentException();
 			var metadataReader = new DmdLazyMetadataReader(getMetadata, metadataReaderFactory);
-			return new DmdModuleControllerImpl(assemblyImpl, metadataReader, isInMemory, isDynamic, fullyQualifiedName);
+			return new DmdModuleControllerImpl(assemblyImpl, metadataReader, isInMemory, isDynamic, assemblyImpl.IsSynthetic, fullyQualifiedName);
 		}
 	}
 }

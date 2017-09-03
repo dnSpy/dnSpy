@@ -54,6 +54,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					assemblies = appDomain.GetAssemblies();
 				foreach (var assembly in assemblies) {
 					foreach (var module in assembly.GetModules()) {
+						if (module.IsSynthetic)
+							continue;
 						if (!checkedModules.Add(module))
 							continue;
 

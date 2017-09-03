@@ -82,6 +82,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsInMemory => ManifestModule.IsInMemory;
 
 		/// <summary>
+		/// true if it's a synthetic assembly; it's not loaded in the debugged process
+		/// </summary>
+		public bool IsSynthetic => ManifestModule.IsSynthetic;
+
+		/// <summary>
 		/// Gets the entry point or null
 		/// </summary>
 		public abstract DmdMethodInfo EntryPoint { get; }

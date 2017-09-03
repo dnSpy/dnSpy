@@ -136,6 +136,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract bool IsInMemory { get; }
 
 		/// <summary>
+		/// true if it's a synthetic module; it's not loaded in the debugged process
+		/// </summary>
+		public abstract bool IsSynthetic { get; }
+
+		/// <summary>
 		/// Gets the custom attributes
 		/// </summary>
 		public ReadOnlyCollection<DmdCustomAttributeData> CustomAttributes => GetCustomAttributesData();
