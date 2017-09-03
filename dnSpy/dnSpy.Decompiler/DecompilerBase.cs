@@ -99,8 +99,10 @@ namespace dnSpy.Decompiler {
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
 				output.Write($"{ts:X8} ({dateString})", BoxedTextColor.Comment);
 			}
-			else
+			else {
 				output.Write(dnSpy_Decompiler_Resources.UnknownValue, BoxedTextColor.Comment);
+				output.Write($" ({ts:X8})", BoxedTextColor.Comment);
+			}
 			WriteCommentEnd(output, true);
 			output.WriteLine();
 		}
