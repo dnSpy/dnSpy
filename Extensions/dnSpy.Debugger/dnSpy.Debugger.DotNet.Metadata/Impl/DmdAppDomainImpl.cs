@@ -159,6 +159,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			lock (assembliesLockObj) {
 				Debug.Assert(!assemblies.Contains(assemblyImpl));
 				assemblies.Add(assemblyImpl);
+				assemblyImpl.IsLoadedInternal = true;
 				listeners = assemblyLoadedListeners.Count == 0 ? Array.Empty<AssemblyLoadedListener>() : assemblyLoadedListeners.ToArray();
 			}
 			foreach (var listener in listeners)
@@ -176,6 +177,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			lock (assembliesLockObj) {
 				bool b = assemblies.Remove(assemblyImpl);
 				Debug.Assert(b);
+				assemblyImpl.IsLoadedInternal = false;
 
 				simpleNameToAssembly.Remove(assemblyImpl.GetName().Name);
 				assemblyNameToAssembly.Remove(assemblyImpl.GetName());
@@ -198,6 +200,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			//TODO: Remove all its types from fullyResolvedTypes
+		}
+
+		internal bool GetIsLoaded(DmdAssemblyImpl assembly) {
+			lock (assembliesLockObj)
+				return assembly.IsLoadedInternal;
 		}
 
 		public override DmdAssembly[] GetAssemblies(bool includeSyntheticAssemblies) {

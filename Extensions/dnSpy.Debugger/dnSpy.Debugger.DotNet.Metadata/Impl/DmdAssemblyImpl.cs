@@ -31,6 +31,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string Location { get; }
 		public override string ImageRuntimeVersion => metadataReader.ImageRuntimeVersion;
 		public override DmdMethodInfo EntryPoint => metadataReader.EntryPoint;
+		public override bool IsLoaded => appDomain.GetIsLoaded(this);
+		internal bool IsLoadedInternal { get; set; }
 
 		internal string ApproximateSimpleName {
 			get {
