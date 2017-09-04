@@ -33,11 +33,19 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public MethodDebugInfo MethodDebugInfo { get; }
 
 		/// <summary>
+		/// Gets the IL offset
+		/// </summary>
+		public uint ILOffset { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="methodDebugInfo">Method debug info</param>
-		public DbgLanguageDebugInfo(MethodDebugInfo methodDebugInfo) =>
+		/// <param name="ilOffset">IL offset</param>
+		public DbgLanguageDebugInfo(MethodDebugInfo methodDebugInfo, uint ilOffset) {
 			MethodDebugInfo = methodDebugInfo ?? throw new ArgumentNullException(nameof(methodDebugInfo));
+			ILOffset = ilOffset;
+		}
 	}
 
 	/// <summary>

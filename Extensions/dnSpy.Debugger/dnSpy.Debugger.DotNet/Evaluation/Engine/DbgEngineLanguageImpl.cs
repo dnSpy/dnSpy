@@ -199,7 +199,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			Debug.Assert(methodDebugInfo != null);
 			if (methodDebugInfo == null)
 				return null;
-			return new DbgLanguageDebugInfo(methodDebugInfo);
+			return new DbgLanguageDebugInfo(methodDebugInfo, location.Offset);
 		}
 	}
 }
