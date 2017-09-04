@@ -66,6 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override byte[] ResolveSignature(int metadataToken) => metadataReader.ResolveSignature(metadataToken);
 		public override string ResolveString(int metadataToken) => metadataReader.ResolveString(metadataToken);
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => metadataReader.GetPEKind(out peKind, out machine);
+		public override DmdReadOnlyAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
 
 		sealed class TypeDefResolver : ITypeDefResolver {
 			readonly DmdModuleImpl module;

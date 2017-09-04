@@ -646,6 +646,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdMethodInfo GetMethod(string name) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, (IList<DmdType>)null);
 
 		/// <summary>
+		/// Gets all referenced assemblies
+		/// </summary>
+		/// <returns></returns>
+		public abstract DmdReadOnlyAssemblyName[] GetReferencedAssemblies();
+
+		/// <summary>
 		/// Returns the metadata name (<see cref="ScopeName"/>)
 		/// </summary>
 		/// <returns></returns>
