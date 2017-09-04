@@ -45,6 +45,16 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata.Internal {
 		public abstract int Size { get; }
 
 		/// <summary>
+		/// Gets the address of the .NET metadata (BSJB header)
+		/// </summary>
+		public abstract IntPtr MetadataAddress { get; }
+
+		/// <summary>
+		/// Gets the size of the metadata
+		/// </summary>
+		public abstract int MetadataSize { get; }
+
+		/// <summary>
 		/// Increments the reference count and returns the same instance
 		/// </summary>
 		/// <returns></returns>

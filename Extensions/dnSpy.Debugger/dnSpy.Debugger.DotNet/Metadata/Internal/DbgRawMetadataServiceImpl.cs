@@ -26,9 +26,14 @@ using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
 namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 	[Export(typeof(DbgRawMetadataService))]
 	sealed class DbgRawMetadataServiceImpl : DbgRawMetadataService {
-		sealed class RuntimeState {
+		sealed class RuntimeState : IDisposable {
 			public readonly object LockObj = new object();
 			public readonly Dictionary<ulong, DbgRawMetadataImpl> Dict = new Dictionary<ulong, DbgRawMetadataImpl>();
+			public void Dispose() {
+				foreach (var kv in Dict)
+					kv.Value.ForceDispose();
+				Dict.Clear();
+			}
 		}
 
 		public override DbgRawMetadata Create(DbgRuntime runtime, bool isFileLayout, ulong moduleAddress, int moduleSize) {

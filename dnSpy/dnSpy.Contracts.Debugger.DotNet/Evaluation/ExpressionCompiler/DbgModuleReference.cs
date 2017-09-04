@@ -25,9 +25,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 	/// </summary>
 	public abstract class DbgModuleReference : DbgObject {
 		/// <summary>
-		/// Gets the pointer to the .NET metadata (BSJB header)
+		/// Gets the address of the .NET metadata (BSJB header)
 		/// </summary>
-		public abstract IntPtr MetadataPointer { get; }
+		public abstract IntPtr MetadataAddress { get; }
 
 		/// <summary>
 		/// Gets the size of the metadata
