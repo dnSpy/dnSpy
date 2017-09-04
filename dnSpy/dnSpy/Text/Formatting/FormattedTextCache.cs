@@ -46,7 +46,9 @@ namespace dnSpy.Text.Formatting {
 		Info GetInfo(TextFormattingRunProperties props) {
 			if (dict.TryGetValue(props, out var info))
 				return info;
+#pragma warning disable 0618 // Type or member is obsolete
 			var ft = new FormattedText("Xg ", props.CultureInfo, FlowDirection.LeftToRight, props.Typeface, props.FontRenderingEmSize, props.ForegroundBrush, null, textFormattingMode);
+#pragma warning restore 0618 // Type or member is obsolete
 			info = new Info(ft);
 			dict.Add(props, info);
 			return info;

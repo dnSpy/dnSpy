@@ -3,7 +3,7 @@
 		"System.ValueTuple": "4.4.0"
 	},
 	"frameworks": {
-		"net46": { }
+		"net462": { }
 	},
 	"runtimes": {
 		"win": { }

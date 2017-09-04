@@ -8,7 +8,7 @@
 		"Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime": "15.0.25726-Preview5"
 	},
 	"frameworks": {
-		"net46": { }
+		"net462": { }
 	},
 	"runtimes": {
 		"win": { }

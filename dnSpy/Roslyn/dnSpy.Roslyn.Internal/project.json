@@ -5,7 +5,7 @@
 		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.3.2"
 	},
 	"frameworks": {
-		"net46": { }
+		"net462": { }
 	},
 	"runtimes": {
 		"win": { }

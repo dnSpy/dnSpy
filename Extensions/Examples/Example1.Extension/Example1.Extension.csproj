@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Example1.Extension</RootNamespace>
     <AssemblyName>Example1.Extension.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>

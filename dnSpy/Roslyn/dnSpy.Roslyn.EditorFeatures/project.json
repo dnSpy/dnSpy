@@ -6,7 +6,7 @@
 		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.26201"
 	},
 	"frameworks": {
-		"net46": { }
+		"net462": { }
 	},
 	"runtimes": {
 		"win": { }

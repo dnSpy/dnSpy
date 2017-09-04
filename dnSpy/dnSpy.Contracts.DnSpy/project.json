@@ -7,7 +7,7 @@
 		"Ookii.Dialogs": "1.0.0"
 	},
 	"frameworks": {
-		"net46": { }
+		"net462": { }
 	},
 	"runtimes": {
 		"win": { }
