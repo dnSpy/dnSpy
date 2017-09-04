@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="getMetadata">Called to provide the metadata</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) =>
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="getMetadata">Called to provide the metadata</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateSyntheticAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) =>
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="getMetadata">Called to provide the metadata</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <param name="isSynthetic">true if it's a synthetic assembly; it's not loaded in the debugged process</param>
 		/// <param name="addAssembly">true if the assembly should be added to the AppDomain</param>
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateAssembly(string filename, bool isFileLayout = true, bool isInMemory = false, bool isDynamic = false, string fullyQualifiedName = null, string assemblyLocation = null) {
@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateAssembly(IntPtr address, uint size, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) =>
@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateAssembly(byte[] assemblyBytes, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) {
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="dispatcher">Dispatcher to use when accessing <paramref name="comMetadata"/></param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateAssembly(object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation = null) {
@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="getMetadata">Called to provide the metadata</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
 		public abstract DmdModule CreateModule(DmdAssembly assembly, Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName);
 
@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
 		public DmdModule CreateModule(DmdAssembly assembly, string filename, bool isFileLayout = true, bool isInMemory = false, bool isDynamic = false, string fullyQualifiedName = null) {
 			if (filename == null)
@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
 		public DmdModule CreateModule(DmdAssembly assembly, IntPtr address, uint size, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName) =>
 			CreateModule(assembly, () => new DmdLazyMetadataBytesPtr(address, size, isFileLayout), isInMemory, isDynamic, fullyQualifiedName);
@@ -195,7 +195,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isFileLayout">true if file layout, false if memory layout</param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
 		public DmdModule CreateModule(DmdAssembly assembly, byte[] moduleBytes, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
 			if (moduleBytes == null)
@@ -212,7 +212,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="dispatcher">Dispatcher to use when accessing <paramref name="comMetadata"/></param>
 		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
-		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>)</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
 		public DmdModule CreateModule(DmdAssembly assembly, object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
 			if (comMetadata == null)
@@ -236,6 +236,29 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="assembly">Assembly to remove</param>
 		public abstract void Remove(DmdAssembly assembly);
+
+		/// <summary>
+		/// Adds an assembly. It gets removed when the return value's <see cref="IDisposable.Dispose"/> method gets called
+		/// </summary>
+		/// <param name="assembly">Assembly to add</param>
+		/// <returns></returns>
+		public TemporaryAssemblyDisposable AddTemporaryAssembly(DmdAssembly assembly) => new TemporaryAssemblyDisposable(assembly);
+
+		/// <summary>
+		/// Adds and removes an assembly
+		/// </summary>
+		public struct TemporaryAssemblyDisposable : IDisposable {
+			readonly DmdAssembly assembly;
+			internal TemporaryAssemblyDisposable(DmdAssembly assembly) {
+				this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
+				assembly.AppDomain.Add(assembly);
+			}
+
+			/// <summary>
+			/// Dispose()
+			/// </summary>
+			public void Dispose() => assembly.AppDomain.Remove(assembly);
+		}
 
 		/// <summary>
 		/// Gets all assemblies
