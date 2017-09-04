@@ -968,6 +968,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				types[i] = module.ResolveType((int)e.Tokens[i], DmdResolveOptions.None) as DmdTypeDef;
 
 			lock (moduleTypeLockObj) {
+				((DmdModuleImpl)module).DynamicModuleVersionInternal++;
 				Dictionary<DmdType, DmdTypeDef> dict1 = null, dict2 = null;
 				toModuleTypeDictIgnoreCase?.TryGetValue(module, out dict1);
 				toModuleTypeDict?.TryGetValue(module, out dict2);

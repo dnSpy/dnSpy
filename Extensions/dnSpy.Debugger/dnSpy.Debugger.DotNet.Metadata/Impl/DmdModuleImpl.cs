@@ -39,6 +39,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			get => scopeNameOverride ?? metadataReader.ModuleScopeName;
 			set => scopeNameOverride = value;
 		}
+		public override int DynamicModuleVersion => DynamicModuleVersionInternal;
+		internal volatile int DynamicModuleVersionInternal;
 
 		internal DmdMetadataReader MetadataReader => metadataReader;
 		readonly DmdAssemblyImpl assembly;

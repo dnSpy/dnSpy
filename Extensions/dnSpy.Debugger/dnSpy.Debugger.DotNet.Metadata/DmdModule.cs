@@ -102,6 +102,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract string ScopeName { get; set; }
 
 		/// <summary>
+		/// Gets a dynamic module's version number. It gets incremented each time a new type gets added to the dynamic module.
+		/// </summary>
+		public abstract int DynamicModuleVersion { get; }
+
+		/// <summary>
 		/// Gets the module name
 		/// </summary>
 		public string Name {
