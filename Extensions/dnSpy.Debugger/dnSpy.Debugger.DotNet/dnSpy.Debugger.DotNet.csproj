@@ -63,6 +63,7 @@
     <Compile Include="Code\TextEditor\DbgTextViewCodeLocationProviderImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetLanguageServiceImpl.cs" />
+    <Compile Include="Evaluation\Engine\DbgDotNetRuntimeUtils.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineAutosProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineExceptionsProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineExpressionEvaluatorImpl.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Evaluation\Engine\DbgEngineReturnValuesProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineValueFormatterImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineValueNodeFactoryImpl.cs" />
+    <Compile Include="Evaluation\Engine\DbgModuleReferenceProvider.cs" />
     <Compile Include="Evaluation\Engine\DecompilerOutputImpl.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />
@@ -136,6 +138,10 @@
     <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj">
+      <Project>{FCD8913D-85A0-479E-9689-70FEA52C6DCB}</Project>
+      <Name>dnSpy.Debugger.DotNet.Metadata</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

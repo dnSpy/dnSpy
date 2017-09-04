@@ -18,30 +18,18 @@
 */
 
 using System;
+using System.Diagnostics;
+using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
-	/// <summary>
-	/// A reference to module metadata used by .NET expression compilers
-	/// </summary>
-	public abstract class DbgModuleReference : DbgObject {
-		/// <summary>
-		/// Gets the address of the .NET metadata (BSJB header)
-		/// </summary>
-		public abstract IntPtr MetadataAddress { get; }
-
-		/// <summary>
-		/// Gets the size of the metadata
-		/// </summary>
-		public abstract uint MetadataSize { get; }
-
-		/// <summary>
-		/// Gets the module version id
-		/// </summary>
-		public abstract Guid ModuleVersionId { get; }
-
-		/// <summary>
-		/// Gets the module generation id
-		/// </summary>
-		public abstract Guid GenerationId { get; }
+namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+	static class DbgDotNetRuntimeUtils {
+		public static IDbgDotNetRuntime GetDotNetRuntime(this DbgRuntime runtime) {
+			var dnRuntime = runtime.InternalRuntime as IDbgDotNetRuntime;
+			Debug.Assert(dnRuntime != null);
+			if (dnRuntime == null)
+				throw new InvalidOperationException(nameof(DbgRuntime.InternalRuntime) + " must implement " + nameof(IDbgDotNetRuntime));
+			return dnRuntime;
+		}
 	}
 }
