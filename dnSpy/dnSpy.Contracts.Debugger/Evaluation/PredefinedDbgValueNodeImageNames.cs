@@ -36,6 +36,12 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string Array = nameof(Array);
 		public const string ArrayElement = nameof(ArrayElement);
 		public const string Exception = nameof(Exception);
+		public const string This = nameof(This);
+		public const string TypeVariables = nameof(TypeVariables);
+		public const string StowedException = nameof(StowedException);
+		public const string ObjectId = nameof(ObjectId);
+		public const string ObjectAddress = nameof(ObjectAddress);
+		public const string EEVariable = nameof(EEVariable);
 		public const string ExceptionInternal = nameof(ExceptionInternal);
 		public const string ExceptionPrivate = nameof(ExceptionPrivate);
 		public const string ExceptionProtected = nameof(ExceptionProtected);
