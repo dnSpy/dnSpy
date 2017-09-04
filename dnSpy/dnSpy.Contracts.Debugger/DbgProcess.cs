@@ -57,6 +57,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract int Bitness { get; }
 
 		/// <summary>
+		/// Gets the size of a pointer
+		/// </summary>
+		public int PointerSize => Bitness / 8;
+
+		/// <summary>
 		/// Machine
 		/// </summary>
 		public abstract DbgMachine Machine { get; }
