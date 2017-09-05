@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
 
@@ -33,28 +34,31 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// Compiles expressions
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="aliases">Aliases</param>
 		/// <param name="expressions">Expressions</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetCompilationResult CompileExpressions(DbgEvaluationContext context, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string[] expressions, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetCompilationResult CompileExpressions(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string[] expressions, DbgEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates an assembly that is used to get all the locals
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetCompilationResult CompileGetLocals(DbgEvaluationContext context, DbgModuleReference[] references, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetCompilationResult CompileGetLocals(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Compiles an assignment
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="aliases">Aliases</param>
 		/// <param name="target">Target expression (lhs)</param>
@@ -62,7 +66,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetCompilationResult CompileAssignment(DbgEvaluationContext context, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetCompilationResult CompileAssignment(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
 	}
 
 	/// <summary>Metadata</summary>

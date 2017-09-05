@@ -18,23 +18,38 @@
 */
 
 using System;
+using System.Collections.Immutable;
 using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.Evaluation;
+using Microsoft.CodeAnalysis.ExpressionEvaluator;
+using Microsoft.CodeAnalysis.VisualBasic.ExpressionEvaluator;
 
-namespace dnSpy.Roslyn.Shared.Debugger.ExpressionEvaluator {
+namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 	[ExportDbgDotNetExpressionCompiler(DbgDotNetLanguageGuids.VisualBasic, PredefinedDbgLanguageNames.VisualBasic, "Visual Basic", PredefinedDecompilerGuids.VisualBasic)]
-	sealed class VisualBasicExpressionCompiler : DbgDotNetExpressionCompiler {
-		public override DbgDotNetCompilationResult CompileAssignment(DbgEvaluationContext context, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+	sealed class VisualBasicExpressionCompiler : LanguageExpressionCompiler {
+		sealed class VisualBasicEvalContextState : EvalContextState {
+			public VisualBasicMetadataContext MetadataContext;
+		}
+
+		public override DbgDotNetCompilationResult CompileAssignment(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override DbgDotNetCompilationResult CompileGetLocals(DbgEvaluationContext context, DbgModuleReference[] references, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			throw new NotImplementedException();//TODO:
+		public override DbgDotNetCompilationResult CompileGetLocals(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+			GetCompileGetLocalsState<VisualBasicEvalContextState>(context, frame, references, out var langDebugInfo, out var method, out var localVarSigTok, out var state, out var metadataBlocks, out var methodVersion);
+
+			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo, calcDefaultNamespaceName: true);
+			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, null, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, method.MDToken.ToInt32(), methodVersion, langDebugInfo.ILOffset, localVarSigTok);
+			state.MetadataContext = new VisualBasicMetadataContext(metadataBlocks, evalCtx);
+
+			var asmBytes = evalCtx.CompileGetLocals(false, ImmutableArray<Alias>.Empty, out var localsInfo, out var typeName);
+			return CreateCompilationResult(asmBytes, typeName, localsInfo);
 		}
 
-		public override DbgDotNetCompilationResult CompileExpressions(DbgEvaluationContext context, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string[] expressions, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgDotNetCompilationResult CompileExpressions(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string[] expressions, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			throw new NotImplementedException();//TODO:
 		}
 	}

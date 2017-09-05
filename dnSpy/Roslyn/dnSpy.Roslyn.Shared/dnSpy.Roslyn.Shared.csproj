@@ -47,6 +47,8 @@
     <Compile Include="Compiler\RoslynLanguageCompiler.cs" />
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
     <Compile Include="Debugger\ExpressionCompiler\CSharpExpressionCompiler.cs" />
+    <Compile Include="Debugger\ExpressionCompiler\LanguageExpressionCompiler.cs" />
+    <Compile Include="Debugger\ExpressionCompiler\RoslynExpressionCompilerMethods.cs" />
     <Compile Include="Debugger\ExpressionCompiler\VisualBasicExpressionCompiler.cs" />
     <Compile Include="Debugger\FilterExpressionEvaluator\DbgFilterExpressionEvaluatorImpl.cs" />
     <Compile Include="Debugger\FilterExpressionEvaluator\EvalDelegateCreator.cs" />
@@ -156,6 +158,18 @@
     <ProjectReference Include="..\dnSpy.Roslyn.VisualBasic.Internal\dnSpy.Roslyn.VisualBasic.Internal.vbproj">
       <Project>{8b774e77-c956-4abc-bbfe-8756cb4111c8}</Project>
       <Name>dnSpy.Roslyn.VisualBasic.Internal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Roslyn.ExpressionEvaluator\Core\ExpressionCompiler\ExpressionCompiler.csproj">
+      <Project>{255C3FEC-91B5-4E11-AAF8-9B102EA57634}</Project>
+      <Name>ExpressionCompiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Roslyn.ExpressionEvaluator\CSharp\CSharpExpressionCompiler\CSharpExpressionCompiler.csproj">
+      <Project>{dad4c898-6cff-485e-ab51-8d7e56f4c672}</Project>
+      <Name>CSharpExpressionCompiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Roslyn.ExpressionEvaluator\VisualBasic\BasicExpressionCompiler\BasicExpressionCompiler.vbproj">
+      <Project>{4b38bfcf-4253-48e7-8ad2-861ae12f41df}</Project>
+      <Name>BasicExpressionCompiler</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

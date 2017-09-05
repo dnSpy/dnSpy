@@ -184,6 +184,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				foreach (var modInfo in asmInfo.Modules) {
 					if (modInfo.Module.IsDynamic) {
 						//TODO: Re-generate the dynamic module MD if it has changed since last time. Store this info in the DmdModule/DbgModule
+						Debug.Fail("NYI");
 					}
 					else {
 						var module = modInfo.Module.GetDebuggerModule();
