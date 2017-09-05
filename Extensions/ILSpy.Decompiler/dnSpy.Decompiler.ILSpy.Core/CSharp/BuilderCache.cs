@@ -43,8 +43,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		ModuleDef lastModule;
 		bool lastModuleResult;
 
-		public AstBuilderState() {
-			AstBuilder = new AstBuilder(new DecompilerContext(null, null, true));
+		public AstBuilderState(int settingsVersion) {
+			AstBuilder = new AstBuilder(new DecompilerContext(settingsVersion, null, null, true));
 			XmlDoc_StringBuilder = new StringBuilder();
 			hasXmlDocFile = new Dictionary<ModuleDef, bool>();
 		}
@@ -80,9 +80,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 	sealed class BuilderCache {
 		readonly ThreadSafeObjectPool<AstBuilderState> astBuilderStatePool;
 
-		public BuilderCache() => astBuilderStatePool = new ThreadSafeObjectPool<AstBuilderState>(Environment.ProcessorCount, createAstBuilderState, resetAstBuilderState);
+		public BuilderCache(int settingsVersion) => astBuilderStatePool = new ThreadSafeObjectPool<AstBuilderState>(Environment.ProcessorCount, () => new AstBuilderState(settingsVersion), resetAstBuilderState);
 
-		static readonly Func<AstBuilderState> createAstBuilderState = () => new AstBuilderState();
 		static readonly Action<AstBuilderState> resetAstBuilderState = abs => abs.Reset();
 
 		public AstBuilderState AllocateAstBuilderState() => astBuilderStatePool.Allocate();

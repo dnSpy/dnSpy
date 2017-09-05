@@ -145,7 +145,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 		}
 
 		Dictionary<int, Action<XamlContext, XElement>> ExtractConnectionId(XamlContext ctx, MethodDef method) {
-			var context = new DecompilerContext(method.Module) {
+			var context = new DecompilerContext(0, method.Module) {
 				CurrentType = method.DeclaringType,
 				CurrentMethod = method,
 				CancellationToken = ctx.CancellationToken

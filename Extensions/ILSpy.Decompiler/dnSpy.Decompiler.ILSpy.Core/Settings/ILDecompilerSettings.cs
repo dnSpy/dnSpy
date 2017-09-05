@@ -71,8 +71,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			};
 		}
 
-		protected override bool EqualsCore(object obj) =>
+		public override bool Equals(object obj) =>
 			obj is ILDecompilerSettings && ilSettings.Equals(((ILDecompilerSettings)obj).ilSettings);
-		protected override int GetHashCodeCore() => ilSettings.GetHashCode();
+		public override int GetHashCode() => ilSettings.GetHashCode();
 	}
 }

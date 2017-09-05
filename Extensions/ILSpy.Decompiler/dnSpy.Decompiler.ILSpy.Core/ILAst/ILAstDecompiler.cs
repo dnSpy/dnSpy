@@ -63,6 +63,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		ILAstOptimizationStep? abortBeforeStep;
 
 		public override DecompilerSettingsBase Settings { get; }
+		const int settingsVersion = 1;
 
 		ILAstDecompiler(ILAstDecompilerSettings langSettings, double orderUI) {
 			Settings = langSettings;
@@ -91,7 +92,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 			ILAstBuilder astBuilder = new ILAstBuilder();
 			ILBlock ilMethod = new ILBlock(CodeBracesRangeFlags.MethodBraces);
-			DecompilerContext context = new DecompilerContext(method.Module, MetadataTextColorProvider) {
+			DecompilerContext context = new DecompilerContext(settingsVersion, method.Module, MetadataTextColorProvider) {
 				CurrentType = method.DeclaringType,
 				CurrentMethod = method,
 				CalculateBinSpans = ctx.CalculateBinSpans,
@@ -140,7 +141,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 
 			var localVariables = new HashSet<ILVariable>(GetVariables(ilMethod));
-			var builder = new MethodDebugInfoBuilder(method, CreateSourceLocals(localVariables));
+			var builder = new MethodDebugInfoBuilder(settingsVersion, method, CreateSourceLocals(localVariables));
 			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output, builder);
 				if (!node.WritesNewLine)

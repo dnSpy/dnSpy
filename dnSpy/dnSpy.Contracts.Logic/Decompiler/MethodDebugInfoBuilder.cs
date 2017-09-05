@@ -44,11 +44,15 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public int? EndPosition { get; set; }
 
+		readonly int decompilerOptionsVersion;
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
 		/// <param name="method">Method</param>
-		public MethodDebugInfoBuilder(MethodDef method) {
+		public MethodDebugInfoBuilder(int decompilerOptionsVersion, MethodDef method) {
+			this.decompilerOptionsVersion = decompilerOptionsVersion;
 			this.method = method ?? throw new ArgumentNullException(nameof(method));
 			statements = new List<SourceStatement>();
 			Scope = new MethodDebugScopeBuilder();
@@ -58,10 +62,11 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
 		/// <param name="method">Method</param>
 		/// <param name="locals">Locals</param>
-		public MethodDebugInfoBuilder(MethodDef method, SourceLocal[] locals)
-			: this(method) => Scope.Locals.AddRange(locals);
+		public MethodDebugInfoBuilder(int decompilerOptionsVersion, MethodDef method, SourceLocal[] locals)
+			: this(decompilerOptionsVersion, method) => Scope.Locals.AddRange(locals);
 
 		/// <summary>
 		/// Adds a <see cref="SourceStatement"/>
@@ -79,7 +84,7 @@ namespace dnSpy.Contracts.Decompiler {
 				methodSpan = TextSpan.FromBounds(StartPosition.Value, EndPosition.Value);
 			else
 				methodSpan = null;
-			return new MethodDebugInfo(method, statements.ToArray(), Scope.ToScope(), methodSpan);
+			return new MethodDebugInfo(decompilerOptionsVersion, method, statements.ToArray(), Scope.ToScope(), methodSpan);
 		}
 	}
 }

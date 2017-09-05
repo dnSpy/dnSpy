@@ -25,12 +25,18 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Method debug info used by a .NET debugger language. An instance of this class is attached to
 	/// a <see cref="DbgEvaluationContext"/>, see <see cref="DbgLanguageDebugInfoExtensions.TryGetLanguageDebugInfo(DbgEvaluationContext)"/>
+	/// and <see cref="DbgLanguageDebugInfoExtensions.GetLanguageDebugInfo(DbgEvaluationContext)"/>
 	/// </summary>
 	public sealed class DbgLanguageDebugInfo {
 		/// <summary>
 		/// Gets the method debug info
 		/// </summary>
 		public MethodDebugInfo MethodDebugInfo { get; }
+
+		/// <summary>
+		/// Gets the method version number, a 1-based number
+		/// </summary>
+		public int MethodVersion { get; }
 
 		/// <summary>
 		/// Gets the IL offset
@@ -41,9 +47,13 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Constructor
 		/// </summary>
 		/// <param name="methodDebugInfo">Method debug info</param>
+		/// <param name="methodVersion">Method version number, a 1-based number</param>
 		/// <param name="ilOffset">IL offset</param>
-		public DbgLanguageDebugInfo(MethodDebugInfo methodDebugInfo, uint ilOffset) {
+		public DbgLanguageDebugInfo(MethodDebugInfo methodDebugInfo, int methodVersion, uint ilOffset) {
+			if (methodVersion < 1)
+				throw new ArgumentOutOfRangeException(nameof(methodVersion));
 			MethodDebugInfo = methodDebugInfo ?? throw new ArgumentNullException(nameof(methodDebugInfo));
+			MethodVersion = methodVersion;
 			ILOffset = ilOffset;
 		}
 	}
@@ -61,6 +71,17 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 			if (context.TryGetData<DbgLanguageDebugInfo>(out var info))
 				return info;
 			return null;
+		}
+
+		/// <summary>
+		/// Gets the debug info and throws if there is none
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <returns></returns>
+		public static DbgLanguageDebugInfo GetLanguageDebugInfo(this DbgEvaluationContext context) {
+			if (context.TryGetData<DbgLanguageDebugInfo>(out var info))
+				return info;
+			throw new InvalidOperationException();
 		}
 
 		/// <summary>

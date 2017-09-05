@@ -35,13 +35,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			}
 
 			if (member is PropertyDef prop) {
-				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken(), null));
+				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(0, new System.Threading.CancellationToken(), null));
 				dis.DisassembleProperty(prop, false);
 				return true;
 			}
 
 			if (member is EventDef evt) {
-				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken(), null));
+				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(0, new System.Threading.CancellationToken(), null));
 				dis.DisassembleEvent(evt, false);
 				return true;
 			}

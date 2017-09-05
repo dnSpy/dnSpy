@@ -41,8 +41,8 @@ namespace dnSpy.Decompiler {
 				get { yield break; }
 			}
 
-			protected override bool EqualsCore(object obj) => obj is DummySettings;
-			protected override int GetHashCodeCore() => 0;
+			public override bool Equals(object obj) => obj is DummySettings;
+			public override int GetHashCode() => 0;
 		}
 
 		public DummyDecompiler() => Settings = new DummySettings();

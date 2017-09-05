@@ -26,7 +26,6 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
@@ -123,7 +122,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken) {
-			Debug.Assert(context.Runtime.InternalRuntime is IDbgDotNetRuntime, nameof(context.Runtime.InternalRuntime) + " must implement " + nameof(IDbgDotNetRuntime));
+			Debug.Assert(context.Runtime.GetDotNetRuntime() != null);
 			var loc = location as IDbgDotNetCodeLocation;
 			if (loc == null)
 				throw new ArgumentException(nameof(location) + " must implement " + nameof(IDbgDotNetCodeLocation));
@@ -199,7 +198,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			Debug.Assert(methodDebugInfo != null);
 			if (methodDebugInfo == null)
 				return null;
-			return new DbgLanguageDebugInfo(methodDebugInfo, location.Offset);
+
+			// We don't support EnC so the version is always 1
+			const int methodVersion = 1;
+			return new DbgLanguageDebugInfo(methodDebugInfo, methodVersion, location.Offset);
 		}
 	}
 }

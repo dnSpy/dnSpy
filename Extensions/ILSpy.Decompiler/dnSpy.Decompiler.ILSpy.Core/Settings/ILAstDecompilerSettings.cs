@@ -35,8 +35,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			get { yield break; }
 		}
 
-		protected override bool EqualsCore(object obj) => obj is ILAstDecompilerSettings;
-		protected override int GetHashCodeCore() => 0;
+		public override bool Equals(object obj) => obj is ILAstDecompilerSettings;
+		public override int GetHashCode() => 0;
 	}
 }
 #endif

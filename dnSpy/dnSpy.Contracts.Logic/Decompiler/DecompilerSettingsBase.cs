@@ -70,25 +70,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj">Other object, may be null</param>
 		/// <returns></returns>
-		protected abstract bool EqualsCore(object obj);
+		public abstract override bool Equals(object obj);
 
 		/// <summary>
 		/// Gets the hash code of this instance
 		/// </summary>
 		/// <returns></returns>
-		protected abstract int GetHashCodeCore();
-
-		/// <summary>
-		/// Returns true if this instance equals <paramref name="obj"/>
-		/// </summary>
-		/// <param name="obj">Other object, may be null</param>
-		/// <returns></returns>
-		public sealed override bool Equals(object obj) => EqualsCore(obj);
-
-		/// <summary>
-		/// Gets the hash code of this instance
-		/// </summary>
-		/// <returns></returns>
-		public sealed override int GetHashCode() => GetHashCodeCore();
+		public abstract override int GetHashCode();
 	}
 }

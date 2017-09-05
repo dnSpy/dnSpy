@@ -83,7 +83,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			CreateReflectionDisassembler(output, ctx, member.Module);
 
 		ReflectionDisassembler CreateReflectionDisassembler(IDecompilerOutput output, DecompilationContext ctx, ModuleDef ownerModule) {
-			var disOpts = new DisassemblerOptions(ctx.CancellationToken, ownerModule);
+			var disOpts = new DisassemblerOptions(langSettings.Settings.SettingsVersion, ctx.CancellationToken, ownerModule);
 			if (langSettings.Settings.ShowILComments)
 				disOpts.GetOpCodeDocumentation = ILLanguageHelper.GetOpCodeDocumentation;
 			var sb = new StringBuilder();

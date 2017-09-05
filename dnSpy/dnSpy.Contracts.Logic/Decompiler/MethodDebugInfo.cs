@@ -28,6 +28,11 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public sealed class MethodDebugInfo {
 		/// <summary>
+		/// Decompiler options version number
+		/// </summary>
+		public int DecompilerOptionsVersion { get; }
+
+		/// <summary>
 		/// Gets the method
 		/// </summary>
 		public MethodDef Method { get; }
@@ -55,16 +60,18 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
 		/// <param name="method">Method</param>
 		/// <param name="statements">Statements</param>
 		/// <param name="scope">Root scope</param>
 		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
-		public MethodDebugInfo(MethodDef method, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan) {
+		public MethodDebugInfo(int decompilerOptionsVersion, MethodDef method, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan) {
 			if (statements == null)
 				throw new ArgumentNullException(nameof(statements));
 			Method = method ?? throw new ArgumentNullException(nameof(method));
 			if (statements.Length > 1)
 				Array.Sort(statements, SourceStatement.SpanStartComparer);
+			DecompilerOptionsVersion = decompilerOptionsVersion;
 			Statements = statements;
 			Scope = scope ?? throw new ArgumentNullException(nameof(scope));
 			Span = methodSpan ?? CalculateMethodSpan(statements) ?? new TextSpan(0, 0);

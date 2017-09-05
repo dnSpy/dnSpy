@@ -64,6 +64,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		string uniqueNameUI = "C#";
 		Guid uniqueGuid = DecompilerConstants.LANGUAGE_CSHARP_ILSPY;
 		bool showAllMembers = false;
+		readonly Func<BuilderCache> createBuilderCache;
 		Predicate<IAstTransform> transformAbortCondition = null;
 
 		public override DecompilerSettingsBase Settings => langSettings;
@@ -71,12 +72,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 
 		public CSharpDecompiler(CSharpVBDecompilerSettings langSettings, double orderUI) {
 			this.langSettings = langSettings;
+			createBuilderCache = () => new BuilderCache(this.langSettings.Settings.SettingsVersion);
 			OrderUI = orderUI;
 		}
 
 #if DEBUG
 		internal static IEnumerable<CSharpDecompiler> GetDebugDecompilers(CSharpVBDecompilerSettings langSettings) {
-			DecompilerContext context = new DecompilerContext(new ModuleDefUser("dummy"), CSharpMetadataTextColorProvider.Instance);
+			DecompilerContext context = new DecompilerContext(0, new ModuleDefUser("dummy"), CSharpMetadataTextColorProvider.Instance);
 			string lastTransformName = "no transforms";
 			double orderUI = DecompilerConstants.CSHARP_ILSPY_DEBUG_ORDERUI;
 			uint id = 0xBF67AF3F;
@@ -312,7 +314,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				settings = settings.Clone();
 				settings.UsingDeclarations = false;
 			}
-			var cache = ctx.GetOrCreate<BuilderCache>();
+			var cache = ctx.GetOrCreate(createBuilderCache);
 			var state = new BuilderState(ctx, cache, MetadataTextColorProvider);
 			state.AstBuilder.Context.CurrentModule = currentModule;
 			state.AstBuilder.Context.CancellationToken = ctx.CancellationToken;
@@ -362,7 +364,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				if (module == null && sig.OwnerMethod != null && sig.OwnerMethod.DeclaringType != null)
 					module = sig.OwnerMethod.DeclaringType.Module;
 			}
-			var ctx = new DecompilerContext(type.Module, MetadataTextColorProvider);
+			var ctx = new DecompilerContext(langSettings.Settings.SettingsVersion, type.Module, MetadataTextColorProvider);
 			astType.AcceptVisitor(new CSharpOutputVisitor(new TextTokenWriter(output, ctx), FormattingOptionsFactory.CreateAllman()));
 		}
 

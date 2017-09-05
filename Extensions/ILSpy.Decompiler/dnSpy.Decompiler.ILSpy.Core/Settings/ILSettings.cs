@@ -17,11 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Threading;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 	class ILSettings : ViewModelBase {
 		protected virtual void OnModified() { }
+
+		void OptionsChanged() {
+			Interlocked.Increment(ref settingsVersion);
+			OnModified();
+		}
+
+		public int SettingsVersion => settingsVersion;
+		volatile int settingsVersion;
 
 		public bool ShowILComments {
 			get { return showILComments; }
@@ -29,7 +38,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (showILComments != value) {
 					showILComments = value;
 					OnPropertyChanged(nameof(ShowILComments));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
@@ -41,7 +50,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (showXmlDocumentation != value) {
 					showXmlDocumentation = value;
 					OnPropertyChanged(nameof(ShowXmlDocumentation));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
@@ -53,7 +62,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (showTokenAndRvaComments != value) {
 					showTokenAndRvaComments = value;
 					OnPropertyChanged(nameof(ShowTokenAndRvaComments));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
@@ -65,7 +74,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (showILBytes != value) {
 					showILBytes = value;
 					OnPropertyChanged(nameof(ShowILBytes));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
@@ -77,7 +86,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (sortMembers != value) {
 					sortMembers = value;
 					OnPropertyChanged(nameof(SortMembers));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
@@ -89,7 +98,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (showPdbInfo != value) {
 					showPdbInfo = value;
 					OnPropertyChanged(nameof(ShowPdbInfo));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
