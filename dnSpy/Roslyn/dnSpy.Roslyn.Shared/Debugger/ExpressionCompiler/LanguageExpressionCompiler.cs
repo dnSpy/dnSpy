@@ -55,7 +55,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 		}
 
 		protected void GetCompileGetLocalsState<T>(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, out DbgLanguageDebugInfo langDebugInfo, out MethodDef method, out int localVarSigTok, out T state, out ImmutableArray<MetadataBlock> metadataBlocks, out int methodVersion) where T : EvalContextState, new() {
-			langDebugInfo = context.TryGetLanguageDebugInfo() ?? throw new InvalidOperationException();
+			langDebugInfo = context.GetLanguageDebugInfo();
 			method = langDebugInfo.MethodDebugInfo.Method;
 			localVarSigTok = (int)(method.Body?.LocalVarSigTok ?? 0);
 
@@ -69,7 +69,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				state.LastMetadataBlocks = metadataBlocks;
 			}
 
-			methodVersion = 1;
+			methodVersion = langDebugInfo.MethodVersion;
 		}
 
 		protected GetMethodDebugInfo CreateGetMethodDebugInfo(EvalContextState evalContextState, DbgLanguageDebugInfo langDebugInfo, bool calcDefaultNamespaceName) {
@@ -160,7 +160,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			return ImmutableArray.Create(builder1.ToImmutable(), builder2.ToImmutable());
 		}
 
-		protected DbgDotNetCompilationResult CreateCompilationResult(byte[] assembly, string typeName, DSEELocalAndMethod[] infos) {
+		protected DbgDotNetCompilationResult CreateCompilationResult(byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string errorMessage) {
+			Debug.Assert((assembly == null) == (errorMessage != null));
+
+			if (errorMessage != null)
+				return new DbgDotNetCompilationResult(errorMessage);
+
 			var compiledExpressions = new DbgDotNetCompiledExpressionResult[infos.Length];
 			int w = 0;
 			for (int i = 0; i < infos.Length; i++) {
@@ -234,7 +239,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				else
 					customTypeInfo = null;
 
-				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo);
+				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo, info.Index);
 			}
 			if (compiledExpressions.Length != w)
 				Array.Resize(ref compiledExpressions, w);

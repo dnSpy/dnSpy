@@ -45,8 +45,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, null, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, method.MDToken.ToInt32(), methodVersion, langDebugInfo.ILOffset, localVarSigTok);
 			state.MetadataContext = new VisualBasicMetadataContext(metadataBlocks, evalCtx);
 
-			var asmBytes = evalCtx.CompileGetLocals(false, ImmutableArray<Alias>.Empty, out var localsInfo, out var typeName);
-			return CreateCompilationResult(asmBytes, typeName, localsInfo);
+			var asmBytes = evalCtx.CompileGetLocals(false, ImmutableArray<Alias>.Empty, out var localsInfo, out var typeName, out var errorMessage);
+			return CreateCompilationResult(asmBytes, typeName, localsInfo, errorMessage);
 		}
 
 		public override DbgDotNetCompilationResult CompileExpressions(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string[] expressions, DbgEvaluationOptions options, CancellationToken cancellationToken) {

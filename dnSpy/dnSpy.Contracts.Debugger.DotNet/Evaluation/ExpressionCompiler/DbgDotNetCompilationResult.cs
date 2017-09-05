@@ -29,14 +29,34 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 	/// </summary>
 	public struct DbgDotNetCompilationResult {
 		/// <summary>
-		/// Gets the .NET assembly bytes
+		/// true if it has an error message (<see cref="ErrorMessage"/>)
+		/// </summary>
+		public bool IsError => ErrorMessage != null;
+
+		/// <summary>
+		/// Gets the error message or null if there was no error
+		/// </summary>
+		public string ErrorMessage { get; }
+
+		/// <summary>
+		/// Gets the .NET assembly bytes or null if there was an error (<see cref="ErrorMessage"/>)
 		/// </summary>
 		public byte[] Assembly { get; }
 
 		/// <summary>
-		/// Gets the result of all compiled expressions
+		/// Gets the result of all compiled expressions or null if there was an error (<see cref="ErrorMessage"/>)
 		/// </summary>
 		public DbgDotNetCompiledExpressionResult[] CompiledExpressions { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="errorMessage">Error message</param>
+		public DbgDotNetCompilationResult(string errorMessage) {
+			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
+			Assembly = null;
+			CompiledExpressions = null;
+		}
 
 		/// <summary>
 		/// Constructor
@@ -44,6 +64,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="assembly">.NET assembly bytes</param>
 		/// <param name="compiledExpressions">Compiled expressions info</param>
 		public DbgDotNetCompilationResult(byte[] assembly, DbgDotNetCompiledExpressionResult[] compiledExpressions) {
+			ErrorMessage = null;
 			Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 			CompiledExpressions = compiledExpressions ?? throw new ArgumentNullException(nameof(compiledExpressions));
 		}
@@ -119,6 +140,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		public DbgDotNetCustomTypeInfo CustomTypeInfo;
 
 		/// <summary>
+		/// Parameter/local index or -1 if unknown
+		/// </summary>
+		public int Index;
+
+		/// <summary>
 		/// Creates a successful compiled expression with no error
 		/// </summary>
 		/// <param name="typeName">Name of type that contains the method to evaluate</param>
@@ -128,8 +154,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="flags">Evaluation result flags</param>
 		/// <param name="imageName">Image, see <see cref="PredefinedDbgValueNodeImageNames"/></param>
 		/// <param name="customTypeInfo">Optional custom type info known by the language expression compiler and the language value formatter</param>
+		/// <param name="index">Parameter/local index or -1 if unknown</param>
 		/// <returns></returns>
-		public static DbgDotNetCompiledExpressionResult Create(string typeName, string methodName, string expression, DbgDotNetText name, DbgEvaluationResultFlags flags, string imageName, DbgDotNetCustomTypeInfo customTypeInfo = null) {
+		public static DbgDotNetCompiledExpressionResult Create(string typeName, string methodName, string expression, DbgDotNetText name, DbgEvaluationResultFlags flags, string imageName, DbgDotNetCustomTypeInfo customTypeInfo = null, int index = -1) {
 			if (name.Parts == null)
 				throw new ArgumentException();
 			return new DbgDotNetCompiledExpressionResult {
@@ -140,6 +167,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 				Flags = flags,
 				ImageName = imageName ?? throw new ArgumentNullException(nameof(imageName)),
 				CustomTypeInfo = customTypeInfo,
+				Index = index,
 			};
 		}
 
