@@ -104,21 +104,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		sealed class RuntimeState {
-			readonly object lockObj = new object();
-			readonly Dictionary<IDecompiler, DecompilerRuntimeState> dict = new Dictionary<IDecompiler, DecompilerRuntimeState>();
-			public DecompilerRuntimeState GetState(IDecompiler decompiler) {
-				lock (lockObj) {
-					if (!dict.TryGetValue(decompiler, out var state))
-						dict.Add(decompiler, state = new DecompilerRuntimeState());
-					return state;
-				}
-			}
-
-			public sealed class DecompilerRuntimeState {
-				public readonly object LockObj = new object();
-				public const int MAX_CACHED_DEBUG_INFOS = 5;
-				public readonly List<(DbgLanguageDebugInfoKey key, DbgLanguageDebugInfo debugInfo)> DebugInfos = new List<(DbgLanguageDebugInfoKey key, DbgLanguageDebugInfo debugInfo)>(MAX_CACHED_DEBUG_INFOS);
-			}
+			public readonly object LockObj = new object();
+			public const int MAX_CACHED_DEBUG_INFOS = 5;
+			public readonly List<(DbgLanguageDebugInfoKey key, DbgLanguageDebugInfo debugInfo)> DebugInfos = new List<(DbgLanguageDebugInfoKey key, DbgLanguageDebugInfo debugInfo)>(MAX_CACHED_DEBUG_INFOS);
 		}
 
 		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken) {
@@ -127,14 +115,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			if (loc == null)
 				throw new ArgumentException(nameof(location) + " must implement " + nameof(IDbgDotNetCodeLocation));
 
-			var state = context.Runtime.GetOrCreateData<RuntimeState>().GetState(decompiler);
+			var state = StateWithKey<RuntimeState>.GetOrCreate(context.Runtime, decompiler);
 			var debugInfo = GetOrCreateDebugInfo(state, loc, cancellationToken);
 			if (debugInfo == null)
 				return;
 			DbgLanguageDebugInfoExtensions.SetLanguageDebugInfo(context, debugInfo);
 		}
 
-		DbgLanguageDebugInfo GetOrCreateDebugInfo(RuntimeState.DecompilerRuntimeState state, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
+		DbgLanguageDebugInfo GetOrCreateDebugInfo(RuntimeState state, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
 			DbgLanguageDebugInfoKey key;
 			if (location.DbgModule is DbgModule dbgModule)
 				key = new DbgLanguageDebugInfoKey(dbgModule, location.Token);
@@ -159,7 +147,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			if (debugInfo == null)
 				return null;
 			lock (state.LockObj) {
-				if (debugInfos.Count == RuntimeState.DecompilerRuntimeState.MAX_CACHED_DEBUG_INFOS)
+				if (debugInfos.Count == RuntimeState.MAX_CACHED_DEBUG_INFOS)
 					debugInfos.RemoveAt(0);
 				debugInfos.Add((key, debugInfo));
 			}
