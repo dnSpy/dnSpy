@@ -109,8 +109,6 @@
     <Compile Include="Engine\DbgEngineRuntimeInfo.cs" />
     <Compile Include="Engine\DbgEngineThread.cs" />
     <Compile Include="Engine\DbgObjectFactory.cs" />
-    <Compile Include="Engine\Evaluation\DbgBaseEngineValueNode.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineErrorValueNode.cs" />
     <Compile Include="Engine\Evaluation\DbgEngineExpressionEvaluator.cs" />
     <Compile Include="Engine\Evaluation\DbgEngineFormatter.cs" />
     <Compile Include="Engine\Evaluation\DbgEngineLanguage.cs" />

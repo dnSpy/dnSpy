@@ -37,14 +37,13 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineValueNodeFactory = engineValueNodeFactory ?? throw new ArgumentNullException(nameof(engineValueNodeFactory));
 		}
 
-		DbgCreateValueNodeResult CreateResult(DbgRuntime runtime, DbgBaseEngineValueNode result) {
-			var valueNode = DbgBaseValueNodeImplFactory.Create(Language, runtime, result);
+		DbgCreateValueNodeResult CreateResult(DbgRuntime runtime, DbgEngineValueNode result) {
+			var valueNode = new DbgValueNodeImpl(Language, runtime, result);
 			runtime.CloseOnContinue(valueNode);
-			bool causesSideEffects = result is DbgEngineErrorValueNode errorNode && errorNode.ErrorMessage == PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects;
-			return new DbgCreateValueNodeResult(valueNode, causesSideEffects);
+			return new DbgCreateValueNodeResult(valueNode, result.CausesSideEffects);
 		}
 
-		DbgValueNode[] CreateResult(DbgRuntime runtime, DbgBaseEngineValueNode[] result, int expectedLength) {
+		DbgValueNode[] CreateResult(DbgRuntime runtime, DbgEngineValueNode[] result, int expectedLength) {
 			if (result.Length != expectedLength)
 				throw new InvalidOperationException();
 			return DbgValueNodeUtils.ToValueNodeArray(Language, runtime, result);

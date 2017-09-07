@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Evaluation {
 
 		public static string GetErrorMessage(string error) {
 			if (error == null)
-				throw new ArgumentNullException(nameof(error));
+				return null;
 			if (toErrorMessage.TryGetValue(error, out var msg))
 				return msg;
 			return error;

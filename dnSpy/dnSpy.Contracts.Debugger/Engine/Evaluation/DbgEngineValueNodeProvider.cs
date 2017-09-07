@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
-	/// Provides <see cref="DbgBaseEngineValueNode"/>s for the locals and autos windows
+	/// Provides <see cref="DbgEngineValueNode"/>s for the locals and autos windows
 	/// </summary>
 	public abstract class DbgEngineValueNodeProvider {
 		/// <summary>
@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgBaseEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets all values
@@ -45,6 +45,6 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken);
+		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 	}
 }

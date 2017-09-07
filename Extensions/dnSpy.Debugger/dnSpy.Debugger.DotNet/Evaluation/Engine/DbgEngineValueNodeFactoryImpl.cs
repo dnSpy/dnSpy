@@ -25,19 +25,19 @@ using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineValueNodeFactoryImpl : DbgEngineValueNodeFactory {
-		public override DbgBaseEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgBaseEngineValueNode> callback, CancellationToken cancellationToken) {
+		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNode> callback, CancellationToken cancellationToken) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override DbgBaseEngineValueNode[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken) {
+		public override void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) {
 			throw new NotImplementedException();//TODO:
 		}
 	}

@@ -24,10 +24,10 @@ using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation {
-	sealed class DbgValueNodeImpl : DbgBaseValueNodeImpl {
+	sealed class DbgValueNodeImpl : DbgValueNode {
 		public override DbgLanguage Language { get; }
 		public override DbgRuntime Runtime { get; }
-		public override string ErrorMessage => null;
+		public override string ErrorMessage => PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(engineValueNode.ErrorMessage);
 		public override DbgValue Value => value;
 		public override bool CanEvaluateExpression => value != null;
 		public override string Expression => engineValueNode.Expression;
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override bool IsReadOnly => engineValueNode.IsReadOnly;
 		public override bool CausesSideEffects => engineValueNode.CausesSideEffects;
 		public override bool? HasChildren => engineValueNode.HasChildren;
-		public override ulong ChildCount => engineValueNode.ChildrenCount;
+		public override ulong ChildCount => engineValueNode.ChildCount;
 
 		readonly DbgEngineValueNode engineValueNode;
 		DbgValueImpl value;
@@ -141,6 +141,8 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(expression));
 			if (IsReadOnly)
 				throw new InvalidOperationException();
+			if (engineValueNode.ErrorMessage != null)
+				throw new NotSupportedException();
 			return CreateResult(engineValueNode.Assign(context, expression, options, cancellationToken));
 		}
 
@@ -159,6 +161,8 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(callback));
 			if (IsReadOnly)
 				throw new InvalidOperationException();
+			if (engineValueNode.ErrorMessage != null)
+				throw new NotSupportedException();
 			engineValueNode.Assign(context, expression, options, res => callback(CreateResult(res)), cancellationToken);
 		}
 

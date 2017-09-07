@@ -23,10 +23,10 @@ using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation {
 	static class DbgValueNodeUtils {
-		public static DbgValueNode[] ToValueNodeArray(DbgLanguage language, DbgRuntime runtime, DbgBaseEngineValueNode[] engineNodes) {
+		public static DbgValueNode[] ToValueNodeArray(DbgLanguage language, DbgRuntime runtime, DbgEngineValueNode[] engineNodes) {
 			var nodes = new DbgValueNode[engineNodes.Length];
 			for (int i = 0; i < nodes.Length; i++)
-				nodes[i] = DbgBaseValueNodeImplFactory.Create(language, runtime, engineNodes[i]);
+				nodes[i] = new DbgValueNodeImpl(language, runtime, engineNodes[i]);
 			runtime.CloseOnContinue(nodes);
 			return nodes;
 		}

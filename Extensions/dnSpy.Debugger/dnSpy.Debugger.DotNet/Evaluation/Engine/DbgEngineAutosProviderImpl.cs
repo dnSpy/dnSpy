@@ -25,12 +25,12 @@ using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineAutosProviderImpl : DbgEngineValueNodeProvider {
-		public override DbgBaseEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			return Array.Empty<DbgBaseEngineValueNode>();//TODO:
+		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+			return Array.Empty<DbgEngineValueNode>();//TODO:
 		}
 
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken) {
-			callback(Array.Empty<DbgBaseEngineValueNode>());//TODO:
+		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) {
+			callback(Array.Empty<DbgEngineValueNode>());//TODO:
 		}
 	}
 }

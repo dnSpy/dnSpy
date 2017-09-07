@@ -79,23 +79,33 @@ namespace dnSpy.Debugger.Evaluation {
 	}
 
 	sealed class NullDbgEngineValueNodeProvider : DbgEngineValueNodeProvider {
-		public override DbgBaseEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgBaseEngineValueNode>();
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(Array.Empty<DbgBaseEngineValueNode>());
+		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgEngineValueNode>();
+		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(Array.Empty<DbgEngineValueNode>());
 	}
 
 	sealed class NullDbgEngineValueNodeFactory : DbgEngineValueNodeFactory {
-		public override DbgBaseEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new NullDbgEngineErrorValueNode(expression);
-		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgBaseEngineValueNode> callback, CancellationToken cancellationToken) => callback(Create(context, frame, expression, options, cancellationToken));
-		public override DbgBaseEngineValueNode[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => objectIds.Select(a => new NullDbgEngineErrorValueNode()).ToArray();
-		public override void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(Create(context, objectIds, options, cancellationToken));
+		public override DbgEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new NullDbgEngineErrorValueNode(expression);
+		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNode> callback, CancellationToken cancellationToken) => callback(Create(context, frame, expression, options, cancellationToken));
+		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => objectIds.Select(a => new NullDbgEngineErrorValueNode()).ToArray();
+		public override void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(Create(context, objectIds, options, cancellationToken));
 	}
 
-	sealed class NullDbgEngineErrorValueNode : DbgEngineErrorValueNode {
+	sealed class NullDbgEngineErrorValueNode : DbgEngineValueNode {
 		public override string ErrorMessage => NullDbgEngineExpressionEvaluator.ERROR;
+		public override DbgEngineValue Value => null;
 		public override string Expression { get; }
+		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
+		public override bool IsReadOnly => true;
+		public override bool CausesSideEffects => false;
+		public override bool? HasChildren => false;
+		public override ulong ChildCount => 0;
 		public NullDbgEngineErrorValueNode(string expression = null) => Expression = expression ?? string.Empty;
-		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, CancellationToken cancellationToken) { }
-		public override void FormatName(DbgEvaluationContext context, ITextColorWriter output, Action callback, CancellationToken cancellationToken) => callback();
+		public override DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgEngineValueNode>();
+		public override void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(GetChildren(context, index, count, options, cancellationToken));
+		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) { }
+		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken) { }
+		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new DbgEngineValueNodeAssignmentResult(NullDbgEngineExpressionEvaluator.ERROR);
+		public override void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback, CancellationToken cancellationToken) => callback(Assign(context, expression, options, cancellationToken));
 		protected override void CloseCore() { }
 	}
 }

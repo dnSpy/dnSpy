@@ -24,11 +24,11 @@ using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
-	/// Creates <see cref="DbgBaseEngineValueNode"/>s
+	/// Creates <see cref="DbgEngineValueNode"/>s
 	/// </summary>
 	public abstract class DbgEngineValueNodeFactory {
 		/// <summary>
-		/// Creates a <see cref="DbgBaseEngineValueNode"/>. It blocks the current thread until the evaluation is complete.
+		/// Creates a <see cref="DbgEngineValueNode"/>. It blocks the current thread until the evaluation is complete.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
@@ -36,10 +36,10 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgBaseEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Creates a <see cref="DbgBaseEngineValueNode"/>
+		/// Creates a <see cref="DbgEngineValueNode"/>
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
@@ -47,26 +47,26 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgBaseEngineValueNode> callback, CancellationToken cancellationToken);
+		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNode> callback, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Creates <see cref="DbgBaseEngineValueNode"/>s. It blocks the current thread.
+		/// Creates <see cref="DbgEngineValueNode"/>s. It blocks the current thread.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgBaseEngineValueNode[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Creates <see cref="DbgBaseEngineValueNode"/>s
+		/// Creates <see cref="DbgEngineValueNode"/>s
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken);
+		public abstract void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 	}
 }

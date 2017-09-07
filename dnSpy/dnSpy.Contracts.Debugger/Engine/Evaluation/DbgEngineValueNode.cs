@@ -25,7 +25,12 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// A value shown in a treeview (eg. in locals window)
 	/// </summary>
-	public abstract class DbgEngineValueNode : DbgBaseEngineValueNode {
+	public abstract class DbgEngineValueNode : DbgObject {
+		/// <summary>
+		/// Gets the error message or null
+		/// </summary>
+		public abstract string ErrorMessage { get; }
+
 		/// <summary>
 		/// Gets the value or null if none
 		/// </summary>
@@ -62,7 +67,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Number of children. This property is called as late as possible and can be lazily initialized.
 		/// It's assumed to be 0 if <see cref="HasChildren"/> is false.
 		/// </summary>
-		public abstract ulong ChildrenCount { get; }
+		public abstract ulong ChildCount { get; }
 
 		/// <summary>
 		/// Creates new children. This method blocks the current thread until the children have been created.
@@ -73,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgBaseEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates new children
@@ -84,7 +89,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgBaseEngineValueNode[]> callback, CancellationToken cancellationToken);
+		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
