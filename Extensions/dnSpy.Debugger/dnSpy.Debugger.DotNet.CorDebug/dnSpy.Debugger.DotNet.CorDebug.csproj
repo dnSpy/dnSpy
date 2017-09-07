@@ -203,6 +203,7 @@
     <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />
     <Compile Include="Impl\ModuleIdExtensions.cs" />
+    <Compile Include="Impl\ReflectionTypeCreator.cs" />
     <Compile Include="Impl\ThreadProperties.cs" />
     <Compile Include="Impl\WpfDebugMessageDispatcher.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProviderImpl.cs" />

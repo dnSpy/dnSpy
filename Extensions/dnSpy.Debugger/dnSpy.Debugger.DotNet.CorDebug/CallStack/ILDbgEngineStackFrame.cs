@@ -150,21 +150,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			module = engine.TryGetModule(corFrame.Function?.Module)?.GetReflectionModule();
 			if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
 				throw new InvalidOperationException();
-			genericTypeArguments = Convert(typeGenArgs);
-			genericMethodArguments = Convert(methGenArgs);
+			var reflectionAppDomain = module.AppDomain;
+			genericTypeArguments = Convert(reflectionAppDomain, typeGenArgs);
+			genericMethodArguments = Convert(reflectionAppDomain, methGenArgs);
 		}
 
-		IList<DmdType> Convert(CorType[] typeArgs) {
+		IList<DmdType> Convert(DmdAppDomain reflectionAppDomain, CorType[] typeArgs) {
 			if (typeArgs.Length == 0)
 				return Array.Empty<DmdType>();
 			var types = new DmdType[typeArgs.Length];
+			var reflectionTypeCreator = new ReflectionTypeCreator(engine, reflectionAppDomain);
 			for (int i = 0; i < types.Length; i++)
-				types[i] = Convert(typeArgs[i]);
+				types[i] = reflectionTypeCreator.Create(typeArgs[i]);
 			return types;
-		}
-
-		DmdType Convert(CorType type) {
-			throw new NotImplementedException();//TODO:
 		}
 
 		protected override void CloseCore() { }
