@@ -55,6 +55,10 @@
     <Compile Include="Debugger\Formatters\CSharpFormatter.cs" />
     <Compile Include="Debugger\Formatters\LanguageFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasicFormatter.cs" />
+    <Compile Include="Debugger\ValueNodes\CSharpValueNodeFactory.cs" />
+    <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeImpl.cs" />
+    <Compile Include="Debugger\ValueNodes\LanguageValueNodeFactory.cs" />
+    <Compile Include="Debugger\ValueNodes\VisualBasicValueNodeFactory.cs" />
     <Compile Include="Documentation\IRoslynDocumentationProviderFactory.cs" />
     <Compile Include="Documentation\RoslynDocumentationProvider.cs" />
     <Compile Include="Documentation\RoslynDocumentationProviderFactory.cs" />
@@ -131,6 +135,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj">
+      <Project>{FCD8913D-85A0-479E-9689-70FEA52C6DCB}</Project>
+      <Name>dnSpy.Debugger.DotNet.Metadata</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>

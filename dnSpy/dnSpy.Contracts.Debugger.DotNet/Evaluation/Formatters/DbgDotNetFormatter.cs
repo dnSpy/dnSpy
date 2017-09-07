@@ -19,8 +19,10 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Threading;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 	/// <summary>
@@ -60,6 +62,25 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 		/// <param name="output">Output</param>
 		/// <param name="id">Object id</param>
 		public abstract void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id);
+
+		/// <summary>
+		/// Formats a value
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="output">Output</param>
+		/// <param name="value">Value to format</param>
+		/// <param name="options">Options</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Formats a type
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="output">Output</param>
+		/// <param name="type">Type to format</param>
+		/// <param name="options">Options</param>
+		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgValueFormatterTypeOptions options);
 	}
 
 	/// <summary>Metadata</summary>

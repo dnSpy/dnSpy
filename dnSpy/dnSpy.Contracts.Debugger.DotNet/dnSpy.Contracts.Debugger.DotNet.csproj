@@ -68,6 +68,8 @@
     <Compile Include="Evaluation\ExpressionCompiler\DbgModuleReference.cs" />
     <Compile Include="Evaluation\ExpressionCompiler\PredefinedDecompilerGuids.cs" />
     <Compile Include="Evaluation\Formatters\DbgDotNetFormatter.cs" />
+    <Compile Include="Evaluation\ValueNodes\DbgDotNetValueNode.cs" />
+    <Compile Include="Evaluation\ValueNodes\DbgDotNetValueNodeFactory.cs" />
     <Compile Include="Extensions\DbgAppDomainExtensions.cs" />
     <Compile Include="Extensions\DbgModuleExtensions.cs" />
     <Compile Include="Extensions\DbgRuntimeExtensions.cs" />
