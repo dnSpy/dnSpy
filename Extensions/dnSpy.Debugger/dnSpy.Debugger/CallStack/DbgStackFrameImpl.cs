@@ -41,6 +41,7 @@ namespace dnSpy.Debugger.CallStack {
 			this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			this.engineStackFrame = engineStackFrame ?? throw new ArgumentNullException(nameof(engineStackFrame));
 			thread.AddAutoClose(this);
+			engineStackFrame.OnFrameCreated(this);
 		}
 
 		public override void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options) {

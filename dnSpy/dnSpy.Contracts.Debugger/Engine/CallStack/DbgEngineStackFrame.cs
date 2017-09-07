@@ -58,5 +58,11 @@ namespace dnSpy.Contracts.Debugger.Engine.CallStack {
 		/// <param name="writer">Writer</param>
 		/// <param name="options">Options</param>
 		public abstract void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options);
+
+		/// <summary>
+		/// Called after the <see cref="DbgStackFrame"/> has been created
+		/// </summary>
+		/// <param name="frame">Stack frame</param>
+		public abstract void OnFrameCreated(DbgStackFrame frame);
 	}
 }

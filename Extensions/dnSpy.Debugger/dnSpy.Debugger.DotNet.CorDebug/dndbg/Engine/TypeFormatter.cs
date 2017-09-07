@@ -1103,8 +1103,8 @@ namespace dndbg.Engine {
 		}
 
 		struct GenericInfo {
-			public List<CorType> TypeGenericArguments;
-			public List<CorType> MethodGenericArguments;
+			public CorType[] TypeGenericArguments;
+			public CorType[] MethodGenericArguments;
 			public List<TokenAndName> TypeTokenAndNames;
 			public List<TokenAndName> MethodTokenAndNames;
 		}
@@ -1118,8 +1118,8 @@ namespace dndbg.Engine {
 				info.MethodTokenAndNames = emptyTokenAndNameList;
 			}
 			else {
-				info.MethodGenericArguments = emptyCorTypeList;
-				info.TypeGenericArguments = emptyCorTypeList;
+				info.MethodGenericArguments = Array.Empty<CorType>();
+				info.TypeGenericArguments = Array.Empty<CorType>();
 				var mdi = GetMetaDataImport(cls?.Module);
 				var clsToken = cls?.Token ?? 0;
 				info.TypeTokenAndNames = MetaDataUtils.GetGenericParameterNames(mdi, clsToken);
@@ -1128,7 +1128,6 @@ namespace dndbg.Engine {
 
 			return info;
 		}
-		static readonly List<CorType> emptyCorTypeList = new List<CorType>();
 		static readonly List<TokenAndName> emptyTokenAndNameList = new List<TokenAndName>();
 
 		void Write(CorFunction func, CorCode code, CorFrame frame) {

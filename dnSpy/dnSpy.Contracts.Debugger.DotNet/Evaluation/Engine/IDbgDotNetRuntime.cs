@@ -20,6 +20,7 @@
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 	/// <summary>
@@ -30,6 +31,15 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		/// Gets the dispatcher
 		/// </summary>
 		DbgDotNetDispatcher Dispatcher { get; }
+
+		/// <summary>
+		/// Gets the current method or null if it's not a normal IL frame
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DmdMethodBase GetFrameMethod(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets aliases

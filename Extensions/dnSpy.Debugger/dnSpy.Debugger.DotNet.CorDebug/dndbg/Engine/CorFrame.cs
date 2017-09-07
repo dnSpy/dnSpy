@@ -222,7 +222,7 @@ namespace dndbg.Engine {
 
 		/// <summary>
 		/// Gets all type and/or method generic parameters. The first returned values are the generic
-		/// type params, followed by the generic method params. See also <see cref="GetTypeAndMethodGenericParameters(out List{CorType}, out List{CorType})"/>
+		/// type params, followed by the generic method params. See also <see cref="GetTypeAndMethodGenericParameters(out CorType[], out CorType[])"/>
 		/// </summary>
 		public IEnumerable<CorType> TypeParameters {
 			get {
@@ -425,16 +425,14 @@ namespace dndbg.Engine {
 		/// <param name="typeGenArgs">Gets updated with a list containing all generic type arguments</param>
 		/// <param name="methGenArgs">Gets updated with a list containing all generic method arguments</param>
 		/// <returns></returns>
-		public bool GetTypeAndMethodGenericParameters(out List<CorType> typeGenArgs, out List<CorType> methGenArgs) {
-			typeGenArgs = new List<CorType>();
-			methGenArgs = new List<CorType>();
-
+		public bool GetTypeAndMethodGenericParameters(out CorType[] typeGenArgs, out CorType[] methGenArgs) {
 			var func = Function;
-			if (func == null)
+			var module = func?.Module;
+			if (module == null) {
+				typeGenArgs = Array.Empty<CorType>();
+				methGenArgs = Array.Empty<CorType>();
 				return false;
-			var module = func.Module;
-			if (module == null)
-				return false;
+			}
 
 			var mdi = module.GetMetaDataInterface<IMetaDataImport>();
 			var gas = new List<CorType>(TypeParameters);
@@ -442,11 +440,13 @@ namespace dndbg.Engine {
 			int typeGenArgsCount = cls == null ? 0 : MetaDataUtils.GetCountGenericParameters(mdi, cls.Token);
 			int methGenArgsCount = MetaDataUtils.GetCountGenericParameters(mdi, func.Token);
 			Debug.Assert(typeGenArgsCount + methGenArgsCount == gas.Count);
+			typeGenArgs = new CorType[typeGenArgsCount];
+			methGenArgs = new CorType[methGenArgsCount];
 			int j = 0;
-			for (int i = 0; j < gas.Count && i < typeGenArgsCount; i++, j++)
-				typeGenArgs.Add(gas[j]);
-			for (int i = 0; j < gas.Count && i < methGenArgsCount; i++, j++)
-				methGenArgs.Add(gas[j]);
+			for (int i = 0; j < gas.Count && i < typeGenArgs.Length; i++, j++)
+				typeGenArgs[i] = gas[j];
+			for (int i = 0; j < gas.Count && i < methGenArgs.Length; i++, j++)
+				methGenArgs[i] = gas[j];
 
 			return true;
 		}

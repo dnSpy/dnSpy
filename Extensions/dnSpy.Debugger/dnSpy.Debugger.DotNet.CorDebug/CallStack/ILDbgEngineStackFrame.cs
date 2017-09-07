@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
@@ -29,6 +30,7 @@ using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 	sealed class ILDbgEngineStackFrame : DbgEngineStackFrame {
@@ -126,6 +128,43 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			if ((options & DbgStackFrameFormatOptions.ShowTokens) != 0)					flags |= TypeFormatterFlags.ShowTokens;
 			if ((options & DbgStackFrameFormatOptions.UseDecimal) != 0)					flags |= TypeFormatterFlags.UseDecimal;
 			return flags;
+		}
+
+		sealed class ILFrameState {
+			public readonly ILDbgEngineStackFrame ILFrame;
+			public ILFrameState(ILDbgEngineStackFrame ilFrame) => ILFrame = ilFrame;
+		}
+		public override void OnFrameCreated(DbgStackFrame frame) => frame.GetOrCreateData(() => new ILFrameState(this));
+		internal static bool TryGetEngineStackFrame(DbgStackFrame frame, out ILDbgEngineStackFrame ilFrame) {
+			if (frame.TryGetData<ILFrameState>(out var data)) {
+				ilFrame = data.ILFrame;
+				return true;
+			}
+			ilFrame = null;
+			return false;
+		}
+
+		internal void GetFrameMethodInfo(out DmdModule module, out int methodMetadataToken, out IList<DmdType> genericTypeArguments, out IList<DmdType> genericMethodArguments) {
+			engine.VerifyCorDebugThread();
+			methodMetadataToken = (int)corFrame.Token;
+			module = engine.TryGetModule(corFrame.Function?.Module)?.GetReflectionModule();
+			if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
+				throw new InvalidOperationException();
+			genericTypeArguments = Convert(typeGenArgs);
+			genericMethodArguments = Convert(methGenArgs);
+		}
+
+		IList<DmdType> Convert(CorType[] typeArgs) {
+			if (typeArgs.Length == 0)
+				return Array.Empty<DmdType>();
+			var types = new DmdType[typeArgs.Length];
+			for (int i = 0; i < types.Length; i++)
+				types[i] = Convert(typeArgs[i]);
+			return types;
+		}
+
+		DmdType Convert(CorType type) {
+			throw new NotImplementedException();//TODO:
 		}
 
 		protected override void CloseCore() { }

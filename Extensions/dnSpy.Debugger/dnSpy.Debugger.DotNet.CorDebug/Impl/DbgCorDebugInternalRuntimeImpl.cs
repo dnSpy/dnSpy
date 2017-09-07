@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -25,6 +26,7 @@ using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
@@ -47,6 +49,31 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			RuntimeDirectory = runtimeDir ?? throw new ArgumentNullException(nameof(runtimeDir));
 			Dispatcher = new DbgDotNetDispatcherImpl(owner);
 			reflectionRuntime.GetOrCreateData(() => runtime);
+		}
+
+		sealed class GetFrameMethodState {
+			public bool Initialized;
+			public DmdMethodBase Method;
+		}
+
+		public DmdMethodBase GetFrameMethod(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			var state = frame.GetOrCreateData<GetFrameMethodState>();
+			if (!state.Initialized) {
+				if (ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame)) {
+					ilFrame.GetFrameMethodInfo(out var module, out var methodMetadataToken, out var genericTypeArguments, out var genericMethodArguments);
+					var method = module.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.ThrowOnError);
+					if (genericTypeArguments.Count != 0) {
+						var type = method.ReflectedType.MakeGenericType(genericTypeArguments);
+						method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true);
+					}
+					if (genericMethodArguments.Count != 0)
+						method = ((DmdMethodInfo)method).MakeGenericMethod(genericMethodArguments);
+					state.Method = method;
+				}
+				state.Initialized = true;
+			}
+			return state.Method;
 		}
 
 		public DbgDotNetAliasInfo[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
@@ -75,7 +102,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public bool CanCreateObjectId(DbgDotNetValue value) {
-			throw new NotImplementedException();//TODO:
+			return false;//TODO:
 		}
 
 		public DbgDotNetEngineObjectId CreateObjectId(DbgDotNetValue value, uint id) {

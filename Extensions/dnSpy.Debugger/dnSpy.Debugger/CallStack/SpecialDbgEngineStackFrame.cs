@@ -47,6 +47,7 @@ namespace dnSpy.Debugger.CallStack {
 			writer.Write(BoxedTextColor.Punctuation, "]");
 		}
 
+		public override void OnFrameCreated(DbgStackFrame frame) { }
 		protected override void CloseCore() { }
 	}
 }
