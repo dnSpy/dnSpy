@@ -23,6 +23,7 @@ using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
+using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Ast;
@@ -30,9 +31,13 @@ using ICSharpCode.NRefactory.VB.Ast;
 namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 	sealed class VBTextOutputFormatter : IOutputFormatter {
 		readonly IDecompilerOutput output;
+		readonly DecompilerContext context;
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
 
-		public VBTextOutputFormatter(IDecompilerOutput output) => this.output = output ?? throw new ArgumentNullException(nameof(output));
+		public VBTextOutputFormatter(IDecompilerOutput output, DecompilerContext context) {
+			this.output = output ?? throw new ArgumentNullException(nameof(output));
+			this.context = context ?? throw new ArgumentNullException(nameof(context));
+		}
 
 		MethodDebugInfoBuilder currentMethodDebugInfoBuilder;
 		Stack<MethodDebugInfoBuilder> parentMethodDebugInfoBuilder = new Stack<MethodDebugInfoBuilder>();
@@ -59,6 +64,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 				throw new InvalidOperationException();
 
 			if (node.Annotation<MethodDebugInfoBuilder>() != null) {
+				if (context.CalculateBinSpans) {
+					foreach (var ns in context.UsingNamespaces)
+						currentMethodDebugInfoBuilder.Scope.Imports.Add(ImportInfo.CreateNamespace(ns));
+				}
 				output.AddDebugInfo(currentMethodDebugInfoBuilder.Create());
 				currentMethodDebugInfoBuilder = parentMethodDebugInfoBuilder.Pop();
 			}

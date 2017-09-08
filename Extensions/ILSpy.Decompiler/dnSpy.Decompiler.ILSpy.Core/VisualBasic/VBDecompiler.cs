@@ -188,7 +188,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			var csharpUnit = astBuilder.SyntaxTree;
 			csharpUnit.AcceptVisitor(new ICSharpCode.NRefactory.CSharp.InsertParenthesesVisitor() { InsertParenthesesForReadability = true });
 			var unit = csharpUnit.AcceptVisitor(new CSharpToVBConverterVisitor(state.AstBuilder.Context.CurrentModule, new ILSpyEnvironmentProvider(state.State.XmlDoc_StringBuilder)), null);
-			var outputFormatter = new VBTextOutputFormatter(output);
+			var outputFormatter = new VBTextOutputFormatter(output, astBuilder.Context);
 			var formattingPolicy = new VBFormattingOptions();
 			unit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
 		}
@@ -240,8 +240,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			}
 
 			var vbAstType = astType.AcceptVisitor(converter, null);
-
-			vbAstType.AcceptVisitor(new OutputVisitor(new VBTextOutputFormatter(output), new VBFormattingOptions()), null);
+			var ctx = new DecompilerContext(langSettings.Settings.SettingsVersion, type.Module, MetadataTextColorProvider);
+			vbAstType.AcceptVisitor(new OutputVisitor(new VBTextOutputFormatter(output, ctx), new VBFormattingOptions()), null);
 		}
 
 		public override bool CanDecompile(DecompilationType decompilationType) {
