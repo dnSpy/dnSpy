@@ -168,8 +168,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			DbgEvaluationContext evalContext;
 			if (isOpen) {
 				evalContext = valueNodesProvider.TryGetEvaluationContext();
-				nodes = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions);
+				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions);
 				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid ?? lastRuntimeGuid;
+				// Frame got closed. Don't use the new nodes, we'll get new nodes using the new frame in a little while.
+				if (nodeInfo.FrameClosed)
+					return;
+				nodes = nodeInfo.Nodes;
 			}
 			else {
 				evalContext = null;
@@ -341,9 +345,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void SetNewRootChildren_UI(DbgValueNodeInfo[] infos) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 
-			// Treeview has bad PERF when removing lots of selected items, so deselect everything before calling Clear()
-			if (treeView.SelectedItems.Length > 10)
-				treeView.SelectItems(Array.Empty<TreeNodeData>());
+			// Always clear the selection. If there's lots of items (eg. locals) and we switch the language,
+			// it's possible for the treeview to select a node which will get reformatted with the wrong
+			// language (and it will throw an exception).
+			// Another reason to clear it is that the treeview has bad perf when too many items are selected.
+			treeView.SelectItems(Array.Empty<TreeNodeData>());
 
 			if (valueNodesContext.EditValueNodeExpression.SupportsEditExpression) {
 				var children = rootNode.TreeNode.Children;

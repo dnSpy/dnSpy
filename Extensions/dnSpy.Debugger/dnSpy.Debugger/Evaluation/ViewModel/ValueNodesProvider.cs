@@ -22,14 +22,32 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel {
+	struct GetNodesResult {
+		/// <summary>
+		/// Gets all nodes
+		/// </summary>
+		public DbgValueNodeInfo[] Nodes { get; }
+
+		/// <summary>
+		/// true if the frame got closed while we were getting the nodes. The caller should
+		/// ignore <see cref="Nodes"/> and wait until we get a new frame.
+		/// </summary>
+		public bool FrameClosed { get; }
+
+		public GetNodesResult(DbgValueNodeInfo[] nodes, bool frameClosed) {
+			Nodes = nodes ?? throw new ArgumentNullException(nameof(nodes));
+			FrameClosed = frameClosed;
+		}
+	}
+
 	abstract class ValueNodesProvider {
 		/// <summary>
-		/// Gets all nodes. Caller owns the nodes and must close them.
+		/// Gets all nodes
 		/// </summary>
 		/// <param name="evalOptions">Evaluation options</param>
 		/// <param name="nodeEvalOptions">Value node evaluation options</param>
 		/// <returns></returns>
-		public abstract DbgValueNodeInfo[] GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions);
+		public abstract GetNodesResult GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions);
 
 		/// <summary>
 		/// Raised when <see cref="GetNodes(DbgEvaluationOptions, DbgValueNodeEvaluationOptions)"/> must be called again, eg. the debugged program is paused

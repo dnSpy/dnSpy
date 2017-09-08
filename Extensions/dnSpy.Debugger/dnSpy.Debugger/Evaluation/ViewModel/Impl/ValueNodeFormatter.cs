@@ -56,8 +56,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return;
 			var vmImpl = (ValueNodeImpl)vm;
 			if (vmImpl.RawNode is DebuggerValueRawNode rawNode) {
-				Debug.Assert(Language != null);
-				if (Language == null)
+				var language = Language;
+				Debug.Assert(language != null);
+				if (language == null)
 					return;
 				var value = rawNode.DebuggerValueNode.Value;
 				if (value == null)
@@ -71,7 +72,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					if (evalContext == null)
 						output.Write(BoxedTextColor.Error, "???");
 					else
-						Language.Formatter.FormatObjectIdName(evalContext, output, objectId.Id);
+						language.Formatter.FormatObjectIdName(evalContext, output, objectId.Id);
 					output.Write(BoxedTextColor.Punctuation, "}");
 				}
 			}

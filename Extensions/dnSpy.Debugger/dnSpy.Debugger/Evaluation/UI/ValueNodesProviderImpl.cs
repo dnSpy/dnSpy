@@ -130,15 +130,16 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			return (language, frame);
 		}
 
-		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
+		public override GetNodesResult GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
 			uiDispatcher.VerifyAccess();
 			var info = TryGetLanguage();
 			if (info.frame == null)
-				return variablesWindowValueNodesProvider.GetDefaultNodes();
+				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), frameClosed: false);
 			var evalContext = TryGetEvaluationContext();
 			if (evalContext == null)
-				return variablesWindowValueNodesProvider.GetDefaultNodes();
-			return variablesWindowValueNodesProvider.GetNodes(evalContext, info.language, info.frame, evalOptions, nodeEvalOptions);
+				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed);
+			var nodes = variablesWindowValueNodesProvider.GetNodes(evalContext, info.language, info.frame, evalOptions, nodeEvalOptions);
+			return new GetNodesResult(nodes, info.frame.IsClosed);
 		}
 
 		void SetIsReadOnly_UI(bool newIsReadOnly) {
