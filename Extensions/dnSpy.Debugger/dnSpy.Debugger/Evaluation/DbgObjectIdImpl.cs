@@ -65,6 +65,6 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override void Remove() => owner.Remove(new[] { this });
-		protected override void CloseCore() => EngineObjectId.Close(Process.DbgManager.Dispatcher);
+		protected override void CloseCore(DbgDispatcher dispatcher) => EngineObjectId.Close(dispatcher);
 	}
 }

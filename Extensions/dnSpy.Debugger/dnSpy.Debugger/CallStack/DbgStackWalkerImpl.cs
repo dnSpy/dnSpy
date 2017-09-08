@@ -50,10 +50,9 @@ namespace dnSpy.Debugger.CallStack {
 			return frames;
 		}
 
-		protected override void CloseCore() {
-			Dispatcher.VerifyAccess();
+		protected override void CloseCore(DbgDispatcher dispatcher) {
 			thread.RemoveAutoClose(this);
-			engineStackWalker.Close(Dispatcher);
+			engineStackWalker.Close(dispatcher);
 		}
 	}
 }

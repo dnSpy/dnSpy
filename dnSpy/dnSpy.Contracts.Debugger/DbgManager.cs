@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// Manages all debug engines. All events are raised in the dispatcher thread.
+	/// Manages all debug engines. All events are raised on the dispatcher thread.
 	/// If you need to hook events before debugging starts, you should export an <see cref="IDbgManagerStartListener"/>.
 	/// It gets called when <see cref="Start(DebugProgramOptions)"/> gets called for the first time.
 	/// </summary>

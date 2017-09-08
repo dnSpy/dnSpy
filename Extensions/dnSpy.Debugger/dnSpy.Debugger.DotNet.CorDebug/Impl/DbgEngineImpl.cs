@@ -690,7 +690,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			runtime.GetOrCreateData(() => new RuntimeData(this));
 		}
 
-		protected override void CloseCore() {
+		protected override void CloseCore(DbgDispatcher dispatcher) {
 			UnhookDnDebuggerEventsAndCloseProcessHandle();
 			debuggerThread.Terminate();
 			DnDebuggerObjectHolder[] objHoldersToClose;

@@ -208,9 +208,6 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void Remove(bool pause) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
 
-		protected override void CloseCore() {
-			Dispatcher.VerifyAccess();
-			InternalModule.Close(Dispatcher);
-		}
+		protected override void CloseCore(DbgDispatcher dispatcher) => InternalModule.Close(dispatcher);
 	}
 }

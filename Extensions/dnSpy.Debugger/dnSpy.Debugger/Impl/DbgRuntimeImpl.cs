@@ -244,7 +244,7 @@ namespace dnSpy.Debugger.Impl {
 
 		sealed class NullDbgEngineStackWalker : DbgEngineStackWalker {
 			public override DbgEngineStackFrame[] GetNextStackFrames(int maxFrames) => Array.Empty<DbgEngineStackFrame>();
-			protected override void CloseCore() { }
+			protected override void CloseCore(DbgDispatcher dispatcher) { }
 		}
 
 		internal DbgStepper CreateStepper(DbgThreadImpl thread) => new DbgStepperImpl(owner, thread, Engine.CreateStepper(thread));
@@ -290,8 +290,7 @@ namespace dnSpy.Debugger.Impl {
 				obj.Close(Dispatcher);
 		}
 
-		protected override void CloseCore() {
-			Dispatcher.VerifyAccess();
+		protected override void CloseCore(DbgDispatcher dispatcher) {
 			DbgThread[] removedThreads;
 			DbgModule[] removedModules;
 			DbgAppDomain[] removedAppDomains;
@@ -314,14 +313,14 @@ namespace dnSpy.Debugger.Impl {
 			if (removedAppDomains.Length != 0)
 				AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(removedAppDomains, added: false));
 			foreach (var obj in objsToClose)
-				obj.Close(Dispatcher);
+				obj.Close(dispatcher);
 			foreach (var thread in removedThreads)
-				thread.Close(Dispatcher);
+				thread.Close(dispatcher);
 			foreach (var module in removedModules)
-				module.Close(Dispatcher);
+				module.Close(dispatcher);
 			foreach (var appDomain in removedAppDomains)
-				appDomain.Close(Dispatcher);
-			InternalRuntime.Close(Dispatcher);
+				appDomain.Close(dispatcher);
+			InternalRuntime.Close(dispatcher);
 		}
 	}
 }

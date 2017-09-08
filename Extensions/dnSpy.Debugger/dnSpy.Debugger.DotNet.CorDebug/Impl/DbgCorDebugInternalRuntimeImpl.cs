@@ -125,6 +125,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			throw new NotImplementedException();//TODO:
 		}
 
-		protected override void CloseCore() { }
+		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

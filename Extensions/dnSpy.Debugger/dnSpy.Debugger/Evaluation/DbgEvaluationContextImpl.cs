@@ -60,6 +60,6 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		protected override void CloseCore() => session.Close(Process.DbgManager.Dispatcher);
+		protected override void CloseCore(DbgDispatcher dispatcher) => session.Close(dispatcher);
 	}
 }

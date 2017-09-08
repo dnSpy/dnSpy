@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -55,8 +56,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return Array.Empty<DbgDotNetValueNode>();//TODO:
 		}
 
-		protected override void CloseCore() {
-			//TODO: Close Value if not null
-		}
+		protected override void CloseCore(DbgDispatcher dispatcher) => Value?.Dispose();
 	}
 }

@@ -20,6 +20,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
@@ -106,6 +107,6 @@ namespace dnSpy.Debugger.Evaluation {
 		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken) { }
 		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new DbgEngineValueNodeAssignmentResult(NullDbgEngineExpressionEvaluator.ERROR);
 		public override void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback, CancellationToken cancellationToken) => callback(Assign(context, expression, options, cancellationToken));
-		protected override void CloseCore() { }
+		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		public override DbgCodeLocation Clone() => factory.Create(Module, Token, Offset);
 		public override void Close() => factory.DbgManager.Value.Close(this);
-		protected override void CloseCore() { }
+		protected override void CloseCore(DbgDispatcher dispatcher) { }
 
 		public override bool Equals(object obj) =>
 			obj is DbgDotNetCodeLocationImpl other &&

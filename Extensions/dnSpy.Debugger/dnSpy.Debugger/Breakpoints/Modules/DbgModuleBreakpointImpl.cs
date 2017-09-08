@@ -19,6 +19,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
 using dnSpy.Debugger.Utilities;
 
@@ -153,6 +154,6 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		}
 
 		public override void Remove() => owner.Remove(this);
-		protected override void CloseCore() { }
+		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

@@ -48,6 +48,6 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public override void OnFrameCreated(DbgStackFrame frame) { }
-		protected override void CloseCore() { }
+		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

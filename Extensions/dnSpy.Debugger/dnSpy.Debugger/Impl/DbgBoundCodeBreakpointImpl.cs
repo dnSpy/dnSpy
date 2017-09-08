@@ -100,6 +100,6 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void Remove(DbgEngineBoundCodeBreakpointImpl[] breakpoints) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(breakpoints));
 
-		protected override void CloseCore() => Dispatcher.VerifyAccess();
+		protected override void CloseCore(DbgDispatcher dispatcher) => Dispatcher.VerifyAccess();
 	}
 }

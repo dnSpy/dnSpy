@@ -165,6 +165,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			return types;
 		}
 
-		protected override void CloseCore() { }
+		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

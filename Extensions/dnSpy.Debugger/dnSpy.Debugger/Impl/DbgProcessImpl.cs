@@ -474,7 +474,7 @@ namespace dnSpy.Debugger.Impl {
 				Debug.Assert(engineInfos.Count == 0);
 		}
 
-		protected override void CloseCore() {
+		protected override void CloseCore(DbgDispatcher dispatcher) {
 			VerifyHasNoRuntimes();
 			hProcess.Dispose();
 			currentRuntime = default;

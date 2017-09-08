@@ -33,6 +33,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			ReflectionAppDomain.GetOrCreateData(() => appDomain);
 		}
-		protected override void CloseCore() { }
+		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

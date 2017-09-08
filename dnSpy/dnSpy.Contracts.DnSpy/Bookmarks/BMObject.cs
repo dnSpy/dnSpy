@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		public event EventHandler Closed;
 
 		/// <summary>
-		/// Closes the instance. This method must only be executed in the dispatcher thread
+		/// Closes the instance. This method must only be executed on the dispatcher thread
 		/// 
 		/// This method must only be called by the owner object.
 		/// </summary>

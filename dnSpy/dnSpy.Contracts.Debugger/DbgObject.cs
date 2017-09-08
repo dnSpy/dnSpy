@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Debugger {
 		public event EventHandler Closed;
 
 		/// <summary>
-		/// Closes the instance. This method must only be executed in the dispatcher thread
+		/// Closes the instance. This method must only be executed on the dispatcher thread
 		/// 
 		/// This method must only be called by the owner object.
 		/// </summary>
@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Debugger {
 			Closed?.Invoke(this, EventArgs.Empty);
 			Closed = null;
 
-			CloseCore();
+			CloseCore(dispatcher);
 
 			(Type key, object data)[] data;
 			lock (lockObj) {
@@ -90,9 +90,10 @@ namespace dnSpy.Contracts.Debugger {
 
 		/// <summary>
 		/// Called by <see cref="Close"/> after it has raised <see cref="Closed"/> and before it disposes
-		/// of all data. This method is called in the dispatcher thread (see <see cref="DbgManager.Dispatcher"/>)
+		/// of all data. This method is called on the dispatcher thread (see <see cref="DbgManager.Dispatcher"/>)
 		/// </summary>
-		protected abstract void CloseCore();
+		/// <param name="dispatcher">Dispatcher</param>
+		protected abstract void CloseCore(DbgDispatcher dispatcher);
 
 		/// <summary>
 		/// Checks if the data exists or is null

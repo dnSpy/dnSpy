@@ -166,9 +166,9 @@ namespace dnSpy.Debugger.Evaluation {
 			engineValueNode.Assign(context, expression, options, res => callback(CreateResult(res)), cancellationToken);
 		}
 
-		protected override void CloseCore() {
-			value?.Close(Process.DbgManager.Dispatcher);
-			engineValueNode.Close(Process.DbgManager.Dispatcher);
+		protected override void CloseCore(DbgDispatcher dispatcher) {
+			value?.Close(dispatcher);
+			engineValueNode.Close(dispatcher);
 		}
 	}
 }

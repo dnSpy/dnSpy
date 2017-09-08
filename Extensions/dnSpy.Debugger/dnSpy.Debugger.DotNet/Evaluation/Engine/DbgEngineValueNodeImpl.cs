@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -68,8 +69,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			callback(new DbgEngineValueNodeAssignmentResult("NYI"));//TODO:
 		}
 
-		protected override void CloseCore() {
-			//TODO: Close Value (if not null), dnValueNode
+		protected override void CloseCore(DbgDispatcher dispatcher) {
+			dnValueNode.Close(dispatcher);
+			Value?.Close(dispatcher);
 		}
 	}
 }

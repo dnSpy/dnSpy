@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (asm.GetModules().Length == 0)
 				asm.AppDomain.Remove(asm);
 		}
-		protected override void CloseCore() => closedListenerCollection.RaiseClosed();
+		protected override void CloseCore(DbgDispatcher dispatcher) => closedListenerCollection.RaiseClosed();
 	}
 
 	sealed class ClosedListenerCollection {

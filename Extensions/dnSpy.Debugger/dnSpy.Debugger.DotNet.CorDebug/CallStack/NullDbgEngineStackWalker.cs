@@ -18,11 +18,12 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 	sealed class NullDbgEngineStackWalker : DbgEngineStackWalker {
 		public override DbgEngineStackFrame[] GetNextStackFrames(int maxFrames) => Array.Empty<DbgEngineStackFrame>();
-		protected override void CloseCore() { }
+		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

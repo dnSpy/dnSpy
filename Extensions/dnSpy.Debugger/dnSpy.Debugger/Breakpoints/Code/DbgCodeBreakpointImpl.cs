@@ -273,9 +273,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		internal void RaiseHit(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) =>
 			Hit?.Invoke(this, new DbgBreakpointHitEventArgs(boundBreakpoint, thread));
 
-		protected override void CloseCore() {
-			owner.DbgDispatcher.VerifyAccess();
-			Location.Close(owner.DbgDispatcher.Dispatcher);
+		protected override void CloseCore(DbgDispatcher dispatcher) {
+			Location.Close(dispatcher);
 			HitCheck = null;
 			Hit = null;
 			BoundBreakpointsChanged = null;

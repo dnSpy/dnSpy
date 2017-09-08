@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			return engine.ObjectFactory.CreateSpecialStackFrame("???");
 		}
 
-		protected override void CloseCore() {
+		protected override void CloseCore(DbgDispatcher dispatcher) {
 			if (framesBuffer != null)
 				engine.ReturnFramesBuffer(ref framesBuffer);
 			framesBuffer = null;

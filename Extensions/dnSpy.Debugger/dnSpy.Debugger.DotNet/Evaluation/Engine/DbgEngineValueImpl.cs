@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -36,6 +37,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			throw new NotImplementedException();//TODO:
 		}
 
-		protected override void CloseCore() => value.Dispose();
+		protected override void CloseCore(DbgDispatcher dispatcher) => value.Dispose();
 	}
 }

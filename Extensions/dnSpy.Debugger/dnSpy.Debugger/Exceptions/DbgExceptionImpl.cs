@@ -43,6 +43,6 @@ namespace dnSpy.Debugger.Exceptions {
 			Module = module;
 		}
 
-		protected override void CloseCore() => Dispatcher.VerifyAccess();
+		protected override void CloseCore(DbgDispatcher dispatcher) => Dispatcher.VerifyAccess();
 	}
 }

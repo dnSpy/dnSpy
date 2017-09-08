@@ -263,8 +263,7 @@ namespace dnSpy.Debugger.Impl {
 				autoCloseObjects.Remove(obj);
 		}
 
-		protected override void CloseCore() {
-			Dispatcher.VerifyAccess();
+		protected override void CloseCore(DbgDispatcher dispatcher) {
 			hThread.Dispose();
 			DbgObject[] objsToClose;
 			lock (lockObj) {
@@ -272,7 +271,7 @@ namespace dnSpy.Debugger.Impl {
 				autoCloseObjects.Clear();
 			}
 			foreach (var obj in objsToClose)
-				obj.Close(Dispatcher);
+				obj.Close(dispatcher);
 		}
 	}
 }

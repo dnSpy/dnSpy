@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 			owner.Create(DbgModule, Module, Token, Offset, ILOffsetMapping, NativeMethodAddress, NativeMethodOffset, CorCode.AddRef());
 
 		public override void Close() => owner.DbgManager.Value.Close(this);
-		protected override void CloseCore() => CorCode.Close();
+		protected override void CloseCore(DbgDispatcher dispatcher) => CorCode.Close();
 
 		public override bool Equals(object obj) =>
 			obj is DbgDotNetNativeCodeLocationImpl other &&

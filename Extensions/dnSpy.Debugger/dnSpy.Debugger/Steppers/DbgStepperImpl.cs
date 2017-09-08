@@ -171,11 +171,10 @@ namespace dnSpy.Debugger.Steppers {
 
 		public override void Close() => Thread.Process.DbgManager.Close(this);
 
-		protected override void CloseCore() {
-			Dispatcher.VerifyAccess();
+		protected override void CloseCore(DbgDispatcher dispatcher) {
 			thread.RemoveAutoClose(this);
 			engineStepper.StepComplete -= DbgEngineStepper_StepComplete;
-			engineStepper.Close(Dispatcher);
+			engineStepper.Close(dispatcher);
 		}
 	}
 }

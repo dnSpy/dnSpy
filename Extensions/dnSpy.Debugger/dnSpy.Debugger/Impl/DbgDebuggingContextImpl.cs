@@ -21,6 +21,6 @@ using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.Impl {
 	sealed class DbgDebuggingContextImpl : DbgDebuggingContext {
-		protected override void CloseCore() { }
+		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

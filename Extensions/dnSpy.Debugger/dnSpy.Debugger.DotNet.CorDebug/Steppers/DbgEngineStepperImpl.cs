@@ -213,7 +213,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				dnThread.Debugger.CancelStep(oldDnStepperData.CorStepper);
 		}
 
-		protected override void CloseCore() {
+		protected override void CloseCore(DbgDispatcher dispatcher) {
 			if (stepData != null)
 				engine.CorDebugThread(() => ForceCancel_CorDebug());
 		}

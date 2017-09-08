@@ -38,6 +38,6 @@ namespace dnSpy.Debugger.Evaluation {
 
 		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) => EngineValue.GetRawAddressValue(onlyDataAddress);
 		public override void Close() => Process.DbgManager.Close(this);
-		protected override void CloseCore() => EngineValue.Close(Process.DbgManager.Dispatcher);
+		protected override void CloseCore(DbgDispatcher dispatcher) => EngineValue.Close(dispatcher);
 	}
 }

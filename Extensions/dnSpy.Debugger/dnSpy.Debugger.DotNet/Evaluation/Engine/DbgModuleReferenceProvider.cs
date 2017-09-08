@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				GenerationId = generationId;
 			}
 
-			protected override void CloseCore() => dbgRawMetadata.Release();
+			protected override void CloseCore(DbgDispatcher dispatcher) => dbgRawMetadata.Release();
 		}
 
 		public override DbgModuleReference[] GetModuleReferences(DbgRuntime runtime, DbgStackFrame frame) {

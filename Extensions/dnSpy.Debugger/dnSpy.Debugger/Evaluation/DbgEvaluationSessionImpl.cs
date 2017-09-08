@@ -17,10 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgEvaluationSessionImpl : DbgEvaluationSession {
-		protected override void CloseCore() { }
+		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }
