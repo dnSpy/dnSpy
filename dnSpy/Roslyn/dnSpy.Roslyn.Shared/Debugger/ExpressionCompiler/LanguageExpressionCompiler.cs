@@ -72,21 +72,21 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			methodVersion = langDebugInfo.MethodVersion;
 		}
 
-		protected GetMethodDebugInfo CreateGetMethodDebugInfo(EvalContextState evalContextState, DbgLanguageDebugInfo langDebugInfo, bool calcDefaultNamespaceName) {
+		protected GetMethodDebugInfo CreateGetMethodDebugInfo(EvalContextState evalContextState, DbgLanguageDebugInfo langDebugInfo) {
 			// If there's only one scope, we can cache the whole thing
 			if (langDebugInfo.MethodDebugInfo.Scope.Scopes.Length == 0) {
 				if (evalContextState.MethodDebugInfoKey != langDebugInfo.MethodDebugInfo.Method) {
-					evalContextState.MethodDebugInfo = CreateMethodDebugInfo(langDebugInfo, calcDefaultNamespaceName);
+					evalContextState.MethodDebugInfo = CreateMethodDebugInfo(langDebugInfo);
 					evalContextState.MethodDebugInfoKey = langDebugInfo.MethodDebugInfo.Method;
 				}
 				return () => evalContextState.MethodDebugInfo;
 			}
 			evalContextState.MethodDebugInfo = default;
 			evalContextState.MethodDebugInfoKey = null;
-			return () => CreateMethodDebugInfo(langDebugInfo, calcDefaultNamespaceName);
+			return () => CreateMethodDebugInfo(langDebugInfo);
 		}
 
-		DSEEMethodDebugInfo CreateMethodDebugInfo(DbgLanguageDebugInfo langDebugInfo, bool calcDefaultNamespaceName) {
+		DSEEMethodDebugInfo CreateMethodDebugInfo(DbgLanguageDebugInfo langDebugInfo) {
 			var info = new DSEEMethodDebugInfo();
 
 			var stack = new List<MethodDebugScope>();
@@ -95,11 +95,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			RoslynExpressionCompilerMethods.GetAllScopes(langDebugInfo.MethodDebugInfo.Scope, stack, allScopes, containingScopes, langDebugInfo.ILOffset);
 
 			info.HoistedLocalScopeRecords = default;
-			info.ImportRecordGroups = GetImports(langDebugInfo.MethodDebugInfo.Scope, out var defaultNamespaceName, calcDefaultNamespaceName);
+			info.ImportRecordGroups = GetImports(langDebugInfo.MethodDebugInfo.Method.DeclaringType, langDebugInfo.MethodDebugInfo.Scope, out var defaultNamespaceName);
 			info.ExternAliasRecords = default;
 			info.DynamicLocalMap = default;
 			info.TupleLocalMap = default;
-			info.DefaultNamespaceName = calcDefaultNamespaceName ? defaultNamespaceName : string.Empty;
+			info.DefaultNamespaceName = defaultNamespaceName ?? string.Empty;
 			info.LocalVariableNames = RoslynExpressionCompilerMethods.GetLocalNames(containingScopes, showAllLocals);
 			info.LocalConstants = default;
 			info.ReuseSpan = RoslynExpressionCompilerMethods.GetReuseSpan(allScopes, langDebugInfo.ILOffset);
@@ -107,61 +107,51 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			return info;
 		}
 
-		static ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(MethodDebugScope scope, out string defaultNamespaceName, bool isVisualBasic) {
-			defaultNamespaceName = string.Empty;
-			if (scope.Imports.Length == 0)
-				return ImmutableArray<ImmutableArray<DSEEImportRecord>>.Empty;
+		protected abstract ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, MethodDebugScope scope, out string defaultNamespaceName);
 
-			var builder1 = ImmutableArray.CreateBuilder<DSEEImportRecord>(scope.Imports.Length);
-			var builder2 = !isVisualBasic ? builder1 : ImmutableArray.CreateBuilder<DSEEImportRecord>(scope.Imports.Length);
-			foreach (var info in scope.Imports) {
-				var builder = info.VBImportScopeKind == VBImportScopeKind.Project ? builder2 : builder1;
-				switch (info.TargetKind) {
-				case ImportInfoKind.Namespace:
-					builder.Add(new DSEEImportRecord(DSEEImportTargetKind.Namespace, info.Alias, info.Target, info.ExternAlias));
-					break;
+		protected static void AddDSEEImportRecord(ImmutableArray<DSEEImportRecord>.Builder builder, ImportInfo info, ref string defaultNamespaceName) {
+			switch (info.TargetKind) {
+			case ImportInfoKind.Namespace:
+				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.Namespace, info.Alias, info.Target, info.ExternAlias));
+				break;
 
-				case ImportInfoKind.Type:
-					builder.Add(new DSEEImportRecord(DSEEImportTargetKind.Type, info.Alias, info.Target, info.ExternAlias));
-					break;
+			case ImportInfoKind.Type:
+				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.Type, info.Alias, info.Target, info.ExternAlias));
+				break;
 
-				case ImportInfoKind.NamespaceOrType:
-					builder.Add(new DSEEImportRecord(DSEEImportTargetKind.NamespaceOrType, info.Alias, info.Target, info.ExternAlias));
-					break;
+			case ImportInfoKind.NamespaceOrType:
+				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.NamespaceOrType, info.Alias, info.Target, info.ExternAlias));
+				break;
 
-				case ImportInfoKind.Assembly:
-					builder.Add(new DSEEImportRecord(DSEEImportTargetKind.Assembly, info.Alias, info.Target, info.ExternAlias));
-					break;
+			case ImportInfoKind.Assembly:
+				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.Assembly, info.Alias, info.Target, info.ExternAlias));
+				break;
 
-				case ImportInfoKind.XmlNamespace:
-					builder.Add(new DSEEImportRecord(DSEEImportTargetKind.XmlNamespace, info.Alias, info.Target, info.ExternAlias));
-					break;
+			case ImportInfoKind.XmlNamespace:
+				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.XmlNamespace, info.Alias, info.Target, info.ExternAlias));
+				break;
 
-				case ImportInfoKind.MethodToken:
-					builder.Add(new DSEEImportRecord(DSEEImportTargetKind.MethodToken, info.Alias, info.Target, info.ExternAlias));
-					break;
+			case ImportInfoKind.MethodToken:
+				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.MethodToken, info.Alias, info.Target, info.ExternAlias));
+				break;
 
-				case ImportInfoKind.CurrentNamespace:
-					builder.Add(new DSEEImportRecord(DSEEImportTargetKind.CurrentNamespace, info.Alias, info.Target, info.ExternAlias));
-					break;
+			case ImportInfoKind.CurrentNamespace:
+				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.CurrentNamespace, info.Alias, info.Target, info.ExternAlias));
+				break;
 
-				case ImportInfoKind.DefaultNamespace:
-					defaultNamespaceName = info.Target ?? string.Empty;
-					builder.Add(new DSEEImportRecord(DSEEImportTargetKind.DefaultNamespace, info.Alias, info.Target, info.ExternAlias));
-					break;
+			case ImportInfoKind.DefaultNamespace:
+				defaultNamespaceName = info.Target ?? string.Empty;
+				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.DefaultNamespace, info.Alias, info.Target, info.ExternAlias));
+				break;
 
-				default:
-					Debug.Fail($"Unknown import kind: {info.TargetKind}");
-					break;
-				}
+			default:
+				Debug.Fail($"Unknown import kind: {info.TargetKind}");
+				break;
 			}
-			if (builder1 == builder2)
-				return ImmutableArray.Create(builder1.ToImmutable());
-			return ImmutableArray.Create(builder1.ToImmutable(), builder2.ToImmutable());
 		}
 
 		protected DbgDotNetCompilationResult CreateCompilationResult(byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string errorMessage) {
-			Debug.Assert((assembly == null) == (errorMessage != null));
+			Debug.Assert((assembly == null || assembly.Length == 0) == (errorMessage != null));
 
 			if (errorMessage != null)
 				return new DbgDotNetCompilationResult(errorMessage);

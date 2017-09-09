@@ -20,18 +20,47 @@
 using System;
 using System.Collections.Immutable;
 using System.Threading;
+using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Decompiler;
 using Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator;
 using Microsoft.CodeAnalysis.ExpressionEvaluator;
+using Microsoft.CodeAnalysis.ExpressionEvaluator.DnSpy;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 	[ExportDbgDotNetExpressionCompiler(DbgDotNetLanguageGuids.CSharp, PredefinedDbgLanguageNames.CSharp, "C#", PredefinedDecompilerGuids.CSharp)]
 	sealed class CSharpExpressionCompiler : LanguageExpressionCompiler {
 		sealed class CSharpEvalContextState : EvalContextState {
 			public CSharpMetadataContext MetadataContext;
+		}
+
+		protected override ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, MethodDebugScope scope, out string defaultNamespaceName) {
+			var importRecordGroupBuilder = ImmutableArray.CreateBuilder<ImmutableArray<DSEEImportRecord>>();
+
+			var type = declaringType;
+			while (type.DeclaringType != null)
+				type = type.DeclaringType;
+			var ns = UTF8String.ToSystemStringOrEmpty(type.Namespace);
+			int index = 0;
+			for (;;) {
+				index = ns.IndexOf('.', index);
+				importRecordGroupBuilder.Add(ImmutableArray<DSEEImportRecord>.Empty);
+				if (index < 0)
+					break;
+				index++;
+			}
+
+			var globalLevelBuilder = ImmutableArray.CreateBuilder<DSEEImportRecord>(scope.Imports.Length);
+			defaultNamespaceName = null;
+			foreach (var info in scope.Imports)
+				AddDSEEImportRecord(globalLevelBuilder, info, ref defaultNamespaceName);
+			// C# doesn't use a default namespace, only VB does, so always initialize it to the empty string
+			defaultNamespaceName = string.Empty;
+			importRecordGroupBuilder.Add(globalLevelBuilder.ToImmutable());
+			return importRecordGroupBuilder.ToImmutable();
 		}
 
 		public override DbgDotNetCompilationResult CompileAssignment(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
@@ -41,7 +70,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 		public override DbgDotNetCompilationResult CompileGetLocals(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			GetCompileGetLocalsState<CSharpEvalContextState>(context, frame, references, out var langDebugInfo, out var method, out var localVarSigTok, out var state, out var metadataBlocks, out var methodVersion);
 
-			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo, calcDefaultNamespaceName: false);
+			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo);
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, method.MDToken.ToInt32(), methodVersion, langDebugInfo.ILOffset, localVarSigTok);
 			state.MetadataContext = new CSharpMetadataContext(metadataBlocks, evalCtx);
 

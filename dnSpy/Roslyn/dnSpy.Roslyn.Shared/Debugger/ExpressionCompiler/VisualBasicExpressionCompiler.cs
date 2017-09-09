@@ -20,11 +20,14 @@
 using System;
 using System.Collections.Immutable;
 using System.Threading;
+using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Decompiler;
 using Microsoft.CodeAnalysis.ExpressionEvaluator;
+using Microsoft.CodeAnalysis.ExpressionEvaluator.DnSpy;
 using Microsoft.CodeAnalysis.VisualBasic.ExpressionEvaluator;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
@@ -34,6 +37,19 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			public VisualBasicMetadataContext MetadataContext;
 		}
 
+		protected override ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, MethodDebugScope scope, out string defaultNamespaceName) {
+			var fileLevelBuilder = ImmutableArray.CreateBuilder<DSEEImportRecord>(scope.Imports.Length);
+			var projectLevelBuilder = ImmutableArray.CreateBuilder<DSEEImportRecord>(scope.Imports.Length);
+			defaultNamespaceName = null;
+			foreach (var info in scope.Imports) {
+				var builder = info.VBImportScopeKind == VBImportScopeKind.Project ? projectLevelBuilder : fileLevelBuilder;
+				AddDSEEImportRecord(builder, info, ref defaultNamespaceName);
+			}
+			if (defaultNamespaceName == null)
+				defaultNamespaceName = string.Empty;
+			return ImmutableArray.Create(fileLevelBuilder.ToImmutable(), projectLevelBuilder.ToImmutable());
+		}
+
 		public override DbgDotNetCompilationResult CompileAssignment(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			throw new NotImplementedException();//TODO:
 		}
@@ -41,7 +57,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 		public override DbgDotNetCompilationResult CompileGetLocals(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			GetCompileGetLocalsState<VisualBasicEvalContextState>(context, frame, references, out var langDebugInfo, out var method, out var localVarSigTok, out var state, out var metadataBlocks, out var methodVersion);
 
-			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo, calcDefaultNamespaceName: true);
+			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo);
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, null, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, method.MDToken.ToInt32(), methodVersion, langDebugInfo.ILOffset, localVarSigTok);
 			state.MetadataContext = new VisualBasicMetadataContext(metadataBlocks, evalCtx);
 
