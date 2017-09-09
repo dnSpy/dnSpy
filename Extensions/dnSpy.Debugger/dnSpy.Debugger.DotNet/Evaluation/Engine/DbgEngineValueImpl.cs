@@ -22,19 +22,21 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineValueImpl : DbgEngineValue {
+		public override DbgSimpleValueType ValueType => DbgSimpleValueType.OtherReferenceType;//TODO:
+		public override bool HasRawValue => false;//TODO:
+		public override object RawValue => null;//TODO:
+		internal DbgDotNetValue DotNetValue => value;
+
 		readonly DbgDotNetValue value;
 
 		public DbgEngineValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
 
-		public override DbgSimpleValueType ValueType => throw new NotImplementedException();//TODO:
-		public override bool HasRawValue => throw new NotImplementedException();//TODO:
-		public override object RawValue => throw new NotImplementedException();//TODO:
-
 		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) {
-			throw new NotImplementedException();//TODO:
+			return null;//TODO:
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) => value.Dispose();

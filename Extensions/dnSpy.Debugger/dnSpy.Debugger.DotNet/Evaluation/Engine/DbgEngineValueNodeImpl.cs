@@ -20,14 +20,17 @@
 using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineValueNodeImpl : DbgEngineValueNode {
 		public override string ErrorMessage => dnValueNode.ErrorMessage;
-		public override DbgEngineValue Value { get; }
+		public override DbgEngineValue Value => value;
 		public override string Expression => dnValueNode.Expression;
 		public override string ImageName => dnValueNode.ImageName;
 		public override bool IsReadOnly => dnValueNode.IsReadOnly;
@@ -35,13 +38,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override bool? HasChildren => dnValueNode.HasChildren;
 		public override ulong ChildCount => dnValueNode.ChildCount;
 
+		readonly DbgDotNetFormatter formatter;
 		readonly DbgDotNetValueNode dnValueNode;
+		readonly DbgEngineValueImpl value;
 
-		public DbgEngineValueNodeImpl(DbgDotNetValueNode dnValueNode) {
+		public DbgEngineValueNodeImpl(DbgDotNetFormatter formatter, DbgDotNetValueNode dnValueNode) {
 			if (dnValueNode == null)
 				throw new ArgumentNullException(nameof(dnValueNode));
+			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
 			var dnValue = dnValueNode.Value;
-			Value = dnValue == null ? null : new DbgEngineValueImpl(dnValue);
+			value = dnValue == null ? null : new DbgEngineValueImpl(dnValue);
 			this.dnValueNode = dnValueNode;
 		}
 
@@ -53,12 +59,26 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			callback(Array.Empty<DbgEngineValueNode>());//TODO:
 		}
 
-		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) {
-			//TODO:
-		}
+		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => FormatCore(context, options, cancellationToken));
 
 		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken) {
-			callback();//TODO:
+			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => {
+				FormatCore(context, options, cancellationToken);
+				callback();
+			});
+		}
+
+		void FormatCore(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) {
+			context.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
+			if (options.NameOutput != null)
+				dnValueNode.Name.WriteTo(options.NameOutput);
+			if (options.ExpectedTypeOutput != null && dnValueNode.ExpectedType is DmdType expectedType)
+				formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, options.ExpectedTypeFormatterOptions);
+			if (options.ActualTypeOutput != null && value?.DotNetValue.Type is DmdType actualType)
+				formatter.FormatType(context, options.ActualTypeOutput, actualType, options.ActualTypeFormatterOptions);
+			if (options.ValueOutput != null && value?.DotNetValue is DbgDotNetValue dnValue)
+				formatter.FormatValue(context, options.ValueOutput, dnValue, options.ValueFormatterOptions, cancellationToken);
 		}
 
 		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
