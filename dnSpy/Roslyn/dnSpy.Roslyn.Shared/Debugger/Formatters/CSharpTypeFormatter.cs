@@ -1,0 +1,424 @@
+﻿/*
+    Copyright (C) 2014-2017 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Text;
+using dnSpy.Debugger.DotNet.Metadata;
+
+namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
+	struct CSharpTypeFormatter {
+		readonly ITextColorWriter output;
+		readonly TypeFormatterOptions options;
+		const int MAX_RECURSION = 200;
+		int recursionCounter;
+
+		const string ARRAY_OPEN_PAREN = "[";
+		const string ARRAY_CLOSE_PAREN = "]";
+		const string GENERICS_OPEN_PAREN = "<";
+		const string GENERICS_CLOSE_PAREN = ">";
+		const string TUPLE_OPEN_PAREN = "(";
+		const string TUPLE_CLOSE_PAREN = ")";
+		const string HEX_PREFIX = "0x";
+		const string COMMENT_BEGIN = "/*";
+		const string COMMENT_END = "*/";
+		const string IDENTIFIER_ESCAPE = "@";
+		const string BYREF_KEYWORD = "ref";
+
+		bool ShowArrayValueSizes => true;
+		bool UseDecimal => false;
+		bool ShowIntrinsicTypeKeywords => (options & TypeFormatterOptions.IntrinsicTypeKeywords) != 0;
+		bool ShowTokens => (options & TypeFormatterOptions.Tokens) != 0;
+		bool ShowNamespaces => (options & TypeFormatterOptions.Namespaces) != 0;
+
+		public CSharpTypeFormatter(ITextColorWriter output, TypeFormatterOptions options) {
+			this.output = output ?? throw new ArgumentNullException(nameof(output));
+			this.options = options;
+			recursionCounter = 0;
+		}
+
+		void OutputWrite(string s, object color) => output.Write(color, s);
+
+		void WriteSpace() => OutputWrite(" ", BoxedTextColor.Text);
+
+		void WriteCommaSpace() {
+			OutputWrite(",", BoxedTextColor.Punctuation);
+			WriteSpace();
+		}
+
+		void WriteUInt32(uint value) => OutputWrite(UseDecimal ? value.ToString() : HEX_PREFIX + value.ToString("X8"), BoxedTextColor.Number);
+		void WriteInt32(int value) => OutputWrite(UseDecimal ? value.ToString() : HEX_PREFIX + value.ToString("X8"), BoxedTextColor.Number);
+
+		void WriteTokenComment(int metadataToken) {
+			if (!ShowTokens)
+				return;
+			OutputWrite(COMMENT_BEGIN + HEX_PREFIX + metadataToken.ToString("X8") + COMMENT_END, BoxedTextColor.Comment);
+		}
+
+		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.Ordinal) {
+			"abstract", "as", "base", "bool", "break", "byte", "case", "catch",
+			"char", "checked", "class", "const", "continue", "decimal", "default", "delegate",
+			"do", "double", "else", "enum", "event", "explicit", "extern", "false",
+			"finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit",
+			"in", "int", "interface", "internal", "is", "lock", "long", "namespace",
+			"new", "null", "object", "operator", "out", "override", "params", "private",
+			"protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short",
+			"sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw",
+			"true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort",
+			"using", "virtual", "void", "volatile", "while",
+		};
+
+		void WriteIdentifier(string id, object color) {
+			if (isKeyword.Contains(id))
+				OutputWrite(IDENTIFIER_ESCAPE + IdentifierEscaper.Escape(id), color);
+			else
+				OutputWrite(IdentifierEscaper.Escape(id), color);
+		}
+
+		//TODO: Inline
+		static DbgDotNetValue GetDereferencedValue(DbgDotNetValue value) => null;//TODO:
+
+		public void Format(DmdType type, DbgDotNetValue value) {
+			if ((object)type == null)
+				throw new ArgumentNullException(nameof(type));
+
+			try {
+				if (recursionCounter++ >= MAX_RECURSION)
+					return;
+
+				switch (type.TypeSignatureKind) {
+				case DmdTypeSignatureKind.SZArray:
+				case DmdTypeSignatureKind.MDArray:
+					// Array types are shown in reverse order
+					var arrayTypesList = new List<(DmdType type, DbgDotNetValue value)>();
+					do {
+						arrayTypesList.Add((type, value));
+						value = GetDereferencedValue(value);
+						type = type.GetElementType();
+					} while (type.IsArray);
+					var t = arrayTypesList[arrayTypesList.Count - 1];
+					Format(t.type.GetElementType(), t.value);
+					foreach (var tuple in arrayTypesList) {
+						var aryType = tuple.type;
+						var aryValue = tuple.value;
+						if (aryType.IsVariableBoundArray) {
+							OutputWrite(ARRAY_OPEN_PAREN, BoxedTextColor.Punctuation);
+							int rank = aryType.GetArrayRank();
+							if (rank <= 0)
+								OutputWrite("???", BoxedTextColor.Error);
+							else {
+								if (rank == 1)
+									OutputWrite("*", BoxedTextColor.Operator);
+								//TODO: get array lower bounds / sizes from the value
+								var lowerBounds = aryValue == null ? null : (IList<int>)null;
+								var sizes = aryValue == null ? null : (IList<int>)null;
+								if (ShowArrayValueSizes && lowerBounds != null && sizes != null && lowerBounds.Count == rank && sizes.Count == rank) {
+									for (int i = 0; i < rank; i++) {
+										if (i > 0) {
+											OutputWrite(",", BoxedTextColor.Punctuation);
+											WriteSpace();
+										}
+										if (lowerBounds[i] == 0)
+											WriteUInt32((uint)sizes[i]);
+										else {
+											//TODO: How does VS print these arrays?
+											WriteInt32(lowerBounds[i]);
+											OutputWrite("..", BoxedTextColor.Operator);
+											WriteInt32(lowerBounds[i] + sizes[i]);
+										}
+									}
+								}
+								else {
+									for (uint i = 1; i < rank; i++)
+										OutputWrite(",", BoxedTextColor.Punctuation);
+								}
+							}
+							OutputWrite(ARRAY_CLOSE_PAREN, BoxedTextColor.Punctuation);
+						}
+						else {
+							Debug.Assert(aryType.IsSZArray);
+							OutputWrite(ARRAY_OPEN_PAREN, BoxedTextColor.Punctuation);
+							if (ShowArrayValueSizes && aryValue != null) {
+								//TODO: WriteUInt32((uint)aryType.GetArrayCount());
+							}
+							OutputWrite(ARRAY_CLOSE_PAREN, BoxedTextColor.Punctuation);
+						}
+					}
+					break;
+
+				case DmdTypeSignatureKind.Pointer:
+					Format(type.GetElementType(), GetDereferencedValue(value));
+					OutputWrite("*", BoxedTextColor.Operator);
+					break;
+
+				case DmdTypeSignatureKind.ByRef:
+					OutputWrite(BYREF_KEYWORD, BoxedTextColor.Keyword);
+					WriteSpace();
+					Format(type.GetElementType(), GetDereferencedValue(value));
+					break;
+
+				case DmdTypeSignatureKind.TypeGenericParameter:
+					WriteIdentifier(type.MetadataName, BoxedTextColor.TypeGenericParameter);
+					break;
+
+				case DmdTypeSignatureKind.MethodGenericParameter:
+					WriteIdentifier(type.MetadataName, BoxedTextColor.MethodGenericParameter);
+					break;
+
+				case DmdTypeSignatureKind.Type:
+				case DmdTypeSignatureKind.GenericInstance:
+					if (type.IsNullable) {
+						Format(type.GetNullableElementType(), null);
+						OutputWrite("?", BoxedTextColor.Operator);
+					}
+					else if (IsTupleType(type)) {
+						OutputWrite(TUPLE_OPEN_PAREN, BoxedTextColor.Punctuation);
+						var tupleType = type;
+						int tupleIndex = 0;
+						do {
+							tupleType = WriteTupleFields(tupleType, ref tupleIndex);
+							if ((object)tupleType != null)
+								WriteCommaSpace();
+						} while ((object)tupleType != null);
+						OutputWrite(TUPLE_CLOSE_PAREN, BoxedTextColor.Punctuation);
+					}
+					else {
+						var genericArgs = type.GetGenericArguments();
+						int genericArgsIndex = 0;
+						KeywordType keywordType;
+						if ((object)type.DeclaringType == null) {
+							keywordType = GetKeywordType(type);
+							if (keywordType == KeywordType.NoKeyword)
+								WriteNamespace(type);
+							WriteTypeName(type, keywordType);
+							WriteGenericArguments(type, genericArgs, ref genericArgsIndex);
+						}
+						else {
+							var typesList = new List<DmdType>();
+							typesList.Add(type);
+							while (type.DeclaringType != null) {
+								type = type.DeclaringType;
+								typesList.Add(type);
+							}
+							keywordType = GetKeywordType(type);
+							if (keywordType == KeywordType.NoKeyword)
+								WriteNamespace(type);
+							for (int i = typesList.Count - 1; i >= 0; i--) {
+								WriteTypeName(typesList[i], i == 0 ? keywordType : KeywordType.NoKeyword);
+								WriteGenericArguments(typesList[i], genericArgs, ref genericArgsIndex);
+								if (i != 0)
+									OutputWrite(".", BoxedTextColor.Operator);
+							}
+						}
+					}
+					break;
+
+				case DmdTypeSignatureKind.FunctionPointer:
+					//TODO:
+					OutputWrite("fnptr", BoxedTextColor.Keyword);
+					break;
+
+				default:
+					throw new InvalidOperationException();
+				}
+			}
+			finally {
+				recursionCounter--;
+			}
+		}
+
+		void WriteGenericArguments(DmdType type, IList<DmdType> genericArgs, ref int genericArgsIndex) {
+			var gas = type.GetGenericArguments();
+			if (genericArgsIndex < genericArgs.Count && genericArgsIndex < gas.Count) {
+				OutputWrite(GENERICS_OPEN_PAREN, BoxedTextColor.Punctuation);
+				int startIndex = genericArgsIndex;
+				for (int j = startIndex; j < genericArgs.Count && j < gas.Count; j++, genericArgsIndex++) {
+					if (j > startIndex)
+						WriteCommaSpace();
+					Format(genericArgs[j], null);
+				}
+				OutputWrite(GENERICS_CLOSE_PAREN, BoxedTextColor.Punctuation);
+			}
+		}
+
+		const int MAX_TUPLE_ARITY = 8;
+		DmdType WriteTupleFields(DmdType type, ref int index) {
+			var args = type.GetGenericArguments();
+			Debug.Assert(0 < args.Count && args.Count <= MAX_TUPLE_ARITY);
+			if (args.Count > MAX_TUPLE_ARITY) {
+				OutputWrite("???", BoxedTextColor.Error);
+				return null;
+			}
+			for (int i = 0; i < args.Count && i < MAX_TUPLE_ARITY - 1; i++) {
+				if (i > 0)
+					WriteCommaSpace();
+				Format(args[i], null);
+				WriteSpace();
+				//TODO: Write tuple name used in source
+				OutputWrite("Item" + (index + 1).ToString(), BoxedTextColor.InstanceField);
+				index++;
+			}
+			if (args.Count == MAX_TUPLE_ARITY)
+				return args[MAX_TUPLE_ARITY - 1];
+			return null;
+		}
+
+		static bool IsTupleType(DmdType type) => GetTupleArity(type) >= 0;
+
+		static int GetTupleArity(DmdType type) {
+			if (type.MetadataNamespace != "System")
+				return -1;
+			if (type.IsNested)
+				return -1;
+			if (!type.IsValueType)
+				return -1;
+			switch (type.MetadataName) {
+			case "ValueTuple`1": return 1;
+			case "ValueTuple`2": return 2;
+			case "ValueTuple`3": return 3;
+			case "ValueTuple`4": return 4;
+			case "ValueTuple`5": return 5;
+			case "ValueTuple`6": return 6;
+			case "ValueTuple`7": return 7;
+			case "ValueTuple`8": return 8;
+			default:
+				return -1;
+			}
+		}
+
+		void WriteNamespace(DmdType type) {
+			if (!ShowNamespaces)
+				return;
+			var ns = type.MetadataNamespace;
+			if (string.IsNullOrEmpty(ns))
+				return;
+			foreach (var nsPart in ns.Split(namespaceSeparators)) {
+				WriteIdentifier(nsPart, BoxedTextColor.Namespace);
+				OutputWrite(".", BoxedTextColor.Operator);
+			}
+		}
+		static readonly char[] namespaceSeparators = new[] { '.' };
+
+		void WriteTypeName(DmdType type, KeywordType keywordType) {
+			switch (keywordType) {
+			case KeywordType.Void:		OutputWrite("void", BoxedTextColor.Keyword); return;
+			case KeywordType.Boolean:	OutputWrite("bool", BoxedTextColor.Keyword); return;
+			case KeywordType.Char:		OutputWrite("char", BoxedTextColor.Keyword); return;
+			case KeywordType.SByte:		OutputWrite("sbyte", BoxedTextColor.Keyword); return;
+			case KeywordType.Byte:		OutputWrite("byte", BoxedTextColor.Keyword); return;
+			case KeywordType.Int16:		OutputWrite("short", BoxedTextColor.Keyword); return;
+			case KeywordType.UInt16:	OutputWrite("ushort", BoxedTextColor.Keyword); return;
+			case KeywordType.Int32:		OutputWrite("int", BoxedTextColor.Keyword); return;
+			case KeywordType.UInt32:	OutputWrite("uint", BoxedTextColor.Keyword); return;
+			case KeywordType.Int64:		OutputWrite("long", BoxedTextColor.Keyword); return;
+			case KeywordType.UInt64:	OutputWrite("ulong", BoxedTextColor.Keyword); return;
+			case KeywordType.Single:	OutputWrite("float", BoxedTextColor.Keyword); return;
+			case KeywordType.Double:	OutputWrite("double", BoxedTextColor.Keyword); return;
+			case KeywordType.Object:	OutputWrite("object", BoxedTextColor.Keyword); return;
+			case KeywordType.Decimal:	OutputWrite("decimal", BoxedTextColor.Keyword); return;
+			case KeywordType.String:	OutputWrite("string", BoxedTextColor.Keyword); return;
+
+			case KeywordType.NoKeyword:
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			WriteIdentifier(RemoveGenericTick(type.MetadataName), GetTypeColor(type));
+			WriteTokenComment(type.MetadataToken);
+		}
+
+		static object GetTypeColor(DmdType type) {
+			if (type.IsInterface)
+				return BoxedTextColor.Interface;
+			if (type.IsEnum)
+				return BoxedTextColor.Enum;
+			if (type.IsValueType)
+				return BoxedTextColor.ValueType;
+			if (type.BaseType == type.AppDomain.System_MulticastDelegate)
+				return BoxedTextColor.Delegate;
+			if (type.IsSealed && type.IsAbstract && type.BaseType == type.AppDomain.System_Object)
+				return BoxedTextColor.StaticType;
+			if (type.IsSealed)
+				return BoxedTextColor.SealedType;
+			return BoxedTextColor.Type;
+		}
+
+		static string RemoveGenericTick(string s) {
+			int index = s.LastIndexOf('`');
+			if (index < 0)
+				return s;
+			// Check if compiler generated name
+			if (s[0] == '<')
+				return s;
+			return s.Substring(0, index);
+		}
+
+		enum KeywordType {
+			NoKeyword,
+			Void,
+			Boolean,
+			Char,
+			SByte,
+			Byte,
+			Int16,
+			UInt16,
+			Int32,
+			UInt32,
+			Int64,
+			UInt64,
+			Single,
+			Double,
+			Object,
+			Decimal,
+			String,
+		}
+
+		KeywordType GetKeywordType(DmdType type) {
+			const KeywordType defaultValue = KeywordType.NoKeyword;
+			if (!ShowIntrinsicTypeKeywords)
+				return defaultValue;
+			if (type.MetadataNamespace == "System" && !type.IsNested) {
+				switch (type.MetadataName) {
+				case "Void":	return type == type.AppDomain.System_Void		? KeywordType.Void		: defaultValue;
+				case "Boolean":	return type == type.AppDomain.System_Boolean	? KeywordType.Boolean	: defaultValue;
+				case "Char":	return type == type.AppDomain.System_Char		? KeywordType.Char		: defaultValue;
+				case "SByte":	return type == type.AppDomain.System_SByte		? KeywordType.SByte		: defaultValue;
+				case "Byte":	return type == type.AppDomain.System_Byte		? KeywordType.Byte		: defaultValue;
+				case "Int16":	return type == type.AppDomain.System_Int16		? KeywordType.Int16		: defaultValue;
+				case "UInt16":	return type == type.AppDomain.System_UInt16		? KeywordType.UInt16	: defaultValue;
+				case "Int32":	return type == type.AppDomain.System_Int32		? KeywordType.Int32		: defaultValue;
+				case "UInt32":	return type == type.AppDomain.System_UInt32		? KeywordType.UInt32	: defaultValue;
+				case "Int64":	return type == type.AppDomain.System_Int64		? KeywordType.Int64		: defaultValue;
+				case "UInt64":	return type == type.AppDomain.System_UInt64		? KeywordType.UInt64	: defaultValue;
+				case "Single":	return type == type.AppDomain.System_Single		? KeywordType.Single	: defaultValue;
+				case "Double":	return type == type.AppDomain.System_Double		? KeywordType.Double	: defaultValue;
+				case "Object":	return type == type.AppDomain.System_Object		? KeywordType.Object	: defaultValue;
+				case "Decimal":	return type == type.AppDomain.System_Decimal	? KeywordType.Decimal	: defaultValue;
+				case "String":	return type == type.AppDomain.System_String		? KeywordType.String	: defaultValue;
+				}
+			}
+			return defaultValue;
+		}
+	}
+}

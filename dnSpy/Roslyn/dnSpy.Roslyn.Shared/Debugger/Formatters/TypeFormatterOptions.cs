@@ -17,16 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
-using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
-using dnSpy.Debugger.DotNet.Metadata;
+using System;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
-	[ExportDbgDotNetFormatter(DbgDotNetLanguageGuids.VisualBasic)]
-	sealed class VisualBasicFormatter : LanguageFormatter {
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgValueFormatterTypeOptions options) =>
-			new VisualBasicTypeFormatter(output, options.ToTypeFormatterOptions()).Format(type, null);
+	[Flags]
+	enum TypeFormatterOptions {
+		None						= 0,
+		IntrinsicTypeKeywords		= 0x00000001,
+		Tokens						= 0x00000002,
+		Namespaces					= 0x00000004,
 	}
 }

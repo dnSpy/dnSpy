@@ -53,8 +53,12 @@
     <Compile Include="Debugger\FilterExpressionEvaluator\DbgFilterExpressionEvaluatorImpl.cs" />
     <Compile Include="Debugger\FilterExpressionEvaluator\EvalDelegateCreator.cs" />
     <Compile Include="Debugger\Formatters\CSharpFormatter.cs" />
+    <Compile Include="Debugger\Formatters\CSharpTypeFormatter.cs" />
+    <Compile Include="Debugger\Formatters\DbgValueFormatterTypeOptionsExtensions.cs" />
     <Compile Include="Debugger\Formatters\LanguageFormatter.cs" />
+    <Compile Include="Debugger\Formatters\TypeFormatterOptions.cs" />
     <Compile Include="Debugger\Formatters\VisualBasicFormatter.cs" />
+    <Compile Include="Debugger\Formatters\VisualBasicTypeFormatter.cs" />
     <Compile Include="Debugger\ValueNodes\CSharpValueNodeFactory.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeImpl.cs" />
     <Compile Include="Debugger\ValueNodes\LanguageValueNodeFactory.cs" />

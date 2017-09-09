@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 	/// </summary>
 	public abstract class DbgDotNetValueNode : DbgObject {
 		/// <summary>
-		/// Gets the expected type
+		/// Gets the expected type or null
 		/// </summary>
 		public abstract DmdType ExpectedType { get; }
 
@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		public abstract string ErrorMessage { get; }
 
 		/// <summary>
-		/// Gets the value
+		/// Gets the value or null
 		/// </summary>
 		public abstract DbgDotNetValue Value { get; }
 

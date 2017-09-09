@@ -23,7 +23,6 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
-using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	abstract class LanguageFormatter : DbgDotNetFormatter {
@@ -40,10 +39,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			output.Write(BoxedTextColor.DebugObjectIdName, "$" + id.ToString());
 
 		public override void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken) {
-			throw new NotImplementedException();//TODO:
-		}
-
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgValueFormatterTypeOptions options) {
 			throw new NotImplementedException();//TODO:
 		}
 	}

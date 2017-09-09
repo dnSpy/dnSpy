@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// </summary>
 	public enum DbgSimpleValueType {
 		/// <summary>
-		/// It's a reference type (allocated on the heap)
+		/// It's a reference type (allocated on the heap) or null
 		/// </summary>
 		OtherReferenceType,
 
@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		Void,
 
 		/// <summary>
-		/// Boolean, <see cref="DbgValue.RawValue"/> is a boxed <see cref="Boolean"/>
+		/// Boolean, <see cref="DbgValue.RawValue"/> is a boxed <see cref="bool"/>
 		/// </summary>
 		Boolean,
 
@@ -97,7 +97,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		Char1,
 
 		/// <summary>
-		/// Char, <see cref="DbgValue.RawValue"/> is a boxed <see cref="Char"/>
+		/// Char, <see cref="DbgValue.RawValue"/> is a boxed <see cref="char"/>
 		/// </summary>
 		CharUtf16,
 
@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		Ptr64,
 
 		/// <summary>
-		/// UTF-16 string, <see cref="DbgValue.RawValue"/> is a boxed <see cref="string"/>
+		/// UTF-16 string, <see cref="DbgValue.RawValue"/> is a <see cref="string"/> or null
 		/// </summary>
 		StringUtf16,
 	}
