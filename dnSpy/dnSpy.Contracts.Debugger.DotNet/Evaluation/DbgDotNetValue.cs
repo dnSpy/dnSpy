@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -74,5 +75,28 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// If it's an enum value, it's stored as the enum's underlying type (eg. <see cref="int"/>)
 		/// </summary>
 		public object RawValue { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="valueType">Type</param>
+		public DbgDotNetRawValue(DbgSimpleValueType valueType) {
+			Debug.Assert(valueType == DbgSimpleValueType.OtherReferenceType || valueType == DbgSimpleValueType.OtherValueType || valueType == DbgSimpleValueType.Void);
+			ValueType = valueType;
+			HasRawValue = false;
+			RawValue = null;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="valueType">Type</param>
+		/// <param name="rawValue">Value</param>
+		public DbgDotNetRawValue(DbgSimpleValueType valueType, object rawValue) {
+			Debug.Assert(valueType != DbgSimpleValueType.Void);
+			ValueType = valueType;
+			HasRawValue = true;
+			RawValue = rawValue;
+		}
 	}
 }
