@@ -50,7 +50,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly DbgMetadataService dbgMetadataService;
 		readonly IDecompiler decompiler;
 
-		public DbgEngineLanguageImpl(string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMetadataService dbgMetadataService, IDecompiler decompiler, DbgDotNetFormatter formatter) {
+		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMetadataService dbgMetadataService, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory) {
+			if (dbgModuleReferenceProvider == null)
+				throw new ArgumentNullException(nameof(dbgModuleReferenceProvider));
 			if (expressionCompiler == null)
 				throw new ArgumentNullException(nameof(expressionCompiler));
 			if (formatter == null)

@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
@@ -35,17 +34,20 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	[Export(typeof(DbgDotNetLanguageService))]
 	sealed class DbgDotNetLanguageServiceImpl : DbgDotNetLanguageService {
 		readonly Lazy<DbgMetadataService> dbgMetadataService;
+		readonly Lazy<DbgModuleReferenceProvider> dbgModuleReferenceProvider;
+		readonly Lazy<DbgDotNetEngineValueNodeFactoryService> dbgDotNetEngineValueNodeFactoryService;
 		readonly Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>[] dbgDotNetExpressionCompilers;
 		readonly IDecompilerService decompilerService;
 		readonly Dictionary<Guid, Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>> formattersDict;
 
 		static readonly Guid csharpDecompilerGuid = new Guid(PredefinedDecompilerGuids.CSharp);
 		static readonly Guid visualBasicDecompilerGuid = new Guid(PredefinedDecompilerGuids.VisualBasic);
-		static readonly Guid defaultLanguageGuid = new Guid(DbgDotNetLanguageGuids.CSharp);
 
 		[ImportingConstructor]
-		DbgDotNetLanguageServiceImpl(Lazy<DbgMetadataService> dbgMetadataService, [ImportMany] IEnumerable<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>> dbgDotNetExpressionCompilers, IDecompilerService decompilerService, [ImportMany] IEnumerable<Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>> dbgDotNetFormatters) {
+		DbgDotNetLanguageServiceImpl(Lazy<DbgMetadataService> dbgMetadataService, Lazy<DbgModuleReferenceProvider> dbgModuleReferenceProvider, Lazy<DbgDotNetEngineValueNodeFactoryService> dbgDotNetEngineValueNodeFactoryService, [ImportMany] IEnumerable<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>> dbgDotNetExpressionCompilers, IDecompilerService decompilerService, [ImportMany] IEnumerable<Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>> dbgDotNetFormatters) {
 			this.dbgMetadataService = dbgMetadataService;
+			this.dbgModuleReferenceProvider = dbgModuleReferenceProvider;
+			this.dbgDotNetEngineValueNodeFactoryService = dbgDotNetEngineValueNodeFactoryService;
 			this.decompilerService = decompilerService;
 			var eeList = new List<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>>();
 			var langGuids = new HashSet<Guid>();
@@ -93,8 +95,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				if (decompiler == null)
 					continue;
 
+				var valueNodeFactory = dbgDotNetEngineValueNodeFactoryService.Value.Create(lz.Metadata.LanguageGuid, formatter.Value);
+				if (valueNodeFactory == null)
+					continue;
+
 				var languageDisplayName = ResourceHelper.GetString(lz.Value, lz.Metadata.LanguageDisplayName);
-				yield return new DbgEngineLanguageImpl(lz.Metadata.LanguageName, languageDisplayName, lz.Value, dbgMetadataService.Value, decompiler, formatter.Value);
+				yield return new DbgEngineLanguageImpl(dbgModuleReferenceProvider.Value, lz.Metadata.LanguageName, languageDisplayName, lz.Value, dbgMetadataService.Value, decompiler, formatter.Value, valueNodeFactory);
 			}
 		}
 
@@ -107,10 +113,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			if (formattersDict.TryGetValue(languageGuid, out formatter))
 				return true;
-			if (formattersDict.TryGetValue(defaultLanguageGuid, out formatter))
+			if (formattersDict.TryGetValue(LanguageConstants.DefaultLanguageGuid, out formatter))
 				return true;
 
-			Debug.Fail($"Default formatter ({defaultLanguageGuid.ToString()}) wasn't exported");
+			Debug.Fail($"Default formatter ({LanguageConstants.DefaultLanguageGuid.ToString()}) wasn't exported");
 			formatter = formattersDict.Values.FirstOrDefault();
 			return formatter != null;
 		}
