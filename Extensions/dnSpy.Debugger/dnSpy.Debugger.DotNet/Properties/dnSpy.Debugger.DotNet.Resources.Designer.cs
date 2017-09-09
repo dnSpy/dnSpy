@@ -19,7 +19,7 @@ namespace dnSpy.Debugger.DotNet.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class dnSpy_Debugger_DotNet_Resources {
@@ -115,6 +115,15 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Decompiler generated variables can&apos;t be evaluated.
+        /// </summary>
+        public static string DecompilerGeneratedVariablesCanNotBeEvaluated {
+            get {
+                return ResourceManager.GetString("DecompilerGeneratedVariablesCanNotBeEvaluated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IL offset {0}.
         /// </summary>
         public static string GlyphToolTip_IL_offset_0 {
@@ -129,6 +138,15 @@ namespace dnSpy.Debugger.DotNet.Properties {
         public static string GlyphToolTip_line_0_character_1 {
             get {
                 return ResourceManager.GetString("GlyphToolTip_line_0_character_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal debugger error.
+        /// </summary>
+        public static string InternalDebuggerError {
+            get {
+                return ResourceManager.GetString("InternalDebuggerError", resourceCulture);
             }
         }
         

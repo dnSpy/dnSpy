@@ -61,10 +61,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
 			this.dbgMetadataService = dbgMetadataService ?? throw new ArgumentNullException(nameof(dbgMetadataService));
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
+			var dnILInterpreter = new DbgDotNetILInterpreterImpl();
 			ExpressionEvaluator = new DbgEngineExpressionEvaluatorImpl(expressionCompiler);
 			ValueFormatter = new DbgEngineValueFormatterImpl();
 			Formatter = new DbgEngineFormatterImpl(formatter);
-			LocalsProvider = new DbgEngineLocalsProviderImpl();
+			LocalsProvider = new DbgEngineLocalsProviderImpl(dbgModuleReferenceProvider, expressionCompiler, valueNodeFactory, dnILInterpreter);
 			AutosProvider = new DbgEngineAutosProviderImpl();
 			ExceptionsProvider = new DbgEngineExceptionsProviderImpl();
 			ReturnValuesProvider = new DbgEngineReturnValuesProviderImpl();

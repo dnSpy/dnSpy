@@ -64,8 +64,10 @@
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactory.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactoryService.cs" />
+    <Compile Include="Evaluation\Engine\DbgDotNetILInterpreter.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetLanguageServiceImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetRuntimeUtils.cs" />
+    <Compile Include="Evaluation\Engine\DbgDotNetValueCreator.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineAutosProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineExceptionsProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineExpressionEvaluatorImpl.cs" />
@@ -144,6 +146,10 @@
     <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Interpreter\dnSpy.Debugger.DotNet.Interpreter.csproj">
+      <Project>{b89e5078-ff71-4fb2-b99f-a790bd94afd7}</Project>
+      <Name>dnSpy.Debugger.DotNet.Interpreter</Name>
     </ProjectReference>
     <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj">
       <Project>{FCD8913D-85A0-479E-9689-70FEA52C6DCB}</Project>
