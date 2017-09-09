@@ -41,10 +41,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		List<DmdType> GetTypesList() {
 			if (typesList == null)
-				typesList = new List<DmdType>();
-			else
-				typesList.Clear();
-			return typesList;
+				return new List<DmdType>();
+			var list = typesList;
+			typesList = null;
+			list.Clear();
+			return list;
+		}
+
+		void FreeTypesList(ref List<DmdType> list) {
+			if (list == null)
+				return;
+			typesList = list;
+			list = null;
 		}
 
 		public DmdType Create(CorType type) {
@@ -100,8 +108,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					types = GetTypesList();
 					foreach (var t in type.TypeParameters)
 						types.Add(Create(t));
+					Debug.Assert(types.Count == 0 || reflectionType.GetGenericArguments().Count == types.Count);
 					if (types.Count != 0)
 						reflectionType = reflectionType.MakeGenericType(types.ToArray());
+					FreeTypesList(ref types);
 				}
 				result = reflectionType;
 				break;
@@ -118,9 +128,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						types.Add(Create(t));
 					}
 				}
+				if ((object)returnType == null)
+					throw new InvalidOperationException();
 				Debug.Fail("Guessing FnPtr calling convention");
 				const DmdSignatureCallingConvention fnPtrCallingConvention = DmdSignatureCallingConvention.C;
 				result = reflectionAppDomain.MakeFunctionPointerType(fnPtrCallingConvention, 0, returnType, types?.ToArray() ?? Array.Empty<DmdType>(), null, null);
+				FreeTypesList(ref types);
 				break;
 
 			case CorElementType.GenericInst:
