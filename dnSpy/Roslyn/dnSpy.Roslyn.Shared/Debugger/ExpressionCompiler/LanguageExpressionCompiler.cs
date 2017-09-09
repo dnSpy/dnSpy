@@ -151,10 +151,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 		}
 
 		protected DbgDotNetCompilationResult CreateCompilationResult(byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string errorMessage) {
-			Debug.Assert((assembly == null || assembly.Length == 0) == (errorMessage != null));
+			Debug.Assert(errorMessage == null || (assembly == null || assembly.Length == 0));
 
 			if (errorMessage != null)
 				return new DbgDotNetCompilationResult(errorMessage);
+			if (assembly == null || assembly.Length == 0)
+				return new DbgDotNetCompilationResult(Array.Empty<byte>(), Array.Empty<DbgDotNetCompiledExpressionResult>());
 
 			var compiledExpressions = new DbgDotNetCompiledExpressionResult[infos.Length];
 			int w = 0;
