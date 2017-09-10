@@ -156,7 +156,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 									}
 								}
 								else
-									OutputWrite(GetArrayCommas(rank), BoxedTextColor.Punctuation);
+									OutputWrite(TypeFormatterUtils.GetArrayCommas(rank), BoxedTextColor.Punctuation);
 							}
 							OutputWrite(ARRAY_CLOSE_PAREN, BoxedTextColor.Punctuation);
 						}
@@ -197,7 +197,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 						Format(type.GetNullableElementType(), null);
 						OutputWrite("?", BoxedTextColor.Operator);
 					}
-					else if (IsTupleType(type)) {
+					else if (TypeFormatterUtils.IsTupleType(type)) {
 						OutputWrite(TUPLE_OPEN_PAREN, BoxedTextColor.Punctuation);
 						var tupleType = type;
 						int tupleIndex = 0;
@@ -262,30 +262,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			}
 		}
 
-		static string GetArrayCommas(int rank) {
-			switch (rank) {
-			case 0:
-			case 1:		return string.Empty;
-			case 2:		return ",";
-			case 3:		return ",,";
-			case 4:		return ",,,";
-			case 5:		return ",,,,";
-			case 6:		return ",,,,,";
-			case 7:		return ",,,,,,";
-			case 8:		return ",,,,,,,";
-			case 9:		return ",,,,,,,,";
-			case 10:	return ",,,,,,,,,";
-			case 11:	return ",,,,,,,,,,";
-			case 12:	return ",,,,,,,,,,,";
-			case 13:	return ",,,,,,,,,,,,";
-			case 14:	return ",,,,,,,,,,,,,";
-			case 15:	return ",,,,,,,,,,,,,,";
-			case 16:	return ",,,,,,,,,,,,,,,";
-			default:
-				return new string(',', rank - 1);
-			}
-		}
-
 		void WriteGenericArguments(DmdType type, IList<DmdType> genericArgs, ref int genericArgsIndex) {
 			var gas = type.GetGenericArguments();
 			if (genericArgsIndex < genericArgs.Count && genericArgsIndex < gas.Count) {
@@ -300,53 +276,28 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			}
 		}
 
-		const int MAX_TUPLE_ARITY = 8;
 		DmdType WriteTupleFields(DmdType type, ref int index) {
 			var args = type.GetGenericArguments();
-			Debug.Assert(0 < args.Count && args.Count <= MAX_TUPLE_ARITY);
-			if (args.Count > MAX_TUPLE_ARITY) {
+			Debug.Assert(0 < args.Count && args.Count <= TypeFormatterUtils.MAX_TUPLE_ARITY);
+			if (args.Count > TypeFormatterUtils.MAX_TUPLE_ARITY) {
 				OutputWrite("???", BoxedTextColor.Error);
 				return null;
 			}
-			for (int i = 0; i < args.Count && i < MAX_TUPLE_ARITY - 1; i++) {
+			for (int i = 0; i < args.Count && i < TypeFormatterUtils.MAX_TUPLE_ARITY - 1; i++) {
 				if (i > 0)
 					WriteCommaSpace();
 				Format(args[i], null);
-				WriteSpace();
 				//TODO: Write tuple name used in source
-				OutputWrite("Item" + (index + 1).ToString(), BoxedTextColor.InstanceField);
+				string fieldName = null;
+				if (fieldName != null) {
+					WriteSpace();
+					OutputWrite(fieldName, BoxedTextColor.InstanceField);
+				}
 				index++;
 			}
-			if (args.Count == MAX_TUPLE_ARITY)
-				return args[MAX_TUPLE_ARITY - 1];
+			if (args.Count == TypeFormatterUtils.MAX_TUPLE_ARITY)
+				return args[TypeFormatterUtils.MAX_TUPLE_ARITY - 1];
 			return null;
-		}
-
-		static bool IsTupleType(DmdType type) => GetTupleArity(type) >= 0;
-
-		static int GetTupleArity(DmdType type) {
-			if (type.MetadataNamespace != "System")
-				return -1;
-			if (type.IsNested)
-				return -1;
-			if (!type.IsValueType)
-				return -1;
-			int arity;
-			switch (type.MetadataName) {
-			case "ValueTuple`1": arity = 1; break;
-			case "ValueTuple`2": arity = 2; break;
-			case "ValueTuple`3": arity = 3; break;
-			case "ValueTuple`4": arity = 4; break;
-			case "ValueTuple`5": arity = 5; break;
-			case "ValueTuple`6": arity = 6; break;
-			case "ValueTuple`7": arity = 7; break;
-			case "ValueTuple`8": arity = 8; break;
-			default:
-				return -1;
-			}
-			if (type.GetGenericArguments().Count != arity)
-				return -1;
-			return arity;
 		}
 
 		void WriteNamespace(DmdType type) {
@@ -388,34 +339,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				throw new InvalidOperationException();
 			}
 
-			WriteIdentifier(RemoveGenericTick(type.MetadataName), GetTypeColor(type));
+			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.MetadataName), TypeFormatterUtils.GetTypeColor(type, canBeModule: false));
 			WriteTokenComment(type.MetadataToken);
-		}
-
-		static object GetTypeColor(DmdType type) {
-			if (type.IsInterface)
-				return BoxedTextColor.Interface;
-			if (type.IsEnum)
-				return BoxedTextColor.Enum;
-			if (type.IsValueType)
-				return BoxedTextColor.ValueType;
-			if (type.BaseType == type.AppDomain.System_MulticastDelegate)
-				return BoxedTextColor.Delegate;
-			if (type.IsSealed && type.IsAbstract && type.BaseType == type.AppDomain.System_Object)
-				return BoxedTextColor.StaticType;
-			if (type.IsSealed)
-				return BoxedTextColor.SealedType;
-			return BoxedTextColor.Type;
-		}
-
-		static string RemoveGenericTick(string s) {
-			int index = s.LastIndexOf('`');
-			if (index < 0)
-				return s;
-			// Check if compiler generated name
-			if (s[0] == '<')
-				return s;
-			return s.Substring(0, index);
 		}
 
 		enum KeywordType {

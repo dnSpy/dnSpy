@@ -57,6 +57,7 @@
     <Compile Include="Debugger\Formatters\DbgValueFormatterTypeOptionsExtensions.cs" />
     <Compile Include="Debugger\Formatters\LanguageFormatter.cs" />
     <Compile Include="Debugger\Formatters\TypeFormatterOptions.cs" />
+    <Compile Include="Debugger\Formatters\TypeFormatterUtils.cs" />
     <Compile Include="Debugger\Formatters\VisualBasicFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasicTypeFormatter.cs" />
     <Compile Include="Debugger\ValueNodes\CSharpValueNodeFactory.cs" />
