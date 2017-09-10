@@ -26,7 +26,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	[ExportDbgDotNetFormatter(DbgDotNetLanguageGuids.CSharp)]
 	sealed class CSharpFormatter : LanguageFormatter {
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgValueFormatterTypeOptions options) =>
-			new CSharpTypeFormatter(output, options.ToTypeFormatterOptions()).Format(type, null);
+		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options) =>
+			new CSharpTypeFormatter(output, options.ToTypeFormatterOptions()).Format(type, value);
 	}
 }

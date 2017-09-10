@@ -79,8 +79,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
 		/// <param name="type">Type to format</param>
+		/// <param name="value">Value or null</param>
 		/// <param name="options">Options</param>
-		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgValueFormatterTypeOptions options);
+		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options);
 	}
 
 	/// <summary>Metadata</summary>
