@@ -43,6 +43,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		const string COMMENT_END = "*/";
 		const string IDENTIFIER_ESCAPE = "@";
 		const string BYREF_KEYWORD = "ref";
+		const int MAX_ARRAY_RANK = 100;
 
 		bool ShowArrayValueSizes => true;
 		bool UseDecimal => false;
@@ -122,7 +123,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 						var aryValue = tuple.value;
 						if (aryType.IsVariableBoundArray) {
 							OutputWrite(ARRAY_OPEN_PAREN, BoxedTextColor.Punctuation);
-							int rank = aryType.GetArrayRank();
+							int rank = Math.Min(aryType.GetArrayRank(), MAX_ARRAY_RANK);
 							if (rank <= 0)
 								OutputWrite("???", BoxedTextColor.Error);
 							else {
@@ -147,10 +148,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 										}
 									}
 								}
-								else {
-									for (uint i = 1; i < rank; i++)
-										OutputWrite(",", BoxedTextColor.Punctuation);
-								}
+								else
+									OutputWrite(GetArrayCommas(rank), BoxedTextColor.Punctuation);
 							}
 							OutputWrite(ARRAY_CLOSE_PAREN, BoxedTextColor.Punctuation);
 						}
@@ -194,11 +193,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 						OutputWrite(TUPLE_OPEN_PAREN, BoxedTextColor.Punctuation);
 						var tupleType = type;
 						int tupleIndex = 0;
-						do {
+						for (;;) {
 							tupleType = WriteTupleFields(tupleType, ref tupleIndex);
 							if ((object)tupleType != null)
 								WriteCommaSpace();
-						} while ((object)tupleType != null);
+							else
+								break;
+						}
 						OutputWrite(TUPLE_CLOSE_PAREN, BoxedTextColor.Punctuation);
 					}
 					else {
@@ -243,6 +244,30 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			}
 			finally {
 				recursionCounter--;
+			}
+		}
+
+		static string GetArrayCommas(int rank) {
+			switch (rank) {
+			case 0:
+			case 1:		return string.Empty;
+			case 2:		return ",";
+			case 3:		return ",,";
+			case 4:		return ",,,";
+			case 5:		return ",,,,";
+			case 6:		return ",,,,,";
+			case 7:		return ",,,,,,";
+			case 8:		return ",,,,,,,";
+			case 9:		return ",,,,,,,,";
+			case 10:	return ",,,,,,,,,";
+			case 11:	return ",,,,,,,,,,";
+			case 12:	return ",,,,,,,,,,,";
+			case 13:	return ",,,,,,,,,,,,";
+			case 14:	return ",,,,,,,,,,,,,";
+			case 15:	return ",,,,,,,,,,,,,,";
+			case 16:	return ",,,,,,,,,,,,,,,";
+			default:
+				return new string(',', rank - 1);
 			}
 		}
 
@@ -291,18 +316,22 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				return -1;
 			if (!type.IsValueType)
 				return -1;
+			int arity;
 			switch (type.MetadataName) {
-			case "ValueTuple`1": return 1;
-			case "ValueTuple`2": return 2;
-			case "ValueTuple`3": return 3;
-			case "ValueTuple`4": return 4;
-			case "ValueTuple`5": return 5;
-			case "ValueTuple`6": return 6;
-			case "ValueTuple`7": return 7;
-			case "ValueTuple`8": return 8;
+			case "ValueTuple`1": arity = 1; break;
+			case "ValueTuple`2": arity = 2; break;
+			case "ValueTuple`3": arity = 3; break;
+			case "ValueTuple`4": arity = 4; break;
+			case "ValueTuple`5": arity = 5; break;
+			case "ValueTuple`6": arity = 6; break;
+			case "ValueTuple`7": arity = 7; break;
+			case "ValueTuple`8": arity = 8; break;
 			default:
 				return -1;
 			}
+			if (type.GetGenericArguments().Count != arity)
+				return -1;
+			return arity;
 		}
 
 		void WriteNamespace(DmdType type) {
