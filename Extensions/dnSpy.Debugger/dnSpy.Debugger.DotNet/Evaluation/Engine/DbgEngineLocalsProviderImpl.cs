@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					if (compilationResult.IsError)
 						return new[] { CreateInternalErrorNode(context, compilationResult.ErrorMessage) };
 
-					int decompilerGeneratedCount = GetDecompilerGeneratedVariablesCount(methodDebugInfo);
+					int decompilerGeneratedCount = GetDecompilerGeneratedVariablesCount(methodDebugInfo.Scope, languageDebugInfo.ILOffset);
 
 					valueInfos = new ValueInfo[compilationResult.CompiledExpressions.Length + decompilerGeneratedCount];
 					int valueInfosIndex = 0;
@@ -160,28 +160,25 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						valueInfos[valueInfosIndex] = new CompiledExpressionValueInfo(valueInfosIndex, compilationResult.CompiledExpressions, i);
 
 					if (decompilerGeneratedCount > 0) {
-						if (methodDebugInfo.Scope.Scopes.Length == 0) {
-							foreach (var local in methodDebugInfo.Scope.Locals) {
+						var scope = methodDebugInfo.Scope;
+						for (;;) {
+							foreach (var local in scope.Locals) {
 								if (local.IsDecompilerGenerated) {
 									valueInfos[valueInfosIndex] = new DecompilerGeneratedVariableValueInfo(valueInfosIndex, local.Name);
 									valueInfosIndex++;
 								}
 							}
-						}
-						else {
-							var stack = new List<MethodDebugScope>();
-							stack.Add(methodDebugInfo.Scope);
-							while (stack.Count > 0) {
-								var scope = stack[stack.Count - 1];
-								stack.RemoveAt(stack.Count - 1);
-								stack.AddRange(scope.Scopes);
-								foreach (var local in scope.Locals) {
-									if (local.IsDecompilerGenerated) {
-										valueInfos[valueInfosIndex] = new DecompilerGeneratedVariableValueInfo(valueInfosIndex, local.Name);
-										valueInfosIndex++;
-									}
+
+							bool found = false;
+							foreach (var childScope in scope.Scopes) {
+								if (childScope.Span.Start <= languageDebugInfo.ILOffset && languageDebugInfo.ILOffset < childScope.Span.End) {
+									found = true;
+									scope = childScope;
+									break;
 								}
 							}
+							if (!found)
+								break;
 						}
 					}
 
@@ -232,47 +229,45 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
+		DbgEngineValueNode CreateInternalErrorNode(DbgEvaluationContext context, string errorMessage) =>
+			valueNodeFactory.CreateError(context, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, "<error>")), errorMessage, "<internal.error>");
+
 		static MethodDebugScope GetScope(MethodDebugScope rootScope, uint offset) {
-			var foundScope = rootScope;
+			var scope = rootScope;
 			for (;;) {
 				bool found = false;
-				foreach (var scope in foundScope.Scopes) {
-					if (scope.Span.Start <= offset && offset < scope.Span.End) {
+				foreach (var childScope in scope.Scopes) {
+					if (childScope.Span.Start <= offset && offset < childScope.Span.End) {
 						found = true;
-						foundScope = scope;
+						scope = childScope;
 						break;
 					}
 				}
 				if (!found)
-					return foundScope;
+					return scope;
 			}
 		}
 
-		DbgEngineValueNode CreateInternalErrorNode(DbgEvaluationContext context, string errorMessage) =>
-			valueNodeFactory.CreateError(context, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, "<error>")), errorMessage, "<internal.error>");
-
-		static int GetDecompilerGeneratedVariablesCount(MethodDebugInfo debugInfo) {
+		static int GetDecompilerGeneratedVariablesCount(MethodDebugScope rootScope, uint offset) {
+			var scope = rootScope;
 			int count = 0;
-			if (debugInfo.Scope.Scopes.Length == 0) {
-				foreach (var local in debugInfo.Scope.Locals) {
+			for (;;) {
+				foreach (var local in scope.Locals) {
 					if (local.IsDecompilerGenerated)
 						count++;
 				}
-			}
-			else {
-				var stack = new List<MethodDebugScope>();
-				stack.Add(debugInfo.Scope);
-				while (stack.Count > 0) {
-					var scope = stack[stack.Count - 1];
-					stack.RemoveAt(stack.Count - 1);
-					stack.AddRange(scope.Scopes);
-					foreach (var local in scope.Locals) {
-						if (local.IsDecompilerGenerated)
-							count++;
+
+				bool found = false;
+				foreach (var childScope in scope.Scopes) {
+					if (childScope.Span.Start <= offset && offset < childScope.Span.End) {
+						found = true;
+						scope = childScope;
+						break;
 					}
 				}
+				if (!found)
+					return count;
 			}
-			return count;
 		}
 	}
 }
