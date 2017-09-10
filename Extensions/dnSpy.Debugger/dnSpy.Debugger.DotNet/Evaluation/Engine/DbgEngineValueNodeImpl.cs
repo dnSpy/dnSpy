@@ -25,6 +25,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
@@ -73,12 +74,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			context.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
 			if (options.NameOutput != null)
 				dnValueNode.Name.WriteTo(options.NameOutput);
+			var dnValue = value?.DotNetValue;
 			if (options.ExpectedTypeOutput != null && dnValueNode.ExpectedType is DmdType expectedType)
 				formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, options.ExpectedTypeFormatterOptions);
 			if (options.ActualTypeOutput != null && value?.DotNetValue.Type is DmdType actualType)
 				formatter.FormatType(context, options.ActualTypeOutput, actualType, options.ActualTypeFormatterOptions);
-			if (options.ValueOutput != null && value?.DotNetValue is DbgDotNetValue dnValue)
-				formatter.FormatValue(context, options.ValueOutput, dnValue, options.ValueFormatterOptions, cancellationToken);
+			if (options.ValueOutput != null) {
+				if (dnValue != null)
+					formatter.FormatValue(context, options.ValueOutput, dnValue, options.ValueFormatterOptions, cancellationToken);
+				else
+					options.ValueOutput.Write(BoxedTextColor.Error, ErrorMessage ?? "???");
+			}
 		}
 
 		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
