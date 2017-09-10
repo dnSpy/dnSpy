@@ -45,8 +45,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		const string BYREF_KEYWORD = "ref";
 		const int MAX_ARRAY_RANK = 100;
 
-		bool ShowArrayValueSizes => true;
-		bool UseDecimal => false;
+		bool ShowArrayValueSizes => (options & TypeFormatterOptions.ShowArrayValueSizes) != 0;
+		bool UseDecimal => (options & TypeFormatterOptions.UseDecimal) != 0;
 		bool ShowIntrinsicTypeKeywords => (options & TypeFormatterOptions.IntrinsicTypeKeywords) != 0;
 		bool ShowTokens => (options & TypeFormatterOptions.Tokens) != 0;
 		bool ShowNamespaces => (options & TypeFormatterOptions.Namespaces) != 0;
@@ -95,32 +95,41 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				OutputWrite(IdentifierEscaper.Escape(id), color);
 		}
 
-		//TODO: Inline
-		static DbgDotNetValue GetDereferencedValue(DbgDotNetValue value) => null;//TODO:
-
 		public void Format(DmdType type, DbgDotNetValue value) {
 			if ((object)type == null)
 				throw new ArgumentNullException(nameof(type));
 
+			DbgDotNetValue valueToDispose = null;
+			List<(DmdType type, DbgDotNetValue value)> arrayTypesList = null;
 			try {
 				if (recursionCounter++ >= MAX_RECURSION)
 					return;
 
+				DbgDotNetValue elementValue;
 				switch (type.TypeSignatureKind) {
 				case DmdTypeSignatureKind.SZArray:
 				case DmdTypeSignatureKind.MDArray:
+					if (value != null && value.IsReference) {
+						valueToDispose = value.Dereference();
+						elementValue = valueToDispose ?? value;
+					}
+					else
+						elementValue = value;
+
 					// Array types are shown in reverse order
-					var arrayTypesList = new List<(DmdType type, DbgDotNetValue value)>();
+					arrayTypesList = new List<(DmdType type, DbgDotNetValue value)>();
 					do {
-						arrayTypesList.Add((type, value));
-						value = GetDereferencedValue(value);
+						arrayTypesList.Add((type, elementValue));
+						elementValue = elementValue?.Dereference();
 						type = type.GetElementType();
 					} while (type.IsArray);
 					var t = arrayTypesList[arrayTypesList.Count - 1];
-					Format(t.type.GetElementType(), t.value);
+					Format(t.type.GetElementType(), elementValue = t.value?.Dereference());
+					elementValue?.Dispose();
 					foreach (var tuple in arrayTypesList) {
 						var aryType = tuple.type;
 						var aryValue = tuple.value;
+						uint elementCount;
 						if (aryType.IsVariableBoundArray) {
 							OutputWrite(ARRAY_OPEN_PAREN, BoxedTextColor.Punctuation);
 							int rank = Math.Min(aryType.GetArrayRank(), MAX_ARRAY_RANK);
@@ -129,22 +138,20 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 							else {
 								if (rank == 1)
 									OutputWrite("*", BoxedTextColor.Operator);
-								//TODO: get array lower bounds / sizes from the value
-								var lowerBounds = aryValue == null ? null : (IList<int>)null;
-								var sizes = aryValue == null ? null : (IList<int>)null;
-								if (ShowArrayValueSizes && lowerBounds != null && sizes != null && lowerBounds.Count == rank && sizes.Count == rank) {
+								if (aryValue == null || !aryValue.GetArrayInfo(out elementCount, out var dimensionInfos))
+									dimensionInfos = null;
+								if (ShowArrayValueSizes && dimensionInfos != null && dimensionInfos.Length == rank) {
 									for (int i = 0; i < rank; i++) {
 										if (i > 0) {
 											OutputWrite(",", BoxedTextColor.Punctuation);
 											WriteSpace();
 										}
-										if (lowerBounds[i] == 0)
-											WriteUInt32((uint)sizes[i]);
+										if (dimensionInfos[i].BaseIndex == 0)
+											WriteUInt32(dimensionInfos[i].Length);
 										else {
-											//TODO: How does VS print these arrays?
-											WriteInt32(lowerBounds[i]);
+											WriteInt32(dimensionInfos[i].BaseIndex);
 											OutputWrite("..", BoxedTextColor.Operator);
-											WriteInt32(lowerBounds[i] + sizes[i]);
+											WriteInt32(dimensionInfos[i].BaseIndex + (int)dimensionInfos[i].Length - 1);
 										}
 									}
 								}
@@ -157,7 +164,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 							Debug.Assert(aryType.IsSZArray);
 							OutputWrite(ARRAY_OPEN_PAREN, BoxedTextColor.Punctuation);
 							if (ShowArrayValueSizes && aryValue != null) {
-								//TODO: WriteUInt32((uint)aryType.GetArrayCount());
+								if (aryValue.GetArrayCount(out elementCount))
+									WriteUInt32(elementCount);
 							}
 							OutputWrite(ARRAY_CLOSE_PAREN, BoxedTextColor.Punctuation);
 						}
@@ -165,14 +173,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 					break;
 
 				case DmdTypeSignatureKind.Pointer:
-					Format(type.GetElementType(), GetDereferencedValue(value));
+					Format(type.GetElementType(), null);
 					OutputWrite("*", BoxedTextColor.Operator);
 					break;
 
 				case DmdTypeSignatureKind.ByRef:
 					OutputWrite(BYREF_KEYWORD, BoxedTextColor.Keyword);
 					WriteSpace();
-					Format(type.GetElementType(), GetDereferencedValue(value));
+					Format(type.GetElementType(), valueToDispose = value.Dereference());
 					break;
 
 				case DmdTypeSignatureKind.TypeGenericParameter:
@@ -244,6 +252,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			}
 			finally {
 				recursionCounter--;
+				valueToDispose?.Dispose();
+				if (arrayTypesList != null) {
+					foreach (var info in arrayTypesList) {
+						if (info.value != value)
+							info.value?.Dispose();
+					}
+				}
 			}
 		}
 

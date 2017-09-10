@@ -75,11 +75,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			if (options.NameOutput != null)
 				dnValueNode.Name.WriteTo(options.NameOutput);
 			var dnValue = value?.DotNetValue;
-			if (options.ExpectedTypeOutput != null && dnValueNode.ExpectedType is DmdType expectedType) {
-				// To prevent the type from being shown as eg. "int[] {int[0x00000100]}", pass in the same
-				// value so it's shown as "int[0x00000100]"
-				formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, expectedType.IsArray && dnValue?.Type == expectedType ? dnValue : null, options.ExpectedTypeFormatterOptions);
-			}
+			if (options.ExpectedTypeOutput != null && dnValueNode.ExpectedType is DmdType expectedType)
+				formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, options.ExpectedTypeFormatterOptions);
 			if (options.ActualTypeOutput != null && dnValue?.Type is DmdType actualType)
 				formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions);
 			if (options.ValueOutput != null) {

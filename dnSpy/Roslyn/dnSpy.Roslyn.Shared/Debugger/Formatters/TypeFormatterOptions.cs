@@ -26,5 +26,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		IntrinsicTypeKeywords		= 0x00000001,
 		Tokens						= 0x00000002,
 		Namespaces					= 0x00000004,
+		ShowArrayValueSizes			= 0x00000008,
+		UseDecimal					= 0x00000010,
 	}
 }
