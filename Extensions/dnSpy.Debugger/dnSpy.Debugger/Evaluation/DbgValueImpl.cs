@@ -25,6 +25,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueImpl : DbgValue {
 		public override DbgRuntime Runtime { get; }
+		public override object InternalValue => EngineValue.InternalValue;
 		public override DbgSimpleValueType ValueType => EngineValue.ValueType;
 		public override bool HasRawValue => EngineValue.HasRawValue;
 		public override object RawValue => EngineValue.RawValue;

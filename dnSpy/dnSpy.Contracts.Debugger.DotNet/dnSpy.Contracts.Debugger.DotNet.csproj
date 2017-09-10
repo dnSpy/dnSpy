@@ -73,6 +73,7 @@
     <Compile Include="Extensions\DbgAppDomainExtensions.cs" />
     <Compile Include="Extensions\DbgModuleExtensions.cs" />
     <Compile Include="Extensions\DbgRuntimeExtensions.cs" />
+    <Compile Include="Extensions\DbgValueExtensions.cs" />
     <Compile Include="Extensions\DmdAppDomainExtensions.cs" />
     <Compile Include="Extensions\DmdModuleExtensions.cs" />
     <Compile Include="Extensions\DmdRuntimeExtensions.cs" />

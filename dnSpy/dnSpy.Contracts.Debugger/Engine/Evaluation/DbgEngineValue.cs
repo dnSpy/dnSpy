@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// </summary>
 	public abstract class DbgEngineValue : DbgObject {
 		/// <summary>
+		/// Gets the value object created by the debug engine
+		/// </summary>
+		public abstract object InternalValue { get; }
+
+		/// <summary>
 		/// Type of the value
 		/// </summary>
 		public abstract DbgSimpleValueType ValueType { get; }
