@@ -186,6 +186,7 @@
     <Compile Include="Impl\DbgDotNetDispatcherImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
+    <Compile Include="Impl\DbgEngineImpl.Evaluation.cs" />
     <Compile Include="Impl\DbgEngineImpl.Threads.cs" />
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DbgModuleMemoryRefreshedNotifierImpl.cs" />

@@ -25,13 +25,75 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
-	/// Result of evaluating an expression
+	/// Result of evaluating an expression. All values are automatically closed when the runtime continues
+	/// but they implement <see cref="IDisposable"/> and should be disposed of earlier if possible.
 	/// </summary>
 	public abstract class DbgDotNetValue : IDisposable {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
 		public abstract DmdType Type { get; }
+
+		/// <summary>
+		/// true if this value references another value
+		/// </summary>
+		public abstract bool IsReference { get; }
+
+		/// <summary>
+		/// true if this is a null reference. It's only valid if <see cref="IsReference"/> is true
+		/// </summary>
+		public abstract bool IsNullReference { get; }
+
+		/// <summary>
+		/// Gets the address of the reference or null if it's unknown or if it's not a reference (<see cref="IsReference"/>)
+		/// </summary>
+		/// <returns></returns>
+		public abstract ulong? GetReferenceAddress();
+
+		/// <summary>
+		/// Gets the referenced value if it's a reference (<see cref="IsReference"/>) or null if it's not a reference or if it's a null reference.
+		/// </summary>
+		/// <returns></returns>
+		public abstract DbgDotNetValue Dereference();
+
+		/// <summary>
+		/// true if this is a boxed value type
+		/// </summary>
+		public abstract bool IsBox { get; }
+
+		/// <summary>
+		/// Gets the unboxed value if it's a boxed value (<see cref="IsBox"/>) or null
+		/// </summary>
+		/// <returns></returns>
+		public abstract DbgDotNetValue Unbox();
+
+		/// <summary>
+		/// true if this is an array value
+		/// </summary>
+		public abstract bool IsArray { get; }
+
+		/// <summary>
+		/// Gets the number of elements of the array (<see cref="IsArray"/>)
+		/// </summary>
+		/// <param name="elementCount">Total number of elements in the array</param>
+		/// <returns></returns>
+		public abstract bool GetArrayCount(out uint elementCount);
+
+		/// <summary>
+		/// Gets array information if it's an array (<see cref="IsArray"/>) or returns false
+		/// </summary>
+		/// <param name="elementCount">Total number of elements in the array</param>
+		/// <param name="dimensionInfos">Dimension base indexes and lengths</param>
+		/// <returns></returns>
+		public abstract bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos);
+
+		/// <summary>
+		/// Gets the element at <paramref name="index"/> in the array. This method can be called even if it's
+		/// a multi-dimensional array.
+		/// </summary>
+		/// <param name="index">Index of the element</param>
+		/// <returns></returns>
+		public abstract DbgDotNetValue GetArrayElementAt(uint index);
 
 		/// <summary>
 		/// Gets the address of the value or null if there's no address available.
@@ -54,6 +116,31 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Called when its owner (<see cref="DbgEngineValue"/>) gets closed
 		/// </summary>
 		public abstract void Dispose();
+	}
+
+	/// <summary>
+	/// Contains base index and length of an array dimension
+	/// </summary>
+	public struct DbgDotNetArrayDimensionInfo {
+		/// <summary>
+		/// Base index
+		/// </summary>
+		public int BaseIndex { get; }
+
+		/// <summary>
+		/// Number of elements in this dimension
+		/// </summary>
+		public uint Length { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="baseIndex">Base index</param>
+		/// <param name="length">Number of elements in this dimension</param>
+		public DbgDotNetArrayDimensionInfo(int baseIndex, uint length) {
+			BaseIndex = baseIndex;
+			Length = length;
+		}
 	}
 
 	/// <summary>

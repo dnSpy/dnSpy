@@ -39,6 +39,7 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Debugger.DotNet.CorDebug.DAC;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.Properties;
 using dnSpy.Debugger.DotNet.CorDebug.Steppers;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
@@ -102,6 +103,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		readonly Dictionary<CorModule, DmdDynamicModuleHelperImpl> toDynamicModuleHelper;
 		internal DmdDispatcherImpl DmdDispatcher { get; }
 		internal DbgRawMetadataService RawMetadataService { get; }
+		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
 
 		protected DbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, DbgStartKind startKind) {
 			if (deps == null)
@@ -124,6 +126,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			clrDac = NullClrDac.Instance;
 			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
+			dotNetValuesToCloseOnContinue = new List<DbgDotNetValueImpl>();
 			dmdRuntime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			toDynamicModuleHelper = new Dictionary<CorModule, DmdDynamicModuleHelperImpl>();
 			DmdDispatcher = new DmdDispatcherImpl(this);
@@ -134,6 +137,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		internal bool CheckCorDebugThread() => debuggerThread.CheckAccess();
 		internal void VerifyCorDebugThread() => debuggerThread.VerifyAccess();
+		internal void InvokeCorDebugThread(Action callback) => debuggerThread.Invoke(callback);
 		internal T InvokeCorDebugThread<T>(Func<T> callback) => debuggerThread.Invoke(callback);
 		internal void CorDebugThread(Action callback) => debuggerThread.BeginInvoke(callback);
 
@@ -769,6 +773,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal void Continue_CorDebug() {
 			debuggerThread.VerifyAccess();
 			ClrDacRunning?.Invoke(this, EventArgs.Empty);
+			CloseDotNetValues_CorDebug();
 			dnDebugger.Continue();
 		}
 
