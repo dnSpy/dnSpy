@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Controls {
 	static class ZoomSelector {
 		public const double MinZoomLevel = 20;
@@ -65,6 +67,7 @@ namespace dnSpy.Controls {
 		public static double ZoomIn(double zoomLevel) => zoomLevels[GetNextZoomInIndex(zoomLevel)];
 
 		static int GetNextZoomInIndex(double zoomLevel) {
+			zoomLevel = Math.Round(zoomLevel);
 			if (zoomLevel < MinZoomLevel)
 				return 0;
 			for (int i = 1; i < zoomLevels.Length; i++) {
@@ -82,6 +85,7 @@ namespace dnSpy.Controls {
 		public static double ZoomOut(double zoomLevel) => zoomLevels[GetNextZoomOutIndex(zoomLevel)];
 
 		static int GetNextZoomOutIndex(double zoomLevel) {
+			zoomLevel = Math.Round(zoomLevel);
 			if (zoomLevel > MaxZoomLevel)
 				return zoomLevels.Length - 1;
 			for (int i = zoomLevels.Length - 2; i >= 0; i--) {
