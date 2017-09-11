@@ -242,6 +242,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)((IntPtr)value.Value.Value).ToInt32());
 					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, (ulong)((IntPtr)value.Value.Value).ToInt64());
 				}
+				if (type == type.AppDomain.System_DateTime)
+					return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, value.Value.Value);
 				return GetRawValueDefault(value, type);
 			}
 		}

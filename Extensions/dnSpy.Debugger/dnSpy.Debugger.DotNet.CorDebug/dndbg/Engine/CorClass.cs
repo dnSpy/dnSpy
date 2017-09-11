@@ -64,6 +64,11 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsSystemDecimal => IsSystem("Decimal");
 
+		/// <summary>
+		/// true if this is <c>System.DateTime</c>
+		/// </summary>
+		public bool IsSystemDateTime => IsSystem("DateTime");
+
 		public CorClass(ICorDebugClass cls)
 			: base(cls) {
 			int hr = cls.GetToken(out token);

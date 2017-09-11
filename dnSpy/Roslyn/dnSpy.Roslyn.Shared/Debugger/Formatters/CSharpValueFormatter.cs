@@ -160,6 +160,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			switch (rawValue.ValueType) {
 			case DbgSimpleValueType.OtherReferenceType:
 			case DbgSimpleValueType.OtherValueType:
+			case DbgSimpleValueType.DateTime:
 				return false;
 
 			case DbgSimpleValueType.Void:

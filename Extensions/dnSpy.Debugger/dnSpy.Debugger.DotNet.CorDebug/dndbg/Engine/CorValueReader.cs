@@ -261,6 +261,9 @@ namespace dndbg.Engine {
 				var res = GetDecimalResult(value);
 				if (res != null)
 					return res;
+				res = GetDateTimeResult(value);
+				if (res != null)
+					return res;
 				res = GetNullableResult(value);
 				if (res != null)
 					return res;
@@ -292,6 +295,18 @@ namespace dndbg.Engine {
 			}
 
 			return null;
+		}
+
+		static CorValueResult? GetDateTimeResult(CorValue value) {
+			var et = value.ExactType;
+			if (et == null || !et.IsSystemDateTime)
+				return null;
+			if (value.Size != 8)
+				return null;
+			var data = value.ReadGenericValue();
+			if (data == null)
+				return null;
+			return new CorValueResult(BitConverter.ToUInt64(data, 0));
 		}
 
 		static CorValueResult? GetNullableResult(CorValue value) {

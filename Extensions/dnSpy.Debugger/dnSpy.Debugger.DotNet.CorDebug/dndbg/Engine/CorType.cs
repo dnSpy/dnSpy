@@ -191,6 +191,19 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// true if this is <c>System.DateTime</c>
+		/// </summary>
+		public bool IsSystemDateTime {
+			get {
+				if (TypeParameters.Any())
+					return false;   // System.DateTime is not generic
+				if (Class?.IsSystemDateTime != true)
+					return false;
+				return Base?.IsSystemValueType == true;
+			}
+		}
+
+		/// <summary>
 		/// Returns <see cref="System.Object"/> or null if it wasn't found in the class hierarchy.
 		/// Can only be called if this is a class or a value type but not an interface
 		/// </summary>
