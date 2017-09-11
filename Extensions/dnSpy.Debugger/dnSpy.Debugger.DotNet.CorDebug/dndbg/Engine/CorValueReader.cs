@@ -19,6 +19,8 @@
 
 using System;
 using System.Diagnostics;
+using System.Reflection;
+using System.Reflection.Emit;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -306,8 +308,25 @@ namespace dndbg.Engine {
 			var data = value.ReadGenericValue();
 			if (data == null)
 				return null;
-			return new CorValueResult(BitConverter.ToUInt64(data, 0));
+			if (DateTime_ctor_UInt64 != null)
+				return new CorValueResult(DateTime_ctor_UInt64(BitConverter.ToUInt64(data, 0)));
+
+			return null;
 		}
+
+		static CorValueReader() {
+			var ctor = typeof(DateTime).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(ulong) }, null);
+			Debug.Assert(ctor != null);
+			if (ctor != null) {
+				var dm = new DynamicMethod("DateTime_ctor_UInt64", typeof(DateTime), new[] { typeof(ulong) }, true);
+				var ilg = dm.GetILGenerator();
+				ilg.Emit(OpCodes.Ldarg_0);
+				ilg.Emit(OpCodes.Newobj, ctor);
+				ilg.Emit(OpCodes.Ret);
+				DateTime_ctor_UInt64 = (Func<ulong, DateTime>)dm.CreateDelegate(typeof(Func<ulong, DateTime>));
+			}
+		}
+		static readonly Func<ulong, DateTime> DateTime_ctor_UInt64;
 
 		static CorValueResult? GetNullableResult(CorValue value) {
 			if (!value.GetNullableValue(out var nullableValue))

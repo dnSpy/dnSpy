@@ -218,7 +218,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			case TypeCode.UInt64:	return new DbgDotNetRawValue(DbgSimpleValueType.UInt64, value.Value.Value);
 			case TypeCode.Single:	return new DbgDotNetRawValue(DbgSimpleValueType.Float32, value.Value.Value);
 			case TypeCode.Double:	return new DbgDotNetRawValue(DbgSimpleValueType.Float64, value.Value.Value);
-			case TypeCode.Decimal:	return new DbgDotNetRawValue(DbgSimpleValueType.Decimal, value.Value.Value);
+			case TypeCode.Decimal:	return new DbgDotNetRawValue(DbgSimpleValueType.Decimal, value.Value.Value ?? default(decimal));
 			case TypeCode.String:	return new DbgDotNetRawValue(DbgSimpleValueType.StringUtf16, value.Value.Value);
 
 			case TypeCode.Empty:
@@ -243,7 +243,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, (ulong)((IntPtr)value.Value.Value).ToInt64());
 				}
 				if (type == type.AppDomain.System_DateTime)
-					return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, value.Value.Value);
+					return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, value.Value.Value ?? default(DateTime));
 				return GetRawValueDefault(value, type);
 			}
 		}

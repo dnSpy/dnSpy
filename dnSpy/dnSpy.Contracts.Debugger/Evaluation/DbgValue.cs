@@ -175,7 +175,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		StringUtf16,
 
 		/// <summary>
-		/// A <see cref="System.DateTime"/>, <see cref="DbgValue.RawValue"/> is a boxed <see cref="ulong"/>
+		/// A <see cref="System.DateTime"/>, <see cref="DbgValue.RawValue"/> is a boxed <see cref="System.DateTime"/>
 		/// </summary>
 		DateTime,
 	}

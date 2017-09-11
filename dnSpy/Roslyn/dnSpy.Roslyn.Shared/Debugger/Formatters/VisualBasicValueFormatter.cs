@@ -229,7 +229,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				return true;
 
 			case DbgSimpleValueType.DateTime:
-				FormatDateTime((ulong)rawValue.RawValue);
+				FormatDateTime((DateTime)rawValue.RawValue);
 				return true;
 
 			default:
@@ -655,16 +655,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		void FormatPointer32(uint value) => WriteNumber(ToFormattedPointer32(value));
 		void FormatPointer64(ulong value) => WriteNumber(ToFormattedPointer64(value));
 
-		void FormatDateTime(ulong value) {
-			Debug.Assert(DateTime_ctor_UInt64 != null);
-			if (DateTime_ctor_UInt64 != null) {
-				var dateTime = (DateTime)DateTime_ctor_UInt64.Invoke(new object[] { value });
-				var s = "#" + dateTime.ToString("M/d/yyyy hh:mm:ss tt") + "#";
-				OutputWrite(s, BoxedTextColor.Number);
-			}
-			else
-				FormatUInt64(value);
+		void FormatDateTime(DateTime value) {
+			var s = "#" + value.ToString("M/d/yyyy hh:mm:ss tt") + "#";
+			OutputWrite(s, BoxedTextColor.Number);
 		}
-		static readonly System.Reflection.ConstructorInfo DateTime_ctor_UInt64 = typeof(DateTime).GetConstructor(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance, null, new[] { typeof(ulong) }, null);
 	}
 }
