@@ -41,12 +41,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		const string TypeNameCloseParen = "}";
 		const string HexPrefix = "0x";
 		const string DecimalSuffix = "M";
-		const string NaN = "NaN";
-		const string NegativeInfinity = "-Infinity";
-		const string PositiveInfinity = "Infinity";
-		const int DigitGroupSizeHex = 4;
-		const int DigitGroupSizeDecimal = 3;
-		const string DigitSeparator = "_";
 		const string VerbatimStringPrefix = "@";
 		const string EnumFlagsOrSeparator = "|";
 
@@ -475,12 +469,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			return ValueFormatterObjectCache.FreeAndToString(ref sb);
 		}
 
-		string ToFormattedDecimalNumber(string number) => ToFormattedNumber(string.Empty, number, DigitGroupSizeDecimal);
-		string ToFormattedHexNumber(string number) => ToFormattedNumber(HexPrefix, number, DigitGroupSizeHex);
+		string ToFormattedDecimalNumber(string number) => ToFormattedNumber(string.Empty, number, ValueFormatterUtils.DigitGroupSizeDecimal);
+		string ToFormattedHexNumber(string number) => ToFormattedNumber(HexPrefix, number, ValueFormatterUtils.DigitGroupSizeHex);
 
 		string ToFormattedNumber(string prefix, string number, int digitGroupSize) {
 			if (DigitSeparators)
-				number = AddDigitSeparators(number, digitGroupSize, DigitSeparator);
+				number = AddDigitSeparators(number, digitGroupSize, ValueFormatterUtils.DigitSeparator);
 
 			string res = number;
 			if (prefix.Length != 0)
@@ -497,7 +491,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			for (int i = 0; i < number.Length; i++) {
 				int d = number.Length - i;
 				if (i != 0 && (d % digitGroupSize) == 0)
-					sb.Append(DigitSeparator);
+					sb.Append(ValueFormatterUtils.DigitSeparator);
 				sb.Append(number[i]);
 			}
 
@@ -565,7 +559,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		void FormatSingle(float value, DmdAppDomain appDomain) {
 			if (float.IsNaN(value)) {
 				if (Display)
-					OutputWrite(NaN, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.NaN, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
 					OutputWrite(".", BoxedTextColor.Operator);
@@ -574,7 +568,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			}
 			else if (float.IsNegativeInfinity(value)) {
 				if (Display)
-					OutputWrite(NegativeInfinity, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.NegativeInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
 					OutputWrite(".", BoxedTextColor.Operator);
@@ -583,7 +577,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			}
 			else if (float.IsPositiveInfinity(value)) {
 				if (Display)
-					OutputWrite(PositiveInfinity, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.PositiveInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
 					OutputWrite(".", BoxedTextColor.Operator);
@@ -597,7 +591,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		void FormatDouble(double value, DmdAppDomain appDomain) {
 			if (double.IsNaN(value)) {
 				if (Display)
-					OutputWrite(NaN, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.NaN, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
 					OutputWrite(".", BoxedTextColor.Operator);
@@ -606,7 +600,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			}
 			else if (double.IsNegativeInfinity(value)) {
 				if (Display)
-					OutputWrite(NegativeInfinity, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.NegativeInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
 					OutputWrite(".", BoxedTextColor.Operator);
@@ -615,7 +609,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			}
 			else if (double.IsPositiveInfinity(value)) {
 				if (Display)
-					OutputWrite(PositiveInfinity, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.PositiveInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
 					OutputWrite(".", BoxedTextColor.Operator);

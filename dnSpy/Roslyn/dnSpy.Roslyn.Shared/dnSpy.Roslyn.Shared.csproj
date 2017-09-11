@@ -65,6 +65,7 @@
     <Compile Include="Debugger\Formatters\ValueFormatterObjectCache.cs" />
     <Compile Include="Debugger\Formatters\ValueFormatterOptions.cs" />
     <Compile Include="Debugger\Formatters\ValueFormatterOptionsExtensions.cs" />
+    <Compile Include="Debugger\Formatters\ValueFormatterUtils.cs" />
     <Compile Include="Debugger\Formatters\VisualBasicFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasicTypeFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasicValueFormatter.cs" />
