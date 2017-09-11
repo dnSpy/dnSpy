@@ -17,9 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Threading;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
@@ -37,9 +34,5 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
 			output.Write(BoxedTextColor.DebugObjectIdName, "$" + id.ToString());
-
-		public override void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken) {
-			throw new NotImplementedException();//TODO:
-		}
 	}
 }

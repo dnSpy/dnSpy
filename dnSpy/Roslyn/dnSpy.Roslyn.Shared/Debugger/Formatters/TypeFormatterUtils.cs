@@ -52,6 +52,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		public static int GetTupleArity(DmdType type) {
 			if (type.MetadataNamespace != "System")
 				return -1;
+			var genArgs = type.GetGenericArguments();
+			if (genArgs.Count == 0)
+				return -1;
 			if (type.IsNested)
 				return -1;
 			if (!type.IsValueType)
@@ -69,7 +72,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			default:
 				return -1;
 			}
-			if (type.GetGenericArguments().Count != arity)
+			if (genArgs.Count != arity)
 				return -1;
 			return arity;
 		}

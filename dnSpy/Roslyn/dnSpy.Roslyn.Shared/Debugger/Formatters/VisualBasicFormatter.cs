@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Threading;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -28,5 +29,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	sealed class VisualBasicFormatter : LanguageFormatter {
 		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options) =>
 			new VisualBasicTypeFormatter(output, options.ToTypeFormatterOptions()).Format(type, value);
+
+		public override void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken) =>
+			new VisualBasicValueFormatter(output, options.ToValueFormatterOptions(), cancellationToken).Format(value);
 	}
 }

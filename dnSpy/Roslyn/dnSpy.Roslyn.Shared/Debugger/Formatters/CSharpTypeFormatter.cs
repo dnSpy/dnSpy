@@ -88,12 +88,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			"using", "virtual", "void", "volatile", "while",
 		};
 
-		void WriteIdentifier(string id, object color) {
+		internal static string GetFormattedIdentifier(string id) {
 			if (isKeyword.Contains(id))
-				OutputWrite(IDENTIFIER_ESCAPE + IdentifierEscaper.Escape(id), color);
-			else
-				OutputWrite(IdentifierEscaper.Escape(id), color);
+				return IDENTIFIER_ESCAPE + IdentifierEscaper.Escape(id);
+			return IdentifierEscaper.Escape(id);
 		}
+
+		void WriteIdentifier(string id, object color) => OutputWrite(GetFormattedIdentifier(id), color);
 
 		public void Format(DmdType type, DbgDotNetValue value) {
 			if ((object)type == null)

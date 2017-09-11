@@ -19,7 +19,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class dnSpy_Roslyn_Shared_Resources {
@@ -84,6 +84,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         internal static string ConstantsToolTip {
             get {
                 return ResourceManager.GetString("ConstantsToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expression has been evaluated and has no value.
+        /// </summary>
+        internal static string DebuggerExpressionHasNoValue {
+            get {
+                return ResourceManager.GetString("DebuggerExpressionHasNoValue", resourceCulture);
             }
         }
         

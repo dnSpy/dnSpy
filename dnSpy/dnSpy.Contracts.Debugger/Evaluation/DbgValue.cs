@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Result of evaluating an expression

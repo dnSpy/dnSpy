@@ -126,6 +126,9 @@
   <data name="ConstantsToolTip" xml:space="preserve">
     <value>Constants</value>
   </data>
+  <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
+    <value>Expression has been evaluated and has no value</value>
+  </data>
   <data name="DelegatesToolTip" xml:space="preserve">
     <value>Delegates</value>
   </data>
