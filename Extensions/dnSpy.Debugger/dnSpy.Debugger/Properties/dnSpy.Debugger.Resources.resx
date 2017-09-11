@@ -1875,4 +1875,7 @@ Are you sure you want to expand it?</value>
   <data name="UnknownValue" xml:space="preserve">
     <value>&lt;Unknown&gt;</value>
   </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
 </root>

@@ -639,13 +639,20 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			RecreateRootChildrenDelay_UI();
 		}
 
-		public void AddExpressions(string[] expressions, bool select) {
+		void IValueNodesVM.AddExpressions(string[] expressions, bool select) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			if (!valueNodesProvider.CanAddRemoveExpressions)
 				throw new InvalidOperationException();
 			valueNodesProvider.AddExpressions(expressions);
 			selectNodeKind = select ? SelectNodeKind.Added : SelectNodeKind.None;
 			RecreateRootChildrenDelay_UI();
+		}
+
+		void IValueNodesVM.Refresh() {
+			valueNodesContext.UIDispatcher.VerifyAccess();
+			if (!isOpen || valueNodesContext.IsWindowReadOnly)
+				return;
+			valueNodesProvider.RefreshAllNodes();
 		}
 
 		bool IEditValueNodeExpression.SupportsEditExpression => ((IValueNodesVM)this).CanAddRemoveExpressions;

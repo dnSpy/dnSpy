@@ -42,6 +42,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 				cmds.Add(new RelayCommand(a => operations.Value.CopyValue(watchContentFactory.Value.GetContent(windowIndex).VM.VM), a => operations.Value.CanCopyValue(watchContentFactory.Value.GetContent(windowIndex).VM.VM)), ModifierKeys.Control | ModifierKeys.Shift, Key.C);
 				cmds.Add(new RelayCommand(a => operations.Value.ToggleExpanded(watchContentFactory.Value.GetContent(windowIndex).VM.VM), a => operations.Value.CanToggleExpanded(watchContentFactory.Value.GetContent(windowIndex).VM.VM)), ModifierKeys.None, Key.Enter);
 				cmds.Add(new RelayCommand(a => operations.Value.ShowInMemoryWindow(watchContentFactory.Value.GetContent(windowIndex).VM.VM), a => operations.Value.CanShowInMemoryWindow(watchContentFactory.Value.GetContent(windowIndex).VM.VM)), ModifierKeys.Control, Key.X);
+				cmds.Add(new RelayCommand(a => operations.Value.Refresh(watchContentFactory.Value.GetContent(windowIndex).VM.VM), a => operations.Value.CanRefresh(watchContentFactory.Value.GetContent(windowIndex).VM.VM)), ModifierKeys.None, Key.F5);
 				for (int j = 0; j < 10 && j < Memory.MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS; j++) {
 					int memoryWindowIndex = j;
 					cmds.Add(new RelayCommand(a => operations.Value.ShowInMemoryWindow(watchContentFactory.Value.GetContent(memoryWindowIndex).VM.VM, memoryWindowIndex), a => operations.Value.CanShowInMemoryWindow(watchContentFactory.Value.GetContent(memoryWindowIndex).VM.VM, memoryWindowIndex)), ModifierKeys.Control, Key.D0 + (j + 1) % 10);

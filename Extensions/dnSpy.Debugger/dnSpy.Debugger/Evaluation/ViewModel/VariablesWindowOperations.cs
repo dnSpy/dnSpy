@@ -53,6 +53,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract void DeleteObjectId(IValueNodesVM vm);
 		public abstract bool CanSave(IValueNodesVM vm);
 		public abstract void Save(IValueNodesVM vm);
+		public abstract bool CanRefresh(IValueNodesVM vm);
+		public abstract void Refresh(IValueNodesVM vm);
 		public abstract bool CanShowInMemoryWindow(IValueNodesVM vm);
 		public abstract void ShowInMemoryWindow(IValueNodesVM vm);
 		public abstract bool CanShowInMemoryWindow(IValueNodesVM vm, int windowIndex);

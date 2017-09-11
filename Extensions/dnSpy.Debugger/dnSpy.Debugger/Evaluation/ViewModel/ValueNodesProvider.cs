@@ -77,6 +77,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 
 		public abstract DbgEvaluationContext TryGetEvaluationContext();
 		public abstract DbgStackFrame TryGetFrame();
+
+		public abstract void RefreshAllNodes();
 	}
 
 	struct DbgValueNodeInfo {

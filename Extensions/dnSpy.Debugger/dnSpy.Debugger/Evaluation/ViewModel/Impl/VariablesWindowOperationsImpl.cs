@@ -334,6 +334,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			Save(GetValueNode(SelectedNode(vm)?.RawNode), pickSaveFilename, messageBoxService);
 		}
 
+		public override bool CanRefresh(IValueNodesVM vm) => CanExecCommands(vm);
+		public override void Refresh(IValueNodesVM vm) {
+			if (!CanRefresh(vm))
+				return;
+			vm.Refresh();
+		}
+
 		static void Save(DbgValueNode valueNode, Lazy<IPickSaveFilename> pickSaveFilename, Lazy<IMessageBoxService> messageBoxService) {
 			var value = valueNode?.Value;
 			if (value == null || value.IsClosed)

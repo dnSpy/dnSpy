@@ -195,5 +195,10 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		}
 
 		public override DbgStackFrame TryGetFrame() => TryGetLanguage().frame;
+
+		public override void RefreshAllNodes() {
+			uiDispatcher.VerifyAccess();
+			RefreshNodes_UI();
+		}
 	}
 }
