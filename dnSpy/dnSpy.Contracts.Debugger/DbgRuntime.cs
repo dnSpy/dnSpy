@@ -42,6 +42,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract Guid Guid { get; }
 
 		/// <summary>
+		/// Gets the runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/>
+		/// </summary>
+		public abstract Guid RuntimeKindGuid { get; }
+
+		/// <summary>
 		/// Gets the runtime name
 		/// </summary>
 		public abstract string Name { get; }

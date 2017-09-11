@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// </summary>
 	public abstract class DbgEngineLanguageProvider {
 		/// <summary>
-		/// Gets the runtime display name, eg. ".NET Framework" or ".NET Core"
+		/// Gets the runtime display name, eg. ".NET"
 		/// </summary>
 		public abstract string RuntimeDisplayName { get; }
 
@@ -41,8 +41,8 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 
 	/// <summary>Metadata</summary>
 	public interface IDbgEngineLanguageProviderMetadata {
-		/// <summary>See <see cref="ExportDbgEngineLanguageProviderAttribute.RuntimeGuid"/></summary>
-		string RuntimeGuid { get; }
+		/// <summary>See <see cref="ExportDbgEngineLanguageProviderAttribute.RuntimeKindGuid"/></summary>
+		string RuntimeKindGuid { get; }
 		/// <summary>See <see cref="ExportDbgEngineLanguageProviderAttribute.Order"/></summary>
 		double Order { get; }
 	}
@@ -55,18 +55,18 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="runtimeGuid">Runtime GUID, see <see cref="PredefinedDbgRuntimeGuids"/></param>
+		/// <param name="runtimeKindGuid">Runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/></param>
 		/// <param name="order">Order</param>
-		public ExportDbgEngineLanguageProviderAttribute(string runtimeGuid, double order = double.MaxValue)
+		public ExportDbgEngineLanguageProviderAttribute(string runtimeKindGuid, double order = double.MaxValue)
 			: base(typeof(DbgEngineLanguageProvider)) {
-			RuntimeGuid = runtimeGuid ?? throw new ArgumentNullException(nameof(runtimeGuid));
+			RuntimeKindGuid = runtimeKindGuid ?? throw new ArgumentNullException(nameof(runtimeKindGuid));
 			Order = order;
 		}
 
 		/// <summary>
-		/// Runtime GUID, see <see cref="PredefinedDbgRuntimeGuids"/>
+		/// Runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/>
 		/// </summary>
-		public string RuntimeGuid { get; }
+		public string RuntimeKindGuid { get; }
 
 		/// <summary>
 		/// Order

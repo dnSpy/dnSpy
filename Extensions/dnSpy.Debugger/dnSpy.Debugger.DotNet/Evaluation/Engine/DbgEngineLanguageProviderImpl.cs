@@ -17,19 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
-	/// <summary>
-	/// Used by a <see cref="DbgEngineObjectIdFactory"/> to create object id factories
-	/// </summary>
-	public abstract class DbgDotNetLanguageService {
-		/// <summary>
-		/// Creates a <see cref="DbgEngineObjectIdFactory"/>
-		/// </summary>
-		/// <param name="runtimeGuid">Runtime guid, see <see cref="PredefinedDbgRuntimeGuids"/></param>
-		/// <returns></returns>
-		public abstract DbgEngineObjectIdFactory GetEngineObjectIdFactory(Guid runtimeGuid);
+namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+	[ExportDbgEngineLanguageProvider(PredefinedDbgRuntimeKindGuids.DotNet)]
+	sealed class DbgEngineLanguageProviderImpl : DbgEngineLanguageProvider {
+		public override string RuntimeDisplayName => ".NET";
+
+		readonly DbgDotNetLanguageService2 dbgDotNetLanguageService;
+
+		[ImportingConstructor]
+		DbgEngineLanguageProviderImpl(DbgDotNetLanguageService2 dbgDotNetLanguageService) => this.dbgDotNetLanguageService = dbgDotNetLanguageService;
+
+		public sealed override IEnumerable<DbgEngineLanguage> Create() => dbgDotNetLanguageService.CreateLanguages();
 	}
 }

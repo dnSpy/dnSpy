@@ -56,7 +56,6 @@
     <Compile Include="Evaluation\DbgLanguageDebugInfo.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetAliasInfo.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetDispatcher.cs" />
-    <Compile Include="Evaluation\Engine\DbgDotNetEngineLanguageProvider.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineObjectIdFactory.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetExceptionInfo.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetLanguageService.cs" />

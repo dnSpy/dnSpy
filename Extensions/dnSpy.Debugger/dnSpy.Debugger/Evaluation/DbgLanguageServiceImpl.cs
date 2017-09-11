@@ -39,12 +39,12 @@ namespace dnSpy.Debugger.Evaluation {
 
 	struct RuntimeLanguageInfo {
 		public string RuntimeDisplayName { get; }
-		public Guid RuntimeGuid { get; }
+		public Guid RuntimeKindGuid { get; }
 		public LanguageInfo[] Languages { get; }
 		public string CurrentLanguage { get; }
-		public RuntimeLanguageInfo(string runtimeDisplayName, Guid runtimeGuid, LanguageInfo[] languages, string currentLanguage) {
+		public RuntimeLanguageInfo(string runtimeDisplayName, Guid runtimeKindGuid, LanguageInfo[] languages, string currentLanguage) {
 			RuntimeDisplayName = runtimeDisplayName ?? throw new ArgumentNullException(nameof(runtimeDisplayName));
-			RuntimeGuid = runtimeGuid;
+			RuntimeKindGuid = runtimeKindGuid;
 			Languages = languages ?? throw new ArgumentNullException(nameof(languages));
 			CurrentLanguage = currentLanguage ?? throw new ArgumentNullException(nameof(currentLanguage));
 		}
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Evaluation {
 
 	abstract class DbgLanguageService2 : DbgLanguageService {
 		public abstract RuntimeLanguageInfo[] GetLanguageInfos();
-		public abstract void SetDefaultLanguageName(Guid runtimeGuid, string languageName);
+		public abstract void SetDefaultLanguageName(Guid runtimeKindGuid, string languageName);
 	}
 
 	[Export(typeof(DbgLanguageService))]
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgLanguageServiceImpl : DbgLanguageService2 {
 		readonly object lockObj;
 		readonly Lazy<DbgManager> dbgManager;
-		readonly Dictionary<Guid, RuntimeInfo> runtimeInfos;
+		readonly Dictionary<Guid, RuntimeInfo> runtimeKindInfos;
 
 		sealed class RuntimeInfo {
 			public Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>[] Providers { get; }
@@ -85,18 +85,18 @@ namespace dnSpy.Debugger.Evaluation {
 
 			var dict = new Dictionary<Guid, List<Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>>>();
 			foreach (var lz in dbgEngineLanguageProviders.OrderBy(a => a.Metadata.Order)) {
-				bool b = Guid.TryParse(lz.Metadata.RuntimeGuid, out var runtimeGuid);
+				bool b = Guid.TryParse(lz.Metadata.RuntimeKindGuid, out var runtimeKindGuid);
 				Debug.Assert(b);
 				if (!b)
 					continue;
-				if (!dict.TryGetValue(runtimeGuid, out var list))
-					dict.Add(runtimeGuid, list = new List<Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>>());
+				if (!dict.TryGetValue(runtimeKindGuid, out var list))
+					dict.Add(runtimeKindGuid, list = new List<Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>>());
 				list.Add(lz);
 			}
 
-			runtimeInfos = new Dictionary<Guid, RuntimeInfo>(dict.Count);
+			runtimeKindInfos = new Dictionary<Guid, RuntimeInfo>(dict.Count);
 			foreach (var kv in dict)
-				runtimeInfos.Add(kv.Key, new RuntimeInfo(kv.Value.ToArray()));
+				runtimeKindInfos.Add(kv.Key, new RuntimeInfo(kv.Value.ToArray()));
 
 			foreach (var lz in dbgLanguageServiceListeners)
 				lz.Value.Initialize(this);
@@ -104,9 +104,9 @@ namespace dnSpy.Debugger.Evaluation {
 
 		public override RuntimeLanguageInfo[] GetLanguageInfos() {
 			lock (lockObj) {
-				var list = new List<RuntimeLanguageInfo>(runtimeInfos.Count);
+				var list = new List<RuntimeLanguageInfo>(runtimeKindInfos.Count);
 
-				foreach (var kv in runtimeInfos) {
+				foreach (var kv in runtimeKindInfos) {
 					var langs = GetLanguages(kv.Key);
 					Debug.Assert(langs.Count != 0);
 					if (langs.Count == 0 || langs[0].Name == PredefinedDbgLanguageNames.None)
@@ -123,21 +123,21 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		public override void SetDefaultLanguageName(Guid runtimeGuid, string languageName) {
+		public override void SetDefaultLanguageName(Guid runtimeKindGuid, string languageName) {
 			if (languageName == null)
 				throw new ArgumentNullException(nameof(languageName));
 			lock (lockObj) {
-				if (runtimeInfos.TryGetValue(runtimeGuid, out var info)) {
+				if (runtimeKindInfos.TryGetValue(runtimeKindGuid, out var info)) {
 					if (info.DefaultLanguageName == null)
 						info.DefaultLanguageName = languageName;
 				}
 			}
 		}
 
-		public override ReadOnlyCollection<DbgLanguage> GetLanguages(Guid runtimeGuid) {
+		public override ReadOnlyCollection<DbgLanguage> GetLanguages(Guid runtimeKindGuid) {
 			lock (lockObj) {
-				if (!runtimeInfos.TryGetValue(runtimeGuid, out var info))
-					runtimeInfos.Add(runtimeGuid, info = new RuntimeInfo(Array.Empty<Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>>()));
+				if (!runtimeKindInfos.TryGetValue(runtimeKindGuid, out var info))
+					runtimeKindInfos.Add(runtimeKindGuid, info = new RuntimeInfo(Array.Empty<Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>>()));
 				var languages = info.Languages;
 				if (languages == null) {
 					var langs = new List<DbgLanguage>();
@@ -145,27 +145,27 @@ namespace dnSpy.Debugger.Evaluation {
 					foreach (var lz in info.Providers) {
 						foreach (var lang in lz.Value.Create()) {
 							if (hash.Add(lang.Name))
-								langs.Add(new DbgLanguageImpl(runtimeGuid, lang));
+								langs.Add(new DbgLanguageImpl(runtimeKindGuid, lang));
 						}
 					}
 					if (langs.Count == 0)
-						langs.Add(new DbgLanguageImpl(runtimeGuid, NullDbgEngineLanguage.Instance));
+						langs.Add(new DbgLanguageImpl(runtimeKindGuid, NullDbgEngineLanguage.Instance));
 					info.Languages = languages = new ReadOnlyCollection<DbgLanguage>(langs.ToArray());
 				}
 				return languages;
 			}
 		}
 
-		public override void SetCurrentLanguage(Guid runtimeGuid, DbgLanguage language) {
+		public override void SetCurrentLanguage(Guid runtimeKindGuid, DbgLanguage language) {
 			if (language == null)
 				throw new ArgumentNullException(nameof(language));
-			dbgManager.Value.Dispatcher.BeginInvoke(() => SetCurrentLanguage_DbgThread(runtimeGuid, language));
+			dbgManager.Value.Dispatcher.BeginInvoke(() => SetCurrentLanguage_DbgThread(runtimeKindGuid, language));
 		}
 
-		void SetCurrentLanguage_DbgThread(Guid runtimeGuid, DbgLanguage language) {
+		void SetCurrentLanguage_DbgThread(Guid runtimeKindGuid, DbgLanguage language) {
 			dbgManager.Value.Dispatcher.VerifyAccess();
 			lock (lockObj) {
-				if (!runtimeInfos.TryGetValue(runtimeGuid, out var info))
+				if (!runtimeKindInfos.TryGetValue(runtimeKindGuid, out var info))
 					return;
 				if (info.Languages == null)
 					return;
@@ -175,13 +175,13 @@ namespace dnSpy.Debugger.Evaluation {
 					return;
 				info.CurrentLanguage = language;
 			}
-			LanguageChanged?.Invoke(this, new DbgLanguageChangedEventArgs(runtimeGuid, language));
+			LanguageChanged?.Invoke(this, new DbgLanguageChangedEventArgs(runtimeKindGuid, language));
 		}
 
-		public override DbgLanguage GetCurrentLanguage(Guid runtimeGuid) {
+		public override DbgLanguage GetCurrentLanguage(Guid runtimeKindGuid) {
 			lock (lockObj) {
-				if (!runtimeInfos.TryGetValue(runtimeGuid, out var info))
-					runtimeInfos.Add(runtimeGuid, info = new RuntimeInfo(Array.Empty<Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>>()));
+				if (!runtimeKindInfos.TryGetValue(runtimeKindGuid, out var info))
+					runtimeKindInfos.Add(runtimeKindGuid, info = new RuntimeInfo(Array.Empty<Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>>()));
 				if (info.Languages == null)
 					GetLanguageInfos();
 				if (info.Languages == null)

@@ -26,12 +26,12 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgFormatterImpl : DbgFormatter {
 		public override DbgLanguage Language { get; }
 
-		readonly Guid runtimeGuid;
+		readonly Guid runtimeKindGuid;
 		readonly DbgEngineFormatter engineFormatter;
 
-		public DbgFormatterImpl(DbgLanguage language, Guid runtimeGuid, DbgEngineFormatter engineFormatter) {
+		public DbgFormatterImpl(DbgLanguage language, Guid runtimeKindGuid, DbgEngineFormatter engineFormatter) {
 			Language = language ?? throw new ArgumentNullException(nameof(language));
-			this.runtimeGuid = runtimeGuid;
+			this.runtimeKindGuid = runtimeKindGuid;
 			this.engineFormatter = engineFormatter ?? throw new ArgumentNullException(nameof(engineFormatter));
 		}
 
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));

@@ -28,12 +28,12 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueNodeFactoryImpl : DbgValueNodeFactory {
 		public override DbgLanguage Language { get; }
 
-		readonly Guid runtimeGuid;
+		readonly Guid runtimeKindGuid;
 		readonly DbgEngineValueNodeFactory engineValueNodeFactory;
 
-		public DbgValueNodeFactoryImpl(DbgLanguage language, Guid runtimeGuid, DbgEngineValueNodeFactory engineValueNodeFactory) {
+		public DbgValueNodeFactoryImpl(DbgLanguage language, Guid runtimeKindGuid, DbgEngineValueNodeFactory engineValueNodeFactory) {
 			Language = language ?? throw new ArgumentNullException(nameof(language));
-			this.runtimeGuid = runtimeGuid;
+			this.runtimeKindGuid = runtimeKindGuid;
 			this.engineValueNodeFactory = engineValueNodeFactory ?? throw new ArgumentNullException(nameof(engineValueNodeFactory));
 		}
 
@@ -56,11 +56,11 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.Guid != runtimeGuid)
+			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
@@ -74,11 +74,11 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.Guid != runtimeGuid)
+			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
@@ -94,14 +94,14 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (objectIds == null)
 				throw new ArgumentNullException(nameof(objectIds));
 			if (objectIds.Length == 0)
 				return Array.Empty<DbgValueNode>();
 			var runtime = objectIds[0].Runtime;
-			if (runtime.Guid != runtimeGuid)
+			if (runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			var engineObjectIds = new DbgEngineObjectId[objectIds.Length];
 			for (int i = 0; i < objectIds.Length; i++)
@@ -116,14 +116,14 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (objectIds == null)
 				throw new ArgumentNullException(nameof(objectIds));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
 			var runtime = objectIds[0].Runtime;
-			if (runtime.Guid != runtimeGuid)
+			if (runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			var engineObjectIds = new DbgEngineObjectId[objectIds.Length];
 			for (int i = 0; i < objectIds.Length; i++)

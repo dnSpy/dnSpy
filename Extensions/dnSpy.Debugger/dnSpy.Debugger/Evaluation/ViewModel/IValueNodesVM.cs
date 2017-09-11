@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		bool IsOpen { get; }
 		bool IsReadOnly { get; }
 		ITreeView TreeView { get; }
-		Guid? RuntimeGuid { get; }
+		Guid? RuntimeKindGuid { get; }
 		VariablesWindowKind VariablesWindowKind { get; }
 
 		bool CanAddRemoveExpressions { get; }

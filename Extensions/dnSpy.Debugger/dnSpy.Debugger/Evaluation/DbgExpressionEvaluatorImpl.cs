@@ -26,12 +26,12 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgExpressionEvaluatorImpl : DbgExpressionEvaluator {
 		public override DbgLanguage Language { get; }
 
-		readonly Guid runtimeGuid;
+		readonly Guid runtimeKindGuid;
 		readonly DbgEngineExpressionEvaluator engineExpressionEvaluator;
 
-		public DbgExpressionEvaluatorImpl(DbgLanguage language, Guid runtimeGuid, DbgEngineExpressionEvaluator engineExpressionEvaluator) {
+		public DbgExpressionEvaluatorImpl(DbgLanguage language, Guid runtimeKindGuid, DbgEngineExpressionEvaluator engineExpressionEvaluator) {
 			Language = language ?? throw new ArgumentNullException(nameof(language));
-			this.runtimeGuid = runtimeGuid;
+			this.runtimeKindGuid = runtimeKindGuid;
 			this.engineExpressionEvaluator = engineExpressionEvaluator ?? throw new ArgumentNullException(nameof(engineExpressionEvaluator));
 		}
 
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));

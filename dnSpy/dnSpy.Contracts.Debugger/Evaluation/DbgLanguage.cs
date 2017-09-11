@@ -28,9 +28,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// </summary>
 	public abstract class DbgLanguage {
 		/// <summary>
-		/// Gets the runtime GUID, see <see cref="PredefinedDbgRuntimeGuids"/>
+		/// Gets the runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/>
 		/// </summary>
-		public abstract Guid RuntimeGuid { get; }
+		public abstract Guid RuntimeKindGuid { get; }
 
 		/// <summary>
 		/// Gets the language name, see <see cref="PredefinedDbgLanguageNames"/>

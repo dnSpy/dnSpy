@@ -18,18 +18,20 @@
 */
 
 using System;
-using dnSpy.Contracts.Debugger.Engine.Evaluation;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// Used by a <see cref="DbgEngineObjectIdFactory"/> to create object id factories
+	/// Predefined runtime kind guids (<see cref="DbgRuntime.RuntimeKindGuid"/>)
 	/// </summary>
-	public abstract class DbgDotNetLanguageService {
+	public static class PredefinedDbgRuntimeKindGuids {
 		/// <summary>
-		/// Creates a <see cref="DbgEngineObjectIdFactory"/>
+		/// .NET
 		/// </summary>
-		/// <param name="runtimeGuid">Runtime guid, see <see cref="PredefinedDbgRuntimeGuids"/></param>
-		/// <returns></returns>
-		public abstract DbgEngineObjectIdFactory GetEngineObjectIdFactory(Guid runtimeGuid);
+		public const string DotNet = "03CFDE68-877E-4DD7-9A14-5C100B37A01A";
+
+		/// <summary>
+		/// .NET
+		/// </summary>
+		public static readonly Guid DotNet_Guid = new Guid(DotNet);
 	}
 }

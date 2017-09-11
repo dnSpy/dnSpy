@@ -27,12 +27,12 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueNodeProviderImpl : DbgValueNodeProvider {
 		public override DbgLanguage Language { get; }
 
-		readonly Guid runtimeGuid;
+		readonly Guid runtimeKindGuid;
 		readonly DbgEngineValueNodeProvider engineValueNodeProvider;
 
-		public DbgValueNodeProviderImpl(DbgLanguage language, Guid runtimeGuid, DbgEngineValueNodeProvider engineValueNodeProvider) {
+		public DbgValueNodeProviderImpl(DbgLanguage language, Guid runtimeKindGuid, DbgEngineValueNodeProvider engineValueNodeProvider) {
 			Language = language ?? throw new ArgumentNullException(nameof(language));
-			this.runtimeGuid = runtimeGuid;
+			this.runtimeKindGuid = runtimeKindGuid;
 			this.engineValueNodeProvider = engineValueNodeProvider ?? throw new ArgumentNullException(nameof(engineValueNodeProvider));
 		}
 
@@ -43,11 +43,11 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.Guid != runtimeGuid)
+			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			return DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineValueNodeProvider.GetNodes(context, frame, options, cancellationToken));
 		}
@@ -59,11 +59,11 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.Guid != runtimeGuid)
+			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));

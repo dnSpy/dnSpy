@@ -27,12 +27,12 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueFormatterImpl : DbgValueFormatter {
 		public override DbgLanguage Language { get; }
 
-		readonly Guid runtimeGuid;
+		readonly Guid runtimeKindGuid;
 		readonly DbgEngineValueFormatter engineValueFormatter;
 
-		public DbgValueFormatterImpl(DbgLanguage language, Guid runtimeGuid, DbgEngineValueFormatter engineValueFormatter) {
+		public DbgValueFormatterImpl(DbgLanguage language, Guid runtimeKindGuid, DbgEngineValueFormatter engineValueFormatter) {
 			Language = language ?? throw new ArgumentNullException(nameof(language));
-			this.runtimeGuid = runtimeGuid;
+			this.runtimeKindGuid = runtimeKindGuid;
 			this.engineValueFormatter = engineValueFormatter ?? throw new ArgumentNullException(nameof(engineValueFormatter));
 		}
 
@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(value));
 			if (!(value is DbgValueImpl valueImpl))
 				throw new ArgumentException();
-			if (value.Runtime.Guid != runtimeGuid)
+			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			engineValueFormatter.Format(context, output, valueImpl.EngineValue, options, cancellationToken);
 		}
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(value));
 			if (!(value is DbgValueImpl valueImpl))
 				throw new ArgumentException();
-			if (value.Runtime.Guid != runtimeGuid)
+			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(value));
 			if (!(value is DbgValueImpl valueImpl))
 				throw new ArgumentException();
-			if (value.Runtime.Guid != runtimeGuid)
+			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			engineValueFormatter.FormatType(context, output, valueImpl.EngineValue, options, cancellationToken);
 		}
@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.Guid != runtimeGuid)
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(value));
 			if (!(value is DbgValueImpl valueImpl))
 				throw new ArgumentException();
-			if (value.Runtime.Guid != runtimeGuid)
+			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));

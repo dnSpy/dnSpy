@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) {
 			var thread = dbgManager.Value.CurrentThread.Current;
-			if (thread == null || thread.Runtime.Guid != e.RuntimeGuid)
+			if (thread == null || thread.Runtime.RuntimeKindGuid != e.RuntimeKindGuid)
 				return;
 			UI(() => RefreshNodes_UI());
 		}
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var frame = dbgCallStackService.Value.ActiveFrame;
 			if (frame == null)
 				return (null, null);
-			var language = dbgLanguageService.Value.GetCurrentLanguage(frame.Thread.Runtime.Guid);
+			var language = dbgLanguageService.Value.GetCurrentLanguage(frame.Thread.Runtime.RuntimeKindGuid);
 			return (language, frame);
 		}
 

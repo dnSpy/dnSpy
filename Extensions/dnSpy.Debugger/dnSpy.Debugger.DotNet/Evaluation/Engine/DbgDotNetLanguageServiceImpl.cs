@@ -31,8 +31,13 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Resources;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+	abstract class DbgDotNetLanguageService2 : DbgDotNetLanguageService {
+		public abstract IEnumerable<DbgEngineLanguage> CreateLanguages();
+	}
+
 	[Export(typeof(DbgDotNetLanguageService))]
-	sealed class DbgDotNetLanguageServiceImpl : DbgDotNetLanguageService {
+	[Export(typeof(DbgDotNetLanguageService2))]
+	sealed class DbgDotNetLanguageServiceImpl : DbgDotNetLanguageService2 {
 		readonly Lazy<DbgMetadataService> dbgMetadataService;
 		readonly Lazy<DbgModuleReferenceProvider> dbgModuleReferenceProvider;
 		readonly Lazy<DbgDotNetEngineValueNodeFactoryService> dbgDotNetEngineValueNodeFactoryService;
@@ -76,7 +81,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
-		public override IEnumerable<DbgEngineLanguage> CreateLanguages(Guid runtimeGuid) {
+		public override IEnumerable<DbgEngineLanguage> CreateLanguages() {
 			foreach (var lz in dbgDotNetExpressionCompilers) {
 				bool b = Guid.TryParse(lz.Metadata.DecompilerGuid, out var decompilerGuid);
 				Debug.Assert(b);

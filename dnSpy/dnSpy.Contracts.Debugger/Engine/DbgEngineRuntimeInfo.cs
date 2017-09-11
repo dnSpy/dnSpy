@@ -31,6 +31,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public Guid Guid { get; }
 
 		/// <summary>
+		/// GUID returned by <see cref="DbgRuntime.RuntimeKindGuid"/>
+		/// </summary>
+		public Guid RuntimeKindGuid { get; }
+
+		/// <summary>
 		/// Name returned by <see cref="DbgRuntime.Name"/>
 		/// </summary>
 		public string Name { get; }
@@ -49,13 +54,17 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Constructor
 		/// </summary>
 		/// <param name="guid">GUID returned by <see cref="DbgRuntime.Guid"/></param>
+		/// <param name="runtimeKindGuid">GUID returned by <see cref="DbgRuntime.RuntimeKindGuid"/></param>
 		/// <param name="name">Name returned by <see cref="DbgRuntime.Name"/></param>
 		/// <param name="id">Id returned by <see cref="DbgRuntime.Id"/></param>
 		/// <param name="tags">Tags returned by <see cref="DbgRuntime.Tags"/></param>
-		public DbgEngineRuntimeInfo(Guid guid, string name, RuntimeId id, ReadOnlyCollection<string> tags) {
+		public DbgEngineRuntimeInfo(Guid guid, Guid runtimeKindGuid, string name, RuntimeId id, ReadOnlyCollection<string> tags) {
 			if (guid == Guid.Empty)
 				throw new ArgumentOutOfRangeException(nameof(guid));
+			if (runtimeKindGuid == Guid.Empty)
+				throw new ArgumentOutOfRangeException(nameof(runtimeKindGuid));
 			Guid = guid;
+			RuntimeKindGuid = runtimeKindGuid;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Id = id ?? throw new ArgumentNullException(nameof(id));
 			Tags = tags ?? throw new ArgumentNullException(nameof(tags));

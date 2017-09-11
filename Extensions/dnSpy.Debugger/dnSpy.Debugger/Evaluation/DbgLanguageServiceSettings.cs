@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Evaluation {
 			var rootSect = settingsService.RecreateSection(SETTINGS_GUID);
 			foreach (var info in dbgLanguageService.GetLanguageInfos()) {
 				var sect = rootSect.CreateSection("Language");
-				sect.Attribute("Guid", info.RuntimeGuid);
+				sect.Attribute("Guid", info.RuntimeKindGuid);
 				sect.Attribute("Language", info.CurrentLanguage);
 			}
 		}

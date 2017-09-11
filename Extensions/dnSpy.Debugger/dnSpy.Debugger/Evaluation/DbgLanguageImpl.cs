@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgLanguageImpl : DbgLanguage {
-		public override Guid RuntimeGuid { get; }
+		public override Guid RuntimeKindGuid { get; }
 		public override string Name { get; }
 		public override string DisplayName { get; }
 		public override DbgExpressionEvaluator ExpressionEvaluator { get; }
@@ -40,25 +40,25 @@ namespace dnSpy.Debugger.Evaluation {
 
 		readonly DbgEngineLanguage engineLanguage;
 
-		public DbgLanguageImpl(Guid runtimeGuid, DbgEngineLanguage engineLanguage) {
-			RuntimeGuid = runtimeGuid;
+		public DbgLanguageImpl(Guid runtimeKindGuid, DbgEngineLanguage engineLanguage) {
+			RuntimeKindGuid = runtimeKindGuid;
 			this.engineLanguage = engineLanguage ?? throw new ArgumentNullException(nameof(engineLanguage));
 			Name = engineLanguage.Name ?? throw new ArgumentException();
 			DisplayName = engineLanguage.DisplayName ?? throw new ArgumentException();
-			ExpressionEvaluator = new DbgExpressionEvaluatorImpl(this, runtimeGuid, engineLanguage.ExpressionEvaluator);
-			ValueFormatter = new DbgValueFormatterImpl(this, runtimeGuid, engineLanguage.ValueFormatter);
-			Formatter = new DbgFormatterImpl(this, runtimeGuid, engineLanguage.Formatter);
-			LocalsProvider = new DbgValueNodeProviderImpl(this, runtimeGuid, engineLanguage.LocalsProvider);
-			AutosProvider = new DbgValueNodeProviderImpl(this, runtimeGuid, engineLanguage.AutosProvider);
-			ExceptionsProvider = new DbgValueNodeProviderImpl(this, runtimeGuid, engineLanguage.ExceptionsProvider);
-			ReturnValuesProvider = new DbgValueNodeProviderImpl(this, runtimeGuid, engineLanguage.ReturnValuesProvider);
-			ValueNodeFactory = new DbgValueNodeFactoryImpl(this, runtimeGuid, engineLanguage.ValueNodeFactory);
+			ExpressionEvaluator = new DbgExpressionEvaluatorImpl(this, runtimeKindGuid, engineLanguage.ExpressionEvaluator);
+			ValueFormatter = new DbgValueFormatterImpl(this, runtimeKindGuid, engineLanguage.ValueFormatter);
+			Formatter = new DbgFormatterImpl(this, runtimeKindGuid, engineLanguage.Formatter);
+			LocalsProvider = new DbgValueNodeProviderImpl(this, runtimeKindGuid, engineLanguage.LocalsProvider);
+			AutosProvider = new DbgValueNodeProviderImpl(this, runtimeKindGuid, engineLanguage.AutosProvider);
+			ExceptionsProvider = new DbgValueNodeProviderImpl(this, runtimeKindGuid, engineLanguage.ExceptionsProvider);
+			ReturnValuesProvider = new DbgValueNodeProviderImpl(this, runtimeKindGuid, engineLanguage.ReturnValuesProvider);
+			ValueNodeFactory = new DbgValueNodeFactoryImpl(this, runtimeKindGuid, engineLanguage.ValueNodeFactory);
 		}
 
 		public override DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options, CancellationToken cancellationToken) {
 			if (runtime == null)
 				throw new ArgumentNullException(nameof(runtime));
-			if (runtime.Guid != RuntimeGuid)
+			if (runtime.RuntimeKindGuid != RuntimeKindGuid)
 				throw new ArgumentException();
 			var context = new DbgEvaluationContextImpl(this, runtime, funcEvalTimeout, options);
 			engineLanguage.InitializeContext(context, location, cancellationToken);

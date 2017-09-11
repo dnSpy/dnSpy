@@ -154,6 +154,7 @@
     <Compile Include="Exceptions\PredefinedExceptionCategories.cs" />
     <Compile Include="IDbgManagerStartListener.cs" />
     <Compile Include="PredefinedDbgRuntimeGuids.cs" />
+    <Compile Include="PredefinedDbgRuntimeKindGuids.cs" />
     <Compile Include="PredefinedDebugTags.cs" />
     <Compile Include="PredefinedThreadKinds.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

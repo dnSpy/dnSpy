@@ -75,8 +75,8 @@ namespace dnSpy.Debugger.Settings {
 			Settings.CopyTo(_global_settings);
 			if (runtimesVM != null) {
 				foreach (var info in runtimesVM.GetSettings()) {
-					var language = dbgLanguageService.Value.GetLanguages(info.runtimeGuid).First(a => a.Name == info.languageName);
-					dbgLanguageService.Value.SetCurrentLanguage(info.runtimeGuid, language);
+					var language = dbgLanguageService.Value.GetLanguages(info.runtimeKindGuid).First(a => a.Name == info.languageName);
+					dbgLanguageService.Value.SetCurrentLanguage(info.runtimeKindGuid, language);
 				}
 			}
 		}
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.Settings {
 			selectedItem = runtimes.FirstOrDefault();
 		}
 
-		public IEnumerable<(Guid runtimeGuid, string languageName)> GetSettings() {
+		public IEnumerable<(Guid runtimeKindGuid, string languageName)> GetSettings() {
 			foreach (var runtime in runtimes)
 				yield return runtime.GetSettings();
 		}
@@ -122,16 +122,16 @@ namespace dnSpy.Debugger.Settings {
 		}
 		LanguageVM selectedItem;
 
-		readonly Guid runtimeGuid;
+		readonly Guid runtimeKindGuid;
 
 		public RuntimeVM(RuntimeLanguageInfo info) {
 			Name = info.RuntimeDisplayName;
-			runtimeGuid = info.RuntimeGuid;
+			runtimeKindGuid = info.RuntimeKindGuid;
 			languages = new ObservableCollection<LanguageVM>(info.Languages.OrderBy(a => a.LanguageDisplayName, StringComparer.CurrentCultureIgnoreCase).Select(a => new LanguageVM(a)));
 			selectedItem = languages.FirstOrDefault(a => a.ID == info.CurrentLanguage) ?? languages.FirstOrDefault();
 		}
 
-		public (Guid runtimeGuid, string languageName) GetSettings() => (runtimeGuid, selectedItem.ID);
+		public (Guid runtimeKindGuid, string languageName) GetSettings() => (runtimeKindGuid, selectedItem.ID);
 	}
 
 	sealed class LanguageVM {

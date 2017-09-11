@@ -28,23 +28,23 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Gets all languages available by a <see cref="DbgRuntime"/>
 		/// </summary>
-		/// <param name="runtimeGuid">Runtime GUID, see <see cref="PredefinedDbgRuntimeGuids"/></param>
+		/// <param name="runtimeKindGuid">Runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/></param>
 		/// <returns></returns>
-		public abstract ReadOnlyCollection<DbgLanguage> GetLanguages(Guid runtimeGuid);
+		public abstract ReadOnlyCollection<DbgLanguage> GetLanguages(Guid runtimeKindGuid);
 
 		/// <summary>
-		/// Sets the language that should be used by all runtimes with GUID <paramref name="runtimeGuid"/>
+		/// Sets the language that should be used by all runtimes with GUID <paramref name="runtimeKindGuid"/>
 		/// </summary>
-		/// <param name="runtimeGuid">Runtime GUID, see <see cref="PredefinedDbgRuntimeGuids"/></param>
+		/// <param name="runtimeKindGuid">Runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/></param>
 		/// <param name="language">Language to use</param>
-		public abstract void SetCurrentLanguage(Guid runtimeGuid, DbgLanguage language);
+		public abstract void SetCurrentLanguage(Guid runtimeKindGuid, DbgLanguage language);
 
 		/// <summary>
 		/// Gets the current language the runtime uses
 		/// </summary>
-		/// <param name="runtimeGuid">Runtime GUID, see <see cref="PredefinedDbgRuntimeGuids"/></param>
+		/// <param name="runtimeKindGuid">Runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/></param>
 		/// <returns></returns>
-		public abstract DbgLanguage GetCurrentLanguage(Guid runtimeGuid);
+		public abstract DbgLanguage GetCurrentLanguage(Guid runtimeKindGuid);
 
 		/// <summary>
 		/// Raised when a runtime's current language is changed
@@ -57,9 +57,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// </summary>
 	public struct DbgLanguageChangedEventArgs {
 		/// <summary>
-		/// Runtime GUID, see <see cref="PredefinedDbgRuntimeGuids"/>
+		/// Runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/>
 		/// </summary>
-		public Guid RuntimeGuid { get; }
+		public Guid RuntimeKindGuid { get; }
 
 		/// <summary>
 		/// New language
@@ -69,10 +69,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="runtimeGuid">Runtime GUID, see <see cref="PredefinedDbgRuntimeGuids"/></param>
+		/// <param name="runtimeKindGuid">Runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/></param>
 		/// <param name="language">New language</param>
-		public DbgLanguageChangedEventArgs(Guid runtimeGuid, DbgLanguage language) {
-			RuntimeGuid = runtimeGuid;
+		public DbgLanguageChangedEventArgs(Guid runtimeKindGuid, DbgLanguage language) {
+			RuntimeKindGuid = runtimeKindGuid;
 			Language = language ?? throw new ArgumentNullException(nameof(language));
 		}
 	}

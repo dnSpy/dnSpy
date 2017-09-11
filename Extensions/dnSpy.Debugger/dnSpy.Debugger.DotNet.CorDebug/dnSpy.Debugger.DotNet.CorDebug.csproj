@@ -200,7 +200,6 @@
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
     <Compile Include="Impl\EvalReflectionUtils.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetEngineLanguageProviderImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetValueImpl.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />

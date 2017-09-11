@@ -492,28 +492,28 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override IList<DbgLanguage> GetLanguages(IValueNodesVM vm) {
 			if (!CanExecCommands(vm))
 				return Array.Empty<DbgLanguage>();
-			var runtimeGuid= vm.RuntimeGuid;
-			if (runtimeGuid == null)
+			var runtimeKindGuid = vm.RuntimeKindGuid;
+			if (runtimeKindGuid == null)
 				return Array.Empty<DbgLanguage>();
-			return dbgLanguageService.Value.GetLanguages(runtimeGuid.Value);
+			return dbgLanguageService.Value.GetLanguages(runtimeKindGuid.Value);
 		}
 
 		public override DbgLanguage GetCurrentLanguage(IValueNodesVM vm) {
 			if (!CanExecCommands(vm))
 				return null;
-			var runtimeGuid = vm.RuntimeGuid;
-			if (runtimeGuid == null)
+			var runtimeKindGuid = vm.RuntimeKindGuid;
+			if (runtimeKindGuid == null)
 				return null;
-			return dbgLanguageService.Value.GetCurrentLanguage(runtimeGuid.Value);
+			return dbgLanguageService.Value.GetCurrentLanguage(runtimeKindGuid.Value);
 		}
 
 		public override void SetCurrentLanguage(IValueNodesVM vm, DbgLanguage language) {
 			if (!CanExecCommands(vm))
 				return;
-			var runtimeGuid = vm.RuntimeGuid;
-			if (runtimeGuid == null)
+			var runtimeKindGuid = vm.RuntimeKindGuid;
+			if (runtimeKindGuid == null)
 				return;
-			dbgLanguageService.Value.SetCurrentLanguage(runtimeGuid.Value, language);
+			dbgLanguageService.Value.SetCurrentLanguage(runtimeKindGuid.Value, language);
 		}
 
 		public override bool CanToggleUseHexadecimal => true;

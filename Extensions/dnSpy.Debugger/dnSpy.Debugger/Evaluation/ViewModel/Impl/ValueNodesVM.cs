@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		bool IValueNodesVM.IsOpen => isOpen;
 		bool IValueNodesVM.IsReadOnly => valueNodesContext.IsWindowReadOnly;
 		ITreeView IValueNodesVM.TreeView => treeView;
-		Guid? IValueNodesVM.RuntimeGuid => valueNodesProvider.Language?.RuntimeGuid;
+		Guid? IValueNodesVM.RuntimeKindGuid => valueNodesProvider.Language?.RuntimeKindGuid;
 		VariablesWindowKind IValueNodesVM.VariablesWindowKind => variablesWindowKind;
 
 		sealed class RootNode : TreeNodeData {
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly RootNode rootNode;
 		bool isOpen;
 		SelectNodeKind selectNodeKind;
-		Guid? lastRuntimeGuid;
+		Guid? lastRuntimeKindGuid;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly IValueNodesVM vm;
@@ -163,13 +163,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void RecreateRootChildren_UI() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			refreshNameFields = false;
-			Guid? runtimeGuid;
+			Guid? runtimeKindGuid;
 			DbgValueNodeInfo[] nodes;
 			DbgEvaluationContext evalContext;
 			if (isOpen) {
 				evalContext = valueNodesProvider.TryGetEvaluationContext();
 				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions);
-				runtimeGuid = valueNodesProvider.Language?.RuntimeGuid ?? lastRuntimeGuid;
+				runtimeKindGuid = valueNodesProvider.Language?.RuntimeKindGuid ?? lastRuntimeKindGuid;
 				// Frame got closed. Don't use the new nodes, we'll get new nodes using the new frame in a little while.
 				if (nodeInfo.FrameClosed)
 					return;
@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			else {
 				evalContext = null;
 				nodes = Array.Empty<DbgValueNodeInfo>();
-				runtimeGuid = null;
+				runtimeKindGuid = null;
 			}
 			valueNodesContext.ValueNodeReader.SetEvaluationContext(evalContext);
 			valueNodesContext.EvaluationContext = evalContext;
@@ -186,7 +186,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 #if DEBUG
 			var origEditNode = TryGetEditNode();
 #endif
-			RecreateRootChildrenCore_UI(nodes, runtimeGuid);
+			RecreateRootChildrenCore_UI(nodes, runtimeKindGuid);
 			VerifyChildren_UI(nodes);
 #if DEBUG
 			// PERF: make sure edit node was re-used
@@ -244,13 +244,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void RecreateRootChildrenCore_UI(DbgValueNodeInfo[] infos, Guid? runtimeGuid) {
+		void RecreateRootChildrenCore_UI(DbgValueNodeInfo[] infos, Guid? runtimeKindGuid) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 
-			bool runtimeGuidChanged = runtimeGuid != lastRuntimeGuid;
-			lastRuntimeGuid = runtimeGuid;
+			bool runtimeKindGuidChanged = runtimeKindGuid != lastRuntimeKindGuid;
+			lastRuntimeKindGuid = runtimeKindGuid;
 
-			if (infos.Length == 0 || rootNode.TreeNode.Children.Count == 0 || runtimeGuidChanged) {
+			if (infos.Length == 0 || rootNode.TreeNode.Children.Count == 0 || runtimeKindGuidChanged) {
 				SetNewRootChildren_UI(infos);
 				return;
 			}
@@ -413,7 +413,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.NodesChanged += ValueNodesProvider_NodesChanged;
 				valueNodesProvider.IsReadOnlyChanged += ValueNodesProvider_IsReadOnlyChanged;
 				valueNodesProvider.LanguageChanged += ValueNodesProvider_LanguageChanged;
-				lastRuntimeGuid = null;
+				lastRuntimeKindGuid = null;
 				selectNodeKind = SelectNodeKind.Open;
 				dbgObjectIdService.ObjectIdsChanged += DbgObjectIdService_ObjectIdsChanged;
 			}
@@ -426,7 +426,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				valueNodesProvider.LanguageChanged -= ValueNodesProvider_LanguageChanged;
 				dbgObjectIdService.ObjectIdsChanged -= DbgObjectIdService_ObjectIdsChanged;
 				valueNodesContext.IsWindowReadOnly = true;
-				lastRuntimeGuid = null;
+				lastRuntimeKindGuid = null;
 				selectNodeKind = SelectNodeKind.None;
 				valueNodesContext.NameEditValueProvider.Language = null;
 				valueNodesContext.ValueEditValueProvider.Language = null;
