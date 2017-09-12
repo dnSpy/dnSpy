@@ -40,7 +40,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			return GetAndCreateEnumInfo(type);
 		}
 
-		static EnumInfo GetAndCreateEnumInfo(DmdType type) => type.GetOrCreateData(() => CreateEnumInfo(type));
+		static EnumInfo GetAndCreateEnumInfo(DmdType type) {
+			var result = CreateEnumInfo(type);
+			return type.GetOrCreateData(() => result);
+		}
 
 		static EnumInfo CreateEnumInfo(DmdType type) {
 			bool hasFlagsAttribute = type.IsDefined("System.FlagsAttribute", inherit: false);
@@ -70,7 +73,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	struct EnumFieldInfo {
 		public DmdFieldInfo Field { get; }
 		public ulong Value { get; }
-		public EnumFieldInfo(DmdFieldInfo field,  ulong value) {
+		public EnumFieldInfo(DmdFieldInfo field, ulong value) {
 			Field = field ?? throw new ArgumentNullException(nameof(field));
 			Value = value;
 		}
