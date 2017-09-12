@@ -26,7 +26,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Roslyn.Shared.Properties;
 
-namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
+namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 	struct CSharpValueFormatter {
 		readonly ITextColorWriter output;
 		readonly ValueFormatterOptions options;

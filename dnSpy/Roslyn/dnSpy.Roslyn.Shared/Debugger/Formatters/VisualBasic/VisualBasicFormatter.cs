@@ -24,13 +24,13 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
-	[ExportDbgDotNetFormatter(DbgDotNetLanguageGuids.CSharp)]
-	sealed class CSharpFormatter : LanguageFormatter {
+namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
+	[ExportDbgDotNetFormatter(DbgDotNetLanguageGuids.VisualBasic)]
+	sealed class VisualBasicFormatter : LanguageFormatter {
 		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options) =>
-			new CSharpTypeFormatter(output, options.ToTypeFormatterOptions()).Format(type, value);
+			new VisualBasicTypeFormatter(output, options.ToTypeFormatterOptions()).Format(type, value);
 
 		public override void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken) =>
-			new CSharpValueFormatter(output, options.ToValueFormatterOptions(), cancellationToken).Format(value);
+			new VisualBasicValueFormatter(output, options.ToValueFormatterOptions(), cancellationToken).Format(value);
 	}
 }

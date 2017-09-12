@@ -20,8 +20,8 @@
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 
-namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
-	[ExportDbgDotNetValueNodeFactory(DbgDotNetLanguageGuids.CSharp)]
-	sealed class CSharpValueNodeFactory : LanguageValueNodeFactory {
+namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
+	[ExportDbgDotNetValueNodeFactory(DbgDotNetLanguageGuids.VisualBasic)]
+	sealed class VisualBasicValueNodeFactory : LanguageValueNodeFactory {
 	}
 }
