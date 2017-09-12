@@ -80,11 +80,20 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			}
 		}
 
+		DbgLocalsValueNodeEvaluationOptions GetLocalsValueNodeOptions() {
+			var res = DbgLocalsValueNodeEvaluationOptions.None;
+			if (debuggerSettings.ShowCompilerGeneratedVariables)
+				res |= DbgLocalsValueNodeEvaluationOptions.ShowCompilerGeneratedVariables;
+			if (debuggerSettings.ShowDecompilerGeneratedVariables)
+				res |= DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables;
+			return res;
+		}
+
 		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
 			var cancellationToken = CancellationToken.None;
 			var exceptions = language.ExceptionsProvider.GetNodes(context, frame, nodeEvalOptions, cancellationToken);
 			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame, nodeEvalOptions, cancellationToken);
-			var variables = language.LocalsProvider.GetNodes(context, frame, nodeEvalOptions, DbgLocalsValueNodeEvaluationOptions.None, cancellationToken);
+			var variables = language.LocalsProvider.GetNodes(context, frame, nodeEvalOptions, GetLocalsValueNodeOptions(), cancellationToken);
 
 			var objectIds = dbgObjectIdService.GetObjectIds(frame.Runtime);
 			Array.Sort(objectIds, DbgObjectIdComparer.Instance);

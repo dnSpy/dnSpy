@@ -114,6 +114,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public ValueInfo[] CachedValueInfos;
 			public byte[] CachedAssemblyBytes;
 			public DbgDotNetILInterpreterState CachedILInterpreterState;
+			public int CachedDecompilerGeneratedCount;
 		}
 
 		DbgEngineLocalsValueNodeInfo[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
@@ -127,15 +128,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 				// Since we attach this to the module, the module doesn't have to be part of Key
 				var state = StateWithKey<GetNodesState>.GetOrCreate(module, this);
-				var key = new GetNodesState.Key(methodDebugInfo.DecompilerOptionsVersion, options, localsOptions,
+				var localsOptionsKey = localsOptions & ~DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables;
+				var key = new GetNodesState.Key(methodDebugInfo.DecompilerOptionsVersion, options, localsOptionsKey,
 						methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion,
 						references, GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset));
 
 				ValueInfo[] valueInfos;
 				byte[] assemblyBytes;
+				int decompilerGeneratedCount;
 				if (key.Equals(state.CachedKey)) {
 					valueInfos = state.CachedValueInfos;
 					assemblyBytes = state.CachedAssemblyBytes;
+					decompilerGeneratedCount = state.CachedDecompilerGeneratedCount;
 				}
 				else {
 					var evalOptions = DbgEvaluationOptions.None;
@@ -149,7 +153,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					if (compilationResult.IsError)
 						return new[] { CreateInternalErrorNode(context, compilationResult.ErrorMessage) };
 
-					int decompilerGeneratedCount = GetDecompilerGeneratedVariablesCount(methodDebugInfo.Scope, languageDebugInfo.ILOffset);
+					decompilerGeneratedCount = GetDecompilerGeneratedVariablesCount(methodDebugInfo.Scope, languageDebugInfo.ILOffset);
 
 					valueInfos = new ValueInfo[compilationResult.CompiledExpressions.Length + decompilerGeneratedCount];
 					int valueInfosIndex = 0;
@@ -187,11 +191,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					state.CachedValueInfos = valueInfos;
 					state.CachedAssemblyBytes = assemblyBytes;
 					state.CachedILInterpreterState = null;
+					state.CachedDecompilerGeneratedCount = decompilerGeneratedCount;
 				}
 
-				valueNodes = valueInfos.Length == 0 ? Array.Empty<DbgEngineLocalsValueNodeInfo>() : new DbgEngineLocalsValueNodeInfo[valueInfos.Length];
+				int count = valueInfos.Length;
+				if ((localsOptions & DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables) == 0)
+					count -= decompilerGeneratedCount;
+				valueNodes = count == 0 ? Array.Empty<DbgEngineLocalsValueNodeInfo>() : new DbgEngineLocalsValueNodeInfo[count];
 				var valueCreator = new DbgDotNetValueCreator(valueNodeFactory, dnILInterpreter, context, frame, options, assemblyBytes, cancellationToken);
-				for (int i = 0; i < valueNodes.Length; i++) {
+				int w = 0;
+				for (int i = 0; i < valueInfos.Length; i++) {
 					cancellationToken.ThrowIfCancellationRequested();
 					var valueInfo = valueInfos[i];
 
@@ -205,6 +214,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						break;
 
 					case ValueInfoKind.DecompilerGeneratedVariable:
+						if ((localsOptions & DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables) == 0)
+							continue;
 						var decGen = (DecompilerGeneratedVariableValueInfo)valueInfo;
 						valueNodeInfo = new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Local, valueNodeFactory.CreateError(context,
 							new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Local, decGen.Name)),
@@ -216,8 +227,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						throw new InvalidOperationException();
 					}
 
-					valueNodes[i] = valueNodeInfo;
+					valueNodes[w++] = valueNodeInfo;
 				}
+				if (w != valueNodes.Length)
+					throw new InvalidOperationException();
 
 				return valueNodes;
 			}

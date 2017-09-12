@@ -61,17 +61,17 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// No bit is set
 		/// </summary>
-		None					= 0,
+		None								= 0,
 
 		/// <summary>
 		/// Show compiler generated variables (<see cref="DebuggerSettings.ShowCompilerGeneratedVariables"/>)
 		/// </summary>
-		ShowCompilerVariables	= 0x00000001,
+		ShowCompilerGeneratedVariables		= 0x00000001,
 
 		/// <summary>
 		/// Show decompiler generated variables (<see cref="DebuggerSettings.ShowDecompilerGeneratedVariables"/>)
 		/// </summary>
-		ShowDecompilerVariables	= 0x00000002,
+		ShowDecompilerGeneratedVariables	= 0x00000002,
 	}
 
 	/// <summary>
