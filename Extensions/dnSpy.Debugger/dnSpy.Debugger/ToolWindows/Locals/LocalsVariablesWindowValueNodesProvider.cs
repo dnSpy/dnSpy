@@ -21,9 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Evaluation.UI;
 using dnSpy.Debugger.Evaluation.ViewModel;
 
@@ -78,9 +81,10 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 		}
 
 		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
-			var exceptions = language.ExceptionsProvider.GetNodes(context, frame, nodeEvalOptions);
-			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame, nodeEvalOptions);
-			var variables = language.LocalsProvider.GetNodes(context, frame, nodeEvalOptions, DbgLocalsValueNodeEvaluationOptions.None);
+			var cancellationToken = CancellationToken.None;
+			var exceptions = language.ExceptionsProvider.GetNodes(context, frame, nodeEvalOptions, cancellationToken);
+			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame, nodeEvalOptions, cancellationToken);
+			var variables = language.LocalsProvider.GetNodes(context, frame, nodeEvalOptions, DbgLocalsValueNodeEvaluationOptions.None, cancellationToken);
 
 			var objectIds = dbgObjectIdService.GetObjectIds(frame.Runtime);
 			Array.Sort(objectIds, DbgObjectIdComparer.Instance);
@@ -99,10 +103,58 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 				res[ri] = new DbgValueNodeInfo(objectIdNodes[i], id, causesSideEffects: false);
 			}
 
+			variables = GetSortedVariables(context, variables, cancellationToken);
 			for (int i = 0; i < variables.Length; i++, ri++)
-				res[ri] = new DbgValueNodeInfo(variables[i], causesSideEffects: false);
+				res[ri] = new DbgValueNodeInfo(variables[i].ValueNode, causesSideEffects: false);
 
 			return res;
+		}
+
+		DbgLocalsValueNodeInfo[] GetSortedVariables(DbgEvaluationContext context, DbgLocalsValueNodeInfo[] variables, CancellationToken cancellationToken) {
+			if (variables.Length <= 1)
+				return variables;
+
+			var sortParameters = debuggerSettings.SortParameters;
+			var sortLocals = debuggerSettings.SortLocals;
+
+			// If the default options are used, don't sort at all. Let the locals provider
+			// decide how to sort them.
+			if (!sortParameters && !sortLocals)
+				return variables;
+
+			var output = new StringBuilderTextColorOutput();
+			if (debuggerSettings.GroupParametersAndLocalsTogether)
+				return variables.OrderBy(a => GetName(context, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+			else {
+				var locals = variables.Where(a => a.Kind == DbgLocalsValueNodeKind.Local).ToArray();
+				var parameters = variables.Where(a => a.Kind == DbgLocalsValueNodeKind.Parameter).ToArray();
+				var others = variables.Where(a => a.Kind != DbgLocalsValueNodeKind.Local && a.Kind != DbgLocalsValueNodeKind.Parameter).ToArray();
+
+				if (sortLocals && locals.Length > 1)
+					locals = locals.OrderBy(a => GetName(context, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+				if (sortParameters && parameters.Length > 1)
+					parameters = parameters.OrderBy(a => GetName(context, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+				if ((sortLocals || sortParameters) && others.Length > 1)
+					others = others.OrderBy(a => GetName(context, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+
+				var res = new DbgLocalsValueNodeInfo[locals.Length + parameters.Length + others.Length];
+				int w = 0;
+				for (int i = 0; i < parameters.Length; i++)
+					res[w++] = parameters[i];
+				for (int i = 0; i < locals.Length; i++)
+					res[w++] = locals[i];
+				for (int i = 0; i < others.Length; i++)
+					res[w++] = others[i];
+				if (w != res.Length)
+					throw new InvalidOperationException();
+				return res;
+			}
+		}
+
+		string GetName(DbgEvaluationContext context, StringBuilderTextColorOutput output, DbgValueNode valueNode, CancellationToken cancellationToken) {
+			output.Reset();
+			valueNode.FormatName(context, output, cancellationToken);
+			return output.ToString();
 		}
 
 		string GetNextExceptionId() => exceptionIdBase + exceptionCounter++.ToString();

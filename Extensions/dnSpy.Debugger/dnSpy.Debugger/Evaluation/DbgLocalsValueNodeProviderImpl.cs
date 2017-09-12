@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineLocalsValueNodeProvider = engineLocalsValueNodeProvider ?? throw new ArgumentNullException(nameof(engineLocalsValueNodeProvider));
 		}
 
-		public override DbgValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
+		public override DbgLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -49,10 +49,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			return DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineLocalsValueNodeProvider.GetNodes(context, frame, options, localsOptions, cancellationToken));
+			return DbgValueNodeUtils.ToLocalsValueNodeInfoArray(Language, frame.Runtime, engineLocalsValueNodeProvider.GetNodes(context, frame, options, localsOptions, cancellationToken));
 		}
 
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgValueNode[]> callback, CancellationToken cancellationToken) {
+		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgLocalsValueNodeInfo[]> callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineLocalsValueNodeProvider.GetNodes(context, frame, options, localsOptions, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineNodes)), cancellationToken);
+			engineLocalsValueNodeProvider.GetNodes(context, frame, options, localsOptions, engineNodes => callback(DbgValueNodeUtils.ToLocalsValueNodeInfoArray(Language, frame.Runtime, engineNodes)), cancellationToken);
 		}
 	}
 }

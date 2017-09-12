@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="localsOptions">Locals value node provider options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken);
+		public abstract DbgEngineLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets all values
@@ -72,6 +72,31 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="localsOptions">Locals value node provider options</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
+		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgEngineLocalsValueNodeInfo[]> callback, CancellationToken cancellationToken);
+	}
+
+	/// <summary>
+	/// Contains a value node and its kind
+	/// </summary>
+	public struct DbgEngineLocalsValueNodeInfo {
+		/// <summary>
+		/// What kind of value this is (local or parameter)
+		/// </summary>
+		public DbgLocalsValueNodeKind Kind { get; }
+
+		/// <summary>
+		/// Gets the node
+		/// </summary>
+		public DbgEngineValueNode ValueNode { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="kind">What kind of value this is (local or parameter)</param>
+		/// <param name="valueNode">Value node</param>
+		public DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind kind, DbgEngineValueNode valueNode) {
+			Kind = kind;
+			ValueNode = valueNode ?? throw new ArgumentNullException(nameof(valueNode));
+		}
 	}
 }

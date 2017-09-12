@@ -44,10 +44,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.dnILInterpreter = dnILInterpreter ?? throw new ArgumentNullException(nameof(dnILInterpreter));
 		}
 
-		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) =>
+		public override DbgEngineLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) =>
 			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetNodesCore(context, frame, options, localsOptions, cancellationToken));
 
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
+		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgEngineLocalsValueNodeInfo[]> callback, CancellationToken cancellationToken) =>
 			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(GetNodesCore(context, frame, options, localsOptions, cancellationToken)));
 
 		enum ValueInfoKind {
@@ -56,23 +56,19 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		abstract class ValueInfo {
-			public int ArrayIndex { get; }
 			public abstract ValueInfoKind Kind { get; }
 			public abstract bool IsParameter { get; }
-			public abstract int Index { get; }
-			protected ValueInfo(int arrayIndex) => ArrayIndex = arrayIndex;
 		}
 
 		sealed class CompiledExpressionValueInfo : ValueInfo {
 			public override ValueInfoKind Kind => ValueInfoKind.CompiledExpression;
 			public override bool IsParameter => compiledExpressions[index].ImageName == PredefinedDbgValueNodeImageNames.Parameter;
-			public override int Index => compiledExpressions[index].Index;
 			public ref DbgDotNetCompiledExpressionResult CompiledExpressionResult => ref compiledExpressions[index];
 
 			readonly DbgDotNetCompiledExpressionResult[] compiledExpressions;
 			readonly int index;
 
-			public CompiledExpressionValueInfo(int arrayIndex, DbgDotNetCompiledExpressionResult[] compiledExpressions, int index) : base(arrayIndex) {
+			public CompiledExpressionValueInfo(DbgDotNetCompiledExpressionResult[] compiledExpressions, int index) {
 				this.compiledExpressions = compiledExpressions;
 				this.index = index;
 			}
@@ -81,9 +77,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		sealed class DecompilerGeneratedVariableValueInfo : ValueInfo {
 			public override ValueInfoKind Kind => ValueInfoKind.DecompilerGeneratedVariable;
 			public override bool IsParameter => false;
-			public override int Index => -1;
 			public string Name { get; }
-			public DecompilerGeneratedVariableValueInfo(int arrayIndex, string name) : base(arrayIndex) =>
+			public DecompilerGeneratedVariableValueInfo(string name) =>
 				Name = name ?? throw new ArgumentNullException(nameof(name));
 		}
 
@@ -121,8 +116,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public DbgDotNetILInterpreterState CachedILInterpreterState;
 		}
 
-		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
-			DbgEngineValueNode[] valueNodes = null;
+		DbgEngineLocalsValueNodeInfo[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
+			DbgEngineLocalsValueNodeInfo[] valueNodes = null;
 			try {
 				var references = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
 
@@ -159,14 +154,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					valueInfos = new ValueInfo[compilationResult.CompiledExpressions.Length + decompilerGeneratedCount];
 					int valueInfosIndex = 0;
 					for (int i = 0; i < compilationResult.CompiledExpressions.Length; i++, valueInfosIndex++)
-						valueInfos[valueInfosIndex] = new CompiledExpressionValueInfo(valueInfosIndex, compilationResult.CompiledExpressions, i);
+						valueInfos[valueInfosIndex] = new CompiledExpressionValueInfo(compilationResult.CompiledExpressions, i);
 
 					if (decompilerGeneratedCount > 0) {
 						var scope = methodDebugInfo.Scope;
 						for (;;) {
 							foreach (var local in scope.Locals) {
 								if (local.IsDecompilerGenerated) {
-									valueInfos[valueInfosIndex] = new DecompilerGeneratedVariableValueInfo(valueInfosIndex, local.Name);
+									valueInfos[valueInfosIndex] = new DecompilerGeneratedVariableValueInfo(local.Name);
 									valueInfosIndex++;
 								}
 							}
@@ -194,45 +189,47 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					state.CachedILInterpreterState = null;
 				}
 
-				valueNodes = valueInfos.Length == 0 ? Array.Empty<DbgEngineValueNode>() : new DbgEngineValueNode[valueInfos.Length];
+				valueNodes = valueInfos.Length == 0 ? Array.Empty<DbgEngineLocalsValueNodeInfo>() : new DbgEngineLocalsValueNodeInfo[valueInfos.Length];
 				var valueCreator = new DbgDotNetValueCreator(valueNodeFactory, dnILInterpreter, context, frame, options, assemblyBytes, cancellationToken);
 				for (int i = 0; i < valueNodes.Length; i++) {
 					cancellationToken.ThrowIfCancellationRequested();
 					var valueInfo = valueInfos[i];
 
-					DbgEngineValueNode valueNode;
+					DbgEngineLocalsValueNodeInfo valueNodeInfo;
 					switch (valueInfo.Kind) {
 					case ValueInfoKind.CompiledExpression:
 						var compExpr = (CompiledExpressionValueInfo)valueInfo;
-						valueNode = valueCreator.CreateValueNode(ref state.CachedILInterpreterState, ref compExpr.CompiledExpressionResult);
+						valueNodeInfo = new DbgEngineLocalsValueNodeInfo(
+							compExpr.IsParameter ? DbgLocalsValueNodeKind.Parameter : DbgLocalsValueNodeKind.Local,
+							valueCreator.CreateValueNode(ref state.CachedILInterpreterState, ref compExpr.CompiledExpressionResult));
 						break;
 
 					case ValueInfoKind.DecompilerGeneratedVariable:
 						var decGen = (DecompilerGeneratedVariableValueInfo)valueInfo;
-						valueNode = valueNodeFactory.CreateError(context,
+						valueNodeInfo = new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Local, valueNodeFactory.CreateError(context,
 							new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Local, decGen.Name)),
 							dnSpy_Debugger_DotNet_Resources.DecompilerGeneratedVariablesCanNotBeEvaluated,
-							decGen.Name);
+							decGen.Name));
 						break;
 
 					default:
 						throw new InvalidOperationException();
 					}
 
-					valueNodes[i] = valueNode;
+					valueNodes[i] = valueNodeInfo;
 				}
 
 				return valueNodes;
 			}
 			catch {
 				if (valueNodes != null)
-					frame.Process.DbgManager.Close(valueNodes.Where(a => a != null));
+					frame.Process.DbgManager.Close(valueNodes.Select(a => a.ValueNode).Where(a => a != null));
 				return new[] { CreateInternalErrorNode(context, dnSpy_Debugger_DotNet_Resources.InternalDebuggerError) };
 			}
 		}
 
-		DbgEngineValueNode CreateInternalErrorNode(DbgEvaluationContext context, string errorMessage) =>
-			valueNodeFactory.CreateError(context, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, "<error>")), errorMessage, "<internal.error>");
+		DbgEngineLocalsValueNodeInfo CreateInternalErrorNode(DbgEvaluationContext context, string errorMessage) =>
+			new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Error, valueNodeFactory.CreateError(context, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, "<error>")), errorMessage, "<internal.error>"));
 
 		static MethodDebugScope GetScope(MethodDebugScope rootScope, uint offset) {
 			var scope = rootScope;

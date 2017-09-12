@@ -64,29 +64,14 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		None					= 0,
 
 		/// <summary>
-		/// Sort parameters (<see cref="DebuggerSettings.SortParameters"/>)
-		/// </summary>
-		SortParameters			= 0x00000001,
-
-		/// <summary>
-		/// Sort locals (<see cref="DebuggerSettings.SortLocals"/>)
-		/// </summary>
-		SortLocals				= 0x00000002,
-
-		/// <summary>
-		/// Group parameters and locals together (<see cref="DebuggerSettings.GroupParametersAndLocalsTogether"/>
-		/// </summary>
-		GroupParamLocals		= 0x00000004,
-
-		/// <summary>
 		/// Show compiler generated variables (<see cref="DebuggerSettings.ShowCompilerGeneratedVariables"/>)
 		/// </summary>
-		ShowCompilerVariables	= 0x00000008,
+		ShowCompilerVariables	= 0x00000001,
 
 		/// <summary>
 		/// Show decompiler generated variables (<see cref="DebuggerSettings.ShowDecompilerGeneratedVariables"/>)
 		/// </summary>
-		ShowDecompilerVariables	= 0x00000010,
+		ShowDecompilerVariables	= 0x00000002,
 	}
 
 	/// <summary>
@@ -108,7 +93,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="localsOptions">Locals value node provider options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken = default);
+		public abstract DbgLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Gets all values. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
@@ -119,6 +104,56 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="localsOptions">Locals value node provider options</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default);
+		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgLocalsValueNodeInfo[]> callback, CancellationToken cancellationToken = default);
+	}
+
+	/// <summary>
+	/// Value node kind
+	/// </summary>
+	public enum DbgLocalsValueNodeKind {
+		/// <summary>
+		/// Unknown value
+		/// </summary>
+		Unknown,
+
+		/// <summary>
+		/// Parameter value
+		/// </summary>
+		Parameter,
+
+		/// <summary>
+		/// Local value
+		/// </summary>
+		Local,
+
+		/// <summary>
+		/// Error value
+		/// </summary>
+		Error,
+	}
+
+	/// <summary>
+	/// Contains a value node and its kind
+	/// </summary>
+	public struct DbgLocalsValueNodeInfo {
+		/// <summary>
+		/// What kind of value this is (local or parameter)
+		/// </summary>
+		public DbgLocalsValueNodeKind Kind { get; }
+
+		/// <summary>
+		/// Gets the node
+		/// </summary>
+		public DbgValueNode ValueNode { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="kind">What kind of value this is (local or parameter)</param>
+		/// <param name="valueNode">Value node</param>
+		public DbgLocalsValueNodeInfo(DbgLocalsValueNodeKind kind, DbgValueNode valueNode) {
+			Kind = kind;
+			ValueNode = valueNode ?? throw new ArgumentNullException(nameof(valueNode));
+		}
 	}
 }

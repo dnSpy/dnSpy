@@ -30,5 +30,17 @@ namespace dnSpy.Debugger.Evaluation {
 			runtime.CloseOnContinue(nodes);
 			return nodes;
 		}
+
+		public static DbgLocalsValueNodeInfo[] ToLocalsValueNodeInfoArray(DbgLanguage language, DbgRuntime runtime, DbgEngineLocalsValueNodeInfo[] engineNodeInfos) {
+			var infos = new DbgLocalsValueNodeInfo[engineNodeInfos.Length];
+			var nodes = new DbgValueNode[engineNodeInfos.Length];
+			for (int i = 0; i < nodes.Length; i++) {
+				var node = new DbgValueNodeImpl(language, runtime, engineNodeInfos[i].ValueNode);
+				nodes[i] = node;
+				infos[i] = new DbgLocalsValueNodeInfo(engineNodeInfos[i].Kind, node);
+			}
+			runtime.CloseOnContinue(nodes);
+			return infos;
+		}
 	}
 }
