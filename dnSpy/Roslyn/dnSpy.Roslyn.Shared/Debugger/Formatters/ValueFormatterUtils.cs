@@ -25,5 +25,31 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		public const string NaN = "NaN";
 		public const string NegativeInfinity = "-Infinity";
 		public const string PositiveInfinity = "Infinity";
+
+		public static string ToFormattedNumber(bool digitSeparators, string prefix, string number, int digitGroupSize) {
+			if (digitSeparators)
+				number = AddDigitSeparators(number, digitGroupSize, DigitSeparator);
+
+			string res = number;
+			if (prefix.Length != 0)
+				res = prefix + res;
+			return res;
+		}
+
+		static string AddDigitSeparators(string number, int digitGroupSize, string digitSeparator) {
+			if (number.Length <= digitGroupSize)
+				return number;
+
+			var sb = ValueFormatterObjectCache.AllocStringBuilder();
+
+			for (int i = 0; i < number.Length; i++) {
+				int d = number.Length - i;
+				if (i != 0 && (d % digitGroupSize) == 0)
+					sb.Append(DigitSeparator);
+				sb.Append(number[i]);
+			}
+
+			return ValueFormatterObjectCache.FreeAndToString(ref sb);
+		}
 	}
 }

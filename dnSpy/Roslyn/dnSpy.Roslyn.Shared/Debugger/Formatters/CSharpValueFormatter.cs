@@ -471,33 +471,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 
 		string ToFormattedDecimalNumber(string number) => ToFormattedNumber(string.Empty, number, ValueFormatterUtils.DigitGroupSizeDecimal);
 		string ToFormattedHexNumber(string number) => ToFormattedNumber(HexPrefix, number, ValueFormatterUtils.DigitGroupSizeHex);
-
-		string ToFormattedNumber(string prefix, string number, int digitGroupSize) {
-			if (DigitSeparators)
-				number = AddDigitSeparators(number, digitGroupSize, ValueFormatterUtils.DigitSeparator);
-
-			string res = number;
-			if (prefix.Length != 0)
-				res = prefix + res;
-			return res;
-		}
-
-		static string AddDigitSeparators(string number, int digitGroupSize, string digitSeparator) {
-			if (number.Length <= digitGroupSize)
-				return number;
-
-			var sb = ValueFormatterObjectCache.AllocStringBuilder();
-
-			for (int i = 0; i < number.Length; i++) {
-				int d = number.Length - i;
-				if (i != 0 && (d % digitGroupSize) == 0)
-					sb.Append(ValueFormatterUtils.DigitSeparator);
-				sb.Append(number[i]);
-			}
-
-			return ValueFormatterObjectCache.FreeAndToString(ref sb);
-		}
-
+		string ToFormattedNumber(string prefix, string number, int digitGroupSize) => ValueFormatterUtils.ToFormattedNumber(DigitSeparators, prefix, number, digitGroupSize);
 		void WriteNumber(string number) => OutputWrite(number, BoxedTextColor.Number);
 
 		string ToFormattedSByte(sbyte value) {
