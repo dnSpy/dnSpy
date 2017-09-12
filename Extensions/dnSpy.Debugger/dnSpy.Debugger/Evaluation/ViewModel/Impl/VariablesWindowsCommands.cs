@@ -139,7 +139,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanSave(context.VM);
 	}
 
-	[ExportMenuItem(Header = "res:Refresh", Icon = DsImagesAttribute.Refresh, InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 80)]
+	// There's no F5 shortcut key since F5 is used to continue the debugged process
+	[ExportMenuItem(Header = "res:Refresh", Icon = DsImagesAttribute.Refresh, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES, Order = 80)]
 	sealed class RefreshVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
 		[ImportingConstructor]
 		RefreshVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }

@@ -37,7 +37,6 @@ namespace dnSpy.Debugger.ToolWindows.Autos {
 			cmds.Add(new RelayCommand(a => operations.Value.CopyValue(content.Value.VM.VM), a => operations.Value.CanCopyValue(content.Value.VM.VM)), ModifierKeys.Control | ModifierKeys.Shift, Key.C);
 			cmds.Add(new RelayCommand(a => operations.Value.ToggleExpanded(content.Value.VM.VM), a => operations.Value.CanToggleExpanded(content.Value.VM.VM)), ModifierKeys.None, Key.Enter);
 			cmds.Add(new RelayCommand(a => operations.Value.ShowInMemoryWindow(content.Value.VM.VM), a => operations.Value.CanShowInMemoryWindow(content.Value.VM.VM)), ModifierKeys.Control, Key.X);
-			cmds.Add(new RelayCommand(a => operations.Value.Refresh(content.Value.VM.VM), a => operations.Value.CanRefresh(content.Value.VM.VM)), ModifierKeys.None, Key.F5);
 			for (int i = 0; i < 10 && i < Memory.MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS; i++) {
 				int windowIndex = i;
 				cmds.Add(new RelayCommand(a => operations.Value.ShowInMemoryWindow(content.Value.VM.VM, windowIndex), a => operations.Value.CanShowInMemoryWindow(content.Value.VM.VM, windowIndex)), ModifierKeys.Control, Key.D0 + (i + 1) % 10);
