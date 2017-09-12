@@ -151,8 +151,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			}
 
 			switch (rawValue.ValueType) {
-			case DbgSimpleValueType.OtherReferenceType:
-			case DbgSimpleValueType.OtherValueType:
+			case DbgSimpleValueType.Other:
 				return false;
 
 			case DbgSimpleValueType.Void:

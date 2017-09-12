@@ -75,14 +75,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// </summary>
 	public enum DbgSimpleValueType {
 		/// <summary>
-		/// It's a reference type (allocated on the heap) or null
+		/// Some other type
 		/// </summary>
-		OtherReferenceType,
-
-		/// <summary>
-		/// It's a value type (normally not allocated on the heap)
-		/// </summary>
-		OtherValueType,
+		Other,
 
 		/// <summary>
 		/// There's no value

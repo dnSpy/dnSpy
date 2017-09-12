@@ -201,7 +201,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				value = value.DereferencedValue;
 				Debug.Assert(value != null);
 				if (value == null)
-					return new DbgDotNetRawValue(DbgSimpleValueType.OtherReferenceType);
+					return new DbgDotNetRawValue(DbgSimpleValueType.Other);
 				type = type.GetElementType();
 			}
 
@@ -249,15 +249,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		static DbgDotNetRawValue GetRawValueDefault(CorValue value, DmdType type) {
-			if (type.IsValueType) {
-				// Could be null if it's a TypedReference
-				if (value.IsNull)
-					return new DbgDotNetRawValue(DbgSimpleValueType.OtherValueType, null);
-				return new DbgDotNetRawValue(DbgSimpleValueType.OtherValueType);
-			}
 			if (value.IsNull)
-				return new DbgDotNetRawValue(DbgSimpleValueType.OtherReferenceType, null);
-			return new DbgDotNetRawValue(DbgSimpleValueType.OtherReferenceType);
+				return new DbgDotNetRawValue(DbgSimpleValueType.Other, null);
+			return new DbgDotNetRawValue(DbgSimpleValueType.Other);
 		}
 
 		public override void Dispose() {

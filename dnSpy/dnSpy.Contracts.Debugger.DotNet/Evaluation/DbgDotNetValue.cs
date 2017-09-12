@@ -168,7 +168,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="valueType">Type</param>
 		public DbgDotNetRawValue(DbgSimpleValueType valueType) {
-			Debug.Assert(valueType == DbgSimpleValueType.OtherReferenceType || valueType == DbgSimpleValueType.OtherValueType || valueType == DbgSimpleValueType.Void);
+			Debug.Assert(valueType == DbgSimpleValueType.Other || valueType == DbgSimpleValueType.Void);
 			ValueType = valueType;
 			HasRawValue = false;
 			RawValue = null;
