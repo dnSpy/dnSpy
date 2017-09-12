@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Decompiler;
 using Microsoft.CodeAnalysis.ExpressionEvaluator;
@@ -27,26 +28,22 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				scopes.Select(scope => new ILSpan(scope.Span.Start, scope.Span.End)));
 		}
 
-		public static ImmutableArray<string> GetLocalNames(List<MethodDebugScope> scopes, bool showAllLocals) {
-			int count = -1;
-			for (int i = 0; i < scopes.Count; i++) {
-				foreach (var local in scopes[i].Locals) {
-					if (local.Local != null && local.Local.Index > count)
-						count = local.Local.Index;
-				}
-			}
-			if (count < 0)
+		public static ImmutableArray<string> GetLocalNames(int totalLocals, List<MethodDebugScope> scopes, CompilerGeneratedVariableInfo[] compilerGeneratedVariables) {
+			if (totalLocals == 0)
 				return ImmutableArray<string>.Empty;
-			var res = new string[count + 1];
+			var res = new string[totalLocals];
 			foreach (var scope in scopes) {
 				foreach (var local in scope.Locals) {
 					if (local.IsDecompilerGenerated)
 						continue;
-					if (!showAllLocals && (local.Local.PdbAttributes & 1) != 0)
-						continue;
 
 					res[local.Local.Index] = local.Name;
 				}
+			}
+			foreach (var info in compilerGeneratedVariables) {
+				Debug.Assert(res[info.Index] == null);
+				if (res[info.Index] == null)
+					res[info.Index] = info.Name;
 			}
 			return ImmutableArray.Create(res);
 		}

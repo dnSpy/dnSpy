@@ -34,15 +34,26 @@ using Microsoft.CodeAnalysis.ExpressionEvaluator.DnSpy;
 using Microsoft.VisualStudio.Debugger.Evaluation.ClrCompilation;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
-	abstract class LanguageExpressionCompiler : DbgDotNetExpressionCompiler {
-		const bool showAllLocals = false;
+	struct CompilerGeneratedVariableInfo {
+		public int Index { get; }
+		public string Name { get; }
+		public CompilerGeneratedVariableInfo(int index, string name) {
+			Index = index;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+		}
+	}
 
+	abstract class LanguageExpressionCompiler : DbgDotNetExpressionCompiler {
 		protected abstract class EvalContextState {
 			public DbgModuleReference[] LastModuleReferences;
 			public ImmutableArray<MetadataBlock> LastMetadataBlocks;
 
 			public DSEEMethodDebugInfo MethodDebugInfo;
 			public object MethodDebugInfoKey;
+
+			public CompilerGeneratedVariableInfo[] CompilerGeneratedVariableInfos;
+			public bool[] NotCompilerGenerated;
+			public object CompilerGeneratedVariableInfosKey;
 		}
 
 		T GetEvalContextState<T>(DbgStackFrame frame) where T : EvalContextState, new() {
@@ -73,34 +84,74 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 		}
 
 		protected GetMethodDebugInfo CreateGetMethodDebugInfo(EvalContextState evalContextState, DbgLanguageDebugInfo langDebugInfo) {
+			if (evalContextState.CompilerGeneratedVariableInfosKey != langDebugInfo.MethodDebugInfo.Method) {
+				evalContextState.CompilerGeneratedVariableInfosKey = langDebugInfo.MethodDebugInfo.Method;
+				evalContextState.CompilerGeneratedVariableInfos = null;
+				evalContextState.NotCompilerGenerated = null;
+			}
+
 			// If there's only one scope, we can cache the whole thing
 			if (langDebugInfo.MethodDebugInfo.Scope.Scopes.Length == 0) {
 				if (evalContextState.MethodDebugInfoKey != langDebugInfo.MethodDebugInfo.Method) {
-					evalContextState.MethodDebugInfo = CreateMethodDebugInfo(langDebugInfo);
+					evalContextState.MethodDebugInfo = CreateMethodDebugInfo(langDebugInfo, ref evalContextState.CompilerGeneratedVariableInfos, ref evalContextState.NotCompilerGenerated);
 					evalContextState.MethodDebugInfoKey = langDebugInfo.MethodDebugInfo.Method;
 				}
 				return () => evalContextState.MethodDebugInfo;
 			}
 			evalContextState.MethodDebugInfo = default;
 			evalContextState.MethodDebugInfoKey = null;
-			return () => CreateMethodDebugInfo(langDebugInfo);
+			return () => CreateMethodDebugInfo(langDebugInfo, ref evalContextState.CompilerGeneratedVariableInfos, ref evalContextState.NotCompilerGenerated);
 		}
 
-		DSEEMethodDebugInfo CreateMethodDebugInfo(DbgLanguageDebugInfo langDebugInfo) {
+		(CompilerGeneratedVariableInfo[] infos, bool[] notCompilerGenerated) CreateCompilerGeneratedVariableInfos(List<MethodDebugScope> allScopes, MethodDebugInfo methodDebugInfo) {
+			var locals = methodDebugInfo.Method.Body?.Variables;
+			if (locals == null || locals.Count == 0)
+				return (Array.Empty<CompilerGeneratedVariableInfo>(), Array.Empty<bool>());
+			var notCompilerGenerated = new bool[locals.Count];
+			foreach (var scope in allScopes) {
+				foreach (var local in scope.Locals) {
+					if (local.IsDecompilerGenerated)
+						continue;
+					if ((local.Local.PdbAttributes & 1) == 0)
+						notCompilerGenerated[local.Local.Index] = true;
+				}
+			}
+			int count = 0;
+			foreach (bool b in notCompilerGenerated) {
+				if (!b)
+					count++;
+			}
+			var res = count == 0 ? Array.Empty<CompilerGeneratedVariableInfo>() : new CompilerGeneratedVariableInfo[count];
+			int w = 0;
+			for (int i = 0; i < notCompilerGenerated.Length; i++) {
+				if (notCompilerGenerated[i])
+					continue;
+				res[w++] = new CompilerGeneratedVariableInfo(i, "V_" + i.ToString());
+			}
+			if (w != res.Length)
+				throw new InvalidOperationException();
+			return (res, notCompilerGenerated);
+		}
+
+		DSEEMethodDebugInfo CreateMethodDebugInfo(DbgLanguageDebugInfo langDebugInfo, ref CompilerGeneratedVariableInfo[] compilerGeneratedVariableInfos, ref bool[] notCompilerGenerated) {
 			var info = new DSEEMethodDebugInfo();
+			var methodDebugInfo = langDebugInfo.MethodDebugInfo;
 
 			var stack = new List<MethodDebugScope>();
 			var allScopes = new List<MethodDebugScope>();
 			var containingScopes = new List<MethodDebugScope>();
-			RoslynExpressionCompilerMethods.GetAllScopes(langDebugInfo.MethodDebugInfo.Scope, stack, allScopes, containingScopes, langDebugInfo.ILOffset);
+			RoslynExpressionCompilerMethods.GetAllScopes(methodDebugInfo.Scope, stack, allScopes, containingScopes, langDebugInfo.ILOffset);
+
+			if (compilerGeneratedVariableInfos == null)
+				(compilerGeneratedVariableInfos, notCompilerGenerated) = CreateCompilerGeneratedVariableInfos(allScopes, methodDebugInfo);
 
 			info.HoistedLocalScopeRecords = default;
-			info.ImportRecordGroups = GetImports(langDebugInfo.MethodDebugInfo.Method.DeclaringType, langDebugInfo.MethodDebugInfo.Scope, out var defaultNamespaceName);
+			info.ImportRecordGroups = GetImports(methodDebugInfo.Method.DeclaringType, methodDebugInfo.Scope, out var defaultNamespaceName);
 			info.ExternAliasRecords = default;
 			info.DynamicLocalMap = default;
 			info.TupleLocalMap = default;
 			info.DefaultNamespaceName = defaultNamespaceName ?? string.Empty;
-			info.LocalVariableNames = RoslynExpressionCompilerMethods.GetLocalNames(containingScopes, showAllLocals);
+			info.LocalVariableNames = RoslynExpressionCompilerMethods.GetLocalNames(methodDebugInfo.Method.Body?.Variables.Count ?? 0, containingScopes, compilerGeneratedVariableInfos);
 			info.LocalConstants = default;
 			info.ReuseSpan = RoslynExpressionCompilerMethods.GetReuseSpan(allScopes, langDebugInfo.ILOffset);
 
@@ -150,7 +201,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			}
 		}
 
-		protected DbgDotNetCompilationResult CreateCompilationResult(byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string errorMessage) {
+		protected DbgDotNetCompilationResult CreateCompilationResult(EvalContextState state, byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string errorMessage) {
 			Debug.Assert(errorMessage == null || (assembly == null || assembly.Length == 0));
 
 			if (errorMessage != null)
@@ -231,7 +282,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				else
 					customTypeInfo = null;
 
-				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo, info.Index);
+				var resultFlags = DbgDotNetCompiledExpressionResultFlags.None;
+				if (info.Kind == LocalAndMethodKind.Local && (uint)info.Index < (uint)state.NotCompilerGenerated.Length && !state.NotCompilerGenerated[info.Index])
+					resultFlags |= DbgDotNetCompiledExpressionResultFlags.CompilerGenerated;
+				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo, resultFlags, info.Index);
 			}
 			if (compiledExpressions.Length != w)
 				Array.Resize(ref compiledExpressions, w);

@@ -63,6 +63,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		sealed class CompiledExpressionValueInfo : ValueInfo {
 			public override ValueInfoKind Kind => ValueInfoKind.CompiledExpression;
 			public override bool IsParameter => compiledExpressions[index].ImageName == PredefinedDbgValueNodeImageNames.Parameter;
+			public bool IsCompilerGenerated => (compiledExpressions[index].ResultFlags & DbgDotNetCompiledExpressionResultFlags.CompilerGenerated) != 0;
 			public ref DbgDotNetCompiledExpressionResult CompiledExpressionResult => ref compiledExpressions[index];
 
 			readonly DbgDotNetCompiledExpressionResult[] compiledExpressions;
@@ -115,6 +116,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public byte[] CachedAssemblyBytes;
 			public DbgDotNetILInterpreterState CachedILInterpreterState;
 			public int CachedDecompilerGeneratedCount;
+			public int CachedCompilerGeneratedCount;
 		}
 
 		DbgEngineLocalsValueNodeInfo[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
@@ -128,18 +130,20 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 				// Since we attach this to the module, the module doesn't have to be part of Key
 				var state = StateWithKey<GetNodesState>.GetOrCreate(module, this);
-				var localsOptionsKey = localsOptions & ~DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables;
+				var localsOptionsKey = localsOptions & ~(DbgLocalsValueNodeEvaluationOptions.ShowCompilerGeneratedVariables | DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables);
 				var key = new GetNodesState.Key(methodDebugInfo.DecompilerOptionsVersion, options, localsOptionsKey,
 						methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion,
 						references, GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset));
 
 				ValueInfo[] valueInfos;
 				byte[] assemblyBytes;
+				int compilerGeneratedCount;
 				int decompilerGeneratedCount;
 				if (key.Equals(state.CachedKey)) {
 					valueInfos = state.CachedValueInfos;
 					assemblyBytes = state.CachedAssemblyBytes;
 					decompilerGeneratedCount = state.CachedDecompilerGeneratedCount;
+					compilerGeneratedCount = state.CachedCompilerGeneratedCount;
 				}
 				else {
 					var evalOptions = DbgEvaluationOptions.None;
@@ -157,8 +161,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 					valueInfos = new ValueInfo[compilationResult.CompiledExpressions.Length + decompilerGeneratedCount];
 					int valueInfosIndex = 0;
-					for (int i = 0; i < compilationResult.CompiledExpressions.Length; i++, valueInfosIndex++)
+					compilerGeneratedCount = 0;
+					for (int i = 0; i < compilationResult.CompiledExpressions.Length; i++, valueInfosIndex++) {
+						if ((compilationResult.CompiledExpressions[i].ResultFlags & DbgDotNetCompiledExpressionResultFlags.CompilerGenerated) != 0)
+							compilerGeneratedCount++;
 						valueInfos[valueInfosIndex] = new CompiledExpressionValueInfo(compilationResult.CompiledExpressions, i);
+					}
 
 					if (decompilerGeneratedCount > 0) {
 						var scope = methodDebugInfo.Scope;
@@ -192,9 +200,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					state.CachedAssemblyBytes = assemblyBytes;
 					state.CachedILInterpreterState = null;
 					state.CachedDecompilerGeneratedCount = decompilerGeneratedCount;
+					state.CachedCompilerGeneratedCount = compilerGeneratedCount;
 				}
 
 				int count = valueInfos.Length;
+				if ((localsOptions & DbgLocalsValueNodeEvaluationOptions.ShowCompilerGeneratedVariables) == 0)
+					count -= compilerGeneratedCount;
 				if ((localsOptions & DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables) == 0)
 					count -= decompilerGeneratedCount;
 				valueNodes = count == 0 ? Array.Empty<DbgEngineLocalsValueNodeInfo>() : new DbgEngineLocalsValueNodeInfo[count];
@@ -208,6 +219,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					switch (valueInfo.Kind) {
 					case ValueInfoKind.CompiledExpression:
 						var compExpr = (CompiledExpressionValueInfo)valueInfo;
+						if ((localsOptions & DbgLocalsValueNodeEvaluationOptions.ShowCompilerGeneratedVariables) == 0 && compExpr.IsCompilerGenerated)
+							continue;
 						valueNodeInfo = new DbgEngineLocalsValueNodeInfo(
 							compExpr.IsParameter ? DbgLocalsValueNodeKind.Parameter : DbgLocalsValueNodeKind.Local,
 							valueCreator.CreateValueNode(ref state.CachedILInterpreterState, ref compExpr.CompiledExpressionResult));
