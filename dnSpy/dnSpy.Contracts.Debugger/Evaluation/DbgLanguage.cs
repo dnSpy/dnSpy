@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Gets the locals and parameters provider
 		/// </summary>
-		public abstract DbgValueNodeProvider LocalsProvider { get; }
+		public abstract DbgLocalsValueNodeProvider LocalsProvider { get; }
 
 		/// <summary>
 		/// Gets the autos provider

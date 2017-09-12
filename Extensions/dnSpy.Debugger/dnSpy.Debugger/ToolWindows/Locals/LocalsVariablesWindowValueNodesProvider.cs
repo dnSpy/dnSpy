@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
 			var exceptions = language.ExceptionsProvider.GetNodes(context, frame, nodeEvalOptions);
 			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame, nodeEvalOptions);
-			var variables = language.LocalsProvider.GetNodes(context, frame, nodeEvalOptions);
+			var variables = language.LocalsProvider.GetNodes(context, frame, nodeEvalOptions, DbgLocalsValueNodeEvaluationOptions.None);
 
 			var objectIds = dbgObjectIdService.GetObjectIds(frame.Runtime);
 			Array.Sort(objectIds, DbgObjectIdComparer.Instance);

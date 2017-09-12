@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override DbgExpressionEvaluator ExpressionEvaluator { get; }
 		public override DbgValueFormatter ValueFormatter { get; }
 		public override DbgFormatter Formatter { get; }
-		public override DbgValueNodeProvider LocalsProvider { get; }
+		public override DbgLocalsValueNodeProvider LocalsProvider { get; }
 		public override DbgValueNodeProvider AutosProvider { get; }
 		public override DbgValueNodeProvider ExceptionsProvider { get; }
 		public override DbgValueNodeProvider ReturnValuesProvider { get; }
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.Evaluation {
 			ExpressionEvaluator = new DbgExpressionEvaluatorImpl(this, runtimeKindGuid, engineLanguage.ExpressionEvaluator);
 			ValueFormatter = new DbgValueFormatterImpl(this, runtimeKindGuid, engineLanguage.ValueFormatter);
 			Formatter = new DbgFormatterImpl(this, runtimeKindGuid, engineLanguage.Formatter);
-			LocalsProvider = new DbgValueNodeProviderImpl(this, runtimeKindGuid, engineLanguage.LocalsProvider);
+			LocalsProvider = new DbgLocalsValueNodeProviderImpl(this, runtimeKindGuid, engineLanguage.LocalsProvider);
 			AutosProvider = new DbgValueNodeProviderImpl(this, runtimeKindGuid, engineLanguage.AutosProvider);
 			ExceptionsProvider = new DbgValueNodeProviderImpl(this, runtimeKindGuid, engineLanguage.ExceptionsProvider);
 			ReturnValuesProvider = new DbgValueNodeProviderImpl(this, runtimeKindGuid, engineLanguage.ReturnValuesProvider);

@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override DbgEngineExpressionEvaluator ExpressionEvaluator { get; }
 		public override DbgEngineValueFormatter ValueFormatter { get; }
 		public override DbgEngineFormatter Formatter { get; }
-		public override DbgEngineValueNodeProvider LocalsProvider { get; }
+		public override DbgEngineLocalsValueNodeProvider LocalsProvider { get; }
 		public override DbgEngineValueNodeProvider AutosProvider { get; }
 		public override DbgEngineValueNodeProvider ExceptionsProvider { get; }
 		public override DbgEngineValueNodeProvider ReturnValuesProvider { get; }
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.Evaluation {
 			ExpressionEvaluator = new NullDbgEngineExpressionEvaluator();
 			ValueFormatter = new NullDbgEngineValueFormatter();
 			Formatter = new NullDbgEngineEngineFormatter();
-			LocalsProvider = new NullDbgEngineValueNodeProvider();
+			LocalsProvider = new NullDbgEngineLocalsValueNodeProvider();
 			AutosProvider = new NullDbgEngineValueNodeProvider();
 			ExceptionsProvider = new NullDbgEngineValueNodeProvider();
 			ReturnValuesProvider = new NullDbgEngineValueNodeProvider();
@@ -77,6 +77,11 @@ namespace dnSpy.Debugger.Evaluation {
 		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id, bool isDefault) { }
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
+	}
+
+	sealed class NullDbgEngineLocalsValueNodeProvider : DbgEngineLocalsValueNodeProvider {
+		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) => Array.Empty<DbgEngineValueNode>();
+		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(Array.Empty<DbgEngineValueNode>());
 	}
 
 	sealed class NullDbgEngineValueNodeProvider : DbgEngineValueNodeProvider {

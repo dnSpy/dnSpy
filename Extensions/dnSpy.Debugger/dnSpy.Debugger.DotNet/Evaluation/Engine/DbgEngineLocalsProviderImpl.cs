@@ -31,7 +31,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Properties;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	sealed class DbgEngineLocalsProviderImpl : DbgEngineValueNodeProvider {
+	sealed class DbgEngineLocalsProviderImpl : DbgEngineLocalsValueNodeProvider {
 		readonly DbgModuleReferenceProvider dbgModuleReferenceProvider;
 		readonly DbgDotNetExpressionCompiler expressionCompiler;
 		readonly DbgDotNetEngineValueNodeFactory valueNodeFactory;
@@ -44,11 +44,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.dnILInterpreter = dnILInterpreter ?? throw new ArgumentNullException(nameof(dnILInterpreter));
 		}
 
-		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetNodesCore(context, frame, options, cancellationToken));
+		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetNodesCore(context, frame, options, localsOptions, cancellationToken));
 
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(GetNodesCore(context, frame, options, cancellationToken)));
+		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(GetNodesCore(context, frame, options, localsOptions, cancellationToken)));
 
 		enum ValueInfoKind {
 			CompiledExpression,
@@ -89,28 +89,31 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		sealed class GetNodesState {
 			public struct Key {
-				public readonly int DecompilerOptionsVersion;
-				public readonly DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions;
+				readonly int decompilerOptionsVersion;
+				readonly DbgValueNodeEvaluationOptions valueNodeEvaluationOptions;
+				readonly DbgLocalsValueNodeEvaluationOptions localsValueNodeEvaluationOptions;
 				// NOTE: DbgModule isn't part of this struct because the state is attached to the module.
-				public readonly int MethodToken;
-				public readonly int MethodVersion;
-				public readonly DbgModuleReference[] ModuleReferences;
-				public readonly MethodDebugScope Scope;
-				public Key(int decompilerOptionsVersion, DbgValueNodeEvaluationOptions valueNodeEvaluationOptions, int methodToken, int methodVersion, DbgModuleReference[] moduleReferences, MethodDebugScope scope) {
-					DecompilerOptionsVersion = decompilerOptionsVersion;
-					ValueNodeEvaluationOptions = valueNodeEvaluationOptions;
-					MethodToken = methodToken;
-					MethodVersion = methodVersion;
-					ModuleReferences = moduleReferences;
-					Scope = scope;
+				readonly int methodToken;
+				readonly int methodVersion;
+				readonly DbgModuleReference[] moduleReferences;
+				readonly MethodDebugScope scope;
+				public Key(int decompilerOptionsVersion, DbgValueNodeEvaluationOptions valueNodeEvaluationOptions, DbgLocalsValueNodeEvaluationOptions localsValueNodeEvaluationOptions, int methodToken, int methodVersion, DbgModuleReference[] moduleReferences, MethodDebugScope scope) {
+					this.decompilerOptionsVersion = decompilerOptionsVersion;
+					this.valueNodeEvaluationOptions = valueNodeEvaluationOptions;
+					this.localsValueNodeEvaluationOptions = localsValueNodeEvaluationOptions;
+					this.methodToken = methodToken;
+					this.methodVersion = methodVersion;
+					this.moduleReferences = moduleReferences;
+					this.scope = scope;
 				}
 				public bool Equals(Key other) =>
-					Scope == other.Scope &&
-					ModuleReferences == other.ModuleReferences &&
-					MethodToken == other.MethodToken &&
-					MethodVersion == other.MethodVersion &&
-					DecompilerOptionsVersion == other.DecompilerOptionsVersion &&
-					ValueNodeEvaluationOptions == other.ValueNodeEvaluationOptions;
+					scope == other.scope &&
+					moduleReferences == other.moduleReferences &&
+					methodToken == other.methodToken &&
+					methodVersion == other.methodVersion &&
+					decompilerOptionsVersion == other.decompilerOptionsVersion &&
+					valueNodeEvaluationOptions == other.valueNodeEvaluationOptions &&
+					localsValueNodeEvaluationOptions == other.localsValueNodeEvaluationOptions;
 			}
 			public Key CachedKey;
 			public ValueInfo[] CachedValueInfos;
@@ -118,7 +121,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public DbgDotNetILInterpreterState CachedILInterpreterState;
 		}
 
-		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
 			DbgEngineValueNode[] valueNodes = null;
 			try {
 				var references = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
@@ -129,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 				// Since we attach this to the module, the module doesn't have to be part of Key
 				var state = StateWithKey<GetNodesState>.GetOrCreate(module, this);
-				var key = new GetNodesState.Key(methodDebugInfo.DecompilerOptionsVersion, options,
+				var key = new GetNodesState.Key(methodDebugInfo.DecompilerOptionsVersion, options, localsOptions,
 						methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion,
 						references, GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset));
 

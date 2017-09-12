@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineExpressionEvaluator ExpressionEvaluator { get; }
 		public override DbgEngineValueFormatter ValueFormatter { get; }
 		public override DbgEngineFormatter Formatter { get; }
-		public override DbgEngineValueNodeProvider LocalsProvider { get; }
+		public override DbgEngineLocalsValueNodeProvider LocalsProvider { get; }
 		public override DbgEngineValueNodeProvider AutosProvider { get; }
 		public override DbgEngineValueNodeProvider ExceptionsProvider { get; }
 		public override DbgEngineValueNodeProvider ReturnValuesProvider { get; }

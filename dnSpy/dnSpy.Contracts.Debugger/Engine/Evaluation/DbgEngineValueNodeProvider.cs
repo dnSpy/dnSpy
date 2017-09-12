@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
-	/// Provides <see cref="DbgEngineValueNode"/>s for the locals and autos windows
+	/// Provides <see cref="DbgEngineValueNode"/>s for the variables windows
 	/// </summary>
 	public abstract class DbgEngineValueNodeProvider {
 		/// <summary>
@@ -46,5 +46,32 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
+	}
+
+	/// <summary>
+	/// Provides <see cref="DbgEngineValueNode"/>s for the locals windows
+	/// </summary>
+	public abstract class DbgEngineLocalsValueNodeProvider {
+		/// <summary>
+		/// Gets all values
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="options">Options</param>
+		/// <param name="localsOptions">Locals value node provider options</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public abstract DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets all values
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="options">Options</param>
+		/// <param name="localsOptions">Locals value node provider options</param>
+		/// <param name="callback">Called when the method is complete</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 	}
 }

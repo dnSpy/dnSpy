@@ -135,6 +135,7 @@
     <Compile Include="Evaluation\DbgLanguageImpl.cs" />
     <Compile Include="Evaluation\DbgLanguageServiceImpl.cs" />
     <Compile Include="Evaluation\DbgLanguageServiceSettings.cs" />
+    <Compile Include="Evaluation\DbgLocalsValueNodeProviderImpl.cs" />
     <Compile Include="Evaluation\DbgObjectIdImpl.cs" />
     <Compile Include="Evaluation\DbgObjectIdServiceImpl.cs" />
     <Compile Include="Evaluation\DbgRuntimeObjectIdService.cs" />

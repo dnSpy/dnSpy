@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <summary>
 		/// Gets the locals and parameters provider
 		/// </summary>
-		public abstract DbgEngineValueNodeProvider LocalsProvider { get; }
+		public abstract DbgEngineLocalsValueNodeProvider LocalsProvider { get; }
 
 		/// <summary>
 		/// Gets the autos provider
