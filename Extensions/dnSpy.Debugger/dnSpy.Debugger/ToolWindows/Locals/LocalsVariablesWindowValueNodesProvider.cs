@@ -19,7 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.Evaluation.UI;
@@ -29,15 +31,34 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 	sealed class LocalsVariablesWindowValueNodesProvider : VariablesWindowValueNodesProvider {
 		public override event EventHandler NodesChanged;
 		readonly DbgObjectIdService dbgObjectIdService;
+		readonly DebuggerSettings debuggerSettings;
 
-		public LocalsVariablesWindowValueNodesProvider(DbgObjectIdService dbgObjectIdService) =>
+		public LocalsVariablesWindowValueNodesProvider(DbgObjectIdService dbgObjectIdService, DebuggerSettings debuggerSettings) {
 			this.dbgObjectIdService = dbgObjectIdService ?? throw new ArgumentNullException(nameof(dbgObjectIdService));
+			this.debuggerSettings = debuggerSettings ?? throw new ArgumentNullException(nameof(debuggerSettings));
+		}
 
 		public override void Initialize(bool enable) {
-			if (enable)
+			if (enable) {
 				dbgObjectIdService.ObjectIdsChanged += DbgObjectIdService_ObjectIdsChanged;
-			else
+				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
+			}
+			else {
 				dbgObjectIdService.ObjectIdsChanged -= DbgObjectIdService_ObjectIdsChanged;
+				debuggerSettings.PropertyChanged -= DebuggerSettings_PropertyChanged;
+			}
+		}
+
+		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+			case nameof(DebuggerSettings.SortParameters):
+			case nameof(DebuggerSettings.SortLocals):
+			case nameof(DebuggerSettings.GroupParametersAndLocalsTogether):
+			case nameof(DebuggerSettings.ShowCompilerGeneratedVariables):
+			case nameof(DebuggerSettings.ShowDecompilerGeneratedVariables):
+				NodesChanged?.Invoke(this, EventArgs.Empty);
+				break;
+			}
 		}
 
 		void DbgObjectIdService_ObjectIdsChanged(object sender, EventArgs e) => NodesChanged?.Invoke(this, EventArgs.Empty);

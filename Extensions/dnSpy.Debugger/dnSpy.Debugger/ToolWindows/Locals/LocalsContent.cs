@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
@@ -32,16 +33,18 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 		public static readonly Guid VariablesWindowGuid = new Guid("1A53B7B7-19AE-490F-9D67-F1992D849150");
 
 		readonly DbgObjectIdService dbgObjectIdService;
+		readonly DebuggerSettings debuggerSettings;
 
 		[ImportingConstructor]
-		LocalsContent(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory, DbgObjectIdService dbgObjectIdService) {
+		LocalsContent(IWpfCommandService wpfCommandService, VariablesWindowVMFactory variablesWindowVMFactory, DbgObjectIdService dbgObjectIdService, DebuggerSettings debuggerSettings) {
 			this.dbgObjectIdService = dbgObjectIdService;
+			this.debuggerSettings = debuggerSettings;
 			Initialize(wpfCommandService, variablesWindowVMFactory, CreateVariablesWindowVMOptions());
 		}
 
 		VariablesWindowVMOptions CreateVariablesWindowVMOptions() {
 			var options = new VariablesWindowVMOptions() {
-				VariablesWindowValueNodesProvider = new LocalsVariablesWindowValueNodesProvider(dbgObjectIdService),
+				VariablesWindowValueNodesProvider = new LocalsVariablesWindowValueNodesProvider(dbgObjectIdService, debuggerSettings),
 				WindowContentType = ContentTypes.LocalsWindow,
 				NameColumnName = PredefinedTextClassifierTags.LocalsWindowName,
 				ValueColumnName = PredefinedTextClassifierTags.LocalsWindowValue,

@@ -95,5 +95,30 @@ namespace dnSpy.Contracts.Debugger {
 		/// Shows raw structure of objects in variables windows
 		/// </summary>
 		public abstract bool ShowRawStructureOfObjects { get; set; }
+
+		/// <summary>
+		/// Sort parameters (locals window)
+		/// </summary>
+		public abstract bool SortParameters { get; set; }
+
+		/// <summary>
+		/// Sort locals (locals window)
+		/// </summary>
+		public abstract bool SortLocals { get; set; }
+
+		/// <summary>
+		/// Group parameters and locals together (locals window)
+		/// </summary>
+		public abstract bool GroupParametersAndLocalsTogether { get; set; }
+
+		/// <summary>
+		/// Show compiler generated variables (locals/autos window)
+		/// </summary>
+		public abstract bool ShowCompilerGeneratedVariables { get; set; }
+
+		/// <summary>
+		/// Show decompiler generated variables (locals/autos window)
+		/// </summary>
+		public abstract bool ShowDecompilerGeneratedVariables { get; set; }
 	}
 }

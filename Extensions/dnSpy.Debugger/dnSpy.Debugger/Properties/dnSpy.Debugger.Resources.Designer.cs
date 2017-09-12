@@ -1429,6 +1429,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Group parameters and locals together.
+        /// </summary>
+        public static string DbgSettings_GroupParametersAndLocalsTogether {
+            get {
+                return ResourceManager.GetString("DbgSettings_GroupParametersAndLocalsTogether", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Highlight changed variables in variables windows.
         /// </summary>
         public static string DbgSettings_HighlightChangedVariables {
@@ -1465,11 +1474,47 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show compiler generated variables.
+        /// </summary>
+        public static string DbgSettings_ShowCompilerGeneratedVariables {
+            get {
+                return ResourceManager.GetString("DbgSettings_ShowCompilerGeneratedVariables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show decompiler generated variables.
+        /// </summary>
+        public static string DbgSettings_ShowDecompilerGeneratedVariables {
+            get {
+                return ResourceManager.GetString("DbgSettings_ShowDecompilerGeneratedVariables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show raw structure of objects in variables windows.
         /// </summary>
         public static string DbgSettings_ShowRawStructureOfObjects {
             get {
                 return ResourceManager.GetString("DbgSettings_ShowRawStructureOfObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort locals.
+        /// </summary>
+        public static string DbgSettings_SortLocals {
+            get {
+                return ResourceManager.GetString("DbgSettings_SortLocals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort parameters.
+        /// </summary>
+        public static string DbgSettings_SortParameters {
+            get {
+                return ResourceManager.GetString("DbgSettings_SortParameters", resourceCulture);
             }
         }
         

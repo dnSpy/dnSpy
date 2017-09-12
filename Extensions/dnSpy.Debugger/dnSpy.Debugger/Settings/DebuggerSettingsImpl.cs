@@ -258,6 +258,101 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool showRawStructureOfObjects = false;
 
+		public override bool SortParameters {
+			get {
+				lock (lockObj)
+					return sortParameters;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = sortParameters != value;
+					sortParameters = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(SortParameters));
+					OnModified();
+				}
+			}
+		}
+		bool sortParameters = false;
+
+		public override bool SortLocals {
+			get {
+				lock (lockObj)
+					return sortLocals;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = sortLocals != value;
+					sortLocals = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(SortLocals));
+					OnModified();
+				}
+			}
+		}
+		bool sortLocals = false;
+
+		public override bool GroupParametersAndLocalsTogether {
+			get {
+				lock (lockObj)
+					return groupParametersAndLocalsTogether;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = groupParametersAndLocalsTogether != value;
+					groupParametersAndLocalsTogether = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(GroupParametersAndLocalsTogether));
+					OnModified();
+				}
+			}
+		}
+		bool groupParametersAndLocalsTogether = false;
+
+		public override bool ShowCompilerGeneratedVariables {
+			get {
+				lock (lockObj)
+					return showCompilerGeneratedVariables;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = showCompilerGeneratedVariables != value;
+					showCompilerGeneratedVariables = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(ShowCompilerGeneratedVariables));
+					OnModified();
+				}
+			}
+		}
+		bool showCompilerGeneratedVariables = false;
+
+		public override bool ShowDecompilerGeneratedVariables {
+			get {
+				lock (lockObj)
+					return showDecompilerGeneratedVariables;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = showDecompilerGeneratedVariables != value;
+					showDecompilerGeneratedVariables = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(ShowDecompilerGeneratedVariables));
+					OnModified();
+				}
+			}
+		}
+		bool showDecompilerGeneratedVariables = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -273,6 +368,11 @@ namespace dnSpy.Debugger.Settings {
 			other.EnableManagedDebuggingAssistants = EnableManagedDebuggingAssistants;
 			other.HighlightChangedVariables = HighlightChangedVariables;
 			other.ShowRawStructureOfObjects = ShowRawStructureOfObjects;
+			other.SortParameters = SortParameters;
+			other.SortLocals = SortLocals;
+			other.GroupParametersAndLocalsTogether = GroupParametersAndLocalsTogether;
+			other.ShowCompilerGeneratedVariables = ShowCompilerGeneratedVariables;
+			other.ShowDecompilerGeneratedVariables = ShowDecompilerGeneratedVariables;
 			return other;
 		}
 	}
@@ -302,6 +402,11 @@ namespace dnSpy.Debugger.Settings {
 			EnableManagedDebuggingAssistants = sect.Attribute<bool?>(nameof(EnableManagedDebuggingAssistants)) ?? EnableManagedDebuggingAssistants;
 			HighlightChangedVariables = sect.Attribute<bool?>(nameof(HighlightChangedVariables)) ?? HighlightChangedVariables;
 			ShowRawStructureOfObjects = sect.Attribute<bool?>(nameof(ShowRawStructureOfObjects)) ?? ShowRawStructureOfObjects;
+			SortParameters = sect.Attribute<bool?>(nameof(SortParameters)) ?? SortParameters;
+			SortLocals = sect.Attribute<bool?>(nameof(SortLocals)) ?? SortLocals;
+			GroupParametersAndLocalsTogether = sect.Attribute<bool?>(nameof(GroupParametersAndLocalsTogether)) ?? GroupParametersAndLocalsTogether;
+			ShowCompilerGeneratedVariables = sect.Attribute<bool?>(nameof(ShowCompilerGeneratedVariables)) ?? ShowCompilerGeneratedVariables;
+			ShowDecompilerGeneratedVariables = sect.Attribute<bool?>(nameof(ShowDecompilerGeneratedVariables)) ?? ShowDecompilerGeneratedVariables;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -322,6 +427,11 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(EnableManagedDebuggingAssistants), EnableManagedDebuggingAssistants);
 			sect.Attribute(nameof(HighlightChangedVariables), HighlightChangedVariables);
 			sect.Attribute(nameof(ShowRawStructureOfObjects), ShowRawStructureOfObjects);
+			sect.Attribute(nameof(SortParameters), SortParameters);
+			sect.Attribute(nameof(SortLocals), SortLocals);
+			sect.Attribute(nameof(GroupParametersAndLocalsTogether), GroupParametersAndLocalsTogether);
+			sect.Attribute(nameof(ShowCompilerGeneratedVariables), ShowCompilerGeneratedVariables);
+			sect.Attribute(nameof(ShowDecompilerGeneratedVariables), ShowDecompilerGeneratedVariables);
 		}
 	}
 }
