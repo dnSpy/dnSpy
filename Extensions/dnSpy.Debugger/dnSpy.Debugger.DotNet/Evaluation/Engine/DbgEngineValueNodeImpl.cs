@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -34,30 +35,47 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValue Value => value;
 		public override string Expression => dnValueNode.Expression;
 		public override string ImageName => dnValueNode.ImageName;
-		public override bool IsReadOnly => dnValueNode.IsReadOnly;
+		public override bool IsReadOnly => value == null || dnValueNode.IsReadOnly;
 		public override bool CausesSideEffects => dnValueNode.CausesSideEffects;
 		public override bool? HasChildren => dnValueNode.HasChildren;
 		public override ulong ChildCount => dnValueNode.ChildCount;
 
-		readonly DbgDotNetFormatter formatter;
+		readonly DbgDotNetEngineValueNodeFactoryImpl owner;
 		readonly DbgDotNetValueNode dnValueNode;
 		readonly DbgEngineValueImpl value;
 
-		public DbgEngineValueNodeImpl(DbgDotNetFormatter formatter, DbgDotNetValueNode dnValueNode) {
+		public DbgEngineValueNodeImpl(DbgDotNetEngineValueNodeFactoryImpl owner, DbgDotNetValueNode dnValueNode) {
 			if (dnValueNode == null)
 				throw new ArgumentNullException(nameof(dnValueNode));
-			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
+			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			var dnValue = dnValueNode.Value;
 			value = dnValue == null ? null : new DbgEngineValueImpl(dnValue);
 			this.dnValueNode = dnValueNode;
 		}
 
-		public override DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			return Array.Empty<DbgEngineValueNode>();//TODO:
-		}
+		public override DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetChildrenCore(context, index, count, options, cancellationToken));
 
-		public override void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) {
-			callback(Array.Empty<DbgEngineValueNode>());//TODO:
+		public override void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(GetChildrenCore(context, index, count, options, cancellationToken)));
+
+		DbgEngineValueNode[] GetChildrenCore(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+			DbgEngineValueNode[] res = null;
+			DbgDotNetValueNode[] dnNodes = null;
+			try {
+				dnNodes = dnValueNode.GetChildren(context, index, count, options, cancellationToken);
+				res = new DbgEngineValueNode[dnNodes.Length];
+				for (int i = 0; i < res.Length; i++)
+					res[i] = owner.Create(dnNodes[i]);
+			}
+			catch {
+				if (res != null)
+					context.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
+				if (dnNodes != null)
+					context.Runtime.Process.DbgManager.Close(dnNodes);
+				throw;
+			}
+			return res;
 		}
 
 		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) =>
@@ -74,6 +92,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			context.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
 			if (options.NameOutput != null)
 				dnValueNode.Name.WriteTo(options.NameOutput);
+			var formatter = owner.Formatter;
 			var dnValue = value?.DotNetValue;
 			if (options.ExpectedTypeOutput != null && dnValueNode.ExpectedType is DmdType expectedType)
 				formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, options.ExpectedTypeFormatterOptions);

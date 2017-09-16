@@ -35,13 +35,14 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="context">Context</param>
 		/// <param name="name">Name</param>
 		/// <param name="value">Value</param>
+		/// <param name="options">Options</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="imageName">Image name, see <see cref="PredefinedDbgValueNodeImageNames"/></param>
 		/// <param name="isReadOnly">true if it's a read-only value</param>
 		/// <param name="causesSideEffects">true if the expression causes side effects</param>
 		/// <param name="expectedType">Expected type</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
+		public abstract DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
 
 		/// <summary>
 		/// Creates an exception value node
@@ -49,8 +50,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="context">Context</param>
 		/// <param name="id">Exception id</param>
 		/// <param name="value">Value</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateException(DbgEvaluationContext context, uint id, DbgDotNetValue value);
+		public abstract DbgDotNetValueNode CreateException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options);
 
 		/// <summary>
 		/// Creates an exception value node
@@ -58,8 +60,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="context">Context</param>
 		/// <param name="id">Stowed exception id</param>
 		/// <param name="value">Value</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, uint id, DbgDotNetValue value);
+		public abstract DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options);
 
 		/// <summary>
 		/// Creates a return value node
@@ -67,9 +70,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="context">Context</param>
 		/// <param name="id">Return value id</param>
 		/// <param name="value">Value</param>
+		/// <param name="options">Options</param>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, uint id, DbgDotNetValue value, DmdMethodBase method);
+		public abstract DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method);
 
 		/// <summary>
 		/// Creates an error value node

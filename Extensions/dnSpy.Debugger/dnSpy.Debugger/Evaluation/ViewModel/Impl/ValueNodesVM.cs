@@ -467,6 +467,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 			case nameof(DebuggerSettings.PropertyEvalAndFunctionCalls):
 			case nameof(DebuggerSettings.ShowRawStructureOfObjects):
+			case nameof(DebuggerSettings.HideCompilerGeneratedMembers):
+			case nameof(DebuggerSettings.RespectHideMemberAttributes):
 				UpdateFormatterOptions();
 				UpdateEvaluationOptions();
 				RecreateRootChildren_UI();
@@ -596,6 +598,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				options |= DbgEvaluationOptions.NoFuncEval;
 			if (debuggerSettings.ShowRawStructureOfObjects)
 				options |= DbgEvaluationOptions.RawView;
+			if (debuggerSettings.HideCompilerGeneratedMembers)
+				options |= DbgEvaluationOptions.HideCompilerGeneratedMembers;
+			if (debuggerSettings.RespectHideMemberAttributes)
+				options |= DbgEvaluationOptions.RespectHideMemberAttributes;
 			return options;
 		}
 
@@ -605,6 +611,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				options |= DbgValueNodeEvaluationOptions.NoFuncEval;
 			if (debuggerSettings.ShowRawStructureOfObjects)
 				options |= DbgValueNodeEvaluationOptions.RawView;
+			if (debuggerSettings.HideCompilerGeneratedMembers)
+				options |= DbgValueNodeEvaluationOptions.HideCompilerGeneratedMembers;
+			if (debuggerSettings.RespectHideMemberAttributes)
+				options |= DbgValueNodeEvaluationOptions.RespectHideMemberAttributes;
 			return options;
 		}
 

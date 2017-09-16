@@ -1893,4 +1893,13 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_SortParameters" xml:space="preserve">
     <value>Sort parameters</value>
   </data>
+  <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
+    <value>Hide compiler generated members</value>
+  </data>
+  <data name="FunctionEvaluationDisabled" xml:space="preserve">
+    <value>Implicit function evaluation is turned off by the user</value>
+  </data>
+  <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
+    <value>Respect attributes that hide members</value>
+  </data>
 </root>

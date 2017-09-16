@@ -1438,6 +1438,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide compiler generated members.
+        /// </summary>
+        public static string DbgSettings_HideCompilerGeneratedMembers {
+            get {
+                return ResourceManager.GetString("DbgSettings_HideCompilerGeneratedMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Highlight changed variables in variables windows.
         /// </summary>
         public static string DbgSettings_HighlightChangedVariables {
@@ -1470,6 +1479,15 @@ namespace dnSpy.Debugger.Properties {
         public static string DbgSettings_PropertyEvalAndFunctionCalls {
             get {
                 return ResourceManager.GetString("DbgSettings_PropertyEvalAndFunctionCalls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Respect attributes that hide members.
+        /// </summary>
+        public static string DbgSettings_RespectHideMemberAttributes {
+            get {
+                return ResourceManager.GetString("DbgSettings_RespectHideMemberAttributes", resourceCulture);
             }
         }
         
@@ -2867,6 +2885,15 @@ namespace dnSpy.Debugger.Properties {
         public static string FreezeThreadCommand {
             get {
                 return ResourceManager.GetString("FreezeThreadCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Implicit function evaluation is turned off by the user.
+        /// </summary>
+        public static string FunctionEvaluationDisabled {
+            get {
+                return ResourceManager.GetString("FunctionEvaluationDisabled", resourceCulture);
             }
         }
         

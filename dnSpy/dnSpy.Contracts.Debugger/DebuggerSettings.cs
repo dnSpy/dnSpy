@@ -18,6 +18,8 @@
 */
 
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
@@ -120,5 +122,15 @@ namespace dnSpy.Contracts.Debugger {
 		/// Show decompiler generated variables (locals/autos window)
 		/// </summary>
 		public abstract bool ShowDecompilerGeneratedVariables { get; set; }
+
+		/// <summary>
+		/// Hide compiler generated members in variables windows (respect debugger attributes, eg. <see cref="CompilerGeneratedAttribute"/>)
+		/// </summary>
+		public abstract bool HideCompilerGeneratedMembers { get; set; }
+
+		/// <summary>
+		/// Respect attributes that can hide a member, eg. <see cref="DebuggerBrowsableAttribute"/> and <see cref="DebuggerBrowsableState.Never"/>
+		/// </summary>
+		public abstract bool RespectHideMemberAttributes { get; set; }
 	}
 }

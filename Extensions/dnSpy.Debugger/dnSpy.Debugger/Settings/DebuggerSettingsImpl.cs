@@ -353,6 +353,44 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool showDecompilerGeneratedVariables = true;
 
+		public override bool HideCompilerGeneratedMembers {
+			get {
+				lock (lockObj)
+					return hideCompilerGeneratedMembers;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = hideCompilerGeneratedMembers != value;
+					hideCompilerGeneratedMembers = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(HideCompilerGeneratedMembers));
+					OnModified();
+				}
+			}
+		}
+		bool hideCompilerGeneratedMembers = true;
+
+		public override bool RespectHideMemberAttributes {
+			get {
+				lock (lockObj)
+					return respectHideMemberAttributes;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = respectHideMemberAttributes != value;
+					respectHideMemberAttributes = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(RespectHideMemberAttributes));
+					OnModified();
+				}
+			}
+		}
+		bool respectHideMemberAttributes = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -373,6 +411,8 @@ namespace dnSpy.Debugger.Settings {
 			other.GroupParametersAndLocalsTogether = GroupParametersAndLocalsTogether;
 			other.ShowCompilerGeneratedVariables = ShowCompilerGeneratedVariables;
 			other.ShowDecompilerGeneratedVariables = ShowDecompilerGeneratedVariables;
+			other.HideCompilerGeneratedMembers = HideCompilerGeneratedMembers;
+			other.RespectHideMemberAttributes = RespectHideMemberAttributes;
 			return other;
 		}
 	}
@@ -407,6 +447,8 @@ namespace dnSpy.Debugger.Settings {
 			GroupParametersAndLocalsTogether = sect.Attribute<bool?>(nameof(GroupParametersAndLocalsTogether)) ?? GroupParametersAndLocalsTogether;
 			ShowCompilerGeneratedVariables = sect.Attribute<bool?>(nameof(ShowCompilerGeneratedVariables)) ?? ShowCompilerGeneratedVariables;
 			ShowDecompilerGeneratedVariables = sect.Attribute<bool?>(nameof(ShowDecompilerGeneratedVariables)) ?? ShowDecompilerGeneratedVariables;
+			HideCompilerGeneratedMembers = sect.Attribute<bool?>(nameof(HideCompilerGeneratedMembers)) ?? HideCompilerGeneratedMembers;
+			RespectHideMemberAttributes = sect.Attribute<bool?>(nameof(RespectHideMemberAttributes)) ?? RespectHideMemberAttributes;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -432,6 +474,8 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(GroupParametersAndLocalsTogether), GroupParametersAndLocalsTogether);
 			sect.Attribute(nameof(ShowCompilerGeneratedVariables), ShowCompilerGeneratedVariables);
 			sect.Attribute(nameof(ShowDecompilerGeneratedVariables), ShowDecompilerGeneratedVariables);
+			sect.Attribute(nameof(HideCompilerGeneratedMembers), HideCompilerGeneratedMembers);
+			sect.Attribute(nameof(RespectHideMemberAttributes), RespectHideMemberAttributes);
 		}
 	}
 }

@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
@@ -103,6 +105,16 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Show the raw view (don't use debugger type proxies). It's enabled if <see cref="DebuggerSettings.ShowRawStructureOfObjects"/> is true
 		/// </summary>
 		RawView						= 0x00000008,
+
+		/// <summary>
+		/// Hide compiler generated members in variables windows (respect debugger attributes, eg. <see cref="CompilerGeneratedAttribute"/>)
+		/// </summary>
+		HideCompilerGeneratedMembers= 0x00000010,
+
+		/// <summary>
+		/// Respect attributes that can hide a member, eg. <see cref="DebuggerBrowsableAttribute"/> and <see cref="DebuggerBrowsableState.Never"/>
+		/// </summary>
+		RespectHideMemberAttributes	= 0x00000020,
 	}
 
 	/// <summary>

@@ -28,12 +28,14 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetEngineValueNodeFactory {
-		public abstract DbgEngineValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
+		public abstract DbgEngineValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
 		public abstract DbgEngineValueNode CreateError(DbgEvaluationContext context, DbgDotNetText name, string errorMessage, string expression);
 		//TODO: Add the remaining methods, eg. CreateException() etc
 	}
 
 	sealed class DbgDotNetEngineValueNodeFactoryImpl : DbgDotNetEngineValueNodeFactory {
+		internal DbgDotNetFormatter Formatter => formatter;
+
 		readonly DbgDotNetFormatter formatter;
 		readonly DbgDotNetValueNodeFactory factory;
 
@@ -42,10 +44,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
 		}
 
-		public override DbgEngineValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType) =>
-			new DbgEngineValueNodeImpl(formatter, factory.Create(context, name, value, expression, imageName, isReadOnly, causesSideEffects, expectedType));
+		internal DbgEngineValueNode Create(DbgDotNetValueNode node) => new DbgEngineValueNodeImpl(this, node);
+
+		public override DbgEngineValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType) =>
+			new DbgEngineValueNodeImpl(this, factory.Create(context, name, value, options, expression, imageName, isReadOnly, causesSideEffects, expectedType));
 
 		public override DbgEngineValueNode CreateError(DbgEvaluationContext context, DbgDotNetText name, string errorMessage, string expression) =>
-			new DbgEngineValueNodeImpl(formatter, factory.CreateError(context, name, errorMessage, expression));
+			new DbgEngineValueNodeImpl(this, factory.CreateError(context, name, errorMessage, expression));
 	}
 }

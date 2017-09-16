@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					ilInterpreterState = dnILInterpreter.CreateState(context, assemblyBytes);
 				var value = dnILInterpreter.Execute(context, frame, ilInterpreterState, compExprInfo.TypeName, compExprInfo.MethodName, options, out var expectedType, cancellationToken);
 				//TODO: Pass in compExprInfo.CustomTypeInfo, or attach it to the DbgDotNetValueNode
-				return valueNodeFactory.Create(context, compExprInfo.Name, value, compExprInfo.Expression, compExprInfo.ImageName, (compExprInfo.Flags & DbgEvaluationResultFlags.ReadOnly) != 0, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, expectedType);
+				return valueNodeFactory.Create(context, compExprInfo.Name, value, options, compExprInfo.Expression, compExprInfo.ImageName, (compExprInfo.Flags & DbgEvaluationResultFlags.ReadOnly) != 0, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, expectedType);
 			}
 		}
 	}
