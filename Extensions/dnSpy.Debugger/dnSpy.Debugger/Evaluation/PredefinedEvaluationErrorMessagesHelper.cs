@@ -27,9 +27,10 @@ namespace dnSpy.Debugger.Evaluation {
 	static class PredefinedEvaluationErrorMessagesHelper {
 		static readonly Dictionary<string, string> toErrorMessage;
 		static PredefinedEvaluationErrorMessagesHelper() {
-			const int TOTAL_COUNT = 1;
+			const int TOTAL_COUNT = 2;
 			toErrorMessage = new Dictionary<string, string>(TOTAL_COUNT, StringComparer.Ordinal) {
 				{ PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, dnSpy_Debugger_Resources.ExpressionCausesSideEffectsNoEval },
+				{ PredefinedEvaluationErrorMessages.FunctionEvaluationDisabled, dnSpy_Debugger_Resources.FunctionEvaluationDisabled },
 			};
 			Debug.Assert(toErrorMessage.Count == TOTAL_COUNT);
 		}

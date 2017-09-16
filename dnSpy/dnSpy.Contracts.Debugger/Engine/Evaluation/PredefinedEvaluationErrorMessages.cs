@@ -31,6 +31,12 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// </summary>
 		public const string ExpressionCausesSideEffects = nameof(ExpressionCausesSideEffects) + SUFFIX;
 
+		/// <summary>
+		/// <see cref="DbgValueNodeEvaluationOptions.NoFuncEval"/> or <see cref="DbgEvaluationOptions.NoFuncEval"/>
+		/// is set but code must call a method
+		/// </summary>
+		public const string FunctionEvaluationDisabled = nameof(FunctionEvaluationDisabled) + SUFFIX;
+
 		// If more errors are added, also update the code in PredefinedEvaluationErrorMessagesHelper
 	}
 }
