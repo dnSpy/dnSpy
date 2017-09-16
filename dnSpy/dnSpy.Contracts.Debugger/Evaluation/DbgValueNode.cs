@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
@@ -104,23 +105,25 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default);
+		public abstract DbgValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates new children. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default);
+		public abstract void GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Formats the name. This method blocks the current thread until all requested values have been formatted

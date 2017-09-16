@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -40,19 +41,19 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.providers = providers;
 		}
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			if (count == 0)
 				return Array.Empty<DbgDotNetValueNode>();
 
 			var first = providers[0];
 			if (index + (uint)count <= first.ChildCount)
-				return first.GetChildren(valueNodeFactory, context, index, count, options, cancellationToken);
+				return first.GetChildren(valueNodeFactory, context, frame, index, count, options, cancellationToken);
 
 			var res = new DbgDotNetValueNode[count];
 			try {
 				int w = 0;
 				if (index < first.ChildCount) {
-					var tmp = first.GetChildren(valueNodeFactory, context, index, (int)(first.ChildCount - index), options, cancellationToken);
+					var tmp = first.GetChildren(valueNodeFactory, context, frame, index, (int)(first.ChildCount - index), options, cancellationToken);
 					Array.Copy(tmp, res, tmp.Length);
 					w += tmp.Length;
 				}

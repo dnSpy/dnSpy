@@ -21,8 +21,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -53,17 +52,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.dnValueNode = dnValueNode;
 		}
 
-		public override DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetChildrenCore(context, index, count, options, cancellationToken));
+		public override DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetChildrenCore(context, frame, index, count, options, cancellationToken));
 
-		public override void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(GetChildrenCore(context, index, count, options, cancellationToken)));
+		public override void GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(GetChildrenCore(context, frame, index, count, options, cancellationToken)));
 
-		DbgEngineValueNode[] GetChildrenCore(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		DbgEngineValueNode[] GetChildrenCore(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			DbgEngineValueNode[] res = null;
 			DbgDotNetValueNode[] dnNodes = null;
 			try {
-				dnNodes = dnValueNode.GetChildren(context, index, count, options, cancellationToken);
+				dnNodes = dnValueNode.GetChildren(context, frame, index, count, options, cancellationToken);
 				res = new DbgEngineValueNode[dnNodes.Length];
 				for (int i = 0; i < res.Length; i++)
 					res[i] = owner.Create(dnNodes[i]);

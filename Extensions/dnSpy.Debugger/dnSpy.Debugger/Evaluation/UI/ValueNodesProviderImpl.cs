@@ -135,10 +135,10 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var info = TryGetLanguage();
 			if (info.frame == null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), frameClosed: false);
-			var evalContext = TryGetEvaluationContext();
-			if (evalContext == null)
+			var evalContextInfo = TryGetEvaluationContextInfo();
+			if (evalContextInfo.context == null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed);
-			var nodes = variablesWindowValueNodesProvider.GetNodes(evalContext, info.language, info.frame, evalOptions, nodeEvalOptions);
+			var nodes = variablesWindowValueNodesProvider.GetNodes(evalContextInfo.context, info.language, info.frame, evalOptions, nodeEvalOptions);
 			return new GetNodesResult(nodes, info.frame.IsClosed);
 		}
 
@@ -176,10 +176,10 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			variablesWindowValueNodesProvider.AddExpressions(expressions);
 		}
 
-		public override DbgEvaluationContext TryGetEvaluationContext() {
+		public override (DbgEvaluationContext context, DbgStackFrame frame) TryGetEvaluationContextInfo() {
 			var info = TryGetLanguage();
 			if (evalContextInfo.Language == info.language && evalContextInfo.Frame == info.frame)
-				return evalContextInfo.Context;
+				return (evalContextInfo.Context, evalContextInfo.Frame);
 
 			evalContextInfo.Context?.Process.DbgManager.Close(evalContextInfo.Context);
 			evalContextInfo.Language = info.language;
@@ -191,7 +191,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			}
 			else
 				evalContextInfo.Context = null;
-			return evalContextInfo.Context;
+			return (evalContextInfo.Context, evalContextInfo.Frame);
 		}
 
 		public override DbgStackFrame TryGetFrame() => TryGetLanguage().frame;

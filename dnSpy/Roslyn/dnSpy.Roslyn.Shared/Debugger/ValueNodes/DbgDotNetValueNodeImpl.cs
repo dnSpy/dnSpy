@@ -20,6 +20,7 @@
 using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -57,10 +58,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			ErrorMessage = errorMessage;
 		}
 
-		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			if (childNodeProvider == null)
 				return Array.Empty<DbgDotNetValueNode>();
-			return childNodeProvider.GetChildren(valueNodeFactory, context, index, count, options, cancellationToken);
+			return childNodeProvider.GetChildren(valueNodeFactory, context, frame, index, count, options, cancellationToken);
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {

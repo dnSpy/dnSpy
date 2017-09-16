@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
@@ -166,8 +167,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			Guid? runtimeKindGuid;
 			DbgValueNodeInfo[] nodes;
 			DbgEvaluationContext evalContext;
+			DbgStackFrame frame;
 			if (isOpen) {
-				evalContext = valueNodesProvider.TryGetEvaluationContext();
+				(evalContext, frame) = valueNodesProvider.TryGetEvaluationContextInfo();
 				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions);
 				runtimeKindGuid = valueNodesProvider.Language?.RuntimeKindGuid ?? lastRuntimeKindGuid;
 				// Frame got closed. Don't use the new nodes, we'll get new nodes using the new frame in a little while.
@@ -177,10 +179,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 			else {
 				evalContext = null;
+				frame = null;
 				nodes = Array.Empty<DbgValueNodeInfo>();
 				runtimeKindGuid = null;
 			}
-			valueNodesContext.ValueNodeReader.SetEvaluationContext(evalContext);
+			valueNodesContext.ValueNodeReader.SetEvaluationContext(evalContext, frame);
 			valueNodesContext.EvaluationContext = evalContext;
 
 #if DEBUG

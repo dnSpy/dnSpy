@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
@@ -73,23 +74,25 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Creates new children. This method blocks the current thread until the children have been created.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates new children
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
+		public abstract void GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
