@@ -293,7 +293,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="assemblyName">Full assembly name</param>
 		/// <returns></returns>
-		public DmdAssembly Load(IDmdEvaluationContext context, string assemblyName) => Load(context, new DmdReadOnlyAssemblyName(assemblyName));
+		public DmdAssembly Load(object context, string assemblyName) => Load(context, new DmdReadOnlyAssemblyName(assemblyName));
 
 		/// <summary>
 		/// Loads an assembly
@@ -301,7 +301,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="name">Assembly name</param>
 		/// <returns></returns>
-		public abstract DmdAssembly Load(IDmdEvaluationContext context, IDmdAssemblyName name);
+		public abstract DmdAssembly Load(object context, IDmdAssemblyName name);
 
 		/// <summary>
 		/// Loads an assembly. Will fail on .NET Core 1.x (but not on .NET Core 2.x or later)
@@ -309,7 +309,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="assemblyFile">Assembly name or path to assembly</param>
 		/// <returns></returns>
-		public abstract DmdAssembly LoadFrom(IDmdEvaluationContext context, string assemblyFile);
+		public abstract DmdAssembly LoadFrom(object context, string assemblyFile);
 
 		/// <summary>
 		/// Loads an assembly. Will fail on .NET Core 1.x (but not on .NET Core 2.x or later)
@@ -317,7 +317,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="path">Path to assembly</param>
 		/// <returns></returns>
-		public abstract DmdAssembly LoadFile(IDmdEvaluationContext context, string path);
+		public abstract DmdAssembly LoadFile(object context, string path);
 
 		/// <summary>
 		/// Gets the core library (eg. mscorlib if it's .NET Framework)
@@ -584,7 +584,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="parameters">Parameters passed to the method</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract object Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken = default);
+		public abstract object Invoke(object context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Loads a field
@@ -594,7 +594,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract object LoadField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, CancellationToken cancellationToken = default);
+		public abstract object LoadField(object context, DmdFieldInfo field, object obj, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Stores a value in a field
@@ -604,7 +604,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="value">Value to store in the field</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void StoreField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, object value, CancellationToken cancellationToken = default);
+		public abstract void StoreField(object context, DmdFieldInfo field, object obj, object value, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Executes a method
@@ -615,7 +615,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="parameters">Parameters passed to the method</param>
 		/// <param name="callback">Notified when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback, CancellationToken cancellationToken = default);
+		public abstract void Invoke(object context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Loads a field
@@ -625,7 +625,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="callback">Notified when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void LoadField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, Action<object> callback, CancellationToken cancellationToken = default);
+		public abstract void LoadField(object context, DmdFieldInfo field, object obj, Action<object> callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Stores a value in a field
@@ -636,7 +636,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="value">Value to store in the field</param>
 		/// <param name="callback">Notified when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void StoreField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, object value, Action callback, CancellationToken cancellationToken = default);
+		public abstract void StoreField(object context, DmdFieldInfo field, object obj, object value, Action callback, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>

@@ -272,7 +272,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="typeName">Fully qualified name of type to create</param>
-		public object CreateInstance(IDmdEvaluationContext context, string typeName) => CreateInstance(context, typeName, false, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, (IList<DmdType>)null);
+		public object CreateInstance(object context, string typeName) => CreateInstance(context, typeName, false, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, (IList<DmdType>)null);
 
 		/// <summary>
 		/// Creates an instance of a type
@@ -280,7 +280,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="typeName">Fully qualified name of type to create</param>
 		/// <param name="ignoreCase">true to ignore case</param>
-		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase) => CreateInstance(context, typeName, ignoreCase, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, (IList<DmdType>)null);
+		public object CreateInstance(object context, string typeName, bool ignoreCase) => CreateInstance(context, typeName, ignoreCase, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, (IList<DmdType>)null);
 
 		/// <summary>
 		/// Creates an instance of a type
@@ -290,7 +290,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="ignoreCase">true to ignore case</param>
 		/// <param name="bindingAttr">Binding attributes</param>
 		/// <param name="args">Constructor arguments or null</param>
-		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args) => CreateInstance(context, typeName, ignoreCase, bindingAttr, args, (IList<DmdType>)null);
+		public object CreateInstance(object context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args) => CreateInstance(context, typeName, ignoreCase, bindingAttr, args, (IList<DmdType>)null);
 
 		/// <summary>
 		/// Creates an instance of a type
@@ -302,7 +302,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="args">Constructor arguments or null</param>
 		/// <param name="argTypes">Constructor parameter types or null</param>
 		/// <returns></returns>
-		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args, IList<DmdType> argTypes) {
+		public object CreateInstance(object context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args, IList<DmdType> argTypes) {
 			args = args ?? Array.Empty<object>();
 			if (argTypes != null && args.Length != argTypes.Count)
 				throw new ArgumentException();
@@ -335,7 +335,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="args">Constructor arguments or null</param>
 		/// <param name="argTypes">Constructor parameter types or null</param>
 		/// <returns></returns>
-		public object CreateInstance(IDmdEvaluationContext context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args, IList<Type> argTypes) =>
+		public object CreateInstance(object context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args, IList<Type> argTypes) =>
 			CreateInstance(context, typeName, ignoreCase, bindingAttr, args, argTypes.ToDmdType(AppDomain));
 
 		/// <summary>

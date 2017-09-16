@@ -102,7 +102,6 @@
     <Compile Include="HexUtils.cs" />
     <Compile Include="IDmdAssemblyName.cs" />
     <Compile Include="IDmdCustomAttributeProvider.cs" />
-    <Compile Include="IDmdEvaluationContext.cs" />
     <Compile Include="IDmdSecurityAttributeProvider.cs" />
     <Compile Include="Impl\AccessorUtils.cs" />
     <Compile Include="Impl\AssemblyNameEqualityComparer.cs" />

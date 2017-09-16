@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="parameters">Parameters</param>
 		/// <returns></returns>
-		public object Invoke(IDmdEvaluationContext context, object[] parameters) => Invoke(context, DmdBindingFlags.Default, parameters);
+		public object Invoke(object context, object[] parameters) => Invoke(context, DmdBindingFlags.Default, parameters);
 
 		/// <summary>
 		/// Calls the method
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="invokeAttr">Binding flags</param>
 		/// <param name="parameters">Parameters</param>
 		/// <returns></returns>
-		public abstract object Invoke(IDmdEvaluationContext context, DmdBindingFlags invokeAttr, object[] parameters);
+		public abstract object Invoke(object context, DmdBindingFlags invokeAttr, object[] parameters);
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdConstructorInfo left, DmdConstructorInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);

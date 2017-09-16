@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		// Only overridden by DmdMethodDef and DmdMethodRef
 		internal virtual DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => throw new InvalidOperationException();
 
-		public sealed override object Invoke(IDmdEvaluationContext context, object obj, DmdBindingFlags invokeAttr, object[] parameters) =>
+		public sealed override object Invoke(object context, object obj, DmdBindingFlags invokeAttr, object[] parameters) =>
 			AppDomain.Invoke(context, this, obj, parameters);
 
 		internal abstract DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments);

@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		internal abstract DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments);
 
-		public sealed override object Invoke(IDmdEvaluationContext context, object obj, DmdBindingFlags invokeAttr, object[] parameters) => AppDomain.Invoke(context, this, obj, parameters);
-		public sealed override object Invoke(IDmdEvaluationContext context, DmdBindingFlags invokeAttr, object[] parameters) => AppDomain.Invoke(context, this, null, parameters);
+		public sealed override object Invoke(object context, object obj, DmdBindingFlags invokeAttr, object[] parameters) => AppDomain.Invoke(context, this, obj, parameters);
+		public sealed override object Invoke(object context, DmdBindingFlags invokeAttr, object[] parameters) => AppDomain.Invoke(context, this, null, parameters);
 	}
 }

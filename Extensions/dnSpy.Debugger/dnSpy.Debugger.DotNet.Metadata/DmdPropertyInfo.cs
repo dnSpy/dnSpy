@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="obj">Instance or null if it's a static property</param>
 		/// <returns></returns>
-		public object GetValue(IDmdEvaluationContext context, object obj) => GetValue(context, obj, null);
+		public object GetValue(object context, object obj) => GetValue(context, obj, null);
 
 		/// <summary>
 		/// Gets the property value
@@ -194,7 +194,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance or null if it's a static property</param>
 		/// <param name="index">Property indexes</param>
 		/// <returns></returns>
-		public object GetValue(IDmdEvaluationContext context, object obj, object[] index) => GetValue(context, obj, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, index);
+		public object GetValue(object context, object obj, object[] index) => GetValue(context, obj, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, index);
 
 		/// <summary>
 		/// Gets the property value
@@ -204,7 +204,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="invokeAttr">Binding flags</param>
 		/// <param name="index">Property indexes</param>
 		/// <returns></returns>
-		public object GetValue(IDmdEvaluationContext context, object obj, DmdBindingFlags invokeAttr, object[] index) {
+		public object GetValue(object context, object obj, DmdBindingFlags invokeAttr, object[] index) {
 			var method = GetGetMethod(nonPublic: true);
 			if ((object)method == null)
 				throw new ArgumentException();
@@ -217,7 +217,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="obj">Instance or null if it's a static property</param>
 		/// <param name="value">New value</param>
-		public void SetValue(IDmdEvaluationContext context, object obj, object value) => SetValue(context, obj, value, null);
+		public void SetValue(object context, object obj, object value) => SetValue(context, obj, value, null);
 
 		/// <summary>
 		/// Writes a new property value
@@ -226,7 +226,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance or null if it's a static property</param>
 		/// <param name="value">New value</param>
 		/// <param name="index">Property indexes</param>
-		public void SetValue(IDmdEvaluationContext context, object obj, object value, object[] index) => SetValue(context, obj, value, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, index);
+		public void SetValue(object context, object obj, object value, object[] index) => SetValue(context, obj, value, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, index);
 
 		/// <summary>
 		/// Writes a new property value
@@ -236,7 +236,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="value">New value</param>
 		/// <param name="invokeAttr">Binding flags</param>
 		/// <param name="index">Property indexes</param>
-		public void SetValue(IDmdEvaluationContext context, object obj, object value, DmdBindingFlags invokeAttr, object[] index) {
+		public void SetValue(object context, object obj, object value, DmdBindingFlags invokeAttr, object[] index) {
 			var method = GetSetMethod(nonPublic: true);
 			if ((object)method == null)
 				throw new ArgumentException();

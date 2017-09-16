@@ -200,7 +200,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance or null if it's a static method</param>
 		/// <param name="parameters">Parameters</param>
 		/// <returns></returns>
-		public object Invoke(IDmdEvaluationContext context, object obj, object[] parameters) => Invoke(context, obj, DmdBindingFlags.Default, parameters);
+		public object Invoke(object context, object obj, object[] parameters) => Invoke(context, obj, DmdBindingFlags.Default, parameters);
 
 		/// <summary>
 		/// Calls the method
@@ -210,7 +210,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="invokeAttr">Binding flags</param>
 		/// <param name="parameters">Parameters</param>
 		/// <returns></returns>
-		public abstract object Invoke(IDmdEvaluationContext context, object obj, DmdBindingFlags invokeAttr, object[] parameters);
+		public abstract object Invoke(object context, object obj, DmdBindingFlags invokeAttr, object[] parameters);
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdMethodBase left, DmdMethodBase right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);

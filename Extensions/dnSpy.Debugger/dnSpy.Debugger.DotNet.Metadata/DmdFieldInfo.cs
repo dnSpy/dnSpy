@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="obj">Instance or null if it's a static field</param>
 		/// <returns></returns>
-		public abstract object GetValue(IDmdEvaluationContext context, object obj);
+		public abstract object GetValue(object context, object obj);
 
 		/// <summary>
 		/// Sets a new value
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance or null if it's a static field</param>
 		/// <param name="value">New value</param>
 		/// <param name="invokeAttr">Binding attributes</param>
-		public abstract void SetValue(IDmdEvaluationContext context, object obj, object value, DmdBindingFlags invokeAttr);
+		public abstract void SetValue(object context, object obj, object value, DmdBindingFlags invokeAttr);
 
 		/// <summary>
 		/// Sets a new value
@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="obj">Instance or null if it's a static field</param>
 		/// <param name="value">New value</param>
-		public void SetValue(IDmdEvaluationContext context, object obj, object value) => SetValue(context, obj, value, DmdBindingFlags.Default);
+		public void SetValue(object context, object obj, object value) => SetValue(context, obj, value, DmdBindingFlags.Default);
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdFieldInfo left, DmdFieldInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
