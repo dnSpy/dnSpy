@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	public abstract class DmdObject {
 		readonly object lockObj;
-		List<(Type key, object data)> dataList;
+		List<(RuntimeTypeHandle key, object data)> dataList;
 
 		/// <summary>
 		/// Gets the lock object used by this instance
@@ -62,9 +62,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool TryGetData<T>(out T value) where T : class {
 			lock (lockObj) {
 				if (dataList != null) {
-					var type = typeof(T);
+					var type = typeof(T).TypeHandle;
 					foreach (var kv in dataList) {
-						if (kv.key == type) {
+						if (kv.key.Equals(type)) {
 							value = (T)kv.data;
 							return true;
 						}
@@ -97,10 +97,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				throw new ArgumentNullException(nameof(create));
 			lock (lockObj) {
 				if (dataList == null)
-					dataList = new List<(Type, object)>();
-				var type = typeof(T);
+					dataList = new List<(RuntimeTypeHandle, object)>();
+				var type = typeof(T).TypeHandle;
 				foreach (var kv in dataList) {
-					if (kv.key == type)
+					if (kv.key.Equals(type))
 						return (T)kv.data;
 				}
 				var value = create();

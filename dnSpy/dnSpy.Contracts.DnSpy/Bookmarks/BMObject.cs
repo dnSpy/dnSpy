@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Bookmarks {
 	/// </summary>
 	public abstract class BMObject {
 		readonly object lockObj;
-		List<(Type key, object data)> dataList;
+		List<(RuntimeTypeHandle key, object data)> dataList;
 
 		/// <summary>
 		/// Constructor
@@ -71,9 +71,9 @@ namespace dnSpy.Contracts.Bookmarks {
 
 			CloseCore();
 
-			(Type key, object data)[] data;
+			(RuntimeTypeHandle key, object data)[] data;
 			lock (lockObj) {
-				data = dataList == null || dataList.Count == 0 ? Array.Empty<(Type, object)>() : dataList.ToArray();
+				data = dataList == null || dataList.Count == 0 ? Array.Empty<(RuntimeTypeHandle, object)>() : dataList.ToArray();
 				dataList?.Clear();
 			}
 			foreach (var kv in data)
@@ -114,9 +114,9 @@ namespace dnSpy.Contracts.Bookmarks {
 		public bool TryGetData<T>(out T value) where T : class {
 			lock (lockObj) {
 				if (dataList != null) {
-					var type = typeof(T);
+					var type = typeof(T).TypeHandle;
 					foreach (var kv in dataList) {
-						if (kv.key == type) {
+						if (kv.key.Equals(type)) {
 							value = (T)kv.data;
 							return true;
 						}
@@ -150,10 +150,10 @@ namespace dnSpy.Contracts.Bookmarks {
 				throw new ArgumentNullException(nameof(create));
 			lock (lockObj) {
 				if (dataList == null)
-					dataList = new List<(Type, object)>();
-				var type = typeof(T);
+					dataList = new List<(RuntimeTypeHandle, object)>();
+				var type = typeof(T).TypeHandle;
 				foreach (var kv in dataList) {
-					if (kv.key == type)
+					if (kv.key.Equals(type))
 						return (T)kv.data;
 				}
 				var value = create();
