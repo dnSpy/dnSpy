@@ -49,32 +49,38 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 
 		public static bool IsTupleType(DmdType type) => GetTupleArity(type) >= 0;
 
-		public static int GetTupleArity(DmdType type) {
-			if (type.MetadataNamespace != "System")
-				return -1;
-			var genArgs = type.GetGenericArguments();
-			if (genArgs.Count == 0)
-				return -1;
-			if (type.IsNested)
-				return -1;
-			if (!type.IsValueType)
-				return -1;
-			int arity;
-			switch (type.MetadataName) {
-			case "ValueTuple`1": arity = 1; break;
-			case "ValueTuple`2": arity = 2; break;
-			case "ValueTuple`3": arity = 3; break;
-			case "ValueTuple`4": arity = 4; break;
-			case "ValueTuple`5": arity = 5; break;
-			case "ValueTuple`6": arity = 6; break;
-			case "ValueTuple`7": arity = 7; break;
-			case "ValueTuple`8": arity = 8; break;
-			default:
-				return -1;
+		static int GetTupleArity(DmdType type) {
+			int arity = 0;
+			for (;;) {
+				if (type.MetadataNamespace != "System")
+					return -1;
+				var genArgs = type.GetGenericArguments();
+				if (genArgs.Count == 0)
+					return -1;
+				if (type.IsNested)
+					return -1;
+				if (!type.IsValueType)
+					return -1;
+				int currentArity;
+				switch (type.MetadataName) {
+				case "ValueTuple`1": currentArity = 1; break;
+				case "ValueTuple`2": currentArity = 2; break;
+				case "ValueTuple`3": currentArity = 3; break;
+				case "ValueTuple`4": currentArity = 4; break;
+				case "ValueTuple`5": currentArity = 5; break;
+				case "ValueTuple`6": currentArity = 6; break;
+				case "ValueTuple`7": currentArity = 7; break;
+				case "ValueTuple`8": currentArity = 8; break;
+				default:
+					return -1;
+				}
+				if (genArgs.Count != currentArity)
+					return -1;
+				if (currentArity != 8)
+					return arity + currentArity;
+				arity += currentArity - 1;
+				type = genArgs[currentArity - 1];
 			}
-			if (genArgs.Count != arity)
-				return -1;
-			return arity;
 		}
 
 		public static object GetTypeColor(DmdType type, bool canBeModule) {
