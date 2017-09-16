@@ -89,6 +89,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtimes\DbgRuntimeDotNetExtensions.cs" />
     <Compile Include="Text\DbgDotNetText.cs" />
+    <Compile Include="Text\DbgDotNetTextOutput.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">
