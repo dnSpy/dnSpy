@@ -39,4 +39,18 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 
 		// If more errors are added, also update the code in PredefinedEvaluationErrorMessagesHelper
 	}
+
+	namespace Internal {
+		/// <summary>
+		/// Converts <see cref="PredefinedEvaluationErrorMessages"/> values to localized strings
+		/// </summary>
+		public interface IPredefinedEvaluationErrorMessagesHelper {
+			/// <summary>
+			/// Gets a message
+			/// </summary>
+			/// <param name="error">An error message (eg. one in <see cref="PredefinedEvaluationErrorMessages"/>)</param>
+			/// <returns></returns>
+			string GetErrorMessage(string error);
+		}
+	}
 }

@@ -100,8 +100,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			if (options.ValueOutput != null) {
 				if (dnValue != null)
 					formatter.FormatValue(context, options.ValueOutput, dnValue, options.ValueFormatterOptions, cancellationToken);
-				else
-					options.ValueOutput.Write(BoxedTextColor.Error, ErrorMessage ?? "???");
+				else if (ErrorMessage is string errorMessage)
+					options.ValueOutput.Write(BoxedTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));
 			}
 		}
 

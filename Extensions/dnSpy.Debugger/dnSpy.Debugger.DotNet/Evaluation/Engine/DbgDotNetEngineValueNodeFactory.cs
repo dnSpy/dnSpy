@@ -23,6 +23,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
+using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
@@ -35,13 +36,15 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 	sealed class DbgDotNetEngineValueNodeFactoryImpl : DbgDotNetEngineValueNodeFactory {
 		internal DbgDotNetFormatter Formatter => formatter;
+		internal IPredefinedEvaluationErrorMessagesHelper ErrorMessagesHelper { get; }
 
 		readonly DbgDotNetFormatter formatter;
 		readonly DbgDotNetValueNodeFactory factory;
 
-		public DbgDotNetEngineValueNodeFactoryImpl(DbgDotNetFormatter formatter, DbgDotNetValueNodeFactory factory) {
+		public DbgDotNetEngineValueNodeFactoryImpl(DbgDotNetFormatter formatter, DbgDotNetValueNodeFactory factory, IPredefinedEvaluationErrorMessagesHelper errorMessagesHelper) {
 			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
 			this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+			ErrorMessagesHelper = errorMessagesHelper ?? throw new ArgumentNullException(nameof(errorMessagesHelper));
 		}
 
 		internal DbgEngineValueNode Create(DbgDotNetValueNode node) => new DbgEngineValueNodeImpl(this, node);

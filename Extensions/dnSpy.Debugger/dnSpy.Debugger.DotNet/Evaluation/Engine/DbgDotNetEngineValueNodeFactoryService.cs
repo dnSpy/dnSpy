@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
+using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetEngineValueNodeFactoryService {
@@ -32,11 +33,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 	[Export(typeof(DbgDotNetEngineValueNodeFactoryService))]
 	sealed class DbgDotNetEngineValueNodeFactoryServiceImpl : DbgDotNetEngineValueNodeFactoryService {
+		readonly IPredefinedEvaluationErrorMessagesHelper errorMessagesHelper;
 		readonly Dictionary<Guid, Lazy<DbgDotNetValueNodeFactory, IDbgDotNetValueNodeFactoryMetadata>> toLazyFactory;
 		readonly Dictionary<Lazy<DbgDotNetValueNodeFactory, IDbgDotNetValueNodeFactoryMetadata>, DbgDotNetEngineValueNodeFactory> toFactory;
 
 		[ImportingConstructor]
-		DbgDotNetEngineValueNodeFactoryServiceImpl([ImportMany] IEnumerable<Lazy<DbgDotNetValueNodeFactory, IDbgDotNetValueNodeFactoryMetadata>> factories) {
+		DbgDotNetEngineValueNodeFactoryServiceImpl(IPredefinedEvaluationErrorMessagesHelper errorMessagesHelper, [ImportMany] IEnumerable<Lazy<DbgDotNetValueNodeFactory, IDbgDotNetValueNodeFactoryMetadata>> factories) {
+			this.errorMessagesHelper = errorMessagesHelper;
 			toLazyFactory = new Dictionary<Guid, Lazy<DbgDotNetValueNodeFactory, IDbgDotNetValueNodeFactoryMetadata>>();
 			toFactory = new Dictionary<Lazy<DbgDotNetValueNodeFactory, IDbgDotNetValueNodeFactoryMetadata>, DbgDotNetEngineValueNodeFactory>();
 			foreach (var lz in factories.OrderBy(a => a.Metadata.Order)) {
@@ -84,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgDotNetEngineValueNodeFactory GetFactory(DbgDotNetFormatter formatter, Lazy<DbgDotNetValueNodeFactory, IDbgDotNetValueNodeFactoryMetadata> lz) {
 			lock (toFactory) {
 				if (!toFactory.TryGetValue(lz, out var factory))
-					toFactory.Add(lz, factory = new DbgDotNetEngineValueNodeFactoryImpl(formatter, lz.Value));
+					toFactory.Add(lz, factory = new DbgDotNetEngineValueNodeFactoryImpl(formatter, lz.Value, errorMessagesHelper));
 				return factory;
 			}
 		}

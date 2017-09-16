@@ -19,8 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
+using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Evaluation {
@@ -41,6 +43,15 @@ namespace dnSpy.Debugger.Evaluation {
 			if (toErrorMessage.TryGetValue(error, out var msg))
 				return msg;
 			return error;
+		}
+	}
+
+	[Export(typeof(IPredefinedEvaluationErrorMessagesHelper))]
+	sealed class PredefinedEvaluationErrorMessagesHelperImpl : IPredefinedEvaluationErrorMessagesHelper {
+		public string GetErrorMessage(string error) {
+			if (error == null)
+				throw new ArgumentNullException(nameof(error));
+			return PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(error);
 		}
 	}
 }
