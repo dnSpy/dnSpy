@@ -24,6 +24,7 @@ namespace dndbg.Engine {
 		public const int CORDBG_E_PROCESS_TERMINATED = unchecked((int)0x80131301);
 		public const int CORDBG_E_OBJECT_NEUTERED = unchecked((int)0x8013134F);
 		public const int CORDBG_E_STATIC_VAR_NOT_AVAILABLE = unchecked((int)0x8013131A);
+		public const int CORDBG_E_CLASS_NOT_LOADED = unchecked((int)0x80131303);
 		public const int CORDBG_E_ILLEGAL_IN_NATIVE_CODE = unchecked((int)0x80131C25);
 		public const int CORDBG_E_ILLEGAL_AT_GC_UNSAFE_POINT = unchecked((int)0x80131C23);
 		public const int CORDBG_E_ILLEGAL_IN_OPTIMIZED_CODE = unchecked((int)0x80131C26);

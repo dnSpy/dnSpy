@@ -20,6 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using dndbg.COM.CorDebug;
+using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
@@ -27,6 +29,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
@@ -39,15 +42,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public DbgDotNetDispatcher Dispatcher { get; }
 		public bool SupportsObjectIds => false;//TODO:
 
-		public DbgCorDebugInternalRuntimeImpl(DbgEngineImpl owner, DbgRuntime runtime, DmdRuntime reflectionRuntime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
+		readonly DbgEngineImpl engine;
+
+		public DbgCorDebugInternalRuntimeImpl(DbgEngineImpl engine, DbgRuntime runtime, DmdRuntime reflectionRuntime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
+			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			ReflectionRuntime = reflectionRuntime ?? throw new ArgumentNullException(nameof(reflectionRuntime));
 			Version = new CorDebugRuntimeVersion(kind, version ?? throw new ArgumentNullException(nameof(version)));
 			ClrFilename = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
 			RuntimeDirectory = runtimeDir ?? throw new ArgumentNullException(nameof(runtimeDir));
-			Dispatcher = new DbgDotNetDispatcherImpl(owner);
+			Dispatcher = new DbgDotNetDispatcherImpl(engine);
 			reflectionRuntime.GetOrCreateData(() => runtime);
 		}
 
@@ -57,6 +61,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public DmdMethodBase GetFrameMethod(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetFrameMethodCore(context, frame, cancellationToken);
+			return Dispatcher.Invoke(() => GetFrameMethodCore(context, frame, cancellationToken));
+		}
+
+		DmdMethodBase GetFrameMethodCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			var state = frame.GetOrCreateData<GetFrameMethodState>();
 			if (!state.Initialized) {
@@ -76,29 +86,198 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return state.Method;
 		}
 
+		CorType GetType(CorAppDomain appDomain, DmdType type) {
+			if (type.TryGetData(out CorType corType))
+				return corType;
+			return GetTypeCore(appDomain, type);
+
+			CorType GetTypeCore(CorAppDomain appDomain2, DmdType type2) => type2.GetOrCreateData(() => new CorDebugTypeCreator(engine, appDomain2).Create(type2));
+		}
+
+		static CorValue GetObjectOrPrimitiveValue(CorValue value) {
+			if (value.IsReference) {
+				if (value.IsNull)
+					throw new InvalidOperationException();
+				value = value.DereferencedValue ?? throw new InvalidOperationException();
+			}
+			if (value.IsBox)
+				value = value.BoxedValue ?? throw new InvalidOperationException();
+			return value;
+		}
+
+		public DbgDotNetValueResult LoadField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return LoadFieldCore(context, frame, obj, field, cancellationToken);
+			return Dispatcher.Invoke(() => LoadFieldCore(context, frame, obj, field, cancellationToken));
+		}
+
+		DbgDotNetValueResult LoadFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			var appDomain = ilFrame.GetAppDomain();
+
+			int hr;
+			CorType corFieldDeclType;
+			if (obj == null) {
+				if (!field.IsStatic)
+					return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+
+				if (field.IsLiteral) {
+					//TODO:
+				}
+				else {
+					corFieldDeclType = GetType(appDomain, field.DeclaringType);
+					var fieldValue = corFieldDeclType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out hr);
+					if (fieldValue == null) {
+						if (hr == CordbgErrors.CORDBG_E_CLASS_NOT_LOADED) {
+							//TODO:
+						}
+						else if (hr == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE) {
+							//TODO: Func-eval the cctor (if it exists), but only do it once per type
+						}
+					}
+					if (fieldValue == null)
+						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, frame.Thread.AppDomain.GetReflectionAppDomain(), tryCreateStrongHandle: true));
+				}
+			}
+			else {
+				if (field.IsStatic)
+					return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+
+				var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
+				corFieldDeclType = GetType(appDomain, field.DeclaringType);
+				var objValue = GetObjectOrPrimitiveValue(objImp.Value);
+				if (objValue.IsObject) {
+					var fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr);
+					if (fieldValue == null)
+						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, frame.Thread.AppDomain.GetReflectionAppDomain(), tryCreateStrongHandle: true));
+				}
+				else {
+					if (IsPrimitiveValueType(objValue.ElementType)) {
+						//TODO:
+					}
+				}
+			}
+
+			return new DbgDotNetValueResult("NYI");//TODO:
+		}
+
+		static bool IsPrimitiveValueType(CorElementType etype) {
+			switch (etype) {
+			case CorElementType.Boolean:
+			case CorElementType.Char:
+			case CorElementType.I1:
+			case CorElementType.U1:
+			case CorElementType.I2:
+			case CorElementType.U2:
+			case CorElementType.I4:
+			case CorElementType.U4:
+			case CorElementType.I8:
+			case CorElementType.U8:
+			case CorElementType.R4:
+			case CorElementType.R8:
+			case CorElementType.I:
+			case CorElementType.U:
+				return true;
+
+			default:
+				return false;
+			}
+		}
+
+		public string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, DbgDotNetValue value, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return StoreFieldCore(context, frame, obj, field, value, cancellationToken);
+			return Dispatcher.Invoke(() => StoreFieldCore(context, frame, obj, field, value, cancellationToken));
+		}
+
+		string StoreFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, DbgDotNetValue value, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			return "NYI";//TODO:
+		}
+
+		public DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return CallCore(context, frame, obj, method, arguments, cancellationToken);
+			return Dispatcher.Invoke(() => CallCore(context, frame, obj, method, arguments, cancellationToken));
+		}
+
+		DbgDotNetValueResult CallCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			return new DbgDotNetValueResult("NYI");//TODO:
+		}
+
 		public DbgDotNetAliasInfo[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetAliasesCore(context, frame, cancellationToken);
+			return Dispatcher.Invoke(() => GetAliasesCore(context, frame, cancellationToken));
+		}
+
+		DbgDotNetAliasInfo[] GetAliasesCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			return Array.Empty<DbgDotNetAliasInfo>();//TODO:
 		}
 
 		public DbgDotNetExceptionInfo[] GetExceptions(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetExceptionsCore(context, frame, cancellationToken);
+			return Dispatcher.Invoke(() => GetExceptionsCore(context, frame, cancellationToken));
+		}
+
+		DbgDotNetExceptionInfo[] GetExceptionsCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			return Array.Empty<DbgDotNetExceptionInfo>();//TODO:
 		}
 
 		public DbgDotNetReturnValueInfo[] GetReturnValues(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetReturnValuesCore(context, frame, cancellationToken);
+			return Dispatcher.Invoke(() => GetReturnValuesCore(context, frame, cancellationToken));
+		}
+
+		DbgDotNetReturnValueInfo[] GetReturnValuesCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			return Array.Empty<DbgDotNetReturnValueInfo>();//TODO:
 		}
 
-		public DbgDotNetValue GetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
-			Dispatcher.VerifyAccess();
-			return null;//TODO:
+		DbgDotNetValueResult CreateValue(CorValue value, ILDbgEngineStackFrame ilFrame) {
+			var reflectionAppDomain = ilFrame.GetReflectionModule()?.AppDomain ?? throw new InvalidOperationException();
+			var dnValue = engine.CreateDotNetValue_CorDebug(value, reflectionAppDomain, tryCreateStrongHandle: true);
+			return new DbgDotNetValueResult(dnValue);
 		}
 
-		public DbgDotNetValue GetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
+		public DbgDotNetValueResult GetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetLocalValueCore(context, frame, index, cancellationToken);
+			return Dispatcher.Invoke(() => GetLocalValueCore(context, frame, index, cancellationToken));
+		}
+
+		DbgDotNetValueResult GetLocalValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
-			return null;//TODO:
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				throw new InvalidOperationException();
+			var value = ilFrame.CorFrame.GetILLocal(index, out int hr);
+			if (value == null)
+				return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+			return CreateValue(value, ilFrame);
+		}
+
+		public DbgDotNetValueResult GetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetParameterValueCore(context, frame, index, cancellationToken);
+			return Dispatcher.Invoke(() => GetParameterValueCore(context, frame, index, cancellationToken));
+		}
+
+		DbgDotNetValueResult GetParameterValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				throw new InvalidOperationException();
+			var value = ilFrame.CorFrame.GetILArgument(index, out int hr);
+			if (value == null)
+				return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+			return CreateValue(value, ilFrame);
 		}
 
 		public bool CanCreateObjectId(DbgDotNetValue value) {

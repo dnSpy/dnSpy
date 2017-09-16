@@ -180,6 +180,7 @@
     <Compile Include="dndbg\Engine\TypeFormatterUtils.cs" />
     <Compile Include="dndbg\Engine\Utils.cs" />
     <Compile Include="dndbg\Engine\Win32EnvironmentStringBuilder.cs" />
+    <Compile Include="Impl\CordbgErrorHelper.cs" />
     <Compile Include="Impl\CorDebugTypeCreator.cs" />
     <Compile Include="Impl\DbgCorDebugInternalAppDomainImpl.cs" />
     <Compile Include="Impl\DbgCorDebugInternalModuleImpl.cs" />

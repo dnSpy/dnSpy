@@ -42,6 +42,41 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		DmdMethodBase GetFrameMethod(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Loads an instance or a static field
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="obj">Instance object or null if it's a static field</param>
+		/// <param name="field">Field</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValueResult LoadField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Stores a value in a field. Returns null or an error message
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="obj">Instance object or null if it's a static field</param>
+		/// <param name="field">Field</param>
+		/// <param name="value">Value to store</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, DbgDotNetValue value, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Calls an instance or a static method
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="obj">Instance object or null if it's a static field</param>
+		/// <param name="method">Method</param>
+		/// <param name="arguments">Arguments, simple types or <see cref="DbgDotNetValue"/>s</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Gets aliases
 		/// </summary>
 		/// <param name="context">Context</param>
@@ -76,7 +111,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		/// <param name="index">Metadata index of local</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValue GetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken);
+		DbgDotNetValueResult GetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets a parameter value or null if the parameter doesn't exist or if it's not possible to read it (eg. optimized code)
@@ -86,7 +121,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		/// <param name="index">Metadata index of parameter</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValue GetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken);
+		DbgDotNetValueResult GetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Returns true if object IDs are supported by this runtime

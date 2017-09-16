@@ -19,7 +19,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class dnSpy_Debugger_DotNet_CorDebug_Resources {
@@ -39,7 +39,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("dnSpy.Debugger.DotNet.CorDebug.Properties.dnSpy.Debugger.DotNet.CorDebug.Resources", typeof(dnSpy_Debugger_DotNet_CorDebug_Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("dnSpy.Debugger.DotNet.CorDebug.Properties.dnSpy.Debugger.DotNet.CorDebug.Resource" +
+                            "s", typeof(dnSpy_Debugger_DotNet_CorDebug_Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -340,6 +341,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
         public static string GlyphToolTip_NativeAddress {
             get {
                 return ResourceManager.GetString("GlyphToolTip_NativeAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal debugger error.
+        /// </summary>
+        public static string InternalDebuggerError {
+            get {
+                return ResourceManager.GetString("InternalDebuggerError", resourceCulture);
             }
         }
         

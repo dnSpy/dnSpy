@@ -22,7 +22,6 @@ using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
@@ -46,8 +45,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 
 		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+			var runtime = context.Runtime.GetDotNetRuntime();
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
-			DbgDotNetValue newValue = null;
+			DbgDotNetValueResult valueResult = default;
 			try {
 				for (int i = 0; i < res.Length; i++) {
 					cancellationToken.ThrowIfCancellationRequested();
@@ -55,30 +55,32 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					if (info.HasDebuggerBrowsableState_RootHidden && (options & DbgValueNodeEvaluationOptions.RawView) == 0) {
 						//TODO:
 					}
-					DbgDotNetValueNode newNode;
 					string expression, imageName;
 					bool isReadOnly;
+					DmdType expectedType;
 					switch (info.Member.MemberType) {
 					case DmdMemberTypes.Field:
 						var field = (DmdFieldInfo)info.Member;
 						expression = valueNodeFactory.GetExpression(Expression, field);
+						expectedType = field.FieldType;
 						imageName = ImageNameUtils.GetImageName(field);
-						newValue = (DbgDotNetValue)field.AppDomain.LoadField(context, field, null, cancellationToken);
-						isReadOnly = field.IsInitOnly;
-						newNode = valueNodeFactory.Create(context, info.Name, newValue, options, expression, imageName, isReadOnly, false, field.FieldType);
+						valueResult = runtime.LoadField(context, frame, null, field, cancellationToken);
+						isReadOnly = field.IsInitOnly || field.IsLiteral;
 						break;
 
 					case DmdMemberTypes.Property:
 						var property = (DmdPropertyInfo)info.Member;
 						expression = valueNodeFactory.GetExpression(Expression, property);
-						if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0)
-							newNode = valueNodeFactory.CreateError(context, info.Name, PredefinedEvaluationErrorMessages.FunctionEvaluationDisabled, expression);
+						expectedType = property.PropertyType;
+						imageName = ImageNameUtils.GetImageName(property);
+						if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0) {
+							isReadOnly = true;
+							valueResult = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FunctionEvaluationDisabled);
+						}
 						else {
 							var getter = property.GetGetMethod(DmdGetAccessorOptions.All) ?? throw new InvalidOperationException();
-							imageName = ImageNameUtils.GetImageName(property);
-							newValue = (DbgDotNetValue)property.AppDomain.Invoke(context, getter, null, Array.Empty<object>(), cancellationToken);
+							valueResult = runtime.Call(context, frame, null, getter, Array.Empty<object>(), cancellationToken);
 							isReadOnly = (object)property.GetSetMethod(DmdGetAccessorOptions.All) == null;
-							newNode = valueNodeFactory.Create(context, info.Name, newValue, options, expression, imageName, isReadOnly, false, property.PropertyType);
 						}
 						break;
 
@@ -86,13 +88,19 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 						throw new InvalidOperationException();
 					}
 
-					newValue = null;
+					DbgDotNetValueNode newNode;
+					if (valueResult.HasError)
+						newNode = valueNodeFactory.CreateError(context, info.Name, valueResult.ErrorMessage, expression);
+					else
+						newNode = valueNodeFactory.Create(context, info.Name, valueResult.Value, options, expression, imageName, isReadOnly, false, expectedType);
+
+					valueResult = default;
 					res[i] = newNode;
 				}
 			}
 			catch {
 				context.Process.DbgManager.Close(res.Where(a => a != null));
-				newValue?.Dispose();
+				valueResult.Value?.Dispose();
 				throw;
 			}
 			return res;

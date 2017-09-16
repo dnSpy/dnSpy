@@ -53,6 +53,7 @@
     <Compile Include="Evaluation\DbgDotNetEngineObjectId.cs" />
     <Compile Include="Evaluation\DbgDotNetLanguageGuids.cs" />
     <Compile Include="Evaluation\DbgDotNetValue.cs" />
+    <Compile Include="Evaluation\DbgDotNetValueResult.cs" />
     <Compile Include="Evaluation\DbgLanguageDebugInfo.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetAliasInfo.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetDispatcher.cs" />

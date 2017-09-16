@@ -155,6 +155,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			genericMethodArguments = Convert(reflectionAppDomain, methGenArgs);
 		}
 
+		internal CorAppDomain GetAppDomain() => corFrame.Function?.Module?.Assembly?.AppDomain;
+
 		IList<DmdType> Convert(DmdAppDomain reflectionAppDomain, CorType[] typeArgs) {
 			if (typeArgs.Length == 0)
 				return Array.Empty<DmdType>();

@@ -46,7 +46,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.owner = owner;
 			this.valueInfo = valueInfo;
 
-			using (var objValue = new ObjectValue(valueInfo.Value)) {
+			using (var objValue = new ArrayObjectValue(valueInfo.Value)) {
 				bool b = objValue.Value.GetArrayInfo(out arrayCount, out dimensionInfos) && dimensionInfos.Length != 0;
 				Debug.Assert(b);
 				if (!b)
@@ -77,7 +77,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 					string expression;
 					uint arrayIndex = (uint)index + (uint)i;
-					using (var objValue = new ObjectValue(valueInfo.Value))
+					using (var objValue = new ArrayObjectValue(valueInfo.Value))
 						newValue = objValue.Value.GetArrayElementAt(arrayIndex);
 
 					if (dimensionInfos.Length == 1) {

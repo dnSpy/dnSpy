@@ -17,33 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Diagnostics;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Debugger.DotNet.CorDebug.Properties;
 
-namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
-	struct ObjectValue : IDisposable {
-		public readonly DbgDotNetValue Value;
-		readonly bool ownsValue;
-		public ObjectValue(DbgDotNetValue value) {
-			Debug.Assert(!value.IsNullReference);
-			if (value.IsReference) {
-				Value = value.Dereference();
-				ownsValue = true;
-			}
-			else if (value.IsBox) {
-				Value = value.Dereference();
-				ownsValue = true;
-			}
-			else {
-				Value = value;
-				ownsValue = false;
-			}
-		}
+namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
+	static class CordbgErrorHelper {
+		public static string InternalError => dnSpy_Debugger_DotNet_CorDebug_Resources.InternalDebuggerError;
 
-		public void Dispose() {
-			if (ownsValue)
-				Value.Dispose();
+		public static string GetErrorMessage(int hr) {
+			if (hr >= 0)
+				return dnSpy_Debugger_DotNet_CorDebug_Resources.InternalDebuggerError;
+			//TODO: If hr is a known error, return a more friendly error message
+			return dnSpy_Debugger_DotNet_CorDebug_Resources.InternalDebuggerError + " (0x" + hr.ToString("X8") + ")";
 		}
 	}
 }

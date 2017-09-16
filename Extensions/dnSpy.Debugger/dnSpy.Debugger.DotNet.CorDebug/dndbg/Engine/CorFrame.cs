@@ -323,34 +323,15 @@ namespace dndbg.Engine {
 		/// was an error
 		/// </summary>
 		/// <param name="index">Index of local</param>
+		/// <param name="hr">Updated with error code</param>
 		/// <returns></returns>
-		public CorValue GetILLocal(uint index) {
+		public CorValue GetILLocal(uint index, out int hr) {
 			var ilf = obj as ICorDebugILFrame;
-			if (ilf == null)
+			if (ilf == null) {
+				hr = -1;
 				return null;
-			int hr = ilf.GetLocalVariable(index, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
-		}
-
-		/// <summary>
-		/// Gets a local variable or null if it's not an <see cref="ICorDebugILFrame"/> or if there
-		/// was an error
-		/// </summary>
-		/// <param name="index">Index of local</param>
-		/// <returns></returns>
-		public CorValue GetILLocal(int index) => GetILLocal((uint)index);
-
-		/// <summary>
-		/// Gets an argument or null if it's not an <see cref="ICorDebugILFrame"/> or if there
-		/// was an error
-		/// </summary>
-		/// <param name="index">Index of argument</param>
-		/// <returns></returns>
-		public CorValue GetILArgument(uint index) {
-			var ilf = obj as ICorDebugILFrame;
-			if (ilf == null)
-				return null;
-			int hr = ilf.GetArgument(index, out var value);
+			}
+			hr = ilf.GetLocalVariable(index, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -359,8 +340,17 @@ namespace dndbg.Engine {
 		/// was an error
 		/// </summary>
 		/// <param name="index">Index of argument</param>
+		/// <param name="hr">Updated with error code</param>
 		/// <returns></returns>
-		public CorValue GetILArgument(int index) => GetILArgument((uint)index);
+		public CorValue GetILArgument(uint index, out int hr) {
+			var ilf = obj as ICorDebugILFrame;
+			if (ilf == null) {
+				hr = -1;
+				return null;
+			}
+			hr = ilf.GetArgument(index, out var value);
+			return hr < 0 || value == null ? null : new CorValue(value);
+		}
 
 		/// <summary>
 		/// Gets all locals
