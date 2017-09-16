@@ -129,6 +129,15 @@
   <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
     <value>Expression has been evaluated and has no value</value>
   </data>
+  <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
+    <value>Static members</value>
+  </data>
+  <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
+    <value>Instance members</value>
+  </data>
+  <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
+    <value>Shared members</value>
+  </data>
   <data name="DelegatesToolTip" xml:space="preserve">
     <value>Delegates</value>
   </data>

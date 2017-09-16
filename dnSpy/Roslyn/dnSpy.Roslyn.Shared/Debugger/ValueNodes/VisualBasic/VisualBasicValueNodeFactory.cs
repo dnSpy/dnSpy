@@ -19,9 +19,37 @@
 
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 	[ExportDbgDotNetValueNodeFactory(DbgDotNetLanguageGuids.VisualBasic)]
 	sealed class VisualBasicValueNodeFactory : LanguageValueNodeFactory {
+		public VisualBasicValueNodeFactory() : base(new VisualBasicValueNodeProviderFactory()) { }
+
+		public override string GetExpression(string baseExpression, DmdFieldInfo field) {
+			//TODO: Add parens, casts, use -> if pointer etc...
+			return baseExpression + "." + field.Name;
+		}
+
+		public override string GetExpression(string baseExpression, DmdPropertyInfo property) {
+			return baseExpression + "." + property.Name;
+		}
+
+		public override string GetExpression(string baseExpression, int index) {
+			return baseExpression + "(" + index.ToString() + ")";
+		}
+
+		public override string GetExpression(string baseExpression, int[] indexes) {
+			var sb = Formatters.ValueFormatterObjectCache.AllocStringBuilder();
+			sb.Append(baseExpression);
+			sb.Append('(');
+			for (int i = 0; i < indexes.Length; i++) {
+				if (i > 0)
+					sb.Append(',');
+				sb.Append(indexes[i].ToString());
+			}
+			sb.Append(')');
+			return Formatters.ValueFormatterObjectCache.FreeAndToString(ref sb);
+		}
 	}
 }

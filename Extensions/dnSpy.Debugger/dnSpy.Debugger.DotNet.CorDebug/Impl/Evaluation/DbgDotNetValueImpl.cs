@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var dereferencedValue = value.DereferencedValue;
 			if (dereferencedValue == null)
 				return null;
-			return engine.CreateDotNetValue_CorDebug(dereferencedValue, type.AppDomain);
+			return engine.CreateDotNetValue_CorDebug(dereferencedValue, type.AppDomain, tryCreateStrongHandle: true);
 		}
 
 		public override DbgDotNetValue Unbox() {
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var boxedValue = value.BoxedValue;
 			if (boxedValue == null)
 				return null;
-			return engine.CreateDotNetValue_CorDebug(boxedValue, type.AppDomain);
+			return engine.CreateDotNetValue_CorDebug(boxedValue, type.AppDomain, tryCreateStrongHandle: true);
 		}
 
 		public override bool GetArrayCount(out uint elementCount) {
@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var elemValue = value.GetElementAtPosition(index);
 			if (elemValue == null)
 				return null;
-			return engine.CreateDotNetValue_CorDebug(elemValue, type.AppDomain);
+			return engine.CreateDotNetValue_CorDebug(elemValue, type.AppDomain, tryCreateStrongHandle: true);
 		}
 
 		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) {

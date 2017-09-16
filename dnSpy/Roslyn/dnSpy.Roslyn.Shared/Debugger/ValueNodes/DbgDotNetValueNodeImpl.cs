@@ -36,12 +36,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string ImageName { get; }
 		public override bool IsReadOnly { get; }
 		public override bool CausesSideEffects { get; }
-		public override bool? HasChildren => false;//TODO:
-		public override ulong ChildCount => 0;//TODO:
+		public override bool? HasChildren => childNodeProvider == null ? false : childNodeProvider.HasChildren;
+		public override ulong ChildCount => childNodeProvider == null ? 0 : childNodeProvider.ChildCount;
 
-		public DbgDotNetValueNodeImpl(DbgDotNetText name, DbgDotNetValue value, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, string errorMessage) {
+		readonly LanguageValueNodeFactory valueNodeFactory;
+		readonly DbgDotNetValueNodeProvider childNodeProvider;
+
+		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValue value, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, string errorMessage) {
 			if (name.Parts == null)
 				throw new ArgumentException();
+			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
+			this.childNodeProvider = childNodeProvider;
 			Name = name;
 			Value = value;
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
@@ -53,9 +58,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 
 		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			return Array.Empty<DbgDotNetValueNode>();//TODO:
+			if (childNodeProvider == null)
+				return Array.Empty<DbgDotNetValueNode>();
+			return childNodeProvider.GetChildren(valueNodeFactory, context, index, count, options, cancellationToken);
 		}
 
-		protected override void CloseCore(DbgDispatcher dispatcher) => Value?.Dispose();
+		protected override void CloseCore(DbgDispatcher dispatcher) {
+			Value?.Dispose();
+			childNodeProvider?.Dispose();
+		}
 	}
 }

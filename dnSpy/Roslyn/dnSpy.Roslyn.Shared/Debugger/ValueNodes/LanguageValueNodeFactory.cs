@@ -26,23 +26,36 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	abstract class LanguageValueNodeFactory : DbgDotNetValueNodeFactory {
-		public sealed override DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType) =>
-			new DbgDotNetValueNodeImpl(name, value, expression, imageName, isReadOnly, causesSideEffects, expectedType, null);
+		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
 
-		public sealed override DbgDotNetValueNode CreateException(DbgEvaluationContext context, uint id, DbgDotNetValue value) {
+		protected LanguageValueNodeFactory(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory) =>
+			this.valueNodeProviderFactory = valueNodeProviderFactory ?? throw new ArgumentNullException(nameof(valueNodeProviderFactory));
+
+		public abstract string GetExpression(string baseExpression, DmdFieldInfo field);
+		public abstract string GetExpression(string baseExpression, DmdPropertyInfo property);
+		public abstract string GetExpression(string baseExpression, int index);
+		public abstract string GetExpression(string baseExpression, int[] indexes);
+
+		internal DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValueNodeProvider provider, DbgValueNodeEvaluationOptions options, string expression, string imageName) =>
+			new DbgDotNetValueNodeImpl(this, provider, name, null, expression, imageName, true, false, null, null);
+
+		public sealed override DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType) =>
+			new DbgDotNetValueNodeImpl(this, valueNodeProviderFactory.Create(value, expression, isReadOnly, options), name, value, expression, imageName, isReadOnly, causesSideEffects, expectedType, null);
+
+		public sealed override DbgDotNetValueNode CreateException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public sealed override DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, uint id, DbgDotNetValue value) {
+		public sealed override DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public sealed override DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, uint id, DbgDotNetValue value, DmdMethodBase method) {
+		public sealed override DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method) {
 			throw new NotImplementedException();//TODO:
 		}
 
 		public sealed override DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgDotNetText name, string errorMessage, string expression) =>
-			new DbgDotNetValueNodeImpl(name, null, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, errorMessage);
+			new DbgDotNetValueNodeImpl(this, null, name, null, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, errorMessage);
 
 		public sealed override DbgDotNetValueNode CreateTypeVariables(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetTypeVariableInfo[] typeVariableInfos) {
 			throw new NotImplementedException();//TODO:

@@ -27,7 +27,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
-		internal DbgDotNetValue CreateDotNetValue_CorDebug(CorValue value, DmdAppDomain reflectionAppDomain) {
+		internal DbgDotNetValue CreateDotNetValue_CorDebug(CorValue value, DmdAppDomain reflectionAppDomain, bool tryCreateStrongHandle) {
 			debuggerThread.VerifyAccess();
 			if (value == null)
 				throw new ArgumentNullException(nameof(value));
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var type = new ReflectionTypeCreator(this, reflectionAppDomain).Create(value.ExactType);
 
 			//TODO: You should support the by-ref case too
-			if (!value.IsNull && !value.IsHandle && value.IsReference && !type.IsPointer && !type.IsFunctionPointer && !type.IsByRef) {
+			if (tryCreateStrongHandle && !value.IsNull && !value.IsHandle && value.IsReference && !type.IsPointer && !type.IsFunctionPointer && !type.IsByRef) {
 				var strongHandle = value.DereferencedValue?.CreateHandle(CorDebugHandleType.HANDLE_STRONG);
 				Debug.Assert(strongHandle != null || type == type.AppDomain.System_TypedReference);
 				if (strongHandle != null)

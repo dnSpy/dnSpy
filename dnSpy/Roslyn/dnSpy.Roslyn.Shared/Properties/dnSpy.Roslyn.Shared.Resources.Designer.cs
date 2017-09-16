@@ -97,6 +97,33 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Static members.
+        /// </summary>
+        internal static string DebuggerVarsWindow_CSharp_StaticMembers {
+            get {
+                return ResourceManager.GetString("DebuggerVarsWindow_CSharp_StaticMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instance members.
+        /// </summary>
+        internal static string DebuggerVarsWindow_InstanceMembers {
+            get {
+                return ResourceManager.GetString("DebuggerVarsWindow_InstanceMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shared members.
+        /// </summary>
+        internal static string DebuggerVarsWindow_VisualBasic_SharedMembers {
+            get {
+                return ResourceManager.GetString("DebuggerVarsWindow_VisualBasic_SharedMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delegates.
         /// </summary>
         internal static string DelegatesToolTip {
