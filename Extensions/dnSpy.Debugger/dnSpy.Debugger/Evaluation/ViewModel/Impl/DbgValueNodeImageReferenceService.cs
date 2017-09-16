@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		[ImportingConstructor]
 		DbgValueNodeImageReferenceServiceImpl() {
-			const int TOTAL_COUNT = 91;
+			const int TOTAL_COUNT = 93;
 			toImageReference = new Dictionary<string, ImageReference>(TOTAL_COUNT, StringComparer.Ordinal) {
 				{ PredefinedDbgValueNodeImageNames.Edit, DsImages.Edit },
 				{ PredefinedDbgValueNodeImageNames.Information, DsImages.StatusInformation },
@@ -56,6 +56,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				{ PredefinedDbgValueNodeImageNames.ObjectId, DsImages.FieldPublic },
 				{ PredefinedDbgValueNodeImageNames.ObjectAddress, DsImages.FieldPublic },
 				{ PredefinedDbgValueNodeImageNames.EEVariable, DsImages.FieldPublic },
+				{ PredefinedDbgValueNodeImageNames.InstanceMembers, DsImages.ClassPublic },
+				{ PredefinedDbgValueNodeImageNames.StaticMembers, DsImages.ClassPublic },
 				{ PredefinedDbgValueNodeImageNames.ExceptionInternal, DsImages.ExceptionInternal },
 				{ PredefinedDbgValueNodeImageNames.ExceptionPrivate, DsImages.ExceptionPrivate },
 				{ PredefinedDbgValueNodeImageNames.ExceptionProtected, DsImages.ExceptionProtected },
