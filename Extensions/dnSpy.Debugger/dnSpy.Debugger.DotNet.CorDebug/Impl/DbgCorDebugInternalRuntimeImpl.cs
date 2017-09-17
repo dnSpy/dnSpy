@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
@@ -28,6 +27,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation;
@@ -118,9 +118,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (!field.IsStatic)
 					return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 
-				if (field.IsLiteral) {
-					//TODO:
-				}
+				if (field.IsLiteral)
+					return CreateSyntheticValue(field.FieldType, field.GetRawConstantValue());
 				else {
 					corFieldDeclType = GetType(appDomain, fieldDeclType);
 
@@ -157,6 +156,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 
 			return new DbgDotNetValueResult("NYI");//TODO:
+		}
+
+		static DbgDotNetValueResult CreateSyntheticValue(DmdType type, object constant) {
+			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type, constant);
+			if (dnValue != null)
+				return new DbgDotNetValueResult(dnValue, valueIsException: false);
+			return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
 		sealed class StaticConstructorInitializedState {

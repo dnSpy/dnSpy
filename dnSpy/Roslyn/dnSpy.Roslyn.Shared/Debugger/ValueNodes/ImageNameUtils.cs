@@ -23,6 +23,30 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	static class ImageNameUtils {
 		public static string GetImageName(DmdFieldInfo field) {
+			if (field.ReflectedType.IsEnum && !field.IsSpecialName) {
+				switch (field.Attributes & DmdFieldAttributes.FieldAccessMask) {
+				case DmdFieldAttributes.PrivateScope:	return PredefinedDbgValueNodeImageNames.EnumerationItemCompilerControlled;
+				case DmdFieldAttributes.Private:		return PredefinedDbgValueNodeImageNames.EnumerationItemPrivate;
+				case DmdFieldAttributes.FamANDAssem:	return PredefinedDbgValueNodeImageNames.EnumerationItemFamilyAndAssembly;
+				case DmdFieldAttributes.Assembly:		return PredefinedDbgValueNodeImageNames.EnumerationItemAssembly;
+				case DmdFieldAttributes.Family:			return PredefinedDbgValueNodeImageNames.EnumerationItemFamily;
+				case DmdFieldAttributes.FamORAssem:		return PredefinedDbgValueNodeImageNames.EnumerationItemFamilyOrAssembly;
+				case DmdFieldAttributes.Public:			return PredefinedDbgValueNodeImageNames.EnumerationItemPublic;
+				default:								return PredefinedDbgValueNodeImageNames.EnumerationItem;
+				}
+			}
+			if (field.IsLiteral) {
+				switch (field.Attributes & DmdFieldAttributes.FieldAccessMask) {
+				case DmdFieldAttributes.PrivateScope:	return PredefinedDbgValueNodeImageNames.ConstantCompilerControlled;
+				case DmdFieldAttributes.Private:		return PredefinedDbgValueNodeImageNames.ConstantPrivate;
+				case DmdFieldAttributes.FamANDAssem:	return PredefinedDbgValueNodeImageNames.ConstantFamilyAndAssembly;
+				case DmdFieldAttributes.Assembly:		return PredefinedDbgValueNodeImageNames.ConstantAssembly;
+				case DmdFieldAttributes.Family:			return PredefinedDbgValueNodeImageNames.ConstantFamily;
+				case DmdFieldAttributes.FamORAssem:		return PredefinedDbgValueNodeImageNames.ConstantFamilyOrAssembly;
+				case DmdFieldAttributes.Public:			return PredefinedDbgValueNodeImageNames.ConstantPublic;
+				default:								return PredefinedDbgValueNodeImageNames.Constant;
+				}
+			}
 			switch (field.Attributes & DmdFieldAttributes.FieldAccessMask) {
 			case DmdFieldAttributes.PrivateScope:	return PredefinedDbgValueNodeImageNames.FieldCompilerControlled;
 			case DmdFieldAttributes.Private:		return PredefinedDbgValueNodeImageNames.FieldPrivate;

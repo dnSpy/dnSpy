@@ -3060,6 +3060,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Internal debugger error.
+        /// </summary>
+        public static string InternalDebuggerError {
+            get {
+                return ResourceManager.GetString("InternalDebuggerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
         public static string LanguageCommand {

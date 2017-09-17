@@ -1902,4 +1902,7 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
     <value>Respect attributes that hide members</value>
   </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Internal debugger error</value>
+  </data>
 </root>

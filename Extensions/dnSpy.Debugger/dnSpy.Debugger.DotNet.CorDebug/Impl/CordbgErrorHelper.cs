@@ -19,20 +19,19 @@
 
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
-using dnSpy.Debugger.DotNet.CorDebug.Properties;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	static class CordbgErrorHelper {
-		public static string InternalError => dnSpy_Debugger_DotNet_CorDebug_Resources.InternalDebuggerError;
+		public static string InternalError => PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		public static string GetErrorMessage(int hr) {
 			if (hr >= 0)
-				return dnSpy_Debugger_DotNet_CorDebug_Resources.InternalDebuggerError;
+				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 			if (CordbgErrors.IsCantEvaluateError(hr))
 				return PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint;
 
-			return dnSpy_Debugger_DotNet_CorDebug_Resources.InternalDebuggerError + " (0x" + hr.ToString("X8") + ")";
+			return PredefinedEvaluationErrorMessages.InternalDebuggerError + " (0x" + hr.ToString("X8") + ")";
 		}
 	}
 }

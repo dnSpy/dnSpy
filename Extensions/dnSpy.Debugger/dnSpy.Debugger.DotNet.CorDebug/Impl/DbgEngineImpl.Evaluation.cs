@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal DbgDotNetValue CreateDotNetValue_CorDebug(CorValue value, DmdAppDomain reflectionAppDomain, bool tryCreateStrongHandle) {
 			debuggerThread.VerifyAccess();
 			if (value == null)
-				throw new ArgumentNullException(nameof(value));
+				return new SyntheticValue(reflectionAppDomain.System_Void, new DbgDotNetRawValue(DbgSimpleValueType.Void));
 
 			var type = new ReflectionTypeCreator(this, reflectionAppDomain).Create(value.ExactType);
 

@@ -254,7 +254,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			catch {
 				if (valueNodes != null)
 					frame.Process.DbgManager.Close(valueNodes.Select(a => a.ValueNode).Where(a => a != null));
-				return new[] { CreateInternalErrorNode(context, dnSpy_Debugger_DotNet_Resources.InternalDebuggerError) };
+				return new[] { CreateInternalErrorNode(context, PredefinedEvaluationErrorMessages.InternalDebuggerError) };
 			}
 		}
 

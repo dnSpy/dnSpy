@@ -27,6 +27,11 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		const string SUFFIX = " <({[dnSpy]})> ";
 
 		/// <summary>
+		/// Some error
+		/// </summary>
+		public const string InternalDebuggerError = nameof(InternalDebuggerError) + SUFFIX;
+
+		/// <summary>
 		/// <see cref="DbgEvaluationOptions.NoSideEffects"/> is set but expression causes side effects
 		/// </summary>
 		public const string ExpressionCausesSideEffects = nameof(ExpressionCausesSideEffects) + SUFFIX;
