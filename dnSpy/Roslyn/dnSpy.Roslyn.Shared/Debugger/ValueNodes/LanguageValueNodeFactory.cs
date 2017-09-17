@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -43,11 +44,25 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			new DbgDotNetValueNodeImpl(this, valueNodeProviderFactory.Create(value, expression, isReadOnly, options), name, value, expression, imageName, isReadOnly, causesSideEffects, expectedType, null);
 
 		public sealed override DbgDotNetValueNode CreateException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options) {
-			throw new NotImplementedException();//TODO:
+			var output = ObjectCache.AllocDotNetTextOutput();
+			context.Language.Formatter.FormatExceptionName(context, output, id);
+			var name = ObjectCache.FreeAndToText(ref output);
+			var expression = name.ToString();
+			const bool isReadOnly = true;
+			const bool causesSideEffects = false;
+			const string imageName = PredefinedDbgValueNodeImageNames.Exception;
+			return new DbgDotNetValueNodeImpl(this, valueNodeProviderFactory.Create(value, expression, isReadOnly, options), name, value, expression, imageName, isReadOnly, causesSideEffects, value.Type, null);
 		}
 
 		public sealed override DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options) {
-			throw new NotImplementedException();//TODO:
+			var output = ObjectCache.AllocDotNetTextOutput();
+			context.Language.Formatter.FormatStowedExceptionName(context, output, id);
+			var name = ObjectCache.FreeAndToText(ref output);
+			var expression = name.ToString();
+			const bool isReadOnly = true;
+			const bool causesSideEffects = false;
+			const string imageName = PredefinedDbgValueNodeImageNames.StowedException;
+			return new DbgDotNetValueNodeImpl(this, valueNodeProviderFactory.Create(value, expression, isReadOnly, options), name, value, expression, imageName, isReadOnly, causesSideEffects, value.Type, null);
 		}
 
 		public sealed override DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method) {

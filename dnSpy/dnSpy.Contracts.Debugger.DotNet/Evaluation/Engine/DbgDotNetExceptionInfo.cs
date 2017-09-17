@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		public DbgDotNetExceptionInfoFlags Flags { get; }
 
 		/// <summary>
+		/// true if it's a stowed exception
+		/// </summary>
+		public bool IsStowedException => (Flags & DbgDotNetExceptionInfoFlags.StowedException) != 0;
+
+		/// <summary>
 		/// Gets the exception id
 		/// </summary>
 		public uint Id { get; }
@@ -38,6 +43,18 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		/// Gets the exception instance. There's no guarantee that it derives from <see cref="Exception"/>.
 		/// </summary>
 		public DbgDotNetValue Value { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="value">Exception value</param>
+		/// <param name="id">Exception id</param>
+		/// <param name="flags">Flags</param>
+		public DbgDotNetExceptionInfo(DbgDotNetValue value, uint id, DbgDotNetExceptionInfoFlags flags) {
+			Value = value ?? throw new ArgumentNullException(nameof(value));
+			Id = id;
+			Flags = flags;
+		}
 	}
 
 	/// <summary>

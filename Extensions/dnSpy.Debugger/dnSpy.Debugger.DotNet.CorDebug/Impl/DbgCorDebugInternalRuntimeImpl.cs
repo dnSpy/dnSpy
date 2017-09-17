@@ -287,7 +287,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		DbgDotNetExceptionInfo[] GetExceptionsCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
-			return Array.Empty<DbgDotNetExceptionInfo>();//TODO:
+			var dnThread = engine.GetThread(frame.Thread);
+			var corValue = dnThread.CorThread.CurrentException;
+			if (corValue == null)
+				return Array.Empty<DbgDotNetExceptionInfo>();
+			var reflectionAppDomain = frame.Thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
+			var value = engine.CreateDotNetValue_CorDebug(corValue, reflectionAppDomain, tryCreateStrongHandle: true);
+			const uint exceptionId = 0;
+			return new[] { new DbgDotNetExceptionInfo(value, exceptionId, DbgDotNetExceptionInfoFlags.None) };
 		}
 
 		public DbgDotNetReturnValueInfo[] GetReturnValues(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {

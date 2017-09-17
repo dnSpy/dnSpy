@@ -86,6 +86,7 @@
     <Compile Include="Debugger\ValueNodes\LanguageValueNodeFactory.cs" />
     <Compile Include="Debugger\ValueNodes\MemberUtils.cs" />
     <Compile Include="Debugger\ValueNodes\MemberValueNodeInfo.cs" />
+    <Compile Include="Debugger\ValueNodes\ObjectCache.cs" />
     <Compile Include="Debugger\ValueNodes\StaticMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\VisualBasic\VisualBasicValueNodeFactory.cs" />
     <Compile Include="Debugger\ValueNodes\VisualBasic\VisualBasicValueNodeProviderFactory.cs" />

@@ -30,8 +30,9 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetEngineValueNodeFactory {
 		public abstract DbgEngineValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
+		public abstract DbgEngineValueNode CreateException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options);
+		public abstract DbgEngineValueNode CreateStowedException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options);
 		public abstract DbgEngineValueNode CreateError(DbgEvaluationContext context, DbgDotNetText name, string errorMessage, string expression);
-		//TODO: Add the remaining methods, eg. CreateException() etc
 	}
 
 	sealed class DbgDotNetEngineValueNodeFactoryImpl : DbgDotNetEngineValueNodeFactory {
@@ -51,6 +52,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override DbgEngineValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType) =>
 			new DbgEngineValueNodeImpl(this, factory.Create(context, name, value, options, expression, imageName, isReadOnly, causesSideEffects, expectedType));
+
+		public override DbgEngineValueNode CreateException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options) =>
+			new DbgEngineValueNodeImpl(this, factory.CreateException(context, id, value, options));
+
+		public override DbgEngineValueNode CreateStowedException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options) =>
+			new DbgEngineValueNodeImpl(this, factory.CreateStowedException(context, id, value, options));
 
 		public override DbgEngineValueNode CreateError(DbgEvaluationContext context, DbgDotNetText name, string errorMessage, string expression) =>
 			new DbgEngineValueNodeImpl(this, factory.CreateError(context, name, errorMessage, expression));

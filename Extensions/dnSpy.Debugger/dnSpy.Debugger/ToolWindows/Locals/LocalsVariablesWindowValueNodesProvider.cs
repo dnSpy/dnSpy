@@ -100,8 +100,13 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 
 			var res = new DbgValueNodeInfo[exceptions.Length + returnValues.Length + objectIds.Length + variables.Length];
 			int ri = 0;
-			for (int i = 0; i < exceptions.Length; i++, ri++)
-				res[ri] = new DbgValueNodeInfo(exceptions[i], GetNextExceptionId(), causesSideEffects: false);
+			for (int i = 0; i < exceptions.Length; i++, ri++) {
+				ulong id = (uint)i;
+				var exception = exceptions[i];
+				if (exception.ImageName == PredefinedDbgValueNodeImageNames.StowedException)
+					id |= 1UL << 32;
+				res[ri] = new DbgValueNodeInfo(exception, GetNextExceptionId(id), causesSideEffects: false);
+			}
 			for (int i = 0; i < returnValues.Length; i++, ri++)
 				res[ri] = new DbgValueNodeInfo(returnValues[i], GetNextReturnValueId(), causesSideEffects: false);
 
@@ -166,8 +171,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			return output.ToString();
 		}
 
-		string GetNextExceptionId() => exceptionIdBase + exceptionCounter++.ToString();
-		uint exceptionCounter;
+		string GetNextExceptionId(ulong id) => exceptionIdBase + id.ToString();
 		readonly string exceptionIdBase = "eid-" + Guid.NewGuid().ToString() + "-";
 
 		string GetNextReturnValueId() => returnValueIdBase + returnValueCounter++.ToString();

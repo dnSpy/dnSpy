@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			public DbgThreadData(DnThread dnThread) => DnThread = dnThread ?? throw new ArgumentNullException(nameof(dnThread));
 		}
 
-		DnThread GetThread(DbgThread thread) =>
+		internal DnThread GetThread(DbgThread thread) =>
 			thread?.GetData<DbgThreadData>()?.DnThread ?? throw new InvalidOperationException();
 
 		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties oldProperties, bool isCreateThread, bool forceReadName) {
