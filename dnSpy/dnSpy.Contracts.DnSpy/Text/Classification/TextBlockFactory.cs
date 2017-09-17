@@ -139,7 +139,7 @@ namespace dnSpy.Contracts.Text.Classification {
 					textBlock.TextEffects = properties.TextEffects;
 				if (!properties.TypefaceEmpty && !IsSameTypeFace(defaultProperties, properties))
 					textBlock.FontFamily = properties.Typeface.FontFamily;
-				textBlock.Text = text;
+				textBlock.Text = ToString(text, filterOutNewlines);
 			}
 			else {
 				int textOffset = 0;
