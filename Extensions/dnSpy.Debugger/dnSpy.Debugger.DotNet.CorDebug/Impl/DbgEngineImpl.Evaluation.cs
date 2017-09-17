@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		sealed class EvalTimedOut { }
 
-		internal DbgDotNetValueResult Eval_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, CancellationToken cancellationToken) {
+		internal DbgDotNetValueResult? CheckFuncEval(DbgEvaluationContext context) {
 			debuggerThread.VerifyAccess();
 			if (dnDebugger.ProcessState != DebuggerProcessState.Paused)
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CanFuncEvalOnlyWhenPaused);
@@ -83,6 +83,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOutNowDisabled);
 			if (dnDebugger.IsEvaluating)
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEval);
+			return null;
+		}
+
+		internal DbgDotNetValueResult FuncEvalCall_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, bool newObj, CancellationToken cancellationToken) {
+			debuggerThread.VerifyAccess();
+			var tmp = CheckFuncEval(context);
+			if (tmp != null)
+				return tmp.Value;
+			Debug.Assert(!newObj || method.IsConstructor);
 
 			if (method.SpecialMethodKind != DmdSpecialMethodKind.Metadata) {
 				//TODO:
@@ -116,10 +125,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					if (typeArgs.Length != w)
 						throw new InvalidOperationException();
 
-					int argsCount = arguments.Length + (method.IsStatic ? 0 : 1);
+					bool hiddenThisArg = !method.IsStatic && !newObj;
+					int argsCount = arguments.Length + (hiddenThisArg ? 1 : 0);
 					var args = argsCount == 0 ? Array.Empty<CorValue>() : new CorValue[argsCount];
 					w = 0;
-					if (!method.IsStatic) {
+					if (hiddenThisArg) {
 						var val = converter.Convert(obj);
 						if (val.ErrorMessage != null)
 							return new DbgDotNetValueResult(val.ErrorMessage);
@@ -134,7 +144,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					if (args.Length != w)
 						throw new InvalidOperationException();
 
-					var res = dnEval.Call(func, typeArgs, args, out int hr);
+					var res = newObj ?
+						dnEval.CallConstructor(func, typeArgs, args, out int hr) :
+						dnEval.Call(func, typeArgs, args, out hr);
 					if (res == null)
 						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
 					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(res.Value.ResultOrException, reflectionAppDomain, tryCreateStrongHandle: true), valueIsException: res.Value.WasException);
@@ -149,6 +161,34 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			finally {
 				foreach (var arg in createdStrongHandles)
 					dnDebugger.DisposeHandle(arg);
+			}
+		}
+
+		internal DbgDotNetValueResult FuncEvalCreateInstanceNoCtor_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, DmdType typeToCreate, CancellationToken cancellationToken) {
+			debuggerThread.VerifyAccess();
+			var tmp = CheckFuncEval(context);
+			if (tmp != null)
+				return tmp.Value;
+
+			var dnThread = GetThread(thread);
+			try {
+				using (var dnEval = dnDebugger.CreateEval()) {
+					dnEval.SetThread(dnThread);
+					dnEval.SetTimeout(context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+
+					var corType = GetType(appDomain, typeToCreate);
+					var res = dnEval.CreateDontCallConstructor(corType, out int hr);
+					if (res == null)
+						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(res.Value.ResultOrException, typeToCreate.AppDomain, tryCreateStrongHandle: true), valueIsException: res.Value.WasException);
+				}
+			}
+			catch (TimeoutException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+			}
+			catch (Exception) {
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 			}
 		}
 

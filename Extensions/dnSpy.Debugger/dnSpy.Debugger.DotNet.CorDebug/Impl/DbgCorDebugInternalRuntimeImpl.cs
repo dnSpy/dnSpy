@@ -113,6 +113,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			int hr;
 			CorType corFieldDeclType;
+			var fieldDeclType = field.DeclaringType;
 			if (obj == null) {
 				if (!field.IsStatic)
 					return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
@@ -121,19 +122,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					//TODO:
 				}
 				else {
-					corFieldDeclType = GetType(appDomain, field.DeclaringType);
-					//TODO: We don't get an error when reading 'System.Reflection.ConstructorInfo.ConstructorName' even when
-					//		the cctor hasn't executed yet. It returns a null value instead of an error.
+					corFieldDeclType = GetType(appDomain, fieldDeclType);
+
+					InitializeStaticConstructor(context, frame, ilFrame, fieldDeclType, corFieldDeclType, cancellationToken);
 					var fieldValue = corFieldDeclType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out hr);
 					if (fieldValue == null) {
-						if (hr == CordbgErrors.CORDBG_E_CLASS_NOT_LOADED) {
-							//TODO:
+						if (hr == CordbgErrors.CORDBG_E_CLASS_NOT_LOADED || hr == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE) {
+							//TODO: Create a synthetic value init'd to the default value (0s or null ref)
 						}
-						else if (hr == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE) {
-							//TODO: Func-eval the cctor (if it exists), but only do it once per type
-						}
-						else
-							Debug.Fail($"Couldn't read static field {field.DeclaringType}.{field.Name}, error: 0x{hr.ToString("X8")}");
 					}
 					if (fieldValue == null)
 						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
@@ -145,7 +141,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 
 				var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
-				corFieldDeclType = GetType(appDomain, field.DeclaringType);
+				corFieldDeclType = GetType(appDomain, fieldDeclType);
 				var objValue = GetObjectOrPrimitiveValue(objImp.Value);
 				if (objValue.IsObject) {
 					var fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr);
@@ -161,6 +157,62 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 
 			return new DbgDotNetValueResult("NYI");//TODO:
+		}
+
+		sealed class StaticConstructorInitializedState {
+			public volatile int Initialized;
+		}
+
+		void InitializeStaticConstructor(DbgEvaluationContext context, DbgStackFrame frame, ILDbgEngineStackFrame ilFrame, DmdType type, CorType corType, CancellationToken cancellationToken) {
+			if (engine.CheckFuncEval(context) != null)
+				return;
+			var state = type.GetOrCreateData<StaticConstructorInitializedState>();
+			if (state.Initialized > 0 || Interlocked.Increment(ref state.Initialized) != 1)
+				return; 
+			var cctor = type.TypeInitializer;
+			if ((object)cctor == null)
+				return;
+			foreach (var field in type.DeclaredFields) {
+				if (!field.IsStatic || field.IsLiteral)
+					continue;
+
+				var fieldValue = corType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out int hr);
+				if (hr == CordbgErrors.CORDBG_E_CLASS_NOT_LOADED || hr == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE)
+					break;
+				if (fieldValue != null) {
+					if (fieldValue.IsNull)
+						continue;
+					if (field.FieldType.IsValueType) {
+						var objValue = fieldValue.DereferencedValue?.BoxedValue;
+						var data = objValue?.ReadGenericValue();
+						if (data != null && !IsZero(data))
+							return;
+					}
+					else {
+						// It's a reference type and not null, so the field has been initialized
+						return;
+					}
+				}
+			}
+
+			var reflectionAppDomain = type.AppDomain;
+			var methodDbgModule = cctor.Module.GetDebuggerModule() ?? throw new InvalidOperationException();
+			if (!engine.TryGetDnModule(methodDbgModule, out var methodModule))
+				return;
+			var func = methodModule.CorModule.GetFunctionFromToken((uint)cctor.MetadataToken) ?? throw new InvalidOperationException();
+			if (func.NativeCode != null)
+				return;
+
+			//TODO: It's better to call System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor()
+			engine.FuncEvalCreateInstanceNoCtor_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), type, cancellationToken);
+		}
+
+		static bool IsZero(byte[] a) {
+			for (int i = 0; i < a.Length; i++) {
+				if (a[i] != 0)
+					return false;
+			}
+			return true;
 		}
 
 		static bool IsPrimitiveValueType(CorElementType etype) {
@@ -207,7 +259,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			Dispatcher.VerifyAccess();
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
-			return engine.Eval_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), method, obj, arguments, cancellationToken);
+			return engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), method, obj, arguments, newObj: false, cancellationToken: cancellationToken);
 		}
 
 		public DbgDotNetAliasInfo[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
