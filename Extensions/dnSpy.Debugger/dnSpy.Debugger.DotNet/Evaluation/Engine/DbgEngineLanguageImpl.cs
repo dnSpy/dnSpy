@@ -115,8 +115,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken) {
 			Debug.Assert(context.Runtime.GetDotNetRuntime() != null);
 			var loc = location as IDbgDotNetCodeLocation;
-			if (loc == null)
-				throw new ArgumentException(nameof(location) + " must implement " + nameof(IDbgDotNetCodeLocation));
+			if (loc == null) {
+				// Could be a special frame, eg. managed to native frame
+				return;
+			}
 
 			var state = StateWithKey<RuntimeState>.GetOrCreate(context.Runtime, decompiler);
 			var debugInfo = GetOrCreateDebugInfo(state, loc, cancellationToken);

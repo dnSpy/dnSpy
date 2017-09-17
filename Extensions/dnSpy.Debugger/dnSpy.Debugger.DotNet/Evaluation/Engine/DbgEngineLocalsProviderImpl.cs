@@ -123,8 +123,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			DbgEngineLocalsValueNodeInfo[] valueNodes = null;
 			try {
 				var references = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
+				if (references.Length == 0)
+					return Array.Empty<DbgEngineLocalsValueNodeInfo>();
 
-				var languageDebugInfo = context.GetLanguageDebugInfo();
+				var languageDebugInfo = context.TryGetLanguageDebugInfo();
+				if (languageDebugInfo == null)
+					return Array.Empty<DbgEngineLocalsValueNodeInfo>();
 				var methodDebugInfo = languageDebugInfo.MethodDebugInfo;
 				var module = frame.Module ?? throw new InvalidOperationException();
 

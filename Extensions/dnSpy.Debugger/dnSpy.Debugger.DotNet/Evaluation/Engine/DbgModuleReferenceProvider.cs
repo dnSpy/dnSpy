@@ -30,6 +30,12 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgModuleReferenceProvider {
+		/// <summary>
+		/// Gets the module references or an empty array if <paramref name="frame"/> is an unsupported frame with no .NET module
+		/// </summary>
+		/// <param name="runtime">Runtime</param>
+		/// <param name="frame">Frame</param>
+		/// <returns></returns>
 		public abstract DbgModuleReference[] GetModuleReferences(DbgRuntime runtime, DbgStackFrame frame);
 	}
 
@@ -136,7 +142,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			var reflectionModule = frame.Module?.GetReflectionModule();
 			if (reflectionModule == null)
-				throw new InvalidOperationException("There's no .NET module");
+				return Array.Empty<DbgModuleReference>();
 
 			if (reflectionModule.TryGetData(out ModuleReferencesState state)) {
 				if (CanReuse(reflectionModule.AppDomain, state))
