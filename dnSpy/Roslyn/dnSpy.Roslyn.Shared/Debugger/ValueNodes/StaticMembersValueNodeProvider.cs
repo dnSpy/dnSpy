@@ -75,7 +75,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 						imageName = ImageNameUtils.GetImageName(property);
 						if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0) {
 							isReadOnly = true;
-							valueResult = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FunctionEvaluationDisabled);
+							valueResult = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
 						}
 						else {
 							var getter = property.GetGetMethod(DmdGetAccessorOptions.All) ?? throw new InvalidOperationException();
@@ -91,6 +91,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					DbgDotNetValueNode newNode;
 					if (valueResult.HasError)
 						newNode = valueNodeFactory.CreateError(context, info.Name, valueResult.ErrorMessage, expression);
+					else if (valueResult.ValueIsException)
+						newNode = valueNodeFactory.Create(context, info.Name, valueResult.Value, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType);
 					else
 						newNode = valueNodeFactory.Create(context, info.Name, valueResult.Value, options, expression, imageName, isReadOnly, false, expectedType);
 

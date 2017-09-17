@@ -39,13 +39,32 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
 
-		readonly DbgEngineImpl engine;
-		readonly CorFrame corFrame;
+		internal CorFrame CorFrame {
+			get {
+				if (__corFrame_DONT_USE.IsNeutered)
+					__corFrame_DONT_USE = FindFrame(__corFrame_DONT_USE) ?? __corFrame_DONT_USE;
+				return __corFrame_DONT_USE;
+			}
+		}
+		CorFrame __corFrame_DONT_USE;
 
-		public ILDbgEngineStackFrame(DbgEngineImpl engine, DbgModule module, CorFrame corFrame, CorFunction corFunction, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
+		CorFrame FindFrame(CorFrame frame) {
+			foreach (var f in dnThread.AllFrames) {
+				if (f.StackStart == frame.StackStart && f.StackEnd == frame.StackEnd)
+					return f;
+			}
+			return null;
+		}
+
+		readonly DbgEngineImpl engine;
+		readonly DnThread dnThread;
+
+		public ILDbgEngineStackFrame(DbgEngineImpl engine, DbgModule module, CorFrame corFrame, DnThread dnThread, CorFunction corFunction, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
+			Debug.Assert(!corFrame.IsNeutered);
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			Module = module ?? throw new ArgumentNullException(nameof(module));
-			this.corFrame = corFrame ?? throw new ArgumentNullException(nameof(corFrame));
+			__corFrame_DONT_USE = corFrame ?? throw new ArgumentNullException(nameof(corFrame));
+			this.dnThread = dnThread ?? throw new ArgumentNullException(nameof(dnThread));
 
 			FunctionToken = corFunction?.Token ?? throw new ArgumentNullException(nameof(corFunction));
 
@@ -107,7 +126,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 				var flags = GetFlags(options);
 				Func<DnEval> getEval = null;
 				Debug.Assert((options & DbgStackFrameFormatOptions.ShowParameterValues) == 0, "NYI");
-				new TypeFormatter(output, flags, getEval).Write(corFrame);
+				new TypeFormatter(output, flags, getEval).Write(CorFrame);
 			}
 			finally {
 				output.Clear();
@@ -144,18 +163,20 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			return false;
 		}
 
+		internal DmdModule GetReflectionModule() => Module.GetReflectionModule() ?? throw new InvalidOperationException();
+		internal CorAppDomain GetCorAppDomain() => dnThread.AppDomainOrNull?.CorAppDomain ?? throw new InvalidOperationException();
+
 		internal void GetFrameMethodInfo(out DmdModule module, out int methodMetadataToken, out IList<DmdType> genericTypeArguments, out IList<DmdType> genericMethodArguments) {
 			engine.VerifyCorDebugThread();
+			var corFrame = CorFrame;
 			methodMetadataToken = (int)corFrame.Token;
-			module = engine.TryGetModule(corFrame.Function?.Module)?.GetReflectionModule();
+			module = engine.TryGetModule(corFrame.Function?.Module)?.GetReflectionModule() ?? throw new InvalidOperationException();
 			if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
 				throw new InvalidOperationException();
 			var reflectionAppDomain = module.AppDomain;
 			genericTypeArguments = Convert(reflectionAppDomain, typeGenArgs);
 			genericMethodArguments = Convert(reflectionAppDomain, methGenArgs);
 		}
-
-		internal CorAppDomain GetAppDomain() => corFrame.Function?.Module?.Assembly?.AppDomain;
 
 		IList<DmdType> Convert(DmdAppDomain reflectionAppDomain, CorType[] typeArgs) {
 			if (typeArgs.Length == 0)

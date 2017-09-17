@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dndbg.Engine;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.Properties;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
@@ -26,7 +28,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public static string GetErrorMessage(int hr) {
 			if (hr >= 0)
 				return dnSpy_Debugger_DotNet_CorDebug_Resources.InternalDebuggerError;
-			//TODO: If hr is a known error, return a more friendly error message
+
+			if (CordbgErrors.IsCantEvaluateError(hr))
+				return PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint;
+
 			return dnSpy_Debugger_DotNet_CorDebug_Resources.InternalDebuggerError + " (0x" + hr.ToString("X8") + ")";
 		}
 	}

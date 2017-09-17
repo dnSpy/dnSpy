@@ -30,6 +30,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		readonly CorAppDomain appDomain;
 		int recursionCounter;
 
+		public static CorType GetType(DbgEngineImpl engine, CorAppDomain appDomain, DmdType type) {
+			if (type.TryGetData(out CorType corType))
+				return corType;
+			return GetTypeCore(engine, appDomain, type);
+
+			CorType GetTypeCore(DbgEngineImpl engine2, CorAppDomain appDomain2, DmdType type2) => type2.GetOrCreateData(() => new CorDebugTypeCreator(engine2, appDomain2).Create(type2));
+		}
+
 		public CorDebugTypeCreator(DbgEngineImpl engine, CorAppDomain appDomain) {
 			this.engine = engine;
 			this.appDomain = appDomain;

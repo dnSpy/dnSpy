@@ -18,10 +18,15 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
@@ -62,6 +67,95 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal void DisposeHandle_CorDebug(CorValue value) {
 			Debug.Assert(debuggerThread.CheckAccess());
 			dnDebugger.DisposeHandle(value);
+		}
+
+		CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(this, appDomain, type);
+
+		sealed class EvalTimedOut { }
+
+		internal DbgDotNetValueResult Eval_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, CancellationToken cancellationToken) {
+			debuggerThread.VerifyAccess();
+			if (dnDebugger.ProcessState != DebuggerProcessState.Paused)
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CanFuncEvalOnlyWhenPaused);
+			if (isUnhandledException)
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvalWhenUnhandledExceptionHasOccurred);
+			if (context.Session.HasData<EvalTimedOut>())
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOutNowDisabled);
+			if (dnDebugger.IsEvaluating)
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEval);
+
+			if (method.SpecialMethodKind != DmdSpecialMethodKind.Metadata) {
+				//TODO:
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			}
+
+			var reflectionAppDomain = thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
+			var methodDbgModule = method.Module.GetDebuggerModule() ?? throw new InvalidOperationException();
+			if (!TryGetDnModule(methodDbgModule, out var methodModule))
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			var func = methodModule.CorModule.GetFunctionFromToken((uint)method.MetadataToken) ?? throw new InvalidOperationException();
+
+			var dnThread = GetThread(thread);
+			var createdStrongHandles = new List<CorValue>();
+			try {
+				using (var dnEval = dnDebugger.CreateEval()) {
+					dnEval.SetThread(dnThread);
+					dnEval.SetTimeout(context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+
+					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdStrongHandles);
+
+					var genTypeArgs = method.ReflectedType.GetGenericArguments();
+					var methTypeArgs = method.GetGenericArguments();
+					var typeArgs = genTypeArgs.Count == 0 && methTypeArgs.Count == 0 ? Array.Empty<CorType>() : new CorType[genTypeArgs.Count + methTypeArgs.Count];
+					int w = 0;
+					for (int i = 0; i < genTypeArgs.Count; i++)
+						typeArgs[w++] = GetType(appDomain, genTypeArgs[i]);
+					for (int i = 0; i < methTypeArgs.Count; i++)
+						typeArgs[w++] = GetType(appDomain, methTypeArgs[i]);
+					if (typeArgs.Length != w)
+						throw new InvalidOperationException();
+
+					int argsCount = arguments.Length + (method.IsStatic ? 0 : 1);
+					var args = argsCount == 0 ? Array.Empty<CorValue>() : new CorValue[argsCount];
+					w = 0;
+					if (!method.IsStatic) {
+						var val = converter.Convert(obj);
+						if (val.ErrorMessage != null)
+							return new DbgDotNetValueResult(val.ErrorMessage);
+						args[w++] = val.CorValue;
+					}
+					for (int i = 0; i < arguments.Length; i++) {
+						var val = converter.Convert(arguments[i]);
+						if (val.ErrorMessage != null)
+							return new DbgDotNetValueResult(val.ErrorMessage);
+						args[w++] = val.CorValue;
+					}
+					if (args.Length != w)
+						throw new InvalidOperationException();
+
+					var res = dnEval.Call(func, typeArgs, args, out int hr);
+					if (res == null)
+						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(res.Value.ResultOrException, reflectionAppDomain, tryCreateStrongHandle: true), valueIsException: res.Value.WasException);
+				}
+			}
+			catch (TimeoutException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+			}
+			catch (Exception) {
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			}
+			finally {
+				foreach (var arg in createdStrongHandles)
+					dnDebugger.DisposeHandle(arg);
+			}
+		}
+
+		void DnEval_EvalEvent(DnEval dnEval, DbgEvaluationContext context) {
+			if (dnEval.EvalTimedOut)
+				context.Session.GetOrCreateData<EvalTimedOut>();
+			dnDebugger.SignalEvalComplete();
 		}
 	}
 }

@@ -125,7 +125,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			MemberValueNodeInfoEqualityComparer() { }
 
 			public int Compare(MemberValueNodeInfo x, MemberValueNodeInfo y) {
-				int c = StringComparer.OrdinalIgnoreCase.Compare(x.Member.Name, y.Member.Name);
+				int c = StringComparer.Ordinal.Compare(x.Member.Name, y.Member.Name);
 				if (c != 0)
 					return c;
 

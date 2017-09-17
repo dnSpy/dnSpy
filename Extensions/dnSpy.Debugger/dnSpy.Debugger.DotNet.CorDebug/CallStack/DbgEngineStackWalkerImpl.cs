@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 				var module = engine.TryGetModule(func.Module);
 				if (module == null)
 					return CreateErrorStackFrame();
-				return new ILDbgEngineStackFrame(engine, module, corFrame, func, dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory);
+				return new ILDbgEngineStackFrame(engine, module, corFrame, dnThread, func, dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory);
 			}
 
 			if (corFrame.IsInternalFrame)

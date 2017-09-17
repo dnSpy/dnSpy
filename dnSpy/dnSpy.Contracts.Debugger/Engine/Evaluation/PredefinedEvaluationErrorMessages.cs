@@ -35,7 +35,37 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <see cref="DbgValueNodeEvaluationOptions.NoFuncEval"/> or <see cref="DbgEvaluationOptions.NoFuncEval"/>
 		/// is set but code must call a method
 		/// </summary>
-		public const string FunctionEvaluationDisabled = nameof(FunctionEvaluationDisabled) + SUFFIX;
+		public const string FuncEvalDisabled = nameof(FuncEvalDisabled) + SUFFIX;
+
+		/// <summary>
+		/// Function evaluation timed out
+		/// </summary>
+		public const string FuncEvalTimedOut = nameof(FuncEvalTimedOut) + SUFFIX;
+
+		/// <summary>
+		/// Function evaluation timed out previously and is disabled until the user continues the debugged program
+		/// </summary>
+		public const string FuncEvalTimedOutNowDisabled = nameof(FuncEvalTimedOutNowDisabled) + SUFFIX;
+
+		/// <summary>
+		/// The debugged program isn't paused so it's not possible to func-eval
+		/// </summary>
+		public const string CanFuncEvalOnlyWhenPaused = nameof(CanFuncEvalOnlyWhenPaused) + SUFFIX;
+
+		/// <summary>
+		/// It's not possible to func-eval when an unhandled exception has occurred
+		/// </summary>
+		public const string CantFuncEvalWhenUnhandledExceptionHasOccurred = nameof(CantFuncEvalWhenUnhandledExceptionHasOccurred) + SUFFIX;
+
+		/// <summary>
+		/// It's not possible to func-eval, eg. because we're already func-eval'ing
+		/// </summary>
+		public const string CantFuncEval = nameof(CantFuncEval) + SUFFIX;
+
+		/// <summary>
+		/// It's not possible to func-eval because the thread isn't at a safe point where a GC can occur
+		/// </summary>
+		public const string CantFuncEvaluateWhenThreadIsAtUnsafePoint = nameof(CantFuncEvaluateWhenThreadIsAtUnsafePoint) + SUFFIX;
 
 		// If more errors are added, also update the code in PredefinedEvaluationErrorMessagesHelper
 	}

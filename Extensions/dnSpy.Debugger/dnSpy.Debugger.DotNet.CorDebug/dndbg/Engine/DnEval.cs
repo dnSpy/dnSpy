@@ -67,8 +67,8 @@ namespace dndbg.Engine {
 		CorEval eval;
 		DateTime? startTime;
 		DateTime endTime;
+		TimeSpan initialTimeOut;
 
-		const int TIMEOUT_MS = 1000;
 		const int ABORT_TIMEOUT_MS = 3000;
 		const int RUDE_ABORT_TIMEOUT_MS = 1000;
 
@@ -81,10 +81,13 @@ namespace dndbg.Engine {
 			this.debugMessageDispatcher = debugMessageDispatcher;
 			SuspendOtherThreads = true;
 			useTotalTimeout = true;
+			initialTimeOut = TimeSpan.FromMilliseconds(1000);
 		}
 
 		public void SetNoTotalTimeout() => useTotalTimeout = false;
 		bool useTotalTimeout;
+
+		public void SetTimeout(TimeSpan timeout) => initialTimeOut = timeout;
 
 		public void SetThread(DnThread thread) => SetThread(thread.CorThread);
 
@@ -192,7 +195,7 @@ namespace dndbg.Engine {
 				return;
 
 			startTime = DateTime.UtcNow;
-			endTime = startTime.Value.AddMilliseconds(TIMEOUT_MS);
+			endTime = startTime.Value + initialTimeOut;
 		}
 
 		struct ThreadInfo {
@@ -258,7 +261,7 @@ namespace dndbg.Engine {
 				now = endTime;
 			var timeLeft = endTime - now;
 			if (!useTotalTimeout)
-				timeLeft = TimeSpan.FromMilliseconds(TIMEOUT_MS);
+				timeLeft = initialTimeOut;
 
 			var infos = new ThreadInfos(thread, SuspendOtherThreads);
 			object dispResult;

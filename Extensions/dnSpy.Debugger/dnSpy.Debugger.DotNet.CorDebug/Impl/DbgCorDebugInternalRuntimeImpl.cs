@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
@@ -86,13 +87,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return state.Method;
 		}
 
-		CorType GetType(CorAppDomain appDomain, DmdType type) {
-			if (type.TryGetData(out CorType corType))
-				return corType;
-			return GetTypeCore(appDomain, type);
-
-			CorType GetTypeCore(CorAppDomain appDomain2, DmdType type2) => type2.GetOrCreateData(() => new CorDebugTypeCreator(engine, appDomain2).Create(type2));
-		}
+		CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(engine, appDomain, type);
 
 		static CorValue GetObjectOrPrimitiveValue(CorValue value) {
 			if (value.IsReference) {
@@ -114,7 +109,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		DbgDotNetValueResult LoadFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
-			var appDomain = ilFrame.GetAppDomain();
+			var appDomain = ilFrame.GetCorAppDomain();
 
 			int hr;
 			CorType corFieldDeclType;
@@ -127,6 +122,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				}
 				else {
 					corFieldDeclType = GetType(appDomain, field.DeclaringType);
+					//TODO: We don't get an error when reading 'System.Reflection.ConstructorInfo.ConstructorName' even when
+					//		the cctor hasn't executed yet. It returns a null value instead of an error.
 					var fieldValue = corFieldDeclType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out hr);
 					if (fieldValue == null) {
 						if (hr == CordbgErrors.CORDBG_E_CLASS_NOT_LOADED) {
@@ -135,10 +132,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						else if (hr == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE) {
 							//TODO: Func-eval the cctor (if it exists), but only do it once per type
 						}
+						else
+							Debug.Fail($"Couldn't read static field {field.DeclaringType}.{field.Name}, error: 0x{hr.ToString("X8")}");
 					}
 					if (fieldValue == null)
 						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
-					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, frame.Thread.AppDomain.GetReflectionAppDomain(), tryCreateStrongHandle: true));
+					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, frame.Thread.AppDomain.GetReflectionAppDomain(), tryCreateStrongHandle: true), valueIsException: false);
 				}
 			}
 			else {
@@ -152,7 +151,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr);
 					if (fieldValue == null)
 						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
-					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, frame.Thread.AppDomain.GetReflectionAppDomain(), tryCreateStrongHandle: true));
+					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, frame.Thread.AppDomain.GetReflectionAppDomain(), tryCreateStrongHandle: true), valueIsException: false);
 				}
 				else {
 					if (IsPrimitiveValueType(objValue.ElementType)) {
@@ -206,7 +205,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		DbgDotNetValueResult CallCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
-			return new DbgDotNetValueResult("NYI");//TODO:
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			return engine.Eval_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), method, obj, arguments, cancellationToken);
 		}
 
 		public DbgDotNetAliasInfo[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
@@ -243,9 +244,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		DbgDotNetValueResult CreateValue(CorValue value, ILDbgEngineStackFrame ilFrame) {
-			var reflectionAppDomain = ilFrame.GetReflectionModule()?.AppDomain ?? throw new InvalidOperationException();
+			var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
 			var dnValue = engine.CreateDotNetValue_CorDebug(value, reflectionAppDomain, tryCreateStrongHandle: true);
-			return new DbgDotNetValueResult(dnValue);
+			return new DbgDotNetValueResult(dnValue, valueIsException: false);
 		}
 
 		public DbgDotNetValueResult GetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {

@@ -104,6 +104,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal DmdDispatcherImpl DmdDispatcher { get; }
 		internal DbgRawMetadataService RawMetadataService { get; }
 		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
+		bool isUnhandledException;
 
 		protected DbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, DbgStartKind startKind) {
 			if (deps == null)
@@ -165,22 +166,33 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				DbgExceptionEventFlags exFlags;
 				if (e2.EventType == CorDebugExceptionCallbackType.DEBUG_EXCEPTION_FIRST_CHANCE)
 					exFlags = DbgExceptionEventFlags.FirstChance;
-				else if (e2.EventType == CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED)
+				else if (e2.EventType == CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED) {
 					exFlags = DbgExceptionEventFlags.SecondChance | DbgExceptionEventFlags.Unhandled;
+					isUnhandledException = true;
+				}
 				else
 					break;
+
+				// Ignore exceptions when evaluating except if it's an unhandled exception, those must always be reported
+				if (dbg.IsEvaluating && e2.EventType != CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED)
+					break;
+
 				var exObj = e2.CorThread?.CurrentException;
 				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread), pause: false);
 				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
 			case DebugCallbackKind.MDANotification:
+				if (dbg.IsEvaluating)
+					break;
 				var mdan = (MDANotificationDebugCallbackEventArgs)e;
 				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread), pause: false);
 				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
 			case DebugCallbackKind.LogMessage:
+				if (dbg.IsEvaluating)
+					break;
 				var lmsgArgs = (LogMessageDebugCallbackEventArgs)e;
 				var msg = lmsgArgs.Message;
 				if (msg != null) {

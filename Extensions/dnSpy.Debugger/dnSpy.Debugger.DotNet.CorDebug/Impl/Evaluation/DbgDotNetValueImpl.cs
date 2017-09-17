@@ -42,6 +42,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			HasFreedHandle		= 0x80,
 		}
 
+		internal CorValue Value => value;
+
 		readonly DbgEngineImpl engine;
 		readonly CorValue value;
 		readonly DmdType type;

@@ -29,10 +29,16 @@ namespace dnSpy.Debugger.Evaluation {
 	static class PredefinedEvaluationErrorMessagesHelper {
 		static readonly Dictionary<string, string> toErrorMessage;
 		static PredefinedEvaluationErrorMessagesHelper() {
-			const int TOTAL_COUNT = 2;
+			const int TOTAL_COUNT = 8;
 			toErrorMessage = new Dictionary<string, string>(TOTAL_COUNT, StringComparer.Ordinal) {
 				{ PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, dnSpy_Debugger_Resources.ExpressionCausesSideEffectsNoEval },
-				{ PredefinedEvaluationErrorMessages.FunctionEvaluationDisabled, dnSpy_Debugger_Resources.FunctionEvaluationDisabled },
+				{ PredefinedEvaluationErrorMessages.FuncEvalDisabled, dnSpy_Debugger_Resources.FunctionEvaluationDisabled },
+				{ PredefinedEvaluationErrorMessages.FuncEvalTimedOut, dnSpy_Debugger_Resources.Locals_Error_EvaluationTimedOut },
+				{ PredefinedEvaluationErrorMessages.FuncEvalTimedOutNowDisabled, dnSpy_Debugger_Resources.Locals_Error_EvalTimedOutIsDisabled },
+				{ PredefinedEvaluationErrorMessages.CanFuncEvalOnlyWhenPaused, dnSpy_Debugger_Resources.Error_CantEvalUnlessDebuggerStopped },
+				{ PredefinedEvaluationErrorMessages.CantFuncEvalWhenUnhandledExceptionHasOccurred, dnSpy_Debugger_Resources.Error_CantEvalWhenUnhandledExceptionHasOccurred },
+				{ PredefinedEvaluationErrorMessages.CantFuncEval, dnSpy_Debugger_Resources.Locals_Error_EvalDisabledCantCallPropsAndMethods },
+				{ PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint, dnSpy_Debugger_Resources.Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint },
 			};
 			Debug.Assert(toErrorMessage.Count == TOTAL_COUNT);
 		}

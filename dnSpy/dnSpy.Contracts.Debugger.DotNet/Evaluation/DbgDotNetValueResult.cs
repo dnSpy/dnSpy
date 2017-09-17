@@ -25,9 +25,15 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// </summary>
 	public struct DbgDotNetValueResult {
 		/// <summary>
-		/// Gets the value or null if there was an error (<see cref="ErrorMessage"/>)
+		/// Gets the value or null if there was an error (<see cref="ErrorMessage"/>). If <see cref="ValueIsException"/>
+		/// is true, this is the thrown exception value.
 		/// </summary>
 		public DbgDotNetValue Value { get; }
+
+		/// <summary>
+		/// true if <see cref="Value"/> contains the thrown exception instead of the expected return value / field value
+		/// </summary>
+		public bool ValueIsException { get; }
 
 		/// <summary>
 		/// Gets the error message or null if there was no error
@@ -43,8 +49,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Constructor
 		/// </summary>
 		/// <param name="value">Value</param>
-		public DbgDotNetValueResult(DbgDotNetValue value) {
+		/// <param name="valueIsException">true if <paramref name="value"/> contains the thrown exception instead of the expected return value / field value</param>
+		public DbgDotNetValueResult(DbgDotNetValue value, bool valueIsException) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
+			ValueIsException = valueIsException;
 			ErrorMessage = null;
 		}
 
@@ -54,6 +62,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="errorMessage">Error message</param>
 		public DbgDotNetValueResult(string errorMessage) {
 			Value = null;
+			ValueIsException = false;
 			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 		}
 	}
