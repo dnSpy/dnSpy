@@ -45,6 +45,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValueNodeProvider AutosProvider { get; }
 		public override DbgEngineValueNodeProvider ExceptionsProvider { get; }
 		public override DbgEngineValueNodeProvider ReturnValuesProvider { get; }
+		public override DbgEngineValueNodeProvider TypeVariablesProvider { get; }
 		public override DbgEngineValueNodeFactory ValueNodeFactory { get; }
 
 		readonly DbgMetadataService dbgMetadataService;
@@ -69,6 +70,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			AutosProvider = new DbgEngineAutosProviderImpl();
 			ExceptionsProvider = new DbgEngineExceptionsProviderImpl(valueNodeFactory);
 			ReturnValuesProvider = new DbgEngineReturnValuesProviderImpl();
+			TypeVariablesProvider = new DbgEngineTypeVariablesProviderImpl(valueNodeFactory);
 			ValueNodeFactory = new DbgEngineValueNodeFactoryImpl();
 		}
 

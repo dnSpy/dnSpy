@@ -168,6 +168,9 @@
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
     <value>Locals and parameters</value>
   </data>
+  <data name="LocalsWindow_TypeVariables" xml:space="preserve">
+    <value>Type variables</value>
+  </data>
   <data name="MethodsToolTip" xml:space="preserve">
     <value>Methods</value>
   </data>

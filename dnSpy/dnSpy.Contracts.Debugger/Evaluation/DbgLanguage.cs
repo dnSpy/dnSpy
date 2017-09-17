@@ -78,6 +78,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgValueNodeProvider ReturnValuesProvider { get; }
 
 		/// <summary>
+		/// Gets the type variables provider
+		/// </summary>
+		public abstract DbgValueNodeProvider TypeVariablesProvider { get; }
+
+		/// <summary>
 		/// Gets the <see cref="DbgValueNode"/> factory
 		/// </summary>
 		public abstract DbgValueNodeFactory ValueNodeFactory { get; }

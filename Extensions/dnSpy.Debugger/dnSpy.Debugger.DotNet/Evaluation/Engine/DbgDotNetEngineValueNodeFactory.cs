@@ -32,7 +32,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public abstract DbgEngineValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
 		public abstract DbgEngineValueNode CreateException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options);
 		public abstract DbgEngineValueNode CreateStowedException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options);
+		public abstract DbgEngineValueNode CreateReturnValue(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method);
 		public abstract DbgEngineValueNode CreateError(DbgEvaluationContext context, DbgDotNetText name, string errorMessage, string expression);
+		public abstract DbgEngineValueNode CreateTypeVariables(DbgEvaluationContext context, DbgDotNetTypeVariableInfo[] typeVariableInfos);
 	}
 
 	sealed class DbgDotNetEngineValueNodeFactoryImpl : DbgDotNetEngineValueNodeFactory {
@@ -59,7 +61,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValueNode CreateStowedException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options) =>
 			new DbgEngineValueNodeImpl(this, factory.CreateStowedException(context, id, value, options));
 
+		public override DbgEngineValueNode CreateReturnValue(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method) =>
+			new DbgEngineValueNodeImpl(this, factory.CreateReturnValue(context, id, value, options, method));
+
 		public override DbgEngineValueNode CreateError(DbgEvaluationContext context, DbgDotNetText name, string errorMessage, string expression) =>
 			new DbgEngineValueNodeImpl(this, factory.CreateError(context, name, errorMessage, expression));
+
+		public override DbgEngineValueNode CreateTypeVariables(DbgEvaluationContext context, DbgDotNetTypeVariableInfo[] typeVariableInfos) =>
+			new DbgEngineValueNodeImpl(this, factory.CreateTypeVariables(context, typeVariableInfos));
 	}
 }

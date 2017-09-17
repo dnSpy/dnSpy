@@ -214,6 +214,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Type variables.
+        /// </summary>
+        internal static string LocalsWindow_TypeVariables {
+            get {
+                return ResourceManager.GetString("LocalsWindow_TypeVariables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Methods.
         /// </summary>
         internal static string MethodsToolTip {

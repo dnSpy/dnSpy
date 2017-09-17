@@ -94,11 +94,15 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			var exceptions = language.ExceptionsProvider.GetNodes(context, frame, nodeEvalOptions, cancellationToken);
 			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame, nodeEvalOptions, cancellationToken);
 			var variables = language.LocalsProvider.GetNodes(context, frame, nodeEvalOptions, GetLocalsValueNodeOptions(), cancellationToken);
+			var typeVariables = language.TypeVariablesProvider.GetNodes(context, frame, nodeEvalOptions, cancellationToken);
 
 			var objectIds = dbgObjectIdService.GetObjectIds(frame.Runtime);
 			Array.Sort(objectIds, DbgObjectIdComparer.Instance);
 
-			var res = new DbgValueNodeInfo[exceptions.Length + returnValues.Length + objectIds.Length + variables.Length];
+			int count = exceptions.Length + returnValues.Length + objectIds.Length + variables.Length + typeVariables.Length;
+			if (count == 0)
+				return Array.Empty<DbgValueNodeInfo>();
+			var res = new DbgValueNodeInfo[count];
 			int ri = 0;
 			for (int i = 0; i < exceptions.Length; i++, ri++) {
 				ulong id = (uint)i;
@@ -121,6 +125,11 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			for (int i = 0; i < variables.Length; i++, ri++)
 				res[ri] = new DbgValueNodeInfo(variables[i].ValueNode, causesSideEffects: false);
 
+			for (int i = 0; i < typeVariables.Length; i++, ri++)
+				res[ri] = new DbgValueNodeInfo(typeVariables[i], GetNextTypeVariableId((uint)i), causesSideEffects: false);
+
+			if (res.Length != ri)
+				throw new InvalidOperationException();
 			return res;
 		}
 
@@ -173,6 +182,9 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 
 		string GetNextExceptionId(ulong id) => exceptionIdBase + id.ToString();
 		readonly string exceptionIdBase = "eid-" + Guid.NewGuid().ToString() + "-";
+
+		string GetNextTypeVariableId(uint id) => typeVariablesIdBase + id.ToString();
+		readonly string typeVariablesIdBase = "eid-" + Guid.NewGuid().ToString() + "-";
 
 		string GetNextReturnValueId() => returnValueIdBase + returnValueCounter++.ToString();
 		uint returnValueCounter;

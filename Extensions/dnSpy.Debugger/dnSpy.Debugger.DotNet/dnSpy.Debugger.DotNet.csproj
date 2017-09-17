@@ -77,6 +77,7 @@
     <Compile Include="Evaluation\Engine\DbgEngineLocalsProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineObjectIdFactoryImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineReturnValuesProviderImpl.cs" />
+    <Compile Include="Evaluation\Engine\DbgEngineTypeVariablesProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineValueFormatterImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineValueImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineValueNodeFactoryImpl.cs" />

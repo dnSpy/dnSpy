@@ -89,10 +89,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// Creates type variables value node
 		/// </summary>
 		/// <param name="context">Context</param>
-		/// <param name="name">Name</param>
 		/// <param name="typeVariableInfos">Type variables</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateTypeVariables(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetTypeVariableInfo[] typeVariableInfos);
+		public abstract DbgDotNetValueNode CreateTypeVariables(DbgEvaluationContext context, DbgDotNetTypeVariableInfo[] typeVariableInfos);
 	}
 
 	/// <summary>Metadata</summary>
@@ -143,5 +142,15 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// Gets the generic argument type
 		/// </summary>
 		public DmdType GenericArgumentType { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="genericParameterType">Generic parameter type</param>
+		/// <param name="genericArgumentType">Generic argument type</param>
+		public DbgDotNetTypeVariableInfo(DmdType genericParameterType, DmdType genericArgumentType) {
+			GenericParameterType = genericParameterType ?? throw new ArgumentNullException(nameof(genericParameterType));
+			GenericArgumentType = genericArgumentType ?? throw new ArgumentNullException(nameof(genericArgumentType));
+		}
 	}
 }

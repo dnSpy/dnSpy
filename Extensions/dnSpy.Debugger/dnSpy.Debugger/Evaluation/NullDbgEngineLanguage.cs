@@ -40,6 +40,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override DbgEngineValueNodeProvider AutosProvider { get; }
 		public override DbgEngineValueNodeProvider ExceptionsProvider { get; }
 		public override DbgEngineValueNodeProvider ReturnValuesProvider { get; }
+		public override DbgEngineValueNodeProvider TypeVariablesProvider { get; }
 		public override DbgEngineValueNodeFactory ValueNodeFactory { get; }
 
 		NullDbgEngineLanguage() {
@@ -50,6 +51,7 @@ namespace dnSpy.Debugger.Evaluation {
 			AutosProvider = new NullDbgEngineValueNodeProvider();
 			ExceptionsProvider = new NullDbgEngineValueNodeProvider();
 			ReturnValuesProvider = new NullDbgEngineValueNodeProvider();
+			TypeVariablesProvider = new NullDbgEngineValueNodeProvider();
 			ValueNodeFactory = new NullDbgEngineValueNodeFactory();
 		}
 

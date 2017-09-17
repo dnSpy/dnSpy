@@ -162,6 +162,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 
 			switch (rawValue.ValueType) {
 			case DbgSimpleValueType.Other:
+				if (rawValue.RawValue is DmdType) {
+					// It's a type variable
+					FormatType((DmdType)rawValue.RawValue);
+					return true;
+				}
+				return false;
+
 			case DbgSimpleValueType.DateTime:
 				return false;
 

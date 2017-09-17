@@ -51,5 +51,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 			sb.Append(']');
 			return Formatters.ValueFormatterObjectCache.FreeAndToString(ref sb);
 		}
+
+		public override string EscapeIdentifier(string identifier) => Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(identifier);
 	}
 }

@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Threading;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -36,6 +35,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract string GetExpression(string baseExpression, DmdPropertyInfo property);
 		public abstract string GetExpression(string baseExpression, int index);
 		public abstract string GetExpression(string baseExpression, int[] indexes);
+		public abstract string EscapeIdentifier(string identifier);
 
 		internal DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValueNodeProvider provider, DbgValueNodeEvaluationOptions options, string expression, string imageName) =>
 			new DbgDotNetValueNodeImpl(this, provider, name, null, expression, imageName, true, false, null, null);
@@ -72,8 +72,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public sealed override DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgDotNetText name, string errorMessage, string expression) =>
 			new DbgDotNetValueNodeImpl(this, null, name, null, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, errorMessage);
 
-		public sealed override DbgDotNetValueNode CreateTypeVariables(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetTypeVariableInfo[] typeVariableInfos) {
-			throw new NotImplementedException();//TODO:
-		}
+		public sealed override DbgDotNetValueNode CreateTypeVariables(DbgEvaluationContext context, DbgDotNetTypeVariableInfo[] typeVariableInfos) =>
+			new DbgDotNetTypeVariablesNode(this, typeVariableInfos);
 	}
 }

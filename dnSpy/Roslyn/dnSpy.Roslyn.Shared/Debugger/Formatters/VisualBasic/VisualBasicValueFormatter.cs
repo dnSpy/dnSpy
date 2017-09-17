@@ -161,6 +161,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 			switch (rawValue.ValueType) {
 			case DbgSimpleValueType.Other:
+				if (rawValue.RawValue is DmdType) {
+					// It's a type variable
+					FormatType((DmdType)rawValue.RawValue);
+					return true;
+				}
 				return false;
 
 			case DbgSimpleValueType.Void:

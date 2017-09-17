@@ -72,6 +72,11 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public abstract DbgEngineValueNodeProvider ReturnValuesProvider { get; }
 
 		/// <summary>
+		/// Gets the type variables provider
+		/// </summary>
+		public abstract DbgEngineValueNodeProvider TypeVariablesProvider { get; }
+
+		/// <summary>
 		/// Gets the <see cref="DbgEngineValueNode"/> factory
 		/// </summary>
 		public abstract DbgEngineValueNodeFactory ValueNodeFactory { get; }
