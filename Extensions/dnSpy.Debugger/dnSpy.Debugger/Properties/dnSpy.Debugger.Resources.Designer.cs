@@ -2889,6 +2889,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The function evaluation requires all threads to run..
+        /// </summary>
+        public static string FuncEvalRequiresAllThreadsToRun {
+            get {
+                return ResourceManager.GetString("FuncEvalRequiresAllThreadsToRun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Implicit function evaluation is turned off by the user.
         /// </summary>
         public static string FunctionEvaluationDisabled {

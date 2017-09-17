@@ -259,6 +259,14 @@ namespace dndbg.Engine {
 			return hr >= 0;
 		}
 
+		public CorValue GetCurrentCustomDebuggerNotification() {
+			var t4 = obj as ICorDebugThread4;
+			if (t4 == null)
+				return null;
+			int hr = t4.GetCurrentCustomDebuggerNotification(out var value);
+			return hr < 0 || value == null ? null : new CorValue(value);
+		}
+
 		/// <summary>
 		/// Returns a new <see cref="CorEval"/> or null if there was an error
 		/// </summary>

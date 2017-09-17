@@ -48,11 +48,14 @@ namespace dndbg.Engine {
 	}
 
 	struct EvalResult {
+		public bool NormalResult => !WasException && !WasCustomNotification;
 		public bool WasException { get; }
+		public bool WasCustomNotification { get; }
 		public CorValue ResultOrException { get; }
 
-		public EvalResult(bool wasException, CorValue resultOrException) {
+		public EvalResult(bool wasException, bool wasCustomNotification, CorValue resultOrException) {
 			WasException = wasException;
+			WasCustomNotification = wasCustomNotification;
 			ResultOrException = resultOrException;
 		}
 	}
@@ -76,10 +79,10 @@ namespace dndbg.Engine {
 		public bool SuspendOtherThreads { get; }
 		public event EventHandler<EvalEventArgs> EvalEvent;
 
-		internal DnEval(DnDebugger debugger, IDebugMessageDispatcher debugMessageDispatcher) {
+		internal DnEval(DnDebugger debugger, IDebugMessageDispatcher debugMessageDispatcher, bool suspendOtherThreads) {
 			this.debugger = debugger;
 			this.debugMessageDispatcher = debugMessageDispatcher;
-			SuspendOtherThreads = true;
+			SuspendOtherThreads = suspendOtherThreads;
 			useTotalTimeout = true;
 			initialTimeOut = TimeSpan.FromMilliseconds(1000);
 		}
@@ -112,7 +115,7 @@ namespace dndbg.Engine {
 			if (cls == null)
 				return null;
 			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(cls, value.ExactType.TypeParameters.ToArray()));
-			if (res == null || res.Value.WasException)
+			if (res == null || !res.Value.NormalResult)
 				return null;
 			var newObj = res.Value.ResultOrException;
 			var r = newObj.NeuterCheckDereferencedValue;
@@ -128,7 +131,7 @@ namespace dndbg.Engine {
 		public CorValue CreateSZArray(CorType type, int numElems) {
 			int hr;
 			var res = WaitForResult(hr = eval.NewParameterizedArray(type, new uint[1] { (uint)numElems }));
-			if (res == null || res.Value.WasException)
+			if (res == null || !res.Value.NormalResult)
 				throw new EvalException(hr, string.Format("Could not create an array, HR=0x{0:X8}", hr));
 			return res.Value.ResultOrException;
 		}
@@ -137,14 +140,14 @@ namespace dndbg.Engine {
 
 		public CorValueResult CallResult(CorFunction func, CorType[] typeArgs, CorValue[] args) {
 			var res = Call(func, typeArgs, args);
-			if (res.WasException || res.ResultOrException == null)
+			if (!res.NormalResult || res.ResultOrException == null)
 				return new CorValueResult();
 			return res.ResultOrException.Value;
 		}
 
 		public CorValueResult CallResult(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) {
 			var res = Call(func, typeArgs, args, out hr);
-			if (res == null || res.Value.WasException || res.Value.ResultOrException == null)
+			if (res == null || !res.Value.NormalResult || res.Value.ResultOrException == null)
 				return new CorValueResult();
 			return res.Value.ResultOrException.Value;
 		}
@@ -264,27 +267,22 @@ namespace dndbg.Engine {
 				timeLeft = initialTimeOut;
 
 			var infos = new ThreadInfos(thread, SuspendOtherThreads);
-			object dispResult;
+			EvalResultKind dispResult;
 			debugger.DebugCallbackEvent += Debugger_DebugCallbackEvent;
 			try {
 				infos.EnableThread();
 
 				debugger.EvalStarted();
-				dispResult = debugMessageDispatcher.DispatchQueue(timeLeft, out bool timedOut);
+				var res = debugMessageDispatcher.DispatchQueue(timeLeft, out bool timedOut);
 				if (timedOut) {
-					int hr = eval.Abort();
-					if (hr >= 0) {
-						debugMessageDispatcher.DispatchQueue(TimeSpan.FromMilliseconds(ABORT_TIMEOUT_MS), out bool timedOutTmp);
-						if (timedOutTmp) {
-							hr = eval.RudeAbort();
-							if (hr >= 0)
-								debugMessageDispatcher.DispatchQueue(TimeSpan.FromMilliseconds(RUDE_ABORT_TIMEOUT_MS), out timedOutTmp);
-						}
-					}
-					hr = debugger.TryBreakProcesses();
-					Debug.WriteLineIf(hr != 0, string.Format("Eval timed out and TryBreakProcesses() failed: hr=0x{0:X8}", hr));
-					EvalTimedOut = true;
+					AbortEval(timedOut);
 					throw new TimeoutException();
+				}
+				Debug.Assert(res != null);
+				dispResult = (EvalResultKind)res;
+				if (dispResult == EvalResultKind.CustomNotification) {
+					if (!AbortEval(false))
+						throw new TimeoutException();
 				}
 			}
 			finally {
@@ -292,22 +290,59 @@ namespace dndbg.Engine {
 				infos.RestoreThreads();
 				debugger.EvalStopped();
 			}
-			Debug.Assert(dispResult is bool);
-			bool wasException = (bool)dispResult;
+			bool wasException = dispResult == EvalResultKind.Exception;
+			bool wasCustomNotification = dispResult == EvalResultKind.CustomNotification;
 
-			return new EvalResult(wasException, eval.Result);
+			return new EvalResult(wasException, wasCustomNotification, wasCustomNotification ? null : eval.Result);
+		}
+
+		enum EvalResultKind {
+			Normal,
+			Exception,
+			CustomNotification,
+		}
+
+		bool AbortEval(bool forceBreakProcesses) {
+			bool timedOut = false;
+			int hr = eval.Abort();
+			if (hr >= 0) {
+				debugMessageDispatcher.DispatchQueue(TimeSpan.FromMilliseconds(ABORT_TIMEOUT_MS), out timedOut);
+				if (timedOut) {
+					hr = eval.RudeAbort();
+					if (hr >= 0)
+						debugMessageDispatcher.DispatchQueue(TimeSpan.FromMilliseconds(RUDE_ABORT_TIMEOUT_MS), out _);
+				}
+			}
+			if (timedOut || forceBreakProcesses) {
+				hr = debugger.TryBreakProcesses();
+				Debug.WriteLineIf(hr != 0, string.Format("Eval timed out and TryBreakProcesses() failed: hr=0x{0:X8}", hr));
+				EvalTimedOut = true;
+			}
+			return !timedOut;
 		}
 
 		void Debugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
-			var ee = e as EvalDebugCallbackEventArgs;
-			if (ee == null)
-				return;
+			switch (e.Kind) {
+			case DebugCallbackKind.EvalComplete:
+			case DebugCallbackKind.EvalException:
+				var ee = (EvalDebugCallbackEventArgs)e;
+				if (ee.Eval == eval.RawObject) {
+					debugger.DebugCallbackEvent -= Debugger_DebugCallbackEvent;
+					e.AddPauseReason(DebuggerPauseReason.Eval);
+					debugMessageDispatcher.CancelDispatchQueue(ee.WasException ? EvalResultKind.Exception : EvalResultKind.Normal);
+					return;
+				}
+				break;
 
-			if (ee.Eval == eval.RawObject) {
-				debugger.DebugCallbackEvent -= Debugger_DebugCallbackEvent;
-				e.AddPauseReason(DebuggerPauseReason.Eval);
-				debugMessageDispatcher.CancelDispatchQueue(ee.WasException);
-				return;
+			case DebugCallbackKind.CustomNotification:
+				if (!SuspendOtherThreads)
+					break;
+				var cne = (CustomNotificationDebugCallbackEventArgs)e;
+				var value = cne.CorThread.GetCurrentCustomDebuggerNotification();
+				if (value != null)
+					debugMessageDispatcher.CancelDispatchQueue(EvalResultKind.CustomNotification);
+				debugger.DisposeHandle(value);
+				break;
 			}
 		}
 

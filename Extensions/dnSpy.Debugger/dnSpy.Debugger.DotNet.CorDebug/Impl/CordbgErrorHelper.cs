@@ -23,6 +23,7 @@ using dnSpy.Contracts.Debugger.Engine.Evaluation;
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	static class CordbgErrorHelper {
 		public static string InternalError => PredefinedEvaluationErrorMessages.InternalDebuggerError;
+		public static string FuncEvalRequiresAllThreadsToRun => PredefinedEvaluationErrorMessages.FuncEvalRequiresAllThreadsToRun;
 
 		public static string GetErrorMessage(int hr) {
 			if (hr >= 0)

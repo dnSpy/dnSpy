@@ -1665,11 +1665,11 @@ namespace dndbg.Engine {
 		internal int GetNextAssemblyId() => Interlocked.Increment(ref nextAssemblyId);
 		internal int GetNextAppDomainId() => Interlocked.Increment(ref nextAppDomainId);
 
-		public DnEval CreateEval() {
+		public DnEval CreateEval(bool suspendOtherThreads) {
 			DebugVerifyThread();
 			Debug.Assert(ProcessStateInternal == DebuggerProcessState.Paused);
 
-			return new DnEval(this, debugMessageDispatcher);
+			return new DnEval(this, debugMessageDispatcher, suspendOtherThreads);
 		}
 
 		/// <summary>

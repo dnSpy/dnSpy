@@ -41,6 +41,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal static EvalArgumentResult Create(EvalResult? res, int hr) {
 			if (res == null || res.Value.WasException)
 				return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
+			if (res.Value.WasCustomNotification)
+				return new EvalArgumentResult(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
 			return new EvalArgumentResult(res.Value.ResultOrException);
 		}
 	}

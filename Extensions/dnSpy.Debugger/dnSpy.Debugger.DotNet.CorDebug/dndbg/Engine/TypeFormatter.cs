@@ -1663,7 +1663,7 @@ namespace dndbg.Engine {
 						return;
 					}
 					var res = eval.Call(func, null, new CorValue[1] { v }, out int hr);
-					if (res == null || CordbgErrors.IsCantEvaluateError(hr) || res.Value.WasException) {
+					if (res == null || CordbgErrors.IsCantEvaluateError(hr) || !res.Value.NormalResult) {
 						WriteTypeOfValue(value);
 						return;
 					}

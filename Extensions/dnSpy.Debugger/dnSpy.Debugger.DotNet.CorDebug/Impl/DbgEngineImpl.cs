@@ -511,6 +511,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					modules.Add(e.Module);
 					toEngineModule.Add(e.Module.CorModule, engineModule);
 				}
+
+				var reflectionModule = ((DbgCorDebugInternalModuleImpl)engineModule.Module.InternalModule).ReflectionModule;
+				if (reflectionModule.IsCorLib) {
+					var type = reflectionModule.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_Debugger_CrossThreadDependencyNotification, isOptional: true);
+					Debug.Assert((object)type != null);
+					if ((object)type != null) {
+						var cls = e.Module.CorModule.GetClassFromToken((uint)type.MetadataToken);
+						Debug.Assert(cls != null);
+						if (cls != null)
+							e.Module.Process.CorProcess.SetEnableCustomNotification(cls, enable: true);
+					}
+				}
 			}
 			else {
 				DbgEngineModule engineModule;

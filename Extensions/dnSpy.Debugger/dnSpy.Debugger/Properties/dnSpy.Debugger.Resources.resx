@@ -1905,4 +1905,7 @@ Are you sure you want to expand it?</value>
   <data name="InternalDebuggerError" xml:space="preserve">
     <value>Internal debugger error</value>
   </data>
+  <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
+    <value>The function evaluation requires all threads to run.</value>
+  </data>
 </root>

@@ -72,6 +72,11 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// </summary>
 		public const string CantFuncEvaluateWhenThreadIsAtUnsafePoint = nameof(CantFuncEvaluateWhenThreadIsAtUnsafePoint) + SUFFIX;
 
+		/// <summary>
+		/// Can't func eval since all threads must execute (the code called <see cref="System.Diagnostics.Debugger.NotifyOfCrossThreadDependency"/>)
+		/// </summary>
+		public const string FuncEvalRequiresAllThreadsToRun = nameof(FuncEvalRequiresAllThreadsToRun) + SUFFIX;
+
 		// If more errors are added, also update the code in PredefinedEvaluationErrorMessagesHelper
 	}
 

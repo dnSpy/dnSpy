@@ -307,6 +307,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_Runtime_InteropServices_WindowsRuntime_RuntimeClass,
 		System_DBNull,
 		System_Security_Permissions_PermissionSetAttribute,
+		System_Diagnostics_Debugger_CrossThreadDependencyNotification,
+
 
 		// When adding more types, update WellKnownMemberResolver
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member

@@ -2029,7 +2029,8 @@ namespace dndbg.COM.CorDebug {
 	interface ICorDebugThread4 {
 		void HasUnhandledException();
 		void GetBlockingObjects([MarshalAs(UnmanagedType.Interface)] out ICorDebugBlockingObjectEnum ppBlockingObjectEnum);
-		void GetCurrentCustomDebuggerNotification([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppNotificationObject);
+		[PreserveSig]
+		int GetCurrentCustomDebuggerNotification([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppNotificationObject);
 	}
 	[Guid("CC7BCB06-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport, SuppressUnmanagedCodeSecurity]

@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Evaluation {
 	static class PredefinedEvaluationErrorMessagesHelper {
 		static readonly Dictionary<string, string> toErrorMessage;
 		static PredefinedEvaluationErrorMessagesHelper() {
-			const int TOTAL_COUNT = 9;
+			const int TOTAL_COUNT = 10;
 			toErrorMessage = new Dictionary<string, string>(TOTAL_COUNT, StringComparer.Ordinal) {
 				{ PredefinedEvaluationErrorMessages.InternalDebuggerError, dnSpy_Debugger_Resources.InternalDebuggerError },
 				{ PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, dnSpy_Debugger_Resources.ExpressionCausesSideEffectsNoEval },
@@ -40,6 +40,7 @@ namespace dnSpy.Debugger.Evaluation {
 				{ PredefinedEvaluationErrorMessages.CantFuncEvalWhenUnhandledExceptionHasOccurred, dnSpy_Debugger_Resources.Error_CantEvalWhenUnhandledExceptionHasOccurred },
 				{ PredefinedEvaluationErrorMessages.CantFuncEval, dnSpy_Debugger_Resources.Locals_Error_EvalDisabledCantCallPropsAndMethods },
 				{ PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint, dnSpy_Debugger_Resources.Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint },
+				{ PredefinedEvaluationErrorMessages.FuncEvalRequiresAllThreadsToRun, dnSpy_Debugger_Resources.FuncEvalRequiresAllThreadsToRun },
 			};
 			Debug.Assert(toErrorMessage.Count == TOTAL_COUNT);
 		}
