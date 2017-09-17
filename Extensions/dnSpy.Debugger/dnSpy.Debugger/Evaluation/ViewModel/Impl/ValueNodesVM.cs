@@ -185,6 +185,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 			valueNodesContext.ValueNodeReader.SetEvaluationContext(evalContext, frame);
 			valueNodesContext.EvaluationContext = evalContext;
+			valueNodesContext.StackFrame = frame;
 
 #if DEBUG
 			var origEditNode = TryGetEditNode();

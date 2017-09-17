@@ -20,6 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
@@ -29,6 +30,8 @@ using dnSpy.Roslyn.Shared.Properties;
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 	struct CSharpValueFormatter {
 		readonly ITextColorWriter output;
+		readonly DbgEvaluationContext context;
+		readonly DbgStackFrame frame;
 		readonly ValueFormatterOptions options;
 		/*readonly*/ CancellationToken cancellationToken;
 		const int MAX_RECURSION = 200;
@@ -50,8 +53,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		bool UseToString => (options & ValueFormatterOptions.ToString) != 0;
 		bool DigitSeparators => (options & ValueFormatterOptions.DigitSeparators) != 0;
 
-		public CSharpValueFormatter(ITextColorWriter output, ValueFormatterOptions options, CancellationToken cancellationToken) {
+		public CSharpValueFormatter(ITextColorWriter output, DbgEvaluationContext context, DbgStackFrame frame, ValueFormatterOptions options, CancellationToken cancellationToken) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
+			this.context = context ?? throw new ArgumentNullException(nameof(context));
+			this.frame = frame ?? throw new ArgumentNullException(nameof(frame));
 			this.options = options;
 			this.cancellationToken = cancellationToken;
 			recursionCounter = 0;
@@ -80,7 +85,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 					return;
 				if (TryFormatWithDebuggerAttributes())
 					return;
-				if (TryFormatToString())
+				if (TryFormatToString(value))
 					return;
 				FormatTypeName(value);
 			}
@@ -129,10 +134,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			return false;
 		}
 
-		bool TryFormatToString() {
+		bool TryFormatToString(DbgDotNetValue value) {
 			if (!FuncEval || !UseToString)
 				return false;
-			return false;//TODO: Call ToString()
+			var s = new ToStringFormatter(context, frame, cancellationToken).GetToStringValue(value);
+			if (s == null)
+				return false;
+			OutputWrite(TypeNameOpenParen + s + TypeNameCloseParen, BoxedTextColor.ToStringEval);
+			return true;
 		}
 
 		bool TrySimpleFormat(DbgDotNetValue value) {

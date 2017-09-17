@@ -112,14 +112,14 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 				res[ri] = new DbgValueNodeInfo(objectIdNodes[i], id, causesSideEffects: false);
 			}
 
-			variables = GetSortedVariables(context, variables, cancellationToken);
+			variables = GetSortedVariables(context, frame, variables, cancellationToken);
 			for (int i = 0; i < variables.Length; i++, ri++)
 				res[ri] = new DbgValueNodeInfo(variables[i].ValueNode, causesSideEffects: false);
 
 			return res;
 		}
 
-		DbgLocalsValueNodeInfo[] GetSortedVariables(DbgEvaluationContext context, DbgLocalsValueNodeInfo[] variables, CancellationToken cancellationToken) {
+		DbgLocalsValueNodeInfo[] GetSortedVariables(DbgEvaluationContext context, DbgStackFrame frame, DbgLocalsValueNodeInfo[] variables, CancellationToken cancellationToken) {
 			if (variables.Length <= 1)
 				return variables;
 
@@ -133,18 +133,18 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 
 			var output = new StringBuilderTextColorOutput();
 			if (debuggerSettings.GroupParametersAndLocalsTogether)
-				return variables.OrderBy(a => GetName(context, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+				return variables.OrderBy(a => GetName(context, frame, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
 			else {
 				var locals = variables.Where(a => a.Kind == DbgLocalsValueNodeKind.Local).ToArray();
 				var parameters = variables.Where(a => a.Kind == DbgLocalsValueNodeKind.Parameter).ToArray();
 				var others = variables.Where(a => a.Kind != DbgLocalsValueNodeKind.Local && a.Kind != DbgLocalsValueNodeKind.Parameter).ToArray();
 
 				if (sortLocals && locals.Length > 1)
-					locals = locals.OrderBy(a => GetName(context, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+					locals = locals.OrderBy(a => GetName(context, frame, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
 				if (sortParameters && parameters.Length > 1)
-					parameters = parameters.OrderBy(a => GetName(context, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+					parameters = parameters.OrderBy(a => GetName(context, frame, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
 				if ((sortLocals || sortParameters) && others.Length > 1)
-					others = others.OrderBy(a => GetName(context, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+					others = others.OrderBy(a => GetName(context, frame, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
 
 				var res = new DbgLocalsValueNodeInfo[locals.Length + parameters.Length + others.Length];
 				int w = 0;
@@ -160,9 +160,9 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			}
 		}
 
-		string GetName(DbgEvaluationContext context, StringBuilderTextColorOutput output, DbgValueNode valueNode, CancellationToken cancellationToken) {
+		string GetName(DbgEvaluationContext context, DbgStackFrame frame, StringBuilderTextColorOutput output, DbgValueNode valueNode, CancellationToken cancellationToken) {
 			output.Reset();
-			valueNode.FormatName(context, output, cancellationToken);
+			valueNode.FormatName(context, frame, output, cancellationToken);
 			return output.ToString();
 		}
 

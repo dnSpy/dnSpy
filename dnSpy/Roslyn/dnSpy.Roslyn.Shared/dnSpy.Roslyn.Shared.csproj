@@ -46,6 +46,7 @@
     <Compile Include="Compiler\RoslynCodeDocument.cs" />
     <Compile Include="Compiler\RoslynLanguageCompiler.cs" />
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
+    <Compile Include="Debugger\DbgDotNetRuntimeUtils.cs" />
     <Compile Include="Debugger\ExpressionCompiler\CSharp\CSharpExpressionCompiler.cs" />
     <Compile Include="Debugger\ExpressionCompiler\LanguageExpressionCompiler.cs" />
     <Compile Include="Debugger\ExpressionCompiler\RoslynExpressionCompilerMethods.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Debugger\Formatters\EnumInfo.cs" />
     <Compile Include="Debugger\Formatters\LanguageFormatter.cs" />
     <Compile Include="Debugger\Formatters\NumberUtils.cs" />
+    <Compile Include="Debugger\Formatters\ToStringFormatter.cs" />
     <Compile Include="Debugger\Formatters\TypeFormatterOptions.cs" />
     <Compile Include="Debugger\Formatters\TypeFormatterUtils.cs" />
     <Compile Include="Debugger\Formatters\ValueFormatterObjectCache.cs" />
@@ -76,7 +78,6 @@
     <Compile Include="Debugger\ValueNodes\CSharp\CSharpValueNodeFactory.cs" />
     <Compile Include="Debugger\ValueNodes\CSharp\CSharpValueNodeProviderFactory.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetInstanceValueInfo.cs" />
-    <Compile Include="Debugger\ValueNodes\DbgDotNetRuntimeUtils.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeImpl.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeProviderFactory.cs" />

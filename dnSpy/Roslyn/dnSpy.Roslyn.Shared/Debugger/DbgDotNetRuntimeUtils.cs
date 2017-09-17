@@ -22,7 +22,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 
-namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
+namespace dnSpy.Roslyn.Shared.Debugger {
 	static class DbgDotNetRuntimeUtils {
 		public static IDbgDotNetRuntime GetDotNetRuntime(this DbgRuntime runtime) {
 			var dnRuntime = runtime.InternalRuntime as IDbgDotNetRuntime;

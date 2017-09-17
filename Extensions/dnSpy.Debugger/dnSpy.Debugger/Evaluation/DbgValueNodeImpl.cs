@@ -23,6 +23,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.CallStack;
 
 namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueNodeImpl : DbgValueNode {
@@ -91,7 +92,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineValueNode.GetChildren(context, frame, index, count, options, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes)), cancellationToken);
 		}
 
-		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) {
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -99,13 +100,19 @@ namespace dnSpy.Debugger.Evaluation {
 			if (context.Language != Language)
 				throw new ArgumentException();
 			if (context.Runtime != Runtime)
+				throw new ArgumentException();
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (!(frame is DbgStackFrameImpl))
+				throw new ArgumentException();
+			if (frame.Runtime != Runtime)
 				throw new ArgumentException();
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			engineValueNode.Format(context, options, cancellationToken);
+			engineValueNode.Format(context, frame, options, cancellationToken);
 		}
 
-		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken) {
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -113,12 +120,18 @@ namespace dnSpy.Debugger.Evaluation {
 			if (context.Language != Language)
 				throw new ArgumentException();
 			if (context.Runtime != Runtime)
+				throw new ArgumentException();
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (!(frame is DbgStackFrameImpl))
+				throw new ArgumentException();
+			if (frame.Runtime != Runtime)
 				throw new ArgumentException();
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNode.Format(context, options, callback, cancellationToken);
+			engineValueNode.Format(context, frame, options, callback, cancellationToken);
 		}
 
 		DbgValueNodeAssignmentResult CreateResult(DbgEngineValueNodeAssignmentResult result) {
@@ -137,7 +150,7 @@ namespace dnSpy.Debugger.Evaluation {
 			return new DbgValueNodeAssignmentResult(error: null);
 		}
 
-		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -145,6 +158,12 @@ namespace dnSpy.Debugger.Evaluation {
 			if (context.Language != Language)
 				throw new ArgumentException();
 			if (context.Runtime != Runtime)
+				throw new ArgumentException();
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (!(frame is DbgStackFrameImpl))
+				throw new ArgumentException();
+			if (frame.Runtime != Runtime)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
@@ -152,10 +171,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new InvalidOperationException();
 			if (engineValueNode.ErrorMessage != null)
 				throw new NotSupportedException();
-			return CreateResult(engineValueNode.Assign(context, expression, options, cancellationToken));
+			return CreateResult(engineValueNode.Assign(context, frame, expression, options, cancellationToken));
 		}
 
-		public override void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback, CancellationToken cancellationToken) {
+		public override void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -163,6 +182,12 @@ namespace dnSpy.Debugger.Evaluation {
 			if (context.Language != Language)
 				throw new ArgumentException();
 			if (context.Runtime != Runtime)
+				throw new ArgumentException();
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (!(frame is DbgStackFrameImpl))
+				throw new ArgumentException();
+			if (frame.Runtime != Runtime)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
@@ -172,7 +197,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new InvalidOperationException();
 			if (engineValueNode.ErrorMessage != null)
 				throw new NotSupportedException();
-			engineValueNode.Assign(context, expression, options, res => callback(CreateResult(res)), cancellationToken);
+			engineValueNode.Assign(context, frame, expression, options, res => callback(CreateResult(res)), cancellationToken);
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {

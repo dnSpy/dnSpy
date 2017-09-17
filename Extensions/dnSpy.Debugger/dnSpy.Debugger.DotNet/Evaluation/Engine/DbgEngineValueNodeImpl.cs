@@ -77,17 +77,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return res;
 		}
 
-		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => FormatCore(context, options, cancellationToken));
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => FormatCore(context, frame, options, cancellationToken));
 
-		public override void Format(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken) {
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken) {
 			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => {
-				FormatCore(context, options, cancellationToken);
+				FormatCore(context, frame, options, cancellationToken);
 				callback();
 			});
 		}
 
-		void FormatCore(DbgEvaluationContext context, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) {
+		void FormatCore(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) {
 			context.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
 			if (options.NameOutput != null)
 				dnValueNode.Name.WriteTo(options.NameOutput);
@@ -99,17 +99,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions);
 			if (options.ValueOutput != null) {
 				if (dnValue != null)
-					formatter.FormatValue(context, options.ValueOutput, dnValue, options.ValueFormatterOptions, cancellationToken);
+					formatter.FormatValue(context, options.ValueOutput, frame, dnValue, options.ValueFormatterOptions, cancellationToken);
 				else if (ErrorMessage is string errorMessage)
 					options.ValueOutput.Write(BoxedTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));
 			}
 		}
 
-		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			return new DbgEngineValueNodeAssignmentResult("NYI");//TODO:
 		}
 
-		public override void Assign(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback, CancellationToken cancellationToken) {
+		public override void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback, CancellationToken cancellationToken) {
 			callback(new DbgEngineValueNodeAssignmentResult("NYI"));//TODO:
 		}
 

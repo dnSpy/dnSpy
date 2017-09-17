@@ -105,14 +105,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var func = methodModule.CorModule.GetFunctionFromToken((uint)method.MetadataToken) ?? throw new InvalidOperationException();
 
 			var dnThread = GetThread(thread);
-			var createdStrongHandles = new List<CorValue>();
+			var createdValues = new List<CorValue>();
 			try {
 				using (var dnEval = dnDebugger.CreateEval()) {
 					dnEval.SetThread(dnThread);
 					dnEval.SetTimeout(context.FuncEvalTimeout);
 					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
 
-					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdStrongHandles);
+					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
 
 					var genTypeArgs = method.ReflectedType.GetGenericArguments();
 					var methTypeArgs = method.GetGenericArguments();
@@ -125,21 +125,48 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					if (typeArgs.Length != w)
 						throw new InvalidOperationException();
 
+					var paramTypes = GetAllMethodParameterTypes(method.GetMethodSignature());
+					if (paramTypes.Count != arguments.Length)
+						throw new InvalidOperationException();
+
 					bool hiddenThisArg = !method.IsStatic && !newObj;
 					int argsCount = arguments.Length + (hiddenThisArg ? 1 : 0);
 					var args = argsCount == 0 ? Array.Empty<CorValue>() : new CorValue[argsCount];
 					w = 0;
+					DmdType origType;
 					if (hiddenThisArg) {
-						var val = converter.Convert(obj);
+						var val = converter.Convert(obj, method.DeclaringType, out origType);
 						if (val.ErrorMessage != null)
 							return new DbgDotNetValueResult(val.ErrorMessage);
-						args[w++] = val.CorValue;
+						args[w++] = BoxIfNeeded(dnEval, createdValues, val.CorValue, method.DeclaringType, method.ReflectedType);
 					}
 					for (int i = 0; i < arguments.Length; i++) {
-						var val = converter.Convert(arguments[i]);
+						var paramType = paramTypes[i];
+						var val = converter.Convert(arguments[i], paramType, out origType);
 						if (val.ErrorMessage != null)
 							return new DbgDotNetValueResult(val.ErrorMessage);
-						args[w++] = val.CorValue;
+						var valType = origType ?? new ReflectionTypeCreator(this, method.AppDomain).Create(val.CorValue.ExactType);
+						args[w++] = BoxIfNeeded(dnEval, createdValues, val.CorValue, paramType, valType);
+					}
+					if (args.Length != w)
+						throw new InvalidOperationException();
+
+					// Derefence/unbox the values here now that they can't get neutered
+					w = hiddenThisArg ? 1 : 0;
+					for (int i = 0; i < arguments.Length; i++) {
+						var paramType = paramTypes[i];
+						var arg = args[w];
+						if (paramType.IsValueType) {
+							if (arg.IsReference) {
+								if (arg.IsNull)
+									throw new InvalidOperationException();
+								arg = arg.DereferencedValue ?? throw new InvalidOperationException();
+							}
+							if (arg.IsBox)
+								arg = arg.BoxedValue ?? throw new InvalidOperationException();
+							args[w] = arg;
+						}
+						w++;
 					}
 					if (args.Length != w)
 						throw new InvalidOperationException();
@@ -159,9 +186,28 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 			}
 			finally {
-				foreach (var arg in createdStrongHandles)
-					dnDebugger.DisposeHandle(arg);
+				foreach (var value in createdValues)
+					dnDebugger.DisposeHandle(value);
 			}
+		}
+
+		static CorValue BoxIfNeeded(DnEval dnEval, List<CorValue> createdValues, CorValue corValue, DmdType targetType, DmdType valueType) {
+			if (!targetType.IsValueType && valueType.IsValueType && corValue.IsGeneric && !corValue.IsHeap) {
+				var boxedValue = dnEval.Box(corValue) ?? throw new InvalidOperationException();
+				if (boxedValue != corValue)
+					createdValues.Add(corValue);
+				corValue = boxedValue;
+			}
+			return corValue;
+		}
+
+		static IList<DmdType> GetAllMethodParameterTypes(DmdMethodSignature sig) {
+			if (sig.GetVarArgsParameterTypes().Count == 0)
+				return sig.GetParameterTypes();
+			var list = new List<DmdType>(sig.GetParameterTypes().Count + sig.GetVarArgsParameterTypes().Count);
+			list.AddRange(sig.GetParameterTypes());
+			list.AddRange(sig.GetVarArgsParameterTypes());
+			return list;
 		}
 
 		internal DbgDotNetValueResult FuncEvalCreateInstanceNoCtor_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, DmdType typeToCreate, CancellationToken cancellationToken) {
