@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		sealed class CompiledExpressionValueInfo : ValueInfo {
 			public override ValueInfoKind Kind => ValueInfoKind.CompiledExpression;
-			public override bool IsParameter => compiledExpressions[index].ImageName == PredefinedDbgValueNodeImageNames.Parameter;
+			public override bool IsParameter => compiledExpressions[index].ImageName == PredefinedDbgValueNodeImageNames.Parameter || compiledExpressions[index].ImageName == PredefinedDbgValueNodeImageNames.This;
 			public bool IsCompilerGenerated => (compiledExpressions[index].ResultFlags & DbgDotNetCompiledExpressionResultFlags.CompilerGenerated) != 0;
 			public ref DbgDotNetCompiledExpressionResult CompiledExpressionResult => ref compiledExpressions[index];
 
