@@ -49,7 +49,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 
 		public static bool IsTupleType(DmdType type) => GetTupleArity(type) >= 0;
 
-		static int GetTupleArity(DmdType type) {
+		public static int GetTupleArity(DmdType type) {
 			int arity = 0;
 			for (;;) {
 				if (type.MetadataNamespace != "System")

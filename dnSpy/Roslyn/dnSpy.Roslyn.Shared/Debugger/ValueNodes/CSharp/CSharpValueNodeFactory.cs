@@ -35,6 +35,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 			return baseExpression + "." + property.Name;
 		}
 
+		public override string GetExpression(string baseExpression, string name) {
+			return baseExpression + "." + name;
+		}
+
 		public override string GetExpression(string baseExpression, int index) {
 			return baseExpression + "[" + index.ToString() + "]";
 		}

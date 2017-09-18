@@ -33,6 +33,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		public abstract string GetExpression(string baseExpression, DmdFieldInfo field);
 		public abstract string GetExpression(string baseExpression, DmdPropertyInfo property);
+		public abstract string GetExpression(string baseExpression, string name);
 		public abstract string GetExpression(string baseExpression, int index);
 		public abstract string GetExpression(string baseExpression, int[] indexes);
 		public abstract string EscapeIdentifier(string identifier);

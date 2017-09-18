@@ -45,6 +45,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			public readonly MemberValueNodeInfo[] InstanceMembers;
 			public readonly MemberValueNodeInfo[] StaticMembers;
 
+			// Only if it's a tuple
+			public readonly TupleField[] TupleFields;
+
 			public bool AddResultsView => (Flags & TypeStateFlags.AddResultsView) != 0;
 			public bool IsNullable => (Flags & TypeStateFlags.IsNullable) != 0;
 			public bool IsTupleType => (Flags & TypeStateFlags.IsTupleType) != 0;
@@ -55,20 +58,34 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 			public TypeState(DmdType type, string expression) {
 				Type = type;
-				Flags = GetFlags(type);
+				Flags = TypeStateFlags.None;
 				Expression = expression;
 				HasNoChildren = true;
 				InstanceMembers = Array.Empty<MemberValueNodeInfo>();
 				StaticMembers = Array.Empty<MemberValueNodeInfo>();
+				TupleFields = Array.Empty<TupleField>();
 			}
 
 			public TypeState(DmdType type, string expression, MemberValueNodeInfo[] instanceMembers, MemberValueNodeInfo[] staticMembers) {
+				Debug.Assert(!Formatters.TypeFormatterUtils.IsTupleType(type));
 				Type = type;
 				Flags = GetFlags(type);
 				Expression = expression;
 				HasNoChildren = false;
 				InstanceMembers = instanceMembers;
 				StaticMembers = staticMembers;
+				TupleFields = Array.Empty<TupleField>();
+			}
+
+			public TypeState(DmdType type, string expression, TupleField[] tupleFields) {
+				Debug.Assert(Formatters.TypeFormatterUtils.IsTupleType(type));
+				Type = type;
+				Flags = TypeStateFlags.IsTupleType;
+				Expression = expression;
+				HasNoChildren = false;
+				InstanceMembers = Array.Empty<MemberValueNodeInfo>();
+				StaticMembers = Array.Empty<MemberValueNodeInfo>();
+				TupleFields = tupleFields;
 			}
 
 			static TypeStateFlags GetFlags(DmdType type) {
@@ -77,8 +94,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					res |= TypeStateFlags.AddResultsView;
 				if (type.IsNullable)
 					res |= TypeStateFlags.IsNullable;
-				if (Formatters.TypeFormatterUtils.IsTupleType(type))
-					res |= TypeStateFlags.IsTupleType;
 				return res;
 			}
 		}
@@ -155,10 +170,67 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return output.ToString();
 		}
 
+		TypeState TryCreateTupleTypeState(DmdType type, string typeExpression) {
+			var tupleArity = Formatters.TypeFormatterUtils.GetTupleArity(type);
+			if (tupleArity <= 0)
+				return null;
+
+			var tupleFields = new TupleField[tupleArity];
+			var currentType = type;
+			var fields = new List<DmdFieldInfo>();
+			var currentFields = new List<DmdFieldInfo>();
+			int tupleIndex = 0;
+			for (;;) {
+				fields.Add(null);
+				currentFields.Clear();
+				foreach (var field in currentType.DeclaredFields) {
+					if (field.IsStatic || field.IsLiteral)
+						continue;
+					currentFields.Add(field);
+				}
+				if (currentFields.Count > sortedTupleFields.Length)
+					return null;
+				currentFields.Sort((a, b) => StringComparer.Ordinal.Compare(a.Name, b.Name));
+				for (int i = 0; i < currentFields.Count; i++) {
+					var field = currentFields[i];
+					if (field.Name != sortedTupleFields[i])
+						return null;
+					fields[fields.Count - 1] = field;
+					if (i + 1 != sortedTupleFields.Length) {
+						if (tupleIndex >= tupleFields.Length)
+							return null;
+						var defaultName = GetDefaultTupleName(tupleIndex);
+						tupleFields[tupleIndex] = new TupleField(defaultName, fields.ToArray());
+						tupleIndex++;
+					}
+					else
+						currentType = field.FieldType;
+				}
+				if (tupleIndex == tupleFields.Length)
+					return new TypeState(type, typeExpression, tupleFields);
+			}
+		}
+		static readonly string[] sortedTupleFields = new string[] {
+			"Item1",
+			"Item2",
+			"Item3",
+			"Item4",
+			"Item5",
+			"Item6",
+			"Item7",
+			"Rest",
+		};
+
+		static string GetDefaultTupleName(int tupleIndex) => "Item" + (tupleIndex + 1).ToString();
+
 		TypeState CreateTypeStateCore(DmdType type) {
 			var typeExpression = GetTypeExpression(type);
 			if (HasNoChildren(type) || type.IsFunctionPointer)
 				return new TypeState(type, typeExpression);
+
+			var tupleTypeState = TryCreateTupleTypeState(type, typeExpression);
+			if (tupleTypeState != null)
+				return tupleTypeState;
 
 			MemberValueNodeInfo[] instanceMembers, staticMembers;
 
@@ -263,9 +335,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				//TODO: check if null
 			}
 
-			if (state.IsTupleType) {
-				//TODO: value tuples
-			}
+			if (state.IsTupleType)
+				return new TupleValueNodeProvider(valueInfo, state.TupleFields);
 
 			if (state.Type.IsArray && !valueInfo.Value.IsNullReference)
 				return new ArrayValueNodeProvider(this, valueInfo);

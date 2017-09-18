@@ -89,6 +89,8 @@
     <Compile Include="Debugger\ValueNodes\MemberValueNodeInfo.cs" />
     <Compile Include="Debugger\ValueNodes\ObjectCache.cs" />
     <Compile Include="Debugger\ValueNodes\StaticMembersValueNodeProvider.cs" />
+    <Compile Include="Debugger\ValueNodes\TupleField.cs" />
+    <Compile Include="Debugger\ValueNodes\TupleValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\VisualBasic\VisualBasicValueNodeFactory.cs" />
     <Compile Include="Debugger\ValueNodes\VisualBasic\VisualBasicValueNodeProviderFactory.cs" />
     <Compile Include="Documentation\IRoslynDocumentationProviderFactory.cs" />
