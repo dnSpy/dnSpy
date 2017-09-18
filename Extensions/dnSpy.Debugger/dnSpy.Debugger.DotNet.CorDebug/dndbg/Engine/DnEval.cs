@@ -66,7 +66,8 @@ namespace dndbg.Engine {
 	sealed class DnEval : IDisposable {
 		readonly DnDebugger debugger;
 		readonly IDebugMessageDispatcher debugMessageDispatcher;
-		CorThread thread;
+		readonly List<(DnModule module, CorClass cls)> customNotificationList;
+		DnThread thread;
 		CorEval eval;
 		DateTime? startTime;
 		DateTime endTime;
@@ -79,12 +80,18 @@ namespace dndbg.Engine {
 		public bool SuspendOtherThreads { get; }
 		public event EventHandler<EvalEventArgs> EvalEvent;
 
-		internal DnEval(DnDebugger debugger, IDebugMessageDispatcher debugMessageDispatcher, bool suspendOtherThreads) {
+		internal DnEval(DnDebugger debugger, IDebugMessageDispatcher debugMessageDispatcher, bool suspendOtherThreads, List<(DnModule module, CorClass cls)> customNotificationList) {
 			this.debugger = debugger;
 			this.debugMessageDispatcher = debugMessageDispatcher;
+			this.customNotificationList = customNotificationList;
 			SuspendOtherThreads = suspendOtherThreads;
 			useTotalTimeout = true;
 			initialTimeOut = TimeSpan.FromMilliseconds(1000);
+
+			// This is only enabled during func-eval. If it's always enabled, everything gets slower.
+			// It took about 50% longer to start VS.
+			foreach (var info in customNotificationList)
+				info.module.Process.CorProcess.SetEnableCustomNotification(info.cls, enable: true);
 		}
 
 		public void SetNoTotalTimeout() => useTotalTimeout = false;
@@ -92,13 +99,11 @@ namespace dndbg.Engine {
 
 		public void SetTimeout(TimeSpan timeout) => initialTimeOut = timeout;
 
-		public void SetThread(DnThread thread) => SetThread(thread.CorThread);
-
-		public void SetThread(CorThread thread) {
+		public void SetThread(DnThread thread) {
 			if (thread == null)
 				throw new InvalidOperationException();
 
-			int hr = thread.RawObject.CreateEval(out var ce);
+			int hr = thread.CorThread.RawObject.CreateEval(out var ce);
 			if (hr < 0 || ce == null)
 				throw new EvalException(hr, string.Format("Could not create an evaluator, HR=0x{0:X8}", hr));
 			this.thread = thread;
@@ -266,7 +271,7 @@ namespace dndbg.Engine {
 			if (!useTotalTimeout)
 				timeLeft = initialTimeOut;
 
-			var infos = new ThreadInfos(thread, SuspendOtherThreads);
+			var infos = new ThreadInfos(thread.CorThread, SuspendOtherThreads);
 			EvalResultKind dispResult;
 			debugger.DebugCallbackEvent += Debugger_DebugCallbackEvent;
 			try {
@@ -349,6 +354,11 @@ namespace dndbg.Engine {
 		}
 
 		public void SignalEvalComplete() => EvalEvent?.Invoke(this, new EvalEventArgs());
-		public void Dispose() => SignalEvalComplete();
+
+		public void Dispose() {
+			foreach (var info in customNotificationList)
+				info.module.Process.CorProcess.SetEnableCustomNotification(info.cls, enable: false);
+			SignalEvalComplete();
+		}
 	}
 }

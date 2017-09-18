@@ -528,12 +528,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (reflectionModule.IsCorLib) {
 					var type = reflectionModule.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_Debugger_CrossThreadDependencyNotification, isOptional: true);
 					Debug.Assert((object)type != null);
-					if ((object)type != null) {
-						var cls = e.Module.CorModule.GetClassFromToken((uint)type.MetadataToken);
-						Debug.Assert(cls != null);
-						if (cls != null)
-							e.Module.Process.CorProcess.SetEnableCustomNotification(cls, enable: true);
-					}
+					if ((object)type != null)
+						dnDebugger.AddCustomNotificationClassToken(e.Module, (uint)type.MetadataToken);
 				}
 			}
 			else {

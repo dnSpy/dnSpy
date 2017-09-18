@@ -44,6 +44,7 @@ namespace dndbg.Engine {
 		readonly BreakpointList<DnNativeCodeBreakpoint> nativeCodeBreakpointList = new BreakpointList<DnNativeCodeBreakpoint>();
 		readonly Dictionary<CorStepper, StepInfo> stepInfos = new Dictionary<CorStepper, StepInfo>();
 		readonly Dictionary<CorModule, DnModule> toDnModule = new Dictionary<CorModule, DnModule>();
+		readonly List<(DnModule module, CorClass cls)> customNotificationList;
 		DebugOptions debugOptions;
 
 		sealed class StepInfo {
@@ -199,6 +200,7 @@ namespace dndbg.Engine {
 			processes = new DebuggerCollection<ICorDebugProcess, DnProcess>(CreateDnProcess);
 			this.debugMessageDispatcher = debugMessageDispatcher ?? throw new ArgumentNullException(nameof(debugMessageDispatcher));
 			this.corDebug = corDebug;
+			customNotificationList = new List<(DnModule, CorClass)>();
 			this.debugOptions = debugOptions ?? new DebugOptions();
 			DebuggeeVersion = debuggeeVersion ?? string.Empty;
 			OtherVersion = otherVersion ?? string.Empty;
@@ -939,6 +941,7 @@ namespace dndbg.Engine {
 				InitializeCurrentDebuggerState(e, eadArgs.Process, eadArgs.AppDomain, null);
 				process = processes.TryGet(eadArgs.Process);
 				if (process != null) {
+					UpdateCustomNotificationList(eadArgs.CorAppDomain);
 					OnAppDomainUnloaded(appDomain = process.TryGetAppDomain(eadArgs.AppDomain));
 					if (appDomain != null) {
 						CallOnAppDomainAdded(appDomain, false, out shouldPause);
@@ -1665,11 +1668,26 @@ namespace dndbg.Engine {
 		internal int GetNextAssemblyId() => Interlocked.Increment(ref nextAssemblyId);
 		internal int GetNextAppDomainId() => Interlocked.Increment(ref nextAppDomainId);
 
+		public void AddCustomNotificationClassToken(DnModule module, uint token) {
+			var cls = module.CorModule.GetClassFromToken(token);
+			Debug.Assert(cls != null);
+			if (cls != null)
+				customNotificationList.Add((module, cls));
+		}
+
+		void UpdateCustomNotificationList(CorAppDomain removedAppDomain) {
+			for (int i = customNotificationList.Count - 1; i >= 0; i--) {
+				var info = customNotificationList[i];
+				if (info.module.AppDomain.CorAppDomain == removedAppDomain)
+					customNotificationList.RemoveAt(i);
+			}
+		}
+
 		public DnEval CreateEval(bool suspendOtherThreads) {
 			DebugVerifyThread();
 			Debug.Assert(ProcessStateInternal == DebuggerProcessState.Paused);
 
-			return new DnEval(this, debugMessageDispatcher, suspendOtherThreads);
+			return new DnEval(this, debugMessageDispatcher, suspendOtherThreads, customNotificationList);
 		}
 
 		/// <summary>
