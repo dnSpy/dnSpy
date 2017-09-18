@@ -283,6 +283,8 @@ namespace dndbg.Engine {
 				if (dispResult == EvalResultKind.CustomNotification) {
 					if (!AbortEval(false))
 						throw new TimeoutException();
+					if (debugger.ProcessState != DebuggerProcessState.Paused)
+						debugger.TryBreakProcesses();
 				}
 			}
 			finally {

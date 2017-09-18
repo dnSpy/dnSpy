@@ -36,6 +36,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			IsNullable = 2,
 			IsTupleType = 4,
 		}
+
 		sealed class TypeState {
 			public readonly DmdType Type;
 			public readonly TypeStateFlags Flags;
@@ -113,11 +114,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (state != null)
 				return state;
 			return CreateTypeState(type);
-		}
 
-		TypeState CreateTypeState(DmdType type) {
-			var state = CreateTypeStateCore(type);
-			return StateWithKey<TypeState>.GetOrCreate(type, this, () => state);
+			TypeState CreateTypeState(DmdType type2) {
+				var state2 = CreateTypeStateCore(type2);
+				return StateWithKey<TypeState>.GetOrCreate(type2, this, () => state2);
+			}
 		}
 
 		sealed class MemberValueNodeInfoEqualityComparer : IComparer<MemberValueNodeInfo> {

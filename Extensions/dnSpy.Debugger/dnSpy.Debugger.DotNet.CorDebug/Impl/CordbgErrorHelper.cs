@@ -19,6 +19,7 @@
 
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
+using dnSpy.Debugger.DotNet.CorDebug.Properties;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	static class CordbgErrorHelper {
@@ -32,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (CordbgErrors.IsCantEvaluateError(hr))
 				return PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint;
 
-			return PredefinedEvaluationErrorMessages.InternalDebuggerError + " (0x" + hr.ToString("X8") + ")";
+			return dnSpy_Debugger_DotNet_CorDebug_Resources.InternalDebuggerError + " (0x" + hr.ToString("X8") + ")";
 		}
 	}
 }

@@ -37,8 +37,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string ImageName { get; }
 		public override bool IsReadOnly { get; }
 		public override bool CausesSideEffects { get; }
-		public override bool? HasChildren => childNodeProvider == null ? false : childNodeProvider.HasChildren;
-		public override ulong ChildCount => childNodeProvider == null ? 0 : childNodeProvider.ChildCount;
+		public override bool? HasChildren => childNodeProvider?.HasChildren ?? false;
+		public override ulong ChildCount => childNodeProvider?.ChildCount ?? 0;
 
 		readonly LanguageValueNodeFactory valueNodeFactory;
 		readonly DbgDotNetValueNodeProvider childNodeProvider;

@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
 
-					var genTypeArgs = method.ReflectedType.GetGenericArguments();
+					var genTypeArgs = method.DeclaringType.GetGenericArguments();
 					var methTypeArgs = method.GetGenericArguments();
 					var typeArgs = genTypeArgs.Count == 0 && methTypeArgs.Count == 0 ? Array.Empty<CorType>() : new CorType[genTypeArgs.Count + methTypeArgs.Count];
 					int w = 0;

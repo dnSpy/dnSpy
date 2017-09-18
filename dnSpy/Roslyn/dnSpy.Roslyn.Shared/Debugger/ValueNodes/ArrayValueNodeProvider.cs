@@ -56,16 +56,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
-		static uint[] CreateDivisors(DbgDotNetArrayDimensionInfo[] infos) {
-			var res = new uint[infos.Length];
-			uint divisor = 1;
-			for (int i = 0; i < infos.Length; i++) {
-				divisor *= infos[i].Length;
-				res[i] = divisor;
-			}
-			return res;
-		}
-
 		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
 			DbgDotNetValue newValue = null;
