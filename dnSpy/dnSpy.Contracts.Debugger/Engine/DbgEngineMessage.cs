@@ -29,27 +29,17 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Gets the message kind
 		/// </summary>
 		public abstract DbgEngineMessageKind MessageKind { get; }
-	}
 
-	/// <summary>
-	/// Base class of messages created by a <see cref="DbgEngine"/> that can contain an error message
-	/// </summary>
-	public abstract class DbgEngineMessageWithPossibleErrorMessage : DbgEngineMessage {
 		/// <summary>
-		/// The error message or null if there's no error
+		/// Gets the message flags
 		/// </summary>
-		public string ErrorMessage { get; }
+		public DbgEngineMessageFlags MessageFlags { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected DbgEngineMessageWithPossibleErrorMessage() { }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="errorMessage">Error message</param>
-		protected DbgEngineMessageWithPossibleErrorMessage(string errorMessage) => ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
+		/// <param name="messageFlags">Message flags</param>
+		protected DbgEngineMessage(DbgEngineMessageFlags messageFlags) => MessageFlags = messageFlags;
 	}
 
 	/// <summary>
@@ -57,11 +47,16 @@ namespace dnSpy.Contracts.Debugger.Engine {
 	/// debug engine. If it couldn't connect, no more messages need to be sent after this message
 	/// is sent.
 	/// </summary>
-	public sealed class DbgMessageConnected : DbgEngineMessageWithPossibleErrorMessage {
+	public sealed class DbgMessageConnected : DbgEngineMessage {
 		/// <summary>
 		/// Returns <see cref="DbgEngineMessageKind.Connected"/>
 		/// </summary>
 		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.Connected;
+
+		/// <summary>
+		/// The error message or null if there's no error
+		/// </summary>
+		public string ErrorMessage { get; }
 
 		/// <summary>
 		/// Gets the process id
@@ -69,25 +64,19 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public ulong ProcessId { get; }
 
 		/// <summary>
-		/// true if the process should be paused, false if other code gets to decide if it should be paused
-		/// </summary>
-		public bool Pause { get; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="processId">Process id</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
-		public DbgMessageConnected(ulong processId, bool pause = false) {
-			ProcessId = processId;
-			Pause = pause;
-		}
+		/// <param name="messageFlags">Message flags</param>
+		public DbgMessageConnected(ulong processId, DbgEngineMessageFlags messageFlags) : base(messageFlags) => ProcessId = processId;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="errorMessage">Error message</param>
-		public DbgMessageConnected(string errorMessage) : base(errorMessage) { }
+		/// <param name="messageFlags">Message flags</param>
+		public DbgMessageConnected(string errorMessage, DbgEngineMessageFlags messageFlags)
+			: base(messageFlags) => ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 	}
 
 	/// <summary>
@@ -108,17 +97,23 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Constructor
 		/// </summary>
 		/// <param name="exitCode">Exit code</param>
-		public DbgMessageDisconnected(int exitCode) => ExitCode = exitCode;
+		/// <param name="messageFlags">Message flags</param>
+		public DbgMessageDisconnected(int exitCode, DbgEngineMessageFlags messageFlags) : base(messageFlags) => ExitCode = exitCode;
 	}
 
 	/// <summary>
 	/// <see cref="DbgEngineMessageKind.Break"/> event
 	/// </summary>
-	public sealed class DbgMessageBreak : DbgEngineMessageWithPossibleErrorMessage {
+	public sealed class DbgMessageBreak : DbgEngineMessage {
 		/// <summary>
 		/// Returns <see cref="DbgEngineMessageKind.Break"/>
 		/// </summary>
 		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.Break;
+
+		/// <summary>
+		/// The error message or null if there's no error
+		/// </summary>
+		public string ErrorMessage { get; }
 
 		/// <summary>
 		/// Gets the thread or null if it's not known
@@ -128,13 +123,16 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public DbgMessageBreak(DbgThread thread) => Thread = thread;
+		/// <param name="thread">Thread or null if it's not known</param>
+		/// <param name="messageFlags">Message flags</param>
+		public DbgMessageBreak(DbgThread thread, DbgEngineMessageFlags messageFlags) : base(messageFlags) => Thread = thread;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="errorMessage">Error message</param>
-		public DbgMessageBreak(string errorMessage) : base(errorMessage) { }
+		/// <param name="messageFlags">Message flags</param>
+		public DbgMessageBreak(string errorMessage, DbgEngineMessageFlags messageFlags) : base(messageFlags) => ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 	}
 
 	/// <summary>
@@ -154,7 +152,9 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public DbgMessageEntryPointBreak(DbgThread thread) => Thread = thread;
+		/// <param name="thread">Thread or null if it's not known</param>
+		/// <param name="messageFlags">Message flags</param>
+		public DbgMessageEntryPointBreak(DbgThread thread, DbgEngineMessageFlags messageFlags) : base(messageFlags) => Thread = thread;
 	}
 
 	/// <summary>
@@ -177,20 +177,15 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public DbgThread Thread { get; }
 
 		/// <summary>
-		/// true if the process should be paused, false if other code gets to decide if it should be paused
-		/// </summary>
-		public bool Pause { get; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="message">Message</param>
 		/// <param name="thread">Thread or null if it's not known</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
-		public DbgMessageProgramMessage(string message, DbgThread thread, bool pause = false) {
+		/// <param name="messageFlags">Message flags</param>
+		public DbgMessageProgramMessage(string message, DbgThread thread, DbgEngineMessageFlags messageFlags)
+			: base(messageFlags) {
 			Message = message ?? throw new ArgumentNullException(nameof(message));
 			Thread = thread;
-			Pause = pause;
 		}
 	}
 
@@ -214,20 +209,15 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public DbgThread Thread { get; }
 
 		/// <summary>
-		/// true if the process should be paused, false if other code gets to decide if it should be paused
-		/// </summary>
-		public bool Pause { get; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="boundBreakpoint">Breakpoint</param>
 		/// <param name="thread">Thread or null if it's not known</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
-		public DbgMessageBreakpoint(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, bool pause = false) {
+		/// <param name="messageFlags">Message flags</param>
+		public DbgMessageBreakpoint(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgEngineMessageFlags messageFlags)
+			: base(messageFlags) {
 			BoundBreakpoint = boundBreakpoint ?? throw new ArgumentNullException(nameof(boundBreakpoint));
 			Thread = thread;
-			Pause = pause;
 		}
 	}
 
@@ -246,19 +236,12 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public DbgThread Thread { get; }
 
 		/// <summary>
-		/// true if the process should be paused, false if other code gets to decide if it should be paused
-		/// </summary>
-		public bool Pause { get; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="thread">Thread or null if it's not known</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
-		public DbgMessageProgramBreak(DbgThread thread, bool pause = false) {
-			Thread = thread;
-			Pause = pause;
-		}
+		/// <param name="messageFlags">Message flags</param>
+		public DbgMessageProgramBreak(DbgThread thread, DbgEngineMessageFlags messageFlags)
+			: base(messageFlags) => Thread = thread;
 	}
 
 	/// <summary>
@@ -291,7 +274,9 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="thread">Thread or null if it's not known</param>
 		/// <param name="framesInvalidated">true if all frames in the thread have been invalidated</param>
 		/// <param name="error">Error string or null if none</param>
-		public DbgMessageSetIPComplete(DbgThread thread, bool framesInvalidated, string error) {
+		/// <param name="messageFlags">Message flags</param>
+		public DbgMessageSetIPComplete(DbgThread thread, bool framesInvalidated, string error, DbgEngineMessageFlags messageFlags)
+			: base(messageFlags) {
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			FramesInvalidated = framesInvalidated;
 			Error = error;

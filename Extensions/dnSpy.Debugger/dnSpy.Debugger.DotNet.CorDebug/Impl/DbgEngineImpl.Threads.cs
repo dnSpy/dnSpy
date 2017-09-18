@@ -75,7 +75,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		static CorValue TryGetThreadObject(DnThread thread) {
-			var threadObj = thread.CorThread.Object?.NeuterCheckDereferencedValue;
+			var threadObj = thread.CorThread.Object;
+			if (threadObj == null || threadObj.IsNull)
+				return null;
+			threadObj = threadObj.NeuterCheckDereferencedValue;
 			if (threadObj == null || threadObj.IsNull)
 				return null;
 			return threadObj;
@@ -220,7 +223,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				var threadData = new DbgThreadData(e.Thread) { Last = props };
 				var state = DnThreadUtils.GetState(props.UserState);
 				e.ShouldPause = true;
-				var engineThread = objectFactory.CreateThread(props.AppDomain, props.Kind, props.Id, props.ManagedId, props.Name, props.SuspendedCount, state, pause: false, data: threadData);
+				var engineThread = objectFactory.CreateThread(props.AppDomain, props.Kind, props.Id, props.ManagedId, props.Name, props.SuspendedCount, state, GetMessageFlags(), data: threadData);
 				lock (lockObj)
 					toEngineThread.Add(e.Thread, engineThread);
 			}
@@ -232,7 +235,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				}
 				if (engineThread != null) {
 					e.ShouldPause = true;
-					engineThread.Remove();
+					engineThread.Remove(GetMessageFlags());
 				}
 			}
 		}
@@ -307,18 +310,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			bool framesInvalidated = false;
 			if (TryGetFrameForSetIP_CorDebug(thread, location, out var corFrame, out uint offset) is string error) {
-				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: error));
+				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, messageFlags: GetMessageFlags(), error: error));
 				return;
 			}
 
 			framesInvalidated = true;
 			bool failed = !corFrame.SetILFrameIP(offset);
 			if (failed) {
-				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotSetNextStatement));
+				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, messageFlags: GetMessageFlags(), error: dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotSetNextStatement));
 				return;
 			}
 
-			SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error: null));
+			SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, messageFlags: GetMessageFlags(), error: null));
 		}
 
 		public override bool CanSetIP(DbgThread thread, DbgCodeLocation location) =>

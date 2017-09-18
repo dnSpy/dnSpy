@@ -56,10 +56,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="internalAppDomain">App domain object created by the debug engine</param>
 		/// <param name="name">New <see cref="DbgAppDomain.Name"/> value</param>
 		/// <param name="id">New <see cref="DbgAppDomain.Id"/> value</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		/// <param name="messageFlags">Message flags</param>
 		/// <returns></returns>
-		public DbgEngineAppDomain CreateAppDomain(DbgInternalAppDomain internalAppDomain, string name, int id, bool pause) =>
-			CreateAppDomain<object>(internalAppDomain, name, id, pause, null, null);
+		public DbgEngineAppDomain CreateAppDomain(DbgInternalAppDomain internalAppDomain, string name, int id, DbgEngineMessageFlags messageFlags) =>
+			CreateAppDomain<object>(internalAppDomain, name, id, messageFlags, null, null);
 
 		/// <summary>
 		/// Creates an app domain. The engine has paused the program.
@@ -68,11 +68,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="internalAppDomain">App domain object created by the debug engine</param>
 		/// <param name="name">New <see cref="DbgAppDomain.Name"/> value</param>
 		/// <param name="id">New <see cref="DbgAppDomain.Id"/> value</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		/// <param name="messageFlags">Message flags</param>
 		/// <param name="data">Data to add to the <see cref="DbgAppDomain"/> or null if nothing gets added</param>
 		/// <param name="onCreated">Called right after creating the app domain but before adding it to internal data structures. This can be null.</param>
 		/// <returns></returns>
-		public abstract DbgEngineAppDomain CreateAppDomain<T>(DbgInternalAppDomain internalAppDomain, string name, int id, bool pause, T data, Action<DbgEngineAppDomain> onCreated = null) where T : class;
+		public abstract DbgEngineAppDomain CreateAppDomain<T>(DbgInternalAppDomain internalAppDomain, string name, int id, DbgEngineMessageFlags messageFlags, T data, Action<DbgEngineAppDomain> onCreated = null) where T : class;
 
 		/// <summary>
 		/// Creates a module. The engine has paused the program.
@@ -91,10 +91,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="order">New <see cref="DbgModule.Order"/> value</param>
 		/// <param name="timestamp">New <see cref="DbgModule.Timestamp"/> value</param>
 		/// <param name="version">New <see cref="DbgModule.Version"/> value</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		/// <param name="messageFlags">Message flags</param>
 		/// <returns></returns>
-		public DbgEngineModule CreateModule(DbgAppDomain appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, bool pause) =>
-			CreateModule<object>(appDomain, internalModule, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, pause, null, null);
+		public DbgEngineModule CreateModule(DbgAppDomain appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, DbgEngineMessageFlags messageFlags) =>
+			CreateModule<object>(appDomain, internalModule, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, messageFlags, null, null);
 
 		/// <summary>
 		/// Creates a module. The engine has paused the program.
@@ -114,11 +114,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="order">New <see cref="DbgModule.Order"/> value</param>
 		/// <param name="timestamp">New <see cref="DbgModule.Timestamp"/> value</param>
 		/// <param name="version">New <see cref="DbgModule.Version"/> value</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		/// <param name="messageFlags">Message flags</param>
 		/// <param name="data">Data to add to the <see cref="DbgModule"/> or null if nothing gets added</param>
 		/// <param name="onCreated">Called right after creating the module but before adding it to internal data structures. This can be null.</param>
 		/// <returns></returns>
-		public abstract DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, bool pause, T data, Action<DbgEngineModule> onCreated = null) where T : class;
+		public abstract DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, DbgEngineMessageFlags messageFlags, T data, Action<DbgEngineModule> onCreated = null) where T : class;
 
 		/// <summary>
 		/// Creates a thread. The engine has paused the program.
@@ -130,10 +130,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="name">New <see cref="DbgThread.Name"/> value</param>
 		/// <param name="suspendedCount">New <see cref="DbgThread.SuspendedCount"/> value</param>
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		/// <param name="messageFlags">Message flags</param>
 		/// <returns></returns>
-		public DbgEngineThread CreateThread(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause) =>
-			CreateThread<object>(appDomain, kind, id, managedId, name, suspendedCount, state, pause, null, null);
+		public DbgEngineThread CreateThread(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, DbgEngineMessageFlags messageFlags) =>
+			CreateThread<object>(appDomain, kind, id, managedId, name, suspendedCount, state, messageFlags, null, null);
 
 		/// <summary>
 		/// Creates a thread. The engine has paused the program.
@@ -146,11 +146,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="name">New <see cref="DbgThread.Name"/> value</param>
 		/// <param name="suspendedCount">New <see cref="DbgThread.SuspendedCount"/> value</param>
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		/// <param name="messageFlags">Message flags</param>
 		/// <param name="data">Data to add to the <see cref="DbgThread"/> or null if nothing gets added</param>
 		/// <param name="onCreated">Called right after creating the thread but before adding it to internal data structures. This can be null.</param>
 		/// <returns></returns>
-		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, bool pause, T data, Action<DbgEngineThread> onCreated = null) where T : class;
+		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, DbgEngineMessageFlags messageFlags, T data, Action<DbgEngineThread> onCreated = null) where T : class;
 
 		/// <summary>
 		/// Creates an exception. The engine has paused the program.
@@ -160,10 +160,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="message">Exception message or null if it's not available</param>
 		/// <param name="thread">Thread where exception was thrown or null if it's unknown</param>
 		/// <param name="module">Module where exception was thrown or null if it's unknown</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		/// <param name="messageFlags">Message flags</param>
 		/// <returns></returns>
-		public DbgException CreateException(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, bool pause) =>
-			CreateException<object>(id, flags, message, thread, module, pause, null, null);
+		public DbgException CreateException(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, DbgEngineMessageFlags messageFlags) =>
+			CreateException<object>(id, flags, message, thread, module, messageFlags, null, null);
 
 		/// <summary>
 		/// Creates an exception. The engine has paused the program.
@@ -174,11 +174,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="message">Exception message or null if it's not available</param>
 		/// <param name="thread">Thread where exception was thrown or null if it's unknown</param>
 		/// <param name="module">Module where exception was thrown or null if it's unknown</param>
-		/// <param name="pause">true if the process should be paused, false if other code gets to decide if it should be paused</param>
+		/// <param name="messageFlags">Message flags</param>
 		/// <param name="data">Data to add to the <see cref="DbgException"/> or null if nothing gets added</param>
 		/// <param name="onCreated">Called right after creating the exception but before adding it to internal data structures. This can be null.</param>
 		/// <returns></returns>
-		public abstract DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, bool pause, T data, Action<DbgException> onCreated = null) where T : class;
+		public abstract DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, DbgEngineMessageFlags messageFlags, T data, Action<DbgException> onCreated = null) where T : class;
 
 		/// <summary>
 		/// Value used when the bound breakpoint's address isn't known

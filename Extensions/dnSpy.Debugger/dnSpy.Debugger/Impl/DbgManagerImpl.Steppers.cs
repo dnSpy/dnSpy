@@ -20,6 +20,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.Steppers;
@@ -73,7 +74,7 @@ namespace dnSpy.Debugger.Impl {
 			var e = new DbgMessageStepCompleteEventArgs(thread, error);
 			// This is a good default value...
 			e.Pause = true;
-			OnConditionalBreak_DbgThread(engine, e, thread, pauseDefaultValue: false);
+			OnConditionalBreak_DbgThread(engine, e, thread, DbgEngineMessageFlags.None);
 		}
 	}
 }

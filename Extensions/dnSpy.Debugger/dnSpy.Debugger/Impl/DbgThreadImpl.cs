@@ -25,6 +25,7 @@ using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Steppers;
 using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
@@ -207,7 +208,7 @@ namespace dnSpy.Debugger.Impl {
 			return -1;
 		}
 
-		internal void Remove(bool pause) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
+		internal void Remove(DbgEngineMessageFlags messageFlags) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(this, messageFlags));
 
 		public override void Freeze() => runtime.Freeze(this);
 		public override void Thaw() => runtime.Thaw(this);

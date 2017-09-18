@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Engine;
 
 namespace dnSpy.Debugger.Impl {
 	sealed class DbgModuleImpl : DbgModule {
@@ -206,7 +207,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		internal void Remove(bool pause) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(this, pause));
+		internal void Remove(DbgEngineMessageFlags messageFlags) => Dispatcher.BeginInvoke(() => runtime.Remove_DbgThread(this, messageFlags));
 
 		protected override void CloseCore(DbgDispatcher dispatcher) => InternalModule.Close(dispatcher);
 	}

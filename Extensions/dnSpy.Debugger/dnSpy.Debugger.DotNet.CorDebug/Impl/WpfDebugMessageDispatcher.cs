@@ -25,6 +25,8 @@ using dndbg.Engine;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class WpfDebugMessageDispatcher : IDebugMessageDispatcher {
+		internal const DispatcherPriority DispPriority = DispatcherPriority.Send;
+
 		readonly ConcurrentQueue<Action> queue = new ConcurrentQueue<Action>();
 		int callingEmptyQueue;
 		readonly Dispatcher dispatcher;
@@ -43,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				EmptyQueue();
 			else if (callingEmptyQueue == 0) {
 				Interlocked.Increment(ref callingEmptyQueue);
-				disp.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+				disp.BeginInvoke(DispPriority, new Action(() => {
 					Interlocked.Decrement(ref callingEmptyQueue);
 					EmptyQueue();
 				}));
@@ -67,7 +69,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return null;
 			}
 			bool timedOutTmp = true;
-			var res = disp.Invoke(() => DispatchQueueCore(waitTime, out timedOutTmp), DispatcherPriority.Send);
+			var res = disp.Invoke(() => DispatchQueueCore(waitTime, out timedOutTmp), DispPriority);
 			timedOut = timedOutTmp;
 			return res;
 		}

@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.Impl {
 			AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: true));
 		}
 
-		internal void Remove_DbgThread(DbgAppDomainImpl appDomain, bool pause) {
+		internal void Remove_DbgThread(DbgAppDomainImpl appDomain, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
 			List<DbgThread> threadsToRemove = null;
 			List<DbgModule> modulesToRemove = null;
@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.Impl {
 				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(threadsToRemove, added: false));
 			if (modulesToRemove != null && modulesToRemove.Count != 0)
 				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(modulesToRemove, added: false));
-			owner.RemoveAppDomain_DbgThread(this, appDomain, pause);
+			owner.RemoveAppDomain_DbgThread(this, appDomain, messageFlags);
 			AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: false));
 			if (threadsToRemove != null) {
 				foreach (var thread in threadsToRemove)
@@ -185,14 +185,14 @@ namespace dnSpy.Debugger.Impl {
 			ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(module, added: true));
 		}
 
-		internal void Remove_DbgThread(DbgModuleImpl module, bool pause) {
+		internal void Remove_DbgThread(DbgModuleImpl module, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				bool b = modules.Remove(module);
 				if (!b)
 					return;
 			}
-			owner.RemoveModule_DbgThread(this, module, pause);
+			owner.RemoveModule_DbgThread(this, module, messageFlags);
 			ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(module, added: false));
 			module.Close(Dispatcher);
 		}
@@ -204,14 +204,14 @@ namespace dnSpy.Debugger.Impl {
 			ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(thread, added: true));
 		}
 
-		internal void Remove_DbgThread(DbgThreadImpl thread, bool pause) {
+		internal void Remove_DbgThread(DbgThreadImpl thread, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				bool b = threads.Remove(thread);
 				if (!b)
 					return;
 			}
-			owner.RemoveThread_DbgThread(this, thread, pause);
+			owner.RemoveThread_DbgThread(this, thread, messageFlags);
 			ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(thread, added: false));
 			thread.Close(Dispatcher);
 		}

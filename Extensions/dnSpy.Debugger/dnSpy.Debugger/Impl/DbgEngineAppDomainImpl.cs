@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public DbgEngineAppDomainImpl(DbgAppDomainImpl appDomain) => this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 
-		public override void Remove(bool pause) => appDomain.Remove(pause);
+		public override void Remove(DbgEngineMessageFlags messageFlags) => appDomain.Remove(messageFlags);
 
 		public override void Update(UpdateOptions options, string name = null, int id = 0) => appDomain.Process.DbgManager.Dispatcher.BeginInvoke(() => {
 			if (appDomain.IsClosed)

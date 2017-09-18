@@ -382,7 +382,7 @@ namespace dnSpy.Debugger.Impl {
 			var objectFactory = new DbgObjectFactoryImpl(this, runtime, engine, boundCodeBreakpointsService);
 
 			DbgProcessState processState;
-			bool pauseProgram = e.Pause;
+			bool pauseProgram = (e.MessageFlags & DbgEngineMessageFlags.Pause) != 0;
 			bool otherPauseProgram;
 			lock (lockObj) {
 				var info = GetEngineInfo_NoLock(engine);
@@ -661,25 +661,28 @@ namespace dnSpy.Debugger.Impl {
 		void OnEntryPointBreak_DbgThread(DbgEngine engine, DbgMessageEntryPointBreak e) {
 			Dispatcher.VerifyAccess();
 			var ep = new DbgMessageEntryPointBreakEventArgs(GetRuntime(engine), e.Thread);
-			OnConditionalBreak_DbgThread(engine, ep, ep.Thread, pauseDefaultValue: true);
+			OnConditionalBreak_DbgThread(engine, ep, ep.Thread, e.MessageFlags | DbgEngineMessageFlags.Pause);
 		}
 
 		void OnProgramMessage_DbgThread(DbgEngine engine, DbgMessageProgramMessage e) {
 			Dispatcher.VerifyAccess();
 			var ep = new DbgMessageProgramMessageEventArgs(e.Message, GetRuntime(engine), e.Thread);
-			OnConditionalBreak_DbgThread(engine, ep, ep.Thread, pauseDefaultValue: e.Pause);
+			OnConditionalBreak_DbgThread(engine, ep, ep.Thread, e.MessageFlags);
 		}
 
 		void OnBreakpoint_DbgThread(DbgEngine engine, DbgMessageBreakpoint e) {
 			Dispatcher.VerifyAccess();
 			var eb = new DbgMessageBoundBreakpointEventArgs(e.BoundBreakpoint, e.Thread);
-			OnConditionalBreak_DbgThread(engine, eb, eb.Thread, pauseDefaultValue: e.Pause);
+			OnConditionalBreak_DbgThread(engine, eb, eb.Thread, e.MessageFlags);
 		}
 
 		void OnProgramBreak_DbgThread(DbgEngine engine, DbgMessageProgramBreak e) {
 			Dispatcher.VerifyAccess();
 			var eb = new DbgMessageProgramBreakEventArgs(GetRuntime(engine), e.Thread);
-			OnConditionalBreak_DbgThread(engine, eb, eb.Thread, pauseDefaultValue: e.Pause || !debuggerSettings.IgnoreBreakInstructions);
+			var flags = e.MessageFlags;
+			if (!debuggerSettings.IgnoreBreakInstructions && (e.MessageFlags & DbgEngineMessageFlags.Continue) == 0)
+				flags |= DbgEngineMessageFlags.Pause;
+			OnConditionalBreak_DbgThread(engine, eb, eb.Thread, flags);
 		}
 
 		void OnSetIPComplete_DbgThread(DbgEngine engine, DbgMessageSetIPComplete e) {
@@ -687,22 +690,21 @@ namespace dnSpy.Debugger.Impl {
 			if (e.Thread.IsClosed)
 				return;
 			var es = new DbgMessageSetIPCompleteEventArgs(e.Thread, e.FramesInvalidated, e.Error);
-			// It was paused, so keep it paused.
-			es.Pause = true;
-			OnConditionalBreak_DbgThread(engine, es, es.Thread, pauseDefaultValue: false);
+			es.Pause = (e.MessageFlags & DbgEngineMessageFlags.Continue) == 0;
+			OnConditionalBreak_DbgThread(engine, es, es.Thread, e.MessageFlags);
 		}
 
-		internal void AddAppDomain_DbgThread(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, bool pause) {
+		internal void AddAppDomain_DbgThread(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
 			Debug.Assert(IsOurEngine(runtime.Engine));
 			if (!IsOurEngine(runtime.Engine))
 				return;
 			runtime.Add_DbgThread(appDomain);
 			var e = new DbgMessageAppDomainLoadedEventArgs(appDomain);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, null, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, null, messageFlags);
 		}
 
-		internal void AddModule_DbgThread(DbgRuntimeImpl runtime, DbgModuleImpl module, bool pause) {
+		internal void AddModule_DbgThread(DbgRuntimeImpl runtime, DbgModuleImpl module, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
 			Debug.Assert(IsOurEngine(runtime.Engine));
 			if (!IsOurEngine(runtime.Engine))
@@ -710,67 +712,68 @@ namespace dnSpy.Debugger.Impl {
 			runtime.Add_DbgThread(module);
 			boundBreakpointsManager.AddBoundBreakpoints_DbgThread(new[] { module });
 			var e = new DbgMessageModuleLoadedEventArgs(module);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, null, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, null, messageFlags);
 		}
 
-		internal void AddThread_DbgThread(DbgRuntimeImpl runtime, DbgThreadImpl thread, bool pause) {
+		internal void AddThread_DbgThread(DbgRuntimeImpl runtime, DbgThreadImpl thread, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
 			Debug.Assert(IsOurEngine(runtime.Engine));
 			if (!IsOurEngine(runtime.Engine))
 				return;
 			runtime.Add_DbgThread(thread);
 			var e = new DbgMessageThreadCreatedEventArgs(thread);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, e.Thread, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, e.Thread, messageFlags);
 		}
 
-		internal void RemoveAppDomain_DbgThread(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, bool pause) {
+		internal void RemoveAppDomain_DbgThread(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
 			Debug.Assert(IsOurEngine(runtime.Engine));
 			if (!IsOurEngine(runtime.Engine))
 				return;
 			var e = new DbgMessageAppDomainUnloadedEventArgs(appDomain);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, null, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, null, messageFlags);
 		}
 
-		internal void RemoveModule_DbgThread(DbgRuntimeImpl runtime, DbgModuleImpl module, bool pause) {
+		internal void RemoveModule_DbgThread(DbgRuntimeImpl runtime, DbgModuleImpl module, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
 			Debug.Assert(IsOurEngine(runtime.Engine));
 			if (!IsOurEngine(runtime.Engine))
 				return;
 			boundBreakpointsManager.RemoveBoundBreakpoints_DbgThread(new[] { module });
 			var e = new DbgMessageModuleUnloadedEventArgs(module);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, null, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, null, messageFlags);
 		}
 
-		internal void RemoveThread_DbgThread(DbgRuntimeImpl runtime, DbgThreadImpl thread, bool pause) {
+		internal void RemoveThread_DbgThread(DbgRuntimeImpl runtime, DbgThreadImpl thread, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
 			Debug.Assert(IsOurEngine(runtime.Engine));
 			if (!IsOurEngine(runtime.Engine))
 				return;
 			int exitCode = thread.GetExitCode();
 			var e = new DbgMessageThreadExitedEventArgs(thread, exitCode);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, null, pauseDefaultValue: pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, null, messageFlags);
 		}
 
-		internal void AddException_DbgThread(DbgRuntimeImpl runtime, DbgExceptionImpl exception, bool pause) {
+		internal void AddException_DbgThread(DbgRuntimeImpl runtime, DbgExceptionImpl exception, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
 			Debug.Assert(IsOurEngine(runtime.Engine));
 			if (!IsOurEngine(runtime.Engine))
 				return;
 			var e = new DbgMessageExceptionThrownEventArgs(exception);
-			OnConditionalBreak_DbgThread(runtime.Engine, e, e.Exception.Thread, exception, pause);
+			OnConditionalBreak_DbgThread(runtime.Engine, e, e.Exception.Thread, messageFlags, exception);
 		}
 
-		void OnConditionalBreak_DbgThread(DbgEngine engine, DbgMessageEventArgs e, DbgThread thread, DbgExceptionImpl exception = null, bool pauseDefaultValue = false) {
+		void OnConditionalBreak_DbgThread(DbgEngine engine, DbgMessageEventArgs e, DbgThread thread, DbgEngineMessageFlags messageFlags, DbgExceptionImpl exception = null) {
 			Dispatcher.VerifyAccess();
 
-			bool pauseProgram = pauseDefaultValue;
+			bool pauseProgram = (messageFlags & DbgEngineMessageFlags.Pause) != 0;
 			RaiseMessage_DbgThread(e, ref pauseProgram);
 			bool otherPauseProgram = false;
 			if (!pauseProgram) {
 				lock (lockObj) {
 					otherPauseProgram |= breakAllHelper != null;
-					if (!otherPauseProgram)
+					// If we're func-eval'ing, don't pause it
+					if (!otherPauseProgram && (messageFlags & DbgEngineMessageFlags.Continue) == 0)
 						otherPauseProgram |= GetEngineInfo_NoLock(engine).EngineState == EngineState.Paused;
 				}
 			}
@@ -803,8 +806,14 @@ namespace dnSpy.Debugger.Impl {
 			}
 			else {
 				exception?.Close(Dispatcher);
-				lock (lockObj)
-					GetEngineInfo_NoLock(engine).Runtime.OnBeforeContinuing_DbgThread();
+				lock (lockObj) {
+					var info = GetEngineInfo_NoLock(engine);
+					// If we got an event while func evaluating, then do not close all DbgObjects
+					// in the 'close on continue' list. We should only do this if it's a real continue
+					// caused by the user.
+					if (info.EngineState == EngineState.Paused && (messageFlags & DbgEngineMessageFlags.Continue) == 0)
+						info.Runtime.OnBeforeContinuing_DbgThread();
+				}
 				engine.Run();
 			}
 		}

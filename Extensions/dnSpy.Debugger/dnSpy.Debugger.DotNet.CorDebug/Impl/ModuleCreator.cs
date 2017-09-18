@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 
 			var internalModule = new DbgCorDebugInternalModuleImpl(reflectionModule, closedListenerCollection);
-			return objectFactory.CreateModule(appDomain, internalModule, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, pause: false, data: data, onCreated: engineModule => internalModule.SetModule(engineModule.Module));
+			return objectFactory.CreateModule(appDomain, internalModule, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, engine.GetMessageFlags(), data: data, onCreated: engineModule => internalModule.SetModule(engineModule.Module));
 		}
 
 		static Func<DmdLazyMetadataBytes> CreateGetMetadataDelegate(DbgEngineImpl engine, DbgRuntime runtime, DnModule dnModule, ClosedListenerCollection closedListenerCollection, DbgImageLayout imageLayout) {

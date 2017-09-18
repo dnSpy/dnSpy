@@ -138,21 +138,30 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		internal bool CheckCorDebugThread() => debuggerThread.CheckAccess();
 		internal void VerifyCorDebugThread() => debuggerThread.VerifyAccess();
-		internal void InvokeCorDebugThread(Action callback) => debuggerThread.Invoke(callback);
 		internal T InvokeCorDebugThread<T>(Func<T> callback) => debuggerThread.Invoke(callback);
 		internal void CorDebugThread(Action callback) => debuggerThread.BeginInvoke(callback);
+
+		internal DbgEngineMessageFlags GetMessageFlags(bool pause = false) {
+			VerifyCorDebugThread();
+			var flags = DbgEngineMessageFlags.None;
+			if (pause)
+				flags |= DbgEngineMessageFlags.Pause;
+			if (dnDebugger.IsEvaluating)
+				flags |= DbgEngineMessageFlags.Continue;
+			return flags;
+		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
 			switch (e.Kind) {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
 				hProcess_debuggee = Native.NativeMethods.OpenProcess(Native.NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
-				SendMessage(new DbgMessageConnected((uint)cp.CorProcess.ProcessId, pause: false));
+				SendMessage(new DbgMessageConnected((uint)cp.CorProcess.ProcessId, GetMessageFlags()));
 				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
 			case DebugCallbackKind.CreateAppDomain:
-				// We can't create it in the CreateProcess event
+				// CreateProcess is too early, we must do this when the AppDomain gets created
 				if (!clrDacInitd) {
 					clrDacInitd = true;
 					var p = dnDebugger.Processes.FirstOrDefault();
@@ -178,7 +187,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					break;
 
 				var exObj = e2.CorThread?.CurrentException;
-				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread), pause: false);
+				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread), GetMessageFlags());
 				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
@@ -186,7 +195,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (dbg.IsEvaluating)
 					break;
 				var mdan = (MDANotificationDebugCallbackEventArgs)e;
-				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread), pause: false);
+				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.MDA, mdan.CorMDA?.Name ?? "???"), DbgExceptionEventFlags.FirstChance, mdan.CorMDA?.Description, TryGetThread(mdan.CorThread), TryGetModule(null, mdan.CorThread), GetMessageFlags());
 				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
@@ -198,7 +207,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (msg != null) {
 					e.AddPauseReason(DebuggerPauseReason.Other);
 					var thread = TryGetThread(lmsgArgs.CorThread);
-					SendMessage(new DbgMessageProgramMessage(msg, thread));
+					SendMessage(new DbgMessageProgramMessage(msg, thread, GetMessageFlags()));
 				}
 				break;
 
@@ -307,7 +316,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				ClrDacTerminated?.Invoke(this, EventArgs.Empty);
 				UnhookDnDebuggerEventsAndCloseProcessHandle();
 
-				SendMessage(new DbgMessageDisconnected(exitCode));
+				SendMessage(new DbgMessageDisconnected(exitCode, GetMessageFlags()));
 				return;
 			}
 			else if (dnDebugger.ProcessState == DebuggerProcessState.Paused) {
@@ -332,7 +341,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 						case DebuggerPauseReason.Break:
 							var bs = (BreakPauseState)pauseState;
-							SendMessage(new DbgMessageProgramBreak(TryGetThread(bs.CorThread)));
+							SendMessage(new DbgMessageProgramBreak(TryGetThread(bs.CorThread), GetMessageFlags()));
 							break;
 
 						case DebuggerPauseReason.NativeCodeBreakpoint:
@@ -342,19 +351,22 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 						case DebuggerPauseReason.EntryPointBreakpoint:
 							var epbp = (EntryPointBreakpointPauseState)pauseState;
-							SendMessage(new DbgMessageEntryPointBreak(TryGetThread(epbp.CorThread)));
+							SendMessage(new DbgMessageEntryPointBreak(TryGetThread(epbp.CorThread), GetMessageFlags()));
+							break;
+
+						case DebuggerPauseReason.Eval:
+							SendMessage(new DbgMessageBreak(TryGetThread(debuggerState.Thread), GetMessageFlags()));
 							break;
 
 						case DebuggerPauseReason.DebugEventBreakpoint:
 						case DebuggerPauseReason.AnyDebugEventBreakpoint:
-						case DebuggerPauseReason.Eval:
 							//TODO:
-							SendMessage(new DbgMessageBreak(TryGetThread(debuggerState.Thread)));
+							SendMessage(new DbgMessageBreak(TryGetThread(debuggerState.Thread), GetMessageFlags()));
 							break;
 
 						default:
 							Debug.Fail($"Unknown reason: {pauseState.Reason}");
-							SendMessage(new DbgMessageBreak(TryGetThread(debuggerState.Thread)));
+							SendMessage(new DbgMessageBreak(TryGetThread(debuggerState.Thread), GetMessageFlags()));
 							break;
 						}
 					}
@@ -384,7 +396,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				e.ShouldPause = true;
 				var appDomain = dmdRuntime.CreateAppDomain(e.AppDomain.Id);
 				var internalAppDomain = new DbgCorDebugInternalAppDomainImpl(appDomain);
-				var engineAppDomain = objectFactory.CreateAppDomain<object>(internalAppDomain, e.AppDomain.Name, e.AppDomain.Id, pause: false, data: null, onCreated: engineAppDomain2 => internalAppDomain.SetAppDomain(engineAppDomain2.AppDomain));
+				var engineAppDomain = objectFactory.CreateAppDomain<object>(internalAppDomain, e.AppDomain.Name, e.AppDomain.Id, GetMessageFlags(), data: null, onCreated: engineAppDomain2 => internalAppDomain.SetAppDomain(engineAppDomain2.AppDomain));
 				lock (lockObj)
 					toEngineAppDomain.Add(e.AppDomain, engineAppDomain);
 			}
@@ -409,7 +421,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				}
 				if (engineAppDomain != null) {
 					e.ShouldPause = true;
-					engineAppDomain.Remove();
+					engineAppDomain.Remove(GetMessageFlags());
 				}
 			}
 		}
@@ -540,7 +552,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				}
 				if (engineModule != null) {
 					e.ShouldPause = true;
-					engineModule.Remove();
+					engineModule.Remove(GetMessageFlags());
 				}
 			}
 		}
@@ -587,7 +599,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				}
 
 				var dbgOptions = new DebugProcessOptions(CreateDebugInfo(options)) {
-					DebugMessageDispatcher = debuggerThread.CreateDebugMessageDispatcher(),
+					DebugMessageDispatcher = debuggerThread.GetDebugMessageDispatcher(),
 					CurrentDirectory = options.WorkingDirectory,
 					Filename = options.Filename,
 					CommandLine = options.CommandLine,
@@ -622,7 +634,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				else
 					errMsg = string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotStartDebuggerCheckAccessToFile, options.Filename ?? "<???>", ex.Message);
 
-				SendMessage(new DbgMessageConnected(errMsg));
+				SendMessage(new DbgMessageConnected(errMsg, GetMessageFlags()));
 				return;
 			}
 		}
@@ -645,7 +657,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (debuggerThread.HasShutdownStarted)
 					throw new InvalidOperationException("Dispatcher has shut down");
 				var dbgOptions = new AttachProcessOptions(CreateAttachInfo(options)) {
-					DebugMessageDispatcher = debuggerThread.CreateDebugMessageDispatcher(),
+					DebugMessageDispatcher = debuggerThread.GetDebugMessageDispatcher(),
 					ProcessId = (int)options.ProcessId,
 				};
 
@@ -668,7 +680,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				else
 					errMsg = string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotStartDebugger2, ex.Message);
 
-				SendMessage(new DbgMessageConnected(errMsg));
+				SendMessage(new DbgMessageConnected(errMsg, GetMessageFlags()));
 				return;
 			}
 		}
@@ -757,17 +769,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (dnDebugger.ProcessState == DebuggerProcessState.Running) {
 				int hr = dnDebugger.TryBreakProcesses();
 				if (hr < 0)
-					SendMessage(new DbgMessageBreak(string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotBreakProcess, hr)));
+					SendMessage(new DbgMessageBreak(string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotBreakProcess, hr), GetMessageFlags()));
 				else {
 					Debug.Assert(dnDebugger.ProcessState == DebuggerProcessState.Paused);
 					// The debugger just picks the first thread in the first AppDomain, and this isn't
 					// always the main thread, eg. when we've attached to a proces. It also doesn't
 					// have enough info to find the main thread so we have to do it.
-					SendMessage(new DbgMessageBreak(GetThreadPreferMain_CorDebug()));
+					SendMessage(new DbgMessageBreak(GetThreadPreferMain_CorDebug(), GetMessageFlags()));
 				}
 			}
 			else
-				SendMessage(new DbgMessageBreak(GetThreadPreferMain_CorDebug()));
+				SendMessage(new DbgMessageBreak(GetThreadPreferMain_CorDebug(), GetMessageFlags()));
 		}
 
 		DbgThread GetThreadPreferMain_CorDebug() {
@@ -797,7 +809,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal void Continue_CorDebug() {
 			debuggerThread.VerifyAccess();
 			ClrDacRunning?.Invoke(this, EventArgs.Empty);
-			CloseDotNetValues_CorDebug();
+			// We could be func evaluating and get a CreateThread event. The DbgManager will call Run()
+			// but we mustn't dispose of the handles that we're still using.
+			if (!dnDebugger.IsEvaluating)
+				CloseDotNetValues_CorDebug();
 			dnDebugger.Continue();
 		}
 
