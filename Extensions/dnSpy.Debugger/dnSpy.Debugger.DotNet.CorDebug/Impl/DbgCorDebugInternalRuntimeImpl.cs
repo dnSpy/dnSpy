@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
@@ -176,41 +177,79 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (state.Initialized > 0 || Interlocked.Increment(ref state.Initialized) != 1)
 				return; 
 			var cctor = type.TypeInitializer;
-			if ((object)cctor == null)
-				return;
-			foreach (var field in type.DeclaredFields) {
-				if (!field.IsStatic || field.IsLiteral)
-					continue;
-
-				var fieldValue = corType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out int hr);
-				if (hr == CordbgErrors.CORDBG_E_CLASS_NOT_LOADED || hr == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE)
-					break;
-				if (fieldValue != null) {
-					if (fieldValue.IsNull)
+			if ((object)cctor != null) {
+				foreach (var field in type.DeclaredFields) {
+					if (!field.IsStatic || field.IsLiteral)
 						continue;
-					if (field.FieldType.IsValueType) {
-						var objValue = fieldValue.DereferencedValue?.BoxedValue;
-						var data = objValue?.ReadGenericValue();
-						if (data != null && !IsZero(data))
+
+					var fieldValue = corType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out int hr);
+					if (hr == CordbgErrors.CORDBG_E_CLASS_NOT_LOADED || hr == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE)
+						break;
+					if (fieldValue != null) {
+						if (fieldValue.IsNull)
+							continue;
+						if (field.FieldType.IsValueType) {
+							var objValue = fieldValue.DereferencedValue?.BoxedValue;
+							var data = objValue?.ReadGenericValue();
+							if (data != null && !IsZero(data))
+								return;
+						}
+						else {
+							// It's a reference type and not null, so the field has been initialized
 							return;
-					}
-					else {
-						// It's a reference type and not null, so the field has been initialized
-						return;
+						}
 					}
 				}
+
+				if (HasNativeCode(cctor))
+					return;
 			}
 
-			var reflectionAppDomain = type.AppDomain;
-			var methodDbgModule = cctor.Module.GetDebuggerModule() ?? throw new InvalidOperationException();
-			if (!engine.TryGetDnModule(methodDbgModule, out var methodModule))
+			var res = engine.FuncEvalCreateInstanceNoCtor_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), type, cancellationToken);
+			if (res.Value == null || res.ValueIsException)
 				return;
-			var func = methodModule.CorModule.GetFunctionFromToken((uint)cctor.MetadataToken) ?? throw new InvalidOperationException();
-			if (func.NativeCode != null)
-				return;
+			RuntimeHelpersRunClassConstructor(context, frame, ilFrame, type, corType, res.Value, cancellationToken);
+		}
 
-			//TODO: It's better to call System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor()
-			engine.FuncEvalCreateInstanceNoCtor_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), type, cancellationToken);
+		bool HasNativeCode(DmdMethodBase method) {
+			var reflectionAppDomain = method.AppDomain;
+			var methodDbgModule = method.Module.GetDebuggerModule() ?? throw new InvalidOperationException();
+			if (!engine.TryGetDnModule(methodDbgModule, out var methodModule))
+				return false;
+			var func = methodModule.CorModule.GetFunctionFromToken((uint)method.MetadataToken) ?? throw new InvalidOperationException();
+			return func.NativeCode != null;
+		}
+
+		// Calls System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor():
+		//		RuntimeHelpers.RunClassConstructor(obj.GetType().TypeHandle);
+		void RuntimeHelpersRunClassConstructor(DbgEvaluationContext context, DbgStackFrame frame, ILDbgEngineStackFrame ilFrame, DmdType type, CorType corType, DbgDotNetValue objValue, CancellationToken cancellationToken) {
+			var reflectionAppDomain = type.AppDomain;
+			var getTypeMethod = objValue.Type.GetMethod(nameof(object.GetType), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, reflectionAppDomain.System_Type, Array.Empty<DmdType>(), throwOnError: false);
+			Debug.Assert((object)getTypeMethod != null);
+			if ((object)getTypeMethod == null)
+				return;
+			var corAppDomain = ilFrame.GetCorAppDomain();
+			var getTypeRes = engine.FuncEvalCall_CorDebug(context, frame.Thread, corAppDomain, getTypeMethod, objValue, Array.Empty<object>(), false, cancellationToken);
+			if (getTypeRes.Value == null || getTypeRes.ValueIsException)
+				return;
+			var typeObj = getTypeRes.Value;
+			var runtimeTypeHandleType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle, isOptional: true);
+			Debug.Assert((object)runtimeTypeHandleType != null);
+			if ((object)runtimeTypeHandleType == null)
+				return;
+			var getTypeHandleMethod = typeObj.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: false);
+			Debug.Assert((object)getTypeHandleMethod != null);
+			if ((object)getTypeHandleMethod == null)
+				return;
+			var typeHandleRes = engine.FuncEvalCall_CorDebug(context, frame.Thread, corAppDomain, getTypeHandleMethod, typeObj, Array.Empty<object>(), false, cancellationToken);
+			if (typeHandleRes.Value == null | typeHandleRes.ValueIsException)
+				return;
+			var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
+			var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
+			Debug.Assert((object)runClassConstructorMethod != null);
+			if ((object)runClassConstructorMethod == null)
+				return;
+			engine.FuncEvalCall_CorDebug(context, frame.Thread, corAppDomain, runClassConstructorMethod, null, new[] { typeHandleRes.Value }, false, cancellationToken);
 		}
 
 		static bool IsZero(byte[] a) {
