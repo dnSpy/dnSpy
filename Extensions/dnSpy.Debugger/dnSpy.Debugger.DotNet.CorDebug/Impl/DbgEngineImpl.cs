@@ -104,6 +104,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal DmdDispatcherImpl DmdDispatcher { get; }
 		internal DbgRawMetadataService RawMetadataService { get; }
 		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
+		readonly List<DbgDotNetValueImpl> valuesToCloseNow;
 		bool isUnhandledException;
 
 		protected DbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, DbgStartKind startKind) {
@@ -128,6 +129,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
 			dotNetValuesToCloseOnContinue = new List<DbgDotNetValueImpl>();
+			valuesToCloseNow = new List<DbgDotNetValueImpl>();
 			dmdRuntime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			toDynamicModuleHelper = new Dictionary<CorModule, DmdDynamicModuleHelperImpl>();
 			DmdDispatcher = new DmdDispatcherImpl(this);

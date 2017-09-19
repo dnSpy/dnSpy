@@ -258,7 +258,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		public override void Dispose() {
 			if ((flags & ValueFlags.HasFreedHandle) == 0)
-				engine.CorDebugThread(() => Dispose_CorDebug());
+				engine.Close(this);
 		}
 
 		internal void Dispose_CorDebug() {

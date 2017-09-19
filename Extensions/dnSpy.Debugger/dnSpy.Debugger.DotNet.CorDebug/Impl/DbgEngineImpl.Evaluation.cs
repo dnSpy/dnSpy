@@ -53,6 +53,27 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return dnValue;
 		}
 
+		internal void Close(DbgDotNetValueImpl value) {
+			bool start;
+			lock (lockObj) {
+				start = valuesToCloseNow.Count == 0;
+				valuesToCloseNow.Add(value);
+			}
+			if (start)
+				CorDebugThread(CloseValuesNow_CorDebug);
+		}
+
+		void CloseValuesNow_CorDebug() {
+			debuggerThread.VerifyAccess();
+			DbgDotNetValueImpl[] values;
+			lock (lockObj) {
+				values = valuesToCloseNow.ToArray();
+				valuesToCloseNow.Clear();
+			}
+			foreach (var value in values)
+				value.Dispose_CorDebug();
+		}
+
 		void CloseDotNetValues_CorDebug() {
 			debuggerThread.VerifyAccess();
 			DbgDotNetValueImpl[] valuesToClose;
