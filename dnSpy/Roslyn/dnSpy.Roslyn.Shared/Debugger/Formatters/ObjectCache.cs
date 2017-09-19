@@ -17,11 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
-	static class ValueFormatterObjectCache {
+	static class ObjectCache {
 		const int MAX_STRINGBUILDER_CAPACITY = 1024;
 		static StringBuilder stringBuilder;
 		public static StringBuilder AllocStringBuilder() => Interlocked.Exchange(ref stringBuilder, null) ?? new StringBuilder();
@@ -32,6 +35,27 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				stringBuilder = sb;
 			sb = null;
 			return res;
+		}
+
+		static List<DbgDotNetValue> dotNetValueList;
+		public static List<DbgDotNetValue> AllocDotNetValueList() => Interlocked.Exchange(ref dotNetValueList, null) ?? new List<DbgDotNetValue>();
+		public static void Free(ref List<DbgDotNetValue> list) {
+			list.Clear();
+			dotNetValueList = list;
+		}
+
+		static List<DmdFieldInfo> fieldInfoList1;
+		public static List<DmdFieldInfo> AllocFieldInfoList1() => Interlocked.Exchange(ref fieldInfoList1, null) ?? new List<DmdFieldInfo>();
+		public static void FreeFieldInfoList1(ref List<DmdFieldInfo> list) {
+			list.Clear();
+			fieldInfoList1 = list;
+		}
+
+		static List<DmdFieldInfo> fieldInfoList2;
+		public static List<DmdFieldInfo> AllocFieldInfoList2() => Interlocked.Exchange(ref fieldInfoList2, null) ?? new List<DmdFieldInfo>();
+		public static void FreeFieldInfoList2(ref List<DmdFieldInfo> list) {
+			list.Clear();
+			fieldInfoList2 = list;
 		}
 	}
 }

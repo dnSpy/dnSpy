@@ -176,50 +176,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				return null;
 
 			var tupleFields = new TupleField[tupleArity];
-			var currentType = type;
-			var fields = new List<DmdFieldInfo>();
-			var currentFields = new List<DmdFieldInfo>();
-			int tupleIndex = 0;
-			for (;;) {
-				fields.Add(null);
-				currentFields.Clear();
-				foreach (var field in currentType.DeclaredFields) {
-					if (field.IsStatic || field.IsLiteral)
-						continue;
-					currentFields.Add(field);
-				}
-				if (currentFields.Count > sortedTupleFields.Length)
+			foreach (var info in Formatters.TupleTypeUtils.GetTupleFields(type, tupleArity)) {
+				if (info.tupleIndex < 0)
 					return null;
-				currentFields.Sort((a, b) => StringComparer.Ordinal.Compare(a.Name, b.Name));
-				for (int i = 0; i < currentFields.Count; i++) {
-					var field = currentFields[i];
-					if (field.Name != sortedTupleFields[i])
-						return null;
-					fields[fields.Count - 1] = field;
-					if (i + 1 != sortedTupleFields.Length) {
-						if (tupleIndex >= tupleFields.Length)
-							return null;
-						var defaultName = GetDefaultTupleName(tupleIndex);
-						tupleFields[tupleIndex] = new TupleField(defaultName, fields.ToArray());
-						tupleIndex++;
-					}
-					else
-						currentType = field.FieldType;
-				}
-				if (tupleIndex == tupleFields.Length)
-					return new TypeState(type, typeExpression, tupleFields);
+				var defaultName = GetDefaultTupleName(info.tupleIndex);
+				tupleFields[info.tupleIndex] = new TupleField(defaultName, info.fields.ToArray());
 			}
+			return new TypeState(type, typeExpression, tupleFields);
 		}
-		static readonly string[] sortedTupleFields = new string[] {
-			"Item1",
-			"Item2",
-			"Item3",
-			"Item4",
-			"Item5",
-			"Item6",
-			"Item7",
-			"Rest",
-		};
 
 		static string GetDefaultTupleName(int tupleIndex) => "Item" + (tupleIndex + 1).ToString();
 

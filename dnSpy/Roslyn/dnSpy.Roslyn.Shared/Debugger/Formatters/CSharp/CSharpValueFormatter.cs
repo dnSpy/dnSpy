@@ -46,6 +46,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		const string DecimalSuffix = "M";
 		const string VerbatimStringPrefix = "@";
 		const string EnumFlagsOrSeparator = "|";
+		const string TupleTypeOpenParen = "(";
+		const string TupleTypeCloseParen = ")";
 
 		bool Display => (options & ValueFormatterOptions.Display) != 0;
 		bool Decimal => (options & ValueFormatterOptions.Decimal) != 0;
@@ -81,7 +83,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				var type = value.Type;
 				if (type.IsNullable && TryFormatNullable(value))
 					return;
-				if (TypeFormatterUtils.IsTupleType(type) && TryFormatTuple(value))
+				int tupleArity = TypeFormatterUtils.GetTupleArity(type);
+				if (tupleArity > 0 && TryFormatTuple(value, tupleArity))
 					return;
 				if (TryFormatWithDebuggerAttributes())
 					return;
@@ -115,10 +118,55 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			return false;
 		}
 
-		bool TryFormatTuple(DbgDotNetValue value) {
-			Debug.Assert(TypeFormatterUtils.IsTupleType(value.Type));
-			//TODO:
-			return false;
+		bool TryFormatTuple(DbgDotNetValue value, int tupleArity) {
+			Debug.Assert(TypeFormatterUtils.GetTupleArity(value.Type) == tupleArity && tupleArity > 0);
+			OutputWrite(TupleTypeOpenParen, BoxedTextColor.Punctuation);
+
+			var values = ObjectCache.AllocDotNetValueList();
+			var runtime = context.Runtime.GetDotNetRuntime();
+			int index = 0;
+			foreach (var info in TupleTypeUtils.GetTupleFields(value.Type, tupleArity)) {
+				if (index++ > 0) {
+					OutputWrite(",", BoxedTextColor.Punctuation);
+					WriteSpace();
+				}
+				if (info.tupleIndex < 0) {
+					OutputWrite("???", BoxedTextColor.Error);
+					break;
+				}
+				else {
+					var objValue = value;
+					DbgDotNetValueResult valueResult = default;
+					try {
+						foreach (var field in info.fields) {
+							valueResult = runtime.LoadField(context, frame, objValue, field, cancellationToken);
+							if (valueResult.Value != null)
+								values.Add(valueResult.Value);
+							if (valueResult.HasError || valueResult.ValueIsException) {
+								objValue = null;
+								break;
+							}
+							objValue = valueResult.Value;
+						}
+						valueResult = default;
+						if (objValue == null) {
+							OutputWrite("???", BoxedTextColor.Error);
+							break;
+						}
+						Format(objValue);
+					}
+					finally {
+						valueResult.Value?.Dispose();
+						foreach (var v in values)
+							v?.Dispose();
+						values.Clear();
+					}
+				}
+			}
+			ObjectCache.Free(ref values);
+
+			OutputWrite(TupleTypeCloseParen, BoxedTextColor.Punctuation);
+			return true;
 		}
 
 		bool TryFormatWithDebuggerAttributes() {
@@ -360,7 +408,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		}
 
 		string ToFormattedChar(char value) {
-			var sb = ValueFormatterObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 
 			sb.Append('\'');
 			switch (value) {
@@ -385,7 +433,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			}
 			sb.Append('\'');
 
-			return ValueFormatterObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 
 		static bool CanUseVerbatimString(string s) {
@@ -439,7 +487,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		}
 
 		string GetFormattedString(string value) {
-			var sb = ValueFormatterObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 
 			sb.Append('"');
 			foreach (var c in value) {
@@ -466,11 +514,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			}
 			sb.Append('"');
 
-			return ValueFormatterObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 
 		string GetFormattedVerbatimString(string value) {
-			var sb = ValueFormatterObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 
 			sb.Append(VerbatimStringPrefix + "\"");
 			foreach (var c in value) {
@@ -481,7 +529,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			}
 			sb.Append('"');
 
-			return ValueFormatterObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 
 		string ToFormattedDecimalNumber(string number) => ToFormattedNumber(string.Empty, number, ValueFormatterUtils.DigitGroupSizeDecimal);

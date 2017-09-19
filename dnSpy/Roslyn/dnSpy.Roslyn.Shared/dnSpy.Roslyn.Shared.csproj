@@ -61,10 +61,11 @@
     <Compile Include="Debugger\Formatters\EnumInfo.cs" />
     <Compile Include="Debugger\Formatters\LanguageFormatter.cs" />
     <Compile Include="Debugger\Formatters\NumberUtils.cs" />
+    <Compile Include="Debugger\Formatters\ObjectCache.cs" />
     <Compile Include="Debugger\Formatters\ToStringFormatter.cs" />
+    <Compile Include="Debugger\Formatters\TupleTypeUtils.cs" />
     <Compile Include="Debugger\Formatters\TypeFormatterOptions.cs" />
     <Compile Include="Debugger\Formatters\TypeFormatterUtils.cs" />
-    <Compile Include="Debugger\Formatters\ValueFormatterObjectCache.cs" />
     <Compile Include="Debugger\Formatters\ValueFormatterOptions.cs" />
     <Compile Include="Debugger\Formatters\ValueFormatterOptionsExtensions.cs" />
     <Compile Include="Debugger\Formatters\ValueFormatterUtils.cs" />

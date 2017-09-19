@@ -45,6 +45,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		const string HexPrefix = "&H";
 		const string DecimalSuffix = "D";
 		const string EnumFlagsOrSeparatorKeyword = "Or";
+		const string TupleTypeOpenParen = "(";
+		const string TupleTypeCloseParen = ")";
 
 		bool Display => (options & ValueFormatterOptions.Display) != 0;
 		bool Decimal => (options & ValueFormatterOptions.Decimal) != 0;
@@ -80,7 +82,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				var type = value.Type;
 				if (type.IsNullable && TryFormatNullable(value))
 					return;
-				if (TypeFormatterUtils.IsTupleType(type) && TryFormatTuple(value))
+				int tupleArity = TypeFormatterUtils.GetTupleArity(type);
+				if (tupleArity > 0 && TryFormatTuple(value, tupleArity))
 					return;
 				if (TryFormatWithDebuggerAttributes())
 					return;
@@ -114,10 +117,55 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			return false;
 		}
 
-		bool TryFormatTuple(DbgDotNetValue value) {
-			Debug.Assert(TypeFormatterUtils.IsTupleType(value.Type));
-			//TODO:
-			return false;
+		bool TryFormatTuple(DbgDotNetValue value, int tupleArity) {
+			Debug.Assert(TypeFormatterUtils.GetTupleArity(value.Type) == tupleArity && tupleArity > 0);
+			OutputWrite(TupleTypeOpenParen, BoxedTextColor.Punctuation);
+
+			var values = ObjectCache.AllocDotNetValueList();
+			var runtime = context.Runtime.GetDotNetRuntime();
+			int index = 0;
+			foreach (var info in TupleTypeUtils.GetTupleFields(value.Type, tupleArity)) {
+				if (index++ > 0) {
+					OutputWrite(",", BoxedTextColor.Punctuation);
+					WriteSpace();
+				}
+				if (info.tupleIndex < 0) {
+					OutputWrite("???", BoxedTextColor.Error);
+					break;
+				}
+				else {
+					var objValue = value;
+					DbgDotNetValueResult valueResult = default;
+					try {
+						foreach (var field in info.fields) {
+							valueResult = runtime.LoadField(context, frame, objValue, field, cancellationToken);
+							if (valueResult.Value != null)
+								values.Add(valueResult.Value);
+							if (valueResult.HasError || valueResult.ValueIsException) {
+								objValue = null;
+								break;
+							}
+							objValue = valueResult.Value;
+						}
+						valueResult = default;
+						if (objValue == null) {
+							OutputWrite("???", BoxedTextColor.Error);
+							break;
+						}
+						Format(objValue);
+					}
+					finally {
+						valueResult.Value?.Dispose();
+						foreach (var v in values)
+							v?.Dispose();
+						values.Clear();
+					}
+				}
+			}
+			ObjectCache.Free(ref values);
+
+			OutputWrite(TupleTypeCloseParen, BoxedTextColor.Punctuation);
+			return true;
 		}
 
 		bool TryFormatWithDebuggerAttributes() {
@@ -456,7 +504,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		}
 
 		string GetSubString(string value, ref int index) {
-			var sb = ValueFormatterObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 
 			while (index < value.Length) {
 				var c = value[index];
@@ -489,7 +537,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				index++;
 			}
 
-			return ValueFormatterObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 
 		string ToFormattedDecimalNumber(string number) => ToFormattedNumber(string.Empty, number, ValueFormatterUtils.DigitGroupSizeDecimal);

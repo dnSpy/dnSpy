@@ -40,7 +40,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			if (number.Length <= digitGroupSize)
 				return number;
 
-			var sb = ValueFormatterObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 
 			for (int i = 0; i < number.Length; i++) {
 				int d = number.Length - i;
@@ -49,7 +49,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				sb.Append(number[i]);
 			}
 
-			return ValueFormatterObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 	}
 }

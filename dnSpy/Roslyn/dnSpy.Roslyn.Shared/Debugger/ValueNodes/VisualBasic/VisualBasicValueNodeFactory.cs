@@ -44,7 +44,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 		}
 
 		public override string GetExpression(string baseExpression, int[] indexes) {
-			var sb = Formatters.ValueFormatterObjectCache.AllocStringBuilder();
+			var sb = Formatters.ObjectCache.AllocStringBuilder();
 			sb.Append(baseExpression);
 			sb.Append('(');
 			for (int i = 0; i < indexes.Length; i++) {
@@ -53,7 +53,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 				sb.Append(indexes[i].ToString());
 			}
 			sb.Append(')');
-			return Formatters.ValueFormatterObjectCache.FreeAndToString(ref sb);
+			return Formatters.ObjectCache.FreeAndToString(ref sb);
 		}
 
 		public override string EscapeIdentifier(string identifier) => Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(identifier);
