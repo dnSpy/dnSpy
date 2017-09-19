@@ -34,6 +34,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		public abstract DmdType ExpectedType { get; }
 
 		/// <summary>
+		/// Gets the actual type or null
+		/// </summary>
+		public abstract DmdType ActualType { get; }
+
+		/// <summary>
 		/// Gets the error message or null
 		/// </summary>
 		public abstract string ErrorMessage { get; }

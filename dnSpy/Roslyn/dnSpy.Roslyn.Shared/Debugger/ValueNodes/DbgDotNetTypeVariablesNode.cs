@@ -33,6 +33,7 @@ using dnSpy.Roslyn.Shared.Properties;
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	sealed class DbgDotNetTypeVariablesNode : DbgDotNetValueNode {
 		public override DmdType ExpectedType => null;
+		public override DmdType ActualType => null;
 		public override string ErrorMessage => null;
 		public override DbgDotNetValue Value => null;
 		public override DbgDotNetText Name => typeVariablesName;
@@ -71,6 +72,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 	sealed class TypeVariableValueNode : DbgDotNetValueNode {
 		public override DmdType ExpectedType { get; }
+		public override DmdType ActualType => ExpectedType;
 		public override string ErrorMessage => null;
 		public override DbgDotNetValue Value { get; }
 		public override DbgDotNetText Name { get; }

@@ -59,6 +59,7 @@
     <Compile Include="Debugger\Formatters\DbgValueFormatterTypeOptionsExtensions.cs" />
     <Compile Include="Debugger\Formatters\EnumInfo.cs" />
     <Compile Include="Debugger\Formatters\LanguageFormatter.cs" />
+    <Compile Include="Debugger\Formatters\NullableTypeUtils.cs" />
     <Compile Include="Debugger\Formatters\NumberUtils.cs" />
     <Compile Include="Debugger\Formatters\ObjectCache.cs" />
     <Compile Include="Debugger\Formatters\ToStringFormatter.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Debugger\ValueNodes\MemberValueNodeInfo.cs" />
     <Compile Include="Debugger\ValueNodes\ObjectCache.cs" />
     <Compile Include="Debugger\ValueNodes\StaticMembersValueNodeProvider.cs" />
+    <Compile Include="Debugger\ValueNodes\SyntheticNullValue.cs" />
     <Compile Include="Debugger\ValueNodes\TupleField.cs" />
     <Compile Include="Debugger\ValueNodes\TupleValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\VisualBasic\VisualBasicValueNodeFactory.cs" />

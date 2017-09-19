@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var dnValue = value?.DotNetValue;
 			if (options.ExpectedTypeOutput != null && dnValueNode.ExpectedType is DmdType expectedType)
 				formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, options.ExpectedTypeFormatterOptions);
-			if (options.ActualTypeOutput != null && dnValue?.Type is DmdType actualType)
+			if (options.ActualTypeOutput != null && dnValueNode.ActualType is DmdType actualType)
 				formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions);
 			if (options.ValueOutput != null) {
 				if (dnValue != null)

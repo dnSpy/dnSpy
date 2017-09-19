@@ -30,6 +30,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	sealed class DbgDotNetValueNodeImpl : DbgDotNetValueNode {
 		public override DmdType ExpectedType { get; }
+		public override DmdType ActualType { get; }
 		public override string ErrorMessage { get; }
 		public override DbgDotNetValue Value { get; }
 		public override DbgDotNetText Name { get; }
@@ -42,19 +43,22 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		readonly LanguageValueNodeFactory valueNodeFactory;
 		readonly DbgDotNetValueNodeProvider childNodeProvider;
+		readonly DbgDotNetValue realValue;
 
-		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValue value, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, string errorMessage) {
+		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValue realValue, DbgDotNetValue value, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage) {
 			if (name.Parts == null)
 				throw new ArgumentException();
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 			this.childNodeProvider = childNodeProvider;
 			Name = name;
 			Value = value;
+			this.realValue = realValue;
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
 			ImageName = imageName ?? throw new ArgumentNullException(nameof(imageName));
 			IsReadOnly = isReadOnly;
 			CausesSideEffects = causesSideEffects;
 			ExpectedType = expectedType;
+			ActualType = actualType;
 			ErrorMessage = errorMessage;
 		}
 
@@ -66,6 +70,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
 			Value?.Dispose();
+			if (realValue != Value)
+				realValue?.Dispose();
 			childNodeProvider?.Dispose();
 		}
 	}

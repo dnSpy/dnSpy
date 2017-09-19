@@ -82,8 +82,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				if (TrySimpleFormat(value))
 					return;
 				var type = value.Type;
-				if (type.IsNullable && TryFormatNullable(value))
-					return;
 				int tupleArity = TypeFormatterUtils.GetTupleArity(type);
 				if (tupleArity > 0 && TryFormatTuple(value, tupleArity))
 					return;
@@ -111,12 +109,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				typeOptions &= ~TypeFormatterOptions.Tokens;
 			}
 			new CSharpTypeFormatter(output, typeOptions).Format(type, null);
-		}
-
-		bool TryFormatNullable(DbgDotNetValue value) {
-			Debug.Assert(value.Type.IsNullable);
-			//TODO:
-			return false;
 		}
 
 		bool TryFormatTuple(DbgDotNetValue value, int tupleArity) {

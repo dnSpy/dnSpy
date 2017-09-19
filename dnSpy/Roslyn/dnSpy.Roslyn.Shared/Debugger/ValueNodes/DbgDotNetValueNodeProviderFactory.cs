@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -116,14 +117,23 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract void FormatArrayName(ITextColorWriter output, int index);
 		public abstract void FormatArrayName(ITextColorWriter output, int[] indexes);
 
-		public DbgDotNetValueNodeProvider Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue value, string expression, bool isReadOnly, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		[Flags]
+		enum CreateFlags {
+			None = 0,
+			NoNullable = 1,
+		}
+
+		public (DbgDotNetValueNodeProvider provider, DbgDotNetValue value) Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue value, string expression, bool isReadOnly, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
+			Create(context, frame, value, expression, isReadOnly, options, CreateFlags.None, cancellationToken);
+
+		(DbgDotNetValueNodeProvider provider, DbgDotNetValue value) Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue value, string expression, bool isReadOnly, DbgValueNodeEvaluationOptions options, CreateFlags createFlags, CancellationToken cancellationToken) {
 			if (value == null)
-				return null;
+				return (null, value);
 			var type = value.Type;
 			if (type.IsByRef)
 				type = type.GetElementType();
 			var state = GetOrCreateTypeState(type);
-			return CreateCore(state, new DbgDotNetInstanceValueInfo(expression, value.Type, value, isReadOnly), options);
+			return CreateCore(context, frame, state, new DbgDotNetInstanceValueInfo(expression, value.Type, value, isReadOnly), options, createFlags, cancellationToken);
 		}
 
 		TypeState GetOrCreateTypeState(DmdType type) {
@@ -293,19 +303,61 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
-		DbgDotNetValueNodeProvider CreateCore(TypeState state, DbgDotNetInstanceValueInfo valueInfo, DbgValueNodeEvaluationOptions evalOptions) {
-			if (state.HasNoChildren)
+		(DbgDotNetValueNodeProvider provider, DbgDotNetValue value)? TryCreateNullable(DbgEvaluationContext context, DbgStackFrame frame, TypeState state, DbgDotNetInstanceValueInfo valueInfo, DbgValueNodeEvaluationOptions evalOptions, CreateFlags createFlags, CancellationToken cancellationToken) {
+			Debug.Assert((createFlags & CreateFlags.NoNullable) == 0);
+			if (!state.IsNullable)
 				return null;
 
-			if (state.IsNullable) {
-				//TODO: check if null
+			var fields = Formatters.NullableTypeUtils.TryGetNullableFields(state.Type);
+			Debug.Assert((object)fields.hasValueField != null);
+			if ((object)fields.hasValueField == null)
+				return null;
+
+			var runtime = context.Runtime.GetDotNetRuntime();
+			bool disposeFieldValue = true;
+			var fieldValue = runtime.LoadField(context, frame, valueInfo.Value, fields.hasValueField, cancellationToken);
+			try {
+				if (fieldValue.HasError || fieldValue.ValueIsException)
+					return null;
+
+				var rawValue = fieldValue.Value.GetRawValue();
+				if (rawValue.ValueType != DbgSimpleValueType.Boolean)
+					return null;
+				if (!(bool)rawValue.RawValue)
+					return (null, new SyntheticNullValue(fields.valueField.FieldType));
+
+				fieldValue.Value?.Dispose();
+				fieldValue = default;
+
+				fieldValue = runtime.LoadField(context, frame, valueInfo.Value, fields.valueField, cancellationToken);
+				if (fieldValue.HasError || fieldValue.ValueIsException)
+					return null;
+
+				var res = Create(context, frame, fieldValue.Value, valueInfo.Expression, valueInfo.IsReadOnly, evalOptions, createFlags | CreateFlags.NoNullable, cancellationToken);
+				disposeFieldValue = false;
+				return res;
+			}
+			finally {
+				if (disposeFieldValue)
+					fieldValue.Value?.Dispose();
+			}
+		}
+
+		(DbgDotNetValueNodeProvider provider, DbgDotNetValue value) CreateCore(DbgEvaluationContext context, DbgStackFrame frame, TypeState state, DbgDotNetInstanceValueInfo valueInfo, DbgValueNodeEvaluationOptions evalOptions, CreateFlags createFlags, CancellationToken cancellationToken) {
+			if (state.HasNoChildren)
+				return (null, valueInfo.Value);
+
+			if ((createFlags & CreateFlags.NoNullable) == 0 && state.IsNullable) {
+				var info = TryCreateNullable(context, frame, state, valueInfo, evalOptions, createFlags, cancellationToken);
+				if (info != null)
+					return info.Value;
 			}
 
 			if (state.IsTupleType)
-				return new TupleValueNodeProvider(valueInfo, state.TupleFields);
+				return (new TupleValueNodeProvider(valueInfo, state.TupleFields), valueInfo.Value);
 
 			if (state.Type.IsArray && !valueInfo.Value.IsNullReference)
-				return new ArrayValueNodeProvider(this, valueInfo);
+				return (new ArrayValueNodeProvider(this, valueInfo), valueInfo.Value);
 
 			if ((evalOptions & DbgValueNodeEvaluationOptions.RawView) == 0) {
 				//TODO: Check if type or base type has System.Diagnostics.DebuggerTypeProxyAttribute
@@ -340,7 +392,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				//TODO: Add "Results View"
 			}
 
-			return DbgDotNetValueNodeProvider.Create(providers);
+			return (DbgDotNetValueNodeProvider.Create(providers), valueInfo.Value);
 		}
 
 		MemberValueNodeInfo[] Filter(MemberValueNodeInfo[] infos, DbgValueNodeEvaluationOptions evalOptions) {
