@@ -54,7 +54,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 					if (method.DeclaringType == appDomain.System_Object || method.DeclaringType == appDomain.System_ValueType || method.DeclaringType == appDomain.System_Enum)
 						method = null;
 				}
-				return new ToStringState(method);
+				return type2.GetOrCreateData(() => new ToStringState(method));
 			}
 		}
 
