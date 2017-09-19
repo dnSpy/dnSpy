@@ -19,6 +19,7 @@
 
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
@@ -57,5 +58,96 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 		}
 
 		public override string EscapeIdentifier(string identifier) => Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(identifier);
+
+		protected override void FormatReturnValueMethodName(ITextColorWriter output, DmdMethodBase method, DmdPropertyInfo property) {
+			const Formatters.TypeFormatterOptions options = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
+			var formatter = new Formatters.CSharp.CSharpTypeFormatter(output, options);
+			formatter.Format(method.DeclaringType, null);
+			output.Write(BoxedTextColor.Operator, ".");
+			if ((object)property != null) {
+				output.Write(MemberUtils.GetColor(property), Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(property.Name));
+				output.Write(BoxedTextColor.Operator, ".");
+				output.Write(BoxedTextColor.Keyword, "get");
+			}
+			else {
+				var methodColor = MemberUtils.GetColor(method, canBeModule: false);
+				if (TryGetMethodName(method.Name, out var containingMethodName, out var localFunctionName)) {
+					output.Write(methodColor, Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(containingMethodName));
+					output.Write(BoxedTextColor.Operator, ".");
+					output.Write(methodColor, Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(localFunctionName));
+				}
+				else
+					output.Write(methodColor, Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(method.Name));
+			}
+		}
+
+		static bool TryGetMethodName(string name, out string containingMethodName, out string localFunctionName) {
+			// Some local function metadata names (real names: Method2(), Method3()) (Roslyn: GeneratedNames.MakeLocalFunctionName())
+			//
+			//		<Method1>g__Method20_0
+			//		<Method1>g__Method30_1
+			//		<Method2>g__Method21_0
+			//		<Method2>g__Method31_1
+			// later C# compiler version
+			//		<Method1>g__Method2|0_0
+			//
+			//	<XXX> = XXX = containing method
+			//	'g' = GeneratedNameKind.LocalFunction
+			//	0_0 = methodOrdinal '_' entityOrdinal
+			//	Method2, Method3 = names of local funcs
+			//
+			// Since a method can end in a digit and method ordinal is a number, we have to guess where
+			// the name ends.
+			//
+			// This has been fixed, see https://github.com/dotnet/roslyn/pull/21848
+
+			containingMethodName = null;
+			localFunctionName = null;
+
+			if (name.Length == 0 || name[0] != '<')
+				return false;
+			int index = name.IndexOf('>');
+			if (index < 0)
+				return false;
+			containingMethodName = name.Substring(1, index - 1);
+			if (containingMethodName.Length == 0)
+				return false;
+			index++;
+			const char GeneratedNameKind_LocalFunction = 'g';
+			if (NextChar(name, ref index) != GeneratedNameKind_LocalFunction)
+				return false;
+			if (NextChar(name, ref index) != '_')
+				return false;
+			if (NextChar(name, ref index) != '_')
+				return false;
+
+			// If it's a later C# compiler version, we can easily find the real name
+			int sepIndex = name.IndexOf('|', index);
+			if (sepIndex >= 0) {
+				if (sepIndex != index) {
+					localFunctionName = name.Substring(index, sepIndex - index);
+					return true;
+				}
+				return false;
+			}
+
+			int endIndex = name.IndexOf('_', index);
+			if (endIndex < 0)
+				endIndex = name.Length;
+			if (char.IsDigit(name[endIndex - 1]))
+				endIndex--;
+			if (index != endIndex) {
+				localFunctionName = name.Substring(index, endIndex - index);
+				return true;
+			}
+
+			return false;
+		}
+
+		static char NextChar(string s, ref int index) {
+			if (index >= s.Length)
+				return (char)0;
+			return s[index++];
+		}
 	}
 }

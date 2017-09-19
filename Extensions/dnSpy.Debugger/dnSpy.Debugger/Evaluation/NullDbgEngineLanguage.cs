@@ -77,7 +77,6 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class NullDbgEngineEngineFormatter : DbgEngineFormatter {
 		public override void FormatExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
-		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id, bool isDefault) { }
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 	}
 

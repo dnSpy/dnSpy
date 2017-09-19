@@ -19,6 +19,7 @@
 
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
@@ -57,5 +58,19 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 		}
 
 		public override string EscapeIdentifier(string identifier) => Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(identifier);
+
+		protected override void FormatReturnValueMethodName(ITextColorWriter output, DmdMethodBase method, DmdPropertyInfo property) {
+			const Formatters.TypeFormatterOptions options = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
+			var formatter = new Formatters.VisualBasic.VisualBasicTypeFormatter(output, options);
+			formatter.Format(method.DeclaringType, null);
+			output.Write(BoxedTextColor.Operator, ".");
+			if ((object)property != null) {
+				output.Write(MemberUtils.GetColor(property), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(property.Name));
+				output.Write(BoxedTextColor.Operator, ".");
+				output.Write(BoxedTextColor.Keyword, "Get");
+			}
+			else
+				output.Write(MemberUtils.GetColor(method, canBeModule: true), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(method.Name));
+		}
 	}
 }

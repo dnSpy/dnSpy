@@ -46,15 +46,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id);
 
 		/// <summary>
-		/// Formats a return value name
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="output">Output</param>
-		/// <param name="id">Return value id</param>
-		/// <param name="isDefault">true if it's the default return value name (without an ID)</param>
-		public abstract void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id, bool isDefault);
-
-		/// <summary>
 		/// Formats an object ID name
 		/// </summary>
 		/// <param name="context">Evaluation context</param>

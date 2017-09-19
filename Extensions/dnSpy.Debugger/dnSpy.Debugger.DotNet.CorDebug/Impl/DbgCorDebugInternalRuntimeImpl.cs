@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					}
 					if (fieldValue == null)
 						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
-					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, frame.Thread.AppDomain.GetReflectionAppDomain(), tryCreateStrongHandle: true), valueIsException: false);
+					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, field.AppDomain, tryCreateStrongHandle: true), valueIsException: false);
 				}
 			}
 			else {
@@ -146,7 +146,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr);
 					if (fieldValue == null)
 						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
-					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, frame.Thread.AppDomain.GetReflectionAppDomain(), tryCreateStrongHandle: true), valueIsException: false);
+					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, field.AppDomain, tryCreateStrongHandle: true), valueIsException: false);
 				}
 				else {
 					if (IsPrimitiveValueType(objValue.ElementType)) {
@@ -331,7 +331,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return Array.Empty<DbgDotNetExceptionInfo>();
 			var reflectionAppDomain = frame.Thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
 			var value = engine.CreateDotNetValue_CorDebug(corValue, reflectionAppDomain, tryCreateStrongHandle: true);
-			const uint exceptionId = 0;
+			const uint exceptionId = 1;
 			return new[] { new DbgDotNetExceptionInfo(value, exceptionId, DbgDotNetExceptionInfoFlags.None) };
 		}
 

@@ -18,13 +18,17 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Roslyn.Shared.Properties;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	abstract class LanguageValueNodeFactory : DbgDotNetValueNodeFactory {
@@ -74,13 +78,72 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 
 		public sealed override DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method, CancellationToken cancellationToken) {
-			throw new NotImplementedException();//TODO:
+			var output = ObjectCache.AllocDotNetTextOutput();
+			FormatReturnValueName(context, output, method);
+			var name = ObjectCache.FreeAndToText(ref output);
+			var expression = "$ReturnValue" + id.ToString();
+			const bool isReadOnly = true;
+			const bool causesSideEffects = false;
+			const string imageName = PredefinedDbgValueNodeImageNames.ReturnValue;
+			return CreateValue(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, cancellationToken);
 		}
+
+		void FormatReturnValueName(DbgEvaluationContext context, DbgDotNetTextOutput output, DmdMethodBase method) {
+			var formatString = dnSpy_Roslyn_Shared_Resources.LocalsWindow_MethodOrProperty_Returned;
+			const string pattern = "{0}";
+			int index = formatString.IndexOf(pattern);
+			Debug.Assert(index >= 0);
+			if (index < 0) {
+				formatString = "{0} returned";
+				index = formatString.IndexOf(pattern);
+			}
+
+			if (index != 0)
+				output.Write(BoxedTextColor.Text, formatString.Substring(0, index));
+			FormatReturnValueMethodName(output, method, PropertyState.TryGetProperty(method));
+			if (index + pattern.Length != formatString.Length)
+				output.Write(BoxedTextColor.Text, formatString.Substring(index + pattern.Length));
+		}
+
+		protected abstract void FormatReturnValueMethodName(ITextColorWriter output, DmdMethodBase method, DmdPropertyInfo property);
 
 		public sealed override DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, CancellationToken cancellationToken) =>
 			new DbgDotNetValueNodeImpl(this, null, name, null, null, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, null, errorMessage);
 
 		public sealed override DbgDotNetValueNode CreateTypeVariables(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetTypeVariableInfo[] typeVariableInfos, CancellationToken cancellationToken) =>
 			new DbgDotNetTypeVariablesNode(this, typeVariableInfos);
+
+		sealed class PropertyState {
+			readonly Dictionary<DmdMethodBase, DmdPropertyInfo> toProperty;
+
+			PropertyState(DmdType type) {
+				toProperty = new Dictionary<DmdMethodBase, DmdPropertyInfo>(DmdMemberInfoEqualityComparer.DefaultMember);
+				foreach (var property in type.DeclaredProperties) {
+					foreach (var method in property.GetAccessors(DmdGetAccessorOptions.All))
+						toProperty[method] = property;
+				}
+			}
+
+			public static DmdPropertyInfo TryGetProperty(DmdMethodBase method) {
+				var m = method as DmdMethodInfo;
+				if ((object)m == null)
+					return null;
+				var state = GetState(m.DeclaringType);
+				if (state.toProperty.TryGetValue(method, out var property))
+					return property;
+				return null;
+			}
+
+			static PropertyState GetState(DmdType type) {
+				if (type.TryGetData(out PropertyState state))
+					return state;
+				return CreateState(type);
+
+				PropertyState CreateState(DmdType type2) {
+					var state2 = new PropertyState(type2);
+					return type2.GetOrCreateData(() => state2);
+				}
+			}
+		}
 	}
 }

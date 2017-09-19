@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
@@ -30,13 +31,25 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public uint Id { get; }
 
 		/// <summary>
-		/// Gets the value returned by the method
+		/// Gets the method
+		/// </summary>
+		public DmdMethodInfo Method { get; }
+
+		/// <summary>
+		/// Gets the value returned by <see cref="Method"/>
 		/// </summary>
 		public DbgDotNetValue Value { get; }
 
 		/// <summary>
-		/// Gets the method
+		/// Constructor
 		/// </summary>
-		public DmdMethodInfo Method { get; }
+		/// <param name="id">Return value id</param>
+		/// <param name="method">Method</param>
+		/// <param name="value">Value returned by <paramref name="method"/></param>
+		public DbgDotNetReturnValueInfo(uint id, DmdMethodInfo method, DbgDotNetValue value) {
+			Id = id;
+			Method = method ?? throw new ArgumentNullException(nameof(method));
+			Value = value ?? throw new ArgumentNullException(nameof(value));
+		}
 	}
 }

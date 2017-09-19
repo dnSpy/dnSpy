@@ -63,20 +63,6 @@ namespace dnSpy.Debugger.Evaluation {
 			engineFormatter.FormatStowedExceptionName(context, output, id);
 		}
 
-		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id, bool isDefault) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
-				throw new ArgumentException();
-			if (context.Language != Language)
-				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (output == null)
-				throw new ArgumentNullException(nameof(output));
-			engineFormatter.FormatReturnValueName(context, output, id, isDefault);
-		}
-
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));

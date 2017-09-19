@@ -32,6 +32,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return BoxedTextColor.InstanceField;
 		}
 
+		public static object GetColor(DmdMethodBase method, bool canBeModule) {
+			if (method.IsConstructor)
+				return Formatters.TypeFormatterUtils.GetTypeColor(method.DeclaringType, canBeModule);
+			if (method.IsStatic) {
+				if (method.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute", inherit: false))
+					return BoxedTextColor.ExtensionMethod;
+				return BoxedTextColor.StaticMethod;
+			}
+			return BoxedTextColor.InstanceMethod;
+		}
+
 		public static object GetColor(DmdPropertyInfo property) {
 			var methodSig = (property.GetGetMethod(DmdGetAccessorOptions.All) ?? property.GetSetMethod(DmdGetAccessorOptions.All))?.GetMethodSignature() ?? property.GetMethodSignature();
 			return methodSig.HasThis ? BoxedTextColor.InstanceProperty : BoxedTextColor.StaticProperty;

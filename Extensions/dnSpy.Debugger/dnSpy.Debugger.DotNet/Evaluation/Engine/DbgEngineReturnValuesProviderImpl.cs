@@ -18,19 +18,48 @@
 */
 
 using System;
+using System.Linq;
 using System.Threading;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineReturnValuesProviderImpl : DbgEngineValueNodeProvider {
+		readonly DbgDotNetEngineValueNodeFactory valueNodeFactory;
+
+		public DbgEngineReturnValuesProviderImpl(DbgDotNetEngineValueNodeFactory valueNodeFactory) =>
+			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
+
 		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			return Array.Empty<DbgEngineValueNode>();//TODO:
+			var runtime = context.Runtime.GetDotNetRuntime();
+			return runtime.Dispatcher.Invoke(() => GetNodesCore(runtime, context, frame, options, cancellationToken));
 		}
 
 		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) {
-			callback(Array.Empty<DbgEngineValueNode>());//TODO:
+			var runtime = context.Runtime.GetDotNetRuntime();
+			runtime.Dispatcher.BeginInvoke(() => callback(GetNodesCore(runtime, context, frame, options, cancellationToken)));
+		}
+
+		DbgEngineValueNode[] GetNodesCore(IDbgDotNetRuntime runtime, DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+			var returnValues = runtime.GetReturnValues(context, frame, cancellationToken);
+			if (returnValues.Length == 0)
+				return Array.Empty<DbgEngineValueNode>();
+
+			var res = new DbgEngineValueNode[returnValues.Length];
+			try {
+				for (int i = 0; i < res.Length; i++) {
+					var info = returnValues[i];
+					res[i] = valueNodeFactory.CreateReturnValue(context, frame, info.Id, info.Value, options, info.Method, cancellationToken);
+				}
+			}
+			catch {
+				context.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
+				throw;
+			}
+			return res;
 		}
 	}
 }

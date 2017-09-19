@@ -168,6 +168,9 @@
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
     <value>Locals and parameters</value>
   </data>
+  <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
+    <value>{0} returned</value>
+  </data>
   <data name="LocalsWindow_TypeVariables" xml:space="preserve">
     <value>Type variables</value>
   </data>

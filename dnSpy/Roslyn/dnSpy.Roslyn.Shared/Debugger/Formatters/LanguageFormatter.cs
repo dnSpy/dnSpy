@@ -29,9 +29,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
 			output.Write(BoxedTextColor.DebugStowedExceptionName, "$stowedexception");
 
-		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id, bool isDefault) =>
-			output.Write(BoxedTextColor.DebugReturnValueName, isDefault ? "$ReturnValue" : "$ReturnValue" + id.ToString());
-
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
 			output.Write(BoxedTextColor.DebugObjectIdName, "$" + id.ToString());
 	}

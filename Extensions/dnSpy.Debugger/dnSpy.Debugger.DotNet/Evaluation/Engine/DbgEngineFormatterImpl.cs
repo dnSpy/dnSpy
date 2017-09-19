@@ -36,9 +36,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
 			formatter.FormatStowedExceptionName(context, output, id);
 
-		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id, bool isDefault) =>
-			formatter.FormatReturnValueName(context, output, id, isDefault);
-
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
 			formatter.FormatObjectIdName(context, output, id);
 	}
