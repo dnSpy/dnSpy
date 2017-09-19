@@ -19,7 +19,7 @@
 
 using System;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Exception info
 	/// </summary>

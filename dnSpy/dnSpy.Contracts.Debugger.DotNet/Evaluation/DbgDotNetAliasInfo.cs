@@ -20,7 +20,7 @@
 using System;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Alias
 	/// </summary>

@@ -17,19 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Diagnostics;
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
+using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Roslyn.Shared.Debugger {
-	static class DbgDotNetRuntimeUtils {
-		public static IDbgDotNetRuntime GetDotNetRuntime(this DbgRuntime runtime) {
-			var dnRuntime = runtime.InternalRuntime as IDbgDotNetRuntime;
-			Debug.Assert(dnRuntime != null);
-			if (dnRuntime == null)
-				throw new InvalidOperationException(nameof(DbgRuntime.InternalRuntime) + " must implement " + nameof(IDbgDotNetRuntime));
-			return dnRuntime;
-		}
+namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
+	/// <summary>
+	/// Contains a method and its return value
+	/// </summary>
+	public struct DbgDotNetReturnValueInfo {
+		/// <summary>
+		/// Gets the return value id
+		/// </summary>
+		public uint Id { get; }
+
+		/// <summary>
+		/// Gets the value returned by the method
+		/// </summary>
+		public DbgDotNetValue Value { get; }
+
+		/// <summary>
+		/// Gets the method
+		/// </summary>
+		public DmdMethodInfo Method { get; }
 	}
 }

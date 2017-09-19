@@ -46,7 +46,6 @@
     <Compile Include="Compiler\RoslynCodeDocument.cs" />
     <Compile Include="Compiler\RoslynLanguageCompiler.cs" />
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
-    <Compile Include="Debugger\DbgDotNetRuntimeUtils.cs" />
     <Compile Include="Debugger\ExpressionCompiler\CSharp\CSharpExpressionCompiler.cs" />
     <Compile Include="Debugger\ExpressionCompiler\LanguageExpressionCompiler.cs" />
     <Compile Include="Debugger\ExpressionCompiler\RoslynExpressionCompilerMethods.cs" />

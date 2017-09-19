@@ -19,11 +19,18 @@
 
 using System;
 using System.Diagnostics;
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	static class DbgDotNetRuntimeUtils {
+namespace dnSpy.Contracts.Debugger {
+	/// <summary>
+	/// Extension methods
+	/// </summary>
+	public static class DbgDotNetRuntimeExtensions {
+		/// <summary>
+		/// Gets the <see cref="IDbgDotNetRuntime"/> instance or throws if it's not a .NET runtime
+		/// </summary>
+		/// <param name="runtime">Runtime</param>
+		/// <returns></returns>
 		public static IDbgDotNetRuntime GetDotNetRuntime(this DbgRuntime runtime) {
 			var dnRuntime = runtime.InternalRuntime as IDbgDotNetRuntime;
 			Debug.Assert(dnRuntime != null);

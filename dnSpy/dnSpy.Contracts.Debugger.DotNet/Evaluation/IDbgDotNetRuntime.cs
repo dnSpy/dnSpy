@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Implemented by a .NET engine, see <see cref="DbgRuntime.InternalRuntime"/>
 	/// </summary>

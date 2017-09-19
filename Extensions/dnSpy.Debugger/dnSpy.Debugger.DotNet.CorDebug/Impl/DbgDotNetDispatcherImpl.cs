@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DbgDotNetDispatcherImpl : DbgDotNetDispatcher {
