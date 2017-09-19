@@ -87,7 +87,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 					var name = output.CreateAndReset();
 					const bool isReadOnly = false;
-					var newNode = valueNodeFactory.Create(context, name, newValue, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, isReadOnly, false, elementType);
+					var newNode = valueNodeFactory.Create(context, frame, name, newValue, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, isReadOnly, false, elementType, cancellationToken);
 					newValue = null;
 					res[i] = newNode;
 				}

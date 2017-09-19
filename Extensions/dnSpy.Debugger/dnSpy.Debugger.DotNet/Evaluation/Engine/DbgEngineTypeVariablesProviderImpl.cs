@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new InvalidOperationException();
 
 			var res = new DbgEngineValueNode[1];
-			res[0] = valueNodeFactory.CreateTypeVariables(context, infos);
+			res[0] = valueNodeFactory.CreateTypeVariables(context, frame, infos, cancellationToken);
 			return res;
 		}
 	}

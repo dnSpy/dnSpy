@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -114,7 +116,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract void FormatArrayName(ITextColorWriter output, int index);
 		public abstract void FormatArrayName(ITextColorWriter output, int[] indexes);
 
-		public DbgDotNetValueNodeProvider Create(DbgDotNetValue value, string expression, bool isReadOnly, DbgValueNodeEvaluationOptions options) {
+		public DbgDotNetValueNodeProvider Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue value, string expression, bool isReadOnly, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			if (value == null)
 				return null;
 			var type = value.Type;

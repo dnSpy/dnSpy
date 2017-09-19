@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -41,10 +43,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		internal DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValueNodeProvider provider, DbgValueNodeEvaluationOptions options, string expression, string imageName) =>
 			new DbgDotNetValueNodeImpl(this, provider, name, null, expression, imageName, true, false, null, null);
 
-		public sealed override DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType) =>
-			new DbgDotNetValueNodeImpl(this, valueNodeProviderFactory.Create(value, expression, isReadOnly, options), name, value, expression, imageName, isReadOnly, causesSideEffects, expectedType, null);
+		public sealed override DbgDotNetValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, CancellationToken cancellationToken) =>
+			new DbgDotNetValueNodeImpl(this, valueNodeProviderFactory.Create(context, frame, value, expression, isReadOnly, options, cancellationToken), name, value, expression, imageName, isReadOnly, causesSideEffects, expectedType, null);
 
-		public sealed override DbgDotNetValueNode CreateException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options) {
+		public sealed override DbgDotNetValueNode CreateException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var output = ObjectCache.AllocDotNetTextOutput();
 			context.Language.Formatter.FormatExceptionName(context, output, id);
 			var name = ObjectCache.FreeAndToText(ref output);
@@ -52,10 +54,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
 			const string imageName = PredefinedDbgValueNodeImageNames.Exception;
-			return new DbgDotNetValueNodeImpl(this, valueNodeProviderFactory.Create(value, expression, isReadOnly, options), name, value, expression, imageName, isReadOnly, causesSideEffects, value.Type, null);
+			return new DbgDotNetValueNodeImpl(this, valueNodeProviderFactory.Create(context, frame, value, expression, isReadOnly, options, cancellationToken), name, value, expression, imageName, isReadOnly, causesSideEffects, value.Type, null);
 		}
 
-		public sealed override DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options) {
+		public sealed override DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var output = ObjectCache.AllocDotNetTextOutput();
 			context.Language.Formatter.FormatStowedExceptionName(context, output, id);
 			var name = ObjectCache.FreeAndToText(ref output);
@@ -63,17 +65,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
 			const string imageName = PredefinedDbgValueNodeImageNames.StowedException;
-			return new DbgDotNetValueNodeImpl(this, valueNodeProviderFactory.Create(value, expression, isReadOnly, options), name, value, expression, imageName, isReadOnly, causesSideEffects, value.Type, null);
+			return new DbgDotNetValueNodeImpl(this, valueNodeProviderFactory.Create(context, frame, value, expression, isReadOnly, options, cancellationToken), name, value, expression, imageName, isReadOnly, causesSideEffects, value.Type, null);
 		}
 
-		public sealed override DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method) {
+		public sealed override DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method, CancellationToken cancellationToken) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public sealed override DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgDotNetText name, string errorMessage, string expression) =>
+		public sealed override DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, CancellationToken cancellationToken) =>
 			new DbgDotNetValueNodeImpl(this, null, name, null, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, errorMessage);
 
-		public sealed override DbgDotNetValueNode CreateTypeVariables(DbgEvaluationContext context, DbgDotNetTypeVariableInfo[] typeVariableInfos) =>
+		public sealed override DbgDotNetValueNode CreateTypeVariables(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetTypeVariableInfo[] typeVariableInfos, CancellationToken cancellationToken) =>
 			new DbgDotNetTypeVariablesNode(this, typeVariableInfos);
 	}
 }

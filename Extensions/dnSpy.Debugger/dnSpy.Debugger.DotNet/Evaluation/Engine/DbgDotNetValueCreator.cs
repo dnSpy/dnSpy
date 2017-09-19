@@ -45,13 +45,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public DbgEngineValueNode CreateValueNode(ref DbgDotNetILInterpreterState ilInterpreterState, ref DbgDotNetCompiledExpressionResult compExprInfo) {
 			if (compExprInfo.ErrorMessage != null)
-				return valueNodeFactory.CreateError(context, compExprInfo.Name, compExprInfo.ErrorMessage, compExprInfo.Expression);
+				return valueNodeFactory.CreateError(context, frame, compExprInfo.Name, compExprInfo.ErrorMessage, compExprInfo.Expression, cancellationToken);
 			else {
 				if (ilInterpreterState == null)
 					ilInterpreterState = dnILInterpreter.CreateState(context, assemblyBytes);
 				var value = dnILInterpreter.Execute(context, frame, ilInterpreterState, compExprInfo.TypeName, compExprInfo.MethodName, options, out var expectedType, cancellationToken);
 				//TODO: Pass in compExprInfo.CustomTypeInfo, or attach it to the DbgDotNetValueNode
-				return valueNodeFactory.Create(context, compExprInfo.Name, value, options, compExprInfo.Expression, compExprInfo.ImageName, (compExprInfo.Flags & DbgEvaluationResultFlags.ReadOnly) != 0, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, expectedType);
+				return valueNodeFactory.Create(context, frame, compExprInfo.Name, value, options, compExprInfo.Expression, compExprInfo.ImageName, (compExprInfo.Flags & DbgEvaluationResultFlags.ReadOnly) != 0, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, expectedType, cancellationToken);
 			}
 		}
 	}

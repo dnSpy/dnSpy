@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					var compilationResult = expressionCompiler.CompileGetLocals(context, frame, references, evalOptions, cancellationToken);
 					cancellationToken.ThrowIfCancellationRequested();
 					if (compilationResult.IsError)
-						return new[] { CreateInternalErrorNode(context, compilationResult.ErrorMessage) };
+						return new[] { CreateInternalErrorNode(context, frame, compilationResult.ErrorMessage, cancellationToken) };
 
 					decompilerGeneratedCount = GetDecompilerGeneratedVariablesCount(methodDebugInfo.Scope, languageDebugInfo.ILOffset);
 
@@ -239,10 +239,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						if ((localsOptions & DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables) == 0)
 							continue;
 						var decGen = (DecompilerGeneratedVariableValueInfo)valueInfo;
-						valueNodeInfo = new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Local, valueNodeFactory.CreateError(context,
+						valueNodeInfo = new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Local,
+							valueNodeFactory.CreateError(context, frame,
 							new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Local, decGen.Name)),
 							dnSpy_Debugger_DotNet_Resources.DecompilerGeneratedVariablesCanNotBeEvaluated,
-							decGen.Name));
+							decGen.Name, cancellationToken));
 						break;
 
 					default:
@@ -259,12 +260,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			catch {
 				if (valueNodes != null)
 					frame.Process.DbgManager.Close(valueNodes.Select(a => a.ValueNode).Where(a => a != null));
-				return new[] { CreateInternalErrorNode(context, PredefinedEvaluationErrorMessages.InternalDebuggerError) };
+				return new[] { CreateInternalErrorNode(context, frame, PredefinedEvaluationErrorMessages.InternalDebuggerError, cancellationToken) };
 			}
 		}
 
-		DbgEngineLocalsValueNodeInfo CreateInternalErrorNode(DbgEvaluationContext context, string errorMessage) =>
-			new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Error, valueNodeFactory.CreateError(context, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, "<error>")), errorMessage, "<internal.error>"));
+		DbgEngineLocalsValueNodeInfo CreateInternalErrorNode(DbgEvaluationContext context, DbgStackFrame frame, string errorMessage, CancellationToken cancellationToken) =>
+			new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Error, valueNodeFactory.CreateError(context, frame, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, "<error>")), errorMessage, "<internal.error>", cancellationToken));
 
 		static MethodDebugScope GetScope(MethodDebugScope rootScope, uint offset) {
 			var scope = rootScope;

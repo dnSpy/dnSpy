@@ -93,11 +93,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 					DbgDotNetValueNode newNode;
 					if (valueResult.HasError)
-						newNode = valueNodeFactory.CreateError(context, info.Name, valueResult.ErrorMessage, expression);
+						newNode = valueNodeFactory.CreateError(context, frame, info.Name, valueResult.ErrorMessage, expression, cancellationToken);
 					else if (valueResult.ValueIsException)
-						newNode = valueNodeFactory.Create(context, info.Name, valueResult.Value, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType);
+						newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, cancellationToken);
 					else
-						newNode = valueNodeFactory.Create(context, info.Name, valueResult.Value, options, expression, imageName, isReadOnly, false, expectedType);
+						newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, imageName, isReadOnly, false, expectedType, cancellationToken);
 
 					valueResult = default;
 					res[i] = newNode;

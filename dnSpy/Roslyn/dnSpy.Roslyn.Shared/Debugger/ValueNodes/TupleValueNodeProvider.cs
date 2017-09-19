@@ -84,11 +84,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					var name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceField, info.DefaultName));
 					DbgDotNetValueNode newNode;
 					if (errorMessage != null)
-						newNode = valueNodeFactory.CreateError(context, name, errorMessage, expression);
+						newNode = valueNodeFactory.CreateError(context, frame, name, errorMessage, expression, cancellationToken);
 					else if (valueIsException)
-						newNode = valueNodeFactory.Create(context, name, objValue, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType);
+						newNode = valueNodeFactory.Create(context, frame, name, objValue, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, cancellationToken);
 					else
-						newNode = valueNodeFactory.Create(context, name, objValue, options, expression, imageName, isReadOnly, false, expectedType);
+						newNode = valueNodeFactory.Create(context, frame, name, objValue, options, expression, imageName, isReadOnly, false, expectedType, cancellationToken);
 
 					foreach (var vr in valueResults)
 						vr.Value?.Dispose();
