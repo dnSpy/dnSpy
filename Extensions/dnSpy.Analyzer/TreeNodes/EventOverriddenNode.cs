@@ -48,7 +48,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			while (baseType != null) {
 				//only typedef has a Events property
-				if (baseType is TypeDef def) {
+				if (baseType is TypeDef) {
+					TypeDef def = (TypeDef) baseType;
 					foreach (EventDef eventDef in def.Events) {
 						if (TypesHierarchyHelpers.IsBaseEvent(eventDef, analyzedEvent)) {
 							MethodDef anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;

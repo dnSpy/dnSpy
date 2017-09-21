@@ -48,7 +48,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			while (baseType != null) {
 				//only typedef has a Properties property
-				if (baseType is TypeDef def) {
+				if (baseType is TypeDef) {
+					TypeDef def = (TypeDef) baseType;
 					foreach (PropertyDef property in def.Properties) {
 						if (TypesHierarchyHelpers.IsBaseProperty(property, analyzedProperty)) {
 							MethodDef anyAccessor = property.GetMethod ?? property.SetMethod;
