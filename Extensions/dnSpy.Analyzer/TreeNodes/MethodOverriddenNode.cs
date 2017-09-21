@@ -54,7 +54,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 				while (baseType != null) { 
 					//only typedef has a Methods property
-					if (baseType is TypeDef def) {
+					if (baseType is TypeDef) {
+						TypeDef def = (TypeDef) baseType;
 						foreach (var method in def.Methods) {
 							if (TypesHierarchyHelpers.IsBaseMethod(method, analyzedMethod)) {
 								newNode = new MethodNode(method) {Context = Context};
