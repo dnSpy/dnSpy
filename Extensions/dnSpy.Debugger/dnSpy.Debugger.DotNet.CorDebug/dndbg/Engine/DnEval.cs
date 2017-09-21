@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -48,14 +49,16 @@ namespace dndbg.Engine {
 	}
 
 	struct EvalResult {
-		public bool NormalResult => !WasException && !WasCustomNotification;
+		public bool NormalResult => !WasException && !WasCustomNotification && !WasCancelled;
 		public bool WasException { get; }
 		public bool WasCustomNotification { get; }
+		public bool WasCancelled { get; }
 		public CorValue ResultOrException { get; }
 
-		public EvalResult(bool wasException, bool wasCustomNotification, CorValue resultOrException) {
+		public EvalResult(bool wasException, bool wasCustomNotification, bool wasCancelled, CorValue resultOrException) {
 			WasException = wasException;
 			WasCustomNotification = wasCustomNotification;
+			WasCancelled = wasCancelled;
 			ResultOrException = resultOrException;
 		}
 	}
@@ -67,6 +70,7 @@ namespace dndbg.Engine {
 		readonly DnDebugger debugger;
 		readonly IDebugMessageDispatcher debugMessageDispatcher;
 		readonly List<(DnModule module, CorClass cls)> customNotificationList;
+		readonly CancellationToken cancellationToken;
 		DnThread thread;
 		CorEval eval;
 		DateTime? startTime;
@@ -80,13 +84,14 @@ namespace dndbg.Engine {
 		public bool SuspendOtherThreads { get; }
 		public event EventHandler<EvalEventArgs> EvalEvent;
 
-		internal DnEval(DnDebugger debugger, IDebugMessageDispatcher debugMessageDispatcher, bool suspendOtherThreads, List<(DnModule module, CorClass cls)> customNotificationList) {
+		internal DnEval(DnDebugger debugger, IDebugMessageDispatcher debugMessageDispatcher, bool suspendOtherThreads, List<(DnModule module, CorClass cls)> customNotificationList, CancellationToken cancellationToken) {
 			this.debugger = debugger;
 			this.debugMessageDispatcher = debugMessageDispatcher;
 			this.customNotificationList = customNotificationList;
 			SuspendOtherThreads = suspendOtherThreads;
 			useTotalTimeout = true;
 			initialTimeOut = TimeSpan.FromMilliseconds(1000);
+			this.cancellationToken = cancellationToken;
 
 			// This is only enabled during func-eval. If it's always enabled, everything gets slower.
 			// It took about 50% longer to start VS.
@@ -132,51 +137,6 @@ namespace dndbg.Engine {
 				return null;
 			return newObj;
 		}
-
-		public CorValue CreateSZArray(CorType type, int numElems) {
-			int hr;
-			var res = WaitForResult(hr = eval.NewParameterizedArray(type, new uint[1] { (uint)numElems }));
-			if (res == null || !res.Value.NormalResult)
-				throw new EvalException(hr, string.Format("Could not create an array, HR=0x{0:X8}", hr));
-			return res.Value.ResultOrException;
-		}
-
-		public CorValueResult CallResult(CorFunction func, CorValue[] args) => CallResult(func, null, args);
-
-		public CorValueResult CallResult(CorFunction func, CorType[] typeArgs, CorValue[] args) {
-			var res = Call(func, typeArgs, args);
-			if (!res.NormalResult || res.ResultOrException == null)
-				return new CorValueResult();
-			return res.ResultOrException.Value;
-		}
-
-		public CorValueResult CallResult(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) {
-			var res = Call(func, typeArgs, args, out hr);
-			if (res == null || !res.Value.NormalResult || res.Value.ResultOrException == null)
-				return new CorValueResult();
-			return res.Value.ResultOrException.Value;
-		}
-
-		public EvalResult CallConstructor(CorFunction ctor, CorValue[] args) => CallConstructor(ctor, null, args);
-
-		public EvalResult CallConstructor(CorFunction ctor, CorType[] typeArgs, CorValue[] args) {
-			var res = CallConstructor(ctor, typeArgs, args, out int hr);
-			if (res != null)
-				return res.Value;
-			throw new EvalException(hr, string.Format("Could not call .ctor {0:X8}, HR=0x{1:X8}", ctor.Token, hr));
-		}
-
-		public EvalResult Call(CorFunction func, CorValue[] args) => Call(func, null, args);
-
-		public EvalResult Call(CorFunction func, CorType[] typeArgs, CorValue[] args) {
-			var res = Call(func, typeArgs, args, out int hr);
-			if (res != null)
-				return res.Value;
-			throw new EvalException(hr, string.Format("Could not call method {0:X8}, HR=0x{1:X8}", func.Token, hr));
-		}
-
-		public CorValue CreateValue(CorElementType et, CorClass cls = null) => eval.CreateValue(et, cls);
-		public CorValue CreateValue(CorType type) => eval.CreateValueForType(type);
 
 		public EvalResult? CreateDontCallConstructor(CorType type, out int hr) {
 			if (!type.HasClass) {
@@ -299,14 +259,16 @@ namespace dndbg.Engine {
 			}
 			bool wasException = dispResult == EvalResultKind.Exception;
 			bool wasCustomNotification = dispResult == EvalResultKind.CustomNotification;
+			bool wasCancelled = dispResult == EvalResultKind.Cancelled;
 
-			return new EvalResult(wasException, wasCustomNotification, wasCustomNotification ? null : eval.Result);
+			return new EvalResult(wasException, wasCustomNotification, wasCancelled, wasCustomNotification ? null : eval.Result);
 		}
 
 		enum EvalResultKind {
 			Normal,
 			Exception,
 			CustomNotification,
+			Cancelled,
 		}
 
 		bool AbortEval(bool forceBreakProcesses) {
@@ -346,11 +308,16 @@ namespace dndbg.Engine {
 					break;
 				var cne = (CustomNotificationDebugCallbackEventArgs)e;
 				var value = cne.CorThread.GetCurrentCustomDebuggerNotification();
-				if (value != null)
+				if (value != null) {
 					debugMessageDispatcher.CancelDispatchQueue(EvalResultKind.CustomNotification);
+					debugger.DisposeHandle(value);
+					return;
+				}
 				debugger.DisposeHandle(value);
 				break;
 			}
+			if (cancellationToken.IsCancellationRequested)
+				debugMessageDispatcher.CancelDispatchQueue(EvalResultKind.Cancelled);
 		}
 
 		public void SignalEvalComplete() => EvalEvent?.Invoke(this, new EvalEventArgs());

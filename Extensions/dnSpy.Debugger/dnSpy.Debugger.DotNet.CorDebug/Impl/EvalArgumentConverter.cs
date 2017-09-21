@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -43,6 +44,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
 			if (res.Value.WasCustomNotification)
 				return new EvalArgumentResult(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
+			if (res.Value.WasCancelled)
+				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			return new EvalArgumentResult(res.Value.ResultOrException);
 		}
 	}

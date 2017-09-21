@@ -39,7 +39,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		readonly MemberValueNodeInfo[] members;
 
-		public StaticMembersValueNodeProvider(DbgDotNetText name, string expression, DbgDotNetInstanceValueInfo valueInfo, MemberValueNodeInfo[] members) {
+		public StaticMembersValueNodeProvider(DbgDotNetText name, string expression, MemberValueNodeInfo[] members) {
 			Name = name;
 			Expression = expression;
 			this.members = members;

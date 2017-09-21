@@ -38,6 +38,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public bool HasDebuggerBrowsableState_Never => (Flags & MemberValueNodeInfoFlags.DebuggerBrowsableState_Mask) == MemberValueNodeInfoFlags.DebuggerBrowsableState_Never;
 		public bool HasDebuggerBrowsableState_RootHidden => (Flags & MemberValueNodeInfoFlags.DebuggerBrowsableState_Mask) == MemberValueNodeInfoFlags.DebuggerBrowsableState_RootHidden;
 		public bool HasCompilerGeneratedAttribute => (Flags & MemberValueNodeInfoFlags.CompilerGeneratedAttribute) != 0;
+		public bool IsPublic => (Flags & MemberValueNodeInfoFlags.Public) != 0;
 
 		[Flags]
 		enum MemberValueNodeInfoFlags : byte {
@@ -47,6 +48,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			DebuggerBrowsableState_Never		= 1,
 			DebuggerBrowsableState_RootHidden	= 2,
 			CompilerGeneratedAttribute			= 4,
+			Public								= 8,
 		}
 
 		public MemberValueNodeInfo(DmdMemberInfo member, byte inheritanceLevel) {
@@ -59,6 +61,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		static MemberValueNodeInfoFlags GetFlags(DmdMemberInfo member) {
 			var flags = MemberValueNodeInfoFlags.None;
+			if (IsPublicInternal(member))
+				flags |= MemberValueNodeInfoFlags.Public;
 			var cas = member.CustomAttributes;
 			for (int i = 0; i < cas.Count; i++) {
 				var ca = cas[i];
@@ -90,6 +94,22 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				}
 			}
 			return flags;
+		}
+
+		static bool IsPublicInternal(DmdMemberInfo member) {
+			Debug.Assert(member.MemberType == DmdMemberTypes.Field || member.MemberType == DmdMemberTypes.Property);
+			switch (member.MemberType) {
+			case DmdMemberTypes.Field:
+				return ((DmdFieldInfo)member).IsPublic;
+
+			case DmdMemberTypes.Property:
+				var prop = (DmdPropertyInfo)member;
+				var accessor = prop.GetGetMethod(DmdGetAccessorOptions.All) ?? prop.GetSetMethod(DmdGetAccessorOptions.All);
+				return accessor?.IsPublic == true;
+
+			default:
+				throw new InvalidOperationException();
+			}
 		}
 
 		public override string ToString() => Member.ToString();

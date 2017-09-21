@@ -1683,11 +1683,11 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public DnEval CreateEval(bool suspendOtherThreads) {
+		public DnEval CreateEval(CancellationToken cancellationToken, bool suspendOtherThreads) {
 			DebugVerifyThread();
 			Debug.Assert(ProcessStateInternal == DebuggerProcessState.Paused);
 
-			return new DnEval(this, debugMessageDispatcher, suspendOtherThreads, customNotificationList);
+			return new DnEval(this, debugMessageDispatcher, suspendOtherThreads, customNotificationList, cancellationToken);
 		}
 
 		/// <summary>

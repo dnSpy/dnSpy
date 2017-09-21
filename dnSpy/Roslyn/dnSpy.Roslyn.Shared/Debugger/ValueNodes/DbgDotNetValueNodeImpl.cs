@@ -43,16 +43,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		readonly LanguageValueNodeFactory valueNodeFactory;
 		readonly DbgDotNetValueNodeProvider childNodeProvider;
-		readonly DbgDotNetValue realValue;
+		readonly DbgDotNetValueNodeInfo nodeInfo;
 
-		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValue realValue, DbgDotNetValue value, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage) {
+		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage) {
 			if (name.Parts == null)
 				throw new ArgumentException();
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 			this.childNodeProvider = childNodeProvider;
+			this.nodeInfo = nodeInfo;
 			Name = name;
-			Value = value;
-			this.realValue = realValue;
+			Value = nodeInfo?.DisplayValue;
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
 			ImageName = imageName ?? throw new ArgumentNullException(nameof(imageName));
 			IsReadOnly = isReadOnly;
@@ -70,8 +70,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
 			Value?.Dispose();
-			if (realValue != Value)
-				realValue?.Dispose();
+			nodeInfo?.Dispose();
 			childNodeProvider?.Dispose();
 		}
 	}

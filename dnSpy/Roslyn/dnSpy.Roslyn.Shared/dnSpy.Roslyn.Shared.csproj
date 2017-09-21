@@ -78,11 +78,12 @@
     <Compile Include="Debugger\ValueNodes\ArrayValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\CSharp\CSharpValueNodeFactory.cs" />
     <Compile Include="Debugger\ValueNodes\CSharp\CSharpValueNodeProviderFactory.cs" />
-    <Compile Include="Debugger\ValueNodes\DbgDotNetInstanceValueInfo.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetTypeVariablesNode.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeImpl.cs" />
+    <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeInfo.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeProviderFactory.cs" />
+    <Compile Include="Debugger\ValueNodes\DebuggerTypeProxyFinder.cs" />
     <Compile Include="Debugger\ValueNodes\ImageNameUtils.cs" />
     <Compile Include="Debugger\ValueNodes\InstanceMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\LanguageValueNodeFactory.cs" />

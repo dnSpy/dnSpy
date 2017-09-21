@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			public int GetHashCode(TypeName obj) => StringComparer.Ordinal.GetHashCode(obj.Namespace) ^ StringComparer.Ordinal.GetHashCode(obj.Name);
 		}
 
-		const int WELL_KNOWN_NONNESTED_TYPES_COUNT = 273;
+		const int WELL_KNOWN_NONNESTED_TYPES_COUNT = 274;
 		const int WELL_KNOWN_NESTED_TYPES_COUNT = 3;
 		const int WELL_KNOWN_TYPES_COUNT = WELL_KNOWN_NONNESTED_TYPES_COUNT + WELL_KNOWN_NESTED_TYPES_COUNT;
 		static readonly Dictionary<TypeName, DmdWellKnownType> toNonNestedWellKnownType = new Dictionary<TypeName, DmdWellKnownType>(WELL_KNOWN_NONNESTED_TYPES_COUNT, TypeNameEqualityComparer.Instance) {
@@ -316,6 +316,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			{ new TypeName("System.Runtime.InteropServices.WindowsRuntime", "RuntimeClass"), DmdWellKnownType.System_Runtime_InteropServices_WindowsRuntime_RuntimeClass },
 			{ new TypeName("System", "DBNull"), DmdWellKnownType.System_DBNull },
 			{ new TypeName("System.Security.Permissions", "PermissionSetAttribute"), DmdWellKnownType.System_Security_Permissions_PermissionSetAttribute },
+			{ new TypeName("System.Diagnostics", "DebuggerTypeProxyAttribute"), DmdWellKnownType.System_Diagnostics_DebuggerTypeProxyAttribute },
 		};
 		static readonly Dictionary<string, DmdWellKnownType> toNestedWellKnownType = new Dictionary<string, DmdWellKnownType>(WELL_KNOWN_NESTED_TYPES_COUNT, StringComparer.Ordinal) {
 			{ "ForLoopControl", DmdWellKnownType.Microsoft_VisualBasic_CompilerServices_ObjectFlowControl_ForLoopControl },

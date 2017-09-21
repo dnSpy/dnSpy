@@ -95,5 +95,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 			}
 			output.Write(BoxedTextColor.Punctuation, ARRAY_PAREN_CLOSE);
 		}
+
+		protected override string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression) {
+			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			var output = new StringBuilderTextColorOutput(sb);
+			output.Write(BoxedTextColor.Keyword, "New");
+			output.Write(BoxedTextColor.Text, " ");
+			FormatTypeName(output, ctor.DeclaringType);
+			output.Write(BoxedTextColor.Punctuation, "(");
+			output.Write(BoxedTextColor.Text, argumentExpression);
+			output.Write(BoxedTextColor.Punctuation, ")");
+			return Formatters.ObjectCache.FreeAndToString(ref sb);
+		}
 	}
 }

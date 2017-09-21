@@ -57,7 +57,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					Array.Copy(tmp, res, tmp.Length);
 					w += tmp.Length;
 				}
-				for (int i = 1; i < providers.Length && w < count; i++) {
+				for (int i = (int)(index - first.ChildCount) + 1; i < providers.Length && w < count; i++) {
 					var provider = providers[i];
 					res[w++] = valueNodeFactory.Create(context, provider.Name, provider, options, provider.Expression, provider.ImageName);
 				}

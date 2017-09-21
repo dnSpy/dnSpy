@@ -160,6 +160,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						evalOptions |= DbgEvaluationOptions.HideCompilerGeneratedMembers;
 					if ((options & DbgValueNodeEvaluationOptions.RespectHideMemberAttributes) != 0)
 						evalOptions |= DbgEvaluationOptions.RespectHideMemberAttributes;
+					if ((options & DbgValueNodeEvaluationOptions.PublicMembers) != 0)
+						evalOptions |= DbgEvaluationOptions.PublicMembers;
 
 					var compilationResult = expressionCompiler.CompileGetLocals(context, frame, references, evalOptions, cancellationToken);
 					cancellationToken.ThrowIfCancellationRequested();

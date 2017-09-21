@@ -51,5 +51,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Respect attributes that can hide a member, eg. <see cref="DebuggerBrowsableAttribute"/> and <see cref="DebuggerBrowsableState.Never"/>
 		/// </summary>
 		RespectHideMemberAttributes	= 0x00000008,
+
+		/// <summary>
+		/// Only show public members
+		/// </summary>
+		PublicMembers				= 0x00000010,
 	}
 }

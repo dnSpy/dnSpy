@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
@@ -244,7 +245,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (typeHandleRes.Value == null | typeHandleRes.ValueIsException)
 				return;
 			var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
-			var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
+			var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
 			Debug.Assert((object)runClassConstructorMethod != null);
 			if ((object)runClassConstructorMethod == null)
 				return;
@@ -304,6 +305,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 			return engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), method, obj, arguments, newObj: false, cancellationToken: cancellationToken);
+		}
+
+		public DbgDotNetValueResult CreateInstance(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return CreateInstanceCore(context, frame, ctor, arguments, cancellationToken);
+			return Dispatcher.Invoke(() => CreateInstanceCore(context, frame, ctor, arguments, cancellationToken));
+		}
+
+		DbgDotNetValueResult CreateInstanceCore(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			return engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), ctor, null, arguments, newObj: true, cancellationToken: cancellationToken);
 		}
 
 		public DbgDotNetAliasInfo[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {

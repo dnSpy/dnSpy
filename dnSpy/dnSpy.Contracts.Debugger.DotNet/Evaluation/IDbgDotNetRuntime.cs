@@ -77,6 +77,17 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Creates a new instance of a type by calling its constructor
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="ctor">Constructor</param>
+		/// <param name="arguments">Arguments, simple types or <see cref="DbgDotNetValue"/>s</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValueResult CreateInstance(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Gets aliases
 		/// </summary>
 		/// <param name="context">Context</param>

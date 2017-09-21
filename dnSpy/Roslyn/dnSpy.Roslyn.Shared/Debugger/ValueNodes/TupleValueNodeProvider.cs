@@ -37,11 +37,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override bool? HasChildren => tupleFields.Length > 0;
 		public override ulong ChildCount => (uint)tupleFields.Length;
 
-		/*readonly*/ DbgDotNetInstanceValueInfo valueInfo;
+		readonly DbgDotNetValueNodeInfo nodeInfo;
 		readonly TupleField[] tupleFields;
 
-		public TupleValueNodeProvider(DbgDotNetInstanceValueInfo valueInfo, TupleField[] tupleFields) {
-			this.valueInfo = valueInfo;
+		public TupleValueNodeProvider(DbgDotNetValueNodeInfo nodeInfo, TupleField[] tupleFields) {
+			this.nodeInfo = nodeInfo;
 			this.tupleFields = tupleFields;
 		}
 
@@ -53,12 +53,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			try {
 				for (int i = 0; i < res.Length; i++) {
 					ref var info = ref tupleFields[(int)index + i];
-					var expression = valueNodeFactory.GetExpression(valueInfo.Expression, info.DefaultName);
+					var expression = valueNodeFactory.GetExpression(nodeInfo.Expression, info.DefaultName);
 					const string imageName = PredefinedDbgValueNodeImageNames.FieldPublic;
 					const bool isReadOnly = false;
 					var expectedType = info.Fields[info.Fields.Length - 1].FieldType;
 
-					var objValue = valueInfo.Value;
+					var objValue = nodeInfo.Value;
 					string errorMessage = null;
 					bool valueIsException = false;
 					for (int j = 0; j < info.Fields.Length; j++) {

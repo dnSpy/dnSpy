@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var dnThread = GetThread(thread);
 			var createdValues = new List<CorValue>();
 			try {
-				using (var dnEval = dnDebugger.CreateEval(suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
 					dnEval.SetThread(dnThread);
 					dnEval.SetTimeout(context.FuncEvalTimeout);
 					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
@@ -199,6 +199,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
 					if (res.Value.WasCustomNotification)
 						return new DbgDotNetValueResult(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
+					if (res.Value.WasCancelled)
+						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(res.Value.ResultOrException, reflectionAppDomain, tryCreateStrongHandle: true), valueIsException: res.Value.WasException);
 				}
 			}
@@ -241,7 +243,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			var dnThread = GetThread(thread);
 			try {
-				using (var dnEval = dnDebugger.CreateEval(suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
 					dnEval.SetThread(dnThread);
 					dnEval.SetTimeout(context.FuncEvalTimeout);
 					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
@@ -252,6 +254,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
 					if (res.Value.WasCustomNotification)
 						return new DbgDotNetValueResult(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
+					if (res.Value.WasCancelled)
+						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(res.Value.ResultOrException, typeToCreate.AppDomain, tryCreateStrongHandle: true), valueIsException: res.Value.WasException);
 				}
 			}

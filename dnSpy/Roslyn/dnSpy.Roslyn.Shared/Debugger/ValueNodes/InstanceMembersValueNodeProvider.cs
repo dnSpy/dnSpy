@@ -37,14 +37,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override bool? HasChildren => members.Length > 0;
 		public override ulong ChildCount => (uint)members.Length;
 
-		/*readonly*/ DbgDotNetInstanceValueInfo valueInfo;
+		readonly DbgDotNetValue value;
 		readonly MemberValueNodeInfo[] members;
 		readonly bool isRawView;
 
-		public InstanceMembersValueNodeProvider(DbgDotNetText name, string expression, DbgDotNetInstanceValueInfo valueInfo, MemberValueNodeInfo[] members, bool isRawView) {
+		public InstanceMembersValueNodeProvider(DbgDotNetText name, string expression, DbgDotNetValue value, MemberValueNodeInfo[] members, bool isRawView) {
 			Name = name;
 			Expression = expression;
-			this.valueInfo = valueInfo;
+			this.value = value;
 			this.members = members;
 			this.isRawView = isRawView;
 		}
@@ -68,16 +68,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					switch (info.Member.MemberType) {
 					case DmdMemberTypes.Field:
 						var field = (DmdFieldInfo)info.Member;
-						expression = valueNodeFactory.GetExpression(valueInfo.Expression, field);
+						expression = valueNodeFactory.GetExpression(Expression, field);
 						expectedType = field.FieldType;
 						imageName = ImageNameUtils.GetImageName(field);
-						valueResult = runtime.LoadField(context, frame, valueInfo.Value, field, cancellationToken);
+						valueResult = runtime.LoadField(context, frame, value, field, cancellationToken);
 						isReadOnly = field.IsInitOnly;
 						break;
 
 					case DmdMemberTypes.Property:
 						var property = (DmdPropertyInfo)info.Member;
-						expression = valueNodeFactory.GetExpression(valueInfo.Expression, property);
+						expression = valueNodeFactory.GetExpression(Expression, property);
 						expectedType = property.PropertyType;
 						imageName = ImageNameUtils.GetImageName(property);
 						if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0) {
@@ -86,7 +86,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 						}
 						else {
 							var getter = property.GetGetMethod(DmdGetAccessorOptions.All) ?? throw new InvalidOperationException();
-							valueResult = runtime.Call(context, frame, valueInfo.Value, getter, Array.Empty<object>(), cancellationToken);
+							valueResult = runtime.Call(context, frame, value, getter, Array.Empty<object>(), cancellationToken);
 							isReadOnly = (object)property.GetSetMethod(DmdGetAccessorOptions.All) == null;
 						}
 						break;

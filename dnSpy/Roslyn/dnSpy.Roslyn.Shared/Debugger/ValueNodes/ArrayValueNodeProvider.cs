@@ -36,13 +36,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override ulong ChildCount => arrayCount;
 
 		readonly DbgDotNetValueNodeProviderFactory owner;
-		/*readonly*/ DbgDotNetInstanceValueInfo valueInfo;
+		readonly DbgDotNetValueNodeInfo valueInfo;
 		readonly uint arrayCount;
 		readonly DbgDotNetArrayDimensionInfo[] dimensionInfos;
 		// This one's only non-null if this is an array with 2 or more dimensions
 		readonly int[] indexes;
 
-		public ArrayValueNodeProvider(DbgDotNetValueNodeProviderFactory owner, DbgDotNetInstanceValueInfo valueInfo) {
+		public ArrayValueNodeProvider(DbgDotNetValueNodeProviderFactory owner, DbgDotNetValueNodeInfo valueInfo) {
 			this.owner = owner;
 			this.valueInfo = valueInfo;
 
@@ -61,7 +61,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			DbgDotNetValue newValue = null;
 			try {
 				var output = new DbgDotNetTextOutput();
-				var elementType = valueInfo.ExpectedType.GetElementType();
+				var elementType = valueInfo.Value.Type.GetElementType();
 				for (int i = 0; i < res.Length; i++) {
 					cancellationToken.ThrowIfCancellationRequested();
 
