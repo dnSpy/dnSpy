@@ -89,7 +89,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					IMethod mr = instr.Operand as IMethod;
 					if (mr != null && !mr.IsField && mr.Name == name) {
 						// explicit call to the requested method 
-						if (instr.OpCode.Code == Code.Call
+						if ((instr.OpCode.Code == Code.Call || instr.OpCode.Code == Code.Callvirt)
 							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType)
 							&& mr.ResolveMethodDef() == analyzedMethod) {
 							foundInstr = instr;
