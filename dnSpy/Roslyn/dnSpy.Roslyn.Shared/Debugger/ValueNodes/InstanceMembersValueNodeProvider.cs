@@ -39,16 +39,20 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		/*readonly*/ DbgDotNetInstanceValueInfo valueInfo;
 		readonly MemberValueNodeInfo[] members;
+		readonly bool isRawView;
 
-		public InstanceMembersValueNodeProvider(DbgDotNetText name, string expression, DbgDotNetInstanceValueInfo valueInfo, MemberValueNodeInfo[] members) {
+		public InstanceMembersValueNodeProvider(DbgDotNetText name, string expression, DbgDotNetInstanceValueInfo valueInfo, MemberValueNodeInfo[] members, bool isRawView) {
 			Name = name;
 			Expression = expression;
 			this.valueInfo = valueInfo;
 			this.members = members;
+			this.isRawView = isRawView;
 		}
 
 		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var runtime = context.Runtime.GetDotNetRuntime();
+			if (isRawView)
+				options |= DbgValueNodeEvaluationOptions.RawView;
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
 			DbgDotNetValueResult valueResult = default;
 			try {

@@ -115,6 +115,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Raw View.
+        /// </summary>
+        internal static string DebuggerVarsWindow_RawView {
+            get {
+                return ResourceManager.GetString("DebuggerVarsWindow_RawView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shared members.
         /// </summary>
         internal static string DebuggerVarsWindow_VisualBasic_SharedMembers {

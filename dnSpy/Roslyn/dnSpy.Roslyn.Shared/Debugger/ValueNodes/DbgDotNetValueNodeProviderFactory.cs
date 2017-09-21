@@ -29,6 +29,7 @@ using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Roslyn.Shared.Properties;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	abstract class DbgDotNetValueNodeProviderFactory {
@@ -69,34 +70,24 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				TupleFields = Array.Empty<TupleField>();
 			}
 
-			public TypeState(DmdType type, string expression, MemberValueNodeInfo[] instanceMembers, MemberValueNodeInfo[] staticMembers) {
-				Debug.Assert(!Formatters.TypeFormatterUtils.IsTupleType(type));
+			public TypeState(DmdType type, string expression, MemberValueNodeInfo[] instanceMembers, MemberValueNodeInfo[] staticMembers, TupleField[] tupleFields) {
 				Type = type;
-				Flags = GetFlags(type);
+				Flags = GetFlags(type, tupleFields);
 				Expression = expression;
 				HasNoChildren = false;
 				InstanceMembers = instanceMembers;
 				StaticMembers = staticMembers;
-				TupleFields = Array.Empty<TupleField>();
-			}
-
-			public TypeState(DmdType type, string expression, TupleField[] tupleFields) {
-				Debug.Assert(Formatters.TypeFormatterUtils.IsTupleType(type));
-				Type = type;
-				Flags = TypeStateFlags.IsTupleType;
-				Expression = expression;
-				HasNoChildren = false;
-				InstanceMembers = Array.Empty<MemberValueNodeInfo>();
-				StaticMembers = Array.Empty<MemberValueNodeInfo>();
 				TupleFields = tupleFields;
 			}
 
-			static TypeStateFlags GetFlags(DmdType type) {
+			static TypeStateFlags GetFlags(DmdType type, TupleField[] tupleFields) {
 				var res = TypeStateFlags.None;
 				if (type.AppDomain.System_Collections_IEnumerable.IsAssignableFrom(type))
 					res |= TypeStateFlags.AddResultsView;
 				if (type.IsNullable)
 					res |= TypeStateFlags.IsNullable;
+				if (tupleFields.Length != 0)
+					res |= TypeStateFlags.IsTupleType;
 				return res;
 			}
 		}
@@ -182,7 +173,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return output.ToString();
 		}
 
-		TypeState TryCreateTupleTypeState(DmdType type, string typeExpression) {
+		TupleField[] TryCreateTupleFields(DmdType type) {
 			var tupleArity = Formatters.TypeFormatterUtils.GetTupleArity(type);
 			if (tupleArity <= 0)
 				return null;
@@ -194,7 +185,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				var defaultName = GetDefaultTupleName(info.tupleIndex);
 				tupleFields[info.tupleIndex] = new TupleField(defaultName, info.fields.ToArray());
 			}
-			return new TypeState(type, typeExpression, tupleFields);
+			return tupleFields;
 		}
 
 		static string GetDefaultTupleName(int tupleIndex) => "Item" + (tupleIndex + 1).ToString();
@@ -204,14 +195,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (HasNoChildren(type) || type.IsFunctionPointer)
 				return new TypeState(type, typeExpression);
 
-			var tupleTypeState = TryCreateTupleTypeState(type, typeExpression);
-			if (tupleTypeState != null)
-				return tupleTypeState;
-
 			MemberValueNodeInfo[] instanceMembers, staticMembers;
+			TupleField[] tupleFields;
 
 			Debug.Assert(!type.IsByRef);
 			if (type.TypeSignatureKind == DmdTypeSignatureKind.Type || type.TypeSignatureKind == DmdTypeSignatureKind.GenericInstance) {
+				tupleFields = TryCreateTupleFields(type) ?? Array.Empty<TupleField>();
+
 				var instanceMembersList = new List<MemberValueNodeInfo>();
 				var staticMembersList = new List<MemberValueNodeInfo>();
 
@@ -264,10 +254,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				UpdateNames(instanceMembers, output);
 				UpdateNames(staticMembers, output);
 			}
-			else
+			else {
 				staticMembers = instanceMembers = Array.Empty<MemberValueNodeInfo>();
+				tupleFields = Array.Empty<TupleField>();
+			}
 
-			return new TypeState(type, typeExpression, instanceMembers, staticMembers);
+			return new TypeState(type, typeExpression, instanceMembers, staticMembers, tupleFields);
 		}
 
 		void UpdateNames(MemberValueNodeInfo[] infos, DbgDotNetTextOutput output) {
@@ -353,16 +345,29 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					return info.Value;
 			}
 
-			if (state.IsTupleType)
-				return (new TupleValueNodeProvider(valueInfo, state.TupleFields), valueInfo.Value);
-
 			if (state.Type.IsArray && !valueInfo.Value.IsNullReference)
 				return (new ArrayValueNodeProvider(this, valueInfo), valueInfo.Value);
 
-			if ((evalOptions & DbgValueNodeEvaluationOptions.RawView) == 0) {
+			var providers = new List<DbgDotNetValueNodeProvider>(2);
+
+			bool forceRawView = (evalOptions & DbgValueNodeEvaluationOptions.RawView) != 0;
+
+			if (state.IsTupleType && !forceRawView) {
+				providers.Add(new TupleValueNodeProvider(valueInfo, state.TupleFields));
+				AddProviders(providers, state, valueInfo, evalOptions, isRawView: true);
+				return (DbgDotNetValueNodeProvider.Create(providers), valueInfo.Value);
+			}
+
+			if (!forceRawView) {
 				//TODO: Check if type or base type has System.Diagnostics.DebuggerTypeProxyAttribute
 			}
 
+			AddProviders(providers, state, valueInfo, evalOptions, isRawView: forceRawView);
+
+			return (DbgDotNetValueNodeProvider.Create(providers), valueInfo.Value);
+		}
+
+		void AddProviders(List<DbgDotNetValueNodeProvider> providers, TypeState state, DbgDotNetInstanceValueInfo valueInfo, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
 			MemberValueNodeInfo[] instanceMembersInfos;
 			MemberValueNodeInfo[] staticMembersInfos;
 			lock (state) {
@@ -375,11 +380,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				staticMembersInfos = state.CachedStaticMembers;
 			}
 
-			var providers = new List<DbgDotNetValueNodeProvider>(2);
-
 			if (valueInfo.Value.IsNullReference)
 				instanceMembersInfos = Array.Empty<MemberValueNodeInfo>();
-			providers.Add(new InstanceMembersValueNodeProvider(InstanceMembersName, state.Expression, valueInfo, instanceMembersInfos));
+			providers.Add(new InstanceMembersValueNodeProvider(isRawView ? rawViewName : InstanceMembersName, state.Expression, valueInfo, instanceMembersInfos, isRawView));
 
 			if (staticMembersInfos.Length != 0)
 				providers.Add(new StaticMembersValueNodeProvider(StaticMembersName, state.Expression, valueInfo, staticMembersInfos));
@@ -391,9 +394,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (state.AddResultsView) {
 				//TODO: Add "Results View"
 			}
-
-			return (DbgDotNetValueNodeProvider.Create(providers), valueInfo.Value);
 		}
+		readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_RawView));
 
 		MemberValueNodeInfo[] Filter(MemberValueNodeInfo[] infos, DbgValueNodeEvaluationOptions evalOptions) {
 			bool hideCompilerGeneratedMembers = (evalOptions & DbgValueNodeEvaluationOptions.HideCompilerGeneratedMembers) != 0;

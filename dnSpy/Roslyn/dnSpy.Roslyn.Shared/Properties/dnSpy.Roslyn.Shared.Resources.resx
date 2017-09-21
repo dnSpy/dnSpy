@@ -135,6 +135,9 @@
   <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
     <value>Instance members</value>
   </data>
+  <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
+    <value>Raw View</value>
+  </data>
   <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
     <value>Shared members</value>
   </data>
