@@ -37,7 +37,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		readonly MemberValueNodeInfoFlags Flags;
 		public bool HasDebuggerBrowsableState_Never => (Flags & MemberValueNodeInfoFlags.DebuggerBrowsableState_Mask) == MemberValueNodeInfoFlags.DebuggerBrowsableState_Never;
 		public bool HasDebuggerBrowsableState_RootHidden => (Flags & MemberValueNodeInfoFlags.DebuggerBrowsableState_Mask) == MemberValueNodeInfoFlags.DebuggerBrowsableState_RootHidden;
-		public bool HasCompilerGeneratedAttribute => (Flags & MemberValueNodeInfoFlags.CompilerGeneratedAttribute) != 0;
+		public bool IsCompilerGenerated => (Flags & (MemberValueNodeInfoFlags.CompilerGeneratedAttribute | MemberValueNodeInfoFlags.CompilerGeneratedName)) != 0;
 		public bool IsPublic => (Flags & MemberValueNodeInfoFlags.Public) != 0;
 
 		[Flags]
@@ -48,7 +48,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			DebuggerBrowsableState_Never		= 1,
 			DebuggerBrowsableState_RootHidden	= 2,
 			CompilerGeneratedAttribute			= 4,
-			Public								= 8,
+			CompilerGeneratedName				= 8,
+			Public								= 0x10,
 		}
 
 		public MemberValueNodeInfo(DmdMemberInfo member, byte inheritanceLevel) {
@@ -63,6 +64,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			var flags = MemberValueNodeInfoFlags.None;
 			if (IsPublicInternal(member))
 				flags |= MemberValueNodeInfoFlags.Public;
+			if (RoslynHelpers.IsCompilerGenerated(member.Name))
+				flags |= MemberValueNodeInfoFlags.CompilerGeneratedName;
 			var cas = member.CustomAttributes;
 			for (int i = 0; i < cas.Count; i++) {
 				var ca = cas[i];

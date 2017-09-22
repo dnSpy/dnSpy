@@ -95,6 +95,7 @@
     <Compile Include="Debugger\ValueNodes\ObjectCache.cs" />
     <Compile Include="Debugger\ValueNodes\ResultsViewMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\ResultsViewNoResultsValueNode.cs" />
+    <Compile Include="Debugger\ValueNodes\RoslynHelpers.cs" />
     <Compile Include="Debugger\ValueNodes\StaticMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\SyntheticNullValue.cs" />
     <Compile Include="Debugger\ValueNodes\TupleField.cs" />

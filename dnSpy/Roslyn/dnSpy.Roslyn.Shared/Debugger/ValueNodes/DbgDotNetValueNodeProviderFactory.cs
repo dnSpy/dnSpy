@@ -511,7 +511,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					return false;
 				if (respectHideMemberAttributes && a.HasDebuggerBrowsableState_Never)
 					return false;
-				if (hideCompilerGeneratedMembers && a.HasCompilerGeneratedAttribute)
+				if (hideCompilerGeneratedMembers && a.IsCompilerGenerated)
 					return false;
 				hasHideRoot |= a.HasDebuggerBrowsableState_RootHidden;
 				return true;
