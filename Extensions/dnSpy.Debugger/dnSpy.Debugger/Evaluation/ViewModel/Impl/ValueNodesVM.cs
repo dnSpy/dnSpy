@@ -69,6 +69,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		bool isOpen;
 		SelectNodeKind selectNodeKind;
 		Guid? lastRuntimeKindGuid;
+		DbgLanguage lastLanguage;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly IValueNodesVM vm;
@@ -168,6 +169,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			DbgValueNodeInfo[] nodes;
 			DbgEvaluationContext evalContext;
 			DbgStackFrame frame;
+			DbgLanguage language;
 			if (isOpen) {
 				(evalContext, frame) = valueNodesProvider.TryGetEvaluationContextInfo();
 				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions);
@@ -176,12 +178,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				if (nodeInfo.FrameClosed)
 					return;
 				nodes = nodeInfo.Nodes;
+				language = valueNodesProvider.Language;
 			}
 			else {
 				evalContext = null;
 				frame = null;
 				nodes = Array.Empty<DbgValueNodeInfo>();
 				runtimeKindGuid = null;
+				language = null;
 			}
 			valueNodesContext.ValueNodeReader.SetEvaluationContext(evalContext, frame);
 			valueNodesContext.EvaluationContext = evalContext;
@@ -190,7 +194,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 #if DEBUG
 			var origEditNode = TryGetEditNode();
 #endif
-			RecreateRootChildrenCore_UI(nodes, runtimeKindGuid);
+			RecreateRootChildrenCore_UI(nodes, runtimeKindGuid, language);
 			VerifyChildren_UI(nodes);
 #if DEBUG
 			// PERF: make sure edit node was re-used
@@ -248,13 +252,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void RecreateRootChildrenCore_UI(DbgValueNodeInfo[] infos, Guid? runtimeKindGuid) {
+		void RecreateRootChildrenCore_UI(DbgValueNodeInfo[] infos, Guid? runtimeKindGuid, DbgLanguage language) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 
-			bool runtimeKindGuidChanged = runtimeKindGuid != lastRuntimeKindGuid;
+			bool recreateAll = runtimeKindGuid != lastRuntimeKindGuid || language != lastLanguage;
 			lastRuntimeKindGuid = runtimeKindGuid;
+			lastLanguage = language;
 
-			if (infos.Length == 0 || rootNode.TreeNode.Children.Count == 0 || runtimeKindGuidChanged) {
+			if (infos.Length == 0 || rootNode.TreeNode.Children.Count == 0 || recreateAll) {
 				SetNewRootChildren_UI(infos);
 				return;
 			}
