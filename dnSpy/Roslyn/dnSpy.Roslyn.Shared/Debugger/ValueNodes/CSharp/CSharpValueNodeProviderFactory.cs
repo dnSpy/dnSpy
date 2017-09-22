@@ -31,6 +31,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 		protected override DbgDotNetText InstanceMembersName => instanceMembersName;
 		protected override DbgDotNetText StaticMembersName => staticMembersName;
 
+		public CSharpValueNodeProviderFactory(LanguageValueNodeFactory valueNodeFactory) : base(valueNodeFactory) { }
+
 		protected override bool HasNoChildren(DmdType type) {
 			switch (DmdType.GetTypeCode(type)) {
 			case TypeCode.Boolean:

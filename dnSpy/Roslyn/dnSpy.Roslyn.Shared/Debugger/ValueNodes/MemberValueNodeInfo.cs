@@ -69,7 +69,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				var type = ca.AttributeType;
 				switch (type.MetadataName) {
 				case "CompilerGeneratedAttribute":
-					if (type.MetadataNamespace == "System.Runtime.CompilerServices")
+					if (type.MetadataNamespace == "System.Runtime.CompilerServices" && member.MemberType == DmdMemberTypes.Field)
 						flags |= MemberValueNodeInfoFlags.CompilerGeneratedAttribute;
 					break;
 

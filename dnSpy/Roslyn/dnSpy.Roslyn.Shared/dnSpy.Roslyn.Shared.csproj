@@ -87,6 +87,7 @@
     <Compile Include="Debugger\ValueNodes\ImageNameUtils.cs" />
     <Compile Include="Debugger\ValueNodes\InstanceMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\LanguageValueNodeFactory.cs" />
+    <Compile Include="Debugger\ValueNodes\MembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\MemberUtils.cs" />
     <Compile Include="Debugger\ValueNodes\MemberValueNodeInfo.cs" />
     <Compile Include="Debugger\ValueNodes\ObjectCache.cs" />

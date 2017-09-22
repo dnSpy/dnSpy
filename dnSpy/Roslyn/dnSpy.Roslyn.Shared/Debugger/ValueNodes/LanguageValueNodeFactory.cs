@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -34,8 +33,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	abstract class LanguageValueNodeFactory : DbgDotNetValueNodeFactory {
 		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
 
-		protected LanguageValueNodeFactory(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory) =>
-			this.valueNodeProviderFactory = valueNodeProviderFactory ?? throw new ArgumentNullException(nameof(valueNodeProviderFactory));
+		protected abstract DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory();
+
+		protected LanguageValueNodeFactory() => valueNodeProviderFactory = CreateValueNodeProviderFactory();
 
 		public abstract string GetExpression(string baseExpression, DmdFieldInfo field);
 		public abstract string GetExpression(string baseExpression, DmdPropertyInfo property);

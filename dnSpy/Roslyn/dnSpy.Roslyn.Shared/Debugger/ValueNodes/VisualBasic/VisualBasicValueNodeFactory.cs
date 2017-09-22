@@ -25,7 +25,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 	[ExportDbgDotNetValueNodeFactory(DbgDotNetLanguageGuids.VisualBasic)]
 	sealed class VisualBasicValueNodeFactory : LanguageValueNodeFactory {
-		public VisualBasicValueNodeFactory() : base(new VisualBasicValueNodeProviderFactory()) { }
+		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new VisualBasicValueNodeProviderFactory(this);
 
 		public override string GetExpression(string baseExpression, DmdFieldInfo field) {
 			//TODO: Add parens, casts, use -> if pointer etc...

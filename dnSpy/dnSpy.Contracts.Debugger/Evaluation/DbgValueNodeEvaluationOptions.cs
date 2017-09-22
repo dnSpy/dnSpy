@@ -56,5 +56,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Only show public members
 		/// </summary>
 		PublicMembers				= 0x00000010,
+
+		/// <summary>
+		/// Roots can't be hidden
+		/// </summary>
+		NoHideRoots					= 0x00000020,
 	}
 }

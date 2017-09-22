@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -26,7 +25,7 @@ using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
-	abstract class DbgDotNetValueNodeProvider : IDisposable {
+	abstract class DbgDotNetValueNodeProvider {
 		public abstract DbgDotNetText Name { get; }
 		public abstract string Expression { get; }
 		public abstract string ImageName { get; }

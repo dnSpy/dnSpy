@@ -32,6 +32,16 @@ using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Roslyn.Shared.Properties;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
+	struct MemberValueNodeInfoCollection {
+		public static readonly MemberValueNodeInfoCollection Empty = new MemberValueNodeInfoCollection(Array.Empty<MemberValueNodeInfo>(), false);
+		public readonly MemberValueNodeInfo[] Members;
+		public readonly bool HasHideRoot;
+		public MemberValueNodeInfoCollection(MemberValueNodeInfo[] members, bool hasHideRoot) {
+			Members = members;
+			HasHideRoot = hasHideRoot;
+		}
+	}
+
 	abstract class DbgDotNetValueNodeProviderFactory {
 		[Flags]
 		enum TypeStateFlags {
@@ -46,8 +56,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			public readonly TypeStateFlags Flags;
 			public readonly string Expression;
 			public readonly bool HasNoChildren;
-			public readonly MemberValueNodeInfo[] InstanceMembers;
-			public readonly MemberValueNodeInfo[] StaticMembers;
+			public readonly MemberValueNodeInfoCollection InstanceMembers;
+			public readonly MemberValueNodeInfoCollection StaticMembers;
 
 			// Only if it's a tuple
 			public readonly TupleField[] TupleFields;
@@ -57,20 +67,20 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			public bool IsTupleType => (Flags & TypeStateFlags.IsTupleType) != 0;
 
 			public DbgValueNodeEvaluationOptions CachedEvalOptions;
-			public MemberValueNodeInfo[] CachedInstanceMembers;
-			public MemberValueNodeInfo[] CachedStaticMembers;
+			public MemberValueNodeInfoCollection CachedInstanceMembers;
+			public MemberValueNodeInfoCollection CachedStaticMembers;
 
 			public TypeState(DmdType type, string expression) {
 				Type = type;
 				Flags = TypeStateFlags.None;
 				Expression = expression;
 				HasNoChildren = true;
-				InstanceMembers = Array.Empty<MemberValueNodeInfo>();
-				StaticMembers = Array.Empty<MemberValueNodeInfo>();
+				InstanceMembers = MemberValueNodeInfoCollection.Empty;
+				StaticMembers = MemberValueNodeInfoCollection.Empty;
 				TupleFields = Array.Empty<TupleField>();
 			}
 
-			public TypeState(DmdType type, string expression, MemberValueNodeInfo[] instanceMembers, MemberValueNodeInfo[] staticMembers, TupleField[] tupleFields) {
+			public TypeState(DmdType type, string expression, MemberValueNodeInfoCollection instanceMembers, MemberValueNodeInfoCollection staticMembers, TupleField[] tupleFields) {
 				Type = type;
 				Flags = GetFlags(type, tupleFields);
 				Expression = expression;
@@ -91,6 +101,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				return res;
 			}
 		}
+
+		readonly LanguageValueNodeFactory valueNodeFactory;
+
+		protected DbgDotNetValueNodeProviderFactory(LanguageValueNodeFactory valueNodeFactory) =>
+			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 
 		/// <summary>
 		/// Returns true if <paramref name="type"/> is a primitive type that doesn't show any members,
@@ -198,7 +213,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (HasNoChildren(type) || type.IsFunctionPointer)
 				return new TypeState(type, typeExpression);
 
-			MemberValueNodeInfo[] instanceMembers, staticMembers;
+			MemberValueNodeInfoCollection instanceMembers, staticMembers;
 			TupleField[] tupleFields;
 
 			Debug.Assert(!type.IsByRef);
@@ -207,6 +222,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 				var instanceMembersList = new List<MemberValueNodeInfo>();
 				var staticMembersList = new List<MemberValueNodeInfo>();
+				bool instanceHasHideRoot = false;
+				bool staticHasHideRoot = false;
 
 				byte inheritanceLevel;
 				DmdType currentType;
@@ -221,10 +238,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 						if (inheritanceLevel != byte.MaxValue)
 							inheritanceLevel++;
 					}
-					if (field.IsStatic)
-						staticMembersList.Add(new MemberValueNodeInfo(field, inheritanceLevel));
-					else
-						instanceMembersList.Add(new MemberValueNodeInfo(field, inheritanceLevel));
+
+					var nodeInfo = new MemberValueNodeInfo(field, inheritanceLevel);
+					if (field.IsStatic) {
+						staticHasHideRoot |= nodeInfo.HasDebuggerBrowsableState_RootHidden;
+						staticMembersList.Add(nodeInfo);
+					}
+					else {
+						instanceHasHideRoot |= nodeInfo.HasDebuggerBrowsableState_RootHidden;
+						instanceMembersList.Add(nodeInfo);
+					}
 				}
 
 				inheritanceLevel = 0;
@@ -242,23 +265,28 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					var getter = property.GetGetMethod(DmdGetAccessorOptions.All);
 					if ((object)getter == null || getter.GetMethodSignature().GetParameterTypes().Count != 0)
 						continue;
-					if (getter.IsStatic)
-						staticMembersList.Add(new MemberValueNodeInfo(property, inheritanceLevel));
-					else
-						instanceMembersList.Add(new MemberValueNodeInfo(property, inheritanceLevel));
+					var nodeInfo = new MemberValueNodeInfo(property, inheritanceLevel);
+					if (getter.IsStatic) {
+						staticHasHideRoot |= nodeInfo.HasDebuggerBrowsableState_RootHidden;
+						staticMembersList.Add(nodeInfo);
+					}
+					else {
+						instanceHasHideRoot |= nodeInfo.HasDebuggerBrowsableState_RootHidden;
+						instanceMembersList.Add(nodeInfo);
+					}
 				}
 
-				instanceMembers = instanceMembersList.Count == 0 ? Array.Empty<MemberValueNodeInfo>() : instanceMembersList.ToArray();
-				staticMembers = staticMembersList.Count == 0 ? Array.Empty<MemberValueNodeInfo>() : staticMembersList.ToArray();
+				instanceMembers = instanceMembersList.Count == 0 ? MemberValueNodeInfoCollection.Empty : new MemberValueNodeInfoCollection(instanceMembersList.ToArray(), instanceHasHideRoot);
+				staticMembers = staticMembersList.Count == 0 ? MemberValueNodeInfoCollection.Empty : new MemberValueNodeInfoCollection(staticMembersList.ToArray(), staticHasHideRoot);
 
-				Array.Sort(instanceMembers, MemberValueNodeInfoEqualityComparer.Instance);
-				Array.Sort(staticMembers, MemberValueNodeInfoEqualityComparer.Instance);
+				Array.Sort(instanceMembers.Members, MemberValueNodeInfoEqualityComparer.Instance);
+				Array.Sort(staticMembers.Members, MemberValueNodeInfoEqualityComparer.Instance);
 				var output = new DbgDotNetTextOutput();
-				UpdateNames(instanceMembers, output);
-				UpdateNames(staticMembers, output);
+				UpdateNames(instanceMembers.Members, output);
+				UpdateNames(staticMembers.Members, output);
 			}
 			else {
-				staticMembers = instanceMembers = Array.Empty<MemberValueNodeInfo>();
+				staticMembers = instanceMembers = MemberValueNodeInfoCollection.Empty;
 				tupleFields = Array.Empty<TupleField>();
 			}
 
@@ -392,10 +420,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 
 		void AddProviders(List<DbgDotNetValueNodeProvider> providers, TypeState state, DbgDotNetValueNodeInfo nodeInfo, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
-			MemberValueNodeInfo[] instanceMembersInfos;
-			MemberValueNodeInfo[] staticMembersInfos;
+			MemberValueNodeInfoCollection instanceMembersInfos;
+			MemberValueNodeInfoCollection staticMembersInfos;
 			lock (state) {
-				if (state.CachedEvalOptions != evalOptions || state.CachedInstanceMembers == null) {
+				if (state.CachedEvalOptions != evalOptions || state.CachedInstanceMembers.Members == null) {
 					state.CachedEvalOptions = evalOptions;
 					state.CachedInstanceMembers = Filter(state.InstanceMembers, evalOptions);
 					state.CachedStaticMembers = Filter(state.StaticMembers, evalOptions);
@@ -404,12 +432,15 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				staticMembersInfos = state.CachedStaticMembers;
 			}
 
+			var membersEvalOptions = evalOptions;
+			if (isRawView)
+				membersEvalOptions |= DbgValueNodeEvaluationOptions.RawView;
 			if (nodeInfo.Value.IsNullReference)
-				instanceMembersInfos = Array.Empty<MemberValueNodeInfo>();
-			providers.Add(new InstanceMembersValueNodeProvider(isRawView ? rawViewName : InstanceMembersName, state.Expression, value, instanceMembersInfos, isRawView));
+				instanceMembersInfos = MemberValueNodeInfoCollection.Empty;
+			providers.Add(new InstanceMembersValueNodeProvider(valueNodeFactory, isRawView ? rawViewName : InstanceMembersName, state.Expression, value, instanceMembersInfos, membersEvalOptions));
 
-			if (staticMembersInfos.Length != 0)
-				providers.Add(new StaticMembersValueNodeProvider(StaticMembersName, state.Expression, staticMembersInfos));
+			if (staticMembersInfos.Members.Length != 0)
+				providers.Add(new StaticMembersValueNodeProvider(valueNodeFactory, StaticMembersName, state.Expression, staticMembersInfos, membersEvalOptions));
 
 			//TODO: dynamic types
 			//TODO: non-void and non-null pointers (derefence and show members)
@@ -420,22 +451,25 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 		readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_RawView));
 
-		static MemberValueNodeInfo[] Filter(MemberValueNodeInfo[] infos, DbgValueNodeEvaluationOptions evalOptions) {
+		static MemberValueNodeInfoCollection Filter(MemberValueNodeInfoCollection infos, DbgValueNodeEvaluationOptions evalOptions) {
 			bool hideCompilerGeneratedMembers = (evalOptions & DbgValueNodeEvaluationOptions.HideCompilerGeneratedMembers) != 0;
 			bool respectHideMemberAttributes = (evalOptions & DbgValueNodeEvaluationOptions.RespectHideMemberAttributes) != 0;
 			bool publicMembers = (evalOptions & DbgValueNodeEvaluationOptions.PublicMembers) != 0;
 			if (!hideCompilerGeneratedMembers && !respectHideMemberAttributes && !publicMembers)
 				return infos;
-			return infos.Where(a => {
+			bool hasHideRoot = false;
+			var members = infos.Members.Where(a => {
 				Debug.Assert(a.Member.MemberType == DmdMemberTypes.Field || a.Member.MemberType == DmdMemberTypes.Property);
 				if (publicMembers && !a.IsPublic)
 					return false;
 				if (respectHideMemberAttributes && a.HasDebuggerBrowsableState_Never)
 					return false;
-				if (hideCompilerGeneratedMembers && a.Member.MemberType == DmdMemberTypes.Field && a.HasCompilerGeneratedAttribute)
+				if (hideCompilerGeneratedMembers && a.HasCompilerGeneratedAttribute)
 					return false;
+				hasHideRoot |= a.HasDebuggerBrowsableState_RootHidden;
 				return true;
 			}).ToArray();
+			return new MemberValueNodeInfoCollection(members, hasHideRoot);
 		}
 	}
 }
