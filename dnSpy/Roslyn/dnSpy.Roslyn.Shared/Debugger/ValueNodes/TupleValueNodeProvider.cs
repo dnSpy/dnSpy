@@ -54,7 +54,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			try {
 				for (int i = 0; i < res.Length; i++) {
 					ref var info = ref tupleFields[(int)index + i];
-					var expression = valueNodeFactory.GetExpression(nodeInfo.Expression, info.DefaultName);
+					var expression = valueNodeFactory.GetFieldExpression(nodeInfo.Expression, info.DefaultName);
 					const string imageName = PredefinedDbgValueNodeImageNames.FieldPublic;
 					const bool isReadOnly = false;
 					var expectedType = info.Fields[info.Fields.Length - 1].FieldType;

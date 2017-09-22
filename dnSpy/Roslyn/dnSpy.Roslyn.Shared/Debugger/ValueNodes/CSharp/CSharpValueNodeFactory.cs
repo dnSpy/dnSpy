@@ -27,16 +27,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 	sealed class CSharpValueNodeFactory : LanguageValueNodeFactory {
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new CSharpValueNodeProviderFactory(this);
 
-		public override string GetExpression(string baseExpression, DmdFieldInfo field) {
+		public override string GetFieldExpression(string baseExpression, string name) {
 			//TODO: Add parens, casts, use -> if pointer etc...
-			return baseExpression + "." + field.Name;
+			return baseExpression + "." + name;
 		}
 
-		public override string GetExpression(string baseExpression, DmdPropertyInfo property) {
-			return baseExpression + "." + property.Name;
-		}
-
-		public override string GetExpression(string baseExpression, string name) {
+		public override string GetPropertyExpression(string baseExpression, string name) {
 			return baseExpression + "." + name;
 		}
 

@@ -52,7 +52,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				switch (info.Member.MemberType) {
 				case DmdMemberTypes.Field:
 					var field = (DmdFieldInfo)info.Member;
-					expression = valueNodeFactory.GetExpression(Expression, field);
+					expression = valueNodeFactory.GetFieldExpression(Expression, field.Name);
 					expectedType = field.FieldType;
 					imageName = ImageNameUtils.GetImageName(field);
 					valueResult = runtime.LoadField(context, frame, value, field, cancellationToken);
@@ -62,7 +62,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 				case DmdMemberTypes.Property:
 					var property = (DmdPropertyInfo)info.Member;
-					expression = valueNodeFactory.GetExpression(Expression, property);
+					expression = valueNodeFactory.GetPropertyExpression(Expression, property.Name);
 					expectedType = property.PropertyType;
 					imageName = ImageNameUtils.GetImageName(property);
 					if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0) {
