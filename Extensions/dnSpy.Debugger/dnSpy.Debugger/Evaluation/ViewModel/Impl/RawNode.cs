@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
@@ -40,7 +41,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public abstract string ImageName { get; }
 		public abstract bool IsReadOnly { get; }
 		public abstract bool? HasChildren { get; }
-		public abstract ulong? ChildCount { get; }
+		public abstract ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
 		public virtual RawNode CreateChild(Action<ChildDbgValueRawNode, object> debuggerValueNodeChanged, object debuggerValueNodeChangedData, uint index) => throw new NotSupportedException();
 		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options);
 		public abstract void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output);
@@ -54,7 +55,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Edit;
 		public override bool IsReadOnly => true;
 		public override bool? HasChildren => false;
-		public override ulong? ChildCount => 0;
+		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
 		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options) { }
 		public override void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output) { }
 		public override void FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options) { }
@@ -68,7 +69,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
 		public override bool IsReadOnly => true;
 		public override bool? HasChildren => false;
-		public override ulong? ChildCount => 0;
+		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
 
 		readonly string expression;
 		string errorMessage;
@@ -134,7 +135,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string Expression => string.Empty;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
 		public override bool? HasChildren => false;
-		public override ulong? ChildCount => 0;
+		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
 
 		protected override ClassifiedTextCollection CachedName => default;
 		protected override ClassifiedTextCollection CachedValue => default;
@@ -147,7 +148,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string Expression { get; }
 		public override string ImageName { get; }
 		public override bool? HasChildren { get; }
-		public override ulong? ChildCount { get; }
+		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => childCount;
+		readonly ulong? childCount;
 
 		protected override ClassifiedTextCollection CachedName { get; }
 		protected override ClassifiedTextCollection CachedValue { get; }
@@ -159,7 +161,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
 			ImageName = imageName ?? throw new ArgumentNullException(nameof(imageName));
 			HasChildren = hasChildren;
-			ChildCount = childCount;
+			this.childCount = childCount;
 			CachedName = cachedName;
 			CachedValue = cachedValue;
 			CachedExpectedType = cachedExpectedType;
@@ -176,7 +178,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string ImageName => DebuggerValueNode.ImageName;
 		public override bool IsReadOnly => DebuggerValueNode.IsReadOnly;
 		public override bool? HasChildren => DebuggerValueNode.HasChildren;
-		public override ulong? ChildCount => DebuggerValueNode.ChildCount;
+		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => DebuggerValueNode.GetChildCount(context, frame, cancellationToken);
 
 		internal abstract DbgValueNode DebuggerValueNode { get; }
 

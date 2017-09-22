@@ -42,7 +42,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override bool IsReadOnly => true;
 		public override bool CausesSideEffects => false;
 		public override bool? HasChildren => typeVariableInfos.Length > 0;
-		public override ulong ChildCount => (uint)typeVariableInfos.Length;
 
 		static readonly DbgDotNetText typeVariablesName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.LocalsWindow_TypeVariables));
 
@@ -53,6 +52,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 			this.typeVariableInfos = typeVariableInfos ?? throw new ArgumentNullException(nameof(typeVariableInfos));
 		}
+
+		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => (uint)typeVariableInfos.Length;
 
 		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var res = new DbgDotNetValueNode[count];
@@ -81,7 +82,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override bool IsReadOnly => true;
 		public override bool CausesSideEffects => false;
 		public override bool? HasChildren => false;
-		public override ulong ChildCount => 0;
 
 		public TypeVariableValueNode(LanguageValueNodeFactory valueNodeFactory, DbgDotNetTypeVariableInfo info) {
 			ExpectedType = info.GenericArgumentType;
@@ -92,6 +92,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			Name = new DbgDotNetText(new DbgDotNetTextPart(isMethodParam ? BoxedTextColor.MethodGenericParameter : BoxedTextColor.TypeGenericParameter, valueNodeFactory.EscapeIdentifier(paramType.Name ?? string.Empty)));
 		}
 
+		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
 		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgDotNetValueNode>();
 		protected override void CloseCore(DbgDispatcher dispatcher) => Value.Dispose();
 	}

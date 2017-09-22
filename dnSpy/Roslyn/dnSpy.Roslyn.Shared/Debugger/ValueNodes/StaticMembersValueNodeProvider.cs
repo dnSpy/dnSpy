@@ -35,7 +35,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string Expression { get; }
 		public override string ImageName => PredefinedDbgValueNodeImageNames.StaticMembers;
 		public override bool? HasChildren => members.Length > 0;
-		public override ulong ChildCount => (uint)members.Length;
 
 		readonly MemberValueNodeInfo[] members;
 
@@ -44,6 +43,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			Expression = expression;
 			this.members = members;
 		}
+
+		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => (uint)members.Length;
 
 		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var runtime = context.Runtime.GetDotNetRuntime();

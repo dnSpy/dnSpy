@@ -37,7 +37,6 @@ namespace dnSpy.Debugger.Evaluation {
 		public override bool IsReadOnly => engineValueNode.IsReadOnly;
 		public override bool CausesSideEffects => engineValueNode.CausesSideEffects;
 		public override bool? HasChildren => engineValueNode.HasChildren;
-		public override ulong ChildCount => engineValueNode.ChildCount;
 
 		readonly DbgEngineValueNode engineValueNode;
 		DbgValueImpl value;
@@ -51,6 +50,22 @@ namespace dnSpy.Debugger.Evaluation {
 				value = new DbgValueImpl(runtime, engineValue);
 			else if (!engineValueNode.IsReadOnly)
 				throw new InvalidOperationException();
+		}
+
+		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime != Runtime)
+				throw new ArgumentException();
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (frame.Runtime != Runtime)
+				throw new ArgumentException();
+			return engineValueNode.GetChildCount(context, frame, cancellationToken);
 		}
 
 		public override DbgValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {

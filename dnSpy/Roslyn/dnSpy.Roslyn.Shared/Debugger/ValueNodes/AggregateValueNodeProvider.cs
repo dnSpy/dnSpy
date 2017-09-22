@@ -32,7 +32,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string Expression => providers[0].Expression;
 		public override string ImageName => providers[0].ImageName;
 		public override bool? HasChildren => true;
-		public override ulong ChildCount => providers[0].ChildCount + (uint)(providers.Length - 1);
 
 		readonly DbgDotNetValueNodeProvider[] providers;
 
@@ -41,23 +40,27 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.providers = providers;
 		}
 
+		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>
+			providers[0].GetChildCount(context, frame, cancellationToken) + (uint)(providers.Length - 1);
+
 		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			if (count == 0)
 				return Array.Empty<DbgDotNetValueNode>();
 
 			var first = providers[0];
-			if (index + (uint)count <= first.ChildCount)
+			ulong childCount = first.GetChildCount(context, frame, cancellationToken);
+			if (index + (uint)count <= childCount)
 				return first.GetChildren(valueNodeFactory, context, frame, index, count, options, cancellationToken);
 
 			var res = new DbgDotNetValueNode[count];
 			try {
 				int w = 0;
-				if (index < first.ChildCount) {
-					var tmp = first.GetChildren(valueNodeFactory, context, frame, index, (int)(first.ChildCount - index), options, cancellationToken);
+				if (index < childCount) {
+					var tmp = first.GetChildren(valueNodeFactory, context, frame, index, (int)(childCount - index), options, cancellationToken);
 					Array.Copy(tmp, res, tmp.Length);
 					w += tmp.Length;
 				}
-				for (int i = (int)(index - first.ChildCount) + 1; i < providers.Length && w < count; i++) {
+				for (int i = (int)(index - childCount) + 1; i < providers.Length && w < count; i++) {
 					var provider = providers[i];
 					res[w++] = valueNodeFactory.Create(context, provider.Name, provider, options, provider.Expression, provider.ImageName);
 				}

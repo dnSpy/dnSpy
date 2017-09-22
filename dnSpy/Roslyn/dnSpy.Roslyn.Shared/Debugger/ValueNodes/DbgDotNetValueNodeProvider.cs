@@ -32,7 +32,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract string ImageName { get; }
 
 		public abstract bool? HasChildren { get; }
-		public abstract ulong ChildCount { get; }
+		public abstract ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
 		public abstract DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		public abstract void Dispose();

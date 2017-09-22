@@ -37,7 +37,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override bool IsReadOnly => value == null || dnValueNode.IsReadOnly;
 		public override bool CausesSideEffects => dnValueNode.CausesSideEffects;
 		public override bool? HasChildren => dnValueNode.HasChildren;
-		public override ulong ChildCount => dnValueNode.ChildCount;
 
 		readonly DbgDotNetEngineValueNodeFactoryImpl owner;
 		readonly DbgDotNetValueNode dnValueNode;
@@ -51,6 +50,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			value = dnValue == null ? null : new DbgEngineValueImpl(dnValue);
 			this.dnValueNode = dnValueNode;
 		}
+
+		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetChildCountCore(context, frame, cancellationToken));
+
+		ulong GetChildCountCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>
+			dnValueNode.GetChildCount(context, frame, cancellationToken);
 
 		public override DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
 			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetChildrenCore(context, frame, index, count, options, cancellationToken));

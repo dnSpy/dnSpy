@@ -39,7 +39,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override bool IsReadOnly { get; }
 		public override bool CausesSideEffects { get; }
 		public override bool? HasChildren => childNodeProvider?.HasChildren ?? false;
-		public override ulong ChildCount => childNodeProvider?.ChildCount ?? 0;
 
 		readonly LanguageValueNodeFactory valueNodeFactory;
 		readonly DbgDotNetValueNodeProvider childNodeProvider;
@@ -61,6 +60,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			ActualType = actualType;
 			ErrorMessage = errorMessage;
 		}
+
+		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>
+			childNodeProvider?.GetChildCount(context, frame, cancellationToken) ?? 0;
 
 		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			if (childNodeProvider == null)

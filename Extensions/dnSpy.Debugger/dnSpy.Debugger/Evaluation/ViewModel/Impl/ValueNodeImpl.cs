@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -301,7 +302,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				yield break;
 			}
 
-			var childCountTmp = RawNode.ChildCount;
+			var childCountTmp = RawNode.GetChildCount(Context.EvaluationContext, Context.StackFrame, CancellationToken.None);
 			cachedChildCount = childCountTmp;
 			if (childCountTmp == null) {
 				ResetLazyLoading();
@@ -495,7 +496,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			return true;
 		}
 
-		static ulong? GetChildCount(RawNode node) => node.HasChildren == false ? 0 : node.ChildCount;
+		ulong? GetChildCount(RawNode node) => node.HasChildren == false ? 0 : node.GetChildCount(Context.EvaluationContext, Context.StackFrame, CancellationToken.None);
 
 		// Don't allow refreshing the value if it's an EmptyCachedRawNode since it doesn't have the original expression
 		bool CanRefreshExpression => IsInvalid && RawNode.CanEvaluateExpression && !string.IsNullOrEmpty(RawNode.Expression);

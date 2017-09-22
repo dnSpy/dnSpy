@@ -105,8 +105,8 @@ namespace dnSpy.Debugger.Evaluation {
 		public override bool IsReadOnly => true;
 		public override bool CausesSideEffects => false;
 		public override bool? HasChildren => false;
-		public override ulong ChildCount => 0;
 		public NullDbgEngineErrorValueNode(string expression = null) => Expression = expression ?? string.Empty;
+		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
 		public override DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgEngineValueNode>();
 		public override void GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(GetChildren(context, frame, index, count, options, cancellationToken));
 		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) { }

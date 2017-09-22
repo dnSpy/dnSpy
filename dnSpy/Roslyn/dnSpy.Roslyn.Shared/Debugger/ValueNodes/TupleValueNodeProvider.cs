@@ -35,7 +35,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string Expression => throw new NotSupportedException();
 		public override string ImageName => throw new NotSupportedException();
 		public override bool? HasChildren => tupleFields.Length > 0;
-		public override ulong ChildCount => (uint)tupleFields.Length;
 
 		readonly DbgDotNetValueNodeInfo nodeInfo;
 		readonly TupleField[] tupleFields;
@@ -44,6 +43,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.nodeInfo = nodeInfo;
 			this.tupleFields = tupleFields;
 		}
+
+		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => (uint)tupleFields.Length;
 
 		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var runtime = context.Runtime.GetDotNetRuntime();

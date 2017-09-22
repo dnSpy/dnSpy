@@ -98,7 +98,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Number of children. This property is called as late as possible and can be lazily initialized.
 		/// It's assumed to be 0 if <see cref="HasChildren"/> is false.
 		/// </summary>
-		public abstract ulong ChildCount { get; }
+		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public abstract ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates new children. This method blocks the current thread until the children have been created.
