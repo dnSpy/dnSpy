@@ -46,13 +46,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		[Flags]
 		enum TypeStateFlags {
 			None = 0,
-			AddResultsView = 1,
-			IsNullable = 2,
-			IsTupleType = 4,
+			IsNullable = 1,
+			IsTupleType = 2,
 		}
 
 		sealed class TypeState {
 			public readonly DmdType Type;
+			public readonly DmdType EnumerableType;
 			public readonly TypeStateFlags Flags;
 			public readonly string Expression;
 			public readonly bool HasNoChildren;
@@ -62,7 +62,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			// Only if it's a tuple
 			public readonly TupleField[] TupleFields;
 
-			public bool AddResultsView => (Flags & TypeStateFlags.AddResultsView) != 0;
 			public bool IsNullable => (Flags & TypeStateFlags.IsNullable) != 0;
 			public bool IsTupleType => (Flags & TypeStateFlags.IsTupleType) != 0;
 
@@ -82,6 +81,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 			public TypeState(DmdType type, string expression, MemberValueNodeInfoCollection instanceMembers, MemberValueNodeInfoCollection staticMembers, TupleField[] tupleFields) {
 				Type = type;
+				EnumerableType = GetEnumerableType(type);
 				Flags = GetFlags(type, tupleFields);
 				Expression = expression;
 				HasNoChildren = false;
@@ -90,10 +90,51 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				TupleFields = tupleFields;
 			}
 
+			static DmdType GetEnumerableType(DmdType type) {
+				if (type.IsArray || type == type.AppDomain.System_String)
+					return null;
+
+				bool foundEnumerableType = false;
+				var enumerableType = type.AppDomain.System_Collections_IEnumerable;
+				var enumerableOfTType = type.AppDomain.System_Collections_Generic_IEnumerable_T;
+				switch (GetEnumerableTypeKind(type, enumerableType, enumerableOfTType)) {
+				case EnumerableTypeKind.Enumerable:
+					foundEnumerableType = true;
+					break;
+				case EnumerableTypeKind.EnumerableOfT:
+					return type;
+				}
+
+				foreach (var iface in type.GetInterfaces()) {
+					switch (GetEnumerableTypeKind(iface, enumerableType, enumerableOfTType)) {
+					case EnumerableTypeKind.Enumerable:
+						foundEnumerableType = true;
+						break;
+					case EnumerableTypeKind.EnumerableOfT:
+						return iface;
+					}
+				}
+				return foundEnumerableType ? enumerableType : null;
+			}
+
+			enum EnumerableTypeKind {
+				None,
+				Enumerable,
+				EnumerableOfT,
+			}
+
+			static EnumerableTypeKind GetEnumerableTypeKind(DmdType type, DmdType enumerableType, DmdType enumerableOfTType) {
+				if (type == enumerableType)
+					return EnumerableTypeKind.Enumerable;
+				if (type.IsConstructedGenericType && type.GetGenericArguments().Count == 1) {
+					if (type.GetGenericTypeDefinition() == enumerableOfTType)
+						return EnumerableTypeKind.EnumerableOfT;
+				}
+				return EnumerableTypeKind.None;
+			}
+
 			static TypeStateFlags GetFlags(DmdType type, TupleField[] tupleFields) {
 				var res = TypeStateFlags.None;
-				if (type.AppDomain.System_Collections_IEnumerable.IsAssignableFrom(type))
-					res |= TypeStateFlags.AddResultsView;
 				if (type.IsNullable)
 					res |= TypeStateFlags.IsNullable;
 				if (tupleFields.Length != 0)
@@ -388,7 +429,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 			if (state.IsTupleType && !forceRawView) {
 				providers.Add(new TupleValueNodeProvider(nodeInfo, state.TupleFields));
-				AddProvidersOneChildNode(providers, state, nodeInfo, nodeInfo.Value, evalOptions, isRawView: true);
+				AddProvidersOneChildNode(providers, state, nodeInfo.Value, evalOptions, isRawView: true);
 				return;
 			}
 
@@ -403,25 +444,28 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 						nodeInfo.Expression = GetNewObjectExpression(proxyCtor, nodeInfo.Expression);
 						nodeInfo.SetProxyValue(proxyTypeResult.Value);
 						Create(context, frame, providers, nodeInfo, evalOptions | DbgValueNodeEvaluationOptions.PublicMembers, createFlags | CreateFlags.NoProxy, cancellationToken);
-						AddProvidersOneChildNode(providers, state, nodeInfo, value, evalOptions, isRawView: true);
+						AddProvidersOneChildNode(providers, state, value, evalOptions, isRawView: true);
 						return;
 					}
 				}
 			}
 
-			AddProviders(providers, state, nodeInfo, nodeInfo.Value, evalOptions, isRawView: forceRawView);
+			AddProviders(providers, state, nodeInfo.Value, evalOptions, forceRawView);
 		}
 
-		void AddProvidersOneChildNode(List<DbgDotNetValueNodeProvider> providers, TypeState state, DbgDotNetValueNodeInfo nodeInfo, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
+		void AddProvidersOneChildNode(List<DbgDotNetValueNodeProvider> providers, TypeState state, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
 			var tmpProviders = new List<DbgDotNetValueNodeProvider>(2);
-			AddProviders(tmpProviders, state, nodeInfo, value, evalOptions, isRawView);
+			AddProviders(tmpProviders, state, value, evalOptions, isRawView);
 			if (tmpProviders.Count > 0)
 				providers.Add(DbgDotNetValueNodeProvider.Create(tmpProviders));
 		}
 
-		void AddProviders(List<DbgDotNetValueNodeProvider> providers, TypeState state, DbgDotNetValueNodeInfo nodeInfo, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
-			MemberValueNodeInfoCollection instanceMembersInfos;
-			MemberValueNodeInfoCollection staticMembersInfos;
+		internal void GetMemberCollections(DmdType type, DbgValueNodeEvaluationOptions evalOptions, out MemberValueNodeInfoCollection instanceMembersInfos, out MemberValueNodeInfoCollection staticMembersInfos) {
+			var state = GetOrCreateTypeState(type);
+			GetMemberCollections(state, evalOptions, out instanceMembersInfos, out staticMembersInfos);
+		}
+
+		void GetMemberCollections(TypeState state, DbgValueNodeEvaluationOptions evalOptions, out MemberValueNodeInfoCollection instanceMembersInfos, out MemberValueNodeInfoCollection staticMembersInfos) {
 			lock (state) {
 				if (state.CachedEvalOptions != evalOptions || state.CachedInstanceMembers.Members == null) {
 					state.CachedEvalOptions = evalOptions;
@@ -431,13 +475,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				instanceMembersInfos = state.CachedInstanceMembers;
 				staticMembersInfos = state.CachedStaticMembers;
 			}
+		}
+
+		void AddProviders(List<DbgDotNetValueNodeProvider> providers, TypeState state, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
+			GetMemberCollections(state, evalOptions, out var instanceMembersInfos, out var staticMembersInfos);
 
 			var membersEvalOptions = evalOptions;
 			if (isRawView)
 				membersEvalOptions |= DbgValueNodeEvaluationOptions.RawView;
-			if (nodeInfo.Value.IsNullReference)
+			if (value.IsNullReference)
 				instanceMembersInfos = MemberValueNodeInfoCollection.Empty;
-			providers.Add(new InstanceMembersValueNodeProvider(valueNodeFactory, isRawView ? rawViewName : InstanceMembersName, state.Expression, value, instanceMembersInfos, membersEvalOptions));
+			providers.Add(new InstanceMembersValueNodeProvider(valueNodeFactory, isRawView ? rawViewName : InstanceMembersName, state.Expression, value, instanceMembersInfos, membersEvalOptions, isRawView ? PredefinedDbgValueNodeImageNames.RawView : PredefinedDbgValueNodeImageNames.InstanceMembers));
 
 			if (staticMembersInfos.Members.Length != 0)
 				providers.Add(new StaticMembersValueNodeProvider(valueNodeFactory, StaticMembersName, state.Expression, staticMembersInfos, membersEvalOptions));
@@ -445,11 +493,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			//TODO: dynamic types
 			//TODO: non-void and non-null pointers (derefence and show members)
 
-			if (state.AddResultsView) {
-				//TODO: Add "Results View"
-			}
+			if ((object)state.EnumerableType != null && !value.IsNullReference)
+				providers.Add(new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, state.Expression, evalOptions));
 		}
-		readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_RawView));
+		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_RawView));
 
 		static MemberValueNodeInfoCollection Filter(MemberValueNodeInfoCollection infos, DbgValueNodeEvaluationOptions evalOptions) {
 			bool hideCompilerGeneratedMembers = (evalOptions & DbgValueNodeEvaluationOptions.HideCompilerGeneratedMembers) != 0;

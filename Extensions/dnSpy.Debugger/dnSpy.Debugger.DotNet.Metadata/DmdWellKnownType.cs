@@ -310,6 +310,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_Diagnostics_Debugger_CrossThreadDependencyNotification,
 		System_Diagnostics_DebuggerTypeProxyAttribute,
 		System_Collections_Generic_KeyValuePair_T2,
+		System_Linq_SystemCore_EnumerableDebugView,
+		System_Linq_SystemCore_EnumerableDebugView_T,
+		System_Linq_SystemCore_EnumerableDebugViewEmptyException,
 
 
 		// When adding more types, update WellKnownMemberResolver

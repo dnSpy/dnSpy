@@ -36,7 +36,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			: base(valueNodeFactory, name, expression, membersCollection, evalOptions) {
 		}
 
-		protected override DbgDotNetValueNode CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var runtime = context.Runtime.GetDotNetRuntime();
 			DbgDotNetValueResult valueResult = default;
 			try {
@@ -84,7 +84,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, imageName, isReadOnly, false, expectedType, cancellationToken);
 
 				valueResult = default;
-				return newNode;
+				return (newNode, true);
 			}
 			catch {
 				valueResult.Value?.Dispose();

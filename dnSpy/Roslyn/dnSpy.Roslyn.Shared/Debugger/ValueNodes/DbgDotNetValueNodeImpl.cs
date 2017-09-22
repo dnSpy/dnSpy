@@ -34,6 +34,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string ErrorMessage { get; }
 		public override DbgDotNetValue Value { get; }
 		public override DbgDotNetText Name { get; }
+		public override DbgDotNetText ValueText { get; }
 		public override string Expression { get; }
 		public override string ImageName { get; }
 		public override bool IsReadOnly { get; }
@@ -44,7 +45,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		readonly DbgDotNetValueNodeProvider childNodeProvider;
 		readonly DbgDotNetValueNodeInfo nodeInfo;
 
-		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage) {
+		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage, DbgDotNetText valueText) {
 			if (name.Parts == null)
 				throw new ArgumentException();
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
@@ -59,6 +60,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			ExpectedType = expectedType;
 			ActualType = actualType;
 			ErrorMessage = errorMessage;
+			ValueText = valueText;
 		}
 
 		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>

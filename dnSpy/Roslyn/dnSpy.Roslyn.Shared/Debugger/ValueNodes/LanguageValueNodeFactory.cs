@@ -43,13 +43,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract string GetExpression(string baseExpression, int[] indexes);
 		public abstract string EscapeIdentifier(string identifier);
 
-		internal DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValueNodeProvider provider, DbgValueNodeEvaluationOptions options, string expression, string imageName) =>
-			new DbgDotNetValueNodeImpl(this, provider, name, default, expression, imageName, true, false, null, null, null);
+		internal DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValueNodeProvider provider, DbgValueNodeEvaluationOptions options, string expression, string imageName, DbgDotNetText valueText) =>
+			new DbgDotNetValueNodeImpl(this, provider, name, default, expression, imageName, true, false, null, null, null, valueText);
 
 		DbgDotNetValueNode CreateValue(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, CancellationToken cancellationToken) {
 			var nodeInfo = new DbgDotNetValueNodeInfo(value, expression);
 			var provider = valueNodeProviderFactory.Create(context, frame, nodeInfo, options, cancellationToken);
-			return new DbgDotNetValueNodeImpl(this, provider, name, nodeInfo, expression, imageName, isReadOnly, causesSideEffects, expectedType, value.Type, null);
+			return new DbgDotNetValueNodeImpl(this, provider, name, nodeInfo, expression, imageName, isReadOnly, causesSideEffects, expectedType, value.Type, null, default);
 		}
 
 		public sealed override DbgDotNetValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, CancellationToken cancellationToken) =>
@@ -108,7 +108,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		protected abstract void FormatReturnValueMethodName(ITextColorWriter output, DmdMethodBase method, DmdPropertyInfo property);
 
 		public sealed override DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, CancellationToken cancellationToken) =>
-			new DbgDotNetValueNodeImpl(this, null, name, default, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, null, errorMessage);
+			new DbgDotNetValueNodeImpl(this, null, name, default, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, null, errorMessage, default);
 
 		public sealed override DbgDotNetValueNode CreateTypeVariables(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetTypeVariableInfo[] typeVariableInfos, CancellationToken cancellationToken) =>
 			new DbgDotNetTypeVariablesNode(this, typeVariableInfos);

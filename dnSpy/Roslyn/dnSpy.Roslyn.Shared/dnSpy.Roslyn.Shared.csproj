@@ -85,6 +85,7 @@
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeProviderFactory.cs" />
     <Compile Include="Debugger\ValueNodes\DebuggerTypeProxyFinder.cs" />
+    <Compile Include="Debugger\ValueNodes\EnumerableDebugViewHelper.cs" />
     <Compile Include="Debugger\ValueNodes\ImageNameUtils.cs" />
     <Compile Include="Debugger\ValueNodes\InstanceMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\LanguageValueNodeFactory.cs" />
@@ -92,6 +93,8 @@
     <Compile Include="Debugger\ValueNodes\MemberUtils.cs" />
     <Compile Include="Debugger\ValueNodes\MemberValueNodeInfo.cs" />
     <Compile Include="Debugger\ValueNodes\ObjectCache.cs" />
+    <Compile Include="Debugger\ValueNodes\ResultsViewMembersValueNodeProvider.cs" />
+    <Compile Include="Debugger\ValueNodes\ResultsViewNoResultsValueNode.cs" />
     <Compile Include="Debugger\ValueNodes\StaticMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\SyntheticNullValue.cs" />
     <Compile Include="Debugger\ValueNodes\TupleField.cs" />

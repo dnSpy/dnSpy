@@ -29,6 +29,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract DbgDotNetText Name { get; }
 		public abstract string Expression { get; }
 		public abstract string ImageName { get; }
+		public virtual DbgDotNetText ValueText => default;
 
 		public abstract bool? HasChildren { get; }
 		public abstract ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);

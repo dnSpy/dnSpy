@@ -24,37 +24,46 @@ using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Text;
+using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Roslyn.Shared.Properties;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	abstract class MembersValueNodeProvider : DbgDotNetValueNodeProvider {
 		public sealed override DbgDotNetText Name { get; }
 		public sealed override string Expression { get; }
-		public sealed override bool? HasChildren => membersCollection.Members.Length > 0;
+		public sealed override bool? HasChildren => (membersCollection.Members?.Length ?? 1) > 0;
 
 		protected readonly LanguageValueNodeFactory valueNodeFactory;
-		/*readonly*/ protected MemberValueNodeInfoCollection membersCollection;
+		protected MemberValueNodeInfoCollection membersCollection;
 		protected readonly DbgValueNodeEvaluationOptions evalOptions;
 		ChildNodeProviderInfo[] childNodeProviderInfos;
 		bool hasInitialized;
 		DbgManager dbgManager;
+		string errorMessage;
 
 		protected struct ChildNodeProviderInfo {
 			public readonly ulong StartIndex;
 			// Not inclusive
 			public readonly ulong EndIndex;
 			public readonly DbgDotNetValueNode ValueNode;
-			public ChildNodeProviderInfo(ulong startIndex, ulong endIndex, DbgDotNetValueNode valueNode) {
+			public readonly bool CanHide;
+			public ChildNodeProviderInfo(ulong startIndex, ulong endIndex, DbgDotNetValueNode valueNode, bool canHide) {
 				StartIndex = startIndex;
 				EndIndex = endIndex;
 				ValueNode = valueNode;
+				CanHide = canHide;
 			}
 			public ChildNodeProviderInfo(ulong startIndex, ulong endIndex) {
 				StartIndex = startIndex;
 				EndIndex = endIndex;
 				ValueNode = null;
+				CanHide = false;
 			}
 		}
 
@@ -83,11 +92,19 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return childNodeProviderInfos[childNodeProviderInfos.Length - 1].EndIndex;
 		}
 
+		protected virtual string InitializeCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => null;
+
 		void Initialize(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			if (hasInitialized)
 				return;
+			errorMessage = InitializeCore(context, frame, cancellationToken);
+			Debug.Assert(errorMessage != null || membersCollection.Members != null);
+			if (errorMessage == null && membersCollection.Members == null)
+				errorMessage = PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			dbgManager = context.Process.DbgManager;
-			if ((evalOptions & DbgValueNodeEvaluationOptions.NoHideRoots) != 0 || !membersCollection.HasHideRoot || membersCollection.Members.Length == 0)
+			if (errorMessage != null)
+				childNodeProviderInfos = new ChildNodeProviderInfo[] { new ChildNodeProviderInfo(0, 1) };
+			else if ((evalOptions & DbgValueNodeEvaluationOptions.NoHideRoots) != 0 || !membersCollection.HasHideRoot || membersCollection.Members.Length == 0)
 				childNodeProviderInfos = new ChildNodeProviderInfo[] { new ChildNodeProviderInfo(0, (uint)membersCollection.Members.Length) };
 			else {
 				DbgDotNetValueNode valueNode = null;
@@ -106,9 +123,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 							baseIndex += (uint)(i - membersBaseIndex);
 						}
 
-						valueNode = CreateValueNode(context, frame, membersBaseIndex, evalOptions, cancellationToken);
-						ulong childCount = valueNode.GetChildCount(context, frame, cancellationToken);
-						list.Add(new ChildNodeProviderInfo(baseIndex, baseIndex + childCount, valueNode));
+						var info = CreateValueNode(context, frame, membersBaseIndex, evalOptions, cancellationToken);
+						valueNode = info.node;
+						ulong childCount = info.canHide ? valueNode.GetChildCount(context, frame, cancellationToken) : 1;
+						list.Add(new ChildNodeProviderInfo(baseIndex, baseIndex + childCount, valueNode, info.canHide));
 
 						membersBaseIndex++;
 						baseIndex += childCount;
@@ -130,7 +148,73 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			hasInitialized = true;
 		}
 
-		protected abstract DbgDotNetValueNode CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		protected abstract (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+
+		protected (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue value, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+			var runtime = context.Runtime.GetDotNetRuntime();
+			if ((evalOptions & DbgValueNodeEvaluationOptions.RawView) != 0)
+				options |= DbgValueNodeEvaluationOptions.RawView;
+			DbgDotNetValueResult valueResult = default;
+			try {
+				ref var info = ref membersCollection.Members[index];
+				string expression, imageName;
+				bool isReadOnly;
+				DmdType expectedType;
+				switch (info.Member.MemberType) {
+				case DmdMemberTypes.Field:
+					var field = (DmdFieldInfo)info.Member;
+					expression = valueNodeFactory.GetFieldExpression(Expression, field.Name);
+					expectedType = field.FieldType;
+					imageName = ImageNameUtils.GetImageName(field);
+					valueResult = runtime.LoadField(context, frame, value, field, cancellationToken);
+					// Ingore field.IsInitOnly
+					isReadOnly = false;
+					break;
+
+				case DmdMemberTypes.Property:
+					var property = (DmdPropertyInfo)info.Member;
+					expression = valueNodeFactory.GetPropertyExpression(Expression, property.Name);
+					expectedType = property.PropertyType;
+					imageName = ImageNameUtils.GetImageName(property);
+					if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0) {
+						isReadOnly = true;
+						valueResult = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
+					}
+					else {
+						var getter = property.GetGetMethod(DmdGetAccessorOptions.All) ?? throw new InvalidOperationException();
+						valueResult = runtime.Call(context, frame, value, getter, Array.Empty<object>(), cancellationToken);
+						isReadOnly = (object)property.GetSetMethod(DmdGetAccessorOptions.All) == null;
+					}
+					break;
+
+				default:
+					throw new InvalidOperationException();
+				}
+
+				DbgDotNetValueNode newNode;
+				bool canHide = true;
+				var customInfo = TryCreateInstanceValueNode(valueResult);
+				if (customInfo.node != null)
+					(newNode, canHide) = customInfo;
+				else if (valueResult.HasError) {
+					newNode = valueNodeFactory.CreateError(context, frame, info.Name, valueResult.ErrorMessage, expression, cancellationToken);
+					canHide = false;
+				}
+				else if (valueResult.ValueIsException)
+					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, cancellationToken);
+				else
+					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, imageName, isReadOnly, false, expectedType, cancellationToken);
+
+				valueResult = default;
+				return (newNode, canHide);
+			}
+			catch {
+				valueResult.Value?.Dispose();
+				throw;
+			}
+		}
+
+		protected virtual (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgDotNetValueResult valueResult) => (null, false);
 
 		int lastProviderIndex;
 		int GetProviderIndex(ulong childIndex) {
@@ -167,17 +251,23 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					cancellationToken.ThrowIfCancellationRequested();
 					ref var providerInfo = ref childNodeProviderInfos[providerIndex];
 					if (providerInfo.ValueNode != null) {
-						ulong childCount = providerInfo.EndIndex - providerInfo.StartIndex;
-						int maxChildren = (int)Math.Min(childCount, (uint)(count - i));
-						children = providerInfo.ValueNode.GetChildren(context, frame, index + (uint)i, maxChildren, options, cancellationToken);
-						for (int j = 0; j < children.Length; j++)
-							res[i++] = children[j];
-						children = null;
+						if (providerInfo.CanHide) {
+							ulong childCount = providerInfo.EndIndex - providerInfo.StartIndex;
+							int maxChildren = (int)Math.Min(childCount, (uint)(count - i));
+							children = providerInfo.ValueNode.GetChildren(context, frame, index + (uint)i, maxChildren, options, cancellationToken);
+							for (int j = 0; j < children.Length; j++)
+								res[i++] = children[j];
+							children = null;
+						}
+						else
+							res[i++] = providerInfo.ValueNode;
 					}
 					else {
 						while (index + (uint)i < providerInfo.EndIndex && i < res.Length) {
 							cancellationToken.ThrowIfCancellationRequested();
-							res[i] = CreateValueNode(context, frame, (int)index + i, options, cancellationToken);
+							res[i] = errorMessage != null ?
+								valueNodeFactory.CreateError(context, frame, errorPropertyName, errorMessage, Expression, cancellationToken) :
+								CreateValueNode(context, frame, (int)index + i, options, cancellationToken).node;
 							i++;
 						}
 					}
@@ -191,9 +281,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 			return res;
 		}
+		static readonly DbgDotNetText errorPropertyName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceProperty, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_Error_PropertyName));
+
+		protected virtual void DisposeCore() { }
 
 		public sealed override void Dispose() {
 			Debug.Assert(childNodeProviderInfos == null || dbgManager != null);
+			DisposeCore();
 			if (childNodeProviderInfos != null) {
 				Debug.Assert(childNodeProviderInfos.Length >= 1);
 				if (childNodeProviderInfos.Length > 1 || childNodeProviderInfos[0].ValueNode != null)

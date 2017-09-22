@@ -106,6 +106,33 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Empty.
+        /// </summary>
+        internal static string DebuggerVarsWindow_Empty_PropertyName {
+            get {
+                return ResourceManager.GetString("DebuggerVarsWindow_Empty_PropertyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string DebuggerVarsWindow_Error_PropertyName {
+            get {
+                return ResourceManager.GetString("DebuggerVarsWindow_Error_PropertyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expanding the Results View will enumerate the IEnumerable.
+        /// </summary>
+        internal static string DebuggerVarsWindow_ExpandResultsViewMessage {
+            get {
+                return ResourceManager.GetString("DebuggerVarsWindow_ExpandResultsViewMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Instance members.
         /// </summary>
         internal static string DebuggerVarsWindow_InstanceMembers {
@@ -120,6 +147,24 @@ namespace dnSpy.Roslyn.Shared.Properties {
         internal static string DebuggerVarsWindow_RawView {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_RawView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Results View.
+        /// </summary>
+        internal static string DebuggerVarsWindow_ResultsView {
+            get {
+                return ResourceManager.GetString("DebuggerVarsWindow_ResultsView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enumeration yielded no results.
+        /// </summary>
+        internal static string DebuggerVarsWindow_ResultsView_NoResults {
+            get {
+                return ResourceManager.GetString("DebuggerVarsWindow_ResultsView_NoResults", resourceCulture);
             }
         }
         
@@ -291,6 +336,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         internal static string StructuresToolTip {
             get {
                 return ResourceManager.GetString("StructuresToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Results View requires {0} to be referenced.
+        /// </summary>
+        internal static string SystemCoreDllNotLoaded {
+            get {
+                return ResourceManager.GetString("SystemCoreDllNotLoaded", resourceCulture);
             }
         }
     }

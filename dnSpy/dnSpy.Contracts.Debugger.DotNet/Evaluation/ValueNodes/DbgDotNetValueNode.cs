@@ -54,6 +54,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		public abstract DbgDotNetText Name { get; }
 
 		/// <summary>
+		/// Gets the text shown in the value column if there's no value
+		/// </summary>
+		public virtual DbgDotNetText ValueText => default;
+
+		/// <summary>
 		/// Gets the expression
 		/// </summary>
 		public abstract string Expression { get; }
