@@ -309,6 +309,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_Security_Permissions_PermissionSetAttribute,
 		System_Diagnostics_Debugger_CrossThreadDependencyNotification,
 		System_Diagnostics_DebuggerTypeProxyAttribute,
+		System_Collections_Generic_KeyValuePair_T2,
 
 
 		// When adding more types, update WellKnownMemberResolver

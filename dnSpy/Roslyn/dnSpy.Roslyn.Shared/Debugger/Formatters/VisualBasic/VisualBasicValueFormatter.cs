@@ -48,6 +48,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		const string EnumFlagsOrSeparatorKeyword = "Or";
 		const string TupleTypeOpenParen = "(";
 		const string TupleTypeCloseParen = ")";
+		const string KeyValuePairTypeOpenParen = "[";
+		const string KeyValuePairTypeCloseParen = "]";
 
 		bool Display => (options & ValueFormatterOptions.Display) != 0;
 		bool Decimal => (options & ValueFormatterOptions.Decimal) != 0;
@@ -83,6 +85,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				var type = value.Type;
 				int tupleArity = TypeFormatterUtils.GetTupleArity(type);
 				if (tupleArity > 0 && TryFormatTuple(value, tupleArity))
+					return;
+				if (KeyValuePairTypeUtils.IsKeyValuePair(type) && TryFormatKeyValuePair(value))
 					return;
 				if (TryFormatWithDebuggerAttributes())
 					return;
@@ -161,16 +165,41 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			return true;
 		}
 
+		bool TryFormatKeyValuePair(DbgDotNetValue value) {
+			var info = KeyValuePairTypeUtils.TryGetFields(value.Type);
+			if ((object)info.keyField == null)
+				return false;
+			var runtime = context.Runtime.GetDotNetRuntime();
+			DbgDotNetValueResult keyResult = default, valueResult = default;
+			try {
+				keyResult = runtime.LoadField(context, frame, value, info.keyField, cancellationToken);
+				if (keyResult.ErrorMessage != null || keyResult.ValueIsException)
+					return false;
+				valueResult = runtime.LoadField(context, frame, value, info.valueField, cancellationToken);
+				if (valueResult.ErrorMessage != null || valueResult.ValueIsException)
+					return false;
+
+				OutputWrite(KeyValuePairTypeOpenParen, BoxedTextColor.Punctuation);
+				Format(keyResult.Value);
+				OutputWrite(",", BoxedTextColor.Punctuation);
+				WriteSpace();
+				Format(valueResult.Value);
+				OutputWrite(KeyValuePairTypeCloseParen, BoxedTextColor.Punctuation);
+				return true;
+			}
+			finally {
+				keyResult.Value.Dispose();
+				valueResult.Value.Dispose();
+			}
+		}
+
 		bool TryFormatWithDebuggerAttributes() {
 			if (!FuncEval)
 				return false;
 			//TODO: If it's derived from System.Type with no debugger attrs, format it as if it had
 			//		[DebuggerDisplay(@"\{Name = {Name} FullName = {FullName}\}")]
 			//TODO: Use debugger attributes if available
-			//		System.Diagnostics.DebuggerBrowsableAttribute
 			//		System.Diagnostics.DebuggerDisplayAttribute
-			//		System.Diagnostics.DebuggerTypeProxyAttribute
-			//		System.Diagnostics.DebuggerVisualizerAttribute
 			return false;
 		}
 
