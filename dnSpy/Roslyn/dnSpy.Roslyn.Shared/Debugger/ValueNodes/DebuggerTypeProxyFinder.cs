@@ -102,6 +102,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		static DmdConstructorInfo GetProxyTypeConstructor(DmdType targetType) {
 			var proxyAttr = targetType.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerTypeProxyAttribute, isOptional: true);
+			Debug.Assert((object)proxyAttr != null);
+			if ((object)proxyAttr == null)
+				return null;
 			var currentType = targetType;
 			for (;;) {
 				DmdConstructorInfo proxyCtor;
@@ -135,18 +138,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (proxyTypeGenericArgs.Count != targetTypeGenericArgs.Count)
 				return null;
 
+			if (targetTypeGenericArgs.Count != 0)
+				proxyType = proxyType.MakeGenericType(targetTypeGenericArgs);
 			var ctors = proxyType.GetConstructors(DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance);
-			for (int i = 0; i < ctors.Length; i++) {
-				var ctor = ctors[i];
-
-				if (proxyTypeGenericArgs.Count != 0) {
-					var t = proxyType.MakeGenericType(targetTypeGenericArgs);
-					var c = t.GetMethod(ctor.Module, ctor.MetadataToken) as DmdConstructorInfo;
-					if ((object)c == null)
-						continue;
-					ctor = c;
-				}
-
+			foreach (var ctor in ctors) {
 				var types = ctor.GetMethodSignature().GetParameterTypes();
 				if (types.Count != 1)
 					continue;
