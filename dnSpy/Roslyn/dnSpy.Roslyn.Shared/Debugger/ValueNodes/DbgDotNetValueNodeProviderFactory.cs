@@ -392,7 +392,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				return;
 			}
 
-			if (!forceRawView && (createFlags & CreateFlags.NoProxy) == 0 && funcEval) {
+			if (!forceRawView && (createFlags & CreateFlags.NoProxy) == 0 && funcEval && !nodeInfo.Value.IsNullReference) {
 				var proxyCtor = DebuggerTypeProxyFinder.GetDebuggerTypeProxyConstructor(state.Type);
 				if ((object)proxyCtor != null) {
 					var runtime = context.Runtime.GetDotNetRuntime();
