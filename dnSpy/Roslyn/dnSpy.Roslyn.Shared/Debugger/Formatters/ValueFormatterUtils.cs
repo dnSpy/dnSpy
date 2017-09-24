@@ -44,7 +44,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 
 			for (int i = 0; i < number.Length; i++) {
 				int d = number.Length - i;
-				if (i != 0 && (d % digitGroupSize) == 0)
+				if (i != 0 && (d % digitGroupSize) == 0 && number[i - 1] != '-')
 					sb.Append(DigitSeparator);
 				sb.Append(number[i]);
 			}

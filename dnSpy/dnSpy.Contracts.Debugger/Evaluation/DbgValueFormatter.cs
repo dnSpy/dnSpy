@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		None						= 0,
 
 		/// <summary>
-		/// Set if it should be formatted for display purposes, true if it should be formatted so it can be edited
+		/// Set if it should be formatted for display purposes, clear if it should be formatted so it can be edited
 		/// </summary>
 		Display						= 0x00000001,
 
@@ -105,6 +105,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// this flag is ignored.
 		/// </summary>
 		ToString					= 0x00000008,
+
+		/// <summary>
+		/// Use digit separators. This flag is ignored if <see cref="Display"/> is not set and the language doesn't support digit separators
+		/// </summary>
+		DigitSeparators				= 0x00000010,
 
 		/// <summary>
 		/// Show the declaring type. Only used if <see cref="Display"/> is set

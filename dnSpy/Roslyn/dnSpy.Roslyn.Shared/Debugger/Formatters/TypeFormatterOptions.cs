@@ -28,5 +28,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		Namespaces					= 0x00000004,
 		ShowArrayValueSizes			= 0x00000008,
 		UseDecimal					= 0x00000010,
+		DigitSeparators				= 0x00000020,
 	}
 }

@@ -466,6 +466,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(DebuggerSettings.UseHexadecimal):
+			case nameof(DebuggerSettings.UseDigitSeparators):
 				RefreshHexFields_UI();
 				break;
 
@@ -577,6 +578,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				options |= DbgValueFormatterOptions.FuncEval;
 			if (debuggerSettings.UseStringConversionFunction && debuggerSettings.PropertyEvalAndFunctionCalls)
 				options |= DbgValueFormatterOptions.ToString;
+			if (debuggerSettings.UseDigitSeparators)
+				options |= DbgValueFormatterOptions.DigitSeparators;
 			if (dbgEvalFormatterSettings.ShowDeclaringTypes)
 				options |= DbgValueFormatterOptions.DeclaringTypes;
 			if (dbgEvalFormatterSettings.ShowNamespaces)

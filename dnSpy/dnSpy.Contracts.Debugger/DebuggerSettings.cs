@@ -44,6 +44,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract bool UseHexadecimal { get; set; }
 
 		/// <summary>
+		/// true to use digit separators
+		/// </summary>
+		public abstract bool UseDigitSeparators { get; set; }
+
+		/// <summary>
 		/// true to colorize debugger tool windows and other debugger UI objects
 		/// </summary>
 		public abstract bool SyntaxHighlight { get; set; }

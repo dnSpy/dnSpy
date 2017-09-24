@@ -1908,4 +1908,7 @@ Are you sure you want to expand it?</value>
   <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
     <value>The function evaluation requires all threads to run.</value>
   </data>
+  <data name="DigitSeparatorsCommand" xml:space="preserve">
+    <value>Digit Separators</value>
+  </data>
 </root>

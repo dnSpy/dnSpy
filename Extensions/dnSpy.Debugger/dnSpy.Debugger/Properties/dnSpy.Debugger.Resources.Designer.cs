@@ -2104,6 +2104,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Digit Separators.
+        /// </summary>
+        public static string DigitSeparatorsCommand {
+            get {
+                return ResourceManager.GetString("DigitSeparatorsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disable All Breakpoi_nts.
         /// </summary>
         public static string DisableAllBreakpointsCommand {

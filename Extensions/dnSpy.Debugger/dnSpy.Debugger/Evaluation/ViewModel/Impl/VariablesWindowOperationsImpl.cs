@@ -530,6 +530,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			set => debuggerSettings.UseHexadecimal = value;
 		}
 
+		public override bool CanToggleUseDigitSeparators => true;
+		public override void ToggleUseDigitSeparators() => UseDigitSeparators = !UseDigitSeparators;
+		public override bool UseDigitSeparators {
+			get => debuggerSettings.UseDigitSeparators;
+			set => debuggerSettings.UseDigitSeparators = value;
+		}
+
 		public override bool ShowDeclaringTypes {
 			get => dbgEvalFormatterSettings.ShowDeclaringTypes;
 			set => dbgEvalFormatterSettings.ShowDeclaringTypes = value;

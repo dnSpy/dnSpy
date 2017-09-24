@@ -31,6 +31,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				res |= TypeFormatterOptions.ShowArrayValueSizes;
 			if ((options & ValueFormatterOptions.Decimal) != 0)
 				res |= TypeFormatterOptions.UseDecimal;
+			if ((options & ValueFormatterOptions.DigitSeparators) != 0)
+				res |= TypeFormatterOptions.DigitSeparators;
 			return res;
 		}
 	}

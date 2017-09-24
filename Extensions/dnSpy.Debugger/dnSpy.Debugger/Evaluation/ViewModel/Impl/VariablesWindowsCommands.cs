@@ -275,6 +275,15 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool IsChecked(VariablesWindowCtxMenuContext context) => context.Operations.UseHexadecimal;
 	}
 
+	[ExportMenuItem(Header = "res:DigitSeparatorsCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_HEXOPTS, Order = 10)]
+	sealed class UseDigitSeparatorsCallStackCtxMenuCommand : VariablesWindowCtxMenuCommand {
+		[ImportingConstructor]
+		UseDigitSeparatorsCallStackCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
+		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.ToggleUseDigitSeparators();
+		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanToggleUseDigitSeparators;
+		public override bool IsChecked(VariablesWindowCtxMenuContext context) => context.Operations.UseDigitSeparators;
+	}
+
 	[ExportMenuItem(Header = "res:LocalsCollapseParentNodeCommand", Icon = DsImagesAttribute.OneLevelUp, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_TREE, Order = 0)]
 	sealed class CollapseParentVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
 		[ImportingConstructor]

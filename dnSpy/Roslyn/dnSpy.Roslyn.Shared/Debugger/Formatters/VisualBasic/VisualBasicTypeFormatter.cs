@@ -49,6 +49,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 		bool ShowArrayValueSizes => (options & TypeFormatterOptions.ShowArrayValueSizes) != 0;
 		bool UseDecimal => (options & TypeFormatterOptions.UseDecimal) != 0;
+		bool DigitSeparators => (options & TypeFormatterOptions.DigitSeparators) != 0;
 		bool ShowIntrinsicTypeKeywords => (options & TypeFormatterOptions.IntrinsicTypeKeywords) != 0;
 		bool ShowTokens => (options & TypeFormatterOptions.Tokens) != 0;
 		bool ShowNamespaces => (options & TypeFormatterOptions.Namespaces) != 0;
@@ -68,13 +69,33 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			WriteSpace();
 		}
 
-		void WriteUInt32(uint value) => OutputWrite(UseDecimal ? value.ToString() : HEX_PREFIX + value.ToString("X8"), BoxedTextColor.Number);
-		void WriteInt32(int value) => OutputWrite(UseDecimal ? value.ToString() : HEX_PREFIX + value.ToString("X8"), BoxedTextColor.Number);
+		string ToFormattedDecimalNumber(string number) => ToFormattedNumber(string.Empty, number, ValueFormatterUtils.DigitGroupSizeDecimal);
+		string ToFormattedHexNumber(string number) => ToFormattedNumber(HEX_PREFIX, number, ValueFormatterUtils.DigitGroupSizeHex);
+		string ToFormattedNumber(string prefix, string number, int digitGroupSize) => ValueFormatterUtils.ToFormattedNumber(DigitSeparators, prefix, number, digitGroupSize);
+
+		string FormatUInt32(uint value) {
+			if (UseDecimal)
+				return ToFormattedDecimalNumber(value.ToString());
+			else
+				return ToFormattedHexNumber(value.ToString("X8"));
+		}
+
+		string FormatInt32(int value) {
+			if (UseDecimal)
+				return ToFormattedDecimalNumber(value.ToString());
+			else
+				return ToFormattedHexNumber(value.ToString("X8"));
+		}
+
+		string FormatHexInt32(int value) => ToFormattedHexNumber(value.ToString("X8"));
+
+		void WriteUInt32(uint value) => OutputWrite(FormatUInt32(value), BoxedTextColor.Number);
+		void WriteInt32(int value) => OutputWrite(FormatInt32(value), BoxedTextColor.Number);
 
 		void WriteTokenComment(int metadataToken) {
 			if (!ShowTokens)
 				return;
-			OutputWrite(COMMENT_BEGIN + HEX_PREFIX + metadataToken.ToString("X8") + COMMENT_END, BoxedTextColor.Comment);
+			OutputWrite(COMMENT_BEGIN + FormatHexInt32(metadataToken) + COMMENT_END, BoxedTextColor.Comment);
 		}
 
 		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {

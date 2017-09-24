@@ -49,6 +49,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool useHexadecimal = true;
 
+		public override bool UseDigitSeparators {
+			get {
+				lock (lockObj)
+					return useDigitSeparators;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = useDigitSeparators != value;
+					useDigitSeparators = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(UseDigitSeparators));
+					OnModified();
+				}
+			}
+		}
+		bool useDigitSeparators = false;
+
 		public override bool SyntaxHighlight {
 			get {
 				lock (lockObj)
@@ -396,6 +415,7 @@ namespace dnSpy.Debugger.Settings {
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
 			other.UseHexadecimal = UseHexadecimal;
 			other.SyntaxHighlight = SyntaxHighlight;
+			other.UseDigitSeparators = UseDigitSeparators;
 			other.AutoOpenLocalsWindow = AutoOpenLocalsWindow;
 			other.UseMemoryModules = UseMemoryModules;
 			other.PropertyEvalAndFunctionCalls = PropertyEvalAndFunctionCalls;
@@ -432,6 +452,7 @@ namespace dnSpy.Debugger.Settings {
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			UseHexadecimal = sect.Attribute<bool?>(nameof(UseHexadecimal)) ?? UseHexadecimal;
 			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
+			UseDigitSeparators = sect.Attribute<bool?>(nameof(UseDigitSeparators)) ?? UseDigitSeparators;
 			AutoOpenLocalsWindow = sect.Attribute<bool?>(nameof(AutoOpenLocalsWindow)) ?? AutoOpenLocalsWindow;
 			UseMemoryModules = sect.Attribute<bool?>(nameof(UseMemoryModules)) ?? UseMemoryModules;
 			PropertyEvalAndFunctionCalls = sect.Attribute<bool?>(nameof(PropertyEvalAndFunctionCalls)) ?? PropertyEvalAndFunctionCalls;
@@ -459,6 +480,7 @@ namespace dnSpy.Debugger.Settings {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UseHexadecimal), UseHexadecimal);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
+			sect.Attribute(nameof(UseDigitSeparators), UseDigitSeparators);
 			sect.Attribute(nameof(AutoOpenLocalsWindow), AutoOpenLocalsWindow);
 			sect.Attribute(nameof(UseMemoryModules), UseMemoryModules);
 			sect.Attribute(nameof(PropertyEvalAndFunctionCalls), PropertyEvalAndFunctionCalls);
