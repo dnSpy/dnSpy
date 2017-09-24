@@ -203,6 +203,7 @@
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
     <Compile Include="Impl\EvalArgumentConverter.cs" />
     <Compile Include="Impl\EvalReflectionUtils.cs" />
+    <Compile Include="Impl\Evaluation\DbgCorValueHolder.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetValueImpl.cs" />
     <Compile Include="Impl\Evaluation\SyntheticValues.cs" />

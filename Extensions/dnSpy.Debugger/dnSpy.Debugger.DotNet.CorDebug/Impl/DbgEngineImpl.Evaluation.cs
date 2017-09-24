@@ -47,13 +47,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					value = strongHandle;
 			}
 
-			var dnValue = new DbgDotNetValueImpl(this, value, type);
+			var dnValue = new DbgDotNetValueImpl(this, new DbgCorValueHolder(this, value), type);
 			lock (lockObj)
 				dotNetValuesToCloseOnContinue.Add(dnValue);
 			return dnValue;
 		}
 
-		internal void Close(DbgDotNetValueImpl value) {
+		internal void Close(DbgCorValueHolder value) {
+			if (CheckCorDebugThread()) {
+				value.Dispose_CorDebug();
+				return;
+			}
+
 			bool start;
 			lock (lockObj) {
 				start = valuesToCloseNow.Count == 0;
@@ -65,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		void CloseValuesNow_CorDebug() {
 			debuggerThread.VerifyAccess();
-			DbgDotNetValueImpl[] values;
+			DbgCorValueHolder[] values;
 			lock (lockObj) {
 				values = valuesToCloseNow.ToArray();
 				valuesToCloseNow.Clear();
@@ -82,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				dotNetValuesToCloseOnContinue.Clear();
 			}
 			foreach (var value in valuesToClose)
-				value.Dispose_CorDebug();
+				value.Dispose();
 		}
 
 		internal void DisposeHandle_CorDebug(CorValue value) {
