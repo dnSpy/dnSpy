@@ -204,6 +204,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string AttachToProcessWindowFullPath = "Path";
 
 		/// <summary>
+		/// Attach to Process window column: Command Line
+		/// </summary>
+		public static readonly string AttachToProcessWindowCommandLine = "CommandLine";
+
+		/// <summary>
 		/// Don't use
 		/// </summary>
 		[Obsolete("Not used", error: true)]

@@ -1911,4 +1911,7 @@ Are you sure you want to expand it?</value>
   <data name="DigitSeparatorsCommand" xml:space="preserve">
     <value>Digit Separators</value>
   </data>
+  <data name="Column_ProcessCommandLine" xml:space="preserve">
+    <value>Command Line</value>
+  </data>
 </root>

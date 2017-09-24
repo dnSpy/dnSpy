@@ -36,5 +36,6 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public void WriteType(ITextColorWriter output, ProgramVM vm) => output.Write(BoxedTextColor.Text, vm.RuntimeName);
 		public void WriteMachine(ITextColorWriter output, ProgramVM vm) => output.Write(BoxedTextColor.InstanceMethod, vm.Architecture);
 		public void WritePath(ITextColorWriter output, ProgramVM vm) => output.WriteFilename(vm.Filename);
+		public void WriteCommandLine(ITextColorWriter output, ProgramVM vm) => output.Write(BoxedTextColor.Text, vm.CommandLine);
 	}
 }

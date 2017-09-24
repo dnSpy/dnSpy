@@ -53,6 +53,11 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		public virtual string Filename => null;
 
 		/// <summary>
+		/// Command line or null to use the default value
+		/// </summary>
+		public virtual string CommandLine => null;
+
+		/// <summary>
 		/// Processor architecture (eg. <see cref="PredefinedArchitectureNames.X86"/>) or null to use the default value
 		/// </summary>
 		public virtual string Architecture => null;

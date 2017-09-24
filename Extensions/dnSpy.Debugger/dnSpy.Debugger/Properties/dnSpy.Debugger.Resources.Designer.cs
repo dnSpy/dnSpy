@@ -970,6 +970,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command Line.
+        /// </summary>
+        public static string Column_ProcessCommandLine {
+            get {
+                return ResourceManager.GetString("Column_ProcessCommandLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filename.
         /// </summary>
         public static string Column_ProcessFilename {

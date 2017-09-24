@@ -40,6 +40,7 @@
     <Compile Include="Attach\AttachableProcessesServiceImpl.cs" />
     <Compile Include="Attach\AttachableProcessImpl.cs" />
     <Compile Include="Attach\AttachableProcessInfo.cs" />
+    <Compile Include="Attach\Win32CommandLineProvider.cs" />
     <Compile Include="Breakpoints\Code\BoundCodeBreakpointsService.cs" />
     <Compile Include="Breakpoints\Code\BreakpointConditionsFormatter.cs" />
     <Compile Include="Breakpoints\Code\BreakpointImageUtilities.cs" />

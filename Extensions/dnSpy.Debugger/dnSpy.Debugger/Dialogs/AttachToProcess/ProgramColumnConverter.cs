@@ -47,6 +47,8 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				formatter.WriteMachine(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.AttachToProcessWindowFullPath)
 				formatter.WritePath(writer, obj.VM);
+			else if (obj.Tag == PredefinedTextClassifierTags.AttachToProcessWindowCommandLine)
+				formatter.WriteCommandLine(writer, obj.VM);
 			else
 				return null;
 

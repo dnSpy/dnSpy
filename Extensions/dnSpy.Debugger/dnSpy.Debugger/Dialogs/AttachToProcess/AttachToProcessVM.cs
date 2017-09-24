@@ -103,6 +103,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowType, "T", dnSpy_Debugger_Resources.Column_ProcessType),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowMachine, "a", dnSpy_Debugger_Resources.Column_ProcessArchitecture),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowFullPath, "f", dnSpy_Debugger_Resources.Column_ProcessFilename),
+			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowCommandLine, "c", dnSpy_Debugger_Resources.Column_ProcessCommandLine),
 		};
 
 		public string GetSearchHelpText() => attachToProcessContext.SearchMatcher.GetHelpText();
@@ -230,6 +231,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				GetType_UI(vm),
 				GetMachine_UI(vm),
 				GetPath_UI(vm),
+				GetCommandLine_UI(vm),
 			};
 			sbOutput.Reset();
 			return attachToProcessContext.SearchMatcher.IsMatchAll(allStrings);
@@ -275,6 +277,13 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			Debug.Assert(uiDispatcher.CheckAccess());
 			sbOutput.Reset();
 			attachToProcessContext.Formatter.WritePath(sbOutput, vm);
+			return sbOutput.ToString();
+		}
+
+		string GetCommandLine_UI(ProgramVM vm) {
+			Debug.Assert(uiDispatcher.CheckAccess());
+			sbOutput.Reset();
+			attachToProcessContext.Formatter.WriteCommandLine(sbOutput, vm);
 			return sbOutput.ToString();
 		}
 

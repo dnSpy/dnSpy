@@ -34,6 +34,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public string Name => attachableProcessInfo.Name;
 		public string Title => attachableProcessInfo.Title;
 		public string Filename => attachableProcessInfo.Filename;
+		public string CommandLine => attachableProcessInfo.CommandLine;
 		public string Architecture => attachableProcessInfo.Architecture;
 
 		public IAttachToProcessContext Context { get; }
@@ -43,6 +44,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public object RuntimeNameObject => new FormatterObject<ProgramVM>(this, PredefinedTextClassifierTags.AttachToProcessWindowType);
 		public object ArchitectureObject => new FormatterObject<ProgramVM>(this, PredefinedTextClassifierTags.AttachToProcessWindowMachine);
 		public object PathObject => new FormatterObject<ProgramVM>(this, PredefinedTextClassifierTags.AttachToProcessWindowFullPath);
+		public object CommandLineObject => new FormatterObject<ProgramVM>(this, PredefinedTextClassifierTags.AttachToProcessWindowCommandLine);
 
 		readonly AttachableProcessInfo attachableProcessInfo;
 

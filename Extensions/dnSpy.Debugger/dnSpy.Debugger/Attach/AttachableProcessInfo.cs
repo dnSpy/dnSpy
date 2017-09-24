@@ -31,15 +31,17 @@ namespace dnSpy.Debugger.Attach {
 		public string Name { get; }
 		public string Title { get; }
 		public string Filename { get; }
+		public string CommandLine { get; }
 		public string Architecture { get; }
 
-		AttachableProcessInfo(ulong processId, RuntimeId runtimeId, string runtimeName, string name, string title, string filename, string architecture) {
+		AttachableProcessInfo(ulong processId, RuntimeId runtimeId, string runtimeName, string name, string title, string filename, string commandLine, string architecture) {
 			ProcessId = processId;
 			RuntimeId = runtimeId ?? throw new ArgumentNullException(nameof(runtimeId));
 			RuntimeName = runtimeName ?? throw new ArgumentNullException(nameof(runtimeName));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Title = title ?? throw new ArgumentNullException(nameof(title));
 			Filename = filename ?? throw new ArgumentNullException(nameof(filename));
+			CommandLine = commandLine ?? throw new ArgumentNullException(nameof(commandLine));
 			Architecture = architecture ?? throw new ArgumentNullException(nameof(architecture));
 		}
 
@@ -54,28 +56,30 @@ namespace dnSpy.Debugger.Attach {
 			var name = options.Name;
 			var title = options.Title;
 			var filename = options.Filename;
+			var commandLine = options.CommandLine;
 			var architecture = options.Architecture;
-			if (name == null || title == null || filename == null || architecture == null) {
+			if (name == null || title == null || filename == null || commandLine == null || architecture == null) {
 				var info = GetDefaultProperties(processProvider, options);
 				name = name ?? info.name ?? string.Empty;
 				title = title ?? info.title ?? string.Empty;
 				filename = filename ?? info.filename ?? string.Empty;
+				commandLine = commandLine ?? info.commandLine ?? string.Empty;
 				architecture = architecture ?? info.arch ?? string.Empty;
 			}
-			return new AttachableProcessInfo(processId, runtimeId, runtimeName, name, title, filename, architecture);
+			return new AttachableProcessInfo(processId, runtimeId, runtimeName, name, title, filename, commandLine, architecture);
 		}
 
-		static (string name, string title, string filename, string arch) GetDefaultProperties(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
+		static (string name, string title, string filename, string commandLine, string arch) GetDefaultProperties(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
 			try {
 				return GetDefaultPropertiesCore(processProvider, attachProgramOptions);
 			}
 			catch {
 			}
-			return (null, null, null, null);
+			return (null, null, null, null, null);
 		}
 
-		static (string name, string title, string filename, string arch) GetDefaultPropertiesCore(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
-			string name = null, title = null, filename = null, arch = null;
+		static (string name, string title, string filename, string commandLine, string arch) GetDefaultPropertiesCore(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
+			string name = null, title = null, filename = null, commandLine = null, arch = null;
 
 			var process = processProvider.GetProcess(attachProgramOptions.ProcessId);
 			if (process != null) {
@@ -83,6 +87,8 @@ namespace dnSpy.Debugger.Attach {
 					name = Path.GetFileName(attachProgramOptions.Filename ?? process.MainModule.FileName);
 				if (attachProgramOptions.Filename == null)
 					filename = process.MainModule.FileName;
+				if (attachProgramOptions.CommandLine == null)
+					commandLine = Win32CommandLineProvider.TryGetCommandLine(process.Handle);
 				if (attachProgramOptions.Title == null)
 					title = process.MainWindowTitle;
 				if (attachProgramOptions.Architecture == null) {
@@ -94,7 +100,7 @@ namespace dnSpy.Debugger.Attach {
 				}
 			}
 
-			return (name, title, filename, arch);
+			return (name, title, filename, commandLine, arch);
 		}
 	}
 }
