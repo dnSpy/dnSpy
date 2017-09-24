@@ -198,6 +198,8 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 		public override void RefreshAllNodes() {
 			uiDispatcher.VerifyAccess();
+			// Clear language so the context is recreated
+			evalContextInfo.Language = null;
 			RefreshNodes_UI();
 		}
 	}
