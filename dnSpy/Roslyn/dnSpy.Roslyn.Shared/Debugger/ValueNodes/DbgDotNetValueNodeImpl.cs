@@ -25,6 +25,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
@@ -34,7 +35,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string ErrorMessage { get; }
 		public override DbgDotNetValue Value { get; }
 		public override DbgDotNetText Name { get; }
-		public override DbgDotNetText ValueText { get; }
 		public override string Expression { get; }
 		public override string ImageName { get; }
 		public override bool IsReadOnly { get; }
@@ -44,6 +44,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		readonly LanguageValueNodeFactory valueNodeFactory;
 		readonly DbgDotNetValueNodeProvider childNodeProvider;
 		readonly DbgDotNetValueNodeInfo nodeInfo;
+		/*readonly*/ DbgDotNetText valueText;
 
 		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage, DbgDotNetText valueText) {
 			if (name.Parts == null)
@@ -60,7 +61,15 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			ExpectedType = expectedType;
 			ActualType = actualType;
 			ErrorMessage = errorMessage;
-			ValueText = valueText;
+			this.valueText = valueText;
+		}
+
+		public override bool FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CancellationToken cancellationToken) {
+			if (valueText.Parts != null) {
+				valueText.WriteTo(output);
+				return true;
+			}
+			return false;
 		}
 
 		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>

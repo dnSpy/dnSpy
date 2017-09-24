@@ -36,7 +36,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string ErrorMessage => null;
 		public override DbgDotNetValue Value => null;
 		public override DbgDotNetText Name => emptyPropertyName;
-		public override DbgDotNetText ValueText => noResultsName;
 		public override string Expression { get; }
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Property;
 		public override bool IsReadOnly => true;
@@ -47,6 +46,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		static readonly DbgDotNetText emptyPropertyName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceProperty, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_Empty_PropertyName));
 
 		public ResultsViewNoResultsValueNode(string expression) => Expression = expression;
+
+		public override bool FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CancellationToken cancellationToken) {
+			noResultsName.WriteTo(output);
+			return true;
+		}
 
 		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
 		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgDotNetValueNode>();

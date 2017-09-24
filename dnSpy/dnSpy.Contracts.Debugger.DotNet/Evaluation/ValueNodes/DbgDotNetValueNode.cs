@@ -21,6 +21,7 @@ using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
@@ -52,11 +53,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// Gets the name
 		/// </summary>
 		public abstract DbgDotNetText Name { get; }
-
-		/// <summary>
-		/// Gets the text shown in the value column if there's no value
-		/// </summary>
-		public virtual DbgDotNetText ValueText => default;
 
 		/// <summary>
 		/// Gets the expression
@@ -105,5 +101,35 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Formats the value column. Returns false if nothing was written to <paramref name="output"/>
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="output">Output</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public virtual bool FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CancellationToken cancellationToken) => false;
+
+		/// <summary>
+		/// Formats the expected type. Returns false if nothing was written to <paramref name="output"/>
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="output">Output</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public virtual bool FormatExpectedType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CancellationToken cancellationToken) => false;
+
+		/// <summary>
+		/// Formats the actual type. Returns false if nothing was written to <paramref name="output"/>
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="output">Output</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public virtual bool FormatActualType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CancellationToken cancellationToken) => false;
 	}
 }

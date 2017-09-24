@@ -98,17 +98,28 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				dnValueNode.Name.WriteTo(options.NameOutput);
 			var formatter = owner.Formatter;
 			var dnValue = value?.DotNetValue;
-			if (options.ExpectedTypeOutput != null && dnValueNode.ExpectedType is DmdType expectedType)
-				formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, options.ExpectedTypeFormatterOptions);
-			if (options.ActualTypeOutput != null && dnValueNode.ActualType is DmdType actualType)
-				formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions);
+			if (options.ExpectedTypeOutput != null) {
+				if (dnValueNode.FormatExpectedType(context,frame, options.ExpectedTypeOutput, cancellationToken)) {
+					// Nothing
+				}
+				else if (dnValueNode.ExpectedType is DmdType expectedType)
+					formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, options.ExpectedTypeFormatterOptions);
+			}
+			if (options.ActualTypeOutput != null) {
+				if (dnValueNode.FormatActualType(context, frame, options.ActualTypeOutput, cancellationToken)) {
+					// Nothing
+				}
+				else if (dnValueNode.ActualType is DmdType actualType)
+					formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions);
+			}
 			if (options.ValueOutput != null) {
-				if (dnValue != null)
+				if (dnValueNode.FormatValue(context,frame, options.ValueOutput, cancellationToken)) {
+					// Nothing
+				}
+				else if (dnValue != null)
 					formatter.FormatValue(context, options.ValueOutput, frame, dnValue, options.ValueFormatterOptions, cancellationToken);
 				else if (ErrorMessage is string errorMessage)
 					options.ValueOutput.Write(BoxedTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));
-				else if (dnValueNode.ValueText is var valueText && valueText.Parts != null)
-					valueText.WriteTo(options.ValueOutput);
 			}
 		}
 
