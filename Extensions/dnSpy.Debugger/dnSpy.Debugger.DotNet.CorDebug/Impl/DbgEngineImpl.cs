@@ -142,6 +142,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal void VerifyCorDebugThread() => debuggerThread.VerifyAccess();
 		internal T InvokeCorDebugThread<T>(Func<T> callback) => debuggerThread.Invoke(callback);
 		internal void CorDebugThread(Action callback) => debuggerThread.BeginInvoke(callback);
+		internal string DebuggeeVersion => dnDebugger.DebuggeeVersion;
 
 		internal DbgEngineMessageFlags GetMessageFlags(bool pause = false) {
 			VerifyCorDebugThread();
@@ -529,7 +530,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				var reflectionModule = ((DbgCorDebugInternalModuleImpl)engineModule.Module.InternalModule).ReflectionModule;
 				if (reflectionModule.IsCorLib) {
 					var type = reflectionModule.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_Debugger_CrossThreadDependencyNotification, isOptional: true);
-					Debug.Assert((object)type != null);
+					Debug.Assert((object)type != null || dnDebugger.DebuggeeVersion.StartsWith("v2."));
 					if ((object)type != null)
 						dnDebugger.AddCustomNotificationClassToken(e.Module, (uint)type.MetadataToken);
 				}

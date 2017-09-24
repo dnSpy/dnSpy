@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -188,9 +189,66 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return engine.InvokeCorDebugThread(() => GetRawAddressValue_CorDebug(onlyDataAddress));
 		}
 
+		// See System.Runtime.CompilerServices.RuntimeHelpers.OffsetToStringData
+		const uint OffsetToStringData32_CLR2 = 12;
+		const uint OffsetToStringData64_CLR2 = 16;
+		// CLR 4 and .NET Core 1.0 - 2.0
+		const uint OffsetToStringData32 = 8;
+		const uint OffsetToStringData64 = 12;
 		DbgRawAddressValue? GetRawAddressValue_CorDebug(bool onlyDataAddress) {
 			engine.VerifyCorDebugThread();
-			return null;//TODO:
+
+			var v = value;
+			if (v.IsNull)
+				return null;
+			if (v.IsReference) {
+				if (v.ElementType == CorElementType.Ptr || v.ElementType == CorElementType.FnPtr)
+					return null;
+				v = v.DereferencedValue;
+				if (v == null)
+					return null;
+			}
+			if (v.IsBox) {
+				v = v.BoxedValue;
+				if (v == null)
+					return null;
+			}
+			var addr = v.Address;
+			var size = v.Size;
+			if (addr == 0)
+				return null;
+			if (!onlyDataAddress || v.IsValueClass || (CorElementType.Boolean <= v.ElementType && v.ElementType <= CorElementType.R8) || v.ElementType == CorElementType.I || v.ElementType == CorElementType.U)
+				return new DbgRawAddressValue(addr, size);
+
+			switch (v.ElementType) {
+			case CorElementType.String:
+				uint offsetToStringData;
+				if (engine.DebuggeeVersion.StartsWith("v2."))
+					offsetToStringData = IntPtr.Size == 4 ? OffsetToStringData32_CLR2 : OffsetToStringData64_CLR2;
+				else
+					offsetToStringData = IntPtr.Size == 4 ? OffsetToStringData32 : OffsetToStringData64;
+				uint stringLength = v.StringLength;
+				Debug.Assert(offsetToStringData + stringLength * 2 <= size);
+				Debug.Assert(offsetToStringData <= size);
+				if (offsetToStringData > size)
+					return null;
+				return new DbgRawAddressValue(addr + offsetToStringData, stringLength * 2);
+
+			case CorElementType.Array:
+			case CorElementType.SZArray:
+				var arryCount = v.ArrayCount;
+				if (arryCount == 0)
+					return new DbgRawAddressValue(addr, 0);
+				var elemValue = v.GetElementAtPosition(0);
+				ulong elemSize = elemValue?.Size ?? 0;
+				ulong elemAddr = elemValue?.Address ?? 0;
+				ulong totalSize = elemSize * arryCount;
+				if (elemAddr == 0 || elemAddr < addr)
+					return null;
+				return new DbgRawAddressValue(elemAddr, totalSize);
+			}
+
+			return new DbgRawAddressValue(addr, size);
 		}
 
 		public override DbgDotNetRawValue GetRawValue() => rawValue;
