@@ -591,8 +591,9 @@ namespace dndbg.Engine {
 		/// Writes a new value. Can be called if <see cref="IsGeneric"/> is true
 		/// </summary>
 		/// <param name="data">Data</param>
+		/// <param name="process">Process to use if first method call fails</param>
 		/// <returns></returns>
-		public unsafe int WriteGenericValue(byte[] data) {
+		public unsafe int WriteGenericValue(byte[] data, CorProcess process = null) {
 			if (data == null || (uint)data.Length != Size)
 				return -1;
 			var g = obj as ICorDebugGenericValue;
@@ -600,7 +601,14 @@ namespace dndbg.Engine {
 				return -1;
 			int hr;
 			fixed (byte* p = &data[0]) {
+				// This sometimes fails with CORDBG_E_CLASS_NOT_LOADED (ImmutableArray<T>, debugging VS2017).
+				// If it fails, use process.WriteMemory().
 				hr = g.SetValue(new IntPtr(p));
+				if (hr < 0 && process != null) {
+					hr = process.WriteMemory(address, data, 0, data.Length, out var sizeWritten);
+					if (sizeWritten != data.Length && hr >= 0)
+						hr = -1;
+				}
 			}
 			return hr;
 		}

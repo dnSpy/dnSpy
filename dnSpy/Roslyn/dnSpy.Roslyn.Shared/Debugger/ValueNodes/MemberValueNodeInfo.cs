@@ -37,7 +37,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		readonly MemberValueNodeInfoFlags Flags;
 		public bool HasDebuggerBrowsableState_Never => (Flags & MemberValueNodeInfoFlags.DebuggerBrowsableState_Mask) == MemberValueNodeInfoFlags.DebuggerBrowsableState_Never;
 		public bool HasDebuggerBrowsableState_RootHidden => (Flags & MemberValueNodeInfoFlags.DebuggerBrowsableState_Mask) == MemberValueNodeInfoFlags.DebuggerBrowsableState_RootHidden;
-		public bool IsCompilerGenerated => (Flags & (MemberValueNodeInfoFlags.CompilerGeneratedAttribute | MemberValueNodeInfoFlags.CompilerGeneratedName)) != 0;
+		public bool IsCompilerGenerated => (Flags & MemberValueNodeInfoFlags.CompilerGeneratedName) != 0;
 		public bool IsPublic => (Flags & MemberValueNodeInfoFlags.Public) != 0;
 
 		[Flags]
@@ -47,9 +47,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			DebuggerBrowsableState_Default		= 0,
 			DebuggerBrowsableState_Never		= 1,
 			DebuggerBrowsableState_RootHidden	= 2,
-			CompilerGeneratedAttribute			= 4,
-			CompilerGeneratedName				= 8,
-			Public								= 0x10,
+			CompilerGeneratedName				= 4,
+			Public								= 8,
 		}
 
 		public MemberValueNodeInfo(DmdMemberInfo member, byte inheritanceLevel) {
@@ -62,8 +61,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		static MemberValueNodeInfoFlags GetFlags(DmdMemberInfo member) {
 			var flags = MemberValueNodeInfoFlags.None;
-			if (IsPublicInternal(member))
+			if (GetIsPublic(member))
 				flags |= MemberValueNodeInfoFlags.Public;
+			// We don't check System.Runtime.CompilerServices.CompilerGeneratedAttribute. This matches VS (Roslyn) behavior.
 			if (RoslynHelpers.IsCompilerGenerated(member.Name))
 				flags |= MemberValueNodeInfoFlags.CompilerGeneratedName;
 			var cas = member.CustomAttributes;
@@ -71,11 +71,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				var ca = cas[i];
 				var type = ca.AttributeType;
 				switch (type.MetadataName) {
-				case "CompilerGeneratedAttribute":
-					if (type.MetadataNamespace == "System.Runtime.CompilerServices" && member.MemberType == DmdMemberTypes.Field)
-						flags |= MemberValueNodeInfoFlags.CompilerGeneratedAttribute;
-					break;
-
 				case "DebuggerBrowsableAttribute":
 					if (type.MetadataNamespace == "System.Diagnostics") {
 						if (ca.ConstructorArguments.Count == 1) {
@@ -99,7 +94,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return flags;
 		}
 
-		static bool IsPublicInternal(DmdMemberInfo member) {
+		static bool GetIsPublic(DmdMemberInfo member) {
 			Debug.Assert(member.MemberType == DmdMemberTypes.Field || member.MemberType == DmdMemberTypes.Property);
 			switch (member.MemberType) {
 			case DmdMemberTypes.Field:

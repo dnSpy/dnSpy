@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 				int count = 0;
 				while (count++ < maxFrames && enumerator.MoveNext())
 					list.Add(CreateEngineStackFrame(enumerator.Current));
-				return list.ToArray();
+				return list.Count == 0 ? Array.Empty<DbgEngineStackFrame>() : list.ToArray();
 			}
 			finally {
 				list.Clear();

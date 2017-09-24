@@ -25,6 +25,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
@@ -68,8 +69,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 					string expression;
 					uint arrayIndex = (uint)index + (uint)i;
-					using (var objValue = new ArrayObjectValue(valueInfo.Value))
+					using (var objValue = new ArrayObjectValue(valueInfo.Value)) {
 						newValue = objValue.Value.GetArrayElementAt(arrayIndex);
+						Debug.Assert(newValue != null);
+					}
 
 					if (dimensionInfos.Length == 1) {
 						int baseIndex = (int)arrayIndex + dimensionInfos[0].BaseIndex;
@@ -88,7 +91,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 					var name = output.CreateAndReset();
 					const bool isReadOnly = false;
-					var newNode = valueNodeFactory.Create(context, frame, name, newValue, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, isReadOnly, false, elementType, cancellationToken);
+					DbgDotNetValueNode newNode;
+					if (newValue == null)
+						newNode = valueNodeFactory.CreateError(context, frame, name, PredefinedEvaluationErrorMessages.InternalDebuggerError, expression, cancellationToken);
+					else
+						newNode = valueNodeFactory.Create(context, frame, name, newValue, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, isReadOnly, false, elementType, cancellationToken);
 					newValue = null;
 					res[i] = newNode;
 				}

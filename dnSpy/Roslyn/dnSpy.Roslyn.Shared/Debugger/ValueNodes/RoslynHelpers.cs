@@ -10,7 +10,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		// names that the compilers produce, but that is acceptable (considering
 		// the fact that none of these will be valid language identifiers, and also
 		// the fact that a broad check helps "future proof" this implementation).
-		internal static bool IsCompilerGenerated(this string name) {
+		internal static bool IsCompilerGenerated(string name) {
 			return name.StartsWith("<", StringComparison.Ordinal) || (name.IndexOf('$') >= 0);
 		}
 	}

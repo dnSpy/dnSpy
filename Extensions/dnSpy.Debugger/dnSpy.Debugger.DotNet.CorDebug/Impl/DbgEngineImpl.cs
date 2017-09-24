@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var flags = DbgEngineMessageFlags.None;
 			if (pause)
 				flags |= DbgEngineMessageFlags.Pause;
-			if (dnDebugger.IsEvaluating)
+			if (dnDebugger?.IsEvaluating == true)
 				flags |= DbgEngineMessageFlags.Continue;
 			return flags;
 		}

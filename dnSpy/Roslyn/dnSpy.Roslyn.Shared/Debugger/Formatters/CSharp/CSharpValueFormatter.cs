@@ -189,8 +189,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				return true;
 			}
 			finally {
-				keyResult.Value.Dispose();
-				valueResult.Value.Dispose();
+				keyResult.Value?.Dispose();
+				valueResult.Value?.Dispose();
 			}
 		}
 

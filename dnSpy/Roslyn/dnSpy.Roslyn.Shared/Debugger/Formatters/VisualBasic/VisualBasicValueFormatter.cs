@@ -188,8 +188,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				return true;
 			}
 			finally {
-				keyResult.Value.Dispose();
-				valueResult.Value.Dispose();
+				keyResult.Value?.Dispose();
+				valueResult.Value?.Dispose();
 			}
 		}
 

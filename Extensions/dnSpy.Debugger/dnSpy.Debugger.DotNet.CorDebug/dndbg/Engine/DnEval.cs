@@ -132,7 +132,7 @@ namespace dndbg.Engine {
 			var vb = r?.BoxedValue;
 			if (vb == null)
 				return null;
-			int hr = vb.WriteGenericValue(value.ReadGenericValue());
+			int hr = vb.WriteGenericValue(value.ReadGenericValue(), thread.CorThread.Process);
 			if (hr < 0)
 				return null;
 			return newObj;

@@ -51,17 +51,20 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			public readonly ulong StartIndex;
 			// Not inclusive
 			public readonly ulong EndIndex;
+			public readonly uint BaseIndex;
 			public readonly DbgDotNetValueNode ValueNode;
 			public readonly bool CanHide;
 			public ChildNodeProviderInfo(ulong startIndex, ulong endIndex, DbgDotNetValueNode valueNode, bool canHide) {
 				StartIndex = startIndex;
 				EndIndex = endIndex;
+				BaseIndex = 0;
 				ValueNode = valueNode;
 				CanHide = canHide;
 			}
-			public ChildNodeProviderInfo(ulong startIndex, ulong endIndex) {
+			public ChildNodeProviderInfo(ulong startIndex, ulong endIndex, uint baseIndex) {
 				StartIndex = startIndex;
 				EndIndex = endIndex;
+				BaseIndex = baseIndex;
 				ValueNode = null;
 				CanHide = false;
 			}
@@ -103,9 +106,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				errorMessage = PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			dbgManager = context.Process.DbgManager;
 			if (errorMessage != null)
-				childNodeProviderInfos = new ChildNodeProviderInfo[] { new ChildNodeProviderInfo(0, 1) };
+				childNodeProviderInfos = new ChildNodeProviderInfo[] { new ChildNodeProviderInfo(0, 1, 0) };
 			else if ((evalOptions & DbgValueNodeEvaluationOptions.NoHideRoots) != 0 || !membersCollection.HasHideRoot || membersCollection.Members.Length == 0)
-				childNodeProviderInfos = new ChildNodeProviderInfo[] { new ChildNodeProviderInfo(0, (uint)membersCollection.Members.Length) };
+				childNodeProviderInfos = new ChildNodeProviderInfo[] { new ChildNodeProviderInfo(0, (uint)membersCollection.Members.Length, 0) };
 			else {
 				DbgDotNetValueNode valueNode = null;
 				var list = Cache.AllocProviderList();
@@ -118,9 +121,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 						if (!members[i].HasDebuggerBrowsableState_RootHidden)
 							continue;
 						if (membersBaseIndex != i) {
-							list.Add(new ChildNodeProviderInfo(baseIndex, baseIndex + (uint)(i - membersBaseIndex)));
-							membersBaseIndex = i;
+							list.Add(new ChildNodeProviderInfo(baseIndex, baseIndex + (uint)(i - membersBaseIndex), (uint)membersBaseIndex));
 							baseIndex += (uint)(i - membersBaseIndex);
+							membersBaseIndex = i;
 						}
 
 						var info = CreateValueNode(context, frame, membersBaseIndex, evalOptions, cancellationToken);
@@ -133,9 +136,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 						valueNode = null;
 					}
 					if (membersBaseIndex != i)
-						list.Add(new ChildNodeProviderInfo(baseIndex, baseIndex + (uint)(i - membersBaseIndex)));
+						list.Add(new ChildNodeProviderInfo(baseIndex, baseIndex + (uint)(i - membersBaseIndex), (uint)membersBaseIndex));
 					if (list.Count == 0)
-						list.Add(new ChildNodeProviderInfo(0, 0));
+						list.Add(new ChildNodeProviderInfo(0, 0, 0));
 					childNodeProviderInfos = Cache.FreeAndToArray(ref list);
 				}
 				catch {
@@ -254,7 +257,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 						if (providerInfo.CanHide) {
 							ulong childCount = providerInfo.EndIndex - providerInfo.StartIndex;
 							int maxChildren = (int)Math.Min(childCount, (uint)(count - i));
-							children = providerInfo.ValueNode.GetChildren(context, frame, index + (uint)i, maxChildren, options, cancellationToken);
+							children = providerInfo.ValueNode.GetChildren(context, frame, index + (uint)i - providerInfo.StartIndex, maxChildren, options, cancellationToken);
 							for (int j = 0; j < children.Length; j++)
 								res[i++] = children[j];
 							children = null;
@@ -267,7 +270,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 							cancellationToken.ThrowIfCancellationRequested();
 							res[i] = errorMessage != null ?
 								valueNodeFactory.CreateError(context, frame, errorPropertyName, errorMessage, Expression, cancellationToken) :
-								CreateValueNode(context, frame, (int)index + i, options, cancellationToken).node;
+								CreateValueNode(context, frame, (int)(index + (uint)i - providerInfo.StartIndex + providerInfo.BaseIndex), options, cancellationToken).node;
 							i++;
 						}
 					}

@@ -90,14 +90,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(engine, appDomain, type);
 
-		static CorValue GetObjectOrPrimitiveValue(CorValue value) {
+		static CorValue TryGetObjectOrPrimitiveValue(CorValue value) {
 			if (value.IsReference) {
 				if (value.IsNull)
 					throw new InvalidOperationException();
-				value = value.DereferencedValue ?? throw new InvalidOperationException();
+				value = value.DereferencedValue;
+				if (value == null)
+					return null;
 			}
 			if (value.IsBox)
-				value = value.BoxedValue ?? throw new InvalidOperationException();
+				value = value.BoxedValue;
 			return value;
 		}
 
@@ -142,7 +144,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 				var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
 				corFieldDeclType = GetType(appDomain, fieldDeclType);
-				var objValue = GetObjectOrPrimitiveValue(objImp.Value);
+				var objValue = TryGetObjectOrPrimitiveValue(objImp.Value);
+				if (objValue == null)
+					return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 				if (objValue.IsObject) {
 					var fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr);
 					if (fieldValue == null)
@@ -205,10 +209,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					return;
 			}
 
-			var res = engine.FuncEvalCreateInstanceNoCtor_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), type, cancellationToken);
-			if (res.Value == null || res.ValueIsException)
-				return;
-			RuntimeHelpersRunClassConstructor(context, frame, ilFrame, type, corType, res.Value, cancellationToken);
+			DbgDotNetValueResult res = default;
+			try {
+				res = engine.FuncEvalCreateInstanceNoCtor_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), type, cancellationToken);
+				if (res.Value == null || res.ValueIsException)
+					return;
+				RuntimeHelpersRunClassConstructor(context, frame, ilFrame, type, corType, res.Value, cancellationToken);
+			}
+			finally {
+				res.Value?.Dispose();
+			}
 		}
 
 		bool HasNativeCode(DmdMethodBase method) {
