@@ -27,23 +27,51 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public DbgEngineObjectIdFactoryImpl(Guid runtimeGuid) => this.runtimeGuid = runtimeGuid;
 
 		public override bool CanCreateObjectId(DbgEngineValue value) {
-			return false;//TODO:
+			var dnValue = ((DbgEngineValueImpl)value).DotNetValue;
+			var runtime = dnValue.TryGetDotNetRuntime();
+			if (runtime == null)
+				return false;
+			return runtime.CanCreateObjectId(dnValue);
 		}
 
 		public override DbgEngineObjectId CreateObjectId(DbgEngineValue value, uint id) {
-			throw new NotImplementedException();//TODO:
+			var dnValue = ((DbgEngineValueImpl)value).DotNetValue;
+			var runtime = dnValue.TryGetDotNetRuntime();
+			if (runtime == null)
+				return null;
+			var objectId = runtime.CreateObjectId(dnValue, id);
+			if (objectId == null)
+				return null;
+			try {
+				return new DbgEngineObjectIdImpl(runtime, objectId);
+			}
+			catch {
+				objectId.Dispose();
+				throw;
+			}
 		}
 
 		public override bool Equals(DbgEngineObjectId objectId, DbgEngineValue value) {
-			throw new NotImplementedException();//TODO:
+			var dnObjectId = ((DbgEngineObjectIdImpl)objectId).DotNetObjectId;
+			var dnValue = ((DbgEngineValueImpl)value).DotNetValue;
+			var runtime = dnValue.TryGetDotNetRuntime();
+			if (runtime == null)
+				return false;
+			return runtime.Equals(dnObjectId, dnValue);
 		}
 
 		public override int GetHashCode(DbgEngineObjectId objectId) {
-			throw new NotImplementedException();//TODO:
+			var impl = (DbgEngineObjectIdImpl)objectId;
+			var dnObjectId = impl.DotNetObjectId;
+			return impl.Runtime.GetHashCode(dnObjectId);
 		}
 
 		public override int GetHashCode(DbgEngineValue value) {
-			throw new NotImplementedException();//TODO:
+			var dnValue = ((DbgEngineValueImpl)value).DotNetValue;
+			var runtime = dnValue.TryGetDotNetRuntime();
+			if (runtime == null)
+				return 0;
+			return runtime.GetHashCode(dnValue);
 		}
 	}
 }

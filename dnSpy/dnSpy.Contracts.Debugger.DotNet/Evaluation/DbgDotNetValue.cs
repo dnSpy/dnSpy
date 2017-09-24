@@ -113,6 +113,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public abstract DbgDotNetRawValue GetRawValue();
 
 		/// <summary>
+		/// Returns the <see cref="IDbgDotNetRuntime"/> instance or null if it's unknown
+		/// </summary>
+		/// <returns></returns>
+		public virtual IDbgDotNetRuntime TryGetDotNetRuntime() => null;
+
+		/// <summary>
 		/// Called when its owner (<see cref="DbgEngineValue"/>) gets closed
 		/// </summary>
 		public abstract void Dispose();

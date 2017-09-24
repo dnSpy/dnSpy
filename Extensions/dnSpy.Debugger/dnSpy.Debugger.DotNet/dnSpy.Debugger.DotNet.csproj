@@ -75,6 +75,7 @@
     <Compile Include="Evaluation\Engine\DbgEngineLanguageProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineLocalsProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineObjectIdFactoryImpl.cs" />
+    <Compile Include="Evaluation\Engine\DbgEngineObjectIdImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineReturnValuesProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineTypeVariablesProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineValueFormatterImpl.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Evaluation\Engine\DbgModuleReferenceProvider.cs" />
     <Compile Include="Evaluation\Engine\DecompilerOutputImpl.cs" />
     <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
+    <Compile Include="Evaluation\Engine\ObjectCache.cs" />
     <Compile Include="Evaluation\Engine\StateWithKey.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />

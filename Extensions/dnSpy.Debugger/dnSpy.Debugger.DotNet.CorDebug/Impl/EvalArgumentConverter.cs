@@ -74,7 +74,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				value = dbgValue.InternalValue;
 			if (value is DbgDotNetValueImpl dnValueImpl) {
 				type = dnValueImpl.Type;
-				return new EvalArgumentResult(dnValueImpl.Value);
+				var corValue = dnValueImpl.TryGetCorValue();
+				if (corValue != null)
+					return new EvalArgumentResult(corValue);
+				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 			if (value is string s) {
 				type = reflectionAppDomain.System_String;

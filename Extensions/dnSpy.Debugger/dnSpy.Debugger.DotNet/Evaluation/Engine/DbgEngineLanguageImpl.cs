@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			ExceptionsProvider = new DbgEngineExceptionsProviderImpl(valueNodeFactory);
 			ReturnValuesProvider = new DbgEngineReturnValuesProviderImpl(valueNodeFactory);
 			TypeVariablesProvider = new DbgEngineTypeVariablesProviderImpl(valueNodeFactory);
-			ValueNodeFactory = new DbgEngineValueNodeFactoryImpl();
+			ValueNodeFactory = new DbgEngineValueNodeFactoryImpl(valueNodeFactory, formatter);
 		}
 
 		static class DecompilerOutputImplCache {

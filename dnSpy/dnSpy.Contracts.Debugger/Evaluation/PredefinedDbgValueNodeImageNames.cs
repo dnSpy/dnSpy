@@ -28,7 +28,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string Warning = nameof(Warning);
 		public const string Error = nameof(Error);
 		public const string ReturnValue = nameof(ReturnValue);
-		public const string ObjectID = nameof(ObjectID);
 		public const string GenericTypeParameter = nameof(GenericTypeParameter);
 		public const string GenericMethodParameter = nameof(GenericMethodParameter);
 		public const string Data = nameof(Data);

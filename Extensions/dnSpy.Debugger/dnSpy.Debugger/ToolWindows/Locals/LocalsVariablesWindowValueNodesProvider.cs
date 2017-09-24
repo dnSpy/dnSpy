@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			for (int i = 0; i < returnValues.Length; i++, ri++)
 				res[ri] = new DbgValueNodeInfo(returnValues[i], GetNextReturnValueId(), causesSideEffects: false);
 
-			var objectIdNodes = language.ValueNodeFactory.Create(context, objectIds, nodeEvalOptions);
+			var objectIdNodes = language.ValueNodeFactory.Create(context, frame, objectIds, nodeEvalOptions);
 			Debug.Assert(objectIdNodes.Length == objectIds.Length);
 			for (int i = 0; i < objectIdNodes.Length; i++, ri++) {
 				var id = GetObjectIdNodeId(objectIds[i]);

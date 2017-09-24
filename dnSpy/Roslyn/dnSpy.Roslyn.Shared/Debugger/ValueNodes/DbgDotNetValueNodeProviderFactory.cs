@@ -322,9 +322,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 				Array.Sort(instanceMembers.Members, MemberValueNodeInfoEqualityComparer.Instance);
 				Array.Sort(staticMembers.Members, MemberValueNodeInfoEqualityComparer.Instance);
-				var output = new DbgDotNetTextOutput();
+				var output = ObjectCache.AllocDotNetTextOutput();
 				UpdateNames(instanceMembers.Members, output);
 				UpdateNames(staticMembers.Members, output);
+				ObjectCache.Free(ref output);
 			}
 			else {
 				staticMembers = instanceMembers = MemberValueNodeInfoCollection.Empty;

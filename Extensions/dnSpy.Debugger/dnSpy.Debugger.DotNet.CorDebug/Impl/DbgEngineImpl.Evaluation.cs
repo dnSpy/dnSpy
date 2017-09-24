@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					value = strongHandle;
 			}
 
-			var dnValue = new DbgDotNetValueImpl(this, new DbgCorValueHolder(this, value), type);
+			var dnValue = new DbgDotNetValueImpl(this, new DbgCorValueHolder(this, value, type));
 			lock (lockObj)
 				dotNetValuesToCloseOnContinue.Add(dnValue);
 			return dnValue;

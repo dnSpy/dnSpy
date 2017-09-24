@@ -52,9 +52,9 @@
     <Compile Include="DbgDotNetInternalRuntime.cs" />
     <Compile Include="Evaluation\DbgDotNetAliasInfo.cs" />
     <Compile Include="Evaluation\DbgDotNetDispatcher.cs" />
-    <Compile Include="Evaluation\DbgDotNetEngineObjectId.cs" />
     <Compile Include="Evaluation\DbgDotNetExceptionInfo.cs" />
     <Compile Include="Evaluation\DbgDotNetLanguageGuids.cs" />
+    <Compile Include="Evaluation\DbgDotNetObjectId.cs" />
     <Compile Include="Evaluation\DbgDotNetReturnValueInfo.cs" />
     <Compile Include="Evaluation\DbgDotNetRuntimeExtensions.cs" />
     <Compile Include="Evaluation\DbgDotNetValue.cs" />

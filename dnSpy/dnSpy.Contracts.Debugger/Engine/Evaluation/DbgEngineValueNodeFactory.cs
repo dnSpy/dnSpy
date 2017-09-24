@@ -53,20 +53,22 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Creates <see cref="DbgEngineValueNode"/>s. It blocks the current thread.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates <see cref="DbgEngineValueNode"/>s
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgEvaluationContext context, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
+		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 	}
 }

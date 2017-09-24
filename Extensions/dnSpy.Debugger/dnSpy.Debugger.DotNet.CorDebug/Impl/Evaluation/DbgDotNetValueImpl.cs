@@ -28,7 +28,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	sealed class DbgDotNetValueImpl : DbgDotNetValue {
-		public override DmdType Type => type;
+		public override DmdType Type => value.Type;
 		public override bool IsReference => (flags & ValueFlags.IsReference) != 0;
 		public override bool IsNullReference => (flags & ValueFlags.IsNullReference) != 0;
 		public override bool IsBox => (flags & ValueFlags.IsBox) != 0;
@@ -43,21 +43,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			IsArray				= 0x08,
 		}
 
-		internal CorValue Value => value.CorValue;
+		internal DbgCorValueHolder CorValueHolder => value;
 
 		readonly DbgEngineImpl engine;
 		readonly DbgCorValueHolder value;
-		readonly DmdType type;
 		readonly DbgDotNetRawValue rawValue;
 		readonly ValueFlags flags;
 		volatile int disposed;
 
-		public DbgDotNetValueImpl(DbgEngineImpl engine, DbgCorValueHolder value, DmdType type) {
+		public DbgDotNetValueImpl(DbgEngineImpl engine, DbgCorValueHolder value) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			this.value = value ?? throw new ArgumentNullException(nameof(value));
-			this.type = type ?? throw new ArgumentNullException(nameof(type));
 			var corValue = value.CorValue;
-			rawValue = GetRawValue(corValue, type);
+			rawValue = GetRawValue(corValue, value.Type);
 
 			var flags = ValueFlags.None;
 			if (corValue.IsReference) {
@@ -70,6 +68,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			if (corValue.IsArray)
 				flags |= ValueFlags.IsArray;
 			this.flags = flags;
+		}
+
+		public override IDbgDotNetRuntime TryGetDotNetRuntime() => engine.DotNetRuntime;
+
+		internal CorValue TryGetCorValue() {
+			try {
+				return value.CorValue;
+			}
+			catch (ObjectDisposedException) {
+				return null;
+			}
 		}
 
 		public override ulong? GetReferenceAddress() {
@@ -94,7 +103,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var dereferencedValue = value.CorValue.DereferencedValue;
 			if (dereferencedValue == null)
 				return null;
-			return engine.CreateDotNetValue_CorDebug(dereferencedValue, type.AppDomain, tryCreateStrongHandle: true);
+			return engine.CreateDotNetValue_CorDebug(dereferencedValue, value.Type.AppDomain, tryCreateStrongHandle: true);
 		}
 
 		public override DbgDotNetValue Unbox() {
@@ -111,7 +120,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var boxedValue = value.CorValue.BoxedValue;
 			if (boxedValue == null)
 				return null;
-			return engine.CreateDotNetValue_CorDebug(boxedValue, type.AppDomain, tryCreateStrongHandle: true);
+			return engine.CreateDotNetValue_CorDebug(boxedValue, value.Type.AppDomain, tryCreateStrongHandle: true);
 		}
 
 		public override bool GetArrayCount(out uint elementCount) {
@@ -183,7 +192,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var elemValue = value.CorValue.GetElementAtPosition(index);
 			if (elemValue == null)
 				return null;
-			return engine.CreateDotNetValue_CorDebug(elemValue, type.AppDomain, tryCreateStrongHandle: true);
+			return engine.CreateDotNetValue_CorDebug(elemValue, value.Type.AppDomain, tryCreateStrongHandle: true);
 		}
 
 		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) {

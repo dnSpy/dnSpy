@@ -30,6 +30,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
 using dnSpy.Contracts.Debugger.Engine;
@@ -719,8 +720,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		public override DbgInternalRuntime CreateInternalRuntime(DbgRuntime runtime) =>
-			new DbgCorDebugInternalRuntimeImpl(this, runtime, dmdRuntime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
+		internal IDbgDotNetRuntime DotNetRuntime => internalRuntime;
+		DbgCorDebugInternalRuntimeImpl internalRuntime;
+		public override DbgInternalRuntime CreateInternalRuntime(DbgRuntime runtime) {
+			if (internalRuntime != null)
+				throw new InvalidOperationException();
+			return internalRuntime = new DbgCorDebugInternalRuntimeImpl(this, runtime, dmdRuntime, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
+		}
 
 		public override void OnConnected(DbgObjectFactory objectFactory, DbgRuntime runtime) {
 			Debug.Assert(objectFactory.Runtime == runtime);

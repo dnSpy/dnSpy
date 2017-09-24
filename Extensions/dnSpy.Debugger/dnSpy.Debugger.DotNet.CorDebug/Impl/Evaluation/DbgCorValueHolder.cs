@@ -20,8 +20,12 @@
 using System;
 using System.Threading;
 using dndbg.Engine;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
+	/// <summary>
+	/// A reference counted <see cref="CorValue"/> class used by <see cref="DbgDotNetValueImpl"/> and <see cref="DbgDotNetObjectIdImpl"/>
+	/// </summary>
 	sealed class DbgCorValueHolder {
 		public CorValue CorValue {
 			get {
@@ -31,14 +35,24 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 		}
 
+		public DmdType Type {
+			get {
+				if (disposed)
+					throw new ObjectDisposedException(nameof(DbgCorValueHolder));
+				return type;
+			}
+		}
+
 		readonly DbgEngineImpl engine;
 		readonly CorValue value;
+		readonly DmdType type;
 		volatile int referenceCounter;
 		volatile bool disposed;
 
-		public DbgCorValueHolder(DbgEngineImpl engine, CorValue value) {
+		public DbgCorValueHolder(DbgEngineImpl engine, CorValue value, DmdType type) {
 			this.engine = engine;
 			this.value = value;
+			this.type = type ?? throw new ArgumentNullException(nameof(type));
 			referenceCounter = 1;
 		}
 

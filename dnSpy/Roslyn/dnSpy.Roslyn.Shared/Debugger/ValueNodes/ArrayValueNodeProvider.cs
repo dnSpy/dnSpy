@@ -62,7 +62,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
 			DbgDotNetValue newValue = null;
 			try {
-				var output = new DbgDotNetTextOutput();
+				var output = ObjectCache.AllocDotNetTextOutput();
 				var elementType = valueInfo.Value.Type.GetElementType();
 				for (int i = 0; i < res.Length; i++) {
 					cancellationToken.ThrowIfCancellationRequested();
@@ -99,6 +99,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					newValue = null;
 					res[i] = newNode;
 				}
+				ObjectCache.Free(ref output);
 			}
 			catch {
 				context.Process.DbgManager.Close(res.Where(a => a != null));

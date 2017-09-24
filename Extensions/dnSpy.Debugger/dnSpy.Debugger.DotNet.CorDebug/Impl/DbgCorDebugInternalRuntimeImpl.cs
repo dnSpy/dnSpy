@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public override string ClrFilename { get; }
 		public override string RuntimeDirectory { get; }
 		public DbgDotNetDispatcher Dispatcher { get; }
-		public bool SupportsObjectIds => false;//TODO:
+		public bool SupportsObjectIds => true;
 
 		readonly DbgEngineImpl engine;
 
@@ -91,6 +91,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(engine, appDomain, type);
 
 		static CorValue TryGetObjectOrPrimitiveValue(CorValue value) {
+			if (value == null)
+				return null;
 			if (value.IsReference) {
 				if (value.IsNull)
 					throw new InvalidOperationException();
@@ -144,7 +146,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 				var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
 				corFieldDeclType = GetType(appDomain, fieldDeclType);
-				var objValue = TryGetObjectOrPrimitiveValue(objImp.Value);
+				var objValue = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue());
 				if (objValue == null)
 					return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 				if (objValue.IsObject) {
@@ -409,27 +411,179 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public bool CanCreateObjectId(DbgDotNetValue value) {
-			return false;//TODO:
+			var valueImpl = value as DbgDotNetValueImpl;
+			if (valueImpl == null)
+				return false;
+			if (Dispatcher.CheckAccess())
+				return CanCreateObjectIdCore(valueImpl);
+			return Dispatcher.Invoke(() => CanCreateObjectIdCore(valueImpl));
 		}
 
-		public DbgDotNetEngineObjectId CreateObjectId(DbgDotNetValue value, uint id) {
-			throw new NotImplementedException();//TODO:
+		bool CanCreateObjectIdCore(DbgDotNetValueImpl value) {
+			Dispatcher.VerifyAccess();
+
+			// Keep this in sync with CreateObjectIdCore()
+			var corValue = value.TryGetCorValue();
+			if (corValue == null)
+				return false;
+			if (!corValue.IsHandle) {
+				if (corValue.IsReference) {
+					if (corValue.IsNull)
+						return false;
+					corValue = corValue.DereferencedValue;
+					if (corValue == null)
+						return false;
+				}
+				if (!corValue.IsHeap2)
+					return false;
+			}
+
+			return true;
 		}
 
-		public bool Equals(DbgDotNetEngineObjectId objectId, DbgDotNetValue value) {
-			throw new NotImplementedException();//TODO:
+		public DbgDotNetObjectId CreateObjectId(DbgDotNetValue value, uint id) {
+			var valueImpl = value as DbgDotNetValueImpl;
+			if (valueImpl == null)
+				return null;
+			if (Dispatcher.CheckAccess())
+				return CreateObjectIdCore(valueImpl, id);
+			return Dispatcher.Invoke(() => CreateObjectIdCore(valueImpl, id));
 		}
 
-		public int GetHashCode(DbgDotNetEngineObjectId objectId) {
-			throw new NotImplementedException();//TODO:
+		DbgDotNetObjectId CreateObjectIdCore(DbgDotNetValueImpl value, uint id) {
+			Dispatcher.VerifyAccess();
+
+			// Keep this in sync with CanCreateObjectIdCore()
+			var corValue = value.TryGetCorValue();
+			if (corValue == null)
+				return null;
+			if (corValue.IsHandle) {
+				var valueHolder = value.CorValueHolder.AddRef();
+				try {
+					return new DbgDotNetObjectIdImpl(valueHolder, id);
+				}
+				catch {
+					valueHolder.Release();
+					throw;
+				}
+			}
+			else {
+				if (corValue.IsReference) {
+					if (corValue.IsNull)
+						return null;
+					corValue = corValue.DereferencedValue;
+					if (corValue == null)
+						return null;
+				}
+				var strongHandle = corValue.CreateHandle(CorDebugHandleType.HANDLE_STRONG);
+				if (strongHandle == null)
+					return null;
+				try {
+					return new DbgDotNetObjectIdImpl(new DbgCorValueHolder(engine, strongHandle, value.Type), id);
+				}
+				catch {
+					strongHandle.DisposeHandle();
+					throw;
+				}
+			}
+		}
+
+		public bool Equals(DbgDotNetObjectId objectId, DbgDotNetValue value) {
+			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
+			var valueImpl = value as DbgDotNetValueImpl;
+			if (objectIdImpl == null || valueImpl == null)
+				return false;
+			if (Dispatcher.CheckAccess())
+				return EqualsCore(objectIdImpl, valueImpl);
+			return Dispatcher.Invoke(() => EqualsCore(objectIdImpl, valueImpl));
+		}
+
+		bool EqualsCore(DbgDotNetObjectIdImpl objectId, DbgDotNetValueImpl value) {
+			Dispatcher.VerifyAccess();
+
+			var idHolder = objectId.Value;
+			var vHolder = value.CorValueHolder;
+			if (idHolder == vHolder)
+				return true;
+			var v1 = GetValue(idHolder.CorValue);
+			var v2 = GetValue(vHolder.CorValue);
+			if (v1 == null || v2 == null)
+				return false;
+			if (v1.Address != v2.Address)
+				return false;
+			if (v1.Address == 0)
+				return false;
+
+			return true;
+		}
+
+		static CorValue GetValue(CorValue corValue) {
+			if (corValue == null)
+				return null;
+			if (corValue.IsReference) {
+				if (corValue.IsNull)
+					return null;
+				corValue = corValue.DereferencedValue;
+			}
+			return corValue;
+		}
+
+		public int GetHashCode(DbgDotNetObjectId objectId) {
+			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
+			if (objectIdImpl == null)
+				return 0;
+			if (Dispatcher.CheckAccess())
+				return GetHashCodeCore(objectIdImpl);
+			return Dispatcher.Invoke(() => GetHashCodeCore(objectIdImpl));
+		}
+
+		int GetHashCodeCore(DbgDotNetObjectIdImpl objectId) {
+			Dispatcher.VerifyAccess();
+			var v = GetValue(objectId.Value.CorValue);
+			return GetHashCode(v);
+		}
+
+		static int GetHashCode(CorValue v) {
+			if (v == null)
+				return 0;
+			var addr = v.Address;
+			return addr == 0 ? 0 : addr.GetHashCode();
 		}
 
 		public int GetHashCode(DbgDotNetValue value) {
-			throw new NotImplementedException();//TODO:
+			var valueImpl = value as DbgDotNetValueImpl;
+			if (valueImpl == null)
+				return 0;
+			if (Dispatcher.CheckAccess())
+				return GetHashCodeCore(valueImpl);
+			return Dispatcher.Invoke(() => GetHashCodeCore(valueImpl));
 		}
 
-		public DbgDotNetValue GetValue(DbgEvaluationContext context, DbgDotNetEngineObjectId objectId, CancellationToken cancellationToken) {
-			throw new NotImplementedException();//TODO:
+		int GetHashCodeCore(DbgDotNetValueImpl value) {
+			Dispatcher.VerifyAccess();
+			var v = GetValue(value.TryGetCorValue());
+			return GetHashCode(v);
+		}
+
+		public DbgDotNetValue GetValue(DbgEvaluationContext context, DbgDotNetObjectId objectId, CancellationToken cancellationToken) {
+			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
+			if (objectIdImpl == null)
+				throw new ArgumentException();
+			if (Dispatcher.CheckAccess())
+				return GetValueCore(context, objectIdImpl, cancellationToken);
+			return Dispatcher.Invoke(() => GetValueCore(context, objectIdImpl, cancellationToken));
+		}
+
+		DbgDotNetValue GetValueCore(DbgEvaluationContext context, DbgDotNetObjectIdImpl objectId, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			var dnValue = objectId.Value.AddRef();
+			try {
+				return new DbgDotNetValueImpl(engine, dnValue);
+			}
+			catch {
+				dnValue.Release();
+				throw;
+			}
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) { }

@@ -47,6 +47,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsHeap => obj is ICorDebugHeapValue;
 
+		public bool IsHeap2 => obj is ICorDebugHeapValue2;
+
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugArrayValue"/>
 		/// </summary>

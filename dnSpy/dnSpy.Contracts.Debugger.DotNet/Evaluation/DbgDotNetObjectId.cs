@@ -17,22 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Threading;
-using dnSpy.Contracts.Debugger.DotNet.Text;
+using System;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 
-namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
-	static class ObjectCache {
-		static DbgDotNetTextOutput dotNetTextOutput;
-		public static DbgDotNetTextOutput AllocDotNetTextOutput() => Interlocked.Exchange(ref dotNetTextOutput, null) ?? new DbgDotNetTextOutput();
-		public static void Free(ref DbgDotNetTextOutput output) {
-			output.Clear();
-			dotNetTextOutput = output;
-			output = null;
-		}
-		public static DbgDotNetText FreeAndToText(ref DbgDotNetTextOutput output) {
-			var res = output.CreateAndReset();
-			Free(ref output);
-			return res;
-		}
+namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
+	/// <summary>
+	/// References a value in the debugged process
+	/// </summary>
+	public abstract class DbgDotNetObjectId : IDisposable {
+		/// <summary>
+		/// Gets the unique id in the runtime
+		/// </summary>
+		public abstract uint Id { get; }
+
+		/// <summary>
+		/// Called when its owner (<see cref="DbgEngineObjectId"/>) gets closed
+		/// </summary>
+		public abstract void Dispose();
 	}
 }

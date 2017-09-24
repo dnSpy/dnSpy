@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="value">Value created by this runtime</param>
 		/// <param name="id">Unique id</param>
 		/// <returns></returns>
-		DbgDotNetEngineObjectId CreateObjectId(DbgDotNetValue value, uint id);
+		DbgDotNetObjectId CreateObjectId(DbgDotNetValue value, uint id);
 
 		/// <summary>
 		/// Checks if an object id and a value refer to the same data
@@ -160,14 +160,14 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="objectId">Object id created by this class</param>
 		/// <param name="value">Value created by this runtime</param>
 		/// <returns></returns>
-		bool Equals(DbgDotNetEngineObjectId objectId, DbgDotNetValue value);
+		bool Equals(DbgDotNetObjectId objectId, DbgDotNetValue value);
 
 		/// <summary>
 		/// Gets the hash code of an object id
 		/// </summary>
 		/// <param name="objectId">Object id created by this class</param>
 		/// <returns></returns>
-		int GetHashCode(DbgDotNetEngineObjectId objectId);
+		int GetHashCode(DbgDotNetObjectId objectId);
 
 		/// <summary>
 		/// Gets the hash code of a value created by this runtime
@@ -183,6 +183,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="objectId">Object id created by this class</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValue GetValue(DbgEvaluationContext context, DbgDotNetEngineObjectId objectId, CancellationToken cancellationToken);
+		DbgDotNetValue GetValue(DbgEvaluationContext context, DbgDotNetObjectId objectId, CancellationToken cancellationToken);
 	}
 }
