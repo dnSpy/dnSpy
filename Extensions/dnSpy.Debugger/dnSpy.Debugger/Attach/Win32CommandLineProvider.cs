@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Attach {
 		struct UNICODE_STRING32 {
 			public ushort Length;
 			public ushort MaximumLength;
-			public IntPtr Buffer;
+			public uint Buffer;
 			public const int SIZE = 8;
 		}
 
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.Attach {
 			public ushort Length;
 			public ushort MaximumLength;
 			public uint Padding;
-			public IntPtr Buffer;
+			public ulong Buffer;
 			public const int SIZE = 16;
 		}
 
@@ -119,7 +119,7 @@ namespace dnSpy.Debugger.Attach {
 				if (!b || bytesRead.ToInt64() != UNICODE_STRING32.SIZE)
 					return null;
 				cmdlineLength = unicodeString.Length;
-				cmdlineBuffer = unicodeString.Buffer;
+				cmdlineBuffer = IntPtr.Size == 4 ? new IntPtr((int)unicodeString.Buffer) : new IntPtr(unicodeString.Buffer);
 			}
 			else {
 				PROCESS_BASIC_INFORMATION64 pbi = default;
@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.Attach {
 				if (!b || bytesRead.ToInt64() != UNICODE_STRING64.SIZE)
 					return null;
 				cmdlineLength = unicodeString.Length;
-				cmdlineBuffer = unicodeString.Buffer;
+				cmdlineBuffer = new IntPtr((long)unicodeString.Buffer);
 			}
 
 			if (cmdlineLength <= 0 || cmdlineBuffer == IntPtr.Zero)

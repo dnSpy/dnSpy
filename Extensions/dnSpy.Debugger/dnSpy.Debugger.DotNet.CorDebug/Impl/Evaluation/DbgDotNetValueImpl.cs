@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
@@ -229,32 +230,34 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var size = v.Size;
 			if (addr == 0)
 				return null;
-			if (!onlyDataAddress || v.IsValueClass || (CorElementType.Boolean <= v.ElementType && v.ElementType <= CorElementType.R8) || v.ElementType == CorElementType.I || v.ElementType == CorElementType.U)
+			var etype = v.ElementType;
+			if (!onlyDataAddress || v.IsValueClass || (CorElementType.Boolean <= etype && etype <= CorElementType.R8) || etype == CorElementType.I || etype == CorElementType.U)
 				return new DbgRawAddressValue(addr, size);
 
-			switch (v.ElementType) {
+			switch (etype) {
 			case CorElementType.String:
 				uint offsetToStringData;
 				if (engine.DebuggeeVersion.StartsWith("v2."))
 					offsetToStringData = IntPtr.Size == 4 ? OffsetToStringData32_CLR2 : OffsetToStringData64_CLR2;
-				else
+				else {
 					offsetToStringData = IntPtr.Size == 4 ? OffsetToStringData32 : OffsetToStringData64;
+					Debug.Assert(offsetToStringData == RuntimeHelpers.OffsetToStringData);
+				}
 				uint stringLength = v.StringLength;
-				Debug.Assert(offsetToStringData + stringLength * 2 <= size);
-				Debug.Assert(offsetToStringData <= size);
+				Debug.Assert((ulong)offsetToStringData + stringLength * 2 <= size);
 				if (offsetToStringData > size)
 					return null;
 				return new DbgRawAddressValue(addr + offsetToStringData, stringLength * 2);
 
 			case CorElementType.Array:
 			case CorElementType.SZArray:
-				var arryCount = v.ArrayCount;
-				if (arryCount == 0)
+				var arrayCount = v.ArrayCount;
+				if (arrayCount == 0)
 					return new DbgRawAddressValue(addr, 0);
 				var elemValue = v.GetElementAtPosition(0);
 				ulong elemSize = elemValue?.Size ?? 0;
 				ulong elemAddr = elemValue?.Address ?? 0;
-				ulong totalSize = elemSize * arryCount;
+				ulong totalSize = elemSize * arrayCount;
 				if (elemAddr == 0 || elemAddr < addr)
 					return null;
 				return new DbgRawAddressValue(elemAddr, totalSize);

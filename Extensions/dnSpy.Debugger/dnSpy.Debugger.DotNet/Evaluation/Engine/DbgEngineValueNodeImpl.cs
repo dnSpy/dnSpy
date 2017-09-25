@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var formatter = owner.Formatter;
 			var dnValue = value?.DotNetValue;
 			if (options.ExpectedTypeOutput != null) {
-				if (dnValueNode.FormatExpectedType(context,frame, options.ExpectedTypeOutput, cancellationToken)) {
+				if (dnValueNode.FormatExpectedType(context, frame, options.ExpectedTypeOutput, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValueNode.ExpectedType is DmdType expectedType)
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions);
 			}
 			if (options.ValueOutput != null) {
-				if (dnValueNode.FormatValue(context,frame, options.ValueOutput, cancellationToken)) {
+				if (dnValueNode.FormatValue(context, frame, options.ValueOutput, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValue != null)
