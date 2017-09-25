@@ -184,6 +184,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 				bookmarkContext.ClassificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 				bookmarksSettings.PropertyChanged += BookmarksSettings_PropertyChanged;
 				bookmarkDisplaySettings.PropertyChanged += BookmarkDisplaySettings_PropertyChanged;
+				bookmarkContext.FormatterOptions = GetBookmarkLocationFormatterOptions();
 				RecreateFormatter_UI();
 				bookmarkContext.SyntaxHighlight = bookmarksSettings.SyntaxHighlight;
 			}
@@ -248,6 +249,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			case nameof(BookmarkDisplaySettings.ShowReturnTypes):
 			case nameof(BookmarkDisplaySettings.ShowNamespaces):
 			case nameof(BookmarkDisplaySettings.ShowIntrinsicTypeKeywords):
+				bookmarkContext.FormatterOptions = GetBookmarkLocationFormatterOptions();
 				RefreshLocationColumn_UI();
 				break;
 
@@ -255,6 +257,33 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 				Debug.Fail($"Unknown property: {propertyName}");
 				break;
 			}
+		}
+
+		BookmarkLocationFormatterOptions GetBookmarkLocationFormatterOptions() {
+			var options = BookmarkLocationFormatterOptions.None;
+			if (bookmarkDisplaySettings.ShowTokens)
+				options |= BookmarkLocationFormatterOptions.Tokens;
+			if (bookmarkDisplaySettings.ShowModuleNames)
+				options |= BookmarkLocationFormatterOptions.ModuleNames;
+			if (bookmarkDisplaySettings.ShowParameterTypes)
+				options |= BookmarkLocationFormatterOptions.ParameterTypes;
+			if (bookmarkDisplaySettings.ShowParameterNames)
+				options |= BookmarkLocationFormatterOptions.ParameterNames;
+			if (bookmarkDisplaySettings.ShowDeclaringTypes)
+				options |= BookmarkLocationFormatterOptions.DeclaringTypes;
+			if (bookmarkDisplaySettings.ShowReturnTypes)
+				options |= BookmarkLocationFormatterOptions.ReturnTypes;
+			if (bookmarkDisplaySettings.ShowNamespaces)
+				options |= BookmarkLocationFormatterOptions.Namespaces;
+			if (bookmarkDisplaySettings.ShowIntrinsicTypeKeywords)
+				options |= BookmarkLocationFormatterOptions.IntrinsicTypeKeywords;
+			bool useDigitSeparators = false;
+			if (useDigitSeparators)
+				options |= BookmarkLocationFormatterOptions.DigitSeparators;
+			bool useHexadecimal = true;
+			if (!useHexadecimal)
+				options |= BookmarkLocationFormatterOptions.Decimal;
+			return options;
 		}
 
 		// UI thread

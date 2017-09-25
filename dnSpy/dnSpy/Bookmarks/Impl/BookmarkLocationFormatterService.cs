@@ -55,7 +55,7 @@ namespace dnSpy.Bookmarks.Impl {
 	sealed class NullBookmarkLocationFormatter : BookmarkLocationFormatter {
 		public static readonly NullBookmarkLocationFormatter Instance = new NullBookmarkLocationFormatter();
 		NullBookmarkLocationFormatter() { }
-		public override void WriteLocation(ITextColorWriter output) { }
+		public override void WriteLocation(ITextColorWriter output, BookmarkLocationFormatterOptions options) { }
 		public override void WriteModule(ITextColorWriter output) { }
 		public override void Dispose() { }
 	}

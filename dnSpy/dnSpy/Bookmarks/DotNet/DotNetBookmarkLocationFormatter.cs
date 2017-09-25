@@ -27,12 +27,10 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Bookmarks.DotNet {
 	abstract class DotNetBookmarkLocationFormatter : BookmarkLocationFormatter {
 		readonly BookmarkFormatterServiceImpl owner;
-		readonly BookmarkDisplaySettings bookmarkDisplaySettings;
 		readonly IDotNetBookmarkLocation location;
 
-		public DotNetBookmarkLocationFormatter(BookmarkFormatterServiceImpl owner, BookmarkDisplaySettings bookmarkDisplaySettings, IDotNetBookmarkLocation location) {
+		public DotNetBookmarkLocationFormatter(BookmarkFormatterServiceImpl owner, IDotNetBookmarkLocation location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
-			this.bookmarkDisplaySettings = bookmarkDisplaySettings ?? throw new ArgumentNullException(nameof(bookmarkDisplaySettings));
 			this.location = location ?? throw new ArgumentNullException(nameof(location));
 		}
 
@@ -40,18 +38,24 @@ namespace dnSpy.Bookmarks.DotNet {
 
 		internal void RefreshLocation() => RaiseLocationChanged();
 
-		void WriteToken(ITextColorWriter output, uint token) =>
-			output.Write(BoxedTextColor.Number, "0x" + token.ToString("X8"));
+		protected string GetHexPrefix() {
+			if (owner.MethodDecompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
+				return "&H";
+			return "0x";
+		}
 
-		public override void WriteLocation(ITextColorWriter output) {
+		void WriteToken(ITextColorWriter output, uint token) =>
+			output.Write(BoxedTextColor.Number, GetHexPrefix() + token.ToString("X8"));
+
+		public override void WriteLocation(ITextColorWriter output, BookmarkLocationFormatterOptions options) {
 			bool printedToken = false;
-			if (bookmarkDisplaySettings.ShowTokens) {
+			if ((options & BookmarkLocationFormatterOptions.Tokens) != 0) {
 				WriteToken(output, location.Token);
 				output.WriteSpace();
 				printedToken = true;
 			}
 
-			bool success = WriteLocationCore(output);
+			bool success = WriteLocationCore(output, options);
 			if (!success) {
 				if (printedToken)
 					output.Write(BoxedTextColor.Error, "???");
@@ -60,19 +64,30 @@ namespace dnSpy.Bookmarks.DotNet {
 			}
 		}
 
-		protected abstract bool WriteLocationCore(ITextColorWriter output);
+		protected abstract bool WriteLocationCore(ITextColorWriter output, BookmarkLocationFormatterOptions options);
 		protected TDef GetDefinition<TDef>() where TDef : class => owner.GetDefinition<TDef>(location.Module, location.Token);
 		protected IDecompiler MethodDecompiler => owner.MethodDecompiler;
 
-		protected FormatterOptions GetPrinterFlags() {
+		protected FormatterOptions GetFormatterOptions(BookmarkLocationFormatterOptions options) {
 			FormatterOptions flags = 0;
-			if (bookmarkDisplaySettings.ShowModuleNames)			flags |= FormatterOptions.ShowModuleNames;
-			if (bookmarkDisplaySettings.ShowParameterTypes)			flags |= FormatterOptions.ShowParameterTypes;
-			if (bookmarkDisplaySettings.ShowParameterNames)			flags |= FormatterOptions.ShowParameterNames;
-			if (bookmarkDisplaySettings.ShowDeclaringTypes)			flags |= FormatterOptions.ShowDeclaringTypes;
-			if (bookmarkDisplaySettings.ShowReturnTypes)			flags |= FormatterOptions.ShowReturnTypes;
-			if (bookmarkDisplaySettings.ShowNamespaces)				flags |= FormatterOptions.ShowNamespaces;
-			if (bookmarkDisplaySettings.ShowIntrinsicTypeKeywords)	flags |= FormatterOptions.ShowIntrinsicTypeKeywords;
+			if ((options & BookmarkLocationFormatterOptions.ModuleNames) != 0)
+				flags |= FormatterOptions.ShowModuleNames;
+			if ((options & BookmarkLocationFormatterOptions.ParameterTypes) != 0)
+				flags |= FormatterOptions.ShowParameterTypes;
+			if ((options & BookmarkLocationFormatterOptions.ParameterNames) != 0)
+				flags |= FormatterOptions.ShowParameterNames;
+			if ((options & BookmarkLocationFormatterOptions.DeclaringTypes) != 0)
+				flags |= FormatterOptions.ShowDeclaringTypes;
+			if ((options & BookmarkLocationFormatterOptions.ReturnTypes) != 0)
+				flags |= FormatterOptions.ShowReturnTypes;
+			if ((options & BookmarkLocationFormatterOptions.Namespaces) != 0)
+				flags |= FormatterOptions.ShowNamespaces;
+			if ((options & BookmarkLocationFormatterOptions.IntrinsicTypeKeywords) != 0)
+				flags |= FormatterOptions.ShowIntrinsicTypeKeywords;
+			if ((options & BookmarkLocationFormatterOptions.DigitSeparators) != 0)
+				flags |= FormatterOptions.DigitSeparators;
+			if ((options & BookmarkLocationFormatterOptions.Decimal) != 0)
+				flags |= FormatterOptions.UseDecimal;
 			return flags;
 		}
 
@@ -83,22 +98,22 @@ namespace dnSpy.Bookmarks.DotNet {
 	sealed class DotNetMethodBodyBookmarkLocationFormatterImpl : DotNetBookmarkLocationFormatter {
 		readonly DotNetMethodBodyBookmarkLocation location;
 
-		public DotNetMethodBodyBookmarkLocationFormatterImpl(BookmarkFormatterServiceImpl owner, BookmarkDisplaySettings bookmarkDisplaySettings, DotNetMethodBodyBookmarkLocationImpl location)
-			: base(owner, bookmarkDisplaySettings, location) => this.location = location ?? throw new ArgumentNullException(nameof(location));
+		public DotNetMethodBodyBookmarkLocationFormatterImpl(BookmarkFormatterServiceImpl owner, DotNetMethodBodyBookmarkLocationImpl location)
+			: base(owner, location) => this.location = location ?? throw new ArgumentNullException(nameof(location));
 
 		void WriteILOffset(ITextColorWriter output, uint offset) {
 			// Offsets are always in hex
 			if (offset <= ushort.MaxValue)
-				output.Write(BoxedTextColor.Number, "0x" + offset.ToString("X4"));
+				output.Write(BoxedTextColor.Number, GetHexPrefix() + offset.ToString("X4"));
 			else
-				output.Write(BoxedTextColor.Number, "0x" + offset.ToString("X8"));
+				output.Write(BoxedTextColor.Number, GetHexPrefix() + offset.ToString("X8"));
 		}
 
-		protected override bool WriteLocationCore(ITextColorWriter output) {
+		protected override bool WriteLocationCore(ITextColorWriter output, BookmarkLocationFormatterOptions options) {
 			var method = GetDefinition<MethodDef>();
 			if (method == null)
 				return false;
-			MethodDecompiler.Write(output, method, GetPrinterFlags());
+			MethodDecompiler.Write(output, method, GetFormatterOptions(options));
 
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Operator, "+");
@@ -112,14 +127,14 @@ namespace dnSpy.Bookmarks.DotNet {
 	sealed class DotNetTokenBookmarkLocationFormatterImpl : DotNetBookmarkLocationFormatter {
 		readonly DotNetTokenBookmarkLocation location;
 
-		public DotNetTokenBookmarkLocationFormatterImpl(BookmarkFormatterServiceImpl owner, BookmarkDisplaySettings bookmarkDisplaySettings, DotNetTokenBookmarkLocationImpl location)
-			: base(owner, bookmarkDisplaySettings, location) => this.location = location ?? throw new ArgumentNullException(nameof(location));
+		public DotNetTokenBookmarkLocationFormatterImpl(BookmarkFormatterServiceImpl owner, DotNetTokenBookmarkLocationImpl location)
+			: base(owner, location) => this.location = location ?? throw new ArgumentNullException(nameof(location));
 
-		protected override bool WriteLocationCore(ITextColorWriter output) {
+		protected override bool WriteLocationCore(ITextColorWriter output, BookmarkLocationFormatterOptions options) {
 			var def = GetDefinition<IMemberDef>();
 			if (def == null)
 				return false;
-			MethodDecompiler.Write(output, def, GetPrinterFlags());
+			MethodDecompiler.Write(output, def, GetFormatterOptions(options));
 
 			return true;
 		}

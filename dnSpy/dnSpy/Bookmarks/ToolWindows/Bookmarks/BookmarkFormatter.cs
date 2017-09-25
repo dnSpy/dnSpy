@@ -55,7 +55,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			output.Write(color, vm.Bookmark.Name ?? string.Empty);
 		}
 
-		internal void WriteLocation(ITextColorWriter output, BookmarkVM vm) => vm.BookmarkLocationFormatter.WriteLocation(output);
+		internal void WriteLocation(ITextColorWriter output, BookmarkVM vm) => vm.BookmarkLocationFormatter.WriteLocation(output, vm.Context.FormatterOptions);
 		internal void WriteModule(ITextColorWriter output, BookmarkVM vm) => vm.BookmarkLocationFormatter.WriteModule(output);
 	}
 }

@@ -34,16 +34,14 @@ namespace dnSpy.Bookmarks.DotNet {
 	[Export(typeof(BookmarkFormatterService))]
 	sealed class BookmarkFormatterServiceImpl : BookmarkFormatterService {
 		readonly Lazy<IDecompilerService> decompilerService;
-		readonly BookmarkDisplaySettings bookmarkDisplaySettings;
 		readonly Lazy<BookmarksService> bookmarksService;
 		readonly Lazy<DbgMetadataService> dbgMetadataService;
 
 		internal IDecompiler MethodDecompiler => decompilerService.Value.Decompiler;
 
 		[ImportingConstructor]
-		BookmarkFormatterServiceImpl(UIDispatcher uiDispatcher, Lazy<IDecompilerService> decompilerService, BookmarkDisplaySettings bookmarkDisplaySettings, Lazy<BookmarksService> bookmarksService, Lazy<DbgMetadataService> dbgMetadataService) {
+		BookmarkFormatterServiceImpl(UIDispatcher uiDispatcher, Lazy<IDecompilerService> decompilerService, Lazy<BookmarksService> bookmarksService, Lazy<DbgMetadataService> dbgMetadataService) {
 			this.decompilerService = decompilerService;
-			this.bookmarkDisplaySettings = bookmarkDisplaySettings;
 			this.bookmarksService = bookmarksService;
 			this.dbgMetadataService = dbgMetadataService;
 			uiDispatcher.UI(() => decompilerService.Value.DecompilerChanged += DecompilerService_DecompilerChanged);
@@ -57,10 +55,10 @@ namespace dnSpy.Bookmarks.DotNet {
 		}
 
 		public override DotNetBookmarkLocationFormatter Create(DotNetMethodBodyBookmarkLocationImpl location) =>
-			new DotNetMethodBodyBookmarkLocationFormatterImpl(this, bookmarkDisplaySettings, location);
+			new DotNetMethodBodyBookmarkLocationFormatterImpl(this, location);
 
 		public override DotNetBookmarkLocationFormatter Create(DotNetTokenBookmarkLocationImpl location) =>
-			new DotNetTokenBookmarkLocationFormatterImpl(this, bookmarkDisplaySettings, location);
+			new DotNetTokenBookmarkLocationFormatterImpl(this, location);
 
 		internal TDef GetDefinition<TDef>(ModuleId module, uint token) where TDef : class {
 			var md = dbgMetadataService.Value.TryGetMetadata(module, DbgLoadModuleOptions.AutoLoaded);
