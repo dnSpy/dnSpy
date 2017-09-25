@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	sealed class NullDbgBreakpointLocationFormatter : DbgBreakpointLocationFormatter {
 		public static readonly NullDbgBreakpointLocationFormatter Instance = new NullDbgBreakpointLocationFormatter();
 		NullDbgBreakpointLocationFormatter() { }
-		public override void WriteName(ITextColorWriter output) { }
+		public override void WriteName(ITextColorWriter output, DbgBreakpointLocationFormatterOptions options) { }
 		public override void WriteModule(ITextColorWriter output) { }
 		public override void Dispose() { }
 	}

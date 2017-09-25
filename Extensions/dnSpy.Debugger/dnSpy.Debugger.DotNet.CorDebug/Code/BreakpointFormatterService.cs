@@ -34,16 +34,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 	[Export(typeof(BreakpointFormatterService))]
 	sealed class BreakpointFormatterServiceImpl : BreakpointFormatterService {
 		readonly Lazy<IDecompilerService> decompilerService;
-		readonly DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgMetadataService> dbgMetadataService;
 
 		internal IDecompiler MethodDecompiler => decompilerService.Value.Decompiler;
 
 		[ImportingConstructor]
-		BreakpointFormatterServiceImpl(UIDispatcher uiDispatcher, Lazy<IDecompilerService> decompilerService, DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgMetadataService> dbgMetadataService) {
+		BreakpointFormatterServiceImpl(UIDispatcher uiDispatcher, Lazy<IDecompilerService> decompilerService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgMetadataService> dbgMetadataService) {
 			this.decompilerService = decompilerService;
-			this.dbgCodeBreakpointDisplaySettings = dbgCodeBreakpointDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgMetadataService = dbgMetadataService;
 			uiDispatcher.UI(() => decompilerService.Value.DecompilerChanged += DecompilerService_DecompilerChanged);
@@ -59,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 		}
 
 		public override DbgBreakpointLocationFormatterImpl Create(DbgDotNetNativeCodeLocation location) =>
-			new DbgBreakpointLocationFormatterImpl(this, dbgCodeBreakpointDisplaySettings, (DbgDotNetNativeCodeLocationImpl)location);
+			new DbgBreakpointLocationFormatterImpl(this, (DbgDotNetNativeCodeLocationImpl)location);
 
 		internal TDef GetDefinition<TDef>(ModuleId module, uint token) where TDef : class {
 			var md = dbgMetadataService.Value.TryGetMetadata(module, DbgLoadModuleOptions.AutoLoaded);

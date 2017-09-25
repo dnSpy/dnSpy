@@ -204,6 +204,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				dbgCodeBreakpointsService.Value.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
 				dbgCodeBreakpointsService.Value.BoundBreakpointsMessageChanged += DbgCodeBreakpointsService_BoundBreakpointsMessageChanged;
 				codeBreakpointContext.DbgCodeBreakpointHitCountService.HitCountChanged += DbgCodeBreakpointHitCountService_HitCountChanged;
+				codeBreakpointContext.BreakpointLocationFormatterOptions = GetBreakpointLocationFormatterOptions();
 				var breakpoints = dbgCodeBreakpointsService.Value.Breakpoints;
 				if (breakpoints.Length > 0)
 					UI(() => AddItems_UI(breakpoints));
@@ -230,9 +231,16 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		// UI thread
 		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
-			if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
+			switch (propertyName) {
+			case nameof(DebuggerSettings.SyntaxHighlight):
 				codeBreakpointContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				RefreshThemeFields_UI();
+				break;
+			case nameof(DebuggerSettings.UseDigitSeparators):
+			case nameof(DebuggerSettings.UseHexadecimal):
+				codeBreakpointContext.BreakpointLocationFormatterOptions = GetBreakpointLocationFormatterOptions();
+				RefreshNameColumn_UI();
+				break;
 			}
 		}
 
@@ -252,6 +260,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			case nameof(DbgCodeBreakpointDisplaySettings.ShowReturnTypes):
 			case nameof(DbgCodeBreakpointDisplaySettings.ShowNamespaces):
 			case nameof(DbgCodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords):
+				codeBreakpointContext.BreakpointLocationFormatterOptions = GetBreakpointLocationFormatterOptions();
 				RefreshNameColumn_UI();
 				break;
 
@@ -259,6 +268,31 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				Debug.Fail($"Unknown property: {propertyName}");
 				break;
 			}
+		}
+
+		DbgBreakpointLocationFormatterOptions GetBreakpointLocationFormatterOptions() {
+			var options = DbgBreakpointLocationFormatterOptions.None;
+			if (dbgCodeBreakpointDisplaySettings.ShowTokens)
+				options |= DbgBreakpointLocationFormatterOptions.Tokens;
+			if (dbgCodeBreakpointDisplaySettings.ShowModuleNames)
+				options |= DbgBreakpointLocationFormatterOptions.ModuleNames;
+			if (dbgCodeBreakpointDisplaySettings.ShowParameterTypes)
+				options |= DbgBreakpointLocationFormatterOptions.ParameterTypes;
+			if (dbgCodeBreakpointDisplaySettings.ShowParameterNames)
+				options |= DbgBreakpointLocationFormatterOptions.ParameterNames;
+			if (dbgCodeBreakpointDisplaySettings.ShowDeclaringTypes)
+				options |= DbgBreakpointLocationFormatterOptions.DeclaringTypes;
+			if (dbgCodeBreakpointDisplaySettings.ShowReturnTypes)
+				options |= DbgBreakpointLocationFormatterOptions.ReturnTypes;
+			if (dbgCodeBreakpointDisplaySettings.ShowNamespaces)
+				options |= DbgBreakpointLocationFormatterOptions.Namespaces;
+			if (dbgCodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords)
+				options |= DbgBreakpointLocationFormatterOptions.IntrinsicTypeKeywords;
+			if (debuggerSettings.UseDigitSeparators)
+				options |= DbgBreakpointLocationFormatterOptions.DigitSeparators;
+			if (!debuggerSettings.UseHexadecimal)
+				options |= DbgBreakpointLocationFormatterOptions.Decimal;
+			return options;
 		}
 
 		// UI thread

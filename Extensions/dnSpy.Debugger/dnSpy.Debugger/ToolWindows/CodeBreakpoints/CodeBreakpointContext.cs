@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Debugger.Breakpoints.Code;
@@ -31,6 +32,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		CodeBreakpointFormatter Formatter { get; }
 		BreakpointConditionsFormatter BreakpointConditionsFormatter { get; }
+		DbgBreakpointLocationFormatterOptions BreakpointLocationFormatterOptions { get; }
 		bool SyntaxHighlight { get; }
 		DbgCodeBreakpointHitCountService2 DbgCodeBreakpointHitCountService { get; }
 		SearchMatcher SearchMatcher { get; }
@@ -43,6 +45,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public CodeBreakpointFormatter Formatter { get; set; }
 		public BreakpointConditionsFormatter BreakpointConditionsFormatter { get; }
+		public DbgBreakpointLocationFormatterOptions BreakpointLocationFormatterOptions { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public DbgCodeBreakpointHitCountService2 DbgCodeBreakpointHitCountService { get; }
 		public SearchMatcher SearchMatcher { get; }

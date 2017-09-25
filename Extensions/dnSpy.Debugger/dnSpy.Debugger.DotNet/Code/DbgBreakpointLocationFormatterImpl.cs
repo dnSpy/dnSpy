@@ -27,11 +27,9 @@ namespace dnSpy.Debugger.DotNet.Code {
 	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
 		readonly DbgDotNetCodeLocationImpl location;
 		readonly BreakpointFormatterServiceImpl owner;
-		readonly DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings;
 
-		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings, DbgDotNetCodeLocationImpl location) {
+		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, DbgDotNetCodeLocationImpl location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
-			this.dbgCodeBreakpointDisplaySettings = dbgCodeBreakpointDisplaySettings ?? throw new ArgumentNullException(nameof(dbgCodeBreakpointDisplaySettings));
 			this.location = location ?? throw new ArgumentNullException(nameof(location));
 		}
 
@@ -39,20 +37,26 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		internal void RefreshName() => RaiseNameChanged();
 
+		string GetHexPrefix() {
+			if (owner.MethodDecompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
+				return "&H";
+			return "0x";
+		}
+
 		void WriteILOffset(ITextColorWriter output, uint offset) {
 			// Offsets are always in hex
 			if (offset <= ushort.MaxValue)
-				output.Write(BoxedTextColor.Number, "0x" + offset.ToString("X4"));
+				output.Write(BoxedTextColor.Number, GetHexPrefix() + offset.ToString("X4"));
 			else
-				output.Write(BoxedTextColor.Number, "0x" + offset.ToString("X8"));
+				output.Write(BoxedTextColor.Number, GetHexPrefix() + offset.ToString("X8"));
 		}
 
 		void WriteToken(ITextColorWriter output, uint token) =>
-			output.Write(BoxedTextColor.Number, "0x" + token.ToString("X8"));
+			output.Write(BoxedTextColor.Number, GetHexPrefix() + token.ToString("X8"));
 
-		public override void WriteName(ITextColorWriter output) {
+		public override void WriteName(ITextColorWriter output, DbgBreakpointLocationFormatterOptions options) {
 			bool printedToken = false;
-			if (dbgCodeBreakpointDisplaySettings.ShowTokens) {
+			if ((options & DbgBreakpointLocationFormatterOptions.Tokens) != 0) {
 				WriteToken(output, location.Token);
 				output.WriteSpace();
 				printedToken = true;
@@ -66,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 					WriteToken(output, location.Token);
 			}
 			else
-				owner.MethodDecompiler.Write(output, method, GetPrinterFlags());
+				owner.MethodDecompiler.Write(output, method, GetFormatterOptions(options));
 
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Operator, "+");
@@ -74,15 +78,26 @@ namespace dnSpy.Debugger.DotNet.Code {
 			WriteILOffset(output, location.Offset);
 		}
 
-		FormatterOptions GetPrinterFlags() {
+		FormatterOptions GetFormatterOptions(DbgBreakpointLocationFormatterOptions options) {
 			FormatterOptions flags = 0;
-			if (dbgCodeBreakpointDisplaySettings.ShowModuleNames)			flags |= FormatterOptions.ShowModuleNames;
-			if (dbgCodeBreakpointDisplaySettings.ShowParameterTypes)		flags |= FormatterOptions.ShowParameterTypes;
-			if (dbgCodeBreakpointDisplaySettings.ShowParameterNames)		flags |= FormatterOptions.ShowParameterNames;
-			if (dbgCodeBreakpointDisplaySettings.ShowDeclaringTypes)		flags |= FormatterOptions.ShowDeclaringTypes;
-			if (dbgCodeBreakpointDisplaySettings.ShowReturnTypes)			flags |= FormatterOptions.ShowReturnTypes;
-			if (dbgCodeBreakpointDisplaySettings.ShowNamespaces)			flags |= FormatterOptions.ShowNamespaces;
-			if (dbgCodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords)	flags |= FormatterOptions.ShowIntrinsicTypeKeywords;
+			if ((options & DbgBreakpointLocationFormatterOptions.ModuleNames) != 0)
+				flags |= FormatterOptions.ShowModuleNames;
+			if ((options & DbgBreakpointLocationFormatterOptions.ParameterTypes) != 0)
+				flags |= FormatterOptions.ShowParameterTypes;
+			if ((options & DbgBreakpointLocationFormatterOptions.ParameterNames) != 0)
+				flags |= FormatterOptions.ShowParameterNames;
+			if ((options & DbgBreakpointLocationFormatterOptions.DeclaringTypes) != 0)
+				flags |= FormatterOptions.ShowDeclaringTypes;
+			if ((options & DbgBreakpointLocationFormatterOptions.ReturnTypes) != 0)
+				flags |= FormatterOptions.ShowReturnTypes;
+			if ((options & DbgBreakpointLocationFormatterOptions.Namespaces) != 0)
+				flags |= FormatterOptions.ShowNamespaces;
+			if ((options & DbgBreakpointLocationFormatterOptions.IntrinsicTypeKeywords) != 0)
+				flags |= FormatterOptions.ShowIntrinsicTypeKeywords;
+			if ((options & DbgBreakpointLocationFormatterOptions.DigitSeparators) != 0)
+				flags |= FormatterOptions.DigitSeparators;
+			if ((options & DbgBreakpointLocationFormatterOptions.Decimal) != 0)
+				flags |= FormatterOptions.UseDecimal;
 			return flags;
 		}
 

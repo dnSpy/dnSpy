@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
-		internal void WriteName(ITextColorWriter output, CodeBreakpointVM vm) => vm.BreakpointLocationFormatter.WriteName(output);
+		internal void WriteName(ITextColorWriter output, CodeBreakpointVM vm) => vm.BreakpointLocationFormatter.WriteName(output, vm.Context.BreakpointLocationFormatterOptions);
 		internal void WriteCondition(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Condition);
 		internal void WriteHitCount(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.HitCount, vm.Context.DbgCodeBreakpointHitCountService.GetHitCount(vm.CodeBreakpoint));
 		internal void WriteFilter(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Filter);

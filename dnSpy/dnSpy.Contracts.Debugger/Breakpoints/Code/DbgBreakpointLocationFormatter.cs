@@ -57,7 +57,8 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// Writes the name shown in the Name column
 		/// </summary>
 		/// <param name="output">Output</param>
-		public abstract void WriteName(ITextColorWriter output);
+		/// <param name="options">Options</param>
+		public abstract void WriteName(ITextColorWriter output, DbgBreakpointLocationFormatterOptions options);
 
 		/// <summary>
 		/// Writes the module shown in the Module column
@@ -69,5 +70,66 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// Called when this instance isn't needed anymore
 		/// </summary>
 		public abstract void Dispose();
+	}
+
+	/// <summary>
+	/// Formatter options
+	/// </summary>
+	[Flags]
+	public enum DbgBreakpointLocationFormatterOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// Show metadata tokens
+		/// </summary>
+		Tokens					= 0x00000001,
+
+		/// <summary>
+		/// Show module names
+		/// </summary>
+		ModuleNames				= 0x00000002,
+
+		/// <summary>
+		/// Show parameter types
+		/// </summary>
+		ParameterTypes			= 0x00000004,
+
+		/// <summary>
+		/// Show parameter names
+		/// </summary>
+		ParameterNames			= 0x00000008,
+
+		/// <summary>
+		/// Show declaring types
+		/// </summary>
+		DeclaringTypes			= 0x00000010,
+
+		/// <summary>
+		/// Show return types
+		/// </summary>
+		ReturnTypes				= 0x00000020,
+
+		/// <summary>
+		/// Show namespaces
+		/// </summary>
+		Namespaces				= 0x00000040,
+
+		/// <summary>
+		/// Show intrinsic type keywords (eg. int instead of Int32)
+		/// </summary>
+		IntrinsicTypeKeywords	= 0x00000080,
+
+		/// <summary>
+		/// Use digit separators
+		/// </summary>
+		DigitSeparators			= 0x00000100,
+
+		/// <summary>
+		/// Use decimal instead of hexadecimal
+		/// </summary>
+		Decimal					= 0x00000200,
 	}
 }
