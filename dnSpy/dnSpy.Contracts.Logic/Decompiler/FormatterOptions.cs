@@ -21,30 +21,31 @@ using System;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// Printer flags
+	/// Formatter options
 	/// </summary>
 	[Flags]
-	public enum SimplePrinterFlags {
+	public enum FormatterOptions {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		ShowModuleNames				= 0x00000001,
 		ShowParameterTypes			= 0x00000002,
 		ShowParameterNames			= 0x00000004,
-		ShowOwnerTypes				= 0x00000008,
+		ShowDeclaringTypes			= 0x00000008,
 		ShowReturnTypes				= 0x00000010,
 		ShowNamespaces				= 0x00000020,
-		ShowTypeKeywords			= 0x00000040,
+		ShowIntrinsicTypeKeywords	= 0x00000040,
 		UseDecimal					= 0x00000080,
 		ShowTokens					= 0x00000100,
 		ShowArrayValueSizes			= 0x00000200,
 		ShowFieldLiteralValues		= 0x00000400,
 		ShowParameterLiteralValues	= 0x00000800,
+		DigitSeparators				= 0x00001000,
 
 		Default =
 			ShowParameterTypes |
 			ShowParameterNames |
-			ShowOwnerTypes |
+			ShowDeclaringTypes |
 			ShowReturnTypes |
-			ShowTypeKeywords |
+			ShowIntrinsicTypeKeywords |
 			ShowFieldLiteralValues,
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

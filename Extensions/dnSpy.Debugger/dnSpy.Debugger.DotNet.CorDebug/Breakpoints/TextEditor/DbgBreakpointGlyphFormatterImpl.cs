@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Breakpoints.TextEditor {
 			if (statement != null) {
 				output.Write(BoxedTextColor.Text, " ('");
 				var decompiler = (documentViewer?.DocumentTab.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
-				decompiler.Write(output, statement.Value.Method, SimplePrinterFlags.Default);
+				decompiler.Write(output, statement.Value.Method, FormatterOptions.Default);
 				output.Write(BoxedTextColor.Text, "')");
 			}
 

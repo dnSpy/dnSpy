@@ -221,14 +221,15 @@ namespace dnSpy.Decompiler {
 				output.Write(IdentifierEscaper.Escape(type.Name), MetadataTextColorProvider.GetColor(type));
 		}
 
+		protected const FormatterOptions DefaultFormatterOptions = FormatterOptions.Default | FormatterOptions.ShowParameterLiteralValues;
 		public virtual void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
-			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(member);
+			new CSharpFormatter(output, DefaultFormatterOptions).WriteToolTip(member);
 		public virtual void WriteToolTip(ITextColorWriter output, ISourceVariable variable) =>
-			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(variable);
+			new CSharpFormatter(output, DefaultFormatterOptions).WriteToolTip(variable);
 		public virtual void WriteNamespaceToolTip(ITextColorWriter output, string @namespace) =>
-			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteNamespaceToolTip(@namespace);
-		public virtual void Write(ITextColorWriter output, IMemberRef member, SimplePrinterFlags flags) =>
-			new SimpleCSharpPrinter(output, flags).Write(member);
+			new CSharpFormatter(output, DefaultFormatterOptions).WriteNamespaceToolTip(@namespace);
+		public virtual void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags) =>
+			new CSharpFormatter(output, flags).Write(member);
 
 		protected static string GetName(IVariable variable, string name) {
 			if (!string.IsNullOrWhiteSpace(name))

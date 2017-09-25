@@ -61,6 +61,33 @@ namespace dnSpy.Decompiler.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to awaitable.
+        /// </summary>
+        internal static string CSharp_Awaitable_Method {
+            get {
+                return ResourceManager.GetString("CSharp_Awaitable_Method", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to deprecated.
+        /// </summary>
+        internal static string CSharp_Deprecated_Member {
+            get {
+                return ResourceManager.GetString("CSharp_Deprecated_Member", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to extension.
+        /// </summary>
+        internal static string CSharp_Extension_Method {
+            get {
+                return ResourceManager.GetString("CSharp_Extension_Method", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to AnyCPU (32-bit preferred).
         /// </summary>
         internal static string Decompile_AnyCPU32BitPreferred {

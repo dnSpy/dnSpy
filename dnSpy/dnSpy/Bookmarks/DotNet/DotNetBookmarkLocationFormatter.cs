@@ -64,15 +64,15 @@ namespace dnSpy.Bookmarks.DotNet {
 		protected TDef GetDefinition<TDef>() where TDef : class => owner.GetDefinition<TDef>(location.Module, location.Token);
 		protected IDecompiler MethodDecompiler => owner.MethodDecompiler;
 
-		protected SimplePrinterFlags GetPrinterFlags() {
-			SimplePrinterFlags flags = 0;
-			if (bookmarkDisplaySettings.ShowModuleNames)			flags |= SimplePrinterFlags.ShowModuleNames;
-			if (bookmarkDisplaySettings.ShowParameterTypes)			flags |= SimplePrinterFlags.ShowParameterTypes;
-			if (bookmarkDisplaySettings.ShowParameterNames)			flags |= SimplePrinterFlags.ShowParameterNames;
-			if (bookmarkDisplaySettings.ShowDeclaringTypes)			flags |= SimplePrinterFlags.ShowOwnerTypes;
-			if (bookmarkDisplaySettings.ShowReturnTypes)			flags |= SimplePrinterFlags.ShowReturnTypes;
-			if (bookmarkDisplaySettings.ShowNamespaces)				flags |= SimplePrinterFlags.ShowNamespaces;
-			if (bookmarkDisplaySettings.ShowIntrinsicTypeKeywords)	flags |= SimplePrinterFlags.ShowTypeKeywords;
+		protected FormatterOptions GetPrinterFlags() {
+			FormatterOptions flags = 0;
+			if (bookmarkDisplaySettings.ShowModuleNames)			flags |= FormatterOptions.ShowModuleNames;
+			if (bookmarkDisplaySettings.ShowParameterTypes)			flags |= FormatterOptions.ShowParameterTypes;
+			if (bookmarkDisplaySettings.ShowParameterNames)			flags |= FormatterOptions.ShowParameterNames;
+			if (bookmarkDisplaySettings.ShowDeclaringTypes)			flags |= FormatterOptions.ShowDeclaringTypes;
+			if (bookmarkDisplaySettings.ShowReturnTypes)			flags |= FormatterOptions.ShowReturnTypes;
+			if (bookmarkDisplaySettings.ShowNamespaces)				flags |= FormatterOptions.ShowNamespaces;
+			if (bookmarkDisplaySettings.ShowIntrinsicTypeKeywords)	flags |= FormatterOptions.ShowIntrinsicTypeKeywords;
 			return flags;
 		}
 

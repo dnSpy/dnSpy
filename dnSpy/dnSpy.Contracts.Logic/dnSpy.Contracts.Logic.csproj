@@ -55,6 +55,7 @@
     <Compile Include="Decompiler\DecompileTypeBase.cs" />
     <Compile Include="Decompiler\DecompileTypeMethods.cs" />
     <Compile Include="Decompiler\Extensions.cs" />
+    <Compile Include="Decompiler\FormatterOptions.cs" />
     <Compile Include="Decompiler\GenericArgumentResolver.cs" />
     <Compile Include="Decompiler\IBamlDecompiler.cs" />
     <Compile Include="Decompiler\IDecompiler.cs" />
@@ -79,7 +80,6 @@
     <Compile Include="Decompiler\NamespaceReference.cs" />
     <Compile Include="Decompiler\PredefinedCustomDataIds.cs" />
     <Compile Include="Decompiler\PredefinedSpanReferenceIds.cs" />
-    <Compile Include="Decompiler\SimplePrinterFlags.cs" />
     <Compile Include="Decompiler\SimpleXmlParser.cs" />
     <Compile Include="Decompiler\SourceLocal.cs" />
     <Compile Include="Decompiler\SourceParameter.cs" />

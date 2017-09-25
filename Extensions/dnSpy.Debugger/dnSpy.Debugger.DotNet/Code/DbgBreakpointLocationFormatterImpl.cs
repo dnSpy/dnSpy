@@ -74,15 +74,15 @@ namespace dnSpy.Debugger.DotNet.Code {
 			WriteILOffset(output, location.Offset);
 		}
 
-		SimplePrinterFlags GetPrinterFlags() {
-			SimplePrinterFlags flags = 0;
-			if (dbgCodeBreakpointDisplaySettings.ShowModuleNames)			flags |= SimplePrinterFlags.ShowModuleNames;
-			if (dbgCodeBreakpointDisplaySettings.ShowParameterTypes)		flags |= SimplePrinterFlags.ShowParameterTypes;
-			if (dbgCodeBreakpointDisplaySettings.ShowParameterNames)		flags |= SimplePrinterFlags.ShowParameterNames;
-			if (dbgCodeBreakpointDisplaySettings.ShowDeclaringTypes)		flags |= SimplePrinterFlags.ShowOwnerTypes;
-			if (dbgCodeBreakpointDisplaySettings.ShowReturnTypes)			flags |= SimplePrinterFlags.ShowReturnTypes;
-			if (dbgCodeBreakpointDisplaySettings.ShowNamespaces)			flags |= SimplePrinterFlags.ShowNamespaces;
-			if (dbgCodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords)	flags |= SimplePrinterFlags.ShowTypeKeywords;
+		FormatterOptions GetPrinterFlags() {
+			FormatterOptions flags = 0;
+			if (dbgCodeBreakpointDisplaySettings.ShowModuleNames)			flags |= FormatterOptions.ShowModuleNames;
+			if (dbgCodeBreakpointDisplaySettings.ShowParameterTypes)		flags |= FormatterOptions.ShowParameterTypes;
+			if (dbgCodeBreakpointDisplaySettings.ShowParameterNames)		flags |= FormatterOptions.ShowParameterNames;
+			if (dbgCodeBreakpointDisplaySettings.ShowDeclaringTypes)		flags |= FormatterOptions.ShowDeclaringTypes;
+			if (dbgCodeBreakpointDisplaySettings.ShowReturnTypes)			flags |= FormatterOptions.ShowReturnTypes;
+			if (dbgCodeBreakpointDisplaySettings.ShowNamespaces)			flags |= FormatterOptions.ShowNamespaces;
+			if (dbgCodeBreakpointDisplaySettings.ShowIntrinsicTypeKeywords)	flags |= FormatterOptions.ShowIntrinsicTypeKeywords;
 			return flags;
 		}
 

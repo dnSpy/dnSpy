@@ -196,7 +196,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="output">Output</param>
 		/// <param name="member">Member</param>
 		/// <param name="flags">Flags</param>
-		void Write(ITextColorWriter output, IMemberRef member, SimplePrinterFlags flags);
+		void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags);
 
 		/// <summary>
 		/// Writes a comment prefix

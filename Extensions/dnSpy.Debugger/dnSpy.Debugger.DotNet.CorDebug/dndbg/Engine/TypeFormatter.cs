@@ -530,10 +530,9 @@ namespace dndbg.Engine {
 										if (indexes[i] == 0)
 											WriteNumber(dims[i]);
 										else {
-											//TODO: How does VS print these arrays?
 											WriteNumber((int)indexes[i]);
 											OutputWrite("..", TypeColor.Operator);
-											WriteNumber((int)(indexes[i] + dims[i]));
+											WriteNumber((int)(indexes[i] + dims[i] - 1));
 										}
 									}
 								}

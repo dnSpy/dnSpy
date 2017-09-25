@@ -41,7 +41,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CSharp\SimpleCSharpPrinter.cs" />
+    <Compile Include="CSharp\CSharpFormatter.cs" />
     <Compile Include="DecompilerBase.cs" />
     <Compile Include="FilenameUtils.cs" />
     <Compile Include="IL\ILLanguageHelper.cs" />
@@ -92,6 +92,7 @@
     <Compile Include="Settings\DecompilerOption.cs" />
     <Compile Include="TargetFrameworkInfo.cs" />
     <Compile Include="TargetFrameworkUtils.cs" />
+    <Compile Include="TypeFormatterUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
