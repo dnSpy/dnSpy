@@ -91,9 +91,9 @@ namespace dnSpy.Debugger.ToolWindows {
 
 		public static T WriteYesNo<T>(this T output, bool value) where T : ITextColorWriter {
 			if (value)
-				output.Write(BoxedTextColor.Keyword, dnSpy_Debugger_Resources.YesNo_Yes);
+				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.YesNo_Yes);
 			else
-				output.Write(BoxedTextColor.InstanceMethod, dnSpy_Debugger_Resources.YesNo_No);
+				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.YesNo_No);
 			return output;
 		}
 	}
