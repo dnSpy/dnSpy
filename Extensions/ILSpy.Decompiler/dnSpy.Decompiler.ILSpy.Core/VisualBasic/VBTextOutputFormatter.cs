@@ -214,6 +214,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 					output.Write(keyword, BoxedTextColor.Keyword);
 				canPrintAccessor = !canPrintAccessor;
 			}
+			else if (memberRef != null && node is OperatorDeclaration && keyword == "Operator")
+				output.Write(keyword, memberRef, DecompilerReferenceFlags.Definition, BoxedTextColor.Keyword);
 			else
 				output.Write(keyword, BoxedTextColor.Keyword);
 		}
