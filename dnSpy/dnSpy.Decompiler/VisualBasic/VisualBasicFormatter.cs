@@ -27,51 +27,56 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Properties;
 
-namespace dnSpy.Decompiler.CSharp {
-	public struct CSharpFormatter {
-		const string Keyword_true = "true";
-		const string Keyword_false = "false";
-		const string Keyword_null = "null";
-		const string Keyword_out = "out";
-		const string Keyword_in = "in";
-		const string Keyword_ref = "ref";
-		const string Keyword_this = "this";
-		const string Keyword_get = "get";
-		const string Keyword_set = "set";
-		const string Keyword_add = "add";
-		const string Keyword_remove = "remove";
-		const string Keyword_enum = "enum";
-		const string Keyword_struct = "struct";
-		const string Keyword_interface = "interface";
-		const string Keyword_class = "class";
-		const string Keyword_namespace = "namespace";
-		const string Keyword_params = "params";
-		const string Keyword_default = "default";
-		const string Keyword_delegate = "delegate";
-		const string HexPrefix = "0x";
-		const string VerbatimStringPrefix = "@";
-		const string IdentifierEscapeBegin = "@";
+namespace dnSpy.Decompiler.VisualBasic {
+	public struct VisualBasicFormatter {
+		const string Keyword_true = "True";
+		const string Keyword_false = "False";
+		const string Keyword_null = "Nothing";
+		const string Keyword_As = "As";
+		const string Keyword_out = "Out";
+		const string Keyword_in = "In";
+		const string Keyword_get = "Get";
+		const string Keyword_set = "Set";
+		const string Keyword_add = "Add";
+		const string Keyword_remove = "Remove";
+		const string Keyword_module = "Module";
+		const string Keyword_enum = "Enum";
+		const string Keyword_struct = "Structure";
+		const string Keyword_interface = "Interface";
+		const string Keyword_class = "Class";
+		const string Keyword_namespace = "Namespace";
+		const string Keyword_params = "ParamArray";
+		const string Keyword_delegate = "Delegate";
+		const string Keyword_ByRef = "ByRef";
+		const string Keyword_New = "New";
+		const string Keyword_Sub = "Sub";
+		const string Keyword_Function = "Function";
+		const string Keyword_ReadOnly = "ReadOnly";
+		const string Keyword_Property = "Property";
+		const string Keyword_Event = "Event";
+		const string HexPrefix = "&H";
+		const string IdentifierEscapeBegin = "[";
+		const string IdentifierEscapeEnd = "]";
 		const string ModuleNameSeparator = "!";
 		const string CommentBegin = "/*";
 		const string CommentEnd = "*/";
-		const string DeprecatedParenOpen = "[";
-		const string DeprecatedParenClose = "]";
-		const string MemberSpecialParenOpen = "(";
-		const string MemberSpecialParenClose = ")";
+		const string DeprecatedParenOpen = "(";
+		const string DeprecatedParenClose = ")";
+		const string MemberSpecialParenOpen = "<";
+		const string MemberSpecialParenClose = ">";
 		const string MethodParenOpen = "(";
 		const string MethodParenClose = ")";
 		const string DescriptionParenOpen = "(";
 		const string DescriptionParenClose = ")";
-		const string IndexerParenOpen = "[";
-		const string IndexerParenClose = "]";
-		const string PropertyParenOpen = "[";
-		const string PropertyParenClose = "]";
-		const string ArrayParenOpen = "[";
-		const string ArrayParenClose = "]";
+		const string PropertyParenOpen = "(";
+		const string PropertyParenClose = ")";
+		const string ArrayParenOpen = "(";
+		const string ArrayParenClose = ")";
 		const string TupleParenOpen = "(";
 		const string TupleParenClose = ")";
-		const string GenericParenOpen = "<";
-		const string GenericParenClose = ">";
+		const string GenericParenOpen = "(";
+		const string GenericParenClose = ")";
+		const string Keyword_Of = "Of";
 		const string DefaultParamValueParenOpen = "[";
 		const string DefaultParamValueParenClose = "]";
 
@@ -84,32 +89,33 @@ namespace dnSpy.Decompiler.CSharp {
 		FormatterOptions options;
 
 		static readonly Dictionary<string, string[]> nameToOperatorName = new Dictionary<string, string[]> {
-			{ "op_Addition", "operator +".Split(' ') },
-			{ "op_BitwiseAnd", "operator &".Split(' ') },
-			{ "op_BitwiseOr", "operator |".Split(' ') },
-			{ "op_Decrement", "operator --".Split(' ') },
-			{ "op_Division", "operator /".Split(' ') },
-			{ "op_Equality", "operator ==".Split(' ') },
-			{ "op_ExclusiveOr", "operator ^".Split(' ') },
-			{ "op_Explicit", "explicit operator".Split(' ') },
-			{ "op_False", "operator false".Split(' ') },
-			{ "op_GreaterThan", "operator >".Split(' ') },
-			{ "op_GreaterThanOrEqual", "operator >=".Split(' ') },
-			{ "op_Implicit", "implicit operator".Split(' ') },
-			{ "op_Increment", "operator ++".Split(' ') },
-			{ "op_Inequality", "operator !=".Split(' ') },
-			{ "op_LeftShift", "operator <<".Split(' ') },
-			{ "op_LessThan", "operator <".Split(' ') },
-			{ "op_LessThanOrEqual", "operator <=".Split(' ') },
-			{ "op_LogicalNot", "operator !".Split(' ') },
-			{ "op_Modulus", "operator %".Split(' ') },
-			{ "op_Multiply", "operator *".Split(' ') },
-			{ "op_OnesComplement", "operator ~".Split(' ') },
-			{ "op_RightShift", "operator >>".Split(' ') },
-			{ "op_Subtraction", "operator -".Split(' ') },
-			{ "op_True", "operator true".Split(' ') },
-			{ "op_UnaryNegation", "operator -".Split(' ') },
-			{ "op_UnaryPlus", "operator +".Split(' ') },
+			{ "op_UnaryPlus", "Operator +".Split(' ') },
+			{ "op_UnaryNegation", "Operator -".Split(' ') },
+			{ "op_False", "Operator IsFalse".Split(' ') },
+			{ "op_True", "Operator IsTrue".Split(' ') },
+			{ "op_OnesComplement", "Operator Not".Split(' ') },
+			{ "op_Addition", "Operator +".Split(' ') },
+			{ "op_Subtraction", "Operator -".Split(' ') },
+			{ "op_Multiply", "Operator *".Split(' ') },
+			{ "op_Division", "Operator /".Split(' ') },
+			{ "op_IntegerDivision", @"Operator \".Split(' ') },
+			{ "op_Concatenate", "Operator &".Split(' ') },
+			{ "op_Exponent", "Operator ^".Split(' ') },
+			{ "op_RightShift", "Operator >>".Split(' ') },
+			{ "op_LeftShift", "Operator <<".Split(' ') },
+			{ "op_Equality", "Operator =".Split(' ') },
+			{ "op_Inequality", "Operator <>".Split(' ') },
+			{ "op_GreaterThan", "Operator >".Split(' ') },
+			{ "op_GreaterThanOrEqual", "Operator >=".Split(' ') },
+			{ "op_LessThan", "Operator <".Split(' ') },
+			{ "op_LessThanOrEqual", "Operator <=".Split(' ') },
+			{ "op_BitwiseAnd", "Operator And".Split(' ') },
+			{ "op_Like", "Operator Like".Split(' ') },
+			{ "op_Modulus", "Operator Mod".Split(' ') },
+			{ "op_BitwiseOr", "Operator Or".Split(' ') },
+			{ "op_ExclusiveOr", "Operator Xor".Split(' ') },
+			{ "op_Implicit", "Widening Operator CType".Split(' ') },
+			{ "op_Explicit", "Narrowing Operator CType".Split(' ') },
 		};
 
 		bool ShowModuleNames => (options & FormatterOptions.ShowModuleNames) != 0;
@@ -126,7 +132,7 @@ namespace dnSpy.Decompiler.CSharp {
 		bool ShowParameterLiteralValues => (options & FormatterOptions.ShowParameterLiteralValues) != 0;
 		bool DigitSeparators => (options & FormatterOptions.DigitSeparators) != 0;
 
-		public CSharpFormatter(ITextColorWriter output, FormatterOptions options) {
+		public VisualBasicFormatter(ITextColorWriter output, FormatterOptions options) {
 			this.output = output;
 			this.options = options;
 			recursionCounter = 0;
@@ -135,22 +141,33 @@ namespace dnSpy.Decompiler.CSharp {
 			forceWrite = false;
 		}
 
-		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.Ordinal) {
-			"abstract", "as", "base", "bool", "break", "byte", "case", "catch",
-			"char", "checked", "class", "const", "continue", "decimal", "default", "delegate",
-			"do", "double", "else", "enum", "event", "explicit", "extern", "false",
-			"finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit",
-			"in", "int", "interface", "internal", "is", "lock", "long", "namespace",
-			"new", "null", "object", "operator", "out", "override", "params", "private",
-			"protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short",
-			"sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw",
-			"true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort",
-			"using", "virtual", "void", "volatile", "while",
+		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+			"#Const", "#Else", "#ElseIf", "#End", "#If", "AddHandler", "AddressOf",
+			"Alias", "And", "AndAlso", "As", "Boolean", "ByRef", "Byte", "ByVal",
+			"Call", "Case", "Catch", "CBool", "CByte", "CChar", "CDate", "CDbl",
+			"CDec", "Char", "CInt", "Class", "CLng", "CObj", "Const", "Continue",
+			"CSByte", "CShort", "CSng", "CStr", "CType", "CUInt", "CULng", "CUShort",
+			"Date", "Decimal", "Declare", "Default", "Delegate", "Dim", "DirectCast",
+			"Do", "Double", "Each", "Else", "ElseIf", "End", "EndIf", "Enum", "Erase",
+			"Error", "Event", "Exit", "False", "Finally", "For", "Friend", "Function",
+			"Get", "GetType", "GetXMLNamespace", "Global", "GoSub", "GoTo", "Handles",
+			"If", "Implements", "Imports", "In", "Inherits", "Integer", "Interface",
+			"Is", "IsNot", "Let", "Lib", "Like", "Long", "Loop", "Me", "Mod", "Module",
+			"MustInherit", "MustOverride", "MyBase", "MyClass", "Namespace", "Narrowing",
+			"New", "Next", "Not", "Nothing", "NotInheritable", "NotOverridable", "Object",
+			"Of", "On", "Operator", "Option", "Optional", "Or", "OrElse", "Out",
+			"Overloads", "Overridable", "Overrides", "ParamArray", "Partial", "Private",
+			"Property", "Protected", "Public", "RaiseEvent", "ReadOnly", "ReDim", "REM",
+			"RemoveHandler", "Resume", "Return", "SByte", "Select", "Set", "Shadows",
+			"Shared", "Short", "Single", "Static", "Step", "Stop", "String", "Structure",
+			"Sub", "SyncLock", "Then", "Throw", "To", "True", "Try", "TryCast", "TypeOf",
+			"UInteger", "ULong", "UShort", "Using", "Variant", "Wend", "When", "While",
+			"Widening", "With", "WithEvents", "WriteOnly", "Xor",
 		};
 
 		void WriteIdentifier(string id, object data) {
 			if (isKeyword.Contains(id))
-				OutputWrite(IdentifierEscapeBegin + IdentifierEscaper.Escape(id), data);
+				OutputWrite(IdentifierEscapeBegin + IdentifierEscaper.Escape(id) + IdentifierEscapeEnd, data);
 			else
 				OutputWrite(IdentifierEscaper.Escape(id), data);
 		}
@@ -192,7 +209,7 @@ namespace dnSpy.Decompiler.CSharp {
 				OutputWrite("System", BoxedTextColor.Namespace);
 				WritePeriod();
 			}
-			OutputWrite(name, BoxedTextColor.Type);
+			OutputWrite(name, isValueType ? BoxedTextColor.ValueType : BoxedTextColor.Type);
 		}
 
 		void WriteToken(IMDTokenProvider tok) {
@@ -285,7 +302,7 @@ namespace dnSpy.Decompiler.CSharp {
 		void WriteDeprecated(bool isDeprecated) {
 			if (isDeprecated) {
 				OutputWrite(DeprecatedParenOpen, BoxedTextColor.Punctuation);
-				OutputWrite(dnSpy_Decompiler_Resources.CSharp_Deprecated_Member, BoxedTextColor.Text);
+				OutputWrite(dnSpy_Decompiler_Resources.VisualBasic_Deprecated_Member, BoxedTextColor.Text);
 				OutputWrite(DeprecatedParenClose, BoxedTextColor.Punctuation);
 				WriteSpace();
 			}
@@ -298,12 +315,12 @@ namespace dnSpy.Decompiler.CSharp {
 			bool comma = false;
 			if ((flags & MemberSpecialFlags.Awaitable) != 0) {
 				comma = true;
-				OutputWrite(dnSpy_Decompiler_Resources.CSharp_Awaitable_Method, BoxedTextColor.Text);
+				OutputWrite(dnSpy_Decompiler_Resources.VisualBasic_Awaitable_Method, BoxedTextColor.Text);
 			}
 			if ((flags & MemberSpecialFlags.Extension) != 0) {
 				if (comma)
 					WriteCommaSpace();
-				OutputWrite(dnSpy_Decompiler_Resources.CSharp_Extension_Method, BoxedTextColor.Text);
+				OutputWrite(dnSpy_Decompiler_Resources.VisualBasic_Extension_Method, BoxedTextColor.Text);
 			}
 			OutputWrite(MemberSpecialParenClose, BoxedTextColor.Punctuation);
 			WriteSpace();
@@ -365,25 +382,10 @@ namespace dnSpy.Decompiler.CSharp {
 				}
 			}
 
-			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(td.Name), CSharpMetadataTextColorProvider.Instance.GetColor(td));
+			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(td.Name), VisualBasicMetadataTextColorProvider.Instance.GetColor(td));
 			WriteToken(type);
 			var genParams = td.GenericParameters.Skip(td.GenericParameters.Count - numGenParams).ToArray();
 			WriteGenerics(genParams, BoxedTextColor.TypeGenericParameter);
-		}
-
-		bool WriteRefIfByRef(TypeSig typeSig, ParamDef pd) {
-			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
-				if (pd != null && (!pd.IsIn && pd.IsOut)) {
-					OutputWrite(Keyword_out, BoxedTextColor.Keyword);
-					WriteSpace();
-				}
-				else {
-					OutputWrite(Keyword_ref, BoxedTextColor.Keyword);
-					WriteSpace();
-				}
-				return true;
-			}
-			return false;
 		}
 
 		void WriteAccessor(AccessorKind kind) {
@@ -405,8 +407,8 @@ namespace dnSpy.Decompiler.CSharp {
 				keyword = Keyword_remove;
 				break;
 			}
-			OutputWrite(".", BoxedTextColor.Operator);
 			OutputWrite(keyword, BoxedTextColor.Keyword);
+			WriteSpace();
 		}
 
 		void Write(IMethod method) {
@@ -417,15 +419,13 @@ namespace dnSpy.Decompiler.CSharp {
 
 			var propInfo = TypeFormatterUtils.TryGetProperty(method as MethodDef);
 			if (propInfo.kind != AccessorKind.None) {
-				Write(propInfo.property, writeAccessors: false);
-				WriteAccessor(propInfo.kind);
+				Write(propInfo.property, propInfo.kind);
 				return;
 			}
 
 			var eventInfo = TypeFormatterUtils.TryGetEvent(method as MethodDef);
 			if (eventInfo.kind != AccessorKind.None) {
-				Write(eventInfo.@event, writeAccessors: false);
-				WriteAccessor(eventInfo.kind);
+				Write(eventInfo.@event, eventInfo.kind);
 				return;
 			}
 
@@ -441,17 +441,25 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 			else
 				operatorInfo = TryGetOperatorInfo(method.Name);
-			bool isExplicitOrImplicit = operatorInfo != null && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
 
-			if (!isExplicitOrImplicit)
-				WriteReturnType(ref info, writeSpace: true);
+			if (operatorInfo != null) {
+				for (int i = 0; i < operatorInfo.Length - 1; i++) {
+					WriteOperatorInfoString(operatorInfo[i]);
+					WriteSpace();
+				}
+			}
+			else {
+				bool isSub = IsSub(ref info);
+				OutputWrite(isSub ? Keyword_Sub : Keyword_Function, BoxedTextColor.Keyword);
+				WriteSpace();
+			}
 
 			if (ShowDeclaringTypes) {
 				Write(method.DeclaringType);
 				WritePeriod();
 			}
 			if (info.MethodDef != null && info.MethodDef.IsConstructor && method.DeclaringType != null)
-				WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(method.DeclaringType.Name), CSharpMetadataTextColorProvider.Instance.GetColor(method));
+				OutputWrite(Keyword_New, BoxedTextColor.Keyword);
 			else if (info.MethodDef != null && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
 				WriteType(ovrMeth.DeclaringType, false, ShowIntrinsicTypeKeywords);
@@ -460,14 +468,11 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 			else
 				WriteMethodName(method, method.Name, operatorInfo);
-			if (isExplicitOrImplicit) {
-				WriteSpace();
-				ForceWriteReturnType(ref info, writeSpace: false);
-			}
 			WriteToken(method);
 
 			WriteGenericArguments(ref info);
 			WriteMethodParameterList(ref info, MethodParenOpen, MethodParenClose);
+			WriteReturnType(ref info);
 		}
 
 		static string[] TryGetOperatorInfo(string name) {
@@ -475,19 +480,13 @@ namespace dnSpy.Decompiler.CSharp {
 			return list;
 		}
 
-		void WriteOperatorInfoString(string s) => OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator);
+		void WriteOperatorInfoString(string s) => OutputWrite(s, 'A' <= s[0] && s[0] <= 'Z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator);
 
 		void WriteMethodName(IMethod method, string name, string[] operatorInfo) {
-			if (operatorInfo != null) {
-				for (int i = 0; i < operatorInfo.Length; i++) {
-					if (i > 0)
-						WriteSpace();
-					var s = operatorInfo[i];
-					WriteOperatorInfoString(s);
-				}
-			}
+			if (operatorInfo != null)
+				WriteOperatorInfoString(operatorInfo[operatorInfo.Length - 1]);
 			else
-				WriteIdentifier(name, CSharpMetadataTextColorProvider.Instance.GetColor(method));
+				WriteIdentifier(name, VisualBasicMetadataTextColorProvider.Instance.GetColor(method));
 		}
 
 		void WriteToolTip(IField field) {
@@ -515,18 +514,20 @@ namespace dnSpy.Decompiler.CSharp {
 					OutputWrite(DescriptionParenClose, BoxedTextColor.Punctuation);
 					WriteSpace();
 				}
-				WriteModuleName(fd?.Module);
-				Write(sig.Type, null, null, null);
-				WriteSpace();
 			}
-			else
-				WriteModuleName(fd?.Module);
+			WriteModuleName(fd?.Module);
 			if (ShowDeclaringTypes) {
 				Write(field.DeclaringType);
 				WritePeriod();
 			}
-			WriteIdentifier(field.Name, CSharpMetadataTextColorProvider.Instance.GetColor(field));
+			WriteIdentifier(field.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(field));
 			WriteToken(field);
+			if (!isEnumOwner) {
+				WriteSpace();
+				OutputWrite(Keyword_As, BoxedTextColor.Keyword);
+				WriteSpace();
+				Write(sig.Type, null, null, null);
+			}
 			if (ShowFieldLiteralValues && fd != null && fd.IsLiteral && fd.Constant != null) {
 				WriteSpace();
 				OutputWrite("=", BoxedTextColor.Operator);
@@ -606,8 +607,9 @@ namespace dnSpy.Decompiler.CSharp {
 			Write(prop);
 		}
 
-		void Write(PropertyDef prop) => Write(prop, writeAccessors: true);
-		void Write(PropertyDef prop, bool writeAccessors) {
+		void Write(PropertyDef prop) => Write(prop, AccessorKind.None);
+
+		void Write(PropertyDef prop, AccessorKind accessorKind) {
 			if (prop == null) {
 				WriteError();
 				return;
@@ -621,48 +623,45 @@ namespace dnSpy.Decompiler.CSharp {
 				return;
 			}
 
-			var info = new FormatterMethodInfo(md, md == setMethod);
+			if (setMethod == null) {
+				OutputWrite(Keyword_ReadOnly, BoxedTextColor.Keyword);
+				WriteSpace();
+			}
+
+			OutputWrite(Keyword_Property, BoxedTextColor.Keyword);
+			WriteSpace();
+
+			var sigMethod = md;
+			if (accessorKind != AccessorKind.None) {
+				if (accessorKind == AccessorKind.Getter)
+					sigMethod = getMethod ?? md;
+				else if (accessorKind == AccessorKind.Setter)
+					sigMethod = setMethod ?? md;
+				else
+					throw new InvalidOperationException();
+				WriteAccessor(accessorKind);
+			}
+
+			var info = new FormatterMethodInfo(sigMethod, sigMethod == setMethod, accessorKind == AccessorKind.Setter);
 			WriteModuleName(ref info);
-			WriteReturnType(ref info, writeSpace: true);
 			if (ShowDeclaringTypes) {
 				Write(prop.DeclaringType);
 				WritePeriod();
 			}
 			var ovrMeth = md == null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
-			if (prop.IsIndexer()) {
-				if (ovrMeth != null) {
-					WriteType(ovrMeth.DeclaringType, false, ShowIntrinsicTypeKeywords);
-					WritePeriod();
-				}
-				OutputWrite(Keyword_this, BoxedTextColor.Keyword);
-				WriteGenericArguments(ref info);
-				WriteMethodParameterList(ref info, IndexerParenOpen, IndexerParenClose);
-			}
-			else if (ovrMeth != null && TypeFormatterUtils.GetPropertyName(ovrMeth) != null) {
+			if (ovrMeth != null && TypeFormatterUtils.GetPropertyName(ovrMeth) != null) {
 				WriteType(ovrMeth.DeclaringType, false, ShowIntrinsicTypeKeywords);
 				WritePeriod();
-				WriteIdentifier(TypeFormatterUtils.GetPropertyName(ovrMeth), CSharpMetadataTextColorProvider.Instance.GetColor(prop));
+				WriteIdentifier(TypeFormatterUtils.GetPropertyName(ovrMeth), VisualBasicMetadataTextColorProvider.Instance.GetColor(prop));
 			}
 			else
-				WriteIdentifier(prop.Name, CSharpMetadataTextColorProvider.Instance.GetColor(prop));
+				WriteIdentifier(prop.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(prop));
+			WriteGenericArguments(ref info);
+			if (accessorKind != AccessorKind.None || prop.PropertySig.GetParamCount() != 0)
+				WriteMethodParameterList(ref info, PropertyParenOpen, PropertyParenClose);
 			WriteToken(prop);
 
-			if (writeAccessors) {
-				WriteSpace();
-				OutputWrite("{", BoxedTextColor.Punctuation);
-				if (prop.GetMethods.Count > 0) {
-					WriteSpace();
-					OutputWrite(Keyword_get, BoxedTextColor.Keyword);
-					OutputWrite(";", BoxedTextColor.Punctuation);
-				}
-				if (prop.SetMethods.Count > 0) {
-					WriteSpace();
-					OutputWrite(Keyword_set, BoxedTextColor.Keyword);
-					OutputWrite(";", BoxedTextColor.Punctuation);
-				}
-				WriteSpace();
-				OutputWrite("}", BoxedTextColor.Punctuation);
-			}
+			WriteReturnType(ref info);
 		}
 
 		void WriteToolTip(EventDef evt) {
@@ -670,22 +669,30 @@ namespace dnSpy.Decompiler.CSharp {
 			Write(evt);
 		}
 
-		void Write(EventDef evt) => Write(evt, writeAccessors: true);
-		void Write(EventDef evt, bool writeAccessors) {
+		void Write(EventDef evt) => Write(evt, AccessorKind.None);
+		void Write(EventDef evt, AccessorKind accessorKind) {
 			if (evt == null) {
 				WriteError();
 				return;
 			}
 
-			WriteModuleName(evt.Module);
-			Write(evt.EventType);
+			OutputWrite(Keyword_Event, BoxedTextColor.Keyword);
 			WriteSpace();
+
+			if (accessorKind != AccessorKind.None)
+				WriteAccessor(accessorKind);
+
+			WriteModuleName(evt.Module);
 			if (ShowDeclaringTypes) {
 				Write(evt.DeclaringType);
 				WritePeriod();
 			}
-			WriteIdentifier(evt.Name, CSharpMetadataTextColorProvider.Instance.GetColor(evt));
+			WriteIdentifier(evt.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(evt));
 			WriteToken(evt);
+			WriteSpace();
+			OutputWrite(Keyword_As, BoxedTextColor.Keyword);
+			WriteSpace();
+			Write(evt.EventType);
 		}
 
 		void WriteToolTip(GenericParam gp) {
@@ -711,7 +718,7 @@ namespace dnSpy.Decompiler.CSharp {
 				return;
 			}
 
-			WriteIdentifier(gp.Name, CSharpMetadataTextColorProvider.Instance.GetColor(gp));
+			WriteIdentifier(gp.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(gp));
 			WriteToken(gp);
 		}
 
@@ -728,13 +735,17 @@ namespace dnSpy.Decompiler.CSharp {
 
 				var info = new FormatterMethodInfo(invoke);
 				WriteModuleName(ref info);
-				WriteReturnType(ref info, writeSpace: true);
+
+				bool isSub = IsSub(ref info);
+				OutputWrite(isSub ? Keyword_Sub : Keyword_Function, BoxedTextColor.Keyword);
+				WriteSpace();
 
 				// Always print the namespace here because that's what VS does
 				WriteType(td, true, ShowIntrinsicTypeKeywords);
 
 				WriteGenericArguments(ref info);
 				WriteMethodParameterList(ref info, MethodParenOpen, MethodParenClose);
+				WriteReturnType(ref info);
 				return;
 			}
 			else
@@ -746,7 +757,9 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 
 			string keyword;
-			if (td.IsEnum)
+			if (IsModule(td))
+				keyword = Keyword_module;
+			else if (td.IsEnum)
 				keyword = Keyword_enum;
 			else if (td.IsValueType)
 				keyword = Keyword_struct;
@@ -760,6 +773,11 @@ namespace dnSpy.Decompiler.CSharp {
 			// Always print the namespace here because that's what VS does
 			WriteType(type, true, false);
 		}
+
+		static bool IsModule(TypeDef type) =>
+			type != null && type.DeclaringType == null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
+		static readonly UTF8String stringMicrosoftVisualBasicCompilerServices = new UTF8String("Microsoft.VisualBasic.CompilerServices");
+		static readonly UTF8String stringStandardModuleAttribute = new UTF8String("StandardModuleAttribute");
 
 		void Write(ITypeDefOrRef type, bool showModuleNames = false) {
 			if (type == null) {
@@ -788,7 +806,7 @@ namespace dnSpy.Decompiler.CSharp {
 					if (showModuleNames)
 						WriteModuleName(type.ResolveTypeDef()?.Module);
 					WriteNamespace(type.Namespace);
-					WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.Name), CSharpMetadataTextColorProvider.Instance.GetColor(type));
+					WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.Name), VisualBasicMetadataTextColorProvider.Instance.GetColor(type));
 				}
 				WriteToken(type);
 			}
@@ -814,32 +832,27 @@ namespace dnSpy.Decompiler.CSharp {
 			if (type == null || type.DeclaringType != null || type.Namespace != "System" || !type.DefinitionAssembly.IsCorLib())
 				return null;
 			switch (type.TypeName) {
-			case "Void":	return "void";
-			case "Boolean":	return "bool";
-			case "Byte":	return "byte";
-			case "Char":	return "char";
-			case "Decimal":	return "decimal";
-			case "Double":	return "double";
-			case "Int16":	return "short";
-			case "Int32":	return "int";
-			case "Int64":	return "long";
-			case "Object":	return "object";
-			case "SByte":	return "sbyte";
-			case "Single":	return "float";
-			case "String":	return "string";
-			case "UInt16":	return "ushort";
-			case "UInt32":	return "uint";
-			case "UInt64":	return "ulong";
+			case "Boolean":	return "Boolean";
+			case "Byte":	return "Byte";
+			case "Char":	return "Char";
+			case "DateTime":return "Date";
+			case "Decimal":	return "Decimal";
+			case "Double":	return "Double";
+			case "Int16":	return "Short";
+			case "Int32":	return "Integer";
+			case "Int64":	return "Long";
+			case "Object":	return "Object";
+			case "SByte":	return "SByte";
+			case "Single":	return "Single";
+			case "String":	return "String";
+			case "UInt16":	return "UShort";
+			case "UInt32":	return "UInteger";
+			case "UInt64":	return "ULong";
 			default:		return null;
 			}
 		}
 
-		void Write(TypeSig type, ParamDef ownerParam, IList<TypeSig> typeGenArgs, IList<TypeSig> methGenArgs) {
-			WriteRefIfByRef(type, ownerParam);
-			if (type.RemovePinnedAndModifiers() is ByRefSig byRef)
-				type = byRef.Next;
-			Write(type, typeGenArgs, methGenArgs);
-		}
+		void Write(TypeSig type, ParamDef ownerParam, IList<TypeSig> typeGenArgs, IList<TypeSig> methGenArgs) => Write(type, typeGenArgs, methGenArgs);
 
 		void Write(TypeSig type, IList<TypeSig> typeGenArgs, IList<TypeSig> methGenArgs) {
 			if (type == null) {
@@ -906,21 +919,21 @@ namespace dnSpy.Decompiler.CSharp {
 				}
 
 				switch (type.ElementType) {
-				case ElementType.Void:			WriteSystemTypeKeyword("Void", "void", true); break;
-				case ElementType.Boolean:		WriteSystemTypeKeyword("Boolean", "bool", true); break;
-				case ElementType.Char:			WriteSystemTypeKeyword("Char", "char", true); break;
-				case ElementType.I1:			WriteSystemTypeKeyword("SByte", "sbyte", true); break;
-				case ElementType.U1:			WriteSystemTypeKeyword("Byte", "byte", true); break;
-				case ElementType.I2:			WriteSystemTypeKeyword("Int16", "short", true); break;
-				case ElementType.U2:			WriteSystemTypeKeyword("UInt16", "ushort", true); break;
-				case ElementType.I4:			WriteSystemTypeKeyword("Int32", "int", true); break;
-				case ElementType.U4:			WriteSystemTypeKeyword("UInt32", "uint", true); break;
-				case ElementType.I8:			WriteSystemTypeKeyword("Int64", "long", true); break;
-				case ElementType.U8:			WriteSystemTypeKeyword("UInt64", "ulong", true); break;
-				case ElementType.R4:			WriteSystemTypeKeyword("Single", "float", true); break;
-				case ElementType.R8:			WriteSystemTypeKeyword("Double", "double", true); break;
-				case ElementType.String:		WriteSystemTypeKeyword("String", "string", false); break;
-				case ElementType.Object:		WriteSystemTypeKeyword("Object", "object", false); break;
+				case ElementType.Void:			WriteSystemType("Void", true); break;
+				case ElementType.Boolean:		WriteSystemTypeKeyword("Boolean", "Boolean", true); break;
+				case ElementType.Char:			WriteSystemTypeKeyword("Char", "Char", true); break;
+				case ElementType.I1:			WriteSystemTypeKeyword("SByte", "SByte", true); break;
+				case ElementType.U1:			WriteSystemTypeKeyword("Byte", "Byte", true); break;
+				case ElementType.I2:			WriteSystemTypeKeyword("Int16", "Short", true); break;
+				case ElementType.U2:			WriteSystemTypeKeyword("UInt16", "UShort", true); break;
+				case ElementType.I4:			WriteSystemTypeKeyword("Int32", "Integer", true); break;
+				case ElementType.U4:			WriteSystemTypeKeyword("UInt32", "UInteger", true); break;
+				case ElementType.I8:			WriteSystemTypeKeyword("Int64", "Long", true); break;
+				case ElementType.U8:			WriteSystemTypeKeyword("UInt64", "ULong", true); break;
+				case ElementType.R4:			WriteSystemTypeKeyword("Single", "Single", true); break;
+				case ElementType.R8:			WriteSystemTypeKeyword("Double", "Double", true); break;
+				case ElementType.String:		WriteSystemTypeKeyword("String", "String", false); break;
+				case ElementType.Object:		WriteSystemTypeKeyword("Object", "Object", false); break;
 
 				case ElementType.TypedByRef:	WriteSystemType("TypedReference", true); break;
 				case ElementType.I:				WriteSystemType("IntPtr", true); break;
@@ -932,8 +945,9 @@ namespace dnSpy.Decompiler.CSharp {
 					break;
 
 				case ElementType.ByRef:
+					OutputWrite(Keyword_ByRef, BoxedTextColor.Keyword);
+					WriteSpace();
 					Write(type.Next, typeGenArgs, methGenArgs);
-					OutputWrite("&", BoxedTextColor.Operator);
 					break;
 
 				case ElementType.ValueType:
@@ -982,6 +996,8 @@ namespace dnSpy.Decompiler.CSharp {
 					else {
 						Write(gis.GenericType, typeGenArgs, methGenArgs);
 						OutputWrite(GenericParenOpen, BoxedTextColor.Punctuation);
+						OutputWrite(Keyword_Of, BoxedTextColor.Keyword);
+						WriteSpace();
 						for (int i = 0; i < gis.GenericArguments.Count; i++) {
 							if (i > 0)
 								WriteCommaSpace();
@@ -1032,15 +1048,23 @@ namespace dnSpy.Decompiler.CSharp {
 
 			var isLocal = variable.IsLocal;
 			var pd = (variable.Variable as Parameter)?.ParamDef;
+			var type = variable.Type;
 			OutputWrite(DescriptionParenOpen, BoxedTextColor.Punctuation);
 			OutputWrite(isLocal ? dnSpy_Decompiler_Resources.ToolTip_Local : dnSpy_Decompiler_Resources.ToolTip_Parameter, BoxedTextColor.Text);
 			OutputWrite(DescriptionParenClose, BoxedTextColor.Punctuation);
 			WriteSpace();
-			Write(variable.Type, !isLocal ? ((Parameter)variable.Variable).ParamDef : null, null, null);
-			WriteSpace();
+			if (type.GetElementType() == ElementType.ByRef) {
+				type = type.Next;
+				OutputWrite(Keyword_ByRef, BoxedTextColor.Keyword);
+				WriteSpace();
+			}
 			WriteIdentifier(TypeFormatterUtils.GetName(variable), isLocal ? BoxedTextColor.Local : BoxedTextColor.Parameter);
 			if (pd != null)
 				WriteToken(pd);
+			WriteSpace();
+			OutputWrite(Keyword_As, BoxedTextColor.Keyword);
+			WriteSpace();
+			Write(type, !isLocal ? ((Parameter)variable.Variable).ParamDef : null, null, null);
 		}
 
 		public void WriteNamespaceToolTip(string @namespace) {
@@ -1097,33 +1121,39 @@ namespace dnSpy.Decompiler.CSharp {
 			return;
 		}
 
-		void WriteReturnType(ref FormatterMethodInfo info, bool writeSpace) {
+		void WriteReturnType(ref FormatterMethodInfo info) {
 			if (!ShowReturnTypes)
 				return;
-			ForceWriteReturnType(ref info, writeSpace);
+			if (IsSub(ref info))
+				return;
+			if (!(info.MethodDef != null && info.MethodDef.IsConstructor)) {
+				var retInfo = GetReturnTypeInfo(ref info);
+				WriteSpace();
+				OutputWrite(Keyword_As, BoxedTextColor.Keyword);
+				WriteSpace();
+				Write(retInfo.returnType, retInfo.paramDef, info.TypeGenericParams, info.MethodGenericParams);
+			}
 		}
 
-		void ForceWriteReturnType(ref FormatterMethodInfo info, bool writeSpace) {
-			if (!(info.MethodDef != null && info.MethodDef.IsConstructor)) {
-				TypeSig retType;
-				ParamDef retParamDef;
-				if (info.RetTypeIsLastArgType) {
-					retType = info.MethodSig.Params.LastOrDefault();
-					if (info.MethodDef == null)
-						retParamDef = null;
-					else {
-						var l = info.MethodDef.Parameters.LastOrDefault();
-						retParamDef = l == null ? null : l.ParamDef;
-					}
-				}
+		static bool IsSub(ref FormatterMethodInfo info) => GetReturnTypeInfo(ref info).returnType.RemovePinnedAndModifiers().GetElementType() == ElementType.Void;
+
+		static (TypeSig returnType, ParamDef paramDef) GetReturnTypeInfo(ref FormatterMethodInfo info) {
+			TypeSig retType;
+			ParamDef retParamDef;
+			if (info.RetTypeIsLastArgType) {
+				retType = info.MethodSig.Params.LastOrDefault();
+				if (info.MethodDef == null)
+					retParamDef = null;
 				else {
-					retType = info.MethodSig.RetType;
-					retParamDef = info.MethodDef == null ? null : info.MethodDef.Parameters.ReturnParameter.ParamDef;
+					var l = info.MethodDef.Parameters.LastOrDefault();
+					retParamDef = l == null ? null : l.ParamDef;
 				}
-				Write(retType, retParamDef, info.TypeGenericParams, info.MethodGenericParams);
-				if (writeSpace)
-					WriteSpace();
 			}
+			else {
+				retType = info.MethodSig.RetType;
+				retParamDef = info.MethodDef == null ? null : info.MethodDef.Parameters.ReturnParameter.ParamDef;
+			}
+			return (retType, retParamDef);
 		}
 
 		void WriteGenericArguments(ref FormatterMethodInfo info) {
@@ -1142,7 +1172,7 @@ namespace dnSpy.Decompiler.CSharp {
 			OutputWrite(lparen, BoxedTextColor.Punctuation);
 			int baseIndex = info.MethodSig.HasThis ? 1 : 0;
 			int count = info.MethodSig.Params.Count;
-			if (info.RetTypeIsLastArgType)
+			if (info.RetTypeIsLastArgType && !info.IncludeReturnTypeInArgsList)
 				count--;
 			for (int i = 0; i < count; i++) {
 				if (i > 0)
@@ -1158,16 +1188,20 @@ namespace dnSpy.Decompiler.CSharp {
 					OutputWrite(DefaultParamValueParenOpen, BoxedTextColor.Punctuation);
 
 				bool needSpace = false;
-				if (ShowParameterTypes) {
-					needSpace = true;
+				var paramType = info.MethodSig.Params[i];
+				if (ShowParameterNames || ShowParameterTypes) {
+					if (paramType.GetElementType() == ElementType.ByRef) {
+						paramType = paramType.Next;
+						OutputWrite(Keyword_ByRef, BoxedTextColor.Keyword);
+						WriteSpace();
+					}
 
 					if (pd != null && pd.CustomAttributes.IsDefined("System.ParamArrayAttribute")) {
 						OutputWrite(Keyword_params, BoxedTextColor.Keyword);
-						WriteSpace();
+						needSpace = true;
 					}
-					var paramType = info.MethodSig.Params[i];
-					Write(paramType, pd, info.TypeGenericParams, info.MethodGenericParams);
 				}
+
 				if (ShowParameterNames) {
 					if (needSpace)
 						WriteSpace();
@@ -1180,6 +1214,17 @@ namespace dnSpy.Decompiler.CSharp {
 					else
 						WriteIdentifier("A_" + i.ToString(), BoxedTextColor.Parameter);
 				}
+				if (ShowParameterTypes) {
+					if (ShowParameterNames) {
+						WriteSpace();
+						OutputWrite(Keyword_As, BoxedTextColor.Keyword);
+					}
+					if (needSpace)
+						WriteSpace();
+					needSpace = true;
+
+					Write(paramType, pd, info.TypeGenericParams, info.MethodGenericParams);
+				}
 				if (ShowParameterLiteralValues && isDefault) {
 					if (needSpace)
 						WriteSpace();
@@ -1189,14 +1234,7 @@ namespace dnSpy.Decompiler.CSharp {
 					WriteSpace();
 					OutputWrite("=", BoxedTextColor.Operator);
 					WriteSpace();
-
-					var t = info.MethodSig.Params[i].RemovePinnedAndModifiers();
-					if (t.GetElementType() == ElementType.ByRef)
-						t = t.Next;
-					if (c == null && t != null && t.IsValueType)
-						OutputWrite(Keyword_default, BoxedTextColor.Keyword);
-					else
-						WriteConstant(c);
+					WriteConstant(c);
 				}
 
 				if (isDefault)
@@ -1209,6 +1247,8 @@ namespace dnSpy.Decompiler.CSharp {
 			if (gps == null || gps.Count == 0)
 				return;
 			OutputWrite(GenericParenOpen, BoxedTextColor.Punctuation);
+			OutputWrite(Keyword_Of, BoxedTextColor.Keyword);
+			WriteSpace();
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
@@ -1231,6 +1271,8 @@ namespace dnSpy.Decompiler.CSharp {
 			if (gps == null || gps.Count == 0)
 				return;
 			OutputWrite(GenericParenOpen, BoxedTextColor.Punctuation);
+			OutputWrite(Keyword_Of, BoxedTextColor.Keyword);
+			WriteSpace();
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
@@ -1246,53 +1288,124 @@ namespace dnSpy.Decompiler.CSharp {
 				OutputWrite(Keyword_false, BoxedTextColor.Keyword);
 		}
 
-		void FormatChar(char value) => OutputWrite(ToFormattedChar(value), BoxedTextColor.Char);
-
-		string ToFormattedChar(char value) {
-			var sb = new StringBuilder();
-
-			sb.Append('\'');
+		void FormatChar(char value) {
 			switch (value) {
-			case '\a': sb.Append(@"\a"); break;
-			case '\b': sb.Append(@"\b"); break;
-			case '\f': sb.Append(@"\f"); break;
-			case '\n': sb.Append(@"\n"); break;
-			case '\r': sb.Append(@"\r"); break;
-			case '\t': sb.Append(@"\t"); break;
-			case '\v': sb.Append(@"\v"); break;
-			case '\\': sb.Append(@"\\"); break;
-			case '\0': sb.Append(@"\0"); break;
-			case '\'': sb.Append(@"\'"); break;
+			case '\r':	OutputWrite("vbCr", BoxedTextColor.LiteralField); break;
+			case '\n':	OutputWrite("vbLf", BoxedTextColor.LiteralField); break;
+			case '\b':	OutputWrite("vbBack", BoxedTextColor.LiteralField); break;
+			case '\f':	OutputWrite("vbFormFeed", BoxedTextColor.LiteralField); break;
+			case '\t':	OutputWrite("vbTab", BoxedTextColor.LiteralField); break;
+			case '\v':	OutputWrite("vbVerticalTab", BoxedTextColor.LiteralField); break;
+			case '\0':	OutputWrite("vbNullChar", BoxedTextColor.LiteralField); break;
+			case '"':	OutputWrite("\"\"\"\"c", BoxedTextColor.Char); break;
 			default:
-				if (char.IsControl(value)) {
-					sb.Append(@"\u");
-					sb.Append(((ushort)value).ToString("X4"));
-				}
+				if (char.IsControl(value))
+					WriteCharW(value);
 				else
-					sb.Append(value);
+					OutputWrite("\"" + value.ToString() + "\"c", BoxedTextColor.Char);
 				break;
 			}
-			sb.Append('\'');
-
-			return sb.ToString();
 		}
 
-		static bool CanUseVerbatimString(string s) {
-			bool foundBackslash = false;
-			foreach (var c in s) {
+		void WriteCharW(char value) {
+			OutputWrite("ChrW", BoxedTextColor.StaticMethod);
+			OutputWrite("(", BoxedTextColor.Punctuation);
+			FormatUInt16(value);
+			OutputWrite(")", BoxedTextColor.Punctuation);
+		}
+
+		void FormatString(string value) {
+			if (value == string.Empty) {
+				OutputWrite("\"\"", BoxedTextColor.String);
+				return;
+			}
+
+			int index = 0;
+			bool needSep = false;
+			while (index < value.Length) {
+				var s = GetSubString(value, ref index);
+				if (s.Length != 0) {
+					if (needSep)
+						WriteStringConcatOperator();
+					OutputWrite("\"" + s + "\"", BoxedTextColor.String);
+					needSep = true;
+				}
+				if (index < value.Length) {
+					var c = value[index];
+					switch (c) {
+					case '\r':
+						if (index + 1 < value.Length && value[index + 1] == '\n') {
+							WriteSpecialConstantString("vbCrLf", ref needSep);
+							index++;
+						}
+						else
+							WriteSpecialConstantString("vbCr", ref needSep);
+						break;
+
+					case '\n':
+						WriteSpecialConstantString("vbLf", ref needSep);
+						break;
+
+					case '\b':
+						WriteSpecialConstantString("vbBack", ref needSep);
+						break;
+
+					case '\f':
+						WriteSpecialConstantString("vbFormFeed", ref needSep);
+						break;
+
+					case '\t':
+						WriteSpecialConstantString("vbTab", ref needSep);
+						break;
+
+					case '\v':
+						WriteSpecialConstantString("vbVerticalTab", ref needSep);
+						break;
+
+					case '\0':
+						WriteSpecialConstantString("vbNullChar", ref needSep);
+						break;
+
+					default:
+						if (needSep)
+							WriteStringConcatOperator();
+						WriteCharW(c);
+						break;
+					}
+					index++;
+					needSep = true;
+				}
+			}
+		}
+
+		void WriteStringConcatOperator() {
+			WriteSpace();
+			OutputWrite("&", BoxedTextColor.Operator);
+			WriteSpace();
+		}
+
+		void WriteSpecialConstantString(string s, ref bool needSep) {
+			if (needSep)
+				WriteStringConcatOperator();
+			OutputWrite(s, BoxedTextColor.LiteralField);
+			needSep = true;
+		}
+
+		string GetSubString(string value, ref int index) {
+			var sb = new StringBuilder();
+
+			while (index < value.Length) {
+				var c = value[index];
+				bool isSpecial;
 				switch (c) {
 				case '"':
+					sb.Append(c);
+					isSpecial = false;
 					break;
-
-				case '\\':
-					foundBackslash = true;
-					break;
-
-				case '\a':
+				case '\r':
+				case '\n':
 				case '\b':
 				case '\f':
-				case '\n':
-				case '\r':
 				case '\t':
 				case '\v':
 				case '\0':
@@ -1300,75 +1413,17 @@ namespace dnSpy.Decompiler.CSharp {
 				case '\u0085':
 				case '\u2028':
 				case '\u2029':
-					return false;
-
+					isSpecial = true;
+					break;
 				default:
-					if (char.IsControl(c))
-						return false;
+					isSpecial = char.IsControl(c);
 					break;
 				}
-			}
-			return foundBackslash;
-		}
-
-		void FormatString(string value) {
-			var s = ToFormattedString(value, out bool isVerbatim);
-			OutputWrite(s, isVerbatim ? BoxedTextColor.VerbatimString : BoxedTextColor.String);
-		}
-
-		string ToFormattedString(string value, out bool isVerbatim) {
-			if (CanUseVerbatimString(value)) {
-				isVerbatim = true;
-				return GetFormattedVerbatimString(value);
-			}
-			else {
-				isVerbatim = false;
-				return GetFormattedString(value);
-			}
-		}
-
-		string GetFormattedString(string value) {
-			var sb = new StringBuilder();
-
-			sb.Append('"');
-			foreach (var c in value) {
-				switch (c) {
-				case '\a': sb.Append(@"\a"); break;
-				case '\b': sb.Append(@"\b"); break;
-				case '\f': sb.Append(@"\f"); break;
-				case '\n': sb.Append(@"\n"); break;
-				case '\r': sb.Append(@"\r"); break;
-				case '\t': sb.Append(@"\t"); break;
-				case '\v': sb.Append(@"\v"); break;
-				case '\\': sb.Append(@"\\"); break;
-				case '\0': sb.Append(@"\0"); break;
-				case '"': sb.Append("\\\""); break;
-				default:
-					if (char.IsControl(c)) {
-						sb.Append(@"\u");
-						sb.Append(((ushort)c).ToString("X4"));
-					}
-					else
-						sb.Append(c);
+				if (isSpecial)
 					break;
-				}
+				sb.Append(c);
+				index++;
 			}
-			sb.Append('"');
-
-			return sb.ToString();
-		}
-
-		string GetFormattedVerbatimString(string value) {
-			var sb = new StringBuilder();
-
-			sb.Append(VerbatimStringPrefix + "\"");
-			foreach (var c in value) {
-				if (c == '"')
-					sb.Append("\"\"");
-				else
-					sb.Append(c);
-			}
-			sb.Append('"');
 
 			return sb.ToString();
 		}

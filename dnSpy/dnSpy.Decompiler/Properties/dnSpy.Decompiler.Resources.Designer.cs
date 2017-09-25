@@ -437,5 +437,32 @@ namespace dnSpy.Decompiler.Properties {
                 return ResourceManager.GetString("UnknownValue", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Awaitable.
+        /// </summary>
+        internal static string VisualBasic_Awaitable_Method {
+            get {
+                return ResourceManager.GetString("VisualBasic_Awaitable_Method", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deprecated.
+        /// </summary>
+        internal static string VisualBasic_Deprecated_Member {
+            get {
+                return ResourceManager.GetString("VisualBasic_Deprecated_Member", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension.
+        /// </summary>
+        internal static string VisualBasic_Extension_Method {
+            get {
+                return ResourceManager.GetString("VisualBasic_Extension_Method", resourceCulture);
+            }
+        }
     }
 }

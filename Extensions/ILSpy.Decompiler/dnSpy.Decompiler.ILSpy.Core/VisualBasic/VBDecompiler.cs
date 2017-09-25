@@ -26,6 +26,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.ILSpy.Core.CSharp;
 using dnSpy.Decompiler.ILSpy.Core.Settings;
 using dnSpy.Decompiler.ILSpy.Core.Text;
+using dnSpy.Decompiler.VisualBasic;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
@@ -302,5 +303,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 				state.Dispose();
 			}
 		}
+
+		public override void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
+			new VisualBasicFormatter(output, DefaultFormatterOptions).WriteToolTip(member);
+		public override void WriteToolTip(ITextColorWriter output, ISourceVariable variable) =>
+			new VisualBasicFormatter(output, DefaultFormatterOptions).WriteToolTip(variable);
+		public override void WriteNamespaceToolTip(ITextColorWriter output, string @namespace) =>
+			new VisualBasicFormatter(output, DefaultFormatterOptions).WriteNamespaceToolTip(@namespace);
+		public override void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags) =>
+			new VisualBasicFormatter(output, flags).Write(member);
 	}
 }

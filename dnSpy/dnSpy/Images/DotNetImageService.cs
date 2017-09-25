@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Images {
@@ -120,6 +121,22 @@ namespace dnSpy.Images {
 						return DsImages.ExceptionShortcut;
 					}
 				}
+				else if (IsModule(type)) {
+					switch (type.Visibility) {
+					case TypeAttributes.Public:
+					case TypeAttributes.NestedPublic:
+						return DsImages.ModulePublic;
+					case TypeAttributes.NestedPrivate:
+						return DsImages.ModulePrivate;
+					case TypeAttributes.NestedFamily:
+						return DsImages.ModuleProtected;
+					case TypeAttributes.NotPublic:
+					case TypeAttributes.NestedAssembly:
+					case TypeAttributes.NestedFamANDAssem:
+					case TypeAttributes.NestedFamORAssem:
+						return DsImages.ModuleInternal;
+					}
+				}
 				else if (type.GenericParameters.Count > 0) {
 					switch (type.Visibility) {
 					case TypeAttributes.Public:
@@ -158,6 +175,11 @@ namespace dnSpy.Images {
 			Debug.Fail("Impossible to get here");
 			return default;
 		}
+
+		static bool IsModule(TypeDef type) =>
+			type != null && type.DeclaringType == null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
+		static readonly UTF8String stringMicrosoftVisualBasicCompilerServices = new UTF8String("Microsoft.VisualBasic.CompilerServices");
+		static readonly UTF8String stringStandardModuleAttribute = new UTF8String("StandardModuleAttribute");
 
 		static bool IsDelegate(TypeDef type) =>
 			type.BaseType != null && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();

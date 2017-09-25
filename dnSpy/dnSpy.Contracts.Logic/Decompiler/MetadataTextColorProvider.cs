@@ -297,9 +297,14 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="type">Type</param>
 		/// <returns></returns>
 		public override object GetColor(TypeDef type) {
-			if (type != null && type.DeclaringType == null && type.IsSealed && type.IsAbstract)
+			if (IsModule(type))
 				return BoxedTextColor.Module;
 			return base.GetColor(type);
 		}
+
+		static bool IsModule(TypeDef type) =>
+			type != null && type.DeclaringType == null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
+		static readonly UTF8String stringMicrosoftVisualBasicCompilerServices = new UTF8String("Microsoft.VisualBasic.CompilerServices");
+		static readonly UTF8String stringStandardModuleAttribute = new UTF8String("StandardModuleAttribute");
 	}
 }

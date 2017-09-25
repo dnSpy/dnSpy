@@ -44,6 +44,7 @@
     <Compile Include="CSharp\CSharpFormatter.cs" />
     <Compile Include="DecompilerBase.cs" />
     <Compile Include="FilenameUtils.cs" />
+    <Compile Include="FormatterMethodInfo.cs" />
     <Compile Include="IL\ILLanguageHelper.cs" />
     <Compile Include="IL\InstructionBytesReader.cs" />
     <Compile Include="IL\InstructionUtils.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="TargetFrameworkInfo.cs" />
     <Compile Include="TargetFrameworkUtils.cs" />
     <Compile Include="TypeFormatterUtils.cs" />
+    <Compile Include="VisualBasic\VisualBasicFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
