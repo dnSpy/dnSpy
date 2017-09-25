@@ -34,6 +34,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		ThreadFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
+		bool DigitSeparators { get; }
 		SearchMatcher SearchMatcher { get; }
 		ClassifiedTextWriter ClassifiedTextWriter { get; }
 	}
@@ -47,6 +48,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public ThreadFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
+		public bool DigitSeparators { get; set; }
 		public SearchMatcher SearchMatcher { get; }
 		public ClassifiedTextWriter ClassifiedTextWriter { get; }
 

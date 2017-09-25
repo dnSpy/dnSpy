@@ -146,6 +146,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			threadContext = new ThreadContext(uiDispatcher, classificationFormatMap, textBlockContentInfoFactory, new SearchMatcher(searchColumnDefinitions)) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
+				DigitSeparators = debuggerSettings.UseDigitSeparators,
 				Formatter = threadFormatterProvider.Create(),
 			};
 		}
@@ -199,6 +200,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				RecreateFormatter_UI();
 				threadContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				threadContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
+				threadContext.DigitSeparators = debuggerSettings.UseDigitSeparators;
 			}
 			else {
 				processes.Clear();
@@ -324,7 +326,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
 			threadContext.UIDispatcher.VerifyAccess();
-			if (propertyName == nameof(DebuggerSettings.UseHexadecimal))
+			if (propertyName == nameof(DebuggerSettings.UseHexadecimal) || propertyName == nameof(DebuggerSettings.UseDigitSeparators))
 				RefreshHexFields_UI();
 			else if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
 				threadContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
@@ -349,6 +351,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		void RefreshHexFields_UI() {
 			threadContext.UIDispatcher.VerifyAccess();
 			threadContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
+			threadContext.DigitSeparators = debuggerSettings.UseDigitSeparators;
 			RecreateFormatter_UI();
 			foreach (var vm in realAllItems)
 				vm.RefreshHexFields_UI();

@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		// UI thread
 		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
 			callStackContext.UIDispatcher.VerifyAccess();
-			if (propertyName == nameof(DebuggerSettings.UseHexadecimal))
+			if (propertyName == nameof(DebuggerSettings.UseHexadecimal) || propertyName == nameof(DebuggerSettings.UseDigitSeparators))
 				RefreshHexFields_UI();
 			else if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
 				callStackContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
@@ -238,6 +238,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			if (callStackDisplaySettings.ShowIntrinsicTypeKeywords)	options |= DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords;
 			if (callStackDisplaySettings.ShowTokens)				options |= DbgStackFrameFormatOptions.ShowTokens;
 			if (!debuggerSettings.UseHexadecimal)					options |= DbgStackFrameFormatOptions.UseDecimal;
+			if (debuggerSettings.UseDigitSeparators)				options |= DbgStackFrameFormatOptions.DigitSeparators;
 
 			return options;
 		}

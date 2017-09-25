@@ -345,6 +345,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 						DbgStackFrameFormatOptions.ShowFunctionOffset;
 					if (!Context.UseHexadecimal)
 						options |= DbgStackFrameFormatOptions.UseDecimal;
+					if (Context.DigitSeparators)
+						options |= DbgStackFrameFormatOptions.DigitSeparators;
 					frames[0].Format(Context.ClassifiedTextWriter, options);
 					return Context.ClassifiedTextWriter.GetClassifiedText();
 				}

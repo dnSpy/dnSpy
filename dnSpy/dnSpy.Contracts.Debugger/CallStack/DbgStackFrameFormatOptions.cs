@@ -84,5 +84,10 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// Use decimal instead of hexadecimal when formatting parameter values. Offsets, addresses, tokens are always in hexadecimal.
 		/// </summary>
 		UseDecimal						= 0x00000400,
+
+		/// <summary>
+		/// Use digit separators
+		/// </summary>
+		DigitSeparators					= 0x00000800,
 	}
 }

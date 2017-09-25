@@ -100,6 +100,8 @@ namespace dndbg.Engine {
 		ShowArrayValueSizes			= 0x00000800,
 		ShowFieldLiteralValues		= 0x00001000,
 		ShowParameterLiteralValues	= 0x00002000,
+		// This isn't used, this whole class will eventually be removed
+		DigitSeparators				= 0x00004000,
 
 		Default =
 			ShowModuleNames |

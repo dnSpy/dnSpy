@@ -146,6 +146,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			if ((options & DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords) != 0)	flags |= TypeFormatterFlags.ShowIntrinsicTypeKeywords;
 			if ((options & DbgStackFrameFormatOptions.ShowTokens) != 0)					flags |= TypeFormatterFlags.ShowTokens;
 			if ((options & DbgStackFrameFormatOptions.UseDecimal) != 0)					flags |= TypeFormatterFlags.UseDecimal;
+			if ((options & DbgStackFrameFormatOptions.DigitSeparators) != 0)			flags |= TypeFormatterFlags.DigitSeparators;
 			return flags;
 		}
 
