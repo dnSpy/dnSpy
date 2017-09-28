@@ -454,8 +454,6 @@ namespace dnSpy.Decompiler.CSharp {
 				WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(method.DeclaringType.Name), CSharpMetadataTextColorProvider.Instance.GetColor(method));
 			else if (info.MethodDef != null && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
-				WriteType(ovrMeth.DeclaringType, false, ShowIntrinsicTypeKeywords);
-				WritePeriod();
 				WriteMethodName(method, ovrMeth.Name, operatorInfo);
 			}
 			else
@@ -630,19 +628,12 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 			var ovrMeth = md == null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
 			if (prop.IsIndexer()) {
-				if (ovrMeth != null) {
-					WriteType(ovrMeth.DeclaringType, false, ShowIntrinsicTypeKeywords);
-					WritePeriod();
-				}
 				OutputWrite(Keyword_this, BoxedTextColor.Keyword);
 				WriteGenericArguments(ref info);
 				WriteMethodParameterList(ref info, IndexerParenOpen, IndexerParenClose);
 			}
-			else if (ovrMeth != null && TypeFormatterUtils.GetPropertyName(ovrMeth) != null) {
-				WriteType(ovrMeth.DeclaringType, false, ShowIntrinsicTypeKeywords);
-				WritePeriod();
+			else if (ovrMeth != null && TypeFormatterUtils.GetPropertyName(ovrMeth) != null)
 				WriteIdentifier(TypeFormatterUtils.GetPropertyName(ovrMeth), CSharpMetadataTextColorProvider.Instance.GetColor(prop));
-			}
 			else
 				WriteIdentifier(prop.Name, CSharpMetadataTextColorProvider.Instance.GetColor(prop));
 			WriteToken(prop);

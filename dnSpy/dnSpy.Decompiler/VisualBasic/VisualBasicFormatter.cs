@@ -462,8 +462,6 @@ namespace dnSpy.Decompiler.VisualBasic {
 				OutputWrite(Keyword_New, BoxedTextColor.Keyword);
 			else if (info.MethodDef != null && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
-				WriteType(ovrMeth.DeclaringType, false, ShowIntrinsicTypeKeywords);
-				WritePeriod();
 				WriteMethodName(method, ovrMeth.Name, operatorInfo);
 			}
 			else
@@ -649,11 +647,8 @@ namespace dnSpy.Decompiler.VisualBasic {
 				WritePeriod();
 			}
 			var ovrMeth = md == null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
-			if (ovrMeth != null && TypeFormatterUtils.GetPropertyName(ovrMeth) != null) {
-				WriteType(ovrMeth.DeclaringType, false, ShowIntrinsicTypeKeywords);
-				WritePeriod();
+			if (ovrMeth != null && TypeFormatterUtils.GetPropertyName(ovrMeth) != null)
 				WriteIdentifier(TypeFormatterUtils.GetPropertyName(ovrMeth), VisualBasicMetadataTextColorProvider.Instance.GetColor(prop));
-			}
 			else
 				WriteIdentifier(prop.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(prop));
 			WriteGenericArguments(ref info);
