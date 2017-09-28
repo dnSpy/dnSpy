@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -107,7 +108,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineValueNode.GetChildren(context, frame, index, count, options, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes)), cancellationToken);
 		}
 
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) {
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -124,10 +125,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			engineValueNode.Format(context, frame, options, cancellationToken);
+			engineValueNode.Format(context, frame, options, cultureInfo, cancellationToken);
 		}
 
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken) {
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, Action callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -146,7 +147,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(options));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNode.Format(context, frame, options, callback, cancellationToken);
+			engineValueNode.Format(context, frame, options, cultureInfo, callback, cancellationToken);
 		}
 
 		DbgValueNodeAssignmentResult CreateResult(DbgEngineValueNodeAssignmentResult result) {

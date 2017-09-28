@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Text;
@@ -135,9 +136,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="output">Output</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CancellationToken cancellationToken = default) =>
-			Format(context, frame, new DbgValueNodeFormatParameters { NameOutput = output ?? throw new ArgumentNullException(nameof(output)) }, cancellationToken);
+		public void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CultureInfo cultureInfo = null, CancellationToken cancellationToken = default) =>
+			Format(context, frame, new DbgValueNodeFormatParameters { NameOutput = output ?? throw new ArgumentNullException(nameof(output)) }, cultureInfo, cancellationToken);
 
 		/// <summary>
 		/// Formats the value. This method blocks the current thread until all requested values have been formatted
@@ -146,12 +148,13 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CancellationToken cancellationToken = default) =>
+		public void FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken = default) =>
 			Format(context, frame, new DbgValueNodeFormatParameters {
 				ValueOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ValueFormatterOptions = options,
-			}, cancellationToken);
+			}, cultureInfo, cancellationToken);
 
 		/// <summary>
 		/// Formats the expected type ("field" type). This method blocks the current thread until all requested values have been formatted
@@ -160,12 +163,13 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatExpectedType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken = default) =>
+		public void FormatExpectedType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken = default) =>
 			Format(context, frame, new DbgValueNodeFormatParameters {
 				ExpectedTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ExpectedTypeFormatterOptions = options,
-			}, cancellationToken);
+			}, cultureInfo, cancellationToken);
 
 		/// <summary>
 		/// Formats the actual type (value type). This method blocks the current thread until all requested values have been formatted
@@ -174,12 +178,13 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatActualType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken = default) =>
+		public void FormatActualType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken = default) =>
 			Format(context, frame, new DbgValueNodeFormatParameters {
 				ActualTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ActualTypeFormatterOptions = options,
-			}, cancellationToken);
+			}, cultureInfo, cancellationToken);
 
 		/// <summary>
 		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
@@ -187,8 +192,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="options">Options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken = default);
+		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Formats the name, value, and type
@@ -196,9 +202,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="options">Options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="callback">Called when this method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken = default);
+		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, Action callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Writes a new value. It blocks the current thread until the assignment is complete.

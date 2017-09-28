@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using dnlib.DotNet;
@@ -87,6 +88,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 
 		readonly ITextColorWriter output;
 		FormatterOptions options;
+		readonly CultureInfo cultureInfo;
 
 		static readonly Dictionary<string, string[]> nameToOperatorName = new Dictionary<string, string[]> {
 			{ "op_UnaryPlus", "Operator +".Split(' ') },
@@ -132,9 +134,10 @@ namespace dnSpy.Decompiler.VisualBasic {
 		bool ShowParameterLiteralValues => (options & FormatterOptions.ShowParameterLiteralValues) != 0;
 		bool DigitSeparators => (options & FormatterOptions.DigitSeparators) != 0;
 
-		public VisualBasicFormatter(ITextColorWriter output, FormatterOptions options) {
+		public VisualBasicFormatter(ITextColorWriter output, FormatterOptions options, CultureInfo cultureInfo) {
 			this.output = output;
 			this.options = options;
+			this.cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
 			recursionCounter = 0;
 			lineLength = 0;
 			outputLengthExceeded = false;
@@ -1430,56 +1433,56 @@ namespace dnSpy.Decompiler.VisualBasic {
 
 		string ToFormattedSByte(sbyte value) {
 			if (UseDecimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X2"));
 		}
 
 		string ToFormattedByte(byte value) {
 			if (UseDecimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X2"));
 		}
 
 		string ToFormattedInt16(short value) {
 			if (UseDecimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X4"));
 		}
 
 		string ToFormattedUInt16(ushort value) {
 			if (UseDecimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X4"));
 		}
 
 		string ToFormattedInt32(int value) {
 			if (UseDecimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
 		string ToFormattedUInt32(uint value) {
 			if (UseDecimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
 		string ToFormattedInt64(long value) {
 			if (UseDecimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X16"));
 		}
 
 		string ToFormattedUInt64(ulong value) {
 			if (UseDecimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X16"));
 		}
@@ -1492,7 +1495,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 			else if (float.IsPositiveInfinity(value))
 				OutputWrite(TypeFormatterUtils.PositiveInfinity, BoxedTextColor.Number);
 			else
-				OutputWrite(value.ToString(), BoxedTextColor.Number);
+				OutputWrite(value.ToString(cultureInfo), BoxedTextColor.Number);
 		}
 
 		void FormatDouble(double value) {
@@ -1503,7 +1506,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 			else if (double.IsPositiveInfinity(value))
 				OutputWrite(TypeFormatterUtils.PositiveInfinity, BoxedTextColor.Number);
 			else
-				OutputWrite(value.ToString(), BoxedTextColor.Number);
+				OutputWrite(value.ToString(cultureInfo), BoxedTextColor.Number);
 		}
 
 		void FormatSByte(sbyte value) => WriteNumber(ToFormattedSByte(value));

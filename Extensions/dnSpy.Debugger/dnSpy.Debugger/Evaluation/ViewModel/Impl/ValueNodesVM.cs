@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger;
@@ -88,7 +89,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
 			this.dbgObjectIdService = dbgObjectIdService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			valueNodesContext = new ValueNodesContext(uiDispatcher, this, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(EvaluateExpression), classificationFormatMap, textBlockContentInfoFactory, options.ShowMessageBox);
+			var formatCulture = CultureInfo.InvariantCulture;
+			valueNodesContext = new ValueNodesContext(uiDispatcher, this, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(EvaluateExpression), classificationFormatMap, textBlockContentInfoFactory, formatCulture, options.ShowMessageBox);
 			valueNodesContext.Formatter.ObjectIdService = dbgObjectIdService;
 
 			rootNode = new RootNode();

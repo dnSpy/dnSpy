@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
@@ -82,42 +83,42 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return res;
 		}
 
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => FormatCore(context, frame, options, cancellationToken));
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => FormatCore(context, frame, options, cultureInfo, cancellationToken));
 
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken) {
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, Action callback, CancellationToken cancellationToken) {
 			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => {
-				FormatCore(context, frame, options, cancellationToken);
+				FormatCore(context, frame, options, cultureInfo, cancellationToken);
 				callback();
 			});
 		}
 
-		void FormatCore(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) {
+		void FormatCore(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			context.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
 			if (options.NameOutput != null)
 				dnValueNode.Name.WriteTo(options.NameOutput);
 			var formatter = owner.Formatter;
 			var dnValue = value?.DotNetValue;
 			if (options.ExpectedTypeOutput != null) {
-				if (dnValueNode.FormatExpectedType(context, frame, options.ExpectedTypeOutput, cancellationToken)) {
+				if (dnValueNode.FormatExpectedType(context, frame, options.ExpectedTypeOutput, cultureInfo, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValueNode.ExpectedType is DmdType expectedType)
-					formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, options.ExpectedTypeFormatterOptions);
+					formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, options.ExpectedTypeFormatterOptions, cultureInfo);
 			}
 			if (options.ActualTypeOutput != null) {
-				if (dnValueNode.FormatActualType(context, frame, options.ActualTypeOutput, cancellationToken)) {
+				if (dnValueNode.FormatActualType(context, frame, options.ActualTypeOutput, cultureInfo, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValueNode.ActualType is DmdType actualType)
-					formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions);
+					formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions, cultureInfo);
 			}
 			if (options.ValueOutput != null) {
-				if (dnValueNode.FormatValue(context, frame, options.ValueOutput, cancellationToken)) {
+				if (dnValueNode.FormatValue(context, frame, options.ValueOutput, cultureInfo, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValue != null)
-					formatter.FormatValue(context, options.ValueOutput, frame, dnValue, options.ValueFormatterOptions, cancellationToken);
+					formatter.FormatValue(context, options.ValueOutput, frame, dnValue, options.ValueFormatterOptions, cultureInfo, cancellationToken);
 				else if (ErrorMessage is string errorMessage)
 					options.ValueOutput.Write(BoxedTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));
 			}

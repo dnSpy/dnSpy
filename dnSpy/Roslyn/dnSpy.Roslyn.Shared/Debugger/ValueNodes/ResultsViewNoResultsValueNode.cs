@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -47,7 +48,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		public ResultsViewNoResultsValueNode(string expression) => Expression = expression;
 
-		public override bool FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CancellationToken cancellationToken) {
+		public override bool FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			noResultsName.WriteTo(output);
 			return true;
 		}

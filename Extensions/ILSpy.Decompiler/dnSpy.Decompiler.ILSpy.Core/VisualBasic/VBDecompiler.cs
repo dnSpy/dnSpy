@@ -305,12 +305,12 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		public override void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
-			new VisualBasicFormatter(output, DefaultFormatterOptions).WriteToolTip(member);
+			new VisualBasicFormatter(output, DefaultFormatterOptions, null).WriteToolTip(member);
 		public override void WriteToolTip(ITextColorWriter output, ISourceVariable variable) =>
-			new VisualBasicFormatter(output, DefaultFormatterOptions).WriteToolTip(variable);
+			new VisualBasicFormatter(output, DefaultFormatterOptions, null).WriteToolTip(variable);
 		public override void WriteNamespaceToolTip(ITextColorWriter output, string @namespace) =>
-			new VisualBasicFormatter(output, DefaultFormatterOptions).WriteNamespaceToolTip(@namespace);
+			new VisualBasicFormatter(output, DefaultFormatterOptions, null).WriteNamespaceToolTip(@namespace);
 		public override void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags) =>
-			new VisualBasicFormatter(output, flags).Write(member);
+			new VisualBasicFormatter(output, flags, null).Write(member);
 	}
 }

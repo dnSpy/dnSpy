@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
@@ -109,8 +110,8 @@ namespace dnSpy.Debugger.Evaluation {
 		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
 		public override DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgEngineValueNode>();
 		public override void GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) => callback(GetChildren(context, frame, index, count, options, cancellationToken));
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken) { }
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken) { }
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) { }
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, Action callback, CancellationToken cancellationToken) { }
 		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new DbgEngineValueNodeAssignmentResult(NullDbgEngineExpressionEvaluator.ERROR);
 		public override void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback, CancellationToken cancellationToken) => callback(Assign(context, frame, expression, options, cancellationToken));
 		protected override void CloseCore(DbgDispatcher dispatcher) { }

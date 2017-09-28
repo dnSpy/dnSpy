@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Globalization;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text.Classification;
@@ -52,6 +53,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; }
 		string ExpressionToEdit { get; set; }
 		bool IsWindowReadOnly { get; }
+		CultureInfo FormatCulture { get; }
 	}
 
 	sealed class ValueNodesContext : IValueNodesContext {
@@ -81,8 +83,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; set; }
 		public string ExpressionToEdit { get; set; }
 		public bool IsWindowReadOnly { get; set; }
+		public CultureInfo FormatCulture { get; }
 
-		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, ShowMessageBox showMessageBox) {
+		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CultureInfo formatCulture, ShowMessageBox showMessageBox) {
 			UIDispatcher = uiDispatcher;
 			EditValueNodeExpression = editValueNodeExpression;
 			WindowContentType = windowContentType;
@@ -99,6 +102,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
 			Formatter = new ValueNodeFormatter();
 			ValueNodeFormatParameters = new DbgValueNodeFormatParameters();
+			FormatCulture = formatCulture;
 		}
 	}
 }

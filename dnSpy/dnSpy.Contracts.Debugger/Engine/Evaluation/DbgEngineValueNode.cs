@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -104,8 +105,9 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="options">Options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CancellationToken cancellationToken);
+		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Formats the name, value, and type
@@ -113,9 +115,10 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame, owned by caller</param>
 		/// <param name="options">Options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="callback">Called when this method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, Action callback, CancellationToken cancellationToken);
+		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, Action callback, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Writes a new value. It blocks the current thread until the assignment is complete.

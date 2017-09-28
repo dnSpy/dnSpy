@@ -57,7 +57,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 
 		protected override void FormatReturnValueMethodName(ITextColorWriter output, DmdMethodBase method, DmdPropertyInfo property) {
 			const Formatters.TypeFormatterOptions options = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
-			var formatter = new Formatters.CSharp.CSharpTypeFormatter(output, options);
+			var formatter = new Formatters.CSharp.CSharpTypeFormatter(output, options, null);
 			formatter.Format(method.DeclaringType, null);
 			output.Write(BoxedTextColor.Operator, ".");
 			if ((object)property != null) {

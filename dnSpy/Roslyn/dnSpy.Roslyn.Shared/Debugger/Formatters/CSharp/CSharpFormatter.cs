@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -28,10 +29,10 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 	[ExportDbgDotNetFormatter(DbgDotNetLanguageGuids.CSharp)]
 	sealed class CSharpFormatter : LanguageFormatter {
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options) =>
-			new CSharpTypeFormatter(output, options.ToTypeFormatterOptions()).Format(type, value);
+		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) =>
+			new CSharpTypeFormatter(output, options.ToTypeFormatterOptions(), cultureInfo).Format(type, value);
 
-		public override void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrame frame, DbgDotNetValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken) =>
-			new CSharpValueFormatter(output, context, frame, options.ToValueFormatterOptions(), cancellationToken).Format(value);
+		public override void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrame frame, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
+			new CSharpValueFormatter(output, context, frame, options.ToValueFormatterOptions(), cultureInfo, cancellationToken).Format(value);
 	}
 }

@@ -223,13 +223,13 @@ namespace dnSpy.Decompiler {
 
 		protected const FormatterOptions DefaultFormatterOptions = FormatterOptions.Default | FormatterOptions.ShowParameterLiteralValues;
 		public virtual void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
-			new CSharpFormatter(output, DefaultFormatterOptions).WriteToolTip(member);
+			new CSharpFormatter(output, DefaultFormatterOptions, null).WriteToolTip(member);
 		public virtual void WriteToolTip(ITextColorWriter output, ISourceVariable variable) =>
-			new CSharpFormatter(output, DefaultFormatterOptions).WriteToolTip(variable);
+			new CSharpFormatter(output, DefaultFormatterOptions, null).WriteToolTip(variable);
 		public virtual void WriteNamespaceToolTip(ITextColorWriter output, string @namespace) =>
-			new CSharpFormatter(output, DefaultFormatterOptions).WriteNamespaceToolTip(@namespace);
+			new CSharpFormatter(output, DefaultFormatterOptions, null).WriteNamespaceToolTip(@namespace);
 		public virtual void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags) =>
-			new CSharpFormatter(output, flags).Write(member);
+			new CSharpFormatter(output, flags, null).Write(member);
 
 		protected static string GetName(IVariable variable, string name) {
 			if (!string.IsNullOrWhiteSpace(name))

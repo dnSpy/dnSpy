@@ -74,7 +74,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 
 		protected override void FormatTypeName(ITextColorWriter output, DmdType type) {
 			const Formatters.TypeFormatterOptions options = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
-			new Formatters.VisualBasic.VisualBasicTypeFormatter(output, options).Format(type, null);
+			new Formatters.VisualBasic.VisualBasicTypeFormatter(output, options, null).Format(type, null);
 		}
 
 		const string ARRAY_PAREN_OPEN = "(";

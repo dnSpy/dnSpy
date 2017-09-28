@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
@@ -29,6 +30,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 	struct VisualBasicTypeFormatter {
 		readonly ITextColorWriter output;
 		readonly TypeFormatterOptions options;
+		readonly CultureInfo cultureInfo;
 		const int MAX_RECURSION = 200;
 		int recursionCounter;
 
@@ -54,9 +56,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		bool ShowTokens => (options & TypeFormatterOptions.Tokens) != 0;
 		bool ShowNamespaces => (options & TypeFormatterOptions.Namespaces) != 0;
 
-		public VisualBasicTypeFormatter(ITextColorWriter output, TypeFormatterOptions options) {
+		public VisualBasicTypeFormatter(ITextColorWriter output, TypeFormatterOptions options, CultureInfo cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.options = options;
+			this.cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
 			recursionCounter = 0;
 		}
 
@@ -75,14 +78,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 		string FormatUInt32(uint value) {
 			if (UseDecimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
 		string FormatInt32(int value) {
 			if (UseDecimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}

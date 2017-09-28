@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
@@ -91,6 +92,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 
 		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
 			var cancellationToken = CancellationToken.None;
+			const CultureInfo cultureInfo = null;
 			var exceptions = language.ExceptionsProvider.GetNodes(context, frame, nodeEvalOptions, cancellationToken);
 			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame, nodeEvalOptions, cancellationToken);
 			var variables = language.LocalsProvider.GetNodes(context, frame, nodeEvalOptions, GetLocalsValueNodeOptions(), cancellationToken);
@@ -121,7 +123,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 				res[ri] = new DbgValueNodeInfo(objectIdNodes[i], id, causesSideEffects: false);
 			}
 
-			variables = GetSortedVariables(context, frame, variables, cancellationToken);
+			variables = GetSortedVariables(context, frame, variables, cultureInfo, cancellationToken);
 			for (int i = 0; i < variables.Length; i++, ri++)
 				res[ri] = new DbgValueNodeInfo(variables[i].ValueNode, causesSideEffects: false);
 
@@ -133,7 +135,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			return res;
 		}
 
-		DbgLocalsValueNodeInfo[] GetSortedVariables(DbgEvaluationContext context, DbgStackFrame frame, DbgLocalsValueNodeInfo[] variables, CancellationToken cancellationToken) {
+		DbgLocalsValueNodeInfo[] GetSortedVariables(DbgEvaluationContext context, DbgStackFrame frame, DbgLocalsValueNodeInfo[] variables, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			if (variables.Length <= 1)
 				return variables;
 
@@ -147,18 +149,18 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 
 			var output = new StringBuilderTextColorOutput();
 			if (debuggerSettings.GroupParametersAndLocalsTogether)
-				return variables.OrderBy(a => GetName(context, frame, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+				return variables.OrderBy(a => GetName(context, frame, output, a.ValueNode, cultureInfo, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
 			else {
 				var locals = variables.Where(a => a.Kind == DbgLocalsValueNodeKind.Local).ToArray();
 				var parameters = variables.Where(a => a.Kind == DbgLocalsValueNodeKind.Parameter).ToArray();
 				var others = variables.Where(a => a.Kind != DbgLocalsValueNodeKind.Local && a.Kind != DbgLocalsValueNodeKind.Parameter).ToArray();
 
 				if (sortLocals && locals.Length > 1)
-					locals = locals.OrderBy(a => GetName(context, frame, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+					locals = locals.OrderBy(a => GetName(context, frame, output, a.ValueNode, cultureInfo, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
 				if (sortParameters && parameters.Length > 1)
-					parameters = parameters.OrderBy(a => GetName(context, frame, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+					parameters = parameters.OrderBy(a => GetName(context, frame, output, a.ValueNode, cultureInfo, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
 				if ((sortLocals || sortParameters) && others.Length > 1)
-					others = others.OrderBy(a => GetName(context, frame, output, a.ValueNode, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
+					others = others.OrderBy(a => GetName(context, frame, output, a.ValueNode, cultureInfo, cancellationToken), StringComparer.OrdinalIgnoreCase).ToArray();
 
 				var res = new DbgLocalsValueNodeInfo[locals.Length + parameters.Length + others.Length];
 				int w = 0;
@@ -174,9 +176,9 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			}
 		}
 
-		string GetName(DbgEvaluationContext context, DbgStackFrame frame, StringBuilderTextColorOutput output, DbgValueNode valueNode, CancellationToken cancellationToken) {
+		string GetName(DbgEvaluationContext context, DbgStackFrame frame, StringBuilderTextColorOutput output, DbgValueNode valueNode, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			output.Reset();
-			valueNode.FormatName(context, frame, output, cancellationToken);
+			valueNode.FormatName(context, frame, output, cultureInfo, cancellationToken);
 			return output.ToString();
 		}
 

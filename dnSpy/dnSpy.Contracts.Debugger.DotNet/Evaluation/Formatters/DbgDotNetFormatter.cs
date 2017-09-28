@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -63,8 +64,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 		/// <param name="frame">Stack frame</param>
 		/// <param name="value">Value to format</param>
 		/// <param name="options">Options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrame frame, DbgDotNetValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken);
+		public abstract void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrame frame, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Formats a type
@@ -74,7 +76,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 		/// <param name="type">Type to format</param>
 		/// <param name="value">Value or null</param>
 		/// <param name="options">Options</param>
-		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options);
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
+		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo);
 	}
 
 	/// <summary>Metadata</summary>

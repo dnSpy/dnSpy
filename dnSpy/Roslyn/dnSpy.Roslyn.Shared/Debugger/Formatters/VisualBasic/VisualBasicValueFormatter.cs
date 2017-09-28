@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -34,6 +35,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		readonly DbgEvaluationContext context;
 		readonly DbgStackFrame frame;
 		readonly ValueFormatterOptions options;
+		readonly CultureInfo cultureInfo;
 		/*readonly*/ CancellationToken cancellationToken;
 		const int MAX_RECURSION = 200;
 		int recursionCounter;
@@ -57,11 +59,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		bool UseToString => (options & ValueFormatterOptions.ToString) != 0;
 		bool DigitSeparators => (options & ValueFormatterOptions.DigitSeparators) != 0;
 
-		public VisualBasicValueFormatter(ITextColorWriter output, DbgEvaluationContext context, DbgStackFrame frame, ValueFormatterOptions options, CancellationToken cancellationToken) {
+		public VisualBasicValueFormatter(ITextColorWriter output, DbgEvaluationContext context, DbgStackFrame frame, ValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
 			this.frame = frame ?? throw new ArgumentNullException(nameof(frame));
 			this.options = options;
+			this.cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
 			this.cancellationToken = cancellationToken;
 			recursionCounter = 0;
 		}
@@ -101,7 +104,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 		void FormatTypeName(DbgDotNetValue value) {
 			OutputWrite(TypeNameOpenParen, BoxedTextColor.Error);
-			new VisualBasicTypeFormatter(output, options.ToTypeFormatterOptions(showArrayValueSizes: true)).Format(value.Type, value);
+			new VisualBasicTypeFormatter(output, options.ToTypeFormatterOptions(showArrayValueSizes: true), cultureInfo).Format(value.Type, value);
 			OutputWrite(TypeNameCloseParen, BoxedTextColor.Error);
 		}
 
@@ -111,7 +114,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				typeOptions |= TypeFormatterOptions.Namespaces;
 				typeOptions &= ~TypeFormatterOptions.Tokens;
 			}
-			new VisualBasicTypeFormatter(output, typeOptions).Format(type, null);
+			new VisualBasicTypeFormatter(output, typeOptions, cultureInfo).Format(type, null);
 		}
 
 		bool TryFormatTuple(DbgDotNetValue value, int tupleArity) {
@@ -436,7 +439,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				if (char.IsControl(value))
 					WriteCharW(value);
 				else
-					OutputWrite("\"" + value.ToString() + "\"c", BoxedTextColor.Char);
+					OutputWrite("\"" + value.ToString(cultureInfo) + "\"c", BoxedTextColor.Char);
 				break;
 			}
 		}
@@ -569,56 +572,56 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 		string ToFormattedSByte(sbyte value) {
 			if (Decimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X2"));
 		}
 
 		string ToFormattedByte(byte value) {
 			if (Decimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X2"));
 		}
 
 		string ToFormattedInt16(short value) {
 			if (Decimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X4"));
 		}
 
 		string ToFormattedUInt16(ushort value) {
 			if (Decimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X4"));
 		}
 
 		string ToFormattedInt32(int value) {
 			if (Decimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
 		string ToFormattedUInt32(uint value) {
 			if (Decimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
 		string ToFormattedInt64(long value) {
 			if (Decimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X16"));
 		}
 
 		string ToFormattedUInt64(ulong value) {
 			if (Decimal)
-				return ToFormattedDecimalNumber(value.ToString());
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X16"));
 		}
@@ -652,7 +655,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				}
 			}
 			else
-				OutputWrite(value.ToString(), BoxedTextColor.Number);
+				OutputWrite(value.ToString(cultureInfo), BoxedTextColor.Number);
 		}
 
 		void FormatDouble(double value, DmdAppDomain appDomain) {
@@ -684,11 +687,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				}
 			}
 			else
-				OutputWrite(value.ToString(), BoxedTextColor.Number);
+				OutputWrite(value.ToString(cultureInfo), BoxedTextColor.Number);
 		}
 
 		string ToFormattedDecimal(decimal value) {
-			var s = value.ToString();
+			var s = value.ToString(cultureInfo);
 			if (!Display)
 				s += DecimalSuffix;
 			return s;
@@ -717,7 +720,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		void FormatPointer64(ulong value) => WriteNumber(ToFormattedPointer64(value));
 
 		void FormatDateTime(DateTime value) {
-			var s = "#" + value.ToString("M/d/yyyy hh:mm:ss tt") + "#";
+			// Roslyn EE always uses invariant culture
+			var s = value.ToString("#M/d/yyyy hh:mm:ss tt#", CultureInfo.InvariantCulture);
 			OutputWrite(s, BoxedTextColor.Number);
 		}
 	}
