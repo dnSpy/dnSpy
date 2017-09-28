@@ -205,7 +205,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				case DmdTypeSignatureKind.ByRef:
 					OutputWrite(BYREF_KEYWORD, BoxedTextColor.Keyword);
 					WriteSpace();
-					Format(type.GetElementType(), valueToDispose = value.Dereference());
+					Format(type.GetElementType(), valueToDispose = value?.Dereference());
 					break;
 
 				case DmdTypeSignatureKind.TypeGenericParameter:

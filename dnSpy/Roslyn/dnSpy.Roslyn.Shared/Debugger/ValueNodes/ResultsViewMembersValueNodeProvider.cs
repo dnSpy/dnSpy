@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -84,7 +85,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		static string GetRequiredAssemblyFileName(DmdAppDomain appDomain) {
 			// Check if it's .NET Core
-			if (appDomain.GetAssembly("System.Private.CoreLib") != null)
+			if (StringComparer.OrdinalIgnoreCase.Equals(appDomain.CorLib.GetName().Name, "System.Private.CoreLib"))
 				return "System.Linq.dll";
 			return "System.Core.dll";
 		}
@@ -95,7 +96,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgDotNetValueResult valueResult) {
 			if (!valueResult.ValueIsException)
 				return (null, false);
-			if (valueResult.Value.Type != valueResult.Value.Type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugViewEmptyException))
+			if (valueResult.Value.Type != valueResult.Value.Type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugViewEmptyException, isOptional: true))
 				return (null, false);
 			valueResult.Value?.Dispose();
 			return (new ResultsViewNoResultsValueNode(Expression), false);
