@@ -31,8 +31,8 @@
 		<color name="staticevent" fg="#DB94B8" />
 		<color name="instanceproperty" fg="#248F8F" />
 		<color name="staticproperty" fg="#1F8E8E" />
-		<color name="local" fg="#BDB76B" />
-		<color name="parameter" fg="#BDB76B" bold="true" />
+		<color name="local" fg="#DCDCDC" />
+		<color name="parameter" fg="#DCDCDC" bold="true" />
 		<color name="preprocessorkeyword" fg="#FF9B9B9B" />
 		<color name="preprocessortext" fg="#FFDCDCDC" />
 		<color name="label" fg="#806F4D" />
