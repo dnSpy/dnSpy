@@ -46,7 +46,6 @@
     <Compile Include="ILVM.cs" />
     <Compile Include="ILVMFactory.cs" />
     <Compile Include="Impl\DebuggerILInterpreter.cs" />
-    <Compile Include="Impl\ILValueConstants.cs" />
     <Compile Include="Impl\ILVMImpl.cs" />
     <Compile Include="Impl\OpCodes.cs" />
     <Compile Include="InterpreterException.cs" />

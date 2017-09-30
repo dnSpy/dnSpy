@@ -30,14 +30,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class ByRefILValueImpl : ByRefILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
 		public ByRefILValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType GetType(DmdAppDomain appDomain) => value.Type;
+		public override DmdType Type => value.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
 	sealed class ObjectRefILValueImpl : ObjectRefILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
 		public ObjectRefILValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType GetType(DmdAppDomain appDomain) => value.Type;
+		public override DmdType Type => value.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
@@ -45,42 +45,38 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly DbgDotNetValue value;
 		public ValueTypeILValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
 		public override ILValue Clone() => this;//TODO:
-		public override DmdType GetType(DmdAppDomain appDomain) => value.Type;
+		public override DmdType Type => value.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
 	sealed class NullObjectRefILValueImpl : NullObjectRefILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
 		public NullObjectRefILValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType GetType(DmdAppDomain appDomain) => value.Type;
+		public override DmdType Type => value.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
 	sealed class ConstantInt32ILValueImpl : ConstantInt32ILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
-		public ConstantInt32ILValueImpl(DbgDotNetValue value, int v) : base(v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType GetType(DmdAppDomain appDomain) => value.Type;
+		public ConstantInt32ILValueImpl(DbgDotNetValue value, int v) : base(value.Type, v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
 	sealed class ConstantInt64ILValueImpl : ConstantInt64ILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
-		public ConstantInt64ILValueImpl(DbgDotNetValue value, long v) : base(v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType GetType(DmdAppDomain appDomain) => value.Type;
+		public ConstantInt64ILValueImpl(DbgDotNetValue value, long v) : base(value.Type, v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
 	sealed class ConstantStringILValueImpl : ConstantStringILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
-		public ConstantStringILValueImpl(DbgDotNetValue value, string s) : base(s) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType GetType(DmdAppDomain appDomain) => value.Type;
+		public ConstantStringILValueImpl(DbgDotNetValue value, string s) : base(value.Type.AppDomain, s) => this.value = value ?? throw new ArgumentNullException(nameof(value));
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
 	sealed class ConstantFloatILValueImpl : ConstantFloatILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
-		public ConstantFloatILValueImpl(DbgDotNetValue value, double v) : base(v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType GetType(DmdAppDomain appDomain) => value.Type;
+		public ConstantFloatILValueImpl(DbgDotNetValue value, double v) : base(value.Type, v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
@@ -88,9 +84,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly DbgDotNetValue value;
 		public static ConstantNativeIntILValueImpl Create32(DbgDotNetValue value, int v) => new ConstantNativeIntILValueImpl(value, v);
 		public static ConstantNativeIntILValueImpl Create64(DbgDotNetValue value, long v) => new ConstantNativeIntILValueImpl(value, v);
-		ConstantNativeIntILValueImpl(DbgDotNetValue value, int v) : base(v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		ConstantNativeIntILValueImpl(DbgDotNetValue value, long v) : base(v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType GetType(DmdAppDomain appDomain) => value.Type;
+		ConstantNativeIntILValueImpl(DbgDotNetValue value, int v) : base(value.Type, v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
+		ConstantNativeIntILValueImpl(DbgDotNetValue value, long v) : base(value.Type, v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 }

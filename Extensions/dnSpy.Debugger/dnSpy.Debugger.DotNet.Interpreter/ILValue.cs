@@ -86,9 +86,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value or null if it's unknown, eg. it's a null reference
 		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public abstract DmdType GetType(DmdAppDomain appDomain);
+		public abstract DmdType Type { get; }
 
 		/// <summary>
 		/// Loads an instance field. Returns null if it's not supported.
@@ -373,15 +371,29 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
-		public ConstantInt32ILValue(int value) => Value = value;
+		public ConstantInt32ILValue(DmdAppDomain appDomain, int value) {
+			if (appDomain == null)
+				throw new ArgumentNullException(nameof(appDomain));
+			Type = appDomain.System_Int32;
+			Value = value;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="type">Type, eg. <see cref="int"/></param>
+		/// <param name="value">Value</param>
+		public ConstantInt32ILValue(DmdType type, int value) {
+			Type = type ?? throw new ArgumentNullException(nameof(type));
+			Value = value;
+		}
 
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_Int32;
+		public override DmdType Type { get; }
 
 		/// <summary>
 		/// ToString()
@@ -412,15 +424,29 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
-		public ConstantInt64ILValue(long value) => Value = value;
+		public ConstantInt64ILValue(DmdAppDomain appDomain, long value) {
+			if (appDomain == null)
+				throw new ArgumentNullException(nameof(appDomain));
+			Type = appDomain.System_Int64;
+			Value = value;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="type">Type, eg. <see cref="long"/></param>
+		/// <param name="value">Value</param>
+		public ConstantInt64ILValue(DmdType type, long value) {
+			Type = type ?? throw new ArgumentNullException(nameof(type));
+			Value = value;
+		}
 
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_Int64;
+		public override DmdType Type { get; }
 
 		/// <summary>
 		/// ToString()
@@ -446,15 +472,29 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
-		public ConstantFloatILValue(double value) => Value = value;
+		public ConstantFloatILValue(DmdAppDomain appDomain, double value) {
+			if (appDomain == null)
+				throw new ArgumentNullException(nameof(appDomain));
+			Type = appDomain.System_Double;
+			Value = value;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="type">Type, eg. <see cref="double"/></param>
+		/// <param name="value">Value</param>
+		public ConstantFloatILValue(DmdType type, double value) {
+			Type = type ?? throw new ArgumentNullException(nameof(type));
+			Value = value;
+		}
 
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_Double;
+		public override DmdType Type { get; }
 
 		/// <summary>
 		/// ToString()
@@ -502,35 +542,83 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Creates a 32-bit native int
 		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
-		public static ConstantNativeIntILValue Create32(int value) => new ConstantNativeIntILValue(value);
+		public static ConstantNativeIntILValue Create32(DmdAppDomain appDomain, int value) => new ConstantNativeIntILValue(appDomain, value);
 
 		/// <summary>
 		/// Creates a 64-bit native int
 		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
-		public static ConstantNativeIntILValue Create64(long value) => new ConstantNativeIntILValue(value);
+		public static ConstantNativeIntILValue Create64(DmdAppDomain appDomain, long value) => new ConstantNativeIntILValue(appDomain, value);
+
+		/// <summary>
+		/// Creates a 32-bit native int
+		/// </summary>
+		/// <param name="type">Type, eg. <see cref="IntPtr"/></param>
+		/// <param name="value">Value</param>
+		/// <returns></returns>
+		public static ConstantNativeIntILValue Create32(DmdType type, int value) => new ConstantNativeIntILValue(type, value);
+
+		/// <summary>
+		/// Creates a 64-bit native int
+		/// </summary>
+		/// <param name="type">Type, eg. <see cref="IntPtr"/></param>
+		/// <param name="value">Value</param>
+		/// <returns></returns>
+		public static ConstantNativeIntILValue Create64(DmdType type, long value) => new ConstantNativeIntILValue(type, value);
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
-		protected ConstantNativeIntILValue(int value) => this.value = value;
+		protected ConstantNativeIntILValue(DmdAppDomain appDomain, int value) {
+			if (appDomain == null)
+				throw new ArgumentNullException(nameof(appDomain));
+			Type = appDomain.System_IntPtr;
+			this.value = value;
+		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
-		protected ConstantNativeIntILValue(long value) => this.value = value;
+		protected ConstantNativeIntILValue(DmdAppDomain appDomain, long value) {
+			if (appDomain == null)
+				throw new ArgumentNullException(nameof(appDomain));
+			Type = appDomain.System_IntPtr;
+			this.value = value;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="type">Type, eg. <see cref="IntPtr"/></param>
+		/// <param name="value">Value</param>
+		protected ConstantNativeIntILValue(DmdType type, int value) {
+			Type = type ?? throw new ArgumentNullException(nameof(type));
+			this.value = value;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="type">Type, eg. <see cref="IntPtr"/></param>
+		/// <param name="value">Value</param>
+		protected ConstantNativeIntILValue(DmdType type, long value) {
+			Type = type ?? throw new ArgumentNullException(nameof(type));
+			this.value = value;
+		}
 
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_IntPtr;
+		public override DmdType Type { get; }
 
 		/// <summary>
 		/// ToString()
@@ -562,7 +650,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// Constructor (used by ldftn instruction)
 		/// </summary>
 		/// <param name="method">Method</param>
-		public FunctionPointerILValue(DmdMethodBase method) => Method = method;
+		public FunctionPointerILValue(DmdMethodBase method) {
+			Method = method ?? throw new ArgumentNullException(nameof(method));
+			Type = method.AppDomain.System_Void.MakePointerType();
+		}
 
 		/// <summary>
 		/// Constructor (used by ldvirtftn instruction)
@@ -571,15 +662,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="thisValue">This object</param>
 		public FunctionPointerILValue(DmdMethodBase method, ILValue thisValue) {
 			Method = method;
+			Type = method.AppDomain.System_Void.MakePointerType();
 			VirtualThisObject = thisValue;
 		}
 
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_Void.MakePointerType();
+		public override DmdType Type { get; }
 	}
 
 	/// <summary>
@@ -597,8 +687,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
 		/// <param name="size">Size of memory</param>
-		public NativeMemoryILValue(int size) => data = new byte[size];
+		public NativeMemoryILValue(DmdAppDomain appDomain, int size) {
+			if (appDomain == null)
+				throw new ArgumentNullException(nameof(appDomain));
+			Type = appDomain.System_Void.MakePointerType();
+			data = new byte[size];
+		}
 
 		NativeMemoryILValue(byte[] data, long offset) {
 			this.data = data;
@@ -696,44 +792,44 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 				if (pointerSize == 4) {
 					if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 						return null;
-					return ConstantNativeIntILValue.Create32(BitConverter.ToInt32(data, (int)offset));
+					return ConstantNativeIntILValue.Create32(type.AppDomain, BitConverter.ToInt32(data, (int)offset));
 				}
 				else {
 					Debug.Assert(pointerSize == 8);
 					if (offset + 8 - 1 < offset || (ulong)offset + 8 - 1 >= (ulong)data.Length)
 						return null;
-					return ConstantNativeIntILValue.Create64(BitConverter.ToInt64(data, (int)offset));
+					return ConstantNativeIntILValue.Create64(type.AppDomain, BitConverter.ToInt64(data, (int)offset));
 				}
 
 			case LoadValueType.I1:
 				if ((ulong)offset >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue((sbyte)data[(int)offset]);
+				return new ConstantInt32ILValue(type.AppDomain, (sbyte)data[(int)offset]);
 
 			case LoadValueType.I2:
 				if (offset + 2 - 1 < offset || (ulong)offset + 2 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(BitConverter.ToInt16(data, (int)offset));
+				return new ConstantInt32ILValue(type.AppDomain, BitConverter.ToInt16(data, (int)offset));
 
 			case LoadValueType.I4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(BitConverter.ToInt32(data, (int)offset));
+				return new ConstantInt32ILValue(type.AppDomain, BitConverter.ToInt32(data, (int)offset));
 
 			case LoadValueType.I8:
 				if (offset + 8 - 1 < offset || (ulong)offset + 8 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantInt64ILValue(BitConverter.ToInt64(data, (int)offset));
+				return new ConstantInt64ILValue(type.AppDomain, BitConverter.ToInt64(data, (int)offset));
 
 			case LoadValueType.R4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantFloatILValue(BitConverter.ToSingle(data, (int)offset));
+				return new ConstantFloatILValue(type.AppDomain, BitConverter.ToSingle(data, (int)offset));
 
 			case LoadValueType.R8:
 				if (offset + 8 - 1 < offset || (ulong)offset + 8 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantFloatILValue(BitConverter.ToDouble(data, (int)offset));
+				return new ConstantFloatILValue(type.AppDomain, BitConverter.ToDouble(data, (int)offset));
 
 			case LoadValueType.Ref:
 				return null;
@@ -741,17 +837,17 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 			case LoadValueType.U1:
 				if ((ulong)offset >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(data[(int)offset]);
+				return new ConstantInt32ILValue(type.AppDomain, data[(int)offset]);
 
 			case LoadValueType.U2:
 				if (offset + 2 - 1 < offset || (ulong)offset + 2 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(BitConverter.ToUInt16(data, (int)offset));
+				return new ConstantInt32ILValue(type.AppDomain, BitConverter.ToUInt16(data, (int)offset));
 
 			case LoadValueType.U4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(BitConverter.ToInt32(data, (int)offset));
+				return new ConstantInt32ILValue(type.AppDomain, BitConverter.ToInt32(data, (int)offset));
 
 			default:
 				return null;
@@ -935,9 +1031,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_Void.MakePointerType();
+		public override DmdType Type { get; }
 	}
 
 	/// <summary>
@@ -948,13 +1042,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// Always returns <see cref="ILValueKind.ByRef"/>
 		/// </summary>
 		public sealed override ILValueKind Kind => ILValueKind.ByRef;
-
-		/// <summary>
-		/// Gets the type of the value
-		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public abstract override DmdType GetType(DmdAppDomain appDomain);
 	}
 
 	/// <summary>
@@ -965,13 +1052,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// Always returns <see cref="ILValueKind.ObjectRef"/>
 		/// </summary>
 		public sealed override ILValueKind Kind => ILValueKind.ObjectRef;
-
-		/// <summary>
-		/// Gets the type of the value
-		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public abstract override DmdType GetType(DmdAppDomain appDomain);
 	}
 
 	/// <summary>
@@ -986,15 +1066,19 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">String value, but not null</param>
-		public ConstantStringILValue(string value) => Value = value;
+		public ConstantStringILValue(DmdAppDomain appDomain, string value) {
+			if (appDomain == null)
+				throw new ArgumentNullException(nameof(appDomain));
+			Type = appDomain.System_String;
+			Value = value;
+		}
 
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_String;
+		public override DmdType Type { get; }
 
 		/// <summary>
 		/// ToString()
@@ -1018,7 +1102,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// Constructor
 		/// </summary>
 		/// <param name="value">Value</param>
-		public BoxedValueTypeILValue(ValueTypeILValue value) => Value = (ValueTypeILValue)value.Clone();
+		public BoxedValueTypeILValue(ValueTypeILValue value) {
+			Value = value.Clone();
+			type = Value.Type;
+		}
 
 		/// <summary>
 		/// Constructor
@@ -1033,9 +1120,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public override DmdType GetType(DmdAppDomain appDomain) => type ?? Value.GetType(appDomain);
+		public override DmdType Type => type;
 	}
 
 	/// <summary>
@@ -1055,9 +1140,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public override DmdType GetType(DmdAppDomain appDomain) => null;
+		public override DmdType Type => null;
 	}
 
 	/// <summary>
@@ -1074,12 +1157,5 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// </summary>
 		/// <returns></returns>
 		public abstract override ILValue Clone();
-
-		/// <summary>
-		/// Gets the type of the value
-		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <returns></returns>
-		public abstract override DmdType GetType(DmdAppDomain appDomain);
 	}
 }
