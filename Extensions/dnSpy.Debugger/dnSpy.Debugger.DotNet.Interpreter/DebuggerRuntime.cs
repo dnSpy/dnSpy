@@ -36,42 +36,42 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// </summary>
 		/// <param name="index">Argument index</param>
 		/// <returns></returns>
-		public abstract ILValue GetArgument(int index);
+		public abstract ILValue LoadArgument(int index);
 
 		/// <summary>
 		/// Gets a local value or returns null on failure
 		/// </summary>
 		/// <param name="index">Local index</param>
 		/// <returns></returns>
-		public abstract ILValue GetLocal(int index);
+		public abstract ILValue LoadLocal(int index);
 
 		/// <summary>
 		/// Gets the address of an argument or returns null on failure
 		/// </summary>
 		/// <param name="index">Argument index</param>
 		/// <returns></returns>
-		public abstract ILValue GetArgumentAddress(int index);
+		public abstract ILValue LoadArgumentAddress(int index);
 
 		/// <summary>
 		/// Gets the address of a local or returns null on failure
 		/// </summary>
 		/// <param name="index">Local index</param>
 		/// <returns></returns>
-		public abstract ILValue GetLocalAddress(int index);
+		public abstract ILValue LoadLocalAddress(int index);
 
 		/// <summary>
 		/// Writes to an argument or returns false on failure
 		/// </summary>
 		/// <param name="index">Argument index</param>
 		/// <param name="value">New value</param>
-		public abstract bool SetArgument(int index, ILValue value);
+		public abstract bool StoreArgument(int index, ILValue value);
 
 		/// <summary>
 		/// Writes to a local or returns false on failure
 		/// </summary>
 		/// <param name="index">Local index</param>
 		/// <param name="value">New value</param>
-		public abstract bool SetLocal(int index, ILValue value);
+		public abstract bool StoreLocal(int index, ILValue value);
 
 		/// <summary>
 		/// Creates an SZ array or returns null on failure
@@ -80,44 +80,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="length">Number of elements</param>
 		/// <returns></returns>
 		public abstract ILValue CreateSZArray(DmdType elementType, long length);
-
-		/// <summary>
-		/// Gets the value of an element in an SZ array or returns null on failure
-		/// </summary>
-		/// <param name="pointerType">Pointer type</param>
-		/// <param name="arrayValue">Array</param>
-		/// <param name="index">Index</param>
-		/// <param name="elementType">Optional element type (eg. it's the ldelem instruction)</param>
-		/// <returns></returns>
-		public abstract ILValue GetSZArrayElement(PointerOpCodeType pointerType, ILValue arrayValue, long index, DmdType elementType);
-
-		/// <summary>
-		/// Gets the address of an element in an SZ array or returns null on failure
-		/// </summary>
-		/// <param name="arrayValue">Array</param>
-		/// <param name="index">Index</param>
-		/// <param name="elementType">Element type</param>
-		/// <returns></returns>
-		public abstract ILValue GetSZArrayElementAddress(ILValue arrayValue, long index, DmdType elementType);
-
-		/// <summary>
-		/// Sets the value of an element in an SZ array or returns false on failure
-		/// </summary>
-		/// <param name="pointerType">Pointer type</param>
-		/// <param name="arrayValue">Array</param>
-		/// <param name="index">Index</param>
-		/// <param name="elementValue">New value</param>
-		/// <param name="elementType">Optional element type (eg. it's the stelem instruction)</param>
-		/// <returns></returns>
-		public abstract bool SetSZArrayElement(PointerOpCodeType pointerType, ILValue arrayValue, long index, ILValue elementValue, DmdType elementType);
-
-		/// <summary>
-		/// Returns the length of an SZ array. Returns false if the input is not an array
-		/// </summary>
-		/// <param name="value">The value, most likely an array value</param>
-		/// <param name="length">Updated with the length of the array</param>
-		/// <returns></returns>
-		public abstract bool GetSZArrayLength(ILValue value, out long length);
 
 		/// <summary>
 		/// Creates a <see cref="RuntimeTypeHandle"/> value or returns null on failure
@@ -148,231 +110,52 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract ILValue CreateTypeNoConstructor(DmdType type);
 
 		/// <summary>
-		/// Calls a method/constructor or returns false on failure. The method could be a CLR-generated method, eg. an array Address() method, see <see cref="DmdSpecialMethodKind"/>.
+		/// Calls a static method or returns false on failure
 		/// </summary>
-		/// <param name="isVirtual">true if it's a virtual call, false if it's a normal call</param>
 		/// <param name="method">Method to call</param>
-		/// <param name="obj">'this' pointer or null if it's a static method</param>
-		/// <param name="parameters">Method arguments</param>
+		/// <param name="arguments">Method arguments</param>
 		/// <param name="returnValue">Return value. It's ignored if the method returns <see cref="void"/></param>
 		/// <returns></returns>
-		public abstract bool Call(bool isVirtual, DmdMethodBase method, ILValue obj, ILValue[] parameters, out ILValue returnValue);
+		public abstract bool CallStatic(DmdMethodBase method, ILValue[] arguments, out ILValue returnValue);
 
 		/// <summary>
-		/// Calls a method or returns false on failure
+		/// Creates a new instance and calls its constructor or returns null on failure. The constructor could be a CLR-generated array constructor
+		/// </summary>
+		/// <param name="ctor">Constructor</param>
+		/// <param name="arguments">Constructor arguments</param>
+		/// <returns></returns>
+		public abstract ILValue CreateInstance(DmdConstructorInfo ctor, ILValue[] arguments);
+
+		/// <summary>
+		/// Calls a static method or returns false on failure
 		/// </summary>
 		/// <param name="methodAddress">Method address</param>
 		/// <param name="methodSig">Method signature</param>
-		/// <param name="obj">'this' pointer or null if it's a static method</param>
-		/// <param name="parameters">Method arguments</param>
+		/// <param name="arguments">Method arguments</param>
 		/// <param name="returnValue">Return value. It's ignored if the method returns <see cref="void"/></param>
 		/// <returns></returns>
-		public abstract bool CallIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue obj, ILValue[] parameters, out ILValue returnValue);
+		public abstract bool CallStaticIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue[] arguments, out ILValue returnValue);
 
 		/// <summary>
-		/// Returns the value of a field or returns null on failure
+		/// Returns the value of a static field or returns null on failure
 		/// </summary>
 		/// <param name="field">Field</param>
-		/// <param name="obj">'this' pointer or null if it's a static field</param>
 		/// <returns></returns>
-		public abstract ILValue GetField(DmdFieldInfo field, ILValue obj);
+		public abstract ILValue LoadStaticField(DmdFieldInfo field);
 
 		/// <summary>
-		/// Returns the address of a field or returns null on failure
+		/// Returns the address of a static field or returns null on failure
 		/// </summary>
 		/// <param name="field">Field</param>
-		/// <param name="obj">'this' pointer or null if it's a static field</param>
 		/// <returns></returns>
-		public abstract ILValue GetFieldAddress(DmdFieldInfo field, ILValue obj);
+		public abstract ILValue LoadStaticFieldAddress(DmdFieldInfo field);
 
 		/// <summary>
-		/// Stores a value to a field or returns false on failure
+		/// Stores a value in a static field or returns false on failure
 		/// </summary>
 		/// <param name="field">Field</param>
-		/// <param name="obj">'this' pointer or null if it's a static field</param>
 		/// <param name="value">Value to store in the field</param>
-		public abstract bool SetField(DmdFieldInfo field, ILValue obj, ILValue value);
-
-		/// <summary>
-		/// Reads a (managed or unmanaged) pointer or returns null on failure
-		/// </summary>
-		/// <param name="pointerType">Pointer type</param>
-		/// <param name="address">Address</param>
-		/// <returns></returns>
-		public abstract ILValue ReadPointer(PointerOpCodeType pointerType, ILValue address);
-
-		/// <summary>
-		/// Writes a (managed or unmanaged) pointer or returns false on failure
-		/// </summary>
-		/// <param name="pointerType">Pointer type</param>
-		/// <param name="address">Address</param>
-		/// <param name="value">New value</param>
-		/// <returns></returns>
-		public abstract bool WritePointer(PointerOpCodeType pointerType, ILValue address, ILValue value);
-
-		/// <summary>
-		/// Loads a type (ldobj instruction) or returns null on failure
-		/// </summary>
-		/// <param name="address">Address of type object</param>
-		/// <param name="type">Type to load</param>
-		/// <returns></returns>
-		public abstract ILValue LoadTypeObject(ILValue address, DmdType type);
-
-		/// <summary>
-		/// Writes a type (stobj instruction) or returns false on failure
-		/// </summary>
-		/// <param name="address">Address of type object</param>
-		/// <param name="type">Type to store</param>
-		/// <param name="value">New value</param>
-		/// <returns></returns>
-		public abstract bool StoreTypeObject(ILValue address, DmdType type, ILValue value);
-
-		/// <summary>
-		/// Copies data from <paramref name="source"/> to <paramref name="destination"/> or returns false on failure
-		/// </summary>
-		/// <param name="destination">Destination pointer</param>
-		/// <param name="source">Source pointer</param>
-		/// <param name="type">Type</param>
-		/// <returns></returns>
-		public abstract bool CopyObject(ILValue destination, ILValue source, DmdType type);
-
-		/// <summary>
-		/// Initializes an address with a default value or returns false on failure
-		/// </summary>
-		/// <param name="address">Address</param>
-		/// <param name="type">Type of data</param>
-		/// <returns></returns>
-		public abstract bool InitializeObject(ILValue address, DmdType type);
-
-		/// <summary>
-		/// Copies memory or returns false on failure
-		/// </summary>
-		/// <param name="destination">Destination address</param>
-		/// <param name="source">Source address</param>
-		/// <param name="size">Size in bytes</param>
-		/// <returns></returns>
-		public abstract bool CopyMemory(ILValue destination, ILValue source, long size);
-
-		/// <summary>
-		/// Initializes memory or returns false on failure
-		/// </summary>
-		/// <param name="address">Address</param>
-		/// <param name="value">Value to write to <paramref name="address"/></param>
-		/// <param name="size">Size of data</param>
-		/// <returns></returns>
-		public abstract bool InitializeMemory(ILValue address, byte value, long size);
-
-		/// <summary>
-		/// Boxes a value type (inluding a nullable value type) or returns null on failure
-		/// </summary>
-		/// <param name="value">Value</param>
-		/// <param name="type">Boxed type</param>
-		/// <returns></returns>
-		public abstract ILValue Box(ILValue value, DmdType type);
-
-		/// <summary>
-		/// Unboxes a boxed value type or returns null if it's not a boxed value
-		/// </summary>
-		/// <param name="value">Value</param>
-		/// <param name="type">Unboxed type</param>
-		/// <returns></returns>
-		public abstract ILValue UnboxAny(ILValue value, DmdType type);
-
-		/// <summary>
-		/// Calculates <paramref name="left"/> + <paramref name="right"/>. This method is called if
-		/// one of the inputs is a non-constant native int or by-ref.
-		/// </summary>
-		/// <param name="left">Left operand</param>
-		/// <param name="right">Right operand</param>
-		/// <returns></returns>
-		public abstract ILValue BinaryAdd(ILValue left, ILValue right);
-
-		/// <summary>
-		/// Calculates <paramref name="left"/> + <paramref name="right"/>. This method is called if
-		/// one of the inputs is a non-constant native int or by-ref.
-		/// </summary>
-		/// <param name="left">Left operand</param>
-		/// <param name="right">Right operand</param>
-		/// <returns></returns>
-		public abstract ILValue BinaryAddOvf(ILValue left, ILValue right);
-
-		/// <summary>
-		/// Calculates <paramref name="left"/> + <paramref name="right"/>. This method is called if
-		/// one of the inputs is a non-constant native int or by-ref.
-		/// </summary>
-		/// <param name="left">Left operand</param>
-		/// <param name="right">Right operand</param>
-		/// <returns></returns>
-		public abstract ILValue BinaryAddOvfUn(ILValue left, ILValue right);
-
-		/// <summary>
-		/// Calculates <paramref name="left"/> - <paramref name="right"/>. This method is called if
-		/// one of the inputs is a non-constant native int or by-ref.
-		/// </summary>
-		/// <param name="left">Left operand</param>
-		/// <param name="right">Right operand</param>
-		/// <returns></returns>
-		public abstract ILValue BinarySub(ILValue left, ILValue right);
-
-		/// <summary>
-		/// Calculates <paramref name="left"/> - <paramref name="right"/>. This method is called if
-		/// one of the inputs is a non-constant native int or by-ref.
-		/// </summary>
-		/// <param name="left">Left operand</param>
-		/// <param name="right">Right operand</param>
-		/// <returns></returns>
-		public abstract ILValue BinarySubOvf(ILValue left, ILValue right);
-
-		/// <summary>
-		/// Calculates <paramref name="left"/> - <paramref name="right"/>. This method is called if
-		/// one of the inputs is a non-constant native int or by-ref.
-		/// </summary>
-		/// <param name="left">Left operand</param>
-		/// <param name="right">Right operand</param>
-		/// <returns></returns>
-		public abstract ILValue BinarySubOvfUn(ILValue left, ILValue right);
-
-		/// <summary>
-		/// Converts the input to a native int or returns null on failure
-		/// </summary>
-		/// <param name="value">Value</param>
-		/// <returns></returns>
-		public abstract ILValue ConvI(ILValue value);
-
-		/// <summary>
-		/// Converts the input to a native int or returns null on failure
-		/// </summary>
-		/// <param name="value">Value</param>
-		/// <returns></returns>
-		public abstract ILValue ConvOvfI(ILValue value);
-
-		/// <summary>
-		/// Converts the input to a native int or returns null on failure
-		/// </summary>
-		/// <param name="value">Value</param>
-		/// <returns></returns>
-		public abstract ILValue ConvOvfIUn(ILValue value);
-
-		/// <summary>
-		/// Converts the input to a native unsigned int or returns null on failure
-		/// </summary>
-		/// <param name="value">Value</param>
-		/// <returns></returns>
-		public abstract ILValue ConvU(ILValue value);
-
-		/// <summary>
-		/// Converts the input to a native unsigned int or returns null on failure
-		/// </summary>
-		/// <param name="value">Value</param>
-		/// <returns></returns>
-		public abstract ILValue ConvOvfU(ILValue value);
-
-		/// <summary>
-		/// Converts the input to a native unsigned int or returns null on failure
-		/// </summary>
-		/// <param name="value">Value</param>
-		/// <returns></returns>
-		public abstract ILValue ConvOvfUUn(ILValue value);
+		public abstract bool StoreStaticField(DmdFieldInfo field, ILValue value);
 
 		/// <summary>
 		/// Compares <paramref name="left"/> and <paramref name="right"/>, returning less than 0, 0 or greater than 0.
@@ -402,7 +185,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-	public enum PointerOpCodeType {
+	public enum LoadValueType {
 		I,
 		I1,
 		I2,

@@ -103,20 +103,20 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 		string GetTestAssemblyFilename() => Path.GetFullPath(Path.GetDirectoryName(GetType().Assembly.Location) + @"\..\..\..\dnSpy.Console\bin\dnSpy.Debugger.DotNet.Interpreter.Tests.dll");
 
 		sealed class DmdEvaluatorImpl : DmdEvaluator {
-			public override object Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
-			public override object LoadField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, CancellationToken cancellationToken) => throw new NotImplementedException();
-			public override void StoreField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, object value, CancellationToken cancellationToken) => throw new NotImplementedException();
-			public override void Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback, CancellationToken cancellationToken) => throw new NotImplementedException();
-			public override void LoadField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, Action<object> callback, CancellationToken cancellationToken) => throw new NotImplementedException();
-			public override void StoreField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, object value, Action callback, CancellationToken cancellationToken) => throw new NotImplementedException();
+			public override object Invoke(object context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
+			public override object LoadField(object context, DmdFieldInfo field, object obj, CancellationToken cancellationToken) => throw new NotImplementedException();
+			public override void StoreField(object context, DmdFieldInfo field, object obj, object value, CancellationToken cancellationToken) => throw new NotImplementedException();
+			public override void Invoke(object context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback, CancellationToken cancellationToken) => throw new NotImplementedException();
+			public override void LoadField(object context, DmdFieldInfo field, object obj, Action<object> callback, CancellationToken cancellationToken) => throw new NotImplementedException();
+			public override void StoreField(object context, DmdFieldInfo field, object obj, object value, Action callback, CancellationToken cancellationToken) => throw new NotImplementedException();
 		}
 
 		TestRuntime CreateTestRuntime() {
-			var rtc = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
-			var adc = rtc.CreateAppDomain(1);
-			adc.CreateAssembly(typeof(void).Assembly.Location);
-			adc.CreateAssembly(GetTestAssemblyFilename());
-			return new Fake.TestRuntimeImpl(rtc.Runtime);
+			var rt = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
+			var ad = rt.CreateAppDomain(1);
+			ad.CreateAssembly(typeof(void).Assembly.Location);
+			ad.CreateAssembly(GetTestAssemblyFilename());
+			return new Fake.TestRuntimeImpl(rt);
 		}
 
 		public static void Test() => new InterpreterTest().TestCore();
@@ -3851,7 +3851,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 
 		ILValue CreateArgument(object value) {
 			if (value == null)
-				return NullObjectRefILValue.Instance;
+				return new NullObjectRefILValue();
 			switch (Type.GetTypeCode(value.GetType())) {
 			case TypeCode.Boolean:	return new ConstantInt32ILValue((bool)value ? 1 : 0);
 			case TypeCode.Char:		return new ConstantInt32ILValue((char)value);

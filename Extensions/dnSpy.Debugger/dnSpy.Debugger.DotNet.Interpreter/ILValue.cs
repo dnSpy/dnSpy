@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// true if this is a null value
 		/// </summary>
-		public bool IsNull => this == NullObjectRefILValue.Instance;
+		public virtual bool IsNull => false;
 
 		/// <summary>
 		/// Makes a copy of this instance so the new instance can be pushed onto the stack. The default implementation
@@ -84,101 +84,279 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public virtual ILValue Clone() => this;
 
 		/// <summary>
-		/// Gets the type of the value or null if it's <see cref="NullObjectRefILValue"/> or if it's a primitive type
+		/// Gets the type of the value or null if it's unknown, eg. it's a null reference
 		/// </summary>
 		/// <param name="appDomain">AppDomain</param>
 		/// <returns></returns>
-		public virtual DmdType GetType(DmdAppDomain appDomain) => null;
+		public abstract DmdType GetType(DmdAppDomain appDomain);
 
 		/// <summary>
-		/// Adds <paramref name="value"/> to this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
+		/// Loads an instance field. Returns null if it's not supported.
 		/// </summary>
-		/// <param name="value">Value to add to this instance</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <param name="field">Field</param>
 		/// <returns></returns>
-		public virtual ILValue PointerAdd(long value, int pointerSize) => null;
+		public virtual ILValue LoadField(DmdFieldInfo field) => null;
 
 		/// <summary>
-		/// Adds <paramref name="value"/> to this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
+		/// Stores a value in an instance field. Returns false if it's not supported.
 		/// </summary>
-		/// <param name="value">Value to add to this instance</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <param name="field">Field</param>
+		/// <param name="value">Value</param>
 		/// <returns></returns>
-		public virtual ILValue PointerAddOvf(long value, int pointerSize) => null;
+		public virtual bool StoreField(DmdFieldInfo field, ILValue value) => false;
 
 		/// <summary>
-		/// Adds <paramref name="value"/> to this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
+		/// Returns the address of an instance field. Returns null if it's not supported.
 		/// </summary>
-		/// <param name="value">Value to add to this instance</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <param name="field">Field</param>
 		/// <returns></returns>
-		public virtual ILValue PointerAddOvfUn(long value, int pointerSize) => null;
+		public virtual ILValue LoadFieldAddress(DmdFieldInfo field) => null;
 
 		/// <summary>
-		/// Subtracts <paramref name="value"/> from this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
+		/// Calls an instance method. The method could be a CLR-generated method, eg. an array Address() method, see <see cref="DmdSpecialMethodKind"/>.
+		/// Returns false if it's not supported.
 		/// </summary>
-		/// <param name="value">Value to subtract from this instance</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <param name="isCallvirt">true if this is a virtual call, false if it's a non-virtual call</param>
+		/// <param name="method">Method</param>
+		/// <param name="arguments">Arguments. The hidden 'this' value isn't included, it's this instance.</param>
+		/// <param name="returnValue">Updated with the return value. Can be null if the return type is <see cref="void"/></param>
 		/// <returns></returns>
-		public virtual ILValue PointerSub(long value, int pointerSize) => null;
+		public virtual bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
+			returnValue = null;
+			return false;
+		}
 
 		/// <summary>
-		/// Subtracts <paramref name="value"/> from this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
+		/// Calls an instance method or returns false on failure
 		/// </summary>
-		/// <param name="value">Value to subtract from this instance</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <param name="methodAddress">Method address</param>
+		/// <param name="methodSig">Method signature</param>
+		/// <param name="arguments">Method arguments</param>
+		/// <param name="returnValue">Return value. It's ignored if the method returns <see cref="void"/></param>
 		/// <returns></returns>
-		public virtual ILValue PointerSubOvf(long value, int pointerSize) => null;
+		public virtual bool CallIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue[] arguments, out ILValue returnValue) {
+			returnValue = null;
+			return false;
+		}
 
 		/// <summary>
-		/// Subtracts <paramref name="value"/> from this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
+		/// Boxes this instance. Returns null if it's not supported.
 		/// </summary>
-		/// <param name="value">Value to subtract from this instance</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <param name="type">Target type</param>
 		/// <returns></returns>
-		public virtual ILValue PointerSubOvfUn(long value, int pointerSize) => null;
+		public virtual ILValue Box(DmdType type) => null;
 
 		/// <summary>
-		/// Reads a (managed or unmanaged) pointer or returns null if it's not supported
+		/// Unboxes this instance. Returns null if it's not supported.
 		/// </summary>
-		/// <param name="pointerType">Pointer type</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <param name="type">Target type</param>
 		/// <returns></returns>
-		public virtual ILValue ReadPointer(PointerOpCodeType pointerType, int pointerSize) => null;
+		public virtual ILValue UnboxAny(DmdType type) => null;
 
 		/// <summary>
-		/// Writes a (managed or unmanaged) pointer or returns false if it's not supported
+		/// Loads an SZ array element. Returns null if it's not supported.
 		/// </summary>
-		/// <param name="pointerType">Pointer type</param>
-		/// <param name="value">New value</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <param name="loadValueType">Type of value to load</param>
+		/// <param name="index">Array index</param>
+		/// <param name="elementType">Optional element type (eg. it's the ldelem instruction)</param>
 		/// <returns></returns>
-		public virtual bool WritePointer(PointerOpCodeType pointerType, ILValue value, int pointerSize) => false;
+		public virtual ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) => null;
 
 		/// <summary>
-		/// Initializes memory or returns false if it's not supported
+		/// Writes an SZ array element. Returns false if it's not supported.
+		/// </summary>
+		/// <param name="loadValueType">Type of value to store</param>
+		/// <param name="index">Index</param>
+		/// <param name="value">Value</param>
+		/// <param name="elementType">Optional element type (eg. it's the stelem instruction)</param>
+		/// <returns></returns>
+		public virtual bool StoreSZArrayElement(LoadValueType loadValueType, long index, ILValue value, DmdType elementType) => false;
+
+		/// <summary>
+		/// Loads the address of an SZ array element. Returns null if it's not supported.
+		/// </summary>
+		/// <param name="index">Index</param>
+		/// <param name="elementType">Element type</param>
+		/// <returns></returns>
+		public virtual ILValue LoadSZArrayElementAddress(long index, DmdType elementType) => null;
+
+		/// <summary>
+		/// Gets the length of an SZ array. Returns false if it's not supported.
+		/// </summary>
+		/// <param name="length">Updated with the length of the array</param>
+		/// <returns></returns>
+		public virtual bool GetSZArrayLength(out long length) {
+			length = 0;
+			return false;
+		}
+
+		/// <summary>
+		/// Loads a value. Returns null if it's not supported.
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <param name="loadValueType">Type of value to load</param>
+		/// <returns></returns>
+		public virtual ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) => null;
+
+		/// <summary>
+		/// Stores a value. Returns false if it's not supported.
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <param name="loadValueType">Type of value to store</param>
+		/// <param name="value">Value</param>
+		/// <returns></returns>
+		public virtual bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) => false;
+
+		/// <summary>
+		/// Clears the memory. Returns false if it's not supported.
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
+		public virtual bool InitializeObject(DmdType type) => false;
+
+		/// <summary>
+		/// Copies <paramref name="source"/> to this value. Returns false if it's not supported.
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <param name="source">Source value</param>
+		/// <returns></returns>
+		public virtual bool CopyObject(DmdType type, ILValue source) => false;
+
+		/// <summary>
+		/// Initializes memory. Returns false if it's not supported.
 		/// </summary>
 		/// <param name="value">Value to write</param>
 		/// <param name="size">Size of data</param>
 		/// <returns></returns>
 		public virtual bool InitializeMemory(byte value, long size) => false;
+
+		/// <summary>
+		/// Copies memory to this value. Returns false if it's not supported.
+		/// </summary>
+		/// <param name="source">Source value</param>
+		/// <param name="size">Size in bytes</param>
+		/// <returns></returns>
+		public virtual bool CopyMemory(ILValue source, long size) => false;
+
+		/// <summary>
+		/// Adds a constant to a copy of this value and returns the result. Returns null if it's not supported.
+		/// </summary>
+		/// <param name="kind">Opcode kind</param>
+		/// <param name="value">Value to add</param>
+		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <returns></returns>
+		public virtual ILValue Add(AddOpCodeKind kind, long value, int pointerSize) => null;
+
+		/// <summary>
+		/// Subtracts a constant from a copy of this value and returns the result. Returns null if it's not supported.
+		/// </summary>
+		/// <param name="kind">Opcode kind</param>
+		/// <param name="value">Value to subtract</param>
+		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <returns></returns>
+		public virtual ILValue Sub(SubOpCodeKind kind, long value, int pointerSize) => null;
+
+		/// <summary>
+		/// Subtracts <paramref name="value"/> from a copy of this value and returns the result. Returns null if it's not supported.
+		/// </summary>
+		/// <param name="kind">Opcode kind</param>
+		/// <param name="value">Value to subtract</param>
+		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <returns></returns>
+		public virtual ILValue Sub(SubOpCodeKind kind, ILValue value, int pointerSize) => null;
+
+		/// <summary>
+		/// Converts this value to a new value. Returns null if it's not supported.
+		/// </summary>
+		/// <param name="kind">Opcode kind</param>
+		/// <returns></returns>
+		public virtual ILValue Conv(ConvOpCodeKind kind) => null;
+	}
+
+	/// <summary>
+	/// Add opcode kind
+	/// </summary>
+	public enum AddOpCodeKind {
+		/// <summary>
+		/// Normal addition
+		/// </summary>
+		Add,
+
+		/// <summary>
+		/// Signed addition with an overflow check
+		/// </summary>
+		Add_Ovf,
+
+		/// <summary>
+		/// Unsigned addition with an overflow check
+		/// </summary>
+		Add_Ovf_Un,
+	}
+
+	/// <summary>
+	/// Sub opcode kind
+	/// </summary>
+	public enum SubOpCodeKind {
+		/// <summary>
+		/// Normal subtraction
+		/// </summary>
+		Sub,
+
+		/// <summary>
+		/// Signed subtraction with an overflow check
+		/// </summary>
+		Sub_Ovf,
+
+		/// <summary>
+		/// Unsigned subtraction with an overflow check
+		/// </summary>
+		Sub_Ovf_Un,
+	}
+
+	/// <summary>
+	/// Convert opcode kind
+	/// </summary>
+	public enum ConvOpCodeKind {
+		/// <summary>
+		/// Convert to a <see cref="IntPtr"/>
+		/// </summary>
+		Conv_I,
+
+		/// <summary>
+		/// Convert to a <see cref="IntPtr"/>, signed, overflow check
+		/// </summary>
+		Conv_Ovf_I,
+
+		/// <summary>
+		/// Convert to a <see cref="IntPtr"/>, unsigned, overflow check
+		/// </summary>
+		Conv_Ovf_I_Un,
+
+		/// <summary>
+		/// Convert to a <see cref="UIntPtr"/>
+		/// </summary>
+		Conv_U,
+
+		/// <summary>
+		/// Convert to a <see cref="UIntPtr"/>, signed, overflow check
+		/// </summary>
+		Conv_Ovf_U,
+
+		/// <summary>
+		/// Convert to a <see cref="UIntPtr"/>, unsigned, overflow check
+		/// </summary>
+		Conv_Ovf_U_Un,
 	}
 
 	/// <summary>
 	/// 32-bit integer. 1-byte, 2-byte and 4-byte integer values, booleans, and chars use this class.
 	/// Smaller values are sign or zero extended.
 	/// </summary>
-	public sealed class ConstantInt32ILValue : ILValue {
+	public class ConstantInt32ILValue : ILValue {
 		/// <summary>
 		/// Always returns <see cref="ILValueKind.Int32"/>
 		/// </summary>
-		public override ILValueKind Kind => ILValueKind.Int32;
+		public sealed override ILValueKind Kind => ILValueKind.Int32;
 
 		/// <summary>
 		/// Gets the value
@@ -199,6 +377,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public ConstantInt32ILValue(int value) => Value = value;
 
 		/// <summary>
+		/// Gets the type of the value
+		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
+		/// <returns></returns>
+		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_Int32;
+
+		/// <summary>
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
@@ -208,11 +393,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	/// <summary>
 	/// 64-bit integer
 	/// </summary>
-	public sealed class ConstantInt64ILValue : ILValue {
+	public class ConstantInt64ILValue : ILValue {
 		/// <summary>
 		/// Always returns <see cref="ILValueKind.Int64"/>
 		/// </summary>
-		public override ILValueKind Kind => ILValueKind.Int64;
+		public sealed override ILValueKind Kind => ILValueKind.Int64;
 
 		/// <summary>
 		/// Gets the value
@@ -231,6 +416,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public ConstantInt64ILValue(long value) => Value = value;
 
 		/// <summary>
+		/// Gets the type of the value
+		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
+		/// <returns></returns>
+		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_Int64;
+
+		/// <summary>
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
@@ -240,11 +432,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	/// <summary>
 	/// 64-bit floating point value (32-bit floating point numbers are extended to 64 bits)
 	/// </summary>
-	public sealed class ConstantFloatILValue : ILValue {
+	public class ConstantFloatILValue : ILValue {
 		/// <summary>
 		/// Always returns <see cref="ILValueKind.Float"/>
 		/// </summary>
-		public override ILValueKind Kind => ILValueKind.Float;
+		public sealed override ILValueKind Kind => ILValueKind.Float;
 
 		/// <summary>
 		/// Gets the value
@@ -256,6 +448,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// </summary>
 		/// <param name="value">Value</param>
 		public ConstantFloatILValue(double value) => Value = value;
+
+		/// <summary>
+		/// Gets the type of the value
+		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
+		/// <returns></returns>
+		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_Double;
 
 		/// <summary>
 		/// ToString()
@@ -271,13 +470,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Always returns <see cref="ILValueKind.NativeInt"/>
 		/// </summary>
-		public override ILValueKind Kind => ILValueKind.NativeInt;
+		public sealed override ILValueKind Kind => ILValueKind.NativeInt;
 	}
 
 	/// <summary>
 	/// native integer or unmanaged pointer
 	/// </summary>
-	public sealed class ConstantNativeIntILValue : NativeIntILValue {
+	public class ConstantNativeIntILValue : NativeIntILValue {
 		readonly long value;
 
 		/// <summary>
@@ -314,8 +513,24 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <returns></returns>
 		public static ConstantNativeIntILValue Create64(long value) => new ConstantNativeIntILValue(value);
 
-		ConstantNativeIntILValue(int value) => this.value = value;
-		ConstantNativeIntILValue(long value) => this.value = value;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="value">Value</param>
+		protected ConstantNativeIntILValue(int value) => this.value = value;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="value">Value</param>
+		protected ConstantNativeIntILValue(long value) => this.value = value;
+
+		/// <summary>
+		/// Gets the type of the value
+		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
+		/// <returns></returns>
+		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_IntPtr;
 
 		/// <summary>
 		/// ToString()
@@ -358,6 +573,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 			Method = method;
 			VirtualThisObject = thisValue;
 		}
+
+		/// <summary>
+		/// Gets the type of the value
+		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
+		/// <returns></returns>
+		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_Void.MakePointerType();
 	}
 
 	/// <summary>
@@ -384,118 +606,93 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		}
 
 		/// <summary>
-		/// Adds <paramref name="value"/> to this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
+		/// Adds a constant to a copy of this value and returns the result. Returns null if it's not supported.
 		/// </summary>
-		/// <param name="value">Value to add to this instance</param>
+		/// <param name="kind">Opcode kind</param>
+		/// <param name="value">Value to add</param>
 		/// <param name="pointerSize">Size of a pointer in bytes</param>
 		/// <returns></returns>
-		public override ILValue PointerAdd(long value, int pointerSize) {
+		public override ILValue Add(AddOpCodeKind kind, long value, int pointerSize) {
 			if (value == 0)
 				return this;
-			if (pointerSize == 4)
-				return new NativeMemoryILValue(data, Offset32 + (int)value);
-			return new NativeMemoryILValue(data, Offset64 + value);
-		}
 
-		/// <summary>
-		/// Adds <paramref name="value"/> to this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
-		/// </summary>
-		/// <param name="value">Value to add to this instance</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
-		/// <returns></returns>
-		public override ILValue PointerAddOvf(long value, int pointerSize) {
-			if (value == 0)
-				return this;
-			if (pointerSize == 4) {
-				int value2 = (int)value;
-				return new NativeMemoryILValue(data, checked(Offset32 + value2));
-			}
-			return new NativeMemoryILValue(data, checked(Offset64 + value));
-		}
+			switch (kind) {
+			case AddOpCodeKind.Add:
+				if (pointerSize == 4)
+					return new NativeMemoryILValue(data, Offset32 + (int)value);
+				return new NativeMemoryILValue(data, Offset64 + value);
 
-		/// <summary>
-		/// Adds <paramref name="value"/> to this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
-		/// </summary>
-		/// <param name="value">Value to add to this instance</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
-		/// <returns></returns>
-		public override ILValue PointerAddOvfUn(long value, int pointerSize) {
-			if (value == 0)
-				return this;
-			if (pointerSize == 4) {
-				uint value2 = (uint)value;
-				return new NativeMemoryILValue(data, (int)checked(UnsignedOffset32 + value2));
-			}
-			else {
-				ulong value2 = (ulong)value;
-				return new NativeMemoryILValue(data, (long)checked(UnsignedOffset64 + value2));
+			case AddOpCodeKind.Add_Ovf:
+				if (pointerSize == 4) {
+					int value2 = (int)value;
+					return new NativeMemoryILValue(data, checked(Offset32 + value2));
+				}
+				return new NativeMemoryILValue(data, checked(Offset64 + value));
+
+			case AddOpCodeKind.Add_Ovf_Un:
+				if (pointerSize == 4) {
+					uint value2 = (uint)value;
+					return new NativeMemoryILValue(data, (int)checked(UnsignedOffset32 + value2));
+				}
+				else {
+					ulong value2 = (ulong)value;
+					return new NativeMemoryILValue(data, (long)checked(UnsignedOffset64 + value2));
+				}
+
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 
 		/// <summary>
-		/// Subtracts <paramref name="value"/> from this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
+		/// Subtracts a constant from a copy of this value and returns the result. Returns null if it's not supported.
 		/// </summary>
-		/// <param name="value">Value to subtract from this instance</param>
+		/// <param name="kind">Opcode kind</param>
+		/// <param name="value">Value to subtract</param>
 		/// <param name="pointerSize">Size of a pointer in bytes</param>
 		/// <returns></returns>
-		public override ILValue PointerSub(long value, int pointerSize) {
+		public override ILValue Sub(SubOpCodeKind kind, long value, int pointerSize) {
 			if (value == 0)
 				return this;
-			if (pointerSize == 4)
-				return new NativeMemoryILValue(data, Offset32 - (int)value);
-			return new NativeMemoryILValue(data, Offset64 - value);
-		}
 
-		/// <summary>
-		/// Subtracts <paramref name="value"/> from this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
-		/// </summary>
-		/// <param name="value">Value to subtract from this instance</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
-		/// <returns></returns>
-		public override ILValue PointerSubOvf(long value, int pointerSize) {
-			if (value == 0)
-				return this;
-			if (pointerSize == 4) {
-				int value2 = (int)value;
-				return new NativeMemoryILValue(data, checked(Offset32 - value2));
-			}
-			return new NativeMemoryILValue(data, checked(Offset64 - value));
-		}
+			switch (kind) {
+			case SubOpCodeKind.Sub:
+				if (pointerSize == 4)
+					return new NativeMemoryILValue(data, Offset32 - (int)value);
+				return new NativeMemoryILValue(data, Offset64 - value);
 
-		/// <summary>
-		/// Subtracts <paramref name="value"/> from this pointer or by-ref and returns a new value.
-		/// Returns null if it's not supported.
-		/// </summary>
-		/// <param name="value">Value to subtract from this instance</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
-		/// <returns></returns>
-		public override ILValue PointerSubOvfUn(long value, int pointerSize) {
-			if (value == 0)
-				return this;
-			if (pointerSize == 4) {
-				uint value2 = (uint)value;
-				return new NativeMemoryILValue(data, (int)checked(UnsignedOffset32 - value2));
-			}
-			else {
-				ulong value2 = (ulong)value;
-				return new NativeMemoryILValue(data, (long)checked(UnsignedOffset64 - value2));
+			case SubOpCodeKind.Sub_Ovf:
+				if (pointerSize == 4) {
+					int value2 = (int)value;
+					return new NativeMemoryILValue(data, checked(Offset32 - value2));
+				}
+				return new NativeMemoryILValue(data, checked(Offset64 - value));
+
+			case SubOpCodeKind.Sub_Ovf_Un:
+				if (pointerSize == 4) {
+					uint value2 = (uint)value;
+					return new NativeMemoryILValue(data, (int)checked(UnsignedOffset32 - value2));
+				}
+				else {
+					ulong value2 = (ulong)value;
+					return new NativeMemoryILValue(data, (long)checked(UnsignedOffset64 - value2));
+				}
+
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 
 		/// <summary>
-		/// Reads a (managed or unmanaged) pointer or returns null if it's not supported
+		/// Loads a value. Returns null if it's not supported.
 		/// </summary>
-		/// <param name="pointerType">Pointer type</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <param name="type">Type</param>
+		/// <param name="loadValueType">Type of value to load</param>
 		/// <returns></returns>
-		public override ILValue ReadPointer(PointerOpCodeType pointerType, int pointerSize) {
-			switch (pointerType) {
-			case PointerOpCodeType.I:
+		public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) {
+			int pointerSize = type.AppDomain.Runtime.PointerSize;
+			switch (loadValueType) {
+			case LoadValueType.I:
 				if (pointerSize == 4) {
 					if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 						return null;
@@ -508,50 +705,50 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 					return ConstantNativeIntILValue.Create64(BitConverter.ToInt64(data, (int)offset));
 				}
 
-			case PointerOpCodeType.I1:
+			case LoadValueType.I1:
 				if ((ulong)offset >= (ulong)data.Length)
 					return null;
 				return new ConstantInt32ILValue((sbyte)data[(int)offset]);
 
-			case PointerOpCodeType.I2:
+			case LoadValueType.I2:
 				if (offset + 2 - 1 < offset || (ulong)offset + 2 - 1 >= (ulong)data.Length)
 					return null;
 				return new ConstantInt32ILValue(BitConverter.ToInt16(data, (int)offset));
 
-			case PointerOpCodeType.I4:
+			case LoadValueType.I4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return null;
 				return new ConstantInt32ILValue(BitConverter.ToInt32(data, (int)offset));
 
-			case PointerOpCodeType.I8:
+			case LoadValueType.I8:
 				if (offset + 8 - 1 < offset || (ulong)offset + 8 - 1 >= (ulong)data.Length)
 					return null;
 				return new ConstantInt64ILValue(BitConverter.ToInt64(data, (int)offset));
 
-			case PointerOpCodeType.R4:
+			case LoadValueType.R4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return null;
 				return new ConstantFloatILValue(BitConverter.ToSingle(data, (int)offset));
 
-			case PointerOpCodeType.R8:
+			case LoadValueType.R8:
 				if (offset + 8 - 1 < offset || (ulong)offset + 8 - 1 >= (ulong)data.Length)
 					return null;
 				return new ConstantFloatILValue(BitConverter.ToDouble(data, (int)offset));
 
-			case PointerOpCodeType.Ref:
+			case LoadValueType.Ref:
 				return null;
 
-			case PointerOpCodeType.U1:
+			case LoadValueType.U1:
 				if ((ulong)offset >= (ulong)data.Length)
 					return null;
 				return new ConstantInt32ILValue(data[(int)offset]);
 
-			case PointerOpCodeType.U2:
+			case LoadValueType.U2:
 				if (offset + 2 - 1 < offset || (ulong)offset + 2 - 1 >= (ulong)data.Length)
 					return null;
 				return new ConstantInt32ILValue(BitConverter.ToUInt16(data, (int)offset));
 
-			case PointerOpCodeType.U4:
+			case LoadValueType.U4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return null;
 				return new ConstantInt32ILValue(BitConverter.ToInt32(data, (int)offset));
@@ -562,17 +759,18 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		}
 
 		/// <summary>
-		/// Writes a (managed or unmanaged) pointer or returns null if it's not supported
+		/// Stores a value. Returns false if it's not supported.
 		/// </summary>
-		/// <param name="pointerType">Pointer type</param>
-		/// <param name="value">New value</param>
-		/// <param name="pointerSize">Size of a pointer in bytes</param>
+		/// <param name="type">Type</param>
+		/// <param name="loadValueType">Type of value to store</param>
+		/// <param name="value">Value</param>
 		/// <returns></returns>
-		public override bool WritePointer(PointerOpCodeType pointerType, ILValue value, int pointerSize) {
+		public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
+			int pointerSize = type.AppDomain.Runtime.PointerSize;
 			long v;
 			double d;
-			switch (pointerType) {
-			case PointerOpCodeType.I:
+			switch (loadValueType) {
+			case LoadValueType.I:
 				if (pointerSize == 4) {
 					if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 						return false;
@@ -591,8 +789,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 					return true;
 				}
 
-			case PointerOpCodeType.I1:
-			case PointerOpCodeType.U1:
+			case LoadValueType.I1:
+			case LoadValueType.U1:
 				if ((ulong)offset >= (ulong)data.Length)
 					return false;
 				if (!GetValue(value, pointerSize, out v))
@@ -600,8 +798,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 				WriteInt8(data, (int)offset, v);
 				return true;
 
-			case PointerOpCodeType.I2:
-			case PointerOpCodeType.U2:
+			case LoadValueType.I2:
+			case LoadValueType.U2:
 				if (offset + 2 - 1 < offset || (ulong)offset + 2 - 1 >= (ulong)data.Length)
 					return false;
 				if (!GetValue(value, pointerSize, out v))
@@ -609,8 +807,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 				WriteInt16(data, (int)offset, v);
 				return true;
 
-			case PointerOpCodeType.I4:
-			case PointerOpCodeType.U4:
+			case LoadValueType.I4:
+			case LoadValueType.U4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return false;
 				if (!GetValue(value, pointerSize, out v))
@@ -618,7 +816,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 				WriteInt32(data, (int)offset, v);
 				return true;
 
-			case PointerOpCodeType.I8:
+			case LoadValueType.I8:
 				if (offset + 8 - 1 < offset || (ulong)offset + 8 - 1 >= (ulong)data.Length)
 					return false;
 				if (!GetValue(value, pointerSize, out v))
@@ -626,7 +824,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 				WriteInt64(data, (int)offset, v);
 				return true;
 
-			case PointerOpCodeType.R4:
+			case LoadValueType.R4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return false;
 				if (!GetValue(value, out d))
@@ -634,7 +832,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 				WriteSingle(data, (int)offset, (float)d);
 				return true;
 
-			case PointerOpCodeType.R8:
+			case LoadValueType.R8:
 				if (offset + 8 - 1 < offset || (ulong)offset + 8 - 1 >= (ulong)data.Length)
 					return false;
 				if (!GetValue(value, out d))
@@ -642,7 +840,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 				WriteDouble(data, (int)offset, d);
 				return true;
 
-			case PointerOpCodeType.Ref:
+			case LoadValueType.Ref:
 				return false;
 
 			default:
@@ -733,6 +931,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 				d[i + o] = value;
 			return true;
 		}
+
+		/// <summary>
+		/// Gets the type of the value
+		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
+		/// <returns></returns>
+		public override DmdType GetType(DmdAppDomain appDomain) => appDomain.System_Void.MakePointerType();
 	}
 
 	/// <summary>
@@ -742,7 +947,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Always returns <see cref="ILValueKind.ByRef"/>
 		/// </summary>
-		public override ILValueKind Kind => ILValueKind.ByRef;
+		public sealed override ILValueKind Kind => ILValueKind.ByRef;
+
+		/// <summary>
+		/// Gets the type of the value
+		/// </summary>
+		/// <param name="appDomain">AppDomain</param>
+		/// <returns></returns>
+		public abstract override DmdType GetType(DmdAppDomain appDomain);
 	}
 
 	/// <summary>
@@ -752,7 +964,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Always returns <see cref="ILValueKind.ObjectRef"/>
 		/// </summary>
-		public override ILValueKind Kind => ILValueKind.ObjectRef;
+		public sealed override ILValueKind Kind => ILValueKind.ObjectRef;
 
 		/// <summary>
 		/// Gets the type of the value
@@ -765,7 +977,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	/// <summary>
 	/// A string value
 	/// </summary>
-	public sealed class ConstantStringILValue : ObjectRefILValue {
+	public class ConstantStringILValue : ObjectRefILValue {
 		/// <summary>
 		/// Gets the value
 		/// </summary>
@@ -829,12 +1041,16 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	/// <summary>
 	/// A null reference
 	/// </summary>
-	public sealed class NullObjectRefILValue : ObjectRefILValue {
+	public class NullObjectRefILValue : ObjectRefILValue {
 		/// <summary>
-		/// Gets the single instance
+		/// Returns true since it's a null value
 		/// </summary>
-		public static readonly NullObjectRefILValue Instance = new NullObjectRefILValue();
-		NullObjectRefILValue() { }
+		public override bool IsNull => true;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public NullObjectRefILValue() { }
 
 		/// <summary>
 		/// Gets the type of the value
@@ -851,7 +1067,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Always returns <see cref="ILValueKind.ValueType"/>
 		/// </summary>
-		public override ILValueKind Kind => ILValueKind.ValueType;
+		public sealed override ILValueKind Kind => ILValueKind.ValueType;
 
 		/// <summary>
 		/// Makes a copy of this instance so the new instance can be pushed onto the stack.

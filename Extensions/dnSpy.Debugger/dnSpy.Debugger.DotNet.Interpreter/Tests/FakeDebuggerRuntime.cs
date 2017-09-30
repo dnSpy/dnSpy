@@ -63,11 +63,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 					}
 				}
 			}
-			public ILValue GetField(DmdFieldInfo field) {
+			public ILValue LoadField(DmdFieldInfo field) {
 				InitFields(field.ReflectedType);
 				return AllFields[field];
 			}
-			public bool SetField(DmdFieldInfo field, ILValue value) {
+			public bool StoreField(DmdFieldInfo field, ILValue value) {
 				InitFields(field.ReflectedType);
 				if (!AllFields.ContainsKey(field))
 					return false;
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(0) : ConstantNativeIntILValue.Create64(0);
 			if (type.IsValueType)
 				return new FakeValueType(type);
-			return NullObjectRefILValue.Instance;
+			return new NullObjectRefILValue();
 		}
 
 		sealed class FakeValueType : ValueTypeILValue {
@@ -131,22 +131,76 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				}
 			}
 
+			const int DUMMY_PTR_BASE = 0x4736DC7B;
+			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
+				var ad = method.AppDomain;
+				var type = method.ReflectedType;
+				if (type == ad.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle)) {
+					if (method.Name == "get_Value") {
+						returnValue = ad.Runtime.PointerSize == 4 ?
+							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 0) :
+							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 0);
+						return true;
+					}
+				}
+				else if (type == ad.GetWellKnownType(DmdWellKnownType.System_RuntimeFieldHandle)) {
+					if (method.Name == "get_Value") {
+						returnValue = ad.Runtime.PointerSize == 4 ?
+							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 1) :
+							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 1);
+						return true;
+					}
+				}
+				else if (type == ad.GetWellKnownType(DmdWellKnownType.System_RuntimeMethodHandle)) {
+					if (method.Name == "get_Value") {
+						returnValue = ad.Runtime.PointerSize == 4 ?
+							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 2) :
+							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 2);
+						return true;
+					}
+				}
+				else if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyStruct") {
+					switch (method.Name) {
+					case "InstanceMethod1":
+						returnValue = new ConstantInt32ILValue(123);
+						return true;
+					case "InstanceMethod2":
+						returnValue = arguments[0].Clone();
+						return true;
+					case "InstanceMethod3":
+						returnValue = arguments[1].Clone();
+						return true;
+					case "InstanceMethod4":
+						returnValue = arguments[2].Clone();
+						return true;
+					}
+				}
+
+				returnValue = null;
+				return false;
+			}
+
 			public override ILValue Clone() => new FakeValueType(this);
 			public override DmdType GetType(DmdAppDomain appDomain) => Type;
 
-			public ILValue GetField(DmdFieldInfo field) => fields[field];
+			public override ILValue LoadField(DmdFieldInfo field) => fields[field];
 
-			public bool SetField(DmdFieldInfo field, ILValue value) {
+			public override bool StoreField(DmdFieldInfo field, ILValue value) {
 				if (!fields.ContainsKey(field))
 					return false;
 				fields[field] = value;
 				return true;
 			}
 
-			public ILValue GetFieldAddress(DmdFieldInfo field) {
+			public override ILValue LoadFieldAddress(DmdFieldInfo field) {
 				if (!fields.ContainsKey(field))
 					return null;
 				return new FakeFieldAddress(fields, field);
+			}
+
+			public override bool InitializeObject(DmdType type) {
+				ResetFields();
+				return true;
 			}
 		}
 
@@ -169,19 +223,42 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 
 			public override DmdType GetType(DmdAppDomain appDomain) => Type;
 
-			public ILValue GetField(DmdFieldInfo field) => fields[field];
+			public override ILValue LoadField(DmdFieldInfo field) => fields[field];
 
-			public bool SetField(DmdFieldInfo field, ILValue value) {
+			public override bool StoreField(DmdFieldInfo field, ILValue value) {
 				if (!fields.ContainsKey(field))
 					return false;
 				fields[field] = value;
 				return true;
 			}
 
-			public ILValue GetFieldAddress(DmdFieldInfo field) {
+			public override ILValue LoadFieldAddress(DmdFieldInfo field) {
 				if (!fields.ContainsKey(field))
 					return null;
 				return new FakeFieldAddress(fields, field);
+			}
+
+			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
+				var type = method.ReflectedType;
+				if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyClass") {
+					switch (method.Name) {
+					case "InstanceMethod1":
+						returnValue = new ConstantInt32ILValue(123);
+						return true;
+					case "InstanceMethod2":
+						returnValue = arguments[0].Clone();
+						return true;
+					case "InstanceMethod3":
+						returnValue = arguments[1].Clone();
+						return true;
+					case "InstanceMethod4":
+						returnValue = arguments[2].Clone();
+						return true;
+					}
+				}
+
+				returnValue = null;
+				return false;
 			}
 		}
 
@@ -194,6 +271,17 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				Field = field;
 			}
 
+			public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) => Fields[Field];
+			public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
+				Fields[Field] = value;
+				return true;
+			}
+			public override bool CopyObject(DmdType type, ILValue source) {
+				Fields[Field] = source.LoadIndirect(type.AppDomain.System_Object, LoadValueType.Ref);
+				return true;
+			}
+			public override bool InitializeObject(DmdType type) => Fields[Field].InitializeObject(type);
+			public override DmdType GetType(DmdAppDomain appDomain) => Field.FieldType;
 			public bool Equals(FakeFieldAddress other) => Fields == other.Fields && Field == other.Field;
 		}
 
@@ -204,6 +292,22 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				Collection = collection;
 				Index = index;
 			}
+			public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) => Collection[Index];
+			public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
+				Collection[Index] = value;
+				return true;
+			}
+			public override bool CopyObject(DmdType type, ILValue source) {
+				Collection[Index] = source.LoadIndirect(type.AppDomain.System_Object, LoadValueType.Ref);
+				return true;
+			}
+			public override bool InitializeObject(DmdType type) => Collection[Index].InitializeObject(type);
+			public override ILValue LoadField(DmdFieldInfo field) => Collection[Index].LoadField(field);
+			public override ILValue LoadFieldAddress(DmdFieldInfo field) => Collection[Index].LoadFieldAddress(field);
+			public override bool StoreField(DmdFieldInfo field, ILValue value) => Collection[Index].StoreField(field, value);
+			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
+				Collection[Index].Call(isCallvirt, method, arguments, out returnValue);
+			public override DmdType GetType(DmdAppDomain appDomain) => Collection[Index].GetType(appDomain).MakeByRefType();
 			public bool Equals(ArgOrLocalAddress other) => Collection == other.Collection && Index == other.Index;
 		}
 
@@ -216,15 +320,15 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 		}
 
 		public override int PointerSize => runtime.PointerSize;
-		public override ILValue GetArgument(int index) => arguments[index];
-		public override ILValue GetLocal(int index) => locals[index];
-		public override ILValue GetArgumentAddress(int index) => new ArgumentAddress(arguments, index);
-		public override ILValue GetLocalAddress(int index) => new LocalAddress(locals, index);
-		public override bool SetArgument(int index, ILValue value) {
+		public override ILValue LoadArgument(int index) => arguments[index];
+		public override ILValue LoadLocal(int index) => locals[index];
+		public override ILValue LoadArgumentAddress(int index) => new ArgumentAddress(arguments, index);
+		public override ILValue LoadLocalAddress(int index) => new LocalAddress(locals, index);
+		public override bool StoreArgument(int index, ILValue value) {
 			arguments[index] = value;
 			return true;
 		}
-		public override bool SetLocal(int index, ILValue value) {
+		public override bool StoreLocal(int index, ILValue value) {
 			locals[index] = value;
 			return true;
 		}
@@ -234,7 +338,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				return;
 
 			if (!valueType.IsValueType) {
-				value = NullObjectRefILValue.Instance;
+				value = new NullObjectRefILValue();
 				return;
 			}
 
@@ -262,7 +366,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 
 		sealed class SZArrayILValue : ObjectRefILValue {
 			public DmdType Type { get; }
-			public long Length => elements.Length;
 			readonly ILValue[] elements;
 
 			public ILValue this[long index] {
@@ -279,6 +382,17 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				elements = new ILValue[length];
 			}
 
+			public override ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) => this[index];
+			public override ILValue LoadSZArrayElementAddress(long index, DmdType elementType) => new SZArrayAddress(this, index);
+			public override bool StoreSZArrayElement(LoadValueType loadValueType, long index, ILValue value, DmdType elementType) {
+				this[index] = value;
+				return true;
+			}
+			public override bool GetSZArrayLength(out long length) {
+				length = elements.Length;
+				return true;
+			}
+
 			public override DmdType GetType(DmdAppDomain appDomain) => Type;
 		}
 
@@ -291,32 +405,26 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				Index = index;
 			}
 
+			public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) => ArrayValue[Index];
+			public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
+				ArrayValue[Index] = value;
+				return true;
+			}
+			public override bool CopyObject(DmdType type, ILValue source) {
+				ArrayValue[Index] = source.LoadIndirect(type.AppDomain.System_Object, LoadValueType.Ref);
+				return true;
+			}
+			public override bool InitializeObject(DmdType type) => ArrayValue[Index].InitializeObject(type);
+			public override ILValue LoadField(DmdFieldInfo field) => ArrayValue[Index].LoadField(field);
+			public override ILValue LoadFieldAddress(DmdFieldInfo field) => ArrayValue[Index].LoadFieldAddress(field);
+			public override bool StoreField(DmdFieldInfo field, ILValue value) => ArrayValue[Index].StoreField(field, value);
+			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
+				ArrayValue[Index].Call(isCallvirt, method, arguments, out returnValue);
 			public override DmdType GetType(DmdAppDomain appDomain) => ArrayValue.GetType(appDomain).MakeByRefType();
 			public bool Equals(SZArrayAddress other) => ArrayValue == other.ArrayValue && Index == other.Index;
 		}
 
 		public override ILValue CreateSZArray(DmdType elementType, long length) => new SZArrayILValue(elementType, length);
-		public override ILValue GetSZArrayElement(PointerOpCodeType pointerType, ILValue arrayValue, long index, DmdType elementType) {
-			if (arrayValue is SZArrayILValue ar)
-				return ar[index];
-			return null;
-		}
-		public override ILValue GetSZArrayElementAddress(ILValue arrayValue, long index, DmdType elementType) => new SZArrayAddress((SZArrayILValue)arrayValue, index);
-		public override bool SetSZArrayElement(PointerOpCodeType pointerType, ILValue arrayValue, long index, ILValue elementValue, DmdType elementType) {
-			if (arrayValue is SZArrayILValue ar) {
-				ar[index] = elementValue;
-				return true;
-			}
-			return false;
-		}
-		public override bool GetSZArrayLength(ILValue value, out long length) {
-			if (value is SZArrayILValue ar) {
-				length = ar.Length;
-				return true;
-			}
-			length = -1;
-			return false;
-		}
 		public override ILValue CreateRuntimeTypeHandle(DmdType type) {
 			var rht = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle);
 			return new FakeValueType(rht);
@@ -336,103 +444,38 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			return new FakeReferenceType(type);
 		}
 
-		const int DUMMY_PTR_BASE = 0x4736DC7B;
-		public override bool Call(bool isVirtual, DmdMethodBase method, ILValue obj, ILValue[] parameters, out ILValue returnValue) {
+		public override bool CallStatic(DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
 			var ad = method.AppDomain;
 			var type = method.ReflectedType;
-			if (type == ad.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle)) {
-				if (method.Name == "get_Value") {
-					returnValue = ad.Runtime.PointerSize == 4 ?
-						ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 0) :
-						ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 0);
-					return true;
-				}
-			}
-			else if (type == ad.GetWellKnownType(DmdWellKnownType.System_RuntimeFieldHandle)) {
-				if (method.Name == "get_Value") {
-					returnValue = ad.Runtime.PointerSize == 4 ?
-						ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 1) :
-						ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 1);
-					return true;
-				}
-			}
-			else if (type == ad.GetWellKnownType(DmdWellKnownType.System_RuntimeMethodHandle)) {
-				if (method.Name == "get_Value") {
-					returnValue = ad.Runtime.PointerSize == 4 ?
-						ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 2) :
-						ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 2);
-					return true;
-				}
-			}
-			else if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyStruct") {
+			if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyStruct") {
 				switch (method.Name) {
-				case ".ctor":
-					if (parameters.Length == 2) {
-						returnValue = NullObjectRefILValue.Instance;
-						return true;
-					}
-					break;
-				case "InstanceMethod1":
-					returnValue = new ConstantInt32ILValue(123);
-					return true;
-				case "InstanceMethod2":
-					returnValue = parameters[0].Clone();
-					return true;
-				case "InstanceMethod3":
-					returnValue = parameters[1].Clone();
-					return true;
-				case "InstanceMethod4":
-					returnValue = parameters[2].Clone();
-					return true;
 				case "StaticMethod1":
 					returnValue = new ConstantInt32ILValue(123);
 					return true;
 				case "StaticMethod2":
-					returnValue = parameters[0].Clone();
+					returnValue = arguments[0].Clone();
 					return true;
 				case "StaticMethod3":
-					returnValue = parameters[1].Clone();
+					returnValue = arguments[1].Clone();
 					return true;
 				case "StaticMethod4":
-					returnValue = parameters[2].Clone();
+					returnValue = arguments[2].Clone();
 					return true;
 				}
 			}
 			else if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyClass") {
 				switch (method.Name) {
-				case ".ctor":
-					if (parameters.Length == 0) {
-						returnValue = NullObjectRefILValue.Instance;
-						return true;
-					}
-					if (parameters.Length == 2) {
-						returnValue = NullObjectRefILValue.Instance;
-						return true;
-					}
-					break;
-				case "InstanceMethod1":
-					returnValue = new ConstantInt32ILValue(123);
-					return true;
-				case "InstanceMethod2":
-					returnValue = parameters[0].Clone();
-					return true;
-				case "InstanceMethod3":
-					returnValue = parameters[1].Clone();
-					return true;
-				case "InstanceMethod4":
-					returnValue = parameters[2].Clone();
-					return true;
 				case "StaticMethod1":
 					returnValue = new ConstantInt32ILValue(123);
 					return true;
 				case "StaticMethod2":
-					returnValue = parameters[0].Clone();
+					returnValue = arguments[0].Clone();
 					return true;
 				case "StaticMethod3":
-					returnValue = parameters[1].Clone();
+					returnValue = arguments[1].Clone();
 					return true;
 				case "StaticMethod4":
-					returnValue = parameters[2].Clone();
+					returnValue = arguments[2].Clone();
 					return true;
 				}
 			}
@@ -441,208 +484,31 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			return false;
 		}
 
-		public override bool CallIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue obj, ILValue[] parameters, out ILValue returnValue) => throw new NotImplementedException();
-		public override ILValue GetField(DmdFieldInfo field, ILValue obj) {
-			if (obj is FakeValueType fakeVT)
-				return fakeVT.GetField(field);
-			if (obj is FakeReferenceType fakeRT)
-				return fakeRT.GetField(field);
-			if (field.IsStatic)
-				return staticFields.GetField(field);
-			if (field.ReflectedType.IsValueType) {
-				if (obj is ArgOrLocalAddress addr)
-					return ((FakeValueType)addr.Collection[addr.Index]).GetField(field);
-				if (obj is SZArrayAddress addr2)
-					return ((FakeValueType)addr2.ArrayValue[addr2.Index]).GetField(field);
+		public override ILValue CreateInstance(DmdConstructorInfo ctor, ILValue[] arguments) {
+			var type = ctor.ReflectedType;
+			if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyStruct") {
+				if (arguments.Length == 2)
+					return new FakeValueType(ctor.ReflectedType);
 			}
+			else if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyClass") {
+				if (arguments.Length == 0)
+					return new FakeReferenceType(ctor.ReflectedType);
+				if (arguments.Length == 2)
+					return new FakeReferenceType(ctor.ReflectedType);
+			}
+
 			return null;
 		}
-		public override ILValue GetFieldAddress(DmdFieldInfo field, ILValue obj) {
-			if (obj is ArgOrLocalAddress addr) {
-				if (addr.Collection[addr.Index] is FakeValueType fakeVT)
-					return fakeVT.GetFieldAddress(field);
-				if (addr.Collection[addr.Index] is FakeReferenceType fakeRT)
-					return fakeRT.GetFieldAddress(field);
-				throw new InvalidOperationException();
-			}
-			if (obj is SZArrayAddress arAddr) {
-				if (arAddr.ArrayValue[arAddr.Index] is FakeValueType fakeVT)
-					return fakeVT.GetFieldAddress(field);
-				if (arAddr.ArrayValue[arAddr.Index] is FakeReferenceType fakeRT)
-					return fakeRT.GetFieldAddress(field);
-				throw new InvalidOperationException();
-			}
-			if (field.IsStatic)
-				return new FakeFieldAddress(staticFields.AllFields, field);
-			return null;
-		}
-		public override bool SetField(DmdFieldInfo field, ILValue obj, ILValue value) {
-			if (obj is ArgOrLocalAddress addr) {
-				if (addr.Collection[addr.Index] is FakeValueType fakeVT) {
-					fakeVT.SetField(field, value);
-					return true;
-				}
-				if (addr.Collection[addr.Index] is FakeReferenceType fakeRT) {
-					fakeRT.SetField(field, value);
-					return true;
-				}
-				throw new InvalidOperationException();
-			}
-			if (obj is SZArrayAddress arAddr) {
-				if (arAddr.ArrayValue[arAddr.Index] is FakeValueType fakeVT) {
-					fakeVT.SetField(field, value);
-					return true;
-				}
-				if (arAddr.ArrayValue[arAddr.Index] is FakeReferenceType fakeRT) {
-					fakeRT.SetField(field, value);
-					return true;
-				}
-				throw new InvalidOperationException();
-			}
-			if (field.IsStatic)
-				return staticFields.SetField(field, value);
-			return false;
-		}
-		public override ILValue ReadPointer(PointerOpCodeType pointerType, ILValue address) {
-			if (address is ArgOrLocalAddress addr1)
-				return addr1.Collection[addr1.Index];
-			if (address is SZArrayAddress addr2)
-				return addr2.ArrayValue[addr2.Index];
-			if (address is FakeFieldAddress fdAddr)
-				return fdAddr.Fields[fdAddr.Field];
-			return null;
-		}
-		public override bool WritePointer(PointerOpCodeType pointerType, ILValue address, ILValue value) {
-			if (address is ArgOrLocalAddress addr1) {
-				addr1.Collection[addr1.Index] = value;
-				return true;
-			}
-			if (address is SZArrayAddress addr2) {
-				addr2.ArrayValue[addr2.Index] = value;
-				return true;
-			}
-			if (address is FakeFieldAddress fdAddr) {
-				fdAddr.Fields[fdAddr.Field] = value;
-				return true;
-			}
-			return false;
-		}
-		ILValue GetFakeType(ILValue address) {
-			if (address is ArgOrLocalAddress addr1)
-				return (ILValue)(addr1.Collection[addr1.Index] as FakeValueType) ?? addr1.Collection[addr1.Index] as FakeReferenceType;
-			if (address is SZArrayAddress addr2)
-				return (ILValue)(addr2.ArrayValue[addr2.Index] as FakeValueType) ?? addr2.ArrayValue[addr2.Index] as FakeReferenceType;
-			if (address is FakeFieldAddress fdAddr)
-				return (ILValue)(fdAddr.Fields[fdAddr.Field] as FakeValueType) ?? fdAddr.Fields[fdAddr.Field] as FakeReferenceType;
-			return null;
-		}
-		ILValue GetValue(ILValue address) {
-			if (address is ArgOrLocalAddress addr1)
-				return addr1.Collection[addr1.Index];
-			if (address is SZArrayAddress addr2)
-				return addr2.ArrayValue[addr2.Index];
-			if (address is FakeFieldAddress fdAddr)
-				return fdAddr.Fields[fdAddr.Field];
-			return null;
-		}
-		public override ILValue LoadTypeObject(ILValue address, DmdType type) {
-			if (GetFakeType(address) is ILValue fakeT)
-				return fakeT;
-			if (address is ArgOrLocalAddress addr1)
-				return addr1.Collection[addr1.Index];
-			if (address is SZArrayAddress addr2)
-				return addr2.ArrayValue[addr2.Index];
-			if (address is FakeFieldAddress fdAddr)
-				return fdAddr.Fields[fdAddr.Field];
-			return null;
-		}
-		public override bool StoreTypeObject(ILValue address, DmdType type, ILValue value) {
-			if (address is ArgOrLocalAddress addr1) {
-				addr1.Collection[addr1.Index] = value;
-				return true;
-			}
-			if (address is SZArrayAddress addr2) {
-				addr2.ArrayValue[addr2.Index] = value;
-				return true;
-			}
-			if (address is FakeFieldAddress fdAddr) {
-				fdAddr.Fields[fdAddr.Field] = value;
-				return true;
-			}
-			return false;
-		}
-		public override bool CopyObject(ILValue destination, ILValue source, DmdType type) {
-			if (destination is ArgOrLocalAddress addr1) {
-				addr1.Collection[addr1.Index] = GetValue(source) ?? throw new InvalidOperationException();
-				return true;
-			}
-			if (destination is SZArrayAddress addr2) {
-				addr2.ArrayValue[addr2.Index] = GetValue(source) ?? throw new InvalidOperationException();
-				return true;
-			}
-			if (destination is FakeFieldAddress fdAddr) {
-				fdAddr.Fields[fdAddr.Field] = GetValue(source) ?? throw new InvalidOperationException();
-				return true;
-			}
-			return false;
-		}
-		public override bool InitializeObject(ILValue address, DmdType type) {
-			if (address is ArgOrLocalAddress addr) {
-				if (addr.Collection[addr.Index] is FakeValueType fakeVT) {
-					fakeVT.ResetFields();
-					return true;
-				}
-				throw new InvalidOperationException();
-			}
-			if (address is SZArrayAddress arAddr) {
-				if (arAddr.ArrayValue[arAddr.Index] is FakeValueType fakeVT) {
-					fakeVT.ResetFields();
-					return true;
-				}
-				throw new InvalidOperationException();
-			}
-			return false;
-		}
-		public override bool CopyMemory(ILValue destination, ILValue source, long size) => throw new NotImplementedException();
-		public override bool InitializeMemory(ILValue address, byte value, long size) => throw new NotImplementedException();
 
-		public override ILValue Box(ILValue value, DmdType type) {
-			if (type.IsValueType) {
-				switch (value.Kind) {
-				case ILValueKind.Int32:
-				case ILValueKind.Int64:
-				case ILValueKind.Float:
-				case ILValueKind.NativeInt:
-					return new BoxedValueTypeILValue(value, type);
+		public override bool CallStaticIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue[] arguments, out ILValue returnValue) => throw new NotImplementedException();
 
-				case ILValueKind.ByRef:
-				case ILValueKind.ObjectRef:
-					break;
-
-				case ILValueKind.ValueType:
-					return new BoxedValueTypeILValue((ValueTypeILValue)value);
-
-				default:
-					throw new InvalidOperationException();
-				}
-			}
-			return value;
+		public override ILValue LoadStaticField(DmdFieldInfo field) => staticFields.LoadField(field);
+		public override ILValue LoadStaticFieldAddress(DmdFieldInfo field) => new FakeFieldAddress(staticFields.AllFields, field);
+		public override bool StoreStaticField(DmdFieldInfo field, ILValue value) {
+			staticFields.StoreField(field, value);
+			return true;
 		}
 
-		public override ILValue UnboxAny(ILValue value, DmdType type) => null;
-
-		public override ILValue BinaryAdd(ILValue left, ILValue right) => throw new NotImplementedException();
-		public override ILValue BinaryAddOvf(ILValue left, ILValue right) => throw new NotImplementedException();
-		public override ILValue BinaryAddOvfUn(ILValue left, ILValue right) => throw new NotImplementedException();
-		public override ILValue BinarySub(ILValue left, ILValue right) => throw new NotImplementedException();
-		public override ILValue BinarySubOvf(ILValue left, ILValue right) => throw new NotImplementedException();
-		public override ILValue BinarySubOvfUn(ILValue left, ILValue right) => throw new NotImplementedException();
-		public override ILValue ConvI(ILValue value) => throw new NotImplementedException();
-		public override ILValue ConvOvfI(ILValue value) => throw new NotImplementedException();
-		public override ILValue ConvOvfIUn(ILValue value) => throw new NotImplementedException();
-		public override ILValue ConvU(ILValue value) => throw new NotImplementedException();
-		public override ILValue ConvOvfU(ILValue value) => throw new NotImplementedException();
-		public override ILValue ConvOvfUUn(ILValue value) => throw new NotImplementedException();
 		public override int? CompareSigned(ILValue left, ILValue right) => throw new NotImplementedException();
 		public override int? CompareUnsigned(ILValue left, ILValue right) => throw new NotImplementedException();
 
