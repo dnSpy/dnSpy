@@ -34,17 +34,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
-	sealed class ObjectRefILValueImpl : ObjectRefILValue, IDebuggerRuntimeILValue {
+	sealed class TypeILValueImpl : TypeILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
-		public ObjectRefILValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType Type => value.Type;
-		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
-	}
-
-	sealed class ValueTypeILValueImpl : ValueTypeILValue, IDebuggerRuntimeILValue {
-		readonly DbgDotNetValue value;
-		public ValueTypeILValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override ILValue Clone() => this;//TODO:
+		public TypeILValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
 		public override DmdType Type => value.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}

@@ -1028,7 +1028,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Castclass:
 					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
 					v1 = Pop1();
-					if (!v1.IsNull && !(v1.Kind == ILValueKind.ObjectRef && type.IsAssignableFrom(v1.Type)))
+					if (!v1.IsNull && !(v1.Kind == ILValueKind.Type && type.IsAssignableFrom(v1.Type)))
 						ThrowInvalidMethodBodyInterpreterException();
 					ilValueStack.Add(v1);
 					break;
@@ -1082,7 +1082,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						else
 							v1 = v1.Clone();
 					}
-					else if (v1.Kind != ILValueKind.ObjectRef)
+					else
 						v1 = v1.UnboxAny(type) ?? v1;
 					ilValueStack.Add(v1);
 					break;
@@ -1123,8 +1123,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1140,8 +1139,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1157,8 +1155,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1201,8 +1198,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1223,15 +1219,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -1267,8 +1261,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1284,8 +1277,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1301,8 +1293,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1345,8 +1336,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1367,15 +1357,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -1411,8 +1399,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1428,8 +1415,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1475,8 +1461,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1497,15 +1482,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -1539,8 +1522,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.ByRef:
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1556,8 +1538,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1573,8 +1554,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1611,8 +1591,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1633,15 +1612,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -1675,8 +1652,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.ByRef:
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1692,8 +1668,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1709,8 +1684,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1747,8 +1721,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1769,15 +1742,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -1811,8 +1782,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.ByRef:
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1828,8 +1798,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1869,8 +1838,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1891,15 +1859,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -1929,8 +1895,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1946,8 +1911,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1963,8 +1927,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -1997,16 +1960,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2036,8 +1997,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2053,8 +2013,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2070,8 +2029,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2104,16 +2062,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2143,8 +2099,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2160,8 +2115,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2197,16 +2151,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2236,8 +2188,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2253,8 +2204,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2270,8 +2220,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2304,16 +2253,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2343,8 +2290,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2360,8 +2306,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2397,16 +2342,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2436,8 +2379,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2453,8 +2395,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2470,8 +2411,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2504,16 +2444,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2543,8 +2481,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2560,8 +2497,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Float:
 						case ILValueKind.NativeInt:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2597,16 +2533,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2640,8 +2574,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2672,8 +2605,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.Float:
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2704,8 +2636,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.Float:
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2736,8 +2667,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.Float:
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2767,8 +2697,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2784,8 +2713,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.NativeInt:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2818,8 +2746,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2827,8 +2754,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.Float:
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2858,8 +2784,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2875,8 +2800,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.NativeInt:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2909,8 +2833,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2918,8 +2841,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.Float:
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -2949,8 +2871,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -2966,8 +2887,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.NativeInt:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -3000,8 +2920,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						case ILValueKind.Int64:
 						case ILValueKind.Float:
 						case ILValueKind.ByRef:
-						case ILValueKind.ObjectRef:
-						case ILValueKind.ValueType:
+						case ILValueKind.Type:
 						default:
 							throw new InvalidMethodBodyInterpreterException();
 						}
@@ -3009,8 +2928,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.Float:
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3041,8 +2959,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.Float:
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3078,13 +2995,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
+					case ILValueKind.Type:
 						v3 = v1.Conv(ConvOpCodeKind.Conv_I);
 						if (v3 == null)
 							ThrowInvalidMethodBodyInterpreterException();
 						break;
 
-					case ILValueKind.ValueType:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3120,13 +3036,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
+					case ILValueKind.Type:
 						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_I);
 						if (v3 == null)
 							ThrowInvalidMethodBodyInterpreterException();
 						break;
 
-					case ILValueKind.ValueType:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3162,13 +3077,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
+					case ILValueKind.Type:
 						v3 = v1.Conv(ConvOpCodeKind.Conv_U);
 						if (v3 == null)
 							ThrowInvalidMethodBodyInterpreterException();
 						break;
 
-					case ILValueKind.ValueType:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3211,13 +3125,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
+					case ILValueKind.Type:
 						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_U);
 						if (v3 == null)
 							ThrowInvalidMethodBodyInterpreterException();
 						break;
 
-					case ILValueKind.ValueType:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3256,13 +3169,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
+					case ILValueKind.Type:
 						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_I_Un);
 						if (v3 == null)
 							ThrowInvalidMethodBodyInterpreterException();
 						break;
 
-					case ILValueKind.ValueType:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3301,13 +3213,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
+					case ILValueKind.Type:
 						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_U_Un);
 						if (v3 == null)
 							ThrowInvalidMethodBodyInterpreterException();
 						break;
 
-					case ILValueKind.ValueType:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3341,8 +3252,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3376,8 +3286,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3410,8 +3319,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3445,8 +3353,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3480,8 +3387,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3514,8 +3420,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3549,8 +3454,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3584,8 +3488,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3618,8 +3521,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3653,8 +3555,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3688,8 +3589,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3722,8 +3622,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3757,8 +3656,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3792,8 +3690,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3826,8 +3723,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3861,8 +3757,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3896,8 +3791,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3930,8 +3824,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -3965,8 +3858,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -4000,8 +3892,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -4034,8 +3925,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -4069,8 +3959,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -4104,8 +3993,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -4138,8 +4026,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -4173,8 +4060,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -4208,8 +4094,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -4243,8 +4128,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.ByRef:
-					case ILValueKind.ObjectRef:
-					case ILValueKind.ValueType:
+					case ILValueKind.Type:
 					default:
 						throw new InvalidMethodBodyInterpreterException();
 					}
@@ -4447,8 +4331,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
-				case ILValueKind.ObjectRef:
-				case ILValueKind.ValueType:
+				case ILValueKind.Type:
 				default:
 					throw new InvalidMethodBodyInterpreterException();
 				}
@@ -4462,8 +4345,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case ILValueKind.Float:
 				case ILValueKind.NativeInt:
 				case ILValueKind.ByRef:
-				case ILValueKind.ObjectRef:
-				case ILValueKind.ValueType:
+				case ILValueKind.Type:
 				default:
 					throw new InvalidMethodBodyInterpreterException();
 				}
@@ -4477,8 +4359,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case ILValueKind.Int64:
 				case ILValueKind.NativeInt:
 				case ILValueKind.ByRef:
-				case ILValueKind.ObjectRef:
-				case ILValueKind.ValueType:
+				case ILValueKind.Type:
 				default:
 					throw new InvalidMethodBodyInterpreterException();
 				}
@@ -4516,8 +4397,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
-				case ILValueKind.ObjectRef:
-				case ILValueKind.ValueType:
+				case ILValueKind.Type:
 				default:
 					throw new InvalidMethodBodyInterpreterException();
 				}
@@ -4539,13 +4419,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
-				case ILValueKind.ObjectRef:
-				case ILValueKind.ValueType:
+				case ILValueKind.Type:
 				default:
 					throw new InvalidMethodBodyInterpreterException();
 				}
 
-			case ILValueKind.ObjectRef:
+			case ILValueKind.Type:
 				if (v1 == v2)
 					return 0;
 				if (isEquals) {
@@ -4558,7 +4437,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				}
 				return v1 == v2 ? 0 : throw new InvalidMethodBodyInterpreterException();
 
-			case ILValueKind.ValueType:
 			default:
 				throw new InvalidMethodBodyInterpreterException();
 			}
@@ -4592,8 +4470,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
-				case ILValueKind.ObjectRef:
-				case ILValueKind.ValueType:
+				case ILValueKind.Type:
 				default:
 					throw new InvalidMethodBodyInterpreterException();
 				}
@@ -4607,8 +4484,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case ILValueKind.Float:
 				case ILValueKind.NativeInt:
 				case ILValueKind.ByRef:
-				case ILValueKind.ObjectRef:
-				case ILValueKind.ValueType:
+				case ILValueKind.Type:
 				default:
 					throw new InvalidMethodBodyInterpreterException();
 				}
@@ -4622,8 +4498,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case ILValueKind.Int64:
 				case ILValueKind.NativeInt:
 				case ILValueKind.ByRef:
-				case ILValueKind.ObjectRef:
-				case ILValueKind.ValueType:
+				case ILValueKind.Type:
 				default:
 					throw new InvalidMethodBodyInterpreterException();
 				}
@@ -4661,8 +4536,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
-				case ILValueKind.ObjectRef:
-				case ILValueKind.ValueType:
+				case ILValueKind.Type:
 				default:
 					throw new InvalidMethodBodyInterpreterException();
 				}
@@ -4684,13 +4558,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
-				case ILValueKind.ObjectRef:
-				case ILValueKind.ValueType:
+				case ILValueKind.Type:
 				default:
 					throw new InvalidMethodBodyInterpreterException();
 				}
 
-			case ILValueKind.ObjectRef:
+			case ILValueKind.Type:
 				if (v1 == v2)
 					return 0;
 				if (isEquals) {
@@ -4703,7 +4576,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				}
 				return v1 == v2 ? 0 : throw new InvalidMethodBodyInterpreterException();
 
-			case ILValueKind.ValueType:
 			default:
 				throw new InvalidMethodBodyInterpreterException();
 			}
@@ -4731,10 +4603,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				goto case ILValueKind.ByRef;
 
 			case ILValueKind.ByRef:
-			case ILValueKind.ObjectRef:
+			case ILValueKind.Type:
 				return false;
 
-			case ILValueKind.ValueType:
 			default:
 				throw new InvalidMethodBodyInterpreterException();
 			}
@@ -4883,11 +4754,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					return new BoxedValueTypeILValue(value, type);
 
 				case ILValueKind.ByRef:
-				case ILValueKind.ObjectRef:
 					break;
 
-				case ILValueKind.ValueType:
-					return new BoxedValueTypeILValue((ValueTypeILValue)value);
+				case ILValueKind.Type:
+					if (value.Type.IsValueType)
+						return new BoxedValueTypeILValue(value);
+					break;
 
 				default:
 					throw new InvalidOperationException();

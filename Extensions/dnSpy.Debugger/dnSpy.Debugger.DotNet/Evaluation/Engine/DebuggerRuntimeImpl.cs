@@ -85,14 +85,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var objValue = rawValue.RawValue;
 			switch (rawValue.ValueType) {
 			case DbgSimpleValueType.Other:
-				if (dnValue.Type.IsValueType)
-					return new ValueTypeILValueImpl(dnValue);
 				if (rawValue.HasRawValue && objValue == null)
 					return new NullObjectRefILValueImpl(dnValue);
-				return new ObjectRefILValueImpl(dnValue);
+				return new TypeILValueImpl(dnValue);
 			case DbgSimpleValueType.Decimal:
 			case DbgSimpleValueType.DateTime:
-				return new ValueTypeILValueImpl(dnValue);
+				return new TypeILValueImpl(dnValue);
 			case DbgSimpleValueType.Void:
 				throw new InvalidOperationException();
 			case DbgSimpleValueType.Boolean:

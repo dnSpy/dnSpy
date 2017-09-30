@@ -52,14 +52,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		ByRef,
 
 		/// <summary>
-		/// Object reference (any type that's not a value type)
+		/// Any other reference type or value type
 		/// </summary>
-		ObjectRef,
-
-		/// <summary>
-		/// Value type, but not a primitive value type
-		/// </summary>
-		ValueType,
+		Type,
 	}
 
 	/// <summary>
@@ -1045,19 +1040,19 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	}
 
 	/// <summary>
-	/// Object reference (non-value type)
+	/// A reference type or a value type
 	/// </summary>
-	public abstract class ObjectRefILValue : ILValue {
+	public abstract class TypeILValue : ILValue {
 		/// <summary>
-		/// Always returns <see cref="ILValueKind.ObjectRef"/>
+		/// Always returns <see cref="ILValueKind.Type"/>
 		/// </summary>
-		public sealed override ILValueKind Kind => ILValueKind.ObjectRef;
+		public sealed override ILValueKind Kind => ILValueKind.Type;
 	}
 
 	/// <summary>
 	/// A string value
 	/// </summary>
-	public class ConstantStringILValue : ObjectRefILValue {
+	public class ConstantStringILValue : TypeILValue {
 		/// <summary>
 		/// Gets the value
 		/// </summary>
@@ -1090,7 +1085,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	/// <summary>
 	/// A boxed value type
 	/// </summary>
-	public sealed class BoxedValueTypeILValue : ObjectRefILValue {
+	public sealed class BoxedValueTypeILValue : TypeILValue {
 		/// <summary>
 		/// Gets the value
 		/// </summary>
@@ -1102,7 +1097,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// Constructor
 		/// </summary>
 		/// <param name="value">Value</param>
-		public BoxedValueTypeILValue(ValueTypeILValue value) {
+		public BoxedValueTypeILValue(ILValue value) {
+			Debug.Assert(value.Type.IsValueType);
 			Value = value.Clone();
 			type = Value.Type;
 		}
@@ -1126,7 +1122,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	/// <summary>
 	/// A null reference
 	/// </summary>
-	public class NullObjectRefILValue : ObjectRefILValue {
+	public class NullObjectRefILValue : TypeILValue {
 		/// <summary>
 		/// Returns true since it's a null value
 		/// </summary>
@@ -1141,21 +1137,5 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// Gets the type of the value
 		/// </summary>
 		public override DmdType Type => null;
-	}
-
-	/// <summary>
-	/// Value type, but not a primitive value type such as <see cref="int"/> or <see cref="double"/>
-	/// </summary>
-	public abstract class ValueTypeILValue : ILValue {
-		/// <summary>
-		/// Always returns <see cref="ILValueKind.ValueType"/>
-		/// </summary>
-		public sealed override ILValueKind Kind => ILValueKind.ValueType;
-
-		/// <summary>
-		/// Makes a copy of this instance so the new instance can be pushed onto the stack.
-		/// </summary>
-		/// <returns></returns>
-		public abstract override ILValue Clone();
 	}
 }
