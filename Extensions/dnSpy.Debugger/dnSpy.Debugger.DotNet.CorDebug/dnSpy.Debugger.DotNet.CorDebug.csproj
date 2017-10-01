@@ -206,6 +206,7 @@
     <Compile Include="Impl\Evaluation\DbgCorValueHolder.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetObjectIdImpl.cs" />
+    <Compile Include="Impl\Evaluation\DbgDotNetRawValueFactory.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetValueImpl.cs" />
     <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />

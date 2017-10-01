@@ -192,18 +192,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorValue NeuterCheckDereferencedValue {
-			get {
-				var v = DereferencedValue;
-				if (v == null || !v.IsNeutered)
-					return v;
-				//TODO: HACKFIX: CLR 2.x caches the value which gets neutered when Continue() gets
-				// called. This will clear the cached value. CLR 4.x doesn't cache the referenced value.
-				ReferenceAddress = ReferenceAddress;
-				return DereferencedValue;
-			}
-		}
-
 		/// <summary>
 		/// Gets the type of the array's elements or <see cref="CorElementType.End"/> if it's not an array
 		/// </summary>
@@ -546,7 +534,7 @@ namespace dndbg.Engine {
 		public CorValue GetFieldValue(string name, bool checkBaseClasses = true) {
 			var self = this;
 			if (self.IsReference) {
-				self = self.NeuterCheckDereferencedValue;
+				self = self.DereferencedValue;
 				if (self == null)
 					return null;
 			}

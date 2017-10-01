@@ -496,7 +496,7 @@ namespace dndbg.Engine {
 				}
 
 				if (value != null && value.IsReference && (value.ElementType == CorElementType.SZArray || value.ElementType == CorElementType.Array))
-					value = value.NeuterCheckDereferencedValue ?? value;
+					value = value.DereferencedValue ?? value;
 
 				// It's shown reverse in C# so need to collect all array types here
 				List<(CorType type, CorValue value)> list = null;
@@ -504,12 +504,12 @@ namespace dndbg.Engine {
 					if (list == null)
 						list = new List<(CorType, CorValue)>();
 					list.Add((type, value));
-					value = value?.NeuterCheckDereferencedValue;
+					value = value?.DereferencedValue;
 					type = type.FirstTypeParameter;
 				}
 				if (list != null) {
 					var t = list[list.Count - 1];
-					Write(t.type.FirstTypeParameter, t.value?.NeuterCheckDereferencedValue);
+					Write(t.type.FirstTypeParameter, t.value?.DereferencedValue);
 					foreach (var tuple in list) {
 						var aryType = tuple.type;
 						var aryValue = tuple.value;
@@ -578,12 +578,12 @@ namespace dndbg.Engine {
 				case CorElementType.U:			WriteSystemType("UIntPtr", TypeColor.ValueType); break;
 
 				case CorElementType.Ptr:
-					Write(type.FirstTypeParameter, value?.NeuterCheckDereferencedValue);
+					Write(type.FirstTypeParameter, value?.DereferencedValue);
 					OutputWrite("*", TypeColor.Operator);
 					break;
 
 				case CorElementType.ByRef:
-					Write(type.FirstTypeParameter, value?.NeuterCheckDereferencedValue);
+					Write(type.FirstTypeParameter, value?.DereferencedValue);
 					OutputWrite("&", TypeColor.Operator);
 					break;
 
@@ -1656,7 +1656,7 @@ namespace dndbg.Engine {
 				using (eval) {
 					var v = value;
 					if (v != null && v.IsReference && v.ElementType == CorElementType.ByRef)
-						v = v.NeuterCheckDereferencedValue;
+						v = v.DereferencedValue;
 					if (v != null && v.IsGeneric && !v.IsHeap && v.ExactType.IsValueType)
 						v = eval.Box(v);
 					if (v == null) {
@@ -1674,7 +1674,7 @@ namespace dndbg.Engine {
 						return;
 					}
 					if (rv != null && rv.IsReference)
-						rv = rv.NeuterCheckDereferencedValue;
+						rv = rv.DereferencedValue;
 					if (rv == null || !rv.IsString) {
 						WriteToStringFailed("return value isn't a string");
 						return;
@@ -1711,7 +1711,7 @@ namespace dndbg.Engine {
 
 			OutputWrite("{", TypeColor.TypeStringBrace);
 			if (value.IsReference && value.ElementType == CorElementType.ByRef)
-				value = value.NeuterCheckDereferencedValue ?? value;
+				value = value.DereferencedValue ?? value;
 			var type = value.ExactType;
 			if (type != null)
 				Write(type, value);

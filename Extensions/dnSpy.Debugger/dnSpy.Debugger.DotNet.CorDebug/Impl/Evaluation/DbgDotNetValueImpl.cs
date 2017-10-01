@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			this.value = value ?? throw new ArgumentNullException(nameof(value));
 			var corValue = value.CorValue;
-			rawValue = GetRawValue(corValue, value.Type);
+			rawValue = new DbgDotNetRawValueFactory(engine).Create(corValue, value.Type);
 
 			var flags = ValueFlags.None;
 			if (corValue.IsReference) {
@@ -267,67 +267,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		public override DbgDotNetRawValue GetRawValue() => rawValue;
-
-		static DbgDotNetRawValue GetRawValue(CorValue value, DmdType type) {
-			if (type.IsByRef) {
-				if (value.IsNull)
-					return GetRawValueDefault(value, type);
-
-				value = value.DereferencedValue;
-				Debug.Assert(value != null);
-				if (value == null)
-					return new DbgDotNetRawValue(DbgSimpleValueType.Other);
-				type = type.GetElementType();
-			}
-
-			switch (DmdType.GetTypeCode(type)) {
-			case TypeCode.Boolean:	return new DbgDotNetRawValue(DbgSimpleValueType.Boolean, value.Value.Value);
-			case TypeCode.Char:		return new DbgDotNetRawValue(DbgSimpleValueType.CharUtf16, value.Value.Value);
-			case TypeCode.SByte:	return new DbgDotNetRawValue(DbgSimpleValueType.Int8, value.Value.Value);
-			case TypeCode.Byte:		return new DbgDotNetRawValue(DbgSimpleValueType.UInt8, value.Value.Value);
-			case TypeCode.Int16:	return new DbgDotNetRawValue(DbgSimpleValueType.Int16, value.Value.Value);
-			case TypeCode.UInt16:	return new DbgDotNetRawValue(DbgSimpleValueType.UInt16, value.Value.Value);
-			case TypeCode.Int32:	return new DbgDotNetRawValue(DbgSimpleValueType.Int32, value.Value.Value);
-			case TypeCode.UInt32:	return new DbgDotNetRawValue(DbgSimpleValueType.UInt32, value.Value.Value);
-			case TypeCode.Int64:	return new DbgDotNetRawValue(DbgSimpleValueType.Int64, value.Value.Value);
-			case TypeCode.UInt64:	return new DbgDotNetRawValue(DbgSimpleValueType.UInt64, value.Value.Value);
-			case TypeCode.Single:	return new DbgDotNetRawValue(DbgSimpleValueType.Float32, value.Value.Value);
-			case TypeCode.Double:	return new DbgDotNetRawValue(DbgSimpleValueType.Float64, value.Value.Value);
-			case TypeCode.Decimal:	return new DbgDotNetRawValue(DbgSimpleValueType.Decimal, value.Value.Value ?? default(decimal));
-			case TypeCode.String:	return new DbgDotNetRawValue(DbgSimpleValueType.StringUtf16, value.Value.Value);
-
-			case TypeCode.Empty:
-			case TypeCode.Object:
-			case TypeCode.DBNull:
-			case TypeCode.DateTime:
-			default:
-				if (type.IsPointer || type.IsFunctionPointer) {
-					var objValue = value.Value.Value;
-					if (IntPtr.Size == 4)
-						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, objValue == null ? 0U : (uint)objValue);
-					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, objValue == null ? 0UL : (ulong)objValue);
-				}
-				if (type == type.AppDomain.System_UIntPtr) {
-					if (IntPtr.Size == 4)
-						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, ((UIntPtr)value.Value.Value).ToUInt32());
-					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, ((UIntPtr)value.Value.Value).ToUInt64());
-				}
-				if (type == type.AppDomain.System_IntPtr) {
-					if (IntPtr.Size == 4)
-						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)((IntPtr)value.Value.Value).ToInt32());
-					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, (ulong)((IntPtr)value.Value.Value).ToInt64());
-				}
-				if (type == type.AppDomain.System_DateTime)
-					return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, value.Value.Value ?? default(DateTime));
-				return GetRawValueDefault(value, type);
-			}
-		}
-
-		static DbgDotNetRawValue GetRawValueDefault(CorValue value, DmdType type) {
-			if (value.IsNull)
-				return new DbgDotNetRawValue(DbgSimpleValueType.Other, null);
-			return new DbgDotNetRawValue(DbgSimpleValueType.Other);
-		}
 
 		public override void Dispose() {
 			if (Interlocked.Exchange(ref disposed, 1) == 0)

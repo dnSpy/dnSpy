@@ -128,7 +128,7 @@ namespace dndbg.Engine {
 			if (res == null || !res.Value.NormalResult)
 				return null;
 			var newObj = res.Value.ResultOrException;
-			var r = newObj.NeuterCheckDereferencedValue;
+			var r = newObj.DereferencedValue;
 			var vb = r?.BoxedValue;
 			if (vb == null)
 				return null;

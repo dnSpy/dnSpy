@@ -86,7 +86,7 @@ namespace dndbg.Engine {
 			if (value.IsReference && value.ElementType == CorElementType.ByRef) {
 				if (value.IsNull)
 					return new CorValueResult(null);
-				value = value.NeuterCheckDereferencedValue;
+				value = value.DereferencedValue;
 				if (value == null)
 					return new CorValueResult();
 			}
@@ -98,7 +98,7 @@ namespace dndbg.Engine {
 						return new CorValueResult((uint)value.ReferenceAddress);
 					return new CorValueResult(value.ReferenceAddress);
 				}
-				value = value.NeuterCheckDereferencedValue;
+				value = value.DereferencedValue;
 				if (value == null)
 					return new CorValueResult();
 			}
