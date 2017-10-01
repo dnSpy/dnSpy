@@ -624,6 +624,33 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 		}
 
+		public bool? Equals(DbgDotNetValue a, DbgDotNetValue b) {
+			if (a == b)
+				return true;
+			if (a.Type != b.Type)
+				return false;
+			var ai = a as DbgDotNetValueImpl;
+			var bi = b as DbgDotNetValueImpl;
+			if (ai == null || bi == null) {
+				// If they're equal, they're both null
+				return ai == bi ? (bool?)null : false;
+			}
+			if (Dispatcher.CheckAccess())
+				return EqualsCore(ai, bi);
+			return Dispatcher.Invoke(() => EqualsCore(ai, bi));
+		}
+
+		bool? EqualsCore(DbgDotNetValueImpl a, DbgDotNetValueImpl b) {
+			Dispatcher.VerifyAccess();
+			var addra = GetValue(a.TryGetCorValue())?.Address ?? 0;
+			var addrb = GetValue(b.TryGetCorValue())?.Address ?? 0;
+			if (addra != 0 && addrb != 0)
+				return addra == addrb;
+			if (addra == 0 && addrb == 0)
+				return null;
+			return false;
+		}
+
 		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

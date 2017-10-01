@@ -62,6 +62,7 @@
     <Compile Include="Code\ReferenceConverterImpl.cs" />
     <Compile Include="Code\TextEditor\DbgTextViewCodeLocationProviderImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
+    <Compile Include="Evaluation\Engine\AddressILValue.cs" />
     <Compile Include="Evaluation\Engine\ArrayILValue.cs" />
     <Compile Include="Evaluation\Engine\ByRefILValueImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactory.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Evaluation\Engine\DbgModuleReferenceProvider.cs" />
     <Compile Include="Evaluation\Engine\DebuggerRuntimeImpl.cs" />
     <Compile Include="Evaluation\Engine\DecompilerOutputImpl.cs" />
+    <Compile Include="Evaluation\Engine\ExceptionUtils.cs" />
     <Compile Include="Evaluation\Engine\ILValues.cs" />
     <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
     <Compile Include="Evaluation\Engine\ObjectCache.cs" />

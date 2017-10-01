@@ -40,8 +40,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override ILValue LoadField(DmdFieldInfo field) =>
 			runtime.LoadInstanceField(objValue, field);
 
-		public override ILValue LoadFieldAddress(DmdFieldInfo field) =>
-			runtime.LoadInstanceFieldAddress(objValue, field);
+		public override ILValue LoadFieldAddress(DmdFieldInfo field) {
+			if (!Type.IsValueType)
+				return runtime.LoadReferenceTypeFieldAddress(objValue, field);
+			return null;
+		}
 
 		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
 			runtime.CallInstance(objValue, isCallvirt, method, arguments, out returnValue);

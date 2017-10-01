@@ -68,6 +68,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
 			switch (method.SpecialMethodKind) {
+			case DmdSpecialMethodKind.Array_Get:
+				//TODO:
+				break;
+
 			case DmdSpecialMethodKind.Array_Set:
 				//TODO:
 				break;
@@ -75,19 +79,34 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			case DmdSpecialMethodKind.Array_Address:
 				//TODO:
 				break;
-
-			case DmdSpecialMethodKind.Array_Get:
-				//TODO:
-				break;
 			}
 
 			return base.Call(isCallvirt, method, arguments, out returnValue);
 		}
 
+		internal DbgDotNetValue ReadArrayElement(long index) {
+			if ((ulong)index > uint.MaxValue)
+				return null;
+			using (var obj = new ArrayObjectValue(arrayValue)) {
+				var elemValue = obj.Value.GetArrayElementAt((uint)index);
+				if (elemValue != null)
+					return runtime.RecordValue(elemValue);
+				return null;
+			}
+		}
+
+		internal void WriteArrayElement(long index, object value) {
+			if ((ulong)index > uint.MaxValue)
+				throw new InvalidOperationException();
+			using (var obj = new ArrayObjectValue(arrayValue)) {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
 		public override ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) {
 			if (!isSZArray)
 				return null;
-			if (index > uint.MaxValue)
+			if ((ulong)index > uint.MaxValue)
 				return null;
 			using (var obj = new ArrayObjectValue(arrayValue)) {
 				var elemValue = obj.Value.GetArrayElementAt((uint)index);
@@ -100,6 +119,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override bool StoreSZArrayElement(LoadValueType loadValueType, long index, ILValue value, DmdType elementType) {
 			if (!isSZArray)
 				return false;
+			if ((ulong)index > uint.MaxValue)
+				return false;
 			//TODO:
 			return false;
 		}
@@ -107,8 +128,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override ILValue LoadSZArrayElementAddress(long index, DmdType elementType) {
 			if (!isSZArray)
 				return null;
-			//TODO:
-			return null;
+			if ((ulong)index > uint.MaxValue)
+				return null;
+			return new ArrayElementAddress(runtime, this, (uint)index);
 		}
 
 		public override bool GetSZArrayLength(out long length) {

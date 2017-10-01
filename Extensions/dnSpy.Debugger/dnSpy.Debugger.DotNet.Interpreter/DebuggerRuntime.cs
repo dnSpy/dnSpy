@@ -49,15 +49,17 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// Gets the address of an argument or returns null on failure
 		/// </summary>
 		/// <param name="index">Argument index</param>
+		/// <param name="type">Type of the argument</param>
 		/// <returns></returns>
-		public abstract ILValue LoadArgumentAddress(int index);
+		public abstract ILValue LoadArgumentAddress(int index, DmdType type);
 
 		/// <summary>
 		/// Gets the address of a local or returns null on failure
 		/// </summary>
 		/// <param name="index">Local index</param>
+		/// <param name="type">Type of the local</param>
 		/// <returns></returns>
-		public abstract ILValue LoadLocalAddress(int index);
+		public abstract ILValue LoadLocalAddress(int index, DmdType type);
 
 		/// <summary>
 		/// Writes to an argument or returns false on failure

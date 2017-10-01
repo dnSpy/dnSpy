@@ -216,5 +216,13 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		DbgDotNetValue GetValue(DbgEvaluationContext context, DbgDotNetObjectId objectId, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Checks if two values are equal. Returns null if it's unknown.
+		/// </summary>
+		/// <param name="a">Value #1</param>
+		/// <param name="b">Value #2</param>
+		/// <returns></returns>
+		bool? Equals(DbgDotNetValue a, DbgDotNetValue b);
 	}
 }

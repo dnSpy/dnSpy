@@ -247,7 +247,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case OpCodeFE.Ldarga:
-						v1 = debuggerRuntime.LoadArgumentAddress(ToUInt16(bodyBytes, ref methodBodyPos));
+						i = ToUInt16(bodyBytes, ref methodBodyPos);
+						v1 = debuggerRuntime.LoadArgumentAddress(i, currentMethod.GetMethodSignature().GetParameterTypes()[i]);
 						if (v1 == null)
 							ThrowInvalidMethodBodyInterpreterException();
 						ilValueStack.Add(v1.Clone());
@@ -261,7 +262,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case OpCodeFE.Ldloca:
-						v1 = debuggerRuntime.LoadLocalAddress(ToUInt16(bodyBytes, ref methodBodyPos));
+						i = ToUInt16(bodyBytes, ref methodBodyPos);
+						v1 = debuggerRuntime.LoadLocalAddress(i, state.Body.LocalVariables[i].LocalType);
 						if (v1 == null)
 							ThrowInvalidMethodBodyInterpreterException();
 						ilValueStack.Add(v1.Clone());
@@ -465,7 +467,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Ldarga_S:
-					v1 = debuggerRuntime.LoadArgumentAddress(bodyBytes[methodBodyPos++]);
+					i = bodyBytes[methodBodyPos++];
+					v1 = debuggerRuntime.LoadArgumentAddress(i, currentMethod.GetMethodSignature().GetParameterTypes()[i]);
 					if (v1 == null)
 						ThrowInvalidMethodBodyInterpreterException();
 					ilValueStack.Add(v1.Clone());
@@ -489,7 +492,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Ldloca_S:
-					v1 = debuggerRuntime.LoadLocalAddress(bodyBytes[methodBodyPos++]);
+					i = bodyBytes[methodBodyPos++];
+					v1 = debuggerRuntime.LoadLocalAddress(i, state.Body.LocalVariables[i].LocalType);
 					if (v1 == null)
 						ThrowInvalidMethodBodyInterpreterException();
 					ilValueStack.Add(v1.Clone());

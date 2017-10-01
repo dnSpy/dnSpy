@@ -170,7 +170,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				catch (InterpreterMessageException ime) {
 					result = new DbgDotNetValueResult(ime.Message);
 				}
-				catch (Exception ex) when (IsInternalDebuggerError(ex)) {
+				catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 					result = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 				}
 				finally {
@@ -190,9 +190,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			}
 		}
-
-		static bool IsInternalDebuggerError(Exception ex) =>
-			!(ex is OutOfMemoryException || ex is OperationCanceledException || ex is ThreadAbortException);
 
 		sealed class State {
 			public DebuggerRuntimeImpl DebuggerRuntime;

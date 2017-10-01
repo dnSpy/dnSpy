@@ -40,8 +40,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override ILValue LoadField(DmdFieldInfo field) =>
 			runtime.LoadInstanceField(byRefValue, field);
 
-		public override ILValue LoadFieldAddress(DmdFieldInfo field) =>
-			runtime.LoadInstanceFieldAddress(byRefValue, field);
+		public override ILValue LoadFieldAddress(DmdFieldInfo field) {
+			if (Type.GetElementType().IsValueType)
+				return runtime.LoadValueTypeFieldAddress(this, field);
+			return null;
+		}
 
 		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
 			runtime.CallInstance(byRefValue, isCallvirt, method, arguments, out returnValue);
@@ -53,13 +56,15 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
-			//TODO:
-			return base.StoreIndirect(type, loadValueType, value);
+			return false;//TODO:
 		}
 
 		public override bool InitializeObject(DmdType type) {
-			//TODO:
-			return base.InitializeObject(type);
+			return false;//TODO:
+		}
+
+		public override bool CopyObject(DmdType type, ILValue source) {
+			return false;//TODO:
 		}
 	}
 }
