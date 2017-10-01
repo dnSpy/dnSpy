@@ -2996,9 +2996,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.ByRef:
 					case ILValueKind.Type:
-						v3 = v1.Conv(ConvOpCodeKind.Conv_I);
-						if (v3 == null)
-							ThrowInvalidMethodBodyInterpreterException();
+						v3 = v1.Conv(ConvOpCodeKind.Conv_I) ?? v1;
 						break;
 
 					default:
@@ -3037,9 +3035,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.ByRef:
 					case ILValueKind.Type:
-						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_I);
-						if (v3 == null)
-							ThrowInvalidMethodBodyInterpreterException();
+						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_I) ?? v1;
 						break;
 
 					default:
@@ -3078,9 +3074,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.ByRef:
 					case ILValueKind.Type:
-						v3 = v1.Conv(ConvOpCodeKind.Conv_U);
-						if (v3 == null)
-							ThrowInvalidMethodBodyInterpreterException();
+						v3 = v1.Conv(ConvOpCodeKind.Conv_U) ?? v1;
 						break;
 
 					default:
@@ -3126,9 +3120,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.ByRef:
 					case ILValueKind.Type:
-						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_U);
-						if (v3 == null)
-							ThrowInvalidMethodBodyInterpreterException();
+						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_U) ?? v1;
 						break;
 
 					default:
@@ -3170,9 +3162,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.ByRef:
 					case ILValueKind.Type:
-						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_I_Un);
-						if (v3 == null)
-							ThrowInvalidMethodBodyInterpreterException();
+						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_I_Un) ?? v1;
 						break;
 
 					default:
@@ -3214,9 +3204,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case ILValueKind.ByRef:
 					case ILValueKind.Type:
-						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_U_Un);
-						if (v3 == null)
-							ThrowInvalidMethodBodyInterpreterException();
+						v3 = v1.Conv(ConvOpCodeKind.Conv_Ovf_U_Un) ?? v1;
 						break;
 
 					default:
