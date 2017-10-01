@@ -96,22 +96,22 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			case TypeCode.Int16:
 			case TypeCode.UInt16:
 			case TypeCode.Int32:
-			case TypeCode.UInt32:		return new ConstantInt32ILValue(0);
+			case TypeCode.UInt32:		return new ConstantInt32ILValue(type.AppDomain, 0);
 			case TypeCode.Int64:
-			case TypeCode.UInt64:		return new ConstantInt64ILValue(0);
+			case TypeCode.UInt64:		return new ConstantInt64ILValue(type.AppDomain, 0);
 			case TypeCode.Single:
-			case TypeCode.Double:		return new ConstantFloatILValue(0);
+			case TypeCode.Double:		return new ConstantFloatILValue(type.AppDomain, 0);
 			}
 			if (type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr)
-				return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(0) : ConstantNativeIntILValue.Create64(0);
+				return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(type.AppDomain, 0) : ConstantNativeIntILValue.Create64(type.AppDomain, 0);
 			if (type.IsValueType)
 				return new FakeValueType(type);
 			return new NullObjectRefILValue();
 		}
 
-		sealed class FakeValueType : ValueTypeILValue {
+		sealed class FakeValueType : TypeILValue {
 			readonly Dictionary<DmdFieldInfo, ILValue> fields;
-			public DmdType Type { get; }
+			public override DmdType Type { get; }
 
 			public FakeValueType(FakeValueType other) {
 				Type = other.Type;
@@ -138,31 +138,31 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				if (type == ad.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle)) {
 					if (method.Name == "get_Value") {
 						returnValue = ad.Runtime.PointerSize == 4 ?
-							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 0) :
-							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 0);
+							ConstantNativeIntILValue.Create32(ad, DUMMY_PTR_BASE + 0) :
+							ConstantNativeIntILValue.Create32(ad, DUMMY_PTR_BASE + 0);
 						return true;
 					}
 				}
 				else if (type == ad.GetWellKnownType(DmdWellKnownType.System_RuntimeFieldHandle)) {
 					if (method.Name == "get_Value") {
 						returnValue = ad.Runtime.PointerSize == 4 ?
-							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 1) :
-							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 1);
+							ConstantNativeIntILValue.Create32(ad, DUMMY_PTR_BASE + 1) :
+							ConstantNativeIntILValue.Create32(ad, DUMMY_PTR_BASE + 1);
 						return true;
 					}
 				}
 				else if (type == ad.GetWellKnownType(DmdWellKnownType.System_RuntimeMethodHandle)) {
 					if (method.Name == "get_Value") {
 						returnValue = ad.Runtime.PointerSize == 4 ?
-							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 2) :
-							ConstantNativeIntILValue.Create32(DUMMY_PTR_BASE + 2);
+							ConstantNativeIntILValue.Create32(ad, DUMMY_PTR_BASE + 2) :
+							ConstantNativeIntILValue.Create32(ad, DUMMY_PTR_BASE + 2);
 						return true;
 					}
 				}
 				else if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyStruct") {
 					switch (method.Name) {
 					case "InstanceMethod1":
-						returnValue = new ConstantInt32ILValue(123);
+						returnValue = new ConstantInt32ILValue(ad, 123);
 						return true;
 					case "InstanceMethod2":
 						returnValue = arguments[0].Clone();
@@ -181,7 +181,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			}
 
 			public override ILValue Clone() => new FakeValueType(this);
-			public override DmdType GetType(DmdAppDomain appDomain) => Type;
 
 			public override ILValue LoadField(DmdFieldInfo field) => fields[field];
 
@@ -204,9 +203,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			}
 		}
 
-		sealed class FakeReferenceType : ObjectRefILValue {
+		sealed class FakeReferenceType : TypeILValue {
 			readonly Dictionary<DmdFieldInfo, ILValue> fields;
-			public DmdType Type { get; }
+			public override DmdType Type { get; }
 
 			public FakeReferenceType(DmdType type) {
 				Type = type;
@@ -220,8 +219,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 						fields[f] = CreateDefaultValue(f.FieldType);
 				}
 			}
-
-			public override DmdType GetType(DmdAppDomain appDomain) => Type;
 
 			public override ILValue LoadField(DmdFieldInfo field) => fields[field];
 
@@ -239,11 +236,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			}
 
 			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
+				var ad = method.AppDomain;
 				var type = method.ReflectedType;
 				if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyClass") {
 					switch (method.Name) {
 					case "InstanceMethod1":
-						returnValue = new ConstantInt32ILValue(123);
+						returnValue = new ConstantInt32ILValue(ad, 123);
 						return true;
 					case "InstanceMethod2":
 						returnValue = arguments[0].Clone();
@@ -281,7 +279,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				return true;
 			}
 			public override bool InitializeObject(DmdType type) => Fields[Field].InitializeObject(type);
-			public override DmdType GetType(DmdAppDomain appDomain) => Field.FieldType;
+			public override DmdType Type => Field.FieldType;
 			public bool Equals(FakeFieldAddress other) => Fields == other.Fields && Field == other.Field;
 		}
 
@@ -307,7 +305,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			public override bool StoreField(DmdFieldInfo field, ILValue value) => Collection[Index].StoreField(field, value);
 			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
 				Collection[Index].Call(isCallvirt, method, arguments, out returnValue);
-			public override DmdType GetType(DmdAppDomain appDomain) => Collection[Index].GetType(appDomain).MakeByRefType();
+			public override DmdType Type => Collection[Index].Type.MakeByRefType();
 			public bool Equals(ArgOrLocalAddress other) => Collection == other.Collection && Index == other.Index;
 		}
 
@@ -343,29 +341,29 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			}
 
 			switch (DmdType.GetTypeCode(valueType)) {
-			case TypeCode.Boolean:		value = new ConstantInt32ILValue(0); return;
-			case TypeCode.Char:			value = new ConstantInt32ILValue(0); return;
-			case TypeCode.SByte:		value = new ConstantInt32ILValue(0); return;
-			case TypeCode.Byte:			value = new ConstantInt32ILValue(0); return;
-			case TypeCode.Int16:		value = new ConstantInt32ILValue(0); return;
-			case TypeCode.UInt16:		value = new ConstantInt32ILValue(0); return;
-			case TypeCode.Int32:		value = new ConstantInt32ILValue(0); return;
-			case TypeCode.UInt32:		value = new ConstantInt32ILValue(0); return;
-			case TypeCode.Int64:		value = new ConstantInt64ILValue(0); return;
-			case TypeCode.UInt64:		value = new ConstantInt64ILValue(0); return;
-			case TypeCode.Single:		value = new ConstantFloatILValue(0); return;
-			case TypeCode.Double:		value = new ConstantFloatILValue(0); return;
+			case TypeCode.Boolean:		value = new ConstantInt32ILValue(valueType.AppDomain, 0); return;
+			case TypeCode.Char:			value = new ConstantInt32ILValue(valueType.AppDomain, 0); return;
+			case TypeCode.SByte:		value = new ConstantInt32ILValue(valueType.AppDomain, 0); return;
+			case TypeCode.Byte:			value = new ConstantInt32ILValue(valueType.AppDomain, 0); return;
+			case TypeCode.Int16:		value = new ConstantInt32ILValue(valueType.AppDomain, 0); return;
+			case TypeCode.UInt16:		value = new ConstantInt32ILValue(valueType.AppDomain, 0); return;
+			case TypeCode.Int32:		value = new ConstantInt32ILValue(valueType.AppDomain, 0); return;
+			case TypeCode.UInt32:		value = new ConstantInt32ILValue(valueType.AppDomain, 0); return;
+			case TypeCode.Int64:		value = new ConstantInt64ILValue(valueType.AppDomain, 0); return;
+			case TypeCode.UInt64:		value = new ConstantInt64ILValue(valueType.AppDomain, 0); return;
+			case TypeCode.Single:		value = new ConstantFloatILValue(valueType.AppDomain, 0); return;
+			case TypeCode.Double:		value = new ConstantFloatILValue(valueType.AppDomain, 0); return;
 			}
 			if (valueType == valueType.AppDomain.System_IntPtr || valueType == valueType.AppDomain.System_UIntPtr) {
-				value = valueType.AppDomain.Runtime.PointerSize == 4 ? ConstantNativeIntILValue.Create32(0) : ConstantNativeIntILValue.Create64(0);
+				value = valueType.AppDomain.Runtime.PointerSize == 4 ? ConstantNativeIntILValue.Create32(valueType.AppDomain, 0) : ConstantNativeIntILValue.Create64(valueType.AppDomain, 0);
 				return;
 			}
 
 			throw new InvalidOperationException();
 		}
 
-		sealed class SZArrayILValue : ObjectRefILValue {
-			public DmdType Type { get; }
+		sealed class SZArrayILValue : TypeILValue {
+			public override DmdType Type { get; }
 			readonly ILValue[] elements;
 
 			public ILValue this[long index] {
@@ -392,11 +390,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				length = elements.Length;
 				return true;
 			}
-
-			public override DmdType GetType(DmdAppDomain appDomain) => Type;
 		}
 
-		sealed class SZArrayAddress : ObjectRefILValue, IEquatable<SZArrayAddress> {
+		sealed class SZArrayAddress : ByRefILValue, IEquatable<SZArrayAddress> {
 			public SZArrayILValue ArrayValue { get; }
 			public long Index { get; }
 
@@ -420,7 +416,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			public override bool StoreField(DmdFieldInfo field, ILValue value) => ArrayValue[Index].StoreField(field, value);
 			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
 				ArrayValue[Index].Call(isCallvirt, method, arguments, out returnValue);
-			public override DmdType GetType(DmdAppDomain appDomain) => ArrayValue.GetType(appDomain).MakeByRefType();
+			public override DmdType Type => ArrayValue.Type.MakeByRefType();
 			public bool Equals(SZArrayAddress other) => ArrayValue == other.ArrayValue && Index == other.Index;
 		}
 
@@ -450,7 +446,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyStruct") {
 				switch (method.Name) {
 				case "StaticMethod1":
-					returnValue = new ConstantInt32ILValue(123);
+					returnValue = new ConstantInt32ILValue(ad, 123);
 					return true;
 				case "StaticMethod2":
 					returnValue = arguments[0].Clone();
@@ -466,7 +462,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			else if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyClass") {
 				switch (method.Name) {
 				case "StaticMethod1":
-					returnValue = new ConstantInt32ILValue(123);
+					returnValue = new ConstantInt32ILValue(ad, 123);
 					return true;
 				case "StaticMethod2":
 					returnValue = arguments[0].Clone();

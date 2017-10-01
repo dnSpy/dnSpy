@@ -53,8 +53,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 				case TypeCode.UInt32:	return (uint)v32.Value;
 				case TypeCode.Int64:	return (long)v32.Value;
 				case TypeCode.UInt64:	return (ulong)v32.Value;
-				case TypeCode.Single:	return (float)v32.Value;
-				case TypeCode.Double:	return (double)v32.Value;
 				default:
 					throw new InvalidOperationException();
 				}
@@ -86,13 +84,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 				}
 				break;
 
-			case ILValueKind.ObjectRef:
+			case ILValueKind.Type:
 				if (v is ConstantStringILValue s)
 					return s.Value;
 				break;
 
 			case ILValueKind.ByRef:
-			case ILValueKind.ValueType:
 				break;
 			}
 
@@ -3853,24 +3850,24 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 			if (value == null)
 				return new NullObjectRefILValue();
 			switch (Type.GetTypeCode(value.GetType())) {
-			case TypeCode.Boolean:	return new ConstantInt32ILValue((bool)value ? 1 : 0);
-			case TypeCode.Char:		return new ConstantInt32ILValue((char)value);
-			case TypeCode.SByte:	return new ConstantInt32ILValue((sbyte)value);
-			case TypeCode.Byte:		return new ConstantInt32ILValue((byte)value);
-			case TypeCode.Int16:	return new ConstantInt32ILValue((short)value);
-			case TypeCode.UInt16:	return new ConstantInt32ILValue((ushort)value);
-			case TypeCode.Int32:	return new ConstantInt32ILValue((int)value);
-			case TypeCode.UInt32:	return new ConstantInt32ILValue((int)(uint)value);
-			case TypeCode.Int64:	return new ConstantInt64ILValue((long)value);
-			case TypeCode.UInt64:	return new ConstantInt64ILValue((long)(ulong)value);
-			case TypeCode.Single:	return new ConstantFloatILValue((float)value);
-			case TypeCode.Double:	return new ConstantFloatILValue((double)value);
-			case TypeCode.String:	return new ConstantStringILValue((string)value);
+			case TypeCode.Boolean:	return new ConstantInt32ILValue(testAsm1.AppDomain, (bool)value ? 1 : 0);
+			case TypeCode.Char:		return new ConstantInt32ILValue(testAsm1.AppDomain, (char)value);
+			case TypeCode.SByte:	return new ConstantInt32ILValue(testAsm1.AppDomain, (sbyte)value);
+			case TypeCode.Byte:		return new ConstantInt32ILValue(testAsm1.AppDomain, (byte)value);
+			case TypeCode.Int16:	return new ConstantInt32ILValue(testAsm1.AppDomain, (short)value);
+			case TypeCode.UInt16:	return new ConstantInt32ILValue(testAsm1.AppDomain, (ushort)value);
+			case TypeCode.Int32:	return new ConstantInt32ILValue(testAsm1.AppDomain, (int)value);
+			case TypeCode.UInt32:	return new ConstantInt32ILValue(testAsm1.AppDomain, (int)(uint)value);
+			case TypeCode.Int64:	return new ConstantInt64ILValue(testAsm1.AppDomain, (long)value);
+			case TypeCode.UInt64:	return new ConstantInt64ILValue(testAsm1.AppDomain, (long)(ulong)value);
+			case TypeCode.Single:	return new ConstantFloatILValue(testAsm1.AppDomain, (float)value);
+			case TypeCode.Double:	return new ConstantFloatILValue(testAsm1.AppDomain, (double)value);
+			case TypeCode.String:	return new ConstantStringILValue(testAsm1.AppDomain, (string)value);
 			default:
 				if (value is IntPtr ip)
-					return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(ip.ToInt32()) : ConstantNativeIntILValue.Create64(ip.ToInt64());
+					return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(testAsm1.AppDomain, ip.ToInt32()) : ConstantNativeIntILValue.Create64(testAsm1.AppDomain, ip.ToInt64());
 				if (value is UIntPtr up)
-					return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32((int)up.ToUInt32()) : ConstantNativeIntILValue.Create64((long)up.ToUInt64());
+					return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(testAsm1.AppDomain, (int)up.ToUInt32()) : ConstantNativeIntILValue.Create64(testAsm1.AppDomain, (long)up.ToUInt64());
 				throw new InvalidOperationException();
 			}
 		}
