@@ -29,6 +29,8 @@ namespace dnSpy.Contracts.Utilities {
 	/// Converts numbers, strings and a few other types to or from strings
 	/// </summary>
 	public static class SimpleTypeConverter {
+		const string digitSeparator = "_";
+
 		/// <summary>
 		/// Parses a byte array string
 		/// </summary>
@@ -297,6 +299,7 @@ namespace dnSpy.Contracts.Utilities {
 			value = 0;
 			bool isValid;
 			s = s.Trim();
+			s = s.Replace(digitSeparator, string.Empty);
 			if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase) ||
 				s.StartsWith("&H", StringComparison.OrdinalIgnoreCase)) {
 				var s2 = s.Substring(2);
@@ -658,6 +661,7 @@ namespace dnSpy.Contracts.Utilities {
 			value = 0;
 			bool isValid;
 			s = s.Trim();
+			s = s.Replace(digitSeparator, string.Empty);
 			bool isSigned = s.StartsWith("-", StringComparison.OrdinalIgnoreCase);
 			if (isSigned)
 				s = s.Substring(1);
