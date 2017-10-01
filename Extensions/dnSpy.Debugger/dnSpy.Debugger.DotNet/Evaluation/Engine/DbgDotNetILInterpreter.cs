@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var genericMethodArguments = frameMethod.GetGenericArguments();
 			var methodState = stateImpl.GetOrCreateMethodInfoState(appDomain, typeName, methodName, genericTypeArguments, genericMethodArguments);
 
-			DbgDotNetValueResult result;
+			DbgDotNetValueResult result = default;
 			using (reflectionAssembly.AppDomain.AddTemporaryAssembly(reflectionAssembly)) {
 				var ilvmState = methodState.ILVMExecuteState;
 				if (ilvmState == null) {
@@ -174,7 +174,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					result = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 				}
 				finally {
-					debuggerRuntime.Clear();
+					debuggerRuntime.Clear(result.Value);
 				}
 			}
 

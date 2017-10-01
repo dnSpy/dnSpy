@@ -37,11 +37,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly IDbgDotNetRuntime runtime;
 		readonly Dictionary<int, ILValue> createdLocals;
 		readonly Dictionary<int, ILValue> createdArguments;
+		readonly List<DbgDotNetValue> valuesToDispose;
 
 		public DebuggerRuntimeImpl(IDbgDotNetRuntime runtime, int pointerSize) {
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			createdLocals = new Dictionary<int, ILValue>();
 			createdArguments = new Dictionary<int, ILValue>();
+			valuesToDispose = new List<DbgDotNetValue>();
 			PointerSize = pointerSize;
 		}
 
@@ -58,14 +60,20 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.cancellationToken = cancellationToken;
 			Debug.Assert(createdArguments.Count == 0);
 			Debug.Assert(createdLocals.Count == 0);
+			Debug.Assert(valuesToDispose.Count == 0);
 		}
 
-		public void Clear() {
+		public void Clear(DbgDotNetValue returnValue) {
 			context = null;
 			frame = null;
 			cancellationToken = default;
 			createdArguments.Clear();
 			createdLocals.Clear();
+			foreach (var v in valuesToDispose) {
+				if (v != returnValue)
+					v.Dispose();
+			}
+			valuesToDispose.Clear();
 		}
 
 		public DbgDotNetValue GetDotNetValue(ILValue value) {
@@ -172,13 +180,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return CreateILValue(dnValue);
 		}
 
-		internal ILValue CreateILValue(DbgDotNetValue value, bool dispose = true) {
+		internal ILValue CreateILValue(DbgDotNetValue value) {
 			try {
+				valuesToDispose.Add(value);
 				return CreateILValueCore(value);
 			}
 			catch {
-				if (dispose)
-					value.Dispose();
+				value.Dispose();
 				throw;
 			}
 		}
@@ -392,8 +400,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new InvalidOperationException();
 			var res = runtime.Call(context, frame, objValue, method, Convert(arguments, method.GetMethodSignature().GetParameterTypes()), cancellationToken);
 			try {
-				if (method.GetMethodSignature().ReturnType == method.AppDomain.System_Void)
+				if (method.GetMethodSignature().ReturnType == method.AppDomain.System_Void) {
 					returnValue = null;
+					res.Value?.Dispose();
+				}
 				else
 					returnValue = CreateILValue(res);
 				return true;
