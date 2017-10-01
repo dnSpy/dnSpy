@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
@@ -74,39 +75,76 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			throw new InvalidOperationException();//TODO:
 		}
 
-		DbgDotNetValue TryGetDotNetValue(ILValue value) {
+		static IDebuggerRuntimeILValue TryGetDebuggerRuntimeILValue(ILValue value) {
 			var rtValue = value as IDebuggerRuntimeILValue;
-			if (rtValue == null) {
-				if (value is BoxedValueTypeILValue boxedValue)
-					rtValue = boxedValue.Value as IDebuggerRuntimeILValue;
-				if (rtValue == null) {
-					if (value.IsNull)
-						return new SyntheticNullValue(value.Type ?? frame.Module.AppDomain.GetReflectionAppDomain().System_Void);
-				}
+			if (rtValue != null)
+				return rtValue;
+			if (value is BoxedValueTypeILValue boxedValue) {
+				rtValue = boxedValue.Value as IDebuggerRuntimeILValue;
+				if (rtValue != null)
+					return rtValue;
 			}
-			return rtValue.GetDotNetValue();
+			return null;
 		}
 
-		object GetArgumentValue(ILValue value) {
+		DbgDotNetValue TryGetDotNetValue(ILValue value) {
+			var rtValue = TryGetDebuggerRuntimeILValue(value);
+			if (rtValue != null)
+				return rtValue.GetDotNetValue();
+			if (value.IsNull)
+				return new SyntheticNullValue(value.Type ?? frame.Module.AppDomain.GetReflectionAppDomain().System_Void);
+			return null;
+		}
+
+		object GetDebuggerValue(ILValue value, DmdType targetType) {
 			var dnValue = TryGetDotNetValue(value);
 			if (dnValue != null)
 				return dnValue;
 
+			var targetTypeCode = DmdType.GetTypeCode(targetType);
 			switch (value.Kind) {
 			case ILValueKind.Int32:
-				return ((ConstantInt32ILValue)value).Value;
+				int v32 = ((ConstantInt32ILValue)value).Value;
+				switch (targetTypeCode) {
+				case TypeCode.Boolean:	return v32 != 0;
+				case TypeCode.Char:		return (char)v32;
+				case TypeCode.SByte:	return (sbyte)v32;
+				case TypeCode.Byte:		return (byte)v32;
+				case TypeCode.Int16:	return (short)v32;
+				case TypeCode.UInt16:	return (ushort)v32;
+				case TypeCode.Int32:	return v32;
+				case TypeCode.UInt32:	return (uint)v32;
+				}
+				break;
 
 			case ILValueKind.Int64:
-				return ((ConstantInt64ILValue)value).Value;
+				long v64 = ((ConstantInt64ILValue)value).Value;
+				switch (targetTypeCode) {
+				case TypeCode.Int64:	return v64;
+				case TypeCode.UInt64:	return (ulong)v64;
+				}
+				break;
 
 			case ILValueKind.Float:
-				return ((ConstantFloatILValue)value).Value;
+				double r8 = ((ConstantFloatILValue)value).Value;
+				switch (targetTypeCode) {
+				case TypeCode.Single:	return (float)r8;
+				case TypeCode.Double:	return r8;
+				}
+				break;
 
 			case ILValueKind.NativeInt:
 				if (value is ConstantNativeIntILValue ci) {
-					if (PointerSize == 4)
-						return new IntPtr(ci.Value32);
-					return new IntPtr(ci.Value64);
+					if (targetType == targetType.AppDomain.System_IntPtr) {
+						if (PointerSize == 4)
+							return new IntPtr(ci.Value32);
+						return new IntPtr(ci.Value64);
+					}
+					else if (targetType == targetType.AppDomain.System_UIntPtr) {
+						if (PointerSize == 4)
+							return new UIntPtr(ci.UnsignedValue32);
+						return new UIntPtr(ci.UnsignedValue64);
+					}
 				}
 				break;
 
@@ -116,7 +154,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				break;
 			}
 
-			throw new InvalidOperationException();//TODO:
+			Debug.Fail($"Unknown value can't be converted to {targetType.FullName}: {value}");
+			throw new InvalidOperationException();
 		}
 
 		ILValue CreateILValue(DbgDotNetValueResult result) {
@@ -287,7 +326,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return CreateILValue(res);
 
 			default:
-				res = runtime.CreateInstance(context, frame, ctor, Convert(arguments), cancellationToken);
+				res = runtime.CreateInstance(context, frame, ctor, Convert(arguments, ctor.GetMethodSignature().GetParameterTypes()), cancellationToken);
 				return CreateILValue(res);
 			}
 		}
@@ -313,7 +352,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override bool StoreStaticField(DmdFieldInfo field, ILValue value) {
-			var error = runtime.StoreField(context, frame, null, field, GetArgumentValue(value), cancellationToken);
+			var error = runtime.StoreField(context, frame, null, field, GetDebuggerValue(value, field.FieldType), cancellationToken);
 			//TODO: Show the error message in the vars window
 			return error != null;
 		}
@@ -331,7 +370,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		internal bool StoreInstanceField(DbgDotNetValue objValue, DmdFieldInfo field, ILValue value) {
-			var error = runtime.StoreField(context, frame, objValue, field, GetArgumentValue(value), cancellationToken);
+			var error = runtime.StoreField(context, frame, objValue, field, GetDebuggerValue(value, field.FieldType), cancellationToken);
 			//TODO: Show the error message in the vars window
 			return error != null;
 		}
@@ -349,7 +388,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		bool Call(DbgDotNetValue objValue, bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
 			if (method.SpecialMethodKind != DmdSpecialMethodKind.Metadata)
 				throw new InvalidOperationException();
-			var res = runtime.Call(context, frame, objValue, method, Convert(arguments), cancellationToken);
+			var res = runtime.Call(context, frame, objValue, method, Convert(arguments, method.GetMethodSignature().GetParameterTypes()), cancellationToken);
 			try {
 				if (method.GetMethodSignature().ReturnType == method.AppDomain.System_Void)
 					returnValue = null;
@@ -363,10 +402,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
-		object[] Convert(ILValue[] arguments) {
-			var res = arguments.Length == 0 ? Array.Empty<object>() : new object[arguments.Length];
+		object[] Convert(ILValue[] values, ReadOnlyCollection<DmdType> targetTypes) {
+			if (values.Length != targetTypes.Count)
+				throw new InvalidOperationException();
+			var res = values.Length == 0 ? Array.Empty<object>() : new object[values.Length];
 			for (int i = 0; i < res.Length; i++)
-				res[i] = GetArgumentValue(arguments[i]);
+				res[i] = GetDebuggerValue(values[i], targetTypes[i]);
 			return res;
 		}
 	}
