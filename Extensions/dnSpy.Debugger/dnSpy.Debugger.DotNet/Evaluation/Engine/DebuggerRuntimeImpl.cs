@@ -160,10 +160,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		ILValue CreateILValue(DbgDotNetValueResult result) {
 			if (result.HasError)
-				return null;//TODO: Return error message
+				throw new InterpreterMessageException(result.ErrorMessage);
 			if (result.ValueIsException) {
 				result.Value.Dispose();
-				return null;//TODO: Return error message
+				return null;
 			}
 
 			var dnValue = result.Value;
@@ -353,8 +353,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override bool StoreStaticField(DmdFieldInfo field, ILValue value) {
 			var error = runtime.StoreField(context, frame, null, field, GetDebuggerValue(value, field.FieldType), cancellationToken);
-			//TODO: Show the error message in the vars window
-			return error != null;
+			if (error != null)
+				throw new InterpreterMessageException(error);
+			return true;
 		}
 
 		public override int? CompareSigned(ILValue left, ILValue right) {
@@ -371,8 +372,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		internal bool StoreInstanceField(DbgDotNetValue objValue, DmdFieldInfo field, ILValue value) {
 			var error = runtime.StoreField(context, frame, objValue, field, GetDebuggerValue(value, field.FieldType), cancellationToken);
-			//TODO: Show the error message in the vars window
-			return error != null;
+			if (error != null)
+				throw new InterpreterMessageException(error);
+			return true;
 		}
 
 		internal ILValue LoadInstanceField(DbgDotNetValue objValue, DmdFieldInfo field) =>

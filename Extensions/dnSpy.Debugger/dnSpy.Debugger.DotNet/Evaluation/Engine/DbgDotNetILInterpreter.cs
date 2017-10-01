@@ -24,6 +24,7 @@ using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -31,7 +32,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetILInterpreter {
 		public abstract DbgDotNetILInterpreterState CreateState(DbgEvaluationContext context, byte[] assembly);
-		public abstract DbgDotNetValue Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgValueNodeEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgValueNodeEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken);
 	}
 
 	abstract class DbgDotNetILInterpreterState {
@@ -109,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return new DbgDotNetILInterpreterStateImpl(assembly);
 		}
 
-		public override DbgDotNetValue Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgValueNodeEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken) {
+		public override DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgValueNodeEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (frame == null)
@@ -137,7 +138,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var genericMethodArguments = frameMethod.GetGenericArguments();
 			var methodState = stateImpl.GetOrCreateMethodInfoState(appDomain, typeName, methodName, genericTypeArguments, genericMethodArguments);
 
-			DbgDotNetValue resultValue;
+			DbgDotNetValueResult result;
 			using (reflectionAssembly.AppDomain.AddTemporaryAssembly(reflectionAssembly)) {
 				var ilvmState = methodState.ILVMExecuteState;
 				if (ilvmState == null) {
@@ -160,15 +161,38 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				debuggerRuntime.Initialize(context, frame, cancellationToken);
 				try {
 					var execResult = stateImpl.ILVM.Execute(debuggerRuntime, ilvmState);
-					resultValue = debuggerRuntime.GetDotNetValue(execResult);
+					var resultValue = debuggerRuntime.GetDotNetValue(execResult);
+					result = new DbgDotNetValueResult(resultValue, valueIsException: false);
+				}
+				catch (InterpreterException ie) {
+					result = new DbgDotNetValueResult(GetErrorMessage(ie.Kind));
+				}
+				catch (InterpreterMessageException ime) {
+					result = new DbgDotNetValueResult(ime.Message);
+				}
+				catch (Exception ex) when (IsInternalDebuggerError(ex)) {
+					result = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 				}
 				finally {
 					debuggerRuntime.Clear();
 				}
 			}
 
-			return resultValue;
+			return result;
 		}
+
+		static string GetErrorMessage(InterpreterExceptionKind kind) {
+			switch (kind) {
+			case InterpreterExceptionKind.TooManyInstructions:
+			case InterpreterExceptionKind.InvalidMethodBody:
+			case InterpreterExceptionKind.InstructionNotSupported:
+			default:
+				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
+			}
+		}
+
+		static bool IsInternalDebuggerError(Exception ex) =>
+			!(ex is OutOfMemoryException || ex is OperationCanceledException || ex is ThreadAbortException);
 
 		sealed class State {
 			public DebuggerRuntimeImpl DebuggerRuntime;
