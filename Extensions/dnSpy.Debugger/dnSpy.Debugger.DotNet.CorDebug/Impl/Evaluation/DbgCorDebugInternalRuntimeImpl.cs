@@ -31,10 +31,9 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
-using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
+namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	sealed class DbgCorDebugInternalRuntimeImpl : DbgCorDebugInternalRuntime, IDbgDotNetRuntime {
 		public override DbgRuntime Runtime { get; }
 		public override DmdRuntime ReflectionRuntime { get; }

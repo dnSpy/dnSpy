@@ -21,7 +21,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.Properties;
 
-namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
+namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	static class CordbgErrorHelper {
 		public static string InternalError => PredefinedEvaluationErrorMessages.InternalDebuggerError;
 		public static string FuncEvalRequiresAllThreadsToRun => PredefinedEvaluationErrorMessages.FuncEvalRequiresAllThreadsToRun;

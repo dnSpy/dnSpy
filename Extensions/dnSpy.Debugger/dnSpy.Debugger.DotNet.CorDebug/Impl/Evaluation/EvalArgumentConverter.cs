@@ -25,10 +25,9 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
+namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	struct EvalArgumentResult {
 		public string ErrorMessage { get; }
 		public CorValue CorValue { get; }

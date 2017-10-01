@@ -20,7 +20,7 @@
 using System;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 
-namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
+namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	sealed class DbgDotNetDispatcherImpl : DbgDotNetDispatcher {
 		readonly DbgEngineImpl engine;
 
