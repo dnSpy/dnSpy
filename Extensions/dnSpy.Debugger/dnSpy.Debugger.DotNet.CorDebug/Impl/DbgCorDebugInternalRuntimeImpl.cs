@@ -295,13 +295,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		public string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, DbgDotNetValue value, CancellationToken cancellationToken) {
+		public string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken) {
 			if (Dispatcher.CheckAccess())
 				return StoreFieldCore(context, frame, obj, field, value, cancellationToken);
 			return Dispatcher.Invoke(() => StoreFieldCore(context, frame, obj, field, value, cancellationToken));
 		}
 
-		string StoreFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, DbgDotNetValue value, CancellationToken cancellationToken) {
+		string StoreFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			return "NYI";//TODO:
 		}
@@ -330,6 +330,45 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 			return engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), ctor, null, arguments, newObj: true, cancellationToken: cancellationToken);
+		}
+
+		public DbgDotNetValueResult CreateInstanceNoConstructor(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return CreateInstanceNoConstructorCore(context, frame, type, cancellationToken);
+			return Dispatcher.Invoke(() => CreateInstanceNoConstructorCore(context, frame, type, cancellationToken));
+		}
+
+		DbgDotNetValueResult CreateInstanceNoConstructorCore(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			return engine.FuncEvalCreateInstanceNoCtor_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), type, cancellationToken);
+		}
+
+		public DbgDotNetValueResult CreateSZArray(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, int length, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return CreateSZArrayCore(context, frame, elementType, length, cancellationToken);
+			return Dispatcher.Invoke(() => CreateSZArrayCore(context, frame, elementType, length, cancellationToken));
+		}
+
+		DbgDotNetValueResult CreateSZArrayCore(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, int length, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);//TODO:
+		}
+
+		public DbgDotNetValueResult CreateArray(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, DbgDotNetArrayDimensionInfo[] dimensionInfos, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return CreateArrayCore(context, frame, elementType, dimensionInfos, cancellationToken);
+			return Dispatcher.Invoke(() => CreateArrayCore(context, frame, elementType, dimensionInfos, cancellationToken));
+		}
+
+		DbgDotNetValueResult CreateArrayCore(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, DbgDotNetArrayDimensionInfo[] dimensionInfos, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);//TODO:
 		}
 
 		public DbgDotNetAliasInfo[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {

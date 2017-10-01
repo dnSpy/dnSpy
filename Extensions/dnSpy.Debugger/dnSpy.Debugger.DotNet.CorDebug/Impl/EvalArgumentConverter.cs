@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation;
@@ -78,6 +79,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (corValue != null)
 					return new EvalArgumentResult(corValue);
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			}
+			if (value is DbgDotNetValue dnValue) {
+				var rawValue = dnValue.GetRawValue();
+				if (rawValue.HasRawValue) {
+					value = rawValue.RawValue;
+					if (value == null) {
+						type = defaultType;
+						return new EvalArgumentResult(dnEval.CreateNull());
+					}
+				}
 			}
 			if (value is string s) {
 				type = reflectionAppDomain.System_String;

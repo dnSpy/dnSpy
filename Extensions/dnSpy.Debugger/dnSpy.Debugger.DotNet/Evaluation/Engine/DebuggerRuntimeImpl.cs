@@ -18,8 +18,10 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -32,9 +34,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		internal IDbgDotNetRuntime Runtime => runtime;
 		readonly IDbgDotNetRuntime runtime;
+		readonly Dictionary<int, ILValue> createdLocals;
+		readonly Dictionary<int, ILValue> createdArguments;
 
 		public DebuggerRuntimeImpl(IDbgDotNetRuntime runtime, int pointerSize) {
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
+			createdLocals = new Dictionary<int, ILValue>();
+			createdArguments = new Dictionary<int, ILValue>();
 			PointerSize = pointerSize;
 		}
 
@@ -49,94 +55,173 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.context = context;
 			this.frame = frame;
 			this.cancellationToken = cancellationToken;
+			Debug.Assert(createdArguments.Count == 0);
+			Debug.Assert(createdLocals.Count == 0);
 		}
 
 		public void Clear() {
 			context = null;
 			frame = null;
 			cancellationToken = default;
+			createdArguments.Clear();
+			createdLocals.Clear();
 		}
 
 		public DbgDotNetValue GetDotNetValue(ILValue value) {
+			var dnValue = TryGetDotNetValue(value);
+			if (dnValue != null)
+				return dnValue;
+			throw new InvalidOperationException();//TODO:
+		}
+
+		DbgDotNetValue TryGetDotNetValue(ILValue value) {
 			var rtValue = value as IDebuggerRuntimeILValue;
 			if (rtValue == null) {
 				if (value is BoxedValueTypeILValue boxedValue)
 					rtValue = boxedValue.Value as IDebuggerRuntimeILValue;
-				if (rtValue == null)
-					throw new InvalidOperationException();//TODO:
+				if (rtValue == null) {
+					if (value.IsNull)
+						return new SyntheticNullValue(value.Type ?? frame.Module.AppDomain.GetReflectionAppDomain().System_Void);
+				}
 			}
 			return rtValue.GetDotNetValue();
+		}
+
+		object GetArgumentValue(ILValue value) {
+			var dnValue = TryGetDotNetValue(value);
+			if (dnValue != null)
+				return dnValue;
+
+			switch (value.Kind) {
+			case ILValueKind.Int32:
+				return ((ConstantInt32ILValue)value).Value;
+
+			case ILValueKind.Int64:
+				return ((ConstantInt64ILValue)value).Value;
+
+			case ILValueKind.Float:
+				return ((ConstantFloatILValue)value).Value;
+
+			case ILValueKind.NativeInt:
+				if (value is ConstantNativeIntILValue ci) {
+					if (PointerSize == 4)
+						return new IntPtr(ci.Value32);
+					return new IntPtr(ci.Value64);
+				}
+				break;
+
+			case ILValueKind.Type:
+				if (value is ConstantStringILValue sv)
+					return sv.Value;
+				break;
+			}
+
+			throw new InvalidOperationException();//TODO:
 		}
 
 		ILValue CreateILValue(DbgDotNetValueResult result) {
 			if (result.HasError)
 				return null;//TODO: Return error message
-			if (result.ValueIsException)
+			if (result.ValueIsException) {
+				result.Value.Dispose();
 				return null;//TODO: Return error message
+			}
 
 			var dnValue = result.Value;
 			if (dnValue == null)
 				return null;
+			return CreateILValue(dnValue);
+		}
 
-			if (dnValue.Type.IsByRef)
-				return new ByRefILValueImpl(dnValue);
+		internal ILValue CreateILValue(DbgDotNetValue value, bool dispose = true) {
+			try {
+				return CreateILValueCore(value);
+			}
+			catch {
+				if (dispose)
+					value.Dispose();
+				throw;
+			}
+		}
 
-			var rawValue = dnValue.GetRawValue();
+		ILValue CreateILValueCore(DbgDotNetValue value) {
+			if (value.Type.IsByRef)
+				return new ByRefILValueImpl(this, value);
+			if (value.IsNullReference)
+				return new NullObjectRefILValueImpl(value);
+
+			if (value.Type.IsArray)
+				return new ArrayILValue(this, value);
+
+			var rawValue = value.GetRawValue();
 			var objValue = rawValue.RawValue;
 			switch (rawValue.ValueType) {
 			case DbgSimpleValueType.Other:
 				if (rawValue.HasRawValue && objValue == null)
-					return new NullObjectRefILValueImpl(dnValue);
-				return new TypeILValueImpl(dnValue);
+					return new NullObjectRefILValueImpl(value);
+				return new TypeILValueImpl(this, value);
 			case DbgSimpleValueType.Decimal:
 			case DbgSimpleValueType.DateTime:
-				return new TypeILValueImpl(dnValue);
+				return new TypeILValueImpl(this, value);
 			case DbgSimpleValueType.Void:
 				throw new InvalidOperationException();
 			case DbgSimpleValueType.Boolean:
-				return new ConstantInt32ILValueImpl(dnValue, (bool)objValue ? 1 : 0);
+				return new ConstantInt32ILValueImpl(value, (bool)objValue ? 1 : 0);
 			case DbgSimpleValueType.Char1:
-				return new ConstantInt32ILValueImpl(dnValue, (byte)objValue);
+				return new ConstantInt32ILValueImpl(value, (byte)objValue);
 			case DbgSimpleValueType.CharUtf16:
-				return new ConstantInt32ILValueImpl(dnValue, (char)objValue);
+				return new ConstantInt32ILValueImpl(value, (char)objValue);
 			case DbgSimpleValueType.Int8:
-				return new ConstantInt32ILValueImpl(dnValue, (sbyte)objValue);
+				return new ConstantInt32ILValueImpl(value, (sbyte)objValue);
 			case DbgSimpleValueType.Int16:
-				return new ConstantInt32ILValueImpl(dnValue, (short)objValue);
+				return new ConstantInt32ILValueImpl(value, (short)objValue);
 			case DbgSimpleValueType.Int32:
-				return new ConstantInt32ILValueImpl(dnValue, (int)objValue);
+				return new ConstantInt32ILValueImpl(value, (int)objValue);
 			case DbgSimpleValueType.Int64:
-				return new ConstantInt64ILValueImpl(dnValue, (long)objValue);
+				return new ConstantInt64ILValueImpl(value, (long)objValue);
 			case DbgSimpleValueType.UInt8:
-				return new ConstantInt32ILValueImpl(dnValue, (byte)objValue);
+				return new ConstantInt32ILValueImpl(value, (byte)objValue);
 			case DbgSimpleValueType.UInt16:
-				return new ConstantInt32ILValueImpl(dnValue, (ushort)objValue);
+				return new ConstantInt32ILValueImpl(value, (ushort)objValue);
 			case DbgSimpleValueType.UInt32:
-				return new ConstantInt32ILValueImpl(dnValue, (int)(uint)objValue);
+				return new ConstantInt32ILValueImpl(value, (int)(uint)objValue);
 			case DbgSimpleValueType.UInt64:
-				return new ConstantInt64ILValueImpl(dnValue, (long)(ulong)objValue);
+				return new ConstantInt64ILValueImpl(value, (long)(ulong)objValue);
 			case DbgSimpleValueType.Float32:
-				return new ConstantFloatILValueImpl(dnValue, (float)objValue);
+				return new ConstantFloatILValueImpl(value, (float)objValue);
 			case DbgSimpleValueType.Float64:
-				return new ConstantFloatILValueImpl(dnValue, (double)objValue);
+				return new ConstantFloatILValueImpl(value, (double)objValue);
 			case DbgSimpleValueType.Ptr32:
 				if (PointerSize != 4)
 					throw new InvalidOperationException();
-				return ConstantNativeIntILValueImpl.Create32(dnValue, (int)(uint)objValue);
+				return ConstantNativeIntILValueImpl.Create32(value, (int)(uint)objValue);
 			case DbgSimpleValueType.Ptr64:
 				if (PointerSize != 8)
 					throw new InvalidOperationException();
-				return ConstantNativeIntILValueImpl.Create64(dnValue, (long)(ulong)objValue);
+				return ConstantNativeIntILValueImpl.Create64(value, (long)(ulong)objValue);
 			case DbgSimpleValueType.StringUtf16:
-				return new ConstantStringILValueImpl(dnValue, (string)objValue);
+				return new ConstantStringILValueImpl(value, (string)objValue);
 			default:
 				Debug.Fail($"Unknown type: {rawValue.ValueType}");
 				throw new InvalidOperationException();
 			}
 		}
 
-		public override ILValue LoadArgument(int index) => CreateILValue(runtime.GetParameterValue(context, frame, (uint)index, cancellationToken));
-		public override ILValue LoadLocal(int index) => CreateILValue(runtime.GetLocalValue(context, frame, (uint)index, cancellationToken));
+		public override ILValue LoadArgument(int index) {
+			if (createdArguments.TryGetValue(index, out var value))
+				return value;
+			value = CreateILValue(runtime.GetParameterValue(context, frame, (uint)index, cancellationToken));
+			createdArguments.Add(index, value);
+			return value;
+		}
+
+		public override ILValue LoadLocal(int index) {
+			if (createdLocals.TryGetValue(index, out var value))
+				return value;
+			value = CreateILValue(runtime.GetLocalValue(context, frame, (uint)index, cancellationToken));
+			createdLocals.Add(index, value);
+			return value;
+		}
 
 		public override ILValue LoadArgumentAddress(int index) {
 			return null;//TODO:
@@ -147,15 +232,20 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override bool StoreArgument(int index, ILValue value) {
-			return false;//TODO:
+			createdArguments[index] = value;
+			return true;
 		}
 
 		public override bool StoreLocal(int index, ILValue value) {
-			return false;//TODO:
+			createdLocals[index] = value;
+			return true;
 		}
 
 		public override ILValue CreateSZArray(DmdType elementType, long length) {
-			return null;//TODO:
+			if (length < 0 || length > int.MaxValue)
+				return null;
+			var res = runtime.CreateSZArray(context, frame, elementType, (int)length, cancellationToken);
+			return CreateILValue(res);
 		}
 
 		public override ILValue CreateRuntimeTypeHandle(DmdType type) {
@@ -171,25 +261,41 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override ILValue CreateTypeNoConstructor(DmdType type) {
-			return null;//TODO:
+			var res = runtime.CreateInstanceNoConstructor(context, frame, type, cancellationToken);
+			return CreateILValue(res);
 		}
 
-		public override bool CallStatic(DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
-			returnValue = null;
-			return false;//TODO:
-		}
+		public override bool CallStatic(DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
+			Call(null, false, method, arguments, out returnValue);
 
 		public override ILValue CreateInstance(DmdConstructorInfo ctor, ILValue[] arguments) {
+			DbgDotNetValueResult res;
+			DbgDotNetArrayDimensionInfo[] dimensionInfos;
 			switch (ctor.SpecialMethodKind) {
 			case DmdSpecialMethodKind.Array_Constructor1:
-				return null;//TODO:
+				dimensionInfos = new DbgDotNetArrayDimensionInfo[arguments.Length];
+				for (int i = 0; i < dimensionInfos.Length; i++)
+					dimensionInfos[i] = new DbgDotNetArrayDimensionInfo(0, (uint)ReadInt32(arguments[i]));
+				res = runtime.CreateArray(context, frame, ctor.ReflectedType.GetElementType(), dimensionInfos, cancellationToken);
+				return CreateILValue(res);
 
 			case DmdSpecialMethodKind.Array_Constructor2:
-				return null;//TODO:
+				dimensionInfos = new DbgDotNetArrayDimensionInfo[arguments.Length / 2];
+				for (int i = 0; i < dimensionInfos.Length; i++)
+					dimensionInfos[i] = new DbgDotNetArrayDimensionInfo(ReadInt32(arguments[i * 2]), (uint)ReadInt32(arguments[i * 2 + 1]));
+				res = runtime.CreateArray(context, frame, ctor.ReflectedType.GetElementType(), dimensionInfos, cancellationToken);
+				return CreateILValue(res);
 
 			default:
-				return null;//TODO:
+				res = runtime.CreateInstance(context, frame, ctor, Convert(arguments), cancellationToken);
+				return CreateILValue(res);
 			}
+		}
+
+		static int ReadInt32(ILValue value) {
+			if (value is ConstantInt32ILValue ci32)
+				return ci32.Value;
+			throw new InvalidOperationException();
 		}
 
 		public override bool CallStaticIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue[] arguments, out ILValue returnValue) {
@@ -198,7 +304,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override ILValue LoadStaticField(DmdFieldInfo field) {
-			return null;//TODO:
+			var res = runtime.LoadField(context, frame, null, field, cancellationToken);
+			return CreateILValue(res);
 		}
 
 		public override ILValue LoadStaticFieldAddress(DmdFieldInfo field) {
@@ -206,7 +313,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override bool StoreStaticField(DmdFieldInfo field, ILValue value) {
-			return false;//TODO:
+			var error = runtime.StoreField(context, frame, null, field, GetArgumentValue(value), cancellationToken);
+			//TODO: Show the error message in the vars window
+			return error != null;
 		}
 
 		public override int? CompareSigned(ILValue left, ILValue right) {
@@ -219,6 +328,46 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override bool? Equals(ILValue left, ILValue right) {
 			return null;//TODO:
+		}
+
+		internal bool StoreInstanceField(DbgDotNetValue objValue, DmdFieldInfo field, ILValue value) {
+			var error = runtime.StoreField(context, frame, objValue, field, GetArgumentValue(value), cancellationToken);
+			//TODO: Show the error message in the vars window
+			return error != null;
+		}
+
+		internal ILValue LoadInstanceField(DbgDotNetValue objValue, DmdFieldInfo field) =>
+			CreateILValue(runtime.LoadField(context, frame, objValue, field, cancellationToken));
+
+		internal ILValue LoadInstanceFieldAddress(DbgDotNetValue objValue, DmdFieldInfo field) {
+			return null;//TODO:
+		}
+
+		internal bool CallInstance(DbgDotNetValue objValue, bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
+			Call(objValue, isCallvirt, method, arguments, out returnValue);
+
+		bool Call(DbgDotNetValue objValue, bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
+			if (method.SpecialMethodKind != DmdSpecialMethodKind.Metadata)
+				throw new InvalidOperationException();
+			var res = runtime.Call(context, frame, objValue, method, Convert(arguments), cancellationToken);
+			try {
+				if (method.GetMethodSignature().ReturnType == method.AppDomain.System_Void)
+					returnValue = null;
+				else
+					returnValue = CreateILValue(res);
+				return true;
+			}
+			catch {
+				res.Value?.Dispose();
+				throw;
+			}
+		}
+
+		object[] Convert(ILValue[] arguments) {
+			var res = arguments.Length == 0 ? Array.Empty<object>() : new object[arguments.Length];
+			for (int i = 0; i < res.Length; i++)
+				res[i] = GetArgumentValue(arguments[i]);
+			return res;
 		}
 	}
 }

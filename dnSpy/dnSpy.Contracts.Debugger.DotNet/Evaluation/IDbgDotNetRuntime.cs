@@ -59,10 +59,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="frame">Stack frame</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="field">Field</param>
-		/// <param name="value">Value to store</param>
+		/// <param name="value">Value to store, a <see cref="DbgDotNetValue"/> instance or a primitive number or a string</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, DbgDotNetValue value, CancellationToken cancellationToken);
+		string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Calls an instance or a static method
@@ -86,6 +86,38 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		DbgDotNetValueResult CreateInstance(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Creates a new instance of a type. All fields are initialized to 0 or null. The constructor isn't called.
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="type">Type to create</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValueResult CreateInstanceNoConstructor(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Creates an SZ array
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="elementType">Element type</param>
+		/// <param name="length">Length of the array</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValueResult CreateSZArray(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, int length, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Creates a multi-dimensional array
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="elementType">Element type</param>
+		/// <param name="dimensionInfos">Dimension infos</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValueResult CreateArray(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, DbgDotNetArrayDimensionInfo[] dimensionInfos, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets aliases

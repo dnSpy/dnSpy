@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -27,48 +26,41 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgDotNetValue GetDotNetValue();
 	}
 
-	sealed class ByRefILValueImpl : ByRefILValue, IDebuggerRuntimeILValue {
-		readonly DbgDotNetValue value;
-		public ByRefILValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType Type => value.Type;
-		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
-	}
-
-	sealed class TypeILValueImpl : TypeILValue, IDebuggerRuntimeILValue {
-		readonly DbgDotNetValue value;
-		public TypeILValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		public override DmdType Type => value.Type;
-		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
-	}
-
 	sealed class NullObjectRefILValueImpl : NullObjectRefILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
-		public NullObjectRefILValueImpl(DbgDotNetValue value) => this.value = value ?? throw new ArgumentNullException(nameof(value));
+		public NullObjectRefILValueImpl(DbgDotNetValue value) => this.value = value;
 		public override DmdType Type => value.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
+	}
+
+	sealed class ByRefNullObjectRefILValueImpl : NullObjectRefILValue, IDebuggerRuntimeILValue {
+		readonly DbgDotNetValue value;
+		public ByRefNullObjectRefILValueImpl(DbgDotNetValue value) => this.value = value;
+		public override DmdType Type => value.Type.GetElementType();
+		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => new SyntheticNullValue(Type);
 	}
 
 	sealed class ConstantInt32ILValueImpl : ConstantInt32ILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
-		public ConstantInt32ILValueImpl(DbgDotNetValue value, int v) : base(value.Type, v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
+		public ConstantInt32ILValueImpl(DbgDotNetValue value, int v) : base(value.Type, v) => this.value = value;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
 	sealed class ConstantInt64ILValueImpl : ConstantInt64ILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
-		public ConstantInt64ILValueImpl(DbgDotNetValue value, long v) : base(value.Type, v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
+		public ConstantInt64ILValueImpl(DbgDotNetValue value, long v) : base(value.Type, v) => this.value = value;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
 	sealed class ConstantStringILValueImpl : ConstantStringILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
-		public ConstantStringILValueImpl(DbgDotNetValue value, string s) : base(value.Type.AppDomain, s) => this.value = value ?? throw new ArgumentNullException(nameof(value));
+		public ConstantStringILValueImpl(DbgDotNetValue value, string s) : base(value.Type.AppDomain, s) => this.value = value;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
 	sealed class ConstantFloatILValueImpl : ConstantFloatILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
-		public ConstantFloatILValueImpl(DbgDotNetValue value, double v) : base(value.Type, v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
+		public ConstantFloatILValueImpl(DbgDotNetValue value, double v) : base(value.Type, v) => this.value = value;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
@@ -76,8 +68,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly DbgDotNetValue value;
 		public static ConstantNativeIntILValueImpl Create32(DbgDotNetValue value, int v) => new ConstantNativeIntILValueImpl(value, v);
 		public static ConstantNativeIntILValueImpl Create64(DbgDotNetValue value, long v) => new ConstantNativeIntILValueImpl(value, v);
-		ConstantNativeIntILValueImpl(DbgDotNetValue value, int v) : base(value.Type, v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
-		ConstantNativeIntILValueImpl(DbgDotNetValue value, long v) : base(value.Type, v) => this.value = value ?? throw new ArgumentNullException(nameof(value));
+		ConstantNativeIntILValueImpl(DbgDotNetValue value, int v) : base(value.Type, v) => this.value = value;
+		ConstantNativeIntILValueImpl(DbgDotNetValue value, long v) : base(value.Type, v) => this.value = value;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 }
