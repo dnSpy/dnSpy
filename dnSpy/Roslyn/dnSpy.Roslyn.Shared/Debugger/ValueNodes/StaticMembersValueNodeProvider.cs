@@ -26,14 +26,25 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	sealed class StaticMembersValueNodeProvider : MembersValueNodeProvider {
 		public override string ImageName => PredefinedDbgValueNodeImageNames.StaticMembers;
 
-		public StaticMembersValueNodeProvider(LanguageValueNodeFactory valueNodeFactory, DbgDotNetText name, string expression, MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions)
+		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
+
+		public StaticMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DbgDotNetText name, string expression, MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions)
 			: base(valueNodeFactory, name, expression, membersCollection, evalOptions) {
+			this.valueNodeProviderFactory = valueNodeProviderFactory;
+		}
+
+		string GetExpression(DmdType declaringType) {
+			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			var output = new StringBuilderTextColorOutput(sb);
+			valueNodeProviderFactory.FormatTypeName2(output, declaringType);
+			return Formatters.ObjectCache.FreeAndToString(ref sb);
 		}
 
 		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
@@ -41,13 +52,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			DbgDotNetValueResult valueResult = default;
 			try {
 				ref var info = ref membersCollection.Members[index];
+				var typeExpression = GetExpression(info.Member.DeclaringType);
 				string expression, imageName;
 				bool isReadOnly;
 				DmdType expectedType;
 				switch (info.Member.MemberType) {
 				case DmdMemberTypes.Field:
 					var field = (DmdFieldInfo)info.Member;
-					expression = valueNodeFactory.GetFieldExpression(Expression, field.Name);
+					expression = valueNodeFactory.GetFieldExpression(typeExpression, field.Name);
 					expectedType = field.FieldType;
 					imageName = ImageNameUtils.GetImageName(field);
 					valueResult = runtime.LoadField(context, frame, null, field, cancellationToken);
@@ -57,7 +69,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 				case DmdMemberTypes.Property:
 					var property = (DmdPropertyInfo)info.Member;
-					expression = valueNodeFactory.GetPropertyExpression(Expression, property.Name);
+					expression = valueNodeFactory.GetPropertyExpression(typeExpression, property.Name);
 					expectedType = property.PropertyType;
 					imageName = ImageNameUtils.GetImageName(property);
 					if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0) {

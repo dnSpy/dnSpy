@@ -54,7 +54,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			public readonly DmdType Type;
 			public readonly DmdType EnumerableType;
 			public readonly TypeStateFlags Flags;
-			public readonly string Expression;
+			public readonly string TypeExpression;
 			public readonly bool HasNoChildren;
 			public readonly MemberValueNodeInfoCollection InstanceMembers;
 			public readonly MemberValueNodeInfoCollection StaticMembers;
@@ -69,21 +69,21 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			public MemberValueNodeInfoCollection CachedInstanceMembers;
 			public MemberValueNodeInfoCollection CachedStaticMembers;
 
-			public TypeState(DmdType type, string expression) {
+			public TypeState(DmdType type, string typeExpression) {
 				Type = type;
 				Flags = TypeStateFlags.None;
-				Expression = expression;
+				TypeExpression = typeExpression;
 				HasNoChildren = true;
 				InstanceMembers = MemberValueNodeInfoCollection.Empty;
 				StaticMembers = MemberValueNodeInfoCollection.Empty;
 				TupleFields = Array.Empty<TupleField>();
 			}
 
-			public TypeState(DmdType type, string expression, MemberValueNodeInfoCollection instanceMembers, MemberValueNodeInfoCollection staticMembers, TupleField[] tupleFields) {
+			public TypeState(DmdType type, string typeExpression, MemberValueNodeInfoCollection instanceMembers, MemberValueNodeInfoCollection staticMembers, TupleField[] tupleFields) {
 				Type = type;
 				EnumerableType = GetEnumerableType(type);
 				Flags = GetFlags(type, tupleFields);
-				Expression = expression;
+				TypeExpression = typeExpression;
 				HasNoChildren = false;
 				InstanceMembers = instanceMembers;
 				StaticMembers = staticMembers;
@@ -164,6 +164,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract void FormatArrayName(ITextColorWriter output, int index);
 		public abstract void FormatArrayName(ITextColorWriter output, int[] indexes);
 		protected abstract string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression);
+
+		internal void FormatTypeName2(ITextColorWriter output, DmdType type) => FormatTypeName(output, type);
 
 		[Flags]
 		enum CreateFlags {
@@ -430,7 +432,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 			if (state.IsTupleType && !forceRawView) {
 				providers.Add(new TupleValueNodeProvider(nodeInfo, state.TupleFields));
-				AddProvidersOneChildNode(providers, state, nodeInfo.Value, evalOptions, isRawView: true);
+				AddProvidersOneChildNode(providers, state, nodeInfo.Expression, nodeInfo.Value, evalOptions, isRawView: true);
 				return;
 			}
 
@@ -442,21 +444,22 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					// Use the result even if the constructor threw an exception
 					if (!proxyTypeResult.HasError) {
 						var value = nodeInfo.Value;
+						var origExpression = nodeInfo.Expression;
 						nodeInfo.Expression = GetNewObjectExpression(proxyCtor, nodeInfo.Expression);
 						nodeInfo.SetProxyValue(proxyTypeResult.Value);
 						Create(context, frame, providers, nodeInfo, evalOptions | DbgValueNodeEvaluationOptions.PublicMembers, createFlags | CreateFlags.NoProxy, cancellationToken);
-						AddProvidersOneChildNode(providers, state, value, evalOptions, isRawView: true);
+						AddProvidersOneChildNode(providers, state, origExpression, value, evalOptions, isRawView: true);
 						return;
 					}
 				}
 			}
 
-			AddProviders(providers, state, nodeInfo.Value, evalOptions, forceRawView);
+			AddProviders(providers, state, nodeInfo.Expression, nodeInfo.Value, evalOptions, forceRawView);
 		}
 
-		void AddProvidersOneChildNode(List<DbgDotNetValueNodeProvider> providers, TypeState state, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
+		void AddProvidersOneChildNode(List<DbgDotNetValueNodeProvider> providers, TypeState state, string expression, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
 			var tmpProviders = new List<DbgDotNetValueNodeProvider>(2);
-			AddProviders(tmpProviders, state, value, evalOptions, isRawView);
+			AddProviders(tmpProviders, state, expression, value, evalOptions, isRawView);
 			if (tmpProviders.Count > 0)
 				providers.Add(DbgDotNetValueNodeProvider.Create(tmpProviders));
 		}
@@ -478,7 +481,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
-		void AddProviders(List<DbgDotNetValueNodeProvider> providers, TypeState state, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
+		void AddProviders(List<DbgDotNetValueNodeProvider> providers, TypeState state, string expression, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
 			GetMemberCollections(state, evalOptions, out var instanceMembersInfos, out var staticMembersInfos);
 
 			var membersEvalOptions = evalOptions;
@@ -486,16 +489,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				membersEvalOptions |= DbgValueNodeEvaluationOptions.RawView;
 			if (value.IsNullReference)
 				instanceMembersInfos = MemberValueNodeInfoCollection.Empty;
-			providers.Add(new InstanceMembersValueNodeProvider(valueNodeFactory, isRawView ? rawViewName : InstanceMembersName, state.Expression, value, instanceMembersInfos, membersEvalOptions, isRawView ? PredefinedDbgValueNodeImageNames.RawView : PredefinedDbgValueNodeImageNames.InstanceMembers));
+			providers.Add(new InstanceMembersValueNodeProvider(valueNodeFactory, isRawView ? rawViewName : InstanceMembersName, expression, value, instanceMembersInfos, membersEvalOptions, isRawView ? PredefinedDbgValueNodeImageNames.RawView : PredefinedDbgValueNodeImageNames.InstanceMembers));
 
 			if (staticMembersInfos.Members.Length != 0)
-				providers.Add(new StaticMembersValueNodeProvider(valueNodeFactory, StaticMembersName, state.Expression, staticMembersInfos, membersEvalOptions));
+				providers.Add(new StaticMembersValueNodeProvider(this, valueNodeFactory, StaticMembersName, state.TypeExpression, staticMembersInfos, membersEvalOptions));
 
 			//TODO: dynamic types
 			//TODO: non-void and non-null pointers (derefence and show members)
 
 			if ((object)state.EnumerableType != null && !value.IsNullReference)
-				providers.Add(new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, state.Expression, evalOptions));
+				providers.Add(new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, state.TypeExpression, evalOptions));
 		}
 		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_RawView));
 
