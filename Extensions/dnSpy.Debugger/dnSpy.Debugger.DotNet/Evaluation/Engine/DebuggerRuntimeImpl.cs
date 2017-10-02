@@ -29,6 +29,7 @@ using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Debugger.DotNet.Properties;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DebuggerRuntimeImpl : DebuggerRuntime {
@@ -468,6 +469,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new InvalidOperationException();
 			var res = runtime.Call(context, frame, objValue, method, Convert(arguments, method.GetMethodSignature().GetParameterTypes()), cancellationToken);
 			try {
+				if (res.HasError)
+					throw new InterpreterMessageException(res.ErrorMessage);
+				if (res.ValueIsException)
+					throw new InterpreterMessageException(string.Format(dnSpy_Debugger_DotNet_Resources.Method_X_ThrewAnExceptionOfType_Y, method.DeclaringType + "." + method.Name, res.Value.Type.FullName));
 				if (method.GetMethodSignature().ReturnType == method.AppDomain.System_Void) {
 					returnValue = null;
 					res.Value?.Dispose();

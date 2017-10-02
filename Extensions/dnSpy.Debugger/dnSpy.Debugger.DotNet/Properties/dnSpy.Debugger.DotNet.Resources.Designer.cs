@@ -169,6 +169,15 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; threw an exception of type &apos;{1}&apos;.
+        /// </summary>
+        public static string Method_X_ThrewAnExceptionOfType_Y {
+            get {
+                return ResourceManager.GetString("Method_X_ThrewAnExceptionOfType_Y", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must break the process before dynamic modules can be loaded..
         /// </summary>
         public static string Module_BreakProcessBeforeLoadingDynamicModules {

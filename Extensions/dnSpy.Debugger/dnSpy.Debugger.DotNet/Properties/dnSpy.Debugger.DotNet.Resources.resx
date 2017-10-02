@@ -153,6 +153,9 @@
   <data name="LoadModule_Title" xml:space="preserve">
     <value>Loading Dynamic Modules</value>
   </data>
+  <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
+    <value>'{0}' threw an exception of type '{1}'</value>
+  </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>You must break the process before dynamic modules can be loaded.</value>
   </data>
