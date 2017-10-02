@@ -328,59 +328,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var sourceValue = evalRes.CorValue;
 					var sourceType = new ReflectionTypeCreator(this, reflectionAppDomain).Create(sourceValue.ExactType);
 
-					if (targetType.IsByRef)
-						return CordbgErrorHelper.InternalError;
-					if (!targetType.IsValueType) {
-						if (!targetValue.IsReference)
-							return CordbgErrorHelper.InternalError;
-						if (!sourceValue.IsReference) {
-							var boxedSourceValue = BoxIfNeeded(dnEval, appDomain, createdValues, sourceValue, targetType, sourceType);
-							if (!boxedSourceValue.IsReference)
-								return CordbgErrorHelper.InternalError;
-							sourceValue = boxedSourceValue;
-						}
-						if (!sourceValue.IsNull && sourceType.IsValueType) {
-							var sourceDerefVal = sourceValue.DereferencedValue;
-							if (sourceDerefVal == null)
-								return CordbgErrorHelper.InternalError;
-							if (!sourceDerefVal.IsBox)
-								return CordbgErrorHelper.InternalError;
-						}
-						targetValue.ReferenceAddress = sourceValue.ReferenceAddress;
-						return null;
-					}
-					else {
-						if (!sourceType.IsValueType)
-							return CordbgErrorHelper.InternalError;
-
-						if (targetValue.IsReference) {
-							targetValue = targetValue.DereferencedValue;
-							if (targetValue == null)
-								return CordbgErrorHelper.InternalError;
-						}
-						if (targetValue.IsBox)
-							return CordbgErrorHelper.InternalError;
-
-						if (sourceValue.IsReference) {
-							sourceValue = sourceValue.DereferencedValue;
-							if (sourceValue == null)
-								return CordbgErrorHelper.InternalError;
-						}
-						if (sourceValue.IsBox) {
-							sourceValue = sourceValue.BoxedValue;
-							if (sourceValue == null)
-								return CordbgErrorHelper.InternalError;
-						}
-
-						if (!targetValue.IsGeneric || !sourceValue.IsGeneric)
-							return CordbgErrorHelper.InternalError;
-						if (targetValue.Size != sourceValue.Size)
-							return CordbgErrorHelper.InternalError;
-						hr = targetValue.WriteGenericValue(sourceValue.ReadGenericValue(), dnThread.Process.CorProcess);
-						if (hr < 0)
-							return CordbgErrorHelper.GetErrorMessage(hr);
-						return null;
-					}
+					return StoreValue_CorDegbug(dnEval, createdValues, appDomain, dnThread, targetValue, targetType, sourceValue, sourceType);
 				}
 			}
 			catch (TimeoutException) {
@@ -435,6 +383,104 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					if (createdCorValue != v)
 						dnDebugger.DisposeHandle(v);
 				}
+			}
+		}
+
+		internal string StoreValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, CorValue targetValue, DmdType targetType, object sourceValue, CancellationToken cancellationToken) {
+			debuggerThread.VerifyAccess();
+			var tmp = CheckFuncEval(context);
+			if (tmp != null)
+				return tmp.Value.ErrorMessage ?? throw new InvalidOperationException();
+
+			var dnThread = GetThread(thread);
+			var createdValues = new List<CorValue>();
+			try {
+				cancellationToken.ThrowIfCancellationRequested();
+				var appDomain = ilFrame.GetCorAppDomain();
+				var reflectionAppDomain = thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
+				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+					dnEval.SetThread(dnThread);
+					dnEval.SetTimeout(context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+
+					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
+
+					var evalRes = converter.Convert(sourceValue, targetType, out var newValueType);
+					if (evalRes.ErrorMessage != null)
+						return evalRes.ErrorMessage;
+
+					var sourceCorValue = evalRes.CorValue;
+					var sourceType = new ReflectionTypeCreator(this, reflectionAppDomain).Create(sourceCorValue.ExactType);
+
+					return StoreValue_CorDegbug(dnEval, createdValues, appDomain, dnThread, targetValue, targetType, sourceCorValue, sourceType);
+				}
+			}
+			catch (TimeoutException) {
+				return PredefinedEvaluationErrorMessages.FuncEvalTimedOut;
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return CordbgErrorHelper.InternalError;
+			}
+			finally {
+				dnDebugger.DisposeHandle(targetValue);
+				foreach (var v in createdValues)
+					dnDebugger.DisposeHandle(v);
+			}
+		}
+
+		string StoreValue_CorDegbug(DnEval dnEval, List<CorValue> createdValues, CorAppDomain appDomain, DnThread dnThread, CorValue targetValue, DmdType targetType, CorValue sourceValue, DmdType sourceType) {
+			if (targetType.IsByRef)
+				return CordbgErrorHelper.InternalError;
+			if (!targetType.IsValueType) {
+				if (!targetValue.IsReference)
+					return CordbgErrorHelper.InternalError;
+				if (!sourceValue.IsReference) {
+					var boxedSourceValue = BoxIfNeeded(dnEval, appDomain, createdValues, sourceValue, targetType, sourceType);
+					if (!boxedSourceValue.IsReference)
+						return CordbgErrorHelper.InternalError;
+					sourceValue = boxedSourceValue;
+				}
+				if (!sourceValue.IsNull && sourceType.IsValueType) {
+					var sourceDerefVal = sourceValue.DereferencedValue;
+					if (sourceDerefVal == null)
+						return CordbgErrorHelper.InternalError;
+					if (!sourceDerefVal.IsBox)
+						return CordbgErrorHelper.InternalError;
+				}
+				targetValue.ReferenceAddress = sourceValue.ReferenceAddress;
+				return null;
+			}
+			else {
+				if (!sourceType.IsValueType)
+					return CordbgErrorHelper.InternalError;
+
+				if (targetValue.IsReference) {
+					targetValue = targetValue.DereferencedValue;
+					if (targetValue == null)
+						return CordbgErrorHelper.InternalError;
+				}
+				if (targetValue.IsBox)
+					return CordbgErrorHelper.InternalError;
+
+				if (sourceValue.IsReference) {
+					sourceValue = sourceValue.DereferencedValue;
+					if (sourceValue == null)
+						return CordbgErrorHelper.InternalError;
+				}
+				if (sourceValue.IsBox) {
+					sourceValue = sourceValue.BoxedValue;
+					if (sourceValue == null)
+						return CordbgErrorHelper.InternalError;
+				}
+
+				if (!targetValue.IsGeneric || !sourceValue.IsGeneric)
+					return CordbgErrorHelper.InternalError;
+				if (targetValue.Size != sourceValue.Size)
+					return CordbgErrorHelper.InternalError;
+				int hr = targetValue.WriteGenericValue(sourceValue.ReadGenericValue(), dnThread.Process.CorProcess);
+				if (hr < 0)
+					return CordbgErrorHelper.GetErrorMessage(hr);
+				return null;
 			}
 		}
 	}

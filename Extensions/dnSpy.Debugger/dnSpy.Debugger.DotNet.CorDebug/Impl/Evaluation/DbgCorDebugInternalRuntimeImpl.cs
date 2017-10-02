@@ -28,7 +28,6 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -117,6 +116,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			int hr;
 			CorType corFieldDeclType;
+			CorValue fieldValue;
 			var fieldDeclType = field.DeclaringType;
 			if (obj == null) {
 				if (!field.IsStatic)
@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					corFieldDeclType = GetType(appDomain, fieldDeclType);
 
 					InitializeStaticConstructor(context, frame, ilFrame, fieldDeclType, corFieldDeclType, cancellationToken);
-					var fieldValue = corFieldDeclType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out hr);
+					fieldValue = corFieldDeclType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out hr);
 					if (fieldValue == null) {
 						if (hr == CordbgErrors.CORDBG_E_CLASS_NOT_LOADED || hr == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE) {
 							//TODO: Create a synthetic value init'd to the default value (0s or null ref)
@@ -149,7 +149,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (objValue == null)
 					return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 				if (objValue.IsObject) {
-					var fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr);
+					fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr);
 					if (fieldValue == null)
 						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
 					return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(fieldValue, field.AppDomain, tryCreateStrongHandle: true), valueIsException: false);
@@ -164,11 +164,73 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return new DbgDotNetValueResult("NYI");//TODO:
 		}
 
+		public string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return StoreFieldCore(context, frame, obj, field, value, cancellationToken);
+			return Dispatcher.Invoke(() => StoreFieldCore(context, frame, obj, field, value, cancellationToken));
+		}
+
+		string StoreFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return CordbgErrorHelper.InternalError;
+			var appDomain = ilFrame.GetCorAppDomain();
+
+			int hr;
+			CorType corFieldDeclType;
+			CorValue fieldValue = null;
+			try {
+				var fieldDeclType = field.DeclaringType;
+				if (obj == null) {
+					if (!field.IsStatic)
+						return CordbgErrorHelper.InternalError;
+
+					if (field.IsLiteral)
+						return CordbgErrorHelper.InternalError;
+					else {
+						corFieldDeclType = GetType(appDomain, fieldDeclType);
+
+						InitializeStaticConstructor(context, frame, ilFrame, fieldDeclType, corFieldDeclType, cancellationToken);
+						fieldValue = corFieldDeclType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out hr);
+						if (fieldValue == null)
+							return CordbgErrorHelper.GetErrorMessage(hr);
+						return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, fieldValue, field.FieldType, value, cancellationToken);
+					}
+				}
+				else {
+					if (field.IsStatic)
+						return CordbgErrorHelper.InternalError;
+
+					var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
+					corFieldDeclType = GetType(appDomain, fieldDeclType);
+					var objValue = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue());
+					if (objValue == null)
+						return CordbgErrorHelper.InternalError;
+					if (objValue.IsObject) {
+						fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr);
+						if (fieldValue == null)
+							return CordbgErrorHelper.GetErrorMessage(hr);
+						return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, fieldValue, field.FieldType, value, cancellationToken);
+					}
+					else {
+						if (IsPrimitiveValueType(objValue.ElementType)) {
+							//TODO:
+						}
+					}
+				}
+			}
+			finally {
+				engine.DisposeHandle_CorDebug(fieldValue);
+			}
+
+			return "NYI";//TODO:
+		}
+
 		static DbgDotNetValueResult CreateSyntheticValue(DmdType type, object constant) {
 			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type, constant);
 			if (dnValue != null)
 				return new DbgDotNetValueResult(dnValue, valueIsException: false);
-			return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 		}
 
 		sealed class StaticConstructorInitializedState {
@@ -233,34 +295,36 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		// Calls System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor():
 		//		RuntimeHelpers.RunClassConstructor(obj.GetType().TypeHandle);
-		void RuntimeHelpersRunClassConstructor(DbgEvaluationContext context, DbgStackFrame frame, ILDbgEngineStackFrame ilFrame, DmdType type, CorType corType, DbgDotNetValue objValue, CancellationToken cancellationToken) {
+		bool RuntimeHelpersRunClassConstructor(DbgEvaluationContext context, DbgStackFrame frame, ILDbgEngineStackFrame ilFrame, DmdType type, CorType corType, DbgDotNetValue objValue, CancellationToken cancellationToken) {
 			var reflectionAppDomain = type.AppDomain;
 			var getTypeMethod = objValue.Type.GetMethod(nameof(object.GetType), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, reflectionAppDomain.System_Type, Array.Empty<DmdType>(), throwOnError: false);
 			Debug.Assert((object)getTypeMethod != null);
 			if ((object)getTypeMethod == null)
-				return;
+				return false;
 			var corAppDomain = ilFrame.GetCorAppDomain();
 			var getTypeRes = engine.FuncEvalCall_CorDebug(context, frame.Thread, corAppDomain, getTypeMethod, objValue, Array.Empty<object>(), false, cancellationToken);
 			if (getTypeRes.Value == null || getTypeRes.ValueIsException)
-				return;
+				return false;
 			var typeObj = getTypeRes.Value;
 			var runtimeTypeHandleType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle, isOptional: true);
 			Debug.Assert((object)runtimeTypeHandleType != null);
 			if ((object)runtimeTypeHandleType == null)
-				return;
+				return false;
 			var getTypeHandleMethod = typeObj.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: false);
 			Debug.Assert((object)getTypeHandleMethod != null);
 			if ((object)getTypeHandleMethod == null)
-				return;
+				return false;
 			var typeHandleRes = engine.FuncEvalCall_CorDebug(context, frame.Thread, corAppDomain, getTypeHandleMethod, typeObj, Array.Empty<object>(), false, cancellationToken);
 			if (typeHandleRes.Value == null | typeHandleRes.ValueIsException)
-				return;
+				return false;
 			var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
 			var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
 			Debug.Assert((object)runClassConstructorMethod != null);
 			if ((object)runClassConstructorMethod == null)
-				return;
-			engine.FuncEvalCall_CorDebug(context, frame.Thread, corAppDomain, runClassConstructorMethod, null, new[] { typeHandleRes.Value }, false, cancellationToken);
+				return false;
+			var res = engine.FuncEvalCall_CorDebug(context, frame.Thread, corAppDomain, runClassConstructorMethod, null, new[] { typeHandleRes.Value }, false, cancellationToken);
+			res.Value?.Dispose();
+			return !res.HasError && !res.ValueIsException;
 		}
 
 		static bool IsZero(byte[] a) {
@@ -292,17 +356,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			default:
 				return false;
 			}
-		}
-
-		public string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken) {
-			if (Dispatcher.CheckAccess())
-				return StoreFieldCore(context, frame, obj, field, value, cancellationToken);
-			return Dispatcher.Invoke(() => StoreFieldCore(context, frame, obj, field, value, cancellationToken));
-		}
-
-		string StoreFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken) {
-			Dispatcher.VerifyAccess();
-			return "NYI";//TODO:
 		}
 
 		public DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken) {
