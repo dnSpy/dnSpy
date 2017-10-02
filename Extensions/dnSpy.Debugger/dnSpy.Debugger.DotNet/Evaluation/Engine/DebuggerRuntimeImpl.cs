@@ -78,8 +78,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		static IDebuggerRuntimeILValue TryGetDebuggerRuntimeILValue(ILValue value) {
-			var rtValue = value as IDebuggerRuntimeILValue;
-			if (rtValue != null)
+			if (value is IDebuggerRuntimeILValue rtValue)
 				return rtValue;
 			if (value is BoxedValueTypeILValue boxedValue) {
 				rtValue = boxedValue.Value as IDebuggerRuntimeILValue;
@@ -223,12 +222,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				value.Dispose();
 				throw;
 			}
-		}
-
-		internal ILValue CreateILValue(object value) {
-			if (value is DbgDotNetValue dnValue)
-				return CreateILValue(dnValue);
-			throw new NotImplementedException();//TODO:
 		}
 
 		ILValue CreateILValueCore(DbgDotNetValue value) {
@@ -419,7 +412,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override bool? Equals(ILValue left, ILValue right) {
 			if (left is AddressILValue laddr && right is AddressILValue raddr)
 				return laddr.Equals(raddr);
-			return null;//TODO:
+			if (TryGetDotNetValue(left) is DbgDotNetValue lv && TryGetDotNetValue(right) is DbgDotNetValue rv) {
+				var res = runtime.Equals(lv, rv);
+				if (res != null)
+					return res;
+			}
+			return null;
 		}
 
 		internal bool Equals(DbgDotNetValue a, DbgDotNetValue b) {

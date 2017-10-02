@@ -628,6 +628,26 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return Dispatcher.Invoke(() => EqualsCore(objectIdImpl, valueImpl));
 		}
 
+		struct EquatableValue {
+			public readonly ulong Address;
+
+			public EquatableValue(DmdType type, CorValue value) {
+				if (value == null)
+					Address = 0;
+				else if (type.IsByRef)
+					Address = value.ReferenceAddress;
+				else {
+					if (value.IsReference)
+						value = value.DereferencedValue;
+					Address = value?.Address ?? 0;
+				}
+			}
+
+			public bool Equals2(EquatableValue other) => Address != 0 && Address == other.Address;
+			public bool? Equals3(EquatableValue other) => Address == 0 && other.Address == 0 ? (bool?)null : Address == other.Address;
+			public new int GetHashCode() => Address == 0 ? 0 : Address.GetHashCode();
+		}
+
 		bool EqualsCore(DbgDotNetObjectIdImpl objectId, DbgDotNetValueImpl value) {
 			Dispatcher.VerifyAccess();
 
@@ -635,28 +655,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var vHolder = value.CorValueHolder;
 			if (idHolder == vHolder)
 				return true;
-			var v1 = GetValue(idHolder.CorValue);
-			var v2 = GetValue(vHolder.CorValue);
-			if (v1 == null || v2 == null)
-				return false;
-			if (v1.Address != v2.Address)
-				return false;
-			if (v1.Address == 0)
-				return false;
-
-			return true;
+			var v1 = GetEquatableValue(idHolder.Type, idHolder.CorValue);
+			var v2 = GetEquatableValue(vHolder.Type, vHolder.CorValue);
+			return v1.Equals2(v2);
 		}
 
-		static CorValue GetValue(CorValue corValue) {
-			if (corValue == null)
-				return null;
-			if (corValue.IsReference) {
-				if (corValue.IsNull)
-					return null;
-				corValue = corValue.DereferencedValue;
-			}
-			return corValue;
-		}
+		static EquatableValue GetEquatableValue(DmdType type, CorValue corValue) => new EquatableValue(type, corValue);
 
 		public int GetHashCode(DbgDotNetObjectId objectId) {
 			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
@@ -669,15 +673,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		int GetHashCodeCore(DbgDotNetObjectIdImpl objectId) {
 			Dispatcher.VerifyAccess();
-			var v = GetValue(objectId.Value.CorValue);
-			return GetHashCode(v);
-		}
-
-		static int GetHashCode(CorValue v) {
-			if (v == null)
-				return 0;
-			var addr = v.Address;
-			return addr == 0 ? 0 : addr.GetHashCode();
+			return GetEquatableValue(objectId.Value.Type, objectId.Value.CorValue).GetHashCode();
 		}
 
 		public int GetHashCode(DbgDotNetValue value) {
@@ -691,8 +687,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		int GetHashCodeCore(DbgDotNetValueImpl value) {
 			Dispatcher.VerifyAccess();
-			var v = GetValue(value.TryGetCorValue());
-			return GetHashCode(v);
+			return GetEquatableValue(value.Type, value.TryGetCorValue()).GetHashCode();
 		}
 
 		public DbgDotNetValue GetValue(DbgEvaluationContext context, DbgDotNetObjectId objectId, CancellationToken cancellationToken) {
@@ -734,13 +729,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		bool? EqualsCore(DbgDotNetValueImpl a, DbgDotNetValueImpl b) {
 			Dispatcher.VerifyAccess();
-			var addra = GetValue(a.TryGetCorValue())?.Address ?? 0;
-			var addrb = GetValue(b.TryGetCorValue())?.Address ?? 0;
-			if (addra != 0 && addrb != 0)
-				return addra == addrb;
-			if (addra == 0 && addrb == 0)
-				return null;
-			return false;
+			return GetEquatableValue(a.Type, a.TryGetCorValue()).Equals3(GetEquatableValue(b.Type, b.TryGetCorValue()));
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) { }
