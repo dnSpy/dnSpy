@@ -28,6 +28,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -405,9 +406,79 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		DbgDotNetValueResult CreateSZArrayCore(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, int length, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
+			if (!CanCallNewParameterizedArray(elementType))
+				return CreateSZArrayCore_Array_CreateInstance(context, frame, elementType, length, cancellationToken);
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
-			return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);//TODO:
+			return engine.CreateSZArray_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), elementType, length, cancellationToken);
+		}
+
+		DbgDotNetValueResult CreateSZArrayCore_Array_CreateInstance(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, int length, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			Debug.Assert(!CanCallNewParameterizedArray(elementType));
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+
+			// Execute this code:
+			//	var elementType = Type.GetType(elementType.AssemblyQualifiedName);
+			//	return Array.CreateInstance(elementType, length);
+
+			var appDomain = elementType.AppDomain;
+
+			DbgDotNetValue typeElementType = null;
+			try {
+				var methodGetType = appDomain.System_Type.GetMethod("GetType", DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
+				var res = engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false, cancellationToken);
+				typeElementType = res.Value;
+				if (res.HasError || res.ValueIsException)
+					return res;
+				if (res.Value.IsNullReference)
+					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+
+				var methodCreateInstance = appDomain.System_Array.GetMethod("CreateInstance", DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32 }, throwOnError: true);
+				return engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodCreateInstance, null, new object[] { typeElementType, length }, false, cancellationToken);
+			}
+			finally {
+				typeElementType?.Dispose();
+			}
+		}
+
+		// ICorDebugEval2.NewParameterizedArray() can only create arrays of reference types or
+		// of primitive value types, but not including IntPtr/UIntPtr, see coreclr code, funceval.cpp, case DB_IPCE_FET_NEW_ARRAY:
+		//		// Gotta be a primitive, class, or System.Object.
+		//		if (((et < ELEMENT_TYPE_BOOLEAN) || (et > ELEMENT_TYPE_R8)) &&
+		//			!IsElementTypeSpecial(et)) // <-- Class,Object,Array,SZArray,String
+		//		{
+		//			COMPlusThrow(kArgumentOutOfRangeException, W("ArgumentOutOfRange_Enum"));
+		static bool CanCallNewParameterizedArray(DmdType elementType) {
+			switch (elementType.TypeSignatureKind) {
+			case DmdTypeSignatureKind.SZArray:
+			case DmdTypeSignatureKind.MDArray:
+				return true;
+
+			case DmdTypeSignatureKind.Pointer:
+			case DmdTypeSignatureKind.ByRef:
+			case DmdTypeSignatureKind.TypeGenericParameter:
+			case DmdTypeSignatureKind.MethodGenericParameter:
+			case DmdTypeSignatureKind.FunctionPointer:
+				return false;
+
+			case DmdTypeSignatureKind.Type:
+			case DmdTypeSignatureKind.GenericInstance:
+				if (!elementType.IsValueType)
+					return true;
+				if (elementType.IsEnum)
+					return false;
+
+				var tc = DmdType.GetTypeCode(elementType);
+				if (TypeCode.Boolean <= tc && tc <= TypeCode.Double)
+					return true;
+
+				return false;
+
+			default:
+				throw new InvalidOperationException();
+			}
 		}
 
 		public DbgDotNetValueResult CreateArray(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, DbgDotNetArrayDimensionInfo[] dimensionInfos, CancellationToken cancellationToken) {

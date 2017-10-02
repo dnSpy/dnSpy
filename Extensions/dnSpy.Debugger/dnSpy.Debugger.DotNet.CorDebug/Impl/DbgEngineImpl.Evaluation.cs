@@ -483,5 +483,41 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return null;
 			}
 		}
+
+		// This method calls ICorDebugEval2.NewParameterizedArray() which doesn't support creating SZ arrays
+		// with any element type. See the caller of this method (CreateSZArrayCore) for more info.
+		internal DbgDotNetValueResult CreateSZArray_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, DmdType elementType, int length, CancellationToken cancellationToken) {
+			debuggerThread.VerifyAccess();
+			var tmp = CheckFuncEval(context);
+			if (tmp != null)
+				return tmp.Value;
+
+			var dnThread = GetThread(thread);
+			try {
+				cancellationToken.ThrowIfCancellationRequested();
+				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+					dnEval.SetThread(dnThread);
+					dnEval.SetTimeout(context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+
+					var corType = GetType(appDomain, elementType);
+					var res = dnEval.CreateSZArray(corType, length, out int hr);
+					if (res == null)
+						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+					Debug.Assert(!res.Value.WasException, "Shouldn't throw " + nameof(ArgumentOutOfRangeException));
+					if (res.Value.WasCustomNotification)
+						return new DbgDotNetValueResult(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
+					if (res.Value.WasCancelled)
+						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(res.Value.ResultOrException, elementType.AppDomain, tryCreateStrongHandle: true), valueIsException: res.Value.WasException);
+				}
+			}
+			catch (TimeoutException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			}
+		}
 	}
 }

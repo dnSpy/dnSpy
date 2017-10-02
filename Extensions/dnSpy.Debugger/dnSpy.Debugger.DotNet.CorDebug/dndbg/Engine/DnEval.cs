@@ -151,6 +151,7 @@ namespace dndbg.Engine {
 		public EvalResult? CallConstructor(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) => WaitForResult(hr = eval.NewParameterizedObject(func, typeArgs, args));
 		public EvalResult? Call(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) => WaitForResult(hr = eval.CallParameterizedFunction(func, typeArgs, args));
 		public EvalResult? CreateString(string s, out int hr) => WaitForResult(hr = eval.NewString(s));
+		public EvalResult? CreateSZArray(CorType type, int numElems, out int hr) => WaitForResult(hr = eval.NewParameterizedArray(type, new uint[1] { (uint)numElems }));
 
 		EvalResult? WaitForResult(int hr) {
 			if (hr < 0)
