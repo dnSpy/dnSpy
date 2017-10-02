@@ -40,6 +40,16 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 		public override void SetMethodExecState(ILValue[] arguments, DmdMethodBody body) => debuggerRuntime.SetMethodExecState(arguments, body);
 	}
 
+	sealed class ConstantStringILValue : TypeILValue {
+		public string Value { get; }
+		public override DmdType Type { get; }
+		public ConstantStringILValue(DmdType type, string value) {
+			Type = type;
+			Value = value;
+		}
+		public override string ToString() => "\"" + Value + "\"";
+	}
+
 	sealed class FakeDebuggerRuntime : DebuggerRuntime {
 		readonly DmdRuntime runtime;
 		public FakeDebuggerRuntime(DmdRuntime runtime) {
@@ -320,13 +330,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 		public override int PointerSize => runtime.PointerSize;
 		public override ILValue LoadArgument(int index) => arguments[index];
 		public override ILValue LoadLocal(int index) => locals[index];
-		public override ILValue LoadArgumentAddress(int index) => new ArgumentAddress(arguments, index);
-		public override ILValue LoadLocalAddress(int index) => new LocalAddress(locals, index);
-		public override bool StoreArgument(int index, ILValue value) {
+		public override ILValue LoadArgumentAddress(int index, DmdType type) => new ArgumentAddress(arguments, index);
+		public override ILValue LoadLocalAddress(int index, DmdType type) => new LocalAddress(locals, index);
+		public override bool StoreArgument(int index, DmdType type, ILValue value) {
 			arguments[index] = value;
 			return true;
 		}
-		public override bool StoreLocal(int index, ILValue value) {
+		public override bool StoreLocal(int index, DmdType type, ILValue value) {
 			locals[index] = value;
 			return true;
 		}
@@ -504,6 +514,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			staticFields.StoreField(field, value);
 			return true;
 		}
+
+		public override ILValue LoadString(DmdType type, string value) => new ConstantStringILValue(type, value);
 
 		public override int? CompareSigned(ILValue left, ILValue right) => throw new NotImplementedException();
 		public override int? CompareUnsigned(ILValue left, ILValue right) => throw new NotImplementedException();

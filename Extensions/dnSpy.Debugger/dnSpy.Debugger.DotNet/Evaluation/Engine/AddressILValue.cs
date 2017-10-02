@@ -150,15 +150,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	}
 
 	sealed class LocalAddress : AddressILValue {
+		readonly DmdType localType;
 		readonly int index;
 
 		public LocalAddress(DebuggerRuntimeImpl runtime, DmdType localType, int index)
 			: base(runtime, localType) {
+			this.localType = localType;
 			this.index = index;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.GetDotNetValue(runtime.LoadLocal(index));
-		protected override void WriteValue(object value) => runtime.StoreLocal(index, runtime.CreateILValue(value));
+		protected override DbgDotNetValue ReadValue() => runtime.LoadLocal2(index);
+		protected override void WriteValue(object value) => runtime.StoreLocal2(index, localType, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is LocalAddress addr &&
@@ -166,15 +168,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	}
 
 	sealed class ArgumentAddress : AddressILValue {
+		readonly DmdType argumentType;
 		readonly int index;
 
 		public ArgumentAddress(DebuggerRuntimeImpl runtime, DmdType argumentType, int index)
 			: base(runtime, argumentType) {
+			this.argumentType = argumentType;
 			this.index = index;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.GetDotNetValue(runtime.LoadArgument(index));
-		protected override void WriteValue(object value) => runtime.StoreArgument(index, runtime.CreateILValue(value));
+		protected override DbgDotNetValue ReadValue() => runtime.LoadArgument2(index);
+		protected override void WriteValue(object value) => runtime.StoreArgument2(index, argumentType, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is ArgumentAddress addr &&

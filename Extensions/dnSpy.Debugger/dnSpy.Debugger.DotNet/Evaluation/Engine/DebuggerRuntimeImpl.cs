@@ -25,6 +25,7 @@ using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -35,14 +36,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		internal IDbgDotNetRuntime Runtime => runtime;
 		readonly IDbgDotNetRuntime runtime;
-		readonly Dictionary<int, ILValue> createdLocals;
-		readonly Dictionary<int, ILValue> createdArguments;
 		readonly List<DbgDotNetValue> valuesToDispose;
 
 		public DebuggerRuntimeImpl(IDbgDotNetRuntime runtime, int pointerSize) {
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
-			createdLocals = new Dictionary<int, ILValue>();
-			createdArguments = new Dictionary<int, ILValue>();
 			valuesToDispose = new List<DbgDotNetValue>();
 			PointerSize = pointerSize;
 		}
@@ -58,8 +55,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.context = context;
 			this.frame = frame;
 			this.cancellationToken = cancellationToken;
-			Debug.Assert(createdArguments.Count == 0);
-			Debug.Assert(createdLocals.Count == 0);
 			Debug.Assert(valuesToDispose.Count == 0);
 		}
 
@@ -67,8 +62,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			context = null;
 			frame = null;
 			cancellationToken = default;
-			createdArguments.Clear();
-			createdLocals.Clear();
 			foreach (var v in valuesToDispose) {
 				if (v != returnValue)
 					v.Dispose();
@@ -108,6 +101,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var dnValue = TryGetDotNetValue(value);
 			if (dnValue != null)
 				return dnValue;
+
+			if (value is BoxedValueTypeILValue boxedValue) {
+				targetType = boxedValue.Type;
+				value = boxedValue.Value;
+			}
 
 			var targetTypeCode = DmdType.GetTypeCode(targetType);
 			switch (value.Kind) {
@@ -157,7 +155,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				break;
 
 			case ILValueKind.Type:
-				if (value is ConstantStringILValue sv)
+				if (value is ConstantStringILValueImpl sv)
 					return sv.Value;
 				break;
 			}
@@ -171,12 +169,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new InterpreterMessageException(result.ErrorMessage);
 			if (result.ValueIsException) {
 				result.Value.Dispose();
-				return null;
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 
 			var dnValue = result.Value;
 			if (dnValue == null)
-				return null;
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+
 			return CreateILValue(dnValue);
 		}
 
@@ -185,13 +184,22 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new InterpreterMessageException(result.ErrorMessage);
 			if (result.ValueIsException) {
 				result.Value.Dispose();
-				return null;
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 
 			var dnValue = result.Value;
 			if (dnValue == null)
-				return null;
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+
 			return RecordValue(dnValue);
+		}
+
+		DbgDotNetValue RecordValue(DbgDotNetCreateValueResult result) {
+			if (result.Error != null)
+				throw new InterpreterMessageException(result.Error);
+			if (result.Value == null)
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			return RecordValue(result.Value);
 		}
 
 		internal DbgDotNetValue RecordValue(DbgDotNetValue value) {
@@ -278,39 +286,37 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					throw new InvalidOperationException();
 				return ConstantNativeIntILValueImpl.Create64(value, (long)(ulong)objValue);
 			case DbgSimpleValueType.StringUtf16:
-				return new ConstantStringILValueImpl(value, (string)objValue);
+				return new ConstantStringILValueImpl(this, value, (string)objValue);
 			default:
 				Debug.Fail($"Unknown type: {rawValue.ValueType}");
 				throw new InvalidOperationException();
 			}
 		}
 
-		public override ILValue LoadArgument(int index) {
-			if (createdArguments.TryGetValue(index, out var value))
-				return value;
-			value = CreateILValue(runtime.GetParameterValue(context, frame, (uint)index, cancellationToken));
-			createdArguments.Add(index, value);
-			return value;
-		}
+		public override ILValue LoadArgument(int index) => CreateILValue(runtime.GetParameterValue(context, frame, (uint)index, cancellationToken));
+		internal DbgDotNetValue LoadArgument2(int index) => RecordValue(runtime.GetParameterValue(context, frame, (uint)index, cancellationToken));
 
-		public override ILValue LoadLocal(int index) {
-			if (createdLocals.TryGetValue(index, out var value))
-				return value;
-			value = CreateILValue(runtime.GetLocalValue(context, frame, (uint)index, cancellationToken));
-			createdLocals.Add(index, value);
-			return value;
-		}
+		public override ILValue LoadLocal(int index) => CreateILValue(runtime.GetLocalValue(context, frame, (uint)index, cancellationToken));
+		internal DbgDotNetValue LoadLocal2(int index) => RecordValue(runtime.GetLocalValue(context, frame, (uint)index, cancellationToken));
 
 		public override ILValue LoadArgumentAddress(int index, DmdType type) => new ArgumentAddress(this, type, index);
 		public override ILValue LoadLocalAddress(int index, DmdType type) => new LocalAddress(this, type, index);
 
-		public override bool StoreArgument(int index, ILValue value) {
-			createdArguments[index] = value;
+		public override bool StoreArgument(int index, DmdType type, ILValue value) => StoreArgument2(index, type, GetDebuggerValue(value, type));
+
+		internal bool StoreArgument2(int index, DmdType targetType, object value) {
+			var error = runtime.SetParameterValue(context, frame, (uint)index, targetType, value, cancellationToken);
+			if (error != null)
+				throw new InterpreterMessageException(error);
 			return true;
 		}
 
-		public override bool StoreLocal(int index, ILValue value) {
-			createdLocals[index] = value;
+		public override bool StoreLocal(int index, DmdType type, ILValue value) => StoreLocal2(index, type, GetDebuggerValue(value, type));
+
+		internal bool StoreLocal2(int index, DmdType targetType, object value) {
+			var error = runtime.SetLocalValue(context, frame, (uint)index, targetType, value, cancellationToken);
+			if (error != null)
+				throw new InterpreterMessageException(error);
 			return true;
 		}
 
@@ -394,6 +400,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			if (error != null)
 				throw new InterpreterMessageException(error);
 			return true;
+		}
+
+		public override ILValue LoadString(DmdType type, string value) {
+			var stringValue = RecordValue(runtime.CreateValue(context, frame, value, cancellationToken));
+			return new ConstantStringILValueImpl(this, stringValue, value);
 		}
 
 		public override int? CompareSigned(ILValue left, ILValue right) {

@@ -65,15 +65,17 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// Writes to an argument or returns false on failure
 		/// </summary>
 		/// <param name="index">Argument index</param>
+		/// <param name="type">Type of the argument</param>
 		/// <param name="value">New value</param>
-		public abstract bool StoreArgument(int index, ILValue value);
+		public abstract bool StoreArgument(int index, DmdType type, ILValue value);
 
 		/// <summary>
 		/// Writes to a local or returns false on failure
 		/// </summary>
 		/// <param name="index">Local index</param>
+		/// <param name="type">Type of the local</param>
 		/// <param name="value">New value</param>
-		public abstract bool StoreLocal(int index, ILValue value);
+		public abstract bool StoreLocal(int index, DmdType type, ILValue value);
 
 		/// <summary>
 		/// Creates an SZ array or returns null on failure
@@ -158,6 +160,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="field">Field</param>
 		/// <param name="value">Value to store in the field</param>
 		public abstract bool StoreStaticField(DmdFieldInfo field, ILValue value);
+
+		/// <summary>
+		/// Returns a new string value
+		/// </summary>
+		/// <param name="type">String type</param>
+		/// <param name="value">String value. This is never null.</param>
+		/// <returns></returns>
+		public abstract ILValue LoadString(DmdType type, string value);
 
 		/// <summary>
 		/// Compares <paramref name="left"/> and <paramref name="right"/>, returning less than 0, 0 or greater than 0.

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Globalization;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -48,6 +49,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		LanguageEditValueProvider ValueEditValueProvider { get; }
 		LanguageEditValueProvider NameEditValueProvider { get; }
 		DbgEvaluationContext EvaluationContext { get; }
+		Action<string> OnValueNodeAssigned { get; }
 		DbgStackFrame StackFrame { get; }
 		DbgEvaluationOptions EvaluationOptions { get; }
 		DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; }
@@ -78,6 +80,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public LanguageEditValueProvider ValueEditValueProvider { get; }
 		public LanguageEditValueProvider NameEditValueProvider { get; }
 		public DbgEvaluationContext EvaluationContext { get; set; }
+		public Action<string> OnValueNodeAssigned { get; }
 		public DbgStackFrame StackFrame { get; set; }
 		public DbgEvaluationOptions EvaluationOptions { get; set; }
 		public DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; set; }
@@ -85,7 +88,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public bool IsWindowReadOnly { get; set; }
 		public CultureInfo FormatCulture { get; }
 
-		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CultureInfo formatCulture, ShowMessageBox showMessageBox) {
+		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CultureInfo formatCulture, ShowMessageBox showMessageBox, Action<string> onValueNodeAssigned) {
 			UIDispatcher = uiDispatcher;
 			EditValueNodeExpression = editValueNodeExpression;
 			WindowContentType = windowContentType;
@@ -95,6 +98,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			ShowMessageBox = showMessageBox;
 			ValueEditValueProvider = languageEditValueProviderFactory.Create(windowContentType);
 			NameEditValueProvider = languageEditValueProviderFactory.Create(windowContentType);
+			OnValueNodeAssigned = onValueNodeAssigned;
 			ValueNodeImageReferenceService = dbgValueNodeImageReferenceService;
 			ValueNodeReader = dbgValueNodeReader;
 			ClassificationFormatMap = classificationFormatMap;

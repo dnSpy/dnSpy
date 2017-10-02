@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public static string FuncEvalRequiresAllThreadsToRun => PredefinedEvaluationErrorMessages.FuncEvalRequiresAllThreadsToRun;
 
 		public static string GetErrorMessage(int hr) {
-			if (hr >= 0)
+			if (hr >= -1)
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 			if (CordbgErrors.IsCantEvaluateError(hr))

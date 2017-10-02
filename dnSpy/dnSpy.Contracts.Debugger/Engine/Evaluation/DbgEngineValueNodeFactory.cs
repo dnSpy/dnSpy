@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Creates a <see cref="DbgEngineValueNode"/>. It blocks the current thread until the evaluation is complete.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Creates a <see cref="DbgEngineValueNode"/>
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Creates <see cref="DbgEngineValueNode"/>s. It blocks the current thread.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Creates <see cref="DbgEngineValueNode"/>s
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the method is complete</param>

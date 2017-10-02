@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// It's assumed to be 0 if <see cref="HasChildren"/> is false.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Creates new children. This method blocks the current thread until the children have been created.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Creates new children
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -113,7 +113,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Formats the name, value, and type
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="callback">Called when this method is complete</param>
@@ -124,7 +124,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Writes a new value. It blocks the current thread until the assignment is complete.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -135,7 +135,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Writes a new value
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>
@@ -149,11 +149,6 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// </summary>
 	public struct DbgEngineValueNodeAssignmentResult {
 		/// <summary>
-		/// Gets the value or null. This value is owned by the <see cref="DbgEngineValueNode"/> instance.
-		/// </summary>
-		public DbgEngineValue Value { get; }
-
-		/// <summary>
 		/// Gets the error message (also see <see cref="PredefinedEvaluationErrorMessages"/>) or null if none
 		/// </summary>
 		public string Error { get; }
@@ -161,19 +156,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="value">New value. It's owned by the <see cref="DbgEngineValueNode"/> instance</param>
-		public DbgEngineValueNodeAssignmentResult(DbgEngineValue value) {
-			Value = value ?? throw new ArgumentNullException(nameof(value));
-			Error = null;
-		}
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
 		/// <param name="error">Error message or one of the errors in <see cref="PredefinedEvaluationErrorMessages"/></param>
-		public DbgEngineValueNodeAssignmentResult(string error) {
-			Value = null;
-			Error = error ?? throw new ArgumentNullException(nameof(error));
-		}
+		public DbgEngineValueNodeAssignmentResult(string error) => Error = error ?? throw new ArgumentNullException(nameof(error));
 	}
 }

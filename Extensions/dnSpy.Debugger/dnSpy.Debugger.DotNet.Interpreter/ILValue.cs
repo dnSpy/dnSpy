@@ -1050,39 +1050,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	}
 
 	/// <summary>
-	/// A string value
-	/// </summary>
-	public class ConstantStringILValue : TypeILValue {
-		/// <summary>
-		/// Gets the value
-		/// </summary>
-		public string Value { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="appDomain">AppDomain</param>
-		/// <param name="value">String value, but not null</param>
-		public ConstantStringILValue(DmdAppDomain appDomain, string value) {
-			if (appDomain == null)
-				throw new ArgumentNullException(nameof(appDomain));
-			Type = appDomain.System_String;
-			Value = value;
-		}
-
-		/// <summary>
-		/// Gets the type of the value
-		/// </summary>
-		public override DmdType Type { get; }
-
-		/// <summary>
-		/// ToString()
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString() => "\"" + Value + "\"";
-	}
-
-	/// <summary>
 	/// A boxed value type
 	/// </summary>
 	public sealed class BoxedValueTypeILValue : TypeILValue {

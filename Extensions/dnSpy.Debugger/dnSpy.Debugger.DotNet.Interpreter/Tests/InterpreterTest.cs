@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 				break;
 
 			case ILValueKind.Type:
-				if (v is ConstantStringILValue s)
+				if (v is Fake.ConstantStringILValue s)
 					return s.Value;
 				break;
 
@@ -3862,7 +3862,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 			case TypeCode.UInt64:	return new ConstantInt64ILValue(testAsm1.AppDomain, (long)(ulong)value);
 			case TypeCode.Single:	return new ConstantFloatILValue(testAsm1.AppDomain, (float)value);
 			case TypeCode.Double:	return new ConstantFloatILValue(testAsm1.AppDomain, (double)value);
-			case TypeCode.String:	return new ConstantStringILValue(testAsm1.AppDomain, (string)value);
+			case TypeCode.String:	return new Fake.ConstantStringILValue(testAsm1.AppDomain.System_String, (string)value);
 			default:
 				if (value is IntPtr ip)
 					return IntPtr.Size == 4 ? ConstantNativeIntILValue.Create32(testAsm1.AppDomain, ip.ToInt32()) : ConstantNativeIntILValue.Create64(testAsm1.AppDomain, ip.ToInt64());

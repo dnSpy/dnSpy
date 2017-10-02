@@ -259,12 +259,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void SaveEditableValue(string expression) {
 			if (!CanEditValue())
 				throw new InvalidOperationException();
+			if (GetEditableValue().Text == expression)
+				return;
 			var res = RawNode.Assign(Context.EvaluationContext, Context.StackFrame, expression, Context.EvaluationOptions);
 			if (res.Error == null)
 				oldCachedValue = cachedValue;
-			ResetForReuse();
-			if (res.Error != null)
-				Context.ShowMessageBox(res.Error, ShowMessageBoxButtons.OK);
+			Context.OnValueNodeAssigned(res.Error);
 		}
 
 		public override bool Activate() => IsEditingValue();

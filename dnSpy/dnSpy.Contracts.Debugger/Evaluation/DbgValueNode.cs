@@ -100,7 +100,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// It's assumed to be 0 if <see cref="HasChildren"/> is false.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
@@ -122,7 +122,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Creates new children. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Formats the name. This method blocks the current thread until all requested values have been formatted
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="output">Output</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -145,7 +145,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Formats the value. This method blocks the current thread until all requested values have been formatted
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
@@ -160,7 +160,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Formats the expected type ("field" type). This method blocks the current thread until all requested values have been formatted
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
@@ -175,7 +175,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Formats the actual type (value type). This method blocks the current thread until all requested values have been formatted
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
@@ -190,7 +190,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -200,7 +200,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Formats the name, value, and type
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="callback">Called when this method is complete</param>
@@ -211,7 +211,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Writes a new value. It blocks the current thread until the assignment is complete.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -222,7 +222,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Writes a new value
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when this method is complete</param>

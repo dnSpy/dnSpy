@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.dbgMetadataService = dbgMetadataService ?? throw new ArgumentNullException(nameof(dbgMetadataService));
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 			var dnILInterpreter = new DbgDotNetILInterpreterImpl();
-			ExpressionEvaluator = new DbgEngineExpressionEvaluatorImpl(expressionCompiler);
+			ExpressionEvaluator = new DbgEngineExpressionEvaluatorImpl(dbgModuleReferenceProvider, expressionCompiler, dnILInterpreter);
 			ValueFormatter = new DbgEngineValueFormatterImpl();
 			Formatter = new DbgEngineFormatterImpl(formatter);
 			LocalsProvider = new DbgEngineLocalsProviderImpl(dbgModuleReferenceProvider, expressionCompiler, valueNodeFactory, dnILInterpreter);

@@ -248,7 +248,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case OpCodeFE.Ldarga:
 						i = ToUInt16(bodyBytes, ref methodBodyPos);
-						v1 = debuggerRuntime.LoadArgumentAddress(i, currentMethod.GetMethodSignature().GetParameterTypes()[i]);
+						v1 = debuggerRuntime.LoadArgumentAddress(i, currentMethod.GetParameters()[i].ParameterType);
 						if (v1 == null)
 							ThrowInvalidMethodBodyInterpreterException();
 						ilValueStack.Add(v1.Clone());
@@ -270,12 +270,16 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case OpCodeFE.Starg:
-						if (!debuggerRuntime.StoreArgument(ToUInt16(bodyBytes, ref methodBodyPos), Pop1()))
+						i = ToUInt16(bodyBytes, ref methodBodyPos);
+						type = currentMethod.GetParameters()[i].ParameterType;
+						if (!debuggerRuntime.StoreArgument(i, type, Convert(Pop1(), type)))
 							ThrowInvalidMethodBodyInterpreterException();
 						break;
 
 					case OpCodeFE.Stloc:
-						if (!debuggerRuntime.StoreLocal(ToUInt16(bodyBytes, ref methodBodyPos), Pop1()))
+						i = ToUInt16(bodyBytes, ref methodBodyPos);
+						type = state.Body.LocalVariables[i].LocalType;
+						if (!debuggerRuntime.StoreLocal(i, type, Convert(Pop1(), type)))
 							ThrowInvalidMethodBodyInterpreterException();
 						break;
 
@@ -442,7 +446,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Ldstr:
-					ilValueStack.Add(new ConstantStringILValue(currentMethod.AppDomain, currentMethod.Module.ResolveString(ToInt32(bodyBytes, ref methodBodyPos))));
+					v1 = debuggerRuntime.LoadString(currentMethod.AppDomain.System_String, currentMethod.Module.ResolveString(ToInt32(bodyBytes, ref methodBodyPos)));
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
 					break;
 
 				case OpCode.Ldnull:
@@ -468,7 +475,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case OpCode.Ldarga_S:
 					i = bodyBytes[methodBodyPos++];
-					v1 = debuggerRuntime.LoadArgumentAddress(i, currentMethod.GetMethodSignature().GetParameterTypes()[i]);
+					v1 = debuggerRuntime.LoadArgumentAddress(i, currentMethod.GetParameters()[i].ParameterType);
 					if (v1 == null)
 						ThrowInvalidMethodBodyInterpreterException();
 					ilValueStack.Add(v1.Clone());
@@ -503,17 +510,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Stloc_1:
 				case OpCode.Stloc_2:
 				case OpCode.Stloc_3:
-					if (!debuggerRuntime.StoreLocal(i - (int)OpCode.Stloc_0, Pop1()))
+					i -= (int)OpCode.Stloc_0;
+					type = state.Body.LocalVariables[i].LocalType;
+					if (!debuggerRuntime.StoreLocal(i, type, Convert(Pop1(), type)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Starg_S:
-					if (!debuggerRuntime.StoreArgument(bodyBytes[methodBodyPos++], Pop1()))
+					i = bodyBytes[methodBodyPos++];
+					type = currentMethod.GetParameters()[i].ParameterType;
+					if (!debuggerRuntime.StoreArgument(i, type, Convert(Pop1(), type)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Stloc_S:
-					if (!debuggerRuntime.StoreLocal(bodyBytes[methodBodyPos++], Pop1()))
+					i = bodyBytes[methodBodyPos++];
+					type = state.Body.LocalVariables[i].LocalType;
+					if (!debuggerRuntime.StoreLocal(i, type, Convert(Pop1(), type)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -652,7 +665,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					Pop2(out v1, out v2);
 					v3 = Pop1();
 					l = GetInt32OrNativeInt(v1);
-					if (!v3.StoreSZArrayElement(GetLoadValueType(type), l, v2, type))
+					if (!v3.StoreSZArrayElement(GetLoadValueType(type), l, Convert(v2, type), type))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -660,7 +673,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					Pop2(out v1, out v2);
 					v3 = Pop1();
 					l = GetInt32OrNativeInt(v1);
-					if (!v3.StoreSZArrayElement(LoadValueType.I, l, v2, currentMethod.AppDomain.System_IntPtr))
+					if (!v3.StoreSZArrayElement(LoadValueType.I, l, Convert(v2, currentMethod.AppDomain.System_IntPtr), currentMethod.AppDomain.System_IntPtr))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -668,7 +681,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					Pop2(out v1, out v2);
 					v3 = Pop1();
 					l = GetInt32OrNativeInt(v1);
-					if (!v3.StoreSZArrayElement(LoadValueType.I1, l, v2, currentMethod.AppDomain.System_SByte))
+					if (!v3.StoreSZArrayElement(LoadValueType.I1, l, Convert(v2, currentMethod.AppDomain.System_SByte), currentMethod.AppDomain.System_SByte))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -676,7 +689,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					Pop2(out v1, out v2);
 					v3 = Pop1();
 					l = GetInt32OrNativeInt(v1);
-					if (!v3.StoreSZArrayElement(LoadValueType.I2, l, v2, currentMethod.AppDomain.System_Int16))
+					if (!v3.StoreSZArrayElement(LoadValueType.I2, l, Convert(v2, currentMethod.AppDomain.System_Int16), currentMethod.AppDomain.System_Int16))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -684,7 +697,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					Pop2(out v1, out v2);
 					v3 = Pop1();
 					l = GetInt32OrNativeInt(v1);
-					if (!v3.StoreSZArrayElement(LoadValueType.I4, l, v2, currentMethod.AppDomain.System_Int32))
+					if (!v3.StoreSZArrayElement(LoadValueType.I4, l, Convert(v2, currentMethod.AppDomain.System_Int32), currentMethod.AppDomain.System_Int32))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -692,7 +705,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					Pop2(out v1, out v2);
 					v3 = Pop1();
 					l = GetInt32OrNativeInt(v1);
-					if (!v3.StoreSZArrayElement(LoadValueType.I8, l, v2, currentMethod.AppDomain.System_Int64))
+					if (!v3.StoreSZArrayElement(LoadValueType.I8, l, Convert(v2, currentMethod.AppDomain.System_Int64), currentMethod.AppDomain.System_Int64))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -700,7 +713,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					Pop2(out v1, out v2);
 					v3 = Pop1();
 					l = GetInt32OrNativeInt(v1);
-					if (!v3.StoreSZArrayElement(LoadValueType.R4, l, v2, currentMethod.AppDomain.System_Single))
+					if (!v3.StoreSZArrayElement(LoadValueType.R4, l, Convert(v2, currentMethod.AppDomain.System_Single), currentMethod.AppDomain.System_Single))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -708,7 +721,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					Pop2(out v1, out v2);
 					v3 = Pop1();
 					l = GetInt32OrNativeInt(v1);
-					if (!v3.StoreSZArrayElement(LoadValueType.R8, l, v2, currentMethod.AppDomain.System_Double))
+					if (!v3.StoreSZArrayElement(LoadValueType.R8, l, Convert(v2, currentMethod.AppDomain.System_Double), currentMethod.AppDomain.System_Double))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -716,7 +729,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					Pop2(out v1, out v2);
 					v3 = Pop1();
 					l = GetInt32OrNativeInt(v1);
-					if (!v3.StoreSZArrayElement(LoadValueType.Ref, l, v2, currentMethod.AppDomain.System_Object))
+					if (!v3.StoreSZArrayElement(LoadValueType.Ref, l, Convert(v2, currentMethod.AppDomain.System_Object), currentMethod.AppDomain.System_Object))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -767,7 +780,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					if (field.IsStatic)
 						ThrowInvalidMethodBodyInterpreterException();
 					Pop2(out v1, out v2);
-					if (!v1.StoreField(field, v2))
+					if (!v1.StoreField(field, Convert(v2, field.FieldType)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -775,7 +788,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
 					if (!field.IsStatic)
 						ThrowInvalidMethodBodyInterpreterException();
-					if (!debuggerRuntime.StoreStaticField(field, Pop1()))
+					if (!debuggerRuntime.StoreStaticField(field, Convert(Pop1(), field.FieldType)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -869,49 +882,49 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case OpCode.Stind_I:
 					Pop2(out v1, out v2);
-					if (!v1.StoreIndirect(currentMethod.AppDomain.System_IntPtr, LoadValueType.I, v2))
+					if (!v1.StoreIndirect(currentMethod.AppDomain.System_IntPtr, LoadValueType.I, Convert(v2, currentMethod.AppDomain.System_IntPtr)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Stind_I1:
 					Pop2(out v1, out v2);
-					if (!v1.StoreIndirect(currentMethod.AppDomain.System_SByte, LoadValueType.I1, v2))
+					if (!v1.StoreIndirect(currentMethod.AppDomain.System_SByte, LoadValueType.I1, Convert(v2, currentMethod.AppDomain.System_SByte)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Stind_I2:
 					Pop2(out v1, out v2);
-					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Int16, LoadValueType.I2, v2))
+					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Int16, LoadValueType.I2, Convert(v2, currentMethod.AppDomain.System_Int16)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Stind_I4:
 					Pop2(out v1, out v2);
-					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Int32, LoadValueType.I4, v2))
+					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Int32, LoadValueType.I4, Convert(v2, currentMethod.AppDomain.System_Int32)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Stind_I8:
 					Pop2(out v1, out v2);
-					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Int64, LoadValueType.I8, v2))
+					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Int64, LoadValueType.I8, Convert(v2, currentMethod.AppDomain.System_Int64)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Stind_R4:
 					Pop2(out v1, out v2);
-					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Single, LoadValueType.R4, v2))
+					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Single, LoadValueType.R4, Convert(v2, currentMethod.AppDomain.System_Single)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Stind_R8:
 					Pop2(out v1, out v2);
-					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Double, LoadValueType.R8, v2))
+					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Double, LoadValueType.R8, Convert(v2, currentMethod.AppDomain.System_Double)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Stind_Ref:
 					Pop2(out v1, out v2);
-					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Object, LoadValueType.Ref, v2))
+					if (!v1.StoreIndirect(currentMethod.AppDomain.System_Object, LoadValueType.Ref, Convert(v2, currentMethod.AppDomain.System_Object)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -927,7 +940,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Stobj:
 					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
 					Pop2(out v1, out v2);
-					if (!v1.StoreIndirect(type, GetLoadValueType(type), v2))
+					if (!v1.StoreIndirect(type, GetLoadValueType(type), Convert(v2, type)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
@@ -4750,7 +4763,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case ILValueKind.Type:
 					if (value.Type.IsValueType)
-						return new BoxedValueTypeILValue(value);
+						return new BoxedValueTypeILValue(value, type);
 					break;
 
 				default:

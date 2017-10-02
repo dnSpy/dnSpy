@@ -22,7 +22,7 @@ using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	sealed class TypeILValueImpl : TypeILValue, IDebuggerRuntimeILValue {
+	class TypeILValueImpl : TypeILValue, IDebuggerRuntimeILValue {
 		public override DmdType Type => objValue.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => objValue;
 
@@ -48,5 +48,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
 			runtime.CallInstance(objValue, isCallvirt, method, arguments, out returnValue);
+	}
+
+	sealed class ConstantStringILValueImpl : TypeILValueImpl, IDebuggerRuntimeILValue {
+		public string Value { get; }
+		public ConstantStringILValueImpl(DebuggerRuntimeImpl runtime, DbgDotNetValue value, string s) : base(runtime, value) => Value = s;
 	}
 }

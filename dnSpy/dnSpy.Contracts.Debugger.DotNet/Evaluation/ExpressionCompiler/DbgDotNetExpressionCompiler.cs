@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// Compiles expressions
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="aliases">Aliases</param>
 		/// <param name="expressions">Expressions</param>
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// Creates an assembly that is used to get all the locals
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// Compiles an assignment
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="aliases">Aliases</param>
 		/// <param name="target">Target expression (lhs)</param>

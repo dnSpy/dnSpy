@@ -209,6 +209,7 @@
     <Compile Include="Impl\Evaluation\DbgDotNetValueImpl.cs" />
     <Compile Include="Impl\Evaluation\EvalArgumentConverter.cs" />
     <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
+    <Compile Include="Impl\ExceptionUtils.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />
     <Compile Include="Impl\ModuleIdExtensions.cs" />
     <Compile Include="Impl\ReflectionTypeCreator.cs" />

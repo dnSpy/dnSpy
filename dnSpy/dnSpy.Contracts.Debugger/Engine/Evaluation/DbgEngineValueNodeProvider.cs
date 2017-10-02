@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Gets all values
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Gets all values
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Gets all values
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="options">Options</param>
 		/// <param name="localsOptions">Locals value node provider options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Gets all values
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="options">Options</param>
 		/// <param name="localsOptions">Locals value node provider options</param>
 		/// <param name="callback">Called when the method is complete</param>

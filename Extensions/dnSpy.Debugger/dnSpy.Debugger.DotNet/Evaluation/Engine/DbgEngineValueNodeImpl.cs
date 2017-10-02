@@ -124,12 +124,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
-		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			return new DbgEngineValueNodeAssignmentResult("NYI");//TODO:
-		}
+		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => AssignCore(context, frame, expression, options, cancellationToken));
 
-		public override void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback, CancellationToken cancellationToken) {
-			callback(new DbgEngineValueNodeAssignmentResult("NYI"));//TODO:
+		public override void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(AssignCore(context, frame, expression, options, cancellationToken)));
+
+		DbgEngineValueNodeAssignmentResult AssignCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+			var ee = context.Language.ExpressionEvaluator;
+			var res = ee.Assign(context, frame, Expression, expression, options, cancellationToken);
+			if (res.Error != null)
+				return new DbgEngineValueNodeAssignmentResult(res.Error);
+			return new DbgEngineValueNodeAssignmentResult();
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {

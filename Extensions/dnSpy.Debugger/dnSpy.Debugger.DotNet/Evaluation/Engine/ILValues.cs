@@ -52,12 +52,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
-	sealed class ConstantStringILValueImpl : ConstantStringILValue, IDebuggerRuntimeILValue {
-		readonly DbgDotNetValue value;
-		public ConstantStringILValueImpl(DbgDotNetValue value, string s) : base(value.Type.AppDomain, s) => this.value = value;
-		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
-	}
-
 	sealed class ConstantFloatILValueImpl : ConstantFloatILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
 		public ConstantFloatILValueImpl(DbgDotNetValue value, double v) : base(value.Type, v) => this.value = value;

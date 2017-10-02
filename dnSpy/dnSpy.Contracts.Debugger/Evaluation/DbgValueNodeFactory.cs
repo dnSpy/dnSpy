@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// The returned <see cref="DbgValueNode"/> is automatically closed when its runtime continues.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Creates a <see cref="DbgValueNode"/>. The returned <see cref="DbgValueNode"/> is automatically closed when its runtime continues.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Creates <see cref="DbgValueNode"/>s. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame, owned by caller</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="options">Options</param>
 		/// <param name="callback">Called when the method is complete</param>

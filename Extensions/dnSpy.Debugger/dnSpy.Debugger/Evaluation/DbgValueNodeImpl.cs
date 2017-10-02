@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override bool? HasChildren => engineValueNode.HasChildren;
 
 		readonly DbgEngineValueNode engineValueNode;
-		DbgValueImpl value;
+		readonly DbgValueImpl value;
 
 		public DbgValueNodeImpl(DbgLanguage language, DbgRuntime runtime, DbgEngineValueNode engineValueNode) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
@@ -155,13 +155,6 @@ namespace dnSpy.Debugger.Evaluation {
 				if (engineValueNode.Value != value.EngineValue)
 					throw new InvalidOperationException();
 				return new DbgValueNodeAssignmentResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
-			}
-			if (result.Value != engineValueNode.Value)
-				throw new InvalidOperationException();
-			lock (engineValueNode) {
-				var oldValue = value;
-				value = new DbgValueImpl(Runtime, result.Value);
-				Process.DbgManager.Close(oldValue);
 			}
 			return new DbgValueNodeAssignmentResult(error: null);
 		}

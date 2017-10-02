@@ -117,14 +117,16 @@ namespace dndbg.Engine {
 
 		public CorValue CreateNull() => eval.CreateValue(CorElementType.Class);
 
-		public CorValue Box(CorValue value) {
-			if (value == null || !value.IsGeneric || value.IsBox || value.IsHeap || !value.ExactType.IsValueType)
+		public CorValue Box(CorValue value, CorType valueType = null) {
+			var et = valueType ?? value?.ExactType;
+			if (et == null)
+				return null;
+			if (value == null || !value.IsGeneric || value.IsBox || value.IsHeap || !valueType.IsValueType)
 				return value;
-			var et = value.ExactType;
 			var cls = et?.Class;
 			if (cls == null)
 				return null;
-			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(cls, value.ExactType.TypeParameters.ToArray()));
+			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(cls, valueType.TypeParameters.ToArray()));
 			if (res == null || !res.Value.NormalResult)
 				return null;
 			var newObj = res.Value.ResultOrException;

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -167,6 +168,40 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DbgDotNetValueResult GetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Writes a new local value. Returns an error message or null.
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="index">Metadata index of parameter</param>
+		/// <param name="targetType">Type of the local</param>
+		/// <param name="value">New value, a <see cref="DbgDotNetValue"/> or a primitive number or a string</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		string SetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Writes a new parameter value. Returns an error message or null.
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="index">Metadata index of parameter</param>
+		/// <param name="targetType">Type of the parameter</param>
+		/// <param name="value">New value, a <see cref="DbgDotNetValue"/> or a primitive number or a string</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		string SetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Creates a simple value (a primitive number or a string)
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="value">A primitive number or a string</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetCreateValueResult CreateValue(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Returns true if object IDs are supported by this runtime
 		/// </summary>
 		bool SupportsObjectIds { get; }
@@ -224,5 +259,38 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="b">Value #2</param>
 		/// <returns></returns>
 		bool? Equals(DbgDotNetValue a, DbgDotNetValue b);
+	}
+
+	/// <summary>
+	/// Contains the created value or an error message
+	/// </summary>
+	public struct DbgDotNetCreateValueResult {
+		/// <summary>
+		/// Gets the value or null if there was an error
+		/// </summary>
+		public DbgDotNetValue Value { get; }
+
+		/// <summary>
+		/// Gets the error message or null
+		/// </summary>
+		public string Error { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="errorMessage">Error message</param>
+		public DbgDotNetCreateValueResult(string errorMessage) {
+			Value = null;
+			Error = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="value">Value</param>
+		public DbgDotNetCreateValueResult(DbgDotNetValue value) {
+			Value = value ?? throw new ArgumentNullException(nameof(value));
+			Error = null;
+		}
 	}
 }

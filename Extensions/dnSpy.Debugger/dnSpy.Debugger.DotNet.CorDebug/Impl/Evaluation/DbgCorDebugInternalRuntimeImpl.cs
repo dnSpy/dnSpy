@@ -448,6 +448,45 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return CreateValue(value, ilFrame);
 		}
 
+		public string SetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return SetLocalValueCore(context, frame, index, targetType, value, cancellationToken);
+			return Dispatcher.Invoke(() => SetLocalValueCore(context, frame, index, targetType, value, cancellationToken));
+		}
+
+		string SetLocalValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				throw new InvalidOperationException();
+			return engine.SetLocalValue_CorDebug(context, frame.Thread, ilFrame, index, targetType, value, cancellationToken);
+		}
+
+		public string SetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return SetParameterValueCore(context, frame, index, targetType, value, cancellationToken);
+			return Dispatcher.Invoke(() => SetParameterValueCore(context, frame, index, targetType, value, cancellationToken));
+		}
+
+		string SetParameterValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				throw new InvalidOperationException();
+			return engine.SetParameterValue_CorDebug(context, frame.Thread, ilFrame, index, targetType, value, cancellationToken);
+		}
+
+		public DbgDotNetCreateValueResult CreateValue(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return CreateValueCore(context, frame, value, cancellationToken);
+			return Dispatcher.Invoke(() => CreateValueCore(context, frame, value, cancellationToken));
+		}
+
+		DbgDotNetCreateValueResult CreateValueCore(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				throw new InvalidOperationException();
+			return engine.CreateValue_CorDebug(context, frame.Thread, ilFrame, value, cancellationToken);
+		}
+
 		public bool CanCreateObjectId(DbgDotNetValue value) {
 			var valueImpl = value as DbgDotNetValueImpl;
 			if (valueImpl == null)

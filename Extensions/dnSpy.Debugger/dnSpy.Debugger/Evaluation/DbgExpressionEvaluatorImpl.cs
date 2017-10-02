@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
@@ -39,12 +40,24 @@ namespace dnSpy.Debugger.Evaluation {
 			if (result.Error != null)
 				return new DbgEvaluationResult(result.Error);
 			var runtime = result.Thread.Runtime;
-			var value = new DbgValueImpl(runtime, result.Value);
-			runtime.CloseOnContinue(value);
-			return new DbgEvaluationResult(value, result.Flags);
+			try {
+				var value = new DbgValueImpl(runtime, result.Value);
+				runtime.CloseOnContinue(value);
+				return new DbgEvaluationResult(value, result.Flags);
+			}
+			catch {
+				runtime.Process.DbgManager.Close(result.Value);
+				throw;
+			}
 		}
 
-		public override DbgEvaluationResult Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+		DbgEEAssignmentResult CreateResult(DbgEngineEEAssignmentResult result) {
+			if (result.Error != null)
+				return new DbgEEAssignmentResult(result.Error);
+			return new DbgEEAssignmentResult();
+		}
+
+		public override DbgEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -55,10 +68,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
-			return CreateResult(engineExpressionEvaluator.Evaluate(context, expression, options, cancellationToken));
+			return CreateResult(engineExpressionEvaluator.Evaluate(context, frame, expression, options, cancellationToken));
 		}
 
-		public override void Evaluate(DbgEvaluationContext context, string expression, DbgEvaluationOptions options, Action<DbgEvaluationResult> callback, CancellationToken cancellationToken) {
+		public override void Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEvaluationResult> callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -71,10 +84,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(expression));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineExpressionEvaluator.Evaluate(context, expression, options, result => callback(CreateResult(result)), cancellationToken);
+			engineExpressionEvaluator.Evaluate(context, frame, expression, options, result => callback(CreateResult(result)), cancellationToken);
 		}
 
-		public override DbgEEAssignmentResult Assign(DbgEvaluationContext context, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -87,11 +100,11 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(expression));
 			if (valueExpression == null)
 				throw new ArgumentNullException(nameof(valueExpression));
-			var result = engineExpressionEvaluator.Assign(context, expression, valueExpression, options, cancellationToken);
-			return new DbgEEAssignmentResult(result.Error);
+			var result = engineExpressionEvaluator.Assign(context, frame, expression, valueExpression, options, cancellationToken);
+			return CreateResult(result);
 		}
 
-		public override void Assign(DbgEvaluationContext context, string expression, string valueExpression, DbgEvaluationOptions options, Action<DbgEEAssignmentResult> callback, CancellationToken cancellationToken) {
+		public override void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, Action<DbgEEAssignmentResult> callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -106,7 +119,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(valueExpression));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineExpressionEvaluator.Assign(context, expression, valueExpression, options, result => callback(new DbgEEAssignmentResult(result.Error)), cancellationToken);
+			engineExpressionEvaluator.Assign(context, frame, expression, valueExpression, options, result => callback(CreateResult(result)), cancellationToken);
 		}
 	}
 }

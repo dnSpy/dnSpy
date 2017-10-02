@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			this.dbgObjectIdService = dbgObjectIdService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			var formatCulture = CultureInfo.InvariantCulture;
-			valueNodesContext = new ValueNodesContext(uiDispatcher, this, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(EvaluateExpression), classificationFormatMap, textBlockContentInfoFactory, formatCulture, options.ShowMessageBox);
+			valueNodesContext = new ValueNodesContext(uiDispatcher, this, options.WindowContentType, options.NameColumnName, options.ValueColumnName, options.TypeColumnName, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, new DbgValueNodeReaderImpl(EvaluateExpression), classificationFormatMap, textBlockContentInfoFactory, formatCulture, options.ShowMessageBox, OnValueNodeAssigned);
 			valueNodesContext.Formatter.ObjectIdService = dbgObjectIdService;
 
 			rootNode = new RootNode();
@@ -103,6 +103,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 			menuService.InitializeContextMenu(treeView.UIObject, new Guid(MenuConstants.GUIDOBJ_VARIABLES_WINDOW_TREEVIEW_GUID), new GuidObjectsProvider(this));
 			wpfCommandService.Add(options.VariablesWindowGuid, treeView.UIObject);
+		}
+
+		// UI thread
+		void OnValueNodeAssigned(string errorMessage) {
+			valueNodesContext.UIDispatcher.VerifyAccess();
+			if (errorMessage != null)
+				valueNodesContext.ShowMessageBox(errorMessage, ShowMessageBoxButtons.OK);
+			RecreateRootChildren_UI();
 		}
 
 		// UI thread

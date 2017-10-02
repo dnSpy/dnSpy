@@ -31,6 +31,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 using Microsoft.CodeAnalysis.ExpressionEvaluator;
 using Microsoft.CodeAnalysis.ExpressionEvaluator.DnSpy;
+using Microsoft.VisualStudio.Debugger.Clr;
 using Microsoft.VisualStudio.Debugger.Evaluation.ClrCompilation;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
@@ -65,7 +66,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			return module.GetOrCreateData<T>();
 		}
 
-		protected void GetCompileGetLocalsState<T>(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, out DbgLanguageDebugInfo langDebugInfo, out MethodDef method, out int localVarSigTok, out T state, out ImmutableArray<MetadataBlock> metadataBlocks, out int methodVersion) where T : EvalContextState, new() {
+		protected void GetCompilationsState<T>(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, out DbgLanguageDebugInfo langDebugInfo, out MethodDef method, out int localVarSigTok, out T state, out ImmutableArray<MetadataBlock> metadataBlocks, out int methodVersion) where T : EvalContextState, new() {
 			langDebugInfo = context.GetLanguageDebugInfo();
 			method = langDebugInfo.MethodDebugInfo.Method;
 			localVarSigTok = (int)(method.Body?.LocalVarSigTok ?? 0);
@@ -199,6 +200,73 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				Debug.Fail($"Unknown import kind: {info.TargetKind}");
 				break;
 			}
+		}
+
+		protected ImmutableArray<Alias> CreateAliases(DbgDotNetAlias[] aliases) {
+			if (aliases.Length == 0)
+				return ImmutableArray<Alias>.Empty;
+
+			var builder = ImmutableArray.CreateBuilder<Alias>(aliases.Length);
+			foreach (var alias in aliases) {
+				DkmClrAliasKind aliasKind;
+				switch (alias.Kind) {
+				case DbgDotNetAliasKind.Exception:
+					aliasKind = DkmClrAliasKind.Exception;
+					break;
+
+				case DbgDotNetAliasKind.StowedException:
+					aliasKind = DkmClrAliasKind.StowedException;
+					break;
+
+				case DbgDotNetAliasKind.ReturnValue:
+					aliasKind = DkmClrAliasKind.ReturnValue;
+					break;
+
+				case DbgDotNetAliasKind.Variable:
+					aliasKind = DkmClrAliasKind.Variable;
+					break;
+
+				case DbgDotNetAliasKind.ObjectId:
+					aliasKind = DkmClrAliasKind.ObjectId;
+					break;
+
+				default:
+					throw new InvalidOperationException();
+				}
+				builder.Add(new Alias(aliasKind, alias.Name, alias.Name, alias.Type, alias.CustomTypeInfoId, alias.CustomTypeInfo));
+			}
+			return builder.ToImmutableArray();
+		}
+
+		protected DbgDotNetCompilationResult CreateAssignmentResult(string targetExpression, CompileResult compileResult, ResultProperties resultProperties, string errorMessage) {
+			if (errorMessage != null)
+				return new DbgDotNetCompilationResult(errorMessage);
+
+			var customTypeInfoGuid = compileResult.GetCustomTypeInfo(out var payload);
+			DbgDotNetCustomTypeInfo customTypeInfo;
+			if (payload != null)
+				customTypeInfo = new DbgDotNetCustomTypeInfo(customTypeInfoGuid, payload);
+			else
+				customTypeInfo = null;
+
+			var compExprs = new DbgDotNetCompiledExpressionResult[1] {
+				DbgDotNetCompiledExpressionResult.Create(compileResult.TypeName, compileResult.MethodName,
+						targetExpression, new DbgDotNetText(Array.Empty<DbgDotNetTextPart>()),
+						ToEvaluationResultFlags(resultProperties.Flags), PredefinedDbgValueNodeImageNames.Data,
+						customTypeInfo),
+			};
+			return new DbgDotNetCompilationResult(compileResult.Assembly, compExprs);
+		}
+
+		static DbgEvaluationResultFlags ToEvaluationResultFlags(DkmClrCompilationResultFlags flags) {
+			var res = DbgEvaluationResultFlags.None;
+			if ((flags & DkmClrCompilationResultFlags.PotentialSideEffect) != 0)
+				res |= DbgEvaluationResultFlags.SideEffects;
+			if ((flags & DkmClrCompilationResultFlags.ReadOnlyResult) != 0)
+				res |= DbgEvaluationResultFlags.ReadOnly;
+			if ((flags & DkmClrCompilationResultFlags.BoolResult) != 0)
+				res |= DbgEvaluationResultFlags.BooleanExpression;
+			return res;
 		}
 
 		protected DbgDotNetCompilationResult CreateCompilationResult(EvalContextState state, byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string errorMessage) {

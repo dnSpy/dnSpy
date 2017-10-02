@@ -56,6 +56,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 	/// </summary>
 	public struct DbgDotNetAlias {
 		/// <summary>
+		/// Alias kind
+		/// </summary>
+		public DbgDotNetAliasKind Kind;
+
+		/// <summary>
 		/// Custom type info understood by the EE
 		/// </summary>
 		public ReadOnlyCollection<byte> CustomTypeInfo;
