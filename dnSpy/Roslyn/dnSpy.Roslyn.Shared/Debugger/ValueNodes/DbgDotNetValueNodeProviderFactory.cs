@@ -422,7 +422,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					return;
 			}
 
-			if (state.Type.IsArray && !nodeInfo.Value.IsNullReference) {
+			if (state.Type.IsArray && !nodeInfo.Value.IsNull) {
 				providers.Add(new ArrayValueNodeProvider(this, nodeInfo));
 				return;
 			}
@@ -436,7 +436,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				return;
 			}
 
-			if (!forceRawView && (createFlags & CreateFlags.NoProxy) == 0 && funcEval && !nodeInfo.Value.IsNullReference) {
+			if (!forceRawView && (createFlags & CreateFlags.NoProxy) == 0 && funcEval && !nodeInfo.Value.IsNull) {
 				var proxyCtor = DebuggerTypeProxyFinder.GetDebuggerTypeProxyConstructor(state.Type);
 				if ((object)proxyCtor != null) {
 					var runtime = context.Runtime.GetDotNetRuntime();
@@ -487,7 +487,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			var membersEvalOptions = evalOptions;
 			if (isRawView)
 				membersEvalOptions |= DbgValueNodeEvaluationOptions.RawView;
-			if (value.IsNullReference)
+			if (value.IsNull)
 				instanceMembersInfos = MemberValueNodeInfoCollection.Empty;
 			providers.Add(new InstanceMembersValueNodeProvider(valueNodeFactory, isRawView ? rawViewName : InstanceMembersName, expression, value, instanceMembersInfos, membersEvalOptions, isRawView ? PredefinedDbgValueNodeImageNames.RawView : PredefinedDbgValueNodeImageNames.InstanceMembers));
 
@@ -497,7 +497,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			//TODO: dynamic types
 			//TODO: non-void and non-null pointers (derefence and show members)
 
-			if ((object)state.EnumerableType != null && !value.IsNullReference)
+			if ((object)state.EnumerableType != null && !value.IsNull)
 				providers.Add(new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, state.TypeExpression, evalOptions));
 		}
 		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_RawView));

@@ -59,7 +59,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		}
 
 		public string GetToStringValue(DbgDotNetValue value) {
-			if (value.IsNullReference)
+			if (value.IsNull)
 				return null;
 
 			var state = GetToStringState(value.Type);

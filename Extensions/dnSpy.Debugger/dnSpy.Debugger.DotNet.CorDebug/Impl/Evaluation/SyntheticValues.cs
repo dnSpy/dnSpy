@@ -128,8 +128,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 	sealed class SyntheticNullValue : DbgDotNetValue {
 		public override DmdType Type { get; }
-		public override bool IsReference => true;
-		public override bool IsNullReference => true;
+		public override bool IsNull => true;
 
 		public SyntheticNullValue(DmdType type) =>
 			Type = type ?? throw new ArgumentNullException(nameof(type));

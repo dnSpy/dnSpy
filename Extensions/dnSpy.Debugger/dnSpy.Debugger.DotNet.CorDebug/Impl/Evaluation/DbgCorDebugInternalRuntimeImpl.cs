@@ -431,7 +431,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				typeElementType = res.Value;
 				if (res.HasError || res.ValueIsException)
 					return res;
-				if (res.Value.IsNullReference)
+				if (res.Value.IsNull)
 					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 				var methodCreateInstance = appDomain.System_Array.GetMethod("CreateInstance", DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32 }, throwOnError: true);
@@ -504,7 +504,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				typeElementType = res.Value;
 				if (res.HasError || res.ValueIsException)
 					return res;
-				if (res.Value.IsNullReference)
+				if (res.Value.IsNull)
 					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 				var lengths = new int[dimensionInfos.Length];

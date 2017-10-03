@@ -75,7 +75,6 @@
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicValueFormatter.cs" />
     <Compile Include="Debugger\StateWithKey.cs" />
     <Compile Include="Debugger\ValueNodes\AggregateValueNodeProvider.cs" />
-    <Compile Include="Debugger\ValueNodes\ArrayObjectValue.cs" />
     <Compile Include="Debugger\ValueNodes\ArrayValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\CSharp\CSharpValueNodeFactory.cs" />
     <Compile Include="Debugger\ValueNodes\CSharp\CSharpValueNodeProviderFactory.cs" />

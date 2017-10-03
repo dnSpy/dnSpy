@@ -41,7 +41,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			try {
 				var type = new ReflectionTypeCreator(this, reflectionAppDomain).Create(value.ExactType);
 
-				//TODO: You should support the by-ref case too
 				if (tryCreateStrongHandle && !value.IsNull && !value.IsHandle && value.IsReference && !type.IsPointer && !type.IsFunctionPointer && !type.IsByRef) {
 					var strongHandle = value.DereferencedValue?.CreateHandle(CorDebugHandleType.HANDLE_STRONG);
 					Debug.Assert(strongHandle != null || type == type.AppDomain.System_TypedReference);

@@ -137,33 +137,22 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			if ((object)type == null)
 				throw new ArgumentNullException(nameof(type));
 
-			DbgDotNetValue valueToDispose = null;
 			List<(DmdType type, DbgDotNetValue value)> arrayTypesList = null;
 			try {
 				if (recursionCounter++ >= MAX_RECURSION)
 					return;
 
-				DbgDotNetValue elementValue;
 				switch (type.TypeSignatureKind) {
 				case DmdTypeSignatureKind.SZArray:
 				case DmdTypeSignatureKind.MDArray:
-					if (value != null && value.IsReference) {
-						valueToDispose = value.Dereference();
-						elementValue = valueToDispose ?? value;
-					}
-					else
-						elementValue = value;
-
 					// Array types are shown in reverse order
 					arrayTypesList = new List<(DmdType type, DbgDotNetValue value)>();
 					do {
-						arrayTypesList.Add((type, elementValue));
-						elementValue = elementValue?.Dereference();
+						arrayTypesList.Add((type, arrayTypesList.Count == 0 ? value : null));
 						type = type.GetElementType();
 					} while (type.IsArray);
 					var t = arrayTypesList[arrayTypesList.Count - 1];
-					Format(t.type.GetElementType(), elementValue = t.value?.Dereference());
-					elementValue?.Dispose();
+					Format(t.type.GetElementType(), null);
 					foreach (var tuple in arrayTypesList) {
 						var aryType = tuple.type;
 						var aryValue = tuple.value;
@@ -218,7 +207,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				case DmdTypeSignatureKind.ByRef:
 					OutputWrite(BYREF_KEYWORD, BoxedTextColor.Keyword);
 					WriteSpace();
-					Format(type.GetElementType(), valueToDispose = value?.Dereference());
+					Format(type.GetElementType(), value?.GetDereferencedValue());
 					break;
 
 				case DmdTypeSignatureKind.TypeGenericParameter:
@@ -290,7 +279,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			}
 			finally {
 				recursionCounter--;
-				valueToDispose?.Dispose();
 				if (arrayTypesList != null) {
 					foreach (var info in arrayTypesList) {
 						if (info.value != value)

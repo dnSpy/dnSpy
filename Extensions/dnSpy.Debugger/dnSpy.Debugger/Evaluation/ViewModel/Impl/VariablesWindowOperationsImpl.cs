@@ -327,7 +327,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			dbgObjectIdService.Value.Remove(objectIds);
 		}
 
-		public override bool CanSave(IValueNodesVM vm) => CanExecCommands(vm) && GetValue(SelectedNode(vm)?.RawNode)?.GetRawAddressValue(onlyDataAddress: true) != null;
+		public override bool CanSave(IValueNodesVM vm) => CanExecCommands(vm) && (GetValue(SelectedNode(vm)?.RawNode)?.GetRawAddressValue(onlyDataAddress: true)?.Length ?? 0) != 0;
 		public override void Save(IValueNodesVM vm) {
 			if (!CanSave(vm))
 				return;

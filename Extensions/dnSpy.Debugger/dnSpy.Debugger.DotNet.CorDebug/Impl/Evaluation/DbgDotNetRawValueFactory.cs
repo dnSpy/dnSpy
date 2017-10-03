@@ -53,10 +53,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			if (recursionCounter > 1)
 				return GetRawValueDefault(value, type);
 
-			if (type.IsByRef) {
-				if (value.IsNull)
-					return GetRawValueDefault(value, type);
+			if (value.IsNull)
+				return GetRawValueDefault(value, type);
 
+			if (type.IsByRef) {
 				value = value.DereferencedValue;
 				Debug.Assert(value != null);
 				if (value == null)
@@ -65,8 +65,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 
 			if (value.IsReference) {
-				if (value.IsNull)
-					return GetRawValueDefault(value, type);
 				if (value.ElementType == CorElementType.Ptr || value.ElementType == CorElementType.FnPtr) {
 					if (type.AppDomain.Runtime.PointerSize == 4)
 						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)value.ReferenceAddress);

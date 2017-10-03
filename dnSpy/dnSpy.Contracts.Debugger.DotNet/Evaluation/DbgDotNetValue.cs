@@ -37,42 +37,20 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public abstract DmdType Type { get; }
 
 		/// <summary>
-		/// true if this value references another value
+		/// true if this is a null value
 		/// </summary>
-		public virtual bool IsReference => false;
+		public virtual bool IsNull => false;
 
 		/// <summary>
-		/// true if this is a null reference. It's only valid if <see cref="IsReference"/> is true
-		/// </summary>
-		public virtual bool IsNullReference => false;
-
-		/// <summary>
-		/// Gets the address of the reference or null if it's unknown or if it's not a reference (<see cref="IsReference"/>)
+		/// Gets the referenced value if it's a by-ref
 		/// </summary>
 		/// <returns></returns>
-		public virtual ulong? GetReferenceAddress() => null;
-
-		/// <summary>
-		/// Gets the referenced value if it's a reference (<see cref="IsReference"/>) or null if it's not a reference or if it's a null reference.
-		/// </summary>
-		/// <returns></returns>
-		public virtual DbgDotNetValue Dereference() => null;
-
-		/// <summary>
-		/// true if this is a boxed value type
-		/// </summary>
-		public virtual bool IsBox => false;
-
-		/// <summary>
-		/// Gets the unboxed value if it's a boxed value (<see cref="IsBox"/>) or null
-		/// </summary>
-		/// <returns></returns>
-		public virtual DbgDotNetValue Unbox() => null;
+		public virtual DbgDotNetValue GetDereferencedValue() => null;
 
 		/// <summary>
 		/// true if this is an array value
 		/// </summary>
-		public virtual bool IsArray => false;
+		public bool IsArray => Type.IsArray;
 
 		/// <summary>
 		/// Gets the number of elements of the array (<see cref="IsArray"/>)

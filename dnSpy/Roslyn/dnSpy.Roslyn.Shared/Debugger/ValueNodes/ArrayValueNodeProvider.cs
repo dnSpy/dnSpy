@@ -46,14 +46,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.owner = owner;
 			this.valueInfo = valueInfo;
 
-			using (var objValue = new ArrayObjectValue(valueInfo.Value)) {
-				bool b = objValue.Value.GetArrayInfo(out arrayCount, out dimensionInfos) && dimensionInfos.Length != 0;
-				Debug.Assert(b);
-				if (!b)
-					dimensionInfos = new[] { new DbgDotNetArrayDimensionInfo(0, arrayCount) };
-				if (dimensionInfos.Length > 1)
-					indexes = new int[dimensionInfos.Length];
-			}
+			bool b = valueInfo.Value.GetArrayInfo(out arrayCount, out dimensionInfos) && dimensionInfos.Length != 0;
+			Debug.Assert(b);
+			if (!b)
+				dimensionInfos = new[] { new DbgDotNetArrayDimensionInfo(0, arrayCount) };
+			if (dimensionInfos.Length > 1)
+				indexes = new int[dimensionInfos.Length];
 		}
 
 		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => arrayCount;
@@ -69,10 +67,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 					string expression;
 					uint arrayIndex = (uint)index + (uint)i;
-					using (var objValue = new ArrayObjectValue(valueInfo.Value)) {
-						newValue = objValue.Value.GetArrayElementAt(arrayIndex);
-						Debug.Assert(newValue != null);
-					}
+					newValue = valueInfo.Value.GetArrayElementAt(arrayIndex);
+					Debug.Assert(newValue != null);
 
 					if (dimensionInfos.Length == 1) {
 						int baseIndex = (int)arrayIndex + dimensionInfos[0].BaseIndex;

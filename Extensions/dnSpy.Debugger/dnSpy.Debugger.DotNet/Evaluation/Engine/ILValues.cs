@@ -33,13 +33,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 
-	sealed class ByRefNullObjectRefILValueImpl : NullObjectRefILValue, IDebuggerRuntimeILValue {
-		readonly DbgDotNetValue value;
-		public ByRefNullObjectRefILValueImpl(DbgDotNetValue value) => this.value = value;
-		public override DmdType Type => value.Type.GetElementType();
-		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => new SyntheticNullValue(Type);
-	}
-
 	sealed class ConstantInt32ILValueImpl : ConstantInt32ILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
 		public ConstantInt32ILValueImpl(DbgDotNetValue value, int v) : base(value.Type, v) => this.value = value;

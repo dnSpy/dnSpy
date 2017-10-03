@@ -227,7 +227,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		ILValue CreateILValueCore(DbgDotNetValue value) {
 			if (value.Type.IsByRef)
 				return new ByRefILValueImpl(this, value);
-			if (value.IsNullReference)
+			if (value.IsNull)
 				return new NullObjectRefILValueImpl(value);
 
 			if (value.Type.IsArray)
@@ -407,11 +407,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		internal void SetArrayElementAt(DbgDotNetValue arrayValue, uint index, object value) {
-			using (var obj = new ArrayObjectValue(arrayValue)) {
-				var error = obj.Value.SetArrayElementAt(context, frame, index, value, cancellationToken);
-				if (error != null)
-					throw new InterpreterMessageException(error);
-			}
+			var error = arrayValue.SetArrayElementAt(context, frame, index, value, cancellationToken);
+			if (error != null)
+				throw new InterpreterMessageException(error);
 		}
 
 		public override int? CompareSigned(ILValue left, ILValue right) {

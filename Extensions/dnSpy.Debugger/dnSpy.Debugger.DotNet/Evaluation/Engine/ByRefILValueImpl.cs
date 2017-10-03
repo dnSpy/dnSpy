@@ -49,11 +49,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
 			runtime.CallInstance(byRefValue, isCallvirt, method, arguments, out returnValue);
 
-		public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) {
-			if (byRefValue.IsNullReference)
-				return new ByRefNullObjectRefILValueImpl(byRefValue);
-			return runtime.CreateILValue(byRefValue.Dereference());
-		}
+		public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) =>
+			runtime.CreateILValue(byRefValue.GetDereferencedValue());
 
 		public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
 			return false;//TODO:

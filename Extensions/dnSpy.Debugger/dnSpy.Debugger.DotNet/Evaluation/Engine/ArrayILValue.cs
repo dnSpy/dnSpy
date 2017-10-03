@@ -24,35 +24,12 @@ using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	struct ArrayObjectValue : IDisposable {
-		public readonly DbgDotNetValue Value;
-		readonly bool ownsValue;
-		public ArrayObjectValue(DbgDotNetValue value) {
-			Debug.Assert(!value.IsNullReference);
-			if (value.IsReference) {
-				Value = value.Dereference();
-				ownsValue = true;
-			}
-			else {
-				Value = value;
-				ownsValue = false;
-			}
-			Debug.Assert(Value.IsArray);
-		}
-
-		public void Dispose() {
-			if (ownsValue)
-				Value.Dispose();
-		}
-	}
-
 	sealed class ArrayILValue : TypeILValue, IDebuggerRuntimeILValue {
 		public override DmdType Type => arrayValue.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => arrayValue;
 
 		readonly DebuggerRuntimeImpl runtime;
 		readonly DbgDotNetValue arrayValue;
-		readonly bool isSZArray;
 		long cachedArrayLength;
 		const long cachedArrayLength_uninitialized = -1;
 		const long cachedArrayLength_error = -2;
@@ -60,9 +37,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public ArrayILValue(DebuggerRuntimeImpl runtime, DbgDotNetValue arrayValue) {
 			this.runtime = runtime;
 			this.arrayValue = arrayValue;
-			var type = arrayValue.Type.IsByRef ? arrayValue.Type.GetElementType() : arrayValue.Type;
-			Debug.Assert(type.IsArray);
-			isSZArray = type.IsSZArray;
 			cachedArrayLength = cachedArrayLength_uninitialized;
 		}
 
@@ -87,31 +61,27 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		internal DbgDotNetValue ReadArrayElement(long index) {
 			if ((ulong)index > uint.MaxValue)
 				return null;
-			using (var obj = new ArrayObjectValue(arrayValue)) {
-				var elemValue = obj.Value.GetArrayElementAt((uint)index);
-				if (elemValue != null)
-					return runtime.RecordValue(elemValue);
-				return null;
-			}
+			var elemValue = arrayValue.GetArrayElementAt((uint)index);
+			if (elemValue != null)
+				return runtime.RecordValue(elemValue);
+			return null;
 		}
 
 		internal void WriteArrayElement(uint index, object value) => runtime.SetArrayElementAt(arrayValue, index, value);
 
 		public override ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) {
-			if (!isSZArray)
+			if (!arrayValue.Type.IsSZArray)
 				return null;
 			if ((ulong)index > uint.MaxValue)
 				return null;
-			using (var obj = new ArrayObjectValue(arrayValue)) {
-				var elemValue = obj.Value.GetArrayElementAt((uint)index);
-				if (elemValue != null)
-					return runtime.CreateILValue(elemValue);
-				return null;
-			}
+			var elemValue = arrayValue.GetArrayElementAt((uint)index);
+			if (elemValue != null)
+				return runtime.CreateILValue(elemValue);
+			return null;
 		}
 
 		public override bool StoreSZArrayElement(LoadValueType loadValueType, long index, ILValue value, DmdType elementType) {
-			if (!isSZArray)
+			if (!arrayValue.Type.IsSZArray)
 				return false;
 			if ((ulong)index > uint.MaxValue)
 				return false;
@@ -120,7 +90,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override ILValue LoadSZArrayElementAddress(long index, DmdType elementType) {
-			if (!isSZArray)
+			if (!arrayValue.Type.IsSZArray)
 				return null;
 			if ((ulong)index > uint.MaxValue)
 				return null;
@@ -128,15 +98,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override bool GetSZArrayLength(out long length) {
-			if (!isSZArray)
+			if (!arrayValue.Type.IsSZArray)
 				cachedArrayLength = cachedArrayLength_error;
 			if (cachedArrayLength == cachedArrayLength_uninitialized) {
-				using (var obj = new ArrayObjectValue(arrayValue)) {
-					if (!obj.Value.Type.IsSZArray || !obj.Value.GetArrayCount(out var arrayCount))
-						cachedArrayLength = cachedArrayLength_error;
-					else
-						cachedArrayLength = arrayCount;
-				}
+				if (!arrayValue.GetArrayCount(out var arrayCount))
+					cachedArrayLength = cachedArrayLength_error;
+				else
+					cachedArrayLength = arrayCount;
 			}
 			if (cachedArrayLength >= 0) {
 				length = cachedArrayLength;

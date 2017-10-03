@@ -31,19 +31,15 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	sealed class DbgDotNetValueImpl : DbgDotNetValue {
-		public override DmdType Type => value.Type;
-		public override bool IsReference => (flags & ValueFlags.IsReference) != 0;
-		public override bool IsNullReference => (flags & ValueFlags.IsNullReference) != 0;
-		public override bool IsBox => (flags & ValueFlags.IsBox) != 0;
-		public override bool IsArray => (flags & ValueFlags.IsArray) != 0;
+		public override DmdType Type { get; }
+		public override bool IsNull => (flags & ValueFlags.IsNull) != 0;
+		bool IsNullByRef => (flags & ValueFlags.IsNullByRef) != 0;
 
 		[Flags]
 		enum ValueFlags : byte {
 			None				= 0,
-			IsReference			= 0x01,
-			IsNullReference		= 0x02,
-			IsBox				= 0x04,
-			IsArray				= 0x08,
+			IsNull				= 0x01,
+			IsNullByRef			= 0x02,
 		}
 
 		internal DbgCorValueHolder CorValueHolder => value;
@@ -57,19 +53,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public DbgDotNetValueImpl(DbgEngineImpl engine, DbgCorValueHolder value) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			this.value = value ?? throw new ArgumentNullException(nameof(value));
+			Type = value.Type;
 			var corValue = value.CorValue;
-			rawValue = new DbgDotNetRawValueFactory(engine).Create(corValue, value.Type);
+			rawValue = new DbgDotNetRawValueFactory(engine).Create(corValue, Type);
 
 			var flags = ValueFlags.None;
-			if (corValue.IsReference) {
-				flags |= ValueFlags.IsReference;
-				if (corValue.IsNull)
-					flags |= ValueFlags.IsNullReference;
+			if (corValue.IsNull) {
+				if (Type.IsByRef)
+					flags |= ValueFlags.IsNullByRef;
+				else
+					flags |= ValueFlags.IsNull;
 			}
-			if (corValue.IsBox)
-				flags |= ValueFlags.IsBox;
-			if (corValue.IsArray)
-				flags |= ValueFlags.IsArray;
 			this.flags = flags;
 		}
 
@@ -84,62 +78,73 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 		}
 
-		public override ulong? GetReferenceAddress() {
-			if (!IsReference || IsNullReference)
+		public override DbgDotNetValue GetDereferencedValue() {
+			if (!Type.IsByRef)
 				return null;
-			if (engine.CheckCorDebugThread())
-				return value.CorValue.ReferenceAddress;
-			return engine.InvokeCorDebugThread<ulong?>(() => value.CorValue.ReferenceAddress);
-		}
-
-		public override DbgDotNetValue Dereference() {
-			if (!IsReference || IsNullReference)
-				return null;
+			if (IsNullByRef)
+				return new SyntheticNullValue(Type.GetElementType());
 			if (engine.CheckCorDebugThread())
 				return Dereference_CorDebug();
 			return engine.InvokeCorDebugThread(() => Dereference_CorDebug());
 		}
 
 		DbgDotNetValue Dereference_CorDebug() {
-			Debug.Assert(IsReference && !IsNullReference);
+			Debug.Assert(Type.IsByRef && !IsNullByRef);
 			engine.VerifyCorDebugThread();
-			var dereferencedValue = value.CorValue.DereferencedValue;
+			var dereferencedValue = TryGetCorValue()?.DereferencedValue;
 			if (dereferencedValue == null)
 				return null;
-			return engine.CreateDotNetValue_CorDebug(dereferencedValue, value.Type.AppDomain, tryCreateStrongHandle: true);
+			return engine.CreateDotNetValue_CorDebug(dereferencedValue, Type.AppDomain, tryCreateStrongHandle: true);
 		}
 
-		public override DbgDotNetValue Unbox() {
-			if (!IsBox)
-				return null;
-			if (engine.CheckCorDebugThread())
-				return Unbox_CorDebug();
-			return engine.InvokeCorDebugThread(() => Unbox_CorDebug());
-		}
+		struct ArrayObjectValue : IDisposable {
+			readonly DbgEngineImpl engine;
+			public readonly CorValue Value;
+			readonly bool ownsValue;
+			public ArrayObjectValue(DbgEngineImpl engine, CorValue value) {
+				this.engine = engine;
+				Debug.Assert(!value.IsNull);
+				if (value.IsReference) {
+					Value = value.DereferencedValue;
+					ownsValue = true;
+				}
+				else {
+					Value = value;
+					ownsValue = false;
+				}
+				Debug.Assert(Value.IsArray);
+			}
 
-		DbgDotNetValue Unbox_CorDebug() {
-			Debug.Assert(IsBox);
-			engine.VerifyCorDebugThread();
-			var boxedValue = value.CorValue.BoxedValue;
-			if (boxedValue == null)
-				return null;
-			return engine.CreateDotNetValue_CorDebug(boxedValue, value.Type.AppDomain, tryCreateStrongHandle: true);
+			public void Dispose() {
+				if (ownsValue)
+					engine.DisposeHandle_CorDebug(Value);
+			}
 		}
 
 		public override bool GetArrayCount(out uint elementCount) {
 			if (IsArray) {
 				if (engine.CheckCorDebugThread()) {
-					elementCount = value.CorValue.ArrayCount;
+					elementCount = GetArrayCountCore();
 					return true;
 				}
 				else {
-					elementCount = engine.InvokeCorDebugThread(() => value.CorValue.ArrayCount);
+					elementCount = engine.InvokeCorDebugThread(() => GetArrayCountCore());
 					return true;
 				}
 			}
 
 			elementCount = 0;
 			return false;
+		}
+
+		uint GetArrayCountCore() {
+			Debug.Assert(IsArray);
+			engine.VerifyCorDebugThread();
+			var corValue = TryGetCorValue();
+			if (corValue == null)
+				return 0;
+			using (var obj = new ArrayObjectValue(engine, corValue))
+				return obj.Value.ArrayCount;
 		}
 
 		public override bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
@@ -164,20 +169,27 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		bool GetArrayInfo_CorDebug(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
 			Debug.Assert(IsArray);
 			engine.VerifyCorDebugThread();
-			var corValue = value.CorValue;
-			elementCount = corValue.ArrayCount;
-			var baseIndexes = (corValue.HasBaseIndicies ? corValue.BaseIndicies : null) ?? Array.Empty<uint>();
-			var dimensions = corValue.Dimensions;
-			if (dimensions != null) {
-				var infos = new DbgDotNetArrayDimensionInfo[dimensions.Length];
-				for (int i = 0; i < infos.Length; i++)
-					infos[i] = new DbgDotNetArrayDimensionInfo((int)(i < baseIndexes.Length ? baseIndexes[i] : 0), dimensions[i]);
-				dimensionInfos = infos;
-				return true;
-			}
-			else {
+			var corValue = TryGetCorValue();
+			if (corValue == null) {
+				elementCount = 0;
 				dimensionInfos = null;
 				return false;
+			}
+			using (var obj = new ArrayObjectValue(engine, corValue)) {
+				elementCount = obj.Value.ArrayCount;
+				var baseIndexes = (obj.Value.HasBaseIndicies ? obj.Value.BaseIndicies : null) ?? Array.Empty<uint>();
+				var dimensions = obj.Value.Dimensions;
+				if (dimensions != null) {
+					var infos = new DbgDotNetArrayDimensionInfo[dimensions.Length];
+					for (int i = 0; i < infos.Length; i++)
+						infos[i] = new DbgDotNetArrayDimensionInfo((int)(i < baseIndexes.Length ? baseIndexes[i] : 0), dimensions[i]);
+					dimensionInfos = infos;
+					return true;
+				}
+				else {
+					dimensionInfos = null;
+					return false;
+				}
 			}
 		}
 
@@ -192,10 +204,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		DbgDotNetValue GetArrayElementAt_CorDebug(uint index) {
 			Debug.Assert(IsArray);
 			engine.VerifyCorDebugThread();
-			var elemValue = value.CorValue.GetElementAtPosition(index, out int hr);
-			if (elemValue == null)
+			var corValue = TryGetCorValue();
+			if (corValue == null)
 				return null;
-			return engine.CreateDotNetValue_CorDebug(elemValue, value.Type.AppDomain, tryCreateStrongHandle: true);
+			using (var obj = new ArrayObjectValue(engine, corValue)) {
+				var elemValue = obj.Value.GetElementAtPosition(index, out int hr);
+				if (elemValue == null)
+					return null;
+				return engine.CreateDotNetValue_CorDebug(elemValue, Type.AppDomain, tryCreateStrongHandle: true);
+			}
 		}
 
 		public override string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
@@ -210,8 +227,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return CordbgErrorHelper.InternalError;
 			Func<(CorValue value, int hr)> createTargetValue = () => {
-				var elemValue = this.value.CorValue.GetElementAtPosition(index, out int hr);
-				return (elemValue, hr);
+				var corValue = TryGetCorValue();
+				if (corValue == null)
+					return (null, -1);
+				using (var obj = new ArrayObjectValue(engine, corValue)) {
+					var elemValue = obj.Value.GetElementAtPosition(index, out int hr);
+					return (elemValue, hr);
+				}
 			};
 			return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, Type.GetElementType(), value, cancellationToken);
 		}
@@ -231,7 +253,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		DbgRawAddressValue? GetRawAddressValue_CorDebug(bool onlyDataAddress) {
 			engine.VerifyCorDebugThread();
 
-			var v = value.CorValue;
+			var v = TryGetCorValue();
+			if (v == null)
+				return null;
+
+			if (Type.IsByRef) {
+				if (IsNullByRef)
+					return null;
+				return new DbgRawAddressValue(v.Address, (uint)Type.AppDomain.Runtime.PointerSize);
+			}
+
+			if (IsNull)
+				return null;
+
 			if (v.IsNull)
 				return null;
 			if (v.IsReference) {
