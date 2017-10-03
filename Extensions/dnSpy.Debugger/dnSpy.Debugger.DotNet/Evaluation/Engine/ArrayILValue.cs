@@ -24,31 +24,31 @@ using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+	struct ArrayObjectValue : IDisposable {
+		public readonly DbgDotNetValue Value;
+		readonly bool ownsValue;
+		public ArrayObjectValue(DbgDotNetValue value) {
+			Debug.Assert(!value.IsNullReference);
+			if (value.IsReference) {
+				Value = value.Dereference();
+				ownsValue = true;
+			}
+			else {
+				Value = value;
+				ownsValue = false;
+			}
+			Debug.Assert(Value.IsArray);
+		}
+
+		public void Dispose() {
+			if (ownsValue)
+				Value.Dispose();
+		}
+	}
+
 	sealed class ArrayILValue : TypeILValue, IDebuggerRuntimeILValue {
 		public override DmdType Type => arrayValue.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => arrayValue;
-
-		struct ArrayObjectValue : IDisposable {
-			public readonly DbgDotNetValue Value;
-			readonly bool ownsValue;
-			public ArrayObjectValue(DbgDotNetValue value) {
-				Debug.Assert(!value.IsNullReference);
-				if (value.IsReference) {
-					Value = value.Dereference();
-					ownsValue = true;
-				}
-				else {
-					Value = value;
-					ownsValue = false;
-				}
-				Debug.Assert(Value.IsArray);
-			}
-
-			public void Dispose() {
-				if (ownsValue)
-					Value.Dispose();
-			}
-		}
 
 		readonly DebuggerRuntimeImpl runtime;
 		readonly DbgDotNetValue arrayValue;
@@ -95,13 +95,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
-		internal void WriteArrayElement(long index, object value) {
-			if ((ulong)index > uint.MaxValue)
-				throw new InvalidOperationException();
-			using (var obj = new ArrayObjectValue(arrayValue)) {
-				throw new NotImplementedException();//TODO:
-			}
-		}
+		internal void WriteArrayElement(uint index, object value) => runtime.SetArrayElementAt(arrayValue, index, value);
 
 		public override ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) {
 			if (!isSZArray)
@@ -121,8 +115,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return false;
 			if ((ulong)index > uint.MaxValue)
 				return false;
-			//TODO:
-			return false;
+			runtime.SetArrayElementAt(arrayValue, (uint)index, value);
+			return true;
 		}
 
 		public override ILValue LoadSZArrayElementAddress(long index, DmdType elementType) {

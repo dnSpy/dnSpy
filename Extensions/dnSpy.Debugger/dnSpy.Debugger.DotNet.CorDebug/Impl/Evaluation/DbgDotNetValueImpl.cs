@@ -23,8 +23,10 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
@@ -194,6 +196,24 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			if (elemValue == null)
 				return null;
 			return engine.CreateDotNetValue_CorDebug(elemValue, value.Type.AppDomain, tryCreateStrongHandle: true);
+		}
+
+		public override string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
+			if (!IsArray)
+				return base.SetArrayElementAt(context, frame, index, value, cancellationToken);
+			if (engine.CheckCorDebugThread())
+				return SetArrayElementAt_CorDebug(context, frame, index, value, cancellationToken);
+			return engine.InvokeCorDebugThread(() => SetArrayElementAt_CorDebug(context, frame, index, value, cancellationToken));
+		}
+
+		string SetArrayElementAt_CorDebug(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return CordbgErrorHelper.InternalError;
+			Func<(CorValue value, int hr)> createTargetValue = () => {
+				var elemValue = this.value.CorValue.GetElementAtPosition(index, out int hr);
+				return (elemValue, hr);
+			};
+			return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, Type.GetElementType(), value, cancellationToken);
 		}
 
 		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) {

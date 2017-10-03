@@ -401,6 +401,19 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return new ConstantStringILValueImpl(this, stringValue, value);
 		}
 
+		internal void SetArrayElementAt(DbgDotNetValue arrayValue, uint index, ILValue value) {
+			var newValue = GetDebuggerValue(value, arrayValue.Type.GetElementType());
+			SetArrayElementAt(arrayValue, index, newValue);
+		}
+
+		internal void SetArrayElementAt(DbgDotNetValue arrayValue, uint index, object value) {
+			using (var obj = new ArrayObjectValue(arrayValue)) {
+				var error = obj.Value.SetArrayElementAt(context, frame, index, value, cancellationToken);
+				if (error != null)
+					throw new InterpreterMessageException(error);
+			}
+		}
+
 		public override int? CompareSigned(ILValue left, ILValue right) {
 			return null;//TODO:
 		}

@@ -19,6 +19,8 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -98,9 +100,23 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Gets the element at <paramref name="index"/> in the array. This method can be called even if it's
 		/// a multi-dimensional array.
 		/// </summary>
-		/// <param name="index">Index of the element</param>
+		/// <param name="index">Zero-based index of the element</param>
 		/// <returns></returns>
 		public virtual DbgDotNetValue GetArrayElementAt(uint index) => null;
+
+		/// <summary>
+		/// Stores a value at <paramref name="index"/> in the array. This method can be called even if it's
+		/// a multi-dimensional array.
+		/// The return value is null or an error message.
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="index">Zero-based index of the element</param>
+		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public virtual string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) =>
+			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
 		/// Gets the address of the value or null if there's no address available.

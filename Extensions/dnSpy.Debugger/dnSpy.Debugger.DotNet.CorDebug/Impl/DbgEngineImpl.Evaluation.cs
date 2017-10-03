@@ -315,15 +315,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					dnEval.SetTimeout(context.FuncEvalTimeout);
 					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
 
-					targetValue = isLocal ? ilFrame.CorFrame.GetILLocal(index, out int hr) : ilFrame.CorFrame.GetILArgument(index, out hr);
-					if (targetValue == null)
-						return CordbgErrorHelper.GetErrorMessage(hr);
-
 					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
 
 					var evalRes = converter.Convert(value, targetType, out var newValueType);
 					if (evalRes.ErrorMessage != null)
 						return evalRes.ErrorMessage;
+
+					targetValue = isLocal ? ilFrame.CorFrame.GetILLocal(index, out int hr) : ilFrame.CorFrame.GetILArgument(index, out hr);
+					if (targetValue == null)
+						return CordbgErrorHelper.GetErrorMessage(hr);
 
 					var sourceValue = evalRes.CorValue;
 					var sourceType = new ReflectionTypeCreator(this, reflectionAppDomain).Create(sourceValue.ExactType);
@@ -386,7 +386,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		internal string StoreValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, CorValue targetValue, DmdType targetType, object sourceValue, CancellationToken cancellationToken) {
+		internal string StoreValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, Func<(CorValue value, int hr)> createTargetValue, DmdType targetType, object sourceValue, CancellationToken cancellationToken) {
 			debuggerThread.VerifyAccess();
 			var tmp = CheckFuncEval(context);
 			if (tmp != null)
@@ -394,6 +394,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			var dnThread = GetThread(thread);
 			var createdValues = new List<CorValue>();
+			CorValue targetValue = null;
 			try {
 				cancellationToken.ThrowIfCancellationRequested();
 				var appDomain = ilFrame.GetCorAppDomain();
@@ -412,6 +413,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var sourceCorValue = evalRes.CorValue;
 					var sourceType = new ReflectionTypeCreator(this, reflectionAppDomain).Create(sourceCorValue.ExactType);
 
+					var targetValueRes = createTargetValue();
+					targetValue = targetValueRes.value;
+					if (targetValue == null)
+						return CordbgErrorHelper.GetErrorMessage(targetValueRes.hr);
 					return StoreValue_CorDegbug(dnEval, createdValues, appDomain, dnThread, targetValue, targetType, sourceCorValue, sourceType);
 				}
 			}

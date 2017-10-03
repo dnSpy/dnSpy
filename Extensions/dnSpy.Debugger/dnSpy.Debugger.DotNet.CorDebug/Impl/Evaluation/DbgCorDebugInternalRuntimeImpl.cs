@@ -177,51 +177,51 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return CordbgErrorHelper.InternalError;
 			var appDomain = ilFrame.GetCorAppDomain();
 
-			int hr;
 			CorType corFieldDeclType;
-			CorValue fieldValue = null;
-			try {
-				var fieldDeclType = field.DeclaringType;
-				if (obj == null) {
-					if (!field.IsStatic)
-						return CordbgErrorHelper.InternalError;
+			var fieldDeclType = field.DeclaringType;
+			if (obj == null) {
+				if (!field.IsStatic)
+					return CordbgErrorHelper.InternalError;
 
-					if (field.IsLiteral)
-						return CordbgErrorHelper.InternalError;
-					else {
-						corFieldDeclType = GetType(appDomain, fieldDeclType);
-
-						InitializeStaticConstructor(context, frame, ilFrame, fieldDeclType, corFieldDeclType, cancellationToken);
-						fieldValue = corFieldDeclType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out hr);
-						if (fieldValue == null)
-							return CordbgErrorHelper.GetErrorMessage(hr);
-						return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, fieldValue, field.FieldType, value, cancellationToken);
-					}
-				}
+				if (field.IsLiteral)
+					return CordbgErrorHelper.InternalError;
 				else {
-					if (field.IsStatic)
-						return CordbgErrorHelper.InternalError;
-
-					var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
 					corFieldDeclType = GetType(appDomain, fieldDeclType);
-					var objValue = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue());
-					if (objValue == null)
-						return CordbgErrorHelper.InternalError;
-					if (objValue.IsObject) {
-						fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr);
-						if (fieldValue == null)
-							return CordbgErrorHelper.GetErrorMessage(hr);
-						return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, fieldValue, field.FieldType, value, cancellationToken);
-					}
-					else {
-						if (IsPrimitiveValueType(objValue.ElementType)) {
-							//TODO:
-						}
-					}
+
+					InitializeStaticConstructor(context, frame, ilFrame, fieldDeclType, corFieldDeclType, cancellationToken);
+					Func<(CorValue value, int hr)> createTargetValue = () => {
+						var fieldValue = corFieldDeclType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out var hr);
+						return (fieldValue, hr);
+					};
+					return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, field.FieldType, value, cancellationToken);
 				}
 			}
-			finally {
-				engine.DisposeHandle_CorDebug(fieldValue);
+			else {
+				if (field.IsStatic)
+					return CordbgErrorHelper.InternalError;
+
+				var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
+				corFieldDeclType = GetType(appDomain, fieldDeclType);
+				var objValue = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue());
+				if (objValue == null)
+					return CordbgErrorHelper.InternalError;
+				if (objValue.IsObject) {
+					Func<(CorValue value, int hr)> createTargetValue = () => {
+						// Re-read it since it could've gotten neutered
+						var objValue2 = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue());
+						Debug.Assert(objValue2?.IsObject == true);
+						if (objValue2 == null)
+							return (null, -1);
+						var fieldValue = objValue2.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out var hr);
+						return (fieldValue, hr);
+					};
+					return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, field.FieldType, value, cancellationToken);
+				}
+				else {
+					if (IsPrimitiveValueType(objValue.ElementType)) {
+						//TODO:
+					}
+				}
 			}
 
 			return "NYI";//TODO:
