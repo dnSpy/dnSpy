@@ -424,7 +424,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			//	return Array.CreateInstance(elementType, length);
 
 			var appDomain = elementType.AppDomain;
-
 			DbgDotNetValue typeElementType = null;
 			try {
 				var methodGetType = appDomain.System_Type.GetMethod("GetType", DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
@@ -491,7 +490,46 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Dispatcher.VerifyAccess();
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
-			return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);//TODO:
+
+			// There's no ICorDebugEval method that can create multi-dimensional arrays so
+			// we have to use Array.CreateInstance(Type, int[], int[]). This method has a
+			// problem, whenever rank == 1 and lower bounds == 0, it always creates an
+			// SZ array..., see coreclr code: ArrayNative::CreateInstance
+
+			var appDomain = elementType.AppDomain;
+			DbgDotNetValue typeElementType = null;
+			try {
+				var methodGetType = appDomain.System_Type.GetMethod("GetType", DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
+				var res = engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false, cancellationToken);
+				typeElementType = res.Value;
+				if (res.HasError || res.ValueIsException)
+					return res;
+				if (res.Value.IsNullReference)
+					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+
+				var lengths = new int[dimensionInfos.Length];
+				var lowerBounds = new int[dimensionInfos.Length];
+				for (int i = 0; i < dimensionInfos.Length; i++) {
+					lengths[i] = (int)dimensionInfos[i].Length;
+					lowerBounds[i] = dimensionInfos[i].BaseIndex;
+				}
+
+				var methodCreateInstance = appDomain.System_Array.GetMethod("CreateInstance", DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32.MakeArrayType(), appDomain.System_Int32.MakeArrayType() }, throwOnError: true);
+				res = engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodCreateInstance, null, new object[] { typeElementType, lengths, lowerBounds }, false, cancellationToken);
+				if (res.HasError || res.ValueIsException)
+					return res;
+
+				// Verify that it's not an SZ array
+				if (res.Value.Type.IsSZArray) {
+					res.Value.Dispose();
+					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				}
+
+				return res;
+			}
+			finally {
+				typeElementType?.Dispose();
+			}
 		}
 
 		public DbgDotNetAliasInfo[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
@@ -683,7 +721,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return new DbgDotNetObjectIdImpl(new DbgCorValueHolder(engine, strongHandle, value.Type), id);
 				}
 				catch {
-					strongHandle.DisposeHandle();
+					engine.DisposeHandle_CorDebug(strongHandle);
 					throw;
 				}
 			}
