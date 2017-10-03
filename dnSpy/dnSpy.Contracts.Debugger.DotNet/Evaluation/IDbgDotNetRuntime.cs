@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="frame">Stack frame</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="field">Field</param>
-		/// <param name="value">Value to store, a <see cref="DbgDotNetValue"/> instance or a primitive number or a string</param>
+		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken);
@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="frame">Stack frame</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="method">Method</param>
-		/// <param name="arguments">Arguments, simple types or <see cref="DbgDotNetValue"/>s</param>
+		/// <param name="arguments">Arguments: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken);
@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="context">Context</param>
 		/// <param name="frame">Stack frame</param>
 		/// <param name="ctor">Constructor</param>
-		/// <param name="arguments">Arguments, simple types or <see cref="DbgDotNetValue"/>s</param>
+		/// <param name="arguments">Arguments: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		DbgDotNetValueResult CreateInstance(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, CancellationToken cancellationToken);
@@ -174,7 +174,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="frame">Stack frame</param>
 		/// <param name="index">Metadata index of parameter</param>
 		/// <param name="targetType">Type of the local</param>
-		/// <param name="value">New value, a <see cref="DbgDotNetValue"/> or a primitive number or a string</param>
+		/// <param name="value">New value: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		string SetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken);
@@ -186,17 +186,17 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="frame">Stack frame</param>
 		/// <param name="index">Metadata index of parameter</param>
 		/// <param name="targetType">Type of the parameter</param>
-		/// <param name="value">New value, a <see cref="DbgDotNetValue"/> or a primitive number or a string</param>
+		/// <param name="value">New value: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		string SetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Creates a simple value (a primitive number or a string)
+		/// Creates a simple value (a primitive number or a string, or arrays of those types)
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="frame">Stack frame</param>
-		/// <param name="value">A primitive number or a string</param>
+		/// <param name="value">A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		DbgDotNetCreateValueResult CreateValue(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken);

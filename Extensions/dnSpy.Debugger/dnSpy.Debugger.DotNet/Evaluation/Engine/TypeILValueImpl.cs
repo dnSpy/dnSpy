@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			runtime.CallInstance(objValue, isCallvirt, method, arguments, out returnValue);
 	}
 
-	sealed class ConstantStringILValueImpl : TypeILValueImpl, IDebuggerRuntimeILValue {
+	sealed class ConstantStringILValueImpl : TypeILValueImpl {
 		public string Value { get; }
 		public ConstantStringILValueImpl(DebuggerRuntimeImpl runtime, DbgDotNetValue value, string s) : base(runtime, value) => Value = s;
 	}

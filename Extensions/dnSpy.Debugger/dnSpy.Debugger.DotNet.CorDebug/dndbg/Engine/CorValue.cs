@@ -447,12 +447,15 @@ namespace dndbg.Engine {
 		/// zero-based, single-dimensional array
 		/// </summary>
 		/// <param name="index">Index of element</param>
+		/// <param name="hr">Updated with HRESULT</param>
 		/// <returns></returns>
-		public CorValue GetElementAtPosition(uint index) {
+		public CorValue GetElementAtPosition(uint index, out int hr) {
 			var a = obj as ICorDebugArrayValue;
-			if (a == null)
+			if (a == null) {
+				hr = -1;
 				return null;
-			int hr = a.GetElementAtPosition(index, out var value);
+			}
+			hr = a.GetElementAtPosition(index, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -461,8 +464,9 @@ namespace dndbg.Engine {
 		/// zero-based, single-dimensional array
 		/// </summary>
 		/// <param name="index">Index of element</param>
+		/// <param name="hr">Updated with HRESULT</param>
 		/// <returns></returns>
-		public CorValue GetElementAtPosition(int index) => GetElementAtPosition((uint)index);
+		public CorValue GetElementAtPosition(int index, out int hr) => GetElementAtPosition((uint)index, out hr);
 
 		/// <summary>
 		/// Gets the value at the specified indices or null

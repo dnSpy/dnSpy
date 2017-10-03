@@ -190,7 +190,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		DbgDotNetValue GetArrayElementAt_CorDebug(uint index) {
 			Debug.Assert(IsArray);
 			engine.VerifyCorDebugThread();
-			var elemValue = value.CorValue.GetElementAtPosition(index);
+			var elemValue = value.CorValue.GetElementAtPosition(index, out int hr);
 			if (elemValue == null)
 				return null;
 			return engine.CreateDotNetValue_CorDebug(elemValue, value.Type.AppDomain, tryCreateStrongHandle: true);
@@ -251,19 +251,26 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			case CorElementType.Array:
 			case CorElementType.SZArray:
-				var arrayCount = v.ArrayCount;
-				if (arrayCount == 0)
-					return new DbgRawAddressValue(addr, 0);
-				var elemValue = v.GetElementAtPosition(0);
-				ulong elemSize = elemValue?.Size ?? 0;
-				ulong elemAddr = elemValue?.Address ?? 0;
-				ulong totalSize = elemSize * arrayCount;
-				if (elemAddr == 0 || elemAddr < addr)
-					return null;
-				return new DbgRawAddressValue(elemAddr, totalSize);
+				return GetArrayAddress(v);
 			}
 
 			return new DbgRawAddressValue(addr, size);
+		}
+
+		internal static DbgRawAddressValue? GetArrayAddress(CorValue v) {
+			var addr = v.Address;
+			if (addr == 0)
+				return null;
+			var arrayCount = v.ArrayCount;
+			if (arrayCount == 0)
+				return new DbgRawAddressValue(addr, 0);
+			var elemValue = v.GetElementAtPosition(0, out int hr);
+			ulong elemSize = elemValue?.Size ?? 0;
+			ulong elemAddr = elemValue?.Address ?? 0;
+			ulong totalSize = elemSize * arrayCount;
+			if (elemAddr == 0 || elemAddr < addr)
+				return null;
+			return new DbgRawAddressValue(elemAddr, totalSize);
 		}
 
 		public override DbgDotNetRawValue GetRawValue() => rawValue;

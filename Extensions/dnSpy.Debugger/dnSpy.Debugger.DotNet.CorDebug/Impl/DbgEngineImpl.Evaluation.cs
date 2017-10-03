@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			dnDebugger.DisposeHandle(value);
 		}
 
-		CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(this, appDomain, type);
+		internal CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(this, appDomain, type);
 
 		sealed class EvalTimedOut { }
 

@@ -172,10 +172,17 @@ namespace dndbg.Engine {
 		/// <param name="sizeWritten">Number of bytes written</param>
 		/// <returns></returns>
 		public unsafe int WriteMemory(ulong address, byte[] buffer, long index, int size, out int sizeWritten) {
-			IntPtr sizeWritten2 = IntPtr.Zero;
-			int hr;
+			if (size == 0) {
+				sizeWritten = 0;
+				return 0;
+			}
 			fixed (byte* p = &buffer[index])
-				hr = obj.WriteMemory(address, (uint)size, new IntPtr(p), out sizeWritten2);
+				return WriteMemory(address, p, size, out sizeWritten);
+		}
+
+		public unsafe int WriteMemory(ulong address, void* buffer, int size, out int sizeWritten) {
+			var sizeWritten2 = IntPtr.Zero;
+			int hr = obj.WriteMemory(address, (uint)size, new IntPtr(buffer), out sizeWritten2);
 			const int ERROR_PARTIAL_COPY = unchecked((int)0x8007012B);
 			if (hr < 0 && hr != ERROR_PARTIAL_COPY) {
 				sizeWritten = 0;

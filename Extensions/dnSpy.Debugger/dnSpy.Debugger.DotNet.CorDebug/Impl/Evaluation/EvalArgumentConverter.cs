@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			this.createdValues = createdValues;
 		}
 
-		public EvalArgumentResult Convert(object value, DmdType defaultType, out DmdType type) {
+		public unsafe EvalArgumentResult Convert(object value, DmdType defaultType, out DmdType type) {
 			if (value == null) {
 				type = defaultType;
 				return new EvalArgumentResult(dnEval.CreateNull());
@@ -130,12 +130,214 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 						return CreateUInt32(reflectionAppDomain.System_UIntPtr, ((UIntPtr)value).ToUInt32());
 					return CreateUInt64(reflectionAppDomain.System_UIntPtr, ((UIntPtr)value).ToUInt64());
 				}
-				//TODO: Check for a few more things, eg. arrays of common types
+				if (value is Array array && array.Rank == 1 && value.GetType().GetElementType().MakeArrayType() == value.GetType()) {
+					switch (Type.GetTypeCode(value.GetType().GetElementType())) {
+					case TypeCode.Boolean:
+						var ba = (bool[])value;
+						fixed (void* p = ba)
+							return ConvertSZArray(p, ba.Length, 1, reflectionAppDomain.System_Boolean, out type);
+
+					case TypeCode.Char:
+						var bc = (char[])value;
+						fixed (void* p = bc)
+							return ConvertSZArray(p, bc.Length, 2, reflectionAppDomain.System_Char, out type);
+
+					case TypeCode.SByte:
+						var bsb = (sbyte[])value;
+						fixed (void* p = bsb)
+							return ConvertSZArray(p, bsb.Length, 1, reflectionAppDomain.System_SByte, out type);
+
+					case TypeCode.Byte:
+						var bb = (byte[])value;
+						fixed (void* p = bb)
+							return ConvertSZArray(p, bb.Length, 1, reflectionAppDomain.System_Byte, out type);
+
+					case TypeCode.Int16:
+						var bi16 = (short[])value;
+						fixed (void* p = bi16)
+							return ConvertSZArray(p, bi16.Length, 2, reflectionAppDomain.System_Int16, out type);
+
+					case TypeCode.UInt16:
+						var bu16 = (ushort[])value;
+						fixed (void* p = bu16)
+							return ConvertSZArray(p, bu16.Length, 2, reflectionAppDomain.System_UInt16, out type);
+
+					case TypeCode.Int32:
+						var bi32 = (int[])value;
+						fixed (void* p = bi32)
+							return ConvertSZArray(p, bi32.Length, 4, reflectionAppDomain.System_Int32, out type);
+
+					case TypeCode.UInt32:
+						var bu32 = (uint[])value;
+						fixed (void* p = bu32)
+							return ConvertSZArray(p, bu32.Length, 4, reflectionAppDomain.System_UInt32, out type);
+
+					case TypeCode.Int64:
+						var bi64 = (long[])value;
+						fixed (void* p = bi64)
+							return ConvertSZArray(p, bi64.Length, 8, reflectionAppDomain.System_Int64, out type);
+
+					case TypeCode.UInt64:
+						var bu64 = (ulong[])value;
+						fixed (void* p = bu64)
+							return ConvertSZArray(p, bu64.Length, 8, reflectionAppDomain.System_UInt64, out type);
+
+					case TypeCode.Single:
+						var br4 = (float[])value;
+						fixed (void* p = br4)
+							return ConvertSZArray(p, br4.Length, 4, reflectionAppDomain.System_Single, out type);
+
+					case TypeCode.Double:
+						var br8 = (double[])value;
+						fixed (void* p = br8)
+							return ConvertSZArray(p, br8.Length, 8, reflectionAppDomain.System_Double, out type);
+
+					case TypeCode.String:
+						return ConvertSZArray((string[])value, out type);
+
+					default:
+						break;
+					}
+				}
 				break;
 			}
 
 			type = defaultType;
 			return new EvalArgumentResult($"Func-eval: Can't convert type {value.GetType()} to a debugger value");
+		}
+
+		EvalArgumentResult ConvertSZArray(string[] array, out DmdType type) {
+			var elementType = reflectionAppDomain.System_String;
+			type = elementType.MakeArrayType();
+			var corElementType = engine.GetType(appDomain, elementType);
+			var res = dnEval.CreateSZArray(corElementType, array.Length, out int hr);
+			if (res == null || !res.Value.NormalResult)
+				return EvalArgumentResult.Create(res, hr);
+			if (!IsInitialized(array))
+				return EvalArgumentResult.Create(res, hr);
+			Debug.Assert(array.Length > 0);
+
+			CorValue elem = null;
+			bool error = true;
+			try {
+				var arrayValue = res.Value.ResultOrException;
+				for (int i = 0; i < array.Length; i++) {
+					var s = array[i];
+					if (s == null)
+						continue;
+
+					var stringValueRes = Convert(s, elementType, out var type2);
+					if (stringValueRes.ErrorMessage != null)
+						return new EvalArgumentResult(stringValueRes.ErrorMessage);
+					if (!stringValueRes.CorValue.IsReference)
+						return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+
+					var av = arrayValue;
+					if (av.IsReference)
+						av = av.DereferencedValue;
+					if (av?.IsArray != true)
+						return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+
+					Debug.Assert(elem == null);
+					elem = av.GetElementAtPosition(i, out hr);
+					if (elem == null)
+						return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
+
+					elem.ReferenceAddress = stringValueRes.CorValue.ReferenceAddress;
+
+					engine.DisposeHandle_CorDebug(elem);
+					elem = null;
+				}
+
+				var eaRes = new EvalArgumentResult(AddValue(type, res.Value.ResultOrException));
+				error = false;
+				return eaRes;
+			}
+			finally {
+				if (error)
+					engine.DisposeHandle_CorDebug(res.Value.ResultOrException);
+				engine.DisposeHandle_CorDebug(elem);
+			}
+		}
+
+		unsafe EvalArgumentResult ConvertSZArray(void* array, int length, int elementSize, DmdType elementType, out DmdType type) {
+			type = elementType.MakeArrayType();
+			var corElementType = engine.GetType(appDomain, elementType);
+			var res = dnEval.CreateSZArray(corElementType, length, out int hr);
+			if (res == null || !res.Value.NormalResult)
+				return EvalArgumentResult.Create(res, hr);
+			if (!IsInitialized(array, length * elementSize))
+				return EvalArgumentResult.Create(res, hr);
+
+			bool error = true;
+			try {
+				Debug.Assert(length > 0);
+				var arrayValue = res.Value.ResultOrException;
+				if (arrayValue.IsReference)
+					arrayValue = arrayValue.DereferencedValue;
+				Debug.Assert(arrayValue?.IsArray == true);
+				if (arrayValue?.IsArray != true)
+					return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				var addr = DbgDotNetValueImpl.GetArrayAddress(arrayValue);
+				if (addr == null)
+					return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+
+				hr = appDomain.Process.WriteMemory(addr.Value.Address, array, length * elementSize, out int sizeWritten);
+				if (hr < 0 || sizeWritten != length * elementSize)
+					return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+
+				var eaRes = new EvalArgumentResult(AddValue(type, res.Value.ResultOrException));
+				error = false;
+				return eaRes;
+			}
+			finally {
+				if (error)
+					engine.DisposeHandle_CorDebug(res.Value.ResultOrException);
+			}
+		}
+
+		static bool IsInitialized<T>(T[] array) where T : class {
+			for (int i = 0; i < array.Length; i++) {
+				if (array[i] != null)
+					return true;
+			}
+			return false;
+		}
+
+		static unsafe bool IsInitialized(void* array, int length) {
+			if (IntPtr.Size == 4) {
+				var p = (uint*)array;
+				while (length >= 4) {
+					if (*p != 0)
+						return true;
+					length -= 4;
+					p++;
+				}
+				var pb = (byte*)p;
+				while (length > 0) {
+					if (*pb != 0)
+						return true;
+					pb++;
+					length--;
+				}
+			}
+			else {
+				var p = (ulong*)array;
+				while (length >= 8) {
+					if (*p != 0)
+						return true;
+					length -= 8;
+					p++;
+				}
+				var pb = (byte*)p;
+				while (length > 0) {
+					if (*pb != 0)
+						return true;
+					pb++;
+					length--;
+				}
+			}
+			return false;
 		}
 
 		CorType GetType(DmdType type) => CorDebugTypeCreator.GetType(engine, appDomain, type);
@@ -148,7 +350,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					createdValues.Add(value);
 				}
 				catch {
-					value.DisposeHandle();
+					engine.DisposeHandle_CorDebug(value);
 					throw;
 				}
 			}
