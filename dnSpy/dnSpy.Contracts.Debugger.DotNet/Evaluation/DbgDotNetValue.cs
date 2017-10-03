@@ -37,47 +37,50 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// true if this value references another value
 		/// </summary>
-		public abstract bool IsReference { get; }
+		public virtual bool IsReference => false;
 
 		/// <summary>
 		/// true if this is a null reference. It's only valid if <see cref="IsReference"/> is true
 		/// </summary>
-		public abstract bool IsNullReference { get; }
+		public virtual bool IsNullReference => false;
 
 		/// <summary>
 		/// Gets the address of the reference or null if it's unknown or if it's not a reference (<see cref="IsReference"/>)
 		/// </summary>
 		/// <returns></returns>
-		public abstract ulong? GetReferenceAddress();
+		public virtual ulong? GetReferenceAddress() => null;
 
 		/// <summary>
 		/// Gets the referenced value if it's a reference (<see cref="IsReference"/>) or null if it's not a reference or if it's a null reference.
 		/// </summary>
 		/// <returns></returns>
-		public abstract DbgDotNetValue Dereference();
+		public virtual DbgDotNetValue Dereference() => null;
 
 		/// <summary>
 		/// true if this is a boxed value type
 		/// </summary>
-		public abstract bool IsBox { get; }
+		public virtual bool IsBox => false;
 
 		/// <summary>
 		/// Gets the unboxed value if it's a boxed value (<see cref="IsBox"/>) or null
 		/// </summary>
 		/// <returns></returns>
-		public abstract DbgDotNetValue Unbox();
+		public virtual DbgDotNetValue Unbox() => null;
 
 		/// <summary>
 		/// true if this is an array value
 		/// </summary>
-		public abstract bool IsArray { get; }
+		public virtual bool IsArray => false;
 
 		/// <summary>
 		/// Gets the number of elements of the array (<see cref="IsArray"/>)
 		/// </summary>
 		/// <param name="elementCount">Total number of elements in the array</param>
 		/// <returns></returns>
-		public abstract bool GetArrayCount(out uint elementCount);
+		public virtual bool GetArrayCount(out uint elementCount) {
+			elementCount = 0;
+			return false;
+		}
 
 		/// <summary>
 		/// Gets array information if it's an array (<see cref="IsArray"/>) or returns false
@@ -85,7 +88,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="elementCount">Total number of elements in the array</param>
 		/// <param name="dimensionInfos">Dimension base indexes and lengths</param>
 		/// <returns></returns>
-		public abstract bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos);
+		public virtual bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
+			elementCount = 0;
+			dimensionInfos = null;
+			return false;
+		}
 
 		/// <summary>
 		/// Gets the element at <paramref name="index"/> in the array. This method can be called even if it's
@@ -93,7 +100,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="index">Index of the element</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValue GetArrayElementAt(uint index);
+		public virtual DbgDotNetValue GetArrayElementAt(uint index) => null;
 
 		/// <summary>
 		/// Gets the address of the value or null if there's no address available.
@@ -104,13 +111,13 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// value, else the returned address and length covers the whole object including vtable, method table or other
 		/// special data.</param>
 		/// <returns></returns>
-		public abstract DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress);
+		public virtual DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) => null;
 
 		/// <summary>
 		/// Gets the raw value
 		/// </summary>
 		/// <returns></returns>
-		public abstract DbgDotNetRawValue GetRawValue();
+		public virtual DbgDotNetRawValue GetRawValue() => new DbgDotNetRawValue(DbgSimpleValueType.Other);
 
 		/// <summary>
 		/// Returns the <see cref="IDbgDotNetRuntime"/> instance or null if it's unknown
@@ -121,7 +128,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Called when its owner (<see cref="DbgEngineValue"/>) gets closed
 		/// </summary>
-		public abstract void Dispose();
+		public virtual void Dispose() { }
 	}
 
 	/// <summary>

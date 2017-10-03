@@ -99,33 +99,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 	sealed class TypeVariableValue : DbgDotNetValue {
 		public override DmdType Type => type;
-		public override bool IsReference => false;
-		public override bool IsNullReference => false;
-		public override bool IsBox => false;
-		public override bool IsArray => false;
-
 		readonly DmdType type;
 
 		public TypeVariableValue(DmdType type) => this.type = type ?? throw new ArgumentNullException(nameof(type));
 
-		public override ulong? GetReferenceAddress() => null;
-		public override DbgDotNetValue Dereference() => null;
-		public override DbgDotNetValue Unbox() => null;
-
-		public override bool GetArrayCount(out uint elementCount) {
-			elementCount = 0;
-			return false;
-		}
-
-		public override bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
-			elementCount = 0;
-			dimensionInfos = null;
-			return false;
-		}
-
-		public override DbgDotNetValue GetArrayElementAt(uint index) => null;
-		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) => null;
 		public override DbgDotNetRawValue GetRawValue() => new DbgDotNetRawValue(DbgSimpleValueType.Other, type);
-		public override void Dispose() { }
 	}
 }

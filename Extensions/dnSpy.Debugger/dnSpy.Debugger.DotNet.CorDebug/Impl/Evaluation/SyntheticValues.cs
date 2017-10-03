@@ -116,11 +116,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 	sealed class SyntheticValue : DbgDotNetValue {
 		public override DmdType Type { get; }
-		public override bool IsReference => false;
-		public override bool IsNullReference => false;
-		public override bool IsBox => false;
-		public override bool IsArray => false;
-
 		readonly DbgDotNetRawValue rawValue;
 
 		public SyntheticValue(DmdType type, DbgDotNetRawValue rawValue) {
@@ -129,58 +124,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		public override DbgDotNetRawValue GetRawValue() => rawValue;
-
-		public override ulong? GetReferenceAddress() => null;
-		public override DbgDotNetValue Dereference() => null;
-		public override DbgDotNetValue Unbox() => null;
-
-		public override bool GetArrayCount(out uint elementCount) {
-			elementCount = 0;
-			return false;
-		}
-
-		public override bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
-			elementCount = 0;
-			dimensionInfos = null;
-			return false;
-		}
-
-		public override DbgDotNetValue GetArrayElementAt(uint index) => null;
-		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) => null;
-
-		public override void Dispose() { }
 	}
 
 	sealed class SyntheticNullValue : DbgDotNetValue {
 		public override DmdType Type { get; }
 		public override bool IsReference => true;
 		public override bool IsNullReference => true;
-		public override bool IsBox => false;
-		public override bool IsArray => false;
 
 		public SyntheticNullValue(DmdType type) =>
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 
 		public override DbgDotNetRawValue GetRawValue() => new DbgDotNetRawValue(DbgSimpleValueType.Other, null);
-
-		public override ulong? GetReferenceAddress() => null;
-		public override DbgDotNetValue Dereference() => null;
-		public override DbgDotNetValue Unbox() => null;
-
-		public override bool GetArrayCount(out uint elementCount) {
-			elementCount = 0;
-			return false;
-		}
-
-		public override bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
-			elementCount = 0;
-			dimensionInfos = null;
-			return false;
-		}
-
-		public override DbgDotNetValue GetArrayElementAt(uint index) => null;
-		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) => null;
-
-		public override void Dispose() { }
 	}
 }
