@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			runtime.LoadInstanceField(ReadValueImpl(), field);
 
 		public override ILValue LoadFieldAddress(DmdFieldInfo field) {
-			if (Type.GetElementType().IsValueType)
+			if (field.ReflectedType.IsValueType)
 				return runtime.LoadValueTypeFieldAddress(this, field);
 			return null;
 		}
@@ -54,8 +54,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
 			runtime.CallInstance(ReadValueImpl(), isCallvirt, method, arguments, out returnValue);
 
-		public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) =>
-			runtime.CreateILValue(ReadValueImpl());
+		public ILValue LoadIndirect() => runtime.CreateILValue(ReadValueImpl());
+		public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) => LoadIndirect();
 
 		public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
 			WriteValue(runtime.GetDebuggerValue(value, Type.GetElementType()));
@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public ReferenceTypeFieldAddress(DebuggerRuntimeImpl runtime, DbgDotNetValue objValue, DmdFieldInfo field)
 			: base(runtime, field.FieldType) {
-			Debug.Assert(!objValue.Type.IsValueType && !objValue.Type.IsArray);
+			Debug.Assert(!field.ReflectedType.IsValueType && !objValue.Type.IsArray);
 			this.objValue = objValue;
 			this.field = field;
 		}
@@ -110,18 +110,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	}
 
 	sealed class ValueTypeFieldAddress : AddressILValue {
-		readonly ByRefILValue objValue;
+		readonly AddressILValue objValue;
 		readonly DmdFieldInfo field;
 
-		public ValueTypeFieldAddress(DebuggerRuntimeImpl runtime, ByRefILValue objValue, DmdFieldInfo field)
+		public ValueTypeFieldAddress(DebuggerRuntimeImpl runtime, AddressILValue objValue, DmdFieldInfo field)
 			: base(runtime, field.FieldType) {
-			Debug.Assert(objValue.Type.IsValueType);
+			Debug.Assert(field.ReflectedType.IsValueType);
 			this.objValue = objValue;
 			this.field = field;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.LoadInstanceField2(runtime.GetDotNetValue(objValue), field);
-		protected override void WriteValue(object value) => runtime.StoreInstanceField(runtime.GetDotNetValue(objValue), field, value);
+		protected override DbgDotNetValue ReadValue() => runtime.LoadInstanceField2(runtime.GetDotNetValue(objValue.LoadIndirect()), field);
+		protected override void WriteValue(object value) => runtime.StoreInstanceField(runtime.GetDotNetValue(objValue.LoadIndirect()), field, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is ValueTypeFieldAddress addr &&

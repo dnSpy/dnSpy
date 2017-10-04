@@ -18,50 +18,28 @@
 */
 
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	sealed class ByRefILValueImpl : ByRefILValue, IDebuggerRuntimeILValue {
+	sealed class ByRefILValueImpl : AddressILValue, IDebuggerRuntimeILValue {
 		public override DmdType Type => byRefValue.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => byRefValue;
 
-		readonly DebuggerRuntimeImpl runtime;
 		readonly DbgDotNetValue byRefValue;
 
-		public ByRefILValueImpl(DebuggerRuntimeImpl runtime, DbgDotNetValue byRefValue) {
-			this.runtime = runtime;
+		public ByRefILValueImpl(DebuggerRuntimeImpl runtime, DbgDotNetValue byRefValue)
+			: base(runtime, byRefValue.Type.GetElementType()) {
 			this.byRefValue = byRefValue;
 		}
 
-		public override bool StoreField(DmdFieldInfo field, ILValue value) =>
-			runtime.StoreInstanceField(byRefValue, field, value);
+		protected override DbgDotNetValue ReadValue() => runtime.RecordValue(byRefValue.GetDereferencedValue());
 
-		public override ILValue LoadField(DmdFieldInfo field) =>
-			runtime.LoadInstanceField(byRefValue, field);
-
-		public override ILValue LoadFieldAddress(DmdFieldInfo field) {
-			if (Type.GetElementType().IsValueType)
-				return runtime.LoadValueTypeFieldAddress(this, field);
-			return null;
+		protected override void WriteValue(object value) {
+			throw new System.NotImplementedException();//TODO:
 		}
 
-		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
-			runtime.CallInstance(byRefValue, isCallvirt, method, arguments, out returnValue);
-
-		public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) =>
-			runtime.CreateILValue(byRefValue.GetDereferencedValue());
-
-		public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
-			return false;//TODO:
-		}
-
-		public override bool InitializeObject(DmdType type) {
-			return false;//TODO:
-		}
-
-		public override bool CopyObject(DmdType type, ILValue source) {
-			return false;//TODO:
-		}
+		public override bool Equals(AddressILValue other) =>
+			other is ByRefILValueImpl addr &&
+			runtime.Equals(byRefValue, addr.byRefValue);
 	}
 }

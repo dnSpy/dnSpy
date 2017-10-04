@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;

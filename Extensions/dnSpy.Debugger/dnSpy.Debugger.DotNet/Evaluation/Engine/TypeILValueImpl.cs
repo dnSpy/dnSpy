@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			runtime.LoadInstanceField(objValue, field);
 
 		public override ILValue LoadFieldAddress(DmdFieldInfo field) {
-			if (!Type.IsValueType)
+			if (!field.ReflectedType.IsValueType)
 				return runtime.LoadReferenceTypeFieldAddress(objValue, field);
 			return null;
 		}

@@ -460,13 +460,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		internal DbgDotNetValue LoadInstanceField2(DbgDotNetValue objValue, DmdFieldInfo field) =>
 			RecordValue(runtime.LoadField(context, frame, objValue, field, cancellationToken));
 
-		internal ILValue LoadValueTypeFieldAddress(ByRefILValue objValue, DmdFieldInfo field) {
-			Debug.Assert(objValue.Type.GetElementType().IsValueType);
+		internal ILValue LoadValueTypeFieldAddress(AddressILValue objValue, DmdFieldInfo field) {
+			Debug.Assert(field.ReflectedType.IsValueType);
 			return new ValueTypeFieldAddress(this, objValue, field);
 		}
 
 		internal ILValue LoadReferenceTypeFieldAddress(DbgDotNetValue objValue, DmdFieldInfo field) {
-			Debug.Assert(objValue.Type.GetElementType().IsValueType);
+			Debug.Assert(field.ReflectedType.IsValueType);
 			return new ReferenceTypeFieldAddress(this, objValue, field);
 		}
 
