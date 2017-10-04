@@ -87,13 +87,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.DotNet.Metad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.DotNet.Interpreter", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Interpreter\dnSpy.Debugger.DotNet.Interpreter.csproj", "{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExpressionEvaluator", "ExpressionEvaluator", "{AF34FB07-B743-4A53-B430-53EFAA27FB92}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExpressionCompiler", "ExpressionCompiler", "{AF34FB07-B743-4A53-B430-53EFAA27FB92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionEvaluator\Core\ExpressionCompiler\ExpressionCompiler.csproj", "{255C3FEC-91B5-4E11-AAF8-9B102EA57634}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\Core\ExpressionCompiler\ExpressionCompiler.csproj", "{255C3FEC-91B5-4E11-AAF8-9B102EA57634}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionEvaluator\CSharp\CSharpExpressionCompiler\CSharpExpressionCompiler.csproj", "{DAD4C898-6CFF-485E-AB51-8D7E56F4C672}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\CSharp\CSharpExpressionCompiler\CSharpExpressionCompiler.csproj", "{DAD4C898-6CFF-485E-AB51-8D7E56F4C672}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "BasicExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionEvaluator\VisualBasic\BasicExpressionCompiler\BasicExpressionCompiler.vbproj", "{4B38BFCF-4253-48E7-8AD2-861AE12F41DF}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "BasicExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\VisualBasic\BasicExpressionCompiler\BasicExpressionCompiler.vbproj", "{4B38BFCF-4253-48E7-8AD2-861AE12F41DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

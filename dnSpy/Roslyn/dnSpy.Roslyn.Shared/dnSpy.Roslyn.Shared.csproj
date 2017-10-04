@@ -209,15 +209,15 @@
       <Project>{8b774e77-c956-4abc-bbfe-8756cb4111c8}</Project>
       <Name>dnSpy.Roslyn.VisualBasic.Internal</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Roslyn.ExpressionEvaluator\Core\ExpressionCompiler\ExpressionCompiler.csproj">
+    <ProjectReference Include="..\Roslyn.ExpressionCompiler\Core\ExpressionCompiler\ExpressionCompiler.csproj">
       <Project>{255C3FEC-91B5-4E11-AAF8-9B102EA57634}</Project>
       <Name>ExpressionCompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Roslyn.ExpressionEvaluator\CSharp\CSharpExpressionCompiler\CSharpExpressionCompiler.csproj">
+    <ProjectReference Include="..\Roslyn.ExpressionCompiler\CSharp\CSharpExpressionCompiler\CSharpExpressionCompiler.csproj">
       <Project>{dad4c898-6cff-485e-ab51-8d7e56f4c672}</Project>
       <Name>CSharpExpressionCompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Roslyn.ExpressionEvaluator\VisualBasic\BasicExpressionCompiler\BasicExpressionCompiler.vbproj">
+    <ProjectReference Include="..\Roslyn.ExpressionCompiler\VisualBasic\BasicExpressionCompiler\BasicExpressionCompiler.vbproj">
       <Project>{4b38bfcf-4253-48e7-8ad2-861ae12f41df}</Project>
       <Name>BasicExpressionCompiler</Name>
     </ProjectReference>
