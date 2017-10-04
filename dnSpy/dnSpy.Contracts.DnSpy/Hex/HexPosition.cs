@@ -203,7 +203,9 @@ namespace dnSpy.Contracts.Hex {
 			result = default;
 			if (value == null)
 				throw new ArgumentNullException(nameof(value));
+			const string digitSeparator = "_";
 			value = value.Trim();
+			value = value.Replace(digitSeparator, string.Empty);
 			if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase) || value.StartsWith("&H", StringComparison.OrdinalIgnoreCase)) {
 				int hexLength = value.Length - 2;
 				if (hexLength == 0 || hexLength > 32)
