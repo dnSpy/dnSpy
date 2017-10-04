@@ -63,8 +63,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					expectedType = field.FieldType;
 					imageName = ImageNameUtils.GetImageName(field);
 					valueResult = runtime.LoadField(context, frame, null, field, cancellationToken);
-					// Ingore field.IsInitOnly
-					isReadOnly = field.IsLiteral;
+					// We should be able to change read only fields (we're a debugger), but since the
+					// compiler will complain, we have to prevent the user from editing the value.
+					isReadOnly = field.IsLiteral || field.IsInitOnly;
 					break;
 
 				case DmdMemberTypes.Property:
