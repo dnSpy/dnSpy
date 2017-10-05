@@ -228,7 +228,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 					var stringValueRes = Convert(s, elementType, out var type2);
 					if (stringValueRes.ErrorMessage != null)
-						return new EvalArgumentResult(stringValueRes.ErrorMessage);
+						return stringValueRes;
 					if (!stringValueRes.CorValue.IsReference)
 						return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 

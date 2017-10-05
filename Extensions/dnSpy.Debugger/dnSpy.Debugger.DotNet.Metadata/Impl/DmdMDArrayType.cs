@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var rank = SafeRank;
 			var types = new DmdType[rank + ((object)lastType == null ? 0 : 1)];
 			var int32Type = AppDomain.System_Int32;
-			for (int i = 0; i < rank; i++)
+			for (int i = 0; i < types.Length; i++)
 				types[i] = int32Type;
 			if ((object)lastType != null)
 				types[types.Length - 1] = lastType;

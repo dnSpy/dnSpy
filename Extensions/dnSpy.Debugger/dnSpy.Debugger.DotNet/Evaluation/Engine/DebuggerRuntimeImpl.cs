@@ -485,6 +485,26 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return true;
 		}
 
+		internal object GetDefaultValue(DmdType type) {
+			if (!type.IsValueType)
+				return null;
+			switch (DmdType.GetTypeCode(type)) {
+			case TypeCode.Boolean:		return false;
+			case TypeCode.Char:			return (char)0;
+			case TypeCode.SByte:		return (sbyte)0;
+			case TypeCode.Byte:			return (byte)0;
+			case TypeCode.Int16:		return (short)0;
+			case TypeCode.UInt16:		return (ushort)0;
+			case TypeCode.Int32:		return 0;
+			case TypeCode.UInt32:		return 0U;
+			case TypeCode.Int64:		return 0L;
+			case TypeCode.UInt64:		return 0UL;
+			case TypeCode.Single:		return 0f;
+			case TypeCode.Double:		return 0d;
+			}
+			return RecordValue(runtime.CreateInstanceNoConstructor(context, frame, type, cancellationToken));
+		}
+
 		internal bool CallInstance(DbgDotNetValue objValue, bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
 			Call(objValue, isCallvirt, method, arguments, out returnValue);
 

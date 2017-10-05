@@ -63,11 +63,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override bool InitializeObject(DmdType type) {
-			return false;//TODO:
+			var defaultValue = runtime.GetDefaultValue(type);
+			WriteValue(defaultValue);
+			return true;
 		}
 
 		public override bool CopyObject(DmdType type, ILValue source) {
-			return false;//TODO:
+			var sourceAddr = source as AddressILValue;
+			if (sourceAddr == null)
+				return false;
+			WriteValue(sourceAddr.ReadValue());
+			return true;
 		}
 
 		public abstract bool Equals(AddressILValue other);
