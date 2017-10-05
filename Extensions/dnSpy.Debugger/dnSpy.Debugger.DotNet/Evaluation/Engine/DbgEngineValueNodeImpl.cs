@@ -133,9 +133,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgEngineValueNodeAssignmentResult AssignCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			var ee = context.Language.ExpressionEvaluator;
 			var res = ee.Assign(context, frame, Expression, expression, options, cancellationToken);
-			if (res.Error != null)
-				return new DbgEngineValueNodeAssignmentResult(res.Error);
-			return new DbgEngineValueNodeAssignmentResult();
+			return new DbgEngineValueNodeAssignmentResult(res.Flags, res.Error);
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {

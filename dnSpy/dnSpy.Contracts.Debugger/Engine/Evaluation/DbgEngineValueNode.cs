@@ -154,9 +154,18 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public string Error { get; }
 
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public DbgEEAssignmentResultFlags Flags { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="flags">Result flags</param>
 		/// <param name="error">Error message or one of the errors in <see cref="PredefinedEvaluationErrorMessages"/></param>
-		public DbgEngineValueNodeAssignmentResult(string error) => Error = error ?? throw new ArgumentNullException(nameof(error));
+		public DbgEngineValueNodeAssignmentResult(DbgEEAssignmentResultFlags flags, string error) {
+			Flags = flags;
+			Error = error;
+		}
 	}
 }

@@ -48,34 +48,36 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(AssignCore(context, frame, expression, valueExpression, options, cancellationToken)));
 
 		DbgEngineEEAssignmentResult AssignCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+			var resultFlags = DbgEEAssignmentResultFlags.None;
 			try {
 				var references = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
 				if (references.Length == 0)
-					return new DbgEngineEEAssignmentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+					return new DbgEngineEEAssignmentResult(resultFlags, PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 				var aliases = Array.Empty<DbgDotNetAlias>();//TODO: Add all aliases
 				var compRes = expressionCompiler.CompileAssignment(context, frame, references, aliases, expression, valueExpression, options, cancellationToken);
 				cancellationToken.ThrowIfCancellationRequested();
 				if (compRes.IsError)
-					return new DbgEngineEEAssignmentResult(compRes.ErrorMessage);
+					return new DbgEngineEEAssignmentResult(resultFlags | DbgEEAssignmentResultFlags.CompilerError, compRes.ErrorMessage);
 
 				var state = dnILInterpreter.CreateState(context, compRes.Assembly);
 				ref var exprInfo = ref compRes.CompiledExpressions[0];
 				if (exprInfo.ErrorMessage != null)
-					return new DbgEngineEEAssignmentResult(exprInfo.ErrorMessage);
+					return new DbgEngineEEAssignmentResult(resultFlags | DbgEEAssignmentResultFlags.CompilerError, exprInfo.ErrorMessage);
+				resultFlags |= DbgEEAssignmentResultFlags.ExecutedCode;
 				var res = dnILInterpreter.Execute(context, frame, state, exprInfo.TypeName, exprInfo.MethodName, ToValueNodeEvaluationOptions(options), out _, cancellationToken);
 				if (res.HasError)
-					return new DbgEngineEEAssignmentResult(res.ErrorMessage);
+					return new DbgEngineEEAssignmentResult(resultFlags, res.ErrorMessage);
 				if (res.ValueIsException) {
 					res.Value?.Dispose();
-					return new DbgEngineEEAssignmentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+					return new DbgEngineEEAssignmentResult(resultFlags, PredefinedEvaluationErrorMessages.InternalDebuggerError);
 				}
 
 				res.Value?.Dispose();
 				return new DbgEngineEEAssignmentResult();
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgEngineEEAssignmentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				return new DbgEngineEEAssignmentResult(resultFlags, PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 

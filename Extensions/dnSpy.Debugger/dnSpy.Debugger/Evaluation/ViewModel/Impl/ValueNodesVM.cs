@@ -106,11 +106,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void OnValueNodeAssigned(string errorMessage) {
+		void OnValueNodeAssigned(string errorMessage, bool retry) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			if (errorMessage != null)
 				valueNodesContext.ShowMessageBox(errorMessage, ShowMessageBoxButtons.OK);
-			RecreateRootChildren_UI();
+			if (!retry)
+				RecreateRootChildren_UI();
 		}
 
 		// UI thread

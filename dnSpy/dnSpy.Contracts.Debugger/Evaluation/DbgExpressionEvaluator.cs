@@ -200,6 +200,26 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	}
 
 	/// <summary>
+	/// Assignment result flags
+	/// </summary>
+	public enum DbgEEAssignmentResultFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// The error is from the compiler and no debuggee code was executed
+		/// </summary>
+		CompilerError		= 0x00000001,
+
+		/// <summary>
+		/// Code in the debuggee was executed
+		/// </summary>
+		ExecutedCode		= 0x00000002,
+	}
+
+	/// <summary>
 	/// Expression evaluator assignment result
 	/// </summary>
 	public struct DbgEEAssignmentResult {
@@ -209,9 +229,23 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public string Error { get; }
 
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public DbgEEAssignmentResultFlags Flags { get; }
+
+		/// <summary>
+		/// true if the error is from the compiler and no debuggee code was executed
+		/// </summary>
+		public bool IsCompilerError => (Flags & DbgEEAssignmentResultFlags.CompilerError) != 0;
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="flags">Result flags</param>
 		/// <param name="error">Error message or null</param>
-		public DbgEEAssignmentResult(string error) => Error = error;
+		public DbgEEAssignmentResult(DbgEEAssignmentResultFlags flags, string error) {
+			Flags = flags;
+			Error = error;
+		}
 	}
 }

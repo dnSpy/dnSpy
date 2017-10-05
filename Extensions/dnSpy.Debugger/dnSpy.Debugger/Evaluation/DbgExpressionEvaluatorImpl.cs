@@ -51,11 +51,7 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		DbgEEAssignmentResult CreateResult(DbgEngineEEAssignmentResult result) {
-			if (result.Error != null)
-				return new DbgEEAssignmentResult(result.Error);
-			return new DbgEEAssignmentResult();
-		}
+		DbgEEAssignmentResult CreateResult(DbgEngineEEAssignmentResult result) => new DbgEEAssignmentResult(result.Flags, result.Error);
 
 		public override DbgEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			if (context == null)

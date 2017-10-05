@@ -133,9 +133,23 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public string Error { get; }
 
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public DbgEEAssignmentResultFlags Flags { get; }
+
+		/// <summary>
+		/// true if the error is from the compiler and no debuggee code was executed
+		/// </summary>
+		public bool IsCompilerError => (Flags & DbgEEAssignmentResultFlags.CompilerError) != 0;
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="flags">Result flags</param>
 		/// <param name="error">Error message or null</param>
-		public DbgEngineEEAssignmentResult(string error) => Error = error ?? throw new ArgumentNullException(nameof(error));
+		public DbgEngineEEAssignmentResult(DbgEEAssignmentResultFlags flags, string error) {
+			Flags = flags;
+			Error = error;
+		}
 	}
 }

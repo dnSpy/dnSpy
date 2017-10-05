@@ -241,10 +241,19 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public string Error { get; }
 
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public DbgEEAssignmentResultFlags Flags { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="flags">Result flags</param>
 		/// <param name="error">Error message or null if none</param>
-		public DbgValueNodeAssignmentResult(string error) => Error = error;
+		public DbgValueNodeAssignmentResult(DbgEEAssignmentResultFlags flags, string error) {
+			Flags = flags;
+			Error = error;
+		}
 	}
 
 	/// <summary>

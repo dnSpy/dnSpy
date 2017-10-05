@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		LanguageEditValueProvider ValueEditValueProvider { get; }
 		LanguageEditValueProvider NameEditValueProvider { get; }
 		DbgEvaluationContext EvaluationContext { get; }
-		Action<string> OnValueNodeAssigned { get; }
+		Action<string, bool> OnValueNodeAssigned { get; }
 		DbgStackFrame StackFrame { get; }
 		DbgEvaluationOptions EvaluationOptions { get; }
 		DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; }
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public LanguageEditValueProvider ValueEditValueProvider { get; }
 		public LanguageEditValueProvider NameEditValueProvider { get; }
 		public DbgEvaluationContext EvaluationContext { get; set; }
-		public Action<string> OnValueNodeAssigned { get; }
+		public Action<string, bool> OnValueNodeAssigned { get; }
 		public DbgStackFrame StackFrame { get; set; }
 		public DbgEvaluationOptions EvaluationOptions { get; set; }
 		public DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; set; }
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public bool IsWindowReadOnly { get; set; }
 		public CultureInfo FormatCulture { get; }
 
-		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CultureInfo formatCulture, ShowMessageBox showMessageBox, Action<string> onValueNodeAssigned) {
+		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CultureInfo formatCulture, ShowMessageBox showMessageBox, Action<string, bool> onValueNodeAssigned) {
 			UIDispatcher = uiDispatcher;
 			EditValueNodeExpression = editValueNodeExpression;
 			WindowContentType = windowContentType;

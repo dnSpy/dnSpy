@@ -264,7 +264,15 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var res = RawNode.Assign(Context.EvaluationContext, Context.StackFrame, expression, Context.EvaluationOptions);
 			if (res.Error == null)
 				oldCachedValue = cachedValue;
-			Context.OnValueNodeAssigned(res.Error);
+			bool retry = res.Error != null &&
+				(res.Flags & DbgEEAssignmentResultFlags.CompilerError) != 0 &&
+				(res.Flags & DbgEEAssignmentResultFlags.ExecutedCode) == 0 &&
+				CanEditValue();
+			Context.OnValueNodeAssigned(res.Error, retry);
+			if (retry) {
+				Context.ExpressionToEdit = expression;
+				ValueEditableValue.IsEditingValue = true;
+			}
 		}
 
 		public override bool Activate() => IsEditingValue();

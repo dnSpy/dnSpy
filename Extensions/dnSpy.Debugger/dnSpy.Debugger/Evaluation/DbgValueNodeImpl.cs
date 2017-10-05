@@ -154,9 +154,9 @@ namespace dnSpy.Debugger.Evaluation {
 			if (result.Error != null) {
 				if (engineValueNode.Value != value.EngineValue)
 					throw new InvalidOperationException();
-				return new DbgValueNodeAssignmentResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
+				return new DbgValueNodeAssignmentResult(result.Flags, PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
 			}
-			return new DbgValueNodeAssignmentResult(error: null);
+			return new DbgValueNodeAssignmentResult(result.Flags, result.Error);
 		}
 
 		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
