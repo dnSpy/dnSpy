@@ -1872,4 +1872,46 @@ HResult: 0x{3:X8}</value>
   <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
     <value>Показывать сырую структуру объектов в окнах переменных</value>
   </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Unknown&gt;</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
+    <value>Group parameters and locals together</value>
+  </data>
+  <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
+    <value>Show compiler generated variables</value>
+  </data>
+  <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
+    <value>Show decompiler generated variables</value>
+  </data>
+  <data name="DbgSettings_SortLocals" xml:space="preserve">
+    <value>Sort locals</value>
+  </data>
+  <data name="DbgSettings_SortParameters" xml:space="preserve">
+    <value>Sort parameters</value>
+  </data>
+  <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
+    <value>Hide compiler generated members</value>
+  </data>
+  <data name="FunctionEvaluationDisabled" xml:space="preserve">
+    <value>Implicit function evaluation is turned off by the user</value>
+  </data>
+  <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
+    <value>Respect attributes that hide members</value>
+  </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Internal debugger error</value>
+  </data>
+  <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
+    <value>The function evaluation requires all threads to run.</value>
+  </data>
+  <data name="DigitSeparatorsCommand" xml:space="preserve">
+    <value>Digit Separators</value>
+  </data>
+  <data name="Column_ProcessCommandLine" xml:space="preserve">
+    <value>Command Line</value>
+  </data>
 </root>

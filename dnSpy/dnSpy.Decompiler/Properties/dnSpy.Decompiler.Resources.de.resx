@@ -202,7 +202,7 @@
     <value>Diese Assembly enthält nicht verwalteten Code.</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
-    <value>Zeitstempel: {0:X8} ({1})</value>
+    <value>Zeitstempel:</value>
   </data>
   <data name="MSBuild_CreateResource" xml:space="preserve">
     <value>Erstelle Ressource {0}</value>
@@ -230,5 +230,26 @@
   </data>
   <data name="MSBuild_CreateResXFile" xml:space="preserve">
     <value>Erstelle ResX Datei</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Unbekannt&gt;</value>
+  </data>
+  <data name="CSharp_Awaitable_Method" xml:space="preserve">
+    <value>awaitable</value>
+  </data>
+  <data name="CSharp_Deprecated_Member" xml:space="preserve">
+    <value>veraltet</value>
+  </data>
+  <data name="CSharp_Extension_Method" xml:space="preserve">
+    <value>Erweiterung</value>
+  </data>
+  <data name="VisualBasic_Awaitable_Method" xml:space="preserve">
+    <value>Awaitable</value>
+  </data>
+  <data name="VisualBasic_Deprecated_Member" xml:space="preserve">
+    <value>Veraltet</value>
+  </data>
+  <data name="VisualBasic_Extension_Method" xml:space="preserve">
+    <value>Erweiterung</value>
   </data>
 </root>

@@ -126,6 +126,36 @@
   <data name="ConstantsToolTip" xml:space="preserve">
     <value>常量</value>
   </data>
+  <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
+    <value>Expression has been evaluated and has no value</value>
+  </data>
+  <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
+    <value>静态成员</value>
+  </data>
+  <data name="DebuggerVarsWindow_Empty_PropertyName" xml:space="preserve">
+    <value>空</value>
+  </data>
+  <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
+    <value>Expanding the Results View will enumerate the IEnumerable</value>
+  </data>
+  <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
+    <value>实例成员</value>
+  </data>
+  <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
+    <value>Raw View</value>
+  </data>
+  <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
+    <value>结果视图</value>
+  </data>
+  <data name="DebuggerVarsWindow_ResultsView_NoResults" xml:space="preserve">
+    <value>Enumeration yielded no results</value>
+  </data>
+  <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
+    <value>共享的成员</value>
+  </data>
   <data name="DelegatesToolTip" xml:space="preserve">
     <value>委托</value>
   </data>
@@ -156,6 +186,12 @@
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
     <value>局部变量和参数</value>
   </data>
+  <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
+    <value>{0} returned</value>
+  </data>
+  <data name="LocalsWindow_TypeVariables" xml:space="preserve">
+    <value>类型变量</value>
+  </data>
   <data name="MethodsToolTip" xml:space="preserve">
     <value>方法</value>
   </data>
@@ -173,5 +209,8 @@
   </data>
   <data name="StructuresToolTip" xml:space="preserve">
     <value>结构</value>
+  </data>
+  <data name="SystemCoreDllNotLoaded" xml:space="preserve">
+    <value>Results View requires {0} to be referenced</value>
   </data>
 </root>

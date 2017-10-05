@@ -135,17 +135,26 @@
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
     <value>Отменить загрузку модулей?</value>
   </data>
+  <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
+    <value>Decompiler generated variables can't be evaluated</value>
+  </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
     <value>Смещение в IL {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>линия {0} символ {1}</value>
   </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Internal debugger error</value>
+  </data>
   <data name="LoadModule_InfoText" xml:space="preserve">
     <value>Загрузка модуля. Это может занять некоторое время.</value>
   </data>
   <data name="LoadModule_Title" xml:space="preserve">
     <value>Загрузка динамических модулей</value>
+  </data>
+  <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
+    <value>'{0}' threw an exception of type '{1}'</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>Перед загрузкой динамических модулей необходимо остановить процесс.</value>

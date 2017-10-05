@@ -126,6 +126,36 @@
   <data name="ConstantsToolTip" xml:space="preserve">
     <value>Konstanten</value>
   </data>
+  <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
+    <value>Ausdruck wurde ausgewertet und hat keinen Wert</value>
+  </data>
+  <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
+    <value>Static members</value>
+  </data>
+  <data name="DebuggerVarsWindow_Empty_PropertyName" xml:space="preserve">
+    <value>Leer</value>
+  </data>
+  <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
+    <value>Expanding the Results View will enumerate the IEnumerable</value>
+  </data>
+  <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
+    <value>Instance members</value>
+  </data>
+  <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
+    <value>Unformatierte Ansicht</value>
+  </data>
+  <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
+    <value>Ergebnisansicht</value>
+  </data>
+  <data name="DebuggerVarsWindow_ResultsView_NoResults" xml:space="preserve">
+    <value>Enumeration yielded no results</value>
+  </data>
+  <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
+    <value>Shared members</value>
+  </data>
   <data name="DelegatesToolTip" xml:space="preserve">
     <value>Delegaten</value>
   </data>
@@ -156,6 +186,12 @@
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
     <value>Felder und Parameter</value>
   </data>
+  <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
+    <value>{0} zurückgegeben</value>
+  </data>
+  <data name="LocalsWindow_TypeVariables" xml:space="preserve">
+    <value>Typparameter</value>
+  </data>
   <data name="MethodsToolTip" xml:space="preserve">
     <value>Methoden</value>
   </data>
@@ -173,5 +209,8 @@
   </data>
   <data name="StructuresToolTip" xml:space="preserve">
     <value>Strukturen</value>
+  </data>
+  <data name="SystemCoreDllNotLoaded" xml:space="preserve">
+    <value>Results View requires {0} to be referenced</value>
   </data>
 </root>

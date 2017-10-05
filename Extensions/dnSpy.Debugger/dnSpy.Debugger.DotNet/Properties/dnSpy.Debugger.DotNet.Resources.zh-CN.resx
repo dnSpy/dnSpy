@@ -135,17 +135,26 @@
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
     <value>取消加载模块吗？</value>
   </data>
+  <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
+    <value>反编译器生成的变量不能被求值</value>
+  </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
     <value>IL 偏移量 {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>行 {0} 字符 {1}</value>
   </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>内部调试器错误</value>
+  </data>
   <data name="LoadModule_InfoText" xml:space="preserve">
     <value>正在加载模块。如果它是个大模块则需要一些时间。</value>
   </data>
   <data name="LoadModule_Title" xml:space="preserve">
     <value>加载动态模块中</value>
+  </data>
+  <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
+    <value>'{0}' threw an exception of type '{1}'</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>加载动态模块前您必须先中断此进程。</value>

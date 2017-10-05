@@ -286,4 +286,7 @@ Erro: {0}</value>
   <data name="Error_CouldNotBreakProcess" xml:space="preserve">
     <value>Could not break process. Error: 0x{0:X8}</value>
   </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Internal debugger error</value>
+  </data>
 </root>

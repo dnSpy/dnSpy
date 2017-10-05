@@ -1913,4 +1913,7 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   <data name="EditLabelsTitle" xml:space="preserve">
     <value>Edit Labels</value>
   </data>
+  <data name="User_Administrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
 </root>

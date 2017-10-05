@@ -202,7 +202,7 @@
     <value>Este assembly contém o código não gerenciado.</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
-    <value>Timestamp: {0:X8} ({1})</value>
+    <value>Timestamp:</value>
   </data>
   <data name="MSBuild_CreateResource" xml:space="preserve">
     <value>Criar recurso {0}</value>
@@ -230,5 +230,26 @@
   </data>
   <data name="MSBuild_CreateResXFile" xml:space="preserve">
     <value>Criar ficheiro ResX</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Unknown&gt;</value>
+  </data>
+  <data name="CSharp_Awaitable_Method" xml:space="preserve">
+    <value>awaitable</value>
+  </data>
+  <data name="CSharp_Deprecated_Member" xml:space="preserve">
+    <value>deprecated</value>
+  </data>
+  <data name="CSharp_Extension_Method" xml:space="preserve">
+    <value>extension</value>
+  </data>
+  <data name="VisualBasic_Awaitable_Method" xml:space="preserve">
+    <value>Awaitable</value>
+  </data>
+  <data name="VisualBasic_Deprecated_Member" xml:space="preserve">
+    <value>Deprecated</value>
+  </data>
+  <data name="VisualBasic_Extension_Method" xml:space="preserve">
+    <value>Extension</value>
   </data>
 </root>

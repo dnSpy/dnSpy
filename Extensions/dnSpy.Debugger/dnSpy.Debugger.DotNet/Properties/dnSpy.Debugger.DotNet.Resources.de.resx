@@ -135,17 +135,26 @@
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
     <value>Laden der Module abbrechen?</value>
   </data>
+  <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
+    <value>Decompiler-generierte Variablen können nicht ausgewertet werden</value>
+  </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
     <value>IL-Versatz {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>Zeile {0} Zeichen {1}</value>
   </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Interner Debuggerfehler</value>
+  </data>
   <data name="LoadModule_InfoText" xml:space="preserve">
     <value>Lade Modul. Dies kann bei großen Modulen etwas dauern.</value>
   </data>
   <data name="LoadModule_Title" xml:space="preserve">
     <value>Lade dynamische Module</value>
+  </data>
+  <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
+    <value>'{0}' threw an exception of type '{1}'</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>Sie müssen den Prozess anhalten um dynamische Module laden zu können.</value>

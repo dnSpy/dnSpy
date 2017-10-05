@@ -1872,4 +1872,46 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
     <value>Unformatierte Struktur von Objekten in Variablenfenstern anzeigen</value>
   </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Unbekannt&gt;</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
+    <value>Gruppiere Parameter und Felder zusammen</value>
+  </data>
+  <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
+    <value>Zeige vom Compiler generierte Variablen</value>
+  </data>
+  <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
+    <value>Zeige vom Dekompilierer generierte Variablen</value>
+  </data>
+  <data name="DbgSettings_SortLocals" xml:space="preserve">
+    <value>Sortiere Felder</value>
+  </data>
+  <data name="DbgSettings_SortParameters" xml:space="preserve">
+    <value>Sortiere Parameter</value>
+  </data>
+  <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
+    <value>Blende durch den Compiler generierte Member aus</value>
+  </data>
+  <data name="FunctionEvaluationDisabled" xml:space="preserve">
+    <value>Implizite Funktionsauswertung ist durch den Benutzer deaktiviert</value>
+  </data>
+  <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
+    <value>Respektiere Attribute, welche Member ausblenden</value>
+  </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Interner Debuggerfehler</value>
+  </data>
+  <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
+    <value>Die Funktionsauswertung erfordert das alle Threads ausgeführt werden.</value>
+  </data>
+  <data name="DigitSeparatorsCommand" xml:space="preserve">
+    <value>Ziffer-Separatoren</value>
+  </data>
+  <data name="Column_ProcessCommandLine" xml:space="preserve">
+    <value>Kommandozeile</value>
+  </data>
 </root>

@@ -1916,4 +1916,7 @@
   <data name="EditLabelsTitle" xml:space="preserve">
     <value>Изменить метки</value>
   </data>
+  <data name="User_Administrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
 </root>

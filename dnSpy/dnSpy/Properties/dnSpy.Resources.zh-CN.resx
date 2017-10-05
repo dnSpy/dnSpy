@@ -643,7 +643,7 @@
     <value>Ctrl+F</value>
   </data>
   <data name="SearchWindow_Generic" xml:space="preserve">
-    <value>普通类型</value>
+    <value>泛型类型</value>
   </data>
   <data name="SearchWindow_Interface" xml:space="preserve">
     <value>接口</value>
@@ -1915,5 +1915,8 @@
   </data>
   <data name="EditLabelsTitle" xml:space="preserve">
     <value>编辑标签</value>
+  </data>
+  <data name="User_Administrator" xml:space="preserve">
+    <value>管理员</value>
   </data>
 </root>
