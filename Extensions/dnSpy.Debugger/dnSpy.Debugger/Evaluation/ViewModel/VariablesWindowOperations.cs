@@ -35,6 +35,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract void ClearAll(IValueNodesVM vm);
 		public abstract bool CanSelectAll(IValueNodesVM vm);
 		public abstract void SelectAll(IValueNodesVM vm);
+		public abstract bool CanEdit(IValueNodesVM vm);
+		public abstract void Edit(IValueNodesVM vm);
+		public abstract void Edit(IValueNodesVM vm, string text);
 		public abstract bool SupportsEditExpression(IValueNodesVM vm);
 		public abstract bool CanEditExpression(IValueNodesVM vm);
 		public abstract void EditExpression(IValueNodesVM vm);

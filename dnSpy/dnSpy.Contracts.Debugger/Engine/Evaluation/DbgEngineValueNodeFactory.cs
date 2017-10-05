@@ -32,22 +32,20 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame</param>
-		/// <param name="expression">Expression</param>
-		/// <param name="options">Options</param>
+		/// <param name="expressions">Expressions to evaluate</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates a <see cref="DbgEngineValueNode"/>
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame</param>
-		/// <param name="expression">Expression</param>
-		/// <param name="options">Options</param>
+		/// <param name="expressions">Expressions to evaluate</param>
 		/// <param name="callback">Called when the evaluation is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNode> callback, CancellationToken cancellationToken);
+		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates <see cref="DbgEngineValueNode"/>s. It blocks the current thread.

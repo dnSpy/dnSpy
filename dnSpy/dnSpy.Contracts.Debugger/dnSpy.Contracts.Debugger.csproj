@@ -126,6 +126,7 @@
     <Compile Include="Engine\Steppers\DbgEngineStepper.cs" />
     <Compile Include="Evaluation\DbgEvaluationContext.cs" />
     <Compile Include="Evaluation\DbgEvaluationSession.cs" />
+    <Compile Include="Evaluation\DbgExpressionEvaluationInfo.cs" />
     <Compile Include="Evaluation\DbgExpressionEvaluator.cs" />
     <Compile Include="Evaluation\DbgFormatter.cs" />
     <Compile Include="Evaluation\DbgLanguage.cs" />

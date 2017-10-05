@@ -799,32 +799,32 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 			case LoadValueType.I1:
 				if ((ulong)offset >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(type.AppDomain, (sbyte)data[(int)offset]);
+				return new ConstantInt32ILValue(type.AppDomain.System_SByte, (sbyte)data[(int)offset]);
 
 			case LoadValueType.I2:
 				if (offset + 2 - 1 < offset || (ulong)offset + 2 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(type.AppDomain, BitConverter.ToInt16(data, (int)offset));
+				return new ConstantInt32ILValue(type.AppDomain.System_Int16, BitConverter.ToInt16(data, (int)offset));
 
 			case LoadValueType.I4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(type.AppDomain, BitConverter.ToInt32(data, (int)offset));
+				return new ConstantInt32ILValue(type.AppDomain.System_Int32, BitConverter.ToInt32(data, (int)offset));
 
 			case LoadValueType.I8:
 				if (offset + 8 - 1 < offset || (ulong)offset + 8 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantInt64ILValue(type.AppDomain, BitConverter.ToInt64(data, (int)offset));
+				return new ConstantInt64ILValue(type.AppDomain.System_Int64, BitConverter.ToInt64(data, (int)offset));
 
 			case LoadValueType.R4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantFloatILValue(type.AppDomain, BitConverter.ToSingle(data, (int)offset));
+				return new ConstantFloatILValue(type.AppDomain.System_Single, BitConverter.ToSingle(data, (int)offset));
 
 			case LoadValueType.R8:
 				if (offset + 8 - 1 < offset || (ulong)offset + 8 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantFloatILValue(type.AppDomain, BitConverter.ToDouble(data, (int)offset));
+				return new ConstantFloatILValue(type.AppDomain.System_Double, BitConverter.ToDouble(data, (int)offset));
 
 			case LoadValueType.Ref:
 				return null;
@@ -832,17 +832,17 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 			case LoadValueType.U1:
 				if ((ulong)offset >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(type.AppDomain, data[(int)offset]);
+				return new ConstantInt32ILValue(type.AppDomain.System_Byte, data[(int)offset]);
 
 			case LoadValueType.U2:
 				if (offset + 2 - 1 < offset || (ulong)offset + 2 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(type.AppDomain, BitConverter.ToUInt16(data, (int)offset));
+				return new ConstantInt32ILValue(type.AppDomain.System_UInt16, BitConverter.ToUInt16(data, (int)offset));
 
 			case LoadValueType.U4:
 				if (offset + 4 - 1 < offset || (ulong)offset + 4 - 1 >= (ulong)data.Length)
 					return null;
-				return new ConstantInt32ILValue(type.AppDomain, BitConverter.ToInt32(data, (int)offset));
+				return new ConstantInt32ILValue(type.AppDomain.System_UInt32, BitConverter.ToInt32(data, (int)offset));
 
 			default:
 				return null;

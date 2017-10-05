@@ -43,8 +43,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var listView = (ListView)treeView?.UIObject;
 			if (treeViewContentPresenter.Content == listView)
 				return;
-			var oldElem = treeViewContentPresenter.Content as UIElement;
-			if (oldElem != null)
+			if (treeViewContentPresenter.Content is UIElement oldElem)
 				oldElem.PreviewTextInput -= TreeView_PreviewTextInput;
 			if (listView != null)
 				listView.PreviewTextInput += TreeView_PreviewTextInput;
@@ -68,19 +67,9 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var text = e.Text;
 			if (text.Length == 0 || (text.Length == 1 && (text[0] == '\u001B' || text[0] == '\b')))
 				return;
-			if (vm.VM.CanAddRemoveExpressions) {
-				// watch windows
-				if (!variablesWindowOperations.Value.CanEditExpression(vm.VM))
-					return;
+			if (variablesWindowOperations.Value.CanEdit(vm.VM)) {
 				e.Handled = true;
-				variablesWindowOperations.Value.EditExpression(vm.VM, text);
-			}
-			else {
-				// autos, locals windows
-				if (!variablesWindowOperations.Value.CanEditValue(vm.VM))
-					return;
-				e.Handled = true;
-				variablesWindowOperations.Value.EditValue(vm.VM, text);
+				variablesWindowOperations.Value.Edit(vm.VM, text);
 			}
 		}
 	}

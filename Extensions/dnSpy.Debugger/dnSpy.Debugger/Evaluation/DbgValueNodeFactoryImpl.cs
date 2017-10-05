@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -37,10 +38,23 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineValueNodeFactory = engineValueNodeFactory ?? throw new ArgumentNullException(nameof(engineValueNodeFactory));
 		}
 
-		DbgCreateValueNodeResult CreateResult(DbgRuntime runtime, DbgEngineValueNode result) {
-			var valueNode = new DbgValueNodeImpl(Language, runtime, result);
-			runtime.CloseOnContinue(valueNode);
-			return new DbgCreateValueNodeResult(valueNode, result.CausesSideEffects);
+		DbgCreateValueNodeResult[] CreateResult(DbgRuntime runtime, DbgEngineValueNode[] results) {
+			if (results.Length == 0)
+				return Array.Empty<DbgCreateValueNodeResult>();
+			var res = new DbgCreateValueNodeResult[results.Length];
+			try {
+				for (int i = 0; i < res.Length; i++) {
+					var result = results[i];
+					var valueNode = new DbgValueNodeImpl(Language, runtime, result);
+					runtime.CloseOnContinue(valueNode);
+					res[i] = new DbgCreateValueNodeResult(valueNode, result.CausesSideEffects);
+				}
+			}
+			catch {
+				runtime.Process.DbgManager.Close(res.Select(a => a.ValueNode).Where(a => a != null));
+				throw;
+			}
+			return res;
 		}
 
 		DbgValueNode[] CreateResult(DbgRuntime runtime, DbgEngineValueNode[] result, int expectedLength) {
@@ -49,7 +63,7 @@ namespace dnSpy.Debugger.Evaluation {
 			return DbgValueNodeUtils.ToValueNodeArray(Language, runtime, result);
 		}
 
-		public override DbgCreateValueNodeResult Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgCreateValueNodeResult[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -62,12 +76,12 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (expression == null)
-				throw new ArgumentNullException(nameof(expression));
-			return CreateResult(frame.Runtime, engineValueNodeFactory.Create(context, frame, expression, options, cancellationToken));
+			if (expressions == null)
+				throw new ArgumentNullException(nameof(expressions));
+			return CreateResult(frame.Runtime, engineValueNodeFactory.Create(context, frame, expressions, cancellationToken));
 		}
 
-		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgCreateValueNodeResult> callback, CancellationToken cancellationToken) {
+		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, Action<DbgCreateValueNodeResult[]> callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -80,11 +94,11 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(frame));
 			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (expression == null)
-				throw new ArgumentNullException(nameof(expression));
+			if (expressions == null)
+				throw new ArgumentNullException(nameof(expressions));
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			engineValueNodeFactory.Create(context, frame, expression, options, result => callback(CreateResult(frame.Runtime, result)), cancellationToken);
+			engineValueNodeFactory.Create(context, frame, expressions, result => callback(CreateResult(frame.Runtime, result)), cancellationToken);
 		}
 
 		public override DbgValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {

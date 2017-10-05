@@ -103,67 +103,67 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			case TypeCode.Boolean:
 				if (!GetValue(value, out l))
 					return value;
-				return new ConstantInt32ILValue(targetType.AppDomain, (byte)l);
+				return new ConstantInt32ILValue(targetType, (byte)l);
 
 			case TypeCode.Char:
 				if (!GetValue(value, out l))
 					return value;
-				return new ConstantInt32ILValue(targetType.AppDomain, (char)l);
+				return new ConstantInt32ILValue(targetType, (char)l);
 
 			case TypeCode.SByte:
 				if (!GetValue(value, out l))
 					return value;
-				return new ConstantInt32ILValue(targetType.AppDomain, (sbyte)l);
+				return new ConstantInt32ILValue(targetType, (sbyte)l);
 
 			case TypeCode.Byte:
 				if (!GetValue(value, out l))
 					return value;
-				return new ConstantInt32ILValue(targetType.AppDomain, (byte)l);
+				return new ConstantInt32ILValue(targetType, (byte)l);
 
 			case TypeCode.Int16:
 				if (!GetValue(value, out l))
 					return value;
-				return new ConstantInt32ILValue(targetType.AppDomain, (short)l);
+				return new ConstantInt32ILValue(targetType, (short)l);
 
 			case TypeCode.UInt16:
 				if (!GetValue(value, out l))
 					return value;
-				return new ConstantInt32ILValue(targetType.AppDomain, (ushort)l);
+				return new ConstantInt32ILValue(targetType, (ushort)l);
 
 			case TypeCode.Int32:
 				if (!GetValue(value, out l))
 					return value;
-				return new ConstantInt32ILValue(targetType.AppDomain, (int)l);
+				return new ConstantInt32ILValue(targetType, (int)l);
 
 			case TypeCode.UInt32:
 				if (!GetValue(value, out l))
 					return value;
-				return new ConstantInt32ILValue(targetType.AppDomain, (int)l);
+				return new ConstantInt32ILValue(targetType, (int)l);
 
 			case TypeCode.Int64:
 				if (!GetValue(value, out l))
 					return value;
-				return new ConstantInt64ILValue(targetType.AppDomain, l);
+				return new ConstantInt64ILValue(targetType, l);
 
 			case TypeCode.UInt64:
 				if (!GetValue(value, out l))
 					return value;
-				return new ConstantInt64ILValue(targetType.AppDomain, l);
+				return new ConstantInt64ILValue(targetType, l);
 
 			case TypeCode.Single:
 				if (!GetValue(value, out d))
 					return value;
-				return new ConstantFloatILValue(targetType.AppDomain, (float)d);
+				return new ConstantFloatILValue(targetType, (float)d);
 
 			case TypeCode.Double:
 				if (!GetValue(value, out d))
 					return value;
-				return new ConstantFloatILValue(targetType.AppDomain, d);
+				return new ConstantFloatILValue(targetType, d);
 
 			default:
 				if (targetType == targetType.AppDomain.System_IntPtr || targetType == targetType.AppDomain.System_UIntPtr) {
 					if (GetValue(value, out l))
-						return debuggerRuntime.PointerSize == 4 ? ConstantNativeIntILValue.Create32(targetType.AppDomain, (int)l) : ConstantNativeIntILValue.Create64(targetType.AppDomain, l);
+						return debuggerRuntime.PointerSize == 4 ? ConstantNativeIntILValue.Create32(targetType, (int)l) : ConstantNativeIntILValue.Create64(targetType, l);
 				}
 				break;
 			}
@@ -436,12 +436,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Ldc_R4:
-					ilValueStack.Add(new ConstantFloatILValue(currentMethod.AppDomain, BitConverter.ToSingle(bodyBytes, methodBodyPos)));
+					ilValueStack.Add(new ConstantFloatILValue(currentMethod.AppDomain.System_Single, BitConverter.ToSingle(bodyBytes, methodBodyPos)));
 					methodBodyPos += 4;
 					break;
 
 				case OpCode.Ldc_R8:
-					ilValueStack.Add(new ConstantFloatILValue(currentMethod.AppDomain, BitConverter.ToDouble(bodyBytes, methodBodyPos)));
+					ilValueStack.Add(new ConstantFloatILValue(currentMethod.AppDomain.System_Double, BitConverter.ToDouble(bodyBytes, methodBodyPos)));
 					methodBodyPos += 8;
 					break;
 
@@ -3066,23 +3066,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
 						if (debuggerRuntime.PointerSize == 4)
-							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain, (int)(uint)((ConstantInt32ILValue)v1).Value);
+							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain.System_UIntPtr, (int)(uint)((ConstantInt32ILValue)v1).Value);
 						else
-							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain, (long)(uint)((ConstantInt32ILValue)v1).Value);
+							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain.System_UIntPtr, (long)(uint)((ConstantInt32ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Int64:
 						if (debuggerRuntime.PointerSize == 4)
-							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain, (int)(uint)((ConstantInt64ILValue)v1).Value);
+							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain.System_UIntPtr, (int)(uint)((ConstantInt64ILValue)v1).Value);
 						else
-							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain, (long)(ulong)((ConstantInt64ILValue)v1).Value);
+							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain.System_UIntPtr, (long)(ulong)((ConstantInt64ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Float:
 						if (debuggerRuntime.PointerSize == 4)
-							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain, (int)(uint)((ConstantFloatILValue)v1).Value);
+							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain.System_UIntPtr, (int)(uint)((ConstantFloatILValue)v1).Value);
 						else
-							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain, (long)(ulong)((ConstantFloatILValue)v1).Value);
+							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain.System_UIntPtr, (long)(ulong)((ConstantFloatILValue)v1).Value);
 						break;
 
 					case ILValueKind.NativeInt:
@@ -3105,31 +3105,31 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
 						if (debuggerRuntime.PointerSize == 4)
-							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain, (int)checked((uint)((ConstantInt32ILValue)v1).Value));
+							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain.System_UIntPtr, (int)checked((uint)((ConstantInt32ILValue)v1).Value));
 						else
-							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain, (long)checked((ulong)((ConstantInt32ILValue)v1).Value));
+							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain.System_UIntPtr, (long)checked((ulong)((ConstantInt32ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Int64:
 						if (debuggerRuntime.PointerSize == 4)
-							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain, (int)checked((uint)((ConstantInt64ILValue)v1).Value));
+							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain.System_UIntPtr, (int)checked((uint)((ConstantInt64ILValue)v1).Value));
 						else
-							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain, (long)checked((ulong)((ConstantInt64ILValue)v1).Value));
+							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain.System_UIntPtr, (long)checked((ulong)((ConstantInt64ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Float:
 						if (debuggerRuntime.PointerSize == 4)
-							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain, (int)checked((uint)((ConstantFloatILValue)v1).Value));
+							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain.System_UIntPtr, (int)checked((uint)((ConstantFloatILValue)v1).Value));
 						else
-							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain, (long)checked((ulong)((ConstantFloatILValue)v1).Value));
+							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain.System_UIntPtr, (long)checked((ulong)((ConstantFloatILValue)v1).Value));
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain, (int)checked((uint)((ConstantNativeIntILValue)v1).Value32));
+								v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain.System_UIntPtr, (int)checked((uint)((ConstantNativeIntILValue)v1).Value32));
 							else
-								v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain, (long)checked((ulong)((ConstantNativeIntILValue)v1).Value64));
+								v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain.System_UIntPtr, (long)checked((ulong)((ConstantNativeIntILValue)v1).Value64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3193,16 +3193,16 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
 						if (debuggerRuntime.PointerSize == 4)
-							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain, (int)checked((uint)((ConstantInt32ILValue)v1).UnsignedValue));
+							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain.System_UIntPtr, (int)checked((uint)((ConstantInt32ILValue)v1).UnsignedValue));
 						else
-							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain, (long)checked((ulong)((ConstantInt32ILValue)v1).UnsignedValue));
+							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain.System_UIntPtr, (long)checked((ulong)((ConstantInt32ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Int64:
 						if (debuggerRuntime.PointerSize == 4)
-							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain, (int)checked((uint)((ConstantInt64ILValue)v1).UnsignedValue));
+							v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain.System_UIntPtr, (int)checked((uint)((ConstantInt64ILValue)v1).UnsignedValue));
 						else
-							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain, (long)checked((ulong)((ConstantInt64ILValue)v1).UnsignedValue));
+							v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain.System_UIntPtr, (long)checked((ulong)((ConstantInt64ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Float:
@@ -3211,9 +3211,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain, (int)checked((uint)((ConstantNativeIntILValue)v1).UnsignedValue32));
+								v3 = ConstantNativeIntILValue.Create32(currentMethod.AppDomain.System_UIntPtr, (int)checked((uint)((ConstantNativeIntILValue)v1).UnsignedValue32));
 							else
-								v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain, (long)checked((ulong)((ConstantNativeIntILValue)v1).UnsignedValue64));
+								v3 = ConstantNativeIntILValue.Create64(currentMethod.AppDomain.System_UIntPtr, (long)checked((ulong)((ConstantNativeIntILValue)v1).UnsignedValue64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3234,23 +3234,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (sbyte)((ConstantInt32ILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, (sbyte)((ConstantInt32ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (sbyte)((ConstantInt64ILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, (sbyte)((ConstantInt64ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (sbyte)((ConstantFloatILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, (sbyte)((ConstantFloatILValue)v1).Value);
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (sbyte)((ConstantNativeIntILValue)v1).Value32);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, (sbyte)((ConstantNativeIntILValue)v1).Value32);
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (sbyte)((ConstantNativeIntILValue)v1).Value64);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, (sbyte)((ConstantNativeIntILValue)v1).Value64);
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3268,23 +3268,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((sbyte)((ConstantInt32ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, checked((sbyte)((ConstantInt32ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((sbyte)((ConstantInt64ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, checked((sbyte)((ConstantInt64ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((sbyte)((ConstantFloatILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, checked((sbyte)((ConstantFloatILValue)v1).Value));
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((sbyte)((ConstantNativeIntILValue)v1).Value32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, checked((sbyte)((ConstantNativeIntILValue)v1).Value32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((sbyte)((ConstantNativeIntILValue)v1).Value64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, checked((sbyte)((ConstantNativeIntILValue)v1).Value64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3302,11 +3302,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((sbyte)((ConstantInt32ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, checked((sbyte)((ConstantInt32ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((sbyte)((ConstantInt64ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, checked((sbyte)((ConstantInt64ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Float:
@@ -3315,9 +3315,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((sbyte)((ConstantNativeIntILValue)v1).UnsignedValue32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, checked((sbyte)((ConstantNativeIntILValue)v1).UnsignedValue32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((sbyte)((ConstantNativeIntILValue)v1).UnsignedValue64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_SByte, checked((sbyte)((ConstantNativeIntILValue)v1).UnsignedValue64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3335,23 +3335,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (short)((ConstantInt32ILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, (short)((ConstantInt32ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (short)((ConstantInt64ILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, (short)((ConstantInt64ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (short)((ConstantFloatILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, (short)((ConstantFloatILValue)v1).Value);
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (short)((ConstantNativeIntILValue)v1).Value32);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, (short)((ConstantNativeIntILValue)v1).Value32);
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (short)((ConstantNativeIntILValue)v1).Value64);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, (short)((ConstantNativeIntILValue)v1).Value64);
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3369,23 +3369,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((short)((ConstantInt32ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, checked((short)((ConstantInt32ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((short)((ConstantInt64ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, checked((short)((ConstantInt64ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((short)((ConstantFloatILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, checked((short)((ConstantFloatILValue)v1).Value));
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((short)((ConstantNativeIntILValue)v1).Value32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, checked((short)((ConstantNativeIntILValue)v1).Value32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((short)((ConstantNativeIntILValue)v1).Value64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, checked((short)((ConstantNativeIntILValue)v1).Value64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3403,11 +3403,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((short)((ConstantInt32ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, checked((short)((ConstantInt32ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((short)((ConstantInt64ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, checked((short)((ConstantInt64ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Float:
@@ -3416,9 +3416,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((short)((ConstantNativeIntILValue)v1).UnsignedValue32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, checked((short)((ConstantNativeIntILValue)v1).UnsignedValue32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((short)((ConstantNativeIntILValue)v1).UnsignedValue64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int16, checked((short)((ConstantNativeIntILValue)v1).UnsignedValue64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3440,19 +3440,19 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)((ConstantInt64ILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, (int)((ConstantInt64ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)((ConstantFloatILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, (int)((ConstantFloatILValue)v1).Value);
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)((ConstantNativeIntILValue)v1).Value32);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, (int)((ConstantNativeIntILValue)v1).Value32);
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)((ConstantNativeIntILValue)v1).Value64);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, (int)((ConstantNativeIntILValue)v1).Value64);
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3474,19 +3474,19 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((int)((ConstantInt64ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, checked((int)((ConstantInt64ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((int)((ConstantFloatILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, checked((int)((ConstantFloatILValue)v1).Value));
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((int)((ConstantNativeIntILValue)v1).Value32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, checked((int)((ConstantNativeIntILValue)v1).Value32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((int)((ConstantNativeIntILValue)v1).Value64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, checked((int)((ConstantNativeIntILValue)v1).Value64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3504,11 +3504,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((int)((ConstantInt32ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, checked((int)((ConstantInt32ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((int)((ConstantInt64ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, checked((int)((ConstantInt64ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Float:
@@ -3517,9 +3517,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((int)((ConstantNativeIntILValue)v1).UnsignedValue32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, checked((int)((ConstantNativeIntILValue)v1).UnsignedValue32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((int)((ConstantNativeIntILValue)v1).UnsignedValue64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Int32, checked((int)((ConstantNativeIntILValue)v1).UnsignedValue64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3537,7 +3537,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, ((ConstantInt32ILValue)v1).Value);
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, ((ConstantInt32ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Int64:
@@ -3545,15 +3545,15 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)((ConstantFloatILValue)v1).Value);
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, (long)((ConstantFloatILValue)v1).Value);
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, ((ConstantNativeIntILValue)v1).Value32);
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, ((ConstantNativeIntILValue)v1).Value32);
 							else
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, ((ConstantNativeIntILValue)v1).Value64);
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, ((ConstantNativeIntILValue)v1).Value64);
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3571,7 +3571,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, checked(((ConstantInt32ILValue)v1).Value));
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, checked(((ConstantInt32ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Int64:
@@ -3579,15 +3579,15 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, checked((long)((ConstantFloatILValue)v1).Value));
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, checked((long)((ConstantFloatILValue)v1).Value));
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, checked(((ConstantNativeIntILValue)v1).Value32));
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, checked(((ConstantNativeIntILValue)v1).Value32));
 							else
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, checked(((ConstantNativeIntILValue)v1).Value64));
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, checked(((ConstantNativeIntILValue)v1).Value64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3605,11 +3605,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, checked((long)((ConstantInt32ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, checked((long)((ConstantInt32ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, checked((long)((ConstantInt64ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, checked((long)((ConstantInt64ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Float:
@@ -3618,9 +3618,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, checked((long)((ConstantNativeIntILValue)v1).UnsignedValue32));
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, checked((long)((ConstantNativeIntILValue)v1).UnsignedValue32));
 							else
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, checked((long)((ConstantNativeIntILValue)v1).UnsignedValue64));
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_Int64, checked((long)((ConstantNativeIntILValue)v1).UnsignedValue64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3638,23 +3638,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (byte)((ConstantInt32ILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, (byte)((ConstantInt32ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (byte)((ConstantInt64ILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, (byte)((ConstantInt64ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (byte)((ConstantFloatILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, (byte)((ConstantFloatILValue)v1).Value);
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (byte)((ConstantNativeIntILValue)v1).Value32);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, (byte)((ConstantNativeIntILValue)v1).Value32);
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (byte)((ConstantNativeIntILValue)v1).Value64);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, (byte)((ConstantNativeIntILValue)v1).Value64);
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3672,23 +3672,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((byte)((ConstantInt32ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, checked((byte)((ConstantInt32ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((byte)((ConstantInt64ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, checked((byte)((ConstantInt64ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((byte)((ConstantFloatILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, checked((byte)((ConstantFloatILValue)v1).Value));
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((byte)((ConstantNativeIntILValue)v1).Value32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, checked((byte)((ConstantNativeIntILValue)v1).Value32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((byte)((ConstantNativeIntILValue)v1).Value64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, checked((byte)((ConstantNativeIntILValue)v1).Value64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3706,11 +3706,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((byte)((ConstantInt32ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, checked((byte)((ConstantInt32ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((byte)((ConstantInt64ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, checked((byte)((ConstantInt64ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Float:
@@ -3719,9 +3719,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((byte)((ConstantNativeIntILValue)v1).UnsignedValue32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, checked((byte)((ConstantNativeIntILValue)v1).UnsignedValue32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((byte)((ConstantNativeIntILValue)v1).UnsignedValue64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_Byte, checked((byte)((ConstantNativeIntILValue)v1).UnsignedValue64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3739,23 +3739,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (ushort)((ConstantInt32ILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, (ushort)((ConstantInt32ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (ushort)((ConstantInt64ILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, (ushort)((ConstantInt64ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (ushort)((ConstantFloatILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, (ushort)((ConstantFloatILValue)v1).Value);
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (ushort)((ConstantNativeIntILValue)v1).Value32);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, (ushort)((ConstantNativeIntILValue)v1).Value32);
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (ushort)((ConstantNativeIntILValue)v1).Value64);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, (ushort)((ConstantNativeIntILValue)v1).Value64);
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3773,23 +3773,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((ushort)((ConstantInt32ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, checked((ushort)((ConstantInt32ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((ushort)((ConstantInt64ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, checked((ushort)((ConstantInt64ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((ushort)((ConstantFloatILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, checked((ushort)((ConstantFloatILValue)v1).Value));
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((ushort)((ConstantNativeIntILValue)v1).Value32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, checked((ushort)((ConstantNativeIntILValue)v1).Value32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((ushort)((ConstantNativeIntILValue)v1).Value64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, checked((ushort)((ConstantNativeIntILValue)v1).Value64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3807,11 +3807,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((ushort)((ConstantInt32ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, checked((ushort)((ConstantInt32ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((ushort)((ConstantInt64ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, checked((ushort)((ConstantInt64ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Float:
@@ -3820,9 +3820,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((ushort)((ConstantNativeIntILValue)v1).UnsignedValue32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, checked((ushort)((ConstantNativeIntILValue)v1).UnsignedValue32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, checked((ushort)((ConstantNativeIntILValue)v1).UnsignedValue64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt16, checked((ushort)((ConstantNativeIntILValue)v1).UnsignedValue64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3844,19 +3844,19 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)(uint)((ConstantInt64ILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)(uint)((ConstantInt64ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)(uint)((ConstantFloatILValue)v1).Value);
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)(uint)((ConstantFloatILValue)v1).Value);
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)(uint)((ConstantNativeIntILValue)v1).Value32);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)(uint)((ConstantNativeIntILValue)v1).Value32);
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)(uint)((ConstantNativeIntILValue)v1).Value64);
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)(uint)((ConstantNativeIntILValue)v1).Value64);
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3874,23 +3874,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)checked((uint)((ConstantInt32ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)checked((uint)((ConstantInt32ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)checked((uint)((ConstantInt64ILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)checked((uint)((ConstantInt64ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)checked((uint)((ConstantFloatILValue)v1).Value));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)checked((uint)((ConstantFloatILValue)v1).Value));
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)checked((uint)((ConstantNativeIntILValue)v1).Value32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)checked((uint)((ConstantNativeIntILValue)v1).Value32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)checked((uint)((ConstantNativeIntILValue)v1).Value64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)checked((uint)((ConstantNativeIntILValue)v1).Value64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3908,11 +3908,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)checked((uint)((ConstantInt32ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)checked((uint)((ConstantInt32ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)checked((uint)((ConstantInt64ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)checked((uint)((ConstantInt64ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Float:
@@ -3921,9 +3921,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)checked((uint)((ConstantNativeIntILValue)v1).UnsignedValue32));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)checked((uint)((ConstantNativeIntILValue)v1).UnsignedValue32));
 							else
-								v3 = new ConstantInt32ILValue(currentMethod.AppDomain, (int)checked((uint)((ConstantNativeIntILValue)v1).UnsignedValue64));
+								v3 = new ConstantInt32ILValue(currentMethod.AppDomain.System_UInt32, (int)checked((uint)((ConstantNativeIntILValue)v1).UnsignedValue64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3941,7 +3941,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)(ulong)(uint)((ConstantInt32ILValue)v1).Value);
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)(ulong)(uint)((ConstantInt32ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Int64:
@@ -3949,15 +3949,15 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)(ulong)((ConstantFloatILValue)v1).Value);
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)(ulong)((ConstantFloatILValue)v1).Value);
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)(uint)((ConstantNativeIntILValue)v1).Value32);
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)(uint)((ConstantNativeIntILValue)v1).Value32);
 							else
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)(ulong)((ConstantNativeIntILValue)v1).Value64);
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)(ulong)((ConstantNativeIntILValue)v1).Value64);
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -3975,23 +3975,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)checked((ulong)((ConstantInt32ILValue)v1).Value));
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)checked((ulong)((ConstantInt32ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)checked((ulong)((ConstantInt64ILValue)v1).Value));
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)checked((ulong)((ConstantInt64ILValue)v1).Value));
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)checked((ulong)((ConstantFloatILValue)v1).Value));
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)checked((ulong)((ConstantFloatILValue)v1).Value));
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)checked((ulong)((ConstantNativeIntILValue)v1).Value32));
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)checked((ulong)((ConstantNativeIntILValue)v1).Value32));
 							else
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)checked((ulong)((ConstantNativeIntILValue)v1).Value64));
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)checked((ulong)((ConstantNativeIntILValue)v1).Value64));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -4009,11 +4009,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)checked((ulong)((ConstantInt32ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)checked((ulong)((ConstantInt32ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)checked((ulong)((ConstantInt64ILValue)v1).UnsignedValue));
+						v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)checked((ulong)((ConstantInt64ILValue)v1).UnsignedValue));
 						break;
 
 					case ILValueKind.Float:
@@ -4022,9 +4022,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)checked((ulong)(((ConstantNativeIntILValue)v1).UnsignedValue32)));
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)checked((ulong)(((ConstantNativeIntILValue)v1).UnsignedValue32)));
 							else
-								v3 = new ConstantInt64ILValue(currentMethod.AppDomain, (long)checked((ulong)(((ConstantNativeIntILValue)v1).UnsignedValue64)));
+								v3 = new ConstantInt64ILValue(currentMethod.AppDomain.System_UInt64, (long)checked((ulong)(((ConstantNativeIntILValue)v1).UnsignedValue64)));
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -4042,23 +4042,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantFloatILValue(currentMethod.AppDomain, (float)((ConstantInt32ILValue)v1).Value);
+						v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Single, (float)((ConstantInt32ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantFloatILValue(currentMethod.AppDomain, (float)((ConstantInt64ILValue)v1).Value);
+						v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Single, (float)((ConstantInt64ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Float:
-						v3 = new ConstantFloatILValue(currentMethod.AppDomain, (float)((ConstantFloatILValue)v1).Value);
+						v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Single, (float)((ConstantFloatILValue)v1).Value);
 						break;
 
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantFloatILValue(currentMethod.AppDomain, (float)((ConstantNativeIntILValue)v1).Value32);
+								v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Single, (float)((ConstantNativeIntILValue)v1).Value32);
 							else
-								v3 = new ConstantFloatILValue(currentMethod.AppDomain, (float)((ConstantNativeIntILValue)v1).Value64);
+								v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Single, (float)((ConstantNativeIntILValue)v1).Value64);
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -4076,11 +4076,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantFloatILValue(currentMethod.AppDomain, (double)((ConstantInt32ILValue)v1).Value);
+						v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Double, (double)((ConstantInt32ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantFloatILValue(currentMethod.AppDomain, (double)((ConstantInt64ILValue)v1).Value);
+						v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Double, (double)((ConstantInt64ILValue)v1).Value);
 						break;
 
 					case ILValueKind.Float:
@@ -4090,9 +4090,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantFloatILValue(currentMethod.AppDomain, (double)((ConstantNativeIntILValue)v1).Value32);
+								v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Double, (double)((ConstantNativeIntILValue)v1).Value32);
 							else
-								v3 = new ConstantFloatILValue(currentMethod.AppDomain, (double)((ConstantNativeIntILValue)v1).Value64);
+								v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Double, (double)((ConstantNativeIntILValue)v1).Value64);
 						}
 						else
 							goto case ILValueKind.ByRef;
@@ -4110,11 +4110,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					switch (v1.Kind) {
 					case ILValueKind.Int32:
-						v3 = new ConstantFloatILValue(currentMethod.AppDomain, (double)((ConstantInt32ILValue)v1).UnsignedValue);
+						v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Double, (double)((ConstantInt32ILValue)v1).UnsignedValue);
 						break;
 
 					case ILValueKind.Int64:
-						v3 = new ConstantFloatILValue(currentMethod.AppDomain, (double)((ConstantInt64ILValue)v1).UnsignedValue);
+						v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Double, (double)((ConstantInt64ILValue)v1).UnsignedValue);
 						break;
 
 					case ILValueKind.Float:
@@ -4124,9 +4124,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						if (v1 is ConstantNativeIntILValue) {
 							if (debuggerRuntime.PointerSize == 4)
-								v3 = new ConstantFloatILValue(currentMethod.AppDomain, (double)((ConstantNativeIntILValue)v1).UnsignedValue32);
+								v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Double, (double)((ConstantNativeIntILValue)v1).UnsignedValue32);
 							else
-								v3 = new ConstantFloatILValue(currentMethod.AppDomain, (double)((ConstantNativeIntILValue)v1).UnsignedValue64);
+								v3 = new ConstantFloatILValue(currentMethod.AppDomain.System_Double, (double)((ConstantNativeIntILValue)v1).UnsignedValue64);
 						}
 						else
 							goto case ILValueKind.ByRef;

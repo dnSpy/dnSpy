@@ -192,9 +192,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Constructor
 		/// </summary>
 		/// <param name="error">Error message</param>
-		public DbgEvaluationResult(string error) {
+		/// <param name="flags">Flags</param>
+		public DbgEvaluationResult(string error, DbgEvaluationResultFlags flags = 0) {
 			Value = null;
-			Flags = 0;
+			Flags = flags;
 			Error = error ?? throw new ArgumentNullException(nameof(error));
 		}
 	}

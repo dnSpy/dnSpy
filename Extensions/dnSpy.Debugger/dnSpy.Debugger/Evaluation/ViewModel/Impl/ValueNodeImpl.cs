@@ -234,6 +234,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void SaveNameExpression(string expression) {
 			if (!CanEditNameExpression())
 				throw new InvalidOperationException();
+			if (GetNameExpression().Text == expression)
+				return;
 			disableHighlightingOnReuse = true;
 			if (IsEditNode)
 				Context.EditValueNodeExpression.AddExpressions(new[] { expression });

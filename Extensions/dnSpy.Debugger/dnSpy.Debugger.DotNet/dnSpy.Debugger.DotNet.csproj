@@ -85,6 +85,7 @@
     <Compile Include="Evaluation\Engine\DbgEngineValueImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineValueNodeFactoryImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgEngineValueNodeImpl.cs" />
+    <Compile Include="Evaluation\Engine\DbgEvaluationOptionsUtils.cs" />
     <Compile Include="Evaluation\Engine\DbgModuleReferenceProvider.cs" />
     <Compile Include="Evaluation\Engine\DebuggerRuntimeImpl.cs" />
     <Compile Include="Evaluation\Engine\DecompilerOutputImpl.cs" />
@@ -93,7 +94,7 @@
     <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
     <Compile Include="Evaluation\Engine\ObjectCache.cs" />
     <Compile Include="Evaluation\Engine\StateWithKey.cs" />
-    <Compile Include="Evaluation\Engine\SyntheticNullValue.cs" />
+    <Compile Include="Evaluation\Engine\SyntheticValues.cs" />
     <Compile Include="Evaluation\Engine\TypeILValueImpl.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
     <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />

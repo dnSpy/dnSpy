@@ -239,6 +239,22 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			vm.TreeView.SelectAll();
 		}
 
+		public override bool CanEdit(IValueNodesVM vm) => (vm.CanAddRemoveExpressions && CanEditExpression(vm)) || CanEditValue(vm);
+
+		public override void Edit(IValueNodesVM vm) {
+			if (vm.CanAddRemoveExpressions && CanEditExpression(vm))
+				EditExpression(vm);
+			else if (CanEditValue(vm))
+				EditValue(vm);
+		}
+
+		public override void Edit(IValueNodesVM vm, string text) {
+			if (vm.CanAddRemoveExpressions && CanEditExpression(vm))
+				EditExpression(vm, text);
+			else if (CanEditValue(vm))
+				EditValue(vm, text);
+		}
+
 		public override bool SupportsEditExpression(IValueNodesVM vm) => vm != null && vm.CanAddRemoveExpressions;
 		public override bool CanEditExpression(IValueNodesVM vm) => CanExecCommands(vm) && SupportsEditExpression(vm) && SelectedNode(vm)?.CanEditNameExpression() == true;
 		public override void EditExpression(IValueNodesVM vm) {

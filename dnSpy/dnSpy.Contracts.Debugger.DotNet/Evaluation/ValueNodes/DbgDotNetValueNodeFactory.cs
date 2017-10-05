@@ -93,9 +93,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="name">Name</param>
 		/// <param name="errorMessage">Error message</param>
 		/// <param name="expression">Expression</param>
+		/// <param name="causesSideEffects">true if the expression causes side effects</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates type variables value node

@@ -219,6 +219,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 
 		bool TrySimpleFormat(DbgDotNetValue value) {
 			var rawValue = value.GetRawValue();
+			if (rawValue.ValueType == DbgSimpleValueType.Void) {
+				Debug.Assert(value.Type == value.Type.AppDomain.System_Void);
+				OutputWrite(dnSpy_Roslyn_Shared_Resources.DebuggerExpressionHasNoValue, BoxedTextColor.Text);
+				return true;
+			}
+
 			if (!rawValue.HasRawValue)
 				return false;
 
@@ -244,11 +250,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 
 			case DbgSimpleValueType.DateTime:
 				return false;
-
-			case DbgSimpleValueType.Void:
-				Debug.Assert(type == type.AppDomain.System_Void);
-				OutputWrite(dnSpy_Roslyn_Shared_Resources.DebuggerExpressionHasNoValue, BoxedTextColor.Text);
-				return true;
 
 			case DbgSimpleValueType.Boolean:
 				FormatBoolean((bool)rawValue.RawValue);

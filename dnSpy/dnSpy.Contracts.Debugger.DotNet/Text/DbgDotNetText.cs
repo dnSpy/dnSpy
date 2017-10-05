@@ -27,6 +27,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 	/// </summary>
 	public struct DbgDotNetText {
 		/// <summary>
+		/// Gets the empty instance
+		/// </summary>
+		public static readonly DbgDotNetText Empty = new DbgDotNetText(Array.Empty<DbgDotNetTextPart>());
+
+		/// <summary>
 		/// Gets all colors and text parts
 		/// </summary>
 		public DbgDotNetTextPart[] Parts { get; }

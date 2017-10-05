@@ -162,6 +162,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				try {
 					var execResult = stateImpl.ILVM.Execute(debuggerRuntime, ilvmState);
 					var resultValue = debuggerRuntime.GetDotNetValue(execResult);
+					if (expectedType == expectedType.AppDomain.System_Void) {
+						resultValue.Dispose();
+						resultValue = new NoResultValue(expectedType.AppDomain);
+					}
 					result = new DbgDotNetValueResult(resultValue, valueIsException: false);
 				}
 				catch (InterpreterException ie) {
@@ -179,6 +183,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 
 			return result;
+		}
+
+		sealed class NoResultValue : DbgDotNetValue {
+			public override DmdType Type { get; }
+			public NoResultValue(DmdAppDomain appDomain) => Type = appDomain.System_Void;
+			public override DbgDotNetRawValue GetRawValue() => new DbgDotNetRawValue(DbgSimpleValueType.Void);
 		}
 
 		static string GetErrorMessage(InterpreterExceptionKind kind) {

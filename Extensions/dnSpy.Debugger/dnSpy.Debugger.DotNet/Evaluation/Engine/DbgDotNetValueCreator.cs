@@ -45,14 +45,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public DbgEngineValueNode CreateValueNode(ref DbgDotNetILInterpreterState ilInterpreterState, ref DbgDotNetCompiledExpressionResult compExprInfo) {
 			if (compExprInfo.ErrorMessage != null)
-				return valueNodeFactory.CreateError(context, frame, compExprInfo.Name, compExprInfo.ErrorMessage, compExprInfo.Expression, cancellationToken);
+				return valueNodeFactory.CreateError(context, frame, compExprInfo.Name, compExprInfo.ErrorMessage, compExprInfo.Expression, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, cancellationToken);
 			else {
 				if (ilInterpreterState == null)
 					ilInterpreterState = dnILInterpreter.CreateState(context, assemblyBytes);
 				var res = dnILInterpreter.Execute(context, frame, ilInterpreterState, compExprInfo.TypeName, compExprInfo.MethodName, options, out var expectedType, cancellationToken);
 				try {
 					if (res.ErrorMessage != null)
-						return valueNodeFactory.CreateError(context, frame, compExprInfo.Name, res.ErrorMessage, compExprInfo.Expression, cancellationToken);
+						return valueNodeFactory.CreateError(context, frame, compExprInfo.Name, res.ErrorMessage, compExprInfo.Expression, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, cancellationToken);
 					//TODO: Pass in compExprInfo.CustomTypeInfo, or attach it to the DbgDotNetValueNode
 					return valueNodeFactory.Create(context, frame, compExprInfo.Name, res.Value, options, compExprInfo.Expression, compExprInfo.ImageName, (compExprInfo.Flags & DbgEvaluationResultFlags.ReadOnly) != 0, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, expectedType, cancellationToken);
 				}

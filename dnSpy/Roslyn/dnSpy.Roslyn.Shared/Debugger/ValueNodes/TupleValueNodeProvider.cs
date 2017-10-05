@@ -85,7 +85,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					var name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceField, info.DefaultName));
 					DbgDotNetValueNode newNode;
 					if (errorMessage != null)
-						newNode = valueNodeFactory.CreateError(context, frame, name, errorMessage, expression, cancellationToken);
+						newNode = valueNodeFactory.CreateError(context, frame, name, errorMessage, expression, false, cancellationToken);
 					else if (valueIsException)
 						newNode = valueNodeFactory.Create(context, frame, name, objValue, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, cancellationToken);
 					else

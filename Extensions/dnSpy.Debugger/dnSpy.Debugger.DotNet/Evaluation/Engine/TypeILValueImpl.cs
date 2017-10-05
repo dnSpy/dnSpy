@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => objValue;
 
 		readonly DebuggerRuntimeImpl runtime;
-		readonly DbgDotNetValue objValue;
+		protected readonly DbgDotNetValue objValue;
 
 		public TypeILValueImpl(DebuggerRuntimeImpl runtime, DbgDotNetValue objValue) {
 			this.runtime = runtime;

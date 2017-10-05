@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override DbgRuntime Runtime { get; }
 		public override string ErrorMessage => PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(engineValueNode.ErrorMessage);
 		public override DbgValue Value => value;
-		public override bool CanEvaluateExpression => value != null;
+		public override bool CanEvaluateExpression => true;
 		public override string Expression => engineValueNode.Expression;
 		public override string ImageName => engineValueNode.ImageName;
 		public override bool IsReadOnly => engineValueNode.IsReadOnly;
@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.Evaluation {
 
 		DbgValueNodeAssignmentResult CreateResult(DbgEngineValueNodeAssignmentResult result) {
 			if (result.Error != null) {
-				if (engineValueNode.Value != value.EngineValue)
+				if (engineValueNode.Value != value?.EngineValue)
 					throw new InvalidOperationException();
 				return new DbgValueNodeAssignmentResult(result.Flags, PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
 			}

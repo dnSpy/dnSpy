@@ -247,7 +247,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 							valueNodeFactory.CreateError(context, frame,
 							new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Local, decGen.Name)),
 							dnSpy_Debugger_DotNet_Resources.DecompilerGeneratedVariablesCanNotBeEvaluated,
-							decGen.Name, cancellationToken));
+							decGen.Name, false, cancellationToken));
 						break;
 
 					default:
@@ -269,7 +269,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		DbgEngineLocalsValueNodeInfo CreateInternalErrorNode(DbgEvaluationContext context, DbgStackFrame frame, string errorMessage, CancellationToken cancellationToken) =>
-			new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Error, valueNodeFactory.CreateError(context, frame, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, "<error>")), errorMessage, "<internal.error>", cancellationToken));
+			new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Error, valueNodeFactory.CreateError(context, frame, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, "<error>")), errorMessage, "<internal.error>", false, cancellationToken));
 
 		static MethodDebugScope GetScope(MethodDebugScope rootScope, uint offset) {
 			var scope = rootScope;

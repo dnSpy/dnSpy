@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public DbgDotNetValue GetDotNetValue(ILValue value) {
-			var dnValue = TryGetDotNetValue(value);
+			var dnValue = TryGetDotNetValue(value, canCreateValues: true);
 			if (dnValue != null)
 				return dnValue;
 			throw new InvalidOperationException();//TODO:
@@ -88,19 +88,98 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return null;
 		}
 
-		DbgDotNetValue TryGetDotNetValue(ILValue value) {
+		DbgDotNetValue TryGetDotNetValue(ILValue value, bool canCreateValues) {
 			var rtValue = TryGetDebuggerRuntimeILValue(value);
 			if (rtValue != null)
 				return rtValue.GetDotNetValue();
-			if (value.IsNull)
-				return new SyntheticNullValue(value.Type ?? frame.Module.AppDomain.GetReflectionAppDomain().System_Void);
+			if (canCreateValues) {
+				if (value.IsNull)
+					return new SyntheticNullValue(value.Type ?? frame.Module.AppDomain.GetReflectionAppDomain().System_Void);
+
+				if (value is BoxedValueTypeILValue boxedValue)
+					value = boxedValue.Value;
+
+				object newValue;
+				var type = value.Type;
+				switch (value.Kind) {
+				case ILValueKind.Int32:
+					int v32 = ((ConstantInt32ILValue)value).Value;
+					switch (DmdType.GetTypeCode(type)) {
+					case TypeCode.Boolean:	newValue = v32 != 0; break;
+					case TypeCode.Char:		newValue = (char)v32; break;
+					case TypeCode.SByte:	newValue = (sbyte)v32; break;
+					case TypeCode.Byte:		newValue = (byte)v32; break;
+					case TypeCode.Int16:	newValue = (short)v32; break;
+					case TypeCode.UInt16:	newValue = (ushort)v32; break;
+					case TypeCode.Int32:	newValue = v32; break;
+					case TypeCode.UInt32:	newValue = (uint)v32; break;
+					default:				newValue = null; break;
+					}
+					break;
+
+				case ILValueKind.Int64:
+					long v64 = ((ConstantInt64ILValue)value).Value;
+					switch (DmdType.GetTypeCode(type)) {
+					case TypeCode.Int64:	newValue = v64; break;
+					case TypeCode.UInt64:	newValue = (ulong)v64; break;
+					default:				newValue = null; break;
+					}
+					break;
+
+				case ILValueKind.Float:
+					double r8 = ((ConstantFloatILValue)value).Value;
+					switch (DmdType.GetTypeCode(type)) {
+					case TypeCode.Single:	newValue = (float)r8; break;
+					case TypeCode.Double:	newValue = r8; break;
+					default:				newValue = null; break;
+					}
+					break;
+
+				case ILValueKind.NativeInt:
+					if (value is ConstantNativeIntILValue ci) {
+						if (type == type.AppDomain.System_IntPtr) {
+							if (PointerSize == 4)
+								newValue = new IntPtr(ci.Value32);
+							else
+								newValue = new IntPtr(ci.Value64);
+						}
+						else if (type == type.AppDomain.System_UIntPtr) {
+							if (PointerSize == 4)
+								newValue = new UIntPtr(ci.UnsignedValue32);
+							else
+								newValue = new UIntPtr(ci.UnsignedValue64);
+						}
+						else
+							newValue = null;
+					}
+					else
+						newValue = null;
+					break;
+
+				case ILValueKind.Type:
+					if (value is ConstantStringILValueImpl sv)
+						newValue = sv.Value;
+					else
+						newValue = null;
+					break;
+
+				default:
+					newValue = null;
+					break;
+				}
+				if (newValue != null)
+					return RecordValue(runtime.CreateValue(context, frame, newValue, cancellationToken));
+			}
 			return null;
 		}
 
 		internal object GetDebuggerValue(ILValue value, DmdType targetType) {
-			var dnValue = TryGetDotNetValue(value);
+			var dnValue = TryGetDotNetValue(value, canCreateValues: false);
 			if (dnValue != null)
 				return dnValue;
+
+			if (value.IsNull)
+				return null;
 
 			if (value is BoxedValueTypeILValue boxedValue) {
 				targetType = boxedValue.Type;
@@ -430,7 +509,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override bool? Equals(ILValue left, ILValue right) {
 			if (left is AddressILValue laddr && right is AddressILValue raddr)
 				return laddr.Equals(raddr);
-			if (TryGetDotNetValue(left) is DbgDotNetValue lv && TryGetDotNetValue(right) is DbgDotNetValue rv) {
+			if (TryGetDotNetValue(left, canCreateValues: false) is DbgDotNetValue lv && TryGetDotNetValue(right, canCreateValues: false) is DbgDotNetValue rv) {
 				var res = runtime.Equals(lv, rv);
 				if (res != null)
 					return res;
@@ -543,7 +622,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		internal int ToInt32(ILValue value) {
 			if (value is ConstantInt32ILValue i32Value)
 				return i32Value.Value;
-			var dnValue = TryGetDotNetValue(value);
+			var dnValue = TryGetDotNetValue(value, canCreateValues: false);
 			if (dnValue != null) {
 				if (dnValue.Type != dnValue.Type.AppDomain.System_Int32)
 					throw new InvalidOperationException();

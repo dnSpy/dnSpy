@@ -104,9 +104,12 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 		}
 
 		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
-			var res = new DbgValueNodeInfo[expressions.Count];
+			if (expressions.Count == 0)
+				return Array.Empty<DbgValueNodeInfo>();
+
+			var infos = new DbgExpressionEvaluationInfo[expressions.Count];
 			Debug.Assert((evalOptions & DbgEvaluationOptions.NoSideEffects) == 0);
-			for (int i = 0; i < res.Length; i++) {
+			for (int i = 0; i < infos.Length; i++) {
 				var info = expressions[i];
 				// Root nodes in watch window can always func-eval
 				var realEvalOptions = evalOptions & ~DbgEvaluationOptions.NoFuncEval;
@@ -115,10 +118,18 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 				else
 					realEvalOptions = evalOptions | DbgEvaluationOptions.NoSideEffects;
 				info.ForceEval = false;
-				var result = language.ValueNodeFactory.Create(context, frame, info.Expression, realEvalOptions);
-				if (result.ValueNode.Expression != info.Expression)
+				infos[i] = new DbgExpressionEvaluationInfo(info.Expression, realEvalOptions);
+			}
+
+			var compRes = language.ValueNodeFactory.Create(context, frame, infos);
+			Debug.Assert(compRes.Length == infos.Length);
+
+			var res = new DbgValueNodeInfo[compRes.Length];
+			for (int i = 0; i < res.Length; i++) {
+				var info = compRes[i];
+				if (info.ValueNode.Expression != expressions[i].Expression)
 					throw new InvalidOperationException();
-				res[i] = new DbgValueNodeInfo(result.ValueNode, info.Id, result.CausesSideEffects);
+				res[i] = new DbgValueNodeInfo(info.ValueNode, expressions[i].Id, info.CausesSideEffects);
 			}
 			return res;
 		}

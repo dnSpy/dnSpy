@@ -201,7 +201,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				if (customInfo.node != null)
 					(newNode, canHide) = customInfo;
 				else if (valueResult.HasError) {
-					newNode = valueNodeFactory.CreateError(context, frame, info.Name, valueResult.ErrorMessage, expression, cancellationToken);
+					newNode = valueNodeFactory.CreateError(context, frame, info.Name, valueResult.ErrorMessage, expression, false, cancellationToken);
 					canHide = false;
 				}
 				else if (valueResult.ValueIsException)
@@ -270,7 +270,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 						while (index + (uint)i < providerInfo.EndIndex && i < res.Length) {
 							cancellationToken.ThrowIfCancellationRequested();
 							res[i] = errorMessage != null ?
-								valueNodeFactory.CreateError(context, frame, errorPropertyName, errorMessage, Expression, cancellationToken) :
+								valueNodeFactory.CreateError(context, frame, errorPropertyName, errorMessage, Expression, false, cancellationToken) :
 								CreateValueNode(context, frame, (int)(index + (uint)i - providerInfo.StartIndex + providerInfo.BaseIndex), options, cancellationToken).node;
 							i++;
 						}

@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.ToolWindows.Autos {
 			var cmds = wpfCommandService.GetCommands(AutosContent.VariablesWindowGuid);
 			cmds.Add(new RelayCommand(a => operations.Value.Copy(content.Value.VM.VM), a => operations.Value.CanCopy(content.Value.VM.VM)), ModifierKeys.Control, Key.C);
 			cmds.Add(new RelayCommand(a => operations.Value.Copy(content.Value.VM.VM), a => operations.Value.CanCopy(content.Value.VM.VM)), ModifierKeys.Control, Key.Insert);
-			cmds.Add(new RelayCommand(a => operations.Value.EditValue(content.Value.VM.VM), a => operations.Value.CanEditValue(content.Value.VM.VM)), ModifierKeys.None, Key.F2);
+			cmds.Add(new RelayCommand(a => operations.Value.Edit(content.Value.VM.VM), a => operations.Value.CanEdit(content.Value.VM.VM)), ModifierKeys.None, Key.F2);
 			cmds.Add(new RelayCommand(a => operations.Value.CopyValue(content.Value.VM.VM), a => operations.Value.CanCopyValue(content.Value.VM.VM)), ModifierKeys.Control | ModifierKeys.Shift, Key.C);
 			cmds.Add(new RelayCommand(a => operations.Value.ToggleExpanded(content.Value.VM.VM), a => operations.Value.CanToggleExpanded(content.Value.VM.VM)), ModifierKeys.None, Key.Enter);
 			cmds.Add(new RelayCommand(a => operations.Value.ShowInMemoryWindow(content.Value.VM.VM), a => operations.Value.CanShowInMemoryWindow(content.Value.VM.VM)), ModifierKeys.Control, Key.X);

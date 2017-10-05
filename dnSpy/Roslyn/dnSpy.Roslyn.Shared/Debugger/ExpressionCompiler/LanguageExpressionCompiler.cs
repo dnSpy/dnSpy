@@ -238,7 +238,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			return builder.ToImmutableArray();
 		}
 
-		protected DbgDotNetCompilationResult CreateAssignmentResult(string targetExpression, CompileResult compileResult, ResultProperties resultProperties, string errorMessage) {
+		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string errorMessage, DbgDotNetText name) {
 			if (errorMessage != null)
 				return new DbgDotNetCompilationResult(errorMessage);
 
@@ -249,11 +249,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			else
 				customTypeInfo = null;
 
-			var compExprs = new DbgDotNetCompiledExpressionResult[1] {
+			var compExprs = new[] {
 				DbgDotNetCompiledExpressionResult.Create(compileResult.TypeName, compileResult.MethodName,
-						targetExpression, new DbgDotNetText(Array.Empty<DbgDotNetTextPart>()),
-						ToEvaluationResultFlags(resultProperties.Flags), PredefinedDbgValueNodeImageNames.Data,
-						customTypeInfo),
+						expression, name, ToEvaluationResultFlags(resultProperties.Flags),
+						resultProperties.GetImageName(), customTypeInfo),
 			};
 			return new DbgDotNetCompilationResult(compileResult.Assembly, compExprs);
 		}
@@ -368,5 +367,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			}
 			return builder.ToImmutable();
 		}
+
+		//TODO: Syntax highlight the expression
+		protected DbgDotNetText GetExpressionText(string expression) => new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, expression));
 	}
 }

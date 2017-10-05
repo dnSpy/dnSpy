@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public abstract DbgEngineValueNode CreateException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 		public abstract DbgEngineValueNode CreateStowedException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 		public abstract DbgEngineValueNode CreateReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method, CancellationToken cancellationToken);
-		public abstract DbgEngineValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, CancellationToken cancellationToken);
+		public abstract DbgEngineValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects, CancellationToken cancellationToken);
 		public abstract DbgEngineValueNode CreateTypeVariables(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetTypeVariableInfo[] typeVariableInfos, CancellationToken cancellationToken);
 	}
 
@@ -66,8 +66,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValueNode CreateReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method, CancellationToken cancellationToken) =>
 			new DbgEngineValueNodeImpl(this, factory.CreateReturnValue(context, frame, id, value, options, method, cancellationToken));
 
-		public override DbgEngineValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, CancellationToken cancellationToken) =>
-			new DbgEngineValueNodeImpl(this, factory.CreateError(context, frame, name, errorMessage, expression, cancellationToken));
+		public override DbgEngineValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects, CancellationToken cancellationToken) =>
+			new DbgEngineValueNodeImpl(this, factory.CreateError(context, frame, name, errorMessage, expression, causesSideEffects, cancellationToken));
 
 		public override DbgEngineValueNode CreateTypeVariables(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetTypeVariableInfo[] typeVariableInfos, CancellationToken cancellationToken) =>
 			new DbgEngineValueNodeImpl(this, factory.CreateTypeVariables(context, frame, typeVariableInfos, cancellationToken));

@@ -31,17 +31,17 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 	/// </summary>
 	public abstract class DbgDotNetExpressionCompiler {
 		/// <summary>
-		/// Compiles expressions
+		/// Compiles an expression
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="aliases">Aliases</param>
-		/// <param name="expressions">Expressions</param>
+		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetCompilationResult CompileExpressions(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string[] expressions, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetCompilationResult CompileExpression(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates an assembly that is used to get all the locals

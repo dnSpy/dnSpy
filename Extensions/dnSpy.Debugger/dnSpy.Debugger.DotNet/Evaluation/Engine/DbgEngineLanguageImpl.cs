@@ -63,7 +63,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.dbgMetadataService = dbgMetadataService ?? throw new ArgumentNullException(nameof(dbgMetadataService));
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 			var dnILInterpreter = new DbgDotNetILInterpreterImpl();
-			ExpressionEvaluator = new DbgEngineExpressionEvaluatorImpl(dbgModuleReferenceProvider, expressionCompiler, dnILInterpreter);
+			var expressionEvaluator = new DbgEngineExpressionEvaluatorImpl(dbgModuleReferenceProvider, expressionCompiler, dnILInterpreter);
+			ExpressionEvaluator = expressionEvaluator;
 			ValueFormatter = new DbgEngineValueFormatterImpl();
 			Formatter = new DbgEngineFormatterImpl(formatter);
 			LocalsProvider = new DbgEngineLocalsProviderImpl(dbgModuleReferenceProvider, expressionCompiler, valueNodeFactory, dnILInterpreter);
@@ -71,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			ExceptionsProvider = new DbgEngineExceptionsProviderImpl(valueNodeFactory);
 			ReturnValuesProvider = new DbgEngineReturnValuesProviderImpl(valueNodeFactory);
 			TypeVariablesProvider = new DbgEngineTypeVariablesProviderImpl(valueNodeFactory);
-			ValueNodeFactory = new DbgEngineValueNodeFactoryImpl(valueNodeFactory, formatter);
+			ValueNodeFactory = new DbgEngineValueNodeFactoryImpl(expressionEvaluator, valueNodeFactory, formatter);
 		}
 
 		static class DecompilerOutputImplCache {

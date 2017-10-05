@@ -24,12 +24,8 @@ using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	sealed class ArrayILValue : TypeILValue, IDebuggerRuntimeILValue {
-		public override DmdType Type => arrayValue.Type;
-		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => arrayValue;
-
+	sealed class ArrayILValue : TypeILValueImpl {
 		readonly DebuggerRuntimeImpl runtime;
-		readonly DbgDotNetValue arrayValue;
 		long cachedArrayLength;
 		const long cachedArrayLength_uninitialized = -1;
 		const long cachedArrayLength_error = -2;
@@ -37,16 +33,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		uint elementCount;
 		DbgDotNetArrayDimensionInfo[] dimensionInfos;
 
-		public ArrayILValue(DebuggerRuntimeImpl runtime, DbgDotNetValue arrayValue) {
+		public ArrayILValue(DebuggerRuntimeImpl runtime, DbgDotNetValue arrayValue)
+			: base(runtime, arrayValue) {
 			this.runtime = runtime;
-			this.arrayValue = arrayValue;
 			cachedArrayLength = cachedArrayLength_uninitialized;
 		}
 
 		void InitializeArrayInfo() {
 			if (dimensionInfos != null)
 				return;
-			if (!arrayValue.GetArrayInfo(out elementCount, out dimensionInfos))
+			if (!objValue.GetArrayInfo(out elementCount, out dimensionInfos))
 				throw new InvalidOperationException();
 		}
 
@@ -91,24 +87,24 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		internal DbgDotNetValue ReadArrayElement(long index) {
 			if ((ulong)index > uint.MaxValue)
 				return null;
-			var elemValue = arrayValue.GetArrayElementAt((uint)index);
+			var elemValue = objValue.GetArrayElementAt((uint)index);
 			if (elemValue != null)
 				return runtime.RecordValue(elemValue);
 			return null;
 		}
 
-		void StoreArrayElement(uint index, ILValue value) => runtime.SetArrayElementAt(arrayValue, index, value);
-		internal void StoreArrayElement(uint index, object value) => runtime.SetArrayElementAt(arrayValue, index, value);
+		void StoreArrayElement(uint index, ILValue value) => runtime.SetArrayElementAt(objValue, index, value);
+		internal void StoreArrayElement(uint index, object value) => runtime.SetArrayElementAt(objValue, index, value);
 
 		ILValue LoadArrayElement(uint index) {
-			var elemValue = arrayValue.GetArrayElementAt(index);
+			var elemValue = objValue.GetArrayElementAt(index);
 			if (elemValue != null)
 				return runtime.CreateILValue(elemValue);
 			return null;
 		}
 
 		public override ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) {
-			if (!arrayValue.Type.IsSZArray)
+			if (!objValue.Type.IsSZArray)
 				return null;
 			if ((ulong)index > uint.MaxValue)
 				return null;
@@ -116,16 +112,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override bool StoreSZArrayElement(LoadValueType loadValueType, long index, ILValue value, DmdType elementType) {
-			if (!arrayValue.Type.IsSZArray)
+			if (!objValue.Type.IsSZArray)
 				return false;
 			if ((ulong)index > uint.MaxValue)
 				return false;
-			runtime.SetArrayElementAt(arrayValue, (uint)index, value);
+			runtime.SetArrayElementAt(objValue, (uint)index, value);
 			return true;
 		}
 
 		public override ILValue LoadSZArrayElementAddress(long index, DmdType elementType) {
-			if (!arrayValue.Type.IsSZArray)
+			if (!objValue.Type.IsSZArray)
 				return null;
 			if ((ulong)index > uint.MaxValue)
 				return null;
@@ -133,10 +129,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override bool GetSZArrayLength(out long length) {
-			if (!arrayValue.Type.IsSZArray)
+			if (!objValue.Type.IsSZArray)
 				cachedArrayLength = cachedArrayLength_error;
 			if (cachedArrayLength == cachedArrayLength_uninitialized) {
-				if (!arrayValue.GetArrayCount(out var arrayCount))
+				if (!objValue.GetArrayCount(out var arrayCount))
 					cachedArrayLength = cachedArrayLength_error;
 				else
 					cachedArrayLength = arrayCount;

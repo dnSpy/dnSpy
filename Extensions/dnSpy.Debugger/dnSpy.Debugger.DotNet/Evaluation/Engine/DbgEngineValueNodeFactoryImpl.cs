@@ -24,25 +24,51 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
+using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineValueNodeFactoryImpl : DbgEngineValueNodeFactory {
+		readonly DbgEngineExpressionEvaluatorImpl expressionEvaluator;
 		readonly DbgDotNetEngineValueNodeFactory valueNodeFactory;
 		readonly DbgDotNetFormatter formatter;
 
-		public DbgEngineValueNodeFactoryImpl(DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetFormatter formatter) {
+		public DbgEngineValueNodeFactoryImpl(DbgEngineExpressionEvaluatorImpl expressionEvaluator, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetFormatter formatter) {
+			this.expressionEvaluator = expressionEvaluator ?? throw new ArgumentNullException(nameof(expressionEvaluator));
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
 		}
 
-		public override DbgEngineValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			throw new NotImplementedException();//TODO:
-		}
+		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => CreateCore(context, frame, expressions, cancellationToken));
 
-		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNode> callback, CancellationToken cancellationToken) {
-			throw new NotImplementedException();//TODO:
+		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(CreateCore(context, frame, expressions, cancellationToken)));
+
+		DbgEngineValueNode[] CreateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) {
+			var res = expressions.Length == 0 ? Array.Empty<DbgEngineValueNode>() : new DbgEngineValueNode[expressions.Length];
+			try {
+				for (int i = 0; i < res.Length; i++) {
+					ref var info = ref expressions[i];
+					var evalRes = expressionEvaluator.EvaluateImpl(context, frame, info.Expression, info.Options, cancellationToken);
+					bool causesSideEffects = (evalRes.Flags & DbgEvaluationResultFlags.SideEffects) != 0;
+					DbgEngineValueNode newNode;
+					if (evalRes.Error != null)
+						newNode = valueNodeFactory.CreateError(context, frame, evalRes.Name, evalRes.Error, info.Expression, causesSideEffects, cancellationToken);
+					else {
+						bool isReadOnly = (evalRes.Flags & DbgEvaluationResultFlags.ReadOnly) != 0;
+						newNode = valueNodeFactory.Create(context, frame, evalRes.Name, evalRes.Value, DbgEvaluationOptionsUtils.ToValueNodeEvaluationOptions(info.Options), info.Expression, evalRes.ImageName, isReadOnly, causesSideEffects, evalRes.Type, cancellationToken);
+					}
+					res[i] = newNode;
+				}
+			}
+			catch {
+				context.Process.DbgManager.Close(res.Where(a => a != null));
+				throw;
+			}
+			return res;
 		}
 
 		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
