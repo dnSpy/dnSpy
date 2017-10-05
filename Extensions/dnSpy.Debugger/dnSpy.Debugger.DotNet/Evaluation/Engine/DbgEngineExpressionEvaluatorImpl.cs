@@ -24,6 +24,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Properties;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineExpressionEvaluatorImpl : DbgEngineExpressionEvaluator {
@@ -69,8 +70,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				if (res.HasError)
 					return new DbgEngineEEAssignmentResult(resultFlags, res.ErrorMessage);
 				if (res.ValueIsException) {
-					res.Value?.Dispose();
-					return new DbgEngineEEAssignmentResult(resultFlags, PredefinedEvaluationErrorMessages.InternalDebuggerError);
+					res.Value.Dispose();
+					var error = string.Format(dnSpy_Debugger_DotNet_Resources.Method_X_ThrewAnExceptionOfType_Y, expression, res.Value.Type.FullName);
+					return new DbgEngineEEAssignmentResult(resultFlags, error);
 				}
 
 				res.Value?.Dispose();
