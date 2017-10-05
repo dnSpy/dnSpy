@@ -200,6 +200,7 @@
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
     <Compile Include="Impl\EvalReflectionUtils.cs" />
     <Compile Include="Impl\Evaluation\CordbgErrorHelper.cs" />
+    <Compile Include="Impl\Evaluation\CreateCorValueResult.cs" />
     <Compile Include="Impl\Evaluation\DbgCorDebugInternalRuntimeImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgCorValueHolder.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetDispatcherImpl.cs" />

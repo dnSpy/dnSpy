@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 		}
 
-		public override DbgDotNetValue GetDereferencedValue() {
+		public override DbgDotNetValue LoadIndirect() {
 			if (!Type.IsByRef)
 				return null;
 			if (IsNullByRef)
@@ -95,6 +95,42 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			if (dereferencedValue == null)
 				return null;
 			return engine.CreateDotNetValue_CorDebug(dereferencedValue, Type.AppDomain, tryCreateStrongHandle: true);
+		}
+
+		public override string StoreIndirect(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+			if (!Type.IsByRef)
+				return CordbgErrorHelper.InternalError;
+			if (engine.CheckCorDebugThread())
+				return StoreIndirect_CorDebug(context, frame, value, cancellationToken);
+			return engine.InvokeCorDebugThread(() => StoreIndirect_CorDebug(context, frame, value, cancellationToken));
+		}
+
+		string StoreIndirect_CorDebug(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return CordbgErrorHelper.InternalError;
+			if (!Type.IsByRef)
+				return CordbgErrorHelper.InternalError;
+			Func<CreateCorValueResult> createTargetValue = () => {
+				var objValue = TryGetCorValue();
+				if (objValue == null)
+					return new CreateCorValueResult(null, -1);
+				Debug.Assert(objValue.ElementType == CorElementType.ByRef);
+				if (objValue.ElementType == CorElementType.ByRef) {
+					var derefencedValue = objValue.DereferencedValue;
+					if (derefencedValue == null)
+						return new CreateCorValueResult(null, -1);
+					if (!derefencedValue.IsReference) {
+						if (derefencedValue.IsGeneric)
+							return new CreateCorValueResult(derefencedValue, 0, canDispose: true);
+						engine.DisposeHandle_CorDebug(derefencedValue);
+						return new CreateCorValueResult(null, -1);
+					}
+					return new CreateCorValueResult(derefencedValue, 0, canDispose: true);
+				}
+				else
+					return new CreateCorValueResult(null, -1);
+			};
+			return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, Type.GetElementType(), value, cancellationToken);
 		}
 
 		struct ArrayObjectValue : IDisposable {
@@ -226,13 +262,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		string SetArrayElementAt_CorDebug(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return CordbgErrorHelper.InternalError;
-			Func<(CorValue value, int hr)> createTargetValue = () => {
+			Func<CreateCorValueResult> createTargetValue = () => {
 				var corValue = TryGetCorValue();
 				if (corValue == null)
-					return (null, -1);
+					return new CreateCorValueResult(null, -1);
 				using (var obj = new ArrayObjectValue(engine, corValue)) {
 					var elemValue = obj.Value.GetElementAtPosition(index, out int hr);
-					return (elemValue, hr);
+					return new CreateCorValueResult(elemValue, hr);
 				}
 			};
 			return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, Type.GetElementType(), value, cancellationToken);

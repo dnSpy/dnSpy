@@ -477,6 +477,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return new ReferenceTypeFieldAddress(this, objValue, field);
 		}
 
+		internal bool StoreIndirect(DbgDotNetValue byRefValue, object value) {
+			Debug.Assert(byRefValue.Type.IsByRef);
+			var error = byRefValue.StoreIndirect(context, frame, value, cancellationToken);
+			if (error != null)
+				throw new InterpreterMessageException(error);
+			return true;
+		}
+
 		internal bool CallInstance(DbgDotNetValue objValue, bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
 			Call(objValue, isCallvirt, method, arguments, out returnValue);
 

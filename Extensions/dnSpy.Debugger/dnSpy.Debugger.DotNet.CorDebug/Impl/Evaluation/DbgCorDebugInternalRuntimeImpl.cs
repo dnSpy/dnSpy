@@ -189,9 +189,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					corFieldDeclType = GetType(appDomain, fieldDeclType);
 
 					InitializeStaticConstructor(context, frame, ilFrame, fieldDeclType, corFieldDeclType, cancellationToken);
-					Func<(CorValue value, int hr)> createTargetValue = () => {
+					Func<CreateCorValueResult> createTargetValue = () => {
 						var fieldValue = corFieldDeclType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out var hr);
-						return (fieldValue, hr);
+						return new CreateCorValueResult(fieldValue, hr);
 					};
 					return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, field.FieldType, value, cancellationToken);
 				}
@@ -206,14 +206,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (objValue == null)
 					return CordbgErrorHelper.InternalError;
 				if (objValue.IsObject) {
-					Func<(CorValue value, int hr)> createTargetValue = () => {
+					Func<CreateCorValueResult> createTargetValue = () => {
 						// Re-read it since it could've gotten neutered
 						var objValue2 = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue());
 						Debug.Assert(objValue2?.IsObject == true);
 						if (objValue2 == null)
-							return (null, -1);
+							return new CreateCorValueResult(null, -1);
 						var fieldValue = objValue2.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out var hr);
-						return (fieldValue, hr);
+						return new CreateCorValueResult(fieldValue, hr);
 					};
 					return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, field.FieldType, value, cancellationToken);
 				}

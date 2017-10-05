@@ -32,11 +32,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.byRefValue = byRefValue;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.RecordValue(byRefValue.GetDereferencedValue());
-
-		protected override void WriteValue(object value) {
-			throw new System.NotImplementedException();//TODO:
-		}
+		protected override DbgDotNetValue ReadValue() => runtime.RecordValue(byRefValue.LoadIndirect());
+		protected override void WriteValue(object value) => runtime.StoreIndirect(byRefValue, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is ByRefILValueImpl addr &&

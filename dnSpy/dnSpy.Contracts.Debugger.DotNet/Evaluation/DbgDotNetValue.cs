@@ -45,7 +45,18 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Gets the referenced value if it's a by-ref
 		/// </summary>
 		/// <returns></returns>
-		public virtual DbgDotNetValue GetDereferencedValue() => null;
+		public virtual DbgDotNetValue LoadIndirect() => null;
+
+		/// <summary>
+		/// Writes to the referenced valued. The return value is null or an error message.
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public virtual string StoreIndirect(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) =>
+			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
 		/// true if this is an array value
