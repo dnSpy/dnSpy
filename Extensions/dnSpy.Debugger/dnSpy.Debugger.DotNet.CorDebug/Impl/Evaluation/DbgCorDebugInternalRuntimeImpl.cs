@@ -426,7 +426,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var appDomain = elementType.AppDomain;
 			DbgDotNetValue typeElementType = null;
 			try {
-				var methodGetType = appDomain.System_Type.GetMethod("GetType", DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
+				var methodGetType = appDomain.System_Type.GetMethod(nameof(Type.GetType), DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
 				var res = engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false, cancellationToken);
 				typeElementType = res.Value;
 				if (res.HasError || res.ValueIsException)
@@ -434,7 +434,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (res.Value.IsNull)
 					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
-				var methodCreateInstance = appDomain.System_Array.GetMethod("CreateInstance", DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32 }, throwOnError: true);
+				var methodCreateInstance = appDomain.System_Array.GetMethod(nameof(Array.CreateInstance), DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32 }, throwOnError: true);
 				return engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodCreateInstance, null, new object[] { typeElementType, length }, false, cancellationToken);
 			}
 			finally {
@@ -499,7 +499,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var appDomain = elementType.AppDomain;
 			DbgDotNetValue typeElementType = null;
 			try {
-				var methodGetType = appDomain.System_Type.GetMethod("GetType", DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
+				var methodGetType = appDomain.System_Type.GetMethod(nameof(Type.GetType), DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
 				var res = engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false, cancellationToken);
 				typeElementType = res.Value;
 				if (res.HasError || res.ValueIsException)
@@ -514,7 +514,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					lowerBounds[i] = dimensionInfos[i].BaseIndex;
 				}
 
-				var methodCreateInstance = appDomain.System_Array.GetMethod("CreateInstance", DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32.MakeArrayType(), appDomain.System_Int32.MakeArrayType() }, throwOnError: true);
+				var methodCreateInstance = appDomain.System_Array.GetMethod(nameof(Array.CreateInstance), DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32.MakeArrayType(), appDomain.System_Int32.MakeArrayType() }, throwOnError: true);
 				res = engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodCreateInstance, null, new object[] { typeElementType, lengths, lowerBounds }, false, cancellationToken);
 				if (res.HasError || res.ValueIsException)
 					return res;

@@ -322,7 +322,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override ILValue CreateRuntimeTypeHandle(DmdType type) {
-			return null;//TODO:
+			var appDomain = type.AppDomain;
+			var methodGetType = appDomain.System_Type.GetMethod(nameof(Type.GetType), DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
+			var typeValue = RecordValue(runtime.Call(context, frame, null, methodGetType, new[] { type.AssemblyQualifiedName }, cancellationToken));
+
+			var runtimeTypeHandleType = appDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle);
+			var getTypeHandleMethod = typeValue.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: true);
+			var typeHandleValue = RecordValue(runtime.Call(context, frame, typeValue, getTypeHandleMethod, Array.Empty<object>(), cancellationToken));
+			return CreateILValue(typeHandleValue);
 		}
 
 		public override ILValue CreateRuntimeFieldHandle(DmdFieldInfo field) {
