@@ -18,19 +18,42 @@
 */
 
 using System;
+using System.Linq;
 using System.Threading;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineAutosProviderImpl : DbgEngineValueNodeProvider {
-		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			return Array.Empty<DbgEngineValueNode>();//TODO:
-		}
+		readonly DbgDotNetEngineValueNodeFactory valueNodeFactory;
 
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) {
-			callback(Array.Empty<DbgEngineValueNode>());//TODO:
+		public DbgEngineAutosProviderImpl(DbgDotNetEngineValueNodeFactory valueNodeFactory) =>
+			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
+
+		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetNodesCore(context, frame, options, cancellationToken));
+
+		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(GetNodesCore(context, frame, options, cancellationToken)));
+
+		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+			//TODO: Show all autos...
+			var res = new DbgEngineValueNode[1];
+			try {
+				for (int i = 0; i < res.Length; i++) {
+					var name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, "Error"));
+					res[i] = valueNodeFactory.CreateError(context, frame, name, "NYI", "NYI", cancellationToken);
+				}
+			}
+			catch {
+				context.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
+				throw;
+			}
+			return res;
 		}
 	}
 }

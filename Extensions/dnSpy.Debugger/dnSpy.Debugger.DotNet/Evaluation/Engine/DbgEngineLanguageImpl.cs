@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			ValueFormatter = new DbgEngineValueFormatterImpl();
 			Formatter = new DbgEngineFormatterImpl(formatter);
 			LocalsProvider = new DbgEngineLocalsProviderImpl(dbgModuleReferenceProvider, expressionCompiler, valueNodeFactory, dnILInterpreter);
-			AutosProvider = new DbgEngineAutosProviderImpl();
+			AutosProvider = new DbgEngineAutosProviderImpl(valueNodeFactory);
 			ExceptionsProvider = new DbgEngineExceptionsProviderImpl(valueNodeFactory);
 			ReturnValuesProvider = new DbgEngineReturnValuesProviderImpl(valueNodeFactory);
 			TypeVariablesProvider = new DbgEngineTypeVariablesProviderImpl(valueNodeFactory);
