@@ -254,17 +254,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		Metadata,
 
 		/// <summary>
-		/// SZArray/MDArray Set method
+		/// SZArray/MDArray Set method: void Set(int, ..., ElementType)
 		/// </summary>
 		Array_Set,
 
 		/// <summary>
-		/// SZArray/MDArray Address method
+		/// SZArray/MDArray Address method: ElementType&amp; Address(int, ...)
 		/// </summary>
 		Array_Address,
 
 		/// <summary>
-		/// SZArray/MDArray Get method
+		/// SZArray/MDArray Get method: ElementType Get(int, ...)
 		/// </summary>
 		Array_Get,
 

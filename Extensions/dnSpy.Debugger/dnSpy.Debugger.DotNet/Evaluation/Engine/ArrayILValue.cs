@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;
@@ -33,28 +34,58 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		const long cachedArrayLength_uninitialized = -1;
 		const long cachedArrayLength_error = -2;
 
+		uint elementCount;
+		DbgDotNetArrayDimensionInfo[] dimensionInfos;
+
 		public ArrayILValue(DebuggerRuntimeImpl runtime, DbgDotNetValue arrayValue) {
 			this.runtime = runtime;
 			this.arrayValue = arrayValue;
 			cachedArrayLength = cachedArrayLength_uninitialized;
 		}
 
+		void InitializeArrayInfo() {
+			if (dimensionInfos != null)
+				return;
+			if (!arrayValue.GetArrayInfo(out elementCount, out dimensionInfos))
+				throw new InvalidOperationException();
+		}
+
 		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
 			switch (method.SpecialMethodKind) {
 			case DmdSpecialMethodKind.Array_Get:
-				//TODO:
-				break;
+				returnValue = LoadArrayElement(GetZeroBasedIndex(arguments, arguments.Length));
+				return returnValue != null;
 
 			case DmdSpecialMethodKind.Array_Set:
-				//TODO:
-				break;
+				StoreArrayElement(GetZeroBasedIndex(arguments, arguments.Length - 1), arguments[arguments.Length - 1]);
+				returnValue = null;
+				return true;
 
 			case DmdSpecialMethodKind.Array_Address:
-				//TODO:
-				break;
+				returnValue = new ArrayElementAddress(runtime, this, GetZeroBasedIndex(arguments, arguments.Length));
+				return true;
 			}
 
 			return base.Call(isCallvirt, method, arguments, out returnValue);
+		}
+
+		uint GetZeroBasedIndex(ILValue[] indexes, int count) {
+			if (dimensionInfos == null)
+				InitializeArrayInfo();
+			if (dimensionInfos.Length != count)
+				throw new InvalidOperationException();
+
+			uint result = 0;
+
+			for (int i = 0; i < dimensionInfos.Length; i++) {
+				ref var dim = ref dimensionInfos[i];
+				uint index = (uint)(runtime.ToInt32(indexes[i]) - dim.BaseIndex);
+				if (index >= dim.Length)
+					throw new InvalidOperationException();
+				result = checked(result * dim.Length + index);
+			}
+
+			return result;
 		}
 
 		internal DbgDotNetValue ReadArrayElement(long index) {
@@ -66,17 +97,22 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return null;
 		}
 
-		internal void WriteArrayElement(uint index, object value) => runtime.SetArrayElementAt(arrayValue, index, value);
+		void StoreArrayElement(uint index, ILValue value) => runtime.SetArrayElementAt(arrayValue, index, value);
+		internal void StoreArrayElement(uint index, object value) => runtime.SetArrayElementAt(arrayValue, index, value);
+
+		ILValue LoadArrayElement(uint index) {
+			var elemValue = arrayValue.GetArrayElementAt(index);
+			if (elemValue != null)
+				return runtime.CreateILValue(elemValue);
+			return null;
+		}
 
 		public override ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) {
 			if (!arrayValue.Type.IsSZArray)
 				return null;
 			if ((ulong)index > uint.MaxValue)
 				return null;
-			var elemValue = arrayValue.GetArrayElementAt((uint)index);
-			if (elemValue != null)
-				return runtime.CreateILValue(elemValue);
-			return null;
+			return LoadArrayElement((uint)index);
 		}
 
 		public override bool StoreSZArrayElement(LoadValueType loadValueType, long index, ILValue value, DmdType elementType) {

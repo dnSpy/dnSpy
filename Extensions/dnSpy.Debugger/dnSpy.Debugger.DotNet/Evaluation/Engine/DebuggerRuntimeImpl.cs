@@ -511,5 +511,20 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				res[i] = GetDebuggerValue(values[i], targetTypes[i]);
 			return res;
 		}
+
+		internal int ToInt32(ILValue value) {
+			if (value is ConstantInt32ILValue i32Value)
+				return i32Value.Value;
+			var dnValue = TryGetDotNetValue(value);
+			if (dnValue != null) {
+				if (dnValue.Type != dnValue.Type.AppDomain.System_Int32)
+					throw new InvalidOperationException();
+				var rawValue = dnValue.GetRawValue();
+				if (rawValue.ValueType == DbgSimpleValueType.Int32)
+					return (int)rawValue.RawValue;
+				throw new InvalidOperationException();
+			}
+			throw new InvalidOperationException();
+		}
 	}
 }

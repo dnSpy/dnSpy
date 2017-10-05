@@ -141,7 +141,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		protected override DbgDotNetValue ReadValue() => arrayValue.ReadArrayElement(index);
-		protected override void WriteValue(object value) => arrayValue.WriteArrayElement(index, value);
+		protected override void WriteValue(object value) => arrayValue.StoreArrayElement(index, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is ArrayElementAddress addr &&
