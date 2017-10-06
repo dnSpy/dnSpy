@@ -210,7 +210,7 @@
 		<color name="debuglogunloadmodule" fg="#FF6600FF" />
 		<color name="debuglogexitprocess" fg="#FF000000" />
 		<color name="debuglogexitthread" fg="#FF006699" />
-		<color name="debuglogprogramoutput" fg="#FF996600" />
+		<color name="debuglogprogramoutput" fg="#FF487C5F" />
 		<color name="debuglogmda" fg="#FFFF0000" />
 		<color name="debuglogtimestamp" fg="#FF6600CC" />
 		<color name="glyphmargin" bg="#FFE6E7E8" />
@@ -292,11 +292,11 @@
 		<color name="debuglogtrace" fg="#FF0000CC" />
 		<color name="debuglogextensionmessage" fg="#FFFF3DE5" />
 		<color name="debuggervaluechangedhighlight" bg="#FFF4A721" />
-		<color name="debugexceptionname" fg="#000080" />
-		<color name="debugstowedexceptionname" fg="#000080" />
-		<color name="debugreturnvaluename" fg="#000080" />
-		<color name="debugvariablename" fg="#000080" />
-		<color name="debugobjectidname" fg="#000080" />
+		<color name="debugexceptionname" fg="Black" />
+		<color name="debugstowedexceptionname" fg="Black" />
+		<color name="debugreturnvaluename" fg="Black" />
+		<color name="debugvariablename" fg="Black" />
+		<color name="debugobjectidname" fg="Black" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
 		<color name="systemcolorscontroldark" bg="#FFA0A0A0" />

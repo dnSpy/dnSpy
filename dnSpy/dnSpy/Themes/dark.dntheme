@@ -292,11 +292,11 @@
 		<color name="debuglogtrace" fg="#FF62CC00" />
 		<color name="debuglogextensionmessage" fg="#FFFFADC4" />
 		<color name="debuggervaluechangedhighlight" bg="#FF773800" />
-		<color name="debugexceptionname" fg="#BDB76B" />
-		<color name="debugstowedexceptionname" fg="#BDB76B" />
-		<color name="debugreturnvaluename" fg="#BDB76B" />
-		<color name="debugvariablename" fg="#BDB76B" />
-		<color name="debugobjectidname" fg="#BDB76B" />
+		<color name="debugexceptionname" fg="#DCDCDC" />
+		<color name="debugstowedexceptionname" fg="#DCDCDC" />
+		<color name="debugreturnvaluename" fg="#DCDCDC" />
+		<color name="debugvariablename" fg="#DCDCDC" />
+		<color name="debugobjectidname" fg="#DCDCDC" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />
