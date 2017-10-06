@@ -165,7 +165,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 							else {
 								if (rank == 1)
 									OutputWrite("*", BoxedTextColor.Operator);
-								if (aryValue == null || !aryValue.GetArrayInfo(out elementCount, out var dimensionInfos))
+								if (aryValue == null || aryValue.IsNull || !aryValue.GetArrayInfo(out elementCount, out var dimensionInfos))
 									dimensionInfos = null;
 								if (ShowArrayValueSizes && dimensionInfos != null && dimensionInfos.Length == rank) {
 									for (int i = 0; i < rank; i++) {
@@ -190,7 +190,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 						else {
 							Debug.Assert(aryType.IsSZArray);
 							OutputWrite(ARRAY_OPEN_PAREN, BoxedTextColor.Punctuation);
-							if (ShowArrayValueSizes && aryValue != null) {
+							if (ShowArrayValueSizes && aryValue != null && !aryValue.IsNull) {
 								if (aryValue.GetArrayCount(out elementCount))
 									WriteUInt32(elementCount);
 							}

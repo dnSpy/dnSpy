@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 
 		/// <summary>
 		/// Creates a <see cref="DbgValueNode"/>. It blocks the current thread until the evaluation is complete.
-		/// The returned <see cref="DbgValueNode"/> is automatically closed when its runtime continues.
+		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame</param>
@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgCreateValueNodeResult[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Creates a <see cref="DbgValueNode"/>. The returned <see cref="DbgValueNode"/> is automatically closed when its runtime continues.
+		/// Creates a <see cref="DbgValueNode"/>. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame</param>

@@ -148,7 +148,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					Value = value;
 					ownsValue = false;
 				}
-				Debug.Assert(Value.IsArray);
+				// Value is sometimes null, DereferencedValue can fail with 0x80131305 = CORDBG_E_BAD_REFERENCE_VALUE
+				Debug.Assert(Value == null || Value.IsArray);
 			}
 
 			public void Dispose() {
@@ -177,10 +178,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Debug.Assert(IsArray);
 			engine.VerifyCorDebugThread();
 			var corValue = TryGetCorValue();
-			if (corValue == null)
+			if (corValue == null || corValue.IsNull)
 				return 0;
 			using (var obj = new ArrayObjectValue(engine, corValue))
-				return obj.Value.ArrayCount;
+				return obj.Value?.ArrayCount ?? 0;
 		}
 
 		public override bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
@@ -206,12 +207,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Debug.Assert(IsArray);
 			engine.VerifyCorDebugThread();
 			var corValue = TryGetCorValue();
-			if (corValue == null) {
+			if (corValue == null || corValue.IsNull) {
 				elementCount = 0;
 				dimensionInfos = null;
 				return false;
 			}
 			using (var obj = new ArrayObjectValue(engine, corValue)) {
+				if (obj.Value == null) {
+					elementCount = 0;
+					dimensionInfos = null;
+					return false;
+				}
 				elementCount = obj.Value.ArrayCount;
 				var baseIndexes = (obj.Value.HasBaseIndicies ? obj.Value.BaseIndicies : null) ?? Array.Empty<uint>();
 				var dimensions = obj.Value.Dimensions;
@@ -241,10 +247,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Debug.Assert(IsArray);
 			engine.VerifyCorDebugThread();
 			var corValue = TryGetCorValue();
-			if (corValue == null)
+			if (corValue == null || corValue.IsNull)
 				return null;
 			using (var obj = new ArrayObjectValue(engine, corValue)) {
-				var elemValue = obj.Value.GetElementAtPosition(index, out int hr);
+				var elemValue = obj.Value?.GetElementAtPosition(index, out int hr);
 				if (elemValue == null)
 					return null;
 				return engine.CreateDotNetValue_CorDebug(elemValue, Type.AppDomain, tryCreateStrongHandle: true);
@@ -264,9 +270,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return CordbgErrorHelper.InternalError;
 			Func<CreateCorValueResult> createTargetValue = () => {
 				var corValue = TryGetCorValue();
-				if (corValue == null)
+				if (corValue == null || corValue.IsNull)
 					return new CreateCorValueResult(null, -1);
 				using (var obj = new ArrayObjectValue(engine, corValue)) {
+					if (obj.Value == null)
+						return new CreateCorValueResult(null, -1);
 					var elemValue = obj.Value.GetElementAtPosition(index, out int hr);
 					return new CreateCorValueResult(elemValue, hr);
 				}

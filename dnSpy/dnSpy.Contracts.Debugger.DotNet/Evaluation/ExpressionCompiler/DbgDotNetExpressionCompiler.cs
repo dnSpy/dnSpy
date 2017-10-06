@@ -26,7 +26,7 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 	/// <summary>
-	/// A .NET expression evaluator. Use <see cref="ExportDbgDotNetExpressionCompilerAttribute"/>
+	/// A .NET expression compiler. Use <see cref="ExportDbgDotNetExpressionCompilerAttribute"/>
 	/// to export an instance.
 	/// </summary>
 	public abstract class DbgDotNetExpressionCompiler {
