@@ -77,6 +77,11 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// </summary>
 		public const string FuncEvalRequiresAllThreadsToRun = nameof(FuncEvalRequiresAllThreadsToRun) + SUFFIX;
 
+		/// <summary>
+		/// Can't read local or argument because it's not available at the current IP or it's been optimized away
+		/// </summary>
+		public const string CannotReadLocalOrArgumentMaybeOptimizedAway = nameof(CannotReadLocalOrArgumentMaybeOptimizedAway) + SUFFIX;
+
 		// If more errors are added, also update the code in PredefinedEvaluationErrorMessagesHelper
 	}
 

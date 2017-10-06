@@ -754,6 +754,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot obtain value of the local variable or argument because it is not available at this instruction pointer, possibly because it has been optimized away..
+        /// </summary>
+        public static string CannotReadLocalOrArgumentMaybeOptimizedAway {
+            get {
+                return ResourceManager.GetString("CannotReadLocalOrArgumentMaybeOptimizedAway", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear All.
         /// </summary>
         public static string ClearAllCommand {

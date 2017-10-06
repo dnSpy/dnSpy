@@ -32,6 +32,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			if (CordbgErrors.IsCantEvaluateError(hr))
 				return PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint;
+			if (hr == CordbgErrors.CORDBG_E_IL_VAR_NOT_AVAILABLE)
+				return PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway;
 
 			return dnSpy_Debugger_DotNet_CorDebug_Resources.InternalDebuggerError + " (0x" + hr.ToString("X8") + ")";
 		}
