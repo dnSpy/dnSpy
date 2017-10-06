@@ -28,27 +28,27 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public DmdEvaluatorImpl(DbgEngineImpl engine) =>
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 
-		public override object Invoke(object context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken) {
+		public override object Invoke(object context, DmdMethodBase method, object obj, object[] parameters) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override void Invoke(object context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback, CancellationToken cancellationToken) {
+		public override void Invoke(object context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override object LoadField(object context, DmdFieldInfo field, object obj, CancellationToken cancellationToken) {
+		public override object LoadField(object context, DmdFieldInfo field, object obj) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override void LoadField(object context, DmdFieldInfo field, object obj, Action<object> callback, CancellationToken cancellationToken) {
+		public override void LoadField(object context, DmdFieldInfo field, object obj, Action<object> callback) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override void StoreField(object context, DmdFieldInfo field, object obj, object value, CancellationToken cancellationToken) {
+		public override void StoreField(object context, DmdFieldInfo field, object obj, object value) {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override void StoreField(object context, DmdFieldInfo field, object obj, object value, Action callback, CancellationToken cancellationToken) {
+		public override void StoreField(object context, DmdFieldInfo field, object obj, object value, Action callback) {
 			throw new NotImplementedException();//TODO:
 		}
 	}

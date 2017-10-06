@@ -32,9 +32,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="method">Method to call</param>
 		/// <param name="obj">Instance object or null if it's a constructor or a static method</param>
 		/// <param name="parameters">Parameters passed to the method</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract object Invoke(object context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken);
+		public abstract object Invoke(object context, DmdMethodBase method, object obj, object[] parameters);
 
 		/// <summary>
 		/// Loads a field
@@ -42,9 +41,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="field">Field</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract object LoadField(object context, DmdFieldInfo field, object obj, CancellationToken cancellationToken);
+		public abstract object LoadField(object context, DmdFieldInfo field, object obj);
 
 		/// <summary>
 		/// Stores a value in a field
@@ -53,8 +51,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="field">Field</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="value">Value to store in the field</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void StoreField(object context, DmdFieldInfo field, object obj, object value, CancellationToken cancellationToken);
+		public abstract void StoreField(object context, DmdFieldInfo field, object obj, object value);
 
 		/// <summary>
 		/// Executes a method
@@ -64,8 +61,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance object or null if it's a constructor or a static method</param>
 		/// <param name="parameters">Parameters passed to the method</param>
 		/// <param name="callback">Notified when the method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Invoke(object context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback, CancellationToken cancellationToken);
+		public abstract void Invoke(object context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback);
 
 		/// <summary>
 		/// Loads a field
@@ -74,8 +70,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="field">Field</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="callback">Notified when the method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void LoadField(object context, DmdFieldInfo field, object obj, Action<object> callback, CancellationToken cancellationToken);
+		public abstract void LoadField(object context, DmdFieldInfo field, object obj, Action<object> callback);
 
 		/// <summary>
 		/// Stores a value in a field
@@ -85,7 +80,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="value">Value to store in the field</param>
 		/// <param name="callback">Notified when the method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void StoreField(object context, DmdFieldInfo field, object obj, object value, Action callback, CancellationToken cancellationToken);
+		public abstract void StoreField(object context, DmdFieldInfo field, object obj, object value, Action callback);
 	}
 }

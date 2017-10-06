@@ -1063,37 +1063,37 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			DmdWellKnownType.System_Collections_Generic_IReadOnlyCollection_T,
 		};
 
-		public override object Invoke(object context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken) {
+		public override object Invoke(object context, DmdMethodBase method, object obj, object[] parameters) {
 			if ((object)method == null)
 				throw new ArgumentNullException(nameof(method));
 			if ((method.MemberType == DmdMemberTypes.Constructor || method.IsStatic) != (obj == null))
 				throw new ArgumentException();
 			if (method.AppDomain != this)
 				throw new ArgumentException();
-			return runtime.Evaluator.Invoke(context, method, obj, parameters ?? Array.Empty<object>(), cancellationToken);
+			return runtime.Evaluator.Invoke(context, method, obj, parameters ?? Array.Empty<object>());
 		}
 
-		public override object LoadField(object context, DmdFieldInfo field, object obj, CancellationToken cancellationToken) {
+		public override object LoadField(object context, DmdFieldInfo field, object obj) {
 			if ((object)field == null)
 				throw new ArgumentNullException(nameof(field));
 			if (field.IsStatic != (obj == null))
 				throw new ArgumentException();
 			if (field.AppDomain != this)
 				throw new ArgumentException();
-			return runtime.Evaluator.LoadField(context, field, obj, cancellationToken);
+			return runtime.Evaluator.LoadField(context, field, obj);
 		}
 
-		public override void StoreField(object context, DmdFieldInfo field, object obj, object value, CancellationToken cancellationToken) {
+		public override void StoreField(object context, DmdFieldInfo field, object obj, object value) {
 			if ((object)field == null)
 				throw new ArgumentNullException(nameof(field));
 			if (field.IsStatic != (obj == null))
 				throw new ArgumentException();
 			if (field.AppDomain != this)
 				throw new ArgumentException();
-			runtime.Evaluator.StoreField(context, field, obj, value, cancellationToken);
+			runtime.Evaluator.StoreField(context, field, obj, value);
 		}
 
-		public override void Invoke(object context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback, CancellationToken cancellationToken) {
+		public override void Invoke(object context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback) {
 			if ((object)method == null)
 				throw new ArgumentNullException(nameof(method));
 			if ((method.MemberType == DmdMemberTypes.Constructor || method.IsStatic) != (obj == null))
@@ -1102,10 +1102,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			runtime.Evaluator.Invoke(context, method, obj, parameters ?? Array.Empty<object>(), callback, cancellationToken);
+			runtime.Evaluator.Invoke(context, method, obj, parameters ?? Array.Empty<object>(), callback);
 		}
 
-		public override void LoadField(object context, DmdFieldInfo field, object obj, Action<object> callback, CancellationToken cancellationToken) {
+		public override void LoadField(object context, DmdFieldInfo field, object obj, Action<object> callback) {
 			if ((object)field == null)
 				throw new ArgumentNullException(nameof(field));
 			if (field.IsStatic != (obj == null))
@@ -1114,10 +1114,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			runtime.Evaluator.LoadField(context, field, obj, callback, cancellationToken);
+			runtime.Evaluator.LoadField(context, field, obj, callback);
 		}
 
-		public override void StoreField(object context, DmdFieldInfo field, object obj, object value, Action callback, CancellationToken cancellationToken) {
+		public override void StoreField(object context, DmdFieldInfo field, object obj, object value, Action callback) {
 			if ((object)field == null)
 				throw new ArgumentNullException(nameof(field));
 			if (field.IsStatic != (obj == null))
@@ -1126,7 +1126,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			runtime.Evaluator.StoreField(context, field, obj, value, callback, cancellationToken);
+			runtime.Evaluator.StoreField(context, field, obj, value, callback);
 		}
 	}
 }

@@ -54,12 +54,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		   token so it will fail when testing an exe file.
 
 		sealed class DmdEvaluatorImpl2 : DmdEvaluator {
-			public override object Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
-			public override object LoadField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, CancellationToken cancellationToken) => throw new NotImplementedException();
-			public override void StoreField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, object value, CancellationToken cancellationToken) => throw new NotImplementedException();
-			public override void Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback, CancellationToken cancellationToken) => throw new NotImplementedException();
-			public override void LoadField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, Action<object> callback, CancellationToken cancellationToken) => throw new NotImplementedException();
-			public override void StoreField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, object value, Action callback, CancellationToken cancellationToken) => throw new NotImplementedException();
+			public override object Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters) => throw new NotImplementedException();
+			public override object LoadField(IDmdEvaluationContext context, DmdFieldInfo field, object obj) => throw new NotImplementedException();
+			public override void StoreField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, object value) => throw new NotImplementedException();
+			public override void Invoke(IDmdEvaluationContext context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback) => throw new NotImplementedException();
+			public override void LoadField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, Action<object> callback) => throw new NotImplementedException();
+			public override void StoreField(IDmdEvaluationContext context, DmdFieldInfo field, object obj, object value, Action callback) => throw new NotImplementedException();
 		}
 		sealed class ModuleNameProvider {
 			readonly Dictionary<string, string> toName;
