@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return GetNodes(dispatcher, context, frame, options, cancellationToken);
 
 			DbgEngineValueNode[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, DbgValueNodeEvaluationOptions options2, CancellationToken cancellationToken2) =>
-				dispatcher2.Invoke(() => GetNodesCore(context2, frame2, options2, cancellationToken2));
+				dispatcher2.InvokeRethrow(() => GetNodesCore(context2, frame2, options2, cancellationToken2));
 		}
 
 		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {

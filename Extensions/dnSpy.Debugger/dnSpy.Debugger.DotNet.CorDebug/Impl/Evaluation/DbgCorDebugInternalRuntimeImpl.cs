@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return GetFrameMethod2(context, frame, cancellationToken);
 
 			DmdMethodBase GetFrameMethod2(DbgEvaluationContext context2, DbgStackFrame frame2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => GetFrameMethodCore(context2, frame2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => GetFrameMethodCore(context2, frame2, cancellationToken2));
 		}
 
 		DmdMethodBase GetFrameMethodCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return LoadField2(context, frame, obj, field, cancellationToken);
 
 			DbgDotNetValueResult LoadField2(DbgEvaluationContext context2, DbgStackFrame frame2, DbgDotNetValue obj2, DmdFieldInfo field2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => LoadFieldCore(context2, frame2, obj2, field2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => LoadFieldCore(context2, frame2, obj2, field2, cancellationToken2));
 		}
 
 		DbgDotNetValueResult LoadFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return StoreField2(context, frame, obj, field, value, cancellationToken);
 
 			string StoreField2(DbgEvaluationContext context2, DbgStackFrame frame2, DbgDotNetValue obj2, DmdFieldInfo field2, object value2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => StoreFieldCore(context2, frame2, obj2, field2, value2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => StoreFieldCore(context2, frame2, obj2, field2, value2, cancellationToken2));
 		}
 
 		string StoreFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken) {
@@ -376,7 +376,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return Call2(context, frame, obj, method, arguments, cancellationToken);
 
 			DbgDotNetValueResult Call2(DbgEvaluationContext context2, DbgStackFrame frame2, DbgDotNetValue obj2, DmdMethodBase method2, object[] arguments2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => CallCore(context2, frame2, obj2, method2, arguments2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => CallCore(context2, frame2, obj2, method2, arguments2, cancellationToken2));
 		}
 
 		DbgDotNetValueResult CallCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken) {
@@ -392,7 +392,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return CreateInstance2(context, frame, ctor, arguments, cancellationToken);
 
 			DbgDotNetValueResult CreateInstance2(DbgEvaluationContext context2, DbgStackFrame frame2, DmdConstructorInfo ctor2, object[] arguments2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => CreateInstanceCore(context2, frame2, ctor2, arguments2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => CreateInstanceCore(context2, frame2, ctor2, arguments2, cancellationToken2));
 		}
 
 		DbgDotNetValueResult CreateInstanceCore(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, CancellationToken cancellationToken) {
@@ -408,7 +408,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return CreateInstanceNoConstructor2(context, frame, type, cancellationToken);
 
 			DbgDotNetValueResult CreateInstanceNoConstructor2(DbgEvaluationContext context2, DbgStackFrame frame2, DmdType type2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => CreateInstanceNoConstructorCore(context2, frame2, type2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => CreateInstanceNoConstructorCore(context2, frame2, type2, cancellationToken2));
 		}
 
 		DbgDotNetValueResult CreateInstanceNoConstructorCore(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, CancellationToken cancellationToken) {
@@ -424,7 +424,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return CreateSZArray2(context, frame, elementType, length, cancellationToken);
 
 			DbgDotNetValueResult CreateSZArray2(DbgEvaluationContext context2, DbgStackFrame frame2, DmdType elementType2, int length2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => CreateSZArrayCore(context2, frame2, elementType2, length2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => CreateSZArrayCore(context2, frame2, elementType2, length2, cancellationToken2));
 		}
 
 		DbgDotNetValueResult CreateSZArrayCore(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, int length, CancellationToken cancellationToken) {
@@ -509,7 +509,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return CreateArray2(context, frame, elementType, dimensionInfos, cancellationToken);
 
 			DbgDotNetValueResult CreateArray2(DbgEvaluationContext context2, DbgStackFrame frame2, DmdType elementType2, DbgDotNetArrayDimensionInfo[] dimensionInfos2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => CreateArrayCore(context2, frame2, elementType2, dimensionInfos2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => CreateArrayCore(context2, frame2, elementType2, dimensionInfos2, cancellationToken2));
 		}
 
 		DbgDotNetValueResult CreateArrayCore(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, DbgDotNetArrayDimensionInfo[] dimensionInfos, CancellationToken cancellationToken) {
@@ -564,7 +564,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return GetAliases2(context, frame, cancellationToken);
 
 			DbgDotNetAliasInfo[] GetAliases2(DbgEvaluationContext context2, DbgStackFrame frame2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => GetAliasesCore(context2, frame2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => GetAliasesCore(context2, frame2, cancellationToken2));
 		}
 
 		DbgDotNetAliasInfo[] GetAliasesCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
@@ -578,7 +578,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return GetExceptions2(context, frame, cancellationToken);
 
 			DbgDotNetExceptionInfo[] GetExceptions2(DbgEvaluationContext context2, DbgStackFrame frame2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => GetExceptionsCore(context2, frame2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => GetExceptionsCore(context2, frame2, cancellationToken2));
 		}
 
 		DbgDotNetExceptionInfo[] GetExceptionsCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
@@ -600,7 +600,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return GetReturnValues2(context, frame, cancellationToken);
 
 			DbgDotNetReturnValueInfo[] GetReturnValues2(DbgEvaluationContext context2, DbgStackFrame frame2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => GetReturnValuesCore(context2, frame2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => GetReturnValuesCore(context2, frame2, cancellationToken2));
 		}
 
 		DbgDotNetReturnValueInfo[] GetReturnValuesCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
@@ -621,7 +621,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return GetLocalValue2(context, frame, index, cancellationToken);
 
 			DbgDotNetValueResult GetLocalValue2(DbgEvaluationContext context2, DbgStackFrame frame2, uint index2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => GetLocalValueCore(context2, frame2, index2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => GetLocalValueCore(context2, frame2, index2, cancellationToken2));
 		}
 
 		DbgDotNetValueResult GetLocalValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
@@ -640,7 +640,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return GetParameterValue2(context, frame, index, cancellationToken);
 
 			DbgDotNetValueResult GetParameterValue2(DbgEvaluationContext context2, DbgStackFrame frame2, uint index2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => GetParameterValueCore(context2, frame2, index2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => GetParameterValueCore(context2, frame2, index2, cancellationToken2));
 		}
 
 		DbgDotNetValueResult GetParameterValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
@@ -659,7 +659,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return SetLocalValue2(context, frame, index, targetType, value, cancellationToken);
 
 			string SetLocalValue2(DbgEvaluationContext context2, DbgStackFrame frame2, uint index2, DmdType targetType2, object value2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => SetLocalValueCore(context2, frame2, index2, targetType2, value2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => SetLocalValueCore(context2, frame2, index2, targetType2, value2, cancellationToken2));
 		}
 
 		string SetLocalValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
@@ -676,7 +676,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return SetParameterValue2(context, frame, index, targetType, value, cancellationToken);
 
 			string SetParameterValue2(DbgEvaluationContext context2, DbgStackFrame frame2, uint index2, DmdType targetType2, object value2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => SetParameterValueCore(context2, frame2, index2, targetType2, value2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => SetParameterValueCore(context2, frame2, index2, targetType2, value2, cancellationToken2));
 		}
 
 		string SetParameterValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
@@ -693,7 +693,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return CreateValue2(context, frame, value, cancellationToken);
 
 			DbgDotNetCreateValueResult CreateValue2(DbgEvaluationContext context2, DbgStackFrame frame2, object value2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => CreateValueCore(context2, frame2, value2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => CreateValueCore(context2, frame2, value2, cancellationToken2));
 		}
 
 		DbgDotNetCreateValueResult CreateValueCore(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
@@ -712,7 +712,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return CanCreateObjectId2(valueImpl);
 
 			bool CanCreateObjectId2(DbgDotNetValueImpl value2) =>
-				Dispatcher.Invoke(() => CanCreateObjectIdCore(value2));
+				Dispatcher.InvokeRethrow(() => CanCreateObjectIdCore(value2));
 		}
 
 		bool CanCreateObjectIdCore(DbgDotNetValueImpl value) {
@@ -746,7 +746,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return CreateObjectId2(valueImpl, id);
 
 			DbgDotNetObjectId CreateObjectId2(DbgDotNetValueImpl value2, uint id2) =>
-				Dispatcher.Invoke(() => CreateObjectIdCore(value2, id2));
+				Dispatcher.InvokeRethrow(() => CreateObjectIdCore(value2, id2));
 		}
 
 		DbgDotNetObjectId CreateObjectIdCore(DbgDotNetValueImpl value, uint id) {
@@ -797,7 +797,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return Equals2(objectIdImpl, valueImpl);
 
 			bool Equals2(DbgDotNetObjectIdImpl objectId2, DbgDotNetValueImpl value2) =>
-				Dispatcher.Invoke(() => EqualsCore(objectId2, value2));
+				Dispatcher.InvokeRethrow(() => EqualsCore(objectId2, value2));
 		}
 
 		struct EquatableValue {
@@ -843,7 +843,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return GetHashCode2(objectIdImpl);
 
 			int GetHashCode2(DbgDotNetObjectIdImpl objectId2) =>
-				Dispatcher.Invoke(() => GetHashCodeCore(objectId2));
+				Dispatcher.InvokeRethrow(() => GetHashCodeCore(objectId2));
 		}
 
 		int GetHashCodeCore(DbgDotNetObjectIdImpl objectId) {
@@ -860,7 +860,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return GetHashCode2(valueImpl);
 
 			int GetHashCode2(DbgDotNetValueImpl value2) =>
-				Dispatcher.Invoke(() => GetHashCodeCore(value2));
+				Dispatcher.InvokeRethrow(() => GetHashCodeCore(value2));
 		}
 
 		int GetHashCodeCore(DbgDotNetValueImpl value) {
@@ -877,7 +877,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return GetValue2(context, objectIdImpl, cancellationToken);
 
 			DbgDotNetValue GetValue2(DbgEvaluationContext context2, DbgDotNetObjectIdImpl objectId2, CancellationToken cancellationToken2) =>
-				Dispatcher.Invoke(() => GetValueCore(context2, objectId2, cancellationToken2));
+				Dispatcher.InvokeRethrow(() => GetValueCore(context2, objectId2, cancellationToken2));
 		}
 
 		DbgDotNetValue GetValueCore(DbgEvaluationContext context, DbgDotNetObjectIdImpl objectId, CancellationToken cancellationToken) {
@@ -908,7 +908,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return Equals2(ai, bi);
 
 			bool? Equals2(DbgDotNetValueImpl a2, DbgDotNetValueImpl b2) =>
-				Dispatcher.Invoke(() => EqualsCore(a2, b2));
+				Dispatcher.InvokeRethrow(() => EqualsCore(a2, b2));
 		}
 
 		bool? EqualsCore(DbgDotNetValueImpl a, DbgDotNetValueImpl b) {

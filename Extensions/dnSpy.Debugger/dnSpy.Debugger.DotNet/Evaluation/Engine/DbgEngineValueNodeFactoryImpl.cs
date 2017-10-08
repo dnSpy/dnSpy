@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return Create(dispatcher, context, frame, expressions, cancellationToken);
 
 			DbgEngineValueNode[] Create(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, DbgExpressionEvaluationInfo[] expressions2, CancellationToken cancellationToken2) =>
-				dispatcher2.Invoke(() => CreateCore(context2, frame2, expressions2, cancellationToken2));
+				dispatcher2.InvokeRethrow(() => CreateCore(context2, frame2, expressions2, cancellationToken2));
 		}
 
 		DbgEngineValueNode[] CreateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) {
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return Create(dispatcher, context, frame, objectIds, options, cancellationToken);
 
 			DbgEngineValueNode[] Create(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, DbgEngineObjectId[] objectIds2, DbgValueNodeEvaluationOptions options2, CancellationToken cancellationToken2) =>
-				dispatcher2.Invoke(() => CreateCore(context2, frame2, objectIds2, options2, cancellationToken2));
+				dispatcher2.InvokeRethrow(() => CreateCore(context2, frame2, objectIds2, options2, cancellationToken2));
 		}
 
 		DbgEngineValueNode[] CreateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {

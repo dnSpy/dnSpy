@@ -203,6 +203,7 @@
     <Compile Include="Impl\Evaluation\CreateCorValueResult.cs" />
     <Compile Include="Impl\Evaluation\DbgCorDebugInternalRuntimeImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgCorValueHolder.cs" />
+    <Compile Include="Impl\Evaluation\DbgDotNetDispatcherExtensions.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetDispatcherImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetObjectIdImpl.cs" />
