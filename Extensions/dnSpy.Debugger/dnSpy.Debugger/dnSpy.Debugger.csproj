@@ -285,7 +285,6 @@
     <Compile Include="Utilities\WildcardsUtils.cs" />
     <None Include="Exceptions\GenerateExceptionsXmlFile.cs" />
     <Compile Include="Impl\DbgAppDomainImpl.cs" />
-    <Compile Include="Impl\DbgDebuggingContextImpl.cs" />
     <Compile Include="Impl\DbgEngineAppDomainImpl.cs" />
     <Compile Include="Impl\DbgEngineModuleImpl.cs" />
     <Compile Include="Impl\DbgEngineThreadImpl.cs" />

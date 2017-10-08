@@ -79,7 +79,6 @@
     <Compile Include="Code\TextEditor\DbgTextViewCodeLocationProvider.cs" />
     <Compile Include="DbgAppDomain.cs" />
     <Compile Include="DbgCollectionChangedEventArgs.cs" />
-    <Compile Include="DbgDebuggingContext.cs" />
     <Compile Include="DbgDispatcher.cs" />
     <Compile Include="DbgEnvironment.cs" />
     <Compile Include="DbgImageLayout.cs" />
