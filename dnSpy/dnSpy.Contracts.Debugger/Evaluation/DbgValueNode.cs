@@ -119,18 +119,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Creates new children. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="index">Index of first child</param>
-		/// <param name="count">Max number of children to return</param>
-		/// <param name="options">Options</param>
-		/// <param name="callback">Called when this method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default);
-
-		/// <summary>
 		/// Formats the name. This method blocks the current thread until all requested values have been formatted
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
@@ -197,17 +185,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Formats the name, value, and type
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="options">Options</param>
-		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		/// <param name="callback">Called when this method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, Action callback, CancellationToken cancellationToken = default);
-
-		/// <summary>
 		/// Writes a new value. It blocks the current thread until the assignment is complete.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
@@ -217,18 +194,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Writes a new value
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="expression">Source expression (rhs)</param>
-		/// <param name="options">Options</param>
-		/// <param name="callback">Called when this method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		/// <returns></returns>
-		public abstract void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgValueNodeAssignmentResult> callback, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>

@@ -22,7 +22,6 @@ using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
@@ -33,17 +32,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public DbgEngineExceptionsProviderImpl(DbgDotNetEngineValueNodeFactory valueNodeFactory) =>
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 
-		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			var runtime = context.Runtime.GetDotNetRuntime();
-			return runtime.Dispatcher.Invoke(() => GetNodesCore(runtime, context, frame, options, cancellationToken));
-		}
+		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
+			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetNodesCore(context, frame, options, cancellationToken));
 
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) {
+		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var runtime = context.Runtime.GetDotNetRuntime();
-			runtime.Dispatcher.BeginInvoke(() => callback(GetNodesCore(runtime, context, frame, options, cancellationToken)));
-		}
-
-		DbgEngineValueNode[] GetNodesCore(IDbgDotNetRuntime runtime, DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var exceptions = runtime.GetExceptions(context, frame, cancellationToken);
 			if (exceptions.Length == 0)
 				return Array.Empty<DbgEngineValueNode>();

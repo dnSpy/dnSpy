@@ -50,9 +50,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return runtime.Dispatcher.Invoke(() => AssignCore(context, frame, expression, valueExpression, options, cancellationToken));
 		}
 
-		public override void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, Action<DbgEngineEEAssignmentResult> callback, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(AssignCore(context, frame, expression, valueExpression, options, cancellationToken)));
-
 		DbgEngineEEAssignmentResult AssignCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			var resultFlags = DbgEEAssignmentResultFlags.None;
 			try {
@@ -94,9 +91,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return EvaluateCore(context, frame, expression, options, cancellationToken);
 			return runtime.Dispatcher.Invoke(() => EvaluateCore(context, frame, expression, options, cancellationToken));
 		}
-
-		public override void Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineEvaluationResult> callback, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(EvaluateCore(context, frame, expression, options, cancellationToken)));
 
 		DbgEngineEvaluationResult EvaluateCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			var res = EvaluateImpl(context, frame, expression, options, cancellationToken);

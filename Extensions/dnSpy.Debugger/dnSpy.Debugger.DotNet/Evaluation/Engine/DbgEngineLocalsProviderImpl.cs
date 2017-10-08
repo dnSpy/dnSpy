@@ -48,9 +48,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) =>
 			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetNodesCore(context, frame, options, localsOptions, cancellationToken));
 
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgEngineLocalsValueNodeInfo[]> callback, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(GetNodesCore(context, frame, options, localsOptions, cancellationToken)));
-
 		enum ValueInfoKind {
 			CompiledExpression,
 			DecompilerGeneratedVariable,

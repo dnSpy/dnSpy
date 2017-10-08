@@ -81,26 +81,6 @@ namespace dnSpy.Debugger.Evaluation {
 			return CreateResult(frame.Runtime, engineValueNodeFactory.Create(context, frame, expressions, cancellationToken));
 		}
 
-		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, Action<DbgCreateValueNodeResult[]> callback, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
-				throw new ArgumentException();
-			if (context.Language != Language)
-				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (expressions == null)
-				throw new ArgumentNullException(nameof(expressions));
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			engineValueNodeFactory.Create(context, frame, expressions, result => callback(CreateResult(frame.Runtime, result)), cancellationToken);
-		}
-
 		public override DbgValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
@@ -125,32 +105,6 @@ namespace dnSpy.Debugger.Evaluation {
 			for (int i = 0; i < objectIds.Length; i++)
 				engineObjectIds[i] = ((DbgObjectIdImpl)objectIds[i]).EngineObjectId;
 			return CreateResult(runtime, engineValueNodeFactory.Create(context, frame, engineObjectIds, options, cancellationToken), engineObjectIds.Length);
-		}
-
-		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
-				throw new ArgumentException();
-			if (context.Language != Language)
-				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (objectIds == null)
-				throw new ArgumentNullException(nameof(objectIds));
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			var runtime = objectIds[0].Runtime;
-			if (runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			var engineObjectIds = new DbgEngineObjectId[objectIds.Length];
-			for (int i = 0; i < objectIds.Length; i++)
-				engineObjectIds[i] = ((DbgObjectIdImpl)objectIds[i]).EngineObjectId;
-			engineValueNodeFactory.Create(context, frame, engineObjectIds, options, result => CreateResult(runtime, result, engineObjectIds.Length), cancellationToken);
 		}
 	}
 }

@@ -36,16 +36,6 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets all values
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="options">Options</param>
-		/// <param name="callback">Called when the method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 	}
 
 	/// <summary>
@@ -62,17 +52,6 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract DbgEngineLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets all values
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="options">Options</param>
-		/// <param name="localsOptions">Locals value node provider options</param>
-		/// <param name="callback">Called when the method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgEngineLocalsValueNodeInfo[]> callback, CancellationToken cancellationToken);
 	}
 
 	/// <summary>

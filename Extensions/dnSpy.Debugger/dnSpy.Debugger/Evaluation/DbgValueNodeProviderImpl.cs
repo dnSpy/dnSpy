@@ -51,23 +51,5 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			return DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineValueNodeProvider.GetNodes(context, frame, options, cancellationToken));
 		}
-
-		public override void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
-				throw new ArgumentException();
-			if (context.Language != Language)
-				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			engineValueNodeProvider.GetNodes(context, frame, options, engineNodes => callback(DbgValueNodeUtils.ToValueNodeArray(Language, frame.Runtime, engineNodes)), cancellationToken);
-		}
 	}
 }

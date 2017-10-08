@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -38,16 +37,6 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public abstract DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Creates a <see cref="DbgEngineValueNode"/>
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="expressions">Expressions to evaluate</param>
-		/// <param name="callback">Called when the evaluation is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
-
-		/// <summary>
 		/// Creates <see cref="DbgEngineValueNode"/>s. It blocks the current thread.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
@@ -57,16 +46,5 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Creates <see cref="DbgEngineValueNode"/>s
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="objectIds">Object ids</param>
-		/// <param name="options">Options</param>
-		/// <param name="callback">Called when the method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Create(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken);
 	}
 }

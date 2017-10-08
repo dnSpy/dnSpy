@@ -41,16 +41,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract DbgValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Gets all values. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="options">Options</param>
-		/// <param name="callback">Called when the method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, Action<DbgValueNode[]> callback, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>
@@ -94,17 +84,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract DbgLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Gets all values. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="options">Options</param>
-		/// <param name="localsOptions">Locals value node provider options</param>
-		/// <param name="callback">Called when the method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, Action<DbgLocalsValueNodeInfo[]> callback, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>

@@ -17,11 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet {
 	/// <summary>
-	/// Base class of a .NET runtime object implemented by the .NET debug engine
+	/// Base class of a .NET runtime object implemented by the .NET debug engine. It must implement <see cref="IDbgDotNetRuntime"/>
 	/// </summary>
 	public abstract class DbgDotNetInternalRuntime : DbgInternalRuntime {
 		/// <summary>

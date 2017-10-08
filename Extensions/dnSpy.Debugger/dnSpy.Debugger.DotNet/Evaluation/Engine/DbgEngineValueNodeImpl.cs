@@ -61,9 +61,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
 			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetChildrenCore(context, frame, index, count, options, cancellationToken));
 
-		public override void GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(GetChildrenCore(context, frame, index, count, options, cancellationToken)));
-
 		DbgEngineValueNode[] GetChildrenCore(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			DbgEngineValueNode[] res = null;
 			DbgDotNetValueNode[] dnNodes = null;
@@ -87,13 +84,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
 			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => FormatCore(context, frame, options, cultureInfo, cancellationToken));
-
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, Action callback, CancellationToken cancellationToken) {
-			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => {
-				FormatCore(context, frame, options, cultureInfo, cancellationToken);
-				callback();
-			});
-		}
 
 		void FormatCore(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			context.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
@@ -131,9 +121,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) =>
 			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => AssignCore(context, frame, expression, options, cancellationToken));
-
-		public override void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEngineValueNodeAssignmentResult> callback, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(AssignCore(context, frame, expression, options, cancellationToken)));
 
 		DbgEngineValueNodeAssignmentResult AssignCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			var ee = context.Language.ExpressionEvaluator;

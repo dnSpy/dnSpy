@@ -46,17 +46,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Evaluates an expression. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="expression">Expression to evaluate</param>
-		/// <param name="options">Options</param>
-		/// <param name="callback">Called when the evaluation is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEvaluationResult> callback, CancellationToken cancellationToken = default);
-
-		/// <summary>
 		/// Assigns the value of an expression to another expression. It blocks the current thread until the evaluation is complete.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
@@ -67,18 +56,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract DbgEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Assigns the value of an expression to another expression
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="expression">Target expression (lhs)</param>
-		/// <param name="valueExpression">Source expression (rhs)</param>
-		/// <param name="options">Options</param>
-		/// <param name="callback">Called when the evaluation is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, Action<DbgEEAssignmentResult> callback, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>

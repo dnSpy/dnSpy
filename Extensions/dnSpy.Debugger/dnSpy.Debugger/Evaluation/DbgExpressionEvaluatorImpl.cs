@@ -67,22 +67,6 @@ namespace dnSpy.Debugger.Evaluation {
 			return CreateResult(engineExpressionEvaluator.Evaluate(context, frame, expression, options, cancellationToken));
 		}
 
-		public override void Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, Action<DbgEvaluationResult> callback, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
-				throw new ArgumentException();
-			if (context.Language != Language)
-				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (expression == null)
-				throw new ArgumentNullException(nameof(expression));
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			engineExpressionEvaluator.Evaluate(context, frame, expression, options, result => callback(CreateResult(result)), cancellationToken);
-		}
-
 		public override DbgEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
@@ -98,24 +82,6 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(valueExpression));
 			var result = engineExpressionEvaluator.Assign(context, frame, expression, valueExpression, options, cancellationToken);
 			return CreateResult(result);
-		}
-
-		public override void Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, Action<DbgEEAssignmentResult> callback, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
-				throw new ArgumentException();
-			if (context.Language != Language)
-				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (expression == null)
-				throw new ArgumentNullException(nameof(expression));
-			if (valueExpression == null)
-				throw new ArgumentNullException(nameof(valueExpression));
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			engineExpressionEvaluator.Assign(context, frame, expression, valueExpression, options, result => callback(CreateResult(result)), cancellationToken);
 		}
 	}
 }

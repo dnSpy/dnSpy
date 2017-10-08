@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -40,15 +39,5 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract DbgEngineValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Creates a new value
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Stack frame</param>
-		/// <param name="callback">Called when the method is complete</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		/// <returns></returns>
-		public abstract void GetValue(DbgEvaluationContext context, DbgStackFrame frame, Action<DbgEngineValue> callback, CancellationToken cancellationToken);
 	}
 }

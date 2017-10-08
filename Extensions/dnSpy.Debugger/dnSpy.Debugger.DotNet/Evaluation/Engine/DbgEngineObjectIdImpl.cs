@@ -43,9 +43,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>
 			runtime.Dispatcher.Invoke(() => GetValueCore(context, frame, cancellationToken));
 
-		public override void GetValue(DbgEvaluationContext context, DbgStackFrame frame, Action<DbgEngineValue> callback, CancellationToken cancellationToken) =>
-			runtime.Dispatcher.BeginInvoke(() => callback(GetValueCore(context, frame, cancellationToken)));
-
 		DbgEngineValue GetValueCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			var dnValue = runtime.GetValue(context, frame, dnObjectId, cancellationToken);
 			try {

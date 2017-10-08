@@ -58,22 +58,6 @@ namespace dnSpy.Debugger.Evaluation {
 			return CreateResult(EngineObjectId.GetValue(context, frame, cancellationToken));
 		}
 
-		public override void GetValue(DbgEvaluationContext context, DbgStackFrame frame, Action<DbgValue> callback, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
-				throw new ArgumentException();
-			if (context.Runtime != Runtime)
-				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime != Runtime)
-				throw new ArgumentException();
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			EngineObjectId.GetValue(context, frame, engineValue => callback(CreateResult(engineValue)), cancellationToken);
-		}
-
 		public override void Remove() => owner.Remove(new[] { this });
 		protected override void CloseCore(DbgDispatcher dispatcher) => EngineObjectId.Close(dispatcher);
 	}

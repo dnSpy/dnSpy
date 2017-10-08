@@ -42,9 +42,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) =>
 			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => CreateCore(context, frame, expressions, cancellationToken));
 
-		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(CreateCore(context, frame, expressions, cancellationToken)));
-
 		DbgEngineValueNode[] CreateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) {
 			var res = expressions.Length == 0 ? Array.Empty<DbgEngineValueNode>() : new DbgEngineValueNode[expressions.Length];
 			try {
@@ -72,9 +69,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
 			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => CreateCore(context, frame, objectIds, options, cancellationToken));
-
-		public override void Create(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, Action<DbgEngineValueNode[]> callback, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.BeginInvoke(() => callback(CreateCore(context, frame, objectIds, options, cancellationToken)));
 
 		DbgEngineValueNode[] CreateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			DbgDotNetValue objectIdValue = null;
