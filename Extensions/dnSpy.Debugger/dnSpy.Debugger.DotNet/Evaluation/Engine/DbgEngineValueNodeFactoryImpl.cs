@@ -24,10 +24,8 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
-using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineValueNodeFactoryImpl : DbgEngineValueNodeFactory {
@@ -51,6 +49,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var res = expressions.Length == 0 ? Array.Empty<DbgEngineValueNode>() : new DbgEngineValueNode[expressions.Length];
 			try {
 				for (int i = 0; i < res.Length; i++) {
+					cancellationToken.ThrowIfCancellationRequested();
 					ref var info = ref expressions[i];
 					var evalRes = expressionEvaluator.EvaluateImpl(context, frame, info.Expression, info.Options, cancellationToken);
 					bool causesSideEffects = (evalRes.Flags & DbgEvaluationResultFlags.SideEffects) != 0;
@@ -83,6 +82,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			try {
 				var output = ObjectCache.AllocDotNetTextOutput();
 				for (int i = 0; i < res.Length; i++) {
+					cancellationToken.ThrowIfCancellationRequested();
 					var objectId = (DbgEngineObjectIdImpl)objectIds[i];
 					var dnObjectId = objectId.DotNetObjectId;
 					objectIdValue = objectId.Runtime.GetValue(context, dnObjectId, cancellationToken);

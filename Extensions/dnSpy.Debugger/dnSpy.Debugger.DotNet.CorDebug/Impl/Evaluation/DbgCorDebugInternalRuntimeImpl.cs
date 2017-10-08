@@ -71,6 +71,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Dispatcher.VerifyAccess();
 			var state = frame.GetOrCreateData<GetFrameMethodState>();
 			if (!state.Initialized) {
+				cancellationToken.ThrowIfCancellationRequested();
 				if (ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame)) {
 					ilFrame.GetFrameMethodInfo(out var module, out var methodMetadataToken, out var genericTypeArguments, out var genericMethodArguments);
 					var method = module.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.ThrowOnError);
@@ -173,6 +174,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		string StoreFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return CordbgErrorHelper.InternalError;
 			var appDomain = ilFrame.GetCorAppDomain();
@@ -551,6 +553,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		DbgDotNetExceptionInfo[] GetExceptionsCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
 			var dnThread = engine.GetThread(frame.Thread);
 			var corValue = dnThread.CorThread.CurrentException;
 			if (corValue == null)
@@ -569,6 +572,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		DbgDotNetReturnValueInfo[] GetReturnValuesCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
 			return Array.Empty<DbgDotNetReturnValueInfo>();//TODO:
 		}
 
@@ -618,6 +622,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		string SetLocalValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				throw new InvalidOperationException();
 			return engine.SetLocalValue_CorDebug(context, frame.Thread, ilFrame, index, targetType, value, cancellationToken);
@@ -631,6 +636,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		string SetParameterValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				throw new InvalidOperationException();
 			return engine.SetParameterValue_CorDebug(context, frame.Thread, ilFrame, index, targetType, value, cancellationToken);

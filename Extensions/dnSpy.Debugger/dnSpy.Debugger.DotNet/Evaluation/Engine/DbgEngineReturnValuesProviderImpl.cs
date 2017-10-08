@@ -51,6 +51,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var res = new DbgEngineValueNode[returnValues.Length];
 			try {
 				for (int i = 0; i < res.Length; i++) {
+					cancellationToken.ThrowIfCancellationRequested();
 					var info = returnValues[i];
 					res[i] = valueNodeFactory.CreateReturnValue(context, frame, info.Id, info.Value, options, info.Method, cancellationToken);
 				}

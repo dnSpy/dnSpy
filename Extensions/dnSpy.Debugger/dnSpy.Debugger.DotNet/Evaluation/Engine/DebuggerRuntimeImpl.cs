@@ -283,6 +283,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		internal DbgDotNetValue RecordValue(DbgDotNetValue value) {
 			try {
+				cancellationToken.ThrowIfCancellationRequested();
 				valuesToDispose.Add(value);
 				return value;
 			}

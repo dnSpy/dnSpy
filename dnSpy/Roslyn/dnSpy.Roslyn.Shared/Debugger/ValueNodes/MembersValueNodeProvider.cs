@@ -126,6 +126,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 							membersBaseIndex = i;
 						}
 
+						cancellationToken.ThrowIfCancellationRequested();
 						var info = CreateValueNode(context, frame, membersBaseIndex, evalOptions, cancellationToken);
 						valueNode = info.node;
 						ulong childCount = info.canHide ? valueNode.GetChildCount(context, frame, cancellationToken) : 1;

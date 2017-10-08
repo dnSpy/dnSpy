@@ -106,6 +106,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		string StoreIndirect_CorDebug(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+			engine.VerifyCorDebugThread();
+			cancellationToken.ThrowIfCancellationRequested();
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return CordbgErrorHelper.InternalError;
 			if (!Type.IsByRef)
@@ -161,11 +163,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public override bool GetArrayCount(out uint elementCount) {
 			if (IsArray) {
 				if (engine.CheckCorDebugThread()) {
-					elementCount = GetArrayCountCore();
+					elementCount = GetArrayCountCore_CorDebug();
 					return true;
 				}
 				else {
-					elementCount = engine.InvokeCorDebugThread(() => GetArrayCountCore());
+					elementCount = engine.InvokeCorDebugThread(() => GetArrayCountCore_CorDebug());
 					return true;
 				}
 			}
@@ -174,7 +176,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return false;
 		}
 
-		uint GetArrayCountCore() {
+		uint GetArrayCountCore_CorDebug() {
 			Debug.Assert(IsArray);
 			engine.VerifyCorDebugThread();
 			var corValue = TryGetCorValue();
@@ -266,6 +268,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		string SetArrayElementAt_CorDebug(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
+			engine.VerifyCorDebugThread();
+			cancellationToken.ThrowIfCancellationRequested();
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 				return CordbgErrorHelper.InternalError;
 			Func<CreateCorValueResult> createTargetValue = () => {

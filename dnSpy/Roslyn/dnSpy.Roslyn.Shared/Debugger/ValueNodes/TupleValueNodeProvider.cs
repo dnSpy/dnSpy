@@ -53,6 +53,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			DbgDotNetValueResult valueResult = default;
 			try {
 				for (int i = 0; i < res.Length; i++) {
+					cancellationToken.ThrowIfCancellationRequested();
 					ref var info = ref tupleFields[(int)index + i];
 					var expression = valueNodeFactory.GetFieldExpression(nodeInfo.Expression, info.DefaultName);
 					const string imageName = PredefinedDbgValueNodeImageNames.FieldPublic;

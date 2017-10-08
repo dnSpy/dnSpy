@@ -45,6 +45,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var res = new DbgEngineValueNode[1];
 			try {
 				for (int i = 0; i < res.Length; i++) {
+					cancellationToken.ThrowIfCancellationRequested();
 					var name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, "Error"));
 					res[i] = valueNodeFactory.CreateError(context, frame, name, "NYI", "NYI", false, cancellationToken);
 				}

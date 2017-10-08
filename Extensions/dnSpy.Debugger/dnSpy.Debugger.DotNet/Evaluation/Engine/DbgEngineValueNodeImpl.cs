@@ -70,8 +70,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			try {
 				dnNodes = dnValueNode.GetChildren(context, frame, index, count, options, cancellationToken);
 				res = new DbgEngineValueNode[dnNodes.Length];
-				for (int i = 0; i < res.Length; i++)
+				for (int i = 0; i < res.Length; i++) {
+					cancellationToken.ThrowIfCancellationRequested();
 					res[i] = owner.Create(dnNodes[i]);
+				}
 			}
 			catch {
 				if (res != null)
@@ -105,6 +107,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				}
 				else if (dnValueNode.ExpectedType is DmdType expectedType)
 					formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, options.ExpectedTypeFormatterOptions, cultureInfo);
+				cancellationToken.ThrowIfCancellationRequested();
 			}
 			if (options.ActualTypeOutput != null) {
 				if (dnValueNode.FormatActualType(context, frame, options.ActualTypeOutput, cultureInfo, cancellationToken)) {
@@ -112,6 +115,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				}
 				else if (dnValueNode.ActualType is DmdType actualType)
 					formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions, cultureInfo);
+				cancellationToken.ThrowIfCancellationRequested();
 			}
 			if (options.ValueOutput != null) {
 				if (dnValueNode.FormatValue(context, frame, options.ValueOutput, cultureInfo, cancellationToken)) {
@@ -121,6 +125,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					formatter.FormatValue(context, options.ValueOutput, frame, dnValue, options.ValueFormatterOptions, cultureInfo, cancellationToken);
 				else if (ErrorMessage is string errorMessage)
 					options.ValueOutput.Write(BoxedTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));
+				cancellationToken.ThrowIfCancellationRequested();
 			}
 		}
 

@@ -414,6 +414,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 
 		void CreateCore(DbgEvaluationContext context, DbgStackFrame frame, List<DbgDotNetValueNodeProvider> providers, DbgDotNetValueNodeInfo nodeInfo, TypeState state, DbgValueNodeEvaluationOptions evalOptions, CreateFlags createFlags, CancellationToken cancellationToken) {
+			cancellationToken.ThrowIfCancellationRequested();
 			if (state.HasNoChildren)
 				return;
 

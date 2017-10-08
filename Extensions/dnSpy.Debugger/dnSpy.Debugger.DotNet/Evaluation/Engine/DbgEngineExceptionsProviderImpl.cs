@@ -51,6 +51,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var res = new DbgEngineValueNode[exceptions.Length];
 			try {
 				for (int i = 0; i < res.Length; i++) {
+					cancellationToken.ThrowIfCancellationRequested();
 					var info = exceptions[i];
 					if (info.IsStowedException)
 						res[i] = valueNodeFactory.CreateStowedException(context, frame, info.Id, info.Value, options, cancellationToken);
