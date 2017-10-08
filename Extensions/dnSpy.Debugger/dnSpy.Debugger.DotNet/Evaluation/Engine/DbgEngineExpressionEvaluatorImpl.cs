@@ -56,12 +56,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgEngineEEAssignmentResult AssignCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			var resultFlags = DbgEEAssignmentResultFlags.None;
 			try {
-				var references = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
-				if (references.Length == 0)
-					return new DbgEngineEEAssignmentResult(resultFlags, PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				var refsResult = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
+				if (refsResult.ErrorMessage != null)
+					return new DbgEngineEEAssignmentResult(resultFlags, refsResult.ErrorMessage);
 
 				var aliases = GetAliases(context, frame, cancellationToken);
-				var compRes = expressionCompiler.CompileAssignment(context, frame, references, aliases, expression, valueExpression, options, cancellationToken);
+				var compRes = expressionCompiler.CompileAssignment(context, frame, refsResult.ModuleReferences, aliases, expression, valueExpression, options, cancellationToken);
 				cancellationToken.ThrowIfCancellationRequested();
 				if (compRes.IsError)
 					return new DbgEngineEEAssignmentResult(resultFlags | DbgEEAssignmentResultFlags.CompilerError, compRes.ErrorMessage);
@@ -122,12 +122,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		EvaluateImplResult? GetInterpreterState(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken, out EvaluateImplExpressionState state) {
 			state = null;
-			var references = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
-			if (references.Length == 0)
-				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+			var refsResult = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
+			if (refsResult.ErrorMessage != null)
+				return new EvaluateImplResult(refsResult.ErrorMessage, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 
 			var aliases = GetAliases(context, frame, cancellationToken);
-			var compRes = expressionCompiler.CompileExpression(context, frame, references, aliases, expression, options, cancellationToken);
+			var compRes = expressionCompiler.CompileExpression(context, frame, refsResult.ModuleReferences, aliases, expression, options, cancellationToken);
 			cancellationToken.ThrowIfCancellationRequested();
 			if (compRes.IsError)
 				return new EvaluateImplResult(compRes.ErrorMessage, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);

@@ -115,6 +115,15 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t evaluate expressions when current stack frame is a native stack frame.
+        /// </summary>
+        public static string CantEvaluateWhenCurrentFrameIsNative {
+            get {
+                return ResourceManager.GetString("CantEvaluateWhenCurrentFrameIsNative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Decompiler generated variables can&apos;t be evaluated.
         /// </summary>
         public static string DecompilerGeneratedVariablesCanNotBeEvaluated {

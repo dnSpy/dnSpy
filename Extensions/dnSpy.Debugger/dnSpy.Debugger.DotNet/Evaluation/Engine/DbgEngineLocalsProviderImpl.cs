@@ -123,8 +123,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgEngineLocalsValueNodeInfo[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
 			DbgEngineLocalsValueNodeInfo[] valueNodes = null;
 			try {
-				var references = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
-				if (references.Length == 0)
+				var refsResult = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
+				if (refsResult.ErrorMessage != null)
 					return Array.Empty<DbgEngineLocalsValueNodeInfo>();
 
 				var languageDebugInfo = context.TryGetLanguageDebugInfo();
@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				var localsOptionsKey = localsOptions & ~(DbgLocalsValueNodeEvaluationOptions.ShowCompilerGeneratedVariables | DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables);
 				var key = new GetNodesState.Key(methodDebugInfo.DecompilerOptionsVersion, options, localsOptionsKey,
 						methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion,
-						references, GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset));
+						refsResult.ModuleReferences, GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset));
 
 				ValueInfo[] valueInfos;
 				byte[] assemblyBytes;
@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					if ((options & DbgValueNodeEvaluationOptions.NoHideRoots) != 0)
 						evalOptions |= DbgEvaluationOptions.NoHideRoots;
 
-					var compilationResult = expressionCompiler.CompileGetLocals(context, frame, references, evalOptions, cancellationToken);
+					var compilationResult = expressionCompiler.CompileGetLocals(context, frame, refsResult.ModuleReferences, evalOptions, cancellationToken);
 					cancellationToken.ThrowIfCancellationRequested();
 					if (compilationResult.IsError)
 						return new[] { CreateInternalErrorNode(context, frame, compilationResult.ErrorMessage, cancellationToken) };
