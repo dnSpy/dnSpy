@@ -23,6 +23,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	abstract class DbgDotNetValueNodeProvider {
@@ -43,6 +44,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (providers.Count == 1)
 				return providers[0];
 			return new AggregateValueNodeProvider(providers.ToArray());
+		}
+
+		protected static bool NeedCast(DmdType slotType, DmdType memberDeclaringType) {
+			if (slotType.IsInterface)
+				return true;
+			else
+				return !slotType.CanCastTo(memberDeclaringType);
 		}
 	}
 }

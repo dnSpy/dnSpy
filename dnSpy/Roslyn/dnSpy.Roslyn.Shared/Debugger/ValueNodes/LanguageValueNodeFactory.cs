@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -37,23 +38,27 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		protected LanguageValueNodeFactory() => valueNodeProviderFactory = CreateValueNodeProviderFactory();
 
-		public abstract string GetFieldExpression(string baseExpression, string name);
-		public abstract string GetPropertyExpression(string baseExpression, string name);
-		public abstract string GetExpression(string baseExpression, int index);
-		public abstract string GetExpression(string baseExpression, int[] indexes);
+		public abstract string GetFieldExpression(string baseExpression, string name, DmdType castType, bool addParens);
+		public abstract string GetPropertyExpression(string baseExpression, string name, DmdType castType, bool addParens);
+		public abstract string GetExpression(string baseExpression, int index, DmdType castType, bool addParens);
+		public abstract string GetExpression(string baseExpression, int[] indexes, DmdType castType, bool addParens);
 		public abstract string EscapeIdentifier(string identifier);
 
 		internal DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValueNodeProvider provider, DbgValueNodeEvaluationOptions options, string expression, string imageName, DbgDotNetText valueText) =>
 			new DbgDotNetValueNodeImpl(this, provider, name, default, expression, imageName, true, false, null, null, null, valueText);
 
-		DbgDotNetValueNode CreateValue(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, CancellationToken cancellationToken) {
+		DbgDotNetValueNode CreateValue(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, bool isRootExpression, CancellationToken cancellationToken) {
 			var nodeInfo = new DbgDotNetValueNodeInfo(value, expression);
-			var provider = valueNodeProviderFactory.Create(context, frame, nodeInfo, options, cancellationToken);
+			bool addParens = isRootExpression && NeedsParentheses(expression);
+			var provider = valueNodeProviderFactory.Create(context, frame, addParens, expectedType, nodeInfo, options, cancellationToken);
 			return new DbgDotNetValueNodeImpl(this, provider, name, nodeInfo, expression, imageName, isReadOnly, causesSideEffects, expectedType, value.Type, null, default);
 		}
 
 		public sealed override DbgDotNetValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, CancellationToken cancellationToken) =>
-			CreateValue(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, expectedType, cancellationToken);
+			Create(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, expectedType, true, cancellationToken);
+
+		internal DbgDotNetValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, bool isRootExpression, CancellationToken cancellationToken) =>
+			CreateValue(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, expectedType, isRootExpression, cancellationToken);
 
 		public sealed override DbgDotNetValueNode CreateException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var output = ObjectCache.AllocDotNetTextOutput();
@@ -63,7 +68,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
 			const string imageName = PredefinedDbgValueNodeImageNames.Exception;
-			return CreateValue(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, cancellationToken);
+			return CreateValue(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false, cancellationToken);
 		}
 
 		public sealed override DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
@@ -74,7 +79,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
 			const string imageName = PredefinedDbgValueNodeImageNames.StowedException;
-			return CreateValue(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, cancellationToken);
+			return CreateValue(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false, cancellationToken);
 		}
 
 		public sealed override DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method, CancellationToken cancellationToken) {
@@ -85,7 +90,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
 			const string imageName = PredefinedDbgValueNodeImageNames.ReturnValue;
-			return CreateValue(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, cancellationToken);
+			return CreateValue(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false, cancellationToken);
 		}
 
 		void FormatReturnValueName(DbgEvaluationContext context, DbgDotNetTextOutput output, DmdMethodBase method) {
@@ -145,5 +150,56 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				}
 			}
 		}
+
+		protected void AddParens(StringBuilder sb, string expression, bool forceAddParens) {
+			if (forceAddParens) {
+				sb.Append('(');
+				sb.Append(expression);
+				sb.Append(')');
+			}
+			else
+				sb.Append(expression);
+		}
+
+		// Roslyn: Microsoft.CodeAnalysis.ExpressionEvaluator.Formatter
+		bool NeedsParentheses(string expr) {
+			int parens = 0;
+			for (int i = 0; i < expr.Length; i++) {
+				var ch = expr[i];
+				switch (ch) {
+				case '(':
+					// Cast, "(A)b", requires parentheses.
+					if ((parens == 0) && FollowsCloseParen(expr, i))
+						return true;
+					parens++;
+					break;
+				case '[':
+					parens++;
+					break;
+				case ')':
+				case ']':
+					parens--;
+					break;
+				case '.':
+					break;
+				default:
+					if (parens == 0) {
+						if (IsIdentifierPartCharacter(ch)) {
+							// Cast, "(A)b", requires parentheses.
+							if (FollowsCloseParen(expr, i))
+								return true;
+						}
+						else
+							return true;
+					}
+					break;
+				}
+			}
+			return false;
+
+			bool FollowsCloseParen(string expr2, int index2) => (index2 > 0) && (expr2[index2 - 1] == ')');
+		}
+
+		protected abstract bool IsIdentifierPartCharacter(char c);
 	}
 }

@@ -79,6 +79,7 @@
     <Compile Include="Debugger\ValueNodes\ArrayValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\CSharp\CSharpValueNodeFactory.cs" />
     <Compile Include="Debugger\ValueNodes\CSharp\CSharpValueNodeProviderFactory.cs" />
+    <Compile Include="Debugger\ValueNodes\CSharp\UnicodeCharacterUtilities.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetTypeVariablesNode.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeImpl.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeInfo.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Debugger\ValueNodes\SyntheticNullValue.cs" />
     <Compile Include="Debugger\ValueNodes\TupleField.cs" />
     <Compile Include="Debugger\ValueNodes\TupleValueNodeProvider.cs" />
+    <Compile Include="Debugger\ValueNodes\VisualBasic\SyntaxFacts.cs" />
     <Compile Include="Debugger\ValueNodes\VisualBasic\VisualBasicValueNodeFactory.cs" />
     <Compile Include="Debugger\ValueNodes\VisualBasic\VisualBasicValueNodeProviderFactory.cs" />
     <Compile Include="Documentation\IRoslynDocumentationProviderFactory.cs" />

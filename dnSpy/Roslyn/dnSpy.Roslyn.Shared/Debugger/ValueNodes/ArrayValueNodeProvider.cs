@@ -27,6 +27,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	sealed class ArrayValueNodeProvider : DbgDotNetValueNodeProvider {
@@ -36,14 +37,18 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override bool? HasChildren => arrayCount > 0;
 
 		readonly DbgDotNetValueNodeProviderFactory owner;
+		readonly bool addParens;
+		readonly DmdType slotType;
 		readonly DbgDotNetValueNodeInfo valueInfo;
 		readonly uint arrayCount;
 		readonly DbgDotNetArrayDimensionInfo[] dimensionInfos;
 		// This one's only non-null if this is an array with 2 or more dimensions
 		readonly int[] indexes;
 
-		public ArrayValueNodeProvider(DbgDotNetValueNodeProviderFactory owner, DbgDotNetValueNodeInfo valueInfo) {
+		public ArrayValueNodeProvider(DbgDotNetValueNodeProviderFactory owner, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo valueInfo) {
 			this.owner = owner;
+			this.addParens = addParens;
+			this.slotType = slotType;
 			this.valueInfo = valueInfo;
 
 			bool b = valueInfo.Value.GetArrayInfo(out arrayCount, out dimensionInfos) && dimensionInfos.Length != 0;
@@ -62,6 +67,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			try {
 				var output = ObjectCache.AllocDotNetTextOutput();
 				var elementType = valueInfo.Value.Type.GetElementType();
+				var castType = NeedCast(slotType, valueInfo.Value.Type) ? valueInfo.Value.Type : null;
 				for (int i = 0; i < res.Length; i++) {
 					cancellationToken.ThrowIfCancellationRequested();
 
@@ -72,7 +78,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 					if (dimensionInfos.Length == 1) {
 						int baseIndex = (int)arrayIndex + dimensionInfos[0].BaseIndex;
-						expression = valueNodeFactory.GetExpression(valueInfo.Expression, baseIndex);
+						expression = valueNodeFactory.GetExpression(valueInfo.Expression, baseIndex, castType, addParens);
 						owner.FormatArrayName(output, baseIndex);
 					}
 					else {
@@ -81,7 +87,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 							indexes[j] = (int)(indexLeft % dimensionInfos[j].Length) + dimensionInfos[j].BaseIndex;
 							indexLeft = indexLeft / dimensionInfos[j].Length;
 						}
-						expression = valueNodeFactory.GetExpression(valueInfo.Expression, indexes);
+						expression = valueNodeFactory.GetExpression(valueInfo.Expression, indexes, castType, addParens);
 						owner.FormatArrayName(output, indexes);
 					}
 
@@ -91,7 +97,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					if (newValue == null)
 						newNode = valueNodeFactory.CreateError(context, frame, name, PredefinedEvaluationErrorMessages.InternalDebuggerError, expression, false, cancellationToken);
 					else
-						newNode = valueNodeFactory.Create(context, frame, name, newValue, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, isReadOnly, false, elementType, cancellationToken);
+						newNode = valueNodeFactory.Create(context, frame, name, newValue, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, isReadOnly, false, elementType, false, cancellationToken);
 					newValue = null;
 					res[i] = newNode;
 				}

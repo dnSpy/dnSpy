@@ -23,21 +23,26 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	sealed class InstanceMembersValueNodeProvider : MembersValueNodeProvider {
 		public override string ImageName => imageName;
 
+		readonly bool addParens;
+		readonly DmdType slotType;
 		readonly DbgDotNetValue value;
 		readonly string imageName;
 
-		public InstanceMembersValueNodeProvider(LanguageValueNodeFactory valueNodeFactory, DbgDotNetText name, string expression, DbgDotNetValue value, MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions, string imageName)
+		public InstanceMembersValueNodeProvider(LanguageValueNodeFactory valueNodeFactory, DbgDotNetText name, string expression, bool addParens, DmdType slotType, DbgDotNetValue value, MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions, string imageName)
 			: base(valueNodeFactory, name, expression, membersCollection, evalOptions) {
+			this.addParens = addParens;
+			this.slotType = slotType;
 			this.value = value;
 			this.imageName = imageName;
 		}
 
 		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
-			CreateValueNode(context, frame, value, index, options, cancellationToken);
+			CreateValueNode(context, frame, addParens, slotType, value, index, options, cancellationToken);
 	}
 }

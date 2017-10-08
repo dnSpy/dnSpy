@@ -28,6 +28,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	sealed class TupleValueNodeProvider : DbgDotNetValueNodeProvider {
@@ -36,10 +37,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string ImageName => throw new NotSupportedException();
 		public override bool? HasChildren => tupleFields.Length > 0;
 
+		readonly bool addParens;
+		readonly DmdType slotType;
 		readonly DbgDotNetValueNodeInfo nodeInfo;
 		readonly TupleField[] tupleFields;
 
-		public TupleValueNodeProvider(DbgDotNetValueNodeInfo nodeInfo, TupleField[] tupleFields) {
+		public TupleValueNodeProvider(bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, TupleField[] tupleFields) {
+			this.addParens = addParens;
+			this.slotType = slotType;
 			this.nodeInfo = nodeInfo;
 			this.tupleFields = tupleFields;
 		}
@@ -55,7 +60,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				for (int i = 0; i < res.Length; i++) {
 					cancellationToken.ThrowIfCancellationRequested();
 					ref var info = ref tupleFields[(int)index + i];
-					var expression = valueNodeFactory.GetFieldExpression(nodeInfo.Expression, info.DefaultName);
+					var castType = NeedCast(slotType, nodeInfo.Value.Type) ? nodeInfo.Value.Type : null;
+					var expression = valueNodeFactory.GetFieldExpression(nodeInfo.Expression, info.DefaultName, castType, addParens);
 					const string imageName = PredefinedDbgValueNodeImageNames.FieldPublic;
 					const bool isReadOnly = false;
 					var expectedType = info.Fields[info.Fields.Length - 1].FieldType;
@@ -88,9 +94,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					if (errorMessage != null)
 						newNode = valueNodeFactory.CreateError(context, frame, name, errorMessage, expression, false, cancellationToken);
 					else if (valueIsException)
-						newNode = valueNodeFactory.Create(context, frame, name, objValue, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, cancellationToken);
+						newNode = valueNodeFactory.Create(context, frame, name, objValue, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false, cancellationToken);
 					else
-						newNode = valueNodeFactory.Create(context, frame, name, objValue, options, expression, imageName, isReadOnly, false, expectedType, cancellationToken);
+						newNode = valueNodeFactory.Create(context, frame, name, objValue, options, expression, imageName, isReadOnly, false, expectedType, false, cancellationToken);
 
 					foreach (var vr in valueResults)
 						vr.Value?.Dispose();

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Text;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Text;
@@ -25,24 +26,62 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 	[ExportDbgDotNetValueNodeFactory(DbgDotNetLanguageGuids.VisualBasic)]
 	sealed class VisualBasicValueNodeFactory : LanguageValueNodeFactory {
+		const Formatters.TypeFormatterOptions typeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
+
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new VisualBasicValueNodeProviderFactory(this);
 
-		public override string GetFieldExpression(string baseExpression, string name) {
-			//TODO: Add parens, casts, use -> if pointer etc...
-			return baseExpression + "." + name;
+		protected override bool IsIdentifierPartCharacter(char c) => SyntaxFacts.IsIdentifierPartCharacter(c);
+
+		void AddCastBegin(StringBuilder sb, DmdType castType) {
+			if ((object)castType == null)
+				return;
+			sb.Append("CType(");
 		}
 
-		public override string GetPropertyExpression(string baseExpression, string name) {
-			return baseExpression + "." + name;
+		void AddCastEnd(StringBuilder sb, DmdType castType) {
+			if ((object)castType == null)
+				return;
+			sb.Append(", ");
+			new Formatters.VisualBasic.VisualBasicTypeFormatter(new StringBuilderTextColorOutput(sb), typeFormatterOptions, null).Format(castType, null);
+			sb.Append(')');
 		}
 
-		public override string GetExpression(string baseExpression, int index) {
-			return baseExpression + "(" + index.ToString() + ")";
-		}
-
-		public override string GetExpression(string baseExpression, int[] indexes) {
+		public override string GetFieldExpression(string baseExpression, string name, DmdType castType, bool addParens) {
 			var sb = Formatters.ObjectCache.AllocStringBuilder();
-			sb.Append(baseExpression);
+			AddCastBegin(sb, castType);
+			AddParens(sb, baseExpression, addParens);
+			AddCastEnd(sb, castType);
+			sb.Append('.');
+			sb.Append(name);
+			return Formatters.ObjectCache.FreeAndToString(ref sb);
+		}
+
+		public override string GetPropertyExpression(string baseExpression, string name, DmdType castType, bool addParens) {
+			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			AddCastBegin(sb, castType);
+			AddParens(sb, baseExpression, addParens);
+			AddCastEnd(sb, castType);
+			sb.Append('.');
+			sb.Append(name);
+			return Formatters.ObjectCache.FreeAndToString(ref sb);
+		}
+
+		public override string GetExpression(string baseExpression, int index, DmdType castType, bool addParens) {
+			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			AddCastBegin(sb, castType);
+			AddParens(sb, baseExpression, addParens);
+			AddCastEnd(sb, castType);
+			sb.Append('(');
+			sb.Append(index.ToString());
+			sb.Append(')');
+			return Formatters.ObjectCache.FreeAndToString(ref sb);
+		}
+
+		public override string GetExpression(string baseExpression, int[] indexes, DmdType castType, bool addParens) {
+			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			AddCastBegin(sb, castType);
+			AddParens(sb, baseExpression, addParens);
+			AddCastEnd(sb, castType);
 			sb.Append('(');
 			for (int i = 0; i < indexes.Length; i++) {
 				if (i > 0)

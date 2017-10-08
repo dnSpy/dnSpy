@@ -59,7 +59,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				switch (info.Member.MemberType) {
 				case DmdMemberTypes.Field:
 					var field = (DmdFieldInfo)info.Member;
-					expression = valueNodeFactory.GetFieldExpression(typeExpression, field.Name);
+					expression = valueNodeFactory.GetFieldExpression(typeExpression, field.Name, null, addParens: false);
 					expectedType = field.FieldType;
 					imageName = ImageNameUtils.GetImageName(field);
 					valueResult = runtime.LoadField(context, frame, null, field, cancellationToken);
@@ -70,7 +70,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 				case DmdMemberTypes.Property:
 					var property = (DmdPropertyInfo)info.Member;
-					expression = valueNodeFactory.GetPropertyExpression(typeExpression, property.Name);
+					expression = valueNodeFactory.GetPropertyExpression(typeExpression, property.Name, null, addParens: false);
 					expectedType = property.PropertyType;
 					imageName = ImageNameUtils.GetImageName(property);
 					if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0) {
@@ -92,9 +92,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				if (valueResult.HasError)
 					newNode = valueNodeFactory.CreateError(context, frame, info.Name, valueResult.ErrorMessage, expression, false, cancellationToken);
 				else if (valueResult.ValueIsException)
-					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, cancellationToken);
+					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false, cancellationToken);
 				else
-					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, imageName, isReadOnly, false, expectedType, cancellationToken);
+					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, imageName, isReadOnly, false, expectedType, false, cancellationToken);
 
 				valueResult = default;
 				return (newNode, true);

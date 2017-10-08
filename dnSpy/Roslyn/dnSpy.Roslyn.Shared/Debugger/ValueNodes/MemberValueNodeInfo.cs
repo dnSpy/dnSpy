@@ -23,6 +23,16 @@ using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
+	struct MemberValueNodeInfoCollection {
+		public static readonly MemberValueNodeInfoCollection Empty = new MemberValueNodeInfoCollection(Array.Empty<MemberValueNodeInfo>(), false);
+		public readonly MemberValueNodeInfo[] Members;
+		public readonly bool HasHideRoot;
+		public MemberValueNodeInfoCollection(MemberValueNodeInfo[] members, bool hasHideRoot) {
+			Members = members;
+			HasHideRoot = hasHideRoot;
+		}
+	}
+
 	struct MemberValueNodeInfo {
 		public readonly DmdMemberInfo Member;
 
@@ -34,11 +44,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		/// </summary>
 		public readonly byte InheritanceLevel;
 
-		readonly MemberValueNodeInfoFlags Flags;
+		MemberValueNodeInfoFlags Flags;
 		public bool HasDebuggerBrowsableState_Never => (Flags & MemberValueNodeInfoFlags.DebuggerBrowsableState_Mask) == MemberValueNodeInfoFlags.DebuggerBrowsableState_Never;
 		public bool HasDebuggerBrowsableState_RootHidden => (Flags & MemberValueNodeInfoFlags.DebuggerBrowsableState_Mask) == MemberValueNodeInfoFlags.DebuggerBrowsableState_RootHidden;
 		public bool IsCompilerGenerated => (Flags & MemberValueNodeInfoFlags.CompilerGeneratedName) != 0;
 		public bool IsPublic => (Flags & MemberValueNodeInfoFlags.Public) != 0;
+		public bool NeedCast => (Flags & MemberValueNodeInfoFlags.NeedCast) != 0;
+		public bool NeedTypeName => (Flags & MemberValueNodeInfoFlags.NeedTypeName) != 0;
 
 		[Flags]
 		enum MemberValueNodeInfoFlags : byte {
@@ -49,6 +61,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			DebuggerBrowsableState_RootHidden	= 2,
 			CompilerGeneratedName				= 4,
 			Public								= 8,
+			NeedCast							= 0x10,
+			NeedTypeName						= 0x20,
 		}
 
 		public MemberValueNodeInfo(DmdMemberInfo member, byte inheritanceLevel) {
@@ -59,10 +73,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			Name = default;
 		}
 
+		public void SetNeedCastAndNeedTypeName() => Flags |= MemberValueNodeInfoFlags.NeedCast | MemberValueNodeInfoFlags.NeedTypeName;
+
 		static MemberValueNodeInfoFlags GetFlags(DmdMemberInfo member) {
-			var flags = MemberValueNodeInfoFlags.None;
-			if (GetIsPublic(member))
-				flags |= MemberValueNodeInfoFlags.Public;
+			var flags = GetInfoFlags(member);
+
 			// We don't check System.Runtime.CompilerServices.CompilerGeneratedAttribute. This matches VS (Roslyn) behavior.
 			if (RoslynHelpers.IsCompilerGenerated(member.Name))
 				flags |= MemberValueNodeInfoFlags.CompilerGeneratedName;
@@ -94,16 +109,28 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return flags;
 		}
 
-		static bool GetIsPublic(DmdMemberInfo member) {
+		static MemberValueNodeInfoFlags GetInfoFlags(DmdMemberInfo member) {
 			Debug.Assert(member.MemberType == DmdMemberTypes.Field || member.MemberType == DmdMemberTypes.Property);
+			MemberValueNodeInfoFlags res = MemberValueNodeInfoFlags.None;
 			switch (member.MemberType) {
 			case DmdMemberTypes.Field:
-				return ((DmdFieldInfo)member).IsPublic;
+				var field = ((DmdFieldInfo)member);
+				if (field.IsPublic)
+					res |= MemberValueNodeInfoFlags.Public;
+				else if ((field.IsPrivate || field.IsPrivateScope) && field.DeclaringType != field.ReflectedType)
+					res |= MemberValueNodeInfoFlags.NeedCast;
+				return res;
 
 			case DmdMemberTypes.Property:
 				var prop = (DmdPropertyInfo)member;
 				var accessor = prop.GetGetMethod(DmdGetAccessorOptions.All) ?? prop.GetSetMethod(DmdGetAccessorOptions.All);
-				return accessor?.IsPublic == true;
+				if (accessor != null) {
+					if (accessor.IsPublic)
+						res |= MemberValueNodeInfoFlags.Public;
+					else if ((accessor.IsPrivate || accessor.IsPrivateScope) && accessor.DeclaringType != accessor.ReflectedType)
+						res |= MemberValueNodeInfoFlags.NeedCast;
+				}
+				return res;
 
 			default:
 				throw new InvalidOperationException();
