@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -37,6 +38,7 @@ using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Debugger.Code.TextEditor;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
+using dnSpy.Debugger.Exceptions;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.DbgUI {
@@ -54,12 +56,13 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly Lazy<DbgCallStackService> dbgCallStackService;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 		readonly Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService;
+		readonly Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService;
 		readonly DebuggerSettings debuggerSettings;
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<IDocumentTabService> documentTabService, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService, DebuggerSettings debuggerSettings) {
+		DebuggerImpl(Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<IDocumentTabService> documentTabService, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService, Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService, DebuggerSettings debuggerSettings) {
 			this.messageBoxService = messageBoxService;
 			this.appWindow = appWindow;
 			this.documentTabService = documentTabService;
@@ -71,6 +74,7 @@ namespace dnSpy.Debugger.DbgUI {
 			this.dbgCallStackService = dbgCallStackService;
 			this.referenceNavigatorService = referenceNavigatorService;
 			this.dbgTextViewCodeLocationService = dbgTextViewCodeLocationService;
+			this.dbgExceptionFormatterService = dbgExceptionFormatterService;
 			this.debuggerSettings = debuggerSettings;
 		}
 
@@ -308,6 +312,14 @@ namespace dnSpy.Debugger.DbgUI {
 				var um = (DbgMessageUserMessageEventArgs)e;
 				UI(() => ShowError_UI(um.Message));
 				break;
+
+			case DbgMessageKind.ExceptionThrown:
+				var exm = (DbgMessageExceptionThrownEventArgs)e;
+				if (exm.Exception.IsUnhandled) {
+					exm.Pause = true;
+					UI(() => ShowUnhandledException_UI(exm));
+				}
+				break;
 			}
 		}
 
@@ -315,6 +327,16 @@ namespace dnSpy.Debugger.DbgUI {
 			var dispatcher = appWindow.Value.MainWindow.Dispatcher;
 			if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
 				dispatcher.BeginInvoke(DispatcherPriority.Send, callback);
+		}
+
+		void ShowUnhandledException_UI(DbgMessageExceptionThrownEventArgs exm) {
+			var sb = new StringBuilder();
+			sb.AppendLine(string.Format(dnSpy_Debugger_Resources.UnhandledExceptionMessage_ProcessName_ProcessId, exm.Exception.Process.Name, exm.Exception.Process.Id));
+			sb.AppendLine();
+			sb.AppendLine(string.Format(dnSpy_Debugger_Resources.ExceptionName, dbgExceptionFormatterService.Value.ToString(exm.Exception.Id)));
+			sb.AppendLine();
+			sb.AppendLine(string.Format(dnSpy_Debugger_Resources.ExceptionMessage, exm.Exception.Message ?? dnSpy_Debugger_Resources.ExceptionMessageIsNull));
+			ShowError_UI(sb.ToString());
 		}
 
 		void ShowError_UI(string error) => messageBoxService.Value.Show(error);

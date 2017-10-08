@@ -2689,11 +2689,29 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Message: {0}.
+        /// </summary>
+        public static string ExceptionMessage {
+            get {
+                return ResourceManager.GetString("ExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;&lt;no exception message&gt;&quot;.
         /// </summary>
         public static string ExceptionMessageIsNull {
             get {
                 return ResourceManager.GetString("ExceptionMessageIsNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception: {0}.
+        /// </summary>
+        public static string ExceptionName {
+            get {
+                return ResourceManager.GetString("ExceptionName", resourceCulture);
             }
         }
         
@@ -5184,6 +5202,15 @@ namespace dnSpy.Debugger.Properties {
         public static string TracepointMessage_ValidKeywords {
             get {
                 return ResourceManager.GetString("TracepointMessage_ValidKeywords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unhandled exception occurred in {0} ({1}).
+        /// </summary>
+        public static string UnhandledExceptionMessage_ProcessName_ProcessId {
+            get {
+                return ResourceManager.GetString("UnhandledExceptionMessage_ProcessName_ProcessId", resourceCulture);
             }
         }
         
