@@ -44,10 +44,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override DbgEngineEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			var runtime = context.Runtime.GetDotNetRuntime();
-			if (runtime.Dispatcher.CheckAccess())
+			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+			if (dispatcher.CheckAccess())
 				return AssignCore(context, frame, expression, valueExpression, options, cancellationToken);
-			return runtime.Dispatcher.Invoke(() => AssignCore(context, frame, expression, valueExpression, options, cancellationToken));
+			return dispatcher.Invoke(() => AssignCore(context, frame, expression, valueExpression, options, cancellationToken));
 		}
 
 		DbgEngineEEAssignmentResult AssignCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
@@ -86,10 +86,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override DbgEngineEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			var runtime = context.Runtime.GetDotNetRuntime();
-			if (runtime.Dispatcher.CheckAccess())
+			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+			if (dispatcher.CheckAccess())
 				return EvaluateCore(context, frame, expression, options, cancellationToken);
-			return runtime.Dispatcher.Invoke(() => EvaluateCore(context, frame, expression, options, cancellationToken));
+			return dispatcher.Invoke(() => EvaluateCore(context, frame, expression, options, cancellationToken));
 		}
 
 		DbgEngineEvaluationResult EvaluateCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {

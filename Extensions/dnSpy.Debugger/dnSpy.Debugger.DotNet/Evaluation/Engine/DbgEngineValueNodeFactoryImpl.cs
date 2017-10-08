@@ -39,8 +39,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
 		}
 
-		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => CreateCore(context, frame, expressions, cancellationToken));
+		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) {
+			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+			if (dispatcher.CheckAccess())
+				return CreateCore(context, frame, expressions, cancellationToken);
+			return dispatcher.Invoke(() => CreateCore(context, frame, expressions, cancellationToken));
+		}
 
 		DbgEngineValueNode[] CreateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) {
 			var res = expressions.Length == 0 ? Array.Empty<DbgEngineValueNode>() : new DbgEngineValueNode[expressions.Length];
@@ -67,8 +71,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return res;
 		}
 
-		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => CreateCore(context, frame, objectIds, options, cancellationToken));
+		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+			if (dispatcher.CheckAccess())
+				return CreateCore(context, frame, objectIds, options, cancellationToken);
+			return dispatcher.Invoke(() => CreateCore(context, frame, objectIds, options, cancellationToken));
+		}
 
 		DbgEngineValueNode[] CreateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			DbgDotNetValue objectIdValue = null;

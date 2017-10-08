@@ -45,8 +45,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.dnILInterpreter = dnILInterpreter ?? throw new ArgumentNullException(nameof(dnILInterpreter));
 		}
 
-		public override DbgEngineLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetNodesCore(context, frame, options, localsOptions, cancellationToken));
+		public override DbgEngineLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
+			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+			if (dispatcher.CheckAccess())
+				return GetNodesCore(context, frame, options, localsOptions, cancellationToken);
+			return dispatcher.Invoke(() => GetNodesCore(context, frame, options, localsOptions, cancellationToken));
+		}
 
 		enum ValueInfoKind {
 			CompiledExpression,

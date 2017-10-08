@@ -40,8 +40,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.dnObjectId = dnObjectId ?? throw new ArgumentNullException(nameof(dnObjectId));
 		}
 
-		public override DbgEngineValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>
-			runtime.Dispatcher.Invoke(() => GetValueCore(context, frame, cancellationToken));
+		public override DbgEngineValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			var dispatcher = runtime.Dispatcher;
+			if (dispatcher.CheckAccess())
+				return GetValueCore(context, frame, cancellationToken);
+			return dispatcher.Invoke(() => GetValueCore(context, frame, cancellationToken));
+		}
 
 		DbgEngineValue GetValueCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			var dnValue = runtime.GetValue(context, frame, dnObjectId, cancellationToken);

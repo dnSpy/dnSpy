@@ -34,8 +34,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public DbgEngineTypeVariablesProviderImpl(DbgDotNetEngineValueNodeFactory valueNodeFactory) =>
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 
-		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
-			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => GetNodesCore(context, frame, options, cancellationToken));
+		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+			if (dispatcher.CheckAccess())
+				return GetNodesCore(context, frame, options, cancellationToken);
+			return dispatcher.Invoke(() => GetNodesCore(context, frame, options, cancellationToken));
+		}
 
 		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var runtime = context.Runtime.GetDotNetRuntime();
