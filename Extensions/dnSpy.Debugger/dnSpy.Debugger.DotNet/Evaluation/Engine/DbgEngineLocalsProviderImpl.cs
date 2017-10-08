@@ -49,7 +49,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
 				return GetNodesCore(context, frame, options, localsOptions, cancellationToken);
-			return dispatcher.Invoke(() => GetNodesCore(context, frame, options, localsOptions, cancellationToken));
+			return GetNodes(dispatcher, context, frame, options, localsOptions, cancellationToken);
+
+			DbgEngineLocalsValueNodeInfo[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, DbgValueNodeEvaluationOptions options2, DbgLocalsValueNodeEvaluationOptions localsOptions2, CancellationToken cancellationToken2) =>
+				dispatcher2.Invoke(() => GetNodesCore(context2, frame2, options2, localsOptions2, cancellationToken2));
 		}
 
 		enum ValueInfoKind {

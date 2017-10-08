@@ -44,7 +44,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var dispatcher = runtime.Dispatcher;
 			if (dispatcher.CheckAccess())
 				return GetValueCore(context, frame, cancellationToken);
-			return dispatcher.Invoke(() => GetValueCore(context, frame, cancellationToken));
+			return GetValue(dispatcher, context, frame, cancellationToken);
+
+			DbgEngineValue GetValue(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, CancellationToken cancellationToken2) =>
+				dispatcher2.Invoke(() => GetValueCore(context2, frame2, cancellationToken2));
 		}
 
 		DbgEngineValue GetValueCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
