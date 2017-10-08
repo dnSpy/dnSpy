@@ -303,6 +303,11 @@ namespace dnSpy.Debugger.DbgUI {
 				if (ep.Error != null)
 					UI(() => ShowError_UI(ep.Error));
 				break;
+
+			case DbgMessageKind.UserMessage:
+				var um = (DbgMessageUserMessageEventArgs)e;
+				UI(() => ShowError_UI(um.Message));
+				break;
 			}
 		}
 

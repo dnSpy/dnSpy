@@ -111,6 +111,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// SetIP() is complete (<see cref="DbgMessageSetIPCompleteEventArgs"/>)
 		/// </summary>
 		SetIPComplete,
+
+		/// <summary>
+		/// Some message that should be shown to the user, eg. we failed to connect to the debugged process (<see cref="DbgMessageUserMessageEventArgs"/>)
+		/// </summary>
+		UserMessage,
 	}
 
 	/// <summary>
@@ -644,5 +649,50 @@ namespace dnSpy.Contracts.Debugger {
 			FramesInvalidated = framesInvalidated;
 			Error = error;
 		}
+	}
+
+	/// <summary>
+	/// A message that should be shown to the user
+	/// </summary>
+	public sealed class DbgMessageUserMessageEventArgs : DbgMessageEventArgs {
+		/// <summary>
+		/// Returns <see cref="DbgMessageKind.UserMessage"/>
+		/// </summary>
+		public override DbgMessageKind Kind => DbgMessageKind.UserMessage;
+
+		/// <summary>
+		/// Gets the message kind
+		/// </summary>
+		public UserMessageKind MessageKind { get; }
+
+		/// <summary>
+		/// Gets the message
+		/// </summary>
+		public string Message { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="messageKind">Message kind</param>
+		/// <param name="message">Message</param>
+		public DbgMessageUserMessageEventArgs(UserMessageKind messageKind, string message) {
+			MessageKind = messageKind;
+			Message = message ?? throw new ArgumentNullException(nameof(message));
+		}
+	}
+
+	/// <summary>
+	/// <see cref="DbgMessageUserMessageEventArgs"/> message kinds
+	/// </summary>
+	public enum UserMessageKind {
+		/// <summary>
+		/// We failed to connect to the debugged process
+		/// </summary>
+		CouldNotConnect,
+
+		/// <summary>
+		/// Could not break the debugged process
+		/// </summary>
+		CouldNotBreak,
 	}
 }

@@ -41,6 +41,13 @@ namespace dnSpy.Debugger.Impl {
 			pauseProgram |= e.Pause;
 		}
 
+		void RaiseUserMessage_DbgThread(UserMessageKind messageKind, string message) {
+			Dispatcher.VerifyAccess();
+			var msg = new DbgMessageUserMessageEventArgs(messageKind, message);
+			bool ignore = false;
+			RaiseMessage_DbgThread(msg, ref ignore);
+		}
+
 		public override DbgDispatcher Dispatcher => dbgDispatcherProvider.Dispatcher;
 		internal DbgDispatcher2 Dispatcher2 => dbgDispatcherProvider.Dispatcher;
 		Dispatcher WpfDispatcher => dbgDispatcherProvider.WpfDispatcher;
@@ -372,7 +379,7 @@ namespace dnSpy.Debugger.Impl {
 		void OnConnected_DbgThread(DbgEngine engine, DbgMessageConnected e) {
 			Dispatcher.VerifyAccess();
 			if (e.ErrorMessage != null) {
-				//TODO: Show error msg
+				RaiseUserMessage_DbgThread(UserMessageKind.CouldNotConnect, e.ErrorMessage ?? "???");
 				OnDisconnected_DbgThread(engine);
 				return;
 			}
@@ -613,10 +620,7 @@ namespace dnSpy.Debugger.Impl {
 				if (info == null)
 					return;
 
-				if (e.ErrorMessage != null) {
-					//TODO: Log the error
-				}
-				else {
+				if (e.ErrorMessage == null) {
 					info.EngineState = EngineState.Paused;
 					info.DelayedIsRunning = false;
 					thread = info.Runtime?.SetBreakThread((DbgThreadImpl)e.Thread, true);
@@ -632,6 +636,8 @@ namespace dnSpy.Debugger.Impl {
 				RaiseIsRunningChanged_DbgThread();
 			if (e.ErrorMessage == null)
 				OnEnginePaused_DbgThread(engine, process, thread, setCurrentProcess: false);
+			else
+				RaiseUserMessage_DbgThread(UserMessageKind.CouldNotBreak, e.ErrorMessage);
 		}
 
 		public override event EventHandler<ProcessPausedEventArgs> ProcessPaused;
