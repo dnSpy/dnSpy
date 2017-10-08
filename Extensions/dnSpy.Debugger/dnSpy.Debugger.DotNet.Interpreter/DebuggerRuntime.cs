@@ -114,6 +114,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract ILValue CreateTypeNoConstructor(DmdType type);
 
 		/// <summary>
+		/// Boxes a value or returns null on failure
+		/// </summary>
+		/// <param name="value">Value to box</param>
+		/// <param name="type">Target type</param>
+		/// <returns></returns>
+		public abstract ILValue Box(ILValue value, DmdType type);
+
+		/// <summary>
 		/// Calls a static method or returns false on failure
 		/// </summary>
 		/// <param name="method">Method to call</param>

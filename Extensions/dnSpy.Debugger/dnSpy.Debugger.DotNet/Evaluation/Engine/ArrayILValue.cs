@@ -25,7 +25,6 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class ArrayILValue : TypeILValueImpl {
-		readonly DebuggerRuntimeImpl runtime;
 		long cachedArrayLength;
 		const long cachedArrayLength_uninitialized = -1;
 		const long cachedArrayLength_error = -2;
@@ -35,7 +34,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public ArrayILValue(DebuggerRuntimeImpl runtime, DbgDotNetValue arrayValue)
 			: base(runtime, arrayValue) {
-			this.runtime = runtime;
 			cachedArrayLength = cachedArrayLength_uninitialized;
 		}
 

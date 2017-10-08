@@ -77,27 +77,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			throw new InvalidOperationException();//TODO:
 		}
 
-		static IDebuggerRuntimeILValue TryGetDebuggerRuntimeILValue(ILValue value) {
-			if (value is IDebuggerRuntimeILValue rtValue)
-				return rtValue;
-			if (value is BoxedValueTypeILValue boxedValue) {
-				rtValue = boxedValue.Value as IDebuggerRuntimeILValue;
-				if (rtValue != null)
-					return rtValue;
-			}
-			return null;
-		}
-
 		DbgDotNetValue TryGetDotNetValue(ILValue value, bool canCreateValues) {
-			var rtValue = TryGetDebuggerRuntimeILValue(value);
-			if (rtValue != null)
+			if (value is IDebuggerRuntimeILValue rtValue)
 				return rtValue.GetDotNetValue();
 			if (canCreateValues) {
 				if (value.IsNull)
 					return new SyntheticNullValue(value.Type ?? frame.Module.AppDomain.GetReflectionAppDomain().System_Void);
-
-				if (value is BoxedValueTypeILValue boxedValue)
-					value = boxedValue.Value;
 
 				object newValue;
 				var type = value.Type;
@@ -180,11 +165,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			if (value.IsNull)
 				return null;
-
-			if (value is BoxedValueTypeILValue boxedValue) {
-				targetType = boxedValue.Type;
-				value = boxedValue.Value;
-			}
 
 			var targetTypeCode = DmdType.GetTypeCode(targetType);
 			switch (value.Kind) {
@@ -423,6 +403,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override ILValue CreateTypeNoConstructor(DmdType type) {
 			var res = runtime.CreateInstanceNoConstructor(context, frame, type, cancellationToken);
 			return CreateILValue(res);
+		}
+
+		public override ILValue Box(ILValue value, DmdType type) {
+			if (type.IsValueType) {
+				var dnValue = TryGetDotNetValue(value, canCreateValues: true) ?? throw new InvalidOperationException();
+				return new BoxedValueTypeILValue(this, value, dnValue, type);
+			}
+			return value;
 		}
 
 		public override bool CallStatic(DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>

@@ -450,6 +450,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			return new FakeReferenceType(type);
 		}
 
+		public override ILValue Box(ILValue value, DmdType type) => new BoxedValueTypeILValue(value, type);
+
 		public override bool CallStatic(DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
 			var ad = method.AppDomain;
 			var type = method.ReflectedType;
@@ -527,5 +529,15 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				return arad1.Equals(arad2);
 			return false;
 		}
+	}
+
+	sealed class BoxedValueTypeILValue : TypeILValue {
+		public override DmdType Type { get; }
+		readonly ILValue value;
+		public BoxedValueTypeILValue(ILValue value, DmdType type) {
+			this.value = value.Clone();
+			Type = type;
+		}
+		public override ILValue UnboxAny(DmdType type) => value.Clone();
 	}
 }

@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DmdType Type => objValue.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => objValue;
 
-		readonly DebuggerRuntimeImpl runtime;
+		protected readonly DebuggerRuntimeImpl runtime;
 		protected readonly DbgDotNetValue objValue;
 
 		public TypeILValueImpl(DebuggerRuntimeImpl runtime, DbgDotNetValue objValue) {

@@ -973,7 +973,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Box:
 					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
 					v1 = Pop1();
-					v1 = v1.Box(type) ?? Box(v1, type);
+					v1 = v1.Box(type) ?? debuggerRuntime.Box(v1, type);
 					if (v1 == null)
 						ThrowInvalidMethodBodyInterpreterException();
 					ilValueStack.Add(v1.Clone());
@@ -1088,17 +1088,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					v1 = Pop1();
 					if (v1.IsNull)
 						v1 = type.IsNullable ? debuggerRuntime.CreateTypeNoConstructor(type) : v1;
-					else if (v1 is BoxedValueTypeILValue) {
-						v1 = ((BoxedValueTypeILValue)v1).Value;
-						if (type.IsNullable) {
-							method = type.GetConstructor(new[] { type.GetNullableElementType() });
-							if ((object)method == null)
-								ThrowInvalidMethodBodyInterpreterException();
-							v1 = debuggerRuntime.CreateInstance((DmdConstructorInfo)method, new[] { v1 });
-						}
-						else
-							v1 = v1.Clone();
-					}
 					else
 						v1 = v1.UnboxAny(type) ?? v1;
 					ilValueStack.Add(v1);
@@ -4747,30 +4736,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					return LoadValueType.I;
 				return LoadValueType.Ref;
 			}
-		}
-
-		static ILValue Box(ILValue value, DmdType type) {
-			if (type.IsValueType) {
-				switch (value.Kind) {
-				case ILValueKind.Int32:
-				case ILValueKind.Int64:
-				case ILValueKind.Float:
-				case ILValueKind.NativeInt:
-					return new BoxedValueTypeILValue(value, type);
-
-				case ILValueKind.ByRef:
-					break;
-
-				case ILValueKind.Type:
-					if (value.Type.IsValueType)
-						return new BoxedValueTypeILValue(value, type);
-					break;
-
-				default:
-					throw new InvalidOperationException();
-				}
-			}
-			return value;
 		}
 
 		static ILValue[] Skip1(ILValue[] a) {

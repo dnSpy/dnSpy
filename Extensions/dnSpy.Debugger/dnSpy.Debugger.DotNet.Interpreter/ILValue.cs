@@ -1050,43 +1050,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 	}
 
 	/// <summary>
-	/// A boxed value type
-	/// </summary>
-	public sealed class BoxedValueTypeILValue : TypeILValue {
-		/// <summary>
-		/// Gets the value
-		/// </summary>
-		public ILValue Value { get; }
-
-		readonly DmdType type;
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="value">Value</param>
-		public BoxedValueTypeILValue(ILValue value) {
-			Debug.Assert(value.Type.IsValueType);
-			Value = value.Clone();
-			type = Value.Type;
-		}
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="value">Value</param>
-		/// <param name="type">Boxed type</param>
-		public BoxedValueTypeILValue(ILValue value, DmdType type) {
-			Value = value.Clone();
-			this.type = type ?? throw new ArgumentNullException(nameof(type));
-		}
-
-		/// <summary>
-		/// Gets the type of the value
-		/// </summary>
-		public override DmdType Type => type;
-	}
-
-	/// <summary>
 	/// A null reference
 	/// </summary>
 	public class NullObjectRefILValue : TypeILValue {
