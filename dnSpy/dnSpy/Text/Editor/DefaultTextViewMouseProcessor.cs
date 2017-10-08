@@ -220,13 +220,14 @@ namespace dnSpy.Text.Editor {
 						GetSelectionOrCaretIfNoSelection(out var selStart, out var selEnd);
 
 						VirtualSnapshotPoint anchorPoint, activePoint;
-						if (selStart < mouseLeftDownInfo.Value.Span.Start) {
+						var translatedSpan = mouseLeftDownInfo.Value.Span.TranslateTo(selStart.Position.Snapshot, SpanTrackingMode.EdgeExclusive);
+						if (selStart < translatedSpan.Start) {
 							activePoint = selStart;
-							anchorPoint = mouseLeftDownInfo.Value.Span.End;
+							anchorPoint = translatedSpan.End;
 						}
 						else {
 							activePoint = selEnd;
-							anchorPoint = mouseLeftDownInfo.Value.Span.Start;
+							anchorPoint = translatedSpan.Start;
 						}
 						wpfTextView.Selection.Select(anchorPoint, activePoint);
 						wpfTextView.Caret.MoveTo(activePoint);
