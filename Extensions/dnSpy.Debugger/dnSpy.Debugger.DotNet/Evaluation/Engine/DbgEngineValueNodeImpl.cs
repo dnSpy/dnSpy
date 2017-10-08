@@ -87,12 +87,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					res[i] = owner.Create(dnNodes[i]);
 				}
 			}
-			catch {
+			catch (Exception ex) {
 				if (res != null)
 					context.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
 				if (dnNodes != null)
 					context.Runtime.Process.DbgManager.Close(dnNodes);
-				throw;
+				if (!ExceptionUtils.IsInternalDebuggerError(ex))
+					throw;
+				res = new DbgEngineValueNode[count];
+				for (int i = 0; i < res.Length; i++)
+					res[i] = owner.CreateError(context, frame, DbgDotNetEngineValueNodeFactoryExtensions.errorName, PredefinedEvaluationErrorMessages.InternalDebuggerError, "<expression>", false, cancellationToken);
+				return res;
 			}
 			return res;
 		}
@@ -153,9 +158,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		DbgEngineValueNodeAssignmentResult AssignCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			var ee = context.Language.ExpressionEvaluator;
-			var res = ee.Assign(context, frame, Expression, expression, options, cancellationToken);
-			return new DbgEngineValueNodeAssignmentResult(res.Flags, res.Error);
+			try {
+				var ee = context.Language.ExpressionEvaluator;
+				var res = ee.Assign(context, frame, Expression, expression, options, cancellationToken);
+				return new DbgEngineValueNodeAssignmentResult(res.Flags, res.Error);
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return new DbgEngineValueNodeAssignmentResult(DbgEEAssignmentResultFlags.None, PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			}
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {

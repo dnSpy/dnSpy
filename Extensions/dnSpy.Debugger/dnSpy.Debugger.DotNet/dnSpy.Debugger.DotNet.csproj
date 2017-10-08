@@ -68,6 +68,7 @@
     <Compile Include="Evaluation\Engine\ByRefILValueImpl.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetDispatcherExtensions.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactory.cs" />
+    <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactoryExtensions.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactoryService.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetILInterpreter.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetLanguageServiceImpl.cs" />

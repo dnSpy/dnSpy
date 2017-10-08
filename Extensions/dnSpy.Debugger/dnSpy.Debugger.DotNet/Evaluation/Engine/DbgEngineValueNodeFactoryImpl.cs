@@ -67,9 +67,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					res[i] = newNode;
 				}
 			}
-			catch {
+			catch (Exception ex) {
 				context.Process.DbgManager.Close(res.Where(a => a != null));
-				throw;
+				if (!ExceptionUtils.IsInternalDebuggerError(ex))
+					throw;
+				return valueNodeFactory.CreateInternalErrorResult(context, frame, cancellationToken);
 			}
 			return res;
 		}
@@ -104,10 +106,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				ObjectCache.Free(ref output);
 				return res;
 			}
-			catch {
+			catch (Exception ex) {
 				context.Process.DbgManager.Close(res.Where(a => a != null));
 				objectIdValue?.Dispose();
-				throw;
+				if (!ExceptionUtils.IsInternalDebuggerError(ex))
+					throw;
+				return valueNodeFactory.CreateInternalErrorResult(context, frame, cancellationToken);
 			}
 		}
 	}

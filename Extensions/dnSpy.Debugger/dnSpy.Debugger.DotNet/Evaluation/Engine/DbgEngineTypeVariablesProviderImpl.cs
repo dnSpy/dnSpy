@@ -46,40 +46,45 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			var runtime = context.Runtime.GetDotNetRuntime();
-			var method = runtime.GetFrameMethod(context, frame, cancellationToken);
-			if ((object)method == null)
-				return Array.Empty<DbgEngineValueNode>();
+			try {
+				var runtime = context.Runtime.GetDotNetRuntime();
+				var method = runtime.GetFrameMethod(context, frame, cancellationToken);
+				if ((object)method == null)
+					return Array.Empty<DbgEngineValueNode>();
 
-			IList<DmdType> genericTypeParameters, genericTypeArguments;
-			IList<DmdType> genericMethodParameters, genericMethodArguments;
+				IList<DmdType> genericTypeParameters, genericTypeArguments;
+				IList<DmdType> genericMethodParameters, genericMethodArguments;
 
-			genericTypeArguments = method.ReflectedType.GetGenericArguments();
-			genericMethodArguments = method.GetGenericArguments();
+				genericTypeArguments = method.ReflectedType.GetGenericArguments();
+				genericMethodArguments = method.GetGenericArguments();
 
-			genericTypeParameters = genericTypeArguments.Count == 0 ? genericTypeArguments : method.ReflectedType.GetGenericTypeDefinition().GetGenericArguments();
-			genericMethodParameters = genericMethodArguments.Count == 0 ? genericMethodArguments : method.Module.ResolveMethod(method.MetadataToken).GetGenericArguments();
-			if (genericTypeParameters.Count != genericTypeArguments.Count)
-				throw new InvalidOperationException();
-			if (genericMethodParameters.Count != genericMethodArguments.Count)
-				throw new InvalidOperationException();
+				genericTypeParameters = genericTypeArguments.Count == 0 ? genericTypeArguments : method.ReflectedType.GetGenericTypeDefinition().GetGenericArguments();
+				genericMethodParameters = genericMethodArguments.Count == 0 ? genericMethodArguments : method.Module.ResolveMethod(method.MetadataToken).GetGenericArguments();
+				if (genericTypeParameters.Count != genericTypeArguments.Count)
+					throw new InvalidOperationException();
+				if (genericMethodParameters.Count != genericMethodArguments.Count)
+					throw new InvalidOperationException();
 
-			int count = genericTypeParameters.Count + genericMethodParameters.Count;
-			if (count == 0)
-				return Array.Empty<DbgEngineValueNode>();
+				int count = genericTypeParameters.Count + genericMethodParameters.Count;
+				if (count == 0)
+					return Array.Empty<DbgEngineValueNode>();
 
-			var infos = new DbgDotNetTypeVariableInfo[count];
-			int w = 0;
-			for (int i = 0; i < genericTypeParameters.Count; i++)
-				infos[w++] = new DbgDotNetTypeVariableInfo(genericTypeParameters[i], genericTypeArguments[i]);
-			for (int i = 0; i < genericMethodParameters.Count; i++)
-				infos[w++] = new DbgDotNetTypeVariableInfo(genericMethodParameters[i], genericMethodArguments[i]);
-			if (infos.Length != w)
-				throw new InvalidOperationException();
+				var infos = new DbgDotNetTypeVariableInfo[count];
+				int w = 0;
+				for (int i = 0; i < genericTypeParameters.Count; i++)
+					infos[w++] = new DbgDotNetTypeVariableInfo(genericTypeParameters[i], genericTypeArguments[i]);
+				for (int i = 0; i < genericMethodParameters.Count; i++)
+					infos[w++] = new DbgDotNetTypeVariableInfo(genericMethodParameters[i], genericMethodArguments[i]);
+				if (infos.Length != w)
+					throw new InvalidOperationException();
 
-			var res = new DbgEngineValueNode[1];
-			res[0] = valueNodeFactory.CreateTypeVariables(context, frame, infos, cancellationToken);
-			return res;
+				var res = new DbgEngineValueNode[1];
+				res[0] = valueNodeFactory.CreateTypeVariables(context, frame, infos, cancellationToken);
+				return res;
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return valueNodeFactory.CreateInternalErrorResult(context, frame, cancellationToken);
+			}
 		}
 	}
 }

@@ -55,9 +55,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					res[i] = valueNodeFactory.CreateError(context, frame, name, "NYI", "NYI", false, cancellationToken);
 				}
 			}
-			catch {
+			catch (Exception ex) {
 				context.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
-				throw;
+				if (!ExceptionUtils.IsInternalDebuggerError(ex))
+					throw;
+				return valueNodeFactory.CreateInternalErrorResult(context, frame, cancellationToken);
 			}
 			return res;
 		}
