@@ -20,6 +20,7 @@
 using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -39,14 +40,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.dnObjectId = dnObjectId ?? throw new ArgumentNullException(nameof(dnObjectId));
 		}
 
-		public override DbgEngineValue GetValue(DbgEvaluationContext context, CancellationToken cancellationToken) =>
-			runtime.Dispatcher.Invoke(() => GetValueCore(context, cancellationToken));
+		public override DbgEngineValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>
+			runtime.Dispatcher.Invoke(() => GetValueCore(context, frame, cancellationToken));
 
-		public override void GetValue(DbgEvaluationContext context, Action<DbgEngineValue> callback, CancellationToken cancellationToken) =>
-			runtime.Dispatcher.BeginInvoke(() => callback(GetValueCore(context, cancellationToken)));
+		public override void GetValue(DbgEvaluationContext context, DbgStackFrame frame, Action<DbgEngineValue> callback, CancellationToken cancellationToken) =>
+			runtime.Dispatcher.BeginInvoke(() => callback(GetValueCore(context, frame, cancellationToken)));
 
-		DbgEngineValue GetValueCore(DbgEvaluationContext context, CancellationToken cancellationToken) {
-			var dnValue = runtime.GetValue(context, dnObjectId, cancellationToken);
+		DbgEngineValue GetValueCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			var dnValue = runtime.GetValue(context, frame, dnObjectId, cancellationToken);
 			try {
 				return new DbgEngineValueImpl(dnValue);
 			}

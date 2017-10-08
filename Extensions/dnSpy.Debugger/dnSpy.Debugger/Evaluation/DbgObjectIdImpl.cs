@@ -20,8 +20,10 @@
 using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.CallStack;
 
 namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgObjectIdImpl : DbgObjectId {
@@ -42,26 +44,34 @@ namespace dnSpy.Debugger.Evaluation {
 			return value;
 		}
 
-		public override DbgValue GetValue(DbgEvaluationContext context, CancellationToken cancellationToken) {
+		public override DbgValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
 			if (context.Runtime != Runtime)
 				throw new ArgumentException();
-			return CreateResult(EngineObjectId.GetValue(context, cancellationToken));
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (frame.Runtime != Runtime)
+				throw new ArgumentException();
+			return CreateResult(EngineObjectId.GetValue(context, frame, cancellationToken));
 		}
 
-		public override void GetValue(DbgEvaluationContext context, Action<DbgValue> callback, CancellationToken cancellationToken) {
+		public override void GetValue(DbgEvaluationContext context, DbgStackFrame frame, Action<DbgValue> callback, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
 			if (context.Runtime != Runtime)
+				throw new ArgumentException();
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (frame.Runtime != Runtime)
 				throw new ArgumentException();
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			EngineObjectId.GetValue(context, engineValue => callback(CreateResult(engineValue)), cancellationToken);
+			EngineObjectId.GetValue(context, frame, engineValue => callback(CreateResult(engineValue)), cancellationToken);
 		}
 
 		public override void Remove() => owner.Remove(new[] { this });

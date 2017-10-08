@@ -805,7 +805,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return GetEquatableValue(value.Type, value.TryGetCorValue()).GetHashCode();
 		}
 
-		public DbgDotNetValue GetValue(DbgEvaluationContext context, DbgDotNetObjectId objectId, CancellationToken cancellationToken) {
+		public DbgDotNetValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetObjectId objectId, CancellationToken cancellationToken) {
 			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
 			if (objectIdImpl == null)
 				throw new ArgumentException();

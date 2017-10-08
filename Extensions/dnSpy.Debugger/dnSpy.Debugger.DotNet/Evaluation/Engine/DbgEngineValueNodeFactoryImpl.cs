@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					cancellationToken.ThrowIfCancellationRequested();
 					var objectId = (DbgEngineObjectIdImpl)objectIds[i];
 					var dnObjectId = objectId.DotNetObjectId;
-					objectIdValue = objectId.Runtime.GetValue(context, dnObjectId, cancellationToken);
+					objectIdValue = objectId.Runtime.GetValue(context, frame, dnObjectId, cancellationToken);
 
 					formatter.FormatObjectIdName(context, output, dnObjectId.Id);
 					var name = output.CreateAndReset();

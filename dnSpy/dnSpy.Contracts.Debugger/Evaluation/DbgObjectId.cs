@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
@@ -44,18 +45,20 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Creates a new value. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Stack frame</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValue GetValue(DbgEvaluationContext context, CancellationToken cancellationToken = default);
+		public abstract DbgValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates a new value. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Stack frame</param>
 		/// <param name="callback">Called when the method is complete</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract void GetValue(DbgEvaluationContext context, Action<DbgValue> callback, CancellationToken cancellationToken = default);
+		public abstract void GetValue(DbgEvaluationContext context, DbgStackFrame frame, Action<DbgValue> callback, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Removes and closes the object id

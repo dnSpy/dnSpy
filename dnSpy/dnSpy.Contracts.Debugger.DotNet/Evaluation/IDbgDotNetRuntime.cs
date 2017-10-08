@@ -247,10 +247,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Gets an object ID's value
 		/// </summary>
 		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
 		/// <param name="objectId">Object id created by this class</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValue GetValue(DbgEvaluationContext context, DbgDotNetObjectId objectId, CancellationToken cancellationToken);
+		DbgDotNetValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetObjectId objectId, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Checks if two values are equal. Returns null if it's unknown.
