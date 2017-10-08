@@ -716,7 +716,7 @@
     </Compile>
     <Compile Include="MainApp\AskVM.cs" />
     <Compile Include="MainApp\CachedMefInfo.cs" />
-    <Compile Include="MainApp\DevBuildWarning.cs" />
+    <None Include="MainApp\DevBuildWarning.cs" />
     <Compile Include="MainApp\DocumentTreeViewWindowContent.cs" />
     <Compile Include="MainApp\DsLoaderControl.xaml.cs">
       <DependentUpon>DsLoaderControl.xaml</DependentUpon>
