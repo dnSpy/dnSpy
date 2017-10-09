@@ -518,7 +518,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void DbgEvalFormatterSettings_PropertyChanged_UI(string propertyName) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
-			case nameof(DbgEvalFormatterSettings.ShowDeclaringTypes):
 			case nameof(DbgEvalFormatterSettings.ShowNamespaces):
 			case nameof(DbgEvalFormatterSettings.ShowIntrinsicTypeKeywords):
 			case nameof(DbgEvalFormatterSettings.ShowTokens):
@@ -591,8 +590,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				options |= DbgValueFormatterOptions.ToString;
 			if (debuggerSettings.UseDigitSeparators)
 				options |= DbgValueFormatterOptions.DigitSeparators;
-			if (dbgEvalFormatterSettings.ShowDeclaringTypes)
-				options |= DbgValueFormatterOptions.DeclaringTypes;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
 				options |= DbgValueFormatterOptions.Namespaces;
 			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)
@@ -604,8 +601,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		DbgValueFormatterTypeOptions GetTypeFormatterOptions() {
 			var options = DbgValueFormatterTypeOptions.None;
-			if (dbgEvalFormatterSettings.ShowDeclaringTypes)
-				options |= DbgValueFormatterTypeOptions.DeclaringTypes;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
 				options |= DbgValueFormatterTypeOptions.Namespaces;
 			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)

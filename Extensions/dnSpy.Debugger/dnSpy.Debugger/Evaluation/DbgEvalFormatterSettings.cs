@@ -36,11 +36,6 @@ namespace dnSpy.Debugger.Evaluation {
 		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		/// <summary>
-		/// Show declaring types
-		/// </summary>
-		public abstract bool ShowDeclaringTypes { get; set; }
-
-		/// <summary>
 		/// Show namespaces
 		/// </summary>
 		public abstract bool ShowNamespaces { get; set; }

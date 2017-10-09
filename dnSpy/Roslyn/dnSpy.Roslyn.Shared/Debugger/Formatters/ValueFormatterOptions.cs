@@ -27,10 +27,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		Decimal						= 0x00000002,
 		FuncEval					= 0x00000004,
 		ToString					= 0x00000008,
-		DeclaringTypes				= 0x00000010,
-		Namespaces					= 0x00000020,
-		IntrinsicTypeKeywords		= 0x00000040,
-		Tokens						= 0x00000080,
-		DigitSeparators				= 0x00000100,
+		Namespaces					= 0x00000010,
+		IntrinsicTypeKeywords		= 0x00000020,
+		Tokens						= 0x00000040,
+		DigitSeparators				= 0x00000080,
 	}
 }

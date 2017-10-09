@@ -112,11 +112,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		DigitSeparators				= 0x00000010,
 
 		/// <summary>
-		/// Show the declaring type. Only used if <see cref="Display"/> is set
-		/// </summary>
-		DeclaringTypes				= 0x10000000,
-
-		/// <summary>
 		/// Show namespaces. Only used if <see cref="Display"/> is set
 		/// </summary>
 		Namespaces					= 0x20000000,
@@ -141,11 +136,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// No bit is set
 		/// </summary>
 		None						= 0,
-
-		/// <summary>
-		/// Show declaring types
-		/// </summary>
-		DeclaringTypes				= 0x10000000,
 
 		/// <summary>
 		/// Show namespaces

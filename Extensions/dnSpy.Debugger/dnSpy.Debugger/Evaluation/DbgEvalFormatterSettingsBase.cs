@@ -29,25 +29,6 @@ namespace dnSpy.Debugger.Evaluation {
 
 		protected DbgEvalFormatterSettingsBase() => lockObj = new object();
 
-		public override bool ShowDeclaringTypes {
-			get {
-				lock (lockObj)
-					return showDeclaringTypes;
-			}
-			set {
-				bool modified;
-				lock (lockObj) {
-					modified = showDeclaringTypes != value;
-					showDeclaringTypes = value;
-				}
-				if (modified) {
-					OnPropertyChanged(nameof(ShowDeclaringTypes));
-					OnModified();
-				}
-			}
-		}
-		bool showDeclaringTypes = true;
-
 		public override bool ShowNamespaces {
 			get {
 				lock (lockObj)
@@ -118,7 +99,6 @@ namespace dnSpy.Debugger.Evaluation {
 
 			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			ShowDeclaringTypes = sect.Attribute<bool?>(nameof(ShowDeclaringTypes)) ?? ShowDeclaringTypes;
 			ShowNamespaces = sect.Attribute<bool?>(nameof(ShowNamespaces)) ?? ShowNamespaces;
 			ShowIntrinsicTypeKeywords = sect.Attribute<bool?>(nameof(ShowIntrinsicTypeKeywords)) ?? ShowIntrinsicTypeKeywords;
 			ShowTokens = sect.Attribute<bool?>(nameof(ShowTokens)) ?? ShowTokens;
@@ -130,7 +110,6 @@ namespace dnSpy.Debugger.Evaluation {
 			if (disableSave)
 				return;
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
-			sect.Attribute(nameof(ShowDeclaringTypes), ShowDeclaringTypes);
 			sect.Attribute(nameof(ShowNamespaces), ShowNamespaces);
 			sect.Attribute(nameof(ShowIntrinsicTypeKeywords), ShowIntrinsicTypeKeywords);
 			sect.Attribute(nameof(ShowTokens), ShowTokens);
