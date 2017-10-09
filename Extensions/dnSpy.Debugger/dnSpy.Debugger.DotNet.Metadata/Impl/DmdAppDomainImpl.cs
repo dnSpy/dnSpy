@@ -124,8 +124,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			var assembly = new DmdAssemblyImpl(this, metadataReader, assemblyLocation);
 			var module = new DmdModuleImpl(assembly, metadataReader, isInMemory, isDynamic, isSynthetic, fullyQualifiedName);
-			assembly.Add(module);
 			metadataReader.SetModule(module);
+			assembly.Add(module);
 			if (addAssembly)
 				Add(assembly);
 			return assembly;
@@ -143,6 +143,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentException();
 			var metadataReader = new DmdLazyMetadataReader(getMetadata, metadataReaderFactory);
 			var module = new DmdModuleImpl(assemblyImpl, metadataReader, isInMemory, isDynamic, assemblyImpl.IsSynthetic, fullyQualifiedName);
+			metadataReader.SetModule(module);
 			assemblyImpl.Add(module);
 			return module;
 		}

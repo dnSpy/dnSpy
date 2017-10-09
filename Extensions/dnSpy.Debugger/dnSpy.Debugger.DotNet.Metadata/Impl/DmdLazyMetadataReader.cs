@@ -26,8 +26,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		Func<DmdLazyMetadataBytes> getMetadata;
 		Func<DmdModuleImpl, DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory;
 		DmdMetadataReader MetadataReader => __metadataReader_DONT_USE ?? InitializeMetadataReader();
-		DmdMetadataReader __metadataReader_DONT_USE;
-		DmdModuleImpl module;
+		volatile DmdMetadataReader __metadataReader_DONT_USE;
+		volatile DmdModuleImpl module;
 
 		public DmdLazyMetadataReader(Func<DmdLazyMetadataBytes> getMetadata, Func<DmdModuleImpl, DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory) {
 			lockObj = new object();
@@ -59,7 +59,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		EventHandler<DmdTypesUpdatedEventArgs> typesUpdated;
 
-		internal void SetModule(DmdModuleImpl module) => this.module = module;
+		internal void SetModule(DmdModuleImpl module) {
+			lock (lockObj)
+				this.module = module;
+		}
 
 		public override Guid ModuleVersionId => MetadataReader.ModuleVersionId;
 		public override int MDStreamVersion => MetadataReader.MDStreamVersion;
