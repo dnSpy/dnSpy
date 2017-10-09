@@ -33,7 +33,7 @@ using Microsoft.CodeAnalysis.ExpressionEvaluator.DnSpy;
 using Microsoft.VisualStudio.Debugger.Evaluation;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
-	[ExportDbgDotNetExpressionCompiler(DbgDotNetLanguageGuids.CSharp, PredefinedDbgLanguageNames.CSharp, "C#", PredefinedDecompilerGuids.CSharp)]
+	[ExportDbgDotNetExpressionCompiler(DbgDotNetLanguageGuids.CSharp, PredefinedDbgLanguageNames.CSharp, "C#", PredefinedDecompilerGuids.CSharp, PredefinedDbgDotNetExpressionCompilerOrders.CSharp)]
 	sealed class CSharpExpressionCompiler : LanguageExpressionCompiler {
 		sealed class CSharpEvalContextState : EvalContextState {
 			public CSharpMetadataContext MetadataContext;

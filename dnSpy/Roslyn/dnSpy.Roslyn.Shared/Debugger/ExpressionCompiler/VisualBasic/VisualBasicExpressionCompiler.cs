@@ -33,7 +33,7 @@ using Microsoft.CodeAnalysis.VisualBasic.ExpressionEvaluator;
 using Microsoft.VisualStudio.Debugger.Evaluation;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.VisualBasic {
-	[ExportDbgDotNetExpressionCompiler(DbgDotNetLanguageGuids.VisualBasic, PredefinedDbgLanguageNames.VisualBasic, "Visual Basic", PredefinedDecompilerGuids.VisualBasic)]
+	[ExportDbgDotNetExpressionCompiler(DbgDotNetLanguageGuids.VisualBasic, PredefinedDbgLanguageNames.VisualBasic, "Visual Basic", PredefinedDecompilerGuids.VisualBasic, PredefinedDbgDotNetExpressionCompilerOrders.VisualBasic)]
 	sealed class VisualBasicExpressionCompiler : LanguageExpressionCompiler {
 		sealed class VisualBasicEvalContextState : EvalContextState {
 			public VisualBasicMetadataContext MetadataContext;

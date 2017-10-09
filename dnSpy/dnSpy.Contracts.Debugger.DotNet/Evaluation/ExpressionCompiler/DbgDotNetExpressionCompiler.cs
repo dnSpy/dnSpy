@@ -130,4 +130,19 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// </summary>
 		public double Order { get; }
 	}
+
+	/// <summary>
+	/// Order of known expression compilers
+	/// </summary>
+	public static class PredefinedDbgDotNetExpressionCompilerOrders {
+		/// <summary>
+		/// Order of C# expression compiler
+		/// </summary>
+		public const double CSharp = 1000000;
+
+		/// <summary>
+		/// Order of Visual Basic expression compiler
+		/// </summary>
+		public const double VisualBasic = 2000000;
+	}
 }
