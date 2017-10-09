@@ -40,9 +40,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgRuntime Runtime { get; }
 
 		/// <summary>
-		/// Gets the current session. It gets closed when the runtime continues
+		/// This object gets closed (and recreated) when the process continues
 		/// </summary>
-		public abstract DbgEvaluationSession Session { get; }
+		public abstract DbgObject ContinueContext { get; }
 
 		/// <summary>
 		/// Func-eval timeout (func-eval = calling functions in debugged process)

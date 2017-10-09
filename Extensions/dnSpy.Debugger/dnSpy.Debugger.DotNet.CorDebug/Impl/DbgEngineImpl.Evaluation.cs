@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CanFuncEvalOnlyWhenPaused);
 			if (isUnhandledException)
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvalWhenUnhandledExceptionHasOccurred);
-			if (context.Session.HasData<EvalTimedOut>())
+			if (context.ContinueContext.HasData<EvalTimedOut>())
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOutNowDisabled);
 			if (dnDebugger.IsEvaluating)
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEval);
@@ -285,7 +285,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		void DnEval_EvalEvent(DnEval dnEval, DbgEvaluationContext context) {
 			if (dnEval.EvalTimedOut)
-				context.Session.GetOrCreateData<EvalTimedOut>();
+				context.ContinueContext.GetOrCreateData<EvalTimedOut>();
 			dnDebugger.SignalEvalComplete();
 		}
 

@@ -28,15 +28,19 @@ namespace dnSpy.Debugger.Evaluation {
 		public override TimeSpan FuncEvalTimeout { get; }
 		public override DbgEvaluationContextOptions Options { get; }
 
-		public override DbgEvaluationSession Session {
+		public override DbgObject ContinueContext {
 			get {
 				lock (lockObj)
-					return session;
+					return continueContext;
 			}
 		}
 
+		sealed class DbgContinueContext : DbgObject {
+			protected override void CloseCore(DbgDispatcher dispatcher) { }
+		}
+
 		readonly object lockObj;
-		DbgEvaluationSession session;
+		DbgObject continueContext;
 
 		public DbgEvaluationContextImpl(DbgLanguage language, DbgRuntime runtime, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options) {
 			lockObj = new object();
@@ -44,22 +48,22 @@ namespace dnSpy.Debugger.Evaluation {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			FuncEvalTimeout = funcEvalTimeout;
 			Options = options;
-			session = new DbgEvaluationSessionImpl();
-			session.Closed += DbgEvaluationSession_Closed;
-			runtime.CloseOnContinue(session);
+			continueContext = new DbgContinueContext();
+			continueContext.Closed += DbgContinueContext_Closed;
+			runtime.CloseOnContinue(continueContext);
 		}
 
-		void DbgEvaluationSession_Closed(object sender, EventArgs e) {
-			session.Closed -= DbgEvaluationSession_Closed;
+		void DbgContinueContext_Closed(object sender, EventArgs e) {
+			continueContext.Closed -= DbgContinueContext_Closed;
 			if (!IsClosed && !Runtime.IsClosed) {
 				lock (lockObj) {
-					session = new DbgEvaluationSessionImpl();
-					session.Closed += DbgEvaluationSession_Closed;
-					Runtime.CloseOnContinue(session);
+					continueContext = new DbgContinueContext();
+					continueContext.Closed += DbgContinueContext_Closed;
+					Runtime.CloseOnContinue(continueContext);
 				}
 			}
 		}
 
-		protected override void CloseCore(DbgDispatcher dispatcher) => session.Close(dispatcher);
+		protected override void CloseCore(DbgDispatcher dispatcher) => continueContext.Close(dispatcher);
 	}
 }
