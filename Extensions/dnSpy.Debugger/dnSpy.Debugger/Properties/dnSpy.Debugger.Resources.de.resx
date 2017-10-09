@@ -1914,4 +1914,16 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="Column_ProcessCommandLine" xml:space="preserve">
     <value>Kommandozeile</value>
   </data>
+  <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
+    <value>Cannot obtain value of the local variable or argument because it is not available at this instruction pointer, possibly because it has been optimized away.</value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>Message: {0}</value>
+  </data>
+  <data name="ExceptionName" xml:space="preserve">
+    <value>Exception: {0}</value>
+  </data>
+  <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
+    <value>An unhandled exception occurred in {0} ({1})</value>
+  </data>
 </root>

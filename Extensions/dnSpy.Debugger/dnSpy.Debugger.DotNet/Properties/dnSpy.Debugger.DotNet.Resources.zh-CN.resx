@@ -135,6 +135,9 @@
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
     <value>取消加载模块吗？</value>
   </data>
+  <data name="CantEvaluateWhenCurrentFrameIsNative" xml:space="preserve">
+    <value>Can't evaluate expressions when current stack frame is a native stack frame</value>
+  </data>
   <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
     <value>反编译器生成的变量不能被求值</value>
   </data>

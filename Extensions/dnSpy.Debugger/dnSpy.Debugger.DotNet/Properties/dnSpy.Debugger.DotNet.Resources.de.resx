@@ -135,6 +135,9 @@
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
     <value>Laden der Module abbrechen?</value>
   </data>
+  <data name="CantEvaluateWhenCurrentFrameIsNative" xml:space="preserve">
+    <value>Can't evaluate expressions when current stack frame is a native stack frame</value>
+  </data>
   <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
     <value>Decompiler-generierte Variablen können nicht ausgewertet werden</value>
   </data>
