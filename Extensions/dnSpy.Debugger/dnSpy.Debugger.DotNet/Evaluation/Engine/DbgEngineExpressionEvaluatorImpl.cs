@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				if (exprInfo.ErrorMessage != null)
 					return new DbgEngineEEAssignmentResult(resultFlags | DbgEEAssignmentResultFlags.CompilerError, exprInfo.ErrorMessage);
 				resultFlags |= DbgEEAssignmentResultFlags.ExecutedCode;
-				var res = dnILInterpreter.Execute(context, frame, state, exprInfo.TypeName, exprInfo.MethodName, DbgEvaluationOptionsUtils.ToValueNodeEvaluationOptions(options), out _, cancellationToken);
+				var res = dnILInterpreter.Execute(context, frame, state, exprInfo.TypeName, exprInfo.MethodName, options, out _, cancellationToken);
 				if (res.HasError)
 					return new DbgEngineEEAssignmentResult(resultFlags, res.ErrorMessage);
 				if (res.ValueIsException) {
@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					return errorRes.Value;
 
 				ref var exprInfo = ref state.CompiledExpressionResult;
-				var res = dnILInterpreter.Execute(context, frame, state.ILInterpreterState, exprInfo.TypeName, exprInfo.MethodName, DbgEvaluationOptionsUtils.ToValueNodeEvaluationOptions(options), out var expectedType, cancellationToken);
+				var res = dnILInterpreter.Execute(context, frame, state.ILInterpreterState, exprInfo.TypeName, exprInfo.MethodName, options, out var expectedType, cancellationToken);
 				if (res.HasError)
 					return new EvaluateImplResult(res.ErrorMessage, exprInfo.Name, null, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, expectedType);
 				if (res.ValueIsException)

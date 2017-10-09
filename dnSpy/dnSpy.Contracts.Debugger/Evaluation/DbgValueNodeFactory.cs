@@ -37,11 +37,12 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame</param>
 		/// <param name="expression">Expression</param>
-		/// <param name="options">Options</param>
+		/// <param name="nodeOptions">Value node options</param>
+		/// <param name="options">Eval options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public DbgCreateValueNodeResult Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default) =>
-			Create(context, frame, new[] { new DbgExpressionEvaluationInfo(expression, options) }, cancellationToken)[0];
+		public DbgCreateValueNodeResult Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options, CancellationToken cancellationToken = default) =>
+			Create(context, frame, new[] { new DbgExpressionEvaluationInfo(expression, nodeOptions, options) }, cancellationToken)[0];
 
 		/// <summary>
 		/// Creates a <see cref="DbgValueNode"/>. It blocks the current thread until the evaluation is complete.

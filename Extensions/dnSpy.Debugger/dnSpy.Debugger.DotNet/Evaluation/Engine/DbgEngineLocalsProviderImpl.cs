@@ -144,6 +144,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion,
 						refsResult.ModuleReferences, GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset));
 
+				var evalOptions = DbgEvaluationOptions.None;
+				if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0)
+					evalOptions |= DbgEvaluationOptions.NoFuncEval;
+
 				ValueInfo[] valueInfos;
 				byte[] assemblyBytes;
 				int compilerGeneratedCount;
@@ -155,20 +159,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					compilerGeneratedCount = state.CachedCompilerGeneratedCount;
 				}
 				else {
-					var evalOptions = DbgEvaluationOptions.None;
-					if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0)
-						evalOptions |= DbgEvaluationOptions.NoFuncEval;
-					if ((options & DbgValueNodeEvaluationOptions.RawView) != 0)
-						evalOptions |= DbgEvaluationOptions.RawView;
-					if ((options & DbgValueNodeEvaluationOptions.HideCompilerGeneratedMembers) != 0)
-						evalOptions |= DbgEvaluationOptions.HideCompilerGeneratedMembers;
-					if ((options & DbgValueNodeEvaluationOptions.RespectHideMemberAttributes) != 0)
-						evalOptions |= DbgEvaluationOptions.RespectHideMemberAttributes;
-					if ((options & DbgValueNodeEvaluationOptions.PublicMembers) != 0)
-						evalOptions |= DbgEvaluationOptions.PublicMembers;
-					if ((options & DbgValueNodeEvaluationOptions.NoHideRoots) != 0)
-						evalOptions |= DbgEvaluationOptions.NoHideRoots;
-
 					var compilationResult = expressionCompiler.CompileGetLocals(context, frame, refsResult.ModuleReferences, evalOptions, cancellationToken);
 					cancellationToken.ThrowIfCancellationRequested();
 					if (compilationResult.IsError)
@@ -226,7 +216,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				if ((localsOptions & DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables) == 0)
 					count -= decompilerGeneratedCount;
 				valueNodes = count == 0 ? Array.Empty<DbgEngineLocalsValueNodeInfo>() : new DbgEngineLocalsValueNodeInfo[count];
-				var valueCreator = new DbgDotNetValueCreator(valueNodeFactory, dnILInterpreter, context, frame, options, assemblyBytes, cancellationToken);
+				var valueCreator = new DbgDotNetValueCreator(valueNodeFactory, dnILInterpreter, context, frame, options, evalOptions, assemblyBytes, cancellationToken);
 				int w = 0;
 				for (int i = 0; i < valueInfos.Length; i++) {
 					cancellationToken.ThrowIfCancellationRequested();

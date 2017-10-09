@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						newNode = valueNodeFactory.CreateError(context, frame, evalRes.Name, evalRes.Error, info.Expression, causesSideEffects, cancellationToken);
 					else {
 						bool isReadOnly = (evalRes.Flags & DbgEvaluationResultFlags.ReadOnly) != 0;
-						newNode = valueNodeFactory.Create(context, frame, evalRes.Name, evalRes.Value, DbgEvaluationOptionsUtils.ToValueNodeEvaluationOptions(info.Options), info.Expression, evalRes.ImageName, isReadOnly, causesSideEffects, evalRes.Type, cancellationToken);
+						newNode = valueNodeFactory.Create(context, frame, evalRes.Name, evalRes.Value, info.NodeOptions, info.Expression, evalRes.ImageName, isReadOnly, causesSideEffects, evalRes.Type, cancellationToken);
 					}
 					res[i] = newNode;
 				}

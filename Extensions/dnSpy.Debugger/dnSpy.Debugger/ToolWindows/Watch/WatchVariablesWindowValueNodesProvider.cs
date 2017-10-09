@@ -113,12 +113,14 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 				var info = expressions[i];
 				// Root nodes in watch window can always func-eval
 				var realEvalOptions = evalOptions & ~DbgEvaluationOptions.NoFuncEval;
+				var realNodeEvalOptions = nodeEvalOptions & ~DbgValueNodeEvaluationOptions.NoFuncEval;
 				if (info.ForceEval)
 					realEvalOptions = evalOptions & ~DbgEvaluationOptions.NoSideEffects;
 				else
 					realEvalOptions = evalOptions | DbgEvaluationOptions.NoSideEffects;
+				Debug.Assert(((realEvalOptions & DbgEvaluationOptions.NoFuncEval) != 0) == ((realNodeEvalOptions & DbgValueNodeEvaluationOptions.NoFuncEval) != 0));
 				info.ForceEval = false;
-				infos[i] = new DbgExpressionEvaluationInfo(info.Expression, realEvalOptions);
+				infos[i] = new DbgExpressionEvaluationInfo(info.Expression, realNodeEvalOptions, realEvalOptions);
 			}
 
 			var compRes = language.ValueNodeFactory.Create(context, frame, infos);

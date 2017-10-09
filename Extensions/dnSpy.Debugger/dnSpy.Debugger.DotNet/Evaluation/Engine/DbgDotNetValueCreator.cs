@@ -29,15 +29,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly DbgDotNetILInterpreter dnILInterpreter;
 		readonly DbgEvaluationContext context;
 		readonly DbgStackFrame frame;
-		readonly DbgValueNodeEvaluationOptions options;
+		readonly DbgValueNodeEvaluationOptions nodeOptions;
+		readonly DbgEvaluationOptions options;
 		readonly byte[] assemblyBytes;
 		/*readonly*/ CancellationToken cancellationToken;
 
-		public DbgDotNetValueCreator(DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, byte[] assemblyBytes, CancellationToken cancellationToken) {
+		public DbgDotNetValueCreator(DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options, byte[] assemblyBytes, CancellationToken cancellationToken) {
 			this.valueNodeFactory = valueNodeFactory;
 			this.dnILInterpreter = dnILInterpreter;
 			this.context = context;
 			this.frame = frame;
+			this.nodeOptions = nodeOptions;
 			this.options = options;
 			this.assemblyBytes = assemblyBytes;
 			this.cancellationToken = cancellationToken;
@@ -54,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					if (res.ErrorMessage != null)
 						return valueNodeFactory.CreateError(context, frame, compExprInfo.Name, res.ErrorMessage, compExprInfo.Expression, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, cancellationToken);
 					//TODO: Pass in compExprInfo.CustomTypeInfo, or attach it to the DbgDotNetValueNode
-					return valueNodeFactory.Create(context, frame, compExprInfo.Name, res.Value, options, compExprInfo.Expression, compExprInfo.ImageName, (compExprInfo.Flags & DbgEvaluationResultFlags.ReadOnly) != 0, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, expectedType, cancellationToken);
+					return valueNodeFactory.Create(context, frame, compExprInfo.Name, res.Value, nodeOptions, compExprInfo.Expression, compExprInfo.ImageName, (compExprInfo.Flags & DbgEvaluationResultFlags.ReadOnly) != 0, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, expectedType, cancellationToken);
 				}
 				catch {
 					res.Value?.Dispose();

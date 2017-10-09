@@ -32,7 +32,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetILInterpreter {
 		public abstract DbgDotNetILInterpreterState CreateState(DbgEvaluationContext context, byte[] assembly);
-		public abstract DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgValueNodeEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken);
 	}
 
 	abstract class DbgDotNetILInterpreterState {
@@ -110,7 +110,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return new DbgDotNetILInterpreterStateImpl(assembly);
 		}
 
-		public override DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgValueNodeEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken) {
+		//TODO: Use options (prevent func-eval if NoFuncEval is set)
+		public override DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (frame == null)

@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public string Expression { get; }
 
 		/// <summary>
+		/// Gets the value node options
+		/// </summary>
+		public DbgValueNodeEvaluationOptions NodeOptions { get; }
+
+		/// <summary>
 		/// Gets the evaluation options
 		/// </summary>
 		public DbgEvaluationOptions Options { get; }
@@ -38,9 +43,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Constructor
 		/// </summary>
 		/// <param name="expression">Expression to evaluate</param>
+		/// <param name="nodeOptions">Value node options</param>
 		/// <param name="options">Evaluation options</param>
-		public DbgExpressionEvaluationInfo(string expression, DbgEvaluationOptions options) {
+		public DbgExpressionEvaluationInfo(string expression, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options) {
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+			NodeOptions = nodeOptions;
 			Options = options;
 		}
 	}

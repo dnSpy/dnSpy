@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var frame = valueNodesProvider.TryGetFrame();
 			if (frame == null)
 				return new DbgValueNodeInfo(expression, expression, dnSpy_Debugger_Resources.ErrorEvaluatingExpression, causesSideEffects: false);
-			var res = context.Language.ValueNodeFactory.Create(context, frame, expression, valueNodesContext.EvaluationOptions);
+			var res = context.Language.ValueNodeFactory.Create(context, frame, expression, valueNodesContext.ValueNodeEvaluationOptions, valueNodesContext.EvaluationOptions);
 			return new DbgValueNodeInfo(res.ValueNode, res.CausesSideEffects);
 		}
 
@@ -614,12 +614,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var options = DbgEvaluationOptions.Expression;
 			if (!debuggerSettings.PropertyEvalAndFunctionCalls)
 				options |= DbgEvaluationOptions.NoFuncEval;
-			if (debuggerSettings.ShowRawStructureOfObjects)
-				options |= DbgEvaluationOptions.RawView;
-			if (debuggerSettings.HideCompilerGeneratedMembers)
-				options |= DbgEvaluationOptions.HideCompilerGeneratedMembers;
-			if (debuggerSettings.RespectHideMemberAttributes)
-				options |= DbgEvaluationOptions.RespectHideMemberAttributes;
 			return options;
 		}
 
