@@ -56,28 +56,6 @@ namespace dnSpy.Debugger.Evaluation {
 			engineValueFormatter.Format(context, output, valueImpl.EngineValue, options, cancellationToken);
 		}
 
-		public override void Format(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, Action callback, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
-				throw new ArgumentException();
-			if (context.Language != Language)
-				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (output == null)
-				throw new ArgumentNullException(nameof(output));
-			if (value == null)
-				throw new ArgumentNullException(nameof(value));
-			if (!(value is DbgValueImpl valueImpl))
-				throw new ArgumentException();
-			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			engineValueFormatter.Format(context, output, valueImpl.EngineValue, options, callback, cancellationToken);
-		}
-
 		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
@@ -96,28 +74,6 @@ namespace dnSpy.Debugger.Evaluation {
 			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			engineValueFormatter.FormatType(context, output, valueImpl.EngineValue, options, cancellationToken);
-		}
-
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, Action callback, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
-				throw new ArgumentException();
-			if (context.Language != Language)
-				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (output == null)
-				throw new ArgumentNullException(nameof(output));
-			if (value == null)
-				throw new ArgumentNullException(nameof(value));
-			if (!(value is DbgValueImpl valueImpl))
-				throw new ArgumentException();
-			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			engineValueFormatter.FormatType(context, output, valueImpl.EngineValue, options, callback, cancellationToken);
 		}
 	}
 }

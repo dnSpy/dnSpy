@@ -30,21 +30,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			output.Write(BoxedTextColor.Error, "TODO:");
 		}
 
-		public override void Format(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, Action callback, CancellationToken cancellationToken) {
-			//TODO:
-			output.Write(BoxedTextColor.Error, "TODO:");
-			callback();
-		}
-
 		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken) {
 			//TODO:
 			output.Write(BoxedTextColor.Error, "TODO:");
-		}
-
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, Action callback, CancellationToken cancellationToken) {
-			//TODO:
-			output.Write(BoxedTextColor.Error, "TODO:");
-			callback();
 		}
 	}
 }
