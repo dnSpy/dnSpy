@@ -113,13 +113,6 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ID}" Width="35">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <ContentPresenter Margin="5 0 0 0" Content="{Binding IdObject, Mode=OneWay, Converter={StaticResource moduleBreakpointColumnConverter}}" HorizontalAlignment="Right" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

@@ -57,7 +57,6 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		public IModuleBreakpointContext Context { get; }
 		public DbgModuleBreakpoint ModuleBreakpoint { get; }
-		public object IdObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowId);
 		public object ModuleNameObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleName);
 		public object OrderObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowOrder);
 		public object ProcessNameObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowProcessName);
@@ -118,7 +117,6 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		// UI thread
 		internal void RefreshThemeFields_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			OnPropertyChanged(nameof(IdObject));
 			OnPropertyChanged(nameof(ModuleNameObject));
 			OnPropertyChanged(nameof(OrderObject));
 			OnPropertyChanged(nameof(ProcessNameObject));

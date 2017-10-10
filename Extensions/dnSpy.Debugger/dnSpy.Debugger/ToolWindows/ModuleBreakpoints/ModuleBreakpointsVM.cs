@@ -157,7 +157,6 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
 		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
-			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowId, "i", dnSpy_Debugger_Resources.Column_ID),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleName, "n", dnSpy_Debugger_Resources.Column_Name),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowOrder, "o", dnSpy_Debugger_Resources.Column_Order),
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ModuleBreakpointsWindowProcessName, "p", dnSpy_Debugger_Resources.Column_Process),
@@ -361,7 +360,6 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				return true;
 			// The order must match searchColumnDefinitions
 			var allStrings = new string[] {
-				GetId_UI(vm),
 				GetModuleName_UI(vm),
 				GetOrder_UI(vm),
 				GetProcessName_UI(vm),
@@ -371,14 +369,6 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			return moduleBreakpointContext.SearchMatcher.IsMatchAll(allStrings);
 		}
 		readonly StringBuilderTextColorOutput sbOutput = new StringBuilderTextColorOutput();
-
-		// UI thread
-		string GetId_UI(ModuleBreakpointVM vm) {
-			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
-			sbOutput.Reset();
-			moduleBreakpointContext.Formatter.WriteId(sbOutput, vm.ModuleBreakpoint);
-			return sbOutput.ToString();
-		}
 
 		// UI thread
 		string GetModuleName_UI(ModuleBreakpointVM vm) {

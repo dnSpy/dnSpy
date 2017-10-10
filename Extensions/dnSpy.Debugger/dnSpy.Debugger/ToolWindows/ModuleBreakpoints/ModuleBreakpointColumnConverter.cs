@@ -35,9 +35,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			var writer = obj.VM.Context.TextClassifierTextColorWriter;
 			writer.Clear();
 			var formatter = obj.VM.Context.Formatter;
-			if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowId)
-				formatter.WriteId(writer, obj.VM.ModuleBreakpoint);
-			else if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleName)
+			if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleName)
 				formatter.WriteModuleName(writer, obj.VM.ModuleBreakpoint);
 			else if (obj.Tag == PredefinedTextClassifierTags.ModuleBreakpointsWindowOrder)
 				formatter.WriteOrder(writer, obj.VM.ModuleBreakpoint);
