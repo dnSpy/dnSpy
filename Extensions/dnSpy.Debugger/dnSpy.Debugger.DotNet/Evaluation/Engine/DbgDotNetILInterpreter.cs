@@ -175,6 +175,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				catch (InterpreterMessageException ime) {
 					result = new DbgDotNetValueResult(ime.Message);
 				}
+				catch (InterpreterThrownExceptionException thrownEx) {
+					Debug.Assert(thrownEx.ThrownValue is DbgDotNetValue);
+					if (thrownEx.ThrownValue is DbgDotNetValue thrownValue)
+						result = new DbgDotNetValueResult(thrownValue, valueIsException: true);
+					else
+						result = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				}
 				catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 					result = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 				}

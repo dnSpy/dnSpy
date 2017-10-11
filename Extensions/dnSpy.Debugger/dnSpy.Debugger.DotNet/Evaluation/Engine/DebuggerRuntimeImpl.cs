@@ -29,7 +29,6 @@ using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
-using dnSpy.Debugger.DotNet.Properties;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DebuggerRuntimeImpl : DebuggerRuntime {
@@ -226,10 +225,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		ILValue CreateILValue(DbgDotNetValueResult result) {
 			if (result.HasError)
 				throw new InterpreterMessageException(result.ErrorMessage);
-			if (result.ValueIsException) {
-				result.Value.Dispose();
-				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
-			}
+			if (result.ValueIsException)
+				throw new InterpreterThrownExceptionException(result.Value);
 
 			var dnValue = result.Value;
 			if (dnValue == null)
@@ -241,10 +238,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgDotNetValue RecordValue(DbgDotNetValueResult result) {
 			if (result.HasError)
 				throw new InterpreterMessageException(result.ErrorMessage);
-			if (result.ValueIsException) {
-				result.Value.Dispose();
-				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
-			}
+			if (result.ValueIsException)
+				throw new InterpreterThrownExceptionException(result.Value);
 
 			var dnValue = result.Value;
 			if (dnValue == null)
@@ -583,8 +578,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			try {
 				if (res.HasError)
 					throw new InterpreterMessageException(res.ErrorMessage);
-				if (res.ValueIsException)
-					throw new InterpreterMessageException(string.Format(dnSpy_Debugger_DotNet_Resources.Method_X_ThrewAnExceptionOfType_Y, method.DeclaringType + "." + method.Name, res.Value.Type.FullName));
+				if (res.ValueIsException) {
+					var value = res.Value;
+					res = default;
+					throw new InterpreterThrownExceptionException(value);
+				}
 				if (method.GetMethodSignature().ReturnType == method.AppDomain.System_Void) {
 					returnValue = null;
 					res.Value?.Dispose();

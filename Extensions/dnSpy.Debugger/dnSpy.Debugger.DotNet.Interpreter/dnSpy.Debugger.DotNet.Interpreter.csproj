@@ -50,6 +50,7 @@
     <Compile Include="Impl\OpCodes.cs" />
     <Compile Include="InterpreterException.cs" />
     <Compile Include="InterpreterMessageException.cs" />
+    <Compile Include="InterpreterThrownExceptionException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Tests\FakeDebuggerRuntime.cs" />
     <None Include="Tests\InterpreterTest.cs" />
