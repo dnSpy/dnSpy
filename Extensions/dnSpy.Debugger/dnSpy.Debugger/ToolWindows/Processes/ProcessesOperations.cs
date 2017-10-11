@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Steppers;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
@@ -137,20 +138,25 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				vm.Process.Break();
 		}
 
-		public override bool CanStepIntoProcess => dbgManager.Value.CurrentProcess.Current != null;
-		public override void StepIntoProcess() {
-			//TODO: Use current process, not selected process
+		void Step(DbgStepKind step) {
+			if (!CanStepProcess)
+				return;
+			var thread = dbgManager.Value.CurrentThread.Current;
+			if (thread == null)
+				return;
+			thread.CreateStepper().Step(step, autoClose: true);
 		}
 
-		public override bool CanStepOverProcess => dbgManager.Value.CurrentProcess.Current != null;
-		public override void StepOverProcess() {
-			//TODO: Use current process, not selected process
-		}
+		bool CanStepProcess => dbgManager.Value.CurrentProcess.Current?.State == DbgProcessState.Paused;
 
-		public override bool CanStepOutProcess => dbgManager.Value.CurrentProcess.Current != null;
-		public override void StepOutProcess() {
-			//TODO: Use current process, not selected process
-		}
+		public override bool CanStepIntoProcess => CanStepProcess;
+		public override void StepIntoProcess() => Step(DbgStepKind.StepIntoProcess);
+
+		public override bool CanStepOverProcess => CanStepProcess;
+		public override void StepOverProcess() => Step(DbgStepKind.StepOverProcess);
+
+		public override bool CanStepOutProcess => CanStepProcess;
+		public override void StepOutProcess() => Step(DbgStepKind.StepOutProcess);
 
 		public override bool CanDetachProcess => SelectedItems.Count != 0;
 		public override void DetachProcess() {
