@@ -127,7 +127,7 @@
     <value>常量</value>
   </data>
   <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
-    <value>Expression has been evaluated and has no value</value>
+    <value>表达式已计算，但是没有值</value>
   </data>
   <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
     <value>静态成员</value>
@@ -145,7 +145,7 @@
     <value>实例成员</value>
   </data>
   <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
-    <value>Raw View</value>
+    <value>Raw 视图</value>
   </data>
   <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
     <value>结果视图</value>

@@ -1879,28 +1879,28 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Aktualisieren</value>
   </data>
   <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
-    <value>Gruppiere Parameter und Felder zusammen</value>
+    <value>Parameter und Felder zusammen gruppieren</value>
   </data>
   <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
-    <value>Zeige vom Compiler generierte Variablen</value>
+    <value>Compiler generierte Variablen anzeigen</value>
   </data>
   <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
-    <value>Zeige vom Dekompilierer generierte Variablen</value>
+    <value>Decompiler generierte Variablen anzeigen</value>
   </data>
   <data name="DbgSettings_SortLocals" xml:space="preserve">
-    <value>Sortiere Felder</value>
+    <value>Felder sortieren</value>
   </data>
   <data name="DbgSettings_SortParameters" xml:space="preserve">
-    <value>Sortiere Parameter</value>
+    <value>Parameter sortieren</value>
   </data>
   <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
-    <value>Blende durch den Compiler generierte Member aus</value>
+    <value>Compiler generierte Member ausblenden</value>
   </data>
   <data name="FunctionEvaluationDisabled" xml:space="preserve">
     <value>Implizite Funktionsauswertung ist durch den Benutzer deaktiviert</value>
   </data>
   <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
-    <value>Respektiere Attribute, welche Member ausblenden</value>
+    <value>Attribute zum Ausblenden von Membern beachten</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
     <value>Interner Debuggerfehler</value>
@@ -1909,21 +1909,21 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Die Funktionsauswertung erfordert das alle Threads ausgeführt werden.</value>
   </data>
   <data name="DigitSeparatorsCommand" xml:space="preserve">
-    <value>Ziffer-Separatoren</value>
+    <value>Ziffern-Separatoren</value>
   </data>
   <data name="Column_ProcessCommandLine" xml:space="preserve">
     <value>Kommandozeile</value>
   </data>
   <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
-    <value>Cannot obtain value of the local variable or argument because it is not available at this instruction pointer, possibly because it has been optimized away.</value>
+    <value>Kann keinen Wert für die lokale Variable oder das Argument am Instruktionszeiger abrufen. Vermutlich durch Optimierungen verschwunden.</value>
   </data>
   <data name="ExceptionMessage" xml:space="preserve">
-    <value>Message: {0}</value>
+    <value>Nachricht: {0}</value>
   </data>
   <data name="ExceptionName" xml:space="preserve">
-    <value>Exception: {0}</value>
+    <value>Ausnahme: {0}</value>
   </data>
   <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
-    <value>An unhandled exception occurred in {0} ({1})</value>
+    <value>Eine unbehandelte Ausnahme trat in {0} ({1}) auf</value>
   </data>
 </root>
