@@ -46,6 +46,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public bool HasError => ErrorMessage != null;
 
 		/// <summary>
+		/// true if there's no error and no exception was thrown
+		/// </summary>
+		public bool IsNormalResult => !HasError && !ValueIsException;
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="value">Value</param>

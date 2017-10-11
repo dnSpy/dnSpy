@@ -62,15 +62,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if ((object)proxyCtor == null) {
 				var loadState = enumerableType.AppDomain.GetOrCreateData<ForceLoadAssemblyState>();
 				if (Interlocked.Increment(ref loadState.Counter) == 1) {
-					//TODO: Try to force load the assembly
-					//		.NET Framework:
-					//			System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-					//			System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-					//		.NET Core:
-					//			v1: System.Linq, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
-					//			v2: System.Linq, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+					var loader = new ReflectionAssemblyLoader(context, frame, enumerableType.AppDomain, cancellationToken);
+					if (loader.TryLoadAssembly(GetRequiredAssemblyFullName(context.Runtime)))
+						proxyCtor = EnumerableDebugViewHelper.GetEnumerableDebugViewConstructor(enumerableType);
 				}
-				return string.Format(dnSpy_Roslyn_Shared_Resources.SystemCoreDllNotLoaded, GetRequiredAssemblyFileName(enumerableType.AppDomain));
+				if ((object)proxyCtor == null)
+					return string.Format(dnSpy_Roslyn_Shared_Resources.SystemCoreDllNotLoaded, GetRequiredAssemblyFileName(context.Runtime));
 			}
 
 			var runtime = context.Runtime.GetDotNetRuntime();
@@ -83,11 +80,36 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return null;
 		}
 
-		static string GetRequiredAssemblyFileName(DmdAppDomain appDomain) {
-			// Check if it's .NET Core
-			if (StringComparer.OrdinalIgnoreCase.Equals(appDomain.CorLib.GetName().Name, "System.Private.CoreLib"))
-				return "System.Linq.dll";
-			return "System.Core.dll";
+		enum ClrVersion {
+			CLR2,
+			CLR4,
+			CoreCLR,
+		}
+
+		ClrVersion GetClrVersion(DbgRuntime runtime) {
+			if (runtime.Guid == PredefinedDbgRuntimeGuids.DotNetCore_Guid)
+				return ClrVersion.CoreCLR;
+			if (enumerableType.AppDomain.CorLib.GetName().Version == new Version(2, 0, 0, 0))
+				return ClrVersion.CLR2;
+			return ClrVersion.CLR4;
+		}
+
+		string GetRequiredAssemblyFullName(DbgRuntime runtime) {
+			switch (GetClrVersion(runtime)) {
+			case ClrVersion.CLR2:		return "System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+			case ClrVersion.CLR4:		return "System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+			case ClrVersion.CoreCLR:	return "System.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+			default:					throw new InvalidOperationException();
+			}
+		}
+
+		string GetRequiredAssemblyFileName(DbgRuntime runtime) {
+			switch (GetClrVersion(runtime)) {
+			case ClrVersion.CLR2:
+			case ClrVersion.CLR4:		return "System.Core.dll";
+			case ClrVersion.CoreCLR:	return "System.Linq.dll";
+			default:					throw new InvalidOperationException();
+			}
 		}
 
 		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
