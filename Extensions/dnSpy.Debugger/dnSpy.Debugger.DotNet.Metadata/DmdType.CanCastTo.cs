@@ -511,13 +511,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			{
 				var inst = GetGenericArguments();
 				var targetInst = target.GetGenericArguments();
+				var targetInstGenParams = target.GetGenericTypeDefinition().GetGenericArguments();
 
 				for (int i = 0; i < inst.Count; i++) {
 					var thArg = inst[i];
 					var thTargetArg = targetInst[i];
 
 					if (!thArg.IsEquivalentTo(thTargetArg)) {
-						switch (thTargetArg.GenericParameterAttributes & DmdGenericParameterAttributes.VarianceMask) {
+						switch (targetInstGenParams[i].GenericParameterAttributes & DmdGenericParameterAttributes.VarianceMask) {
 						case DmdGenericParameterAttributes.Covariant:
 							if (!thArg.__IsBoxedAndCanCastTo(thTargetArg))
 								return false;
