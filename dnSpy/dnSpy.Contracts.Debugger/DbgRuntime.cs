@@ -92,6 +92,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgThread>> ThreadsChanged;
 
 		/// <summary>
+		/// Gets the break infos, it gets updated when the runtime breaks and cleared when it continues.
+		/// </summary>
+		public abstract ReadOnlyCollection<DbgBreakInfo> BreakInfos { get; }
+
+		/// <summary>
 		/// Closes <paramref name="obj"/> just before the runtime continues (or when it gets closed if it never continues)
 		/// </summary>
 		/// <param name="obj">Object</param>
@@ -102,5 +107,74 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="objs">Objects</param>
 		public abstract void CloseOnContinue(IEnumerable<DbgObject> objs);
+	}
+
+	/// <summary>
+	/// Break info kind
+	/// </summary>
+	public enum DbgBreakInfoKind {
+		/// <summary>
+		/// Unknown break reason
+		/// </summary>
+		Unknown,
+
+		/// <summary>
+		/// We've connected to the debugged process
+		/// </summary>
+		Connected,
+
+		/// <summary>
+		/// It broke due to some debug message. <see cref="DbgBreakInfo.Data"/> is a <see cref="DbgMessageEventArgs"/>
+		/// </summary>
+		Message,
+	}
+
+	/// <summary>
+	/// Break info
+	/// </summary>
+	public struct DbgBreakInfo {
+		/// <summary>
+		/// Gets the kind
+		/// </summary>
+		public DbgBreakInfoKind Kind { get; }
+
+		/// <summary>
+		/// Gets the data, see <see cref="DbgBreakInfoKind"/> for more info
+		/// </summary>
+		public object Data { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="kind">Kind</param>
+		/// <param name="data">Data</param>
+		public DbgBreakInfo(DbgBreakInfoKind kind, object data) {
+			Kind = kind;
+			Data = data;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="message">Debug message</param>
+		public DbgBreakInfo(DbgMessageEventArgs message) {
+			Kind = DbgBreakInfoKind.Message;
+			Data = message ?? throw new ArgumentNullException(nameof(message));
+		}
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() {
+			switch (Kind) {
+			case DbgBreakInfoKind.Unknown:
+			default:
+				return Kind.ToString();
+
+			case DbgBreakInfoKind.Message:
+				return $"Debug message: {((DbgMessageEventArgs)Data).Kind}";
+			}
+		}
 	}
 }

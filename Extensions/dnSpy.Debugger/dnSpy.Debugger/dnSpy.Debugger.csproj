@@ -189,6 +189,7 @@
     <Compile Include="Exceptions\ExceptionsFileReader.cs" />
     <Compile Include="Impl\CurrentObject.cs" />
     <Compile Include="Impl\DbgBoundCodeBreakpointImpl.cs" />
+    <Compile Include="Impl\DbgBreakInfoCollectionBuilder.cs" />
     <Compile Include="Impl\DbgDispatcherImpl.cs" />
     <Compile Include="Impl\DbgDispatcherProvider.cs" />
     <Compile Include="Impl\DbgEngineBoundCodeBreakpointImpl.cs" />

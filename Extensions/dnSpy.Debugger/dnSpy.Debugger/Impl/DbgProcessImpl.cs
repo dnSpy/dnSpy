@@ -414,8 +414,8 @@ namespace dnSpy.Debugger.Impl {
 				IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		internal (DbgRuntime runtime, bool hasMoreRuntimes) Remove_DbgThread(DbgEngine engine) {
-			DbgRuntime runtime = null;
+		internal (DbgRuntimeImpl runtime, bool hasMoreRuntimes) Remove_DbgThread(DbgEngine engine) {
+			DbgRuntimeImpl runtime = null;
 			bool hasMoreRuntimes;
 			lock (lockObj) {
 				for (int i = 0; i < engineInfos.Count; i++) {

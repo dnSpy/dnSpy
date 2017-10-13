@@ -68,6 +68,10 @@ namespace dnSpy.Debugger.Impl {
 		}
 		readonly List<DbgThreadImpl> threads;
 
+		public override ReadOnlyCollection<DbgBreakInfo> BreakInfos => breakInfos;
+		volatile ReadOnlyCollection<DbgBreakInfo> breakInfos;
+		static readonly ReadOnlyCollection<DbgBreakInfo> emptyBreakInfos = new ReadOnlyCollection<DbgBreakInfo>(Array.Empty<DbgBreakInfo>());
+
 		DbgDispatcher Dispatcher => Process.DbgManager.Dispatcher;
 		internal DbgEngine Engine { get; }
 
@@ -93,7 +97,13 @@ namespace dnSpy.Debugger.Impl {
 			modules = new List<DbgModule>();
 			threads = new List<DbgThreadImpl>();
 			closeOnContinueList = new List<DbgObject>();
+			breakInfos = emptyBreakInfos;
 			InternalRuntime = engine.CreateInternalRuntime(this) ?? throw new InvalidOperationException();
+		}
+
+		internal void SetBreakInfos_DbgThread(DbgBreakInfo[] infos) {
+			owner.Dispatcher.VerifyAccess();
+			breakInfos = infos.Length == 0 ? emptyBreakInfos : new ReadOnlyCollection<DbgBreakInfo>(infos);
 		}
 
 		internal void SetCurrentThread_DbgThread(DbgThreadImpl thread) {

@@ -116,6 +116,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// Some message that should be shown to the user, eg. we failed to connect to the debugged process (<see cref="DbgMessageUserMessageEventArgs"/>)
 		/// </summary>
 		UserMessage,
+
+		/// <summary>
+		/// The program was paused by the user, or because some other program was paused for some other reason (<see cref="DbgMessageBreakEventArgs"/>)
+		/// </summary>
+		Break,
 	}
 
 	/// <summary>
@@ -694,5 +699,35 @@ namespace dnSpy.Contracts.Debugger {
 		/// Could not break the debugged process
 		/// </summary>
 		CouldNotBreak,
+	}
+
+	/// <summary>
+	/// The program was paused by the user, or because some other program was paused for some other reason (<see cref="DbgMessageKind.Break"/>)
+	/// </summary>
+	public sealed class DbgMessageBreakEventArgs : DbgMessageEventArgs {
+		/// <summary>
+		/// Returns <see cref="DbgMessageKind.Break"/>
+		/// </summary>
+		public override DbgMessageKind Kind => DbgMessageKind.Break;
+
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public DbgRuntime Runtime { get; }
+
+		/// <summary>
+		/// Gets the thread or null if it's unknown
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="runtime">Runtime</param>
+		/// <param name="thread">Thread or null if it's unknown</param>
+		public DbgMessageBreakEventArgs(DbgRuntime runtime, DbgThread thread) {
+			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
+			Thread = thread;
+		}
 	}
 }
