@@ -212,27 +212,28 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			const string DESIGNER = ".Designer";
 			var resxFile = TryGetResXFile(type);
-			if (resxFile != null) {
-				if (DotNetUtils.IsWinForm(type)) {
-					var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename));
-					var newFile = new WinFormsProjectFile(type, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
+			if (DotNetUtils.IsWinForm(type)) {
+				var fname = resxFile != null ? Path.GetFileNameWithoutExtension(resxFile.Filename) : type.Name.String;
+				var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, fname);
+				var dname = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, fname + DESIGNER);
+
+				var newFile = new WinFormsProjectFile(type, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
+				if (resxFile != null)
 					resxFile.DependentUpon = newFile;
-					var dname = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename) + DESIGNER);
-					var winFormsDesignerFile = new WinFormsDesignerProjectFile(newFile, dname, createDecompilerOutput);
-					winFormsDesignerFile.DependentUpon = newFile;
-					Files.Add(winFormsDesignerFile);
-					return newFile;
-				}
-				else {
-					var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename) + DESIGNER);
-					var newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
-					newFile.DependentUpon = resxFile;
-					newFile.AutoGen = true;
-					newFile.DesignTime = true;
-					resxFile.Generator = type.IsPublic ? "PublicResXFileCodeGenerator" : "ResXFileCodeGenerator";
-					resxFile.LastGenOutput = newFile;
-					return newFile;
-				}
+				var winFormsDesignerFile = new WinFormsDesignerProjectFile(newFile, dname, createDecompilerOutput);
+				winFormsDesignerFile.DependentUpon = newFile;
+				Files.Add(winFormsDesignerFile);
+				return newFile;
+			}
+			else if (resxFile != null) {
+				var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename) + DESIGNER);
+				var newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
+				newFile.DependentUpon = resxFile;
+				newFile.AutoGen = true;
+				newFile.DesignTime = true;
+				resxFile.Generator = type.IsPublic ? "PublicResXFileCodeGenerator" : "ResXFileCodeGenerator";
+				resxFile.LastGenOutput = newFile;
+				return newFile;
 			}
 
 			var bt = type.BaseType;
