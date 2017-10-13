@@ -605,6 +605,7 @@ namespace dnSpy.Debugger.Impl {
 			DbgProcessImpl process;
 			bool raiseIsRunningChanged;
 			DbgThread thread = null;
+			bool forceSetCurrentProcess = false;
 			lock (lockObj) {
 				var oldCachedIsRunning = cachedIsRunning;
 				var info = TryGetEngineInfo_NoLock(engine);
@@ -618,6 +619,7 @@ namespace dnSpy.Debugger.Impl {
 						builder.Add(new DbgMessageBreakEventArgs(info.Runtime, e.Thread));
 					else
 						builder.Add(new DbgBreakInfo(DbgBreakInfoKind.Unknown, null));
+					forceSetCurrentProcess = info.EngineState != EngineState.Paused && (dbgCurrentProcess.currentProcess.Current == null || dbgCurrentProcess.currentProcess.Current?.CurrentRuntime.Current?.Engine == engine);
 					info.EngineState = EngineState.Paused;
 					info.Runtime?.SetBreakInfos_DbgThread(builder.Create());
 					info.DelayedIsRunning = false;
@@ -631,7 +633,7 @@ namespace dnSpy.Debugger.Impl {
 			breakAllHelper?.OnBreak_DbgThread(engine);
 			process?.UpdateState_DbgThread(processState);
 			if (e.ErrorMessage == null)
-				OnEnginePaused_DbgThread(engine, process, thread, setCurrentProcess: false);
+				OnEnginePaused_DbgThread(engine, process, thread, setCurrentProcess: forceSetCurrentProcess);
 			else
 				RaiseUserMessage_DbgThread(UserMessageKind.CouldNotBreak, e.ErrorMessage);
 			if (raiseIsRunningChanged)
