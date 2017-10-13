@@ -164,7 +164,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				string expression, imageName;
 				bool isReadOnly;
 				DmdType expectedType;
-				var castType = info.NeedCast || NeedCast(slotType, info.Member.DeclaringType) ? info.Member.DeclaringType : null;
+				var castType = info.NeedCast || NeedCast(slotType, GetMemberDeclaringType(info.Member)) ? info.Member.DeclaringType : null;
 				switch (info.Member.MemberType) {
 				case DmdMemberTypes.Field:
 					var field = (DmdFieldInfo)info.Member;
@@ -217,6 +217,24 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			catch {
 				valueResult.Value?.Dispose();
 				throw;
+			}
+		}
+
+		static DmdType GetMemberDeclaringType(DmdMemberInfo member) {
+			switch (member.MemberType) {
+			case DmdMemberTypes.Field:
+				return member.DeclaringType;
+
+			case DmdMemberTypes.Property:
+				var property = (DmdPropertyInfo)member;
+				var accessor = property.GetGetMethod(DmdGetAccessorOptions.All) ?? property.GetSetMethod(DmdGetAccessorOptions.All);
+				if ((object)accessor == null)
+					return member.DeclaringType;
+				accessor = accessor.GetBaseDefinition();
+				return accessor.DeclaringType;
+
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 
