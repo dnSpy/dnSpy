@@ -1103,7 +1103,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					ArraySig ara = a as ArraySig, arb = b as ArraySig;
 					result = ara.Rank == arb.Rank &&
 							Equals(ara.Sizes, arb.Sizes) &&
-							Equals(ara.LowerBounds, arb.LowerBounds) &&
+							LowerBoundsEquals(ara.LowerBounds, arb.LowerBounds) &&
 							Equals(a.Next, b.Next);
 					break;
 
@@ -1351,6 +1351,23 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 			for (int i = 0; i < a.Count; i++) {
 				if (a[i] != b[i])
+					return false;
+			}
+			return true;
+		}
+
+		bool LowerBoundsEquals(IList<int> a, IList<int> b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Count != 0 && b.Count != 0 && a.Count != b.Count)
+				return false;
+			int count = Math.Max(a.Count, b.Count);
+			for (int i = 0; i < count; i++) {
+				var ai = i >= a.Count ? 0 : a[i];
+				var bi = i >= b.Count ? 0 : b[i];
+				if (ai != bi)
 					return false;
 			}
 			return true;
