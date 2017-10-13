@@ -34,9 +34,15 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// </summary>
 		public bool FrameClosed { get; }
 
-		public GetNodesResult(DbgValueNodeInfo[] nodes, bool frameClosed) {
+		/// <summary>
+		/// true if all nodes should be recreated, eg. it's a new frame
+		/// </summary>
+		public bool RecreateAllNodes { get; }
+
+		public GetNodesResult(DbgValueNodeInfo[] nodes, bool frameClosed, bool recreateAllNodes) {
 			Nodes = nodes ?? throw new ArgumentNullException(nameof(nodes));
 			FrameClosed = frameClosed;
+			RecreateAllNodes = recreateAllNodes;
 		}
 	}
 

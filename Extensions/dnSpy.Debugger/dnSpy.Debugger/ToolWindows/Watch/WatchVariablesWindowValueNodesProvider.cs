@@ -103,9 +103,9 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			return res;
 		}
 
-		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
+		public override ValueNodesProviderResult GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
 			if (expressions.Count == 0)
-				return Array.Empty<DbgValueNodeInfo>();
+				return new ValueNodesProviderResult(Array.Empty<DbgValueNodeInfo>(), false);
 
 			var infos = new DbgExpressionEvaluationInfo[expressions.Count];
 			Debug.Assert((evalOptions & DbgEvaluationOptions.NoSideEffects) == 0);
@@ -133,7 +133,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 					throw new InvalidOperationException();
 				res[i] = new DbgValueNodeInfo(info.ValueNode, expressions[i].Id, info.CausesSideEffects);
 			}
-			return res;
+			return new ValueNodesProviderResult(res, false);
 		}
 
 		public override void DeleteExpressions(string[] ids) {

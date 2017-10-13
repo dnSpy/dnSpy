@@ -134,12 +134,12 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			uiDispatcher.VerifyAccess();
 			var info = TryGetLanguage();
 			if (info.frame == null)
-				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), frameClosed: false);
+				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), frameClosed: false, recreateAllNodes: false);
 			var evalContextInfo = TryGetEvaluationContextInfo();
 			if (evalContextInfo.context == null)
-				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed);
-			var nodes = variablesWindowValueNodesProvider.GetNodes(evalContextInfo.context, info.language, info.frame, evalOptions, nodeEvalOptions);
-			return new GetNodesResult(nodes, info.frame.IsClosed);
+				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed, recreateAllNodes: false);
+			var nodesInfo = variablesWindowValueNodesProvider.GetNodes(evalContextInfo.context, info.language, info.frame, evalOptions, nodeEvalOptions);
+			return new GetNodesResult(nodesInfo.Nodes, info.frame.IsClosed, nodesInfo.RecreateAllNodes);
 		}
 
 		void SetIsReadOnly_UI(bool newIsReadOnly) {

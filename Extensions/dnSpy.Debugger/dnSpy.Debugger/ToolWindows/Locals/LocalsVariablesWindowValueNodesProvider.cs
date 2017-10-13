@@ -36,6 +36,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 		public override event EventHandler NodesChanged;
 		readonly DbgObjectIdService dbgObjectIdService;
 		readonly DebuggerSettings debuggerSettings;
+		bool forceRecreateAllNodesl;
 
 		public LocalsVariablesWindowValueNodesProvider(DbgObjectIdService dbgObjectIdService, DebuggerSettings debuggerSettings) {
 			this.dbgObjectIdService = dbgObjectIdService ?? throw new ArgumentNullException(nameof(dbgObjectIdService));
@@ -60,6 +61,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			case nameof(DebuggerSettings.GroupParametersAndLocalsTogether):
 			case nameof(DebuggerSettings.ShowCompilerGeneratedVariables):
 			case nameof(DebuggerSettings.ShowDecompilerGeneratedVariables):
+				forceRecreateAllNodesl = true;
 				NodesChanged?.Invoke(this, EventArgs.Empty);
 				break;
 			}
@@ -90,7 +92,10 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			return res;
 		}
 
-		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
+		public override ValueNodesProviderResult GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
+			var recreateAllNodes = forceRecreateAllNodesl;
+			forceRecreateAllNodesl = false;
+
 			var cancellationToken = CancellationToken.None;
 			const CultureInfo cultureInfo = null;
 			var exceptions = language.ExceptionsProvider.GetNodes(context, frame, nodeEvalOptions, cancellationToken);
@@ -103,7 +108,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 
 			int count = exceptions.Length + returnValues.Length + objectIds.Length + variables.Length + typeVariables.Length;
 			if (count == 0)
-				return Array.Empty<DbgValueNodeInfo>();
+				return new ValueNodesProviderResult(Array.Empty<DbgValueNodeInfo>(), false);
 			var res = new DbgValueNodeInfo[count];
 			int ri = 0;
 			for (int i = 0; i < exceptions.Length; i++, ri++) {
@@ -132,7 +137,8 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 
 			if (res.Length != ri)
 				throw new InvalidOperationException();
-			return res;
+
+			return new ValueNodesProviderResult(res, recreateAllNodes);
 		}
 
 		DbgLocalsValueNodeInfo[] GetSortedVariables(DbgEvaluationContext context, DbgStackFrame frame, DbgLocalsValueNodeInfo[] variables, CultureInfo cultureInfo, CancellationToken cancellationToken) {

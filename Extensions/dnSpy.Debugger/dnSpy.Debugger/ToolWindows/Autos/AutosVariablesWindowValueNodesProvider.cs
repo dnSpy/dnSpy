@@ -25,7 +25,7 @@ using dnSpy.Debugger.Evaluation.ViewModel;
 
 namespace dnSpy.Debugger.ToolWindows.Autos {
 	sealed class AutosVariablesWindowValueNodesProvider : VariablesWindowValueNodesProvider {
-		public override DbgValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
+		public override ValueNodesProviderResult GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
 			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame, nodeEvalOptions);
 			var variables = language.AutosProvider.GetNodes(context, frame, nodeEvalOptions);
 
@@ -36,7 +36,8 @@ namespace dnSpy.Debugger.ToolWindows.Autos {
 			for (int i = 0; i < variables.Length; i++, ri++)
 				res[ri] = new DbgValueNodeInfo(variables[i], causesSideEffects: false);
 
-			return res;
+			const bool recreateAllNodes = false;
+			return new ValueNodesProviderResult(res, recreateAllNodes);
 		}
 
 		string GetNextReturnValueId() => returnValueIdBase + returnValueCounter++.ToString();
