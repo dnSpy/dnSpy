@@ -17,21 +17,35 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Globalization;
 using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineValueFormatterImpl : DbgEngineValueFormatter {
-		public override void Format(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken) {
-			//TODO:
-			output.Write(BoxedTextColor.Error, "TODO:");
+		readonly DbgDotNetFormatter formatter;
+
+		public DbgEngineValueFormatterImpl(DbgDotNetFormatter formatter) => this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
+
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+			var valueImpl = value as DbgEngineValueImpl;
+			if (valueImpl == null)
+				throw new ArgumentException();
+			var dnValue = valueImpl.DotNetValue;
+			formatter.FormatValue(context, output, frame, dnValue, options, cultureInfo, cancellationToken);
 		}
 
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken) {
-			//TODO:
-			output.Write(BoxedTextColor.Error, "TODO:");
+		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+			var valueImpl = value as DbgEngineValueImpl;
+			if (valueImpl == null)
+				throw new ArgumentException();
+			var dnValue = valueImpl.DotNetValue;
+			formatter.FormatType(context, output, dnValue.Type, null, options, cultureInfo);
 		}
 	}
 }

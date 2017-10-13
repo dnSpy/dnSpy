@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Globalization;
 using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
@@ -36,7 +38,7 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineValueFormatter = engineValueFormatter ?? throw new ArgumentNullException(nameof(engineValueFormatter));
 		}
 
-		public override void Format(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken) {
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -44,6 +46,10 @@ namespace dnSpy.Debugger.Evaluation {
 			if (context.Language != Language)
 				throw new ArgumentException();
 			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
+				throw new ArgumentException();
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (frame.Runtime.Guid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
@@ -53,10 +59,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			engineValueFormatter.Format(context, output, valueImpl.EngineValue, options, cancellationToken);
+			engineValueFormatter.Format(context, frame, output, valueImpl.EngineValue, options, cultureInfo, cancellationToken);
 		}
 
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken) {
+		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -73,7 +79,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			engineValueFormatter.FormatType(context, output, valueImpl.EngineValue, options, cancellationToken);
+			engineValueFormatter.FormatType(context, output, valueImpl.EngineValue, options, cultureInfo, cancellationToken);
 		}
 	}
 }

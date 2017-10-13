@@ -67,8 +67,8 @@ namespace dnSpy.Debugger.Evaluation {
 	}
 
 	sealed class NullDbgEngineValueFormatter : DbgEngineValueFormatter {
-		public override void Format(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CancellationToken cancellationToken) { }
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CancellationToken cancellationToken) { }
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) { }
+		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) { }
 	}
 
 	sealed class NullDbgEngineEngineFormatter : DbgEngineFormatter {
