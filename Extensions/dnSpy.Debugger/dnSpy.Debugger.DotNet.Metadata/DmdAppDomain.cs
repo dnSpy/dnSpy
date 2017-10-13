@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -51,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) =>
-			CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation, isSynthetic: false, addAssembly: true);
+			CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation, assemblySimpleName: null, isSynthetic: false, addAssembly: true);
 
 		/// <summary>
 		/// Creates a synthetic assembly but does not add it to the AppDomain
@@ -63,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateSyntheticAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) =>
-			CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation, isSynthetic: true, addAssembly: false);
+			CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation, assemblySimpleName: null, isSynthetic: true, addAssembly: false);
 
 		/// <summary>
 		/// Creates an assembly and optionally adds it to the AppDomain. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
@@ -73,10 +72,20 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <param name="assemblySimpleName">The assembly's simple name or null if it's unknown</param>
 		/// <param name="isSynthetic">true if it's a synthetic assembly; it's not loaded in the debugged process</param>
 		/// <param name="addAssembly">true if the assembly should be added to the AppDomain</param>
 		/// <returns></returns>
-		public abstract DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation, bool isSynthetic, bool addAssembly);
+		public DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation, string assemblySimpleName, bool isSynthetic, bool addAssembly) =>
+			CreateAssembly(getMetadata, new DmdCreateAssemblyInfo(isInMemory, isDynamic, isSynthetic, addAssembly, fullyQualifiedName, assemblyLocation, assemblySimpleName));
+
+		/// <summary>
+		/// Creates an assembly and optionally adds it to the AppDomain. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
+		/// </summary>
+		/// <param name="getMetadata">Called to provide the metadata</param>
+		/// <param name="assemblyInfo">Assembly info</param>
+		/// <returns></returns>
+		public abstract DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, DmdCreateAssemblyInfo assemblyInfo);
 
 		/// <summary>
 		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
@@ -648,5 +657,113 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Ignore case
 		/// </summary>
 		IgnoreCase			= 0x00000002,
+	}
+
+	/// <summary>
+	/// Create-assembly-options
+	/// </summary>
+	public enum DmdCreateAssemblyOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// Set if the module is in memory (<see cref="DmdModule.IsInMemory"/>)
+		/// </summary>
+		InMemory			= 0x00000001,
+
+		/// <summary>
+		/// Set if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)
+		/// </summary>
+		Dynamic				= 0x00000002,
+
+		/// <summary>
+		/// Synthetic assembly, eg. created by the expression compiler
+		/// </summary>
+		Synthetic			= 0x00000004,
+
+		/// <summary>
+		/// Don't add the assembly to the app domain
+		/// </summary>
+		DontAddAssembly		= 0x00000008,
+
+		/// <summary>
+		/// It's an exe file. If it's not set, it's either a DLL or it's unknown
+		/// </summary>
+		IsEXE				= 0x00000010,
+
+		/// <summary>
+		/// It's a dll file. If it's not set, it's either an EXE or it's unknown
+		/// </summary>
+		IsDLL				= 0x00000020,
+	}
+
+	/// <summary>
+	/// Info needed when creating an assembly
+	/// </summary>
+	public struct DmdCreateAssemblyInfo {
+		/// <summary>
+		/// Gets the options
+		/// </summary>
+		public DmdCreateAssemblyOptions Options { get; }
+
+		/// <summary>
+		/// The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/>
+		/// </summary>
+		public string FullyQualifiedName { get; }
+
+		/// <summary>
+		/// Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)
+		/// </summary>
+		public string AssemblyLocation { get; }
+
+		/// <summary>
+		/// Gets the assembly's simple name or null if it's unknown
+		/// </summary>
+		public string AssemblySimpleName { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
+		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <param name="assemblySimpleName">The assembly's simple name or null if it's unknown</param>
+		public DmdCreateAssemblyInfo(DmdCreateAssemblyOptions options, string fullyQualifiedName, string assemblyLocation, string assemblySimpleName) {
+			if ((options & (DmdCreateAssemblyOptions.IsEXE | DmdCreateAssemblyOptions.IsDLL)) == (DmdCreateAssemblyOptions.IsEXE | DmdCreateAssemblyOptions.IsDLL))
+				throw new ArgumentException();
+			Options = options;
+			FullyQualifiedName = fullyQualifiedName ?? throw new ArgumentNullException(nameof(fullyQualifiedName));
+			AssemblyLocation = assemblyLocation ?? throw new ArgumentNullException(nameof(assemblyLocation));
+			AssemblySimpleName = assemblySimpleName;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="isInMemory">true if the module is in memory (<see cref="DmdModule.IsInMemory"/>)</param>
+		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
+		/// <param name="isSynthetic">true if it's a synthetic assembly, eg. created by the expression compiler</param>
+		/// <param name="addAssembly">true if the assembly should be added to the AppDomain</param>
+		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
+		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <param name="assemblySimpleName">The assembly's simple name or null if it's unknown</param>
+		public DmdCreateAssemblyInfo(bool isInMemory, bool isDynamic, bool isSynthetic, bool addAssembly, string fullyQualifiedName, string assemblyLocation, string assemblySimpleName)
+			: this(GetOptions(isInMemory, isDynamic, isSynthetic, addAssembly), fullyQualifiedName, assemblyLocation, assemblySimpleName) {
+		}
+
+		static DmdCreateAssemblyOptions GetOptions(bool isInMemory, bool isDynamic, bool isSynthetic, bool addAssembly) {
+			var options = DmdCreateAssemblyOptions.None;
+			if (isInMemory)
+				options |= DmdCreateAssemblyOptions.InMemory;
+			if (isDynamic)
+				options |= DmdCreateAssemblyOptions.Dynamic;
+			if (isSynthetic)
+				options |= DmdCreateAssemblyOptions.Synthetic;
+			if (!addAssembly)
+				options |= DmdCreateAssemblyOptions.DontAddAssembly;
+			return options;
+		}
 	}
 }

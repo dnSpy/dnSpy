@@ -34,15 +34,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsLoaded => appDomain.GetIsLoaded(this);
 		internal bool IsLoadedInternal { get; set; }
 
-		internal string ApproximateSimpleName {
+		internal string AssemblySimpleName {
 			get {
-				if (approximateSimpleName == null)
-					approximateSimpleName = CalculateApproximateSimpleName();
-				return approximateSimpleName;
+				if (assemblySimpleName == null)
+					assemblySimpleName = CalculateAssemblySimpleName();
+				return assemblySimpleName;
 			}
 		}
-		string approximateSimpleName;
-		string CalculateApproximateSimpleName() {
+		string assemblySimpleName;
+		string CalculateAssemblySimpleName() {
+			// GetName() will access the metadata but we have to do it in case this is a renamed exe file.
+			// Most files aren't EXEs so most of the files' metadata won't be accessed.
+			if (isExe)
+				return GetName().Name;
+
 			if (IsInMemory || IsDynamic)
 				return string.Empty;
 			try {
@@ -67,12 +72,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdAppDomainImpl appDomain;
 		readonly List<DmdModuleImpl> modules;
 		readonly DmdMetadataReader metadataReader;
+		readonly bool isExe;
 
-		public DmdAssemblyImpl(DmdAppDomainImpl appDomain, DmdMetadataReader metadataReader, string location) {
+		public DmdAssemblyImpl(DmdAppDomainImpl appDomain, DmdMetadataReader metadataReader, string location, string assemblySimpleNameOrNull, bool isExe) {
 			modules = new List<DmdModuleImpl>();
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			this.metadataReader = metadataReader ?? throw new ArgumentNullException(nameof(metadataReader));
 			Location = location ?? throw new ArgumentNullException(nameof(location));
+			assemblySimpleName = assemblySimpleNameOrNull;
+			this.isExe = isExe;
 		}
 
 		internal void Add(DmdModuleImpl module) {
@@ -120,6 +128,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdReadOnlyAssemblyName GetName() {
 			if (asmName == null) {
 				var newAsmName = metadataReader.GetName();
+				Debug.Assert(assemblySimpleName == null || newAsmName.Name == assemblySimpleName);
 				var flags = newAsmName.RawFlags;
 				flags |= DmdAssemblyNameFlags.PublicKey;
 				if (metadataReader.MDStreamVersion >= 0x00010000) {

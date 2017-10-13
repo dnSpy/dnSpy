@@ -113,20 +113,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			throw new NotSupportedException($"Unknown lazy metadata: {lzmd.GetType()}");
 		}
 
-		public override DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation, bool isSynthetic, bool addAssembly) {
+		public override DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, DmdCreateAssemblyInfo assemblyInfo) {
 			if (getMetadata == null)
 				throw new ArgumentNullException(nameof(getMetadata));
-			if (fullyQualifiedName == null)
-				throw new ArgumentNullException(nameof(fullyQualifiedName));
-			if (assemblyLocation == null)
-				throw new ArgumentNullException(nameof(assemblyLocation));
+			if (assemblyInfo.FullyQualifiedName == null || assemblyInfo.AssemblyLocation == null)
+				throw new ArgumentException();
 			var metadataReader = new DmdLazyMetadataReader(getMetadata, metadataReaderFactory);
 
-			var assembly = new DmdAssemblyImpl(this, metadataReader, assemblyLocation);
-			var module = new DmdModuleImpl(assembly, metadataReader, isInMemory, isDynamic, isSynthetic, fullyQualifiedName);
+			var options = assemblyInfo.Options;
+			var assembly = new DmdAssemblyImpl(this, metadataReader, assemblyInfo.AssemblyLocation, assemblyInfo.AssemblySimpleName, (options & DmdCreateAssemblyOptions.IsEXE) != 0);
+			var module = new DmdModuleImpl(assembly, metadataReader,
+				(options & DmdCreateAssemblyOptions.InMemory) != 0,
+				(options & DmdCreateAssemblyOptions.Dynamic) != 0,
+				(options & DmdCreateAssemblyOptions.Synthetic) != 0,
+				assemblyInfo.FullyQualifiedName);
 			metadataReader.SetModule(module);
 			assembly.Add(module);
-			if (addAssembly)
+			if ((options & DmdCreateAssemblyOptions.DontAddAssembly) == 0)
 				Add(assembly);
 			return assembly;
 		}
@@ -286,7 +289,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			foreach (var assembly in assemblies) {
 				if (assembly.IsInMemory || assembly.IsDynamic)
 					continue;
-				if (!StringComparer.OrdinalIgnoreCase.Equals(simpleName, assembly.ApproximateSimpleName))
+				if (!StringComparer.OrdinalIgnoreCase.Equals(simpleName, assembly.AssemblySimpleName))
 					continue;
 
 				// Access metadata (when calling GetName())

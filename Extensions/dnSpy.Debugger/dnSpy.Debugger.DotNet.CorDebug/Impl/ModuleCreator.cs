@@ -24,6 +24,7 @@ using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnlib.DotNet.MD;
 using dnlib.PE;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
@@ -41,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			bool isInMemory = dnModule.IsInMemory;
 			bool isOptimized = CalculateIsOptimized(dnModule);
 			int order = dnModule.UniqueId;
-			InitializeExeFields(dnModule, filename, imageLayout, out var isExe, out var timestamp, out var version);
+			InitializeExeFields(dnModule, filename, imageLayout, out var isExe, out var isDll, out var timestamp, out var version, out var assemblySimpleName);
 
 			var reflectionAppDomain = ((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).ReflectionAppDomain;
 
@@ -54,7 +55,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			DmdModule reflectionModule;
 			if (isManifestModule) {
 				var assemblyLocation = isInMemory || isDynamic ? string.Empty : dnModule.Name;
-				reflectionAssembly = reflectionAppDomain.CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
+				var asmOptions = DmdCreateAssemblyOptions.None;
+				if (isInMemory)
+					asmOptions |= DmdCreateAssemblyOptions.InMemory;
+				if (isDynamic)
+					asmOptions |= DmdCreateAssemblyOptions.Dynamic;
+				if (isExe)
+					asmOptions |= DmdCreateAssemblyOptions.IsEXE;
+				else if (isDll)
+					asmOptions |= DmdCreateAssemblyOptions.IsDLL;
+				var asmInfo = new DmdCreateAssemblyInfo(asmOptions, fullyQualifiedName, assemblyLocation, assemblySimpleName);
+				reflectionAssembly = reflectionAppDomain.CreateAssembly(getMetadata, asmInfo);
 				reflectionModule = reflectionAssembly.ManifestModule;
 			}
 			else {
@@ -131,10 +142,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return s;
 		}
 
-		static void InitializeExeFields(DnModule dnModule, string filename, DbgImageLayout imageLayout, out bool isExe, out DateTime? timestamp, out string version) {
+		static void InitializeExeFields(DnModule dnModule, string filename, DbgImageLayout imageLayout, out bool isExe, out bool isDll, out DateTime? timestamp, out string version, out string assemblySimpleName) {
 			isExe = false;
+			isDll = false;
 			timestamp = null;
 			version = null;
+			assemblySimpleName = null;
 
 			if (dnModule.IsDynamic) {
 				if (dnModule.CorModule.IsManifestModule)
@@ -148,7 +161,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					try {
 						version = GetFileVersion(bytes);
 						using (var peImage = new PEImage(bytes, imageLayout == DbgImageLayout.File ? ImageLayout.File : ImageLayout.Memory, true))
-							InitializeExeFieldsFrom(peImage, out isExe, out timestamp, ref version);
+							InitializeExeFieldsFrom(peImage, out isExe, out isDll, out timestamp, ref version, out assemblySimpleName);
 					}
 					catch {
 					}
@@ -158,7 +171,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				try {
 					version = GetFileVersion(filename);
 					using (var peImage = new PEImage(filename))
-						InitializeExeFieldsFrom(peImage, out isExe, out timestamp, ref version);
+						InitializeExeFieldsFrom(peImage, out isExe, out isDll, out timestamp, ref version, out assemblySimpleName);
 				}
 				catch {
 				}
@@ -168,8 +181,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				version = string.Empty;
 		}
 
-		static void InitializeExeFieldsFrom(IPEImage peImage, out bool isExe, out DateTime? timestamp, ref string version) {
+		static void InitializeExeFieldsFrom(IPEImage peImage, out bool isExe, out bool isDll, out DateTime? timestamp, ref string version, out string assemblySimpleName) {
 			isExe = (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
+			isDll = !isExe;
 
 			// Roslyn sets bit 31 if /deterministic is used (the low 31 bits is not a timestamp)
 			if (peImage.ImageNTHeaders.FileHeader.TimeDateStamp < 0x80000000)
@@ -177,9 +191,27 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			else
 				timestamp = null;
 
-			if (string.IsNullOrEmpty(version)) {
-				using (var mod = ModuleDefMD.Load(peImage))
-					version = mod.Assembly?.Version.ToString();
+			try {
+				if (string.IsNullOrEmpty(version)) {
+					using (var mod = ModuleDefMD.Load(peImage)) {
+						if (string.IsNullOrEmpty(version))
+							version = mod.Assembly?.Version.ToString();
+						assemblySimpleName = UTF8String.ToSystemString(mod.Assembly?.Name);
+					}
+				}
+				else {
+					using (var md = MetaDataCreator.CreateMetaData(peImage)) {
+						var row = md.TablesStream.ReadAssemblyRow(1);
+						if (row == null)
+							assemblySimpleName = null;
+						else
+							assemblySimpleName = md.StringsStream.Read(row.Name);
+					}
+
+				}
+			}
+			catch {
+				assemblySimpleName = null;
 			}
 		}
 		static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
