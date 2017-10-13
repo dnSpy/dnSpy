@@ -81,6 +81,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 		}
 
+		internal event EventHandler OnVariableChanged;
+
 		public ValueNodesVM(UIDispatcher uiDispatcher, ValueNodesVMOptions options, ITreeViewService treeViewService, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, DbgObjectIdService dbgObjectIdService, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, IMenuService menuService, IWpfCommandService wpfCommandService) {
 			uiDispatcher.VerifyAccess();
 			valueNodesProvider = options.NodesProvider;
@@ -110,8 +112,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			if (errorMessage != null)
 				valueNodesContext.ShowMessageBox(errorMessage, ShowMessageBoxButtons.OK);
-			if (!retry)
+			if (!retry) {
+				OnVariableChanged?.Invoke(this, EventArgs.Empty);
 				RecreateRootChildren_UI();
+			}
 		}
 
 		// UI thread
@@ -173,7 +177,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void RecreateRootChildren_UI() {
+		internal void RecreateRootChildren_UI() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			refreshNameFields = false;
 			Guid? runtimeKindGuid;

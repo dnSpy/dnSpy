@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger;
@@ -42,6 +43,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly ITextBlockContentInfoFactory textBlockContentInfoFactory;
 		readonly IMenuService menuService;
 		readonly IWpfCommandService wpfCommandService;
+		readonly List<ValueNodesVM> allValueNodesVMs;
 
 		[ImportingConstructor]
 		ValueNodesVMFactoryImpl(UIDispatcher uiDispatcher, ITreeViewService treeViewService, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, DbgObjectIdService dbgObjectIdService, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, IMenuService menuService, IWpfCommandService wpfCommandService) {
@@ -57,6 +59,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			this.textBlockContentInfoFactory = textBlockContentInfoFactory;
 			this.menuService = menuService;
 			this.wpfCommandService = wpfCommandService;
+			allValueNodesVMs = new List<ValueNodesVM>();
 		}
 
 		public override IValueNodesVM Create(ValueNodesVMOptions options) {
@@ -78,7 +81,18 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				throw new ArgumentException();
 			if (options.ShowMessageBox == null)
 				throw new ArgumentException();
-			return new ValueNodesVM(uiDispatcher, options, treeViewService, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, debuggerSettings, dbgEvalFormatterSettings, dbgObjectIdService, classificationFormatMapService, textBlockContentInfoFactory, menuService, wpfCommandService);
+			var vm = new ValueNodesVM(uiDispatcher, options, treeViewService, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, debuggerSettings, dbgEvalFormatterSettings, dbgObjectIdService, classificationFormatMapService, textBlockContentInfoFactory, menuService, wpfCommandService);
+			allValueNodesVMs.Add(vm);
+			vm.OnVariableChanged += ValueNodesVM_OnVariableChanged;
+			return vm;
+		}
+
+		void ValueNodesVM_OnVariableChanged(object sender, EventArgs e) {
+			uiDispatcher.VerifyAccess();
+			foreach (var vm in allValueNodesVMs) {
+				if (vm != sender)
+					vm.RecreateRootChildren_UI();
+			}
 		}
 	}
 }
