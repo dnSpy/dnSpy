@@ -38,8 +38,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.cancellationToken = cancellationToken;
 		}
 
-		//TODO: This fails on .NET Core 2.0, we can't call Assembly.Load() without getting an argument exception.
-		//		It works as expected on .NET Core 1.x and .NET Framework.
 		public bool TryLoadAssembly(string assemblyFullName) => Try_Assembly_Load_String(assemblyFullName);
 
 		// Try System.Reflection.Assembly.Load(string)

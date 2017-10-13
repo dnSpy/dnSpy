@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		void DbgRuntime_Closed(object sender, EventArgs e) => Cancel();
 
 		public bool CanCancel => cancelling == 0;
-		int cancelling;
+		volatile int cancelling;
 
 		public void AskCancel() {
 			uiDispatcher.VerifyAccess();
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		void UI(Action callback) => uiDispatcher.UI(callback);
 
 		void Cancel() {
-			if (Interlocked.Increment(ref cancelling) != 1)
+			if (Interlocked.Exchange(ref cancelling, 1) != 0)
 				return;
 			cancellationTokenSource.Cancel();
 			cancellationTokenSource.Dispose();

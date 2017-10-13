@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Debugger {
 				throw new ArgumentNullException(nameof(dispatcher));
 			dispatcher.VerifyAccess();
 			// This sometimes happens, eg. a cached frame gets closed by its thread, but also by the owner (eg. call stack service)
-			if (Interlocked.Increment(ref isClosed) != 1)
+			if (Interlocked.Exchange(ref isClosed, 1) != 0)
 				return;
 			Closed?.Invoke(this, EventArgs.Empty);
 			Closed = null;

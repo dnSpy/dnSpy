@@ -264,7 +264,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			if (engine.CheckFuncEval(context) != null)
 				return;
 			var state = type.GetOrCreateData<StaticConstructorInitializedState>();
-			if (state.Initialized > 0 || Interlocked.Increment(ref state.Initialized) != 1)
+			if (state.Initialized > 0 || Interlocked.Exchange(ref state.Initialized, 1) != 0)
 				return; 
 			var cctor = type.TypeInitializer;
 			if ((object)cctor != null) {

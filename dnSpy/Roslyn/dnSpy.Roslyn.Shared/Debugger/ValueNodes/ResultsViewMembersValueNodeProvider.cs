@@ -61,7 +61,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			var proxyCtor = EnumerableDebugViewHelper.GetEnumerableDebugViewConstructor(enumerableType);
 			if ((object)proxyCtor == null) {
 				var loadState = enumerableType.AppDomain.GetOrCreateData<ForceLoadAssemblyState>();
-				if (Interlocked.Increment(ref loadState.Counter) == 1) {
+				if (Interlocked.Exchange(ref loadState.Counter, 1) == 0) {
 					var loader = new ReflectionAssemblyLoader(context, frame, enumerableType.AppDomain, cancellationToken);
 					if (loader.TryLoadAssembly(GetRequiredAssemblyFullName(context.Runtime)))
 						proxyCtor = EnumerableDebugViewHelper.GetEnumerableDebugViewConstructor(enumerableType);

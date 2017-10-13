@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// </summary>
 		public void Close() {
 			Debug.Assert(!IsClosed);
-			if (Interlocked.Increment(ref isClosed) != 1)
+			if (Interlocked.Exchange(ref isClosed, 1) != 0)
 				return;
 			Closed?.Invoke(this, EventArgs.Empty);
 			Closed = null;

@@ -154,7 +154,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 
 		internal void ForceDispose() {
 			GC.SuppressFinalize(this);
-			if (address != IntPtr.Zero && Interlocked.Increment(ref freedAddress) == 1) {
+			if (address != IntPtr.Zero && Interlocked.Exchange(ref freedAddress, 1) == 0) {
 				bool b = NativeMethods.VirtualFree(address, IntPtr.Zero, NativeMethods.MEM_RELEASE);
 				Debug.Assert(b);
 			}
