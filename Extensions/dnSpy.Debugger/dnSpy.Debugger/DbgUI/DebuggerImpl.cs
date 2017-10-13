@@ -363,18 +363,137 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 		bool oldIsDebugging;
 
-		void SetRunningStatusMessage() => appWindow.Value.StatusBar.Show(dnSpy_Debugger_Resources.StatusBar_Running);
+		void SetRunningStatusMessage() => SetStatusMessage(dnSpy_Debugger_Resources.StatusBar_Running);
+		void SetStatusMessage(string message) => appWindow.Value.StatusBar.Show(message);
 
 		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
+			var breakInfos = dbgManager.CurrentRuntime.Break?.BreakInfos ?? (IList<DbgBreakInfo>)Array.Empty<DbgBreakInfo>();
 			UI(() => {
 				var newIsRunning = dbgManager.IsRunning;
 				if (newIsRunning == oldIsRunning)
 					return;
 				oldIsRunning = newIsRunning;
+				SetStatusMessage(GetStatusBarMessage(breakInfos));
 				CommandManager.InvalidateRequerySuggested();
 			});
 		}
 		bool? oldIsRunning;
+
+		static string GetStatusBarMessage(IList<DbgBreakInfo> breakInfos) {
+			if (breakInfos.Count == 0)
+				return dnSpy_Debugger_Resources.StatusBar_Running;
+
+			var info = GetBreakInfo(breakInfos);
+			switch (info.Kind) {
+			case DbgBreakInfoKind.Message:
+				var e = (DbgMessageEventArgs)info.Data;
+				switch (e.Kind) {
+				case DbgMessageKind.ModuleLoaded:
+					var module = ((DbgMessageModuleLoadedEventArgs)e).Module;
+					if (module.IsDynamic || module.IsInMemory)
+						return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_LoadModule1, module.IsDynamic ? 1 : 0, module.IsInMemory ? 1 : 0, module.Address, module.Size, module.Name);
+					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_LoadModule2, module.Address, module.Size, module.Name);
+
+				case DbgMessageKind.ExceptionThrown:
+					var ex = ((DbgMessageExceptionThrownEventArgs)e).Exception;
+					return ex.IsUnhandled ? dnSpy_Debugger_Resources.Debug_EventDescription_UnhandledException : dnSpy_Debugger_Resources.Debug_EventDescription_Exception;
+
+				case DbgMessageKind.BoundBreakpoint:
+					return dnSpy_Debugger_Resources.StatusBar_BreakpointHit;
+
+				case DbgMessageKind.ProcessCreated:
+				case DbgMessageKind.ProcessExited:
+				case DbgMessageKind.RuntimeCreated:
+				case DbgMessageKind.RuntimeExited:
+				case DbgMessageKind.AppDomainLoaded:
+				case DbgMessageKind.AppDomainUnloaded:
+				case DbgMessageKind.ModuleUnloaded:
+				case DbgMessageKind.ThreadCreated:
+				case DbgMessageKind.ThreadExited:
+				case DbgMessageKind.EntryPointBreak:
+				case DbgMessageKind.ProgramMessage:
+				case DbgMessageKind.ProgramBreak:
+				case DbgMessageKind.StepComplete:
+				case DbgMessageKind.SetIPComplete:
+				case DbgMessageKind.UserMessage:
+				case DbgMessageKind.Break:
+					break;
+
+				default:
+					Debug.Fail($"Unknown kind: {e.Kind}");
+					break;
+				}
+				break;
+
+			case DbgBreakInfoKind.Unknown:
+			case DbgBreakInfoKind.Connected:
+			default:
+				break;
+			}
+
+			return dnSpy_Debugger_Resources.StatusBar_Ready;
+		}
+
+		static DbgBreakInfo GetBreakInfo(IList<DbgBreakInfo> breakInfos) {
+			if (breakInfos.Count == 0)
+				throw new InvalidOperationException();
+			DbgBreakInfo result = default;
+			int resultPrio = int.MaxValue;
+			foreach (var info in breakInfos) {
+				int prio = GetPriority(info);
+				if (prio < resultPrio) {
+					resultPrio = prio;
+					result = info;
+				}
+			}
+			return result;
+		}
+
+		static int GetPriority(DbgBreakInfo info) {
+			const int defaultPrio = int.MaxValue - 1;
+			if (info.Kind == DbgBreakInfoKind.Message) {
+				var e = (DbgMessageEventArgs)info.Data;
+				switch (e.Kind) {
+				case DbgMessageKind.ExceptionThrown:
+					return 0;
+
+				case DbgMessageKind.EntryPointBreak:
+					return 1;
+
+				case DbgMessageKind.BoundBreakpoint:
+					return 2;
+
+				case DbgMessageKind.ProgramBreak:
+					return 3;
+
+				case DbgMessageKind.StepComplete:
+					return 4;
+
+				case DbgMessageKind.ProcessCreated:
+				case DbgMessageKind.ProcessExited:
+				case DbgMessageKind.RuntimeCreated:
+				case DbgMessageKind.RuntimeExited:
+				case DbgMessageKind.AppDomainLoaded:
+				case DbgMessageKind.AppDomainUnloaded:
+				case DbgMessageKind.ModuleLoaded:
+				case DbgMessageKind.ModuleUnloaded:
+				case DbgMessageKind.ThreadCreated:
+				case DbgMessageKind.ThreadExited:
+				case DbgMessageKind.ProgramMessage:
+				case DbgMessageKind.UserMessage:
+				case DbgMessageKind.Break:
+					return defaultPrio - 1;
+
+				case DbgMessageKind.SetIPComplete:
+					return defaultPrio;
+
+				default:
+					Debug.Fail($"Unknown kind: {e.Kind}");
+					return defaultPrio;
+				}
+			}
+			return defaultPrio;
+		}
 	}
 }

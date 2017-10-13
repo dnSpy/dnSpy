@@ -1926,4 +1926,7 @@ Are you sure you want to expand it?</value>
   <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
     <value>An unhandled exception occurred in {0} ({1})</value>
   </data>
+  <data name="StatusBar_BreakpointHit" xml:space="preserve">
+    <value>Breakpoint</value>
+  </data>
 </root>

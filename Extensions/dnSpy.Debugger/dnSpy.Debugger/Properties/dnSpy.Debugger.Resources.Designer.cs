@@ -4621,6 +4621,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Breakpoint.
+        /// </summary>
+        public static string StatusBar_BreakpointHit {
+            get {
+                return ResourceManager.GetString("StatusBar_BreakpointHit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ready.
         /// </summary>
         public static string StatusBar_Ready {
