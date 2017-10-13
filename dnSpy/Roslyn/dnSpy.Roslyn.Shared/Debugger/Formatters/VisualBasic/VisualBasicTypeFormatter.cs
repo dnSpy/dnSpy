@@ -251,7 +251,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 						else {
 							var typesList = new List<DmdType>();
 							typesList.Add(type);
-							while (type.DeclaringType != null) {
+							while ((object)type.DeclaringType != null) {
 								type = type.DeclaringType;
 								typesList.Add(type);
 							}

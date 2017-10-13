@@ -124,7 +124,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			case DmdMemberTypes.Property:
 				var prop = (DmdPropertyInfo)member;
 				var accessor = prop.GetGetMethod(DmdGetAccessorOptions.All) ?? prop.GetSetMethod(DmdGetAccessorOptions.All);
-				if (accessor != null) {
+				if ((object)accessor != null) {
 					if (accessor.IsPublic)
 						res |= MemberValueNodeInfoFlags.Public;
 					else if ((accessor.IsPrivate || accessor.IsPrivateScope) && accessor.DeclaringType != accessor.ReflectedType)

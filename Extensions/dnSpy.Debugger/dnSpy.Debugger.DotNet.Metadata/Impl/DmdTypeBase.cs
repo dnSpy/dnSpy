@@ -659,7 +659,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			protected void InitializeAllCore() {
 				lock (lockObj) {
 					int index = members.Count;
-					while (GetNext(ref index) != null)
+					while ((object)GetNext(ref index) != null)
 						index = members.Count;
 				}
 			}
