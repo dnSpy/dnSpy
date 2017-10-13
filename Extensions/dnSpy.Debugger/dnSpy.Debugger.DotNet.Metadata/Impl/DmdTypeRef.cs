@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var appDomain = (DmdAppDomainImpl)ownerModule.AppDomain;
 			var type = appDomain.Resolve(this, throwOnError, ignoreCase: false);
 			if ((object)type != null && GetCustomModifiers().Count != 0)
-				type = (DmdTypeDef)appDomain.Intern(type.WithCustomModifiers(GetCustomModifiers()), MakeTypeOptions.None);
+				type = (DmdTypeDef)appDomain.Intern(type.WithCustomModifiers(GetCustomModifiers()), DmdMakeTypeOptions.None);
 			Interlocked.CompareExchange(ref __resolvedType_DONT_USE, type, null);
 			return __resolvedType_DONT_USE;
 		}

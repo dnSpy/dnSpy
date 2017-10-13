@@ -207,12 +207,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			case DMD.ElementType.U:			result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_UIntPtr); break;
 			case DMD.ElementType.Object:	result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.System_Object); break;
 
-			case DMD.ElementType.Ptr:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakePointerType(ReadType().type, null, MakeTypeOptions.NoResolve)); break;
-			case DMD.ElementType.ByRef:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeByRefType(ReadType().type, null, MakeTypeOptions.NoResolve)); break;
+			case DMD.ElementType.Ptr:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakePointerType(ReadType().type, null, DmdMakeTypeOptions.NoResolve)); break;
+			case DMD.ElementType.ByRef:		result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeByRefType(ReadType().type, null, DmdMakeTypeOptions.NoResolve)); break;
 			case DMD.ElementType.ValueType:	result = AddCustomModifiers(GetCustomModifiers(), ReadTypeDefOrRef()); break;
 			case DMD.ElementType.Class:		result = AddCustomModifiers(GetCustomModifiers(), ReadTypeDefOrRef()); break;
 			case DMD.ElementType.FnPtr:		result = AddCustomModifiers(GetCustomModifiers(), ReadMethodSignatureType()); break;
-			case DMD.ElementType.SZArray:	result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeArrayType(ReadType().type, null, MakeTypeOptions.NoResolve)); break;
+			case DMD.ElementType.SZArray:	result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeArrayType(ReadType().type, null, DmdMakeTypeOptions.NoResolve)); break;
 
 			case DMD.ElementType.Pinned:
 				resultFlags |= TypeFlags.IsPinned;
@@ -252,14 +252,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var args = new DmdType[reader.ReadCompressedUInt32()];
 				for (int i = 0; i < args.Length; i++)
 					args[i] = ReadType().type;
-				result = AddCustomModifiers(customModifiers, module.AppDomain.MakeGenericType(nextType, args, null, MakeTypeOptions.NoResolve));
+				result = AddCustomModifiers(customModifiers, module.AppDomain.MakeGenericType(nextType, args, null, DmdMakeTypeOptions.NoResolve));
 				break;
 
 			case DMD.ElementType.Array:
 				nextType = ReadType().type;
 				uint rank = reader.ReadCompressedUInt32();
 				if (rank == 0) {
-					result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeArrayType(nextType, (int)rank, Array.Empty<int>(), Array.Empty<int>(), null, MakeTypeOptions.NoResolve));
+					result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeArrayType(nextType, (int)rank, Array.Empty<int>(), Array.Empty<int>(), null, DmdMakeTypeOptions.NoResolve));
 					break;
 				}
 				var sizes = new int[(int)reader.ReadCompressedUInt32()];
@@ -268,7 +268,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var lowerBounds = new int[(int)reader.ReadCompressedUInt32()];
 				for (int i = 0; i < lowerBounds.Length; i++)
 					lowerBounds[i] = reader.ReadCompressedInt32();
-				result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeArrayType(nextType, (int)rank, sizes, lowerBounds, null, MakeTypeOptions.NoResolve));
+				result = AddCustomModifiers(GetCustomModifiers(), module.AppDomain.MakeArrayType(nextType, (int)rank, sizes, lowerBounds, null, DmdMakeTypeOptions.NoResolve));
 				break;
 
 			case DMD.ElementType.ValueArray:
@@ -302,7 +302,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			ReadMethodSignature(out var flags, out var genericParameterCount, out var returnType, out var parameterTypes, out var varArgsParameterTypes);
 			if ((flags & DmdSignatureCallingConvention.Mask) == DmdSignatureCallingConvention.Property)
 				throw new IOException();
-			return module.AppDomain.MakeFunctionPointerType(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes, null, resolve ? MakeTypeOptions.None : MakeTypeOptions.NoResolve);
+			return module.AppDomain.MakeFunctionPointerType(flags, genericParameterCount, returnType, parameterTypes, varArgsParameterTypes, null, resolve ? DmdMakeTypeOptions.None : DmdMakeTypeOptions.NoResolve);
 		}
 
 		void ReadMethodSignature(out DmdSignatureCallingConvention flags, out int genericParameterCount, out DmdType returnType, out IList<DmdType> parameterTypes, out IList<DmdType> varArgsParameterTypes) {

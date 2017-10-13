@@ -411,7 +411,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="type">Type</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType Intern(DmdType type, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdType Intern(DmdType type, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a pointer type
@@ -420,7 +420,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakePointerType(DmdType elementType, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdType MakePointerType(DmdType elementType, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a by-ref type
@@ -429,7 +429,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeByRefType(DmdType elementType, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdType MakeByRefType(DmdType elementType, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a SZ array type
@@ -438,7 +438,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a multi-dimensional array type
@@ -450,7 +450,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a generic type
@@ -460,7 +460,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a generic method
@@ -469,7 +469,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="typeArguments">Generic arguments</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo MakeGenericMethod(DmdMethodInfo genericMethodDefinition, IList<DmdType> typeArguments, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdMethodInfo MakeGenericMethod(DmdMethodInfo genericMethodDefinition, IList<DmdType> typeArguments, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a function pointer type
@@ -478,7 +478,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a function pointer type
@@ -491,7 +491,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a generic type parameter
@@ -511,7 +511,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeGenericTypeParameter(int position, DmdType declaringType, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdType MakeGenericTypeParameter(int position, DmdType declaringType, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a generic method parameter
@@ -531,7 +531,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeGenericMethodParameter(int position, DmdMethodBase declaringMethod, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, MakeTypeOptions options = MakeTypeOptions.None);
+		public abstract DmdType MakeGenericMethodParameter(int position, DmdMethodBase declaringMethod, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type
@@ -626,7 +626,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// Options used when creating types
 	/// </summary>
 	[Flags]
-	public enum MakeTypeOptions {
+	public enum DmdMakeTypeOptions {
 		/// <summary>
 		/// No bit is set
 		/// </summary>

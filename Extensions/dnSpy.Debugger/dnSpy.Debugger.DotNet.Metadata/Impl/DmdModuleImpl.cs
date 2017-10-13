@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var resolver = new TypeDefResolver(this, (options & DmdGetTypeOptions.IgnoreCase) != 0);
 			var type = DmdTypeNameParser.Parse(resolver, typeName);
 			if ((object)type != null)
-				return AppDomain.Intern(type, MakeTypeOptions.NoResolve);
+				return AppDomain.Intern(type, DmdMakeTypeOptions.NoResolve);
 
 			if ((options & DmdGetTypeOptions.ThrowOnError) != 0)
 				throw new TypeNotFoundException(typeName);
