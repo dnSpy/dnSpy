@@ -142,14 +142,23 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public override Guid GenerationId { get; }
 
 			readonly DbgRawMetadata dbgRawMetadata;
+#if DEBUG
+			readonly string toStringValue;
+#endif
 
-			public DbgModuleReferenceImpl(DbgRawMetadata dbgRawMetadata, Guid moduleVersionId, Guid generationId) {
+			public DbgModuleReferenceImpl(DbgRawMetadata dbgRawMetadata, Guid moduleVersionId, Guid generationId, DmdModule moduleForToString) {
 				this.dbgRawMetadata = dbgRawMetadata;
 				ModuleVersionId = moduleVersionId;
 				GenerationId = generationId;
+#if DEBUG
+				toStringValue = $"{moduleForToString.Assembly.FullName} [{moduleForToString.FullyQualifiedName}]";
+#endif
 			}
 
 			protected override void CloseCore(DbgDispatcher dispatcher) => dbgRawMetadata.Release();
+#if DEBUG
+			public override string ToString() => toStringValue;
+#endif
 		}
 
 		public override GetModuleReferencesResult GetModuleReferences(DbgRuntime runtime, DbgStackFrame frame) {
@@ -225,7 +234,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 							}
 							else {
 								try {
-									modRef = new DbgModuleReferenceImpl(rawMd, modInfo.Module.ModuleVersionId, Guid.Empty);
+									modRef = new DbgModuleReferenceImpl(rawMd, modInfo.Module.ModuleVersionId, Guid.Empty, modInfo.Module);
 									rtState.ModuleReferences.Add(key, modRef);
 								}
 								catch {
