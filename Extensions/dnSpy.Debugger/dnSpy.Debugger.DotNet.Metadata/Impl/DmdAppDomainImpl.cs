@@ -1064,10 +1064,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			DmdWellKnownType.System_Collections_Generic_IReadOnlyCollection_T,
 		};
 
+		public override object CreateInstance(object context, DmdConstructorInfo ctor, object[] parameters) {
+			if ((object)ctor == null)
+				throw new ArgumentNullException(nameof(ctor));
+			if (ctor.IsStatic)
+				throw new ArgumentException();
+			if (ctor.AppDomain != this)
+				throw new ArgumentException();
+			return runtime.Evaluator.CreateInstance(context, ctor, parameters ?? Array.Empty<object>());
+		}
+
 		public override object Invoke(object context, DmdMethodBase method, object obj, object[] parameters) {
 			if ((object)method == null)
 				throw new ArgumentNullException(nameof(method));
-			if ((method.MemberType == DmdMemberTypes.Constructor || method.IsStatic) != (obj == null))
+			if (method.IsStatic != (obj == null))
 				throw new ArgumentException();
 			if (method.AppDomain != this)
 				throw new ArgumentException();
@@ -1092,42 +1102,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (field.AppDomain != this)
 				throw new ArgumentException();
 			runtime.Evaluator.StoreField(context, field, obj, value);
-		}
-
-		public override void Invoke(object context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback) {
-			if ((object)method == null)
-				throw new ArgumentNullException(nameof(method));
-			if ((method.MemberType == DmdMemberTypes.Constructor || method.IsStatic) != (obj == null))
-				throw new ArgumentException();
-			if (method.AppDomain != this)
-				throw new ArgumentException();
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			runtime.Evaluator.Invoke(context, method, obj, parameters ?? Array.Empty<object>(), callback);
-		}
-
-		public override void LoadField(object context, DmdFieldInfo field, object obj, Action<object> callback) {
-			if ((object)field == null)
-				throw new ArgumentNullException(nameof(field));
-			if (field.IsStatic != (obj == null))
-				throw new ArgumentException();
-			if (field.AppDomain != this)
-				throw new ArgumentException();
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			runtime.Evaluator.LoadField(context, field, obj, callback);
-		}
-
-		public override void StoreField(object context, DmdFieldInfo field, object obj, object value, Action callback) {
-			if ((object)field == null)
-				throw new ArgumentNullException(nameof(field));
-			if (field.IsStatic != (obj == null))
-				throw new ArgumentException();
-			if (field.AppDomain != this)
-				throw new ArgumentException();
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			runtime.Evaluator.StoreField(context, field, obj, value, callback);
 		}
 	}
 }

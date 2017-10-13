@@ -192,7 +192,6 @@
     <Compile Include="Impl\DebuggerThread.cs" />
     <Compile Include="Impl\DmdDispatcherImpl.cs" />
     <Compile Include="Impl\DmdDynamicModuleHelperImpl.cs" />
-    <Compile Include="Impl\DmdEvaluatorImpl.cs" />
     <Compile Include="Impl\DnDebuggerObjectHolder.cs" />
     <Compile Include="Impl\DnModuleIdExtensions.cs" />
     <Compile Include="Impl\DnThreadUtils.cs" />
@@ -209,6 +208,7 @@
     <Compile Include="Impl\Evaluation\DbgDotNetObjectIdImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetRawValueFactory.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetValueImpl.cs" />
+    <Compile Include="Impl\Evaluation\DmdEvaluatorImpl.cs" />
     <Compile Include="Impl\Evaluation\EvalArgumentConverter.cs" />
     <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
     <Compile Include="Impl\ExceptionUtils.cs" />
