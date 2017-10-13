@@ -21,16 +21,22 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Text;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
+using dnSpy.Roslyn.Shared.Text;
+using dnSpy.Roslyn.Shared.Text.Classification;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExpressionEvaluator;
 using Microsoft.CodeAnalysis.ExpressionEvaluator.DnSpy;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Debugger.Clr;
 using Microsoft.VisualStudio.Debugger.Evaluation.ClrCompilation;
 
@@ -241,6 +247,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string errorMessage, DbgDotNetText name) {
 			if (errorMessage != null)
 				return new DbgDotNetCompilationResult(errorMessage);
+			Debug.Assert(compileResult != null);
+			if (compileResult == null)
+				return new DbgDotNetCompilationResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			var customTypeInfoGuid = compileResult.GetCustomTypeInfo(out var payload);
 			DbgDotNetCustomTypeInfo customTypeInfo;
@@ -368,7 +377,35 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			return builder.ToImmutable();
 		}
 
-		//TODO: Syntax highlight the expression
-		protected DbgDotNetText GetExpressionText(string expression) => new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, expression));
+		protected static DbgDotNetText CreateErrorName(string expression) => new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, expression));
+
+		protected DbgDotNetText GetExpressionText(string languageName, CompilationOptions compilationOptions, ParseOptions parseOptions, string expression, string documentText, int documentTextExpressionOffset, IEnumerable<MetadataReference> metadataReferences, CancellationToken cancellationToken) {
+			using (var workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices)) {
+				var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "P", Guid.NewGuid().ToString(), languageName,
+					compilationOptions: compilationOptions,
+					parseOptions: parseOptions,
+					metadataReferences: metadataReferences);
+				workspace.AddProject(projectInfo);
+
+				var doc = workspace.AddDocument(projectInfo.Id, "A", SourceText.From(documentText));
+				var syntaxRoot = doc.GetSyntaxRootAsync().GetAwaiter().GetResult();
+				var semanticModel = doc.GetSemanticModelAsync().GetAwaiter().GetResult();
+				var classifier = new RoslynClassifier(syntaxRoot, semanticModel, workspace, RoslynClassificationTypes2.Default, null, cancellationToken);
+				var textSpan = new Microsoft.CodeAnalysis.Text.TextSpan(documentTextExpressionOffset, expression.Length);
+
+				int pos = textSpan.Start;
+				var output = ValueNodes.ObjectCache.AllocDotNetTextOutput();
+				//TODO: This fails to syntax highlight private members, eg. list._size
+				foreach (var info in classifier.GetColors(textSpan)) {
+					if (pos < info.Span.Start)
+						output.Write(BoxedTextColor.Text, expression.Substring(pos - textSpan.Start, info.Span.Start - pos));
+					output.Write(info.Color, expression.Substring(info.Span.Start - textSpan.Start, info.Span.Length));
+					pos = info.Span.End;
+				}
+				if (pos < textSpan.End)
+					output.Write(BoxedTextColor.Text, expression.Substring(pos - textSpan.Start, textSpan.End - pos));
+				return ValueNodes.ObjectCache.FreeAndToText(ref output);
+			}
+		}
 	}
 }

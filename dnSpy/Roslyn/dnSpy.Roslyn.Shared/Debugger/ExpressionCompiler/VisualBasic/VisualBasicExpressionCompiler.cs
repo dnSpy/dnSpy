@@ -27,8 +27,10 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExpressionEvaluator;
 using Microsoft.CodeAnalysis.ExpressionEvaluator.DnSpy;
+using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.CodeAnalysis.VisualBasic.ExpressionEvaluator;
 using Microsoft.VisualStudio.Debugger.Evaluation;
 
@@ -85,7 +87,38 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.VisualBasic {
 			if ((options & DbgEvaluationOptions.Expression) != 0)
 				compilationFlags |= DkmEvaluationFlags.TreatAsExpression;
 			var compileResult = evalCtx.CompileExpression(expression, compilationFlags, CreateAliases(aliases), out var resultProperties, out var errorMessage);
-			return CreateCompilationResult(expression, compileResult, resultProperties, errorMessage, GetExpressionText(expression));
+			var name = compileResult == null || errorMessage != null ? CreateErrorName(expression) :
+				GetExpressionText(state.MetadataContext.EvaluationContext, state.MetadataContext.Compilation, expression, cancellationToken);
+			return CreateCompilationResult(expression, compileResult, resultProperties, errorMessage, name);
+		}
+
+		DbgDotNetText GetExpressionText(EvaluationContext evaluationContext, VisualBasicCompilation compilation, string expression, CancellationToken cancellationToken) {
+			var (exprSource, exprOffset) = CreateExpressionSource(evaluationContext, expression);
+			return GetExpressionText(LanguageNames.VisualBasic, visualBasicCompilationOptions, visualBasicParseOptions, expression, exprSource, exprOffset, compilation.References, cancellationToken);
+		}
+		static readonly VisualBasicCompilationOptions visualBasicCompilationOptions = new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+		static readonly VisualBasicParseOptions visualBasicParseOptions = new VisualBasicParseOptions(LanguageVersion.Latest);
+
+		(string exprSource, int exprOffset) CreateExpressionSource(EvaluationContext evaluationContext, string expression) {
+			var sb = Formatters.ObjectCache.AllocStringBuilder();
+
+			evaluationContext.WriteImports(sb);
+			sb.AppendLine(@"Public Class __C__L__A__S__S__");
+			sb.Append(@"Shared Sub __M__E__T__H__O__D__(");
+			evaluationContext.WriteParameters(sb);
+			sb.AppendLine(")");
+			evaluationContext.WriteLocals(sb);
+			// Some expressions must be assigned to a variable or we won't get colorized text, eg.
+			//		"1234".Length
+			//		New System.Collections.Generic.List(Of Integer)()
+			sb.Append("Dim __L_O_C_A_L__ = ");
+			int exprOffset = sb.Length;
+			sb.AppendLine(expression);
+			sb.AppendLine("End Sub");
+			sb.AppendLine("End Class");
+
+			var exprSource = Formatters.ObjectCache.FreeAndToString(ref sb);
+			return (exprSource, exprOffset);
 		}
 	}
 }
