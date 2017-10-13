@@ -156,7 +156,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		protected abstract void FormatPropertyName(ITextColorWriter output, DmdPropertyInfo property);
 		public abstract void FormatArrayName(ITextColorWriter output, int index);
 		public abstract void FormatArrayName(ITextColorWriter output, int[] indexes);
-		protected abstract string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression);
+		public abstract string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression);
 
 		internal void FormatTypeName2(ITextColorWriter output, DmdType type) => FormatTypeName(output, type);
 
@@ -526,7 +526,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			//TODO: non-void and non-null pointers (derefence and show members)
 
 			if ((object)state.EnumerableType != null && !value.IsNull)
-				providers.Add(new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, state.TypeExpression, evalOptions));
+				providers.Add(new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, state.TypeExpression, expression, evalOptions));
 		}
 		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_RawView));
 

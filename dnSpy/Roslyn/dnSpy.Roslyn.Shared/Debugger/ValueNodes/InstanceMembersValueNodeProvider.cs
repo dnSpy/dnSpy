@@ -43,6 +43,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 
 		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
-			CreateValueNode(context, frame, addParens, slotType, value, index, options, cancellationToken);
+			CreateValueNode(context, frame, addParens, slotType, value, index, options, Expression, cancellationToken);
 	}
 }

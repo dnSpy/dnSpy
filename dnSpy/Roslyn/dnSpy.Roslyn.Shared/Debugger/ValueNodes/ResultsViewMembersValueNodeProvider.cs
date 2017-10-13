@@ -41,13 +41,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
 		readonly DmdType enumerableType;
 		readonly DbgDotNetValue instanceValue;
+		readonly string valueExpression;
+		string resultsViewProxyExpression;
 		DbgDotNetValue getResultsViewValue;
 
-		public ResultsViewMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DmdType enumerableType, DbgDotNetValue instanceValue, string expression, DbgValueNodeEvaluationOptions evalOptions)
-			: base(valueNodeFactory, resultsViewName, expression + ", results", default, evalOptions) {
+		public ResultsViewMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DmdType enumerableType, DbgDotNetValue instanceValue, string typeExpression, string valueExpression, DbgValueNodeEvaluationOptions evalOptions)
+			: base(valueNodeFactory, resultsViewName, typeExpression + ", results", default, evalOptions) {
 			this.valueNodeProviderFactory = valueNodeProviderFactory;
 			this.enumerableType = enumerableType;
 			this.instanceValue = instanceValue;
+			this.valueExpression = valueExpression;
+			resultsViewProxyExpression = string.Empty;
 		}
 
 		sealed class ForceLoadAssemblyState {
@@ -75,6 +79,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (proxyTypeResult.HasError)
 				return proxyTypeResult.ErrorMessage;
 
+			resultsViewProxyExpression = valueNodeProviderFactory.GetNewObjectExpression(proxyCtor, valueExpression);
 			getResultsViewValue = proxyTypeResult.Value;
 			valueNodeProviderFactory.GetMemberCollections(getResultsViewValue.Type, evalOptions, out membersCollection, out _);
 			return null;
@@ -113,7 +118,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 
 		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
-			CreateValueNode(context, frame, false, getResultsViewValue.Type, getResultsViewValue, index, options, cancellationToken);
+			CreateValueNode(context, frame, false, getResultsViewValue.Type, getResultsViewValue, index, options, resultsViewProxyExpression, cancellationToken);
 
 		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgDotNetValueResult valueResult) {
 			if (!valueResult.ValueIsException)
