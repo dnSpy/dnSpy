@@ -466,6 +466,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The breakpoint expression must be a boolean expression.
+        /// </summary>
+        public static string BreakpointExpressionMustBeABooleanExpression {
+            get {
+                return ResourceManager.GetString("BreakpointExpressionMustBeABooleanExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not create the breakpoint..
         /// </summary>
         public static string BreakpointMessage_CouldNotCreateBreakpoint {

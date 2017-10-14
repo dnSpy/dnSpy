@@ -47,11 +47,13 @@
     <Compile Include="Breakpoints\Code\BreakpointsSerializer.cs" />
     <Compile Include="Breakpoints\Code\CodeBreakpointsListSettings.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\BreakpointBreakChecker.cs" />
+    <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointCheckResult.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointConditionChecker.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointFilterChecker.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointHitCountChecker.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointTraceMessagePrinter.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\DbgFilterExpressionEvaluatorService.cs" />
+    <Compile Include="Breakpoints\Code\CondChecker\ObjectCache.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\ParsedTracepointMessage.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\TracepointMessageCreator.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\TracepointMessageParser.cs" />

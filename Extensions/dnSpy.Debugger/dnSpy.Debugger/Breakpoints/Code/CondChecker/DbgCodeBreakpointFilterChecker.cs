@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgCodeBreakpointFilterChecker {
-		public abstract bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointFilter filter);
+		public abstract DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointFilter filter);
 	}
 
 	[Export(typeof(DbgCodeBreakpointFilterChecker))]
@@ -61,22 +61,23 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 		}
 
-		public override bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointFilter filter) {
-			// If there's no FEE, assume expression matches everything
-			if (!dbgFilterExpressionEvaluatorService.HasExpressionEvaluator)
-				return true;
+		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointFilter filter) {
+			if (!dbgFilterExpressionEvaluatorService.HasExpressionEvaluator) {
+				// There's no need to localize it, the FEE is exported by the Roslyn code
+				return new DbgCodeBreakpointCheckResult("There's no filter expression evaluator");
+			}
 
 			var expr = filter.Filter;
 			Debug.Assert(expr != null);
 			if (expr == null)
-				return false;
+				return new DbgCodeBreakpointCheckResult("Missing expression");
 
 			try {
 				dbgFilterEEVariableProvider.Initialize(boundBreakpoint.Process, thread);
 				var res = dbgFilterExpressionEvaluatorService.Evaluate(expr, dbgFilterEEVariableProvider);
 				if (res.HasError)
-					return false;//TODO: Notify user too, but only at most once per breakpoint
-				return res.Result;
+					return new DbgCodeBreakpointCheckResult(res.Error);
+				return new DbgCodeBreakpointCheckResult(res.Result);
 			}
 			finally {
 				dbgFilterEEVariableProvider.Clear();

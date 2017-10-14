@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Evaluation {
 
 		DbgEvaluationResult CreateResult(DbgEngineEvaluationResult result) {
 			if (result.Error != null)
-				return new DbgEvaluationResult(result.Error, result.Flags);
+				return new DbgEvaluationResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error), result.Flags);
 			var runtime = result.Thread.Runtime;
 			try {
 				var value = new DbgValueImpl(runtime, result.Value);
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		DbgEEAssignmentResult CreateResult(DbgEngineEEAssignmentResult result) => new DbgEEAssignmentResult(result.Flags, result.Error);
+		DbgEEAssignmentResult CreateResult(DbgEngineEEAssignmentResult result) => new DbgEEAssignmentResult(result.Flags, PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
 
 		public override DbgEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			if (context == null)

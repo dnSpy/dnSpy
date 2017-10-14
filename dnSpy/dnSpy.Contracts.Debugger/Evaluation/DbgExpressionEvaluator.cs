@@ -18,8 +18,6 @@
 */
 
 using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 

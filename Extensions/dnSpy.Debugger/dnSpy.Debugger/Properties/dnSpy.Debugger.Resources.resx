@@ -1929,4 +1929,7 @@ Are you sure you want to expand it?</value>
   <data name="StatusBar_BreakpointHit" xml:space="preserve">
     <value>Breakpoint</value>
   </data>
+  <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
+    <value>The breakpoint expression must be a boolean expression</value>
+  </data>
 </root>

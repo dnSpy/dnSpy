@@ -63,23 +63,37 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			if (!bp.RaiseHitCheck(boundBreakpoint, thread))
 				return false;
 
-			// Don't reorder these checks. This seems to be the order VS' debugger checks everything:
-			//		condition && hitCount && filter
+			DbgCodeBreakpointCheckResult checkRes;
+
+			if (settings.Filter is DbgCodeBreakpointFilter filter) {
+				checkRes = dbgCodeBreakpointFilterChecker.Value.ShouldBreak(boundBreakpoint, thread, filter);
+				if (checkRes.ErrorMessage != null) {
+					thread.Process.DbgManager.ShowError(checkRes.ErrorMessage);
+					return true;
+				}
+				if (!checkRes.ShouldBreak)
+					return false;
+			}
 
 			if (settings.Condition is DbgCodeBreakpointCondition condition) {
-				if (!dbgCodeBreakpointConditionChecker.Value.ShouldBreak(boundBreakpoint, thread, condition))
+				checkRes = dbgCodeBreakpointConditionChecker.Value.ShouldBreak(boundBreakpoint, thread, condition);
+				if (checkRes.ErrorMessage != null) {
+					thread.Process.DbgManager.ShowError(checkRes.ErrorMessage);
+					return true;
+				}
+				if (!checkRes.ShouldBreak)
 					return false;
 			}
 
 			// This counts as a hit, even if there's no 'hit count' option
 			int currentHitCount = dbgCodeBreakpointHitCountService.Value.Hit_DbgThread(boundBreakpoint.Breakpoint);
 			if (settings.HitCount is DbgCodeBreakpointHitCount hitCount) {
-				if (!dbgCodeBreakpointHitCountChecker.Value.ShouldBreak(boundBreakpoint, thread, hitCount, currentHitCount))
-					return false;
-			}
-
-			if (settings.Filter is DbgCodeBreakpointFilter filter) {
-				if (!dbgCodeBreakpointFilterChecker.Value.ShouldBreak(boundBreakpoint, thread, filter))
+				checkRes = dbgCodeBreakpointHitCountChecker.Value.ShouldBreak(boundBreakpoint, thread, hitCount, currentHitCount);
+				if (checkRes.ErrorMessage != null) {
+					thread.Process.DbgManager.ShowError(checkRes.ErrorMessage);
+					return true;
+				}
+				if (!checkRes.ShouldBreak)
 					return false;
 			}
 

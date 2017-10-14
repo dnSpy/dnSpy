@@ -24,27 +24,27 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgCodeBreakpointHitCountChecker {
-		public abstract bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointHitCount hitCount, int currentHitCount);
+		public abstract DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointHitCount hitCount, int currentHitCount);
 	}
 
 	[Export(typeof(DbgCodeBreakpointHitCountChecker))]
 	sealed class DbgCodeBreakpointHitCountCheckerImpl : DbgCodeBreakpointHitCountChecker {
-		public override bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointHitCount hitCount, int currentHitCount) {
+		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointHitCount hitCount, int currentHitCount) {
 			switch (hitCount.Kind) {
 			case DbgCodeBreakpointHitCountKind.Equals:
-				return currentHitCount == hitCount.Count;
+				return new DbgCodeBreakpointCheckResult(currentHitCount == hitCount.Count);
 
 			case DbgCodeBreakpointHitCountKind.MultipleOf:
 				if (hitCount.Count <= 0)
-					return false;
-				return (currentHitCount % hitCount.Count) == 0;
+					return new DbgCodeBreakpointCheckResult($"Invalid hit count value: {hitCount.Count}");
+				return new DbgCodeBreakpointCheckResult((currentHitCount % hitCount.Count) == 0);
 
 			case DbgCodeBreakpointHitCountKind.GreaterThanOrEquals:
-				return currentHitCount >= hitCount.Count;
+				return new DbgCodeBreakpointCheckResult(currentHitCount >= hitCount.Count);
 
 			default:
 				Debug.Fail($"Unknown hit count kind: {hitCount.Kind}");
-				return false;
+				return new DbgCodeBreakpointCheckResult($"Unknown hit count kind: {hitCount.Kind}");
 			}
 		}
 	}
