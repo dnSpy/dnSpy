@@ -394,7 +394,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				var textSpan = new Microsoft.CodeAnalysis.Text.TextSpan(documentTextExpressionOffset, expression.Length);
 
 				int pos = textSpan.Start;
-				var output = ValueNodes.ObjectCache.AllocDotNetTextOutput();
+				var output = ObjectCache.AllocDotNetTextOutput();
 				//TODO: This fails to syntax highlight private members, eg. list._size
 				foreach (var info in classifier.GetColors(textSpan)) {
 					if (pos < info.Span.Start)
@@ -404,7 +404,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				}
 				if (pos < textSpan.End)
 					output.Write(BoxedTextColor.Text, expression.Substring(pos - textSpan.Start, textSpan.End - pos));
-				return ValueNodes.ObjectCache.FreeAndToText(ref output);
+				return ObjectCache.FreeAndToText(ref output);
 			}
 		}
 	}

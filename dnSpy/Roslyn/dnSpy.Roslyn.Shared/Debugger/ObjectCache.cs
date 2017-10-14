@@ -21,9 +21,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
+namespace dnSpy.Roslyn.Shared.Debugger {
 	static class ObjectCache {
 		const int MAX_STRINGBUILDER_CAPACITY = 1024;
 		static StringBuilder stringBuilder;
@@ -56,6 +57,19 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		public static void FreeFieldInfoList2(ref List<DmdFieldInfo> list) {
 			list.Clear();
 			fieldInfoList2 = list;
+		}
+
+		static DbgDotNetTextOutput dotNetTextOutput;
+		public static DbgDotNetTextOutput AllocDotNetTextOutput() => Interlocked.Exchange(ref dotNetTextOutput, null) ?? new DbgDotNetTextOutput();
+		public static void Free(ref DbgDotNetTextOutput output) {
+			output.Clear();
+			dotNetTextOutput = output;
+			output = null;
+		}
+		public static DbgDotNetText FreeAndToText(ref DbgDotNetTextOutput output) {
+			var res = output.CreateAndReset();
+			Free(ref output);
+			return res;
 		}
 	}
 }

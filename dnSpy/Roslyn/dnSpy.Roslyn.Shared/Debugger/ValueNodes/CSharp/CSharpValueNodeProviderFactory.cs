@@ -99,7 +99,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 		}
 
 		public override string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression) {
-			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 			var output = new StringBuilderTextColorOutput(sb);
 			output.Write(BoxedTextColor.Keyword, "new");
 			output.Write(BoxedTextColor.Text, " ");
@@ -107,7 +107,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 			output.Write(BoxedTextColor.Punctuation, "(");
 			output.Write(BoxedTextColor.Text, argumentExpression);
 			output.Write(BoxedTextColor.Punctuation, ")");
-			return Formatters.ObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 	}
 }

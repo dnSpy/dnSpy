@@ -41,10 +41,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 
 		string GetExpression(DmdType declaringType) {
-			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 			var output = new StringBuilderTextColorOutput(sb);
 			valueNodeProviderFactory.FormatTypeName2(output, declaringType);
-			return Formatters.ObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 
 		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {

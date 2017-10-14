@@ -113,7 +113,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 		static readonly CSharpParseOptions csharpParseOptions = new CSharpParseOptions(LanguageVersion.Latest);
 
 		(string exprSource, int exprOffset) CreateExpressionSource(EvaluationContext evaluationContext, string expression) {
-			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 
 			evaluationContext.WriteImports(sb);
 			sb.Append(@"static class __C__L__A__S__S__ {");
@@ -127,7 +127,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 			sb.Append('}');
 			sb.Append('}');
 
-			var exprSource = Formatters.ObjectCache.FreeAndToString(ref sb);
+			var exprSource = ObjectCache.FreeAndToString(ref sb);
 			return (exprSource, exprOffset);
 		}
 	}

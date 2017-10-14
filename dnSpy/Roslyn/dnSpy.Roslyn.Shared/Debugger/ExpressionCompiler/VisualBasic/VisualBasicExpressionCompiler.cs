@@ -100,7 +100,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.VisualBasic {
 		static readonly VisualBasicParseOptions visualBasicParseOptions = new VisualBasicParseOptions(LanguageVersion.Latest);
 
 		(string exprSource, int exprOffset) CreateExpressionSource(EvaluationContext evaluationContext, string expression) {
-			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 
 			evaluationContext.WriteImports(sb);
 			sb.AppendLine(@"Public Class __C__L__A__S__S__");
@@ -117,7 +117,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.VisualBasic {
 			sb.AppendLine("End Sub");
 			sb.AppendLine("End Class");
 
-			var exprSource = Formatters.ObjectCache.FreeAndToString(ref sb);
+			var exprSource = ObjectCache.FreeAndToString(ref sb);
 			return (exprSource, exprOffset);
 		}
 	}

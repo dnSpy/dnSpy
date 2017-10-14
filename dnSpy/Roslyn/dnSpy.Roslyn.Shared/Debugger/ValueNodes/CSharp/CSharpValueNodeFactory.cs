@@ -47,38 +47,38 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 		}
 
 		public override string GetFieldExpression(string baseExpression, string name, DmdType castType, bool addParens) {
-			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
 			AddParens(sb, baseExpression, addParens);
 			AddCastEnd(sb, castType);
 			sb.Append('.');
 			sb.Append(name);
-			return Formatters.ObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 
 		public override string GetPropertyExpression(string baseExpression, string name, DmdType castType, bool addParens) {
-			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
 			AddParens(sb, baseExpression, addParens);
 			AddCastEnd(sb, castType);
 			sb.Append('.');
 			sb.Append(name);
-			return Formatters.ObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 
 		public override string GetExpression(string baseExpression, int index, DmdType castType, bool addParens) {
-			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
 			AddParens(sb, baseExpression, addParens);
 			AddCastEnd(sb, castType);
 			sb.Append('[');
 			sb.Append(index.ToString());
 			sb.Append(']');
-			return Formatters.ObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 
 		public override string GetExpression(string baseExpression, int[] indexes, DmdType castType, bool addParens) {
-			var sb = Formatters.ObjectCache.AllocStringBuilder();
+			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
 			AddParens(sb, baseExpression, addParens);
 			AddCastEnd(sb, castType);
@@ -89,7 +89,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 				sb.Append(indexes[i].ToString());
 			}
 			sb.Append(']');
-			return Formatters.ObjectCache.FreeAndToString(ref sb);
+			return ObjectCache.FreeAndToString(ref sb);
 		}
 
 		public override string EscapeIdentifier(string identifier) => Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(identifier);
