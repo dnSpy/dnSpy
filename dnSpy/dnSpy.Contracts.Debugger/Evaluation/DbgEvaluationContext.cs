@@ -53,5 +53,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Context options
 		/// </summary>
 		public abstract DbgEvaluationContextOptions Options { get; }
+
+		/// <summary>
+		/// Closes this instance
+		/// </summary>
+		public void Close() => Process.DbgManager.Close(this);
 	}
 }

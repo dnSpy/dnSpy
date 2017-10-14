@@ -214,6 +214,12 @@ namespace dnSpy.Contracts.Debugger {
 		public void WriteMessage(string message) => WriteMessage(PredefinedDbgManagerMessageKinds.Output, message);
 
 		/// <summary>
+		/// Shows an error message and returns immediately
+		/// </summary>
+		/// <param name="errorMessage">Error message</param>
+		public void ShowError(string errorMessage) => WriteMessage(PredefinedDbgManagerMessageKinds.ErrorUser, errorMessage);
+
+		/// <summary>
 		/// Writes a message
 		/// </summary>
 		/// <param name="messageKind">Message kind, see <see cref="PredefinedDbgManagerMessageKinds"/></param>
@@ -233,7 +239,12 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Output window
 		/// </summary>
-		public static string Output = nameof(Output);
+		public const string Output = nameof(Output);
+
+		/// <summary>
+		/// An error message that should be shown to the user
+		/// </summary>
+		public const string ErrorUser = nameof(ErrorUser);
 	}
 
 	/// <summary>

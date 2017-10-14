@@ -298,6 +298,15 @@ namespace dnSpy.Debugger.DbgUI {
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
 			dbgManager.Message += DbgManager_Message;
+			dbgManager.DbgManagerMessage += DbgManager_DbgManagerMessage;
+		}
+
+		void DbgManager_DbgManagerMessage(object sender, DbgManagerMessageEventArgs e) {
+			switch (e.MessageKind) {
+			case PredefinedDbgManagerMessageKinds.ErrorUser:
+				UI(() => ShowError_UI(e.Message));
+				break;
+			}
 		}
 
 		void DbgManager_Message(object sender, DbgMessageEventArgs e) {

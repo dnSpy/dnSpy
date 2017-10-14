@@ -19,6 +19,7 @@
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Steppers;
@@ -110,6 +111,24 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <returns></returns>
 		public abstract DbgStackWalker CreateStackWalker();
+
+		/// <summary>
+		/// Gets the top stack frame or null if there's none
+		/// </summary>
+		/// <returns></returns>
+		public DbgStackFrame GetTopStackFrame() {
+			DbgStackWalker stackWalker = null;
+			try {
+				stackWalker = CreateStackWalker();
+				var frames = stackWalker.GetNextStackFrames(1);
+				Debug.Assert(frames.Length <= 1);
+				return frames.Length == 0 ? null : frames[0];
+			}
+			finally {
+				if (stackWalker != null)
+					Process.DbgManager.Close(stackWalker);
+			}
+		}
 
 		/// <summary>
 		/// Creates a stepper.

@@ -508,8 +508,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return false;
 			}
 
-			{
-				var inst = GetGenericArguments();
+			var inst = GetGenericArguments();
+			if (inst.Count > 0) {
 				var targetInst = target.GetGenericArguments();
 				var targetInstGenParams = target.GetGenericTypeDefinition().GetGenericArguments();
 
