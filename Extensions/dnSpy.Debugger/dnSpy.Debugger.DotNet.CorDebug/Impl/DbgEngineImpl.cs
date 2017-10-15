@@ -359,7 +359,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 							break;
 
 						case DebuggerPauseReason.Eval:
-							SendMessage(new DbgMessageBreak(TryGetThread(debuggerState.Thread), GetMessageFlags()));
+							// Don't send a message, that will confuse DbgManager. It thinks we're running or paused.
 							break;
 
 						case DebuggerPauseReason.DebugEventBreakpoint:

@@ -220,7 +220,6 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			if (state.Language != language || state.Condition != condition) {
 				state.Language = language;
 				state.Condition = condition;
-				state.Context?.Close();
 				state.Context = language.CreateContext(frame, EvaluationConstants.DefaultFuncEvalTimeout, DbgEvaluationContextOptions.None, cancellationToken);
 			}
 			return state;
