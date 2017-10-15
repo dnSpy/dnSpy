@@ -179,10 +179,30 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				switch (condition.Kind) {
 				case DbgCodeBreakpointConditionKind.IsTrue:
-					if (value.ValueType == DbgSimpleValueType.Boolean) {
-						var obj = value.RawValue;
-						if (obj is bool)
-							return new DbgCodeBreakpointCheckResult((bool)obj);
+					switch (value.ValueType) {
+					case DbgSimpleValueType.Boolean:	return new DbgCodeBreakpointCheckResult((bool)value.RawValue);
+					case DbgSimpleValueType.Char1:		return new DbgCodeBreakpointCheckResult((byte)value.RawValue != 0);
+					case DbgSimpleValueType.CharUtf16:	return new DbgCodeBreakpointCheckResult((char)value.RawValue != 0);
+					case DbgSimpleValueType.Int8:		return new DbgCodeBreakpointCheckResult((sbyte)value.RawValue != 0);
+					case DbgSimpleValueType.Int16:		return new DbgCodeBreakpointCheckResult((short)value.RawValue != 0);
+					case DbgSimpleValueType.Int32:		return new DbgCodeBreakpointCheckResult((int)value.RawValue != 0);
+					case DbgSimpleValueType.Int64:		return new DbgCodeBreakpointCheckResult((long)value.RawValue != 0);
+					case DbgSimpleValueType.UInt8:		return new DbgCodeBreakpointCheckResult((byte)value.RawValue != 0);
+					case DbgSimpleValueType.UInt16:		return new DbgCodeBreakpointCheckResult((ushort)value.RawValue != 0);
+					case DbgSimpleValueType.UInt32:		return new DbgCodeBreakpointCheckResult((uint)value.RawValue != 0);
+					case DbgSimpleValueType.UInt64:		return new DbgCodeBreakpointCheckResult((ulong)value.RawValue != 0);
+					case DbgSimpleValueType.Float32:	return new DbgCodeBreakpointCheckResult((float)value.RawValue != 0);
+					case DbgSimpleValueType.Float64:	return new DbgCodeBreakpointCheckResult((double)value.RawValue != 0);
+					case DbgSimpleValueType.Decimal:	return new DbgCodeBreakpointCheckResult((decimal)value.RawValue != 0);
+					case DbgSimpleValueType.Ptr32:		return new DbgCodeBreakpointCheckResult((uint)value.RawValue != 0);
+					case DbgSimpleValueType.Ptr64:		return new DbgCodeBreakpointCheckResult((ulong)value.RawValue != 0);
+
+					case DbgSimpleValueType.Other:
+					case DbgSimpleValueType.Void:
+					case DbgSimpleValueType.StringUtf16:
+					case DbgSimpleValueType.DateTime:
+					default:
+						break;
 					}
 					return new DbgCodeBreakpointCheckResult(dnSpy_Debugger_Resources.BreakpointExpressionMustBeABooleanExpression);
 
