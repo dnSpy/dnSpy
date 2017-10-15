@@ -170,7 +170,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						var val = converter.Convert(obj, method.DeclaringType, out origType);
 						if (val.ErrorMessage != null)
 							return new DbgDotNetValueResult(val.ErrorMessage);
-						args[w++] = BoxIfNeeded(dnEval, appDomain, createdValues, val.CorValue, method.DeclaringType, method.ReflectedType);
+						args[w++] = BoxIfNeeded(dnEval, appDomain, createdValues, val.CorValue, method.DeclaringType, origType);
 					}
 					for (int i = 0; i < arguments.Length; i++) {
 						var paramType = paramTypes[i];
@@ -295,7 +295,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal string SetParameterValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) =>
 			SetLocalOrParameterValue_CorDebug(context, thread, ilFrame, index, targetType, value, isLocal: false, cancellationToken: cancellationToken);
 
-		internal string SetLocalOrParameterValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, uint index, DmdType targetType, object value, bool isLocal, CancellationToken cancellationToken) {
+		string SetLocalOrParameterValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, uint index, DmdType targetType, object value, bool isLocal, CancellationToken cancellationToken) {
 			debuggerThread.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(context);
