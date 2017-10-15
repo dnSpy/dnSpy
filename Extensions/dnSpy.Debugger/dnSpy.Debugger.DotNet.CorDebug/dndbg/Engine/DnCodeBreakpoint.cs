@@ -73,8 +73,9 @@ namespace dndbg.Engine {
 				bp.FunctionBreakpoint.IsActive = IsEnabled;
 		}
 
-		internal void AddBreakpoint(DnModule module) {
-			var newError = AddBreakpointCore(module);
+		internal void AddBreakpoint(DnModule module) => SetError(AddBreakpointCore(module));
+
+		internal void SetError(DnCodeBreakpointError newError) {
 			if (newError != error) {
 				error = newError;
 				ErrorChanged?.Invoke(this, EventArgs.Empty);

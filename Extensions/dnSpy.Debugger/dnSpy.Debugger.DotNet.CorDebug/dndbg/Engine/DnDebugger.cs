@@ -1011,6 +1011,17 @@ namespace dndbg.Engine {
 			case DebugCallbackKind.BreakpointSetError:
 				var bpseArgs = (BreakpointSetErrorDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, bpseArgs.AppDomain, bpseArgs.Thread);
+				var moduleId = TryGetModuleId(bpseArgs.CorFunctionBreakpoint?.Function?.Module);
+				if (moduleId != null) {
+					foreach (var bp in ilCodeBreakpointList.GetBreakpoints(moduleId.Value)) {
+						if (bp.IsBreakpoint(bpseArgs.Breakpoint))
+							bp.SetError(DnCodeBreakpointError.CouldNotCreateBreakpoint);
+					}
+					foreach (var bp in nativeCodeBreakpointList.GetBreakpoints(moduleId.Value)) {
+						if (bp.IsBreakpoint(bpseArgs.Breakpoint))
+							bp.SetError(DnCodeBreakpointError.CouldNotCreateBreakpoint);
+					}
+				}
 				break;
 
 			case DebugCallbackKind.FunctionRemapOpportunity:

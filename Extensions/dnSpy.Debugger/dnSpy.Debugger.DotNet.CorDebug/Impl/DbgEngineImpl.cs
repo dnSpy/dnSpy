@@ -233,10 +233,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					}
 				}
 				break;
-
-			case DebugCallbackKind.BreakpointSetError:
-				//TODO:
-				break;
 			}
 		}
 
