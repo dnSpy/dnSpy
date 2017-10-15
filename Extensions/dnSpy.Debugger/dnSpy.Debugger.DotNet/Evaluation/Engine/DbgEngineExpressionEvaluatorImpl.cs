@@ -205,7 +205,15 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			var aliases = GetAliases(context, frame, cancellationToken);
 
-			var evalState = stateObj as EvaluateImplExpressionState ?? context.GetOrCreateData<EvaluateImplExpressionState>();
+			EvaluateImplExpressionState evalState;
+			if (stateObj != null) {
+				evalState = stateObj as EvaluateImplExpressionState;
+				Debug.Assert(evalState != null);
+				if (evalState == null)
+					throw new ArgumentException("Invalid expression evaluator state. It must be null or created by " + nameof(DbgExpressionEvaluator) + "." + nameof(DbgExpressionEvaluator.CreateExpressionEvaluatorState) + "()");
+			}
+			else
+				evalState = context.GetOrCreateData<EvaluateImplExpressionState>();
 
 			var keyOptions = options & ~(DbgEvaluationOptions.NoSideEffects | DbgEvaluationOptions.NoFuncEval);
 			var key = new EvaluateImplExpressionState.Key(this, methodDebugInfo.DecompilerOptionsVersion,

@@ -21,11 +21,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	[Export(typeof(IDbgManagerStartListener))]
@@ -56,6 +60,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	[Export(typeof(TracepointMessageCreatorImpl))]
 	sealed class TracepointMessageCreatorImpl : TracepointMessageCreator {
 		readonly object lockObj;
+		readonly DbgLanguageService dbgLanguageService;
+		readonly DebuggerSettings debuggerSettings;
+		readonly DbgEvalFormatterSettings dbgEvalFormatterSettings;
 		readonly TracepointMessageParser tracepointMessageParser;
 		readonly StringBuilderTextColorWriter stringBuilderTextColorWriter;
 		Dictionary<string, ParsedTracepointMessage> toParsedMessage;
@@ -68,9 +75,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		DbgStackFrame[] stackFrames;
 
 		[ImportingConstructor]
-		TracepointMessageCreatorImpl() {
+		TracepointMessageCreatorImpl(DbgLanguageService dbgLanguageService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings) {
 			lockObj = new object();
 			output = new StringBuilder();
+			this.dbgLanguageService = dbgLanguageService;
+			this.debuggerSettings = debuggerSettings;
+			this.dbgEvalFormatterSettings = dbgEvalFormatterSettings;
 			tracepointMessageParser = new TracepointMessageParser();
 			stringBuilderTextColorWriter = new StringBuilderTextColorWriter();
 			stringBuilderTextColorWriter.SetStringBuilder(output);
@@ -104,11 +114,14 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				this.boundBreakpoint = boundBreakpoint;
 				this.thread = thread;
 				var parsed = GetOrCreate(text);
-				if (parsed.MaxFrames > 0 && thread != null) {
+				int maxFrames = parsed.MaxFrames;
+				if (parsed.Evaluates && maxFrames < 1)
+					maxFrames = 1;
+				if (maxFrames > 0 && thread != null) {
 					stackWalker = thread.CreateStackWalker();
-					stackFrames = stackWalker.GetNextStackFrames(parsed.MaxFrames);
+					stackFrames = stackWalker.GetNextStackFrames(maxFrames);
 				}
-				Write(parsed);
+				Write(parsed, text);
 				return output.ToString();
 			}
 			finally {
@@ -144,7 +157,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			return frames[i];
 		}
 
-		void Write(ParsedTracepointMessage parsed) {
+		void Write(ParsedTracepointMessage parsed, string tracepointMessage) {
 			DbgStackFrame frame;
 			foreach (var part in parsed.Parts) {
 				switch (part.Kind) {
@@ -153,8 +166,17 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					break;
 
 				case TracepointMessageKind.WriteEvaluatedExpression:
-					//TODO:
-					WriteError();
+					frame = TryGetFrame(0);
+					if (frame == null)
+						WriteError();
+					else {
+						var language = dbgLanguageService.GetCurrentLanguage(thread.Runtime.RuntimeKindGuid);
+						var cancellationToken = CancellationToken.None;
+						var state = GetTracepointEvalState(boundBreakpoint, language, frame, tracepointMessage, cancellationToken);
+						var eeState = state.GetExpressionEvaluatorState(part.String);
+						var evalRes = language.ExpressionEvaluator.Evaluate(state.Context, frame, part.String, DbgEvaluationOptions.Expression, eeState, cancellationToken);
+						Write(state.Context, frame, language, evalRes, cancellationToken);
+					}
 					break;
 
 				case TracepointMessageKind.WriteAddress:
@@ -341,6 +363,79 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				pos += part.Length;
 			}
 			Debug.Assert(pos == msg.Length);
+		}
+
+		sealed class TracepointEvalState : IDisposable {
+			public DbgLanguage Language;
+			public string TracepointMessage;
+
+			public DbgEvaluationContext Context {
+				get => context;
+				set {
+					context?.Close();
+					context = value;
+				}
+			}
+			DbgEvaluationContext context;
+
+			public readonly Dictionary<string, object> ExpressionEvaluatorStates = new Dictionary<string, object>(StringComparer.Ordinal);
+
+			public object GetExpressionEvaluatorState(string expression) {
+				if (ExpressionEvaluatorStates.TryGetValue(expression, out var state))
+					return state;
+				state = Language.ExpressionEvaluator.CreateExpressionEvaluatorState();
+				ExpressionEvaluatorStates[expression] = state;
+				return state;
+			}
+
+			public void Dispose() {
+				Language = null;
+				TracepointMessage = null;
+				Context = null;
+				ExpressionEvaluatorStates.Clear();
+			}
+		}
+
+		TracepointEvalState GetTracepointEvalState(DbgBoundCodeBreakpoint boundBreakpoint, DbgLanguage language, DbgStackFrame frame, string tracepointMessage, CancellationToken cancellationToken) {
+			var state = boundBreakpoint.GetOrCreateData<TracepointEvalState>();
+			if (state.Language != language || state.TracepointMessage != tracepointMessage) {
+				state.Language = language;
+				state.TracepointMessage = tracepointMessage;
+				state.Context = language.CreateContext(frame, EvaluationConstants.DefaultFuncEvalTimeout, DbgEvaluationContextOptions.None, cancellationToken);
+				state.ExpressionEvaluatorStates.Clear();
+			}
+			return state;
+		}
+
+		void Write(DbgEvaluationContext context, DbgStackFrame frame, DbgLanguage language, DbgEvaluationResult evalRes, CancellationToken cancellationToken) {
+			if (evalRes.Error != null) {
+				Write("<<<");
+				Write(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(evalRes.Error));
+				Write(">>>");
+			}
+			else {
+				var options = GetValueFormatterOptions(isDisplay: true);
+				const CultureInfo cultureInfo = null;
+				language.ValueFormatter.Format(context, frame, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo, cancellationToken);
+				evalRes.Value.Close();
+			}
+		}
+
+		DbgValueFormatterOptions GetValueFormatterOptions(bool isDisplay) {
+			var options = DbgValueFormatterOptions.FuncEval | DbgValueFormatterOptions.ToString;
+			if (isDisplay)
+				options |= DbgValueFormatterOptions.Display;
+			if (!debuggerSettings.UseHexadecimal)
+				options |= DbgValueFormatterOptions.Decimal;
+			if (debuggerSettings.UseDigitSeparators)
+				options |= DbgValueFormatterOptions.DigitSeparators;
+			if (dbgEvalFormatterSettings.ShowNamespaces)
+				options |= DbgValueFormatterOptions.Namespaces;
+			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)
+				options |= DbgValueFormatterOptions.IntrinsicTypeKeywords;
+			if (dbgEvalFormatterSettings.ShowTokens)
+				options |= DbgValueFormatterOptions.Tokens;
+			return options;
 		}
 	}
 }

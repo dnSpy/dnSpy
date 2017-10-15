@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.Guid != runtimeKindGuid)
+			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
