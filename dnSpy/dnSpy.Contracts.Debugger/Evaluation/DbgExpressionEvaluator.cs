@@ -32,6 +32,12 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
+		/// Creates evaluator state used to cache data that is needed to evaluate an expression
+		/// </summary>
+		/// <returns></returns>
+		public abstract object CreateExpressionEvaluatorState();
+
+		/// <summary>
 		/// Evaluates an expression. It blocks the current thread until the evaluation is complete.
 		/// The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
 		/// </summary>
@@ -39,9 +45,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="frame">Frame</param>
 		/// <param name="expression">Expression to evaluate</param>
 		/// <param name="options">Options</param>
+		/// <param name="state">State created by <see cref="CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="context"/></param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default);
+		public abstract DbgEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Assigns the value of an expression to another expression. It blocks the current thread until the evaluation is complete.

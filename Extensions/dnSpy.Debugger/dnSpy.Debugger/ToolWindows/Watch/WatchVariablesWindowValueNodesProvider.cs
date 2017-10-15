@@ -78,6 +78,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			public string Id { get; }
 			public string Expression { get; set; }
 			public bool ForceEval { get; set; }
+			public object ExpressionEvaluatorState { get; set; }
 
 			public ExpressionInfo(string id, string expression, bool forceEval) {
 				Id = id ?? throw new ArgumentNullException(nameof(id));
@@ -89,6 +90,13 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 		public WatchVariablesWindowValueNodesProviderImpl(string[] savedExpressions, Action<string[]> saveExpressions) {
 			expressions = new List<ExpressionInfo>(savedExpressions.Select(a => new ExpressionInfo(GetNextId(), a, forceEval: false)));
 			this.saveExpressions = saveExpressions ?? throw new ArgumentNullException(nameof(saveExpressions));
+		}
+
+		public override void Initialize(bool enable) => ClearEEState();
+
+		void ClearEEState() {
+			foreach (var info in expressions)
+				info.ExpressionEvaluatorState = null;
 		}
 
 		// The returned id is unique and also sortable (unless it overflows...)
@@ -120,7 +128,9 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 					realEvalOptions = evalOptions | DbgEvaluationOptions.NoSideEffects;
 				Debug.Assert(((realEvalOptions & DbgEvaluationOptions.NoFuncEval) != 0) == ((realNodeEvalOptions & DbgValueNodeEvaluationOptions.NoFuncEval) != 0));
 				info.ForceEval = false;
-				infos[i] = new DbgExpressionEvaluationInfo(info.Expression, realNodeEvalOptions, realEvalOptions);
+				if (info.ExpressionEvaluatorState == null)
+					info.ExpressionEvaluatorState = language.ExpressionEvaluator.CreateExpressionEvaluatorState();
+				infos[i] = new DbgExpressionEvaluationInfo(info.Expression, realNodeEvalOptions, realEvalOptions, info.ExpressionEvaluatorState);
 			}
 
 			var compRes = language.ValueNodeFactory.Create(context, frame, infos);

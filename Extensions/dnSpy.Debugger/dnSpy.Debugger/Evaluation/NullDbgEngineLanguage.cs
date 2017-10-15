@@ -62,7 +62,8 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class NullDbgEngineExpressionEvaluator : DbgEngineExpressionEvaluator {
 		// No need to localize it, an EE should always be available
 		public const string ERROR = "No expression evaluator is available for this runtime";
-		public override DbgEngineEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new DbgEngineEvaluationResult(ERROR);
+		public override object CreateExpressionEvaluatorState() => null;
+		public override DbgEngineEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken) => new DbgEngineEvaluationResult(ERROR);
 		public override DbgEngineEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new DbgEngineEEAssignmentResult(DbgEEAssignmentResultFlags.CompilerError, ERROR);
 	}
 

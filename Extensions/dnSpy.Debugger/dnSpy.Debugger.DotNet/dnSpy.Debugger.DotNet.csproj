@@ -94,6 +94,7 @@
     <Compile Include="Evaluation\Engine\ExceptionUtils.cs" />
     <Compile Include="Evaluation\Engine\ILValues.cs" />
     <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
+    <Compile Include="Evaluation\Engine\MethodDebugScopeUtils.cs" />
     <Compile Include="Evaluation\Engine\ObjectCache.cs" />
     <Compile Include="Evaluation\Engine\StateWithKey.cs" />
     <Compile Include="Evaluation\Engine\SyntheticValues.cs" />

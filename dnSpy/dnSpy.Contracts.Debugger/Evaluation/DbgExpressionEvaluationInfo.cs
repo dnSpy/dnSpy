@@ -40,15 +40,22 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public DbgEvaluationOptions Options { get; }
 
 		/// <summary>
+		/// Expression evaluator state or null, see <see cref="DbgExpressionEvaluator.CreateExpressionEvaluatorState"/>
+		/// </summary>
+		public object ExpressionEvaluatorState { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="expression">Expression to evaluate</param>
 		/// <param name="nodeOptions">Value node options</param>
 		/// <param name="options">Evaluation options</param>
-		public DbgExpressionEvaluationInfo(string expression, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options) {
+		/// <param name="expressionEvaluatorState">Expression evaluator state or null, see <see cref="DbgExpressionEvaluator.CreateExpressionEvaluatorState"/></param>
+		public DbgExpressionEvaluationInfo(string expression, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options, object expressionEvaluatorState) {
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
 			NodeOptions = nodeOptions;
 			Options = options;
+			ExpressionEvaluatorState = expressionEvaluatorState;
 		}
 	}
 }

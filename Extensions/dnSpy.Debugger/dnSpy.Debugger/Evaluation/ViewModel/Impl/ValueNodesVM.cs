@@ -166,7 +166,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var frame = valueNodesProvider.TryGetFrame();
 			if (frame == null)
 				return new DbgValueNodeInfo(expression, expression, dnSpy_Debugger_Resources.ErrorEvaluatingExpression, causesSideEffects: false);
-			var res = context.Language.ValueNodeFactory.Create(context, frame, expression, valueNodesContext.ValueNodeEvaluationOptions, valueNodesContext.EvaluationOptions);
+			var res = context.Language.ValueNodeFactory.Create(context, frame, expression, valueNodesContext.ValueNodeEvaluationOptions, valueNodesContext.EvaluationOptions, context.Language.ExpressionEvaluator.CreateExpressionEvaluatorState());
 			return new DbgValueNodeInfo(res.ValueNode, res.CausesSideEffects);
 		}
 

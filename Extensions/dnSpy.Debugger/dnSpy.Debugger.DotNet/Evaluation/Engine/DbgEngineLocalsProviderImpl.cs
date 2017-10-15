@@ -91,21 +91,21 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		sealed class GetNodesState {
 			public struct Key {
 				readonly int decompilerOptionsVersion;
-				readonly DbgValueNodeEvaluationOptions valueNodeEvaluationOptions;
-				readonly DbgLocalsValueNodeEvaluationOptions localsValueNodeEvaluationOptions;
 				// NOTE: DbgModule isn't part of this struct because the state is attached to the module.
 				readonly int methodToken;
 				readonly int methodVersion;
 				readonly DbgModuleReference[] moduleReferences;
 				readonly MethodDebugScope scope;
-				public Key(int decompilerOptionsVersion, DbgValueNodeEvaluationOptions valueNodeEvaluationOptions, DbgLocalsValueNodeEvaluationOptions localsValueNodeEvaluationOptions, int methodToken, int methodVersion, DbgModuleReference[] moduleReferences, MethodDebugScope scope) {
+				readonly DbgValueNodeEvaluationOptions valueNodeEvaluationOptions;
+				readonly DbgLocalsValueNodeEvaluationOptions localsValueNodeEvaluationOptions;
+				public Key(int decompilerOptionsVersion, int methodToken, int methodVersion, DbgModuleReference[] moduleReferences, MethodDebugScope scope, DbgValueNodeEvaluationOptions valueNodeEvaluationOptions, DbgLocalsValueNodeEvaluationOptions localsValueNodeEvaluationOptions) {
 					this.decompilerOptionsVersion = decompilerOptionsVersion;
-					this.valueNodeEvaluationOptions = valueNodeEvaluationOptions;
-					this.localsValueNodeEvaluationOptions = localsValueNodeEvaluationOptions;
 					this.methodToken = methodToken;
 					this.methodVersion = methodVersion;
 					this.moduleReferences = moduleReferences;
 					this.scope = scope;
+					this.valueNodeEvaluationOptions = valueNodeEvaluationOptions;
+					this.localsValueNodeEvaluationOptions = localsValueNodeEvaluationOptions;
 				}
 				public bool Equals(Key other) =>
 					scope == other.scope &&
@@ -140,9 +140,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				// Since we attach this to the module, the module doesn't have to be part of Key
 				var state = StateWithKey<GetNodesState>.GetOrCreate(module, this);
 				var localsOptionsKey = localsOptions & ~(DbgLocalsValueNodeEvaluationOptions.ShowCompilerGeneratedVariables | DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables);
-				var key = new GetNodesState.Key(methodDebugInfo.DecompilerOptionsVersion, options, localsOptionsKey,
+				var key = new GetNodesState.Key(methodDebugInfo.DecompilerOptionsVersion,
 						methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion,
-						refsResult.ModuleReferences, GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset));
+						refsResult.ModuleReferences, MethodDebugScopeUtils.GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset),
+						options, localsOptionsKey);
 
 				var evalOptions = DbgEvaluationOptions.None;
 				if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0)
@@ -266,22 +267,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		DbgEngineLocalsValueNodeInfo CreateInternalErrorNode(DbgEvaluationContext context, DbgStackFrame frame, string errorMessage, CancellationToken cancellationToken) =>
 			new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Error, valueNodeFactory.CreateError(context, frame, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, "<error>")), errorMessage, "<internal.error>", false, cancellationToken));
-
-		static MethodDebugScope GetScope(MethodDebugScope rootScope, uint offset) {
-			var scope = rootScope;
-			for (;;) {
-				bool found = false;
-				foreach (var childScope in scope.Scopes) {
-					if (childScope.Span.Start <= offset && offset < childScope.Span.End) {
-						found = true;
-						scope = childScope;
-						break;
-					}
-				}
-				if (!found)
-					return scope;
-			}
-		}
 
 		static int GetDecompilerGeneratedVariablesCount(MethodDebugScope rootScope, uint offset) {
 			var scope = rootScope;

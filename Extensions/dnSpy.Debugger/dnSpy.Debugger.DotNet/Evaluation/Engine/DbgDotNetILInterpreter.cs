@@ -31,7 +31,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetILInterpreter {
-		public abstract DbgDotNetILInterpreterState CreateState(DbgEvaluationContext context, byte[] assembly);
+		public abstract DbgDotNetILInterpreterState CreateState(byte[] assembly);
 		public abstract DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken);
 	}
 
@@ -102,9 +102,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public DmdType ExpectedType { get; set; }
 		}
 
-		public override DbgDotNetILInterpreterState CreateState(DbgEvaluationContext context, byte[] assembly) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
+		public override DbgDotNetILInterpreterState CreateState(byte[] assembly) {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
 			return new DbgDotNetILInterpreterStateImpl(assembly);

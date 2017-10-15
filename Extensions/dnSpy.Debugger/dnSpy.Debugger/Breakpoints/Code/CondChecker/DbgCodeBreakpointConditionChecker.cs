@@ -64,11 +64,14 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 			DbgEvaluationContext context;
 
+			public object ExpressionEvaluatorState;
+
 			public void Dispose() {
 				Language = null;
 				Condition = default;
 				SavedValue = null;
 				Context = null;
+				ExpressionEvaluatorState = null;
 			}
 		}
 
@@ -172,7 +175,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				var language = dbgLanguageService.GetCurrentLanguage(thread.Runtime.RuntimeKindGuid);
 				var cancellationToken = CancellationToken.None;
 				var state = GetState(boundBreakpoint, language, frame, condition, cancellationToken);
-				var evalRes = language.ExpressionEvaluator.Evaluate(state.Context, frame, expression, DbgEvaluationOptions.Expression, cancellationToken);
+				var evalRes = language.ExpressionEvaluator.Evaluate(state.Context, frame, expression, DbgEvaluationOptions.Expression, state.ExpressionEvaluatorState, cancellationToken);
 				if (evalRes.Error != null)
 					return new DbgCodeBreakpointCheckResult(evalRes.Error);
 				value = evalRes.Value;
@@ -241,6 +244,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				state.Language = language;
 				state.Condition = condition;
 				state.Context = language.CreateContext(frame, EvaluationConstants.DefaultFuncEvalTimeout, DbgEvaluationContextOptions.None, cancellationToken);
+				state.ExpressionEvaluatorState = language.ExpressionEvaluator.CreateExpressionEvaluatorState();
 			}
 			return state;
 		}

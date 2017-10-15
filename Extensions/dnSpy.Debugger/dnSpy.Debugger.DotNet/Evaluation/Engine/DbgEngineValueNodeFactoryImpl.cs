@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				for (int i = 0; i < res.Length; i++) {
 					cancellationToken.ThrowIfCancellationRequested();
 					ref var info = ref expressions[i];
-					var evalRes = expressionEvaluator.EvaluateImpl(context, frame, info.Expression, info.Options, cancellationToken);
+					var evalRes = expressionEvaluator.EvaluateImpl(context, frame, info.Expression, info.Options, info.ExpressionEvaluatorState, cancellationToken);
 					bool causesSideEffects = (evalRes.Flags & DbgEvaluationResultFlags.SideEffects) != 0;
 					DbgEngineValueNode newNode;
 					if (evalRes.Error != null)
