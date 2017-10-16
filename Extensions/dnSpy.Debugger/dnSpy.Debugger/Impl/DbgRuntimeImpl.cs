@@ -80,6 +80,8 @@ namespace dnSpy.Debugger.Impl {
 		readonly object lockObj;
 		readonly DbgManagerImpl owner;
 		readonly List<DbgObject> closeOnContinueList;
+		readonly List<DbgObject> closeOnExitList;
+		readonly List<IDisposable> disposeOnExitList;
 		CurrentObject<DbgThreadImpl> currentThread;
 
 		public DbgRuntimeImpl(DbgManagerImpl owner, DbgProcess process, DbgEngine engine) {
@@ -97,6 +99,8 @@ namespace dnSpy.Debugger.Impl {
 			modules = new List<DbgModule>();
 			threads = new List<DbgThreadImpl>();
 			closeOnContinueList = new List<DbgObject>();
+			closeOnExitList = new List<DbgObject>();
+			disposeOnExitList = new List<IDisposable>();
 			breakInfos = emptyBreakInfos;
 			InternalRuntime = engine.CreateInternalRuntime(this) ?? throw new InvalidOperationException();
 		}
@@ -291,6 +295,30 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
+		public override void CloseOnExit(IEnumerable<DbgObject> objs) {
+			if (objs == null)
+				throw new ArgumentNullException(nameof(objs));
+			lock (lockObj) {
+				if (IsClosed)
+					Process.DbgManager.Close(objs);
+				else
+					closeOnExitList.AddRange(objs);
+			}
+		}
+
+		public override void CloseOnExit(IEnumerable<IDisposable> objs) {
+			if (objs == null)
+				throw new ArgumentNullException(nameof(objs));
+			lock (lockObj) {
+				if (!IsClosed) {
+					disposeOnExitList.AddRange(objs);
+					return;
+				}
+			}
+			foreach (var obj in objs)
+				obj.Dispose();
+		}
+
 		internal void OnBeforeContinuing_DbgThread() {
 			Dispatcher.VerifyAccess();
 			DbgObject[] objsToClose;
@@ -306,16 +334,22 @@ namespace dnSpy.Debugger.Impl {
 			DbgThread[] removedThreads;
 			DbgModule[] removedModules;
 			DbgAppDomain[] removedAppDomains;
-			DbgObject[] objsToClose;
+			DbgObject[] objsToClose1;
+			DbgObject[] objsToClose2;
+			IDisposable[] objsToDispose;
 			lock (lockObj) {
 				removedThreads = threads.ToArray();
 				removedModules = modules.ToArray();
 				removedAppDomains = appDomains.ToArray();
-				objsToClose = closeOnContinueList.ToArray();
+				objsToClose1 = closeOnContinueList.ToArray();
+				objsToClose2 = closeOnExitList.ToArray();
+				objsToDispose = disposeOnExitList.ToArray();
 				threads.Clear();
 				modules.Clear();
 				appDomains.Clear();
 				closeOnContinueList.Clear();
+				closeOnExitList.Clear();
+				disposeOnExitList.Clear();
 			}
 			currentThread = default;
 			if (removedThreads.Length != 0)
@@ -324,7 +358,11 @@ namespace dnSpy.Debugger.Impl {
 				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(removedModules, added: false));
 			if (removedAppDomains.Length != 0)
 				AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(removedAppDomains, added: false));
-			foreach (var obj in objsToClose)
+			foreach (var obj in objsToDispose)
+				obj.Dispose();
+			foreach (var obj in objsToClose2)
+				obj.Close(dispatcher);
+			foreach (var obj in objsToClose1)
 				obj.Close(dispatcher);
 			foreach (var thread in removedThreads)
 				thread.Close(dispatcher);

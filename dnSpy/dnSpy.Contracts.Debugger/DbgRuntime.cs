@@ -107,6 +107,30 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="objs">Objects</param>
 		public abstract void CloseOnContinue(IEnumerable<DbgObject> objs);
+
+		/// <summary>
+		/// Closes <paramref name="obj"/> when the runtime closes
+		/// </summary>
+		/// <param name="obj">Object</param>
+		public void CloseOnExit(DbgObject obj) => CloseOnExit(new[] { obj ?? throw new ArgumentNullException(nameof(obj)) });
+
+		/// <summary>
+		/// Closes <paramref name="objs"/> when the runtime closes
+		/// </summary>
+		/// <param name="objs">Objects</param>
+		public abstract void CloseOnExit(IEnumerable<DbgObject> objs);
+
+		/// <summary>
+		/// Closes <paramref name="obj"/> when the runtime closes
+		/// </summary>
+		/// <param name="obj">Object</param>
+		public void CloseOnExit(IDisposable obj) => CloseOnExit(new[] { obj ?? throw new ArgumentNullException(nameof(obj)) });
+
+		/// <summary>
+		/// Closes <paramref name="objs"/> when the runtime closes
+		/// </summary>
+		/// <param name="objs">Objects</param>
+		public abstract void CloseOnExit(IEnumerable<IDisposable> objs);
 	}
 
 	/// <summary>
