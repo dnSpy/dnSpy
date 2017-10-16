@@ -1926,4 +1926,10 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
     <value>Eine unbehandelte Ausnahme trat in {0} ({1}) auf</value>
   </data>
+  <data name="StatusBar_BreakpointHit" xml:space="preserve">
+    <value>Haltepunkt</value>
+  </data>
+  <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
+    <value>The breakpoint expression must be a boolean expression</value>
+  </data>
 </root>

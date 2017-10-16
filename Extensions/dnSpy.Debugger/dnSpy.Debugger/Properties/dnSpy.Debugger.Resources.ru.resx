@@ -1926,4 +1926,10 @@ HResult: 0x{3:X8}</value>
   <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
     <value>An unhandled exception occurred in {0} ({1})</value>
   </data>
+  <data name="StatusBar_BreakpointHit" xml:space="preserve">
+    <value>Точки останова</value>
+  </data>
+  <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
+    <value>The breakpoint expression must be a boolean expression</value>
+  </data>
 </root>
