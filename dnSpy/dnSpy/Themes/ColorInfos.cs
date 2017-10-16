@@ -2185,6 +2185,7 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.DebugReturnValueName, ""),
 							new BrushColorInfo(ColorType.DebugVariableName, ""),
 							new BrushColorInfo(ColorType.DebugObjectIdName, ""),
+							new BrushColorInfo(ColorType.DebuggerDisplayAttributeEval, ""),
 						},
 					},
 				},

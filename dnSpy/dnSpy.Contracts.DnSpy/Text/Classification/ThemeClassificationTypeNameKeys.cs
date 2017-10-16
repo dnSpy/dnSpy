@@ -1516,5 +1516,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.DebugObjectIdName"/>
 		/// </summary>
 		public const string DebugObjectIdName = nameof(DebugObjectIdName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebuggerDisplayAttributeEval"/>
+		/// </summary>
+		public const string DebuggerDisplayAttributeEval = nameof(DebuggerDisplayAttributeEval);
 	}
 }
