@@ -27,39 +27,43 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger {
 	static class ObjectCache {
 		const int MAX_STRINGBUILDER_CAPACITY = 1024;
-		static StringBuilder stringBuilder;
+		static volatile StringBuilder stringBuilder;
 		public static StringBuilder AllocStringBuilder() => Interlocked.Exchange(ref stringBuilder, null) ?? new StringBuilder();
+		public static void Free(ref StringBuilder sb) {
+			if (sb.Capacity <= MAX_STRINGBUILDER_CAPACITY) {
+				sb.Clear();
+				stringBuilder = sb;
+			}
+			sb = null;
+		}
 		public static string FreeAndToString(ref StringBuilder sb) {
 			var res = sb.ToString();
-			sb.Clear();
-			if (sb.Capacity <= MAX_STRINGBUILDER_CAPACITY)
-				stringBuilder = sb;
-			sb = null;
+			Free(ref sb);
 			return res;
 		}
 
-		static List<DbgDotNetValue> dotNetValueList;
+		static volatile List<DbgDotNetValue> dotNetValueList;
 		public static List<DbgDotNetValue> AllocDotNetValueList() => Interlocked.Exchange(ref dotNetValueList, null) ?? new List<DbgDotNetValue>();
 		public static void Free(ref List<DbgDotNetValue> list) {
 			list.Clear();
 			dotNetValueList = list;
 		}
 
-		static List<DmdFieldInfo> fieldInfoList1;
+		static volatile List<DmdFieldInfo> fieldInfoList1;
 		public static List<DmdFieldInfo> AllocFieldInfoList1() => Interlocked.Exchange(ref fieldInfoList1, null) ?? new List<DmdFieldInfo>();
 		public static void FreeFieldInfoList1(ref List<DmdFieldInfo> list) {
 			list.Clear();
 			fieldInfoList1 = list;
 		}
 
-		static List<DmdFieldInfo> fieldInfoList2;
+		static volatile List<DmdFieldInfo> fieldInfoList2;
 		public static List<DmdFieldInfo> AllocFieldInfoList2() => Interlocked.Exchange(ref fieldInfoList2, null) ?? new List<DmdFieldInfo>();
 		public static void FreeFieldInfoList2(ref List<DmdFieldInfo> list) {
 			list.Clear();
 			fieldInfoList2 = list;
 		}
 
-		static DbgDotNetTextOutput dotNetTextOutput;
+		static volatile DbgDotNetTextOutput dotNetTextOutput;
 		public static DbgDotNetTextOutput AllocDotNetTextOutput() => Interlocked.Exchange(ref dotNetTextOutput, null) ?? new DbgDotNetTextOutput();
 		public static void Free(ref DbgDotNetTextOutput output) {
 			output.Clear();

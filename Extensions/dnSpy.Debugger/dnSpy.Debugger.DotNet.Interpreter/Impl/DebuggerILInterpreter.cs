@@ -215,6 +215,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			var body = state.Body;
 			if (body == null)
 				ThrowInvalidMethodBodyInterpreterException();
+			debuggerRuntime.Initialize(currentMethod, body);
 			var bodyBytes = state.ILBytes;
 			var exceptionHandlingClauses = body.ExceptionHandlingClauses;
 			int methodBodyPos = 0;

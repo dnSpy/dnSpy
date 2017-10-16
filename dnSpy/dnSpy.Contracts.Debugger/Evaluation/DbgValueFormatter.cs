@@ -95,6 +95,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		DigitSeparators				= 0x00000010,
 
 		/// <summary>
+		/// Don't show string quotes, just the raw string value
+		/// </summary>
+		NoStringQuotes				= 0x00000020,
+
+		/// <summary>
 		/// Show namespaces. Only used if <see cref="Display"/> is set
 		/// </summary>
 		Namespaces					= 0x20000000,

@@ -25,8 +25,10 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
+using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
@@ -34,15 +36,17 @@ using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Properties;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	sealed class DbgEngineExpressionEvaluatorImpl : DbgEngineExpressionEvaluator {
+	sealed class DbgEngineExpressionEvaluatorImpl : DbgEngineExpressionEvaluator, IDebuggerDisplayAttributeEvaluator {
 		readonly DbgModuleReferenceProvider dbgModuleReferenceProvider;
 		readonly DbgDotNetExpressionCompiler expressionCompiler;
 		readonly DbgDotNetILInterpreter dnILInterpreter;
+		readonly IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper;
 
-		public DbgEngineExpressionEvaluatorImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, DbgDotNetExpressionCompiler expressionCompiler, DbgDotNetILInterpreter dnILInterpreter) {
+		public DbgEngineExpressionEvaluatorImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, DbgDotNetExpressionCompiler expressionCompiler, DbgDotNetILInterpreter dnILInterpreter, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
 			this.dbgModuleReferenceProvider = dbgModuleReferenceProvider ?? throw new ArgumentNullException(nameof(dbgModuleReferenceProvider));
 			this.expressionCompiler = expressionCompiler ?? throw new ArgumentNullException(nameof(expressionCompiler));
 			this.dnILInterpreter = dnILInterpreter ?? throw new ArgumentNullException(nameof(dnILInterpreter));
+			this.predefinedEvaluationErrorMessagesHelper = predefinedEvaluationErrorMessagesHelper ?? throw new ArgumentNullException(nameof(predefinedEvaluationErrorMessagesHelper));
 		}
 
 		public override DbgEngineEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
@@ -119,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public struct Key : IEquatable<Key> {
 				readonly DbgEngineExpressionEvaluatorImpl ee;
 				readonly int decompilerOptionsVersion;
-				readonly DbgModule memberModule;
+				readonly object memberModule;
 				readonly int memberToken;
 				readonly int memberVersion;
 				readonly DbgModuleReference[] moduleReferences;
@@ -128,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				readonly DbgEvaluationOptions options;
 				readonly string expression;
 
-				public Key(DbgEngineExpressionEvaluatorImpl ee, int decompilerOptionsVersion, DbgModule memberModule, int memberToken, int memberVersion, DbgModuleReference[] moduleReferences, MethodDebugScope scope, DbgDotNetAlias[] aliases, DbgEvaluationOptions options, string expression) {
+				public Key(DbgEngineExpressionEvaluatorImpl ee, int decompilerOptionsVersion, object memberModule, int memberToken, int memberVersion, DbgModuleReference[] moduleReferences, MethodDebugScope scope, DbgDotNetAlias[] aliases, DbgEvaluationOptions options, string expression) {
 					this.ee = ee;
 					this.decompilerOptionsVersion = decompilerOptionsVersion;
 					this.memberModule = memberModule;
@@ -191,20 +195,32 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public EvaluateImplResult? EvaluateImplResult;
 		}
 
-		EvaluateImplResult? GetInterpreterState(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object stateObj, CancellationToken cancellationToken, out EvaluateImplExpressionState evalExprState) {
-			evalExprState = null;
-			var refsResult = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
-			if (refsResult.ErrorMessage != null)
-				return new EvaluateImplResult(refsResult.ErrorMessage, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
-
+		EvaluateImplResult? GetMethodInterpreterState(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object stateObj, CancellationToken cancellationToken, out EvaluateImplExpressionState evalExprState) {
 			var languageDebugInfo = context.TryGetLanguageDebugInfo();
-			if (languageDebugInfo == null)
+			if (languageDebugInfo == null) {
+				evalExprState = null;
 				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+			}
 			var methodDebugInfo = languageDebugInfo.MethodDebugInfo;
 			var module = frame.Module ?? throw new InvalidOperationException();
-
 			var aliases = GetAliases(context, frame, cancellationToken);
+			return GetInterpreterStateCommon(context, frame, null, methodDebugInfo.DecompilerOptionsVersion, module, methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion, MethodDebugScopeUtils.GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset), aliases, options, expression, stateObj, null, out evalExprState, cancellationToken);
+		}
 
+		EvaluateImplResult? GetTypeInterpreterState(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, string expression, DbgEvaluationOptions options, object stateObj, CancellationToken cancellationToken, out EvaluateImplExpressionState evalExprState) {
+			if (type.TypeSignatureKind != DmdTypeSignatureKind.Type) {
+				evalExprState = null;
+				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+			}
+
+			// This is for evaluating DebuggerDisplayAttribute expressions only, so don't use any aliases
+			var aliases = Array.Empty<DbgDotNetAlias>();
+
+			return GetInterpreterStateCommon(context, frame, type.Module, 0, type.Module, type.MetadataToken, 0, null, aliases, options, expression, stateObj, type, out evalExprState, cancellationToken);
+		}
+
+		EvaluateImplResult? GetInterpreterStateCommon(DbgEvaluationContext context, DbgStackFrame frame, DmdModule reflectionModuleOrNull, int decompilerOptionsVersion, object memberModule, int memberToken, int memberVersion, MethodDebugScope scope, DbgDotNetAlias[] aliases, DbgEvaluationOptions options, string expression, object stateObj, DmdType type, out EvaluateImplExpressionState evalExprState, CancellationToken cancellationToken) {
+			evalExprState = null;
 			EvaluateImplExpressionState evalState;
 			if (stateObj != null) {
 				evalState = stateObj as EvaluateImplExpressionState;
@@ -215,13 +231,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			else
 				evalState = context.GetOrCreateData<EvaluateImplExpressionState>();
 
+			var refsResult = reflectionModuleOrNull != null ?
+				dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, reflectionModuleOrNull) :
+				dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
+			if (refsResult.ErrorMessage != null)
+				return new EvaluateImplResult(refsResult.ErrorMessage, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+
 			var keyOptions = options & ~(DbgEvaluationOptions.NoSideEffects | DbgEvaluationOptions.NoFuncEval);
-			var key = new EvaluateImplExpressionState.Key(this, methodDebugInfo.DecompilerOptionsVersion,
-						module, methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion,
-						refsResult.ModuleReferences, MethodDebugScopeUtils.GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset),
-						aliases, keyOptions, expression);
+			var key = new EvaluateImplExpressionState.Key(this, decompilerOptionsVersion, memberModule, memberToken, memberVersion, refsResult.ModuleReferences, scope, aliases, options, expression);
 			if (!evalState.CachedKey.Equals(key)) {
-				evalState.CompilationResult = expressionCompiler.CompileExpression(context, frame, refsResult.ModuleReferences, aliases, expression, keyOptions, cancellationToken);
+				evalState.CompilationResult = (object)type != null ?
+					expressionCompiler.CompileTypeExpression(context, frame, type, refsResult.ModuleReferences, aliases, expression, keyOptions, cancellationToken) :
+					expressionCompiler.CompileExpression(context, frame, refsResult.ModuleReferences, aliases, expression, keyOptions, cancellationToken);
 				evalState.CachedKey = key;
 				evalState.EvaluateImplResult = GetEvaluateImplResult(ref evalState.CompilationResult, expression);
 				if (evalState.EvaluateImplResult == null)
@@ -249,7 +270,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		internal EvaluateImplResult EvaluateImpl(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object stateObj, CancellationToken cancellationToken) {
 			try {
-				var errorRes = GetInterpreterState(context, frame, expression, options, stateObj, cancellationToken, out var state);
+				var errorRes = GetMethodInterpreterState(context, frame, expression, options, stateObj, cancellationToken, out var state);
 				if (errorRes != null)
 					return errorRes.Value;
 
@@ -272,6 +293,72 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		static DbgDotNetText CreateName(string expression) => new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, expression));
+
+		DbgDotNetEvalResult IDebuggerDisplayAttributeEvaluator.Evaluate(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken) {
+			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+			if (dispatcher.CheckAccess())
+				return EvaluateCore(context, frame, obj, expression, options, state, cancellationToken);
+			return Evaluate2(dispatcher, context, frame, obj, expression, options, state, cancellationToken);
+
+			DbgDotNetEvalResult Evaluate2(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, DbgDotNetValue obj2, string expression2, DbgEvaluationOptions options2, object state2, CancellationToken cancellationToken2) =>
+				dispatcher2.InvokeRethrow(() => EvaluateCore(context2, frame2, obj2, expression2, options2, state2, cancellationToken2));
+		}
+
+		DbgDotNetEvalResult EvaluateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken) {
+			var res = EvaluateImpl(context, frame, obj, expression, options, state, cancellationToken);
+			if (res.Error != null)
+				return new DbgDotNetEvalResult(predefinedEvaluationErrorMessagesHelper.GetErrorMessage(res.Error));
+			return new DbgDotNetEvalResult(res.Value);
+		}
+
+		EvaluateImplResult EvaluateImpl(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object stateObj, CancellationToken cancellationToken) {
+			try {
+				var type = obj.Type;
+				if (type.IsGenericType)
+					type = type.GetGenericTypeDefinition();
+				var errorRes = GetTypeInterpreterState(context, frame, type, expression, options, stateObj, cancellationToken, out var state);
+				if (errorRes != null)
+					return errorRes.Value;
+
+				var genericTypeArguments = obj.Type.GetGenericArguments();
+				var genericMethodArguments = Array.Empty<DmdType>();
+
+				Debug.Assert(state.CompilationResult.CompiledExpressions.Length == 1);
+				ref var exprInfo = ref state.CompilationResult.CompiledExpressions[0];
+
+				if ((options & DbgEvaluationOptions.NoSideEffects) != 0 && (exprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0)
+					return new EvaluateImplResult(PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, exprInfo.Name, null, exprInfo.Flags, exprInfo.ImageName, null);
+
+				var argumentsProvider = new TypeArgumentsProvider(obj);
+				var res = dnILInterpreter.Execute(context, frame, genericTypeArguments, genericMethodArguments, argumentsProvider, null, state.ILInterpreterState, exprInfo.TypeName, exprInfo.MethodName, options, out var expectedType, cancellationToken);
+				if (res.HasError)
+					return new EvaluateImplResult(res.ErrorMessage, exprInfo.Name, null, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, expectedType);
+				if (res.ValueIsException)
+					return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, PredefinedDbgValueNodeImageNames.Error, expectedType);
+				return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.Flags, exprInfo.ImageName, expectedType);
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, DbgDotNetEngineValueNodeFactoryExtensions.errorName, null, DbgEvaluationResultFlags.None, PredefinedDbgValueNodeImageNames.Error, null);
+			}
+		}
+
+		sealed class TypeArgumentsProvider : VariablesProvider {
+			readonly DbgDotNetValue argument;
+
+			public TypeArgumentsProvider(DbgDotNetValue argument) => this.argument = argument;
+
+			public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DmdMethodBody body, CancellationToken cancellationToken) { }
+
+			public override DbgDotNetValueResult GetVariable(int index) {
+				if (index == 0)
+					return new DbgDotNetValueResult(argument, valueIsException: false);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			}
+
+			public override string SetVariable(int index, DmdType targetType, object value) => PredefinedEvaluationErrorMessages.InternalDebuggerError;
+			public override bool CanDispose(DbgDotNetValue value) => value != argument;
+			public override void Clear() { }
+		}
 
 		DbgDotNetAlias[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			return Array.Empty<DbgDotNetAlias>();//TODO:

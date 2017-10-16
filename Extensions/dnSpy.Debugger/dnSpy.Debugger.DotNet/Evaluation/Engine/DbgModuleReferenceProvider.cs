@@ -38,6 +38,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		/// <param name="frame">Frame</param>
 		/// <returns></returns>
 		public abstract GetModuleReferencesResult GetModuleReferences(DbgRuntime runtime, DbgStackFrame frame);
+
+		public abstract GetModuleReferencesResult GetModuleReferences(DbgRuntime runtime, DmdModule module);
 	}
 
 	struct GetModuleReferencesResult {
@@ -162,21 +164,24 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override GetModuleReferencesResult GetModuleReferences(DbgRuntime runtime, DbgStackFrame frame) {
-			// Not thread safe since all callers should call it on the correct engine thread
-			runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
-
 			var reflectionModule = frame.Module?.GetReflectionModule();
 			if (reflectionModule == null)
 				return new GetModuleReferencesResult(dnSpy_Debugger_DotNet_Resources.CantEvaluateWhenCurrentFrameIsNative);
+			return GetModuleReferences(runtime, reflectionModule);
+		}
 
-			if (reflectionModule.TryGetData(out ModuleReferencesState state)) {
-				if (CanReuse(reflectionModule.AppDomain, state))
+		public override GetModuleReferencesResult GetModuleReferences(DbgRuntime runtime, DmdModule module) {
+			// Not thread safe since all callers should call it on the correct engine thread
+			runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
+
+			if (module.TryGetData(out ModuleReferencesState state)) {
+				if (CanReuse(module.AppDomain, state))
 					return new GetModuleReferencesResult(state.ModuleReferences);
 			}
 			else
-				state = reflectionModule.GetOrCreateData<ModuleReferencesState>();
+				state = module.GetOrCreateData<ModuleReferencesState>();
 
-			InitializeState(runtime, reflectionModule.Assembly, state);
+			InitializeState(runtime, module.Assembly, state);
 			return new GetModuleReferencesResult(state.ModuleReferences);
 		}
 

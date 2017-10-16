@@ -401,7 +401,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			if (state.Language != language || state.TracepointMessage != tracepointMessage) {
 				state.Language = language;
 				state.TracepointMessage = tracepointMessage;
-				state.Context = language.CreateContext(frame, EvaluationConstants.DefaultFuncEvalTimeout, DbgEvaluationContextOptions.None, cancellationToken);
+				state.Context = language.CreateContext(frame, cancellationToken: cancellationToken);
 				state.ExpressionEvaluatorStates.Clear();
 			}
 			return state;

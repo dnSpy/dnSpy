@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			if (info.frame != null) {
 				//TODO: Show a cancel button if the decompiler takes too long to decompile the method
 				var cancellationToken = CancellationToken.None;
-				evalContextInfo.Context = info.language.CreateContext(info.frame.Runtime, info.frame.Location, EvaluationConstants.DefaultFuncEvalTimeout, DbgEvaluationContextOptions.None, cancellationToken);
+				evalContextInfo.Context = info.language.CreateContext(info.frame, cancellationToken: cancellationToken);
 			}
 			else
 				evalContextInfo.Context = null;

@@ -88,28 +88,33 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgValueNodeFactory ValueNodeFactory { get; }
 
 		/// <summary>
+		/// Default func-eval timeout value
+		/// </summary>
+		public static readonly TimeSpan DefaultFuncEvalTimeout = TimeSpan.FromSeconds(1);
+
+		/// <summary>
 		/// Creates an evaluation context
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
 		/// <param name="location">Location or null</param>
-		/// <param name="funcEvalTimeout">Func-eval timeout (func-eval = calling functions in the debugged process)</param>
 		/// <param name="options">Options</param>
+		/// <param name="funcEvalTimeout">Func-eval timeout (func-eval = calling functions in the debugged process) or default instance to use default timeout value</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options, CancellationToken cancellationToken = default);
+		public abstract DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, DbgEvaluationContextOptions options = DbgEvaluationContextOptions.None, TimeSpan funcEvalTimeout = default, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates an evaluation context
 		/// </summary>
 		/// <param name="frame">Stack frame</param>
-		/// <param name="funcEvalTimeout">Func-eval timeout (func-eval = calling functions in the debugged process)</param>
 		/// <param name="options">Options</param>
+		/// <param name="funcEvalTimeout">Func-eval timeout (func-eval = calling functions in the debugged process) or default instance to use default timeout value</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public DbgEvaluationContext CreateContext(DbgStackFrame frame, TimeSpan funcEvalTimeout, DbgEvaluationContextOptions options, CancellationToken cancellationToken = default) {
+		public DbgEvaluationContext CreateContext(DbgStackFrame frame, DbgEvaluationContextOptions options = DbgEvaluationContextOptions.None, TimeSpan funcEvalTimeout = default, CancellationToken cancellationToken = default) {
 			if (frame == null)
 				throw new ArgumentNullException(nameof(frame));
-			return CreateContext(frame.Runtime, frame.Location, funcEvalTimeout, options, cancellationToken);
+			return CreateContext(frame.Runtime, frame.Location, options, funcEvalTimeout, cancellationToken);
 		}
 	}
 

@@ -90,6 +90,18 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			methodVersion = langDebugInfo.MethodVersion;
 		}
 
+		protected void GetTypeCompilationState<T>(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, out T state, out ImmutableArray<MetadataBlock> metadataBlocks) where T : EvalContextState, new() {
+			state = GetEvalContextState<T>(frame);
+
+			if (state.LastModuleReferences == references && !state.LastMetadataBlocks.IsDefault)
+				metadataBlocks = state.LastMetadataBlocks;
+			else {
+				metadataBlocks = CreateMetadataBlock(references);
+				state.LastModuleReferences = references;
+				state.LastMetadataBlocks = metadataBlocks;
+			}
+		}
+
 		protected GetMethodDebugInfo CreateGetMethodDebugInfo(EvalContextState evalContextState, DbgLanguageDebugInfo langDebugInfo) {
 			if (evalContextState.CompilerGeneratedVariableInfosKey != langDebugInfo.MethodDebugInfo.Method) {
 				evalContextState.CompilerGeneratedVariableInfosKey = langDebugInfo.MethodDebugInfo.Method;

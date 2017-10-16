@@ -33,6 +33,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			new CSharpTypeFormatter(output, options.ToTypeFormatterOptions(), cultureInfo).Format(type, value);
 
 		public override void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrame frame, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
-			new CSharpValueFormatter(output, context, frame, options.ToValueFormatterOptions(), cultureInfo, cancellationToken).Format(value);
+			new CSharpValueFormatter(output, context, frame, this, options.ToValueFormatterOptions(), cultureInfo, cancellationToken).Format(value);
 	}
 }

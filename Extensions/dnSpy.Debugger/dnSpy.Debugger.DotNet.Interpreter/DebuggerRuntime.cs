@@ -32,6 +32,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract int PointerSize { get; }
 
 		/// <summary>
+		/// Called before executing the method
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <param name="body">Method body</param>
+		public abstract void Initialize(DmdMethodBase method, DmdMethodBody body);
+
+		/// <summary>
 		/// Gets an argument value or returns null on failure
 		/// </summary>
 		/// <param name="index">Argument index</param>

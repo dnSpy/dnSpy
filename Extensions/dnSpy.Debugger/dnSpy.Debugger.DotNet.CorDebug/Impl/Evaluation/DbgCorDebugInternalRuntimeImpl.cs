@@ -482,9 +482,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			try {
 				var methodGetType = appDomain.System_Type.GetMethod(nameof(Type.GetType), DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
 				var res = engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false, cancellationToken);
-				typeElementType = res.Value;
 				if (res.HasError || res.ValueIsException)
 					return res;
+				typeElementType = res.Value;
 				if (res.Value.IsNull)
 					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
@@ -558,9 +558,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			try {
 				var methodGetType = appDomain.System_Type.GetMethod(nameof(Type.GetType), DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
 				var res = engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false, cancellationToken);
-				typeElementType = res.Value;
 				if (res.HasError || res.ValueIsException)
 					return res;
+				typeElementType = res.Value;
 				if (res.Value.IsNull)
 					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 

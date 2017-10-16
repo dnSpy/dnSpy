@@ -17,10 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Collections.Generic;
+using System.Threading;
 
-namespace dnSpy.Debugger.Evaluation {
-	static class EvaluationConstants {
-		public static readonly TimeSpan DefaultFuncEvalTimeout = TimeSpan.FromSeconds(1);
+namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
+	static class ListCache<T> {
+		static volatile List<T> cachedList;
+		public static List<T> AllocList() => Interlocked.Exchange(ref cachedList, null) ?? new List<T>();
+		public static T[] FreeAndToArray(ref List<T> list) {
+			var res = list.ToArray();
+			list.Clear();
+			cachedList = list;
+			return res;
+		}
 	}
 }

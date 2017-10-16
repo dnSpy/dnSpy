@@ -32,7 +32,15 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetILInterpreter {
 		public abstract DbgDotNetILInterpreterState CreateState(byte[] assembly);
-		public abstract DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken);
+
+		public DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken) {
+			var frameMethod = frame.Runtime.GetDotNetRuntime().GetFrameMethod(context, frame, cancellationToken) ?? throw new InvalidOperationException();
+			var genericTypeArguments = frameMethod.ReflectedType.GetGenericArguments();
+			var genericMethodArguments = frameMethod.GetGenericArguments();
+			return Execute(context, frame, genericTypeArguments, genericMethodArguments, null, null, state, typeName, methodName, options, out expectedType, cancellationToken);
+		}
+
+		public abstract DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, VariablesProvider argumentsProvider, VariablesProvider localsProvider, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken);
 	}
 
 	abstract class DbgDotNetILInterpreterState {
@@ -109,20 +117,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		//TODO: Use options (prevent func-eval if NoFuncEval is set)
-		public override DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (state == null)
-				throw new ArgumentNullException(nameof(state));
-			if (typeName == null)
-				throw new ArgumentNullException(nameof(typeName));
-			if (methodName == null)
-				throw new ArgumentNullException(nameof(methodName));
-			var stateImpl = state as DbgDotNetILInterpreterStateImpl;
-			if (stateImpl == null)
-				throw new ArgumentException();
+		public override DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, VariablesProvider argumentsProvider, VariablesProvider localsProvider, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken) {
+			var stateImpl = (DbgDotNetILInterpreterStateImpl)state;
 
 			var debuggerRuntime = GetDebuggerRuntime(context.Runtime);
 			debuggerRuntime.Runtime.Dispatcher.VerifyAccess();
@@ -132,9 +128,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new ArgumentException("No AppDomain available");
 
 			var reflectionAssembly = stateImpl.GetOrCreateReflectionAssembly(appDomain);
-			var frameMethod = frame.Runtime.GetDotNetRuntime().GetFrameMethod(context, frame, cancellationToken) ?? throw new InvalidOperationException();
-			var genericTypeArguments = frameMethod.ReflectedType.GetGenericArguments();
-			var genericMethodArguments = frameMethod.GetGenericArguments();
 			var methodState = stateImpl.GetOrCreateMethodInfoState(appDomain, typeName, methodName, genericTypeArguments, genericMethodArguments);
 
 			DbgDotNetValueResult result = default;
@@ -157,7 +150,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				}
 
 				expectedType = methodState.ExpectedType;
-				debuggerRuntime.Initialize(context, frame, cancellationToken);
+				debuggerRuntime.Initialize(context, frame, argumentsProvider, localsProvider, cancellationToken);
 				try {
 					var execResult = stateImpl.ILVM.Execute(debuggerRuntime, ilvmState);
 					var resultValue = debuggerRuntime.GetDotNetValue(execResult);

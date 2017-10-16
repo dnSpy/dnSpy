@@ -34,6 +34,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		readonly ITextColorWriter output;
 		readonly DbgEvaluationContext context;
 		readonly DbgStackFrame frame;
+		readonly LanguageFormatter languageFormatter;
 		readonly ValueFormatterOptions options;
 		readonly CultureInfo cultureInfo;
 		/*readonly*/ CancellationToken cancellationToken;
@@ -58,11 +59,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		bool FuncEval => (options & ValueFormatterOptions.FuncEval) != 0;
 		bool UseToString => (options & ValueFormatterOptions.ToString) != 0;
 		bool DigitSeparators => (options & ValueFormatterOptions.DigitSeparators) != 0;
+		bool NoStringQuotes => (options & ValueFormatterOptions.NoStringQuotes) != 0;
 
-		public VisualBasicValueFormatter(ITextColorWriter output, DbgEvaluationContext context, DbgStackFrame frame, ValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+		public VisualBasicValueFormatter(ITextColorWriter output, DbgEvaluationContext context, DbgStackFrame frame, LanguageFormatter languageFormatter, ValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
 			this.frame = frame ?? throw new ArgumentNullException(nameof(frame));
+			this.languageFormatter = languageFormatter ?? throw new ArgumentNullException(nameof(languageFormatter));
 			this.options = options;
 			this.cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
 			this.cancellationToken = cancellationToken;
@@ -91,7 +94,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 					return;
 				if (KeyValuePairTypeUtils.IsKeyValuePair(type) && TryFormatKeyValuePair(value))
 					return;
-				if (TryFormatWithDebuggerAttributes())
+				if (TryFormatWithDebuggerAttributes(value))
 					return;
 				if (TryFormatToString(value))
 					return;
@@ -196,14 +199,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			}
 		}
 
-		bool TryFormatWithDebuggerAttributes() {
+		bool TryFormatWithDebuggerAttributes(DbgDotNetValue value) {
 			if (!FuncEval)
 				return false;
-			//TODO: If it's derived from System.Type with no debugger attrs, format it as if it had
-			//		[DebuggerDisplay(@"\{Name = {Name} FullName = {FullName}\}")]
-			//TODO: Use debugger attributes if available
-			//		System.Diagnostics.DebuggerDisplayAttribute
-			return false;
+			return new DebuggerDisplayAttributeFormatter(context, frame, languageFormatter, output, options.ToDbgValueFormatterOptions(), cultureInfo, cancellationToken).Format(value);
 		}
 
 		bool TryFormatToString(DbgDotNetValue value) {
@@ -453,6 +452,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		}
 
 		void FormatString(string value) {
+			if (NoStringQuotes) {
+				OutputWrite(value, BoxedTextColor.String);
+				return;
+			}
+
 			if (value == string.Empty) {
 				OutputWrite("\"\"", BoxedTextColor.String);
 				return;

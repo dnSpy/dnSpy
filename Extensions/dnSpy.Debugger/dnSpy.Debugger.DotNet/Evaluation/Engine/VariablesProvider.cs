@@ -17,20 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
-	[Flags]
-	enum ValueFormatterOptions {
-		None						= 0,
-		Display						= 0x00000001,
-		Decimal						= 0x00000002,
-		FuncEval					= 0x00000004,
-		ToString					= 0x00000008,
-		Namespaces					= 0x00000010,
-		IntrinsicTypeKeywords		= 0x00000020,
-		Tokens						= 0x00000040,
-		DigitSeparators				= 0x00000080,
-		NoStringQuotes				= 0x00000100,
+namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+	abstract class VariablesProvider {
+		public abstract void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DmdMethodBody body, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueResult GetVariable(int index);
+		public abstract string SetVariable(int index, DmdType targetType, object value);
+		public abstract bool CanDispose(DbgDotNetValue value);
+		public abstract void Clear();
 	}
 }

@@ -147,7 +147,6 @@
     <Compile Include="Evaluation\DbgValueNodeImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeProviderImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeUtils.cs" />
-    <Compile Include="Evaluation\EvaluationConstants.cs" />
     <Compile Include="Evaluation\NullDbgEngineLanguage.cs" />
     <Compile Include="Evaluation\NullDbgEngineObjectIdFactory.cs" />
     <Compile Include="Evaluation\PredefinedEvaluationErrorMessagesHelper.cs" />

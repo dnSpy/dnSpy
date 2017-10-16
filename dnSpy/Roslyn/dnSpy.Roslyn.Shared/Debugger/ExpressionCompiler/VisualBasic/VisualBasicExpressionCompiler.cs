@@ -27,6 +27,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Debugger.DotNet.Metadata;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExpressionEvaluator;
 using Microsoft.CodeAnalysis.ExpressionEvaluator.DnSpy;
@@ -81,14 +82,23 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.VisualBasic {
 
 			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo);
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, null, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, method.MDToken.ToInt32(), methodVersion, langDebugInfo.ILOffset, localVarSigTok);
-			state.MetadataContext = new VisualBasicMetadataContext(metadataBlocks, evalCtx);
 
+			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, false, cancellationToken);
+		}
+
+		DbgDotNetCompilationResult CompileExpressionCore(DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, VisualBasicEvalContextState state, ImmutableArray<MetadataBlock> metadataBlocks, EvaluationContext evalCtx, bool noName, CancellationToken cancellationToken) {
+			state.MetadataContext = new VisualBasicMetadataContext(metadataBlocks, evalCtx);
 			var compilationFlags = DkmEvaluationFlags.None;
 			if ((options & DbgEvaluationOptions.Expression) != 0)
 				compilationFlags |= DkmEvaluationFlags.TreatAsExpression;
 			var compileResult = evalCtx.CompileExpression(expression, compilationFlags, CreateAliases(aliases), out var resultProperties, out var errorMessage);
-			var name = compileResult == null || errorMessage != null ? CreateErrorName(expression) :
-				GetExpressionText(state.MetadataContext.EvaluationContext, state.MetadataContext.Compilation, expression, cancellationToken);
+			DbgDotNetText name;
+			if (noName)
+				name = DbgDotNetText.Empty;
+			else if (compileResult == null || errorMessage != null)
+				name = CreateErrorName(expression);
+			else
+				name = GetExpressionText(state.MetadataContext.EvaluationContext, state.MetadataContext.Compilation, expression, cancellationToken);
 			return CreateCompilationResult(expression, compileResult, resultProperties, errorMessage, name);
 		}
 
@@ -119,6 +129,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.VisualBasic {
 
 			var exprSource = ObjectCache.FreeAndToString(ref sb);
 			return (exprSource, exprOffset);
+		}
+
+		public override DbgDotNetCompilationResult CompileTypeExpression(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+			GetTypeCompilationState<VisualBasicEvalContextState>(context, frame, references, out var state, out var metadataBlocks);
+			var evalCtx = EvaluationContext.CreateTypeContext(state.MetadataContext, metadataBlocks, type.Module.ModuleVersionId, type.MetadataToken);
+			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, true, cancellationToken);
 		}
 	}
 }

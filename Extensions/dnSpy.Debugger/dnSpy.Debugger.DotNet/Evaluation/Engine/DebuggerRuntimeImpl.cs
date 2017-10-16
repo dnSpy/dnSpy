@@ -44,18 +44,32 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			PointerSize = pointerSize;
 		}
 
+		VariablesProvider DefaultArgumentsProvider => defaultArgumentsProvider ?? (defaultArgumentsProvider = new DefaultArgumentsProviderImpl(runtime));
+		VariablesProvider defaultArgumentsProvider;
+		VariablesProvider DefaultLocalsProvider => defaultLocalsProvider ?? (defaultLocalsProvider = new DefaultLocalsProviderImpl(runtime));
+		VariablesProvider defaultLocalsProvider;
+
+		VariablesProvider argumentsProvider;
+		VariablesProvider localsProvider;
 		DbgEvaluationContext context;
 		DbgStackFrame frame;
 		CancellationToken cancellationToken;
 
-		public void Initialize(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+		public void Initialize(DbgEvaluationContext context, DbgStackFrame frame, VariablesProvider argumentsProvider, VariablesProvider localsProvider, CancellationToken cancellationToken) {
 			Debug.Assert(this.context == null);
 			if (this.context != null)
 				throw new InvalidOperationException();
 			this.context = context;
 			this.frame = frame;
 			this.cancellationToken = cancellationToken;
+			this.argumentsProvider = argumentsProvider ?? DefaultArgumentsProvider;
+			this.localsProvider = localsProvider ?? DefaultLocalsProvider;
 			Debug.Assert(valuesToDispose.Count == 0);
+		}
+
+		public override void Initialize(DmdMethodBase method, DmdMethodBody body) {
+			argumentsProvider.Initialize(context, frame, method, body, cancellationToken);
+			localsProvider.Initialize(context, frame, method, body, cancellationToken);
 		}
 
 		public void Clear(DbgDotNetValue returnValue) {
@@ -63,10 +77,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			frame = null;
 			cancellationToken = default;
 			foreach (var v in valuesToDispose) {
-				if (v != returnValue)
+				if (v != returnValue && argumentsProvider.CanDispose(v) && localsProvider.CanDispose(v))
 					v.Dispose();
 			}
 			valuesToDispose.Clear();
+			argumentsProvider.Clear();
+			localsProvider.Clear();
+			argumentsProvider = null;
+			localsProvider = null;
 		}
 
 		public DbgDotNetValue GetDotNetValue(ILValue value) {
@@ -342,11 +360,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
-		public override ILValue LoadArgument(int index) => CreateILValue(runtime.GetParameterValue(context, frame, (uint)index, cancellationToken));
-		internal DbgDotNetValue LoadArgument2(int index) => RecordValue(runtime.GetParameterValue(context, frame, (uint)index, cancellationToken));
+		public override ILValue LoadArgument(int index) => CreateILValue(argumentsProvider.GetVariable(index));
+		internal DbgDotNetValue LoadArgument2(int index) => RecordValue(argumentsProvider.GetVariable(index));
 
-		public override ILValue LoadLocal(int index) => CreateILValue(runtime.GetLocalValue(context, frame, (uint)index, cancellationToken));
-		internal DbgDotNetValue LoadLocal2(int index) => RecordValue(runtime.GetLocalValue(context, frame, (uint)index, cancellationToken));
+		public override ILValue LoadLocal(int index) => CreateILValue(localsProvider.GetVariable(index));
+		internal DbgDotNetValue LoadLocal2(int index) => RecordValue(localsProvider.GetVariable(index));
 
 		public override ILValue LoadArgumentAddress(int index, DmdType type) => new ArgumentAddress(this, type, index);
 		public override ILValue LoadLocalAddress(int index, DmdType type) => new LocalAddress(this, type, index);
@@ -354,7 +372,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override bool StoreArgument(int index, DmdType type, ILValue value) => StoreArgument2(index, type, GetDebuggerValue(value, type));
 
 		internal bool StoreArgument2(int index, DmdType targetType, object value) {
-			var error = runtime.SetParameterValue(context, frame, (uint)index, targetType, value, cancellationToken);
+			var error = argumentsProvider.SetVariable(index, targetType, value);
 			if (error != null)
 				throw new InterpreterMessageException(error);
 			return true;
@@ -363,7 +381,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override bool StoreLocal(int index, DmdType type, ILValue value) => StoreLocal2(index, type, GetDebuggerValue(value, type));
 
 		internal bool StoreLocal2(int index, DmdType targetType, object value) {
-			var error = runtime.SetLocalValue(context, frame, (uint)index, targetType, value, cancellationToken);
+			var error = localsProvider.SetVariable(index, targetType, value);
 			if (error != null)
 				throw new InterpreterMessageException(error);
 			return true;
