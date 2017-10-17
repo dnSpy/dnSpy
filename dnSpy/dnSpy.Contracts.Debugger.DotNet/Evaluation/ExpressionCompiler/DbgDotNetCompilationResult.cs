@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -67,31 +66,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 			ErrorMessage = null;
 			Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 			CompiledExpressions = compiledExpressions ?? throw new ArgumentNullException(nameof(compiledExpressions));
-		}
-	}
-
-	/// <summary>
-	/// Extra custom type info provided by the expression compiler and used by language formatters
-	/// </summary>
-	public sealed class DbgDotNetCustomTypeInfo {
-		/// <summary>
-		/// Gets the custom type info ID
-		/// </summary>
-		public Guid CustomTypeInfoId { get; }
-
-		/// <summary>
-		/// Gets the custom type info
-		/// </summary>
-		public ReadOnlyCollection<byte> CustomTypeInfo { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="customTypeInfoId">Custom type info ID</param>
-		/// <param name="customTypeInfo">Custom type info</param>
-		public DbgDotNetCustomTypeInfo(Guid customTypeInfoId, ReadOnlyCollection<byte> customTypeInfo) {
-			CustomTypeInfoId = customTypeInfoId;
-			CustomTypeInfo = customTypeInfo ?? throw new ArgumentNullException(nameof(customTypeInfo));
 		}
 	}
 

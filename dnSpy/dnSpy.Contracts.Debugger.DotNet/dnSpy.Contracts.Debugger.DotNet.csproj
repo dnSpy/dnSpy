@@ -51,6 +51,7 @@
     <Compile Include="DbgDotNetInternalModule.cs" />
     <Compile Include="DbgDotNetInternalRuntime.cs" />
     <Compile Include="Evaluation\DbgDotNetAliasInfo.cs" />
+    <Compile Include="Evaluation\DbgDotNetCustomTypeInfo.cs" />
     <Compile Include="Evaluation\DbgDotNetDispatcher.cs" />
     <Compile Include="Evaluation\DbgDotNetExceptionInfo.cs" />
     <Compile Include="Evaluation\DbgDotNetLanguageGuids.cs" />

@@ -21,7 +21,6 @@ using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
