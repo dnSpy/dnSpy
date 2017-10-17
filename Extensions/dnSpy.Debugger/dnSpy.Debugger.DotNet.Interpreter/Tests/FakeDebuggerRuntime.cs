@@ -119,6 +119,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			return new NullObjectRefILValue();
 		}
 
+		public override void Initialize(DmdMethodBase method, DmdMethodBody body) { }
+
 		sealed class FakeValueType : TypeILValue {
 			readonly Dictionary<DmdFieldInfo, ILValue> fields;
 			public override DmdType Type { get; }
@@ -519,15 +521,15 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 
 		public override ILValue LoadString(DmdType type, string value) => new ConstantStringILValue(type, value);
 
-		public override int? CompareSigned(ILValue left, ILValue right) => throw new NotImplementedException();
-		public override int? CompareUnsigned(ILValue left, ILValue right) => throw new NotImplementedException();
+		public override int? CompareSigned(ILValue left, ILValue right) => null;
+		public override int? CompareUnsigned(ILValue left, ILValue right) => null;
 
 		public override bool? Equals(ILValue left, ILValue right) {
 			if (left is ArgOrLocalAddress addr1 && right is ArgOrLocalAddress addr2)
 				return addr1.Equals(addr2);
 			if (left is SZArrayAddress arad1 && right is SZArrayAddress arad2)
 				return arad1.Equals(arad2);
-			return false;
+			return null;
 		}
 	}
 

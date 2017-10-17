@@ -291,27 +291,27 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case OpCodeFE.Ceq:
 						Pop2(out v1, out v2);
-						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, CompareSigned(v1, v2, isEquals: true) == 0 ? 1 : 0));
+						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, CompareEquals(v1, v2) ? 1 : 0));
 						break;
 
 					case OpCodeFE.Cgt:
 						Pop2(out v1, out v2);
-						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, CompareSigned(v1, v2, isEquals: false) > 0 ? 1 : 0));
+						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, CompareSigned(v1, v2) > 0 ? 1 : 0));
 						break;
 
 					case OpCodeFE.Cgt_Un:
 						Pop2(out v1, out v2);
-						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, CompareUnsigned(v1, v2, isEquals: false) > 0 ? 1 : 0));
+						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, CompareUnsigned(v1, v2) > 0 ? 1 : 0));
 						break;
 
 					case OpCodeFE.Clt:
 						Pop2(out v1, out v2);
-						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, CompareSigned(v1, v2, isEquals: false) < 0 ? 1 : 0));
+						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, CompareSigned(v1, v2) < 0 ? 1 : 0));
 						break;
 
 					case OpCodeFE.Clt_Un:
 						Pop2(out v1, out v2);
-						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, CompareUnsigned(v1, v2, isEquals: false) < 0 ? 1 : 0));
+						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, CompareUnsigned(v1, v2) < 0 ? 1 : 0));
 						break;
 
 					case OpCodeFE.Cpblk:
@@ -4134,7 +4134,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Beq_S:
 					i = (i != (int)OpCode.Beq ? (sbyte)bodyBytes[methodBodyPos++] : ToInt32(bodyBytes, ref methodBodyPos)) + methodBodyPos;
 					Pop2(out v1, out v2);
-					if (CompareSigned(v1, v2, isEquals: true) == 0)
+					if (CompareEquals(v1, v2))
 						methodBodyPos = i;
 					break;
 
@@ -4142,7 +4142,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Bge_S:
 					i = (i != (int)OpCode.Bge ? (sbyte)bodyBytes[methodBodyPos++] : ToInt32(bodyBytes, ref methodBodyPos)) + methodBodyPos;
 					Pop2(out v1, out v2);
-					if (CompareSigned(v1, v2, isEquals: false) >= 0)
+					if (CompareSigned(v1, v2) >= 0)
 						methodBodyPos = i;
 					break;
 
@@ -4150,7 +4150,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Bge_Un_S:
 					i = (i != (int)OpCode.Bge_Un ? (sbyte)bodyBytes[methodBodyPos++] : ToInt32(bodyBytes, ref methodBodyPos)) + methodBodyPos;
 					Pop2(out v1, out v2);
-					if (CompareUnsigned(v1, v2, isEquals: false) >= 0)
+					if (CompareUnsigned(v1, v2) >= 0)
 						methodBodyPos = i;
 					break;
 
@@ -4158,7 +4158,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Bgt_S:
 					i = (i != (int)OpCode.Bgt ? (sbyte)bodyBytes[methodBodyPos++] : ToInt32(bodyBytes, ref methodBodyPos)) + methodBodyPos;
 					Pop2(out v1, out v2);
-					if (CompareSigned(v1, v2, isEquals: false) > 0)
+					if (CompareSigned(v1, v2) > 0)
 						methodBodyPos = i;
 					break;
 
@@ -4166,7 +4166,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Bgt_Un_S:
 					i = (i != (int)OpCode.Bgt_Un ? (sbyte)bodyBytes[methodBodyPos++] : ToInt32(bodyBytes, ref methodBodyPos)) + methodBodyPos;
 					Pop2(out v1, out v2);
-					if (CompareUnsigned(v1, v2, isEquals: false) > 0)
+					if (CompareUnsigned(v1, v2) > 0)
 						methodBodyPos = i;
 					break;
 
@@ -4174,7 +4174,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Ble_S:
 					i = (i != (int)OpCode.Ble ? (sbyte)bodyBytes[methodBodyPos++] : ToInt32(bodyBytes, ref methodBodyPos)) + methodBodyPos;
 					Pop2(out v1, out v2);
-					if (CompareSigned(v1, v2, isEquals: false) <= 0)
+					if (CompareSigned(v1, v2) <= 0)
 						methodBodyPos = i;
 					break;
 
@@ -4182,7 +4182,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Ble_Un_S:
 					i = (i != (int)OpCode.Ble_Un ? (sbyte)bodyBytes[methodBodyPos++] : ToInt32(bodyBytes, ref methodBodyPos)) + methodBodyPos;
 					Pop2(out v1, out v2);
-					if (CompareUnsigned(v1, v2, isEquals: false) <= 0)
+					if (CompareUnsigned(v1, v2) <= 0)
 						methodBodyPos = i;
 					break;
 
@@ -4190,7 +4190,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Blt_S:
 					i = (i != (int)OpCode.Blt ? (sbyte)bodyBytes[methodBodyPos++] : ToInt32(bodyBytes, ref methodBodyPos)) + methodBodyPos;
 					Pop2(out v1, out v2);
-					if (CompareSigned(v1, v2, isEquals: false) < 0)
+					if (CompareSigned(v1, v2) < 0)
 						methodBodyPos = i;
 					break;
 
@@ -4198,7 +4198,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Blt_Un_S:
 					i = (i != (int)OpCode.Blt_Un ? (sbyte)bodyBytes[methodBodyPos++] : ToInt32(bodyBytes, ref methodBodyPos)) + methodBodyPos;
 					Pop2(out v1, out v2);
-					if (CompareUnsigned(v1, v2, isEquals: false) < 0)
+					if (CompareUnsigned(v1, v2) < 0)
 						methodBodyPos = i;
 					break;
 
@@ -4206,7 +4206,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Bne_Un_S:
 					i = (i != (int)OpCode.Bne_Un ? (sbyte)bodyBytes[methodBodyPos++] : ToInt32(bodyBytes, ref methodBodyPos)) + methodBodyPos;
 					Pop2(out v1, out v2);
-					if (CompareUnsigned(v1, v2, isEquals: true) != 0)
+					if (!CompareEquals(v1, v2))
 						methodBodyPos = i;
 					break;
 
@@ -4298,7 +4298,163 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 		static bool CheckFinite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
 
-		int CompareSigned(ILValue v1, ILValue v2, bool isEquals) {
+		enum ZeroResult {
+			Unknown,
+			Zero,
+			NonZero,
+		}
+
+		ZeroResult IsIntegerZeroOrNull(ILValue v) {
+			if (v.IsNull)
+				return ZeroResult.Zero;
+			switch (v.Kind) {
+			case ILValueKind.Int32:
+				return ((ConstantInt32ILValue)v).Value == 0 ? ZeroResult.Zero : ZeroResult.NonZero;
+
+			case ILValueKind.Int64:
+				return ((ConstantInt64ILValue)v).Value == 0 ? ZeroResult.Zero : ZeroResult.NonZero;
+
+			case ILValueKind.Float:
+				return ZeroResult.Unknown;
+
+			case ILValueKind.NativeInt:
+				if (v is ConstantNativeIntILValue) {
+					if (debuggerRuntime.PointerSize == 4)
+						return ((ConstantNativeIntILValue)v).Value32 == 0 ? ZeroResult.Zero : ZeroResult.NonZero;
+					return ((ConstantNativeIntILValue)v).Value64 == 0 ? ZeroResult.Zero : ZeroResult.NonZero;
+				}
+				return ZeroResult.NonZero;
+
+			case ILValueKind.ByRef:
+				return ZeroResult.NonZero;
+
+			case ILValueKind.Type:
+				return ZeroResult.NonZero;
+
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
+		bool CompareEquals(ILValue v1, ILValue v2) {
+			if (v1 == v2)
+				return true;
+
+			var res = debuggerRuntime.Equals(v1, v2);
+			if (res != null)
+				return res.Value;
+
+			var v1z = IsIntegerZeroOrNull(v1);
+			var v2z = IsIntegerZeroOrNull(v2);
+			if (v1z != v2z)
+				return false;
+			if (v1z == ZeroResult.Zero && v2z == ZeroResult.Zero)
+				return true;
+
+			switch (v1.Kind) {
+			case ILValueKind.Int32:
+				switch (v2.Kind) {
+				case ILValueKind.Int32:
+					return ((ConstantInt32ILValue)v1).Value.Equals(((ConstantInt32ILValue)v2).Value);
+
+				case ILValueKind.NativeInt:
+					if (v2 is ConstantNativeIntILValue) {
+						if (debuggerRuntime.PointerSize == 4)
+							return (((ConstantInt32ILValue)v1).Value).Equals(((ConstantNativeIntILValue)v2).Value32);
+						return ((long)((ConstantInt32ILValue)v1).Value).Equals(((ConstantNativeIntILValue)v2).Value64);
+					}
+					goto case ILValueKind.ByRef;
+
+				case ILValueKind.ByRef:
+					return false;
+
+				case ILValueKind.Int64:
+				case ILValueKind.Float:
+				case ILValueKind.Type:
+				default:
+					throw new InvalidMethodBodyInterpreterException();
+				}
+
+			case ILValueKind.Int64:
+				switch (v2.Kind) {
+				case ILValueKind.Int64:
+					return ((ConstantInt64ILValue)v1).Value.Equals(((ConstantInt64ILValue)v2).Value);
+
+				case ILValueKind.Int32:
+				case ILValueKind.Float:
+				case ILValueKind.NativeInt:
+				case ILValueKind.ByRef:
+				case ILValueKind.Type:
+				default:
+					throw new InvalidMethodBodyInterpreterException();
+				}
+
+			case ILValueKind.Float:
+				switch (v2.Kind) {
+				case ILValueKind.Float:
+					return ((ConstantFloatILValue)v1).Value.Equals(((ConstantFloatILValue)v2).Value);
+
+				case ILValueKind.Int32:
+				case ILValueKind.Int64:
+				case ILValueKind.NativeInt:
+				case ILValueKind.ByRef:
+				case ILValueKind.Type:
+				default:
+					throw new InvalidMethodBodyInterpreterException();
+				}
+
+			case ILValueKind.NativeInt:
+				switch (v2.Kind) {
+				case ILValueKind.Int32:
+					if (v1 is ConstantNativeIntILValue) {
+						if (debuggerRuntime.PointerSize == 4)
+							return ((ConstantNativeIntILValue)v1).Value32.Equals(((ConstantInt32ILValue)v2).Value);
+						return ((ConstantNativeIntILValue)v1).Value64.Equals(((ConstantInt32ILValue)v2).Value);
+					}
+					goto case ILValueKind.ByRef;
+
+				case ILValueKind.NativeInt:
+					if (v1 is ConstantNativeIntILValue && v2 is ConstantNativeIntILValue) {
+						if (debuggerRuntime.PointerSize == 4)
+							return ((ConstantNativeIntILValue)v1).Value32.Equals(((ConstantNativeIntILValue)v2).Value32);
+						return ((ConstantNativeIntILValue)v1).Value64.Equals(((ConstantNativeIntILValue)v2).Value64);
+					}
+					goto case ILValueKind.ByRef;
+
+				case ILValueKind.ByRef:
+					return false;
+
+				case ILValueKind.Int64:
+				case ILValueKind.Float:
+				case ILValueKind.Type:
+				default:
+					throw new InvalidMethodBodyInterpreterException();
+				}
+
+			case ILValueKind.ByRef:
+				return false;
+
+			case ILValueKind.Type:
+				return false;
+
+			default:
+				throw new InvalidMethodBodyInterpreterException();
+			}
+		}
+
+		int CompareSigned(ILValue v1, ILValue v2) {
+			if (v1 == v2)
+				return 0;
+
+			var res = debuggerRuntime.CompareSigned(v1, v2);
+			if (res != null)
+				return res.Value;
+
+			var v1z = IsIntegerZeroOrNull(v1);
+			var v2z = IsIntegerZeroOrNull(v2);
+			if (v1z == ZeroResult.Zero && v2z == ZeroResult.Zero)
+				return 0;
+
 			switch (v1.Kind) {
 			case ILValueKind.Int32:
 				switch (v2.Kind) {
@@ -4314,16 +4470,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					goto case ILValueKind.ByRef;
 
 				case ILValueKind.ByRef:
-					if (v1 == v2)
-						return 0;
-					if (isEquals) {
-						var res = debuggerRuntime.Equals(v1, v2);
-						if (res == null)
-							throw new InvalidMethodBodyInterpreterException();
-						return res.Value ? 0 : 1;
-					}
-					return debuggerRuntime.CompareSigned(v1, v2) ?? throw new InvalidMethodBodyInterpreterException();
-
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
 				case ILValueKind.Type:
@@ -4380,16 +4526,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					goto case ILValueKind.ByRef;
 
 				case ILValueKind.ByRef:
-					if (v1 == v2)
-						return 0;
-					if (isEquals) {
-						var res = debuggerRuntime.Equals(v1, v2);
-						if (res == null)
-							throw new InvalidMethodBodyInterpreterException();
-						return res.Value ? 0 : 1;
-					}
-					return debuggerRuntime.CompareSigned(v1, v2) ?? throw new InvalidMethodBodyInterpreterException();
-
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
 				case ILValueKind.Type:
@@ -4398,46 +4534,33 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				}
 
 			case ILValueKind.ByRef:
-				switch (v2.Kind) {
-				case ILValueKind.Int32:
-				case ILValueKind.NativeInt:
-				case ILValueKind.ByRef:
-					if (v1 == v2)
-						return 0;
-					if (isEquals) {
-						var res = debuggerRuntime.Equals(v1, v2);
-						if (res == null)
-							throw new InvalidMethodBodyInterpreterException();
-						return res.Value ? 0 : 1;
-					}
-					return debuggerRuntime.CompareSigned(v1, v2) ?? throw new InvalidMethodBodyInterpreterException();
-
-				case ILValueKind.Int64:
-				case ILValueKind.Float:
-				case ILValueKind.Type:
-				default:
-					throw new InvalidMethodBodyInterpreterException();
-				}
-
 			case ILValueKind.Type:
-				if (v1 == v2)
-					return 0;
-				if (isEquals) {
-					if (v1.IsNull && v2.IsNull)
-						return 0;
-					var res = debuggerRuntime.Equals(v1, v2);
-					if (res == null)
-						throw new InvalidMethodBodyInterpreterException();
-					return res.Value ? 0 : 1;
-				}
-				return v1 == v2 ? 0 : throw new InvalidMethodBodyInterpreterException();
-
 			default:
 				throw new InvalidMethodBodyInterpreterException();
 			}
 		}
 
-		int CompareUnsigned(ILValue v1, ILValue v2, bool isEquals) {
+		int CompareUnsigned(ILValue v1, ILValue v2) {
+			if (v1 == v2)
+				return 0;
+
+			var res = debuggerRuntime.CompareUnsigned(v1, v2);
+			if (res != null)
+				return res.Value;
+
+			var v1z = IsIntegerZeroOrNull(v1);
+			var v2z = IsIntegerZeroOrNull(v2);
+			if (v2z == ZeroResult.Zero) {
+				if (v1z == ZeroResult.Zero)
+					return 0;
+				if (v1z == ZeroResult.NonZero)
+					return 1;
+			}
+			if (v1z == ZeroResult.Zero) {
+				if (v2z == ZeroResult.NonZero)
+					return -1;
+			}
+
 			switch (v1.Kind) {
 			case ILValueKind.Int32:
 				switch (v2.Kind) {
@@ -4453,16 +4576,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					goto case ILValueKind.ByRef;
 
 				case ILValueKind.ByRef:
-					if (v1 == v2)
-						return 0;
-					if (isEquals) {
-						var res = debuggerRuntime.Equals(v1, v2);
-						if (res == null)
-							throw new InvalidMethodBodyInterpreterException();
-						return res.Value ? 0 : 1;
-					}
-					return debuggerRuntime.CompareSigned(v1, v2) ?? throw new InvalidMethodBodyInterpreterException();
-
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
 				case ILValueKind.Type:
@@ -4519,16 +4632,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					goto case ILValueKind.ByRef;
 
 				case ILValueKind.ByRef:
-					if (v1 == v2)
-						return 0;
-					if (isEquals) {
-						var res = debuggerRuntime.Equals(v1, v2);
-						if (res == null)
-							throw new InvalidMethodBodyInterpreterException();
-						return res.Value ? 0 : 1;
-					}
-					return debuggerRuntime.CompareSigned(v1, v2) ?? throw new InvalidMethodBodyInterpreterException();
-
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
 				case ILValueKind.Type:
@@ -4537,40 +4640,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				}
 
 			case ILValueKind.ByRef:
-				switch (v2.Kind) {
-				case ILValueKind.Int32:
-				case ILValueKind.NativeInt:
-				case ILValueKind.ByRef:
-					if (v1 == v2)
-						return 0;
-					if (isEquals) {
-						var res = debuggerRuntime.Equals(v1, v2);
-						if (res == null)
-							throw new InvalidMethodBodyInterpreterException();
-						return res.Value ? 0 : 1;
-					}
-					return debuggerRuntime.CompareSigned(v1, v2) ?? throw new InvalidMethodBodyInterpreterException();
-
-				case ILValueKind.Int64:
-				case ILValueKind.Float:
-				case ILValueKind.Type:
-				default:
-					throw new InvalidMethodBodyInterpreterException();
-				}
-
 			case ILValueKind.Type:
-				if (v1 == v2)
-					return 0;
-				if (isEquals) {
-					if (v1.IsNull && v2.IsNull)
-						return 0;
-					var res = debuggerRuntime.Equals(v1, v2);
-					if (res == null)
-						throw new InvalidMethodBodyInterpreterException();
-					return res.Value ? 0 : 1;
-				}
-				return v1 == v2 ? 0 : throw new InvalidMethodBodyInterpreterException();
-
 			default:
 				throw new InvalidMethodBodyInterpreterException();
 			}

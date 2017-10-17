@@ -27,7 +27,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
@@ -96,16 +95,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 			throw new InvalidOperationException();
 		}
 	}
-	sealed class InterpreterTest {
+	public sealed class InterpreterTest {
 		string GetTestAssemblyFilename() => Path.GetFullPath(Path.GetDirectoryName(GetType().Assembly.Location) + @"\..\..\..\dnSpy.Console\bin\dnSpy.Debugger.DotNet.Interpreter.Tests.dll");
 
 		sealed class DmdEvaluatorImpl : DmdEvaluator {
+			public override object CreateInstance(object context, DmdConstructorInfo ctor, object[] arguments) => throw new NotImplementedException();
 			public override object Invoke(object context, DmdMethodBase method, object obj, object[] parameters) => throw new NotImplementedException();
 			public override object LoadField(object context, DmdFieldInfo field, object obj) => throw new NotImplementedException();
 			public override void StoreField(object context, DmdFieldInfo field, object obj, object value) => throw new NotImplementedException();
-			public override void Invoke(object context, DmdMethodBase method, object obj, object[] parameters, Action<object> callback) => throw new NotImplementedException();
-			public override void LoadField(object context, DmdFieldInfo field, object obj, Action<object> callback) => throw new NotImplementedException();
-			public override void StoreField(object context, DmdFieldInfo field, object obj, object value, Action callback) => throw new NotImplementedException();
 		}
 
 		TestRuntime CreateTestRuntime() {
