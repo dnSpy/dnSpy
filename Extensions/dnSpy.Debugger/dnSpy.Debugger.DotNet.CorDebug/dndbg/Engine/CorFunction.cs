@@ -150,76 +150,12 @@ namespace dndbg.Engine {
 			//TODO: ICorDebugFunction3::GetActiveReJitRequestILCode
 		}
 
-		public void GetAttributes(out MethodImplAttributes implAttributes, out MethodAttributes attributes) =>
-			MDAPI.GetMethodAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token, out attributes, out implAttributes);
-
 		public MethodAttributes GetAttributes() {
 			MDAPI.GetMethodAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token, out var attributes, out var implAttributes);
 			return attributes;
 		}
 
-		/// <summary>
-		/// Creates a function breakpoint at the beginning of the function
-		/// </summary>
-		/// <returns></returns>
-		public CorFunctionBreakpoint CreateBreakpoint() {
-			int hr = obj.CreateBreakpoint(out var fnbp);
-			return hr < 0 || fnbp == null ? null : new CorFunctionBreakpoint(fnbp);
-		}
-
-		/// <summary>
-		/// Gets method parameters and method flags
-		/// </summary>
-		/// <param name="methodAttrs">Method attributes</param>
-		/// <param name="methodImplAttrs">Method implementation attributes</param>
-		/// <returns></returns>
-		public MDParameters GetMDParameters(out MethodAttributes methodAttrs, out MethodImplAttributes methodImplAttrs) {
-			methodAttrs = 0;
-			methodImplAttrs = 0;
-			var mod = Module;
-			if (mod == null)
-				return null;
-			var mdi = mod.GetMetaDataInterface<IMetaDataImport>();
-			if (mdi == null)
-				return null;
-			if (!MDAPI.GetMethodAttributes(mdi, Token, out methodAttrs, out methodImplAttrs))
-				return null;
-			var name = MDAPI.GetMethodName(mdi, Token);
-			if (name == null)
-				return null;
-			return MetaDataUtils.GetParameters(mdi, Token);
-		}
-
-		/// <summary>
-		/// Gets method generic parameters
-		/// </summary>
-		/// <returns></returns>
-		public List<TokenAndName> GetGenericParameters() =>
-			MetaDataUtils.GetGenericParameterNames(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
-
-		/// <summary>
-		/// Gets type and method generic parameters
-		/// </summary>
-		/// <param name="typeParams">Updated with type params</param>
-		/// <param name="methodParams">Updated with method params</param>
-		public void GetGenericParameters(out List<TokenAndName> typeParams, out List<TokenAndName> methodParams) {
-			methodParams = GetGenericParameters();
-			typeParams = Class?.GetGenericParameters() ?? new List<TokenAndName>();
-		}
-
-		public CorOverride[] GetOverrides() {
-			var mod = Module;
-			var info = MDAPI.GetMethodOverrides(mod?.GetMetaDataInterface<IMetaDataImport>(), Token);
-			if (info.Length == 0)
-				return Array.Empty<CorOverride>();
-			var res = new CorOverride[info.Length];
-			for (int i = 0; i < res.Length; i++)
-				res[i] = new CorOverride(mod, info[i]);
-			return res;
-		}
-
 		public string GetName() => MDAPI.GetMethodName(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
-		public MethodSig GetMethodSig() => MetaDataUtils.GetMethodSignature(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
 
 		public static bool operator ==(CorFunction a, CorFunction b) {
 			if (ReferenceEquals(a, b))

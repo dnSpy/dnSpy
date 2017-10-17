@@ -35,49 +35,15 @@ namespace dndbg.Engine {
 		public TypeSig FieldType { get; }
 		public FieldAttributes Attributes { get; }
 		public object Constant { get; }
-		public CorElementType ConstantType { get; }
-		public DebuggerBrowsableState? DebuggerBrowsableState { get; }
-		public bool CompilerGeneratedAttribute { get; }
 
-		public CorFieldInfo(CorType ownerType, uint token, string name, TypeSig fieldType, FieldAttributes attrs, object constant, CorElementType constantType, DebuggerBrowsableState? debuggerBrowsableState, bool compilerGeneratedAttribute) {
+		public CorFieldInfo(CorType ownerType, uint token, string name, TypeSig fieldType, FieldAttributes attrs, object constant) {
 			OwnerType = ownerType;
 			Token = token;
 			Name = name;
 			FieldType = fieldType;
 			Attributes = attrs;
 			Constant = constant;
-			ConstantType = constantType;
-			DebuggerBrowsableState = debuggerBrowsableState;
-			CompilerGeneratedAttribute = compilerGeneratedAttribute;
 		}
-
-		public override string ToString() => string.Format("{0:X8} {1} {2} {3}", Token, TypeFormatterUtils.ToString(FieldType), Name, OwnerType);
-	}
-
-	sealed class CorPropertyInfo {
-		public CorType OwnerType { get; }
-		public uint Token { get; }
-		public uint GetToken { get; }
-		public uint SetToken { get; }
-		public string Name { get; }
-		public MethodSig GetSig { get; }
-		public MethodSig SetSig { get; }
-		public MethodAttributes GetMethodAttributes { get; }
-		public DebuggerBrowsableState? DebuggerBrowsableState { get; }
-
-		public CorPropertyInfo(CorType ownerType, uint token, uint getToken, uint setToken, string name, MethodSig getSig, MethodSig setSig, MethodAttributes getMethodAttributes, DebuggerBrowsableState? debuggerBrowsableState) {
-			OwnerType = ownerType;
-			Token = token;
-			GetToken = getToken;
-			SetToken = setToken;
-			Name = name;
-			GetSig = getSig;
-			SetSig = setSig;
-			GetMethodAttributes = getMethodAttributes;
-			DebuggerBrowsableState = debuggerBrowsableState;
-		}
-
-		public override string ToString() => string.Format("{0:X8} {1} {2}", Token, Name, OwnerType);
 	}
 
 	sealed class CorMethodInfo {
@@ -86,17 +52,13 @@ namespace dndbg.Engine {
 		public string Name { get; }
 		public MethodSig MethodSig { get; }
 		public MethodAttributes MethodAttributes { get; }
-		public MethodImplAttributes MethodImplAttributes { get; }
-		public bool CompilerGeneratedAttribute { get; }
 
-		public CorMethodInfo(CorType ownerType, uint token, string name, MethodSig methodSig, MethodAttributes attrs, MethodImplAttributes implAttrs, bool compilerGeneratedAttribute) {
+		public CorMethodInfo(CorType ownerType, uint token, string name, MethodSig methodSig, MethodAttributes attrs) {
 			OwnerType = ownerType;
 			Token = token;
 			Name = name;
 			MethodSig = methodSig;
 			MethodAttributes = attrs;
-			MethodImplAttributes = implAttrs;
-			CompilerGeneratedAttribute = compilerGeneratedAttribute;
 		}
 	}
 
@@ -236,27 +198,6 @@ namespace dndbg.Engine {
 			return new DebugSignatureReader().ReadSignature(mdi, sig) as MethodSig;
 		}
 
-		public static unsafe CallingConventionSig ReadStandAloneSig(IMetaDataImport mdi, uint token) {
-			var sig = MDAPI.GetStandAloneSigBlob(mdi, token);
-			if (sig == null)
-				return null;
-			return new DebugSignatureReader().ReadSignature(mdi, sig);
-		}
-
-		public static unsafe FieldSig ReadFieldSig(IMetaDataImport mdi, uint token) {
-			var sig = MDAPI.GetFieldSignatureBlob(mdi, token);
-			if (sig == null)
-				return null;
-			return new DebugSignatureReader().ReadSignature(mdi, sig) as FieldSig;
-		}
-
-		public static unsafe PropertySig ReadPropertySig(IMetaDataImport mdi, uint token) {
-			var sig = MDAPI.GetPropertySignatureBlob(mdi, token);
-			if (sig == null)
-				return null;
-			return new DebugSignatureReader().ReadSignature(mdi, sig) as PropertySig;
-		}
-
 		public static uint GetGlobalStaticConstructor(IMetaDataImport mdi) {
 			var mdTokens = MDAPI.GetMethodTokens(mdi, 0x02000001);
 			foreach (uint mdToken in mdTokens) {
@@ -298,26 +239,6 @@ namespace dndbg.Engine {
 			return sig?.Type;
 		}
 
-		static DebuggerBrowsableState? GetDebuggerBrowsableState(IMetaDataImport mdi, uint token) {
-			Debug.Assert(new MDToken(token).Table == Table.Field || new MDToken(token).Table == Table.Property);
-			if (mdi == null)
-				return null;
-
-			var data = MDAPI.GetCustomAttributeByName(mdi, token, "System.Diagnostics.DebuggerBrowsableAttribute");
-			const int expectedLength = 8;
-			if (data == null || data.Length != expectedLength)
-				return null;
-			if (BitConverter.ToUInt16(data, 0) != 1)
-				return null;
-			var state = (DebuggerBrowsableState)BitConverter.ToInt32(data, 2);
-			if (BitConverter.ToUInt16(data, 6) != 0)
-				return null;
-
-			return state;
-		}
-
-		static bool GetCompilerGeneratedAttribute(IMetaDataImport mdi, uint token) => MDAPI.HasAttribute(mdi, token, "System.Runtime.CompilerServices.CompilerGeneratedAttribute");
-
 		static CorFieldInfo ReadFieldInfo(IMetaDataImport mdi, uint token, CorType type) {
 			if (mdi == null)
 				return null;
@@ -329,9 +250,7 @@ namespace dndbg.Engine {
 				return null;
 			var attrs = MDAPI.GetFieldAttributes(mdi, token);
 			var constant = MDAPI.GetFieldConstant(mdi, token, out var constantType);
-			var browseState = GetDebuggerBrowsableState(mdi, token);
-			bool compilerGeneratedAttribute = GetCompilerGeneratedAttribute(mdi, token);
-			return new CorFieldInfo(type, token, name, fieldType, attrs, constant, constantType, browseState, compilerGeneratedAttribute);
+			return new CorFieldInfo(type, token, name, fieldType, attrs, constant);
 		}
 
 		public static IEnumerable<CorFieldInfo> GetFieldInfos(CorType type, bool checkBaseClasses = true) {
@@ -360,71 +279,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		unsafe static CorPropertyInfo ReadPropertyInfo(IMetaDataImport mdi, uint token, CorType type) {
-			if (mdi == null)
-				return null;
-
-			var name = MDAPI.GetPropertyName(mdi, token);
-			if (name == null)
-				return null;
-			if (!MDAPI.GetPropertyGetterSetter(mdi, token, out uint mdGetter, out uint mdSetter))
-				return null;
-
-			var getSig = GetMethodSignature(mdi, mdGetter);
-			var setSig = GetMethodSignature(mdi, mdSetter);
-
-			if (getSig == null)
-				return null;
-			if (getSig.ParamsAfterSentinel != null)
-				return null;
-			if (getSig.GenParamCount != 0)
-				return null;
-			if (getSig.Params.Count != 0)
-				return null;
-			if (getSig.RetType.RemovePinnedAndModifiers().GetElementType() == ElementType.Void)
-				return null;
-
-			if (setSig != null && setSig.ParamsAfterSentinel != null)
-				setSig = null;
-			if (setSig != null && setSig.GenParamCount != 0)
-				setSig = null;
-			if (setSig != null && setSig.Params.Count != 1)
-				setSig = null;
-			if (setSig != null && setSig.RetType.RemovePinnedAndModifiers().GetElementType() != ElementType.Void)
-				setSig = null;
-
-			if (setSig != null && getSig.HasThis != setSig.HasThis)
-				setSig = null;
-			if (setSig != null && !Equals(getSig.RetType.RemovePinnedAndModifiers(), setSig.Params[0].RemovePinnedAndModifiers()))
-				setSig = null;
-
-			if (setSig == null)
-				mdSetter = 0;
-
-			if (!MDAPI.GetMethodAttributes(mdi, mdGetter, out var getMethodAttrs, out var getMethodImplAttrs))
-				return null;
-
-			var browseState = GetDebuggerBrowsableState(mdi, token);
-
-			return new CorPropertyInfo(type, token, mdGetter, mdSetter, name, getSig, setSig, getMethodAttrs, browseState);
-		}
-
-		static bool Equals(TypeSig ts1, TypeSig ts2) => new TypeComparer().Equals(ts1, ts2);
-
-		public static IEnumerable<CorPropertyInfo> GetProperties(CorType type, bool checkBaseClasses = true) {
-			for (; type != null; type = type.Base) {
-				var mdi = type.GetMetaDataImport(out uint token);
-				var pdTokens = MDAPI.GetPropertyTokens(mdi, token);
-				foreach (var pdToken in pdTokens) {
-					var info = ReadPropertyInfo(mdi, pdToken, type);
-					if (info != null)
-						yield return info;
-				}
-				if (!checkBaseClasses)
-					break;
-			}
-		}
-
 		static CorMethodInfo ReadMethodInfo(IMetaDataImport mdi, uint token, CorType type) {
 			if (mdi == null)
 				return null;
@@ -440,9 +294,7 @@ namespace dndbg.Engine {
 			if (sig == null)
 				return null;
 
-			bool compilerGeneratedAttribute = GetCompilerGeneratedAttribute(mdi, token);
-
-			return new CorMethodInfo(type, token, name, sig, attrs, implAttrs, compilerGeneratedAttribute);
+			return new CorMethodInfo(type, token, name, sig, attrs);
 		}
 
 		public static CorMethodInfo GetToStringMethod(CorType type) {

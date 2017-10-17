@@ -85,10 +85,6 @@ namespace dndbg.Engine {
 			hr = code.GetAddress(out address);
 			if (hr < 0)
 				address = 0;
-
-			//TODO: ICorDebugCode::GetCode
-			//TODO: ICorDebugCode::GetILToNativeMapping
-			//TODO: ICorDebugCode3::GetReturnValueLiveOffset
 		}
 
 		/// <summary>

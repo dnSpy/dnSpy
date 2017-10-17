@@ -142,9 +142,6 @@ namespace dndbg.Engine {
 			hr = chain.GetStackRange(out rangeStart, out rangeEnd);
 			if (hr < 0)
 				rangeStart = rangeEnd = 0;
-
-			//TODO: ICorDebugChain::GetContext
-			//TODO: ICorDebugChain::GetRegisterSet
 		}
 
 		public static bool operator ==(CorChain a, CorChain b) {

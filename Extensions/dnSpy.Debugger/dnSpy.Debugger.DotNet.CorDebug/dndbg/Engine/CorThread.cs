@@ -133,19 +133,6 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
-		/// Gets the task ID. It's 0 unless the thread is associated with a connection.
-		/// </summary>
-		public ulong TaskId {
-			get {
-				var t2 = obj as ICorDebugThread2;
-				if (t2 == null)
-					return 0;
-				int hr = t2.GetTaskID(out ulong taskId);
-				return hr < 0 ? 0 : taskId;
-			}
-		}
-
-		/// <summary>
 		/// true if the thread is running
 		/// </summary>
 		public bool IsRunning => State == CorDebugThreadState.THREAD_RUN;

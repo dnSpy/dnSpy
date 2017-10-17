@@ -245,7 +245,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		string TryGetExceptionName(CorValue exObj) => exObj?.ExactType?.Class?.ToReflectionString();
+		string TryGetExceptionName(CorValue exObj) {
+			var corType = exObj?.ExactType;
+			var module = TryGetModule(corType?.Class?.Module);
+			if (module == null)
+				return null;
+			var type = new ReflectionTypeCreator(this, module.GetReflectionModule().AppDomain).Create(corType);
+			if (type.IsConstructedGenericType)
+				type = type.GetGenericTypeDefinition();
+			return type.FullName;
+		}
 
 		string TryGetExceptionMessage(CorValue exObj) {
 			if (EvalReflectionUtils.ReadExceptionMessage(exObj, out var message))

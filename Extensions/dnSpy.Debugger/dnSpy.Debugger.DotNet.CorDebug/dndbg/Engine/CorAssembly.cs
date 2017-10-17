@@ -29,26 +29,6 @@ using dnlib.DotNet.MD;
 namespace dndbg.Engine {
 	sealed class CorAssembly : COMObject<ICorDebugAssembly>, IEquatable<CorAssembly> {
 		/// <summary>
-		/// Gets the process or null
-		/// </summary>
-		public CorProcess Process {
-			get {
-				int hr = obj.GetProcess(out var process);
-				return hr < 0 || process == null ? null : new CorProcess(process);
-			}
-		}
-
-		/// <summary>
-		/// Gets the AppDomain or null
-		/// </summary>
-		public CorAppDomain AppDomain {
-			get {
-				int hr = obj.GetAppDomain(out var appDomain);
-				return hr < 0 || appDomain == null ? null : new CorAppDomain(appDomain);
-			}
-		}
-
-		/// <summary>
 		/// Gets all modules
 		/// </summary>
 		public IEnumerable<CorModule> Modules {
@@ -62,19 +42,6 @@ namespace dndbg.Engine {
 						break;
 					yield return new CorModule(module);
 				}
-			}
-		}
-
-		/// <summary>
-		/// true if the assembly has been granted full trust by the runtime security system
-		/// </summary>
-		public bool IsFullyTrusted {
-			get {
-				var asm2 = obj as ICorDebugAssembly2;
-				if (asm2 == null)
-					return false;
-				int hr = asm2.IsFullyTrusted(out int ft);
-				return hr >= 0 && ft != 0;
 			}
 		}
 
@@ -97,7 +64,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal static string CalculateFullName(CorModule manifestModule) {
+		static string CalculateFullName(CorModule manifestModule) {
 			var mdai = manifestModule.GetMetaDataInterface<IMetaDataAssemblyImport>();
 			uint token = new MDToken(Table.Assembly, 1).Raw;
 

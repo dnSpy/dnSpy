@@ -41,77 +41,6 @@ namespace dndbg.Engine {
 		readonly int id;
 
 		/// <summary>
-		/// true if the debugger is attached to the AppDomain
-		/// </summary>
-		public bool IsAttached {
-			get {
-				int hr = obj.IsAttached(out int attached);
-				return hr >= 0 && attached != 0;
-			}
-		}
-
-		/// <summary>
-		/// true if the threads are running freely
-		/// </summary>
-		public bool IsRunning {
-			get {
-				int hr = obj.IsRunning(out int running);
-				return hr >= 0 && running != 0;
-			}
-		}
-
-		/// <summary>
-		/// Gets all threads
-		/// </summary>
-		public IEnumerable<CorThread> Threads {
-			get {
-				int hr = obj.EnumerateThreads(out var threadEnum);
-				if (hr < 0)
-					yield break;
-				for (;;) {
-					hr = threadEnum.Next(1, out var thread, out uint count);
-					if (hr != 0 || thread == null)
-						break;
-					yield return new CorThread(thread);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets all assemblies
-		/// </summary>
-		public IEnumerable<CorAssembly> Assemblies {
-			get {
-				int hr = obj.EnumerateAssemblies(out var assemblyEnum);
-				if (hr < 0)
-					yield break;
-				for (;;) {
-					hr = assemblyEnum.Next(1, out var assembly, out uint count);
-					if (hr != 0 || assembly == null)
-						break;
-					yield return new CorAssembly(assembly);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets all steppers
-		/// </summary>
-		public IEnumerable<CorStepper> Steppers {
-			get {
-				int hr = obj.EnumerateSteppers(out var stepperEnum);
-				if (hr < 0)
-					yield break;
-				for (;;) {
-					hr = stepperEnum.Next(1, out var stepper, out uint count);
-					if (hr != 0 || stepper == null)
-						break;
-					yield return new CorStepper(stepper);
-				}
-			}
-		}
-
-		/// <summary>
 		/// AppDomain name
 		/// </summary>
 		public string Name => GetName(obj) ?? string.Empty;
@@ -127,45 +56,12 @@ namespace dndbg.Engine {
 			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Gets the CLR AppDomain object or null if it hasn't been constructed yet
-		/// </summary>
-		public CorValue Object {
-			get {
-				int hr = obj.GetObject(out var value);
-				return hr < 0 || value == null ? null : new CorValue(value);
-			}
-		}
-
 		public CorAppDomain(ICorDebugAppDomain appDomain)
 			: base(appDomain) {
 			int hr = appDomain.GetID(out id);
 			if (hr < 0)
 				id = -1;
-
-			//TODO: ICorDebugAppDomain3
-			//TODO: ICorDebugAppDomain4::GetObjectForCCW 
 		}
-
-		/// <summary>
-		/// Sets the debug state of all managed threads
-		/// </summary>
-		/// <param name="state">New state</param>
-		/// <param name="thread">Thread to exempt from the new state or null</param>
-		public void SetAllThreadsDebugState(CorDebugThreadState state, CorThread thread = null) =>
-			obj.SetAllThreadsDebugState(state, thread == null ? null : thread.RawObject);
-
-		/// <summary>
-		/// true if any managed callbacks are currently queued for the specified thread
-		/// </summary>
-		/// <param name="thread">Thread or null to check all threads</param>
-		/// <returns></returns>
-		public bool HasQueuedCallbacks(CorThread thread) {
-			int hr = obj.HasQueuedCallbacks(thread == null ? null : thread.RawObject, out int queued);
-			return hr >= 0 && queued != 0;
-		}
-
-		public bool Detach() => obj.Detach() >= 0;
 
 		public CorType GetPtr(CorType type) {
 			var ad2 = obj as ICorDebugAppDomain2;

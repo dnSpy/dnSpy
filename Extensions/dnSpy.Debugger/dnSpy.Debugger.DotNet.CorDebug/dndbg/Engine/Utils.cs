@@ -48,14 +48,6 @@ namespace dndbg.Engine {
 			return true;
 		}
 
-		public static bool GetSystemNullableFields(this CorType type, out TokenAndName hasValueInfo, out TokenAndName valueInfo, out CorType nullableElemType) {
-			nullableElemType = null;
-			if (!type.GetSystemNullableFields(out hasValueInfo, out valueInfo))
-				return false;
-			nullableElemType = type.FirstTypeParameter;
-			return nullableElemType != null;
-		}
-
 		public static bool IsSystemNullable(this GenericInstSig gis) {
 			if (gis == null)
 				return false;

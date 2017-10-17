@@ -24,15 +24,6 @@ using dndbg.COM.CorDebug;
 namespace dndbg.Engine {
 	sealed class CorMDA : COMObject<ICorDebugMDA>, IEquatable<CorMDA> {
 		/// <summary>
-		/// true if the thread on which the MDA was fired has slipped since the MDA was fired.
-		/// 
-		/// When the call stack no longer describes where the MDA was originally raised, the thread
-		/// is considered to have slipped. This is an unusual circumstance brought about by the
-		/// thread's execution of an invalid operation upon exiting.
-		/// </summary>
-		public bool ThreadSlipped => (Flags & CorDebugMDAFlags.MDA_FLAG_SLIP) != 0;
-
-		/// <summary>
 		/// Gets the flags
 		/// </summary>
 		public CorDebugMDAFlags Flags {

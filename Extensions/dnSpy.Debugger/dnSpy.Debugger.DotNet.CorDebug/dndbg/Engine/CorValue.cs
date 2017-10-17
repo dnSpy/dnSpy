@@ -338,47 +338,6 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
-		/// Gets an ordered list of threads that are queued on the event that is associated with a
-		/// monitor lock
-		/// </summary>
-		public IEnumerable<CorThread> MonitorEventWaitList {
-			get {
-				var h3 = obj as ICorDebugHeapValue3;
-				if (h3 == null)
-					yield break;
-				int hr = h3.GetMonitorEventWaitList(out var threadEnum);
-				if (hr < 0)
-					yield break;
-				for (;;) {
-					hr = threadEnum.Next(1, out var thread, out uint count);
-					if (hr != 0 || thread == null)
-						break;
-					yield return new CorThread(thread);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets all <see cref="CorExceptionObjectStackFrame"/>s if <see cref="IsExceptionObject"/> is true
-		/// </summary>
-		public IEnumerable<CorExceptionObjectStackFrame> ExceptionObjectStackFrames {
-			get {
-				var dex = obj as ICorDebugExceptionObjectValue;
-				if (dex == null)
-					yield break;
-				int hr = dex.EnumerateExceptionCallStack(out var exEnum);
-				if (hr < 0 || exEnum == null)
-					yield break;
-				for (;;) {
-					hr = exEnum.Next(1, out var objStackFrame, out uint count);
-					if (hr != 0)
-						break;
-					yield return new CorExceptionObjectStackFrame(objStackFrame);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Gets the value. Only values of simple types are currently returned: boolean, integers,
 		/// floating points, decimal, string and null.
 		/// </summary>
@@ -469,42 +428,6 @@ namespace dndbg.Engine {
 		public CorValue GetElementAtPosition(int index, out int hr) => GetElementAtPosition((uint)index, out hr);
 
 		/// <summary>
-		/// Gets the value at the specified indices or null
-		/// </summary>
-		/// <param name="indices">Indices into the array</param>
-		/// <returns></returns>
-		public unsafe CorValue GetElement(uint[] indices) {
-			Debug.Assert(indices != null && (uint)indices.Length == Rank);
-			var a = obj as ICorDebugArrayValue;
-			if (a == null)
-				return null;
-			int hr;
-			ICorDebugValue value;
-			fixed (uint* p = &indices[0]) {
-				hr = a.GetElement((uint)indices.Length, new IntPtr(p), out value);
-			}
-			return hr < 0 || value == null ? null : new CorValue(value);
-		}
-
-		/// <summary>
-		/// Gets the value at the specified indices or null
-		/// </summary>
-		/// <param name="indices">Indices into the array</param>
-		/// <returns></returns>
-		public unsafe CorValue GetElement(int[] indices) {
-			Debug.Assert(indices != null && (uint)indices.Length == Rank);
-			var a = obj as ICorDebugArrayValue;
-			if (a == null)
-				return null;
-			int hr;
-			ICorDebugValue value;
-			fixed (int* p = &indices[0]) {
-				hr = a.GetElement((uint)indices.Length, new IntPtr(p), out value);
-			}
-			return hr < 0 || value == null ? null : new CorValue(value);
-		}
-
-		/// <summary>
 		/// Gets the value of a field or null if it's not a <see cref="ICorDebugObjectValue"/>
 		/// </summary>
 		/// <param name="cls">Class</param>
@@ -564,21 +487,6 @@ namespace dndbg.Engine {
 				return null;
 			int hr = h2.CreateHandle(type, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
-		}
-
-		/// <summary>
-		/// Returns the managed thread that owns the monitor lock on this object
-		/// </summary>
-		/// <param name="acquisitionCount">The number of times this thread would have to release the
-		/// lock before it returns to being unowned</param>
-		/// <returns></returns>
-		public CorThread GetThreadOwningMonitorLock(out uint acquisitionCount) {
-			acquisitionCount = 0;
-			var h3 = obj as ICorDebugHeapValue3;
-			if (h3 == null)
-				return null;
-			int hr = h3.GetThreadOwningMonitorLock(out var thread, out acquisitionCount);
-			return hr < 0 || thread == null ? null : new CorThread(thread);
 		}
 
 		/// <summary>

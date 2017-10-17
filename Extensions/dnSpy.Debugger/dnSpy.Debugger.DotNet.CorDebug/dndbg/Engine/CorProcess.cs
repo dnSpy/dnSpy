@@ -215,44 +215,6 @@ namespace dndbg.Engine {
 			return buf;
 		}
 
-		/// <summary>
-		/// Sets the debug state of all managed threads
-		/// </summary>
-		/// <param name="state">New state</param>
-		/// <param name="thread">Thread to exempt from the new state or null</param>
-		public void SetAllThreadsDebugState(CorDebugThreadState state, CorThread thread = null) =>
-			obj.SetAllThreadsDebugState(state, thread?.RawObject);
-
-		/// <summary>
-		/// true if any managed callbacks are currently queued for the specified thread
-		/// </summary>
-		/// <param name="thread">Thread or null to check all threads</param>
-		/// <returns></returns>
-		public bool HasQueuedCallbacks(CorThread thread) {
-			int hr = obj.HasQueuedCallbacks(thread?.RawObject, out int queued);
-			return hr >= 0 && queued != 0;
-		}
-
-		/// <summary>
-		/// Gets a thread or null
-		/// </summary>
-		/// <param name="threadId">Thread ID</param>
-		/// <returns></returns>
-		public CorThread GetThread(uint threadId) {
-			int hr = obj.GetThread(threadId, out var thread);
-			return hr < 0 || thread == null ? null : new CorThread(thread);
-		}
-
-		/// <summary>
-		/// true if the specified thread has been suspended as a result of the debugger stopping this process
-		/// </summary>
-		/// <param name="threadId">Thread id</param>
-		/// <returns></returns>
-		public bool IsOSSuspended(uint threadId) {
-			int hr = obj.IsOSSuspended(threadId, out int susp);
-			return hr >= 0 && susp != 0;
-		}
-
 		public void SetEnableCustomNotification(CorClass cls, bool enable) {
 			if (obj is ICorDebugProcess3 p3) {
 				int hr = p3.SetEnableCustomNotification(cls.RawObject, enable ? 1 : 0);
@@ -287,32 +249,6 @@ namespace dndbg.Engine {
 		public bool Detach() {
 			int hr = obj.Detach();
 			return hr >= 0;
-		}
-
-		public bool IsTransitionStub(ulong addr) {
-			int hr = obj.IsTransitionStub(addr, out int ts);
-			return hr >= 0 && ts != 0;
-		}
-
-		public void ClearCurrentException(uint threadId) => obj.ClearCurrentException(threadId);
-
-		public CorThread ThreadForFiberCookie(uint fiberCookie) {
-			int hr = obj.ThreadForFiberCookie(fiberCookie, out var thread);
-			return hr < 0 || thread == null ? null : new CorThread(thread);
-		}
-
-		/// <summary>
-		/// Converts an object address to a <see cref="CorValue"/>. Return value is null or
-		/// a <see cref="ICorDebugObjectValue"/>.
-		/// </summary>
-		/// <param name="address">Address of object</param>
-		/// <returns></returns>
-		public CorValue GetObject(ulong address) {
-			var p5 = obj as ICorDebugProcess5;
-			if (p5 == null)
-				return null;
-			int hr = p5.GetObject(address, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
 		public static bool operator ==(CorProcess a, CorProcess b) {

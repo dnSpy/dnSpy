@@ -240,7 +240,7 @@ namespace dndbg.Engine {
 					return;
 				}
 
-				var name = GetFileName(module.UniquerName);
+				var name = GetFileName(module.Name);
 				OutputWrite(FilterName(name), TypeColor.AssemblyModule);
 			}
 			finally {
@@ -875,129 +875,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public void Write(CorField field) {
-			if (field == null) {
-				OutputWrite("null field", TypeColor.Error);
-				return;
-			}
-
-			try {
-				if (recursionCounter++ >= MAX_RECURSION)
-					return;
-
-				var sig = field.GetFieldSig();
-				var cls = field.Class;
-				var type = cls.GetParameterizedType(CorElementType.Class);
-				bool isEnumOwner = type != null && type.IsEnum;
-
-				var info = GetGenericInfo(null, cls, 0);
-				var fieldAttrs = field.GetAttributes();
-
-				if (!isEnumOwner || (fieldAttrs & FieldAttributes.Literal) == 0) {
-					Write(sig.Type, info.TypeGenericArguments, info.MethodGenericArguments, info.TypeTokenAndNames, info.MethodTokenAndNames);
-					WriteSpace();
-				}
-				if (ShowDeclaringTypes) {
-					Write(type);
-					OutputWrite(".", TypeColor.Operator);
-				}
-				WriteIdentifier(field.GetName(), GetTypeColor(field, type, fieldAttrs));
-				WriteTokenComment(field.Token);
-				if (ShowFieldLiteralValues) {
-					object c;
-					if ((fieldAttrs & FieldAttributes.Literal) != 0 && (c = field.GetConstant()) != null) {
-						WriteSpace();
-						OutputWrite("=", TypeColor.Operator);
-						WriteSpace();
-						WriteConstant(c);
-					}
-				}
-			}
-			finally {
-				recursionCounter--;
-			}
-		}
-
-		TypeColor GetTypeColor(CorField field, CorType type, FieldAttributes fieldAttrs) {
-			if (field == null)
-				return TypeColor.InstanceField;
-			if (type != null && type.IsEnum)
-				return TypeColor.EnumField;
-			if ((fieldAttrs & FieldAttributes.Literal) != 0)
-				return TypeColor.LiteralField;
-			if ((fieldAttrs & FieldAttributes.Static) != 0)
-				return TypeColor.StaticField;
-			return TypeColor.InstanceField;
-		}
-
-		public void Write(CorProperty prop) {
-			if (prop == null) {
-				OutputWrite("null property", TypeColor.Error);
-				return;
-			}
-
-			try {
-				if (recursionCounter++ >= MAX_RECURSION)
-					return;
-
-				var getMethod = prop.GetMethod;
-				var setMethod = prop.SetMethod;
-				var accMeth = getMethod ?? setMethod;
-
-				var module = prop.Class.Module;
-				uint token = accMeth == null ? 0 : accMeth.Token;
-
-				var info = GetGenericInfo(null, prop.Class, token);
-
-				MethodSig methodSig = null;
-				bool retTypeIsLastArgType = accMeth == setMethod;
-
-				WriteModuleName(module);
-				WriteReturnType(ref methodSig, retTypeIsLastArgType, module, token, info.TypeGenericArguments, info.MethodGenericArguments, info.TypeTokenAndNames, info.MethodTokenAndNames);
-				if (ShowDeclaringTypes) {
-					Write(prop.Class.GetParameterizedType(CorElementType.Class));
-					OutputWrite(".", TypeColor.Operator);
-				}
-				var overrides = accMeth == null ? Array.Empty<CorOverride>() : accMeth.GetOverrides();
-				var ovrMeth = overrides.Length == 0 ? null : overrides[0].FunctionDeclaration;
-				if (IsIndexer(prop, accMeth, ovrMeth)) {
-					if (ovrMeth != null) {
-						WriteFuncType(ovrMeth);
-						OutputWrite(".", TypeColor.Operator);
-					}
-					OutputWrite("this", TypeColor.Keyword);
-					WriteGenericParameters(module, token, info.MethodGenericArguments, info.MethodTokenAndNames, true);
-					WriteMethodParameterList(ref methodSig, retTypeIsLastArgType, module, token, info.TypeTokenAndNames, info.MethodTokenAndNames, "[", "]");
-				}
-				else if (ovrMeth != null && GetPropName(ovrMeth) != null) {
-					WriteFuncType(ovrMeth);
-					OutputWrite(".", TypeColor.Operator);
-					WriteIdentifier(GetPropName(ovrMeth), GetTypeColor(accMeth, TypeColor.StaticProperty, TypeColor.InstanceProperty));
-				}
-				else
-					WriteIdentifier(prop.GetName(), GetTypeColor(accMeth, TypeColor.StaticProperty, TypeColor.InstanceProperty));
-				WriteTokenComment(prop.Token);
-
-				WriteSpace();
-				OutputWrite("{", TypeColor.Punctuation);
-				if (getMethod != null) {
-					WriteSpace();
-					OutputWrite("get", TypeColor.Keyword);
-					OutputWrite(";", TypeColor.Punctuation);
-				}
-				if (setMethod != null) {
-					WriteSpace();
-					OutputWrite("set", TypeColor.Keyword);
-					OutputWrite(";", TypeColor.Punctuation);
-				}
-				WriteSpace();
-				OutputWrite("}", TypeColor.Punctuation);
-			}
-			finally {
-				recursionCounter--;
-			}
-		}
-
 		void WriteFuncType(CorFunction func) {
 			var cls = func.Class;
 			var type = cls?.GetParameterizedType(CorElementType.Class);
@@ -1014,66 +891,6 @@ namespace dndbg.Engine {
 			if (name.StartsWith("get_", StringComparison.Ordinal) || name.StartsWith("set_", StringComparison.Ordinal))
 				return name.Substring(4);
 			return null;
-		}
-
-		static bool IsIndexer(CorProperty prop, CorFunction accMeth, CorFunction ovrMeth) {
-			if (prop == null || prop.GetPropertySig().GetParamCount() == 0)
-				return false;
-
-			var bp = prop;
-			if (accMeth != null && ovrMeth != null) {
-				foreach (var p in ovrMeth.Class.FindProperties(false)) {
-					if (ovrMeth.Equals(p.GetMethod) || ovrMeth.Equals(p.SetMethod)) {
-						bp = p;
-						break;
-					}
-				}
-			}
-			return GetDefaultMemberName(bp.Class) == bp.GetName();
-		}
-
-		static string GetDefaultMemberName(CorClass cls) {
-			if (cls == null)
-				return null;
-
-			//TODO:
-			return "Item";
-		}
-
-		public void Write(CorEvent evt) {
-			if (evt == null) {
-				OutputWrite("null event", TypeColor.Error);
-				return;
-			}
-
-			try {
-				if (recursionCounter++ >= MAX_RECURSION)
-					return;
-
-				Write(evt.GetEventType());
-				WriteSpace();
-				if (ShowDeclaringTypes) {
-					Write(evt.Class.GetParameterizedType(CorElementType.Class));
-					OutputWrite(".", TypeColor.Operator);
-				}
-				WriteIdentifier(evt.GetName(), GetTypeColor(evt));
-				WriteTokenComment(evt.Token);
-			}
-			finally {
-				recursionCounter--;
-			}
-		}
-
-		TypeColor GetTypeColor(CorEvent e) =>
-			GetTypeColor(e.AddMethod ?? e.RemoveMethod ?? e.FireMethod, TypeColor.StaticEvent, TypeColor.InstanceEvent);
-
-		TypeColor GetTypeColor(CorFunction func, TypeColor staticValue, TypeColor instanceValue) {
-			if (func == null)
-				return instanceValue;
-			var attrs = func.GetAttributes();
-			if ((attrs & MethodAttributes.Static) != 0)
-				return staticValue;
-			return instanceValue;
 		}
 
 		public void Write(CorFunction func) => Write(func, null);
@@ -1725,11 +1542,6 @@ namespace dndbg.Engine {
 			OutputWrite("}", TypeColor.TypeStringBrace);
 		}
 
-		public void WriteConstant(TypeSig type, object c) {
-			if (!TryWriteEnum(type, c))
-				WriteConstant(c);
-		}
-
 		bool TryWriteEnum(TypeSig type, object c) {
 			if (type == null)
 				return false;
@@ -1748,7 +1560,7 @@ namespace dndbg.Engine {
 			return true;
 		}
 
-		public void WriteConstant(object c) {
+		void WriteConstant(object c) {
 			if (c == null)
 				OutputWrite("null", TypeColor.Keyword);
 			else if (c is bool)
