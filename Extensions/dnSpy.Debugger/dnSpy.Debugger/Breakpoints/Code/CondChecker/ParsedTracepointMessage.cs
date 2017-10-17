@@ -71,25 +71,43 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 	}
 
-	struct TracepointMessagePart {
-		public TracepointMessageKind Kind => (TracepointMessageKind)(val & 0xFF);
-		public int Number => (int)(val >> 8);
-		public string String { get; }
-		public int Length { get; }
-		uint val;
+	[Flags]
+	enum TracepointMessageFlags : byte {
+		None					= 0,
+		Decimal					= 0x01,
+		Hexadecimal				= 0x02,
+		NoQuotes				= 0x04,
+	}
 
-		public TracepointMessagePart(TracepointMessageKind kind, string @string, int length) {
-			val = (uint)kind;
+	struct TracepointMessagePart {
+		public TracepointMessageKind Kind => (TracepointMessageKind)(val1 & 0xFF);
+		public int Number => (int)(val1 >> 8);
+		public string String { get; }
+		public int Length => (int)(val2 >> 3);
+		public TracepointMessageFlags Flags => (TracepointMessageFlags)(val2 & 7);
+		uint val1;
+		uint val2;
+
+		public TracepointMessagePart(TracepointMessageKind kind, string @string, int length, TracepointMessageFlags flags = TracepointMessageFlags.None) {
+			val1 = (uint)kind;
 			String = @string;
-			Length = length;
+			val2 = (uint)(length << 3) | (uint)flags;
+			Debug.Assert(Kind == kind);
+			Debug.Assert(Number == 0);
+			Debug.Assert(Length == length);
+			Debug.Assert(Flags == flags);
 		}
 
 		public TracepointMessagePart(TracepointMessageKind kind, int number, int length) {
 			Debug.Assert((int)kind <= 0xFF);
 			Debug.Assert(0 <= number && number <= 0x00FFFFFF);
-			val = (uint)kind | ((uint)number << 8);
+			val1 = (uint)kind | ((uint)number << 8);
 			String = null;
-			Length = length;
+			val2 = (uint)(length << 3);
+			Debug.Assert(Kind == kind);
+			Debug.Assert(Number == number);
+			Debug.Assert(Length == length);
+			Debug.Assert(Flags == 0);
 		}
 	}
 

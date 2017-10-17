@@ -250,17 +250,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 					case '{':
 					case '}':
 					case '\\':
-						sb.Append(c);
 						break;
 
 					default:
 						sb.Append('\\');
-						sb.Append(c);
 						break;
 					}
 				}
-				else
-					sb.Append(c);
+				sb.Append(c);
 			}
 			return sb.ToString();
 		}
@@ -271,6 +268,19 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				var c = s[pos++];
 				if (c == '}')
 					break;
+				if (c == '\\' && pos < s.Length) {
+					c = s[pos++];
+					switch (c) {
+					case '{':
+					case '}':
+					case '\\':
+						break;
+
+					default:
+						sb.Append('\\');
+						break;
+					}
+				}
 				seenComma |= c == ',';
 				sb.Append(c);
 			}

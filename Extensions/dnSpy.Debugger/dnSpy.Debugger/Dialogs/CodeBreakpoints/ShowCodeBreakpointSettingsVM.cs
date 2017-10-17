@@ -275,7 +275,7 @@ ThreadName");
 			sb.AppendLine();
 			sb.AppendLine(dnSpy_Debugger_Resources.TracepointMessage_EvaluateMessage);
 			sb.AppendLine();
-			sb.AppendLine(string.Format(dnSpy_Debugger_Resources.TracepointMessage_EscapeSequences, @"\\ \$ \{ \a \b \f \n \r \t \v"));
+			sb.AppendLine(string.Format(dnSpy_Debugger_Resources.TracepointMessage_EscapeSequences, @"\\ \$ \{ \} \a \b \f \n \r \t \v"));
 			sb.AppendLine();
 			sb.AppendLine(dnSpy_Debugger_Resources.TracepointMessage_ValidKeywords);
 			sb.Append(@"

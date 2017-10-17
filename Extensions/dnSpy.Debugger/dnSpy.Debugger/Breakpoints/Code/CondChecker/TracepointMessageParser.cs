@@ -46,11 +46,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		readonly List<TracepointMessagePart> partBuilder;
 		readonly StringBuilder currentText;
+		readonly StringBuilder tempStringBuilder;
 		int currentTextLength;
 
 		public TracepointMessageParser() {
 			partBuilder = new List<TracepointMessagePart>();
 			currentText = new StringBuilder();
+			tempStringBuilder = new StringBuilder();
 			currentTextLength = 0;
 			keywords = new KeywordInfo[] {
 				// NOTE: order is important, first match is picked
@@ -118,6 +120,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				partBuilder.Clear();
 				currentText.Clear();
 				currentTextLength = 0;
+				tempStringBuilder.Clear();
 			}
 		}
 
@@ -184,14 +187,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					goto default;
 
 				case '{':
-					int exprEndIndex = text.IndexOf('}', textPos + 1);
-					if (exprEndIndex >= 0) {
-						FlushPendingText();
-						partBuilder.Add(new TracepointMessagePart(TracepointMessageKind.WriteEvaluatedExpression, text.Substring(textPos + 1, exprEndIndex - textPos - 1), exprEndIndex - textPos + 1));
-						textPos = exprEndIndex + 1;
-						break;
-					}
-					goto default;
+					int pos = textPos + 1;
+					var evalInfo = ReadEvalText(text, ref pos);
+					FlushPendingText();
+					partBuilder.Add(new TracepointMessagePart(TracepointMessageKind.WriteEvaluatedExpression, evalInfo.expression, pos - textPos, evalInfo.flags));
+					textPos = pos;
+					break;
 
 				default:
 					AddText(text[textPos++]);
@@ -202,7 +203,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			FlushPendingText();
 		}
 		// If you add more chars, update help message in ShowCodeBreakpointSettingsVM
-		static char[] specialChars = new char[] { '\\', '$', '{' };
+		static char[] specialChars = new char[] { '\\', '$', '{', '}' };
 
 		static bool StartsWith(string s, int index, string other) {
 			if (index + other.Length > s.Length)
@@ -212,6 +213,52 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					return false;
 			}
 			return true;
+		}
+
+		(string expression, TracepointMessageFlags flags) ReadEvalText(string s, ref int pos) {
+			var sb = tempStringBuilder;
+			sb.Clear();
+			bool seenComma = false;
+			while (pos < s.Length) {
+				var c = s[pos++];
+				if (c == '}')
+					break;
+				if (c == '\\' && pos < s.Length) {
+					c = s[pos++];
+					switch (c) {
+					case '{':
+					case '}':
+					case '\\':
+						break;
+
+					default:
+						sb.Append('\\');
+						break;
+					}
+				}
+				seenComma |= c == ',';
+				sb.Append(c);
+			}
+			if (!seenComma)
+				return (sb.ToString(), 0);
+
+			var info = FormatSpecifiersUtils.GetFormatSpecifiers(sb);
+			var flags = TracepointMessageFlags.None;
+			// https://docs.microsoft.com/en-us/visualstudio/debugger/format-specifiers-in-csharp
+			foreach (var fs in info.formatSpecifiers) {
+				switch (fs) {
+				case "d":
+					flags = (flags & ~TracepointMessageFlags.Hexadecimal) | TracepointMessageFlags.Decimal;
+					break;
+				case "h":
+					flags = (flags & ~TracepointMessageFlags.Decimal) | TracepointMessageFlags.Hexadecimal;
+					break;
+				case "nq":
+					flags |= TracepointMessageFlags.NoQuotes;
+					break;
+				}
+			}
+			return (info.expression, flags);
 		}
 
 		void AddText(string text, int startIndex, int count) {
