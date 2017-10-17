@@ -30,6 +30,7 @@ using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.Metadata;
 
@@ -55,6 +56,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Dispatcher = new DbgDotNetDispatcherImpl(engine);
 			reflectionRuntime.GetOrCreateData(() => runtime);
 		}
+
+		public ModuleId GetModuleId(DbgModule module) => engine.GetModuleId(module);
 
 		sealed class GetFrameMethodState {
 			public bool Initialized;

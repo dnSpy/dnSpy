@@ -444,6 +444,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
+		internal ModuleId GetModuleId(DbgModule module) {
+			if (TryGetModuleData(module, out var data))
+				return data.ModuleId;
+			throw new InvalidOperationException();
+		}
+
 		bool TryGetModuleData(DbgModule module, out DbgModuleData data) {
 			if (module.TryGetData(out data) && data.Engine == this)
 				return true;

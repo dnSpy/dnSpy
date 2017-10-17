@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			public override int GetHashCode() => process.GetHashCode() ^ address.GetHashCode();
 		}
 
-		public ModuleId ModuleId => isInMemory ? ModuleId.CreateInMemory(ModuleDef) : ModuleId.CreateFromFile(ModuleDef);
+		public ModuleId ModuleId { get; }
 		public override IDsDocumentNameKey Key => CreateKey(Process, Address);
 		public override DsDocumentInfo? SerializedDocument => null;
 		public bool AutoUpdateMemory { get; }
@@ -52,15 +52,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		readonly DbgInMemoryModuleServiceImpl owner;
 		readonly byte[] data;
-		readonly bool isInMemory;
 
-		MemoryModuleDefDocument(DbgInMemoryModuleServiceImpl owner, DbgProcess process, ulong address, byte[] data, bool isInMemory, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
+		MemoryModuleDefDocument(DbgInMemoryModuleServiceImpl owner, ModuleId moduleId, DbgProcess process, ulong address, byte[] data, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
 			: base(module, loadSyms) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
+			ModuleId = moduleId;
 			Process = process ?? throw new ArgumentNullException(nameof(process));
 			Address = address;
 			this.data = data ?? throw new ArgumentNullException(nameof(data));
-			this.isInMemory = isInMemory;
 			AutoUpdateMemory = autoUpdateMemory;
 		}
 
@@ -117,7 +116,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public static MemoryModuleDefDocument CreateAssembly(List<MemoryModuleDefDocument> files) {
 			var manifest = files[0];
-			var file = new MemoryModuleDefDocument(manifest.owner, manifest.Process, manifest.Address, manifest.data, manifest.isInMemory, manifest.ModuleDef, false, manifest.AutoUpdateMemory);
+			var file = new MemoryModuleDefDocument(manifest.owner, manifest.ModuleId, manifest.Process, manifest.Address, manifest.data, manifest.ModuleDef, false, manifest.AutoUpdateMemory);
 			file.files = new List<MemoryModuleDefDocument>(files);
 			return file;
 		}
@@ -134,7 +133,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			bool autoUpdateMemory = false;
 			if (GacInfo.IsGacPath(mod.Location))
 				autoUpdateMemory = false;   // GAC files are not likely to decrypt methods in memory
-			return new MemoryModuleDefDocument(owner, module.Process, module.Address, data, module.IsInMemory, mod, loadSyms, autoUpdateMemory);
+			var moduleId = module.Runtime.GetDotNetRuntime().GetModuleId(module);
+			return new MemoryModuleDefDocument(owner, moduleId, module.Process, module.Address, data, mod, loadSyms, autoUpdateMemory);
 		}
 
 		static ImageLayout GetImageLayout(DbgModule module) {

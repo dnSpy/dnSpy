@@ -21,6 +21,7 @@ using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
@@ -32,6 +33,13 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Gets the dispatcher
 		/// </summary>
 		DbgDotNetDispatcher Dispatcher { get; }
+
+		/// <summary>
+		/// Gets the module id
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <returns></returns>
+		ModuleId GetModuleId(DbgModule module);
 
 		/// <summary>
 		/// Gets the current method or null if it's not a normal IL frame
