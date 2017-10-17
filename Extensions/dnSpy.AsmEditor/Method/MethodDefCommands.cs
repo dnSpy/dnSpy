@@ -478,6 +478,8 @@ namespace dnSpy.AsmEditor.Method {
 				return;
 
 			undoCommandService.Value.Add(new MethodDefSettingsCommand(methodNode, data.CreateMethodDefOptions()));
+
+			methodNode.TreeNode.TreeView.SelectItems(new[] { methodNode });
 		}
 
 		readonly MethodNode methodNode;

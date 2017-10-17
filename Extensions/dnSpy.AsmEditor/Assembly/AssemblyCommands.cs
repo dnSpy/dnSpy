@@ -291,6 +291,8 @@ namespace dnSpy.AsmEditor.Assembly {
 				return;
 
 			undoCommandService.Value.Add(new AssemblySettingsCommand(asmNode, data.CreateAssemblyOptions()));
+
+			asmNode.TreeNode.TreeView.SelectItems(new[] { asmNode });
 		}
 
 		readonly AssemblyDocumentNode asmNode;

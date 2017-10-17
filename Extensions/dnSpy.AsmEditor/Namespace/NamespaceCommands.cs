@@ -382,6 +382,8 @@ namespace dnSpy.AsmEditor.Namespace {
 				return;
 
 			undoCommandService.Value.Add(new RenameNamespaceCommand(data.Name, nsNode));
+
+			nsNode.TreeNode.TreeView.SelectItems(new[] { nsNode });
 		}
 
 		readonly string newName;

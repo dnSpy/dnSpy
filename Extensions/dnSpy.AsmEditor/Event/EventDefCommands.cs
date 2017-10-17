@@ -383,6 +383,8 @@ namespace dnSpy.AsmEditor.Event {
 				return;
 
 			undoCommandService.Value.Add(new EventDefSettingsCommand(eventNode, data.CreateEventDefOptions()));
+
+			eventNode.TreeNode.TreeView.SelectItems(new[] { eventNode });
 		}
 
 		readonly EventNode eventNode;

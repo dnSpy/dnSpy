@@ -749,6 +749,8 @@ namespace dnSpy.AsmEditor.Module {
 				return;
 
 			undoCommandService.Value.Add(new ModuleSettingsCommand(asmNode, data.CreateModuleOptions()));
+
+			asmNode.TreeNode.TreeView.SelectItems(new[] { asmNode });
 		}
 
 		readonly ModuleDocumentNode modNode;

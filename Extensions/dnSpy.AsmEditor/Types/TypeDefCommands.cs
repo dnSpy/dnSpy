@@ -475,6 +475,8 @@ namespace dnSpy.AsmEditor.Types {
 				return;
 
 			undoCommandService.Value.Add(new TypeDefSettingsCommand(module, typeNode, data.CreateTypeDefOptions()));
+
+			typeNode.TreeNode.TreeView.SelectItems(new[] { typeNode });
 		}
 
 		readonly ModuleDef module;

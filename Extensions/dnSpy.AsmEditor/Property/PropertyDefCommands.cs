@@ -380,6 +380,8 @@ namespace dnSpy.AsmEditor.Property {
 				return;
 
 			undoCommandService.Value.Add(new PropertyDefSettingsCommand(propNode, data.CreatePropertyDefOptions()));
+
+			propNode.TreeNode.TreeView.SelectItems(new[] { propNode });
 		}
 
 		readonly PropertyNode propNode;

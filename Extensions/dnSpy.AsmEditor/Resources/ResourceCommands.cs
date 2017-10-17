@@ -1043,6 +1043,8 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 
 			undoCommandService.Value.Add(new ResourceSettingsCommand(rsrcNode, data.CreateResourceOptions()));
+
+			rsrcNode.TreeNode.TreeView.SelectItems(new[] { rsrcNode });
 		}
 
 		readonly ResourceNode rsrcNode;

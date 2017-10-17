@@ -390,6 +390,8 @@ namespace dnSpy.AsmEditor.Field {
 				return;
 
 			undoCommandService.Value.Add(new FieldDefSettingsCommand(fieldNode, data.CreateFieldDefOptions()));
+
+			fieldNode.TreeNode.TreeView.SelectItems(new[] { fieldNode });
 		}
 
 		readonly FieldNode fieldNode;
