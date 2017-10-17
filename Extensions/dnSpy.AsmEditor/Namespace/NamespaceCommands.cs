@@ -456,6 +456,7 @@ namespace dnSpy.AsmEditor.Namespace {
 					typeNode.TypeDef.Namespace = newNamespace;
 
 				origParentNode.TreeNode.AddChild(nsNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { nsNode });
 				nsNode.TreeNode.RefreshUI();
 			}
 
@@ -489,6 +490,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 				nsNode.Name = origName;
 				origParentNode.TreeNode.Children.Insert(origParentChildIndex, nsNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { nsNode });
 				nsNode.TreeNode.RefreshUI();
 			}
 

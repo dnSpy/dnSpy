@@ -545,6 +545,7 @@ namespace dnSpy.AsmEditor.Types {
 				newOptions.CopyTo(typeNode.TypeDef, module);
 
 				origParentNode.TreeNode.AddChild(typeNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { typeNode });
 			}
 			else
 				newOptions.CopyTo(typeNode.TypeDef, module);
@@ -577,6 +578,7 @@ namespace dnSpy.AsmEditor.Types {
 
 				origOptions.CopyTo(typeNode.TypeDef, module);
 				origParentNode.TreeNode.Children.Insert(origParentChildIndex, typeNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { typeNode });
 			}
 			else
 				origOptions.CopyTo(typeNode.TypeDef, module);

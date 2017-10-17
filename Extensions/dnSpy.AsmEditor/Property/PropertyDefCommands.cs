@@ -415,6 +415,7 @@ namespace dnSpy.AsmEditor.Property {
 				newOptions.CopyTo(propNode.PropertyDef);
 
 				origParentNode.TreeNode.AddChild(propNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { propNode });
 			}
 			else
 				newOptions.CopyTo(propNode.PropertyDef);
@@ -430,6 +431,7 @@ namespace dnSpy.AsmEditor.Property {
 
 				origOptions.CopyTo(propNode.PropertyDef);
 				origParentNode.TreeNode.Children.Insert(origParentChildIndex, propNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { propNode });
 			}
 			else
 				origOptions.CopyTo(propNode.PropertyDef);

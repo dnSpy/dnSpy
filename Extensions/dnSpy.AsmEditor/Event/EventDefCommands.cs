@@ -418,6 +418,7 @@ namespace dnSpy.AsmEditor.Event {
 				newOptions.CopyTo(eventNode.EventDef);
 
 				origParentNode.TreeNode.AddChild(eventNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { eventNode });
 			}
 			else
 				newOptions.CopyTo(eventNode.EventDef);
@@ -433,6 +434,7 @@ namespace dnSpy.AsmEditor.Event {
 
 				origOptions.CopyTo(eventNode.EventDef);
 				origParentNode.TreeNode.Children.Insert(origParentChildIndex, eventNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { eventNode });
 			}
 			else
 				origOptions.CopyTo(eventNode.EventDef);

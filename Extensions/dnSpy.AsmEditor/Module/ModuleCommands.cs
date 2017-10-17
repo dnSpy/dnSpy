@@ -765,6 +765,7 @@ namespace dnSpy.AsmEditor.Module {
 
 		void WriteModuleOptions(ModuleOptions theOptions) {
 			theOptions.CopyTo(modNode.Document.ModuleDef);
+			modNode.TreeNode.TreeView.SelectItems(new[] { modNode });
 			modNode.TreeNode.RefreshUI();
 		}
 
