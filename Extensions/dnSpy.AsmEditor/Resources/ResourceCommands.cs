@@ -1043,8 +1043,6 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 
 			undoCommandService.Value.Add(new ResourceSettingsCommand(rsrcNode, data.CreateResourceOptions()));
-
-			rsrcNode.TreeNode.TreeView.SelectItems(new[] { rsrcNode });
 		}
 
 		readonly ResourceNode rsrcNode;
@@ -1080,6 +1078,7 @@ namespace dnSpy.AsmEditor.Resources {
 				newOptions.CopyTo(rsrcNode.Resource);
 
 				origParentNode.TreeNode.AddChild(rsrcNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { rsrcNode });
 			}
 			else
 				newOptions.CopyTo(rsrcNode.Resource);
@@ -1095,6 +1094,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 				origOptions.CopyTo(rsrcNode.Resource);
 				origParentNode.TreeNode.Children.Insert(origParentChildIndex, rsrcNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { rsrcNode });
 			}
 			else
 				origOptions.CopyTo(rsrcNode.Resource);

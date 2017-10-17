@@ -478,8 +478,6 @@ namespace dnSpy.AsmEditor.Method {
 				return;
 
 			undoCommandService.Value.Add(new MethodDefSettingsCommand(methodNode, data.CreateMethodDefOptions()));
-
-			methodNode.TreeNode.TreeView.SelectItems(new[] { methodNode });
 		}
 
 		readonly MethodNode methodNode;
@@ -518,6 +516,7 @@ namespace dnSpy.AsmEditor.Method {
 				newOptions.CopyTo(methodNode.MethodDef);
 
 				origParentNode.TreeNode.AddChild(methodNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { methodNode });
 			}
 			else
 				newOptions.CopyTo(methodNode.MethodDef);
@@ -537,6 +536,7 @@ namespace dnSpy.AsmEditor.Method {
 
 				origOptions.CopyTo(methodNode.MethodDef);
 				origParentNode.TreeNode.Children.Insert(origParentChildIndex, methodNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { methodNode });
 			}
 			else
 				origOptions.CopyTo(methodNode.MethodDef);

@@ -291,8 +291,6 @@ namespace dnSpy.AsmEditor.Assembly {
 				return;
 
 			undoCommandService.Value.Add(new AssemblySettingsCommand(asmNode, data.CreateAssemblyOptions()));
-
-			asmNode.TreeNode.TreeView.SelectItems(new[] { asmNode });
 		}
 
 		readonly AssemblyDocumentNode asmNode;
@@ -335,6 +333,7 @@ namespace dnSpy.AsmEditor.Assembly {
 						info.AssemblyRef.PublicKeyOrToken = newOptions.PublicKey;
 				}
 			}
+			asmNode.TreeNode.TreeView.SelectItems(new[] { asmNode });
 			asmNode.TreeNode.RefreshUI();
 		}
 
@@ -346,6 +345,7 @@ namespace dnSpy.AsmEditor.Assembly {
 					info.AssemblyRef.PublicKeyOrToken = info.OrigPublicKeyOrToken;
 				}
 			}
+			asmNode.TreeNode.TreeView.SelectItems(new[] { asmNode });
 			asmNode.TreeNode.RefreshUI();
 		}
 
