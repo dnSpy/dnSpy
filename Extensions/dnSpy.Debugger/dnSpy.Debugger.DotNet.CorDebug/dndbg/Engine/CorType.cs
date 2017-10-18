@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;

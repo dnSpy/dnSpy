@@ -410,6 +410,44 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool respectHideMemberAttributes = true;
 
+		public override bool SuppressJITOptimization_SystemModules {
+			get {
+				lock (lockObj)
+					return suppressJITOptimization_SystemModules;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = suppressJITOptimization_SystemModules != value;
+					suppressJITOptimization_SystemModules = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(SuppressJITOptimization_SystemModules));
+					OnModified();
+				}
+			}
+		}
+		bool suppressJITOptimization_SystemModules = true;
+
+		public override bool SuppressJITOptimization_ProgramModules {
+			get {
+				lock (lockObj)
+					return suppressJITOptimization_ProgramModules;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = suppressJITOptimization_ProgramModules != value;
+					suppressJITOptimization_ProgramModules = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(SuppressJITOptimization_ProgramModules));
+					OnModified();
+				}
+			}
+		}
+		bool suppressJITOptimization_ProgramModules = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -433,6 +471,8 @@ namespace dnSpy.Debugger.Settings {
 			other.ShowDecompilerGeneratedVariables = ShowDecompilerGeneratedVariables;
 			other.HideCompilerGeneratedMembers = HideCompilerGeneratedMembers;
 			other.RespectHideMemberAttributes = RespectHideMemberAttributes;
+			other.SuppressJITOptimization_SystemModules = SuppressJITOptimization_SystemModules;
+			other.SuppressJITOptimization_ProgramModules = SuppressJITOptimization_ProgramModules;
 			return other;
 		}
 	}
@@ -470,6 +510,8 @@ namespace dnSpy.Debugger.Settings {
 			ShowDecompilerGeneratedVariables = sect.Attribute<bool?>(nameof(ShowDecompilerGeneratedVariables)) ?? ShowDecompilerGeneratedVariables;
 			HideCompilerGeneratedMembers = sect.Attribute<bool?>(nameof(HideCompilerGeneratedMembers)) ?? HideCompilerGeneratedMembers;
 			RespectHideMemberAttributes = sect.Attribute<bool?>(nameof(RespectHideMemberAttributes)) ?? RespectHideMemberAttributes;
+			SuppressJITOptimization_SystemModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_SystemModules)) ?? SuppressJITOptimization_SystemModules;
+			SuppressJITOptimization_ProgramModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_ProgramModules)) ?? SuppressJITOptimization_ProgramModules;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -498,6 +540,8 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(ShowDecompilerGeneratedVariables), ShowDecompilerGeneratedVariables);
 			sect.Attribute(nameof(HideCompilerGeneratedMembers), HideCompilerGeneratedMembers);
 			sect.Attribute(nameof(RespectHideMemberAttributes), RespectHideMemberAttributes);
+			sect.Attribute(nameof(SuppressJITOptimization_SystemModules), SuppressJITOptimization_SystemModules);
+			sect.Attribute(nameof(SuppressJITOptimization_ProgramModules), SuppressJITOptimization_ProgramModules);
 		}
 	}
 }

@@ -20,10 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
-using dnlib.DotNet;
 
 namespace dndbg.Engine {
 	sealed class CorFrame : COMObject<ICorDebugFrame>, IEquatable<CorFrame> {

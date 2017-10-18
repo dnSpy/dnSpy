@@ -183,6 +183,7 @@
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DbgModuleMemoryRefreshedNotifierImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
+    <Compile Include="Impl\DebugOptionsProviderImpl.cs" />
     <Compile Include="Impl\DmdDispatcherImpl.cs" />
     <Compile Include="Impl\DmdDynamicModuleHelperImpl.cs" />
     <Compile Include="Impl\DnDebuggerObjectHolder.cs" />

@@ -621,6 +621,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					Environment = env.Environment,
 				};
 				dbgOptions.DebugOptions.IgnoreBreakInstructions = false;
+				dbgOptions.DebugOptions.DebugOptionsProvider = new DebugOptionsProviderImpl(debuggerSettings);
 
 				dnDebugger = DnDebugger.DebugProcess(dbgOptions);
 				OnDebugProcess(dnDebugger);
@@ -674,6 +675,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					DebugMessageDispatcher = debuggerThread.GetDebugMessageDispatcher(),
 					ProcessId = (int)options.ProcessId,
 				};
+				dbgOptions.DebugOptions.DebugOptionsProvider = new DebugOptionsProviderImpl(debuggerSettings);
 
 				dnDebugger = DnDebugger.Attach(dbgOptions);
 				if (dnDebugger.Processes.Length == 0)

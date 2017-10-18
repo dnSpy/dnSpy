@@ -19,10 +19,8 @@
 
 // This file contains helper methods that are used by the CorDebug classes. It uses MDAPI.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;

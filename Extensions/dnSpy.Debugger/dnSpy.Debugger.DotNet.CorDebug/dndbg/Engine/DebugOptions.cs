@@ -17,178 +17,36 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	class DebugOptions : INotifyPropertyChanged {
-		public event PropertyChangedEventHandler PropertyChanged;
+	abstract class DebugOptionsProvider {
+		public abstract CorDebugJITCompilerFlags GetDesiredNGENCompilerFlags(DnProcess process);
+		public abstract ModuleLoadOptions GetModuleLoadOptions(DnModule module);
+	}
 
-		protected void OnPropertyChanged(string propName) =>
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+	struct ModuleLoadOptions {
+		public CorDebugJITCompilerFlags JITCompilerFlags;
+		public bool ModuleTrackJITInfo;
+		public bool ModuleAllowJitOptimizations;
+		public bool JustMyCode;
+	}
 
-		/// <summary>
-		/// Stepper intercept mask
-		/// </summary>
-		public CorDebugIntercept StepperInterceptMask {
-			get { return stepperInterceptMask; }
-			set {
-				if (stepperInterceptMask != value) {
-					stepperInterceptMask = value;
-					OnPropertyChanged(nameof(StepperInterceptMask));
-				}
-			}
-		}
-		CorDebugIntercept stepperInterceptMask = CorDebugIntercept.INTERCEPT_NONE;
-
-		/// <summary>
-		/// Stepper unmapped stop mask
-		/// </summary>
-		public CorDebugUnmappedStop StepperUnmappedStopMask {
-			get { return stepperUnmappedStopMask; }
-			set {
-				if (stepperUnmappedStopMask != value) {
-					stepperUnmappedStopMask = value;
-					OnPropertyChanged(nameof(StepperUnmappedStopMask));
-				}
-			}
-		}
-		CorDebugUnmappedStop stepperUnmappedStopMask = CorDebugUnmappedStop.STOP_NONE;
-
-		/// <summary>
-		/// Stepper JMC (Just My Code)
-		/// </summary>
-		public bool StepperJMC {
-			get { return stepperJMC; }
-			set {
-				if (stepperJMC != value) {
-					stepperJMC = value;
-					OnPropertyChanged(nameof(StepperJMC));
-				}
-			}
-		}
-		bool stepperJMC = false;
-
-		/// <summary>
-		/// Passed to ICorDebugProcess2::SetDesiredNGENCompilerFlags() and ICorDebugModule2::SetJITCompilerFlags()
-		/// </summary>
-		public CorDebugJITCompilerFlags JITCompilerFlags {
-			get { return jitCompilerFlags; }
-			set {
-				if (jitCompilerFlags != value) {
-					jitCompilerFlags = value;
-					OnPropertyChanged(nameof(JITCompilerFlags));
-				}
-			}
-		}
-		CorDebugJITCompilerFlags jitCompilerFlags = CorDebugJITCompilerFlags.CORDEBUG_JIT_DISABLE_OPTIMIZATION;
-
-		/// <summary>
-		/// Passed to ICorDebugModule::EnableJITDebugging()
-		/// </summary>
-		public bool ModuleTrackJITInfo {
-			get { return moduleTrackJITInfo; }
-			set {
-				if (moduleTrackJITInfo != value) {
-					moduleTrackJITInfo = value;
-					OnPropertyChanged(nameof(ModuleTrackJITInfo));
-				}
-			}
-		}
-		bool moduleTrackJITInfo = true;
-
-		/// <summary>
-		/// Passed to ICorDebugModule::EnableJITDebugging()
-		/// </summary>
-		public bool ModuleAllowJitOptimizations {
-			get { return moduleAllowJitOptimizations; }
-			set {
-				if (moduleAllowJitOptimizations != value) {
-					moduleAllowJitOptimizations = value;
-					OnPropertyChanged(nameof(ModuleAllowJitOptimizations));
-				}
-			}
-		}
-		bool moduleAllowJitOptimizations = true;
-
-		/// <summary>
-		/// Passed to ICorDebugModule::EnableClassLoadCallbacks()
-		/// </summary>
-		public bool ModuleClassLoadCallbacks {
-			get { return moduleClassLoadCallbacks; }
-			set {
-				if (moduleClassLoadCallbacks != value) {
-					moduleClassLoadCallbacks = value;
-					OnPropertyChanged(nameof(ModuleClassLoadCallbacks));
-				}
-			}
-		}
-		bool moduleClassLoadCallbacks = false;
-
-		/// <summary>
-		/// true if 'break' IL instructions are ignored when executed
-		/// </summary>
-		public bool IgnoreBreakInstructions {
-			get { return ignoreBreakInstructions; }
-			set {
-				if (ignoreBreakInstructions != value) {
-					ignoreBreakInstructions = value;
-					OnPropertyChanged(nameof(IgnoreBreakInstructions));
-				}
-			}
-		}
-		bool ignoreBreakInstructions = false;
-
-		/// <summary>
-		/// Passed to ICorDebugProcess::EnableLogMessages
-		/// </summary>
-		public bool LogMessages {
-			get { return logMessages; }
-			set {
-				if (logMessages != value) {
-					logMessages = value;
-					OnPropertyChanged(nameof(LogMessages));
-				}
-			}
-		}
-		bool logMessages = true;
-
-		/// <summary>
-		/// Passed to ICorDebugProcess8::EnableExceptionCallbacksOutsideOfMyCode
-		/// </summary>
-		public bool ExceptionCallbacksOutsideOfMyCode {
-			get { return exceptionCallbacksOutsideOfMyCode; }
-			set {
-				if (exceptionCallbacksOutsideOfMyCode != value) {
-					exceptionCallbacksOutsideOfMyCode = value;
-					OnPropertyChanged(nameof(ExceptionCallbacksOutsideOfMyCode));
-				}
-			}
-		}
-		bool exceptionCallbacksOutsideOfMyCode = true;
-
-		/// <summary>
-		/// Passed to ICorDebugProcess5::EnableNGENPolicy 
-		/// </summary>
-		public CorDebugNGENPolicy NGENPolicy {
-			get { return ngenPolicy; }
-			set {
-				if (ngenPolicy != value) {
-					ngenPolicy = value;
-					OnPropertyChanged(nameof(NGENPolicy));
-				}
-			}
-		}
-		CorDebugNGENPolicy ngenPolicy;
+	sealed class DebugOptions {
+		public DebugOptionsProvider DebugOptionsProvider { get; set; }
+		public CorDebugIntercept StepperInterceptMask { get; set; } = CorDebugIntercept.INTERCEPT_NONE;
+		public CorDebugUnmappedStop StepperUnmappedStopMask { get; set; } = CorDebugUnmappedStop.STOP_NONE;
+		public bool StepperJMC { get; set; } = false;
+		public bool IgnoreBreakInstructions { get; set; } = false;
+		public bool LogMessages { get; set; } = true;
+		public bool ExceptionCallbacksOutsideOfMyCode { get; set; } = true;
+		public CorDebugNGENPolicy NGENPolicy { get; set; } = 0;
 
 		public DebugOptions CopyTo(DebugOptions other) {
+			other.DebugOptionsProvider = DebugOptionsProvider;
 			other.StepperInterceptMask = StepperInterceptMask;
 			other.StepperUnmappedStopMask = StepperUnmappedStopMask;
 			other.StepperJMC = StepperJMC;
-			other.JITCompilerFlags = JITCompilerFlags;
-			other.ModuleTrackJITInfo = ModuleTrackJITInfo;
-			other.ModuleAllowJitOptimizations = ModuleAllowJitOptimizations;
-			other.ModuleClassLoadCallbacks = ModuleClassLoadCallbacks;
 			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
 			other.LogMessages = LogMessages;
 			other.ExceptionCallbacksOutsideOfMyCode = ExceptionCallbacksOutsideOfMyCode;

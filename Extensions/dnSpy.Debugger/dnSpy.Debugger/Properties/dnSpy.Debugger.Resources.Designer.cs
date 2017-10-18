@@ -1564,6 +1564,33 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Suppress JIT optimization on module load.
+        /// </summary>
+        public static string DbgSettings_SuppressJITOptimization {
+            get {
+                return ResourceManager.GetString("DbgSettings_SuppressJITOptimization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Program modules.
+        /// </summary>
+        public static string DbgSettings_SuppressJITOptimization_ProgramModules {
+            get {
+                return ResourceManager.GetString("DbgSettings_SuppressJITOptimization_ProgramModules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System modules.
+        /// </summary>
+        public static string DbgSettings_SuppressJITOptimization_SystemModules {
+            get {
+                return ResourceManager.GetString("DbgSettings_SuppressJITOptimization_SystemModules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Syntax highlight.
         /// </summary>
         public static string DbgSettings_SyntaxHighlight {

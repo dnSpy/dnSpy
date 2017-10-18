@@ -137,5 +137,19 @@ namespace dnSpy.Contracts.Debugger {
 		/// Respect attributes that can hide a member, eg. <see cref="DebuggerBrowsableAttribute"/> and <see cref="DebuggerBrowsableState.Never"/>
 		/// </summary>
 		public abstract bool RespectHideMemberAttributes { get; set; }
+
+		/// <summary>
+		/// Suppress JIT optimization on module load (system modules). If false, the code will be optimized and
+		/// much more difficult to debug (it will be like when attaching to a process).
+		/// System modules are all non-program modules (eg. GAC assemblies).
+		/// </summary>
+		public abstract bool SuppressJITOptimization_SystemModules { get; set; }
+
+		/// <summary>
+		/// Suppress JIT optimization on module load (program modules). If false, the code will be optimized and
+		/// much more difficult to debug (it will be like when attaching to a process).
+		/// All modules in the same folder, or sub folder, as the main executable are considered program modules.
+		/// </summary>
+		public abstract bool SuppressJITOptimization_ProgramModules { get; set; }
 	}
 }

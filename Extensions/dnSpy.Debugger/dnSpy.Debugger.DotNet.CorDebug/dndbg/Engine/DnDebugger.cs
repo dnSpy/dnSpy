@@ -786,7 +786,7 @@ namespace dndbg.Engine {
 				process = TryAdd(cpArgs.Process);
 				if (process != null) {
 					process.CorProcess.EnableLogMessages(debugOptions.LogMessages);
-					process.CorProcess.DesiredNGENCompilerFlags = debugOptions.JITCompilerFlags;
+					process.CorProcess.DesiredNGENCompilerFlags = debugOptions.DebugOptionsProvider.GetDesiredNGENCompilerFlags(process);
 					process.CorProcess.SetWriteableMetadataUpdateMode(WriteableMetadataUpdateMode.AlwaysShowUpdates);
 					process.CorProcess.EnableExceptionCallbacksOutsideOfMyCode(debugOptions.ExceptionCallbacksOutsideOfMyCode);
 					process.CorProcess.EnableNGENPolicy(debugOptions.NGENPolicy);
@@ -842,10 +842,12 @@ namespace dndbg.Engine {
 				if (assembly != null) {
 					var module = assembly.TryAdd(lmArgs.Module);
 					toDnModule.Add(module.CorModule, module);
-					module.CorModule.EnableJITDebugging(debugOptions.ModuleTrackJITInfo, debugOptions.ModuleAllowJitOptimizations);
-					module.CorModule.EnableClassLoadCallbacks(debugOptions.ModuleClassLoadCallbacks);
-					module.CorModule.JITCompilerFlags = debugOptions.JITCompilerFlags;
-					module.CorModule.SetJMCStatus(true);
+
+					var moduleOptions = debugOptions.DebugOptionsProvider.GetModuleLoadOptions(module);
+					module.CorModule.EnableJITDebugging(moduleOptions.ModuleTrackJITInfo, moduleOptions.ModuleAllowJitOptimizations);
+					module.CorModule.JITCompilerFlags = moduleOptions.JITCompilerFlags;
+					module.CorModule.SetJMCStatus(moduleOptions.JustMyCode);
+					module.CorModule.EnableClassLoadCallbacks(false);
 
 					module.InitializeCachedValues();
 					AddBreakpoints(module);

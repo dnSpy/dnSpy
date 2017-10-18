@@ -45,56 +45,6 @@ namespace dndbg.Engine {
 			case BreakProcessKind.None:
 				break;
 
-			case BreakProcessKind.CreateProcess:
-				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.CreateProcess);
-				break;
-
-			case BreakProcessKind.CreateAppDomain:
-				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.CreateAppDomain);
-				break;
-
-			case BreakProcessKind.CreateThread:
-				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.CreateThread);
-				break;
-
-			case BreakProcessKind.LoadModule:
-				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.LoadModule);
-				break;
-
-			case BreakProcessKind.LoadClass:
-				bool oldLoadClass = debugger.Options.ModuleClassLoadCallbacks;
-				debugger.Options.ModuleClassLoadCallbacks = true;
-				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.LoadClass, ctx => {
-					ctx.Debugger.Options.ModuleClassLoadCallbacks = oldLoadClass;
-					return true;
-				});
-				break;
-
-			case BreakProcessKind.ExeLoadClass:
-				CreateStartupAnyDebugBreakEvent(ctx => {
-					if (ctx.EventArgs.Kind == DebugCallbackKind.LoadModule) {
-						var lm = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
-						var mod = lm.CorModule;
-						if (IsOurModule(mod))
-							mod.EnableClassLoadCallbacks(true);
-					}
-					else if (ctx.EventArgs.Kind == DebugCallbackKind.LoadClass) {
-						var lc = (LoadClassDebugCallbackEventArgs)ctx.EventArgs;
-						return IsOurModule(lc.CorClass?.Module);
-					}
-
-					return false;
-				});
-				break;
-
-			case BreakProcessKind.ExeLoadModule:
-				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.LoadModule, ctx => {
-					var e = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
-					return IsOurModule(e.CorModule);
-				});
-				break;
-
-			case BreakProcessKind.ModuleCctorOrEntryPoint:
 			case BreakProcessKind.EntryPoint:
 				breakpoint = debugger.CreateBreakpoint(DebugEventBreakpointKind.LoadModule, OnLoadModule);
 				break;
@@ -152,14 +102,6 @@ namespace dndbg.Engine {
 			Debug.Assert(!mod.IsDynamic && !mod.IsInMemory);
 			// It's not a dyn/in-mem module so id isn't used
 			var moduleId = mod.GetModuleId(uint.MaxValue);
-
-			if (type == BreakProcessKind.ModuleCctorOrEntryPoint) {
-				uint cctorToken = MetaDataUtils.GetGlobalStaticConstructor(mod.GetMetaDataInterface<IMetaDataImport>());
-				if (cctorToken != 0) {
-					SetILBreakpoint(moduleId, cctorToken);
-					return false;
-				}
-			}
 
 			uint epToken = GetEntryPointToken(filename, out string otherModuleName);
 			if (epToken != 0) {
