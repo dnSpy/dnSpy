@@ -96,6 +96,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			throw new InvalidOperationException();//TODO:
 		}
 
+		DbgDotNetValue TryCreateSyntheticValue(DmdType type, object value) {
+			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type, value);
+			if (dnValue != null)
+				RecordValue(dnValue);
+			return dnValue;
+		}
+
 		DbgDotNetValue TryGetDotNetValue(ILValue value, bool canCreateValues) {
 			if (value is IDebuggerRuntimeILValue rtValue)
 				return rtValue.GetDotNetValue();
@@ -171,8 +178,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					newValue = null;
 					break;
 				}
-				if (newValue != null)
+				if (newValue != null) {
+					var dnValue = TryCreateSyntheticValue(type, newValue);
+					if (dnValue != null)
+						return dnValue;
 					return RecordValue(runtime.CreateValue(context, frame, newValue, cancellationToken));
+				}
 			}
 			return null;
 		}
@@ -495,7 +506,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override ILValue LoadString(DmdType type, string value) {
-			var stringValue = RecordValue(runtime.CreateValue(context, frame, value, cancellationToken));
+			var stringValue = TryCreateSyntheticValue(type, value);
+			if (stringValue == null)
+				stringValue = RecordValue(runtime.CreateValue(context, frame, value, cancellationToken));
 			return new ConstantStringILValueImpl(this, stringValue, value);
 		}
 
