@@ -53,14 +53,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		VariablesProvider localsProvider;
 		DbgEvaluationContext context;
 		DbgStackFrame frame;
+		bool canFuncEval;
 		CancellationToken cancellationToken;
 
-		public void Initialize(DbgEvaluationContext context, DbgStackFrame frame, VariablesProvider argumentsProvider, VariablesProvider localsProvider, CancellationToken cancellationToken) {
+		public void Initialize(DbgEvaluationContext context, DbgStackFrame frame, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken) {
 			Debug.Assert(this.context == null);
 			if (this.context != null)
 				throw new InvalidOperationException();
 			this.context = context;
 			this.frame = frame;
+			this.canFuncEval = canFuncEval;
 			this.cancellationToken = cancellationToken;
 			this.argumentsProvider = argumentsProvider ?? DefaultArgumentsProvider;
 			this.localsProvider = localsProvider ?? DefaultLocalsProvider;
@@ -395,6 +397,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override ILValue CreateRuntimeTypeHandle(DmdType type) {
+			if (!canFuncEval)
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
 			var appDomain = type.AppDomain;
 			var methodGetType = appDomain.System_Type.GetMethod(nameof(Type.GetType), DmdSignatureCallingConvention.Default, 0, appDomain.System_Type, new[] { appDomain.System_String }, throwOnError: true);
 			var typeValue = RecordValue(runtime.Call(context, frame, null, methodGetType, new[] { type.AssemblyQualifiedName }, cancellationToken));
@@ -414,6 +418,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override ILValue CreateTypeNoConstructor(DmdType type) {
+			if (!canFuncEval)
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
 			var res = runtime.CreateInstanceNoConstructor(context, frame, type, cancellationToken);
 			return CreateILValue(res);
 		}
@@ -448,6 +454,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return CreateILValue(res);
 
 			default:
+				if (!canFuncEval)
+					throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
 				res = runtime.CreateInstance(context, frame, ctor, Convert(arguments, ctor.GetMethodSignature().GetParameterTypes()), cancellationToken);
 				return CreateILValue(res);
 			}
@@ -583,6 +591,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			case TypeCode.Single:		return 0f;
 			case TypeCode.Double:		return 0d;
 			}
+			if (!canFuncEval)
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
 			return RecordValue(runtime.CreateInstanceNoConstructor(context, frame, type, cancellationToken));
 		}
 
@@ -592,6 +602,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		bool Call(DbgDotNetValue objValue, bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
 			if (method.SpecialMethodKind != DmdSpecialMethodKind.Metadata)
 				throw new InvalidOperationException();
+			if (!canFuncEval)
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
 			var res = runtime.Call(context, frame, objValue, method, Convert(arguments, method.GetMethodSignature().GetParameterTypes()), cancellationToken);
 			try {
 				if (res.HasError)

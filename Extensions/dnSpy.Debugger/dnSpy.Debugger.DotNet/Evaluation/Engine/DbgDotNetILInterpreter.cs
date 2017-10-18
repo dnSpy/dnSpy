@@ -116,7 +116,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return new DbgDotNetILInterpreterStateImpl(assembly);
 		}
 
-		//TODO: Use options (prevent func-eval if NoFuncEval is set)
 		public override DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, VariablesProvider argumentsProvider, VariablesProvider localsProvider, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken) {
 			var stateImpl = (DbgDotNetILInterpreterStateImpl)state;
 
@@ -150,7 +149,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				}
 
 				expectedType = methodState.ExpectedType;
-				debuggerRuntime.Initialize(context, frame, argumentsProvider, localsProvider, cancellationToken);
+				debuggerRuntime.Initialize(context, frame, argumentsProvider, localsProvider, (options & DbgEvaluationOptions.NoFuncEval) == 0, cancellationToken);
 				try {
 					var execResult = stateImpl.ILVM.Execute(debuggerRuntime, ilvmState);
 					var resultValue = debuggerRuntime.GetDotNetValue(execResult);
