@@ -243,7 +243,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					if (elem == null)
 						return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
 
-					elem.ReferenceAddress = stringValueRes.CorValue.ReferenceAddress;
+					hr = elem.SetReferenceAddress(stringValueRes.CorValue.ReferenceAddress);
+					if (hr != 0)
+						return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
 
 					engine.DisposeHandle_CorDebug(elem);
 					elem = null;

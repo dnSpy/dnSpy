@@ -82,6 +82,7 @@ namespace dndbg.Engine {
 
 	class DebuggerPauseState {
 		public DebuggerPauseReason Reason { get; }
+		public bool Handled { get; set; }
 
 		public DebuggerPauseState(DebuggerPauseReason reason) => Reason = reason;
 	}

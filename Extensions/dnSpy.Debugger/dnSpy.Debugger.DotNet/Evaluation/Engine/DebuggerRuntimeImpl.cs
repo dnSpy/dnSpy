@@ -219,7 +219,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			case ILValueKind.NativeInt:
 				if (value is ConstantNativeIntILValue ci) {
-					if (targetType == targetType.AppDomain.System_IntPtr) {
+					if (targetType.IsPointer || targetType.IsFunctionPointer || targetType == targetType.AppDomain.System_IntPtr) {
 						if (PointerSize == 4)
 							return new IntPtr(ci.Value32);
 						return new IntPtr(ci.Value64);
@@ -279,6 +279,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		internal DbgDotNetValue RecordValue(DbgDotNetValue value) {
 			try {
 				cancellationToken.ThrowIfCancellationRequested();
+				Debug.Assert(value != null);
 				valuesToDispose.Add(value);
 				return value;
 			}
@@ -290,6 +291,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		internal ILValue CreateILValue(DbgDotNetValue value) {
 			try {
+				Debug.Assert(value != null);
 				valuesToDispose.Add(value);
 				return CreateILValueCore(value);
 			}

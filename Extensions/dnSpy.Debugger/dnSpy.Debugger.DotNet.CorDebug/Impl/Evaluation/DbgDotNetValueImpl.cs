@@ -92,8 +92,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Debug.Assert(Type.IsByRef && !IsNullByRef);
 			engine.VerifyCorDebugThread();
 			var dereferencedValue = TryGetCorValue()?.DereferencedValue;
+			// We sometimes get 0x80131c49 = CORDBG_E_READVIRTUAL_FAILURE
 			if (dereferencedValue == null)
-				return null;
+				return new SyntheticNullValue(Type.GetElementType());
 			return engine.CreateDotNetValue_CorDebug(dereferencedValue, Type.AppDomain, tryCreateStrongHandle: true);
 		}
 

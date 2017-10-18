@@ -148,7 +148,7 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
-		/// Gets/sets the address to which <see cref="ICorDebugReferenceValue"/> points
+		/// Gets the address to which <see cref="ICorDebugReferenceValue"/> points
 		/// </summary>
 		public ulong ReferenceAddress {
 			get {
@@ -158,12 +158,13 @@ namespace dndbg.Engine {
 				int hr = r.GetValue(out ulong addr);
 				return hr < 0 ? 0 : addr;
 			}
-			set {
-				var r = obj as ICorDebugReferenceValue;
-				if (r == null)
-					return;
-				int hr = r.SetValue(value);
-			}
+		}
+
+		public int SetReferenceAddress(ulong value) {
+			var r = obj as ICorDebugReferenceValue;
+			if (r == null)
+				return -1;
+			return r.SetValue(value);
 		}
 
 		/// <summary>

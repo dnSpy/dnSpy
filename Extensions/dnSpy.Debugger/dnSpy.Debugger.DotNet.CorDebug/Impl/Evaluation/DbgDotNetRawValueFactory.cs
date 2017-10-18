@@ -58,7 +58,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			if (type.IsByRef) {
 				value = value.DereferencedValue;
-				Debug.Assert(value != null);
 				if (value == null)
 					return new DbgDotNetRawValue(DbgSimpleValueType.Other);
 				type = GetType(type.AppDomain, value);

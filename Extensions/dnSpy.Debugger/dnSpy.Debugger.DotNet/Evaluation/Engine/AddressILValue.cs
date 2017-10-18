@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var sourceAddr = source as AddressILValue;
 			if (sourceAddr == null)
 				return false;
-			WriteValue(sourceAddr.ReadValue());
+			WriteValue(sourceAddr.ReadValueImpl());
 			return true;
 		}
 

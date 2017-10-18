@@ -334,6 +334,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 				foreach (var debuggerState in dnDebugger.DebuggerStates) {
 					foreach (var pauseState in debuggerState.PauseStates) {
+						if (pauseState.Handled)
+							continue;
+						pauseState.Handled = true;
 						switch (pauseState.Reason) {
 						case DebuggerPauseReason.Other:
 							// We use this reason when we pause the process, DbgManager already knows that we're paused
