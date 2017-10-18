@@ -1928,4 +1928,13 @@ Tem certeza que deseja expandi-la?</value>
   <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
     <value>The breakpoint expression must be a boolean expression</value>
   </data>
+  <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
+    <value>Suppress JIT optimization on module load</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
+    <value>Program modules</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
+    <value>System modules</value>
+  </data>
 </root>

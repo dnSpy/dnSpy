@@ -781,7 +781,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Es ist derzeit nicht möglich, neue Zeichenfolgen erstellen</value>
   </data>
   <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
-    <value>Kann nicht auswerten wenn sich der Thread an einem unsicheren Punkt befindet. Entweder einen Schritt oder bis zum nächsten Haltepunkt ausführen.</value>
+    <value>Kann nicht auswerten wann der Thread an einem unsicheren Punkt ist. Entweder einen Schritt oder bis zum nächsten Haltepunkt ausführen.</value>
   </data>
   <data name="Locals_Error_CouldNotCreateString" xml:space="preserve">
     <value>Konnte keine Zeichenfolge erstellen. Fehler: 0x{0:X8}</value>
@@ -1930,6 +1930,15 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Haltepunkt</value>
   </data>
   <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
-    <value>The breakpoint expression must be a boolean expression</value>
+    <value>Der Haltepunkt Ausdruck muss ein Boolescher Ausdruck sein</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
+    <value>Suppress JIT optimization on module load</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
+    <value>Program modules</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
+    <value>System modules</value>
   </data>
 </root>
