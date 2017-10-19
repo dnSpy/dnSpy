@@ -90,7 +90,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				}
 			}
 		}
-		bool sortMembers = true;
+		bool sortMembers = false;
 
 		public bool ShowPdbInfo {
 			get { return showPdbInfo; }
