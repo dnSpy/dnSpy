@@ -87,7 +87,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 			state.MetadataContext = new CSharpMetadataContext(metadataBlocks, evalCtx);
 
 			var asmBytes = evalCtx.CompileGetLocals(false, ImmutableArray<Alias>.Empty, out var localsInfo, out var typeName, out var errorMessage);
-			return CreateCompilationResult(state, asmBytes, typeName, localsInfo, errorMessage);
+			var res = CreateCompilationResult(state, asmBytes, typeName, localsInfo, errorMessage);
+			if (!res.IsError)
+				return res;
+			return CompileGetLocals(state, method);
 		}
 
 		public override DbgDotNetCompilationResult CompileExpression(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
@@ -145,6 +148,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 			GetTypeCompilationState<CSharpEvalContextState>(context, frame, references, out var state, out var metadataBlocks);
 			var evalCtx = EvaluationContext.CreateTypeContext(state.MetadataContext, metadataBlocks, type.Module.ModuleVersionId, type.MetadataToken);
 			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, true, cancellationToken);
+		}
+
+		internal override string GetVariableName(string metadataName, bool isThis) {
+			if (isThis)
+				return "this";
+			return Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(metadataName);
 		}
 	}
 }

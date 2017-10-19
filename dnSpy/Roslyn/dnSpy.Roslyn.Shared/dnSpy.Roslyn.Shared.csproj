@@ -76,6 +76,7 @@
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicTypeFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicValueFormatter.cs" />
+    <Compile Include="Debugger\GetLocalsAssemblyBuilder.cs" />
     <Compile Include="Debugger\ObjectCache.cs" />
     <Compile Include="Debugger\StateWithKey.cs" />
     <Compile Include="Debugger\ValueNodes\AggregateValueNodeProvider.cs" />

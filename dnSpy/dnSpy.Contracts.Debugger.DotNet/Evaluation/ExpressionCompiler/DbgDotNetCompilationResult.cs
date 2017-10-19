@@ -38,7 +38,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		public string ErrorMessage { get; }
 
 		/// <summary>
-		/// Gets the .NET assembly bytes or null if there was an error (<see cref="ErrorMessage"/>)
+		/// Gets the .NET assembly bytes or null if there was an error (<see cref="ErrorMessage"/>). It's
+		/// empty if <see cref="CompiledExpressions"/> is empty.
 		/// </summary>
 		public byte[] Assembly { get; }
 

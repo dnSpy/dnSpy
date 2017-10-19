@@ -419,5 +419,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				return ObjectCache.FreeAndToText(ref output);
 			}
 		}
+
+		protected DbgDotNetCompilationResult CompileGetLocals(EvalContextState state, MethodDef method) {
+			var builder = new GetLocalsAssemblyBuilder(this, method, state.MethodDebugInfo.LocalVariableNames);
+			var asmBytes = builder.Compile(out var localsInfo, out var typeName, out var errorMessage);
+			return CreateCompilationResult(state, asmBytes, typeName, localsInfo, errorMessage);
+		}
+
+		internal abstract string GetVariableName(string metadataName, bool isThis);
 	}
 }

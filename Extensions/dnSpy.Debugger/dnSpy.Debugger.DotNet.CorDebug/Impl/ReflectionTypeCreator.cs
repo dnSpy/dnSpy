@@ -130,9 +130,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				}
 				if ((object)returnType == null)
 					throw new InvalidOperationException();
-				Debug.Fail("Guessing FnPtr calling convention");
+				//TODO: Guessing FnPtr calling convention
 				const DmdSignatureCallingConvention fnPtrCallingConvention = DmdSignatureCallingConvention.C;
-				result = reflectionAppDomain.MakeFunctionPointerType(fnPtrCallingConvention, 0, returnType, types?.ToArray() ?? Array.Empty<DmdType>(), null, null);
+				//TODO: We're assuming varArgsParameterTypes is empty
+				result = reflectionAppDomain.MakeFunctionPointerType(fnPtrCallingConvention, 0, returnType, types?.ToArray() ?? Array.Empty<DmdType>(), Array.Empty<DmdType>(), null);
 				FreeTypesList(ref types);
 				break;
 
