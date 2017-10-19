@@ -24,7 +24,6 @@ using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
-using dnSpy.Debugger.DotNet.UI;
 
 namespace dnSpy.Debugger.DotNet.Code {
 	abstract class BreakpointFormatterService {
@@ -33,21 +32,21 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 	[Export(typeof(BreakpointFormatterService))]
 	sealed class BreakpointFormatterServiceImpl : BreakpointFormatterService {
-		readonly Lazy<IDecompilerService> decompilerService;
+		readonly DbgDotNetDecompilerService dbgDotNetDecompilerService;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgMetadataService> dbgMetadataService;
 
-		internal IDecompiler MethodDecompiler => decompilerService.Value.Decompiler;
+		internal IDecompiler MethodDecompiler => dbgDotNetDecompilerService.Decompiler;
 
 		[ImportingConstructor]
-		BreakpointFormatterServiceImpl(UIDispatcher uiDispatcher, Lazy<IDecompilerService> decompilerService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgMetadataService> dbgMetadataService) {
-			this.decompilerService = decompilerService;
+		BreakpointFormatterServiceImpl(DbgDotNetDecompilerService dbgDotNetDecompilerService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgMetadataService> dbgMetadataService) {
+			this.dbgDotNetDecompilerService = dbgDotNetDecompilerService;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgMetadataService = dbgMetadataService;
-			uiDispatcher.UI(() => decompilerService.Value.DecompilerChanged += DecompilerService_DecompilerChanged);
+			dbgDotNetDecompilerService.DecompilerChanged += DbgDotNetDecompilerService_DecompilerChanged;
 		}
 
-		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
+		void DbgDotNetDecompilerService_DecompilerChanged(object sender, EventArgs e) {
 			foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
 				if (bp.IsHidden)
 					continue;

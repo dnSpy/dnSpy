@@ -58,6 +58,8 @@
     <Compile Include="Code\DbgDotNetCodeLocationFactoryImpl.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationImpl.cs" />
     <Compile Include="Code\DbgDotNetCodeRangeServiceImpl.cs" />
+    <Compile Include="Code\DbgDotNetDecompilerGuidProviderImpl.cs" />
+    <Compile Include="Code\DbgDotNetDecompilerServiceImpl.cs" />
     <Compile Include="Code\DotNetReferenceNavigator.cs" />
     <Compile Include="Code\ReferenceConverterImpl.cs" />
     <Compile Include="Code\TextEditor\DbgTextViewCodeLocationProviderImpl.cs" />

@@ -44,7 +44,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		public IDecompiler Decompiler {
-			get { return decompiler; }
+			get => decompiler;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
