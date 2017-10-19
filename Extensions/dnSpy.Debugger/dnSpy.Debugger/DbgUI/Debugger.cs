@@ -70,11 +70,11 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract bool CanDisableAllBreakpoints { get; }
 		public abstract void DisableAllBreakpoints();
 
-		public abstract bool CanContinueOrDegbugProgram { get; }
-		public abstract void ContinueOrDegbugProgram();
-		public abstract bool CanStepIntoOrDegbugProgram { get; }
-		public abstract void StepIntoOrDegbugProgram();
-		public abstract bool CanStepOverOrDegbugProgram { get; }
-		public abstract void StepOverOrDegbugProgram();
+		public abstract bool CanContinueOrDebugProgram { get; }
+		public abstract void ContinueOrDebugProgram();
+		public abstract bool CanStepIntoOrDebugProgram { get; }
+		public abstract void StepIntoOrDebugProgram();
+		public abstract bool CanStepOverOrDebugProgram { get; }
+		public abstract void StepOverOrDebugProgram();
 	}
 }

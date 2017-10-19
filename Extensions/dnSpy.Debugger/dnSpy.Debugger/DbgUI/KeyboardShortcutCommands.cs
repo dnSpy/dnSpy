@@ -39,9 +39,9 @@ namespace dnSpy.Debugger.DbgUI {
 			cmds.Add(new RelayCommand(a => debugger.Value.BreakAll(), a => debugger.Value.CanBreakAll), ModifierKeys.Control | ModifierKeys.Alt, Key.Cancel);
 			cmds.Add(new RelayCommand(a => debugger.Value.Restart(), a => debugger.Value.CanRestart), ModifierKeys.Control | ModifierKeys.Shift, Key.F5);
 			cmds.Add(new RelayCommand(a => debugger.Value.StopDebugging(), a => debugger.Value.CanStopDebugging), ModifierKeys.Shift, Key.F5);
-			cmds.Add(new RelayCommand(a => debugger.Value.ContinueOrDegbugProgram(), a => debugger.Value.CanContinueOrDegbugProgram), ModifierKeys.None, Key.F5);
-			cmds.Add(new RelayCommand(a => debugger.Value.StepIntoOrDegbugProgram(), a => debugger.Value.CanStepIntoOrDegbugProgram), ModifierKeys.None, Key.F11);
-			cmds.Add(new RelayCommand(a => debugger.Value.StepOverOrDegbugProgram(), a => debugger.Value.CanStepOverOrDegbugProgram), ModifierKeys.None, Key.F10);
+			cmds.Add(new RelayCommand(a => debugger.Value.ContinueOrDebugProgram(), a => debugger.Value.CanContinueOrDebugProgram), ModifierKeys.None, Key.F5);
+			cmds.Add(new RelayCommand(a => debugger.Value.StepIntoOrDebugProgram(), a => debugger.Value.CanStepIntoOrDebugProgram), ModifierKeys.None, Key.F11);
+			cmds.Add(new RelayCommand(a => debugger.Value.StepOverOrDebugProgram(), a => debugger.Value.CanStepOverOrDebugProgram), ModifierKeys.None, Key.F10);
 			cmds.Add(new RelayCommand(a => debugger.Value.StepOut(), a => debugger.Value.CanStepOut), ModifierKeys.Shift, Key.F11);
 			cmds.Add(new RelayCommand(a => debugger.Value.ShowNextStatement(), a => debugger.Value.CanShowNextStatement), ModifierKeys.Alt, Key.Multiply);
 			cmds.Add(new RelayCommand(a => debugger.Value.SetNextStatement(), a => debugger.Value.CanSetNextStatement), ModifierKeys.Control | ModifierKeys.Shift, Key.F10);

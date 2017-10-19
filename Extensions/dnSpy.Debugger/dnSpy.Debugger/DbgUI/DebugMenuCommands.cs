@@ -53,9 +53,9 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StartWithoutDebuggingCommand", Icon = DsImagesAttribute.RunOutline, InputGestureText = "res:ShortCutKeyCtrlF5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 10)]
-		sealed class StartWithoutDegbuggingDebugMainMenuCommand : DebugMainMenuCommand {
+		sealed class StartWithoutDebuggingDebugMainMenuCommand : DebugMainMenuCommand {
 			[ImportingConstructor]
-			public StartWithoutDegbuggingDebugMainMenuCommand(Lazy<Debugger> debugger)
+			public StartWithoutDebuggingDebugMainMenuCommand(Lazy<Debugger> debugger)
 				: base(debugger, null) {
 			}
 

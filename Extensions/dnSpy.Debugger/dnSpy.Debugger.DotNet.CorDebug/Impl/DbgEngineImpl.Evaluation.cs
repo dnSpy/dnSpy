@@ -352,7 +352,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread.VerifyAccess();
 
 			if (RequiresNoFuncEvalToStoreValue(targetType, sourceValue))
-				return StoreSimpleValue_CorDegbug(context, thread, ilFrame, createTargetValue, targetType, sourceValue, cancellationToken);
+				return StoreSimpleValue_CorDebug(context, thread, ilFrame, createTargetValue, targetType, sourceValue, cancellationToken);
 
 			cancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(context);
@@ -382,7 +382,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					createResult = createTargetValue();
 					if (createResult.Value == null)
 						return CordbgErrorHelper.GetErrorMessage(createResult.HResult);
-					return StoreValue_CorDegbug(dnEval, createdValues, appDomain, dnThread, createResult.Value, targetType, sourceCorValue, sourceType);
+					return StoreValue_CorDebug(dnEval, createdValues, appDomain, dnThread, createResult.Value, targetType, sourceCorValue, sourceType);
 				}
 			}
 			catch (TimeoutException) {
@@ -399,7 +399,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		string StoreValue_CorDegbug(DnEval dnEval, List<CorValue> createdValues, CorAppDomain appDomain, DnThread dnThread, CorValue targetValue, DmdType targetType, CorValue sourceValue, DmdType sourceType) {
+		string StoreValue_CorDebug(DnEval dnEval, List<CorValue> createdValues, CorAppDomain appDomain, DnThread dnThread, CorValue targetValue, DmdType targetType, CorValue sourceValue, DmdType sourceType) {
 			if (targetType.IsByRef)
 				return CordbgErrorHelper.InternalError;
 			if (!targetType.IsValueType) {
@@ -457,7 +457,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		string StoreSimpleValue_CorDegbug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, Func<CreateCorValueResult> createTargetValue, DmdType targetType, object sourceValue, CancellationToken cancellationToken) {
+		string StoreSimpleValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, Func<CreateCorValueResult> createTargetValue, DmdType targetType, object sourceValue, CancellationToken cancellationToken) {
 			Debug.Assert(RequiresNoFuncEvalToStoreValue(targetType, sourceValue));
 			cancellationToken.ThrowIfCancellationRequested();
 			CreateCorValueResult createResult = default;
@@ -466,7 +466,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				createResult = createTargetValue();
 				if (createResult.Value == null)
 					return CordbgErrorHelper.GetErrorMessage(createResult.HResult);
-				return StoreSimpleValue_CorDegbug(dnThread, createResult.Value, targetType, sourceValue);
+				return StoreSimpleValue_CorDebug(dnThread, createResult.Value, targetType, sourceValue);
 			}
 			catch (TimeoutException) {
 				return PredefinedEvaluationErrorMessages.FuncEvalTimedOut;
@@ -506,7 +506,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return true;
 		}
 
-		string StoreSimpleValue_CorDegbug(DnThread dnThread, CorValue targetValue, DmdType targetType, object sourceValue) {
+		string StoreSimpleValue_CorDebug(DnThread dnThread, CorValue targetValue, DmdType targetType, object sourceValue) {
 			if (targetType.IsByRef)
 				return CordbgErrorHelper.InternalError;
 			if (targetType.IsPointer || targetType.IsFunctionPointer) {

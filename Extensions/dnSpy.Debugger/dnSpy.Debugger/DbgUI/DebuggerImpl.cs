@@ -270,24 +270,24 @@ namespace dnSpy.Debugger.DbgUI {
 			}).ToArray());
 		}
 
-		public override bool CanContinueOrDegbugProgram => CanContinue || CanDebugProgram;
-		public override void ContinueOrDegbugProgram() {
+		public override bool CanContinueOrDebugProgram => CanContinue || CanDebugProgram;
+		public override void ContinueOrDebugProgram() {
 			if (CanContinue)
 				Continue();
 			else if (CanDebugProgram && !dbgManager.Value.IsDebugging)
 				DebugProgram(pauseAtEntryPoint: false);
 		}
 
-		public override bool CanStepIntoOrDegbugProgram => CanStepInto || CanDebugProgram;
-		public override void StepIntoOrDegbugProgram() {
+		public override bool CanStepIntoOrDebugProgram => CanStepInto || CanDebugProgram;
+		public override void StepIntoOrDebugProgram() {
 			if (CanStepInto)
 				StepInto();
 			else if (CanDebugProgram && !dbgManager.Value.IsDebugging)
 				DebugProgram(pauseAtEntryPoint: true);
 		}
 
-		public override bool CanStepOverOrDegbugProgram => CanStepOver || CanDebugProgram;
-		public override void StepOverOrDegbugProgram() {
+		public override bool CanStepOverOrDebugProgram => CanStepOver || CanDebugProgram;
+		public override void StepOverOrDebugProgram() {
 			if (CanStepOver)
 				StepOver();
 			else if (CanDebugProgram && !dbgManager.Value.IsDebugging)
