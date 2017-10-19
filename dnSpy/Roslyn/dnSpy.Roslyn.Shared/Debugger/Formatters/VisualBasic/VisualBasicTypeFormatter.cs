@@ -41,6 +41,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		const string GENERICS_OF_KEYWORD = "Of";
 		const string TUPLE_OPEN_PAREN = "(";
 		const string TUPLE_CLOSE_PAREN = ")";
+		const string METHOD_OPEN_PAREN = "(";
+		const string METHOD_CLOSE_PAREN = ")";
 		const string HEX_PREFIX = "&H";
 		const string COMMENT_BEGIN = "/*";
 		const string COMMENT_END = "*/";
@@ -269,8 +271,27 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 					break;
 
 				case DmdTypeSignatureKind.FunctionPointer:
-					//TODO:
-					OutputWrite("fnptr", BoxedTextColor.Keyword);
+					var sig = type.GetFunctionPointerMethodSignature();
+					Format(sig.ReturnType, null);
+					WriteSpace();
+					OutputWrite(METHOD_OPEN_PAREN, BoxedTextColor.Punctuation);
+					var types = sig.GetParameterTypes();
+					for (int i = 0; i < types.Count; i++) {
+						if (i > 0)
+							WriteCommaSpace();
+						Format(types[i], null);
+					}
+					types = sig.GetVarArgsParameterTypes();
+					if (types.Count > 0) {
+						if (sig.GetParameterTypes().Count > 0)
+							WriteCommaSpace();
+						OutputWrite("...", BoxedTextColor.Punctuation);
+						for (int i = 0; i < types.Count; i++) {
+							WriteCommaSpace();
+							Format(types[i], null);
+						}
+					}
+					OutputWrite(METHOD_CLOSE_PAREN, BoxedTextColor.Punctuation);
 					break;
 
 				default:

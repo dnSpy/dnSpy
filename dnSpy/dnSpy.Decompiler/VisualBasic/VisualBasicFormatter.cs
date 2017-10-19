@@ -1006,7 +1006,25 @@ namespace dnSpy.Decompiler.VisualBasic {
 					break;
 
 				case ElementType.FnPtr:
-					OutputWrite("fnptr", BoxedTextColor.Keyword);
+					var sig = ((FnPtrSig)type).MethodSig;
+					Write(sig.RetType, typeGenArgs, methGenArgs);
+					WriteSpace();
+					OutputWrite(MethodParenOpen, BoxedTextColor.Punctuation);
+					for (int i = 0; i < sig.Params.Count; i++) {
+						if (i > 0)
+							WriteCommaSpace();
+						Write(sig.Params[i], typeGenArgs, methGenArgs);
+					}
+					if (sig.ParamsAfterSentinel != null) {
+						if (sig.Params.Count > 0)
+							WriteCommaSpace();
+						OutputWrite("...", BoxedTextColor.Punctuation);
+						for (int i = 0; i < sig.ParamsAfterSentinel.Count; i++) {
+							WriteCommaSpace();
+							Write(sig.ParamsAfterSentinel[i], typeGenArgs, methGenArgs);
+						}
+					}
+					OutputWrite(MethodParenClose, BoxedTextColor.Punctuation);
 					break;
 
 				case ElementType.CModReqd:
