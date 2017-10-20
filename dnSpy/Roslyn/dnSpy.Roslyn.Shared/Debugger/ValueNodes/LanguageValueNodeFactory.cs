@@ -86,7 +86,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			var output = ObjectCache.AllocDotNetTextOutput();
 			FormatReturnValueName(context, output, method);
 			var name = ObjectCache.FreeAndToText(ref output);
-			var expression = "$ReturnValue" + id.ToString();
+			output = ObjectCache.AllocDotNetTextOutput();
+			context.Language.Formatter.FormatReturnValueName(context, output, id);
+			var expression = ObjectCache.FreeAndToText(ref output).ToString();
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
 			const string imageName = PredefinedDbgValueNodeImageNames.ReturnValue;

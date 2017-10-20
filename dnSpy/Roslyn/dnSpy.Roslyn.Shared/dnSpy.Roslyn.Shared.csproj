@@ -46,6 +46,7 @@
     <Compile Include="Compiler\RoslynCodeDocument.cs" />
     <Compile Include="Compiler\RoslynLanguageCompiler.cs" />
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
+    <Compile Include="Debugger\AliasConstants.cs" />
     <Compile Include="Debugger\ExpressionCompiler\CSharp\CSharpExpressionCompiler.cs" />
     <Compile Include="Debugger\ExpressionCompiler\ImageNameUtils.cs" />
     <Compile Include="Debugger\ExpressionCompiler\LanguageExpressionCompiler.cs" />

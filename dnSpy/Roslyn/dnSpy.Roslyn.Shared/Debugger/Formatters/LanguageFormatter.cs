@@ -24,12 +24,19 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	abstract class LanguageFormatter : DbgDotNetFormatter {
 		public override void FormatExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
-			output.Write(BoxedTextColor.DebugExceptionName, "$exception");
+			output.Write(BoxedTextColor.DebugExceptionName, AliasConstants.ExceptionName);
 
 		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
-			output.Write(BoxedTextColor.DebugStowedExceptionName, "$stowedexception");
+			output.Write(BoxedTextColor.DebugStowedExceptionName, AliasConstants.StowedExceptionName);
+
+		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id) {
+			if (id == 0)
+				output.Write(BoxedTextColor.DebugReturnValueName, AliasConstants.ReturnValueName);
+			else
+				output.Write(BoxedTextColor.DebugReturnValueName, AliasConstants.ReturnValueName + id.ToString());
+		}
 
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
-			output.Write(BoxedTextColor.DebugObjectIdName, "$" + id.ToString());
+			output.Write(BoxedTextColor.DebugObjectIdName, AliasConstants.ObjectIdName + id.ToString());
 	}
 }
