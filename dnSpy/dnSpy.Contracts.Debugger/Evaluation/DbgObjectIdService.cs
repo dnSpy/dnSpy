@@ -60,6 +60,14 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgObjectId GetObjectId(DbgValue value);
 
 		/// <summary>
+		/// Returns an object id or null if there's none
+		/// </summary>
+		/// <param name="runtime">Runtime</param>
+		/// <param name="id">Object id</param>
+		/// <returns></returns>
+		public abstract DbgObjectId GetObjectId(DbgRuntime runtime, uint id);
+
+		/// <summary>
 		/// Gets all object ids
 		/// </summary>
 		/// <param name="runtime">Runtime</param>

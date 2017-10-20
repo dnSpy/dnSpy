@@ -31,6 +31,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public abstract bool CanCreateObjectId(DbgValue value);
 		public abstract DbgObjectId[] CreateObjectIds(DbgValue[] values);
 		public abstract DbgObjectId GetObjectId(DbgValue value);
+		public abstract DbgObjectId GetObjectId(uint id);
 		public abstract DbgObjectId[] GetObjectIds();
 		public abstract void Remove(IList<DbgObjectId> objectIds);
 	}
@@ -45,6 +46,7 @@ namespace dnSpy.Debugger.Evaluation {
 		// The key is a DbgObjectIdImpl, but a DbgValueImpl can also be used when looking up values.
 		// Note that key == value in this dictionary.
 		readonly Dictionary<object, DbgObjectId> objectIds;
+		readonly Dictionary<uint, DbgObjectId> idToObjectId;
 
 		sealed class ObjectIdComparer : IEqualityComparer<object> {
 			readonly DbgEngineObjectIdFactory dbgEngineObjectIdFactory;
@@ -77,6 +79,7 @@ namespace dnSpy.Debugger.Evaluation {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.dbgEngineObjectIdFactory = dbgEngineObjectIdFactory ?? throw new ArgumentNullException(nameof(dbgEngineObjectIdFactory));
 			objectIds = new Dictionary<object, DbgObjectId>(new ObjectIdComparer(dbgEngineObjectIdFactory));
+			idToObjectId = new Dictionary<uint, DbgObjectId>();
 		}
 
 		public override bool CanCreateObjectId(DbgValue value) {
@@ -118,6 +121,8 @@ namespace dnSpy.Debugger.Evaluation {
 							objectIdCounter++;
 							objectId = new DbgObjectIdImpl(this, engineObjectId);
 							objectIds.Add(objectId, objectId);
+							idToObjectId.Add(objectId.Id, objectId);
+							Debug.Assert(objectIds.Count == idToObjectId.Count);
 						}
 					}
 					res[i] = objectId;
@@ -141,6 +146,16 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
+		public override DbgObjectId GetObjectId(uint id) {
+			if (Runtime.IsClosed)
+				return null;
+			lock (lockObj) {
+				if (idToObjectId.TryGetValue(id, out var objectId))
+					return objectId;
+				return null;
+			}
+		}
+
 		public override DbgObjectId[] GetObjectIds() {
 			lock (lockObj) {
 				int count = this.objectIds.Count;
@@ -159,11 +174,14 @@ namespace dnSpy.Debugger.Evaluation {
 			if (objectIds == null)
 				throw new ArgumentNullException(nameof(objectIds));
 			lock (lockObj) {
+				Debug.Assert(this.objectIds.Count == idToObjectId.Count);
 				foreach (var objectId in objectIds) {
 					if (objectId == null || objectId.Runtime != Runtime)
 						throw new ArgumentException();
 					this.objectIds.Remove(objectId);
+					idToObjectId.Remove(objectId.Id);
 				}
+				Debug.Assert(this.objectIds.Count == idToObjectId.Count);
 			}
 			if (objectIds.Count > 0) {
 				Runtime.Process.DbgManager.Close(objectIds);
@@ -176,8 +194,10 @@ namespace dnSpy.Debugger.Evaluation {
 			dispatcher.VerifyAccess();
 			DbgObjectId[] objsToClose;
 			lock (lockObj) {
+				Debug.Assert(objectIds.Count == idToObjectId.Count);
 				objsToClose = objectIds.Values.ToArray();
 				objectIds.Clear();
+				idToObjectId.Clear();
 			}
 			foreach (var obj in objsToClose)
 				obj.Close(dispatcher);

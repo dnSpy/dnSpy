@@ -98,6 +98,12 @@ namespace dnSpy.Debugger.Evaluation {
 			return GetRuntimeObjectIdService(value.Runtime).GetObjectId(value);
 		}
 
+		public override DbgObjectId GetObjectId(DbgRuntime runtime, uint id) {
+			if (runtime == null)
+				throw new ArgumentNullException(nameof(runtime));
+			return GetRuntimeObjectIdService(runtime).GetObjectId(id);
+		}
+
 		public override DbgObjectId[] GetObjectIds(DbgRuntime runtime) {
 			if (runtime == null)
 				throw new ArgumentNullException(nameof(runtime));
