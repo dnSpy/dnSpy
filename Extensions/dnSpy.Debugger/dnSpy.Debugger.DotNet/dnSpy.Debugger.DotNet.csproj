@@ -98,6 +98,13 @@
     <Compile Include="Evaluation\Engine\ExceptionUtils.cs" />
     <Compile Include="Evaluation\Engine\ExpressionCompilerConstants.cs" />
     <Compile Include="Evaluation\Engine\ILValues.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\DebuggerRuntimeFactory.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\DebuggerRuntimeFactoryImpl.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\DotNetClassHook.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\DotNetClassHookFactory.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\IDebuggerRuntime.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\TypeName.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\WellKnownTypeUtils.cs" />
     <Compile Include="Evaluation\Engine\IntrinsicsAssemblyBuilder.cs" />
     <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
     <Compile Include="Evaluation\Engine\MethodDebugScopeUtils.cs" />

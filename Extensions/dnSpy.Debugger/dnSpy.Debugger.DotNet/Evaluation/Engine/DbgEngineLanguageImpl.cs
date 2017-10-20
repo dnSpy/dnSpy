@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly IDecompiler decompiler;
 		readonly IDebuggerDisplayAttributeEvaluator debuggerDisplayAttributeEvaluator;
 
-		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMetadataService dbgMetadataService, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
+		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMetadataService dbgMetadataService, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
 			if (dbgModuleReferenceProvider == null)
 				throw new ArgumentNullException(nameof(dbgModuleReferenceProvider));
 			if (expressionCompiler == null)
@@ -62,13 +62,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new ArgumentNullException(nameof(formatter));
 			if (valueNodeFactory == null)
 				throw new ArgumentNullException(nameof(valueNodeFactory));
+			if (dnILInterpreter == null)
+				throw new ArgumentNullException(nameof(dnILInterpreter));
 			if (predefinedEvaluationErrorMessagesHelper == null)
 				throw new ArgumentNullException(nameof(predefinedEvaluationErrorMessagesHelper));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
 			this.dbgMetadataService = dbgMetadataService ?? throw new ArgumentNullException(nameof(dbgMetadataService));
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
-			var dnILInterpreter = new DbgDotNetILInterpreterImpl();
 			var expressionEvaluator = new DbgEngineExpressionEvaluatorImpl(dbgModuleReferenceProvider, expressionCompiler, dnILInterpreter, predefinedEvaluationErrorMessagesHelper);
 			ExpressionEvaluator = expressionEvaluator;
 			ValueFormatter = new DbgEngineValueFormatterImpl(formatter);

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
@@ -26,6 +27,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
@@ -46,6 +48,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetILInterpreterState {
 	}
 
+	[Export(typeof(DbgDotNetILInterpreter))]
 	sealed class DbgDotNetILInterpreterImpl : DbgDotNetILInterpreter {
 		sealed class DbgDotNetILInterpreterStateImpl : DbgDotNetILInterpreterState {
 			public ILVM ILVM { get; }
@@ -105,6 +108,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
+		readonly DebuggerRuntimeFactory debuggerRuntimeFactory;
+
+		[ImportingConstructor]
+		DbgDotNetILInterpreterImpl(DebuggerRuntimeFactory debuggerRuntimeFactory) =>
+			this.debuggerRuntimeFactory = debuggerRuntimeFactory;
+
 		sealed class MethodInfoState {
 			public ILVMExecuteState ILVMExecuteState { get; set; }
 			public DmdType ExpectedType { get; set; }
@@ -119,7 +128,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgDotNetValueResult Execute(DbgEvaluationContext context, DbgStackFrame frame, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, VariablesProvider argumentsProvider, VariablesProvider localsProvider, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType, CancellationToken cancellationToken) {
 			var stateImpl = (DbgDotNetILInterpreterStateImpl)state;
 
-			var debuggerRuntime = GetDebuggerRuntime(context.Runtime);
+			var debuggerRuntime = debuggerRuntimeFactory.Create(context.Runtime);
 			debuggerRuntime.Runtime.Dispatcher.VerifyAccess();
 
 			var appDomain = frame.Thread.AppDomain;
@@ -197,17 +206,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			default:
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			}
-		}
-
-		sealed class State {
-			public DebuggerRuntimeImpl DebuggerRuntime;
-		}
-
-		DebuggerRuntimeImpl GetDebuggerRuntime(DbgRuntime runtime) {
-			var state = StateWithKey<State>.GetOrCreate(runtime, this);
-			if (state.DebuggerRuntime == null)
-				state.DebuggerRuntime = new DebuggerRuntimeImpl(runtime.GetDotNetRuntime(), runtime.Process.PointerSize);
-			return state.DebuggerRuntime;
 		}
 	}
 }

@@ -27,21 +27,55 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	sealed class DebuggerRuntimeImpl : DebuggerRuntime {
+	abstract class DebuggerRuntime2 : DebuggerRuntime {
+		public abstract IDbgDotNetRuntime Runtime { get; }
+		public abstract void Initialize(DbgEvaluationContext context, DbgStackFrame frame, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken);
+		public abstract void Clear(DbgDotNetValue returnValue);
+		public abstract DbgDotNetValue GetDotNetValue(ILValue value);
+	}
+
+	sealed class DebuggerRuntimeImpl : DebuggerRuntime2, IDebuggerRuntime {
 		public override int PointerSize { get; }
 
-		internal IDbgDotNetRuntime Runtime => runtime;
+		public override IDbgDotNetRuntime Runtime => runtime;
 		readonly IDbgDotNetRuntime runtime;
+		readonly DotNetClassHook[] anyClassHooks;
+		readonly Dictionary<TypeName, DotNetClassHook> classHooks;
 		readonly List<DbgDotNetValue> valuesToDispose;
 
-		public DebuggerRuntimeImpl(IDbgDotNetRuntime runtime, int pointerSize) {
+		public DebuggerRuntimeImpl(IDbgDotNetRuntime runtime, int pointerSize, DotNetClassHookFactory[] dotNetClassHookFactories) {
+			if (dotNetClassHookFactories == null)
+				throw new ArgumentNullException(nameof(dotNetClassHookFactories));
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			valuesToDispose = new List<DbgDotNetValue>();
 			PointerSize = pointerSize;
+
+			var anyClassHooksList = new List<DotNetClassHook>();
+			classHooks = new Dictionary<TypeName, DotNetClassHook>(TypeNameEqualityComparer.Instance);
+			foreach (var factory in dotNetClassHookFactories) {
+				foreach (var info in factory.Create(this)) {
+					Debug.Assert(info.Hook != null);
+					if (info.WellKnownType == null && info.TypeName == null)
+						anyClassHooksList.Add(info.Hook);
+					else {
+						TypeName typeName;
+						if (info.WellKnownType != null)
+							typeName = WellKnownTypeUtils.GetTypeName(info.WellKnownType.Value);
+						else {
+							Debug.Assert(info.TypeName != null);
+							typeName = info.TypeName.Value;
+						}
+						Debug.Assert(!classHooks.ContainsKey(typeName));
+						classHooks[typeName] = info.Hook;
+					}
+				}
+			}
+			anyClassHooks = anyClassHooksList.ToArray();
 		}
 
 		VariablesProvider DefaultArgumentsProvider => defaultArgumentsProvider ?? (defaultArgumentsProvider = new DefaultArgumentsProviderImpl(runtime));
@@ -55,8 +89,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgStackFrame frame;
 		bool canFuncEval;
 		CancellationToken cancellationToken;
+		DmdAppDomain reflectionAppDomain;
 
-		public void Initialize(DbgEvaluationContext context, DbgStackFrame frame, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken) {
+		public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken) {
 			Debug.Assert(this.context == null);
 			if (this.context != null)
 				throw new InvalidOperationException();
@@ -70,11 +105,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override void Initialize(DmdMethodBase method, DmdMethodBody body) {
+			reflectionAppDomain = method.AppDomain;
 			argumentsProvider.Initialize(context, frame, method, body, cancellationToken);
 			localsProvider.Initialize(context, frame, method, body, cancellationToken);
 		}
 
-		public void Clear(DbgDotNetValue returnValue) {
+		public override void Clear(DbgDotNetValue returnValue) {
 			context = null;
 			frame = null;
 			cancellationToken = default;
@@ -87,13 +123,51 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			localsProvider.Clear();
 			argumentsProvider = null;
 			localsProvider = null;
+			reflectionAppDomain = null;
 		}
 
-		public DbgDotNetValue GetDotNetValue(ILValue value) {
+		public override DbgDotNetValue GetDotNetValue(ILValue value) {
 			var dnValue = TryGetDotNetValue(value, canCreateValues: true);
 			if (dnValue != null)
 				return dnValue;
 			throw new InvalidOperationException();//TODO:
+		}
+
+		DmdType TryGetType(object value) {
+			if (value == null)
+				return null;
+
+			var type = value.GetType();
+			switch (Type.GetTypeCode(type)) {
+			case TypeCode.Boolean:		return reflectionAppDomain.System_Boolean;
+			case TypeCode.Char:			return reflectionAppDomain.System_Char;
+			case TypeCode.SByte:		return reflectionAppDomain.System_SByte;
+			case TypeCode.Byte:			return reflectionAppDomain.System_Byte;
+			case TypeCode.Int16:		return reflectionAppDomain.System_Int16;
+			case TypeCode.UInt16:		return reflectionAppDomain.System_UInt16;
+			case TypeCode.Int32:		return reflectionAppDomain.System_Int32;
+			case TypeCode.UInt32:		return reflectionAppDomain.System_UInt32;
+			case TypeCode.Int64:		return reflectionAppDomain.System_Int64;
+			case TypeCode.UInt64:		return reflectionAppDomain.System_UInt64;
+			case TypeCode.Single:		return reflectionAppDomain.System_Single;
+			case TypeCode.Double:		return reflectionAppDomain.System_Double;
+			case TypeCode.Decimal:		return reflectionAppDomain.System_Decimal;
+			case TypeCode.DateTime:		return reflectionAppDomain.System_DateTime;
+			case TypeCode.String:		return reflectionAppDomain.System_String;
+			}
+			if (type == typeof(IntPtr))
+				return reflectionAppDomain.System_IntPtr;
+			if (type == typeof(UIntPtr))
+				return reflectionAppDomain.System_UIntPtr;
+
+			return null;
+		}
+
+		DbgDotNetValue TryCreateSyntheticValue(object value) {
+			var type = TryGetType(value);
+			if ((object)type != null)
+				return TryCreateSyntheticValue(type, value);
+			return null;
 		}
 
 		DbgDotNetValue TryCreateSyntheticValue(DmdType type, object value) {
@@ -467,11 +541,41 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return CreateILValue(res);
 
 			default:
-				if (!canFuncEval)
-					throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
-				res = runtime.CreateInstance(context, frame, ctor, Convert(arguments, ctor.GetMethodSignature().GetParameterTypes()), cancellationToken);
+				res = CreateInstanceCore(ctor, arguments);
 				return CreateILValue(res);
 			}
+		}
+
+		DbgDotNetValueResult CreateInstanceCore(DmdConstructorInfo ctor, ILValue[] arguments) {
+			if (ctor.IsStatic)
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+
+			const DotNetClassHookCallOptions options = DotNetClassHookCallOptions.None;
+			foreach (var anyHook in anyClassHooks) {
+				var res = anyHook.CreateInstance(options, ctor, arguments);
+				if (res != null)
+					return new DbgDotNetValueResult(res, valueIsException: false);
+			}
+
+			var type = ctor.DeclaringType;
+			if (type.IsConstructedGenericType)
+				type = type.GetGenericTypeDefinition();
+			var typeName = TypeName.Create(type);
+			if (classHooks.TryGetValue(typeName, out var hook)) {
+				if (WellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
+					if (type != type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true))
+						hook = null;
+				}
+				if (hook != null) {
+					var res = hook.CreateInstance(options, ctor, arguments);
+					if (res != null)
+						return new DbgDotNetValueResult(res, valueIsException: false);
+				}
+			}
+
+			if (!canFuncEval)
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
+			return runtime.CreateInstance(context, frame, ctor, Convert(arguments, ctor.GetMethodSignature().GetParameterTypes()), cancellationToken);
 		}
 
 		static int ReadInt32(ILValue value) {
@@ -617,9 +721,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		bool Call(DbgDotNetValue objValue, bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
 			if (method.SpecialMethodKind != DmdSpecialMethodKind.Metadata)
 				throw new InvalidOperationException();
-			if (!canFuncEval)
-				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
-			var res = runtime.Call(context, frame, objValue, method, Convert(arguments, method.GetMethodSignature().GetParameterTypes()), cancellationToken);
+			var res = CallCore(objValue, isCallvirt, method, arguments);
 			try {
 				if (res.HasError)
 					throw new InterpreterMessageException(res.ErrorMessage);
@@ -640,6 +742,35 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				res.Value?.Dispose();
 				throw;
 			}
+		}
+
+		DbgDotNetValueResult CallCore(DbgDotNetValue obj, bool isCallvirt, DmdMethodBase method, ILValue[] arguments) {
+			var options = isCallvirt ? DotNetClassHookCallOptions.IsCallvirt : DotNetClassHookCallOptions.None;
+			foreach (var anyHook in anyClassHooks) {
+				var res = anyHook.Call(options, obj, method, arguments);
+				if (res != null)
+					return new DbgDotNetValueResult(res, valueIsException: false);
+			}
+
+			var type = method.DeclaringType;
+			if (type.IsConstructedGenericType)
+				type = type.GetGenericTypeDefinition();
+			var typeName = TypeName.Create(type);
+			if (classHooks.TryGetValue(typeName, out var hook)) {
+				if (WellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
+					if (type != type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true))
+						hook = null;
+				}
+				if (hook != null) {
+					var res = hook.Call(options, obj, method, arguments);
+					if (res != null)
+						return new DbgDotNetValueResult(res, valueIsException: false);
+				}
+			}
+
+			if (!canFuncEval)
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
+			return runtime.Call(context, frame, obj, method, Convert(arguments, method.GetMethodSignature().GetParameterTypes()), cancellationToken);
 		}
 
 		object[] Convert(ILValue[] values, ReadOnlyCollection<DmdType> targetTypes) {
@@ -664,6 +795,31 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new InvalidOperationException();
 			}
 			throw new InvalidOperationException();
+		}
+
+		DbgDotNetValue IDebuggerRuntime.CreateValue(object value) {
+			var res = TryCreateSyntheticValue(value);
+			if (res != null)
+				return res;
+			return RecordValue(runtime.CreateValue(context, frame, value, cancellationToken));
+		}
+
+		char IDebuggerRuntime.ToChar(ILValue value) {
+			if (value.Kind == ILValueKind.Int32)
+				return (char)((ConstantInt32ILValue)value).Value;
+			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+		}
+
+		int IDebuggerRuntime.ToInt32(ILValue value) {
+			if (value.Kind == ILValueKind.Int32)
+				return ((ConstantInt32ILValue)value).Value;
+			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+		}
+
+		string IDebuggerRuntime.ToString(ILValue value) {
+			if (value is ConstantStringILValueImpl stringValue)
+				return stringValue.Value;
+			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 	}
 }
