@@ -205,12 +205,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		IntrinsicsAssemblyState GetOrCreateIntrinsicsAssemblyState(DbgRuntime runtime, DmdAppDomain appDomain) {
-			var assemblyBytes = new IntrinsicsAssemblyBuilder(appDomain.CorLib.GetName().FullName).Create();
+			var info = new IntrinsicsAssemblyBuilder(appDomain.CorLib.GetName().FullName).Create();
 			const bool isFileLayout = true;
 			const bool isInMemory = false;
 			const bool isDynamic = false;
-			var assembly = appDomain.CreateSyntheticAssembly(() => new DmdLazyMetadataBytesArray(assemblyBytes, isFileLayout), isInMemory, isDynamic, DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, null), string.Empty);
-			var rawMD = dbgRawMetadataService.Create(runtime, isFileLayout, assemblyBytes);
+			var assembly = appDomain.CreateSyntheticAssembly(() => new DmdLazyMetadataBytesArray(info.assemblyBytes, isFileLayout), isInMemory, isDynamic, DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, null), string.Empty, info.assemblySimpleName);
+			var rawMD = dbgRawMetadataService.Create(runtime, isFileLayout, info.assemblyBytes);
 			var modRef = new DbgModuleReferenceImpl(rawMD, assembly.ManifestModule.ModuleVersionId, Guid.Empty, assembly.ManifestModule);
 			RuntimeState.GetRuntimeState(runtime).OtherModuleReferences.Add(modRef);
 			var state = new IntrinsicsAssemblyState(modRef, assembly);

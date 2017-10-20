@@ -60,9 +60,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
+		/// <param name="assemblySimpleName">The assembly's simple name or null if it's unknown</param>
 		/// <returns></returns>
-		public DmdAssembly CreateSyntheticAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) =>
-			CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation, assemblySimpleName: null, isSynthetic: true, addAssembly: false);
+		public DmdAssembly CreateSyntheticAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation, string assemblySimpleName) =>
+			CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation, assemblySimpleName: assemblySimpleName, isSynthetic: true, addAssembly: false);
 
 		/// <summary>
 		/// Creates an assembly and optionally adds it to the AppDomain. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)

@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdReadOnlyAssemblyName GetName() {
 			if (asmName == null) {
 				var newAsmName = metadataReader.GetName();
-				Debug.Assert(assemblySimpleName == null || newAsmName.Name == assemblySimpleName);
+				Debug.Assert(string.IsNullOrEmpty(assemblySimpleName) || newAsmName.Name == assemblySimpleName);
 				var flags = newAsmName.RawFlags;
 				flags |= DmdAssemblyNameFlags.PublicKey;
 				if (metadataReader.MDStreamVersion >= 0x00010000) {

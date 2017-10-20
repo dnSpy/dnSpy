@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			guidTypeSig = new ValueTypeSig(corlibTypes.GetTypeRef(nameof(System), nameof(Guid)));
 		}
 
-		public byte[] Create() {
+		public (byte[] assemblyBytes, string assemblySimpleName) Create() {
 			intrinsicsType.Methods.Add(CreateGetObjectAtAddress());
 			intrinsicsType.Methods.Add(CreateGetException());
 			intrinsicsType.Methods.Add(CreateGetStowedException());
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var memStream = new MemoryStream();
 			var writerOptions = new ModuleWriterOptions(module);
 			module.Write(memStream, writerOptions);
-			return memStream.ToArray();
+			return (memStream.ToArray(), module.Assembly.Name);
 		}
 
 		const MethodImplAttributes methodImplAttributes = MethodImplAttributes.IL | MethodImplAttributes.Managed;

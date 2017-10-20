@@ -299,7 +299,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			// Check all in-memory and dynamic assemblies. We need to read their metadata.
 			foreach (var assembly in assemblies) {
-				if (!(assembly.IsInMemory || assembly.IsDynamic))
+				if (!(assembly.IsInMemory || assembly.IsDynamic || assembly.AssemblySimpleName == string.Empty))
 					continue;
 
 				if (name == null) {

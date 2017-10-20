@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				const bool isDynamic = false;
 				var fullyQualifiedName = DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, fullyQualifiedName: null);
 				Func<DmdLazyMetadataBytes> getMetadata = () => new DmdLazyMetadataBytesArray(assemblyBytes, isFileLayout: true);
-				var assembly = reflectionAppDomain.CreateSyntheticAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, string.Empty);
+				var assembly = reflectionAppDomain.CreateSyntheticAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, string.Empty, null);
 
 				assemblies.Add((appDomain.Id, assembly));
 				return assembly;
