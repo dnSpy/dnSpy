@@ -196,11 +196,47 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No object found at the given address.
+        /// </summary>
+        public static string NoDotNetObjectFoundAtAddress {
+            get {
+                return ResourceManager.GetString("NoDotNetObjectFoundAtAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no exception on the current thread.
+        /// </summary>
+        public static string NoExceptionOnTheCurrentThread {
+            get {
+                return ResourceManager.GetString("NoExceptionOnTheCurrentThread", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reload All Method Bodies.
         /// </summary>
         public static string ReloadAllMethodBodiesCommand {
             get {
                 return ResourceManager.GetString("ReloadAllMethodBodiesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Return value is not currently available.
+        /// </summary>
+        public static string ReturnValueNotAvailable {
+            get {
+                return ResourceManager.GetString("ReturnValueNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown variable or object ID.
+        /// </summary>
+        public static string UnknownVariableOrObjectId {
+            get {
+                return ResourceManager.GetString("UnknownVariableOrObjectId", resourceCulture);
             }
         }
     }

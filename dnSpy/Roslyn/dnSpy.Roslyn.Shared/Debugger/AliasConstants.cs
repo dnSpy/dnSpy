@@ -17,6 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
+
 namespace dnSpy.Roslyn.Shared.Debugger {
 	static class AliasConstants {
 		// These strings are hard coded in the expression compiler
@@ -24,5 +28,44 @@ namespace dnSpy.Roslyn.Shared.Debugger {
 		public const string ExceptionName = "$exception";
 		public const string StowedExceptionName = "$stowedexception";
 		public const string ObjectIdName = "$";
+
+		public static bool TryGetAliasInfo(string aliasName, bool isCaseSensitive, out DbgDotNetParsedAlias aliasInfo) {
+			if (aliasName != null) {
+				var comparison = isCaseSensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+				if (aliasName.Equals(ReturnValueName, comparison)) {
+					aliasInfo = new DbgDotNetParsedAlias(DbgDotNetAliasKind.ReturnValue, DbgDotNetRuntimeConstants.LastReturnValueId);
+					return true;
+				}
+				if (aliasName.Equals(ExceptionName, comparison)) {
+					aliasInfo = new DbgDotNetParsedAlias(DbgDotNetAliasKind.Exception, DbgDotNetRuntimeConstants.ExceptionId);
+					return true;
+				}
+				if (aliasName.Equals(StowedExceptionName, comparison)) {
+					aliasInfo = new DbgDotNetParsedAlias(DbgDotNetAliasKind.StowedException, DbgDotNetRuntimeConstants.StowedExceptionId);
+					return true;
+				}
+				if (TryGetId(aliasName, ReturnValueName, comparison, out uint id) && id != DbgDotNetRuntimeConstants.LastReturnValueId) {
+					aliasInfo = new DbgDotNetParsedAlias(DbgDotNetAliasKind.ReturnValue, id);
+					return true;
+				}
+				if (TryGetId(aliasName, ObjectIdName, comparison, out id)) {
+					aliasInfo = new DbgDotNetParsedAlias(DbgDotNetAliasKind.ObjectId, id);
+					return true;
+				}
+			}
+
+			aliasInfo = default;
+			return false;
+		}
+
+		static bool TryGetId(string aliasName, string prefix, StringComparison comparison, out uint id) {
+			if (aliasName.StartsWith(prefix, comparison)) {
+				if (uint.TryParse(aliasName.Substring(prefix.Length), out id) && aliasName.Equals(prefix + id.ToString(), comparison))
+					return true;
+			}
+
+			id = 0;
+			return false;
+		}
 	}
 }

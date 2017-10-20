@@ -427,5 +427,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 		}
 
 		internal abstract string GetVariableName(string metadataName, bool isThis);
+
+		protected abstract bool IsCaseSensitive { get; }
+		public override bool TryGetAliasInfo(string aliasName, out DbgDotNetParsedAlias aliasInfo) =>
+			AliasConstants.TryGetAliasInfo(aliasName, IsCaseSensitive, out aliasInfo);
 	}
 }

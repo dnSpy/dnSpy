@@ -156,6 +156,36 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DbgDotNetReturnValueInfo[] GetReturnValues(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Gets an exception or null
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="id">Exception id, eg. <see cref="DbgDotNetRuntimeConstants.ExceptionId"/></param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValue GetException(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets a stowed exception or null
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="id">Stowed exception id, eg. <see cref="DbgDotNetRuntimeConstants.StowedExceptionId"/></param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValue GetStowedException(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets a return value or null
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="id">Return value id, eg. <see cref="DbgDotNetRuntimeConstants.LastReturnValueId"/></param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValue GetReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Gets a local value or null if the local doesn't exist or if it's not possible to read it (eg. optimized code)
 		/// </summary>
 		/// <param name="context">Context</param>
@@ -268,6 +298,26 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="b">Value #2</param>
 		/// <returns></returns>
 		bool? Equals(DbgDotNetValue a, DbgDotNetValue b);
+	}
+
+	/// <summary>
+	/// Constants
+	/// </summary>
+	public static class DbgDotNetRuntimeConstants {
+		/// <summary>
+		/// Exception ID
+		/// </summary>
+		public const uint ExceptionId = 1;
+
+		/// <summary>
+		/// Stowed exception ID
+		/// </summary>
+		public const uint StowedExceptionId = 1;
+
+		/// <summary>
+		/// ID of last return value
+		/// </summary>
+		public const uint LastReturnValueId = 0;
 	}
 
 	/// <summary>

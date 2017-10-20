@@ -83,6 +83,14 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract DbgDotNetCompilationResult CompileAssignment(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets alias info
+		/// </summary>
+		/// <param name="aliasName">Alias name</param>
+		/// <param name="aliasInfo">Updated with alias info</param>
+		/// <returns></returns>
+		public abstract bool TryGetAliasInfo(string aliasName, out DbgDotNetParsedAlias aliasInfo);
 	}
 
 	/// <summary>Metadata</summary>
@@ -160,5 +168,30 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// Order of Visual Basic expression compiler
 		/// </summary>
 		public const double VisualBasic = 2000000;
+	}
+
+	/// <summary>
+	/// Alias info
+	/// </summary>
+	public struct DbgDotNetParsedAlias {
+		/// <summary>
+		/// Alias kind
+		/// </summary>
+		public DbgDotNetAliasKind Kind;
+
+		/// <summary>
+		/// Id
+		/// </summary>
+		public uint Id;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="kind">Alias kind</param>
+		/// <param name="id">Id</param>
+		public DbgDotNetParsedAlias(DbgDotNetAliasKind kind, uint id) {
+			Kind = kind;
+			Id = id;
+		}
 	}
 }

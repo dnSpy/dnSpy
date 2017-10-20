@@ -40,12 +40,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly DbgModuleReferenceProvider dbgModuleReferenceProvider;
 		readonly DbgDotNetExpressionCompiler expressionCompiler;
 		readonly DbgDotNetILInterpreter dnILInterpreter;
+		readonly DbgObjectIdService objectIdService;
 		readonly IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper;
 
-		public DbgEngineExpressionEvaluatorImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, DbgDotNetExpressionCompiler expressionCompiler, DbgDotNetILInterpreter dnILInterpreter, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
+		public DbgEngineExpressionEvaluatorImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, DbgDotNetExpressionCompiler expressionCompiler, DbgDotNetILInterpreter dnILInterpreter, DbgObjectIdService objectIdService, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
 			this.dbgModuleReferenceProvider = dbgModuleReferenceProvider ?? throw new ArgumentNullException(nameof(dbgModuleReferenceProvider));
 			this.expressionCompiler = expressionCompiler ?? throw new ArgumentNullException(nameof(expressionCompiler));
 			this.dnILInterpreter = dnILInterpreter ?? throw new ArgumentNullException(nameof(dnILInterpreter));
+			this.objectIdService = objectIdService ?? throw new ArgumentNullException(nameof(objectIdService));
 			this.predefinedEvaluationErrorMessagesHelper = predefinedEvaluationErrorMessagesHelper ?? throw new ArgumentNullException(nameof(predefinedEvaluationErrorMessagesHelper));
 		}
 
@@ -361,7 +363,55 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		DbgDotNetAlias[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
-			return Array.Empty<DbgDotNetAlias>();//TODO:
+			var runtime = context.Runtime.GetDotNetRuntime();
+			var objectIds = objectIdService.GetObjectIds(context.Runtime);
+			var aliases = runtime.GetAliases(context, frame, cancellationToken);
+
+			if (objectIds.Length == 0 && aliases.Length == 0)
+				return Array.Empty<DbgDotNetAlias>();
+
+			var res = new DbgDotNetAlias[objectIds.Length + aliases.Length];
+
+			var sb = ObjectCache.AllocStringBuilder();
+			var output = new StringBuilderTextColorOutput(sb);
+			int w = 0;
+			foreach (var alias in aliases) {
+				output.Reset();
+				DbgDotNetAliasKind dnAliasKind;
+				string aliasName;
+				switch (alias.Kind) {
+				case DbgDotNetAliasInfoKind.Exception:
+					dnAliasKind = DbgDotNetAliasKind.Exception;
+					context.Language.Formatter.FormatExceptionName(context, output, alias.Id);
+					aliasName = sb.ToString();
+					break;
+				case DbgDotNetAliasInfoKind.StowedException:
+					dnAliasKind = DbgDotNetAliasKind.StowedException;
+					context.Language.Formatter.FormatStowedExceptionName(context, output, alias.Id);
+					aliasName = sb.ToString();
+					break;
+				case DbgDotNetAliasInfoKind.ReturnValue:
+					dnAliasKind = DbgDotNetAliasKind.ReturnValue;
+					context.Language.Formatter.FormatReturnValueName(context, output, alias.Id);
+					aliasName = sb.ToString();
+					break;
+				default:
+					throw new InvalidOperationException();
+				}
+				res[w++] = new DbgDotNetAlias(dnAliasKind, alias.Type.AssemblyQualifiedName, aliasName, alias.CustomTypeInfoId, alias.CustomTypeInfo);
+			}
+			foreach (var objectId in objectIds) {
+				output.Reset();
+				var value = objectId.GetValue(context, frame, cancellationToken);
+				var dnValue = (DbgDotNetValue)value.InternalValue;
+				context.Language.Formatter.FormatObjectIdName(context, output, objectId.Id);
+				res[w++] = new DbgDotNetAlias(DbgDotNetAliasKind.ObjectId, dnValue.Type.AssemblyQualifiedName, sb.ToString(), Guid.Empty, null);
+				value.Close();
+			}
+			if (w != res.Length)
+				throw new InvalidOperationException();
+			ObjectCache.Free(ref sb);
+			return res;
 		}
 	}
 

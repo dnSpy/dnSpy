@@ -17,11 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Text;
 using System.Threading;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	static class ObjectCache {
+		const int MAX_STRINGBUILDER_CAPACITY = 1024;
+		static volatile StringBuilder stringBuilder;
+		public static StringBuilder AllocStringBuilder() => Interlocked.Exchange(ref stringBuilder, null) ?? new StringBuilder();
+		public static void Free(ref StringBuilder sb) {
+			if (sb.Capacity <= MAX_STRINGBUILDER_CAPACITY) {
+				sb.Clear();
+				stringBuilder = sb;
+			}
+			sb = null;
+		}
+		public static string FreeAndToString(ref StringBuilder sb) {
+			var res = sb.ToString();
+			Free(ref sb);
+			return res;
+		}
+
 		static DbgDotNetTextOutput dotNetTextOutput;
 		public static DbgDotNetTextOutput AllocDotNetTextOutput() => Interlocked.Exchange(ref dotNetTextOutput, null) ?? new DbgDotNetTextOutput();
 		public static void Free(ref DbgDotNetTextOutput output) {

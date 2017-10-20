@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		public DbgDotNetAliasKind Kind;
 
 		/// <summary>
-		/// Custom type info understood by the EE
+		/// Custom type info understood by the EE or null
 		/// </summary>
 		public ReadOnlyCollection<byte> CustomTypeInfo;
 
@@ -79,5 +79,21 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// Serialized type name, see <see cref="Type.AssemblyQualifiedName"/>
 		/// </summary>
 		public string Type;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="kind">Alias kind</param>
+		/// <param name="type">Serialized type name, see <see cref="Type.AssemblyQualifiedName"/></param>
+		/// <param name="name">Name, eg. "$ReturnValue", "$1"</param>
+		/// <param name="customTypeInfoId">Custom type info ID</param>
+		/// <param name="customTypeInfo">Custom type info understood by the EE or null</param>
+		public DbgDotNetAlias(DbgDotNetAliasKind kind, string type, string name, Guid customTypeInfoId, ReadOnlyCollection<byte> customTypeInfo) {
+			Kind = kind;
+			Type = type;
+			Name = name;
+			CustomTypeInfo = customTypeInfo;
+			CustomTypeInfoId = customTypeInfoId;
+		}
 	}
 }

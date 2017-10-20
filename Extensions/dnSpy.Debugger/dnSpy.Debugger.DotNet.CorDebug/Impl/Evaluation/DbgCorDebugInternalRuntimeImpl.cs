@@ -606,7 +606,42 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		DbgDotNetAliasInfo[] GetAliasesCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
-			return Array.Empty<DbgDotNetAliasInfo>();//TODO:
+
+			DbgDotNetValue exception = null;
+			DbgDotNetValue stowedException = null;
+			var returnValues = Array.Empty<DbgDotNetReturnValueInfo>();
+			try {
+				exception = GetExceptionCore(context, frame, DbgDotNetRuntimeConstants.ExceptionId, cancellationToken);
+				stowedException = GetStowedExceptionCore(context, frame, DbgDotNetRuntimeConstants.StowedExceptionId, cancellationToken);
+				returnValues = GetReturnValuesCore(context, frame, cancellationToken);
+
+				int count = (exception != null ? 1 : 0) + (stowedException != null ? 1 : 0) + returnValues.Length + (returnValues.Length != 0 ? 1 : 0);
+				if (count == 0)
+					return Array.Empty<DbgDotNetAliasInfo>();
+
+				var res = new DbgDotNetAliasInfo[count];
+				int w = 0;
+				if (exception != null)
+					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.Exception, exception.Type, 0, Guid.Empty, null);
+				if (stowedException != null)
+					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.StowedException, stowedException.Type, 0, Guid.Empty, null);
+				if (returnValues.Length != 0) {
+					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.ReturnValue, returnValues[returnValues.Length - 1].Value.Type, DbgDotNetRuntimeConstants.LastReturnValueId, Guid.Empty, null);
+					foreach (var returnValue in returnValues) {
+						Debug.Assert(returnValue.Id != DbgDotNetRuntimeConstants.LastReturnValueId);
+						res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.ReturnValue, returnValue.Value.Type, returnValue.Id, Guid.Empty, null);
+					}
+				}
+				if (w != res.Length)
+					throw new InvalidOperationException();
+				return res;
+			}
+			finally {
+				exception?.Dispose();
+				stowedException?.Dispose();
+				foreach (var rv in returnValues)
+					rv.Value?.Dispose();
+			}
 		}
 
 		public DbgDotNetExceptionInfo[] GetExceptions(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
@@ -621,14 +656,29 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		DbgDotNetExceptionInfo[] GetExceptionsCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
-			var dnThread = engine.GetThread(frame.Thread);
-			var corValue = dnThread.CorThread.CurrentException;
-			if (corValue == null)
-				return Array.Empty<DbgDotNetExceptionInfo>();
-			var reflectionAppDomain = frame.Thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
-			var value = engine.CreateDotNetValue_CorDebug(corValue, reflectionAppDomain, tryCreateStrongHandle: true);
-			const uint exceptionId = 1;
-			return new[] { new DbgDotNetExceptionInfo(value, exceptionId, DbgDotNetExceptionInfoFlags.None) };
+			DbgDotNetValue exception = null;
+			DbgDotNetValue stowedException = null;
+			try {
+				exception = GetExceptionCore(context, frame, DbgDotNetRuntimeConstants.ExceptionId, cancellationToken);
+				stowedException = GetStowedExceptionCore(context, frame, DbgDotNetRuntimeConstants.StowedExceptionId, cancellationToken);
+				int count = (exception != null ? 1 : 0) + (stowedException != null ? 1 : 0);
+				if (count == 0)
+					return Array.Empty<DbgDotNetExceptionInfo>();
+				var res = new DbgDotNetExceptionInfo[count];
+				int w = 0;
+				if (exception != null)
+					res[w++] = new DbgDotNetExceptionInfo(exception, DbgDotNetRuntimeConstants.ExceptionId, DbgDotNetExceptionInfoFlags.None);
+				if (stowedException != null)
+					res[w++] = new DbgDotNetExceptionInfo(stowedException, DbgDotNetRuntimeConstants.StowedExceptionId, DbgDotNetExceptionInfoFlags.StowedException);
+				if (w != res.Length)
+					throw new InvalidOperationException();
+				return res;
+			}
+			catch {
+				exception?.Dispose();
+				stowedException?.Dispose();
+				throw;
+			}
 		}
 
 		public DbgDotNetReturnValueInfo[] GetReturnValues(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
@@ -644,6 +694,74 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Dispatcher.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
 			return Array.Empty<DbgDotNetReturnValueInfo>();//TODO:
+		}
+
+		public DbgDotNetValue GetException(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetExceptionCore(context, frame, id, cancellationToken);
+			return GetException2(context, frame, id, cancellationToken);
+
+			DbgDotNetValue GetException2(DbgEvaluationContext context2, DbgStackFrame frame2, uint id2, CancellationToken cancellationToken2) =>
+				Dispatcher.InvokeRethrow(() => GetExceptionCore(context2, frame2, id2, cancellationToken2));
+		}
+
+		DbgDotNetValue GetExceptionCore(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
+			if (id != DbgDotNetRuntimeConstants.ExceptionId)
+				return null;
+			var corException = TryGetException(frame);
+			if (corException == null)
+				return null;
+			var reflectionAppDomain = frame.Thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
+			return engine.CreateDotNetValue_CorDebug(corException, reflectionAppDomain, tryCreateStrongHandle: true);
+		}
+
+		public DbgDotNetValue GetStowedException(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetStowedExceptionCore(context, frame, id, cancellationToken);
+			return GetStowedException2(context, frame, id, cancellationToken);
+
+			DbgDotNetValue GetStowedException2(DbgEvaluationContext context2, DbgStackFrame frame2, uint id2, CancellationToken cancellationToken2) =>
+				Dispatcher.InvokeRethrow(() => GetStowedExceptionCore(context2, frame2, id2, cancellationToken2));
+		}
+
+		DbgDotNetValue GetStowedExceptionCore(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
+			if (id != DbgDotNetRuntimeConstants.StowedExceptionId)
+				return null;
+			var corStowedException = TryGetStowedException(frame);
+			if (corStowedException == null)
+				return null;
+			var reflectionAppDomain = frame.Thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
+			return engine.CreateDotNetValue_CorDebug(corStowedException, reflectionAppDomain, tryCreateStrongHandle: true);
+		}
+
+		CorValue TryGetException(DbgStackFrame frame) {
+			Dispatcher.VerifyAccess();
+			var dnThread = engine.GetThread(frame.Thread);
+			return dnThread.CorThread.CurrentException;
+		}
+
+		CorValue TryGetStowedException(DbgStackFrame frame) {
+			Dispatcher.VerifyAccess();
+			return null;//TODO:
+		}
+
+		public DbgDotNetValue GetReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetReturnValueCore(context, frame, id, cancellationToken);
+			return GetReturnValue2(context, frame, id, cancellationToken);
+
+			DbgDotNetValue GetReturnValue2(DbgEvaluationContext context2, DbgStackFrame frame2, uint id2, CancellationToken cancellationToken2) =>
+				Dispatcher.InvokeRethrow(() => GetReturnValueCore(context2, frame2, id2, cancellationToken2));
+		}
+
+		DbgDotNetValue GetReturnValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
+			return null;//TODO: If id==DbgDotNetRuntimeConstants.LastReturnValueId, return the last return value
 		}
 
 		DbgDotNetValueResult CreateValue(CorValue value, ILDbgEngineStackFrame ilFrame) {

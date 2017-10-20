@@ -38,6 +38,8 @@ using Microsoft.VisualStudio.Debugger.Evaluation;
 namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 	[ExportDbgDotNetExpressionCompiler(DbgDotNetLanguageGuids.CSharp, PredefinedDbgLanguageNames.CSharp, "C#", PredefinedDecompilerGuids.CSharp, PredefinedDbgDotNetExpressionCompilerOrders.CSharp)]
 	sealed class CSharpExpressionCompiler : LanguageExpressionCompiler {
+		protected override bool IsCaseSensitive => true;
+
 		sealed class CSharpEvalContextState : EvalContextState {
 			public CSharpMetadataContext MetadataContext;
 		}

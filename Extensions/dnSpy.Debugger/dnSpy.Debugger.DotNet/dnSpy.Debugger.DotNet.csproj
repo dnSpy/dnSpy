@@ -102,6 +102,7 @@
     <Compile Include="Evaluation\Engine\Interpreter\DebuggerRuntimeFactoryImpl.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\DotNetClassHook.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\DotNetClassHookFactory.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\Hooks\dnSpy_Roslyn_ExpressionEvaluator_IntrinsicMethods.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\Hooks\DotNetClassHookFactoryImpl.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\Hooks\System_String.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\IDebuggerRuntime.cs" />

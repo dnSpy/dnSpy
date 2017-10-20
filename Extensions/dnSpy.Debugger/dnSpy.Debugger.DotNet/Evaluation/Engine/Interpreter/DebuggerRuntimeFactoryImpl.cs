@@ -21,15 +21,19 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	[Export(typeof(DebuggerRuntimeFactory))]
 	sealed class DebuggerRuntimeFactoryImpl : DebuggerRuntimeFactory {
+		readonly DbgObjectIdService dbgObjectIdService;
 		readonly DotNetClassHookFactory[] dotNetClassHookFactories;
 
 		[ImportingConstructor]
-		DebuggerRuntimeFactoryImpl([ImportMany] IEnumerable<DotNetClassHookFactory> dotNetClassHookFactories) =>
+		DebuggerRuntimeFactoryImpl(DbgObjectIdService dbgObjectIdService, [ImportMany] IEnumerable<DotNetClassHookFactory> dotNetClassHookFactories) {
+			this.dbgObjectIdService = dbgObjectIdService;
 			this.dotNetClassHookFactories = dotNetClassHookFactories.ToArray();
+		}
 
 		sealed class State {
 			public DebuggerRuntimeImpl DebuggerRuntime;
@@ -38,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override DebuggerRuntime2 Create(DbgRuntime runtime) {
 			var state = StateWithKey<State>.GetOrCreate(runtime, this);
 			if (state.DebuggerRuntime == null)
-				state.DebuggerRuntime = new DebuggerRuntimeImpl(runtime.GetDotNetRuntime(), runtime.Process.PointerSize, dotNetClassHookFactories);
+				state.DebuggerRuntime = new DebuggerRuntimeImpl(dbgObjectIdService, runtime.GetDotNetRuntime(), runtime.Process.PointerSize, dotNetClassHookFactories);
 			return state.DebuggerRuntime;
 		}
 	}

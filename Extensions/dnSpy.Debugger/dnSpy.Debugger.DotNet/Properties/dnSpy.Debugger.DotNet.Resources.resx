@@ -162,7 +162,19 @@
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>You must break the process before dynamic modules can be loaded.</value>
   </data>
+  <data name="NoDotNetObjectFoundAtAddress" xml:space="preserve">
+    <value>No object found at the given address</value>
+  </data>
+  <data name="NoExceptionOnTheCurrentThread" xml:space="preserve">
+    <value>There is no exception on the current thread</value>
+  </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
     <value>Reload All Method Bodies</value>
+  </data>
+  <data name="ReturnValueNotAvailable" xml:space="preserve">
+    <value>Return value is not currently available</value>
+  </data>
+  <data name="UnknownVariableOrObjectId" xml:space="preserve">
+    <value>Unknown variable or object ID</value>
   </data>
 </root>

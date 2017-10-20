@@ -50,27 +50,29 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValueNodeFactory ValueNodeFactory { get; }
 
 		readonly DbgMetadataService dbgMetadataService;
+		readonly DbgDotNetExpressionCompiler expressionCompiler;
 		readonly IDecompiler decompiler;
 		readonly IDebuggerDisplayAttributeEvaluator debuggerDisplayAttributeEvaluator;
 
-		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMetadataService dbgMetadataService, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
+		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMetadataService dbgMetadataService, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgObjectIdService objectIdService, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
 			if (dbgModuleReferenceProvider == null)
 				throw new ArgumentNullException(nameof(dbgModuleReferenceProvider));
-			if (expressionCompiler == null)
-				throw new ArgumentNullException(nameof(expressionCompiler));
 			if (formatter == null)
 				throw new ArgumentNullException(nameof(formatter));
 			if (valueNodeFactory == null)
 				throw new ArgumentNullException(nameof(valueNodeFactory));
 			if (dnILInterpreter == null)
 				throw new ArgumentNullException(nameof(dnILInterpreter));
+			if (objectIdService == null)
+				throw new ArgumentNullException(nameof(objectIdService));
 			if (predefinedEvaluationErrorMessagesHelper == null)
 				throw new ArgumentNullException(nameof(predefinedEvaluationErrorMessagesHelper));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
 			this.dbgMetadataService = dbgMetadataService ?? throw new ArgumentNullException(nameof(dbgMetadataService));
+			this.expressionCompiler = expressionCompiler ?? throw new ArgumentNullException(nameof(expressionCompiler));
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
-			var expressionEvaluator = new DbgEngineExpressionEvaluatorImpl(dbgModuleReferenceProvider, expressionCompiler, dnILInterpreter, predefinedEvaluationErrorMessagesHelper);
+			var expressionEvaluator = new DbgEngineExpressionEvaluatorImpl(dbgModuleReferenceProvider, expressionCompiler, dnILInterpreter, objectIdService, predefinedEvaluationErrorMessagesHelper);
 			ExpressionEvaluator = expressionEvaluator;
 			ValueFormatter = new DbgEngineValueFormatterImpl(formatter);
 			Formatter = new DbgEngineFormatterImpl(formatter);
@@ -127,6 +129,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			Debug.Assert(context.Runtime.GetDotNetRuntime() != null);
 
 			IDebuggerDisplayAttributeEvaluatorUtils.Initialize(context, debuggerDisplayAttributeEvaluator);
+			// Needed by DebuggerRuntimeImpl (calls expressionCompiler.TryGetAliasInfo())
+			context.GetOrCreateData(() => expressionCompiler);
 
 			var loc = location as IDbgDotNetCodeLocation;
 			if (loc == null) {

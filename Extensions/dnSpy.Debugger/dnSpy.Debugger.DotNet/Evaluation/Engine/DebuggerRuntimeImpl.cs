@@ -25,11 +25,13 @@ using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Debugger.DotNet.Properties;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DebuggerRuntime2 : DebuggerRuntime {
@@ -43,14 +45,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override int PointerSize { get; }
 
 		public override IDbgDotNetRuntime Runtime => runtime;
+		readonly DbgObjectIdService dbgObjectIdService;
 		readonly IDbgDotNetRuntime runtime;
 		readonly DotNetClassHook[] anyClassHooks;
 		readonly Dictionary<TypeName, DotNetClassHook> classHooks;
 		readonly List<DbgDotNetValue> valuesToDispose;
 
-		public DebuggerRuntimeImpl(IDbgDotNetRuntime runtime, int pointerSize, DotNetClassHookFactory[] dotNetClassHookFactories) {
+		public DebuggerRuntimeImpl(DbgObjectIdService dbgObjectIdService, IDbgDotNetRuntime runtime, int pointerSize, DotNetClassHookFactory[] dotNetClassHookFactories) {
 			if (dotNetClassHookFactories == null)
 				throw new ArgumentNullException(nameof(dotNetClassHookFactories));
+			this.dbgObjectIdService = dbgObjectIdService ?? throw new ArgumentNullException(nameof(dbgObjectIdService));
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			valuesToDispose = new List<DbgDotNetValue>();
 			PointerSize = pointerSize;
@@ -87,8 +91,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		VariablesProvider localsProvider;
 		DbgEvaluationContext context;
 		DbgStackFrame frame;
-		bool canFuncEval;
 		CancellationToken cancellationToken;
+		bool canFuncEval;
 		DmdAppDomain reflectionAppDomain;
 
 		public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken) {
@@ -97,8 +101,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new InvalidOperationException();
 			this.context = context;
 			this.frame = frame;
-			this.canFuncEval = canFuncEval;
 			this.cancellationToken = cancellationToken;
+			this.canFuncEval = canFuncEval;
 			this.argumentsProvider = argumentsProvider ?? DefaultArgumentsProvider;
 			this.localsProvider = localsProvider ?? DefaultLocalsProvider;
 			Debug.Assert(valuesToDispose.Count == 0);
@@ -114,6 +118,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			context = null;
 			frame = null;
 			cancellationToken = default;
+			canFuncEval = false;
 			foreach (var v in valuesToDispose) {
 				if (v != returnValue && argumentsProvider.CanDispose(v) && localsProvider.CanDispose(v))
 					v.Dispose();
@@ -816,9 +821,103 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
+		ulong IDebuggerRuntime.ToUInt64(ILValue value) {
+			if (value.Kind == ILValueKind.Int64)
+				return ((ConstantInt64ILValue)value).UnsignedValue;
+			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+		}
+
 		string IDebuggerRuntime.ToString(ILValue value) {
 			if (value is ConstantStringILValueImpl stringValue)
 				return stringValue.Value;
+			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+		}
+
+		DmdType IDebuggerRuntime.ToType(ILValue value) {
+			//TODO:
+			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+		}
+
+		Guid IDebuggerRuntime.ToGuid(ILValue value) {
+			//TODO:
+			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+		}
+
+		byte[] IDebuggerRuntime.ToByteArray(ILValue value) {
+			//TODO:
+			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+		}
+
+		DbgDotNetValue IDebuggerRuntime.GetException() {
+			var value = runtime.GetException(context, frame, DbgDotNetRuntimeConstants.ExceptionId, cancellationToken);
+			if (value == null)
+				throw new InterpreterMessageException(dnSpy_Debugger_DotNet_Resources.NoExceptionOnTheCurrentThread);
+			return value;
+		}
+
+		DbgDotNetValue IDebuggerRuntime.GetStowedException() {
+			var value = runtime.GetStowedException(context, frame, DbgDotNetRuntimeConstants.StowedExceptionId, cancellationToken);
+			if (value == null)
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			return value;
+		}
+
+		DbgDotNetValue IDebuggerRuntime.GetReturnValue(int index) {
+			var value = runtime.GetReturnValue(context, frame, (uint)index, cancellationToken);
+			if (value == null)
+				throw new InterpreterMessageException(dnSpy_Debugger_DotNet_Resources.ReturnValueNotAvailable);
+			return value;
+		}
+
+		DbgDotNetValue IDebuggerRuntime.GetObjectByAlias(string name) {
+			context.TryGetData(out DbgDotNetExpressionCompiler expressionCompiler);
+			Debug.Assert(expressionCompiler != null);
+			if (expressionCompiler == null)
+				throw new InvalidOperationException();
+
+			if (!expressionCompiler.TryGetAliasInfo(name, out var aliasInfo))
+				aliasInfo = new DbgDotNetParsedAlias(DbgDotNetAliasKind.Variable, 0);
+
+			DbgDotNetValue value;
+			switch (aliasInfo.Kind) {
+			case DbgDotNetAliasKind.Exception:
+			case DbgDotNetAliasKind.StowedException:
+			case DbgDotNetAliasKind.ReturnValue:
+				// These can't be returned by this method
+				break;
+
+			case DbgDotNetAliasKind.Variable:
+				//TODO:
+				break;
+
+			case DbgDotNetAliasKind.ObjectId:
+				var objectId = dbgObjectIdService.GetObjectId(context.Runtime, aliasInfo.Id);
+				if (objectId != null) {
+					var dbgValue = objectId.GetValue(context, frame, cancellationToken);
+					value = (DbgDotNetValue)dbgValue.InternalValue;
+					return RecordValue(value);
+				}
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			throw new InterpreterMessageException(dnSpy_Debugger_DotNet_Resources.UnknownVariableOrObjectId);
+		}
+
+		DbgDotNetValue IDebuggerRuntime.GetObjectAtAddress(ulong address) {
+			//TODO:
+			throw new InterpreterMessageException(dnSpy_Debugger_DotNet_Resources.NoDotNetObjectFoundAtAddress);
+		}
+
+		void IDebuggerRuntime.CreateVariable(DmdType type, string name, Guid customTypeInfoPayloadTypeId, byte[] customTypeInfoPayload) {
+			//TODO:
+			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+		}
+
+		DbgDotNetValue IDebuggerRuntime.GetVariableAddress(DmdType type, string name) {
+			//TODO:
 			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 	}

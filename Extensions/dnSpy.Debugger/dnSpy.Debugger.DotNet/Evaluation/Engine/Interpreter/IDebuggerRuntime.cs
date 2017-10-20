@@ -17,14 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	interface IDebuggerRuntime {
+		void CreateVariable(DmdType type, string name, Guid customTypeInfoPayloadTypeId, byte[] customTypeInfoPayload);
 		DbgDotNetValue CreateValue(object value);
+		DbgDotNetValue GetException();
+		DbgDotNetValue GetStowedException();
+		DbgDotNetValue GetReturnValue(int index);
+		DbgDotNetValue GetObjectByAlias(string name);
+		DbgDotNetValue GetObjectAtAddress(ulong address);
+		DbgDotNetValue GetVariableAddress(DmdType type, string name);
 		char ToChar(ILValue value);
 		int ToInt32(ILValue value);
+		ulong ToUInt64(ILValue value);
 		string ToString(ILValue value);
+		DmdType ToType(ILValue value);
+		Guid ToGuid(ILValue value);
+		byte[] ToByteArray(ILValue value);
 	}
 }
