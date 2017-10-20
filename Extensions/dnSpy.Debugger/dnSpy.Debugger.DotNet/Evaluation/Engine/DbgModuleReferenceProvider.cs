@@ -79,6 +79,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				public override int GetHashCode() => Address.GetHashCode();
 			}
 			public readonly Dictionary<Key, DbgModuleReference> ModuleReferences = new Dictionary<Key, DbgModuleReference>();
+			public readonly List<DbgModuleReference> OtherModuleReferences = new List<DbgModuleReference>();
 
 			readonly DbgRuntime runtime;
 
@@ -95,6 +96,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public void Dispose() {
 				var refs = ModuleReferences.Values.ToArray();
 				ModuleReferences.Clear();
+				runtime.Process.DbgManager.Close(refs);
+				refs = OtherModuleReferences.ToArray();
+				OtherModuleReferences.Clear();
 				runtime.Process.DbgManager.Close(refs);
 			}
 		}
@@ -185,14 +189,48 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return new GetModuleReferencesResult(state.ModuleReferences);
 		}
 
+		sealed class IntrinsicsAssemblyState {
+			public readonly DbgModuleReference ModuleReference;
+			public readonly DmdAssembly Assembly;
+			public IntrinsicsAssemblyState(DbgModuleReference moduleReference, DmdAssembly assembly) {
+				ModuleReference = moduleReference ?? throw new ArgumentNullException(nameof(moduleReference));
+				Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
+			}
+		}
+
+		IntrinsicsAssemblyState GetIntrinsicsAssemblyState(DbgRuntime runtime, DmdAppDomain appDomain) {
+			if (appDomain.TryGetData(out IntrinsicsAssemblyState state))
+				return state;
+			return GetOrCreateIntrinsicsAssemblyState(runtime, appDomain);
+		}
+
+		IntrinsicsAssemblyState GetOrCreateIntrinsicsAssemblyState(DbgRuntime runtime, DmdAppDomain appDomain) {
+			var assemblyBytes = new IntrinsicsAssemblyBuilder(appDomain.CorLib.GetName().FullName).Create();
+			const bool isFileLayout = true;
+			const bool isInMemory = false;
+			const bool isDynamic = false;
+			var assembly = appDomain.CreateSyntheticAssembly(() => new DmdLazyMetadataBytesArray(assemblyBytes, isFileLayout), isInMemory, isDynamic, DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, null), string.Empty);
+			var rawMD = dbgRawMetadataService.Create(runtime, isFileLayout, assemblyBytes);
+			var modRef = new DbgModuleReferenceImpl(rawMD, assembly.ManifestModule.ModuleVersionId, Guid.Empty, assembly.ManifestModule);
+			RuntimeState.GetRuntimeState(runtime).OtherModuleReferences.Add(modRef);
+			var state = new IntrinsicsAssemblyState(modRef, assembly);
+			return appDomain.GetOrCreateData(() => {
+				appDomain.Add(state.Assembly);
+				return state;
+			});
+		}
+
 		void InitializeState(DbgRuntime runtime, DmdAssembly assembly, ModuleReferencesState state) {
 			state.AssemblyInfos.Clear();
 			state.NonLoadedAssemblies.Clear();
 			var appDomain = assembly.AppDomain;
 
+			var intrinsicsState = GetIntrinsicsAssemblyState(runtime, appDomain);
+
 			var hash = new HashSet<DmdAssembly>();
 			var stack = new List<AssemblyInfo>();
 			stack.Add(new AssemblyInfo(assembly));
+			stack.Add(new AssemblyInfo(intrinsicsState.Assembly));
 			stack.Add(new AssemblyInfo(appDomain.CorLib));
 
 			while (stack.Count > 0) {
@@ -223,6 +261,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						Debug.Fail("NYI");
 					}
 					else {
+						if (modInfo.Module.Assembly == intrinsicsState.Assembly) {
+							modRefs.Add(intrinsicsState.ModuleReference);
+							continue;
+						}
 						var module = modInfo.Module.GetDebuggerModule();
 						Debug.Assert(module != null);
 						if (module == null)

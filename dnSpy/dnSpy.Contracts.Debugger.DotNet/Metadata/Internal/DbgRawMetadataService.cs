@@ -31,5 +31,14 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata.Internal {
 		/// <param name="moduleSize">Size of module</param>
 		/// <returns></returns>
 		public abstract DbgRawMetadata Create(DbgRuntime runtime, bool isFileLayout, ulong moduleAddress, int moduleSize);
+
+		/// <summary>
+		/// Creates a <see cref="DbgRawMetadata"/>
+		/// </summary>
+		/// <param name="runtime">Runtime</param>
+		/// <param name="isFileLayout">true if it's file layout, false if it's memory layout</param>
+		/// <param name="moduleBytes">Raw module bytes</param>
+		/// <returns></returns>
+		public abstract DbgRawMetadata Create(DbgRuntime runtime, bool isFileLayout, byte[] moduleBytes);
 	}
 }

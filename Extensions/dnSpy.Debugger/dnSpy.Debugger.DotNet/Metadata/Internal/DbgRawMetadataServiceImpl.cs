@@ -29,10 +29,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 		sealed class RuntimeState : IDisposable {
 			public readonly object LockObj = new object();
 			public readonly Dictionary<ulong, DbgRawMetadataImpl> Dict = new Dictionary<ulong, DbgRawMetadataImpl>();
+			public readonly List<DbgRawMetadataImpl> OtherMetadata = new List<DbgRawMetadataImpl>();
 			public void Dispose() {
 				foreach (var kv in Dict)
 					kv.Value.ForceDispose();
 				Dict.Clear();
+				foreach (var m in OtherMetadata)
+					m.ForceDispose();
+				OtherMetadata.Clear();
 			}
 		}
 
@@ -60,6 +64,26 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 				rawMd = new DbgRawMetadataImpl(runtime.Process, isFileLayout, moduleAddress, moduleSize);
 				try {
 					state.Dict.Add(moduleAddress, rawMd);
+				}
+				catch {
+					rawMd.Release();
+					throw;
+				}
+				return rawMd;
+			}
+		}
+
+		public override DbgRawMetadata Create(DbgRuntime runtime, bool isFileLayout, byte[] moduleBytes) {
+			if (runtime == null)
+				throw new ArgumentNullException(nameof(runtime));
+			if (moduleBytes == null)
+				throw new ArgumentNullException(nameof(moduleBytes));
+
+			var state = runtime.GetOrCreateData<RuntimeState>();
+			lock (state.LockObj) {
+				var rawMd = new DbgRawMetadataImpl(moduleBytes, isFileLayout);
+				try {
+					state.OtherMetadata.Add(rawMd);
 				}
 				catch {
 					rawMd.Release();

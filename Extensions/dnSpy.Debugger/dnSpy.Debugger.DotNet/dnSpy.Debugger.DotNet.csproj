@@ -96,7 +96,9 @@
     <Compile Include="Evaluation\Engine\DefaultArgumentsProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\DefaultLocalsProviderImpl.cs" />
     <Compile Include="Evaluation\Engine\ExceptionUtils.cs" />
+    <Compile Include="Evaluation\Engine\ExpressionCompilerConstants.cs" />
     <Compile Include="Evaluation\Engine\ILValues.cs" />
+    <Compile Include="Evaluation\Engine\IntrinsicsAssemblyBuilder.cs" />
     <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
     <Compile Include="Evaluation\Engine\MethodDebugScopeUtils.cs" />
     <Compile Include="Evaluation\Engine\ObjectCache.cs" />
