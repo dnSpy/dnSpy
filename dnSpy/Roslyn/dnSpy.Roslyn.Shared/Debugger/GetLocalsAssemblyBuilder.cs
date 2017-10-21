@@ -138,7 +138,7 @@ namespace dnSpy.Roslyn.Shared.Debugger {
 			var methodSig = new MethodSig(callConv, sourceMethod.MethodSig.GenParamCount);
 			methodSig.RetType = generatedModule.Import(type.RemovePinnedAndModifiers());
 			if (methodSig.RetType.IsByRef)
-				methodSig.RetType = methodSig.RetType.Next;
+				methodSig.RetType = methodSig.RetType.Next.RemovePinnedAndModifiers();
 
 			if (lastMethodSig != null) {
 				foreach (var p in lastMethodSig.Params)
@@ -168,7 +168,7 @@ namespace dnSpy.Roslyn.Shared.Debugger {
 			}
 			body.Instructions.Add(CreateLoadVariable(method, body.Variables, index, isLocal));
 			if (type.RemovePinnedAndModifiers().GetElementType() == ElementType.ByRef)
-				body.Instructions.Add(LoadIndirect(type.RemovePinnedAndModifiers().Next));
+				body.Instructions.Add(LoadIndirect(type.RemovePinnedAndModifiers().Next.RemovePinnedAndModifiers()));
 			body.Instructions.Add(Instruction.Create(OpCodes.Ret));
 
 			lastMethodSig = methodSig;
