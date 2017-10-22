@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 	struct DotNetClassHookInfo {
 		public DotNetClassHook Hook { get; }
-		public TypeName? TypeName { get; }
+		public DmdTypeName? TypeName { get; }
 		public DmdWellKnownType? WellKnownType { get; }
 
 		public DotNetClassHookInfo(DotNetClassHook hook) {
@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			WellKnownType = null;
 		}
 
-		public DotNetClassHookInfo(DotNetClassHook hook, TypeName typeName) {
+		public DotNetClassHookInfo(DotNetClassHook hook, DmdTypeName typeName) {
 			Hook = hook ?? throw new ArgumentNullException(nameof(hook));
 			TypeName = typeName;
 			WellKnownType = null;

@@ -208,8 +208,6 @@
     <Compile Include="Impl\Evaluation\Hooks\ClassHookInfo.cs" />
     <Compile Include="Impl\Evaluation\Hooks\ClassHookProvider.cs" />
     <Compile Include="Impl\Evaluation\Hooks\ICorDebugRuntime.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\TypeName.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\WellKnownTypeUtils.cs" />
     <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
     <Compile Include="Impl\ExceptionUtils.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />

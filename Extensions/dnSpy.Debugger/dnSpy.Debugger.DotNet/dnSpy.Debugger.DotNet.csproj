@@ -108,9 +108,7 @@
     <Compile Include="Evaluation\Engine\Interpreter\ILValues.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\SyntheticValues.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\TypeILValueImpl.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\TypeName.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\VariablesProvider.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\WellKnownTypeUtils.cs" />
     <Compile Include="Evaluation\Engine\IntrinsicsAssemblyBuilder.cs" />
     <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
     <Compile Include="Evaluation\Engine\MethodDebugScopeUtils.cs" />

@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		readonly DbgObjectIdService dbgObjectIdService;
 		readonly IDbgDotNetRuntime runtime;
 		readonly DotNetClassHook[] anyClassHooks;
-		readonly Dictionary<TypeName, DotNetClassHook> classHooks;
+		readonly Dictionary<DmdTypeName, DotNetClassHook> classHooks;
 		readonly List<DbgDotNetValue> valuesToDispose;
 
 		public DebuggerRuntimeImpl(DbgObjectIdService dbgObjectIdService, IDbgDotNetRuntime runtime, int pointerSize, DotNetClassHookFactory[] dotNetClassHookFactories) {
@@ -59,16 +59,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			PointerSize = pointerSize;
 
 			var anyClassHooksList = new List<DotNetClassHook>();
-			classHooks = new Dictionary<TypeName, DotNetClassHook>(TypeNameEqualityComparer.Instance);
+			classHooks = new Dictionary<DmdTypeName, DotNetClassHook>(DmdTypeNameEqualityComparer.Instance);
 			foreach (var factory in dotNetClassHookFactories) {
 				foreach (var info in factory.Create(this)) {
 					Debug.Assert(info.Hook != null);
 					if (info.WellKnownType == null && info.TypeName == null)
 						anyClassHooksList.Add(info.Hook);
 					else {
-						TypeName typeName;
+						DmdTypeName typeName;
 						if (info.WellKnownType != null)
-							typeName = WellKnownTypeUtils.GetTypeName(info.WellKnownType.Value);
+							typeName = DmdWellKnownTypeUtils.GetTypeName(info.WellKnownType.Value);
 						else {
 							Debug.Assert(info.TypeName != null);
 							typeName = info.TypeName.Value;
@@ -564,9 +564,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			var type = ctor.DeclaringType;
 			if (type.IsConstructedGenericType)
 				type = type.GetGenericTypeDefinition();
-			var typeName = TypeName.Create(type);
+			var typeName = DmdTypeName.Create(type);
 			if (classHooks.TryGetValue(typeName, out var hook)) {
-				if (WellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
+				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
 					if (type != type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true))
 						hook = null;
 				}
@@ -759,9 +759,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			var type = method.DeclaringType;
 			if (type.IsConstructedGenericType)
 				type = type.GetGenericTypeDefinition();
-			var typeName = TypeName.Create(type);
+			var typeName = DmdTypeName.Create(type);
 			if (classHooks.TryGetValue(typeName, out var hook)) {
-				if (WellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
+				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
 					if (type != type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true))
 						hook = null;
 				}

@@ -411,8 +411,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				var type = method.DeclaringType;
 				if (type.IsConstructedGenericType)
 					type = type.GetGenericTypeDefinition();
-				var typeName = TypeName.Create(type);
-				if (WellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
+				var typeName = DmdTypeName.Create(type);
+				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
 					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
 						var res = hook.Call(obj, method, arguments);
 						if (res != null)
@@ -445,8 +445,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				var type = ctor.DeclaringType;
 				if (type.IsConstructedGenericType)
 					type = type.GetGenericTypeDefinition();
-				var typeName = TypeName.Create(type);
-				if (WellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
+				var typeName = DmdTypeName.Create(type);
+				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
 					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
 						var res = hook.CreateInstance(ctor, arguments);
 						if (res != null)

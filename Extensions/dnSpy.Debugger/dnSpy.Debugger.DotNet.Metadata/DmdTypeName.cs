@@ -20,34 +20,63 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
-	struct TypeName {
+namespace dnSpy.Debugger.DotNet.Metadata {
+	/// <summary>
+	/// Type name
+	/// </summary>
+	public struct DmdTypeName {
+		/// <summary>
+		/// Namespace or null
+		/// </summary>
 		public string Namespace;
+
+		/// <summary>
+		/// Name
+		/// </summary>
 		public string Name;
+
+		/// <summary>
+		/// Nested type names, separated with '+'
+		/// </summary>
 		public string Extra;
 
-		public TypeName(string @namespace, string name) {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="namespace">Namespace or null</param>
+		/// <param name="name">Name</param>
+		public DmdTypeName(string @namespace, string name) {
 			Namespace = @namespace;
 			Name = name;
 			Extra = null;
 		}
 
-		public TypeName(string @namespace, string name, string extra) {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="namespace">Namespace or null</param>
+		/// <param name="name">Name</param>
+		/// <param name="extra">Nested type names, separated with '+'</param>
+		public DmdTypeName(string @namespace, string name, string extra) {
 			Namespace = @namespace;
 			Name = name;
 			Extra = extra;
 		}
 
-		internal static TypeName Create(DmdType type) {
+		/// <summary>
+		/// Creates a <see cref="DmdTypeName"/>
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
+		public static DmdTypeName Create(DmdType type) {
 			if (type.TypeSignatureKind == DmdTypeSignatureKind.Type) {
 				var declType = type.DeclaringType;
 				if ((object)declType == null)
-					return new TypeName(type.MetadataNamespace, type.MetadataName);
+					return new DmdTypeName(type.MetadataNamespace, type.MetadataName);
 
 				if ((object)declType.DeclaringType == null)
-					return new TypeName(declType.MetadataNamespace, declType.MetadataName, type.Name);
+					return new DmdTypeName(declType.MetadataNamespace, declType.MetadataName, type.Name);
 
 				var list = new List<DmdType>();
 				for (;;) {
@@ -62,12 +91,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 						sb.Append('+');
 					sb.Append(list[i].MetadataName);
 				}
-				return new TypeName(type.MetadataNamespace, type.MetadataName, sb.ToString());
+				return new DmdTypeName(type.MetadataNamespace, type.MetadataName, sb.ToString());
 			}
 
-			return new TypeName(null, string.Empty);
+			return new DmdTypeName(null, string.Empty);
 		}
 
+		/// <summary>
+		/// Gets the type name
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString() {
 			if (Namespace == null) {
 				if (Extra == null)
@@ -80,16 +113,33 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 		}
 	}
 
-	sealed class TypeNameEqualityComparer : IEqualityComparer<TypeName> {
-		public static readonly TypeNameEqualityComparer Instance = new TypeNameEqualityComparer();
-		TypeNameEqualityComparer() { }
+	/// <summary>
+	/// <see cref="DmdTypeName"/> equality comparer
+	/// </summary>
+	public sealed class DmdTypeNameEqualityComparer : IEqualityComparer<DmdTypeName> {
+		/// <summary>
+		/// Gets the single instance
+		/// </summary>
+		public static readonly DmdTypeNameEqualityComparer Instance = new DmdTypeNameEqualityComparer();
+		DmdTypeNameEqualityComparer() { }
 
-		public bool Equals(TypeName x, TypeName y) =>
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		public bool Equals(DmdTypeName x, DmdTypeName y) =>
 			x.Name == y.Name &&
 			x.Namespace == y.Namespace &&
 			x.Extra == y.Extra;
 
-		public int GetHashCode(TypeName obj) =>
+		/// <summary>
+		/// GetHashCode()
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public int GetHashCode(DmdTypeName obj) =>
 			StringComparer.Ordinal.GetHashCode(obj.Namespace ?? string.Empty) ^
 			StringComparer.Ordinal.GetHashCode(obj.Name ?? string.Empty) ^
 			StringComparer.Ordinal.GetHashCode(obj.Extra ?? string.Empty);

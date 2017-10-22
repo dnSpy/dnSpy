@@ -96,9 +96,11 @@
     <Compile Include="DmdType.CanCastTo.cs" />
     <Compile Include="DmdType.cs" />
     <Compile Include="DmdTypeAttributes.cs" />
+    <Compile Include="DmdTypeName.cs" />
     <Compile Include="DmdTypeScope.cs" />
     <Compile Include="DmdTypeSignatureKind.cs" />
     <Compile Include="DmdWellKnownType.cs" />
+    <Compile Include="DmdWellKnownTypeUtils.cs" />
     <Compile Include="HexUtils.cs" />
     <Compile Include="IDmdAssemblyName.cs" />
     <Compile Include="IDmdCustomAttributeProvider.cs" />
@@ -190,7 +192,6 @@
     <Compile Include="Impl\MD\MetadataConstantUtilities.cs" />
     <None Include="Impl\ReflectionTests.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.cs" />
-    <Compile Include="Impl\WellKnownMemberResolver.Data.cs" />
     <Compile Include="MemberNotFoundException.cs" />
     <Compile Include="ObjectPools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

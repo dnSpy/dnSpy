@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	sealed partial class WellKnownMemberResolver {
+	sealed class WellKnownMemberResolver {
 		readonly object lockObj;
 		readonly HashSet<DmdModule> checkedModules;
 		readonly DmdAppDomain appDomain;
@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			lockObj = new object();
 			checkedModules = new HashSet<DmdModule>();
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
-			wellKnownTypes = new DmdType[WELL_KNOWN_TYPES_COUNT];
+			wellKnownTypes = new DmdType[DmdWellKnownTypeUtils.NumberOfWellKnownTypes];
 		}
 
 		public DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool onlyCorLib) {
@@ -64,18 +64,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							continue;
 
 						foreach (var type in module.GetTypes()) {
-							if ((type.Attributes & DmdTypeAttributes.VisibilityMask) <= DmdTypeAttributes.Public) {
-								if (toNonNestedWellKnownType.TryGetValue(new TypeName(type.MetadataNamespace, type.MetadataName), out var wkt))
-									wellKnownTypes[(int)wkt] = type;
-							}
-							else if (type.MetadataNamespace == null) {
-								var nonNested = type.DeclaringType;
-								if ((object)nonNested == null || !nonNested.IsPublic)
-									continue;
-								if (!toNonNestedWellKnownType.ContainsKey(new TypeName(nonNested.MetadataNamespace, nonNested.MetadataName)))
-									continue;
-								if (toNestedWellKnownType.TryGetValue(type.MetadataName, out var wkt))
-									wellKnownTypes[(int)wkt] = type;
+							if (DmdWellKnownTypeUtils.TryGetWellKnownType(DmdTypeName.Create(type), out var wkt)) {
+								ref var elem = ref wellKnownTypes[(int)wkt];
+								if ((object)elem == null)
+									elem = type;
 							}
 						}
 
