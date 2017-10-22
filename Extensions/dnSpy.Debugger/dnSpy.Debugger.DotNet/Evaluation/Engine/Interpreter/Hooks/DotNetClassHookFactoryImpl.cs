@@ -26,6 +26,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 	sealed class DotNetClassHookFactoryImpl : DotNetClassHookFactory {
 		public override IEnumerable<DotNetClassHookInfo> Create(IDebuggerRuntime runtime) {
 			yield return new DotNetClassHookInfo(new dnSpy_Roslyn_ExpressionEvaluator_IntrinsicMethods(runtime), new DmdTypeName(ExpressionCompilerConstants.IntrinsicAssemblyNamespace, ExpressionCompilerConstants.IntrinsicAssemblyTypeName));
+			yield return new DotNetClassHookInfo(new System_Runtime_CompilerServices_RuntimeHelpers(runtime), DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers);
 		}
 	}
 }

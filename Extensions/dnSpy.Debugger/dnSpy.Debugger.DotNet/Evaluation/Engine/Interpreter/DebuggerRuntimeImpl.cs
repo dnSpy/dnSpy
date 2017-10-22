@@ -819,6 +819,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
+		DbgDotNetValue IDebuggerRuntime.ToDotNetValue(ILValue value) {
+			var dnValue = TryGetDotNetValue(value, canCreateValues: false);
+			if (dnValue != null)
+				return dnValue;
+			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+		}
+
 		DbgDotNetValue IDebuggerRuntime.GetException() {
 			var value = runtime.GetException(context, frame, DbgDotNetRuntimeConstants.ExceptionId, cancellationToken);
 			if (value == null)

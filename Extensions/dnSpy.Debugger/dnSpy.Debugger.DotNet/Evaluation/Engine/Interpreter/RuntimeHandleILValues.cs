@@ -33,14 +33,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	}
 
 	sealed class RuntimeFieldHandleILValue : TypeILValueImpl {
-		readonly DmdFieldInfo field;
+		public DmdFieldInfo Field { get; }
 
 		public RuntimeFieldHandleILValue(DebuggerRuntimeImpl runtime, DmdFieldInfo field)
 			: base(runtime, field.AppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeFieldHandle)) {
-			this.field = field;
+			Field = field;
 		}
 
-		protected override DbgDotNetValue CreateObjValue() => runtime.CreateRuntimeFieldHandleCore(field);
+		protected override DbgDotNetValue CreateObjValue() => runtime.CreateRuntimeFieldHandleCore(Field);
 	}
 
 	sealed class RuntimeMethodHandleILValue : TypeILValueImpl {

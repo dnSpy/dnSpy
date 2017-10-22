@@ -39,5 +39,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		DmdType ToType(ILValue value);
 		Guid ToGuid(ILValue value);
 		byte[] ToByteArray(ILValue value);
+		DbgDotNetValue ToDotNetValue(ILValue value);
 	}
 }
