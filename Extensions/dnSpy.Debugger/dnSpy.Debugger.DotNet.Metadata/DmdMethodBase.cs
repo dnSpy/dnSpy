@@ -126,6 +126,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
+		/// Gets the RVA of the method body or native code or 0 if none
+		/// </summary>
+		public abstract uint RVA { get; }
+
+		/// <summary>
 		/// true if this is an instance constructor
 		/// </summary>
 		public bool IsConstructor => this is DmdConstructorInfo && !IsStatic;

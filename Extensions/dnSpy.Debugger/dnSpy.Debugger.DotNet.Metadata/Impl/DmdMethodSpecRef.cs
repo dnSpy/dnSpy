@@ -31,6 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int MetadataToken => genericMethodRef.MetadataToken;
 		public override DmdMethodImplAttributes MethodImplementationFlags => genericMethodRef.MethodImplementationFlags;
 		public override DmdMethodAttributes Attributes => genericMethodRef.Attributes;
+		public override uint RVA => genericMethodRef.RVA;
 		public override bool IsMetadataReference => true;
 		public override bool IsGenericMethodDefinition => false;
 		public override bool IsGenericMethod => true;

@@ -21,9 +21,10 @@ using System;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdFieldDefCOMD : DmdFieldDef {
-		public sealed override string Name { get; }
-		public sealed override DmdType FieldType { get; }
-		public sealed override DmdFieldAttributes Attributes { get; }
+		public override string Name { get; }
+		public override DmdType FieldType { get; }
+		public override DmdFieldAttributes Attributes { get; }
+		public override uint FieldRVA => 0;
 
 		readonly DmdComMetadataReader reader;
 
@@ -39,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
 
-		public sealed override object GetRawConstantValue() => COMThread(() => reader.ReadFieldConstant_COMThread(MetadataToken).value);
+		public override object GetRawConstantValue() => COMThread(() => reader.ReadFieldConstant_COMThread(MetadataToken).value);
 
 		protected override (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType marshalType) CreateCustomAttributes() => COMThread(CreateCustomAttributes_COMThread);
 

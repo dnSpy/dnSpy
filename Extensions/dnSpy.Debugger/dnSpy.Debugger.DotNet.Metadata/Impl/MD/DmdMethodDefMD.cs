@@ -68,5 +68,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var row = reader.TablesStream.ReadMethodRow(Rid);
 			return reader.ReadMethodSignature(row.Signature, DeclaringType.GetGenericArguments(), genericMethodArguments, isProperty: false);
 		}
+
+		protected override uint GetRVA() => reader.GetRVA(this);
 	}
 }

@@ -50,5 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var sas = reader.ReadSecurityAttributes(MetadataToken);
 			return (cas, sas);
 		}
+
+		protected override uint GetRVA() => reader.GetRVA(this);
 	}
 }

@@ -32,6 +32,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType ReflectedType => DeclaringType;
 		public override int MetadataToken => ResolvedField.MetadataToken;
 		public override DmdFieldAttributes Attributes => ResolvedField.Attributes;
+		public override uint FieldRVA => ResolvedField.FieldRVA;
 
 		DmdFieldDef ResolvedField => GetResolvedField(throwOnError: true);
 		DmdFieldDef GetResolvedField(bool throwOnError) {

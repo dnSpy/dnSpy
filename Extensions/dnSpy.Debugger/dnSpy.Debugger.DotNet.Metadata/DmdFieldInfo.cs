@@ -66,6 +66,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
+		/// Gets the RVA of the data if <see cref="HasFieldRVA"/> is true
+		/// </summary>
+		public abstract uint FieldRVA { get; }
+
+		/// <summary>
 		/// Resolves a field reference
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>

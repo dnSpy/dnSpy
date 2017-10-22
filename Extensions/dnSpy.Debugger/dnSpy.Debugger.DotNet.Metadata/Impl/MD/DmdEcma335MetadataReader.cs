@@ -405,6 +405,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 		}
 
+		internal uint GetRVA(DmdMethodBase method) {
+			var row = TablesStream.ReadMethodRow((uint)method.MetadataToken & 0x00FFFFFF);
+			return row?.RVA ?? 0;
+		}
+
 		(DmdType type, bool isPinned)[] IMethodBodyResolver.ReadLocals(int localSignatureMetadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
 			if ((localSignatureMetadataToken & 0x00FFFFFF) == 0 || (localSignatureMetadataToken >> 24) != 0x11)
 				return Array.Empty<(DmdType, bool)>();

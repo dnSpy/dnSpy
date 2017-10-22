@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int MetadataToken => ResolvedConstructor.MetadataToken;
 		public override DmdMethodImplAttributes MethodImplementationFlags => ResolvedConstructor.MethodImplementationFlags;
 		public override DmdMethodAttributes Attributes => ResolvedConstructor.Attributes;
+		public override uint RVA => ResolvedConstructor.RVA;
 		public override bool IsGenericMethodDefinition => methodSignature.GenericParameterCount != 0;
 		public override bool IsGenericMethod => methodSignature.GenericParameterCount != 0;
 

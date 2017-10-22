@@ -93,5 +93,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				InitializeCustomAttributes();
 			return __securityAttributes_DONT_USE;
 		}
+
+		protected abstract uint GetRVA();
+		public sealed override uint RVA {
+			get {
+				if (!__rva_initd) {
+					__rva_DONT_USE = GetRVA();
+					__rva_initd = true;
+				}
+				return __rva_DONT_USE;
+			}
+		}
+		volatile uint __rva_DONT_USE;
+		volatile bool __rva_initd;
 	}
 }

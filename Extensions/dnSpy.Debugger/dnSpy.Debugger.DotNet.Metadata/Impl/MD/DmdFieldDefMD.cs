@@ -24,6 +24,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public sealed override string Name { get; }
 		public sealed override DmdType FieldType { get; }
 		public sealed override DmdFieldAttributes Attributes { get; }
+		public override uint FieldRVA { get; }
 
 		readonly DmdEcma335MetadataReader reader;
 
@@ -33,6 +34,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Attributes = (DmdFieldAttributes)row.Flags;
 			Name = reader.StringsStream.ReadNoNull(row.Name);
 			FieldType = reader.ReadFieldType(row.Signature, DeclaringType.GetGenericArguments());
+			if (HasFieldRVA) {
+				var rvaRow = reader.TablesStream.ReadFieldRVARow(reader.Metadata.GetFieldRVARid(rid));
+				FieldRVA = rvaRow?.RVA ?? 0;
+			}
 		}
 
 		public sealed override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
