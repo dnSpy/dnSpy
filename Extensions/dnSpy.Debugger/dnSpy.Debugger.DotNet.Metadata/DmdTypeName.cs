@@ -78,20 +78,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if ((object)declType.DeclaringType == null)
 					return new DmdTypeName(declType.MetadataNamespace, declType.MetadataName, type.Name);
 
-				var list = new List<DmdType>();
+				var list = ListCache<DmdType>.AllocList();
 				for (;;) {
 					if ((object)type.DeclaringType == null)
 						break;
 					list.Add(type);
 					type = type.DeclaringType;
 				}
-				var sb = new StringBuilder();
+				var sb = ObjectCache.AllocStringBuilder();
 				for (int i = list.Count - 1; i >= 0; i--) {
 					if (i != list.Count - 1)
 						sb.Append('+');
 					sb.Append(list[i].MetadataName);
 				}
-				return new DmdTypeName(type.MetadataNamespace, type.MetadataName, sb.ToString());
+				ListCache<DmdType>.Free(ref list);
+				return new DmdTypeName(type.MetadataNamespace, type.MetadataName, ObjectCache.FreeAndToString(ref sb));
 			}
 
 			return new DmdTypeName(null, string.Empty);

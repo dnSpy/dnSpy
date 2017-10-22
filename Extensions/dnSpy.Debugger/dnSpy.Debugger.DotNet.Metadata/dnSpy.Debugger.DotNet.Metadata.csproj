@@ -192,7 +192,9 @@
     <Compile Include="Impl\MD\MetadataConstantUtilities.cs" />
     <None Include="Impl\ReflectionTests.cs" />
     <Compile Include="Impl\WellKnownMemberResolver.cs" />
+    <Compile Include="ListCache.cs" />
     <Compile Include="MemberNotFoundException.cs" />
+    <Compile Include="ObjectCache.cs" />
     <Compile Include="ObjectPools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadOnlyCollectionHelpers.cs" />
