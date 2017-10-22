@@ -20,7 +20,7 @@
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	sealed class ByRefILValueImpl : AddressILValue, IDebuggerRuntimeILValue {
 		public override DmdType Type => byRefValue.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => byRefValue;

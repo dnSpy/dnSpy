@@ -22,6 +22,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	struct DbgDotNetValueCreator {

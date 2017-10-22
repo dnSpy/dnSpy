@@ -27,11 +27,10 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	abstract class DbgDotNetILInterpreter {
 		public abstract DbgDotNetILInterpreterState CreateState(byte[] assembly);
 

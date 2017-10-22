@@ -21,7 +21,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	interface IDebuggerRuntimeILValue {
 		DbgDotNetValue GetDotNetValue();
 	}

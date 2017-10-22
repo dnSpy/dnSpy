@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	abstract class VariablesProvider {
 		public abstract void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DmdMethodBody body, CancellationToken cancellationToken);
 		public abstract DbgDotNetValueResult GetVariable(int index);

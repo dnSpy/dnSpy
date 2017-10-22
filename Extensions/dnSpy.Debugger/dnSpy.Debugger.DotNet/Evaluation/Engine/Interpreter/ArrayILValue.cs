@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	sealed class ArrayILValue : TypeILValueImpl {
 		long cachedArrayLength;
 		const long cachedArrayLength_uninitialized = -1;

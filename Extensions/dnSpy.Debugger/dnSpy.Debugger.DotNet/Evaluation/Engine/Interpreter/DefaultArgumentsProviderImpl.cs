@@ -23,10 +23,10 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	sealed class DefaultLocalsProviderImpl : VariablesProvider {
+namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
+	sealed class DefaultArgumentsProviderImpl : VariablesProvider {
 		readonly IDbgDotNetRuntime runtime;
-		public DefaultLocalsProviderImpl(IDbgDotNetRuntime runtime) => this.runtime = runtime;
+		public DefaultArgumentsProviderImpl(IDbgDotNetRuntime runtime) => this.runtime = runtime;
 
 		DbgEvaluationContext context;
 		DbgStackFrame frame;
@@ -39,10 +39,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override DbgDotNetValueResult GetVariable(int index) =>
-			runtime.GetLocalValue(context, frame, (uint)index, cancellationToken);
+			runtime.GetParameterValue(context, frame, (uint)index, cancellationToken);
 
 		public override string SetVariable(int index, DmdType targetType, object value) =>
-			runtime.SetLocalValue(context, frame, (uint)index, targetType, value, cancellationToken);
+			runtime.SetParameterValue(context, frame, (uint)index, targetType, value, cancellationToken);
 
 		public override bool CanDispose(DbgDotNetValue value) => true;
 

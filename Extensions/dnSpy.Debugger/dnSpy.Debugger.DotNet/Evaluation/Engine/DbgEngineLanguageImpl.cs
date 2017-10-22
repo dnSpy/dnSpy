@@ -34,6 +34,7 @@ using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
+using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineLanguageImpl : DbgEngineLanguage {
