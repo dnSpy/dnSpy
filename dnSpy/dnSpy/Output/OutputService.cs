@@ -25,6 +25,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -246,7 +247,7 @@ namespace dnSpy.Output {
 			if (filename == null)
 				return;
 			try {
-				File.WriteAllText(filename, vm.GetText());
+				File.WriteAllText(filename, vm.GetText(), Encoding.UTF8);
 			}
 			catch (Exception ex) {
 				MsgBox.Instance.Show(ex);
