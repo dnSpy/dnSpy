@@ -270,9 +270,10 @@ namespace dnSpy.Debugger.Impl {
 				ReadMemory(address, p, size);
 		}
 
-		public override void ReadMemory(ulong address, byte* destination, int size) {
+		public override void ReadMemory(ulong address, void* destination, int size) {
+			var dest = (byte*)destination;
 			if (hProcess.IsClosed || (Bitness == 32 && address > uint.MaxValue)) {
-				Clear(destination, size);
+				Clear(dest, size);
 				return;
 			}
 
@@ -288,20 +289,20 @@ namespace dnSpy.Debugger.Impl {
 				if ((ulong)len > pageSizeLeft)
 					len = (int)pageSizeLeft;
 
-				bool b = NativeMethods.ReadProcessMemory(hProcessLocal, (void*)address, destination, new IntPtr(len), out var sizeRead);
+				bool b = NativeMethods.ReadProcessMemory(hProcessLocal, (void*)address, dest, new IntPtr(len), out var sizeRead);
 
 				int read = !b ? 0 : (int)sizeRead.ToInt64();
 				Debug.Assert(read <= len);
 				Debug.Assert(read == 0 || read == len);
 				if (read != len)
-					Clear(destination + read, len - read);
+					Clear(dest + read, len - read);
 
 				address += (ulong)len;
 				count -= (uint)len;
-				destination += len;
+				dest += len;
 
 				if (address == endAddr) {
-					Clear(destination, (int)count);
+					Clear(dest, (int)count);
 					break;
 				}
 			}
@@ -324,7 +325,8 @@ namespace dnSpy.Debugger.Impl {
 				WriteMemory(address, p, size);
 		}
 
-		public override void WriteMemory(ulong address, byte* source, int size) {
+		public override void WriteMemory(ulong address, void* source, int size) {
+			var src = (byte*)source;
 			if (hProcess.IsClosed || (Bitness == 32 && address > uint.MaxValue))
 				return;
 
@@ -341,13 +343,13 @@ namespace dnSpy.Debugger.Impl {
 					len = (int)pageSizeLeft;
 
 				bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcessLocal, (void*)address, new IntPtr(len), NativeMethods.PAGE_EXECUTE_READWRITE, out uint oldProtect);
-				NativeMethods.WriteProcessMemory(hProcessLocal, (void*)address, source, new IntPtr(len), out var sizeWritten);
+				NativeMethods.WriteProcessMemory(hProcessLocal, (void*)address, src, new IntPtr(len), out var sizeWritten);
 				if (restoreOldProtect)
 					NativeMethods.VirtualProtectEx(hProcessLocal, (void*)address, new IntPtr(len), oldProtect, out oldProtect);
 
 				address += (ulong)len;
 				count -= (uint)len;
-				source += len;
+				src += len;
 
 				if (address == endAddr)
 					break;

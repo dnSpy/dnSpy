@@ -118,7 +118,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="destination">Destination address</param>
 		/// <param name="size">Number of bytes to read</param>
 		/// <returns></returns>
-		public unsafe abstract void ReadMemory(ulong address, byte* destination, int size);
+		public unsafe abstract void ReadMemory(ulong address, void* destination, int size);
 
 		/// <summary>
 		/// Reads memory. Unreadable memory is returned as 0s.
@@ -137,7 +137,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="source">Source address</param>
 		/// <param name="size">Number of bytes to write</param>
 		/// <returns></returns>
-		public unsafe abstract void WriteMemory(ulong address, byte* source, int size);
+		public unsafe abstract void WriteMemory(ulong address, void* source, int size);
 
 		/// <summary>
 		/// Writes memory.

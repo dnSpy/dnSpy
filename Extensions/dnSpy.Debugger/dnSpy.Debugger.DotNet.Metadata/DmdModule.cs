@@ -652,6 +652,53 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract DmdReadOnlyAssemblyName[] GetReferencedAssemblies();
 
 		/// <summary>
+		/// Reads memory. Returns false if data couldn't be read.
+		/// </summary>
+		/// <param name="rva">RVA of data</param>
+		/// <param name="destination">Destination address</param>
+		/// <param name="size">Number of bytes to read</param>
+		/// <returns></returns>
+		public abstract unsafe bool ReadMemory(uint rva, void* destination, int size);
+
+		/// <summary>
+		/// Reads memory. Returns false if data couldn't be read.
+		/// </summary>
+		/// <param name="rva">RVA of data</param>
+		/// <param name="destination">Destination buffer</param>
+		/// <param name="destinationIndex">Destination index</param>
+		/// <param name="size">Number of bytes to read</param>
+		/// <returns></returns>
+		public unsafe bool ReadMemory(uint rva, byte[] destination, int destinationIndex, int size) {
+			if (destination == null)
+				throw new ArgumentNullException(nameof(destination));
+			if ((uint)destinationIndex > (uint)destination.Length)
+				throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+			if (size < 0)
+				throw new ArgumentOutOfRangeException(nameof(size));
+			if ((uint)(destinationIndex + size) > (uint)destination.Length)
+				throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+			if (size == 0)
+				return true;
+			fixed (void* p = &destination[destinationIndex])
+				return ReadMemory(rva, p, size);
+		}
+
+		/// <summary>
+		/// Reads memory. Returns null if data couldn't be read.
+		/// </summary>
+		/// <param name="rva">RVA of data</param>
+		/// <param name="size">Number of bytes to read</param>
+		/// <returns></returns>
+		public byte[] ReadMemory(uint rva, int size) {
+			if (size == 0)
+				return Array.Empty<byte>();
+			var res = new byte[size];
+			if (!ReadMemory(rva, res, 0, size))
+				return null;
+			return res;
+		}
+
+		/// <summary>
 		/// Returns the metadata name (<see cref="ScopeName"/>)
 		/// </summary>
 		/// <returns></returns>

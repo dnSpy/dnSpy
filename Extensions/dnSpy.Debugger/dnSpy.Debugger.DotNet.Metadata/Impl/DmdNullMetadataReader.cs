@@ -57,6 +57,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		public override DmdReadOnlyAssemblyName GetName() => new DmdReadOnlyAssemblyName("NullAssembly");
 		public override DmdReadOnlyAssemblyName[] GetReferencedAssemblies() => Array.Empty<DmdReadOnlyAssemblyName>();
+		public override unsafe bool ReadMemory(uint rva, void* destination, int size) => false;
 		protected override DmdCustomAttributeData[] ReadAssemblyCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
 		protected override DmdCustomAttributeData[] ReadModuleCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();
 		protected override DmdCustomAttributeData[] ReadTypeDefCustomAttributes(uint rid) => Array.Empty<DmdCustomAttributeData>();

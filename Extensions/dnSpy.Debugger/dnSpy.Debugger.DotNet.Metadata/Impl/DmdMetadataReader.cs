@@ -39,6 +39,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine);
 		public abstract DmdReadOnlyAssemblyName GetName();
 		public abstract DmdReadOnlyAssemblyName[] GetReferencedAssemblies();
+		public abstract unsafe bool ReadMemory(uint rva, void* destination, int size);
 		public abstract DmdCustomAttributeData[] ReadCustomAttributes(int metadataToken);
 		public abstract DmdCustomAttributeData[] ReadSecurityAttributes(int metadataToken);
 		public abstract event EventHandler<DmdTypesUpdatedEventArgs> TypesUpdated;
