@@ -902,6 +902,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var corValue = value.TryGetCorValue();
 			if (corValue == null)
 				return false;
+			if (corValue.IsNull)
+				return false;
 			if (!corValue.IsHandle) {
 				if (corValue.IsReference) {
 					if (corValue.IsNull)
@@ -935,6 +937,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			// Keep this in sync with CanCreateObjectIdCore()
 			var corValue = value.TryGetCorValue();
 			if (corValue == null)
+				return null;
+			if (corValue.IsNull)
 				return null;
 			if (corValue.IsHandle) {
 				var valueHolder = value.CorValueHolder.AddRef();
