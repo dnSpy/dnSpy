@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		public override bool GetArrayCount(out uint elementCount) {
-			if (IsArray) {
+			if (Type.IsArray) {
 				if (engine.CheckCorDebugThread()) {
 					elementCount = GetArrayCountCore_CorDebug();
 					return true;
@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		uint GetArrayCountCore_CorDebug() {
-			Debug.Assert(IsArray);
+			Debug.Assert(Type.IsArray);
 			engine.VerifyCorDebugThread();
 			var corValue = TryGetCorValue();
 			if (corValue == null || corValue.IsNull)
@@ -188,7 +188,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		public override bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
-			if (IsArray) {
+			if (Type.IsArray) {
 				if (engine.CheckCorDebugThread())
 					return GetArrayInfo_CorDebug(out elementCount, out dimensionInfos);
 				else {
@@ -207,7 +207,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		bool GetArrayInfo_CorDebug(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
-			Debug.Assert(IsArray);
+			Debug.Assert(Type.IsArray);
 			engine.VerifyCorDebugThread();
 			var corValue = TryGetCorValue();
 			if (corValue == null || corValue.IsNull) {
@@ -239,7 +239,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		public override DbgDotNetValue GetArrayElementAt(uint index) {
-			if (!IsArray)
+			if (!Type.IsArray)
 				return null;
 			if (engine.CheckCorDebugThread())
 				return GetArrayElementAt_CorDebug(index);
@@ -247,7 +247,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		DbgDotNetValue GetArrayElementAt_CorDebug(uint index) {
-			Debug.Assert(IsArray);
+			Debug.Assert(Type.IsArray);
 			engine.VerifyCorDebugThread();
 			var corValue = TryGetCorValue();
 			if (corValue == null || corValue.IsNull)
@@ -261,7 +261,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		public override string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
-			if (!IsArray)
+			if (!Type.IsArray)
 				return base.SetArrayElementAt(context, frame, index, value, cancellationToken);
 			if (engine.CheckCorDebugThread())
 				return SetArrayElementAt_CorDebug(context, frame, index, value, cancellationToken);

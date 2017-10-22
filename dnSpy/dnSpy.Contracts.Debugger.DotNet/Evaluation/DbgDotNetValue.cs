@@ -59,12 +59,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
-		/// true if this is an array value
-		/// </summary>
-		public bool IsArray => Type.IsArray;
-
-		/// <summary>
-		/// Gets the number of elements of the array (<see cref="IsArray"/>)
+		/// Gets the number of elements of the array
 		/// </summary>
 		/// <param name="elementCount">Total number of elements in the array</param>
 		/// <returns></returns>
@@ -74,7 +69,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		}
 
 		/// <summary>
-		/// Gets array information if it's an array (<see cref="IsArray"/>) or returns false
+		/// Gets array information if it's an array or returns false
 		/// </summary>
 		/// <param name="elementCount">Total number of elements in the array</param>
 		/// <param name="dimensionInfos">Dimension base indexes and lengths</param>
