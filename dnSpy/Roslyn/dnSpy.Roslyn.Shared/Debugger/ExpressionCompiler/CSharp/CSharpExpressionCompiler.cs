@@ -121,6 +121,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 		}
 
 		DbgDotNetText GetExpressionText(EvaluationContext evaluationContext, CSharpCompilation compilation, string expression, CancellationToken cancellationToken) {
+			if (TryGetAliasInfo(expression, out var aliasInfo))
+				return CreateText(aliasInfo.Kind, expression);
 			var (exprSource, exprOffset) = CreateExpressionSource(evaluationContext, expression);
 			return GetExpressionText(LanguageNames.CSharp, csharpCompilationOptions, csharpParseOptions, expression, exprSource, exprOffset, compilation.References, cancellationToken);
 		}

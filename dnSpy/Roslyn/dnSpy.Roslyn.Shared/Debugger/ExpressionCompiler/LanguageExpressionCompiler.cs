@@ -431,5 +431,18 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 		protected abstract bool IsCaseSensitive { get; }
 		public override bool TryGetAliasInfo(string aliasName, out DbgDotNetParsedAlias aliasInfo) =>
 			AliasConstants.TryGetAliasInfo(aliasName, IsCaseSensitive, out aliasInfo);
+
+		protected DbgDotNetText CreateText(DbgDotNetAliasKind kind, string expression) {
+			object color;
+			switch (kind) {
+			case DbgDotNetAliasKind.Exception:		color = BoxedTextColor.DebugExceptionName; break;
+			case DbgDotNetAliasKind.StowedException:color = BoxedTextColor.DebugStowedExceptionName; break;
+			case DbgDotNetAliasKind.ReturnValue:	color = BoxedTextColor.DebugReturnValueName; break;
+			case DbgDotNetAliasKind.Variable:		color = BoxedTextColor.DebugVariableName; break;
+			case DbgDotNetAliasKind.ObjectId:		color = BoxedTextColor.DebugObjectIdName; break;
+			default:								throw new InvalidOperationException();
+			}
+			return new DbgDotNetText(new DbgDotNetTextPart(color, expression));
+		}
 	}
 }

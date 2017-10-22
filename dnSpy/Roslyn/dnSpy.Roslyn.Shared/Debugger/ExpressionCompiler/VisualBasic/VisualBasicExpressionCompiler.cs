@@ -108,6 +108,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.VisualBasic {
 		}
 
 		DbgDotNetText GetExpressionText(EvaluationContext evaluationContext, VisualBasicCompilation compilation, string expression, CancellationToken cancellationToken) {
+			if (TryGetAliasInfo(expression, out var aliasInfo))
+				return CreateText(aliasInfo.Kind, expression);
 			var (exprSource, exprOffset) = CreateExpressionSource(evaluationContext, expression);
 			return GetExpressionText(LanguageNames.VisualBasic, visualBasicCompilationOptions, visualBasicParseOptions, expression, exprSource, exprOffset, compilation.References, cancellationToken);
 		}
