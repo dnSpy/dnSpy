@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		void InitializeArrayInfo() {
 			if (dimensionInfos != null)
 				return;
-			if (!objValue.GetArrayInfo(out elementCount, out dimensionInfos))
+			if (!ObjValue.GetArrayInfo(out elementCount, out dimensionInfos))
 				throw new InvalidOperationException();
 		}
 
@@ -85,24 +85,24 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		internal DbgDotNetValue ReadArrayElement(long index) {
 			if ((ulong)index > uint.MaxValue)
 				return null;
-			var elemValue = objValue.GetArrayElementAt((uint)index);
+			var elemValue = ObjValue.GetArrayElementAt((uint)index);
 			if (elemValue != null)
 				return runtime.RecordValue(elemValue);
 			return null;
 		}
 
-		void StoreArrayElement(uint index, ILValue value) => runtime.SetArrayElementAt(objValue, index, value);
-		internal void StoreArrayElement(uint index, object value) => runtime.SetArrayElementAt(objValue, index, value);
+		void StoreArrayElement(uint index, ILValue value) => runtime.SetArrayElementAt(ObjValue, index, value);
+		internal void StoreArrayElement(uint index, object value) => runtime.SetArrayElementAt(ObjValue, index, value);
 
 		ILValue LoadArrayElement(uint index) {
-			var elemValue = objValue.GetArrayElementAt(index);
+			var elemValue = ObjValue.GetArrayElementAt(index);
 			if (elemValue != null)
 				return runtime.CreateILValue(elemValue);
 			return null;
 		}
 
 		public override ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) {
-			if (!objValue.Type.IsSZArray)
+			if (!ObjValue.Type.IsSZArray)
 				return null;
 			if ((ulong)index > uint.MaxValue)
 				return null;
@@ -110,16 +110,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		public override bool StoreSZArrayElement(LoadValueType loadValueType, long index, ILValue value, DmdType elementType) {
-			if (!objValue.Type.IsSZArray)
+			if (!ObjValue.Type.IsSZArray)
 				return false;
 			if ((ulong)index > uint.MaxValue)
 				return false;
-			runtime.SetArrayElementAt(objValue, (uint)index, value);
+			runtime.SetArrayElementAt(ObjValue, (uint)index, value);
 			return true;
 		}
 
 		public override ILValue LoadSZArrayElementAddress(long index, DmdType elementType) {
-			if (!objValue.Type.IsSZArray)
+			if (!ObjValue.Type.IsSZArray)
 				return null;
 			if ((ulong)index > uint.MaxValue)
 				return null;
@@ -127,10 +127,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		public override bool GetSZArrayLength(out long length) {
-			if (!objValue.Type.IsSZArray)
+			if (!ObjValue.Type.IsSZArray)
 				cachedArrayLength = cachedArrayLength_error;
 			if (cachedArrayLength == cachedArrayLength_uninitialized) {
-				if (!objValue.GetArrayCount(out var arrayCount))
+				if (!ObjValue.GetArrayCount(out var arrayCount))
 					cachedArrayLength = cachedArrayLength_error;
 				else
 					cachedArrayLength = arrayCount;

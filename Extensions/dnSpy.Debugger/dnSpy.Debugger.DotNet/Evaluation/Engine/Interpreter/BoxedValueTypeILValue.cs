@@ -23,11 +23,9 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	sealed class BoxedValueTypeILValue : TypeILValueImpl {
-		public override DmdType Type { get; }
 		readonly ILValue ilValue;
-		public BoxedValueTypeILValue(DebuggerRuntimeImpl runtime, ILValue ilValue, DbgDotNetValue value, DmdType type) : base(runtime, value) {
+		public BoxedValueTypeILValue(DebuggerRuntimeImpl runtime, ILValue ilValue, DbgDotNetValue value, DmdType type) : base(runtime, value, type) {
 			this.ilValue = ilValue;
-			Type = type;
 		}
 
 		public override ILValue UnboxAny(DmdType type) {

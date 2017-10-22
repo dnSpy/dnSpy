@@ -17,37 +17,58 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Debugger.DotNet.Interpreter;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	class TypeILValueImpl : TypeILValue, IDebuggerRuntimeILValue {
-		public override DmdType Type => objValue.Type;
-		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => objValue;
+		public sealed override DmdType Type { get; }
+		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => ObjValue;
+
+		protected virtual DbgDotNetValue CreateObjValue() => null;
+		protected DbgDotNetValue ObjValue {
+			get {
+				if (__objValue_DONT_USE == null) {
+					__objValue_DONT_USE = CreateObjValue();
+					if (__objValue_DONT_USE == null)
+						throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				}
+				return __objValue_DONT_USE;
+			}
+		}
+		DbgDotNetValue __objValue_DONT_USE;
 
 		protected readonly DebuggerRuntimeImpl runtime;
-		protected readonly DbgDotNetValue objValue;
 
-		public TypeILValueImpl(DebuggerRuntimeImpl runtime, DbgDotNetValue objValue) {
+		protected TypeILValueImpl(DebuggerRuntimeImpl runtime, DmdType type) {
 			this.runtime = runtime;
-			this.objValue = objValue;
+			__objValue_DONT_USE = null;
+			Type = type ?? throw new ArgumentNullException(nameof(type));
+		}
+
+		public TypeILValueImpl(DebuggerRuntimeImpl runtime, DbgDotNetValue objValue, DmdType type = null) {
+			this.runtime = runtime;
+			__objValue_DONT_USE = objValue ?? throw new ArgumentNullException(nameof(objValue));
+			Type = type ?? objValue.Type;
 		}
 
 		public override bool StoreField(DmdFieldInfo field, ILValue value) =>
-			runtime.StoreInstanceField(objValue, field, value);
+			runtime.StoreInstanceField(ObjValue, field, value);
 
 		public override ILValue LoadField(DmdFieldInfo field) =>
-			runtime.LoadInstanceField(objValue, field);
+			runtime.LoadInstanceField(ObjValue, field);
 
 		public override ILValue LoadFieldAddress(DmdFieldInfo field) {
 			if (!field.ReflectedType.IsValueType)
-				return runtime.LoadReferenceTypeFieldAddress(objValue, field);
+				return runtime.LoadReferenceTypeFieldAddress(ObjValue, field);
 			return null;
 		}
 
 		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
-			runtime.CallInstance(objValue, isCallvirt, method, arguments, out returnValue);
+			runtime.CallInstance(ObjValue, isCallvirt, method, arguments, out returnValue);
 	}
 
 	sealed class ConstantStringILValueImpl : TypeILValueImpl {

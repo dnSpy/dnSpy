@@ -105,6 +105,7 @@
     <Compile Include="Evaluation\Engine\Interpreter\Hooks\DotNetClassHookFactoryImpl.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\IDebuggerRuntime.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\ILValues.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\RuntimeHandleILValues.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\SyntheticValues.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\TypeILValueImpl.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\VariablesProvider.cs" />

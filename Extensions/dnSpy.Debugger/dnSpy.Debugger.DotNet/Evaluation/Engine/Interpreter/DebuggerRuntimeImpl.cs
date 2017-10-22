@@ -457,7 +457,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return CreateILValue(res);
 		}
 
-		public override ILValue CreateRuntimeTypeHandle(DmdType type) {
+		public override ILValue CreateRuntimeTypeHandle(DmdType type) => new RuntimeTypeHandleILValue(this, type);
+		internal DbgDotNetValue CreateRuntimeTypeHandleCore(DmdType type) {
 			if (!canFuncEval)
 				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
 			var appDomain = type.AppDomain;
@@ -466,16 +467,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 			var runtimeTypeHandleType = appDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle);
 			var getTypeHandleMethod = typeValue.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: true);
-			var typeHandleValue = RecordValue(runtime.Call(context, frame, typeValue, getTypeHandleMethod, Array.Empty<object>(), cancellationToken));
-			return CreateILValue(typeHandleValue);
+			return RecordValue(runtime.Call(context, frame, typeValue, getTypeHandleMethod, Array.Empty<object>(), cancellationToken));
 		}
 
-		public override ILValue CreateRuntimeFieldHandle(DmdFieldInfo field) {
-			return null;//TODO:
+		public override ILValue CreateRuntimeFieldHandle(DmdFieldInfo field) => new RuntimeFieldHandleILValue(this, field);
+		internal DbgDotNetValue CreateRuntimeFieldHandleCore(DmdFieldInfo field) {
+			throw new NotImplementedException();//TODO:
 		}
 
-		public override ILValue CreateRuntimeMethodHandle(DmdMethodBase method) {
-			return null;//TODO:
+		public override ILValue CreateRuntimeMethodHandle(DmdMethodBase method) => new RuntimeMethodHandleILValue(this, method);
+		internal DbgDotNetValue CreateRuntimeMethodHandleCore(DmdMethodBase method) {
+			throw new NotImplementedException();//TODO:
 		}
 
 		public override ILValue CreateTypeNoConstructor(DmdType type) {
