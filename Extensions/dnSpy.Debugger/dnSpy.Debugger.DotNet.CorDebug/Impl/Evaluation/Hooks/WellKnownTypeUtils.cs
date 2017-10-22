@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
+namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 	static class WellKnownTypeUtils {
 		static readonly Dictionary<TypeName, DmdWellKnownType> toWellKnownType;
 		static readonly TypeName[] toWellKnownTypeName;

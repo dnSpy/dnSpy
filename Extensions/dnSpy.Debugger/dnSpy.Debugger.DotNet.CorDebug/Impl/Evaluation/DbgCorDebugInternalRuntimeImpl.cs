@@ -32,10 +32,11 @@ using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
-	sealed class DbgCorDebugInternalRuntimeImpl : DbgCorDebugInternalRuntime, IDbgDotNetRuntime {
+	sealed class DbgCorDebugInternalRuntimeImpl : DbgCorDebugInternalRuntime, IDbgDotNetRuntime, ICorDebugRuntime {
 		public override DbgRuntime Runtime { get; }
 		public override DmdRuntime ReflectionRuntime { get; }
 		public override CorDebugRuntimeVersion Version { get; }
@@ -45,6 +46,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public bool SupportsObjectIds => true;
 
 		readonly DbgEngineImpl engine;
+		readonly Dictionary<DmdWellKnownType, ClassHook> classHooks;
 
 		public DbgCorDebugInternalRuntimeImpl(DbgEngineImpl engine, DbgRuntime runtime, DmdRuntime reflectionRuntime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
@@ -55,6 +57,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			RuntimeDirectory = runtimeDir ?? throw new ArgumentNullException(nameof(runtimeDir));
 			Dispatcher = new DbgDotNetDispatcherImpl(engine);
 			reflectionRuntime.GetOrCreateData(() => runtime);
+
+			classHooks = new Dictionary<DmdWellKnownType, ClassHook>();
+			foreach (var info in ClassHookProvider.Create(this)) {
+				Debug.Assert(info.Hook != null);
+				Debug.Assert(!classHooks.ContainsKey(info.WellKnownType));
+				classHooks.Add(info.WellKnownType, info.Hook);
+			}
 		}
 
 		public ModuleId GetModuleId(DbgModule module) => engine.GetModuleId(module);
@@ -398,6 +407,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			try {
 				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 					return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+
+				var type = method.DeclaringType;
+				if (type.IsConstructedGenericType)
+					type = type.GetGenericTypeDefinition();
+				var typeName = TypeName.Create(type);
+				if (WellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
+					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
+						var res = hook.Call(obj, method, arguments);
+						if (res != null)
+							return new DbgDotNetValueResult(res, valueIsException: false);
+					}
+				}
+
 				return engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), method, obj, arguments, newObj: false, cancellationToken: cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
@@ -419,6 +441,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			try {
 				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
 					return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+
+				var type = ctor.DeclaringType;
+				if (type.IsConstructedGenericType)
+					type = type.GetGenericTypeDefinition();
+				var typeName = TypeName.Create(type);
+				if (WellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
+					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
+						var res = hook.CreateInstance(ctor, arguments);
+						if (res != null)
+							return new DbgDotNetValueResult(res, valueIsException: false);
+					}
+				}
+
 				return engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), ctor, null, arguments, newObj: true, cancellationToken: cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
