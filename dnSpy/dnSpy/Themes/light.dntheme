@@ -298,5 +298,6 @@
 		<color name="debugvariablename" fg="Black" />
 		<color name="debugobjectidname" fg="Black" />
 		<color name="debuggerdisplayattributeeval" fg="#2E387C" />
+		<color name="debuggernostringquoteseval" fg="#2E387C" />
 	</colors>
 </theme>

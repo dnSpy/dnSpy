@@ -453,7 +453,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 		void FormatString(string value) {
 			if (NoStringQuotes) {
-				OutputWrite(value, BoxedTextColor.String);
+				OutputWrite(value, BoxedTextColor.DebuggerNoStringQuotesEval);
 				return;
 			}
 

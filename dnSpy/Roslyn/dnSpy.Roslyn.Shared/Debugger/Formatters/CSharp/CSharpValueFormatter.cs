@@ -497,7 +497,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 
 		void FormatString(string value) {
 			if (NoStringQuotes)
-				OutputWrite(value, BoxedTextColor.String);
+				OutputWrite(value, BoxedTextColor.DebuggerNoStringQuotesEval);
 			else {
 				var s = ToFormattedString(value, out bool isVerbatim);
 				OutputWrite(s, isVerbatim ? BoxedTextColor.VerbatimString : BoxedTextColor.String);

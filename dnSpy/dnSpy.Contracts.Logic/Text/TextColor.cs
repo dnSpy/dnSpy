@@ -325,6 +325,7 @@ namespace dnSpy.Contracts.Text {
 		DebugVariableName,
 		DebugObjectIdName,
 		DebuggerDisplayAttributeEval,
+		DebuggerNoStringQuotesEval,
 
 		/// <summary>
 		/// Must be last
@@ -636,6 +637,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object DebugVariableName = TextColor.DebugVariableName;
 		public static readonly object DebugObjectIdName = TextColor.DebugObjectIdName;
 		public static readonly object DebuggerDisplayAttributeEval = TextColor.DebuggerDisplayAttributeEval;
+		public static readonly object DebuggerNoStringQuotesEval = TextColor.DebuggerNoStringQuotesEval;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -949,6 +951,7 @@ namespace dnSpy.Contracts.Text {
 			DebugVariableName,
 			DebugObjectIdName,
 			DebuggerDisplayAttributeEval,
+			DebuggerNoStringQuotesEval,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

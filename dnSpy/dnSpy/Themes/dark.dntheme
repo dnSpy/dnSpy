@@ -298,6 +298,7 @@
 		<color name="debugvariablename" fg="#DCDCDC" />
 		<color name="debugobjectidname" fg="#DCDCDC" />
 		<color name="debuggerdisplayattributeeval" fg="#6BF0FF" />
+		<color name="debuggernostringquoteseval" fg="#6BF0FF" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />
