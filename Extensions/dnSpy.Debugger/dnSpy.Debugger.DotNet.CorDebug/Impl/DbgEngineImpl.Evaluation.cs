@@ -168,10 +168,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					w = 0;
 					DmdType origType;
 					if (hiddenThisArg) {
-						var val = converter.Convert(obj, method.DeclaringType, out origType);
+						var declType = method.DeclaringType;
+						if (method is DmdMethodInfo m)
+							declType = m.GetBaseDefinition().DeclaringType;
+						var val = converter.Convert(obj, declType, out origType);
 						if (val.ErrorMessage != null)
 							return new DbgDotNetValueResult(val.ErrorMessage);
-						args[w++] = BoxIfNeeded(dnEval, appDomain, createdValues, val.CorValue, method.DeclaringType, origType);
+						args[w++] = BoxIfNeeded(dnEval, appDomain, createdValues, val.CorValue, declType, origType);
 					}
 					for (int i = 0; i < arguments.Length; i++) {
 						var paramType = paramTypes[i];
