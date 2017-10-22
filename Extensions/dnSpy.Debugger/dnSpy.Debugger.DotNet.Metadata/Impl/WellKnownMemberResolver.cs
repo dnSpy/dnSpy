@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			lockObj = new object();
 			checkedModules = new HashSet<DmdModule>();
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
-			wellKnownTypes = new DmdType[DmdWellKnownTypeUtils.NumberOfWellKnownTypes];
+			wellKnownTypes = new DmdType[DmdWellKnownTypeUtils.WellKnownTypesCount];
 		}
 
 		public DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool onlyCorLib) {

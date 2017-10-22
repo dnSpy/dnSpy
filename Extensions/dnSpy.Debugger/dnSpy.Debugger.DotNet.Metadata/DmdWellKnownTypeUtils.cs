@@ -42,10 +42,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="wellKnownType">Well known type</param>
 		/// <returns></returns>
-		public static DmdTypeName GetTypeName(DmdWellKnownType wellKnownType) =>
-			toWellKnownTypeName[(int)wellKnownType];
+		public static DmdTypeName GetTypeName(DmdWellKnownType wellKnownType) {
+			Debug.Assert(wellKnownType != DmdWellKnownType.None);
+			return toWellKnownTypeName[(int)wellKnownType];
+		}
 
 		static void Add(DmdTypeName typeName, DmdWellKnownType wellKnownType) {
+			Debug.Assert(wellKnownType != DmdWellKnownType.None);
 			toWellKnownType.Add(typeName, wellKnownType);
 			toWellKnownTypeName[(int)wellKnownType] = typeName;
 		}
@@ -53,11 +56,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the number of well known types
 		/// </summary>
-		public static int NumberOfWellKnownTypes => 282;
+		public static int WellKnownTypesCount => 282;
 
 		static DmdWellKnownTypeUtils() {
-			toWellKnownType = new Dictionary<DmdTypeName, DmdWellKnownType>(NumberOfWellKnownTypes, DmdTypeNameEqualityComparer.Instance);
-			toWellKnownTypeName = new DmdTypeName[NumberOfWellKnownTypes];
+			toWellKnownType = new Dictionary<DmdTypeName, DmdWellKnownType>(WellKnownTypesCount, DmdTypeNameEqualityComparer.Instance);
+			toWellKnownTypeName = new DmdTypeName[WellKnownTypesCount];
 
 			Add(new DmdTypeName("System", "Object"), DmdWellKnownType.System_Object);
 			Add(new DmdTypeName("System", "Enum"), DmdWellKnownType.System_Enum);
@@ -342,7 +345,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Add(new DmdTypeName("System.Linq", "SystemCore_EnumerableDebugViewEmptyException"), DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugViewEmptyException);
 			Add(new DmdTypeName("System.Text", "Encoding"), DmdWellKnownType.System_Text_Encoding);
 
-			Debug.Assert(toWellKnownType.Count == NumberOfWellKnownTypes);
+			Debug.Assert(toWellKnownType.Count == WellKnownTypesCount);
 #if DEBUG
 			foreach (var name in toWellKnownTypeName)
 				Debug.Assert(name.Name != null);

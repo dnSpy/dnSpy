@@ -1166,6 +1166,18 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsMarshalByRef => CanCastTo(AppDomain.GetWellKnownType(DmdWellKnownType.System_MarshalByRefObject, isOptional: true));
 
 		/// <summary>
+		/// Gets the <see cref="DmdWellKnownType"/> value or <see cref="DmdWellKnownType.None"/> if it's not a well known type
+		/// </summary>
+		/// <returns></returns>
+		public DmdWellKnownType GetWellKnownType() {
+			if (!DmdWellKnownTypeUtils.TryGetWellKnownType(DmdTypeName.Create(this), out var wkt))
+				return DmdWellKnownType.None;
+			if (this != AppDomain.GetWellKnownType(wkt, isOptional: true))
+				return DmdWellKnownType.None;
+			return wkt;
+		}
+
+		/// <summary>
 		/// Gets the element type if it's an array, a by-ref or a pointer type
 		/// </summary>
 		/// <returns></returns>
