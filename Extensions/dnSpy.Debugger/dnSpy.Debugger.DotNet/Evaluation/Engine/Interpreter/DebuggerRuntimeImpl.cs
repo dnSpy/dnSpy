@@ -137,41 +137,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			throw new InvalidOperationException();//TODO:
 		}
 
-		DmdType TryGetType(object value) {
-			if (value == null)
-				return null;
-
-			var type = value.GetType();
-			switch (Type.GetTypeCode(type)) {
-			case TypeCode.Boolean:		return reflectionAppDomain.System_Boolean;
-			case TypeCode.Char:			return reflectionAppDomain.System_Char;
-			case TypeCode.SByte:		return reflectionAppDomain.System_SByte;
-			case TypeCode.Byte:			return reflectionAppDomain.System_Byte;
-			case TypeCode.Int16:		return reflectionAppDomain.System_Int16;
-			case TypeCode.UInt16:		return reflectionAppDomain.System_UInt16;
-			case TypeCode.Int32:		return reflectionAppDomain.System_Int32;
-			case TypeCode.UInt32:		return reflectionAppDomain.System_UInt32;
-			case TypeCode.Int64:		return reflectionAppDomain.System_Int64;
-			case TypeCode.UInt64:		return reflectionAppDomain.System_UInt64;
-			case TypeCode.Single:		return reflectionAppDomain.System_Single;
-			case TypeCode.Double:		return reflectionAppDomain.System_Double;
-			case TypeCode.Decimal:		return reflectionAppDomain.System_Decimal;
-			case TypeCode.DateTime:		return reflectionAppDomain.System_DateTime;
-			case TypeCode.String:		return reflectionAppDomain.System_String;
-			}
-			if (type == typeof(IntPtr))
-				return reflectionAppDomain.System_IntPtr;
-			if (type == typeof(UIntPtr))
-				return reflectionAppDomain.System_UIntPtr;
-
-			return null;
-		}
-
 		DbgDotNetValue TryCreateSyntheticValue(object value) {
-			var type = TryGetType(value);
-			if ((object)type != null)
-				return TryCreateSyntheticValue(type, value);
-			return null;
+			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(reflectionAppDomain, value);
+			if (dnValue != null)
+				RecordValue(dnValue);
+			return dnValue;
 		}
 
 		DbgDotNetValue TryCreateSyntheticValue(DmdType type, object value) {

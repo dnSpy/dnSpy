@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the number of well known types
 		/// </summary>
-		public static int NumberOfWellKnownTypes => 281;
+		public static int NumberOfWellKnownTypes => 282;
 
 		static DmdWellKnownTypeUtils() {
 			toWellKnownType = new Dictionary<DmdTypeName, DmdWellKnownType>(NumberOfWellKnownTypes, DmdTypeNameEqualityComparer.Instance);
@@ -340,6 +340,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Add(new DmdTypeName("System.Linq", "SystemCore_EnumerableDebugView"), DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugView);
 			Add(new DmdTypeName("System.Linq", "SystemCore_EnumerableDebugView`1"), DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugView_T);
 			Add(new DmdTypeName("System.Linq", "SystemCore_EnumerableDebugViewEmptyException"), DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugViewEmptyException);
+			Add(new DmdTypeName("System.Text", "Encoding"), DmdWellKnownType.System_Text_Encoding);
 
 			Debug.Assert(toWellKnownType.Count == NumberOfWellKnownTypes);
 #if DEBUG

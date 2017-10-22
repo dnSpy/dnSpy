@@ -313,6 +313,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_Linq_SystemCore_EnumerableDebugView,
 		System_Linq_SystemCore_EnumerableDebugView_T,
 		System_Linq_SystemCore_EnumerableDebugViewEmptyException,
+		System_Text_Encoding,
 
 
 		// When adding more types, update WellKnownMemberResolver

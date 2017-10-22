@@ -189,7 +189,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					for (int i = 0; i < arguments.Length; i++) {
 						var paramType = paramTypes[i];
 						var arg = args[w];
-						if (paramType.IsValueType) {
+						if (paramType.IsValueType || paramType.IsPointer || paramType.IsFunctionPointer) {
 							if (arg.IsReference) {
 								if (arg.IsNull)
 									throw new InvalidOperationException();

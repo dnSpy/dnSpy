@@ -18,11 +18,12 @@
 */
 
 using System.Collections.Generic;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 	static class ClassHookProvider {
 		public static IEnumerable<ClassHookInfo> Create(ICorDebugRuntime runtime) {
-			yield break;//TODO:
+			yield return new ClassHookInfo(new System_String(runtime), DmdWellKnownType.System_String);
 		}
 	}
 }

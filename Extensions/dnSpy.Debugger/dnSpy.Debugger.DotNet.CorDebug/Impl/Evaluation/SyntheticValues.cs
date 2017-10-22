@@ -24,6 +24,43 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	static class SyntheticValueFactory {
+		static DmdType TryGetType(DmdAppDomain appDomain, object value) {
+			if (value == null)
+				return null;
+
+			var type = value.GetType();
+			switch (Type.GetTypeCode(type)) {
+			case TypeCode.Boolean:		return appDomain.System_Boolean;
+			case TypeCode.Char:			return appDomain.System_Char;
+			case TypeCode.SByte:		return appDomain.System_SByte;
+			case TypeCode.Byte:			return appDomain.System_Byte;
+			case TypeCode.Int16:		return appDomain.System_Int16;
+			case TypeCode.UInt16:		return appDomain.System_UInt16;
+			case TypeCode.Int32:		return appDomain.System_Int32;
+			case TypeCode.UInt32:		return appDomain.System_UInt32;
+			case TypeCode.Int64:		return appDomain.System_Int64;
+			case TypeCode.UInt64:		return appDomain.System_UInt64;
+			case TypeCode.Single:		return appDomain.System_Single;
+			case TypeCode.Double:		return appDomain.System_Double;
+			case TypeCode.Decimal:		return appDomain.System_Decimal;
+			case TypeCode.DateTime:		return appDomain.System_DateTime;
+			case TypeCode.String:		return appDomain.System_String;
+			}
+			if (type == typeof(IntPtr))
+				return appDomain.System_IntPtr;
+			if (type == typeof(UIntPtr))
+				return appDomain.System_UIntPtr;
+
+			return null;
+		}
+
+		public static DbgDotNetValue TryCreateSyntheticValue(DmdAppDomain appDomain, object constant) {
+			var type = TryGetType(appDomain, constant);
+			if ((object)type != null)
+				return TryCreateSyntheticValue(type, constant);
+			return null;
+		}
+
 		public static DbgDotNetValue TryCreateSyntheticValue(DmdType type, object constant) {
 			switch (DmdType.GetTypeCode(type)) {
 			case TypeCode.Boolean:

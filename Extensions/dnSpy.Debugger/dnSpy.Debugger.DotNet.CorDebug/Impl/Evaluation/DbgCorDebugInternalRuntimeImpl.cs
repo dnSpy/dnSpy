@@ -45,8 +45,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public DbgDotNetDispatcher Dispatcher { get; }
 		public bool SupportsObjectIds => true;
 
+		ICorDebugValueConverter ICorDebugRuntime.ValueConverter => corDebugValueConverter;
+
 		readonly DbgEngineImpl engine;
 		readonly Dictionary<DmdWellKnownType, ClassHook> classHooks;
+		readonly ICorDebugValueConverter corDebugValueConverter;
 
 		public DbgCorDebugInternalRuntimeImpl(DbgEngineImpl engine, DbgRuntime runtime, DmdRuntime reflectionRuntime, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
@@ -58,6 +61,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Dispatcher = new DbgDotNetDispatcherImpl(engine);
 			reflectionRuntime.GetOrCreateData(() => runtime);
 
+			corDebugValueConverter = new CorDebugValueConverterImpl(this);
 			classHooks = new Dictionary<DmdWellKnownType, ClassHook>();
 			foreach (var info in ClassHookProvider.Create(this)) {
 				Debug.Assert(info.Hook != null);
@@ -262,7 +266,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		static DbgDotNetValueResult CreateSyntheticValue(DmdType type, object constant) {
-			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type, constant);
+			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type.AppDomain, constant);
 			if (dnValue != null)
 				return new DbgDotNetValueResult(dnValue, valueIsException: false);
 			return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
