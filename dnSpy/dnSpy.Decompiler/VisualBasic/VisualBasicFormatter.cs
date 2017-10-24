@@ -1199,7 +1199,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 				else
 					pd = null;
 
-				bool isDefault = pd != null && pd.Constant != null;
+				bool isDefault = TypeFormatterUtils.IsDefaultParameter(pd);
 				if (isDefault)
 					OutputWrite(DefaultParamValueParenOpen, BoxedTextColor.Punctuation);
 

@@ -305,6 +305,24 @@ namespace dnSpy.Decompiler {
 
 			return flags;
 		}
+
+		public static bool IsDefaultParameter(ParamDef pd) {
+			if (pd == null)
+				return false;
+			if (pd.Constant != null)
+				return true;
+			foreach (var ca in pd.CustomAttributes) {
+				var type = ca.AttributeType;
+				while (type != null) {
+					var fullName = type.FullName;
+					if (fullName == "System.Runtime.CompilerServices.CustomConstantAttribute" ||
+						fullName == "System.Runtime.CompilerServices.DecimalConstantAttribute")
+						return true;
+					type = type.GetBaseType();
+				}
+			}
+			return false;
+		}
 	}
 
 	enum AccessorKind {
