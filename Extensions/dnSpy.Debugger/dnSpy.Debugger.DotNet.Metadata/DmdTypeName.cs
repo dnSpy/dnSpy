@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return new DmdTypeName(type.MetadataNamespace, type.MetadataName);
 
 				if ((object)declType.DeclaringType == null)
-					return new DmdTypeName(declType.MetadataNamespace, declType.MetadataName, type.Name);
+					return new DmdTypeName(declType.MetadataNamespace, declType.MetadataName, type.MetadataName);
 
 				var list = ListCache<DmdType>.AllocList();
 				for (;;) {
