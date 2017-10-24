@@ -496,18 +496,21 @@ namespace dnSpy.AsmEditor.Compiler {
 			var stateMachineTypes = new List<TypeDef>();
 
 			foreach (var nestedType in newType.NestedTypes) {
+				bool canAdd = true;
+
 				// If it's a state machine type, always create a new one.
 				if (newStateMachineTypes.Contains(nestedType)) {
 					stateMachineTypes.Add(nestedType);
-					continue;
+					canAdd = false;
 				}
 
 				if (targetTypesDict.TryGetValue(nestedType, out var targetNestedType)) {
 					existingTypes.Add(new ExistingMember<TypeDef>(nestedType, targetNestedType));
-					continue;
+					canAdd = false;
 				}
 
-				newNestedTypes.Add(nestedType);
+				if (canAdd)
+					newNestedTypes.Add(nestedType);
 			}
 
 			mergedImportedType.DeletedNestedTypes.AddRange(targetTypesDict.Keys.Where(a => !newNestedTypesDict.ContainsKey(a)));
@@ -515,7 +518,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			var usedTypeNames = new UsedTypeNames();
 			foreach (var existing in existingTypes) {
 				usedTypeNames.Add(existing.CompiledMember);
-				mergedImportedType.NewOrExistingNestedTypes.Add(MergeEditedTypes(existing.CompiledMember, existing.TargetMember));
+				if (!newStateMachineTypes.Contains(existing.CompiledMember))
+					mergedImportedType.NewOrExistingNestedTypes.Add(MergeEditedTypes(existing.CompiledMember, existing.TargetMember));
 			}
 
 			foreach (var newNestedType in newNestedTypes)
