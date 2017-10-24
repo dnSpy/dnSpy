@@ -1941,4 +1941,7 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
     <value>System modules</value>
   </data>
+  <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
+    <value>The runtime is unable to evaluate this expression.</value>
+  </data>
 </root>

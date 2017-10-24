@@ -3991,6 +3991,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The runtime is unable to evaluate this expression..
+        /// </summary>
+        public static string RuntimeIsUnableToEvaluateExpression {
+            get {
+                return ResourceManager.GetString("RuntimeIsUnableToEvaluateExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ru_n To Cursor.
         /// </summary>
         public static string RunToCursorCommand {

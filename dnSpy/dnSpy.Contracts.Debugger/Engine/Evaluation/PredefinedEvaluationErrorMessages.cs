@@ -82,6 +82,11 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// </summary>
 		public const string CannotReadLocalOrArgumentMaybeOptimizedAway = nameof(CannotReadLocalOrArgumentMaybeOptimizedAway) + SUFFIX;
 
+		/// <summary>
+		/// Runtime can't read a field, local
+		/// </summary>
+		public const string RuntimeIsUnableToEvaluateExpression = nameof(RuntimeIsUnableToEvaluateExpression) + SUFFIX;
+
 		// If more errors are added, also update the code in PredefinedEvaluationErrorMessagesHelper
 	}
 

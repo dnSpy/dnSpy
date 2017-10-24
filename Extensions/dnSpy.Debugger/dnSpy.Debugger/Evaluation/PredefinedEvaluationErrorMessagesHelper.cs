@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Evaluation {
 	static class PredefinedEvaluationErrorMessagesHelper {
 		static readonly Dictionary<string, string> toErrorMessage;
 		static PredefinedEvaluationErrorMessagesHelper() {
-			const int TOTAL_COUNT = 11;
+			const int TOTAL_COUNT = 12;
 			toErrorMessage = new Dictionary<string, string>(TOTAL_COUNT, StringComparer.Ordinal) {
 				{ PredefinedEvaluationErrorMessages.InternalDebuggerError, dnSpy_Debugger_Resources.InternalDebuggerError },
 				{ PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, dnSpy_Debugger_Resources.ExpressionCausesSideEffectsNoEval },
@@ -42,6 +42,7 @@ namespace dnSpy.Debugger.Evaluation {
 				{ PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint, dnSpy_Debugger_Resources.Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint },
 				{ PredefinedEvaluationErrorMessages.FuncEvalRequiresAllThreadsToRun, dnSpy_Debugger_Resources.FuncEvalRequiresAllThreadsToRun },
 				{ PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway, dnSpy_Debugger_Resources.CannotReadLocalOrArgumentMaybeOptimizedAway },
+				{ PredefinedEvaluationErrorMessages.RuntimeIsUnableToEvaluateExpression, dnSpy_Debugger_Resources.RuntimeIsUnableToEvaluateExpression },
 			};
 			Debug.Assert(toErrorMessage.Count == TOTAL_COUNT);
 		}
