@@ -151,15 +151,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return dnValue;
 		}
 
-		DbgDotNetValue TryGetDotNetValue(ILValue value, bool canCreateValues) {
+		DbgDotNetValue TryGetDotNetValue(ILValue value, bool canCreateValues) => TryGetDotNetValue(value, value.Type, canCreateValues);
+
+		DbgDotNetValue TryGetDotNetValue(ILValue value, DmdType valueType, bool canCreateValues) {
 			if (value is IDebuggerRuntimeILValue rtValue)
 				return rtValue.GetDotNetValue();
 			if (canCreateValues) {
 				if (value.IsNull)
-					return new SyntheticNullValue(value.Type ?? frame.Module.AppDomain.GetReflectionAppDomain().System_Void);
+					return new SyntheticNullValue(valueType ?? frame.Module.AppDomain.GetReflectionAppDomain().System_Void);
 
 				object newValue;
-				var type = value.Type;
+				var type = valueType;
 				switch (value.Kind) {
 				case ILValueKind.Int32:
 					int v32 = ((ConstantInt32ILValue)value).Value;
@@ -237,7 +239,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		internal object GetDebuggerValue(ILValue value, DmdType targetType) {
-			var dnValue = TryGetDotNetValue(value, canCreateValues: false);
+			var dnValue = TryGetDotNetValue(value, targetType, canCreateValues: false);
 			if (dnValue != null)
 				return dnValue;
 
@@ -530,7 +532,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override ILValue Box(ILValue value, DmdType type) {
 			if (type.IsValueType) {
-				var dnValue = TryGetDotNetValue(value, canCreateValues: true) ?? throw new InvalidOperationException();
+				var dnValue = TryGetDotNetValue(value, type, canCreateValues: true) ?? throw new InvalidOperationException();
 				var boxedValue = dnValue.Box(context, frame, cancellationToken);
 				if (boxedValue == null)
 					return new BoxedValueTypeILValue(this, value, dnValue, type);
