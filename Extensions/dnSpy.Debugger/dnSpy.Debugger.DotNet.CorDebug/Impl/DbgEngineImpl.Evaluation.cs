@@ -332,6 +332,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal DbgDotNetCreateValueResult CreateValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, object value, CancellationToken cancellationToken) {
 			debuggerThread.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
+			if (value is DbgDotNetValueImpl)
+				return new DbgDotNetCreateValueResult((DbgDotNetValueImpl)value);
 			var tmp = CheckFuncEval(context);
 			if (tmp != null)
 				return new DbgDotNetCreateValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());

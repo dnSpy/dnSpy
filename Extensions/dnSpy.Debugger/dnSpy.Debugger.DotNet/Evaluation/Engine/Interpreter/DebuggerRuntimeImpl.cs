@@ -35,7 +35,7 @@ using dnSpy.Debugger.DotNet.Properties;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	abstract class DebuggerRuntime2 : DebuggerRuntime {
 		public abstract IDbgDotNetRuntime Runtime { get; }
-		public abstract void Initialize(DbgEvaluationContext context, DbgStackFrame frame, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken);
+		public abstract void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBody realMethodBody, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken);
 		public abstract void Clear(DbgDotNetValue returnValue);
 		public abstract DbgDotNetValue GetDotNetValue(ILValue value);
 	}
@@ -49,6 +49,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		readonly DotNetClassHook[] anyClassHooks;
 		readonly Dictionary<DmdTypeName, DotNetClassHook> classHooks;
 		readonly List<DbgDotNetValue> valuesToDispose;
+		readonly InterpreterLocalsProvider interpreterLocalsProvider;
 
 		public DebuggerRuntimeImpl(DbgObjectIdService dbgObjectIdService, IDbgDotNetRuntime runtime, int pointerSize, DotNetClassHookFactory[] dotNetClassHookFactories) {
 			if (dotNetClassHookFactories == null)
@@ -56,6 +57,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.dbgObjectIdService = dbgObjectIdService ?? throw new ArgumentNullException(nameof(dbgObjectIdService));
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			valuesToDispose = new List<DbgDotNetValue>();
+			interpreterLocalsProvider = new InterpreterLocalsProvider(this);
 			PointerSize = pointerSize;
 
 			var anyClassHooksList = new List<DotNetClassHook>();
@@ -87,14 +89,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		VariablesProvider defaultLocalsProvider;
 
 		VariablesProvider argumentsProvider;
-		VariablesProvider localsProvider;
 		DbgEvaluationContext context;
 		DbgStackFrame frame;
 		CancellationToken cancellationToken;
 		bool canFuncEval;
 		DmdAppDomain reflectionAppDomain;
 
-		public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken) {
+		public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBody realMethodBody, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken) {
 			Debug.Assert(this.context == null);
 			if (this.context != null)
 				throw new InvalidOperationException();
@@ -103,14 +104,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.cancellationToken = cancellationToken;
 			this.canFuncEval = canFuncEval;
 			this.argumentsProvider = argumentsProvider ?? DefaultArgumentsProvider;
-			this.localsProvider = localsProvider ?? DefaultLocalsProvider;
+			interpreterLocalsProvider.Initialize(realMethodBody, localsProvider ?? DefaultLocalsProvider);
 			Debug.Assert(valuesToDispose.Count == 0);
 		}
 
 		public override void Initialize(DmdMethodBase method, DmdMethodBody body) {
 			reflectionAppDomain = method.AppDomain;
 			argumentsProvider.Initialize(context, frame, method, body, cancellationToken);
-			localsProvider.Initialize(context, frame, method, body, cancellationToken);
+			interpreterLocalsProvider.Initialize(context, frame, method, body, cancellationToken);
 		}
 
 		public override void Clear(DbgDotNetValue returnValue) {
@@ -119,14 +120,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			cancellationToken = default;
 			canFuncEval = false;
 			foreach (var v in valuesToDispose) {
-				if (v != returnValue && argumentsProvider.CanDispose(v) && localsProvider.CanDispose(v))
+				if (v != returnValue && argumentsProvider.CanDispose(v) && interpreterLocalsProvider.CanDispose(v))
 					v.Dispose();
 			}
 			valuesToDispose.Clear();
 			argumentsProvider.Clear();
-			localsProvider.Clear();
+			interpreterLocalsProvider.Clear();
 			argumentsProvider = null;
-			localsProvider = null;
 			reflectionAppDomain = null;
 		}
 
@@ -423,11 +423,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			}
 		}
 
-		public override ILValue LoadArgument(int index) => CreateILValue(argumentsProvider.GetVariable(index));
-		internal DbgDotNetValue LoadArgument2(int index) => RecordValue(argumentsProvider.GetVariable(index));
+		DbgDotNetValueResult GetArgument(int index) => argumentsProvider.GetVariable(index);
+		string SetArgument(int index, DmdType targetType, object value) => argumentsProvider.SetVariable(index, targetType, value);
 
-		public override ILValue LoadLocal(int index) => CreateILValue(localsProvider.GetVariable(index));
-		internal DbgDotNetValue LoadLocal2(int index) => RecordValue(localsProvider.GetVariable(index));
+		DbgDotNetValueResult GetLocal(int index) => interpreterLocalsProvider.GetVariable(index);
+		string SetLocal(int index, DmdType targetType, object value) => interpreterLocalsProvider.SetVariable(index, targetType, value);
+
+		public override ILValue LoadArgument(int index) => CreateILValue(GetArgument(index));
+		internal DbgDotNetValue LoadArgument2(int index) => RecordValue(GetArgument(index));
+
+		public override ILValue LoadLocal(int index) => CreateILValue(GetLocal(index));
+		internal DbgDotNetValue LoadLocal2(int index) => RecordValue(GetLocal(index));
 
 		public override ILValue LoadArgumentAddress(int index, DmdType type) => new ArgumentAddress(this, type, index);
 		public override ILValue LoadLocalAddress(int index, DmdType type) => new LocalAddress(this, type, index);
@@ -435,7 +441,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override bool StoreArgument(int index, DmdType type, ILValue value) => StoreArgument2(index, type, GetDebuggerValue(value, type));
 
 		internal bool StoreArgument2(int index, DmdType targetType, object value) {
-			var error = argumentsProvider.SetVariable(index, targetType, value);
+			var error = SetArgument(index, targetType, value);
 			if (error != null)
 				throw new InterpreterMessageException(error);
 			return true;
@@ -444,7 +450,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override bool StoreLocal(int index, DmdType type, ILValue value) => StoreLocal2(index, type, GetDebuggerValue(value, type));
 
 		internal bool StoreLocal2(int index, DmdType targetType, object value) {
-			var error = localsProvider.SetVariable(index, targetType, value);
+			var error = SetLocal(index, targetType, value);
 			if (error != null)
 				throw new InterpreterMessageException(error);
 			return true;
@@ -480,11 +486,46 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override ILValue CreateTypeNoConstructor(DmdType type) {
+		DbgDotNetValue TryCreateDefaultValue(DmdType type) {
+			switch (DmdType.GetTypeCode(type)) {
+			case TypeCode.Boolean:	return TryCreateSyntheticValue(false);
+			case TypeCode.Char:		return TryCreateSyntheticValue('\0');
+			case TypeCode.SByte:	return TryCreateSyntheticValue((sbyte)0);
+			case TypeCode.Byte:		return TryCreateSyntheticValue((byte)0);
+			case TypeCode.Int16:	return TryCreateSyntheticValue((short)0);
+			case TypeCode.UInt16:	return TryCreateSyntheticValue((ushort)0);
+			case TypeCode.Int32:	return TryCreateSyntheticValue(0);
+			case TypeCode.UInt32:	return TryCreateSyntheticValue(0U);
+			case TypeCode.Int64:	return TryCreateSyntheticValue(0L);
+			case TypeCode.UInt64:	return TryCreateSyntheticValue(0UL);
+			case TypeCode.Single:	return TryCreateSyntheticValue(0f);
+			case TypeCode.Double:	return TryCreateSyntheticValue(0d);
+			}
+			if (type == type.AppDomain.System_IntPtr || type.IsPointer || type.IsFunctionPointer)
+				return TryCreateSyntheticValue(IntPtr.Zero);
+			if (type == type.AppDomain.System_UIntPtr)
+				return TryCreateSyntheticValue(UIntPtr.Zero);
+			return null;
+		}
+
+		internal DbgDotNetValue GetDefaultValue(DmdType type) {
+			if (!type.IsValueType)
+				return new SyntheticNullValue(type);
+			var dnValue = TryCreateDefaultValue(type);
+			if (dnValue != null)
+				return dnValue;
 			if (!canFuncEval)
 				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
-			var res = runtime.CreateInstanceNoConstructor(context, frame, type, cancellationToken);
-			return CreateILValue(res);
+			return RecordValue(runtime.CreateInstanceNoConstructor(context, frame, type, cancellationToken));
+		}
+
+		public override ILValue CreateTypeNoConstructor(DmdType type) {
+			var dnValue = TryCreateDefaultValue(type);
+			if (dnValue != null)
+				return CreateILValue(dnValue);
+			if (!canFuncEval)
+				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
+			return CreateILValue(runtime.CreateInstanceNoConstructor(context, frame, type, cancellationToken));
 		}
 
 		public override ILValue Box(ILValue value, DmdType type) {
@@ -671,28 +712,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			if (error != null)
 				throw new InterpreterMessageException(error);
 			return true;
-		}
-
-		internal object GetDefaultValue(DmdType type) {
-			if (!type.IsValueType)
-				return null;
-			switch (DmdType.GetTypeCode(type)) {
-			case TypeCode.Boolean:		return false;
-			case TypeCode.Char:			return (char)0;
-			case TypeCode.SByte:		return (sbyte)0;
-			case TypeCode.Byte:			return (byte)0;
-			case TypeCode.Int16:		return (short)0;
-			case TypeCode.UInt16:		return (ushort)0;
-			case TypeCode.Int32:		return 0;
-			case TypeCode.UInt32:		return 0U;
-			case TypeCode.Int64:		return 0L;
-			case TypeCode.UInt64:		return 0UL;
-			case TypeCode.Single:		return 0f;
-			case TypeCode.Double:		return 0d;
-			}
-			if (!canFuncEval)
-				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
-			return RecordValue(runtime.CreateInstanceNoConstructor(context, frame, type, cancellationToken));
 		}
 
 		internal bool CallInstance(DbgDotNetValue objValue, bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
@@ -902,5 +921,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			//TODO:
 			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
+
+		internal DbgDotNetValue CreateValue(object value) =>
+			((IDebuggerRuntime)this).CreateValue(value);
 	}
 }

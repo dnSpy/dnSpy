@@ -116,6 +116,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		sealed class MethodInfoState {
 			public ILVMExecuteState ILVMExecuteState { get; set; }
 			public DmdType ExpectedType { get; set; }
+			public DmdMethodBody RealMethodBody { get; set; }
 		}
 
 		public override DbgDotNetILInterpreterState CreateState(byte[] assembly) {
@@ -154,10 +155,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 					methodState.ExpectedType = method.ReturnType;
 					ilvmState = stateImpl.ILVM.CreateExecuteState(method);
 					methodState.ILVMExecuteState = ilvmState;
+					var realMethod = context.Runtime.GetDotNetRuntime().GetFrameMethod(context, frame, cancellationToken) ?? throw new InvalidOperationException();
+					methodState.RealMethodBody = realMethod.GetMethodBody();
 				}
 
 				expectedType = methodState.ExpectedType;
-				debuggerRuntime.Initialize(context, frame, argumentsProvider, localsProvider, (options & DbgEvaluationOptions.NoFuncEval) == 0, cancellationToken);
+				debuggerRuntime.Initialize(context, frame, methodState.RealMethodBody, argumentsProvider, localsProvider, (options & DbgEvaluationOptions.NoFuncEval) == 0, cancellationToken);
 				try {
 					var execResult = stateImpl.ILVM.Execute(debuggerRuntime, ilvmState);
 					var resultValue = debuggerRuntime.GetDotNetValue(execResult);

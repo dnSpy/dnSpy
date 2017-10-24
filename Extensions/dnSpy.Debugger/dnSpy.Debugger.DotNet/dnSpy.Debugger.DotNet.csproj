@@ -106,6 +106,7 @@
     <Compile Include="Evaluation\Engine\Interpreter\Hooks\System_Runtime_CompilerServices_RuntimeHelpers.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\IDebuggerRuntime.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\ILValues.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\InterpreterLocalsProvider.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\RuntimeHandleILValues.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\SyntheticValues.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\TypeILValueImpl.cs" />
