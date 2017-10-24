@@ -287,6 +287,39 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, Type.GetElementType(), value, cancellationToken);
 		}
 
+		public override DbgDotNetValue Box(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			if (engine.CheckCorDebugThread())
+				return Box_CorDebug(context, frame, cancellationToken);
+			return engine.InvokeCorDebugThread(() => Box_CorDebug(context, frame, cancellationToken));
+		}
+
+		DbgDotNetValue Box_CorDebug(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+			engine.VerifyCorDebugThread();
+			cancellationToken.ThrowIfCancellationRequested();
+			var corValue = TryGetCorValue();
+			if (corValue == null)
+				return null;
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return null;
+			// Even if it's boxed, box the unboxed value. This code path should only be called if
+			// the compiler thinks it's an unboxed value, so we must make a new boxed value.
+			if (corValue.IsReference) {
+				corValue = corValue.DereferencedValue;
+				if (corValue == null)
+					return null;
+			}
+			if (corValue.IsBox) {
+				corValue = corValue.BoxedValue;
+				if (corValue == null)
+					return null;
+			}
+			var res = engine.Box_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), corValue, Type, cancellationToken);
+			if (res.IsNormalResult)
+				return res.Value;
+			res.Value?.Dispose();
+			return null;
+		}
+
 		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) {
 			if (engine.CheckCorDebugThread())
 				return GetRawAddressValue_CorDebug(onlyDataAddress);

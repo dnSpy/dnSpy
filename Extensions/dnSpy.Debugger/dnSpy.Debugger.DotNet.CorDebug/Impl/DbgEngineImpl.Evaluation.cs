@@ -239,7 +239,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					corValueType = GetType(appDomain, valueType);
 				var boxedValue = dnEval.Box(corValue, corValueType) ?? throw new InvalidOperationException();
 				if (boxedValue != corValue)
-					createdValues.Add(corValue);
+					createdValues.Add(boxedValue);
 				corValue = boxedValue;
 			}
 			return corValue;
@@ -252,6 +252,42 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			list.AddRange(sig.GetParameterTypes());
 			list.AddRange(sig.GetVarArgsParameterTypes());
 			return list;
+		}
+
+		internal DbgDotNetValueResult Box_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, CorValue value, DmdType type, CancellationToken cancellationToken) {
+			debuggerThread.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
+			var tmp = CheckFuncEval(context);
+			if (tmp != null)
+				return tmp.Value;
+
+			var dnThread = GetThread(thread);
+			var createdValues = new List<CorValue>();
+			CorValue boxedValue = null;
+			try {
+				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+					dnEval.SetThread(dnThread);
+					dnEval.SetTimeout(context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+
+					boxedValue = BoxIfNeeded(dnEval, appDomain, createdValues, value, type.AppDomain.System_Object, type);
+					if (boxedValue == null)
+						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(-1));
+					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(boxedValue, type.AppDomain, tryCreateStrongHandle: true), valueIsException: false);
+				}
+			}
+			catch (TimeoutException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+			}
+			finally {
+				foreach (var v in createdValues) {
+					if (boxedValue != v)
+						dnDebugger.DisposeHandle(v);
+				}
+			}
 		}
 
 		internal DbgDotNetValueResult FuncEvalCreateInstanceNoCtor_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, DmdType typeToCreate, CancellationToken cancellationToken) {

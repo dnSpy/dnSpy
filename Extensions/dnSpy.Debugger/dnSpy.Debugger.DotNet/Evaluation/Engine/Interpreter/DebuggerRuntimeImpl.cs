@@ -490,7 +490,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override ILValue Box(ILValue value, DmdType type) {
 			if (type.IsValueType) {
 				var dnValue = TryGetDotNetValue(value, canCreateValues: true) ?? throw new InvalidOperationException();
-				return new BoxedValueTypeILValue(this, value, dnValue, type);
+				var boxedValue = dnValue.Box(context, frame, cancellationToken);
+				if (boxedValue == null)
+					return new BoxedValueTypeILValue(this, value, dnValue, type);
+				RecordValue(boxedValue);
+				return new BoxedValueTypeILValue(this, value, boxedValue, type);
 			}
 			return value;
 		}

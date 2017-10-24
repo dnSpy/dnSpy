@@ -103,6 +103,15 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
+		/// Boxes the value type, returns null on failure
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public virtual DbgDotNetValue Box(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => null;
+
+		/// <summary>
 		/// Gets the address of the value or null if there's no address available.
 		/// The returned address gets invalid when the runtime continues.
 		/// </summary>

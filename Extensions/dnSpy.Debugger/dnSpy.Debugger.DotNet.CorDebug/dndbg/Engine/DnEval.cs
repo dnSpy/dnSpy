@@ -127,13 +127,17 @@ namespace dndbg.Engine {
 			if (cls == null)
 				return null;
 			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(cls, valueType.TypeParameters.ToArray()));
-			if (res == null || !res.Value.NormalResult)
+			if (res == null || !res.Value.NormalResult) {
+				res?.ResultOrException?.DisposeHandle();
 				return null;
+			}
 			var newObj = res.Value.ResultOrException;
 			var r = newObj.DereferencedValue;
 			var vb = r?.BoxedValue;
-			if (vb == null)
+			if (vb == null) {
+				newObj.DisposeHandle();
 				return null;
+			}
 			int hr = vb.WriteGenericValue(value.ReadGenericValue(), thread.CorThread.Process);
 			if (hr < 0)
 				return null;
