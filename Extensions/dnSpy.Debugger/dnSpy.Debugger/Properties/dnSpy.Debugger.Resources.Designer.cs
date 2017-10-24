@@ -2878,6 +2878,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable or disable all exceptions matching the current search criteria.
+        /// </summary>
+        public static string Exceptions_ToggleMatchingExceptions_ToolTip {
+            get {
+                return ResourceManager.GetString("Exceptions_ToggleMatchingExceptions_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exceptions.
         /// </summary>
         public static string ExceptionsCommand {

@@ -63,6 +63,9 @@
                 <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveExceptionsCommand}" ToolTip="{Binding RemoveExceptionsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.RemoveCommand}"/>
                 </Button>
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ToggleMatchingExceptionsCommand}" ToolTip="{Binding ToggleMatchingExceptionsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.ToggleAllBreakpoints}"/>
+                </Button>
                 <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding EditConditionsCommand}" ToolTip="{Binding EditConditionsToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Edit}"/>
                 </Button>

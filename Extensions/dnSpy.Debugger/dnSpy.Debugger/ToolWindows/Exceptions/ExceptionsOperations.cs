@@ -45,6 +45,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		public abstract void RestoreSettings();
 		public abstract bool CanResetSearchSettings { get; }
 		public abstract void ResetSearchSettings();
+		public abstract bool CanToggleMatchingExceptions { get; }
+		public abstract void ToggleMatchingExceptions();
 		public abstract bool CanToggleBreakWhenThrown { get; }
 		public abstract void ToggleBreakWhenThrown();
 	}
@@ -137,14 +139,17 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		public override bool CanResetSearchSettings => true;
 		public override void ResetSearchSettings() => exceptionsVM.ResetSearchSettings();
 
+		public override bool CanToggleMatchingExceptions => AllItems.Count > 0;
+		public override void ToggleMatchingExceptions() => ToggleBreakWhenThrown(AllItems);
+
 		public override bool CanToggleBreakWhenThrown => SelectedItems.Count > 0;
-		public override void ToggleBreakWhenThrown() {
-			// Toggling everything seems to be less useful, it's more likely that you'd want
-			// to enable all selected exceptions or disable all of them.
-			bool allSet = SelectedItems.All(a => a.BreakWhenThrown);
-			var newSettings = new DbgExceptionIdAndSettings[SelectedItems.Count];
+		public override void ToggleBreakWhenThrown() => ToggleBreakWhenThrown(SelectedItems);
+
+		void ToggleBreakWhenThrown(IList<ExceptionVM> exceptions) {
+			bool allSet = exceptions.All(a => a.BreakWhenThrown);
+			var newSettings = new DbgExceptionIdAndSettings[exceptions.Count];
 			for (int i = 0; i < newSettings.Length; i++) {
-				var vm = SelectedItems[i];
+				var vm = exceptions[i];
 				var flags = vm.Settings.Flags;
 				if (allSet)
 					flags &= ~DbgExceptionDefinitionFlags.StopFirstChance;

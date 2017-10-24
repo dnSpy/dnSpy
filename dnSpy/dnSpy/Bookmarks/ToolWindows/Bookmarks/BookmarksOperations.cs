@@ -213,8 +213,6 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		public override void DisableBookmarks() => EnableDisableBookmarks(SelectedItems, enable: false);
 
 		void ToggleBookmarks(IList<BookmarkVM> bookmarks) {
-			// Toggling everything seems to be less useful, it's more likely that you'd want
-			// to enable all selected bookmarks or disable all of them.
 			bool allSet = bookmarks.All(a => a.IsEnabled);
 			EnableDisableBookmarks(bookmarks, enable: !allSet);
 		}

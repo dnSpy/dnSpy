@@ -60,6 +60,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			public string ShowOnlyEnabledExceptionsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_ShowOnlyEnabledExceptions_ToolTip, null);
 			public string AddExceptionToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_Add_ToolTip, null);
 			public string RemoveExceptionsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_Remove_ToolTip, null);
+			public string ToggleMatchingExceptionsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_ToggleMatchingExceptions_ToolTip, null);
 			public string EditConditionsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_EditConditions_ToolTip, null);
 			public string RestoreSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_RestoreSettings_ToolTip, null);
 			public string ResetSearchSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_ResetSearchSettings_ToolTip, null);
@@ -68,6 +69,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 			public ICommand AddExceptionCommand => new RelayCommand(a => Operations.AddException(), a => Operations.CanAddException);
 			public ICommand RemoveExceptionsCommand => new RelayCommand(a => Operations.RemoveExceptions(), a => Operations.CanRemoveExceptions);
+			public ICommand ToggleMatchingExceptionsCommand => new RelayCommand(a => Operations.ToggleMatchingExceptions(), a => Operations.CanToggleMatchingExceptions);
 			public ICommand EditConditionsCommand => new RelayCommand(a => Operations.EditConditions(), a => Operations.CanEditConditions);
 			public ICommand RestoreSettingsCommand => new RelayCommand(a => Operations.RestoreSettings(), a => Operations.CanRestoreSettings);
 			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);

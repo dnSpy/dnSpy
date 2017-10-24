@@ -187,8 +187,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public override void DisableBreakpoints() => EnableDisableBreakpoints(SelectedItems, enable: false);
 
 		void ToggleBreakpoints(IList<CodeBreakpointVM> breakpoints) {
-			// Toggling everything seems to be less useful, it's more likely that you'd want
-			// to enable all selected code breakpoints or disable all of them.
 			bool allSet = breakpoints.All(a => a.IsEnabled);
 			EnableDisableBreakpoints(breakpoints, enable: !allSet);
 		}
