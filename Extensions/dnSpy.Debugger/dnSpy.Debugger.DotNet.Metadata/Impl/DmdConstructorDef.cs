@@ -45,66 +45,86 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected abstract DmdType[] CreateGenericParameters();
 		public sealed override ReadOnlyCollection<DmdType> GetGenericArguments() {
-			if (__genericParameters_DONT_USE != null)
-				return __genericParameters_DONT_USE;
+			var f = ExtraFields;
+			if (f.__genericParameters_DONT_USE != null)
+				return f.__genericParameters_DONT_USE;
 			var res = CreateGenericParameters();
-			Interlocked.CompareExchange(ref __genericParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
-			return __genericParameters_DONT_USE;
+			Interlocked.CompareExchange(ref f.__genericParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
+			return f.__genericParameters_DONT_USE;
 		}
-		volatile ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
 
 		public sealed override ReadOnlyCollection<DmdParameterInfo> GetParameters() {
-			if (__parameters_DONT_USE != null)
-				return __parameters_DONT_USE;
+			var f = ExtraFields;
+			if (f.__parameters_DONT_USE != null)
+				return f.__parameters_DONT_USE;
 			var info = CreateParameters();
 			Debug.Assert(info.Length == GetMethodSignature().GetParameterTypes().Count);
-			Interlocked.CompareExchange(ref __parameters_DONT_USE, ReadOnlyCollectionHelpers.Create(info), null);
-			return __parameters_DONT_USE;
+			Interlocked.CompareExchange(ref f.__parameters_DONT_USE, ReadOnlyCollectionHelpers.Create(info), null);
+			return f.__parameters_DONT_USE;
 		}
-		volatile ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
 		protected abstract DmdParameterInfo[] CreateParameters();
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
-			if (__customAttributes_DONT_USE == null)
+			var f = ExtraFields;
+			if (f.__customAttributes_DONT_USE == null)
 				InitializeCustomAttributes();
-			return __customAttributes_DONT_USE;
+			return f.__customAttributes_DONT_USE;
 		}
 
 		void InitializeCustomAttributes() {
-			if (__customAttributes_DONT_USE != null)
+			var f = ExtraFields;
+			if (f.__customAttributes_DONT_USE != null)
 				return;
 			var info = CreateCustomAttributes();
 			var newSAs = ReadOnlyCollectionHelpers.Create(info.sas);
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, newSAs);
 			lock (LockObject) {
-				if (__customAttributes_DONT_USE == null) {
-					__securityAttributes_DONT_USE = newSAs;
-					__customAttributes_DONT_USE = newCAs;
+				if (f.__customAttributes_DONT_USE == null) {
+					f.__securityAttributes_DONT_USE = newSAs;
+					f.__customAttributes_DONT_USE = newCAs;
 				}
 			}
 		}
-		volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
-		volatile ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
+
+		ExtraFieldsImpl ExtraFields {
+			get {
+				if (__extraFields_DONT_USE is ExtraFieldsImpl f)
+					return f;
+				Interlocked.CompareExchange(ref __extraFields_DONT_USE, new ExtraFieldsImpl(), null);
+				return __extraFields_DONT_USE;
+			}
+		}
+		volatile ExtraFieldsImpl __extraFields_DONT_USE;
+
+		// Most of the fields aren't used so we alloc them when needed
+		sealed class ExtraFieldsImpl {
+			public volatile ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
+			public volatile ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
+			public volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+			public volatile ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
+			public volatile uint __rva_DONT_USE;
+			public volatile bool __rva_initd_DONT_USE;
+		}
 
 		protected abstract (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes();
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() {
-			if (__customAttributes_DONT_USE == null)
+			var f = ExtraFields;
+			if (f.__customAttributes_DONT_USE == null)
 				InitializeCustomAttributes();
-			return __securityAttributes_DONT_USE;
+			return f.__securityAttributes_DONT_USE;
 		}
 
 		protected abstract uint GetRVA();
 		public sealed override uint RVA {
 			get {
-				if (!__rva_initd) {
-					__rva_DONT_USE = GetRVA();
-					__rva_initd = true;
+				var f = ExtraFields;
+				if (!f.__rva_initd_DONT_USE) {
+					f.__rva_DONT_USE = GetRVA();
+					f.__rva_initd_DONT_USE = true;
 				}
-				return __rva_DONT_USE;
+				return f.__rva_DONT_USE;
 			}
 		}
-		volatile uint __rva_DONT_USE;
-		volatile bool __rva_initd;
 	}
 }

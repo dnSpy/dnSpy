@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			public volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
 			public volatile ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
 			public volatile uint __rva_DONT_USE;
-			public volatile bool __rva_initd;
+			public volatile bool __rva_initd_DONT_USE;
 		}
 
 		protected abstract (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas, DmdImplMap? implMap) CreateCustomAttributes();
@@ -160,9 +160,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override uint RVA {
 			get {
 				var f = ExtraFields;
-				if (!f.__rva_initd) {
+				if (!f.__rva_initd_DONT_USE) {
 					f.__rva_DONT_USE = GetRVA();
-					f.__rva_initd = true;
+					f.__rva_initd_DONT_USE = true;
 				}
 				return f.__rva_DONT_USE;
 			}
