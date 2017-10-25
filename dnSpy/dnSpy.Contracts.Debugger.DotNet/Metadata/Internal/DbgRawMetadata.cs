@@ -64,5 +64,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata.Internal {
 		/// Decrements the reference count
 		/// </summary>
 		public abstract void Release();
+
+		/// <summary>
+		/// Re-reads the memory if possible
+		/// </summary>
+		public abstract void UpdateMemory();
 	}
 }

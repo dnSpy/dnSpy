@@ -323,6 +323,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (doc != null)
 				return doc;
 
+			MemoryModuleDefDocument result = null;
 			lock (lockObj) {
 				doc = FindMemoryModule(module);
 				if (doc != null)
@@ -344,7 +345,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return null;
 
 				var docs = new List<MemoryModuleDefDocument>(modules.Length);
-				MemoryModuleDefDocument result = null;
 				foreach (var m in modules) {
 					MemoryModuleDefDocument modDoc;
 					try {
@@ -378,9 +378,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 				var addedFile = documentProvider.GetOrAdd(asmFile);
 				Debug.Assert(addedFile == asmFile);
-
-				return result.ModuleDef;
 			}
+
+			// The modules got loaded for the first time, but it's possible that the debugger is using the
+			// old disk file modules. Raise an event so the debugger rereads the memory.
+			var newModules = GetModules(result.Process, result.Address);
+			if (newModules.Length > 0)
+				dbgModuleMemoryRefreshedNotifier.Value.RaiseModulesRefreshed(newModules);
+
+			return result.ModuleDef;
 		}
 
 		public override ModuleDef FindModule(DbgModule module) {

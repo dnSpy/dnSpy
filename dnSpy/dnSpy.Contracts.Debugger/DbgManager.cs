@@ -180,6 +180,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract event EventHandler<DbgCurrentObjectChangedEventArgs<DbgThread>> CurrentThreadChanged;
 
 		/// <summary>
+		/// Raised when the module's memory has been updated (eg. decrypted)
+		/// </summary>
+		public abstract event EventHandler<ModulesRefreshedEventArgs> ModulesRefreshed;
+
+		/// <summary>
 		/// Returns true if the runtime can be debugged
 		/// </summary>
 		/// <param name="pid">Process id</param>

@@ -107,7 +107,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			bool isAutoLoaded = (options & DbgLoadModuleOptions.AutoLoaded) != 0;
 			if (!string.IsNullOrEmpty(asmFilename)) {
-				var document = documentService.TryGetOrCreate(Contracts.Documents.DsDocumentInfo.CreateDocument(asmFilename), isAutoLoaded);
+				var document = documentService.TryGetOrCreate(DsDocumentInfo.CreateDocument(asmFilename), isAutoLoaded);
 				if (document == null)
 					document = documentService.Resolve(new AssemblyNameInfo(moduleId.AssemblyFullName), null);
 				if (document != null) {
@@ -122,7 +122,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				}
 			}
 
-			return documentService.TryGetOrCreate(Contracts.Documents.DsDocumentInfo.CreateDocument(moduleFilename), isAutoLoaded)?.ModuleDef;
+			return documentService.TryGetOrCreate(DsDocumentInfo.CreateDocument(moduleFilename), isAutoLoaded)?.ModuleDef;
 		}
 
 		static string GetAssemblyFilename(string moduleFilename, string assemblyFullName, bool moduleNameOnly) {

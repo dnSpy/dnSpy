@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 
@@ -36,6 +37,14 @@ namespace dnSpy.Debugger.Impl {
 		public override bool IsInMemory => isInMemory;
 		public override int Order => order;
 		public override string Version => version;
+
+		public override int RefreshedVersion => refreshedVersion;
+		volatile int refreshedVersion;
+		public override event EventHandler Refreshed;
+		internal void RaiseRefreshed() {
+			Interlocked.Increment(ref refreshedVersion);
+			Refreshed?.Invoke(this, EventArgs.Empty);
+		}
 
 		public override ulong Address {
 			get {

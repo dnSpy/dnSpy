@@ -115,5 +115,15 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets the version, eg. the file version, see <see cref="FileVersionInfo"/>
 		/// </summary>
 		public abstract string Version { get; }
+
+		/// <summary>
+		/// Raised when the module's memory has been updated (eg. decrypted)
+		/// </summary>
+		public abstract event EventHandler Refreshed;
+
+		/// <summary>
+		/// Gets incremented when the module gets refreshed (<see cref="Refreshed"/>)
+		/// </summary>
+		public abstract int RefreshedVersion { get; }
 	}
 }

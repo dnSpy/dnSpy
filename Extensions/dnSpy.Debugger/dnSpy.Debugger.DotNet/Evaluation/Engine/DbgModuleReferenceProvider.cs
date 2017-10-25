@@ -78,8 +78,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				public override bool Equals(object obj) => obj is Key other && Equals(other);
 				public override int GetHashCode() => Address.GetHashCode();
 			}
-			public readonly Dictionary<Key, DbgModuleReference> ModuleReferences = new Dictionary<Key, DbgModuleReference>();
-			public readonly List<DbgModuleReference> OtherModuleReferences = new List<DbgModuleReference>();
+			public readonly Dictionary<Key, DbgModuleReferenceImpl> ModuleReferences = new Dictionary<Key, DbgModuleReferenceImpl>();
+			public readonly List<DbgModuleReferenceImpl> OtherModuleReferences = new List<DbgModuleReferenceImpl>();
 
 			readonly DbgRuntime runtime;
 
@@ -134,10 +134,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		struct ModuleInfo {
 			public DmdModule Module;
+			public DbgModule DebuggerModuleOrNull;
 			public int DynamicModuleVersion;
+			public int DebuggerModuleVersion;
 			public ModuleInfo(DmdModule module) {
 				Module = module;
+				DebuggerModuleOrNull = module.GetDebuggerModule();
 				DynamicModuleVersion = module.DynamicModuleVersion;
+				DebuggerModuleVersion = DebuggerModuleOrNull?.RefreshedVersion ?? -1;
 			}
 		}
 
@@ -145,20 +149,30 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public override IntPtr MetadataAddress => dbgRawMetadata.MetadataAddress;
 			public override uint MetadataSize => (uint)dbgRawMetadata.MetadataSize;
 			public override Guid ModuleVersionId { get; }
-			public override Guid GenerationId { get; }
+			public override Guid GenerationId => generationId;
 
 			readonly DbgRawMetadata dbgRawMetadata;
+			Guid generationId;
+			int refreshedVersion;
 #if DEBUG
 			readonly string toStringValue;
 #endif
 
-			public DbgModuleReferenceImpl(DbgRawMetadata dbgRawMetadata, Guid moduleVersionId, Guid generationId, DmdModule moduleForToString) {
+			public DbgModuleReferenceImpl(DbgRawMetadata dbgRawMetadata, Guid moduleVersionId, DmdModule moduleForToString, int refreshedVersion) {
 				this.dbgRawMetadata = dbgRawMetadata;
 				ModuleVersionId = moduleVersionId;
-				GenerationId = generationId;
+				this.refreshedVersion = refreshedVersion;
 #if DEBUG
 				toStringValue = $"{moduleForToString.Assembly.FullName} [{moduleForToString.FullyQualifiedName}]";
 #endif
+			}
+
+			internal void Update(int version) {
+				if (refreshedVersion != version) {
+					refreshedVersion = version;
+					generationId = Guid.NewGuid();
+					dbgRawMetadata.UpdateMemory();
+				}
 			}
 
 			protected override void CloseCore(DbgDispatcher dispatcher) => dbgRawMetadata.Release();
@@ -211,7 +225,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			const bool isDynamic = false;
 			var assembly = appDomain.CreateSyntheticAssembly(() => new DmdLazyMetadataBytesArray(info.assemblyBytes, isFileLayout), isInMemory, isDynamic, DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, null), string.Empty, info.assemblySimpleName);
 			var rawMD = dbgRawMetadataService.Create(runtime, isFileLayout, info.assemblyBytes);
-			var modRef = new DbgModuleReferenceImpl(rawMD, assembly.ManifestModule.ModuleVersionId, Guid.Empty, assembly.ManifestModule);
+			var modRef = new DbgModuleReferenceImpl(rawMD, assembly.ManifestModule.ModuleVersionId, assembly.ManifestModule, -1);
 			RuntimeState.GetRuntimeState(runtime).OtherModuleReferences.Add(modRef);
 			var state = new IntrinsicsAssemblyState(modRef, assembly);
 			return appDomain.GetOrCreateData(() => {
@@ -281,7 +295,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 							}
 							else {
 								try {
-									modRef = new DbgModuleReferenceImpl(rawMd, modInfo.Module.ModuleVersionId, Guid.Empty, modInfo.Module);
+									modRef = new DbgModuleReferenceImpl(rawMd, modInfo.Module.ModuleVersionId, modInfo.Module, module.RefreshedVersion);
 									rtState.ModuleReferences.Add(key, modRef);
 								}
 								catch {
@@ -290,6 +304,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 								}
 							}
 						}
+						modRef.Update(module.RefreshedVersion);
 						modRefs.Add(modRef);
 					}
 				}
@@ -321,7 +336,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return false;
 			for (int i = 0; i < a.Length; i++) {
 				var info = b[i];
-				if (a[i] != info.Module || a[i].DynamicModuleVersion != info.DynamicModuleVersion)
+				var am = a[i];
+				if (am != info.Module || a[i].DynamicModuleVersion != info.DynamicModuleVersion)
+					return false;
+				var dm = info.DebuggerModuleOrNull ?? am.GetDebuggerModule();
+				if (dm != null && dm.RefreshedVersion != info.DebuggerModuleVersion)
 					return false;
 			}
 			return true;

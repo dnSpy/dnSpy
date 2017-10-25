@@ -76,7 +76,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 		readonly int metadataSize;
 		readonly object lockObj;
 		GCHandle moduleBytesHandle;
-		readonly bool isProcessMemory;
+		readonly DbgProcess process;
+		readonly ulong moduleAddress;
 		volatile int referenceCounter;
 		volatile bool disposed;
 		volatile int freedAddress;
@@ -86,7 +87,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 			referenceCounter = 1;
 			this.isFileLayout = isFileLayout;
 			size = moduleBytes.Length;
-			isProcessMemory = false;
 			moduleBytesHandle = GCHandle.Alloc(moduleBytes, GCHandleType.Pinned);
 			address = moduleBytesHandle.AddrOfPinnedObject();
 			(metadataAddress, metadataSize) = GetMetadataInfo();
@@ -97,14 +97,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 			referenceCounter = 1;
 			this.isFileLayout = isFileLayout;
 			size = moduleSize;
-			isProcessMemory = true;
+			this.process = process;
+			this.moduleAddress = moduleAddress;
 
 			try {
 				// Prevent allocation on the LOH. We'll also be able to free the memory as soon as it's not needed.
 				address = NativeMethods.VirtualAlloc(IntPtr.Zero, new IntPtr(moduleSize), NativeMethods.MEM_COMMIT, NativeMethods.PAGE_READWRITE);
 				if (address == IntPtr.Zero)
 					throw new OutOfMemoryException();
-				process.ReadMemory(moduleAddress, (byte*)address.ToPointer(), size);
+				process.ReadMemory(moduleAddress, address.ToPointer(), size);
 				(metadataAddress, metadataSize) = GetMetadataInfo();
 			}
 			catch {
@@ -134,6 +135,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 		~DbgRawMetadataImpl() {
 			Debug.Assert(Environment.HasShutdownStarted, nameof(DbgRawMetadataImpl) + " dtor called!");
 			Dispose();
+		}
+
+		public unsafe override void UpdateMemory() {
+			if (disposed)
+				throw new ObjectDisposedException(nameof(DbgRawMetadataImpl));
+			process?.ReadMemory(moduleAddress, address.ToPointer(), size);
 		}
 
 		internal DbgRawMetadata TryAddRef() {
@@ -174,11 +181,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 
 		internal void ForceDispose() {
 			GC.SuppressFinalize(this);
-			if (isProcessMemory && address != IntPtr.Zero && Interlocked.Exchange(ref freedAddress, 1) == 0) {
+			if (process != null && address != IntPtr.Zero && Interlocked.Exchange(ref freedAddress, 1) == 0) {
 				bool b = NativeMethods.VirtualFree(address, IntPtr.Zero, NativeMethods.MEM_RELEASE);
 				Debug.Assert(b);
 			}
-			if (!isProcessMemory) {
+			if (process == null) {
 				try {
 					if (moduleBytesHandle.IsAllocated)
 						moduleBytesHandle.Free();

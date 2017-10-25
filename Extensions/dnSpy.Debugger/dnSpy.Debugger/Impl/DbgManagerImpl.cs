@@ -1039,7 +1039,16 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed(object sender, ModulesRefreshedEventArgs e) =>
-			DbgThread(() => boundBreakpointsManager.ReAddBreakpoints_DbgThread(e.Modules));
+			DbgThread(() => DbgModuleMemoryRefreshedNotifier_ModulesRefreshed_CorDebug(e));
+
+		public override event EventHandler<ModulesRefreshedEventArgs> ModulesRefreshed;
+		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed_CorDebug(ModulesRefreshedEventArgs e) {
+			Dispatcher.VerifyAccess();
+			foreach (var module in e.Modules)
+				((DbgModuleImpl)module).RaiseRefreshed();
+			ModulesRefreshed?.Invoke(this, e);
+			boundBreakpointsManager.ReAddBreakpoints_DbgThread(e.Modules);
+		}
 
 		public override void Close(DbgObject obj) {
 			if (obj == null)

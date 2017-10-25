@@ -101,22 +101,26 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			readonly uint token;
 			readonly DbgModule module;
 			/*readonly*/ ModuleId moduleId;
+			readonly int refreshedVersion;
 
 			public DbgLanguageDebugInfoKey(DbgModule module, uint token) {
 				this.token = token;
 				moduleId = default;
 				this.module = module;
+				refreshedVersion = module.RefreshedVersion;
 			}
 
 			public DbgLanguageDebugInfoKey(ModuleId moduleId, uint token) {
 				this.token = token;
 				this.moduleId = moduleId;
 				module = null;
+				refreshedVersion = 0;
 			}
 
 			public bool Equals(DbgLanguageDebugInfoKey other) =>
 				token == other.token &&
 				module == other.module &&
+				refreshedVersion == other.refreshedVersion &&
 				moduleId == other.moduleId;
 		}
 

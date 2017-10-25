@@ -30,7 +30,19 @@ using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
+	[Export(typeof(IDbgManagerStartListener))]
+	sealed class ValueNodesVMFactoryImpl_DbgManagerStartListener : IDbgManagerStartListener {
+		readonly Lazy<ValueNodesVMFactoryImpl> valueNodesVMFactoryImpl;
+
+		[ImportingConstructor]
+		ValueNodesVMFactoryImpl_DbgManagerStartListener(Lazy<ValueNodesVMFactoryImpl> valueNodesVMFactoryImpl) =>
+			this.valueNodesVMFactoryImpl = valueNodesVMFactoryImpl;
+
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => valueNodesVMFactoryImpl.Value.OnStart(dbgManager);
+	}
+
 	[Export(typeof(ValueNodesVMFactory))]
+	[Export(typeof(ValueNodesVMFactoryImpl))]
 	sealed class ValueNodesVMFactoryImpl : ValueNodesVMFactory {
 		readonly UIDispatcher uiDispatcher;
 		readonly ITreeViewService treeViewService;
@@ -93,6 +105,17 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				if (vm != sender)
 					vm.RecreateRootChildren_UI();
 			}
+		}
+
+		internal void OnStart(DbgManager dbgManager) => dbgManager.ModulesRefreshed += DbgManager_ModulesRefreshed;
+
+		void DbgManager_ModulesRefreshed(object sender, ModulesRefreshedEventArgs e) =>
+			uiDispatcher.UI(() => OnModulesRefreshed());
+
+		void OnModulesRefreshed() {
+			uiDispatcher.VerifyAccess();
+			foreach (var vm in allValueNodesVMs)
+				vm.RefreshAllNodes_UI();
 		}
 	}
 }

@@ -177,6 +177,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
+		internal void RefreshAllNodes_UI() {
+			valueNodesContext.UIDispatcher.VerifyAccess();
+			valueNodesProvider.RefreshAllNodes();
+			RecreateRootChildren_UI();
+		}
+
+		// UI thread
 		internal void RecreateRootChildren_UI() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			refreshNameFields = false;
