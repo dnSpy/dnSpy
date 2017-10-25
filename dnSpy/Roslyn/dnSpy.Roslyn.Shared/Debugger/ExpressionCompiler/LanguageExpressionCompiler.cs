@@ -171,11 +171,43 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			info.TupleLocalMap = default;
 			info.DefaultNamespaceName = defaultNamespaceName ?? string.Empty;
 			info.LocalVariableNames = RoslynExpressionCompilerMethods.GetLocalNames(methodDebugInfo.Method.Body?.Variables.Count ?? 0, containingScopes, compilerGeneratedVariableInfos);
+			info.ParameterNames = GetParameterNames(langDebugInfo.MethodDebugInfo.Method);
 			info.LocalConstants = default;
 			info.ReuseSpan = RoslynExpressionCompilerMethods.GetReuseSpan(allScopes, langDebugInfo.ILOffset);
 
 			return info;
 		}
+
+		ImmutableArray<string> GetParameterNames(MethodDef method) {
+			var ps = method.Parameters;
+			if (method.MethodSig.Params.Count == 0)
+				return default;
+
+			bool valid = true;
+			for (int i = 0; i < ps.Count; i++) {
+				var p = ps[i];
+				if (!p.IsNormalMethodParameter)
+					continue;
+				if (GetParameterName(i, p.Name) != p.Name) {
+					valid = false;
+					break;
+				}
+			}
+			if (valid)
+				return default;
+
+			var builder = ImmutableArray.CreateBuilder<string>(method.Parameters.Count);
+			for (int i = 0; i < ps.Count; i++) {
+				var p = ps[i];
+				if (p.IsNormalMethodParameter)
+					builder.Add(GetParameterName(i, p.Name));
+				else
+					builder.Add(null);
+			}
+			return builder.ToImmutable();
+		}
+
+		protected abstract string GetParameterName(int index, string name);
 
 		protected abstract ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, MethodDebugScope scope, out string defaultNamespaceName);
 
@@ -421,7 +453,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 		}
 
 		protected DbgDotNetCompilationResult CompileGetLocals(EvalContextState state, MethodDef method) {
-			var builder = new GetLocalsAssemblyBuilder(this, method, state.MethodDebugInfo.LocalVariableNames);
+			var builder = new GetLocalsAssemblyBuilder(this, method, state.MethodDebugInfo.LocalVariableNames, state.MethodDebugInfo.ParameterNames);
 			var asmBytes = builder.Compile(out var localsInfo, out var typeName, out var errorMessage);
 			return CreateCompilationResult(state, asmBytes, typeName, localsInfo, errorMessage);
 		}
