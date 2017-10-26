@@ -196,6 +196,15 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The metadata of the module couldn&apos;t be found or it is invalid.
+        /// </summary>
+        public static string ModuleMetadataNotFoundOrInvalid {
+            get {
+                return ResourceManager.GetString("ModuleMetadataNotFoundOrInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No object found at the given address.
         /// </summary>
         public static string NoDotNetObjectFoundAtAddress {

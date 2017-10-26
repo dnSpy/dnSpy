@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="languageName">Language name, see <see cref="PredefinedDbgLanguageNames"/></param>
 		/// <param name="languageDisplayName">Language's display name (shown in the UI)</param>
 		/// <param name="decompilerGuid">Decompiler GUID, see <see cref="PredefinedDecompilerGuids"/> or one of the decompiler GUIDs (<see cref="DecompilerConstants"/>)</param>
-		/// <param name="order">Order</param>
+		/// <param name="order">Order, see <see cref="PredefinedDbgDotNetExpressionCompilerOrders"/></param>
 		public ExportDbgDotNetExpressionCompilerAttribute(string languageGuid, string languageName, string languageDisplayName, string decompilerGuid, double order = double.MaxValue)
 			: base(typeof(DbgDotNetExpressionCompiler)) {
 			LanguageGuid = languageGuid ?? throw new ArgumentNullException(nameof(languageGuid));

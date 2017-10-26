@@ -142,6 +142,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			using (reflectionAssembly.AppDomain.AddTemporaryAssembly(reflectionAssembly)) {
 				var ilvmState = methodState.ILVMExecuteState;
 				if (ilvmState == null) {
+					// This could fail so get it first
+					var realMethod = context.Runtime.GetDotNetRuntime().GetFrameMethod(context, frame, cancellationToken) ?? throw new InvalidOperationException();
+
 					var type = reflectionAssembly.GetTypeThrow(typeName);
 					Debug.Assert(type.GetGenericArguments().Count == genericTypeArguments.Count);
 					if (genericTypeArguments.Count != 0)
@@ -155,7 +158,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 					methodState.ExpectedType = method.ReturnType;
 					ilvmState = stateImpl.ILVM.CreateExecuteState(method);
 					methodState.ILVMExecuteState = ilvmState;
-					var realMethod = context.Runtime.GetDotNetRuntime().GetFrameMethod(context, frame, cancellationToken) ?? throw new InvalidOperationException();
 					methodState.RealMethodBody = realMethod.GetMethodBody();
 				}
 

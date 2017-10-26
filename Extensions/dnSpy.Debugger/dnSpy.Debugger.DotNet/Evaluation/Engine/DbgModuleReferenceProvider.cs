@@ -107,6 +107,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public DbgModuleReference[] ModuleReferences;
 
 			/// <summary>
+			/// Module reference of source module
+			/// </summary>
+			public DbgModuleReference SourceModuleReference;
+
+			/// <summary>
 			/// Referenced assemblies that have been loaded, including all their current modules. If an
 			/// assembly gets unloaded or if it loads/unloads a module, we need to invalidate the cached data.
 			/// </summary>
@@ -194,12 +199,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			if (module.TryGetData(out ModuleReferencesState state)) {
 				if (CanReuse(module.AppDomain, state))
-					return new GetModuleReferencesResult(state.ModuleReferences);
+					return CreateGetModuleReferencesResult(state);
 			}
 			else
 				state = module.GetOrCreateData<ModuleReferencesState>();
 
-			InitializeState(runtime, module.Assembly, state);
+			InitializeState(runtime, module, state);
+			return CreateGetModuleReferencesResult(state);
+		}
+
+		GetModuleReferencesResult CreateGetModuleReferencesResult(ModuleReferencesState state) {
+			if (state.SourceModuleReference == null || state.SourceModuleReference.MetadataAddress == IntPtr.Zero || state.SourceModuleReference.MetadataSize == 0)
+				return new GetModuleReferencesResult(dnSpy_Debugger_DotNet_Resources.ModuleMetadataNotFoundOrInvalid);
 			return new GetModuleReferencesResult(state.ModuleReferences);
 		}
 
@@ -234,9 +245,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			});
 		}
 
-		void InitializeState(DbgRuntime runtime, DmdAssembly assembly, ModuleReferencesState state) {
+		void InitializeState(DbgRuntime runtime, DmdModule sourceModule, ModuleReferencesState state) {
 			state.AssemblyInfos.Clear();
 			state.NonLoadedAssemblies.Clear();
+			state.SourceModuleReference = null;
+			var assembly = sourceModule.Assembly;
 			var appDomain = assembly.AppDomain;
 
 			var intrinsicsState = GetIntrinsicsAssemblyState(runtime, appDomain);
@@ -306,6 +319,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						}
 						modRef.Update(module.RefreshedVersion);
 						modRefs.Add(modRef);
+						if (modInfo.Module == sourceModule) {
+							Debug.Assert(state.SourceModuleReference == null);
+							state.SourceModuleReference = modRef;
+						}
 					}
 				}
 			}

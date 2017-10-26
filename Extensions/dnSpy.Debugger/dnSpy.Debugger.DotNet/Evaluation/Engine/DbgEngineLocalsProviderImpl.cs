@@ -128,15 +128,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgEngineLocalsValueNodeInfo[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
 			DbgEngineLocalsValueNodeInfo[] valueNodes = null;
 			try {
-				var refsResult = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
-				if (refsResult.ErrorMessage != null)
+				var module = frame.Module;
+				if (module == null)
 					return Array.Empty<DbgEngineLocalsValueNodeInfo>();
-
 				var languageDebugInfo = context.TryGetLanguageDebugInfo();
 				if (languageDebugInfo == null)
 					return Array.Empty<DbgEngineLocalsValueNodeInfo>();
 				var methodDebugInfo = languageDebugInfo.MethodDebugInfo;
-				var module = frame.Module ?? throw new InvalidOperationException();
+
+				var refsResult = dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
+				if (refsResult.ErrorMessage != null)
+					return new[] { CreateInternalErrorNode(context, frame, refsResult.ErrorMessage, cancellationToken) };
 
 				// Since we attach this to the module, the module doesn't have to be part of Key
 				var state = StateWithKey<GetNodesState>.GetOrCreate(module, this);

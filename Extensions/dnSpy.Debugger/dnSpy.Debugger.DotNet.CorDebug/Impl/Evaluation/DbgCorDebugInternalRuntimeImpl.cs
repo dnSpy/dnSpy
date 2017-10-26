@@ -93,13 +93,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				cancellationToken.ThrowIfCancellationRequested();
 				if (ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame)) {
 					ilFrame.GetFrameMethodInfo(out var module, out var methodMetadataToken, out var genericTypeArguments, out var genericMethodArguments);
-					var method = module.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.ThrowOnError);
-					if (genericTypeArguments.Count != 0) {
-						var type = method.ReflectedType.MakeGenericType(genericTypeArguments);
-						method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true);
+					// Don't throw if it fails to resolve. Callers must be able to handle null return values
+					var method = module.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.None);
+					if ((object)method != null) {
+						if (genericTypeArguments.Count != 0) {
+							var type = method.ReflectedType.MakeGenericType(genericTypeArguments);
+							method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true);
+						}
+						if (genericMethodArguments.Count != 0)
+							method = ((DmdMethodInfo)method).MakeGenericMethod(genericMethodArguments);
 					}
-					if (genericMethodArguments.Count != 0)
-						method = ((DmdMethodInfo)method).MakeGenericMethod(genericMethodArguments);
 					state.Method = method;
 				}
 				state.Initialized = true;
