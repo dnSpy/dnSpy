@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
@@ -307,7 +308,11 @@ namespace dnSpy.Contracts.Documents.TreeView {
 			Debug.Assert(b);
 			if (!b)
 				return;
-			DragDrop.DoDragDrop(dragSource, Copy(nodes), DragDropEffects.All);
+			try {
+				DragDrop.DoDragDrop(dragSource, Copy(nodes), DragDropEffects.All);
+			}
+			catch (COMException) {
+			}
 		}
 
 		/// <summary>
