@@ -244,7 +244,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return GetAssemblyCore(name.Name, name);
 		}
 
-		DmdAssemblyImpl GetAssemblyCore(string simpleName, IDmdAssemblyName name) {
+		DmdAssembly GetAssemblyCore(string simpleName, IDmdAssemblyName name) {
 			bool onlySimpleName = name == null || (name.Version == null && name.CultureName == null && name.GetPublicKeyToken() == null);
 			if (onlySimpleName)
 				name = null;
@@ -279,7 +279,47 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					}
 				}
 			}
+			else if (CanResolveToCorLib(name)) {
+				// .NET Core hack. We don't resolve assemblies, but some attributes used by the
+				// debugger reference types in an assembly that just forwards the type to the corlib.
+				// This assembly isn't normally loaded at runtime.
+				// We could resolve assemblies but then it's possible that we'll resolve the wrong
+				// assembly. This is the only known case where we must resolve an assembly so, for now,
+				// use this hack by just returning the corlib.
+				return CorLib;
+			}
+
 			return assembly;
+		}
+
+		static bool CanResolveToCorLib(IDmdAssemblyName name) {
+			if (name == null)
+				return false;
+			if (!string.IsNullOrEmpty(name.CultureName))
+				return false;
+
+			if (Equals(name.GetPublicKeyToken(), pkt)) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(name.Name, "System.Diagnostics.Debug"))
+					return true;
+				return false;
+			}
+
+			return false;
+		}
+		static readonly byte[] pkt = new byte[8] { 0xB0, 0x3F, 0x5F, 0x7F, 0x11, 0xD5, 0x0A, 0x3A };
+
+		static bool Equals(byte[] a, byte[] b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Length != b.Length)
+				return false;
+			for (int i = 0; i < a.Length; i++) {
+				if (a[i] != b[i])
+					return false;
+			}
+			return true;
 		}
 
 		static DmdAssemblyImpl GetAssemblySlowCore(DmdAssemblyImpl[] assemblies, string simpleName, IDmdAssemblyName name) {
