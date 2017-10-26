@@ -57,8 +57,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.VisualBasic {
 			return ImmutableArray.Create(fileLevelBuilder.ToImmutable(), projectLevelBuilder.ToImmutable());
 		}
 
-		protected override string GetParameterName(int index, string name) => IdentifierEscaper.Escape(name);
-
 		public override DbgDotNetCompilationResult CompileAssignment(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			GetCompilationState<VisualBasicEvalContextState>(context, frame, references, out var langDebugInfo, out var method, out var localVarSigTok, out var state, out var metadataBlocks, out var methodVersion);
 

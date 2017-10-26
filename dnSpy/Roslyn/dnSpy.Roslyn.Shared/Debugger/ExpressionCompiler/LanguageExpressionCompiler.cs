@@ -207,7 +207,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			return builder.ToImmutable();
 		}
 
-		protected abstract string GetParameterName(int index, string name);
+		protected virtual string GetParameterName(int index, string name) => GetParameterNameCore(index, name);
+
+		protected string GetParameterNameCore(int index, string name) {
+			if (string.IsNullOrEmpty(name))
+				return "A_" + index.ToString();
+			return IdentifierEscaper.Escape(name);
+		}
 
 		protected abstract ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, MethodDebugScope scope, out string defaultNamespaceName);
 
