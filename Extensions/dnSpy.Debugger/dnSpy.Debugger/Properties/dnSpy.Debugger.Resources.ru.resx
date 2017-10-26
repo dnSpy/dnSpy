@@ -1941,4 +1941,10 @@ HResult: 0x{3:X8}</value>
   <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
     <value>System modules</value>
   </data>
+  <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
+    <value>The runtime is unable to evaluate this expression.</value>
+  </data>
+  <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
+    <value>Enable or disable all exceptions matching the current search criteria</value>
+  </data>
 </root>

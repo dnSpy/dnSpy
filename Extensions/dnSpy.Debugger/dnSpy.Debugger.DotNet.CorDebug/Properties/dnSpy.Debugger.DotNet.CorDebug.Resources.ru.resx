@@ -272,7 +272,7 @@
     <value>Безопасность</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>Смещение IL {0}</value>
+    <value>Смещение в IL {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>линия {0} символ {1}</value>
