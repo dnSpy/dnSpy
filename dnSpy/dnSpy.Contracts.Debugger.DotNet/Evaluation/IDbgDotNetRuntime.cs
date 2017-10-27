@@ -42,6 +42,13 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		ModuleId GetModuleId(DbgModule module);
 
 		/// <summary>
+		/// Gets the module data or <see cref="DbgDotNetRawModuleBytes.None"/>
+		/// </summary>
+		/// <param name="module"></param>
+		/// <returns></returns>
+		DbgDotNetRawModuleBytes GetRawModuleBytes(DbgModule module);
+
+		/// <summary>
 		/// Gets the current method or null if it's not a normal IL frame
 		/// </summary>
 		/// <param name="context">Context</param>
@@ -350,6 +357,36 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public DbgDotNetCreateValueResult(DbgDotNetValue value) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
 			Error = null;
+		}
+	}
+
+	/// <summary>
+	/// Contains .NET module data information
+	/// </summary>
+	public struct DbgDotNetRawModuleBytes {
+		/// <summary>
+		/// No .NET module data is available
+		/// </summary>
+		public static readonly DbgDotNetRawModuleBytes None = default;
+
+		/// <summary>
+		/// true if it's file layout, false if it's memory layout
+		/// </summary>
+		public bool IsFileLayout { get; }
+
+		/// <summary>
+		/// Raw bytes of the .NET module
+		/// </summary>
+		public byte[] RawBytes { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="rawBytes">Raw bytes of the .NET module</param>
+		/// <param name="isFileLayout">true if it's file layout, false if it's memory layout</param>
+		public DbgDotNetRawModuleBytes(byte[] rawBytes, bool isFileLayout) {
+			IsFileLayout = isFileLayout;
+			RawBytes = rawBytes ?? throw new ArgumentNullException(nameof(rawBytes));
 		}
 	}
 }

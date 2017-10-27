@@ -72,6 +72,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		public ModuleId GetModuleId(DbgModule module) => engine.GetModuleId(module);
 
+		public DbgDotNetRawModuleBytes GetRawModuleBytes(DbgModule module) {
+			if (module.IsDynamic) {
+				//TODO:
+			}
+
+			return DbgDotNetRawModuleBytes.None;
+		}
+
 		sealed class GetFrameMethodState {
 			public bool Initialized;
 			public DmdMethodBase Method;
