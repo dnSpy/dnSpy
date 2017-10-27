@@ -202,7 +202,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var languageDebugInfo = context.TryGetLanguageDebugInfo();
 			if (languageDebugInfo == null) {
 				evalExprState = null;
-				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+				return new EvaluateImplResult(dnSpy_Debugger_DotNet_Resources.CantEvaluateWhenCurrentFrameIsNative, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 			}
 			var methodDebugInfo = languageDebugInfo.MethodDebugInfo;
 			var module = frame.Module ?? throw new InvalidOperationException();
@@ -213,7 +213,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		EvaluateImplResult? GetTypeInterpreterState(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, string expression, DbgEvaluationOptions options, object stateObj, CancellationToken cancellationToken, out EvaluateImplExpressionState evalExprState) {
 			if (type.TypeSignatureKind != DmdTypeSignatureKind.Type) {
 				evalExprState = null;
-				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+				return new EvaluateImplResult(dnSpy_Debugger_DotNet_Resources.CantEvaluateWhenCurrentFrameIsNative, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 			}
 
 			// This is for evaluating DebuggerDisplayAttribute expressions only, so don't use any aliases
