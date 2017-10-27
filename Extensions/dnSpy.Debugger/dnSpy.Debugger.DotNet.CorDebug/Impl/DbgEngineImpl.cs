@@ -307,6 +307,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			dnDebugger.OnThreadAdded += DnDebugger_OnThreadAdded;
 			dnDebugger.OnAppDomainAdded += DnDebugger_OnAppDomainAdded;
 			dnDebugger.OnModuleAdded += DnDebugger_OnModuleAdded;
+			dnDebugger.OnCorModuleDefCreated += DnDebugger_OnCorModuleDefCreated;
 		}
 
 		void UnhookDnDebuggerEventsAndCloseProcessHandle() {
@@ -317,6 +318,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				dnDebugger.OnThreadAdded -= DnDebugger_OnThreadAdded;
 				dnDebugger.OnAppDomainAdded -= DnDebugger_OnAppDomainAdded;
 				dnDebugger.OnModuleAdded -= DnDebugger_OnModuleAdded;
+				dnDebugger.OnCorModuleDefCreated -= DnDebugger_OnCorModuleDefCreated;
 			}
 			hProcess_debuggee?.Close();
 		}

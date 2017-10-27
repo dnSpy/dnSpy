@@ -179,6 +179,7 @@
     <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.Evaluation.cs" />
+    <Compile Include="Impl\DbgEngineImpl.ModuleDef.cs" />
     <Compile Include="Impl\DbgEngineImpl.Threads.cs" />
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DbgModuleMemoryRefreshedNotifierImpl.cs" />
@@ -187,6 +188,7 @@
     <Compile Include="Impl\DmdDispatcherImpl.cs" />
     <Compile Include="Impl\DmdDynamicModuleHelperImpl.cs" />
     <Compile Include="Impl\DnDebuggerObjectHolder.cs" />
+    <Compile Include="Impl\DnlibAssemblyResolverImpl.cs" />
     <Compile Include="Impl\DnModuleIdExtensions.cs" />
     <Compile Include="Impl\DnThreadUtils.cs" />
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
