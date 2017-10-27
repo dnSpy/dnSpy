@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
 using dndbg.DotNet;
@@ -223,18 +224,23 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var dnModule = dbg.TryGetModule(lcArgs.CorAppDomain, cls);
 					if (dnModule.IsDynamic) {
 						UpdateDynamicModuleIds(dnModule);
-						GetDynamicModuleHelper(dnModule).RaiseTypeLoaded(new DmdTypeLoadedEventArgs((int)cls.Token));
-						if (dnModule?.CorModuleDef != null) {
-							var module = TryGetModule(dnModule.CorModule);
-							Debug.Assert(module != null);
-							if (module != null)
-								ClassLoaded?.Invoke(this, new ClassLoadedEventArgs(module, cls.Token));
+						var module = TryGetModule(dnModule.CorModule);
+						Debug.Assert(module != null);
+						if (module != null)
+							dbgModuleMemoryRefreshedNotifier.RaiseModulesRefreshed(new[] { module });
+						if (dnModule?.CorModuleDef != null && module != null) {
+							if (TryGetModuleData(module, out var data))
+								data.OnLoadClass();
+							ClassLoaded?.Invoke(this, new ClassLoadedEventArgs(module, cls.Token));
 						}
+						GetDynamicModuleHelper(dnModule).RaiseTypeLoaded(new DmdTypeLoadedEventArgs((int)cls.Token));
 					}
 				}
 				break;
 			}
 		}
+
+		internal void RaiseModulesRefreshed(DbgModule module) => dbgModuleMemoryRefreshedNotifier.RaiseModulesRefreshed(new[] { module });
 
 		internal DmdDynamicModuleHelperImpl GetDynamicModuleHelper(DnModule dnModule) {
 			Debug.Assert(dnModule.IsDynamic);
@@ -443,11 +449,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			public DnModule DnModule { get; }
 			public ModuleId ModuleId { get; private set; }
 			public bool HasUpdatedModuleId { get; private set; }
+			public int LoadClassVersion => loadClassVersion;
+			volatile int loadClassVersion;
 			public DbgModuleData(DbgEngineImpl engine, DnModule dnModule, ModuleId moduleId) {
 				Engine = engine;
 				DnModule = dnModule;
 				ModuleId = moduleId;
 			}
+			public void OnLoadClass() => Interlocked.Increment(ref loadClassVersion);
 			public void UpdateModuleId(ModuleId moduleId) {
 				if (!moduleId.IsDynamic)
 					throw new InvalidOperationException();
@@ -466,6 +475,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (module.TryGetData(out data) && data.Engine == this)
 				return true;
 			data = null;
+			return false;
+		}
+
+		internal bool TryGetDnModuleAndVersion(DbgModule module, out DnModule dnModule, out int loadClassVersion) {
+			if (module.TryGetData(out DbgModuleData data) && data.Engine == this) {
+				dnModule = data.DnModule;
+				loadClassVersion = data.LoadClassVersion;
+				return true;
+			}
+			dnModule = null;
+			loadClassVersion = -1;
 			return false;
 		}
 

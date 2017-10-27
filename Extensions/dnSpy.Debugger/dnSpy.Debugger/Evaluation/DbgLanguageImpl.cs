@@ -65,7 +65,13 @@ namespace dnSpy.Debugger.Evaluation {
 			if (funcEvalTimeout == TimeSpan.Zero)
 				funcEvalTimeout = DefaultFuncEvalTimeout;
 			var context = new DbgEvaluationContextImpl(this, runtime, funcEvalTimeout, options);
-			engineLanguage.InitializeContext(context, location, cancellationToken);
+			try {
+				engineLanguage.InitializeContext(context, location, cancellationToken);
+			}
+			catch {
+				context.Close();
+				throw;
+			}
 			return context;
 		}
 	}

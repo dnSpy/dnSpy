@@ -194,8 +194,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			DbgLanguage language;
 			bool forceRecreateAllNodes;
 			if (isOpen) {
-				(evalContext, frame) = valueNodesProvider.TryGetEvaluationContextInfo();
 				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions);
+				(evalContext, frame) = valueNodesProvider.TryGetEvaluationContextInfo();
 				runtimeKindGuid = valueNodesProvider.Language?.RuntimeKindGuid ?? lastRuntimeKindGuid;
 				// Frame got closed. Don't use the new nodes, we'll get new nodes using the new frame in a little while.
 				if (nodeInfo.FrameClosed)

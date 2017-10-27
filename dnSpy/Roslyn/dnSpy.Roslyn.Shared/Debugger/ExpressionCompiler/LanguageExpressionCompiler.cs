@@ -72,10 +72,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			return module.GetOrCreateData<T>();
 		}
 
-		protected void GetCompilationState<T>(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, out DbgLanguageDebugInfo langDebugInfo, out MethodDef method, out int localVarSigTok, out T state, out ImmutableArray<MetadataBlock> metadataBlocks, out int methodVersion) where T : EvalContextState, new() {
+		protected void GetCompilationState<T>(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, out DbgLanguageDebugInfo langDebugInfo, out MethodDef method, out int methodToken, out int localVarSigTok, out T state, out ImmutableArray<MetadataBlock> metadataBlocks, out int methodVersion) where T : EvalContextState, new() {
 			langDebugInfo = context.GetLanguageDebugInfo();
 			method = langDebugInfo.MethodDebugInfo.Method;
-			localVarSigTok = (int)(method.Body?.LocalVarSigTok ?? 0);
+			methodToken = langDebugInfo.MethodToken;
+			localVarSigTok = langDebugInfo.LocalVarSigTok;
 
 			state = GetEvalContextState<T>(frame);
 

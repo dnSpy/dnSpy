@@ -38,7 +38,15 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		readonly EvalContextInfo evalContextInfo;
 
 		sealed class EvalContextInfo {
-			public DbgEvaluationContext Context;
+			public DbgEvaluationContext Context {
+				get => __context_DONT_USE;
+				set {
+					__context_DONT_USE?.Close();
+					__context_DONT_USE = value;
+				}
+			}
+			DbgEvaluationContext __context_DONT_USE;
+
 			public DbgLanguage Language;
 			public DbgStackFrame Frame;
 
@@ -72,7 +80,6 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public void Initialize_UI(bool enable) {
 			uiDispatcher.VerifyAccess();
 			isOpen = enable;
-			evalContextInfo.Context?.Process.DbgManager.Close(evalContextInfo.Context);
 			evalContextInfo.Clear();
 			variablesWindowValueNodesProvider.Initialize(enable);
 			if (enable)
@@ -178,10 +185,9 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 		public override (DbgEvaluationContext context, DbgStackFrame frame) TryGetEvaluationContextInfo() {
 			var info = TryGetLanguage();
-			if (evalContextInfo.Language == info.language && evalContextInfo.Frame == info.frame)
+			if (evalContextInfo.Context != null && evalContextInfo.Language == info.language && evalContextInfo.Frame == info.frame)
 				return (evalContextInfo.Context, evalContextInfo.Frame);
 
-			evalContextInfo.Context?.Process.DbgManager.Close(evalContextInfo.Context);
 			evalContextInfo.Language = info.language;
 			evalContextInfo.Frame = info.frame;
 			if (info.frame != null) {

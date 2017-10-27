@@ -34,6 +34,16 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public MethodDebugInfo MethodDebugInfo { get; }
 
 		/// <summary>
+		/// Gets the method token
+		/// </summary>
+		public int MethodToken { get; }
+
+		/// <summary>
+		/// Gets the method local variables signature token
+		/// </summary>
+		public int LocalVarSigTok { get; }
+
+		/// <summary>
 		/// Gets the method version number, a 1-based number
 		/// </summary>
 		public int MethodVersion { get; }
@@ -47,12 +57,16 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Constructor
 		/// </summary>
 		/// <param name="methodDebugInfo">Method debug info</param>
+		/// <param name="methodToken">Method token</param>
+		/// <param name="localVarSigTok">Method local variables signature token</param>
 		/// <param name="methodVersion">Method version number, a 1-based number</param>
 		/// <param name="ilOffset">IL offset</param>
-		public DbgLanguageDebugInfo(MethodDebugInfo methodDebugInfo, int methodVersion, uint ilOffset) {
+		public DbgLanguageDebugInfo(MethodDebugInfo methodDebugInfo, int methodToken, int localVarSigTok, int methodVersion, uint ilOffset) {
 			if (methodVersion < 1)
 				throw new ArgumentOutOfRangeException(nameof(methodVersion));
 			MethodDebugInfo = methodDebugInfo ?? throw new ArgumentNullException(nameof(methodDebugInfo));
+			MethodToken = methodToken;
+			LocalVarSigTok = localVarSigTok;
 			MethodVersion = methodVersion;
 			ILOffset = ilOffset;
 		}

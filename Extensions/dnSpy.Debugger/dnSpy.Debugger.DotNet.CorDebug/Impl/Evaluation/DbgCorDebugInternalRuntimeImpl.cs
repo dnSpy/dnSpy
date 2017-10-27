@@ -20,10 +20,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
+using dnlib.DotNet;
+using dnlib.DotNet.Writer;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
@@ -73,11 +76,109 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public ModuleId GetModuleId(DbgModule module) => engine.GetModuleId(module);
 
 		public DbgDotNetRawModuleBytes GetRawModuleBytes(DbgModule module) {
-			if (module.IsDynamic) {
-				//TODO:
+			if (!module.IsDynamic)
+				return DbgDotNetRawModuleBytes.None;
+			if (Dispatcher.CheckAccess())
+				return GetRawModuleBytesCore(module);
+			return GetRawModuleBytesCore2(module);
+
+			DbgDotNetRawModuleBytes GetRawModuleBytesCore2(DbgModule module2) =>
+				Dispatcher.InvokeRethrow(() => GetRawModuleBytesCore(module2));
+		}
+
+		sealed class DynamicModuleMetadataState {
+			public byte[] RawBytes;
+			public ModuleDefMD Module;
+			public int LoadClassVersion;
+			public DbgDotNetRawModuleBytes ToDbgDotNetRawModuleBytes() {
+				if (RawBytes != null)
+					return new DbgDotNetRawModuleBytes(RawBytes, isFileLayout: true);
+				return DbgDotNetRawModuleBytes.None;
+			}
+		}
+
+		DbgDotNetRawModuleBytes GetRawModuleBytesCore(DbgModule module) {
+			Dispatcher.VerifyAccess();
+			if (!module.IsDynamic)
+				return DbgDotNetRawModuleBytes.None;
+
+			if (!engine.TryGetDnModuleAndVersion(module, out var dnModule, out int loadClassVersion))
+				return DbgDotNetRawModuleBytes.None;
+
+			var state = module.GetOrCreateData<DynamicModuleMetadataState>();
+			if (state.RawBytes != null && state.LoadClassVersion == loadClassVersion)
+				return state.ToDbgDotNetRawModuleBytes();
+
+			var md = dnModule.GetOrCreateCorModuleDef();
+			try {
+				md.DisableMDAPICalls = false;
+				md.LoadEverything(null);
+			}
+			finally {
+				md.DisableMDAPICalls = true;
 			}
 
-			return DbgDotNetRawModuleBytes.None;
+			var resultStream = new MemoryStream();
+			var options = new ModuleWriterOptions(md);
+			options.MetaDataOptions.Flags = MetaDataFlags.PreserveRids;
+			md.Write(resultStream, options);
+
+			state.Module = null;
+			state.RawBytes = resultStream.ToArray();
+			state.LoadClassVersion = loadClassVersion;
+
+			engine.RaiseModulesRefreshed(module);
+
+			return state.ToDbgDotNetRawModuleBytes();
+		}
+
+		public bool TryGetMethodToken(DbgModule module, int methodToken, out int metadataMethodToken, out int metadataLocalVarSigTok) {
+			if (!module.IsDynamic) {
+				metadataMethodToken = 0;
+				metadataLocalVarSigTok = 0;
+				return false;
+			}
+
+			if (Dispatcher.CheckAccess())
+				return TryGetMethodTokenCore(module, methodToken, out metadataMethodToken, out metadataLocalVarSigTok);
+			return TryGetMethodTokenCore2(module, methodToken, out metadataMethodToken, out metadataLocalVarSigTok);
+
+			bool TryGetMethodTokenCore2(DbgModule module2, int methodToken2, out int metadataMethodToken2, out int metadataLocalVarSigTok2) {
+				int tmpMetadataMethodToken = 0, tmpMetadataLocalVarSigTok = 0;
+				var res2 = Dispatcher.InvokeRethrow(() => {
+					var res = TryGetMethodTokenCore(module2, methodToken2, out var metadataMethodToken3, out var metadataLocalVarSigTok3);
+					tmpMetadataMethodToken = metadataMethodToken3;
+					tmpMetadataLocalVarSigTok = metadataLocalVarSigTok3;
+					return res;
+				});
+				metadataMethodToken2 = tmpMetadataMethodToken;
+				metadataLocalVarSigTok2 = tmpMetadataLocalVarSigTok;
+				return res2;
+			}
+		}
+
+		bool TryGetMethodTokenCore(DbgModule module, int methodToken, out int metadataMethodToken, out int metadataLocalVarSigTok) {
+			Dispatcher.VerifyAccess();
+			DynamicModuleMetadataState state = null;
+			if (module.IsDynamic && !module.TryGetData<DynamicModuleMetadataState>(out state)) {
+				GetRawModuleBytesCore(module);
+				bool b = module.TryGetData<DynamicModuleMetadataState>(out state);
+				Debug.Assert(b);
+			}
+			if (state != null) {
+				if (state.Module == null)
+					state.Module = ModuleDefMD.Load(state.RawBytes);
+				var method = state.Module.ResolveToken(methodToken) as MethodDef;
+				if (method != null) {
+					metadataMethodToken = method.MDToken.ToInt32();
+					metadataLocalVarSigTok = (int)(method.Body?.LocalVarSigTok ?? 0);
+					return true;
+				}
+			}
+
+			metadataMethodToken = 0;
+			metadataLocalVarSigTok = 0;
+			return false;
 		}
 
 		sealed class GetFrameMethodState {

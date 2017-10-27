@@ -144,13 +144,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 
 			var state = StateWithKey<RuntimeState>.GetOrCreate(context.Runtime, decompiler);
-			var debugInfo = GetOrCreateDebugInfo(state, loc, cancellationToken);
+			var debugInfo = GetOrCreateDebugInfo(context, state, loc, cancellationToken);
 			if (debugInfo == null)
 				return;
 			DbgLanguageDebugInfoExtensions.SetLanguageDebugInfo(context, debugInfo);
 		}
 
-		DbgLanguageDebugInfo GetOrCreateDebugInfo(RuntimeState state, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
+		DbgLanguageDebugInfo GetOrCreateDebugInfo(DbgEvaluationContext context, RuntimeState state, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
 			DbgLanguageDebugInfoKey key;
 			if (location.DbgModule is DbgModule dbgModule)
 				key = new DbgLanguageDebugInfoKey(dbgModule, location.Token);
@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				}
 			}
 
-			var debugInfo = CreateDebugInfo(location, cancellationToken);
+			var debugInfo = CreateDebugInfo(context, location, cancellationToken);
 			if (debugInfo == null)
 				return null;
 			lock (state.LockObj) {
@@ -182,24 +182,33 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return debugInfo;
 		}
 
-		DbgLanguageDebugInfo CreateDebugInfo(IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
+		DbgLanguageDebugInfo CreateDebugInfo(DbgEvaluationContext context, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
 			const DbgLoadModuleOptions options = DbgLoadModuleOptions.AutoLoaded;
 			ModuleDef mdModule;
 			if (location.DbgModule is DbgModule dbgModule)
 				mdModule = dbgMetadataService.TryGetMetadata(dbgModule, options);
-			else
+			else {
+				dbgModule = null;
 				mdModule = dbgMetadataService.TryGetMetadata(location.Module, options);
+			}
 			Debug.Assert(mdModule != null);
 			if (mdModule == null)
 				return null;
 			cancellationToken.ThrowIfCancellationRequested();
 
 			var method = mdModule.ResolveToken(location.Token) as MethodDef;
-			Debug.Assert(method != null);
+			// Could be null if it's a dynamic assembly. It will get refreshed later and we'll get called again.
 			if (method == null)
 				return null;
 
-			var context = new DecompilationContext {
+			var runtime = context.Runtime.GetDotNetRuntime();
+			int methodToken, localVarSigTok;
+			if (dbgModule == null || !runtime.TryGetMethodToken(dbgModule, method.MDToken.ToInt32(), out methodToken, out localVarSigTok)) {
+				methodToken = method.MDToken.ToInt32();
+				localVarSigTok = (int)(method.Body?.LocalVarSigTok ?? 0);
+			}
+
+			var decContext = new DecompilationContext {
 				CancellationToken = cancellationToken,
 				CalculateBinSpans = true,
 			};
@@ -207,7 +216,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			output.Initialize(method.MDToken.Raw);
 			//TODO: Whenever the decompiler options change, we need to invalidate our cache and every
 			//		single DbgLanguageDebugInfo instance.
-			decompiler.Decompile(method, output, context);
+			decompiler.Decompile(method, output, decContext);
 			var methodDebugInfo = output.TryGetMethodDebugInfo();
 			DecompilerOutputImplCache.Free(ref output);
 			cancellationToken.ThrowIfCancellationRequested();
@@ -217,7 +226,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			// We don't support EnC so the version is always 1
 			const int methodVersion = 1;
-			return new DbgLanguageDebugInfo(methodDebugInfo, methodVersion, location.Offset);
+			return new DbgLanguageDebugInfo(methodDebugInfo, methodToken, localVarSigTok, methodVersion, location.Offset);
 		}
 	}
 }

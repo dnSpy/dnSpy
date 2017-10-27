@@ -49,6 +49,16 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DbgDotNetRawModuleBytes GetRawModuleBytes(DbgModule module);
 
 		/// <summary>
+		/// Translates a method token from the original dynamic module's metadata to the saved module metadata used by the expression compiler
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="methodToken">Method token</param>
+		/// <param name="metadataMethodToken">New method token</param>
+		/// <param name="metadataLocalVarSigTok">New method body local variables signature token</param>
+		/// <returns></returns>
+		bool TryGetMethodToken(DbgModule module, int methodToken, out int metadataMethodToken, out int metadataLocalVarSigTok);
+
+		/// <summary>
 		/// Gets the current method or null if it's not a normal IL frame
 		/// </summary>
 		/// <param name="context">Context</param>
