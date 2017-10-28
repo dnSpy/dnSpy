@@ -170,11 +170,13 @@
     <Compile Include="Documents\AssemblyResolver.cs" />
     <Compile Include="Documents\DefaultDsDocumentLoader.cs" />
     <Compile Include="Documents\DefaultDsDocumentProvider.cs" />
+    <Compile Include="Documents\DotNetCorePaths.cs" />
     <Compile Include="Documents\DsDocumentLoader.cs" />
     <Compile Include="Documents\DsDocumentService.cs" />
     <Compile Include="Documents\DsDocumentServiceAppSettingsModifiedListener.cs" />
     <Compile Include="Documents\DsDocumentServiceProvider.cs" />
     <Compile Include="Documents\DsDocumentServiceSettings.cs" />
+    <Compile Include="Documents\FrameworkPath.cs" />
     <Compile Include="Documents\IDsDocumentLoader.cs" />
     <Compile Include="Documents\MethodAnnotations.cs" />
     <Compile Include="Documents\ReferenceNavigatorServiceImpl.cs" />
@@ -316,6 +318,7 @@
     <Compile Include="Documents\Tabs\TabContentImpl.cs" />
     <Compile Include="Documents\Tabs\TabHistory.cs" />
     <Compile Include="Documents\Tabs\TreeNodeReferenceDocumentTabContentProvider.cs" />
+    <Compile Include="Documents\TargetFrameworkAttributeInfo.cs" />
     <Compile Include="Documents\TreeView\AssemblyDocumentNodeImpl.cs" />
     <Compile Include="Documents\TreeView\AssemblyReferenceNodeImpl.cs" />
     <Compile Include="Documents\TreeView\BaseTypeFolderNodeImpl.cs" />

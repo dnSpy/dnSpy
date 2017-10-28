@@ -250,20 +250,19 @@ namespace dnSpy.Documents {
 					return AddTempCachedDocument(document);
 				result = GetOrAdd(document);
 			}
-			if (result != document) {
-				if (info.Document != null && origAssemblyRef != null && document.AssemblyDef is AssemblyDef asm) {
-					if (!AssemblyNameComparer.CompareAll.Equals(origAssemblyRef, asm)) {
-						rwLock.EnterWriteLock();
-						try {
-							info.AddAlternativeAssemblyName(origAssemblyRef);
-						}
-						finally {
-							rwLock.ExitWriteLock();
-						}
+			if (info.Document != null && origAssemblyRef != null && document.AssemblyDef is AssemblyDef asm) {
+				if (!AssemblyNameComparer.CompareAll.Equals(origAssemblyRef, asm)) {
+					rwLock.EnterWriteLock();
+					try {
+						info.AddAlternativeAssemblyName(origAssemblyRef);
+					}
+					finally {
+						rwLock.ExitWriteLock();
 					}
 				}
-				Dispose(document);
 			}
+			if (result != document)
+				Dispose(document);
 			return result;
 		}
 

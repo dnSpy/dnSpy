@@ -28,6 +28,7 @@ namespace dnSpy.Documents {
 	sealed class AssemblyResolver : IAssemblyResolver {
 		readonly DsDocumentService documentService;
 		readonly FailedAssemblyResolveCache failedAssemblyResolveCache;
+		readonly DotNetCorePaths dotNetCorePaths;
 
 		static readonly Version invalidMscorlibVersion = new Version(255, 255, 255, 255);
 		static readonly Version newMscorlibVersion = new Version(4, 0, 0, 0);
@@ -35,17 +36,8 @@ namespace dnSpy.Documents {
 		public AssemblyResolver(DsDocumentService documentService) {
 			this.documentService = documentService;
 			failedAssemblyResolveCache = new FailedAssemblyResolveCache();
+			dotNetCorePaths = new DotNetCorePaths();
 		}
-
-		public void AddSearchPath(string s) {
-			lock (asmSearchPathsLockObj) {
-				asmSearchPaths.Add(s);
-				asmSearchPathsArray = asmSearchPaths.ToArray();
-			}
-		}
-		readonly object asmSearchPathsLockObj = new object();
-		readonly List<string> asmSearchPaths = new List<string>();
-		string[] asmSearchPathsArray = Array.Empty<string>();
 
 		// PERF: Sometimes various pieces of code tries to resolve the same assembly and this
 		// assembly isn't found. This class caches these failed resolves so null is returned
@@ -133,9 +125,11 @@ namespace dnSpy.Documents {
 			if (existingDocument != null)
 				return existingDocument;
 
-			var document = LookupFromSearchPaths(assembly, sourceModule, true);
+			var dotNetCoreAppVersion = dotNetCorePaths.TryGetDotNetCoreVersion(sourceModule);
+
+			var document = LookupFromSearchPaths(assembly, sourceModule, dotNetCoreAppVersion);
 			if (document != null)
-				return documentService.GetOrAddCanDispose(document, null);
+				return documentService.GetOrAddCanDispose(document, assembly);
 
 			var gacFile = GacInfo.FindInGac(assembly);
 			if (gacFile != null)
@@ -146,31 +140,65 @@ namespace dnSpy.Documents {
 					return documentService.GetOrAddCanDispose(document, assembly);
 			}
 
-			document = LookupFromSearchPaths(assembly, sourceModule, false);
-			if (document != null)
-				return documentService.GetOrAddCanDispose(document, assembly);
-
 			return null;
 		}
 
-		IDsDocument LookupFromSearchPaths(IAssembly asmName, ModuleDef sourceModule, bool exactCheck) {
+		IDsDocument LookupFromSearchPaths(IAssembly asmName, ModuleDef sourceModule, Version dotNetCoreAppVersion) {
 			IDsDocument document;
-			string sourceModuleDir = null;
-			if (sourceModule != null && File.Exists(sourceModule.Location)) {
-				sourceModuleDir = Path.GetDirectoryName(sourceModule.Location);
-				document = TryLoadFromDir(asmName, exactCheck, sourceModuleDir);
-				if (document != null)
-					return document;
-			}
-			var ary = asmSearchPathsArray;
-			foreach (var path in ary) {
-				document = TryLoadFromDir(asmName, exactCheck, path);
-				if (document != null)
-					return document;
+			if (sourceModule != null) {
+				var sourceModuleLocationExists = File.Exists(sourceModule.Location);
+				string sourceModuleDir = sourceModuleLocationExists ? Path.GetDirectoryName(sourceModule.Location) : null;
+
+				if (sourceModuleLocationExists) {
+					document = TryFindFromDir(asmName, dirPath: sourceModuleDir);
+					if (document != null)
+						return document;
+				}
+
+				int bitness;
+				string dotNetCorePath;
+				if (dotNetCoreAppVersion != null) {
+					bitness = sourceModule.GetPointerSize(IntPtr.Size) * 8;
+					dotNetCorePath = dotNetCorePaths.TryGetDotNetCorePath(dotNetCoreAppVersion, bitness);
+				}
+				else {
+					bitness = -1;
+					dotNetCorePath = null;
+				}
+				if (dotNetCorePath != null) {
+					document = TryFindFromDir(asmName, dirPath: dotNetCorePath);
+					if (document != null)
+						return document;
+				}
+
+				if (sourceModuleLocationExists) {
+					document = TryLoadFromDir(asmName, exactCheck: false, dirPath: sourceModuleDir);
+					if (document != null)
+						return document;
+				}
+				if (dotNetCorePath != null) {
+					document = TryLoadFromDir(asmName, exactCheck: false, dirPath: dotNetCorePath);
+					if (document != null)
+						return document;
+				}
 			}
 
 			return null;
 		}
+
+		IDsDocument TryFindFromDir(IAssembly asmName, string dirPath) {
+			string baseName;
+			try {
+				baseName = Path.Combine(dirPath, asmName.Name);
+			}
+			catch (ArgumentException) { // eg. invalid chars in asmName.Name
+				return null;
+			}
+			return TryFindFromDir2(baseName + ".dll") ??
+				   TryFindFromDir2(baseName + ".exe");
+		}
+
+		IDsDocument TryFindFromDir2(string filename) => documentService.Find(new FilenameKey(filename));
 
 		IDsDocument TryLoadFromDir(IAssembly asmName, bool exactCheck, string dirPath) {
 			string baseName;
