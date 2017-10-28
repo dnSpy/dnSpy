@@ -32,5 +32,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		Tokens						= 0x00000040,
 		DigitSeparators				= 0x00000080,
 		NoStringQuotes				= 0x00000100,
+		NoDebuggerDisplay			= 0x00000200,
 	}
 }

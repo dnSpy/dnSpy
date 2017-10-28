@@ -100,6 +100,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		NoStringQuotes				= 0x00000020,
 
 		/// <summary>
+		/// Don't use debugger display attributes
+		/// </summary>
+		NoDebuggerDisplay			= 0x00000040,
+
+		/// <summary>
 		/// Show namespaces. Only used if <see cref="Display"/> is set
 		/// </summary>
 		Namespaces					= 0x20000000,

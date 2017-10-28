@@ -35,6 +35,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				res |= DbgValueFormatterOptions.DigitSeparators;
 			if ((options & ValueFormatterOptions.NoStringQuotes) != 0)
 				res |= DbgValueFormatterOptions.NoStringQuotes;
+			if ((options & ValueFormatterOptions.NoDebuggerDisplay) != 0)
+				res |= DbgValueFormatterOptions.NoDebuggerDisplay;
 			if ((options & ValueFormatterOptions.Namespaces) != 0)
 				res |= DbgValueFormatterOptions.Namespaces;
 			if ((options & ValueFormatterOptions.IntrinsicTypeKeywords) != 0)

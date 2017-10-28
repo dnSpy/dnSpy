@@ -41,6 +41,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		readonly CancellationToken cancellationToken;
 
 		public DebuggerDisplayAttributeFormatter(DbgEvaluationContext context, DbgStackFrame frame, LanguageFormatter languageFormatter, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+			Debug.Assert((options & DbgValueFormatterOptions.NoDebuggerDisplay) == 0);
 			this.context = context;
 			this.frame = frame;
 			this.languageFormatter = languageFormatter;
@@ -140,8 +141,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 							output.Write(BoxedTextColor.Error, ">>>");
 						}
 						else {
-							// Prevent recursive calls by disabling func-eval
-							var options = this.options & ~(DbgValueFormatterOptions.FuncEval | DbgValueFormatterOptions.ToString);
+							// Prevent recursive calls
+							var options = this.options | DbgValueFormatterOptions.NoDebuggerDisplay;
 							if ((part.Flags & DisplayPartFlags.Decimal) != 0)
 								options |= DbgValueFormatterOptions.Decimal;
 							else if ((part.Flags & DisplayPartFlags.Hexadecimal) != 0)

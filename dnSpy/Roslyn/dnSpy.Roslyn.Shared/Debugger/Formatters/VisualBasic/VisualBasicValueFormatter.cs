@@ -60,6 +60,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		bool UseToString => (options & ValueFormatterOptions.ToString) != 0;
 		bool DigitSeparators => (options & ValueFormatterOptions.DigitSeparators) != 0;
 		bool NoStringQuotes => (options & ValueFormatterOptions.NoStringQuotes) != 0;
+		bool NoDebuggerDisplay => (options & ValueFormatterOptions.NoDebuggerDisplay) != 0;
 
 		public VisualBasicValueFormatter(ITextColorWriter output, DbgEvaluationContext context, DbgStackFrame frame, LanguageFormatter languageFormatter, ValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
@@ -200,7 +201,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		}
 
 		bool TryFormatWithDebuggerAttributes(DbgDotNetValue value) {
-			if (!FuncEval)
+			if (!FuncEval || NoDebuggerDisplay)
 				return false;
 			return new DebuggerDisplayAttributeFormatter(context, frame, languageFormatter, output, options.ToDbgValueFormatterOptions(), cultureInfo, cancellationToken).Format(value);
 		}
