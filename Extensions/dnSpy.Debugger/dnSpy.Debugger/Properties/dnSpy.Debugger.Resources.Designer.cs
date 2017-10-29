@@ -1195,6 +1195,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Give focus to debugged process.
+        /// </summary>
+        public static string DbgSettings_FocusActiveProcess {
+            get {
+                return ResourceManager.GetString("DbgSettings_FocusActiveProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Group parameters and locals together.
         /// </summary>
         public static string DbgSettings_GroupParametersAndLocalsTogether {

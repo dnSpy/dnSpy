@@ -448,6 +448,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool suppressJITOptimization_ProgramModules = true;
 
+		public override bool FocusActiveProcess {
+			get {
+				lock (lockObj)
+					return focusActiveProcess;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = focusActiveProcess != value;
+					focusActiveProcess = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(FocusActiveProcess));
+					OnModified();
+				}
+			}
+		}
+		bool focusActiveProcess = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -473,6 +492,7 @@ namespace dnSpy.Debugger.Settings {
 			other.RespectHideMemberAttributes = RespectHideMemberAttributes;
 			other.SuppressJITOptimization_SystemModules = SuppressJITOptimization_SystemModules;
 			other.SuppressJITOptimization_ProgramModules = SuppressJITOptimization_ProgramModules;
+			other.FocusActiveProcess = FocusActiveProcess;
 			return other;
 		}
 	}
@@ -512,6 +532,7 @@ namespace dnSpy.Debugger.Settings {
 			RespectHideMemberAttributes = sect.Attribute<bool?>(nameof(RespectHideMemberAttributes)) ?? RespectHideMemberAttributes;
 			SuppressJITOptimization_SystemModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_SystemModules)) ?? SuppressJITOptimization_SystemModules;
 			SuppressJITOptimization_ProgramModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_ProgramModules)) ?? SuppressJITOptimization_ProgramModules;
+			FocusActiveProcess = sect.Attribute<bool?>(nameof(FocusActiveProcess)) ?? FocusActiveProcess;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -542,6 +563,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(RespectHideMemberAttributes), RespectHideMemberAttributes);
 			sect.Attribute(nameof(SuppressJITOptimization_SystemModules), SuppressJITOptimization_SystemModules);
 			sect.Attribute(nameof(SuppressJITOptimization_ProgramModules), SuppressJITOptimization_ProgramModules);
+			sect.Attribute(nameof(FocusActiveProcess), FocusActiveProcess);
 		}
 	}
 }

@@ -1476,4 +1476,7 @@ Are you sure you want to expand it?</value>
 HR: 0x{0:X8}
 Error: 0x{1:X8}</value>
   </data>
+  <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
+    <value>Give focus to debugged process</value>
+  </data>
 </root>

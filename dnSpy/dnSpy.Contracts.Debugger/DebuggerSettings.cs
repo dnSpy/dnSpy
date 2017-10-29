@@ -151,5 +151,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// All modules in the same folder, or sub folder, as the main executable are considered program modules.
 		/// </summary>
 		public abstract bool SuppressJITOptimization_ProgramModules { get; set; }
+
+		/// <summary>
+		/// Give focus to the active process
+		/// </summary>
+		public abstract bool FocusActiveProcess { get; set; }
 	}
 }
