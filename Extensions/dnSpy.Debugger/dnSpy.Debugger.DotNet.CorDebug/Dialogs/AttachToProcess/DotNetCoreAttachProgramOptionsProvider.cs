@@ -72,6 +72,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 		public override ulong ProcessId { get; }
 		public override RuntimeId RuntimeId { get; }
 		public override string RuntimeName { get; }
+		public override Guid RuntimeGuid => PredefinedDbgRuntimeGuids.DotNetCore_Guid;
+		public override Guid RuntimeKindGuid => PredefinedDbgRuntimeKindGuids.DotNet_Guid;
 
 		readonly string clrModuleVersion;
 		readonly string coreCLRFilename;

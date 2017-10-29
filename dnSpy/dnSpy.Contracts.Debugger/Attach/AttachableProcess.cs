@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Debugger.Attach {
 	/// <summary>
 	/// A process that can be attached to
@@ -31,6 +33,16 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// Runtime id
 		/// </summary>
 		public abstract RuntimeId RuntimeId { get; }
+
+		/// <summary>
+		/// Gets the runtime GUID, see <see cref="PredefinedDbgRuntimeGuids"/>
+		/// </summary>
+		public abstract Guid RuntimeGuid { get; }
+
+		/// <summary>
+		/// Gets the runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/>
+		/// </summary>
+		public abstract Guid RuntimeKindGuid { get; }
 
 		/// <summary>
 		/// Runtime name, eg. "CLR v4.0.30319"

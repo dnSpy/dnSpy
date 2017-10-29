@@ -90,14 +90,14 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public abstract DbgModuleBreakpoint[] Find(DbgBreakpointModule module);
+		public abstract DbgModuleBreakpoint[] Find(DbgModuleBreakpointInfo module);
 
 		/// <summary>
 		/// Checks if <paramref name="module"/> matches at least one breakpoint
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public abstract bool IsMatch(DbgBreakpointModule module);
+		public abstract bool IsMatch(DbgModuleBreakpointInfo module);
 	}
 
 	/// <summary>

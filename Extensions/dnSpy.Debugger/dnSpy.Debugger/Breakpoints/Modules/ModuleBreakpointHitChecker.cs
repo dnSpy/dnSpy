@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
 			if (e.Kind == DbgMessageKind.ModuleLoaded) {
 				var em = (DbgMessageModuleLoadedEventArgs)e;
-				if (dbgModuleBreakpointsService.IsMatch(new DbgBreakpointModule(em.Module)))
+				if (dbgModuleBreakpointsService.IsMatch(new DbgModuleBreakpointInfo(em.Module)))
 					e.Pause = true;
 			}
 		}

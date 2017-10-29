@@ -27,6 +27,8 @@ namespace dnSpy.Debugger.Attach {
 	sealed class AttachableProcessInfo {
 		public ulong ProcessId { get; }
 		public RuntimeId RuntimeId { get; }
+		public Guid RuntimeGuid { get; }
+		public Guid RuntimeKindGuid { get; }
 		public string RuntimeName { get; }
 		public string Name { get; }
 		public string Title { get; }
@@ -34,9 +36,11 @@ namespace dnSpy.Debugger.Attach {
 		public string CommandLine { get; }
 		public string Architecture { get; }
 
-		AttachableProcessInfo(ulong processId, RuntimeId runtimeId, string runtimeName, string name, string title, string filename, string commandLine, string architecture) {
+		AttachableProcessInfo(ulong processId, RuntimeId runtimeId, Guid runtimeGuid, Guid runtimeKindGuid, string runtimeName, string name, string title, string filename, string commandLine, string architecture) {
 			ProcessId = processId;
 			RuntimeId = runtimeId ?? throw new ArgumentNullException(nameof(runtimeId));
+			RuntimeGuid = runtimeGuid;
+			RuntimeKindGuid = runtimeKindGuid;
 			RuntimeName = runtimeName ?? throw new ArgumentNullException(nameof(runtimeName));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Title = title ?? throw new ArgumentNullException(nameof(title));
@@ -50,9 +54,6 @@ namespace dnSpy.Debugger.Attach {
 				throw new ArgumentNullException(nameof(processProvider));
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			var processId = options.ProcessId;
-			var runtimeId = options.RuntimeId;
-			var runtimeName = options.RuntimeName;
 			var name = options.Name;
 			var title = options.Title;
 			var filename = options.Filename;
@@ -66,7 +67,7 @@ namespace dnSpy.Debugger.Attach {
 				commandLine = commandLine ?? info.commandLine ?? string.Empty;
 				architecture = architecture ?? info.arch ?? string.Empty;
 			}
-			return new AttachableProcessInfo(processId, runtimeId, runtimeName, name, title, filename, commandLine, architecture);
+			return new AttachableProcessInfo(options.ProcessId, options.RuntimeId, options.RuntimeGuid, options.RuntimeKindGuid, options.RuntimeName, name, title, filename, commandLine, architecture);
 		}
 
 		static (string name, string title, string filename, string commandLine, string arch) GetDefaultProperties(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {

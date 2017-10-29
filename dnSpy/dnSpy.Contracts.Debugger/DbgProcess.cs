@@ -131,6 +131,22 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract void ReadMemory(ulong address, byte[] destination, int destinationIndex, int size);
 
 		/// <summary>
+		/// Reads memory. Unreadable memory is returned as 0s.
+		/// </summary>
+		/// <param name="address">Address in the debugged process</param>
+		/// <param name="size">Number of bytes to read</param>
+		/// <returns></returns>
+		public byte[] ReadMemory(ulong address, int size) {
+			if (size < 0)
+				throw new ArgumentOutOfRangeException(nameof(size));
+			if (size == 0)
+				return Array.Empty<byte>();
+			var res = new byte[size];
+			ReadMemory(address, res, 0, size);
+			return res;
+		}
+
+		/// <summary>
 		/// Writes memory.
 		/// </summary>
 		/// <param name="address">Address in the debugged process</param>

@@ -63,8 +63,8 @@
     <Compile Include="Breakpoints\Code\FilterExpressionEvaluator\DbgFilterExpressionEvaluator.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphFormatter.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphTextMarkerLocationProvider.cs" />
-    <Compile Include="Breakpoints\Modules\DbgBreakpointModule.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpoint.cs" />
+    <Compile Include="Breakpoints\Modules\DbgModuleBreakpointInfo.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointSettings.cs" />
     <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsService.cs" />
     <Compile Include="CallStack\DbgCallStackService.cs" />

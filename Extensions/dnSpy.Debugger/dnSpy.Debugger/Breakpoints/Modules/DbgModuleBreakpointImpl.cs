@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			}
 		}
 
-		internal bool IsMatch(DbgBreakpointModule module) {
+		internal bool IsMatch(DbgModuleBreakpointInfo module) {
 			lock (lockObj) {
 				if (!settings.IsEnabled)
 					return false;

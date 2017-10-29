@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 	/// <summary>
 	/// Module info
 	/// </summary>
-	public struct DbgBreakpointModule {
+	public struct DbgModuleBreakpointInfo {
 		/// <summary>
 		/// Name of module
 		/// </summary>
@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// Constructor
 		/// </summary>
 		/// <param name="module">Module</param>
-		public DbgBreakpointModule(DbgModule module) {
+		public DbgModuleBreakpointInfo(DbgModule module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			ModuleName = module.Name ?? string.Empty;

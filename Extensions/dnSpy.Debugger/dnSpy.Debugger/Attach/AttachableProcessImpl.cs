@@ -25,6 +25,8 @@ namespace dnSpy.Debugger.Attach {
 	sealed class AttachableProcessImpl : AttachableProcess {
 		public override ulong ProcessId => attachableProcessInfo.ProcessId;
 		public override RuntimeId RuntimeId => attachableProcessInfo.RuntimeId;
+		public override Guid RuntimeGuid => attachableProcessInfo.RuntimeGuid;
+		public override Guid RuntimeKindGuid => attachableProcessInfo.RuntimeKindGuid;
 		public override string RuntimeName => attachableProcessInfo.RuntimeName;
 		public override string Name => attachableProcessInfo.Name;
 		public override string Title => attachableProcessInfo.Title;
