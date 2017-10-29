@@ -27,7 +27,6 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
-using dnSpy.Debugger.Evaluation;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
