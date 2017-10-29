@@ -38,5 +38,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			else
 				return ilValue.Clone();
 		}
+
+		public override ILValue Unbox(DmdType type) {
+			var dnValue = runtime.GetDotNetValue(ilValue);
+			if (dnValue.Type != type)
+				return null;
+			return new UnboxAddressILValue(runtime, dnValue);
+		}
 	}
 }

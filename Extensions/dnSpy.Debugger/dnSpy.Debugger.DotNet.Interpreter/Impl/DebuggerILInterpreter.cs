@@ -94,8 +94,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			// We want to return the same ILValue, if possible, since it can contain extra information,
 			// such as address of value that the caller (debugger) would like to keep.
 			var type = value.Type;
-			if (targetType.IsAssignableFrom(type))
+			if (targetType.IsAssignableFrom(type)) {
+				if (type.IsValueType && type != targetType)
+					value = debuggerRuntime.Box(value, type) ?? value;
 				return value;
+			}
 
 			long l;
 			double d;
@@ -1080,8 +1083,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Unbox:
 					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
 					v1 = Pop1();
-					//TODO:
-					ThrowInvalidMethodBodyInterpreterException();
+					if (v1.IsNull || !type.IsValueType)
+						ThrowInvalidMethodBodyInterpreterException();
+					v1 = v1.Unbox(type);
+					if (v1 == null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1);
 					break;
 
 				case OpCode.Unbox_Any:

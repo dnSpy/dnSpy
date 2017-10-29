@@ -110,6 +110,7 @@
     <Compile Include="Evaluation\Engine\Interpreter\RuntimeHandleILValues.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\SyntheticValues.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\TypeILValueImpl.cs" />
+    <Compile Include="Evaluation\Engine\Interpreter\UnboxAddressILValue.cs" />
     <Compile Include="Evaluation\Engine\Interpreter\VariablesProvider.cs" />
     <Compile Include="Evaluation\Engine\IntrinsicsAssemblyBuilder.cs" />
     <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
