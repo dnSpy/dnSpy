@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -26,7 +27,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
@@ -40,11 +40,13 @@ using dnSpy.Debugger.Code.TextEditor;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.Exceptions;
 using dnSpy.Debugger.Properties;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.DbgUI {
 	[Export(typeof(Debugger))]
 	[Export(typeof(IDbgManagerStartListener))]
 	sealed class DebuggerImpl : Debugger, IDbgManagerStartListener {
+		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<IMessageBoxService> messageBoxService;
 		readonly Lazy<IAppWindow> appWindow;
 		readonly Lazy<IDocumentTabService> documentTabService;
@@ -62,7 +64,8 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<IDocumentTabService> documentTabService, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService, Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService, DebuggerSettings debuggerSettings) {
+		DebuggerImpl(UIDispatcher uiDispatcher, Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<IDocumentTabService> documentTabService, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService, Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService, DebuggerSettings debuggerSettings) {
+			this.uiDispatcher = uiDispatcher;
 			this.messageBoxService = messageBoxService;
 			this.appWindow = appWindow;
 			this.documentTabService = documentTabService;
@@ -76,6 +79,15 @@ namespace dnSpy.Debugger.DbgUI {
 			this.dbgTextViewCodeLocationService = dbgTextViewCodeLocationService;
 			this.dbgExceptionFormatterService = dbgExceptionFormatterService;
 			this.debuggerSettings = debuggerSettings;
+			UI(() => appWindow.Value.MainWindowClosing += AppWindow_MainWindowClosing);
+		}
+
+		void AppWindow_MainWindowClosing(object sender, CancelEventArgs e) {
+			if (IsDebugging) {
+				var result = messageBoxService.Value.ShowIgnorableMessage(new Guid("B4B8E13C-B7B7-490A-953B-8ED8EAE7C170"), dnSpy_Debugger_Resources.AskAppWindowClosingStopDebugging, MsgBoxButton.Yes | MsgBoxButton.No);
+				if (result == MsgBoxButton.None || result == MsgBoxButton.No)
+					e.Cancel = true;
+			}
 		}
 
 		public override string GetCurrentExecutableFilename() => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
@@ -332,11 +344,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		void UI(Action callback) {
-			var dispatcher = appWindow.Value.MainWindow.Dispatcher;
-			if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
-				dispatcher.BeginInvoke(DispatcherPriority.Send, callback);
-		}
+		void UI(Action callback) => uiDispatcher.UI(callback);
 
 		void ShowUnhandledException_UI(DbgMessageExceptionThrownEventArgs exm) {
 			var sb = new StringBuilder();
@@ -360,7 +368,7 @@ namespace dnSpy.Debugger.DbgUI {
 				Application.Current.Resources["IsDebuggingKey"] = newIsDebugging;
 				if (newIsDebugging) {
 					appWindow.Value.StatusBar.Open();
-					SetRunningStatusMessage();
+					SetRunningStatusMessage_UI();
 					appWindow.Value.AddTitleInfo(dnSpy_Debugger_Resources.AppTitle_Debugging);
 				}
 				else {
@@ -372,8 +380,8 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 		bool oldIsDebugging;
 
-		void SetRunningStatusMessage() => SetStatusMessage(dnSpy_Debugger_Resources.StatusBar_Running);
-		void SetStatusMessage(string message) => appWindow.Value.StatusBar.Show(message);
+		void SetRunningStatusMessage_UI() => SetStatusMessage_UI(dnSpy_Debugger_Resources.StatusBar_Running);
+		void SetStatusMessage_UI(string message) => appWindow.Value.StatusBar.Show(message);
 
 		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
@@ -383,7 +391,7 @@ namespace dnSpy.Debugger.DbgUI {
 				if (newIsRunning == oldIsRunning)
 					return;
 				oldIsRunning = newIsRunning;
-				SetStatusMessage(GetStatusBarMessage(breakInfos));
+				SetStatusMessage_UI(GetStatusBarMessage(breakInfos));
 				CommandManager.InvalidateRequerySuggested();
 			});
 		}

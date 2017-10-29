@@ -1467,4 +1467,7 @@ Are you sure you want to expand it?</value>
   <data name="Exceptions_Add_ToolTip" xml:space="preserve">
     <value>Add an exception to the list</value>
   </data>
+  <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
+    <value>Do you want to stop debugging?</value>
+  </data>
 </root>

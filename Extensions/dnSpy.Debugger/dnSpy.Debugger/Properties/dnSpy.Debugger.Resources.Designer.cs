@@ -124,6 +124,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you want to stop debugging?.
+        /// </summary>
+        public static string AskAppWindowClosingStopDebugging {
+            get {
+                return ResourceManager.GetString("AskAppWindowClosingStopDebugging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to delete all breakpoints?.
         /// </summary>
         public static string AskDeleteAllBreakpoints {
