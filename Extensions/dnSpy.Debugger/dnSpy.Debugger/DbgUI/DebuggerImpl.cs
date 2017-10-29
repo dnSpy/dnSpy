@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
@@ -39,6 +40,7 @@ using dnSpy.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Debugger.Code.TextEditor;
 using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.Exceptions;
+using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
 
@@ -356,7 +358,15 @@ namespace dnSpy.Debugger.DbgUI {
 			ShowError_UI(sb.ToString());
 		}
 
-		void ShowError_UI(string error) => messageBoxService.Value.Show(error);
+		void ActivateWindow_UI() {
+			NativeMethods.SetWindowPos(new WindowInteropHelper(appWindow.Value.MainWindow).Handle, IntPtr.Zero, 0, 0, 0, 0, 3);
+			appWindow.Value.MainWindow.Activate();
+		}
+
+		void ShowError_UI(string error) {
+			ActivateWindow_UI();
+			messageBoxService.Value.Show(error);
+		}
 
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
