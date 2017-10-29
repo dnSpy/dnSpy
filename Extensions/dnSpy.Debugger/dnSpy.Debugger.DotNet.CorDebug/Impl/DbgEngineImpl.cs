@@ -157,6 +157,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
+			string msg;
 			switch (e.Kind) {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
@@ -208,7 +209,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (dbg.IsEvaluating)
 					break;
 				var lmsgArgs = (LogMessageDebugCallbackEventArgs)e;
-				var msg = lmsgArgs.Message;
+				msg = lmsgArgs.Message;
 				if (msg != null) {
 					e.AddPauseReason(DebuggerPauseReason.Other);
 					var thread = TryGetThread(lmsgArgs.CorThread);
@@ -236,6 +237,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						GetDynamicModuleHelper(dnModule).RaiseTypeLoaded(new DmdTypeLoadedEventArgs((int)cls.Token));
 					}
 				}
+				break;
+
+			case DebugCallbackKind.DebuggerError:
+				var deArgs = (DebuggerErrorDebugCallbackEventArgs)e;
+				if (deArgs.HError == CordbgErrors.CORDBG_E_UNCOMPATIBLE_PLATFORMS)
+					msg = GetIncompatiblePlatformErrorMessage();
+				else
+					msg = string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CLRDebuggerErrorOccurred, deArgs.HError, deArgs.ErrorCode);
+				SendMessage(new DbgMessageBreak(msg, GetMessageFlags(pause: true)));
 				break;
 			}
 		}

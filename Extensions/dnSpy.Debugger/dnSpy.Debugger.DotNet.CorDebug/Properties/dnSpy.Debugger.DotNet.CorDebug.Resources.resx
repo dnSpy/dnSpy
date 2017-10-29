@@ -289,4 +289,10 @@ Error: {0}</value>
   <data name="InternalDebuggerError" xml:space="preserve">
     <value>Internal debugger error</value>
   </data>
+  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
+    <value>A CLR debugger error occurred. Terminate the debugged process and try again.
+
+HR: 0x{0:X8}
+Error: 0x{1:X8}</value>
+  </data>
 </root>

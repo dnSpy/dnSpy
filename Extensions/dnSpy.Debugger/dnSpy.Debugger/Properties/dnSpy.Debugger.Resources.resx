@@ -1470,4 +1470,10 @@ Are you sure you want to expand it?</value>
   <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
     <value>Do you want to stop debugging?</value>
   </data>
+  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
+    <value>A CLR debugger error occurred. Terminate the debugged process and try again.
+
+HR: 0x{0:X8}
+Error: 0x{1:X8}</value>
+  </data>
 </root>

@@ -1798,6 +1798,18 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A CLR debugger error occurred. Terminate the debugged process and try again.
+        ///
+        ///HR: 0x{0:X8}
+        ///Error: 0x{1:X8}.
+        /// </summary>
+        public static string Error_CLRDebuggerErrorOccurred {
+            get {
+                return ResourceManager.GetString("Error_CLRDebuggerErrorOccurred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not start &apos;{0}&apos;
         ///ERROR: {0}.
         /// </summary>
