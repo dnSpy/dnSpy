@@ -4347,10 +4347,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			if (v1 == v2)
 				return true;
 
-			var res = debuggerRuntime.Equals(v1, v2);
-			if (res != null)
-				return res.Value;
-
 			var v1z = IsIntegerZeroOrNull(v1);
 			var v2z = IsIntegerZeroOrNull(v2);
 			if (v1z != v2z)
@@ -4373,14 +4369,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					goto case ILValueKind.ByRef;
 
 				case ILValueKind.ByRef:
-					return false;
-
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
 				case ILValueKind.Type:
 				default:
-					throw new InvalidMethodBodyInterpreterException();
+					break;
 				}
+				break;
 
 			case ILValueKind.Int64:
 				switch (v2.Kind) {
@@ -4393,8 +4388,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case ILValueKind.ByRef:
 				case ILValueKind.Type:
 				default:
-					throw new InvalidMethodBodyInterpreterException();
+					break;
 				}
+				break;
 
 			case ILValueKind.Float:
 				switch (v2.Kind) {
@@ -4407,8 +4403,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case ILValueKind.ByRef:
 				case ILValueKind.Type:
 				default:
-					throw new InvalidMethodBodyInterpreterException();
+					break;
 				}
+				break;
 
 			case ILValueKind.NativeInt:
 				switch (v2.Kind) {
@@ -4429,24 +4426,25 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					goto case ILValueKind.ByRef;
 
 				case ILValueKind.ByRef:
-					return false;
-
 				case ILValueKind.Int64:
 				case ILValueKind.Float:
 				case ILValueKind.Type:
 				default:
-					throw new InvalidMethodBodyInterpreterException();
+					break;
 				}
+				break;
 
 			case ILValueKind.ByRef:
-				return false;
-
 			case ILValueKind.Type:
-				return false;
-
 			default:
-				throw new InvalidMethodBodyInterpreterException();
+				break;
 			}
+
+			var res = debuggerRuntime.Equals(v1, v2);
+			if (res != null)
+				return res.Value;
+
+			throw new InvalidMethodBodyInterpreterException();
 		}
 
 		int CompareSigned(ILValue v1, ILValue v2) {
