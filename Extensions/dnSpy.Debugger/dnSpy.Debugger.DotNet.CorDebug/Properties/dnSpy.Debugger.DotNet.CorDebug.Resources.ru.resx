@@ -183,7 +183,7 @@
     <value>Файл не существует</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Файл отсутствует</value>
+    <value>Пропущено имя файла</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Отладчик ({0})</value>
@@ -288,5 +288,11 @@
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
     <value>Internal debugger error</value>
+  </data>
+  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
+    <value>Произошла ошибка дебаггера CLR. Уничтожьте процесс дебаггера и попробуйте снова.
+
+HR: 0x{0:X8}
+Ошибка: 0x{1:X8}</value>
   </data>
 </root>
