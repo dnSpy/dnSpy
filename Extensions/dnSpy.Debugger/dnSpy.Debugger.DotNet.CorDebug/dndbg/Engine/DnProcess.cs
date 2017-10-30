@@ -92,14 +92,7 @@ namespace dndbg.Engine {
 			new DnThread(this, thread, Debugger.GetNextThreadId(), Interlocked.Increment(ref nextThreadId));
 		public bool Terminate(int exitCode) => CorProcess.Terminate(exitCode);
 
-		/// <summary>
-		/// true if we attached to the process, false if we created the process
-		/// </summary>
-		public bool WasAttached => attached;
-		bool attached;
-
-		internal void Initialize(bool attached, string filename, string cwd, string cmdLine) {
-			this.attached = attached;
+		internal void Initialize(string filename, string cwd, string cmdLine) {
 			this.filename = filename ?? string.Empty;
 			this.cwd = cwd ?? string.Empty;
 			this.cmdLine = cmdLine ?? string.Empty;

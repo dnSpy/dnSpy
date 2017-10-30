@@ -33,6 +33,7 @@ using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
+using dnSpy.Debugger.DotNet.CorDebug.DAC;
 using dnSpy.Debugger.DotNet.CorDebug.Properties;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
@@ -41,13 +42,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			public DnThread DnThread { get; }
 			public ThreadProperties Last { get; set; }
 			public bool HasNewName { get; set; }
-			public DbgThreadData(DnThread dnThread) => DnThread = dnThread ?? throw new ArgumentNullException(nameof(dnThread));
+			public bool IsMainThread { get; set; }
+			public DbgThreadData(DnThread dnThread, bool isMainThread) {
+				DnThread = dnThread ?? throw new ArgumentNullException(nameof(dnThread));
+				IsMainThread = isMainThread;
+			}
 		}
 
 		internal DnThread GetThread(DbgThread thread) =>
 			thread?.GetData<DbgThreadData>()?.DnThread ?? throw new InvalidOperationException();
 
-		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties oldProperties, bool isCreateThread, bool forceReadName) {
+		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties oldProperties, bool isCreateThread, bool forceReadName, bool isMainThread) {
 			debuggerThread.VerifyAccess();
 			var appDomain = TryGetEngineAppDomain(thread.AppDomainOrNull)?.AppDomain;
 			ulong id = (uint)thread.VolatileThreadId;
@@ -70,7 +75,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			int suspendedCount = thread.CorThread.IsSuspended ? 1 : 0;
 			var userState = thread.CorThread.UserState;
-			var kind = GetThreadKind(thread, managedId);
+			var kind = GetThreadKind(thread, isMainThread);
 			return new ThreadProperties(appDomain, kind, id, managedId, name, suspendedCount, userState);
 		}
 
@@ -113,8 +118,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return name;
 		}
 
-		string GetThreadKind(DnThread thread, ulong? managedId) {
-			if (managedId == 1)
+		string GetThreadKind(DnThread thread, bool isMainThread) {
+			if (isMainThread)
 				return PredefinedThreadKinds.Main;
 
 			var s = GetThreadKind_ClrDac(thread);
@@ -125,27 +130,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return PredefinedThreadKinds.Terminated;
 			if (thread.CorThread.IsThreadPool)
 				return PredefinedThreadKinds.ThreadPool;
-			if (managedId == 1 || IsMainThread(thread))
-				return PredefinedThreadKinds.Main;
-			if (IsWorkerThread(thread))
-				return PredefinedThreadKinds.WorkerThread;
 			return PredefinedThreadKinds.Unknown;
-
-			// This check is not correct but will only be called if ClrDac fails
-			bool IsWorkerThread(DnThread t) => t.CorThread.IsBackground;
-
-			// Not 100% accurate but it's only called if ClrDac fails
-			bool IsMainThread(DnThread t) {
-				if (!t.Process.WasAttached)
-					return t.UniqueIdProcess == 0;
-
-				var ad = t.AppDomainOrNull;
-				if (ad == null || ad.Id != 1)
-					return false;
-				if (t.CorThread.IsBackground)
-					return false;
-				return t.UniqueIdProcess == 0;
-			}
 		}
 
 		string GetThreadKind_ClrDac(DnThread thread) {
@@ -180,7 +165,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug_NoLock(DbgEngineThread engineThread) {
 			debuggerThread.VerifyAccess();
 			var threadData = engineThread.Thread.GetData<DbgThreadData>();
-			var newProps = GetThreadProperties_CorDebug(threadData.DnThread, threadData.Last, isCreateThread: false, forceReadName: threadData.HasNewName);
+			var newProps = GetThreadProperties_CorDebug(threadData.DnThread, threadData.Last, isCreateThread: false, forceReadName: threadData.HasNewName, isMainThread: threadData.IsMainThread);
 			threadData.HasNewName = false;
 			var updateOptions = threadData.Last.Compare(newProps);
 			if (updateOptions == DbgEngineThread.UpdateOptions.None)
@@ -219,8 +204,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		void DnDebugger_OnThreadAdded(object sender, ThreadDebuggerEventArgs e) {
 			Debug.Assert(objectFactory != null);
 			if (e.Added) {
-				var props = GetThreadProperties_CorDebug(e.Thread, null, isCreateThread: true, forceReadName: false);
-				var threadData = new DbgThreadData(e.Thread) { Last = props };
+				bool isMainThread = IsMainThread(e.Thread);
+				var props = GetThreadProperties_CorDebug(e.Thread, null, isCreateThread: true, forceReadName: false, isMainThread: isMainThread);
+				var threadData = new DbgThreadData(e.Thread, isMainThread) { Last = props };
 				var state = DnThreadUtils.GetState(props.UserState);
 				e.ShouldPause = true;
 				var engineThread = objectFactory.CreateThread(props.AppDomain, props.Kind, props.Id, props.ManagedId, props.Name, props.SuspendedCount, state, GetMessageFlags(), data: threadData);
@@ -238,6 +224,100 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					engineThread.Remove(GetMessageFlags());
 				}
 			}
+		}
+
+		bool IsMainThread(DnThread thread) {
+			// We'll detect this later
+			if (StartKind == DbgStartKind.Attach)
+				return false;
+
+			if (alreadyKnowsMainThread)
+				return false;
+
+			if (IsNotMainThread(thread))
+				return false;
+
+			alreadyKnowsMainThread = true;
+			return true;
+		}
+		bool alreadyKnowsMainThread;
+
+		bool IsNotMainThread(DnThread thread) {
+			var info = clrDac.GetThreadInfo(thread.VolatileThreadId);
+			if (info != null) {
+				var flags = info.Value.Flags;
+				const ClrDacThreadFlags NotMainThreadFlags =
+					ClrDacThreadFlags.IsFinalizer |
+					ClrDacThreadFlags.IsGC |
+					ClrDacThreadFlags.IsDebuggerHelper |
+					ClrDacThreadFlags.IsThreadpoolTimer |
+					ClrDacThreadFlags.IsThreadpoolCompletionPort |
+					ClrDacThreadFlags.IsThreadpoolWorker |
+					ClrDacThreadFlags.IsThreadpoolWait |
+					ClrDacThreadFlags.IsThreadpoolGate;
+				if ((flags & NotMainThreadFlags) != 0)
+					return true;
+			}
+
+			return false;
+		}
+
+		void DetectMainThread() {
+			debuggerThread.VerifyAccess();
+			Debug.Assert(StartKind == DbgStartKind.Attach);
+			if (alreadyKnowsMainThread)
+				return;
+			(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? info = null;
+			lock (lockObj) {
+				var list = new List<(DnThread thread, DbgThreadData data)>();
+				foreach (var kv in toEngineThread) {
+					var thread = kv.Key;
+					if (IsNotMainThread(thread))
+						continue;
+					var data = kv.Value.Thread.GetData<DbgThreadData>();
+					list.Add((thread, data));
+				}
+
+				if (list.Count > 0) {
+					const ulong defaultManagedId = ulong.MaxValue;
+					// The main thread should have a low managed ID, very often MID=1
+					list.Sort((a, b) => (a.data.Last.ManagedId ?? defaultManagedId).CompareTo(b.data.Last.ManagedId ?? defaultManagedId));
+					// If we fail to detect it, just pick the one with the smallest MID
+					var mainThreadInfo = list[0];
+					foreach (var threadInfo in list) {
+						if (IsMainThreadCheckCallStack(threadInfo.thread)) {
+							mainThreadInfo = threadInfo;
+							break;
+						}
+					}
+					alreadyKnowsMainThread = true;
+					mainThreadInfo.data.IsMainThread = true;
+					info = UpdateThreadProperties_CorDebug_NoLock(mainThreadInfo.thread);
+				}
+			}
+			if (info != null)
+				NotifyThreadPropertiesChanged_CorDebug(info.Value.engineThread, info.Value.updateOptions, info.Value.props);
+		}
+
+		bool IsMainThreadCheckCallStack(DnThread dnThread) {
+			var lastFrame = dnThread.AllFrames.LastOrDefault();
+			var func = lastFrame?.Function;
+			var corModule = func?.Module;
+			if (corModule == null)
+				return false;
+			var module = TryGetModule(corModule);
+			if (module == null)
+				return false;
+			if (!module.IsExe)
+				return false;
+			var reflectionModule = module.GetReflectionModule();
+			if (reflectionModule == null)
+				return false;
+			if (reflectionModule.Assembly.EntryPoint?.MetadataToken != func.Token)
+				return false;
+
+			// Seems to be the main assembly
+			return true;
 		}
 
 		DbgEngineThread TryGetEngineThread(DnThread thread) {
