@@ -77,12 +77,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (suppressJITOptimization) {
 				options.JITCompilerFlags = CorDebugJITCompilerFlags.CORDEBUG_JIT_DISABLE_OPTIMIZATION;
 				options.ModuleTrackJITInfo = true;
-				options.ModuleAllowJitOptimizations = true;
+				options.ModuleAllowJitOptimizations = false;
 			}
 			else {
 				options.JITCompilerFlags = CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT;
 				options.ModuleTrackJITInfo = false;
-				options.ModuleAllowJitOptimizations = false;
+				options.ModuleAllowJitOptimizations = true;
 			}
 
 			options.JustMyCode = IsJustMyCode(module);
