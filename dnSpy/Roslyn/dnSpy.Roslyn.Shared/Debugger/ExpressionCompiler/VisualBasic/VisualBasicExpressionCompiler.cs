@@ -88,17 +88,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.VisualBasic {
 			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo);
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, null, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, methodToken, methodVersion, langDebugInfo.ILOffset, localVarSigTok);
 
-			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, false, cancellationToken);
+			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, cancellationToken);
 		}
 
-		DbgDotNetCompilationResult CompileExpressionCore(DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, VisualBasicEvalContextState state, ImmutableArray<MetadataBlock> metadataBlocks, EvaluationContext evalCtx, bool noName, CancellationToken cancellationToken) {
+		DbgDotNetCompilationResult CompileExpressionCore(DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, VisualBasicEvalContextState state, ImmutableArray<MetadataBlock> metadataBlocks, EvaluationContext evalCtx, CancellationToken cancellationToken) {
 			state.MetadataContext = new VisualBasicMetadataContext(metadataBlocks, evalCtx);
 			var compilationFlags = DkmEvaluationFlags.None;
 			if ((options & DbgEvaluationOptions.Expression) != 0)
 				compilationFlags |= DkmEvaluationFlags.TreatAsExpression;
 			var compileResult = evalCtx.CompileExpression(expression, compilationFlags, CreateAliases(aliases), out var resultProperties, out var errorMessage);
 			DbgDotNetText name;
-			if (noName)
+			if ((options & DbgEvaluationOptions.NoName) != 0)
 				name = DbgDotNetText.Empty;
 			else if (compileResult == null || errorMessage != null)
 				name = CreateErrorName(expression);
@@ -141,7 +141,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.VisualBasic {
 		public override DbgDotNetCompilationResult CompileTypeExpression(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
 			GetTypeCompilationState<VisualBasicEvalContextState>(context, frame, references, out var state, out var metadataBlocks);
 			var evalCtx = EvaluationContext.CreateTypeContext(state.MetadataContext, metadataBlocks, type.Module.ModuleVersionId, type.MetadataToken);
-			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, true, cancellationToken);
+			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, cancellationToken);
 		}
 
 		internal override string GetVariableName(string metadataName, bool isThis) {

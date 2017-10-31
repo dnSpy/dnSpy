@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		DbgEngineEvaluationResult EvaluateCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken) {
-			var res = EvaluateImpl(context, frame, expression, options, state, cancellationToken);
+			var res = EvaluateImpl(context, frame, expression, options | DbgEvaluationOptions.NoName, state, cancellationToken);
 			if (res.Error != null)
 				return new DbgEngineEvaluationResult(res.Error, res.Flags);
 			try {
@@ -241,7 +241,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return new EvaluateImplResult(refsResult.ErrorMessage, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 
 			var keyOptions = options & ~(DbgEvaluationOptions.NoSideEffects | DbgEvaluationOptions.NoFuncEval);
-			var key = new EvaluateImplExpressionState.Key(this, decompilerOptionsVersion, memberModule, memberToken, memberVersion, refsResult.ModuleReferences, scope, aliases, options, expression);
+			var key = new EvaluateImplExpressionState.Key(this, decompilerOptionsVersion, memberModule, memberToken, memberVersion, refsResult.ModuleReferences, scope, aliases, keyOptions, expression);
 			if (!evalState.CachedKey.Equals(key)) {
 				evalState.CompilationResult = (object)type != null ?
 					expressionCompiler.CompileTypeExpression(context, frame, type, refsResult.ModuleReferences, aliases, expression, keyOptions, cancellationToken) :
@@ -319,7 +319,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				var type = obj.Type;
 				if (type.IsGenericType)
 					type = type.GetGenericTypeDefinition();
-				var errorRes = GetTypeInterpreterState(context, frame, type, expression, options, stateObj, cancellationToken, out var state);
+				var errorRes = GetTypeInterpreterState(context, frame, type, expression, options | DbgEvaluationOptions.NoName, stateObj, cancellationToken, out var state);
 				if (errorRes != null)
 					return errorRes.Value;
 
