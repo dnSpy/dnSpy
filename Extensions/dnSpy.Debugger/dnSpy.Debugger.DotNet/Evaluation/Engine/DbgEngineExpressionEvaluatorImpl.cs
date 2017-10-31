@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			if (res.Error != null)
 				return new DbgEngineEvaluationResult(res.Error, res.Flags);
 			try {
-				return new DbgEngineEvaluationResult(frame.Thread, new DbgEngineValueImpl(res.Value), res.Flags);
+				return new DbgEngineEvaluationResult(new DbgEngineValueImpl(res.Value), res.Flags);
 			}
 			catch {
 				res.Value.Dispose();
@@ -287,7 +287,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				if (res.HasError)
 					return new EvaluateImplResult(res.ErrorMessage, exprInfo.Name, null, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, expectedType);
 				if (res.ValueIsException)
-					return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, PredefinedDbgValueNodeImageNames.Error, expectedType);
+					return new EvaluateImplResult(null, exprInfo.Name, res.Value, (exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects) | DbgEvaluationResultFlags.ThrownException, PredefinedDbgValueNodeImageNames.Error, expectedType);
 				return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.Flags, exprInfo.ImageName, expectedType);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
@@ -310,8 +310,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgDotNetEvalResult EvaluateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken) {
 			var res = EvaluateImpl(context, frame, obj, expression, options, state, cancellationToken);
 			if (res.Error != null)
-				return new DbgDotNetEvalResult(predefinedEvaluationErrorMessagesHelper.GetErrorMessage(res.Error));
-			return new DbgDotNetEvalResult(res.Value);
+				return new DbgDotNetEvalResult(predefinedEvaluationErrorMessagesHelper.GetErrorMessage(res.Error), res.Flags);
+			return new DbgDotNetEvalResult(res.Value, res.Flags);
 		}
 
 		EvaluateImplResult EvaluateImpl(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object stateObj, CancellationToken cancellationToken) {

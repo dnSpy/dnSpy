@@ -45,13 +45,17 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 
 	public struct DbgDotNetEvalResult {
 		public DbgDotNetValue Value { get; }
+		public DbgEvaluationResultFlags Flags { get; }
+		public bool IsThrownException => (Flags & DbgEvaluationResultFlags.ThrownException) != 0;
 		public string Error { get; }
-		public DbgDotNetEvalResult(string error) {
+		public DbgDotNetEvalResult(string error, DbgEvaluationResultFlags flags = 0) {
 			Value = null;
+			Flags = flags;
 			Error = error ?? throw new ArgumentNullException(nameof(error));
 		}
-		public DbgDotNetEvalResult(DbgDotNetValue value) {
+		public DbgDotNetEvalResult(DbgDotNetValue value, DbgEvaluationResultFlags flags) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
+			Flags = flags;
 			Error = null;
 		}
 	}

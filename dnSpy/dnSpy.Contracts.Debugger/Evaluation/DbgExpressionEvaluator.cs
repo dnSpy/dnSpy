@@ -113,6 +113,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// It's a boolean expression
 		/// </summary>
 		BooleanExpression			= 0x00000004,
+
+		/// <summary>
+		/// The value is a thrown exception
+		/// </summary>
+		ThrownException				= 0x00000008,
 	}
 
 	/// <summary>
@@ -128,6 +133,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Gets the flags
 		/// </summary>
 		public DbgEvaluationResultFlags Flags { get; }
+
+		/// <summary>
+		/// true if <see cref="Value"/> is a thrown exception
+		/// </summary>
+		public bool IsThrownException => (Flags & DbgEvaluationResultFlags.ThrownException) != 0;
 
 		/// <summary>
 		/// Gets the error or null if none
