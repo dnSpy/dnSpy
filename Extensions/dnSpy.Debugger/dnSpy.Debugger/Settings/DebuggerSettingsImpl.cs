@@ -237,7 +237,7 @@ namespace dnSpy.Debugger.Settings {
 				}
 			}
 		}
-		bool enableManagedDebuggingAssistants = false;
+		bool enableManagedDebuggingAssistants = true;
 
 		public override bool HighlightChangedVariables {
 			get {
