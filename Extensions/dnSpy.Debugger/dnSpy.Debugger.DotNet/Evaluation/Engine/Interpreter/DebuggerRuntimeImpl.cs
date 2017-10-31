@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public abstract IDbgDotNetRuntime Runtime { get; }
 		public abstract void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBody realMethodBody, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken);
 		public abstract void Clear(DbgDotNetValue returnValue);
-		public abstract DbgDotNetValue GetDotNetValue(ILValue value);
+		public abstract DbgDotNetValue GetDotNetValue(ILValue value, DmdType targetType = null);
 	}
 
 	sealed class DebuggerRuntimeImpl : DebuggerRuntime2, IDebuggerRuntime {
@@ -130,8 +130,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			reflectionAppDomain = null;
 		}
 
-		public override DbgDotNetValue GetDotNetValue(ILValue value) {
-			var dnValue = TryGetDotNetValue(value, canCreateValues: true);
+		public override DbgDotNetValue GetDotNetValue(ILValue value, DmdType targetType = null) {
+			targetType = targetType ?? value.Type;
+			var dnValue = TryGetDotNetValue(value, value.IsNull ? targetType : value.Type, canCreateValues: true);
 			if (dnValue != null)
 				return dnValue;
 			throw new InvalidOperationException();//TODO:

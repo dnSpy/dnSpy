@@ -1063,7 +1063,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Returns true since it's a null value
 		/// </summary>
-		public override bool IsNull => true;
+		public sealed override bool IsNull => true;
 
 		/// <summary>
 		/// Constructor

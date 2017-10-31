@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				debuggerRuntime.Initialize(context, frame, methodState.RealMethodBody, argumentsProvider, localsProvider, (options & DbgEvaluationOptions.NoFuncEval) == 0, cancellationToken);
 				try {
 					var execResult = stateImpl.ILVM.Execute(debuggerRuntime, ilvmState);
-					var resultValue = debuggerRuntime.GetDotNetValue(execResult);
+					var resultValue = debuggerRuntime.GetDotNetValue(execResult, expectedType);
 					if (expectedType == expectedType.AppDomain.System_Void) {
 						resultValue.Dispose();
 						resultValue = new NoResultValue(expectedType.AppDomain);
