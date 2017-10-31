@@ -651,13 +651,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				throw new InterpreterMessageException(error);
 		}
 
-		public override int? CompareSigned(ILValue left, ILValue right) {
-			return null;//TODO:
-		}
-
-		public override int? CompareUnsigned(ILValue left, ILValue right) {
-			return null;//TODO:
-		}
+		public override int? CompareSigned(ILValue left, ILValue right) => null;
+		public override int? CompareUnsigned(ILValue left, ILValue right) => null;
 
 		public override bool? Equals(ILValue left, ILValue right) {
 			if (left is AddressILValue laddr && right is AddressILValue raddr)
@@ -782,6 +777,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			for (int i = 0; i < res.Length; i++)
 				res[i] = GetDebuggerValue(values[i], targetTypes[i]);
 			return res;
+		}
+
+		public override int GetSizeOfValueType(DmdType type) {
+			Debug.Assert(type.IsValueType);
+			Debug.Assert(!type.IsPrimitive);
+			throw new NotImplementedException();//TODO:
 		}
 
 		internal int ToInt32(ILValue value) {

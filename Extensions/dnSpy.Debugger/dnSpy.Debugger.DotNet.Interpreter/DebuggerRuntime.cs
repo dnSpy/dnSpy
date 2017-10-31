@@ -209,6 +209,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="right">Right operand</param>
 		/// <returns></returns>
 		public abstract bool? Equals(ILValue left, ILValue right);
+
+		/// <summary>
+		/// Gets the size of a value type
+		/// </summary>
+		/// <param name="type">Value type</param>
+		/// <returns></returns>
+		public abstract int GetSizeOfValueType(DmdType type);
 	}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member

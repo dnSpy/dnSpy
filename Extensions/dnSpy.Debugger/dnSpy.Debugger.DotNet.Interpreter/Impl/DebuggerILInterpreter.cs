@@ -4698,15 +4698,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			case TypeCode.UInt64:	return 8;
 			case TypeCode.Single:	return 4;
 			case TypeCode.Double:	return 8;
-			case TypeCode.Decimal:	return 16;
-			case TypeCode.DateTime:	return 8;
 			}
-
 			if (type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr)
 				return debuggerRuntime.PointerSize;
 
-			//TODO:
-			throw new InvalidMethodBodyInterpreterException();
+			return debuggerRuntime.GetSizeOfValueType(type);
 		}
 
 		long GetInt32OrNativeInt(ILValue v) {
