@@ -313,7 +313,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var reflectionModule = module.GetReflectionModule();
 			if (reflectionModule == null)
 				return false;
-			if (reflectionModule.Assembly.EntryPoint?.MetadataToken != func.Token)
+			var ep = reflectionModule.Assembly.EntryPoint;
+			if (ep?.Module != reflectionModule || ep.MetadataToken != func.Token)
 				return false;
 
 			// Seems to be the main assembly
