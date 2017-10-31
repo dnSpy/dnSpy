@@ -248,11 +248,6 @@ namespace dndbg.Engine {
 			hr = frame.GetStackRange(out rangeStart, out rangeEnd);
 			if (hr < 0)
 				rangeStart = rangeEnd = 0;
-
-			//TODO: ICorDebugILFrame2, ICorDebugILFrame3
-			//TODO: ICorDebugInternalFrame, ICorDebugInternalFrame2
-			//TODO: ICorDebugNativeFrame, ICorDebugNativeFrame2
-			//TODO: ICorDebugRuntimeUnwindableFrame
 		}
 
 		public CorStepper CreateStepper() {

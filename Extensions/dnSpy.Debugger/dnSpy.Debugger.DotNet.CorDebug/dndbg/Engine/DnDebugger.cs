@@ -817,7 +817,6 @@ namespace dndbg.Engine {
 				process = TryGetValidProcess(ctArgs.Thread);
 				if (process != null) {
 					var dnThread = process.TryAdd(ctArgs.Thread);
-					//TODO: ICorDebugThread::SetDebugState
 					if (dnThread != null) {
 						CallOnThreadAdded(dnThread, true, out shouldPause);
 						if (shouldPause)
@@ -1131,8 +1130,6 @@ namespace dndbg.Engine {
 				var b = (BreakDebugCallbackEventArgs)e;
 				e.AddPauseState(new BreakPauseState(b.CorAppDomain, b.CorThread));
 			}
-
-			//TODO: DebugCallbackType.BreakpointSetError
 		}
 
 		void ProcessesTerminated() {

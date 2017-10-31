@@ -233,11 +233,6 @@ namespace dndbg.DotNet {
 			CreateCorLibTypes();
 
 			InitModuleProperties_NoLock();
-
-			//TODO: protected virtual RVA GetNativeEntryPoint_NoLock() {
-			//TODO: protected virtual IManagedEntryPoint GetManagedEntryPoint_NoLock() {
-			//TODO: protected virtual VTableFixups GetVTableFixups_NoLock() {
-			//TODO: protected virtual Win32Resources GetWin32Resources_NoLock() {
 		}
 
 		public bool IsValidToken(uint token) {

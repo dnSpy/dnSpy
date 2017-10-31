@@ -234,8 +234,6 @@ namespace dndbg.Engine {
 
 		public CorThread(ICorDebugThread thread)
 			: base(thread) {
-			//TODO: ICorDebugThread3
-			//TODO: ICorDebugThread4
 		}
 
 		public bool InterceptCurrentException(CorFrame frame) {

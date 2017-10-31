@@ -145,8 +145,6 @@ namespace dndbg.Engine {
 
 		public CorFunction(ICorDebugFunction func, CorModule module = null)
 			: base(func) {
-			//TODO: ICorDebugFunction2::EnumerateNativeCode
-			//TODO: ICorDebugFunction3::GetActiveReJitRequestILCode
 		}
 
 		public MethodAttributes GetAttributes() {

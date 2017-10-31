@@ -29,11 +29,6 @@ namespace dnSpy.Contracts.MVVM {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
-		/// true if someone has added a <see cref="PropertyChanged"/> handler
-		/// </summary>
-		protected internal bool HasPropertyChangedHandlers => PropertyChanged != null;
-
-		/// <summary>
 		/// Raises <see cref="PropertyChanged"/>
 		/// </summary>
 		/// <param name="propName">Name of property that got changed</param>

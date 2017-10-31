@@ -127,11 +127,8 @@ namespace dndbg.Engine {
 		}
 
 		public byte[] ReadFieldInitialValue(uint fieldRva, uint fdToken, int size) {
-			if (module.IsDynamic) {
-				//TODO: See COMModule::SetFieldRVAContent()
-				//TODO: Perhaps you could create a type using the CorDebug eval API and read the value?
+			if (module.IsDynamic)
 				return null;
-			}
 
 			return ReadFromRVA(fieldRva, size);
 		}

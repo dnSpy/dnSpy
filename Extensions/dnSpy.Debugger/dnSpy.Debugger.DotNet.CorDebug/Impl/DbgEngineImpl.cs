@@ -394,7 +394,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 						case DebuggerPauseReason.DebugEventBreakpoint:
 						case DebuggerPauseReason.AnyDebugEventBreakpoint:
-							//TODO:
 							SendMessage(new DbgMessageBreak(TryGetThread(debuggerState.Thread), GetMessageFlags()));
 							break;
 

@@ -133,9 +133,6 @@ namespace dndbg.Engine {
 			int hr = process.GetID(out pid);
 			if (hr < 0)
 				pid = 0;
-
-			//TODO: ICorDebugProcess2::GetReferenceValueFromGCHandle
-			//TODO: ICorDebugProcess5 (GC methods)
 		}
 
 		/// <summary>
