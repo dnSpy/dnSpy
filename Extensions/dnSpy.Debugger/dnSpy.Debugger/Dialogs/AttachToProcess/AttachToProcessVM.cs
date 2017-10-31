@@ -46,6 +46,10 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public ICommand RefreshCommand => new RelayCommand(a => Refresh(), a => CanRefresh);
 		public string SearchHelpToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.SearchHelp_ToolTip, null);
 
+		public ICommand MakingAnImageEasierToDebugCommand => new RelayCommand(a => ShowMakingAnImageEasierToDebugPage());
+		public string MakingAnImageEasierToDebugToolTip => "Making an Image Easier to Debug";
+		const string MakingAnImageEasierToDebugPage = "https://docs.microsoft.com/en-us/dotnet/framework/debug-trace-profile/making-an-image-easier-to-debug";
+
 		public string Title {
 			get {
 				if (!Environment.Is64BitOperatingSystem)
@@ -285,6 +289,16 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			sbOutput.Reset();
 			attachToProcessContext.Formatter.WriteCommandLine(sbOutput, vm);
 			return sbOutput.ToString();
+		}
+
+		void ShowMakingAnImageEasierToDebugPage() => OpenWebPage(MakingAnImageEasierToDebugPage);
+
+		static void OpenWebPage(string url) {
+			try {
+				Process.Start(url);
+			}
+			catch {
+			}
 		}
 
 		internal void Dispose() {

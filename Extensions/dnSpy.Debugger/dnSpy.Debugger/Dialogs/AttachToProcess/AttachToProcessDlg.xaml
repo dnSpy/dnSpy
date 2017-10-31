@@ -126,18 +126,22 @@
             </ListView.View>
         </ListView>
 
-        <Grid Grid.Row="2" Margin="5">
+        <Grid Grid.Row="2" Margin="5" img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Refresh}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding RefreshCommand}" />
             <TextBlock Grid.Column="1" Text="{Binding DebuggingText}" Visibility="{Binding HasDebuggingText, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Center" />
             <ProgressBar Name="progressBar" Grid.Column="1" IsIndeterminate="True" Visibility="{Binding IsRefreshing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button Grid.Column="2" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Attach}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="5 0 5 0" Click="okButton_Click" />
-            <Button Grid.Column="3" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0 0 0 0" />
+            <Button Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding MakingAnImageEasierToDebugCommand}" ToolTip="{Binding MakingAnImageEasierToDebugToolTip}">
+                <img:DsImage ImageReference="{x:Static img:DsImages.StatusInformation}"/>
+            </Button>
+            <Button Grid.Column="3" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Attach}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="5 0 5 0" Click="okButton_Click" />
+            <Button Grid.Column="4" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0 0 0 0" />
         </Grid>
     </Grid>
 </winlocal:WindowBase>
