@@ -53,18 +53,25 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 				}
 				break;
 
+			// https://github.com/Microsoft/ConcordExtensibilitySamples/wiki/CLR-Expression-Evaluator-Intrinsics
+			// "This function returns the exception on the current thread"
 			case ExpressionCompilerConstants.GetExceptionMethodName:
 				// public static Exception GetException()
 				if (sig.GenericParameterCount == 0 && sig.ReturnType == appDomain.GetWellKnownType(DmdWellKnownType.System_Exception, isOptional: true) && ps.Count == 0)
 					return runtime.GetException();
 				break;
 
+			// https://github.com/Microsoft/ConcordExtensibilitySamples/wiki/CLR-Expression-Evaluator-Intrinsics
+			// "This function returns the stowed exception"
 			case ExpressionCompilerConstants.GetStowedExceptionMethodName:
 				// public static Exception GetStowedException()
 				if (sig.GenericParameterCount == 0 && sig.ReturnType == appDomain.GetWellKnownType(DmdWellKnownType.System_Exception, isOptional: true) && ps.Count == 0)
 					return runtime.GetStowedException();
 				break;
 
+			// https://github.com/Microsoft/ConcordExtensibilitySamples/wiki/CLR-Expression-Evaluator-Intrinsics
+			// "This function returns the return value of the given index. The indexes are 1-based. If 0 is passed, this
+			// function returns the last return value."
 			case ExpressionCompilerConstants.GetReturnValueMethodName:
 				// public static object GetReturnValue(int index)
 				if (sig.GenericParameterCount == 0 && sig.ReturnType == appDomain.System_Object && ps.Count == 1 && ps[0] == appDomain.System_Int32) {

@@ -1057,7 +1057,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Isinst:
 					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
 					v1 = Pop1();
-					ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, !v1.IsNull && type.IsAssignableFrom(v1.Type) ? 1 : 0));
+					ilValueStack.Add(!v1.IsNull && type.IsAssignableFrom(v1.Type) ? v1 : new NullObjectRefILValue());
 					break;
 
 				case OpCode.Newarr:

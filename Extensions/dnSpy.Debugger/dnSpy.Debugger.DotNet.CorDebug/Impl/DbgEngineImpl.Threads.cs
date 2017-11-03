@@ -243,6 +243,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		bool alreadyKnowsMainThread;
 
 		bool IsNotMainThread(DnThread thread) {
+			if (thread.AppDomainOrNull?.Id != 1)
+				return false;
 			var info = clrDac.GetThreadInfo(thread.VolatileThreadId);
 			if (info != null) {
 				var flags = info.Value.Flags;
