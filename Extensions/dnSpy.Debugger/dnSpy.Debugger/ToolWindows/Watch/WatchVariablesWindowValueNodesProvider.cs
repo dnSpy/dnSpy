@@ -107,6 +107,8 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 
 		void DbgObjectIdService_ObjectIdsChanged(object sender, EventArgs e) => NodesChanged?.Invoke(this, EventArgs.Empty);
 
+		public override void OnIsDebuggingChanged(bool isDebugging) => ClearEEState();
+
 		void ClearEEState() {
 			foreach (var info in expressions)
 				info.ExpressionEvaluatorState = null;

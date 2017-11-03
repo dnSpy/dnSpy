@@ -95,12 +95,19 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			if (enable) {
 				dbgLanguageService.Value.LanguageChanged += DbgLanguageService_LanguageChanged;
 				dbgCallStackService.Value.FramesChanged += DbgCallStackService_FramesChanged;
+				dbgManager.Value.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 			}
 			else {
 				dbgLanguageService.Value.LanguageChanged -= DbgLanguageService_LanguageChanged;
 				dbgCallStackService.Value.FramesChanged -= DbgCallStackService_FramesChanged;
+				dbgManager.Value.IsDebuggingChanged -= DbgManager_IsDebuggingChanged;
 			}
+			CallOnIsDebuggingChanged();
 		}
+
+		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) => CallOnIsDebuggingChanged();
+
+		void CallOnIsDebuggingChanged() => UI(() => variablesWindowValueNodesProvider.OnIsDebuggingChanged(dbgManager.Value.IsDebugging));
 
 		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) {
 			var thread = dbgManager.Value.CurrentThread.Current;

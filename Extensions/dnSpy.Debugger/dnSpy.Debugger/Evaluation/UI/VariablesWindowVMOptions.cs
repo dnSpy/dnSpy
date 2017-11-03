@@ -44,6 +44,8 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		/// <param name="enable">true if window is shown, false if it's closed</param>
 		public virtual void Initialize(bool enable) { }
 
+		public virtual void OnIsDebuggingChanged(bool isDebugging) { }
+
 		/// <summary>
 		/// true if root nodes can be added/deleted (supported by watch window)
 		/// </summary>
