@@ -306,18 +306,21 @@ namespace dndbg.Engine {
 		/// </summary>
 		public uint ContinueCounter { get; private set; }
 
-		// Called in our dndbg thread
+		void DisposeOfHandles() {
+			DebugVerifyThread();
+			foreach (var value in disposeValues)
+				value.DisposeHandle();
+			disposeValues.Clear();
+		}
+
 		void OnManagedCallbackInDebuggerThread(DebugCallbackEventArgs e) {
 			DebugVerifyThread();
 			if (hasTerminated)
 				return;
 			managedCallbackCounter++;
 
-			if (disposeValues.Count != 0) {
-				foreach (var value in disposeValues)
-					value.DisposeHandle();
-				disposeValues.Clear();
-			}
+			if (disposeValues.Count != 0)
+				DisposeOfHandles();
 
 			try {
 				HandleManagedCallback(e);
@@ -1620,6 +1623,8 @@ namespace dndbg.Engine {
 				if (hr < 0)
 					return hr;
 			}
+
+			DisposeOfHandles();
 
 			foreach (var bp in ilCodeBreakpointList.GetBreakpoints())
 				bp.OnRemoved();
