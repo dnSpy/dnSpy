@@ -347,12 +347,15 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 						WriteEnumSeperator();
 					WriteEnumInteger(type, f);
 				}
+				if (needSep)
+					WriteRawValue(enumValue, type);
 			}
 			else {
 				bool printed = false;
 				foreach (var info in enumInfo.FieldInfos) {
 					if (info.Value == enumValue) {
 						WriteEnumField(info.Field);
+						WriteRawValue(enumValue, type);
 						printed = true;
 						break;
 					}
@@ -360,6 +363,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				if (!printed)
 					WriteEnumInteger(type, enumValue);
 			}
+		}
+
+		void WriteRawValue(ulong enumValue, DmdType type) {
+			Debug.Assert(type.IsEnum);
+			if (!Display)
+				return;
+			WriteSpace();
+			OutputWrite(TypeNameOpenParen, BoxedTextColor.Error);
+			WriteNumber(ToFormattedInteger(type.GetEnumUnderlyingType(), enumValue));
+			OutputWrite(TypeNameCloseParen, BoxedTextColor.Error);
 		}
 
 		void WriteEnumField(DmdFieldInfo field) {
