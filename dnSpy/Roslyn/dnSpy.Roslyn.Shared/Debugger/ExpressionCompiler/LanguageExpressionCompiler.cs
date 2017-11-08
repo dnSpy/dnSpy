@@ -23,6 +23,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading;
 using dnlib.DotNet;
+using dnlib.DotNet.Pdb;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
@@ -132,7 +133,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				foreach (var local in scope.Locals) {
 					if (local.IsDecompilerGenerated)
 						continue;
-					if ((local.Local.PdbAttributes & 1) == 0)
+					if ((local.Local.Attributes & PdbLocalAttributes.DebuggerHidden) == 0)
 						notCompilerGenerated[local.Local.Index] = true;
 				}
 			}

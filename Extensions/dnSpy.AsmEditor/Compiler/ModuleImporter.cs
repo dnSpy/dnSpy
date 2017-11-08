@@ -1908,7 +1908,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var local in sourceBody.Variables) {
 				var newLocal = new Local(Import(local.Type), local.Name);
 				bodyDict[local] = newLocal;
-				newLocal.PdbAttributes = local.PdbAttributes;
+				newLocal.Attributes = local.Attributes;
 				targetBody.Variables.Add(newLocal);
 			}
 

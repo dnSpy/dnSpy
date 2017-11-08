@@ -211,7 +211,7 @@
                         <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox Style="{StaticResource CilCheckBoxStyle}" IsChecked="{Binding IsCompilerGenerated}" HorizontalAlignment="Left" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character_ToolTip}" />
+                                    <CheckBox Style="{StaticResource CilCheckBoxStyle}" IsChecked="{Binding DebuggerHidden}" HorizontalAlignment="Left" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character_ToolTip}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

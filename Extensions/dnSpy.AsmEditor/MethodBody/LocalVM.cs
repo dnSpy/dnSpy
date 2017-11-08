@@ -20,6 +20,7 @@
 using System;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnlib.DotNet.Pdb;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
@@ -91,22 +92,27 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		string name;
 
-		public bool IsCompilerGenerated {
-			get { return PdbAttributes == 1; }
-			set { PdbAttributes = value ? 1 : 0; }
+		public bool DebuggerHidden {
+			get { return (Attributes & PdbLocalAttributes.DebuggerHidden) != 0; }
+			set {
+				if (value)
+					Attributes |= PdbLocalAttributes.DebuggerHidden;
+				else
+					Attributes &= ~PdbLocalAttributes.DebuggerHidden;
+			}
 		}
 
-		public int PdbAttributes {
-			get { return pdbAttributes; }
+		public PdbLocalAttributes Attributes {
+			get { return attributes; }
 			set {
-				if (pdbAttributes != value) {
-					pdbAttributes = value;
-					OnPropertyChanged(nameof(PdbAttributes));
-					OnPropertyChanged(nameof(IsCompilerGenerated));
+				if (attributes != value) {
+					attributes = value;
+					OnPropertyChanged(nameof(Attributes));
+					OnPropertyChanged(nameof(DebuggerHidden));
 				}
 			}
 		}
-		int pdbAttributes;
+		PdbLocalAttributes attributes;
 
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
@@ -139,13 +145,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public void InitializeFrom(LocalOptions options) {
 			Type = options.Type;
 			Name = options.Name;
-			PdbAttributes = options.PdbAttributes;
+			Attributes = options.Attributes;
 		}
 
 		public LocalOptions CopyTo(LocalOptions options) {
 			options.Type = Type;
 			options.Name = Name;
-			options.PdbAttributes = PdbAttributes;
+			options.Attributes = Attributes;
 			return options;
 		}
 
