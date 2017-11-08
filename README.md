@@ -2,6 +2,8 @@
 
 dnSpy is a debugger and .NET assembly editor. You can use it to edit and debug assemblies even if you don't have any source code available.
 
+Want to say thanks? Click the star at the top of the page. Or fork dnSpy and send a PR!
+
 The following pictures show dnSpy in action. It shows dnSpy editing and debugging a .NET EXE file, not source code.
 
 ![debug-animated](images/debug-animated.gif)
@@ -23,7 +25,7 @@ dnSpy uses the ILSpy decompiler engine and the Roslyn (C# / Visual Basic) compil
 
 [Latest release](https://github.com/0xd4d/dnSpy/releases)
 
-Latest build: [![Build status](https://ci.appveyor.com/api/projects/status/616rgr9ot3nvfjv5/branch/master?svg=true)](https://ci.appveyor.com/project/0xd4d/dnspy/branch/master/artifacts)
+Latest build: [![Build status](https://ci.appveyor.com/api/projects/status/3utl4e1qkx7pamko/branch/master?svg=true)](https://ci.appveyor.com/project/0xd4d/dnspy/branch/master/artifacts)
 
 Or build it from source, see the [Wiki](https://github.com/0xd4d/dnSpy/wiki/Building-dnSpy).
 
