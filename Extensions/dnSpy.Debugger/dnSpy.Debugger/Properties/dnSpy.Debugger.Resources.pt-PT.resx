@@ -1467,12 +1467,6 @@ Tem certeza que deseja expandi-la?</value>
   <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
     <value>Você quer parar a depuração?</value>
   </data>
-  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>Ocorreu um erro de depurador CLR. Finalize o processo depurado e tente novamente. 
-
-HR: 0x{0:X8}
-Erro: 0x{1:X8}</value>
-  </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
     <value>Give focus to debugged process</value>
   </data>

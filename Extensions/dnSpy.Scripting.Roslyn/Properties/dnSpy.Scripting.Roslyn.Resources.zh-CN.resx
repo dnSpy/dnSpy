@@ -142,7 +142,7 @@
     <value>显示匹配当前输入文本的下一命令</value>
   </data>
   <data name="HelpCtrlAltUp" xml:space="preserve">
-    <value>显示匹配当前输入文本的的前一命令</value>
+    <value>显示匹配当前输入文本的前一命令</value>
   </data>
   <data name="HelpCtrlEnter" xml:space="preserve">
     <value>执行命令</value>

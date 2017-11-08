@@ -1470,12 +1470,6 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
     <value>Möchten Sie das Debuggen beenden?</value>
   </data>
-  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>Ein CLR Debugger Fehler trat auf. Beenden Sie den debuggten Prozess und versuchen Sie es erneut.
-
-HR: 0x{0:X8}
-Error: 0x{1:X8}</value>
-  </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
     <value>Give focus to debugged process</value>
   </data>

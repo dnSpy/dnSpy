@@ -136,7 +136,7 @@
     <value>取消加载模块吗？</value>
   </data>
   <data name="CantEvaluateWhenCurrentFrameIsNative" xml:space="preserve">
-    <value>Can't evaluate expressions when current stack frame is a native stack frame</value>
+    <value>在当前栈帧为本地栈帧时无法计算表达式</value>
   </data>
   <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
     <value>反编译器生成的变量不能被求值</value>
@@ -157,27 +157,27 @@
     <value>加载动态模块中</value>
   </data>
   <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
-    <value>'{0}' threw an exception of type '{1}'</value>
+    <value>'{0}'抛出了类型为'{1}'的异常</value>
   </data>
   <data name="ModuleMetadataNotFoundOrInvalid" xml:space="preserve">
-    <value>The metadata of the module couldn't be found or it is invalid</value>
+    <value>模块的元数据不存在或无效</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>加载动态模块前您必须先中断此进程。</value>
   </data>
   <data name="NoDotNetObjectFoundAtAddress" xml:space="preserve">
-    <value>No object found at the given address</value>
+    <value>在给定地址未找到对象</value>
   </data>
   <data name="NoExceptionOnTheCurrentThread" xml:space="preserve">
-    <value>There is no exception on the current thread</value>
+    <value>在当前线程上未发生异常</value>
   </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
     <value>重新加载所有方法体</value>
   </data>
   <data name="ReturnValueNotAvailable" xml:space="preserve">
-    <value>Return value is not currently available</value>
+    <value>返回值当前不可用</value>
   </data>
   <data name="UnknownVariableOrObjectId" xml:space="preserve">
-    <value>Unknown variable or object ID</value>
+    <value>未知变量或对象ID</value>
   </data>
 </root>

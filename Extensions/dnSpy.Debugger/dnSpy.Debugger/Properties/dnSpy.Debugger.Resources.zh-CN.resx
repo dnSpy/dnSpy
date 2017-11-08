@@ -1470,12 +1470,6 @@
   <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
     <value>要停止调试吗？</value>
   </data>
-  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>CLR 调试器发生错误。请终止调试的进程并再试。
-
-HR: 0x{0:X8}
-错误：0x{1:X8}</value>
-  </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
     <value>Give focus to debugged process</value>
   </data>
