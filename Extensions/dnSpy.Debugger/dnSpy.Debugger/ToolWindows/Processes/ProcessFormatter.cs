@@ -63,10 +63,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		public void WriteId(ITextColorWriter output, DbgProcess process) {
-			if (useHex) {
-				// Lower case like in VS
-				output.Write(BoxedTextColor.Number, "0x" + process.Id.ToString("x8"));
-			}
+			if (useHex)
+				output.Write(BoxedTextColor.Number, "0x" + process.Id.ToString("X8"));
 			else
 				output.Write(BoxedTextColor.Number, process.Id.ToString());
 		}

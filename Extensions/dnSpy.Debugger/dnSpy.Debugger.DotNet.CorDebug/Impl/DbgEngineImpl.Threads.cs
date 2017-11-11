@@ -243,8 +243,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		bool alreadyKnowsMainThread;
 
 		bool IsNotMainThread(DnThread thread) {
-			if (thread.AppDomainOrNull?.Id != 1)
-				return true;
 			var info = clrDac.GetThreadInfo(thread.VolatileThreadId);
 			if (info != null) {
 				var flags = info.Value.Flags;
@@ -284,17 +282,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					const ulong defaultManagedId = ulong.MaxValue;
 					// The main thread should have a low managed ID, very often MID=1
 					list.Sort((a, b) => (a.data.Last.ManagedId ?? defaultManagedId).CompareTo(b.data.Last.ManagedId ?? defaultManagedId));
-					// If we fail to detect it, just pick the one with the smallest MID
-					var mainThreadInfo = list[0];
+					alreadyKnowsMainThread = true;
+					(DnThread thread, DbgThreadData data) mainThreadInfo = default;
 					foreach (var threadInfo in list) {
 						if (IsMainThreadCheckCallStack(threadInfo.thread)) {
 							mainThreadInfo = threadInfo;
 							break;
 						}
 					}
-					alreadyKnowsMainThread = true;
-					mainThreadInfo.data.IsMainThread = true;
-					info = UpdateThreadProperties_CorDebug_NoLock(mainThreadInfo.thread);
+					if (mainThreadInfo.thread != null) {
+						mainThreadInfo.data.IsMainThread = true;
+						info = UpdateThreadProperties_CorDebug_NoLock(mainThreadInfo.thread);
+					}
 				}
 			}
 			if (info != null)
