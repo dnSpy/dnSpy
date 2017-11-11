@@ -1387,79 +1387,79 @@
     <value>Показывать сырую структуру объектов в окнах переменных</value>
   </data>
   <data name="UnknownValue" xml:space="preserve">
-    <value>&lt;Unknown&gt;</value>
+    <value>&lt;Неизвестно&gt;</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Обновить</value>
   </data>
   <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
-    <value>Group parameters and locals together</value>
+    <value>Группировать параметры и локальные переменные вместе</value>
   </data>
   <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
-    <value>Show compiler generated variables</value>
+    <value>Показать созданные компилятором переменные</value>
   </data>
   <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
-    <value>Show decompiler generated variables</value>
+    <value>Показать созданные декомпилятором переменные</value>
   </data>
   <data name="DbgSettings_SortLocals" xml:space="preserve">
-    <value>Sort locals</value>
+    <value>Сортировать локальные переменные</value>
   </data>
   <data name="DbgSettings_SortParameters" xml:space="preserve">
-    <value>Sort parameters</value>
+    <value>Сортировать параметры</value>
   </data>
   <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
-    <value>Hide compiler generated members</value>
+    <value>Скрыть созданные компилятором члены</value>
   </data>
   <data name="FunctionEvaluationDisabled" xml:space="preserve">
-    <value>Implicit function evaluation is turned off by the user</value>
+    <value>Вычисление неявных функций отключено пользователем</value>
   </data>
   <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
-    <value>Respect attributes that hide members</value>
+    <value>Соблюдать атрибуты, скрывающие члены</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Internal debugger error</value>
+    <value>Внутренняя ошибка отладчика</value>
   </data>
   <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
-    <value>The function evaluation requires all threads to run.</value>
+    <value>Вычисление функции требует выполнения всех потоков.</value>
   </data>
   <data name="DigitSeparatorsCommand" xml:space="preserve">
-    <value>Digit Separators</value>
+    <value>Разделители цифр</value>
   </data>
   <data name="Column_ProcessCommandLine" xml:space="preserve">
-    <value>Command Line</value>
+    <value>Командная строка</value>
   </data>
   <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
-    <value>Cannot obtain value of the local variable or argument because it is not available at this instruction pointer, possibly because it has been optimized away.</value>
+    <value>Не удалось получить значение локальной переменной или аргумента, потому что он недоступен для текущего указателя инструкций, возможно потому, что он был оптимизирован.</value>
   </data>
   <data name="ExceptionMessage" xml:space="preserve">
-    <value>Message: {0}</value>
+    <value>Сообщение: {0}</value>
   </data>
   <data name="ExceptionName" xml:space="preserve">
-    <value>Exception: {0}</value>
+    <value>Исключение: {0}</value>
   </data>
   <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
-    <value>An unhandled exception occurred in {0} ({1})</value>
+    <value>Необработанное исключение произошло в {0} ({1})</value>
   </data>
   <data name="StatusBar_BreakpointHit" xml:space="preserve">
     <value>Точки останова</value>
   </data>
   <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
-    <value>The breakpoint expression must be a boolean expression</value>
+    <value>Выражение точки останова должно быть типа boolean</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
-    <value>Suppress JIT optimization on module load</value>
+    <value>Отключить JIT-оптимизацию при загрузке модуля</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
-    <value>Program modules</value>
+    <value>Модули программы</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
-    <value>System modules</value>
+    <value>Системные модули</value>
   </data>
   <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
-    <value>The runtime is unable to evaluate this expression.</value>
+    <value>Среда выполнения не может вычислить это выражение.</value>
   </data>
   <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
-    <value>Enable or disable all exceptions matching the current search criteria</value>
+    <value>Включает или выключает все исключения, соответствующие текущему условию поиска</value>
   </data>
   <data name="DisableBreakpointCommand2" xml:space="preserve">
     <value>В_ыключить точку останова</value>
@@ -1471,6 +1471,6 @@
     <value>Вы хотите остановить отладку?</value>
   </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
-    <value>Give focus to debugged process</value>
+    <value>Установить фокус на отлаживаемый процесс</value>
   </data>
 </root>

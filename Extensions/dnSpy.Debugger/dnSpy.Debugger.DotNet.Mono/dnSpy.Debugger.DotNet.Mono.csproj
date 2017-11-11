@@ -97,6 +97,10 @@
       <LastGenOutput>dnSpy.Debugger.DotNet.Mono.Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.zh-CN.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

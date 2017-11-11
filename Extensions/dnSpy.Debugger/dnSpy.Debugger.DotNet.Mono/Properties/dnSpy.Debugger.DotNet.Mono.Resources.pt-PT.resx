@@ -118,160 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DbgAsm_Args" xml:space="preserve">
-    <value>А_ргументы</value>
+    <value>Argumentos</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Сборка</value>
+    <value>Assembly</value>
   </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>_Остановиться в</value>
+    <value>Parar em</value>
   </data>
-  <data name="DbgAsm_Host" xml:space="preserve">
-    <value>_Хост</value>
+  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
+    <value>_Port</value>
   </data>
-  <data name="DbgAsm_HostArgs" xml:space="preserve">
-    <value>Ар_гументы хоста</value>
+  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="DbgAsm_IP_Address" xml:space="preserve">
+    <value>IP Address</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>_Рабочий каталог</value>
+    <value>Diretório de Trabalho</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Создать Процесс</value>
+    <value>CreateProcess</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>Не прерывать</value>
+    <value>Não quebre</value>
   </data>
   <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Точка входа</value>
-  </data>
-  <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Не найден хост .NET Core '{0}'</value>
-  </data>
-  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
-    <value>Не могу запустить дебаггер. {0}</value>
-  </data>
-  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
-    <value>Не могу запустить дебаггер. Убедитесь, что есть доступ к файлу '{0}'
-
-Ошибка: {1}</value>
-  </data>
-  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
-    <value>Не могу запустить дебаггер. Отлаживаемое приложение требует административных полномочий. Перезапустите dnSpy в режиме администратора и попробуйте снова.</value>
+    <value>Ponto de Entrada</value>
   </data>
   <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>Файл не существует</value>
+    <value>O ficheiro não existe</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Пропущено имя файла</value>
+    <value>Nome do ficheiro em falta</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Отладчик ({0})</value>
-  </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Фоновый</value>
-  </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Остановлен</value>
-  </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>Запрос останова</value>
-  </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Приостановлен</value>
-  </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Запрос приостановки</value>
-  </data>
-  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
-    <value>ThreadPool</value>
-  </data>
-  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
-    <value>UnsafePoint</value>
-  </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Незапущен</value>
-  </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
-  </data>
-  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Для отладки 32-битных приложений используйте dnSpy-x86.exe.</value>
-  </data>
-  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Для отладки 64-битных приложений используйте dnSpy.exe.</value>
-  </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>«&lt;сообщение без исключения&gt;»</value>
-  </data>
-  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
-    <value>Не могу запустить дебаггер.
-
-Ошибка: {0}</value>
-  </data>
-  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Не получается присоединиться к процессу {0}</value>
-  </data>
-  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Другой процесс уже отлаживает процесс {0}</value>
-  </data>
-  <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Native Frame {0}</value>
-  </data>
-  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Appdomain Transition</value>
-  </data>
-  <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Инициализация Класса</value>
-  </data>
-  <data name="StackFrame_Exception" xml:space="preserve">
-    <value>Исключение</value>
-  </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Вычисление функции</value>
-  </data>
-  <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Внутренний вызов</value>
-  </data>
-  <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Внутренний фрейм({0})</value>
-  </data>
-  <data name="StackFrame_JITCompilation" xml:space="preserve">
-    <value>JIT-компиляция</value>
-  </data>
-  <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Lightweight Function</value>
-  </data>
-  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Managed to Native Transition</value>
-  </data>
-  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Переход от управляемого к управляемому</value>
-  </data>
-  <data name="StackFrame_Security" xml:space="preserve">
-    <value>Безопасность</value>
-  </data>
-  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>Смещение в IL {0}</value>
-  </data>
-  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
-    <value>линия {0} символ {1}</value>
-  </data>
-  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
-    <value>адрес {0}</value>
-  </data>
-  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>Не могу установить следующую инструкцию.</value>
-  </data>
-  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
-    <value>Не могу прервать процесс. Ошибка: 0x{0:X8}</value>
-  </data>
-  <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Внутренняя ошибка отладчика</value>
-  </data>
-  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>Произошла ошибка дебаггера CLR. Уничтожьте процесс дебаггера и попробуйте снова.
-
-HR: 0x{0:X8}
-Ошибка: 0x{1:X8}</value>
+    <value>Depurador ({0})</value>
   </data>
 </root>

@@ -144,27 +144,6 @@
   <data name="DbgBreak_EntryPoint" xml:space="preserve">
     <value>入口点</value>
   </data>
-  <data name="DbgBreak_ExeFirstLoadClassEvent" xml:space="preserve">
-    <value>程序的第一个LoadClass事件</value>
-  </data>
-  <data name="DbgBreak_ExeLoadModuleEvent" xml:space="preserve">
-    <value>程序的LoadModule事件</value>
-  </data>
-  <data name="DbgBreak_FirstCreateAppDomainEvent" xml:space="preserve">
-    <value>第一个CreateAppDomain事件</value>
-  </data>
-  <data name="DbgBreak_FirstCreateThreadEvent" xml:space="preserve">
-    <value>第一个CreateThread事件</value>
-  </data>
-  <data name="DbgBreak_FirstLoadClassEvent" xml:space="preserve">
-    <value>第一个LoadClass事件</value>
-  </data>
-  <data name="DbgBreak_FirstLoadModuleEvent" xml:space="preserve">
-    <value>第一个LoadModule事件</value>
-  </data>
-  <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
-    <value>模块的静态构造函数或入口点</value>
-  </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
     <value>无法找到.NET Core宿主 '{0}'</value>
   </data>

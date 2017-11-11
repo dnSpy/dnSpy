@@ -202,7 +202,7 @@
     <value>Эта сборка содержит неуправляемый код.</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
-    <value>Timestamp:</value>
+    <value>Время:</value>
   </data>
   <data name="MSBuild_CreateResource" xml:space="preserve">
     <value>Создать ресурс {0}</value>
@@ -232,7 +232,7 @@
     <value>Создать файл ResX</value>
   </data>
   <data name="UnknownValue" xml:space="preserve">
-    <value>&lt;Unknown&gt;</value>
+    <value>&lt;Неизвестно&gt;</value>
   </data>
   <data name="CSharp_Awaitable_Method" xml:space="preserve">
     <value>awaitable</value>
