@@ -117,4 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DbgAsm_Args" xml:space="preserve">
+    <value>A_rguments</value>
+  </data>
+  <data name="DbgAsm_Assembly" xml:space="preserve">
+    <value>_Assembly</value>
+  </data>
+  <data name="DbgAsm_BreakAt" xml:space="preserve">
+    <value>_Break at</value>
+  </data>
+  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
+    <value>_Port</value>
+  </data>
+  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="DbgAsm_IP_Address" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
+  <data name="DbgAsm_WorkingDir" xml:space="preserve">
+    <value>_Working Directory</value>
+  </data>
+  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
+    <value>CreateProcess</value>
+  </data>
+  <data name="DbgBreak_Dont" xml:space="preserve">
+    <value>Don't Break</value>
+  </data>
+  <data name="DbgBreak_EntryPoint" xml:space="preserve">
+    <value>Entry Point</value>
+  </data>
+  <data name="Error_FileDoesNotExist" xml:space="preserve">
+    <value>The file doesn't exist</value>
+  </data>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>Missing filename</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Debugger ({0})</value>
+  </data>
 </root>

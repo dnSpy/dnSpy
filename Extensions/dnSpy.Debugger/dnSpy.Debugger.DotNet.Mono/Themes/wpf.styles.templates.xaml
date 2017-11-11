@@ -21,4 +21,91 @@
                     xmlns:p="clr-namespace:dnSpy.Debugger.DotNet.Mono.Properties"
                     xmlns:dbgprog="clr-namespace:dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram">
 
+    <DataTemplate DataType="{x:Type dbgprog:MonoStartDebuggingOptionsPage}">
+        <Grid Grid.Row="0" Margin="0 0 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_Assembly}" Target="{Binding ElementName=exeTextBox}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="exeTextBox" Text="{Binding Filename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickFilenameCommand}" />
+
+            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_Args}" Target="{Binding ElementName=argsTextBox}" />
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="argsTextBox" Text="{Binding CommandLine, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_WorkingDir}" Target="{Binding ElementName=cwdTextBox}" />
+            <TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="cwdTextBox" Text="{Binding WorkingDirectory, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickWorkingDirectoryCommand}" />
+
+            <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="mono.exe" Target="{Binding ElementName=monoExeTextBox}" />
+            <TextBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Name="monoExeTextBox" Text="{Binding MonoExePath, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickMonoExePathCommand}" />
+
+            <Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_ConnectionPort}" Target="{Binding ElementName=portTextBox}" />
+            <TextBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Name="portTextBox" Text="{Binding ConnectionPort.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_BreakAt}" Target="{Binding ElementName=breakComboBox}" />
+            <ComboBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessKindVM.Items}" SelectedIndex="{Binding BreakProcessKindVM.SelectedIndex}" VerticalContentAlignment="Center" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type dbgprog:MonoConnectStartDebuggingOptionsPage}">
+        <Grid Grid.Row="0" Margin="0 0 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_IP_Address}" Target="{Binding ElementName=ipAddressTextBox}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="ipAddressTextBox" Text="{Binding Address, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_ConnectionPort}" Target="{Binding ElementName=ipPortTextBox}" />
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="ipPortTextBox" Text="{Binding ConnectionPort.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_BreakAt}" Target="{Binding ElementName=breakComboBox}" />
+            <ComboBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessKindVM.Items}" SelectedIndex="{Binding BreakProcessKindVM.SelectedIndex}" VerticalContentAlignment="Center" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type dbgprog:UnityConnectStartDebuggingOptionsPage}">
+        <Grid Grid.Row="0" Margin="0 0 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_IP_Address}" Target="{Binding ElementName=ipAddressTextBox}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="ipAddressTextBox" Text="{Binding Address, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_ConnectionPort}" Target="{Binding ElementName=ipPortTextBox}" />
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="ipPortTextBox" Text="{Binding ConnectionPort.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_BreakAt}" Target="{Binding ElementName=breakComboBox}" />
+            <ComboBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessKindVM.Items}" SelectedIndex="{Binding BreakProcessKindVM.SelectedIndex}" VerticalContentAlignment="Center" />
+        </Grid>
+    </DataTemplate>
+
 </ResourceDictionary>

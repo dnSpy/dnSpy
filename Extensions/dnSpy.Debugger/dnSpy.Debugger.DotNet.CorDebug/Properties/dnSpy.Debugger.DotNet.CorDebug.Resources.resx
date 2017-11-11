@@ -144,27 +144,6 @@
   <data name="DbgBreak_EntryPoint" xml:space="preserve">
     <value>Entry Point</value>
   </data>
-  <data name="DbgBreak_ExeFirstLoadClassEvent" xml:space="preserve">
-    <value>Exe's First LoadClass Event</value>
-  </data>
-  <data name="DbgBreak_ExeLoadModuleEvent" xml:space="preserve">
-    <value>Exe's LoadModule Event</value>
-  </data>
-  <data name="DbgBreak_FirstCreateAppDomainEvent" xml:space="preserve">
-    <value>First CreateAppDomain Event</value>
-  </data>
-  <data name="DbgBreak_FirstCreateThreadEvent" xml:space="preserve">
-    <value>First CreateThread Event</value>
-  </data>
-  <data name="DbgBreak_FirstLoadClassEvent" xml:space="preserve">
-    <value>First LoadClass Event</value>
-  </data>
-  <data name="DbgBreak_FirstLoadModuleEvent" xml:space="preserve">
-    <value>First LoadModule Event</value>
-  </data>
-  <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
-    <value>Module .cctor or Entry Point</value>
-  </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
     <value>Couldn't find .NET Core host '{0}'</value>
   </data>

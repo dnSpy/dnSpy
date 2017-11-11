@@ -124,8 +124,6 @@ namespace dnSpy.Contracts.Utilities {
 			return (char)(val - 10 + (upper ? (int)'A' : (int)'a'));
 		}
 
-		const string INVALID_TOSTRING_VALUE = "<invalid value>";
-
 		/// <summary>
 		/// Converts an unsigned integer to a string
 		/// </summary>
@@ -135,8 +133,6 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="useDecimal">true to use decimal, false to use hex, null to use decimal if possible, hex otherwise</param>
 		/// <returns></returns>
 		public static string ToString(ulong value, ulong min, ulong max, bool? useDecimal) {
-			if (value < min || value > max)
-				return INVALID_TOSTRING_VALUE;
 			if (useDecimal == null) {
 				if (decimalUInt64.Contains(value))
 					return value.ToString();
@@ -157,8 +153,6 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="useDecimal">true to use decimal, false to use hex, null to use decimal if possible, hex otherwise</param>
 		/// <returns></returns>
 		public static string ToString(long value, long min, long max, bool? useDecimal) {
-			if (value < min || value > max)
-				return INVALID_TOSTRING_VALUE;
 			if (useDecimal == null) {
 				if (decimalInt64.Contains(value))
 					return value.ToString();

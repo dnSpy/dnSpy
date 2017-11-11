@@ -59,5 +59,122 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A_rguments.
+        /// </summary>
+        public static string DbgAsm_Args {
+            get {
+                return ResourceManager.GetString("DbgAsm_Args", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Assembly.
+        /// </summary>
+        public static string DbgAsm_Assembly {
+            get {
+                return ResourceManager.GetString("DbgAsm_Assembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Break at.
+        /// </summary>
+        public static string DbgAsm_BreakAt {
+            get {
+                return ResourceManager.GetString("DbgAsm_BreakAt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect.
+        /// </summary>
+        public static string DbgAsm_Connect_To_Process {
+            get {
+                return ResourceManager.GetString("DbgAsm_Connect_To_Process", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Port.
+        /// </summary>
+        public static string DbgAsm_ConnectionPort {
+            get {
+                return ResourceManager.GetString("DbgAsm_ConnectionPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IP Address.
+        /// </summary>
+        public static string DbgAsm_IP_Address {
+            get {
+                return ResourceManager.GetString("DbgAsm_IP_Address", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Working Directory.
+        /// </summary>
+        public static string DbgAsm_WorkingDir {
+            get {
+                return ResourceManager.GetString("DbgAsm_WorkingDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CreateProcess.
+        /// </summary>
+        public static string DbgBreak_CreateProcessEvent {
+            get {
+                return ResourceManager.GetString("DbgBreak_CreateProcessEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Don&apos;t Break.
+        /// </summary>
+        public static string DbgBreak_Dont {
+            get {
+                return ResourceManager.GetString("DbgBreak_Dont", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entry Point.
+        /// </summary>
+        public static string DbgBreak_EntryPoint {
+            get {
+                return ResourceManager.GetString("DbgBreak_EntryPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file doesn&apos;t exist.
+        /// </summary>
+        public static string Error_FileDoesNotExist {
+            get {
+                return ResourceManager.GetString("Error_FileDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing filename.
+        /// </summary>
+        public static string Error_MissingFilename {
+            get {
+                return ResourceManager.GetString("Error_MissingFilename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debugger ({0}).
+        /// </summary>
+        public static string Plugin_ShortDescription {
+            get {
+                return ResourceManager.GetString("Plugin_ShortDescription", resourceCulture);
+            }
+        }
     }
 }

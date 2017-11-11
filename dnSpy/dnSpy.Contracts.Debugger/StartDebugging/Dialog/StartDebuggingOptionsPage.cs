@@ -140,5 +140,15 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// .NET Core
 		/// </summary>
 		public const double DotNetCore = 1000000;
+
+		/// <summary>
+		/// .NET Mono
+		/// </summary>
+		public const double DotNetMono = 1000000;
+
+		/// <summary>
+		/// .NET Unity
+		/// </summary>
+		public const double DotNetUnity = 1000000;
 	}
 }

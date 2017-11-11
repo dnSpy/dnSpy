@@ -143,69 +143,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exe&apos;s First LoadClass Event.
-        /// </summary>
-        public static string DbgBreak_ExeFirstLoadClassEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_ExeFirstLoadClassEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exe&apos;s LoadModule Event.
-        /// </summary>
-        public static string DbgBreak_ExeLoadModuleEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_ExeLoadModuleEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First CreateAppDomain Event.
-        /// </summary>
-        public static string DbgBreak_FirstCreateAppDomainEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_FirstCreateAppDomainEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First CreateThread Event.
-        /// </summary>
-        public static string DbgBreak_FirstCreateThreadEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_FirstCreateThreadEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First LoadClass Event.
-        /// </summary>
-        public static string DbgBreak_FirstLoadClassEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_FirstLoadClassEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First LoadModule Event.
-        /// </summary>
-        public static string DbgBreak_FirstLoadModuleEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_FirstLoadModuleEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Module .cctor or Entry Point.
-        /// </summary>
-        public static string DbgBreak_ModuleClassConstructorOrEntryPoint {
-            get {
-                return ResourceManager.GetString("DbgBreak_ModuleClassConstructorOrEntryPoint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A CLR debugger error occurred. Terminate the debugged process and try again.
         ///
         ///HR: 0x{0:X8}

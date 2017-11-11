@@ -60,6 +60,7 @@
     <Compile Include="Dialogs\AttachToProcess\DebuggableProcesses.cs" />
     <Compile Include="Dialogs\AttachToProcess\DotNetCoreAttachProgramOptionsProvider.cs" />
     <Compile Include="Dialogs\AttachToProcess\DotNetFrameworkAttachProgramOptionsProvider.cs" />
+    <Compile Include="Dialogs\DebugProgram\BreakProcessKindsUtils.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetCoreStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetFrameworkStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetStartDebuggingOptionsPage.cs" />
