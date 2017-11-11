@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		public abstract double DisplayOrder { get; }
 
 		/// <summary>
-		/// Name of debugger engine shown in the UI, eg. ".NET Framework" or ".NET Core" or "Mono"
+		/// Name of debug engine shown in the UI, eg. ".NET Framework" or ".NET Core" or "Mono"
 		/// </summary>
 		public abstract string DisplayName { get; }
 
