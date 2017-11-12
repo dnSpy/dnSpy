@@ -172,6 +172,7 @@
     <Compile Include="Impl\DbgEngineImpl.Evaluation.cs" />
     <Compile Include="Impl\DbgEngineImpl.ModuleDef.cs" />
     <Compile Include="Impl\DbgEngineImpl.Threads.cs" />
+    <Compile Include="Impl\DbgEngineImplDependencies.cs" />
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DbgModuleMemoryRefreshedNotifierImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />

@@ -41,7 +41,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DbgMonoDebugInternalRuntime.cs" />
     <Compile Include="MonoConnectStartDebuggingOptions.cs" />
+    <Compile Include="MonoDebugRuntimeKind.cs" />
     <Compile Include="MonoStartDebuggingOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

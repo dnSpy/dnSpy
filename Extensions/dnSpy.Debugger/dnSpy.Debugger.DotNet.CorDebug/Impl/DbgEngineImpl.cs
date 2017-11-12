@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -48,28 +47,6 @@ using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
-	[Export(typeof(DbgEngineImplDependencies))]
-	sealed class DbgEngineImplDependencies {
-		public DbgDotNetCodeRangeService DotNetCodeRangeService { get; }
-		public DebuggerSettings DebuggerSettings { get; }
-		public Lazy<DbgDotNetNativeCodeLocationFactory> DbgDotNetNativeCodeLocationFactory { get; }
-		public Lazy<DbgDotNetCodeLocationFactory> DbgDotNetCodeLocationFactory { get; }
-		public ClrDacProvider ClrDacProvider { get; }
-		public DbgModuleMemoryRefreshedNotifier2 DbgModuleMemoryRefreshedNotifier { get; }
-		public DbgRawMetadataService RawMetadataService { get; }
-
-		[ImportingConstructor]
-		DbgEngineImplDependencies(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DebuggerSettings debuggerSettings, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgRawMetadataService rawMetadataService) {
-			DotNetCodeRangeService = dbgDotNetCodeRangeService;
-			DebuggerSettings = debuggerSettings;
-			DbgDotNetNativeCodeLocationFactory = dbgDotNetNativeCodeLocationFactory;
-			DbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
-			ClrDacProvider = clrDacProvider;
-			DbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier;
-			RawMetadataService = rawMetadataService;
-		}
-	}
-
 	abstract partial class DbgEngineImpl : DbgEngine, IClrDacDebugger {
 		public override DbgStartKind StartKind { get; }
 		public override string[] DebugTags => new[] { PredefinedDebugTags.DotNetDebugger };

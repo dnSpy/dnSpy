@@ -17,31 +17,30 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Runtime.ExceptionServices;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 
-namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
-	/// <summary>
-	/// .NET Framework / .NET Core runtime. It must implement <see cref="IDbgDotNetRuntime"/>
-	/// </summary>
-	public abstract class DbgCorDebugInternalRuntime : DbgDotNetInternalRuntime {
-		/// <summary>
-		/// Gets the runtime version
-		/// </summary>
-		public abstract CorDebugRuntimeVersion Version { get; }
+namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
+	static class DbgDotNetDispatcherExtensions {
+		public static void InvokeRethrow(this DbgDotNetDispatcher dispatcher, Action callback) =>
+			dispatcher.InvokeRethrow<object>(() => { callback(); return null; });
 
-		/// <summary>
-		/// Gets the kind
-		/// </summary>
-		public CorDebugRuntimeKind Kind => Version.Kind;
-
-		/// <summary>
-		/// Path to the CLR dll (clr.dll, mscorwks.dll, mscorsvr.dll, coreclr.dll)
-		/// </summary>
-		public abstract string ClrFilename { get; }
-
-		/// <summary>
-		/// Path to the runtime directory
-		/// </summary>
-		public abstract string RuntimeDirectory { get; }
+		public static T InvokeRethrow<T>(this DbgDotNetDispatcher dispatcher, Func<T> callback) {
+			ExceptionDispatchInfo exceptionInfo = null;
+			var res = dispatcher.Invoke(() => {
+				T res2;
+				try {
+					res2 = callback();
+				}
+				catch (Exception ex) {
+					exceptionInfo = ExceptionDispatchInfo.Capture(ex);
+					res2 = default;
+				}
+				return res2;
+			});
+			exceptionInfo?.Throw();
+			return res;
+		}
 	}
 }

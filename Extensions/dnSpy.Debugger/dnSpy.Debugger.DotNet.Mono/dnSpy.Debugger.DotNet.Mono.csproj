@@ -37,6 +37,7 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CallStack\DbgEngineStackWalkerImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\BreakProcessKindsUtils.cs" />
     <Compile Include="Dialogs\DebugProgram\MonoConnectStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\MonoConnectStartDebuggingOptionsPageBase.cs" />
@@ -44,6 +45,21 @@
     <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\UnityConnectStartDebuggingOptionsPage.cs" />
+    <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
+    <Compile Include="Impl\DbgEngineImpl.cs" />
+    <Compile Include="Impl\DbgEngineImpl.Threads.cs" />
+    <Compile Include="Impl\DbgEngineImplDependencies.cs" />
+    <Compile Include="Impl\DbgEngineProviderImpl.cs" />
+    <Compile Include="Impl\DbgModuleMemoryRefreshedNotifierImpl.cs" />
+    <Compile Include="Impl\DebuggerThread.cs" />
+    <Compile Include="Impl\DmdDispatcherImpl.cs" />
+    <Compile Include="Impl\DotNetMonoRuntimeId.cs" />
+    <Compile Include="Impl\Evaluation\DbgDotNetDispatcherExtensions.cs" />
+    <Compile Include="Impl\Evaluation\DbgDotNetDispatcherImpl.cs" />
+    <Compile Include="Impl\Evaluation\DbgMonoDebugInternalRuntimeImpl.cs" />
+    <Compile Include="Impl\Evaluation\DmdEvaluatorImpl.cs" />
+    <Compile Include="Impl\Evaluation\ErrorHelper.cs" />
+    <Compile Include="Impl\ExceptionUtils.cs" />
     <Compile Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -80,6 +96,10 @@
     <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj">
       <Project>{fcd8913d-85a0-479e-9689-70fea52c6dcb}</Project>
       <Name>dnSpy.Debugger.DotNet.Metadata</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
+      <Project>{57b5039f-30cc-4eaa-9d55-1b9a07ac8a69}</Project>
+      <Name>Mono.Debugger.Soft</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

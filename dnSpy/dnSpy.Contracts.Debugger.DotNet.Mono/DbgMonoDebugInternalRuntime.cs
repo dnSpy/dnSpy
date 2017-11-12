@@ -19,29 +19,14 @@
 
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 
-namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
+namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 	/// <summary>
-	/// .NET Framework / .NET Core runtime. It must implement <see cref="IDbgDotNetRuntime"/>
+	/// Mono / Unity runtime. It must implement <see cref="IDbgDotNetRuntime"/>
 	/// </summary>
-	public abstract class DbgCorDebugInternalRuntime : DbgDotNetInternalRuntime {
-		/// <summary>
-		/// Gets the runtime version
-		/// </summary>
-		public abstract CorDebugRuntimeVersion Version { get; }
-
+	public abstract class DbgMonoDebugInternalRuntime : DbgDotNetInternalRuntime {
 		/// <summary>
 		/// Gets the kind
 		/// </summary>
-		public CorDebugRuntimeKind Kind => Version.Kind;
-
-		/// <summary>
-		/// Path to the CLR dll (clr.dll, mscorwks.dll, mscorsvr.dll, coreclr.dll)
-		/// </summary>
-		public abstract string ClrFilename { get; }
-
-		/// <summary>
-		/// Path to the runtime directory
-		/// </summary>
-		public abstract string RuntimeDirectory { get; }
+		public abstract MonoDebugRuntimeKind Kind { get; }
 	}
 }

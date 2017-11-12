@@ -41,5 +41,10 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 		/// .NET Mono runtime
 		/// </summary>
 		public const string DotNetMono = nameof(DotNetMono);
+
+		/// <summary>
+		/// .NET Unity runtime
+		/// </summary>
+		public const string DotNetUnity = nameof(DotNetUnity);
 	}
 }

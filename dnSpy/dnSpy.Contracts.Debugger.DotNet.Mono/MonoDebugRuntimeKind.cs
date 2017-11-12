@@ -17,31 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-
-namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
+namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 	/// <summary>
-	/// .NET Framework / .NET Core runtime. It must implement <see cref="IDbgDotNetRuntime"/>
+	/// Mono debug runtime kind
 	/// </summary>
-	public abstract class DbgCorDebugInternalRuntime : DbgDotNetInternalRuntime {
+	public enum MonoDebugRuntimeKind {
 		/// <summary>
-		/// Gets the runtime version
+		/// Mono
 		/// </summary>
-		public abstract CorDebugRuntimeVersion Version { get; }
+		Mono,
 
 		/// <summary>
-		/// Gets the kind
+		/// Unity
 		/// </summary>
-		public CorDebugRuntimeKind Kind => Version.Kind;
-
-		/// <summary>
-		/// Path to the CLR dll (clr.dll, mscorwks.dll, mscorsvr.dll, coreclr.dll)
-		/// </summary>
-		public abstract string ClrFilename { get; }
-
-		/// <summary>
-		/// Path to the runtime directory
-		/// </summary>
-		public abstract string RuntimeDirectory { get; }
+		Unity,
 	}
 }

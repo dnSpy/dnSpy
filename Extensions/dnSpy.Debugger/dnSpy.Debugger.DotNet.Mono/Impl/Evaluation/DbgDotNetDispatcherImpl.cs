@@ -17,31 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 
-namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
-	/// <summary>
-	/// .NET Framework / .NET Core runtime. It must implement <see cref="IDbgDotNetRuntime"/>
-	/// </summary>
-	public abstract class DbgCorDebugInternalRuntime : DbgDotNetInternalRuntime {
-		/// <summary>
-		/// Gets the runtime version
-		/// </summary>
-		public abstract CorDebugRuntimeVersion Version { get; }
+namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
+	sealed class DbgDotNetDispatcherImpl : DbgDotNetDispatcher {
+		readonly DbgEngineImpl engine;
 
-		/// <summary>
-		/// Gets the kind
-		/// </summary>
-		public CorDebugRuntimeKind Kind => Version.Kind;
+		public DbgDotNetDispatcherImpl(DbgEngineImpl engine) =>
+			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 
-		/// <summary>
-		/// Path to the CLR dll (clr.dll, mscorwks.dll, mscorsvr.dll, coreclr.dll)
-		/// </summary>
-		public abstract string ClrFilename { get; }
+		public override void BeginInvoke(Action callback) => engine.MonoDebugThread(callback);
+		public override bool CheckAccess() => engine.CheckMonoDebugThread();
 
-		/// <summary>
-		/// Path to the runtime directory
-		/// </summary>
-		public abstract string RuntimeDirectory { get; }
+		public override T Invoke<T>(Func<T> callback) {
+			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
+			return engine.InvokeMonoDebugThread(callback);
+		}
 	}
 }

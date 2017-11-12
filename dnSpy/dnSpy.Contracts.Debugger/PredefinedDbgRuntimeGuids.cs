@@ -43,5 +43,25 @@ namespace dnSpy.Contracts.Debugger {
 		/// .NET Core
 		/// </summary>
 		public static readonly Guid DotNetCore_Guid = new Guid(DotNetCore);
+
+		/// <summary>
+		/// Unity
+		/// </summary>
+		public const string DotNetUnity = "CE8A11EE-73EF-4A51-B5D0-BDA2E665A2B4";
+
+		/// <summary>
+		/// Unity
+		/// </summary>
+		public static readonly Guid DotNetUnity_Guid = new Guid(DotNetUnity);
+
+		/// <summary>
+		/// Mono
+		/// </summary>
+		public const string DotNetMono = "7A99738E-9A75-4268-9B74-BBA174764FC7";
+
+		/// <summary>
+		/// Mono
+		/// </summary>
+		public static readonly Guid DotNetMono_Guid = new Guid(DotNetMono);
 	}
 }
