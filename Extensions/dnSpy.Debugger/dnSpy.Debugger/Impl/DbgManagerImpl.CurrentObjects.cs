@@ -210,7 +210,7 @@ namespace dnSpy.Debugger.Impl {
 				var runtime = info.Runtime;
 				var newCurrentProcess = new CurrentObject<DbgProcessImpl>(process, process);
 				var newCurrentRuntime = new CurrentObject<DbgRuntimeImpl>(runtime, runtime);
-				var newCurrentThread = runtime.CurrentThread;
+				var newCurrentThread = runtime?.CurrentThread ?? default;
 				processEventArgs = new DbgCurrentObjectChangedEventArgs<DbgProcess>(currentChanged: dbgCurrentProcess.currentProcess.Current != newCurrentProcess.Current, breakChanged: dbgCurrentProcess.currentProcess.Break != newCurrentProcess.Break);
 				runtimeEventArgs = new DbgCurrentObjectChangedEventArgs<DbgRuntime>(currentChanged: dbgCurrentRuntime.currentRuntime.Current != newCurrentRuntime.Current, breakChanged: dbgCurrentRuntime.currentRuntime.Break != newCurrentRuntime.Break);
 				threadEventArgs = new DbgCurrentObjectChangedEventArgs<DbgThread>(currentChanged: dbgCurrentThread.currentThread.Current != newCurrentThread.Current, breakChanged: dbgCurrentThread.currentThread.Break != newCurrentThread.Break);

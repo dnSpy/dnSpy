@@ -156,4 +156,16 @@
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Debugger ({0})</value>
   </data>
+  <data name="Error_CouldNotFindFile" xml:space="preserve">
+    <value>Could not find {0}</value>
+  </data>
+  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
+    <value>Couldn't connect to the debugged process</value>
+  </data>
+  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
+    <value>Could not find the debugged process</value>
+  </data>
+  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
+    <value>The connection to the debugged process was unexpectedly closed</value>
+  </data>
 </root>

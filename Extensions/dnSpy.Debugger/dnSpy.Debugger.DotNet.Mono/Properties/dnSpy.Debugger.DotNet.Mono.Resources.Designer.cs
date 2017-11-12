@@ -151,6 +151,42 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The connection to the debugged process was unexpectedly closed.
+        /// </summary>
+        public static string Error_ConnectionWasUnexpectedlyClosed {
+            get {
+                return ResourceManager.GetString("Error_ConnectionWasUnexpectedlyClosed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t connect to the debugged process.
+        /// </summary>
+        public static string Error_CouldNotConnectToProcess {
+            get {
+                return ResourceManager.GetString("Error_CouldNotConnectToProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find the debugged process.
+        /// </summary>
+        public static string Error_CouldNotFindDebuggedProcess {
+            get {
+                return ResourceManager.GetString("Error_CouldNotFindDebuggedProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find {0}.
+        /// </summary>
+        public static string Error_CouldNotFindFile {
+            get {
+                return ResourceManager.GetString("Error_CouldNotFindFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file doesn&apos;t exist.
         /// </summary>
         public static string Error_FileDoesNotExist {
