@@ -97,7 +97,13 @@ namespace dnSpy.Documents {
 			foreach (var path in pathEnvVar.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)) {
 				if (!Directory.Exists(path))
 					continue;
-				var file = Path.Combine(path, DotNetExeName);
+				string file;
+				try {
+					file = Path.Combine(path, DotNetExeName);
+				}
+				catch {
+					continue;
+				}
 				if (!File.Exists(file))
 					continue;
 				int bitness;
