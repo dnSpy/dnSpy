@@ -43,9 +43,11 @@
   <ItemGroup>
     <Compile Include="DbgMonoDebugInternalRuntime.cs" />
     <Compile Include="MonoConnectStartDebuggingOptions.cs" />
+    <Compile Include="MonoConnectStartDebuggingOptionsBase.cs" />
     <Compile Include="MonoDebugRuntimeKind.cs" />
     <Compile Include="MonoStartDebuggingOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnityConnectStartDebuggingOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">

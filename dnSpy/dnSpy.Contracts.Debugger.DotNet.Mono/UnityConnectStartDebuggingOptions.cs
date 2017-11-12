@@ -21,15 +21,15 @@ using System;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 	/// <summary>
-	/// Debugging options used when connecting to a Mono program
+	/// Debugging options used when connecting to a Unity program
 	/// </summary>
-	public sealed class MonoConnectStartDebuggingOptions : MonoConnectStartDebuggingOptionsBase {
+	public sealed class UnityConnectStartDebuggingOptions : MonoConnectStartDebuggingOptionsBase {
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/> and returns it
 		/// </summary>
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
-		public MonoConnectStartDebuggingOptions CopyTo(MonoConnectStartDebuggingOptions other) {
+		public UnityConnectStartDebuggingOptions CopyTo(UnityConnectStartDebuggingOptions other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
@@ -40,6 +40,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public override DebugProgramOptions Clone() => CopyTo(new MonoConnectStartDebuggingOptions());
+		public override DebugProgramOptions Clone() => CopyTo(new UnityConnectStartDebuggingOptions());
 	}
 }

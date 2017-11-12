@@ -73,18 +73,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			return PredefinedBreakKinds.DontBreak;
 		}
 
-		void Initialize(MonoConnectStartDebuggingOptions options) {
+		protected void Initialize(MonoConnectStartDebuggingOptionsBase options) {
 			Address = options.Address;
 			ConnectionPort.Value = options.Port;
 			BreakKind = FilterBreakKind(options.BreakKind);
 		}
 
-		MonoConnectStartDebuggingOptions InitializeDefault(MonoConnectStartDebuggingOptions options, string breakKind) {
+		protected T InitializeDefault<T>(T options, string breakKind) where T : MonoConnectStartDebuggingOptionsBase {
 			options.BreakKind = FilterBreakKind(breakKind);
 			return options;
 		}
 
-		MonoConnectStartDebuggingOptions GetOptions(MonoConnectStartDebuggingOptions options) {
+		protected T GetOptions<T>(T options) where T : MonoConnectStartDebuggingOptionsBase {
 			options.Address = Address;
 			options.Port = ConnectionPort.Value;
 			options.BreakKind = FilterBreakKind(BreakKind);
@@ -93,30 +93,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		string IDataErrorInfo.Error => throw new NotImplementedException();
 		string IDataErrorInfo.this[string columnName] => Verify(columnName);
-
-		public override void InitializePreviousOptions(StartDebuggingOptions options) {
-			var dncOptions = options as MonoConnectStartDebuggingOptions;
-			if (dncOptions == null)
-				return;
-			Initialize(dncOptions);
-		}
-
-		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
-			Initialize(GetDefaultOptions(filename, breakKind, options));
-
-		MonoConnectStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
-			if (options is MonoConnectStartDebuggingOptions connectOptions)
-				return connectOptions;
-			return CreateOptions(breakKind);
-		}
-
-		MonoConnectStartDebuggingOptions CreateOptions(string breakKind) =>
-			InitializeDefault(new MonoConnectStartDebuggingOptions(), breakKind);
-
-		public override StartDebuggingOptionsInfo GetOptions() {
-			var options = GetOptions(new MonoConnectStartDebuggingOptions());
-			return new StartDebuggingOptionsInfo(options);
-		}
 
 		public override bool SupportsDebugEngine(Guid engineGuid, out double order) {
 			order = 0;

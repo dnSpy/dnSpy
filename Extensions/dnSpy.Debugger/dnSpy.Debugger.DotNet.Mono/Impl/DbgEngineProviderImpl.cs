@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.Engine;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
@@ -32,7 +33,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			this.dbgEngineImplDependencies = dbgEngineImplDependencies;
 
 		public override DbgEngine Create(DbgManager dbgManager, DebugProgramOptions options) {
-			//TODO:
+			switch (options) {
+			case MonoStartDebuggingOptions _:
+			case MonoConnectStartDebuggingOptions _:
+				return new DbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, MonoDebugRuntimeKind.Mono);
+
+			case UnityConnectStartDebuggingOptions _:
+				return new DbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, MonoDebugRuntimeKind.Unity);
+			}
+
 			return null;
 		}
 	}

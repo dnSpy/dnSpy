@@ -18,6 +18,8 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Debugger.DotNet.Mono.Properties;
 
@@ -26,5 +28,33 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		public override Guid Guid => new Guid("4B1A77AC-5FDB-4244-A847-0681801F7AA4");
 		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetMonoConnect;
 		public override string DisplayName => "Mono (" + dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_Connect_To_Process + ")";
+
+		public override void InitializePreviousOptions(StartDebuggingOptions options) {
+			var dncOptions = options as MonoConnectStartDebuggingOptions;
+			if (dncOptions == null)
+				return;
+			Initialize(dncOptions);
+		}
+
+		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
+			Initialize(GetDefaultOptions(filename, breakKind, options));
+
+		MonoConnectStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
+			if (options is MonoConnectStartDebuggingOptions connectOptions)
+				return connectOptions;
+			return CreateOptions(breakKind);
+		}
+
+		MonoConnectStartDebuggingOptions CreateOptions(string breakKind) =>
+			InitializeDefault(new MonoConnectStartDebuggingOptions(), breakKind);
+
+		void Initialize(MonoConnectStartDebuggingOptions options) {
+			base.Initialize(options);
+		}
+
+		public override StartDebuggingOptionsInfo GetOptions() {
+			var options = GetOptions(new MonoConnectStartDebuggingOptions());
+			return new StartDebuggingOptionsInfo(options);
+		}
 	}
 }

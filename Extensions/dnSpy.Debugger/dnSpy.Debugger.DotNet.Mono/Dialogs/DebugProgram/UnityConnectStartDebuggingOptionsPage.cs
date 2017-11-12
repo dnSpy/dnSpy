@@ -18,6 +18,8 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
@@ -26,5 +28,33 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetUnity;
 		// Shouldn't be localized
 		public override string DisplayName => "Unity";
+
+		public override void InitializePreviousOptions(StartDebuggingOptions options) {
+			var dncOptions = options as UnityConnectStartDebuggingOptions;
+			if (dncOptions == null)
+				return;
+			Initialize(dncOptions);
+		}
+
+		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
+			Initialize(GetDefaultOptions(filename, breakKind, options));
+
+		UnityConnectStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
+			if (options is UnityConnectStartDebuggingOptions connectOptions)
+				return connectOptions;
+			return CreateOptions(breakKind);
+		}
+
+		UnityConnectStartDebuggingOptions CreateOptions(string breakKind) =>
+			InitializeDefault(new UnityConnectStartDebuggingOptions(), breakKind);
+
+		void Initialize(UnityConnectStartDebuggingOptions options) {
+			base.Initialize(options);
+		}
+
+		public override StartDebuggingOptionsInfo GetOptions() {
+			var options = GetOptions(new UnityConnectStartDebuggingOptions());
+			return new StartDebuggingOptionsInfo(options);
+		}
 	}
 }

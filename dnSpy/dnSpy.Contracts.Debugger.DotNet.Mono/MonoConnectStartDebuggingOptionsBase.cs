@@ -21,25 +21,40 @@ using System;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 	/// <summary>
-	/// Debugging options used when connecting to a Mono program
+	/// Debugging options used when connecting to a Mono / Unity program
 	/// </summary>
-	public sealed class MonoConnectStartDebuggingOptions : MonoConnectStartDebuggingOptionsBase {
+	public abstract class MonoConnectStartDebuggingOptionsBase : StartDebuggingOptions {
 		/// <summary>
-		/// Copies this instance to <paramref name="other"/> and returns it
+		/// The IP address <c>mono.exe</c> is listening on or null to use <c>127.0.0.1</c>
+		/// </summary>
+		public string Address { get; set; }
+
+		/// <summary>
+		/// The port <c>mono.exe</c> is listening on
+		/// </summary>
+		public ushort Port { get; set; }
+
+		/// <summary>
+		/// Gets the connection timeout. If it's <see cref="TimeSpan.Zero"/>, the default timeout is used.
+		/// </summary>
+		public TimeSpan ConnectionTimeout { get; set; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected MonoConnectStartDebuggingOptionsBase() => ConnectionTimeout = TimeSpan.Zero;
+
+		/// <summary>
+		/// Copies this instance to <paramref name="other"/>
 		/// </summary>
 		/// <param name="other">Destination</param>
-		/// <returns></returns>
-		public MonoConnectStartDebuggingOptions CopyTo(MonoConnectStartDebuggingOptions other) {
+		protected void CopyTo(MonoConnectStartDebuggingOptionsBase other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
-			return other;
+			other.Address = Address;
+			other.Port = Port;
+			other.ConnectionTimeout = ConnectionTimeout;
 		}
-
-		/// <summary>
-		/// Clones this instance
-		/// </summary>
-		/// <returns></returns>
-		public override DebugProgramOptions Clone() => CopyTo(new MonoConnectStartDebuggingOptions());
 	}
 }
