@@ -305,7 +305,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 				hProcess_debuggee = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)vmPid);
 
-				var events = new EventType[] {
+				var events = new List<EventType> {
 					EventType.VMStart,
 					EventType.VMDeath,
 					EventType.ThreadStart,
@@ -315,10 +315,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					EventType.AssemblyLoad,
 					EventType.AssemblyUnload,
 					EventType.Exception,
-					EventType.UserBreak,
 					EventType.UserLog,
 				};
-				vm.EnableEvents(events, SuspendPolicy.All);
+				if (!debuggerSettings.IgnoreBreakInstructions)
+					events.Add(EventType.UserBreak);
+				vm.EnableEvents(events.ToArray(), SuspendPolicy.All);
 
 				var eventThread = new Thread(MonoEventThread);
 				eventThread.IsBackground = true;
@@ -479,12 +480,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.UserBreak:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
-					break;//TODO:
+					var ube = (UserBreakEvent)evt;
+					SendMessage(new DbgMessageBreak(TryGetThread(ube.Thread), GetMessageFlags()));
+					break;
 
 				case EventType.UserLog:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
-					break;//TODO:
+					var ule = (UserLogEvent)evt;
+					SendMessage(new NormalPendingMessage(this, true, new DbgMessageProgramMessage(ule.Message, TryGetThread(ule.Thread), GetMessageFlags())));
+					break;
 
 				case EventType.VMDisconnect:
 					if (vmDeathExitCode == null && (!hProcess_debuggee.IsClosed && !hProcess_debuggee.IsInvalid && NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode)))
