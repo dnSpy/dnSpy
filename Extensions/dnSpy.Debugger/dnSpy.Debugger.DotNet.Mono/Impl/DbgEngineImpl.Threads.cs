@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
@@ -65,9 +67,66 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return new ThreadProperties(appDomain, kind, id, managedId, name, suspendedCount, threadState);
 		}
 
-		static ulong? GetManagedId(ThreadMirror thread) {
-			//TODO: Either func-eval ManagedThreadId or try to read internal_thread.managed_id
+		sealed class GetManagedIdState {
+			public MethodMirror ManagedIdGetter;
+		}
+		ulong? GetManagedId(ThreadMirror thread) {
+			var appDomain = TryGetEngineAppDomain(thread.Domain)?.AppDomain;
+			Debug.Assert(appDomain != null);
+			if (appDomain != null) {
+				try {
+					var state = appDomain.GetOrCreateData<GetManagedIdState>();
+					if (state.ManagedIdGetter == null) {
+						var threadType = thread.Domain.Corlib.GetType("System.Threading.Thread", false, false);
+						Debug.Assert(threadType != null);
+						state.ManagedIdGetter = threadType?.GetMethod("get_" + nameof(ST.Thread.ManagedThreadId));
+					}
+					if (state.ManagedIdGetter != null) {
+						if (!TryGetManagedId(thread, thread, state.ManagedIdGetter, out ulong? managedId))
+							return null;
+						if (managedId != null)
+							return managedId;
+
+						foreach (var t in thread.VirtualMachine.GetThreads()) {
+							if (t == thread)
+								continue;
+							if (!TryGetManagedId(t, thread, state.ManagedIdGetter, out managedId))
+								return null;
+							if (managedId != null)
+								return managedId;
+						}
+					}
+				}
+				catch (Exception ex) {
+					Debug.Fail(ex.ToString());
+				}
+			}
 			return null;
+		}
+
+		bool TryGetManagedId(ThreadMirror thread, ThreadMirror threadObj, MethodMirror managedIdGetter, out ulong? managedId) {
+			debuggerThread.VerifyAccess();
+
+			try {
+				var res = TryInvokeMethod(thread, threadObj, managedIdGetter, Array.Empty<Value>(), out bool timedOut);
+				if (timedOut) {
+					managedId = null;
+					return false;
+				}
+
+				if (res is PrimitiveValue pv && pv.Value is int) {
+					managedId = (uint)(int)pv.Value;
+					return true;
+				}
+			}
+			catch (VMNotSuspendedException) {
+				// 1. The process is not suspended (should never be the case)
+				// 2. The thread is running native code (eg. it's the finalizer thread)
+				// 3. There's a pending invoke on this thread
+			}
+
+			managedId = null;
+			return true;
 		}
 
 		static string GetThreadName(ThreadMirror thread) {

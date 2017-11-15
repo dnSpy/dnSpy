@@ -20,7 +20,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;

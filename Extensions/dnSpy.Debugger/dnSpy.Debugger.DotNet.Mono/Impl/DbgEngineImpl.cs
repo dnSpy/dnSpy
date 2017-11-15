@@ -168,8 +168,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			public override void RaiseMessage() => raiseMessage();
 		}
 
-		bool IsEvaluating => false;//TODO:
-
 		void SendMessage(DbgEngineMessage message, bool mustWaitForRun = false) =>
 			SendMessage(new NormalPendingMessage(this, mustWaitForRun, message));
 		void SendMessage(PendingMessage message) {

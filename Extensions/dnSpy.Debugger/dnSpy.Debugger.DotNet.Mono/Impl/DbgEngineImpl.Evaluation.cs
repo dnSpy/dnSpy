@@ -17,8 +17,30 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
+using System.Diagnostics;
+using Mono.Debugger.Soft;
+
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
+		bool IsEvaluating => isEvaluatingCounter > 0;
+		volatile int isEvaluatingCounter;
+
+		Value TryInvokeMethod(ThreadMirror thread, ObjectMirror obj, MethodMirror method, IList<Value> arguments, out bool timedOut) {
+			debuggerThread.VerifyAccess();
+			Debug.Assert(isEvaluatingCounter == 0);
+			isEvaluatingCounter++;
+			try {
+				//TODO: This could block
+				var res = obj.InvokeMethod(thread, method, arguments);
+				timedOut = false;
+				return res;
+			}
+			finally {
+				isEvaluatingCounter--;
+			}
+		}
+
 		void CloseDotNetValues_MonoDebug() {
 			debuggerThread.VerifyAccess();
 			//TODO:
