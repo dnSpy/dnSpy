@@ -195,4 +195,7 @@
   <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
     <value>WaitSleepJoin</value>
   </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;no exception message&gt;"</value>
+  </data>
 </root>

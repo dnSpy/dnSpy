@@ -57,6 +57,7 @@
     <Compile Include="Impl\DebuggerThread.cs" />
     <Compile Include="Impl\DmdDispatcherImpl.cs" />
     <Compile Include="Impl\DotNetMonoRuntimeId.cs" />
+    <Compile Include="Impl\EvalReflectionUtils.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetDispatcherExtensions.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetDispatcherImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />

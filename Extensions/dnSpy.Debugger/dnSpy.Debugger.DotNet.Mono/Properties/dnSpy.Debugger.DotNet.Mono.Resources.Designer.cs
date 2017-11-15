@@ -205,6 +205,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;&lt;no exception message&gt;&quot;.
+        /// </summary>
+        public static string ExceptionMessageIsNull {
+            get {
+                return ResourceManager.GetString("ExceptionMessageIsNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Debugger ({0}).
         /// </summary>
         public static string Plugin_ShortDescription {

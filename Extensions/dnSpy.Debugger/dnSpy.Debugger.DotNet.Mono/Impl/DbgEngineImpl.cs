@@ -35,6 +35,7 @@ using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
+using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
@@ -72,6 +73,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		int vmPid;
 		int? vmDeathExitCode;
 		bool gotVMDisconnect;
+		bool isUnhandledException;
 		DbgObjectFactory objectFactory;
 		SafeHandle hProcess_debuggee;
 		int suspendCount;
@@ -314,12 +316,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					EventType.AppDomainUnload,
 					EventType.AssemblyLoad,
 					EventType.AssemblyUnload,
-					EventType.Exception,
 					EventType.UserLog,
 				};
 				if (!debuggerSettings.IgnoreBreakInstructions)
 					events.Add(EventType.UserBreak);
 				vm.EnableEvents(events.ToArray(), SuspendPolicy.All);
+				uncaughtRequest = vm.CreateExceptionRequest(null, false, true);
+				caughtRequest = vm.CreateExceptionRequest(null, true, false);
+				uncaughtRequest.Enable();
+				caughtRequest.Enable();
 
 				var eventThread = new Thread(MonoEventThread);
 				eventThread.IsBackground = true;
@@ -342,6 +347,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return;
 			}
 		}
+		ExceptionEventRequest uncaughtRequest;
+		ExceptionEventRequest caughtRequest;
 
 		void MonoEventThread() {
 			var vm = this.vm;
@@ -467,15 +474,27 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					IncrementSuspendCount();
 					break;//TODO:
 
-				case EventType.TypeLoad:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					IncrementSuspendCount();
-					break;//TODO:
-
 				case EventType.Exception:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
-					break;//TODO:
+					var ee = (ExceptionEvent)evt;
+					SendMessage(new DelegatePendingMessage(true, () => {
+						var req = ee.TryGetRequest() as ExceptionEventRequest;
+						DbgExceptionEventFlags exFlags;
+						if (req == caughtRequest)
+							exFlags = DbgExceptionEventFlags.FirstChance;
+						else if (req == uncaughtRequest) {
+							exFlags = DbgExceptionEventFlags.SecondChance | DbgExceptionEventFlags.Unhandled;
+							isUnhandledException = true;
+						}
+						else {
+							Debug.Fail("Unknown exception request");
+							exFlags = DbgExceptionEventFlags.FirstChance;
+						}
+						var exObj = ee.Exception;
+						objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, EvalReflectionUtils.TryGetExceptionMessage(exObj), TryGetThread(ee.Thread), TryGetModule(ee.Thread), GetMessageFlags());
+					}));
+					break;
 
 				case EventType.UserBreak:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
@@ -498,7 +517,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						vmDeathExitCode = -1;
 						dbgManager.ShowError(dnSpy_Debugger_DotNet_Mono_Resources.Error_ConnectionWasUnexpectedlyClosed);
 					}
-					SendMessage(new DbgMessageDisconnected(vmDeathExitCode.Value, GetMessageFlags()));
+					Message?.Invoke(this, new DbgMessageDisconnected(vmDeathExitCode.Value, GetMessageFlags()));
 					gotVMDisconnect = true;
 					break;
 
@@ -507,6 +526,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 				}
 			}
+		}
+
+		DbgModule TryGetModule(ThreadMirror thread) {
+			return null;//TODO:
+		}
+
+		static string TryGetExceptionName(ObjectMirror exObj) {
+			return exObj.Type.FullName;//TODO:
 		}
 
 		DbgEngineAppDomain TryGetEngineAppDomain(AppDomainMirror monoAppDomain) {
@@ -762,14 +789,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					runCounter++;
 				if (SendNextMessage())
 					return;
-				while (suspendCount > 0) {
-					vm.Resume();
-					DecrementSuspendCount();
-				}
+				ResumeCore();
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.Message);
 				dbgManager.ShowError(ex.Message);
+			}
+		}
+
+		void ResumeCore() {
+			debuggerThread.VerifyAccess();
+			while (suspendCount > 0) {
+				vm.Resume();
+				DecrementSuspendCount();
 			}
 		}
 
@@ -779,7 +811,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (!HasConnected_MonoDebugThread)
 				return;
 			try {
-				vm.Exit(0);
+				// If we got an unhandled exception, the next event is VMDisconnect so just Resume() it
+				if (isUnhandledException)
+					ResumeCore();
+				else
+					vm.Exit(0);
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.Message);
