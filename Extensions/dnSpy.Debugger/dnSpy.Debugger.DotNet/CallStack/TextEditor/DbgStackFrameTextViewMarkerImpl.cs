@@ -23,14 +23,14 @@ using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.CallStack.TextEditor;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Metadata;
+using dnSpy.Debugger.DotNet.Code;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
+namespace dnSpy.Debugger.DotNet.CallStack.TextEditor {
 	[Export(typeof(DbgStackFrameTextViewMarker))]
 	sealed class DbgStackFrameTextViewMarkerImpl : DbgStackFrameTextViewMarker {
 		readonly IModuleIdProvider moduleIdProvider;
@@ -86,25 +86,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 			// since it's the current statement)
 			for (int i = 1; i < frames.Count; i++) {
 				switch (frames[i].Location) {
-				case DbgDotNetNativeCodeLocation nativeLoc:
-					switch (nativeLoc.ILOffsetMapping) {
-					case DbgILOffsetMapping.Prolog:
-					case DbgILOffsetMapping.Epilog:
-					case DbgILOffsetMapping.Exact:
-					case DbgILOffsetMapping.Approximate:
-						break;
-
-					case DbgILOffsetMapping.Unknown:
-					case DbgILOffsetMapping.NoInfo:
-					case DbgILOffsetMapping.UnmappedAddress:
-					default:
-						continue;
-					}
-
-					var key = new ModuleTokenId(nativeLoc.Module, nativeLoc.Token);
+				case DbgDotNetCodeLocationImpl locImpl:
+					var key = new ModuleTokenId(locImpl.Module, locImpl.Token);
 					if (!dict.TryGetValue(key, out var list))
 						dict.Add(key, list = new List<uint>());
-					uint offset = nativeLoc.Offset;
+					uint offset = locImpl.Offset;
 					// The list should be small so Contains() should be fast
 					if (!list.Contains(offset))
 						list.Add(offset);

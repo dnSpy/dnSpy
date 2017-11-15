@@ -53,6 +53,7 @@
     <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphTextMarkerLocationProviderImpl.cs" />
     <Compile Include="Breakpoints\Code\TextEditor\DeleteBreakpointsInRemovedModules.cs" />
     <Compile Include="CallStack\TextEditor\DbgStackFrameGlyphTextMarkerLocationInfoProviderImpl.cs" />
+    <Compile Include="CallStack\TextEditor\DbgStackFrameTextViewMarkerImpl.cs" />
     <Compile Include="Code\BreakpointFormatterService.cs" />
     <Compile Include="Code\DbgBreakpointLocationFormatterImpl.cs" />
     <Compile Include="Code\DbgCodeLocationSerializerImpl.cs" />
