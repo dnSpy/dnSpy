@@ -18,12 +18,14 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Contracts.Text;
+using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.Impl;
 using Mono.Debugger.Soft;
 
@@ -35,11 +37,11 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 		public override uint FunctionToken { get; }
 
 		readonly DbgEngineImpl engine;
+		readonly StackFrame monoFrame;
 
 		public ILDbgEngineStackFrame(DbgEngineImpl engine, DbgModule module, StackFrame monoFrame, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
-			if (monoFrame == null)
-				throw new ArgumentNullException(nameof(monoFrame));
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
+			this.monoFrame = monoFrame ?? throw new ArgumentNullException(nameof(monoFrame));
 			Module = module ?? throw new ArgumentNullException(nameof(module));
 			FunctionToken = (uint)monoFrame.Method.MetadataToken;
 			// Native transitions have no IL offset so -1 is used by mono, but we should use 0 instead
@@ -59,7 +61,48 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			writer.Write(BoxedTextColor.Error, "NYI");//TODO:
 		}
 
-		public override void OnFrameCreated(DbgStackFrame frame) { }
+		sealed class ILFrameState {
+			public readonly ILDbgEngineStackFrame ILFrame;
+			public ILFrameState(ILDbgEngineStackFrame ilFrame) => ILFrame = ilFrame;
+		}
+		public override void OnFrameCreated(DbgStackFrame frame) => frame.GetOrCreateData(() => new ILFrameState(this));
+		internal static bool TryGetEngineStackFrame(DbgStackFrame frame, out ILDbgEngineStackFrame ilFrame) {
+			if (frame.TryGetData<ILFrameState>(out var data)) {
+				ilFrame = data.ILFrame;
+				return true;
+			}
+			ilFrame = null;
+			return false;
+		}
+
+		internal void GetFrameMethodInfo(out DmdModule module, out int methodMetadataToken, out IList<DmdType> genericTypeArguments, out IList<DmdType> genericMethodArguments) {
+			engine.VerifyMonoDebugThread();
+			methodMetadataToken = monoFrame.Method.MetadataToken;
+			module = Module.GetReflectionModule() ?? throw new InvalidOperationException();
+
+			TypeMirror[] typeGenArgs;
+			TypeMirror[] methGenArgs;
+			if (monoFrame.VirtualMachine.Version.AtLeast(2, 15)) {
+				typeGenArgs = monoFrame.Method.DeclaringType.GetGenericArguments();
+				methGenArgs = monoFrame.Method.GetGenericArguments();
+			}
+			else {
+				System.Diagnostics.Debug.Fail("Old version doesn't support generics");
+				typeGenArgs = Array.Empty<TypeMirror>();
+				methGenArgs = Array.Empty<TypeMirror>();
+			}
+
+			var reflectionAppDomain = module.AppDomain;
+			genericTypeArguments = Convert(reflectionAppDomain, typeGenArgs);
+			genericMethodArguments = Convert(reflectionAppDomain, methGenArgs);
+		}
+
+		IList<DmdType> Convert(DmdAppDomain reflectionAppDomain, TypeMirror[] typeArgs) {
+			if (typeArgs.Length == 0)
+				return Array.Empty<DmdType>();
+			throw new NotImplementedException();//TODO:
+		}
+
 		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

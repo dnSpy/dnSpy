@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
@@ -27,6 +28,7 @@ using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Debugger.DotNet.Mono.CallStack;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	sealed class DbgMonoDebugInternalRuntimeImpl : DbgMonoDebugInternalRuntime, IDbgDotNetRuntime {
@@ -46,9 +48,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Dispatcher = new DbgDotNetDispatcherImpl(engine);
 		}
 
-		public ModuleId GetModuleId(DbgModule module) {
-			return default;//TODO:
-		}
+		public ModuleId GetModuleId(DbgModule module) => engine.GetModuleId(module);
 
 		public DbgDotNetRawModuleBytes GetRawModuleBytes(DbgModule module) {
 			if (!module.IsDynamic)
@@ -122,7 +122,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var state = frame.GetOrCreateData<GetFrameMethodState>();
 			if (!state.Initialized) {
 				cancellationToken.ThrowIfCancellationRequested();
-				state.Method = null;//TODO:
+				if (ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame)) {
+					ilFrame.GetFrameMethodInfo(out var module, out var methodMetadataToken, out var genericTypeArguments, out var genericMethodArguments);
+					// Don't throw if it fails to resolve. Callers must be able to handle null return values
+					var method = module.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.None);
+					if ((object)method != null) {
+						if (genericTypeArguments.Count != 0) {
+							var type = method.ReflectedType.MakeGenericType(genericTypeArguments);
+							method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true);
+						}
+						if (genericMethodArguments.Count != 0)
+							method = ((DmdMethodInfo)method).MakeGenericMethod(genericMethodArguments);
+					}
+					state.Method = method;
+				}
 				state.Initialized = true;
 			}
 			return state.Method;
