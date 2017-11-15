@@ -32,6 +32,7 @@ using ST = System.Threading;
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
 		const string FinalizerName = "Finalizer";
+		const int CheckNewThreadNameDelayMilliseconds = 1000;
 
 		sealed class DbgThreadData {
 			public ThreadMirror MonoThread { get; }
@@ -39,6 +40,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			public bool HasNewName { get; set; }
 			public bool IsMainThread { get; }
 			public bool IsFinalizerThread { get; }
+			public DateTime LastNameUpdateTime;
 			public DbgThreadData(ThreadMirror monoThread, bool isMainThread, bool isFinalizerThread) {
 				MonoThread = monoThread ?? throw new ArgumentNullException(nameof(monoThread));
 				IsMainThread = isMainThread;
@@ -49,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal ThreadMirror GetThread(DbgThread thread) =>
 			thread?.GetData<DbgThreadData>()?.MonoThread ?? throw new InvalidOperationException();
 
-		ThreadProperties GetThreadProperties_MonoDebug(ThreadMirror thread, ThreadProperties oldProperties, bool isCreateThread, bool forceReadName, bool isMainThread, bool isFinalizerThread) {
+		ThreadProperties GetThreadProperties_MonoDebug(ThreadMirror thread, ThreadProperties oldProperties, ref DateTime lastNameUpdateTime, bool isCreateThread, bool forceReadName, bool isMainThread, bool isFinalizerThread) {
 			debuggerThread.VerifyAccess();
 			var appDomain = TryGetEngineAppDomain(thread.Domain)?.AppDomain;
 			ulong id = (uint)thread.TID;
@@ -61,7 +63,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (managedId == null && forceReadName)
 				managedId = GetManagedId(thread);
 
-			var name = forceReadName ? GetThreadName(thread) : oldProperties?.Name;
+			var time = DateTime.UtcNow;
+			if (oldProperties?.Name == null && (lastNameUpdateTime == default || time - lastNameUpdateTime >= TimeSpan.FromMilliseconds(CheckNewThreadNameDelayMilliseconds)))
+				forceReadName = true;
+
+			string name;
+			if (forceReadName) {
+				name = GetThreadName(thread);
+				lastNameUpdateTime = time;
+			}
+			else
+				name = oldProperties?.Name;
 
 			int suspendedCount = (thread.ThreadState & ST.ThreadState.Suspended) != 0 ? 1 : 0;
 			var threadState = thread.ThreadState;
@@ -132,6 +144,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		static string GetThreadName(ThreadMirror thread) {
+			thread.InvalidateName();
 			var name = thread.Name;
 			if (name == string.Empty)
 				return null;
@@ -154,7 +167,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_MonoDebug_NoLock(DbgEngineThread engineThread) {
 			debuggerThread.VerifyAccess();
 			var threadData = engineThread.Thread.GetData<DbgThreadData>();
-			var newProps = GetThreadProperties_MonoDebug(threadData.MonoThread, threadData.Last, isCreateThread: false, forceReadName: threadData.HasNewName, isMainThread: threadData.IsMainThread, isFinalizerThread: threadData.IsFinalizerThread);
+			var newProps = GetThreadProperties_MonoDebug(threadData.MonoThread, threadData.Last, ref threadData.LastNameUpdateTime, isCreateThread: false, forceReadName: threadData.HasNewName, isMainThread: threadData.IsMainThread, isFinalizerThread: threadData.IsFinalizerThread);
 			threadData.HasNewName = false;
 			var updateOptions = threadData.Last.Compare(newProps);
 			if (updateOptions == DbgEngineThread.UpdateOptions.None)
@@ -194,12 +207,24 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			bool isMainThread = IsMainThread(monoThread);
 			bool isFinalizerThread = !isMainThread && IsFinalizerThread(monoThread);
-			var props = GetThreadProperties_MonoDebug(monoThread, null, isCreateThread: true, forceReadName: false, isMainThread: isMainThread, isFinalizerThread: isFinalizerThread);
-			var threadData = new DbgThreadData(monoThread, isMainThread, isFinalizerThread) { Last = props };
+			var threadData = new DbgThreadData(monoThread, isMainThread, isFinalizerThread);
+			var props = GetThreadProperties_MonoDebug(monoThread, null, ref threadData.LastNameUpdateTime, isCreateThread: true, forceReadName: false, isMainThread: isMainThread, isFinalizerThread: isFinalizerThread);
+			threadData.Last = props;
 			var state = ThreadMirrorUtils.GetState(props.ThreadState);
 			var engineThread = objectFactory.CreateThread(props.AppDomain, props.Kind, props.Id, props.ManagedId, props.Name, props.SuspendedCount, state, GetMessageFlags(), data: threadData);
 			lock (lockObj)
 				toEngineThread.Add(monoThread, engineThread);
+		}
+
+		void DestroyThread(ThreadMirror monoThread) {
+			debuggerThread.VerifyAccess();
+			DbgEngineThread engineThread;
+			lock (lockObj) {
+				if (toEngineThread.TryGetValue(monoThread, out engineThread))
+					toEngineThread.Remove(monoThread);
+			}
+			if (engineThread != null)
+				engineThread.Remove(GetMessageFlags());
 		}
 
 		bool IsMainThread(ThreadMirror thread) {

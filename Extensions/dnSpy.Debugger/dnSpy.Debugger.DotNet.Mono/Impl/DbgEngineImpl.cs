@@ -393,12 +393,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.ThreadStart:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
-					break;//TODO:
+					var tse = (ThreadStartEvent)evt;
+					CreateThread(tse.Thread);
+					break;
 
 				case EventType.ThreadDeath:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					var tde = (ThreadDeathEvent)evt;
+					// Destroy it before calling IncrementSuspendCount() since it will update thread props
+					DestroyThread(tde.Thread);
 					IncrementSuspendCount();
-					break;//TODO:
+					break;
 
 				case EventType.AppDomainCreate:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
