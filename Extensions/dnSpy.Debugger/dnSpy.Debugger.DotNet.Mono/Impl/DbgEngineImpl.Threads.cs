@@ -19,9 +19,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
 using Mono.Debugger.Soft;
@@ -147,6 +149,45 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (thread.IsThreadPoolThread)
 				return PredefinedThreadKinds.ThreadPool;
 			return PredefinedThreadKinds.WorkerThread;
+		}
+
+		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_MonoDebug_NoLock(DbgEngineThread engineThread) {
+			debuggerThread.VerifyAccess();
+			var threadData = engineThread.Thread.GetData<DbgThreadData>();
+			var newProps = GetThreadProperties_MonoDebug(threadData.MonoThread, threadData.Last, isCreateThread: false, forceReadName: threadData.HasNewName, isMainThread: threadData.IsMainThread, isFinalizerThread: threadData.IsFinalizerThread);
+			threadData.HasNewName = false;
+			var updateOptions = threadData.Last.Compare(newProps);
+			if (updateOptions == DbgEngineThread.UpdateOptions.None)
+				return null;
+			threadData.Last = newProps;
+			return (engineThread, updateOptions, newProps);
+		}
+
+		void NotifyThreadPropertiesChanged_MonoDebug(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props) {
+			debuggerThread.VerifyAccess();
+			ReadOnlyCollection<DbgStateInfo> state = null;
+			if ((updateOptions & DbgEngineThread.UpdateOptions.State) != 0)
+				state = ThreadMirrorUtils.GetState(props.ThreadState);
+			engineThread.Update(updateOptions, appDomain: props.AppDomain, kind: props.Kind, id: props.Id, managedId: props.ManagedId, name: props.Name, suspendedCount: props.SuspendedCount, state: state);
+		}
+
+		void UpdateThreadProperties_MonoDebug() {
+			debuggerThread.VerifyAccess();
+			List<(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)> threadsToUpdate = null;
+			lock (lockObj) {
+				foreach (var kv in toEngineThread) {
+					var info = UpdateThreadProperties_MonoDebug_NoLock(kv.Value);
+					if (info == null)
+						continue;
+					if (threadsToUpdate == null)
+						threadsToUpdate = new List<(DbgEngineThread, DbgEngineThread.UpdateOptions, ThreadProperties)>();
+					threadsToUpdate.Add(info.Value);
+				}
+			}
+			if (threadsToUpdate != null) {
+				foreach (var info in threadsToUpdate)
+					NotifyThreadPropertiesChanged_MonoDebug(info.engineThread, info.updateOptions, info.props);
+			}
 		}
 
 		void CreateThread(ThreadMirror monoThread) {

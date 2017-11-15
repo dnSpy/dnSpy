@@ -358,6 +358,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
+		void IncrementSuspendCount() {
+			debuggerThread.VerifyAccess();
+			suspendCount++;
+			if (suspendCount == 1)
+				UpdateThreadProperties_MonoDebug();
+		}
+
+		void DecrementSuspendCount() {
+			debuggerThread.VerifyAccess();
+			suspendCount--;
+		}
+
 		void OnDebuggerEvents(EventSet eventSet) {
 			debuggerThread.VerifyAccess();
 
@@ -368,7 +380,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			foreach (var evt in eventSet.Events) {
 				switch (evt.EventType) {
 				case EventType.VMStart:
-					suspendCount++;
+					IncrementSuspendCount();
 					SendMessage(new DbgMessageConnected((uint)vmPid, GetMessageFlags()));
 					break;
 
@@ -380,17 +392,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 				case EventType.ThreadStart:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.ThreadDeath:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.AppDomainCreate:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					var adce = (AppDomainCreateEvent)evt;
 					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(adce.Domain)));
 					SendMessage(new DelegatePendingMessage(true, () => CreateModule(adce.Domain, adce.Domain.Corlib.ManifestModule)));
@@ -398,12 +410,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 				case EventType.AppDomainUnload:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.AssemblyLoad:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					var ale = (AssemblyLoadEvent)evt;
 					// The debugger agent doesn't support netmodules...
 					SendMessage(new DelegatePendingMessage(true, () => CreateModule(ale.Assembly.Domain, ale.Assembly.ManifestModule)));
@@ -411,37 +423,37 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 				case EventType.AssemblyUnload:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.Breakpoint:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.Step:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.TypeLoad:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.Exception:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.UserBreak:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.UserLog:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					suspendCount++;
+					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.VMDisconnect:
@@ -639,7 +651,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			try {
 				if (suspendCount == 0) {
 					vm.Suspend();
-					suspendCount++;
+					IncrementSuspendCount();
 				}
 				SendMessage(new DbgMessageBreak(GetThreadPreferMain_MonoDebug(), GetMessageFlags()));
 			}
@@ -662,7 +674,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					return;
 				while (suspendCount > 0) {
 					vm.Resume();
-					suspendCount--;
+					DecrementSuspendCount();
 				}
 			}
 			catch (Exception ex) {
