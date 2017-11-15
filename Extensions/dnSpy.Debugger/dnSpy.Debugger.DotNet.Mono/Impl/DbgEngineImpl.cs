@@ -506,6 +506,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			throw new InvalidOperationException();
 		}
 
+		internal static ModuleId? TryGetModuleId(DbgModule module) {
+			if (module.TryGetData(out DbgModuleData data))
+				return data.ModuleId;
+			return null;
+		}
+
 		bool TryGetModuleData(DbgModule module, out DbgModuleData data) {
 			if (module.TryGetData(out data) && data.Engine == this)
 				return true;
