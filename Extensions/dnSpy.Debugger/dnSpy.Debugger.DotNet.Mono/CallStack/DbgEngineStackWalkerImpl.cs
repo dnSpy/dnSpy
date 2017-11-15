@@ -24,6 +24,7 @@ using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Debugger.DotNet.Mono.Impl;
 using dnSpy.Debugger.DotNet.Mono.Properties;
 using Mono.Debugger.Soft;
+using SD = System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 	sealed class DbgEngineStackWalkerImpl : DbgEngineStackWalker {
@@ -84,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 				if (monoFrame.IsNativeTransition)
 					return engine.ObjectFactory.CreateSpecialStackFrame(dnSpy_Debugger_DotNet_Mono_Resources.StackFrame_NativeTransition);
 
-				System.Diagnostics.Debug.Fail("Unknown frame without a method");
+				SD.Debug.Fail("Unknown frame without a method");
 				return CreateErrorStackFrame();
 			}
 			else {
@@ -92,7 +93,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 				if (module != null)
 					return new ILDbgEngineStackFrame(engine, module, monoFrame, dbgDotNetCodeLocationFactory);
 
-				System.Diagnostics.Debug.Fail("Creating an error stack frame");
+				SD.Debug.Fail("Creating an error stack frame");
 				return CreateErrorStackFrame();
 			}
 		}

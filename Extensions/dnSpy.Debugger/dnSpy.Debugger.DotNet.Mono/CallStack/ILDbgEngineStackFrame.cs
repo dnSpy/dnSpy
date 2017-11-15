@@ -28,6 +28,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.Impl;
 using Mono.Debugger.Soft;
+using SD = System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 	sealed class ILDbgEngineStackFrame : DbgEngineStackFrame {
@@ -87,7 +88,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 				methGenArgs = monoFrame.Method.GetGenericArguments();
 			}
 			else {
-				System.Diagnostics.Debug.Fail("Old version doesn't support generics");
+				SD.Debug.Fail("Old version doesn't support generics");
 				typeGenArgs = Array.Empty<TypeMirror>();
 				methGenArgs = Array.Empty<TypeMirror>();
 			}
@@ -100,7 +101,11 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 		IList<DmdType> Convert(DmdAppDomain reflectionAppDomain, TypeMirror[] typeArgs) {
 			if (typeArgs.Length == 0)
 				return Array.Empty<DmdType>();
-			throw new NotImplementedException();//TODO:
+			var types = new DmdType[typeArgs.Length];
+			var reflectionTypeCreator = new ReflectionTypeCreator(engine, reflectionAppDomain);
+			for (int i = 0; i < types.Length; i++)
+				types[i] = reflectionTypeCreator.Create(typeArgs[i]);
+			return types;
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) { }

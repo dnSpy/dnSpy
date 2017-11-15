@@ -21,14 +21,18 @@ using System;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Debugger.DotNet.Metadata;
+using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed class DbgMonoDebugInternalAppDomainImpl : DbgDotNetInternalAppDomain {
 		public override DmdAppDomain ReflectionAppDomain { get; }
 		public override DbgAppDomain AppDomain => appDomain ?? throw new InvalidOperationException();
 		DbgAppDomain appDomain;
-		public DbgMonoDebugInternalAppDomainImpl(DmdAppDomain reflectionAppDomain) =>
+		public DbgMonoDebugInternalAppDomainImpl(DmdAppDomain reflectionAppDomain, AppDomainMirror monoAppDomain) {
 			ReflectionAppDomain = reflectionAppDomain ?? throw new ArgumentNullException(nameof(reflectionAppDomain));
+			reflectionAppDomain.GetOrCreateData(() => monoAppDomain);
+		}
+		internal static AppDomainMirror GetAppDomainMirror(DmdAppDomain reflectionAppDomain) => reflectionAppDomain.GetData<AppDomainMirror>();
 		internal void SetAppDomain(DbgAppDomain appDomain) {
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			ReflectionAppDomain.GetOrCreateData(() => appDomain);

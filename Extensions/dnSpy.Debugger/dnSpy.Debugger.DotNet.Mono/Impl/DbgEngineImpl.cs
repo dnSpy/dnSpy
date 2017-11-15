@@ -577,7 +577,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			int appDomainId = GetAppDomainId(monoAppDomain);
 			var appDomain = dmdRuntime.CreateAppDomain(appDomainId);
-			var internalAppDomain = new DbgMonoDebugInternalAppDomainImpl(appDomain);
+			var internalAppDomain = new DbgMonoDebugInternalAppDomainImpl(appDomain, monoAppDomain);
 			var appDomainName = monoAppDomain.FriendlyName;
 			var engineAppDomain = objectFactory.CreateAppDomain<object>(internalAppDomain, appDomainName, appDomainId, GetMessageFlags(), data: null, onCreated: engineAppDomain2 => internalAppDomain.SetAppDomain(engineAppDomain2.AppDomain));
 			lock (lockObj) {
