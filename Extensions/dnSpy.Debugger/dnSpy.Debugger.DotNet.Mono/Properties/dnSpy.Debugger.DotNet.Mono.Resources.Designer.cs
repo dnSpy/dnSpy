@@ -223,6 +223,24 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Function Evaluation.
+        /// </summary>
+        public static string StackFrame_FunctionEvaluation {
+            get {
+                return ResourceManager.GetString("StackFrame_FunctionEvaluation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Native Transition.
+        /// </summary>
+        public static string StackFrame_NativeTransition {
+            get {
+                return ResourceManager.GetString("StackFrame_NativeTransition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Aborted.
         /// </summary>
         public static string Thread_UserState_Aborted {

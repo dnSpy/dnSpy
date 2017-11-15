@@ -38,6 +38,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CallStack\DbgEngineStackWalkerImpl.cs" />
+    <Compile Include="CallStack\ILDbgEngineStackFrame.cs" />
+    <Compile Include="CallStack\NullDbgEngineStackWalker.cs" />
+    <Compile Include="CallStack\StackFrameData.cs" />
     <Compile Include="Dialogs\DebugProgram\BreakProcessKindsUtils.cs" />
     <Compile Include="Dialogs\DebugProgram\MonoConnectStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\MonoConnectStartDebuggingOptionsPageBase.cs" />

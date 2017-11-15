@@ -198,4 +198,10 @@
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;no exception message&gt;"</value>
   </data>
+  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
+    <value>Function Evaluation</value>
+  </data>
+  <data name="StackFrame_NativeTransition" xml:space="preserve">
+    <value>Native Transition</value>
+  </data>
 </root>

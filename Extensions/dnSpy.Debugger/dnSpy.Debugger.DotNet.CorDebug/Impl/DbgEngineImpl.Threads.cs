@@ -49,8 +49,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
+		DbgThreadData TryGetThreadData(DbgThread thread) {
+			if (thread != null && thread.TryGetData(out DbgThreadData data))
+				return data;
+			return null;
+		}
+
 		internal DnThread GetThread(DbgThread thread) =>
-			thread?.GetData<DbgThreadData>()?.DnThread ?? throw new InvalidOperationException();
+			TryGetThreadData(thread)?.DnThread ?? throw new InvalidOperationException();
 
 		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties oldProperties, bool isCreateThread, bool forceReadName, bool isMainThread) {
 			debuggerThread.VerifyAccess();
@@ -349,7 +355,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return;
 			if (dnDebugger.ProcessState != DebuggerProcessState.Paused)
 				return;
-			var threadData = thread.GetData<DbgThreadData>();
+			var threadData = TryGetThreadData(thread);
+			if (threadData == null)
+				return;
 			var corThread = threadData.DnThread.CorThread;
 			if (freeze) {
 				if (corThread.IsSuspended)
@@ -369,8 +377,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public override DbgEngineStackWalker CreateStackWalker(DbgThread thread) {
-			var threadData = thread.GetData<DbgThreadData>();
-			var engineThread = TryGetEngineThread(threadData.DnThread);
+			var threadData = TryGetThreadData(thread);
+			var engineThread = TryGetEngineThread(threadData?.DnThread);
 			if (engineThread == null || threadData.DnThread.HasExited)
 				return new NullDbgEngineStackWalker();
 			return new DbgEngineStackWalkerImpl(dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory, this, threadData.DnThread, thread, GetFramesBuffer());
@@ -437,7 +445,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		bool TryGetFrame(DbgThread thread, out CorFrame frame) {
 			debuggerThread.VerifyAccess();
 			frame = null;
-			if (!thread.TryGetData(out DbgThreadData data))
+			var data = TryGetThreadData(thread);
+			if (data == null)
 				return false;
 			if (data.DnThread.HasExited)
 				return false;

@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					if (moduleAddressTmp != 0 && moduleSizeTmp != 0)
 						rawMd = engine.RawMetadataService.Create(runtime, imageLayout == DbgImageLayout.File, moduleAddressTmp, (int)moduleSizeTmp);
 					else if (File.Exists(filename))
-						rawMd = engine.RawMetadataService.Create(runtime, imageLayout == DbgImageLayout.File, File.ReadAllBytes(filename));
+						rawMd = engine.RawMetadataService.Create(runtime, true, File.ReadAllBytes(filename));
 					else {
 						//TODO:
 						rawMd = engine.RawMetadataService.Create(runtime, imageLayout == DbgImageLayout.File, Array.Empty<byte>());

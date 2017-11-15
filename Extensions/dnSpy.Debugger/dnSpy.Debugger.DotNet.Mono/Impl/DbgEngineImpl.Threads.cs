@@ -48,8 +48,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
+		DbgThreadData TryGetThreadData(DbgThread thread) {
+			if (thread != null && thread.TryGetData(out DbgThreadData data))
+				return data;
+			return null;
+		}
+
 		internal ThreadMirror GetThread(DbgThread thread) =>
-			thread?.GetData<DbgThreadData>()?.MonoThread ?? throw new InvalidOperationException();
+			TryGetThreadData(thread)?.MonoThread ?? throw new InvalidOperationException();
 
 		ThreadProperties GetThreadProperties_MonoDebug(ThreadMirror thread, ThreadProperties oldProperties, ref DateTime lastNameUpdateTime, bool isCreateThread, bool forceReadName, bool isMainThread, bool isFinalizerThread) {
 			debuggerThread.VerifyAccess();
@@ -260,6 +266,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return false;
 		}
 
+		DbgEngineThread TryGetEngineThread(ThreadMirror thread) {
+			if (thread == null)
+				return null;
+			DbgEngineThread engineThread;
+			bool b;
+			lock (lockObj)
+				b = toEngineThread.TryGetValue(thread, out engineThread);
+			Debug.Assert(b);
+			return engineThread;
+		}
+
 		public override void Freeze(DbgThread thread) {
 			//TODO:
 		}
@@ -269,7 +286,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		public override DbgEngineStackWalker CreateStackWalker(DbgThread thread) {
-			return new DbgEngineStackWalkerImpl();
+			var threadData = TryGetThreadData(thread);
+			var engineThread = TryGetEngineThread(threadData?.MonoThread);
+			if (engineThread == null)
+				return new NullDbgEngineStackWalker();
+			return new DbgEngineStackWalkerImpl(dbgDotNetCodeLocationFactory, this, threadData.MonoThread, thread);
 		}
 
 		public override void SetIP(DbgThread thread, DbgCodeLocation location) {

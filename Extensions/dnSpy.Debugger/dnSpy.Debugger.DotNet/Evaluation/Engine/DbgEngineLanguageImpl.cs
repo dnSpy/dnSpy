@@ -220,7 +220,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var methodDebugInfo = output.TryGetMethodDebugInfo();
 			DecompilerOutputImplCache.Free(ref output);
 			cancellationToken.ThrowIfCancellationRequested();
-			Debug.Assert(methodDebugInfo != null);
+			if (methodDebugInfo == null && method.Body == null) {
+				var scope = new MethodDebugScope(new BinSpan(0, 0), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
+				methodDebugInfo = new MethodDebugInfo(-1, method, Array.Empty<SourceStatement>(), scope, null);
+			}
 			if (methodDebugInfo == null)
 				return null;
 

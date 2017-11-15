@@ -38,6 +38,7 @@ using dnSpy.Contracts.Debugger.Engine.Steppers;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Debugger.DotNet.Mono.CallStack;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Mono.Properties;
 using Mono.Debugger.Soft;
@@ -51,6 +52,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public override string[] DebugTags => new[] { PredefinedDebugTags.DotNetDebugger };
 		public override string[] Debugging { get; }
 		public override event EventHandler<DbgEngineMessage> Message;
+
+		internal DbgObjectFactory ObjectFactory => objectFactory;
 
 		readonly object lockObj;
 		readonly DebuggerThread debuggerThread;
@@ -69,6 +72,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly Dictionary<ThreadMirror, DbgEngineThread> toEngineThread;
 		readonly Dictionary<AssemblyMirror, List<ModuleMirror>> toAssemblyModules;
 		readonly HashSet<AppDomainMirror> appDomainsThatHaveNotBeenInitializedYet;
+		internal readonly StackFrameData stackFrameData;
 		VirtualMachine vm;
 		int vmPid;
 		int? vmDeathExitCode;
@@ -76,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		bool isUnhandledException;
 		DbgObjectFactory objectFactory;
 		SafeHandle hProcess_debuggee;
-		int suspendCount;
+		volatile int suspendCount;
 		readonly List<PendingMessage> pendingMessages;
 
 		static DbgEngineImpl() => ThreadMirror.NativeTransitions = true;
@@ -92,6 +96,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			toEngineThread = new Dictionary<ThreadMirror, DbgEngineThread>();
 			toAssemblyModules = new Dictionary<AssemblyMirror, List<ModuleMirror>>();
 			appDomainsThatHaveNotBeenInitializedYet = new HashSet<AppDomainMirror>();
+			stackFrameData = new StackFrameData();
 			debuggerSettings = deps.DebuggerSettings;
 			dbgDotNetCodeRangeService = deps.DotNetCodeRangeService;
 			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;
@@ -122,6 +127,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			PredefinedDotNetDbgRuntimeTags.DotNetUnity,
 		});
 
+		internal DebuggerThread DebuggerThread => debuggerThread;
 		internal bool CheckMonoDebugThread() => debuggerThread.CheckAccess();
 		internal void VerifyMonoDebugThread() => debuggerThread.VerifyAccess();
 		internal T InvokeMonoDebugThread<T>(Func<T> callback) => debuggerThread.Invoke(callback);
@@ -783,6 +789,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (!HasConnected_MonoDebugThread)
 				return;
 			try {
+				continueCounter++;
 				if (!IsEvaluating)
 					CloseDotNetValues_MonoDebug();
 				if (runCounter != nextSendRunCounter)
@@ -796,7 +803,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				dbgManager.ShowError(ex.Message);
 			}
 		}
+		internal uint ContinueCounter => continueCounter;
+		volatile uint continueCounter;
 
+		internal bool IsPaused => suspendCount > 0;
 		void ResumeCore() {
 			debuggerThread.VerifyAccess();
 			while (suspendCount > 0) {
