@@ -67,6 +67,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly Dictionary<ModuleMirror, DbgEngineModule> toEngineModule;
 		readonly Dictionary<ThreadMirror, DbgEngineThread> toEngineThread;
 		readonly Dictionary<AssemblyMirror, List<ModuleMirror>> toAssemblyModules;
+		readonly HashSet<AppDomainMirror> appDomainsThatHaveNotBeenInitializedYet;
 		VirtualMachine vm;
 		int vmPid;
 		int? vmDeathExitCode;
@@ -75,7 +76,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		SafeHandle hProcess_debuggee;
 		int suspendCount;
 		readonly List<PendingMessage> pendingMessages;
-		bool canSendNextMessage;
 
 		static DbgEngineImpl() => ThreadMirror.NativeTransitions = true;
 
@@ -84,12 +84,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				throw new ArgumentNullException(nameof(deps));
 			lockObj = new object();
 			suspendCount = 0;
-			this.pendingMessages = new List<PendingMessage>();
-			canSendNextMessage = true;
+			pendingMessages = new List<PendingMessage>();
 			toEngineAppDomain = new Dictionary<AppDomainMirror, DbgEngineAppDomain>();
 			toEngineModule = new Dictionary<ModuleMirror, DbgEngineModule>();
 			toEngineThread = new Dictionary<ThreadMirror, DbgEngineThread>();
 			toAssemblyModules = new Dictionary<AssemblyMirror, List<ModuleMirror>>();
+			appDomainsThatHaveNotBeenInitializedYet = new HashSet<AppDomainMirror>();
 			debuggerSettings = deps.DebuggerSettings;
 			dbgDotNetCodeRangeService = deps.DotNetCodeRangeService;
 			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;
@@ -176,23 +176,34 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			SendNextMessage();
 		}
 
+		uint runCounter;
+		uint nextSendRunCounter;
 		bool SendNextMessage() {
 			debuggerThread.VerifyAccess();
-			if (!canSendNextMessage)
+			if (gotVMDisconnect)
+				return true;
+			if (runCounter != nextSendRunCounter)
 				return false;
-			for (;;) {
-				if (pendingMessages.Count == 0) {
-					canSendNextMessage = pendingMessages.Count == 0;
-					return false;
-				}
-				var pendingMessage = pendingMessages[0];
-				pendingMessages.RemoveAt(0);
-				pendingMessage.RaiseMessage();
-				if (pendingMessage.MustWaitForRun) {
-					canSendNextMessage = pendingMessages.Count == 0;
-					return true;
+			try {
+				for (;;) {
+					if (pendingMessages.Count == 0) {
+						nextSendRunCounter = runCounter;
+						return false;
+					}
+					var pendingMessage = pendingMessages[0];
+					pendingMessages.RemoveAt(0);
+					pendingMessage.RaiseMessage();
+					if (pendingMessage.MustWaitForRun) {
+						nextSendRunCounter = runCounter + 1;
+						return true;
+					}
 				}
 			}
+			catch (VMDisconnectedException) {
+			}
+			catch {
+			}
+			return true;
 		}
 
 		public override void Start(DebugProgramOptions options) => MonoDebugThread(() => StartCore(options));
@@ -394,14 +405,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var tse = (ThreadStartEvent)evt;
-					CreateThread(tse.Thread);
+					InitializeDomain(tse.Thread.Domain);
+					SendMessage(new DelegatePendingMessage(true, () => CreateThread(tse.Thread)));
 					break;
 
 				case EventType.ThreadDeath:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					var tde = (ThreadDeathEvent)evt;
 					// Destroy it before calling IncrementSuspendCount() since it will update thread props
-					DestroyThread(tde.Thread);
+					SendMessage(new DelegatePendingMessage(true, () => DestroyThread(tde.Thread)));
 					IncrementSuspendCount();
 					break;
 
@@ -410,26 +422,39 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					IncrementSuspendCount();
 					var adce = (AppDomainCreateEvent)evt;
 					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(adce.Domain)));
-					SendMessage(new DelegatePendingMessage(true, () => CreateModule(adce.Domain, adce.Domain.Corlib.ManifestModule)));
 					break;
 
 				case EventType.AppDomainUnload:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
-					break;//TODO:
+					var adue = (AppDomainUnloadEvent)evt;
+					SendMessage(new DelegatePendingMessage(true, () => DestroyAppDomain(adue.Domain)));
+					break;
 
 				case EventType.AssemblyLoad:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var ale = (AssemblyLoadEvent)evt;
+					InitializeDomain(ale.Assembly.Domain);
 					// The debugger agent doesn't support netmodules...
-					SendMessage(new DelegatePendingMessage(true, () => CreateModule(ale.Assembly.Domain, ale.Assembly.ManifestModule)));
+					SendMessage(new DelegatePendingMessage(true, () => CreateModule(ale.Assembly.ManifestModule)));
 					break;
 
 				case EventType.AssemblyUnload:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
-					break;//TODO:
+					var aue = (AssemblyUnloadEvent)evt;
+					var monoModule = TryGetModule(aue.Assembly.ManifestModule);
+					Debug.Assert(monoModule != null);
+					if (monoModule != null) {
+						foreach (var module in GetAssemblyModules(monoModule)) {
+							if (!TryGetModuleData(module, out var data))
+								continue;
+							var tmp = data.MonoModule;
+							SendMessage(new DelegatePendingMessage(true, () => DestroyModule(tmp)));
+						}
+					}
+					break;
 
 				case EventType.Breakpoint:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
@@ -462,7 +487,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;//TODO:
 
 				case EventType.VMDisconnect:
-					gotVMDisconnect = true;
 					if (vmDeathExitCode == null && (!hProcess_debuggee.IsClosed && !hProcess_debuggee.IsInvalid && NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode)))
 						vmDeathExitCode = exitCode;
 					if (vmDeathExitCode == null) {
@@ -470,6 +494,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						dbgManager.ShowError(dnSpy_Debugger_DotNet_Mono_Resources.Error_ConnectionWasUnexpectedlyClosed);
 					}
 					SendMessage(new DbgMessageDisconnected(vmDeathExitCode.Value, GetMessageFlags()));
+					gotVMDisconnect = true;
 					break;
 
 				default:
@@ -497,14 +522,53 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 		int nextAppDomainId = 1;
 
+		void InitializeDomain(AppDomainMirror monoAppDomain) {
+			debuggerThread.VerifyAccess();
+			lock (lockObj) {
+				if (!appDomainsThatHaveNotBeenInitializedYet.Remove(monoAppDomain))
+					return;
+				bool b = toEngineAppDomain.TryGetValue(monoAppDomain, out var engineAppDomain);
+				Debug.Assert(b);
+				if (b)
+					engineAppDomain.UpdateName(monoAppDomain.FriendlyName);
+			}
+			SendMessage(new DelegatePendingMessage(true, () => CreateModule(monoAppDomain.Corlib.ManifestModule)));
+		}
+
 		void CreateAppDomain(AppDomainMirror monoAppDomain) {
 			debuggerThread.VerifyAccess();
 			int appDomainId = GetAppDomainId(monoAppDomain);
 			var appDomain = dmdRuntime.CreateAppDomain(appDomainId);
 			var internalAppDomain = new DbgMonoDebugInternalAppDomainImpl(appDomain);
-			var engineAppDomain = objectFactory.CreateAppDomain<object>(internalAppDomain, monoAppDomain.FriendlyName, appDomainId, GetMessageFlags(), data: null, onCreated: engineAppDomain2 => internalAppDomain.SetAppDomain(engineAppDomain2.AppDomain));
-			lock (lockObj)
+			var appDomainName = monoAppDomain.FriendlyName;
+			var engineAppDomain = objectFactory.CreateAppDomain<object>(internalAppDomain, appDomainName, appDomainId, GetMessageFlags(), data: null, onCreated: engineAppDomain2 => internalAppDomain.SetAppDomain(engineAppDomain2.AppDomain));
+			lock (lockObj) {
+				appDomainsThatHaveNotBeenInitializedYet.Add(monoAppDomain);
 				toEngineAppDomain.Add(monoAppDomain, engineAppDomain);
+			}
+		}
+
+		void DestroyAppDomain(AppDomainMirror monoAppDomain) {
+			debuggerThread.VerifyAccess();
+			DbgEngineAppDomain engineAppDomain;
+			lock (lockObj) {
+				if (toEngineAppDomain.TryGetValue(monoAppDomain, out engineAppDomain)) {
+					appDomainsThatHaveNotBeenInitializedYet.Remove(monoAppDomain);
+					toEngineAppDomain.Remove(monoAppDomain);
+					var appDomain = engineAppDomain.AppDomain;
+					dmdRuntime.Remove(((DbgMonoDebugInternalAppDomainImpl)appDomain.InternalAppDomain).ReflectionAppDomain);
+					foreach (var kv in toEngineThread.ToArray()) {
+						if (kv.Value.Thread.AppDomain == appDomain)
+							toEngineThread.Remove(kv.Key);
+					}
+					foreach (var kv in toEngineModule.ToArray()) {
+						if (kv.Value.Module.AppDomain == appDomain)
+							toEngineModule.Remove(kv.Key);
+					}
+				}
+			}
+			if (engineAppDomain != null)
+				engineAppDomain.Remove(GetMessageFlags());
 		}
 
 		sealed class DbgModuleData {
@@ -537,11 +601,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		int moduleOrder;
-		void CreateModule(AppDomainMirror monoAppDomain, ModuleMirror monoModule) {
+		void CreateModule(ModuleMirror monoModule) {
 			debuggerThread.VerifyAccess();
-			Debug.Assert(monoAppDomain == monoModule.Assembly.Domain);
-
-			var appDomain = TryGetEngineAppDomain(monoAppDomain)?.AppDomain;
+			var appDomain = TryGetEngineAppDomain(monoModule.Assembly.Domain).AppDomain;
 			var moduleData = new DbgModuleData(this, monoModule);
 			var engineModule = ModuleCreator.CreateModule(this, objectFactory, appDomain, monoModule, moduleOrder++, moduleData);
 			moduleData.ModuleId = ModuleIdUtils.Create(engineModule.Module, monoModule);
@@ -551,6 +613,24 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				modules.Add(monoModule);
 				toEngineModule.Add(monoModule, engineModule);
 			}
+		}
+
+		void DestroyModule(ModuleMirror monoModule) {
+			debuggerThread.VerifyAccess();
+			DbgEngineModule engineModule;
+			lock (lockObj) {
+				if (toAssemblyModules.TryGetValue(monoModule.Assembly, out var modules)) {
+					modules.Remove(monoModule);
+					if (modules.Count == 0)
+						toAssemblyModules.Remove(monoModule.Assembly);
+				}
+				if (toEngineModule.TryGetValue(monoModule, out engineModule)) {
+					toEngineModule.Remove(monoModule);
+					((DbgMonoDebugInternalModuleImpl)engineModule.Module.InternalModule).Remove();
+				}
+			}
+			if (engineModule != null)
+				engineModule.Remove(GetMessageFlags());
 		}
 
 		internal DbgModule TryGetModule(ModuleMirror monoModule) {
@@ -641,7 +721,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				Debug.Assert(vm != null);
 				if (vm != null) {
 					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(vm.RootDomain)));
-					SendMessage(new DelegatePendingMessage(true, () => CreateModule(vm.RootDomain, vm.RootDomain.Corlib.ManifestModule)));
 					foreach (var monoThread in vm.GetThreads())
 						SendMessage(new DelegatePendingMessage(true, () => CreateThread(monoThread)));
 				}
@@ -674,7 +753,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			try {
 				if (!IsEvaluating)
 					CloseDotNetValues_MonoDebug();
-				canSendNextMessage = true;
+				if (runCounter != nextSendRunCounter)
+					runCounter++;
 				if (SendNextMessage())
 					return;
 				while (suspendCount > 0) {
