@@ -20,41 +20,71 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using dndbg.COM.CorDebug;
-using dndbg.COM.MetaData;
-using dndbg.Engine;
+using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.DotNet.Metadata;
+using Mono.Debugger.Soft;
 
-namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
-	static class ModuleCreator {
-		public static DbgEngineModule CreateModule<T>(DbgEngineImpl engine, DbgObjectFactory objectFactory, DbgAppDomain appDomain, DnModule dnModule, T data) where T : class {
-			ulong address = dnModule.Address;
-			uint size = dnModule.Size;
-			var imageLayout = CalculateImageLayout(dnModule);
-			string name = GetFilename(dnModule.Name);
-			string filename = dnModule.Name;
-			bool isDynamic = dnModule.IsDynamic;
-			bool isInMemory = dnModule.IsInMemory;
-			bool? isOptimized = CalculateIsOptimized(dnModule);
-			int order = dnModule.UniqueId;
-			InitializeExeFields(dnModule, filename, imageLayout, out var isExe, out var isDll, out var timestamp, out var version, out var assemblySimpleName);
+namespace dnSpy.Debugger.DotNet.Mono.Impl {
+	struct ModuleCreator {
+		readonly DbgEngineImpl engine;
+		readonly DbgObjectFactory objectFactory;
+		readonly DbgAppDomain appDomain;
+		readonly ModuleMirror monoModule;
+		readonly int moduleOrder;
+		ulong moduleAddress;
+		uint moduleSize;
+		bool isDynamic;
+		bool isInMemory;
 
-			var reflectionAppDomain = ((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).ReflectionAppDomain;
+		ModuleCreator(DbgEngineImpl engine, DbgObjectFactory objectFactory, DbgAppDomain appDomain, ModuleMirror monoModule, int moduleOrder) {
+			this.engine = engine;
+			this.objectFactory = objectFactory;
+			this.appDomain = appDomain;
+			this.monoModule = monoModule;
+			this.moduleOrder = moduleOrder;
+			moduleAddress = 0;
+			moduleSize = 0;
+			isDynamic = false;
+			isInMemory = false;
+		}
+
+		public static DbgEngineModule CreateModule<T>(DbgEngineImpl engine, DbgObjectFactory objectFactory, DbgAppDomain appDomain, ModuleMirror monoModule, int moduleOrder, T data) where T : class =>
+			new ModuleCreator(engine, objectFactory, appDomain, monoModule, moduleOrder).CreateModuleCore(data);
+
+		DbgEngineModule CreateModuleCore<T>(T data) where T : class {
+			//TODO: Use func-eval to get these values, or update debugger agent
+			moduleAddress = 0;
+			moduleSize = 0;
+			if (File.Exists(monoModule.FullyQualifiedName)) {
+				isDynamic = false;
+				isInMemory = false;
+			}
+			else {
+				isDynamic = false;//TODO:
+				isInMemory = true;
+			}
+
+			var imageLayout = CalculateImageLayout();
+			string name = GetFilename(monoModule.FullyQualifiedName);
+			string filename = monoModule.FullyQualifiedName;
+			bool? isOptimized = CalculateIsOptimized();
+			InitializeExeFields(filename, imageLayout, out var isExe, out var isDll, out var timestamp, out var version, out var assemblySimpleName);
+
+			var reflectionAppDomain = ((DbgMonoDebugInternalAppDomainImpl)appDomain.InternalAppDomain).ReflectionAppDomain;
 
 			var closedListenerCollection = new ClosedListenerCollection();
-			var modules = dnModule.Assembly.Modules;
-			bool isManifestModule = modules[0] == dnModule;
-			var getMetadata = CreateGetMetadataDelegate(engine, objectFactory.Runtime, dnModule, closedListenerCollection, imageLayout);
-			var fullyQualifiedName = DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, dnModule.Name);
+			var getMetadata = CreateGetMetadataDelegate(closedListenerCollection, imageLayout);
+			var fullyQualifiedName = DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, monoModule.FullyQualifiedName);
 			DmdAssembly reflectionAssembly;
 			DmdModule reflectionModule;
-			if (isManifestModule) {
-				var assemblyLocation = isInMemory || isDynamic ? string.Empty : dnModule.Name;
+			if (monoModule == monoModule.Assembly.ManifestModule) {
+				var assemblyLocation = isInMemory || isDynamic ? string.Empty : monoModule.FullyQualifiedName;
 				var asmOptions = DmdCreateAssemblyOptions.None;
 				if (isInMemory)
 					asmOptions |= DmdCreateAssemblyOptions.InMemory;
@@ -69,68 +99,68 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				reflectionModule = reflectionAssembly.ManifestModule;
 			}
 			else {
-				var manifestModule = engine.TryGetModule(modules[0].CorModule);
+				var manifestModule = engine.TryGetModule(monoModule.Assembly.ManifestModule);
 				if (manifestModule == null)
 					throw new InvalidOperationException();
-				reflectionAssembly = ((DbgCorDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule.Assembly;
+				reflectionAssembly = ((DbgMonoDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule.Assembly;
 				reflectionModule = reflectionAppDomain.CreateModule(reflectionAssembly, getMetadata, isInMemory, isDynamic, fullyQualifiedName);
 			}
 
-			var internalModule = new DbgCorDebugInternalModuleImpl(reflectionModule, closedListenerCollection);
-			return objectFactory.CreateModule(appDomain, internalModule, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, engine.GetMessageFlags(), data: data, onCreated: engineModule => internalModule.SetModule(engineModule.Module));
+			var internalModule = new DbgMonoDebugInternalModuleImpl(reflectionModule, closedListenerCollection);
+			return objectFactory.CreateModule(appDomain, internalModule, isExe, moduleAddress, moduleSize, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, moduleOrder, timestamp, version, engine.GetMessageFlags(), data: data, onCreated: engineModule => internalModule.SetModule(engineModule.Module));
 		}
 
-		static Func<DmdLazyMetadataBytes> CreateGetMetadataDelegate(DbgEngineImpl engine, DbgRuntime runtime, DnModule dnModule, ClosedListenerCollection closedListenerCollection, DbgImageLayout imageLayout) {
-			if (dnModule.IsDynamic)
-				return CreateDynamicGetMetadataDelegate(engine, dnModule);
+		Func<DmdLazyMetadataBytes> CreateGetMetadataDelegate(ClosedListenerCollection closedListenerCollection, DbgImageLayout imageLayout) {
+			if (isDynamic)
+				return CreateDynamicGetMetadataDelegate();
 			else
-				return CreateNormalGetMetadataDelegate(engine, runtime, dnModule, closedListenerCollection, imageLayout);
+				return CreateNormalGetMetadataDelegate(closedListenerCollection, imageLayout);
 		}
 
-		static Func<DmdLazyMetadataBytes> CreateDynamicGetMetadataDelegate(DbgEngineImpl engine, DnModule dnModule) {
-			Debug.Assert(dnModule.IsDynamic);
-			var comMetadata = dnModule.CorModule.GetMetaDataInterface<IMetaDataImport2>();
-			if (comMetadata == null)
-				throw new InvalidOperationException();
-			var result = new DmdLazyMetadataBytesCom(comMetadata, engine.GetDynamicModuleHelper(dnModule), engine.DmdDispatcher);
-			return () => result;
+		Func<DmdLazyMetadataBytes> CreateDynamicGetMetadataDelegate() {
+			Debug.Assert(isDynamic);
+			return () => new DmdLazyMetadataBytesArray(Array.Empty<byte>(), false);//TODO:
 		}
 
-		static Func<DmdLazyMetadataBytes> CreateNormalGetMetadataDelegate(DbgEngineImpl engine, DbgRuntime runtime, DnModule dnModule, ClosedListenerCollection closedListenerCollection, DbgImageLayout imageLayout) {
-			Debug.Assert(!dnModule.IsDynamic);
+		Func<DmdLazyMetadataBytes> CreateNormalGetMetadataDelegate(ClosedListenerCollection closedListenerCollection, DbgImageLayout imageLayout) {
+			Debug.Assert(!isDynamic);
 
+			var moduleAddressTmp = moduleAddress;
+			var moduleSizeTmp = moduleSize;
+			var engine = this.engine;
+			var runtime = objectFactory.Runtime;
+			var filename = monoModule.FullyQualifiedName;
 			return () => {
-				var rawMd = engine.RawMetadataService.Create(runtime, imageLayout == DbgImageLayout.File, dnModule.Address, (int)dnModule.Size);
+				DbgRawMetadata rawMd = null;
 				try {
+					if (moduleAddressTmp != 0 && moduleSizeTmp != 0)
+						rawMd = engine.RawMetadataService.Create(runtime, imageLayout == DbgImageLayout.File, moduleAddressTmp, (int)moduleSizeTmp);
+					else if (File.Exists(filename))
+						rawMd = engine.RawMetadataService.Create(runtime, imageLayout == DbgImageLayout.File, File.ReadAllBytes(filename));
+					else {
+						//TODO:
+						rawMd = engine.RawMetadataService.Create(runtime, imageLayout == DbgImageLayout.File, Array.Empty<byte>());
+					}
 					closedListenerCollection.Closed += (s, e) => rawMd.Release();
 					return new DmdLazyMetadataBytesPtr(rawMd.Address, (uint)rawMd.Size, rawMd.IsFileLayout);
 				}
 				catch {
-					rawMd.Release();
+					rawMd?.Release();
 					throw;
 				}
 			};
 		}
 
-		static DbgImageLayout CalculateImageLayout(DnModule dnModule) {
-			if (dnModule.IsDynamic)
+		DbgImageLayout CalculateImageLayout() {
+			if (isDynamic)
 				return DbgImageLayout.Unknown;
-			if (dnModule.IsInMemory)
+			if (isInMemory)
 				return DbgImageLayout.File;
 			return DbgImageLayout.Memory;
 		}
 
-		static bool? CalculateIsOptimized(DnModule dnModule) {
-			switch (dnModule.CachedJITCompilerFlags) {
-			case CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT:
-				return true;
-			case CorDebugJITCompilerFlags.CORDEBUG_JIT_DISABLE_OPTIMIZATION:
-			case CorDebugJITCompilerFlags.CORDEBUG_JIT_ENABLE_ENC:
-				return false;
-			default:
-				Debug.Fail($"Unknown JIT compiler flags: {dnModule.CachedJITCompilerFlags}");
-				return null;
-			}
+		bool? CalculateIsOptimized() {
+			return null;//TODO:
 		}
 
 		static string GetFilename(string s) {
@@ -142,21 +172,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return s;
 		}
 
-		static void InitializeExeFields(DnModule dnModule, string filename, DbgImageLayout imageLayout, out bool isExe, out bool isDll, out DateTime? timestamp, out string version, out string assemblySimpleName) {
+		void InitializeExeFields(string filename, DbgImageLayout imageLayout, out bool isExe, out bool isDll, out DateTime? timestamp, out string version, out string assemblySimpleName) {
 			isExe = false;
 			isDll = false;
 			timestamp = null;
 			version = null;
 			assemblySimpleName = null;
 
-			if (dnModule.IsDynamic) {
-				if (dnModule.CorModule.IsManifestModule)
-					version = new AssemblyNameInfo(dnModule.Assembly.FullName).Version.ToString();
+			if (isDynamic) {
+				if (monoModule.Assembly.ManifestModule == monoModule)
+					version = monoModule.Assembly.GetName().Version.ToString();
 			}
-			else if (dnModule.IsInMemory) {
+			else if (isInMemory) {
 				Debug.Assert(imageLayout == DbgImageLayout.File, nameof(GetFileVersion) + " assumes file layout");
 
-				var bytes = dnModule.Process.CorProcess.ReadMemory(dnModule.Address, (int)dnModule.Size);
+				var bytes = engine.DbgRuntime.Process.ReadMemory(moduleAddress, (int)moduleSize);
 				if (bytes != null) {
 					try {
 						version = GetFileVersion(bytes);

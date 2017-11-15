@@ -47,6 +47,7 @@
     <Compile Include="MonoDebugRuntimeKind.cs" />
     <Compile Include="MonoStartDebuggingOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ThreadStates.cs" />
     <Compile Include="UnityConnectStartDebuggingOptions.cs" />
   </ItemGroup>
   <ItemGroup>

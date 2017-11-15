@@ -35,6 +35,7 @@ using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Mono.Properties;
@@ -59,20 +60,36 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier;
 		readonly DmdRuntime dmdRuntime;
 		readonly DmdDispatcherImpl dmdDispatcher;
-		readonly DbgRawMetadataService rawMetadataService;
+		internal DbgRawMetadataService RawMetadataService { get; }
 		readonly MonoDebugRuntimeKind monoDebugRuntimeKind;
 		readonly DbgEngineRuntimeInfo runtimeInfo;
+		readonly Dictionary<AppDomainMirror, DbgEngineAppDomain> toEngineAppDomain;
+		readonly Dictionary<ModuleMirror, DbgEngineModule> toEngineModule;
+		readonly Dictionary<ThreadMirror, DbgEngineThread> toEngineThread;
+		readonly Dictionary<AssemblyMirror, List<ModuleMirror>> toAssemblyModules;
 		VirtualMachine vm;
 		int vmPid;
 		int? vmDeathExitCode;
 		bool gotVMDisconnect;
 		DbgObjectFactory objectFactory;
 		SafeHandle hProcess_debuggee;
+		int suspendCount;
+		readonly List<PendingMessage> pendingMessages;
+		bool canSendNextMessage;
+
+		static DbgEngineImpl() => ThreadMirror.NativeTransitions = true;
 
 		public DbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, MonoDebugRuntimeKind monoDebugRuntimeKind) {
 			if (deps == null)
 				throw new ArgumentNullException(nameof(deps));
 			lockObj = new object();
+			suspendCount = 0;
+			this.pendingMessages = new List<PendingMessage>();
+			canSendNextMessage = true;
+			toEngineAppDomain = new Dictionary<AppDomainMirror, DbgEngineAppDomain>();
+			toEngineModule = new Dictionary<ModuleMirror, DbgEngineModule>();
+			toEngineThread = new Dictionary<ThreadMirror, DbgEngineThread>();
+			toAssemblyModules = new Dictionary<AssemblyMirror, List<ModuleMirror>>();
 			debuggerSettings = deps.DebuggerSettings;
 			dbgDotNetCodeRangeService = deps.DotNetCodeRangeService;
 			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;
@@ -82,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.CallDispatcherRun();
 			dmdRuntime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			dmdDispatcher = new DmdDispatcherImpl(this);
-			rawMetadataService = deps.RawMetadataService;
+			RawMetadataService = deps.RawMetadataService;
 			this.monoDebugRuntimeKind = monoDebugRuntimeKind;
 			if (monoDebugRuntimeKind == MonoDebugRuntimeKind.Mono) {
 				Debugging = new[] { "MonoCLR" };
@@ -107,14 +124,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal void VerifyMonoDebugThread() => debuggerThread.VerifyAccess();
 		internal T InvokeMonoDebugThread<T>(Func<T> callback) => debuggerThread.Invoke(callback);
 		internal void MonoDebugThread(Action callback) => debuggerThread.BeginInvoke(callback);
+		internal DbgRuntime DbgRuntime => objectFactory.Runtime;
 
-		DbgEngineMessageFlags GetMessageFlags(bool pause = false) {
+		internal DbgEngineMessageFlags GetMessageFlags(bool pause = false) {
 			VerifyMonoDebugThread();
 			var flags = DbgEngineMessageFlags.None;
 			if (pause)
 				flags |= DbgEngineMessageFlags.Pause;
-			bool isEvaluating = false;//TODO:
-			if (isEvaluating)
+			if (IsEvaluating)
 				flags |= DbgEngineMessageFlags.Continue;
 			return flags;
 		}
@@ -126,7 +143,59 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		void SendMessage(DbgEngineMessage message) => Message?.Invoke(this, message);
+		abstract class PendingMessage {
+			public abstract bool MustWaitForRun { get; }
+			public abstract void RaiseMessage();
+		}
+		sealed class NormalPendingMessage : PendingMessage {
+			readonly DbgEngineImpl engine;
+			readonly DbgEngineMessage message;
+			public override bool MustWaitForRun { get; }
+			public NormalPendingMessage(DbgEngineImpl engine, bool mustWaitForRun, DbgEngineMessage message) {
+				this.engine = engine;
+				MustWaitForRun = mustWaitForRun;
+				this.message = message;
+			}
+			public override void RaiseMessage() => engine.Message?.Invoke(engine, message);
+		}
+		sealed class DelegatePendingMessage : PendingMessage {
+			readonly Action raiseMessage;
+			public override bool MustWaitForRun { get; }
+			public DelegatePendingMessage(bool mustWaitForRun, Action raiseMessage) {
+				MustWaitForRun = mustWaitForRun;
+				this.raiseMessage = raiseMessage;
+			}
+			public override void RaiseMessage() => raiseMessage();
+		}
+
+		bool IsEvaluating => false;//TODO:
+
+		void SendMessage(DbgEngineMessage message, bool mustWaitForRun = false) =>
+			SendMessage(new NormalPendingMessage(this, mustWaitForRun, message));
+		void SendMessage(PendingMessage message) {
+			debuggerThread.VerifyAccess();
+			pendingMessages.Add(message);
+			SendNextMessage();
+		}
+
+		bool SendNextMessage() {
+			debuggerThread.VerifyAccess();
+			if (!canSendNextMessage)
+				return false;
+			for (;;) {
+				if (pendingMessages.Count == 0) {
+					canSendNextMessage = pendingMessages.Count == 0;
+					return false;
+				}
+				var pendingMessage = pendingMessages[0];
+				pendingMessages.RemoveAt(0);
+				pendingMessage.RaiseMessage();
+				if (pendingMessage.MustWaitForRun) {
+					canSendNextMessage = pendingMessages.Count == 0;
+					return true;
+				}
+			}
+		}
 
 		public override void Start(DebugProgramOptions options) => MonoDebugThread(() => StartCore(options));
 
@@ -234,12 +303,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					EventType.ThreadDeath,
 					EventType.AppDomainCreate,
 					EventType.AppDomainUnload,
-					EventType.MethodEntry,
-					EventType.MethodExit,
 					EventType.AssemblyLoad,
 					EventType.AssemblyUnload,
-					//TODO: Should only be enabled if it's a dynamic assembly
-					EventType.TypeLoad,
 					EventType.Exception,
 					EventType.UserBreak,
 					EventType.UserLog,
@@ -259,7 +324,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				vm = null;
 
 				string msg;
-				if (ex is StartException startExcetpion)
+				if (ex is StartException)
 					msg = ex.Message;
 				else
 					msg = dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotConnectToProcess + "\r\n\r\n" + ex.Message;
@@ -289,7 +354,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						vm.Detach();
 					}
 					catch { }
-					SendMessage(new DbgMessageDisconnected(-1, DbgEngineMessageFlags.None));
+					Message?.Invoke(this, new DbgMessageDisconnected(-1, DbgEngineMessageFlags.None));
 					return;
 				}
 			}
@@ -298,9 +363,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		void OnDebuggerEvents(EventSet eventSet) {
 			debuggerThread.VerifyAccess();
 
+			Debug.Assert(!gotVMDisconnect);
+			if (gotVMDisconnect)
+				return;
+
 			foreach (var evt in eventSet.Events) {
 				switch (evt.EventType) {
 				case EventType.VMStart:
+					suspendCount++;
 					SendMessage(new DbgMessageConnected((uint)vmPid, GetMessageFlags()));
 					break;
 
@@ -311,52 +381,72 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.ThreadStart:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
 					break;//TODO:
 
 				case EventType.ThreadDeath:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
 					break;//TODO:
 
 				case EventType.AppDomainCreate:
-					break;//TODO:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
+					var adce = (AppDomainCreateEvent)evt;
+					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(adce.Domain)));
+					SendMessage(new DelegatePendingMessage(true, () => CreateModule(adce.Domain, adce.Domain.Corlib.ManifestModule)));
+					break;
 
 				case EventType.AppDomainUnload:
-					break;//TODO:
-
-				case EventType.MethodEntry:
-					break;//TODO:
-
-				case EventType.MethodExit:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
 					break;//TODO:
 
 				case EventType.AssemblyLoad:
-					break;//TODO:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
+					var ale = (AssemblyLoadEvent)evt;
+					// The debugger agent doesn't support netmodules...
+					SendMessage(new DelegatePendingMessage(true, () => CreateModule(ale.Assembly.Domain, ale.Assembly.ManifestModule)));
+					break;
 
 				case EventType.AssemblyUnload:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
 					break;//TODO:
 
 				case EventType.Breakpoint:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
 					break;//TODO:
 
 				case EventType.Step:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
 					break;//TODO:
 
 				case EventType.TypeLoad:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
 					break;//TODO:
 
 				case EventType.Exception:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
 					break;//TODO:
 
-				case EventType.KeepAlive:
-					break;
-
 				case EventType.UserBreak:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
 					break;//TODO:
 
 				case EventType.UserLog:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					suspendCount++;
 					break;//TODO:
 
 				case EventType.VMDisconnect:
-					Debug.Assert(!gotVMDisconnect);
 					gotVMDisconnect = true;
 					if (vmDeathExitCode == null && (!hProcess_debuggee.IsClosed && !hProcess_debuggee.IsInvalid && NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode)))
 						vmDeathExitCode = exitCode;
@@ -372,6 +462,108 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 				}
 			}
+		}
+
+		DbgEngineAppDomain TryGetEngineAppDomain(AppDomainMirror monoAppDomain) {
+			if (monoAppDomain == null)
+				return null;
+			DbgEngineAppDomain engineAppDomain;
+			bool b;
+			lock (lockObj)
+				b = toEngineAppDomain.TryGetValue(monoAppDomain, out engineAppDomain);
+			Debug.Assert(b);
+			return engineAppDomain;
+		}
+
+		int GetAppDomainId(AppDomainMirror monoAppDomain) {
+			debuggerThread.VerifyAccess();
+			//TODO: Get AD obj, func-eval get_Id()
+			return nextAppDomainId++;
+		}
+		int nextAppDomainId = 1;
+
+		void CreateAppDomain(AppDomainMirror monoAppDomain) {
+			debuggerThread.VerifyAccess();
+			int appDomainId = GetAppDomainId(monoAppDomain);
+			var appDomain = dmdRuntime.CreateAppDomain(appDomainId);
+			var internalAppDomain = new DbgMonoDebugInternalAppDomainImpl(appDomain);
+			var engineAppDomain = objectFactory.CreateAppDomain<object>(internalAppDomain, monoAppDomain.FriendlyName, appDomainId, GetMessageFlags(), data: null, onCreated: engineAppDomain2 => internalAppDomain.SetAppDomain(engineAppDomain2.AppDomain));
+			lock (lockObj)
+				toEngineAppDomain.Add(monoAppDomain, engineAppDomain);
+		}
+
+		sealed class DbgModuleData {
+			public DbgEngineImpl Engine { get; }
+			public ModuleMirror MonoModule { get; }
+			public ModuleId ModuleId { get; set; }
+			public DbgModuleData(DbgEngineImpl engine, ModuleMirror monoModule) {
+				Engine = engine;
+				MonoModule = monoModule;
+			}
+		}
+
+		internal ModuleId GetModuleId(DbgModule module) {
+			if (TryGetModuleData(module, out var data))
+				return data.ModuleId;
+			throw new InvalidOperationException();
+		}
+
+		bool TryGetModuleData(DbgModule module, out DbgModuleData data) {
+			if (module.TryGetData(out data) && data.Engine == this)
+				return true;
+			data = null;
+			return false;
+		}
+
+		int moduleOrder;
+		void CreateModule(AppDomainMirror monoAppDomain, ModuleMirror monoModule) {
+			debuggerThread.VerifyAccess();
+			Debug.Assert(monoAppDomain == monoModule.Assembly.Domain);
+
+			var appDomain = TryGetEngineAppDomain(monoAppDomain)?.AppDomain;
+			var moduleData = new DbgModuleData(this, monoModule);
+			var engineModule = ModuleCreator.CreateModule(this, objectFactory, appDomain, monoModule, moduleOrder++, moduleData);
+			moduleData.ModuleId = ModuleIdUtils.Create(engineModule.Module, monoModule);
+			lock (lockObj) {
+				if (!toAssemblyModules.TryGetValue(monoModule.Assembly, out var modules))
+					toAssemblyModules.Add(monoModule.Assembly, modules = new List<ModuleMirror>());
+				modules.Add(monoModule);
+				toEngineModule.Add(monoModule, engineModule);
+			}
+		}
+
+		internal DbgModule TryGetModule(ModuleMirror monoModule) {
+			if (monoModule == null)
+				return null;
+			lock (lockObj) {
+				if (toEngineModule.TryGetValue(monoModule, out var engineModule))
+					return engineModule.Module;
+			}
+			return null;
+		}
+
+		DbgThread GetThreadPreferMain_MonoDebug() {
+			debuggerThread.VerifyAccess();
+			DbgThread firstThread = null;
+			lock (lockObj) {
+				foreach (var kv in toEngineThread) {
+					var thread = TryGetThread(kv.Key);
+					if (firstThread == null)
+						firstThread = thread;
+					if (thread?.IsMain == true)
+						return thread;
+				}
+			}
+			return firstThread;
+		}
+
+		DbgThread TryGetThread(ThreadMirror thread) {
+			if (thread == null)
+				return null;
+			DbgEngineThread engineThread;
+			lock (lockObj)
+				toEngineThread.TryGetValue(thread, out engineThread);
+			return engineThread?.Thread;
 		}
 
 		sealed class StartException : Exception {
@@ -407,6 +599,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			Debug.Assert(Array.IndexOf(objectFactory.Process.Runtimes, runtime) < 0);
 			this.objectFactory = objectFactory;
 			runtime.GetOrCreateData(() => new RuntimeData(this));
+
+			MonoDebugThread(() => {
+				Debug.Assert(vm != null);
+				if (vm != null) {
+					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(vm.RootDomain)));
+					SendMessage(new DelegatePendingMessage(true, () => CreateModule(vm.RootDomain, vm.RootDomain.Corlib.ManifestModule)));
+					foreach (var monoThread in vm.GetThreads())
+						SendMessage(new DelegatePendingMessage(true, () => CreateThread(monoThread)));
+				}
+			});
 		}
 
 		public override void Break() => MonoDebugThread(BreakCore);
@@ -415,13 +617,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (!HasConnected_MonoDebugThread)
 				return;
 			try {
-				vm.Suspend();
-				DbgThread thread = null;//TODO: Get main thread
-				SendMessage(new DbgMessageBreak(thread, GetMessageFlags()));
+				if (suspendCount == 0) {
+					vm.Suspend();
+					suspendCount++;
+				}
+				SendMessage(new DbgMessageBreak(GetThreadPreferMain_MonoDebug(), GetMessageFlags()));
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.Message);
-				dbgManager.ShowError(ex.Message);
+				SendMessage(new DbgMessageBreak(ex.Message, GetMessageFlags()));
 			}
 		}
 
@@ -431,9 +635,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (!HasConnected_MonoDebugThread)
 				return;
 			try {
-				vm.Resume();
-			}
-			catch (VMNotSuspendedException) {
+				if (!IsEvaluating)
+					CloseDotNetValues_MonoDebug();
+				canSendNextMessage = true;
+				if (SendNextMessage())
+					return;
+				while (suspendCount > 0) {
+					vm.Resume();
+					suspendCount--;
+				}
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.Message);

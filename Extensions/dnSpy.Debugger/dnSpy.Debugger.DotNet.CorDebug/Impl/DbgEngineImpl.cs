@@ -277,11 +277,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return TryGetModule(frame?.Function?.Module);
 		}
 
-		internal DbgModule TryGetModule(CorModule corModul) {
-			if (corModul == null)
+		internal DbgModule TryGetModule(CorModule corModule) {
+			if (corModule == null)
 				return null;
 			lock (lockObj) {
-				if (toEngineModule.TryGetValue(corModul, out var engineModule))
+				if (toEngineModule.TryGetValue(corModule, out var engineModule))
 					return engineModule.Module;
 			}
 			return null;

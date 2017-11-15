@@ -212,5 +212,86 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
                 return ResourceManager.GetString("Plugin_ShortDescription", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aborted.
+        /// </summary>
+        public static string Thread_UserState_Aborted {
+            get {
+                return ResourceManager.GetString("Thread_UserState_Aborted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AbortRequested.
+        /// </summary>
+        public static string Thread_UserState_AbortRequested {
+            get {
+                return ResourceManager.GetString("Thread_UserState_AbortRequested", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Background.
+        /// </summary>
+        public static string Thread_UserState_Background {
+            get {
+                return ResourceManager.GetString("Thread_UserState_Background", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stopped.
+        /// </summary>
+        public static string Thread_UserState_Stopped {
+            get {
+                return ResourceManager.GetString("Thread_UserState_Stopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to StopRequested.
+        /// </summary>
+        public static string Thread_UserState_StopRequested {
+            get {
+                return ResourceManager.GetString("Thread_UserState_StopRequested", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suspended.
+        /// </summary>
+        public static string Thread_UserState_Suspended {
+            get {
+                return ResourceManager.GetString("Thread_UserState_Suspended", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SuspendRequested.
+        /// </summary>
+        public static string Thread_UserState_SuspendRequested {
+            get {
+                return ResourceManager.GetString("Thread_UserState_SuspendRequested", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unstarted.
+        /// </summary>
+        public static string Thread_UserState_Unstarted {
+            get {
+                return ResourceManager.GetString("Thread_UserState_Unstarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WaitSleepJoin.
+        /// </summary>
+        public static string Thread_UserState_WaitSleepJoin {
+            get {
+                return ResourceManager.GetString("Thread_UserState_WaitSleepJoin", resourceCulture);
+            }
+        }
     }
 }

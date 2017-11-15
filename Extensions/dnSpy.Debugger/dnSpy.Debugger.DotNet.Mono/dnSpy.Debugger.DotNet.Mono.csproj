@@ -47,10 +47,13 @@
     <Compile Include="Dialogs\DebugProgram\UnityConnectStartDebuggingOptionsPage.cs" />
     <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
+    <Compile Include="Impl\DbgEngineImpl.Evaluation.cs" />
     <Compile Include="Impl\DbgEngineImpl.Threads.cs" />
     <Compile Include="Impl\DbgEngineImplDependencies.cs" />
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DbgModuleMemoryRefreshedNotifierImpl.cs" />
+    <Compile Include="Impl\DbgMonoDebugInternalAppDomainImpl.cs" />
+    <Compile Include="Impl\DbgMonoDebugInternalModuleImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
     <Compile Include="Impl\DmdDispatcherImpl.cs" />
     <Compile Include="Impl\DotNetMonoRuntimeId.cs" />
@@ -61,9 +64,13 @@
     <Compile Include="Impl\Evaluation\DmdEvaluatorImpl.cs" />
     <Compile Include="Impl\Evaluation\ErrorHelper.cs" />
     <Compile Include="Impl\ExceptionUtils.cs" />
+    <Compile Include="Impl\ModuleCreator.cs" />
+    <Compile Include="Impl\ModuleIdUtils.cs" />
     <Compile Include="Impl\MonoExeFinder.cs" />
     <Compile Include="Impl\NativeMethods.cs" />
     <Compile Include="Impl\NetUtils.cs" />
+    <Compile Include="Impl\ThreadMirrorUtils.cs" />
+    <Compile Include="Impl\ThreadProperties.cs" />
     <Compile Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -168,4 +168,31 @@
   <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
     <value>The connection to the debugged process was unexpectedly closed</value>
   </data>
+  <data name="Thread_UserState_Aborted" xml:space="preserve">
+    <value>Aborted</value>
+  </data>
+  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
+    <value>AbortRequested</value>
+  </data>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>Background</value>
+  </data>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>StopRequested</value>
+  </data>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>SuspendRequested</value>
+  </data>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>Unstarted</value>
+  </data>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>WaitSleepJoin</value>
+  </data>
 </root>
