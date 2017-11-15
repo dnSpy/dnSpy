@@ -71,6 +71,7 @@
     <Compile Include="Impl\NetUtils.cs" />
     <Compile Include="Impl\ThreadMirrorUtils.cs" />
     <Compile Include="Impl\ThreadProperties.cs" />
+    <Compile Include="Metadata\DbgAssemblyInfoProviderImpl.cs" />
     <Compile Include="Metadata\DbgModuleIdProviderImpl.cs" />
     <Compile Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.Designer.cs">
       <AutoGen>True</AutoGen>

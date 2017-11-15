@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 				AssemblyInfoProvider = dbgAssemblyInfoProvider ?? throw new ArgumentNullException(nameof(dbgAssemblyInfoProvider));
 				DynamicModuleProvider = dbgDynamicModuleProvider;
-				ClassLoader = classLoader ?? throw new ArgumentNullException(nameof(classLoader));
+				ClassLoader = classLoader;
 				if (dbgDynamicModuleProvider != null)
 					dbgDynamicModuleProvider.ClassLoaded += DbgDynamicModuleProvider_ClassLoaded;
 			}
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				foreach (var r in process.Runtimes) {
 					if (!TryGetRuntimeInfo(r, out var info))
 						continue;
-					info.ClassLoader.LoadNewClasses();
+					info.ClassLoader?.LoadNewClasses();
 				}
 			}
 		}
@@ -122,8 +122,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					if (assemblyInfoProvider == null)
 						continue;
 
+					ClassLoader classLoader;
 					var dynamicModuleProvider = dbgDynamicModuleProviderService.Create(r);
-					var classLoader = classLoaderFactory.Create(r, dynamicModuleProvider);
+					if (dynamicModuleProvider == null)
+						classLoader = null;
+					else
+						classLoader = classLoaderFactory.Create(r, dynamicModuleProvider);
 
 					r.GetOrCreateData(() => new RuntimeInfo(this, assemblyInfoProvider, dynamicModuleProvider, classLoader));
 					r.ModulesChanged += DbgRuntime_ModulesChanged;
@@ -135,7 +139,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		void DbgDynamicModuleProvider_ClassLoaded(RuntimeInfo info, ClassLoadedEventArgs e) => info.ClassLoader.LoadClass(e.Module, e.LoadedClassToken);
+		void DbgDynamicModuleProvider_ClassLoaded(RuntimeInfo info, ClassLoadedEventArgs e) => info.ClassLoader?.LoadClass(e.Module, e.LoadedClassToken);
 		bool TryGetRuntimeInfo(DbgRuntime runtime, out RuntimeInfo info) => runtime.TryGetData(out info);
 
 		void DbgRuntime_ModulesChanged(object sender, DbgCollectionChangedEventArgs<DbgModule> e) {
@@ -421,7 +425,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Debug.Assert(info.DynamicModuleProvider != null);
 			if (info.DynamicModuleProvider == null)
 				return;
-			info.ClassLoader.LoadEverything_UI(docs);
+			info.ClassLoader?.LoadEverything_UI(docs);
 		}
 
 		internal void UpdateModuleMemory(MemoryModuleDefDocument document) {

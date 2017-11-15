@@ -598,6 +598,22 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return null;
 		}
 
+		internal DbgModule[] GetAssemblyModules(DbgModule module) {
+			if (!TryGetModuleData(module, out var data))
+				return Array.Empty<DbgModule>();
+			lock (lockObj) {
+				toAssemblyModules.TryGetValue(data.MonoModule.Assembly, out var modules);
+				if (modules == null || modules.Count == 0)
+					return Array.Empty<DbgModule>();
+				var res = new List<DbgModule>(modules.Count);
+				foreach (var monoModule in modules) {
+					if (toEngineModule.TryGetValue(monoModule, out var engineModule))
+						res.Add(engineModule.Module);
+				}
+				return res.ToArray();
+			}
+		}
+
 		public override void OnConnected(DbgObjectFactory objectFactory, DbgRuntime runtime) {
 			Debug.Assert(objectFactory.Runtime == runtime);
 			Debug.Assert(Array.IndexOf(objectFactory.Process.Runtimes, runtime) < 0);
