@@ -31,6 +31,17 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <param name="token">Token of a method within the module</param>
 		/// <param name="offset">IL offset of the location within the method body</param>
 		/// <returns></returns>
-		public abstract DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset);
+		public DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset) =>
+			Create(module, token, offset, DbgDotNetCodeLocationOptions.None);
+
+		/// <summary>
+		/// Creates a new <see cref="DbgDotNetCodeLocation"/> instance
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="token">Token of a method within the module</param>
+		/// <param name="offset">IL offset of the location within the method body</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public abstract DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset, DbgDotNetCodeLocationOptions options);
 	}
 }

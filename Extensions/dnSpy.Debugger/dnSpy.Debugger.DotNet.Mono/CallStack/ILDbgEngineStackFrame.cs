@@ -46,7 +46,8 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			var ilOffset = (uint)monoFrame.ILOffset;
 			FunctionOffset = ilOffset == uint.MaxValue ? 0 : ilOffset;
 			var moduleId = DbgEngineImpl.TryGetModuleId(module) ?? default;
-			Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset);
+			var options = ilOffset == uint.MaxValue ? DbgDotNetCodeLocationOptions.InvalidOffset : 0;
+			Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset, options);
 		}
 
 		public override void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options) =>

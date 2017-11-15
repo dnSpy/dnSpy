@@ -17,21 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.DotNet.Code;
-using dnSpy.Contracts.Metadata;
+namespace dnSpy.Contracts.Debugger.DotNet.Code {
+	/// <summary>
+	/// Options
+	/// </summary>
+	public enum DbgDotNetCodeLocationOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
 
-namespace dnSpy.Debugger.DotNet.Code {
-	[Export(typeof(DbgDotNetCodeLocationFactory))]
-	sealed class DbgDotNetCodeLocationFactoryImpl : DbgDotNetCodeLocationFactory {
-		internal Lazy<DbgManager> DbgManager { get; }
-
-		[ImportingConstructor]
-		DbgDotNetCodeLocationFactoryImpl(Lazy<DbgManager> dbgManager) => DbgManager = dbgManager;
-
-		public override DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset, DbgDotNetCodeLocationOptions options) =>
-			new DbgDotNetCodeLocationImpl(this, module, token, offset, options);
+		/// <summary>
+		/// Offset is invalid, eg. it's a method with no managed method body
+		/// </summary>
+		InvalidOffset			= 0x00000001,
 	}
 }

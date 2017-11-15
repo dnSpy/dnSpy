@@ -17,24 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.CallStack.TextEditor;
 using dnSpy.Contracts.Debugger.DotNet.Code;
-using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Text.Editor;
+using dnSpy.Debugger.DotNet.Code;
 
-namespace dnSpy.Debugger.DotNet.Code {
-	[ExportReferenceConverter]
-	sealed class ReferenceConverterImpl : ReferenceConverter {
-		public override void Convert(ref object reference) {
-			switch (reference) {
+namespace dnSpy.Debugger.DotNet.CallStack.TextEditor {
+	[Export(typeof(DbgStackFrameGlyphTextMarkerLocationInfoProvider))]
+	sealed class DbgStackFrameGlyphTextMarkerLocationInfoProviderImpl : DbgStackFrameGlyphTextMarkerLocationInfoProvider {
+		public override GlyphTextMarkerLocationInfo Create(DbgStackFrame frame) {
+			switch (frame.Location) {
 			case DbgDotNetCodeLocationImpl locImpl:
 				if ((locImpl.Options & DbgDotNetCodeLocationOptions.InvalidOffset) != 0)
-					reference = new DotNetTokenReference(locImpl.Module, locImpl.Token);
-				else
-					reference = new DotNetMethodBodyReference(locImpl.Module, locImpl.Token, locImpl.Offset);
-				break;
+					return new DotNetTokenGlyphTextMarkerLocationInfo(locImpl.Module, locImpl.Token);
+				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(locImpl.Module, locImpl.Token, locImpl.Offset);
 
 			case DbgDotNetCodeLocation loc:
-				reference = new DotNetMethodBodyReference(loc.Module, loc.Token, loc.Offset);
-				break;
+				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(loc.Module, loc.Token, loc.Offset);
+
+			default:
+				return null;
 			}
 		}
 	}

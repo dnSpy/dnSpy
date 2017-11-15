@@ -31,17 +31,20 @@ namespace dnSpy.Debugger.DotNet.Code {
 		public override uint Offset { get; }
 		public override DbgModule DbgModule => null;
 
+		internal DbgDotNetCodeLocationOptions Options { get; }
+
 		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
 		readonly DbgDotNetCodeLocationFactoryImpl factory;
 
-		public DbgDotNetCodeLocationImpl(DbgDotNetCodeLocationFactoryImpl factory, ModuleId module, uint token, uint offset) {
+		public DbgDotNetCodeLocationImpl(DbgDotNetCodeLocationFactoryImpl factory, ModuleId module, uint token, uint offset, DbgDotNetCodeLocationOptions options) {
 			this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
 			Module = module;
 			Token = token;
 			Offset = offset;
+			Options = options;
 		}
 
-		public override DbgCodeLocation Clone() => factory.Create(Module, Token, Offset);
+		public override DbgCodeLocation Clone() => factory.Create(Module, Token, Offset, Options);
 		public override void Close() => factory.DbgManager.Value.Close(this);
 		protected override void CloseCore(DbgDispatcher dispatcher) { }
 
