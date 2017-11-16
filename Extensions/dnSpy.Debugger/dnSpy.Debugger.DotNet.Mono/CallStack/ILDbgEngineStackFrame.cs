@@ -37,14 +37,62 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
 
-		internal StackFrame MonoFrame => monoFrame;
+		internal StackFrame MonoFrame {
+			get {
+				if (engine.MethodInvokeCounter != methodInvokeCounter)
+					UpdateFrame();
+				return __monoFrame_DONT_USE;
+			}
+		}
+		readonly ThreadMirror frameThread;
+		StackFrame __monoFrame_DONT_USE;
+		int frameIndex;
+		int methodInvokeCounter;
+
+		void UpdateFrame() {
+			var frames = frameThread.GetFrames();
+			// PERF: It's not likely that frames were removed, so always start searching from the frame index
+			for (int i = frameIndex; i < frames.Length; i++) {
+				var currentFrame = frames[i];
+				if (IsSameAsOurFrame(currentFrame)) {
+					__monoFrame_DONT_USE = currentFrame;
+					frameIndex = i;
+					methodInvokeCounter = engine.MethodInvokeCounter;
+					return;
+				}
+			}
+			SD.Debug.Fail("Failed to find the frame");
+		}
+
+		bool IsSameAsOurFrame(StackFrame otherFrame) {
+			if (otherFrame == null)
+				return false;
+
+			// None of the properties below can throw, all values are cached in the StackFrame instance
+			if (__monoFrame_DONT_USE.Method != otherFrame.Method)
+				return false;
+			if (__monoFrame_DONT_USE.ILOffset != otherFrame.ILOffset)
+				return false;
+			if (__monoFrame_DONT_USE.IsDebuggerInvoke != otherFrame.IsDebuggerInvoke)
+				return false;
+			if (__monoFrame_DONT_USE.IsNativeTransition != otherFrame.IsNativeTransition)
+				return false;
+
+			// Looks like it could be the correct frame. There's no address so we don't know for sure,
+			// but since the properties above matched AND the frame index is probably the same too,
+			// it's very likely the same frame.
+
+			return true;
+		}
 
 		readonly DbgEngineImpl engine;
-		readonly StackFrame monoFrame;
 
-		public ILDbgEngineStackFrame(DbgEngineImpl engine, DbgModule module, StackFrame monoFrame, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
+		public ILDbgEngineStackFrame(DbgEngineImpl engine, DbgModule module, ThreadMirror frameThread, StackFrame monoFrame, int frameIndex, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
-			this.monoFrame = monoFrame ?? throw new ArgumentNullException(nameof(monoFrame));
+			this.frameThread = frameThread;
+			__monoFrame_DONT_USE = monoFrame ?? throw new ArgumentNullException(nameof(monoFrame));
+			this.frameIndex = frameIndex;
+			methodInvokeCounter = engine.MethodInvokeCounter;
 			Module = module ?? throw new ArgumentNullException(nameof(module));
 			FunctionToken = (uint)monoFrame.Method.MetadataToken;
 			// Native transitions have no IL offset so -1 is used by mono, but we should use 0 instead
@@ -80,14 +128,14 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 
 		internal void GetFrameMethodInfo(out DmdModule module, out int methodMetadataToken, out IList<DmdType> genericTypeArguments, out IList<DmdType> genericMethodArguments) {
 			engine.VerifyMonoDebugThread();
-			methodMetadataToken = monoFrame.Method.MetadataToken;
+			methodMetadataToken = MonoFrame.Method.MetadataToken;
 			module = Module.GetReflectionModule() ?? throw new InvalidOperationException();
 
 			TypeMirror[] typeGenArgs;
 			TypeMirror[] methGenArgs;
-			if (monoFrame.VirtualMachine.Version.AtLeast(2, 15)) {
-				typeGenArgs = monoFrame.Method.DeclaringType.GetGenericArguments();
-				methGenArgs = monoFrame.Method.GetGenericArguments();
+			if (MonoFrame.VirtualMachine.Version.AtLeast(2, 15)) {
+				typeGenArgs = MonoFrame.Method.DeclaringType.GetGenericArguments();
+				methGenArgs = MonoFrame.Method.GetGenericArguments();
 			}
 			else {
 				SD.Debug.Fail("Old version doesn't support generics");

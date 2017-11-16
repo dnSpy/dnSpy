@@ -56,8 +56,10 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 					frames = monoThread.GetFrames();
 				var list = engine.stackFrameData.DbgEngineStackFrameList;
 				try {
-					while (list.Count < maxFrames && frameIndex < frames.Length)
-						list.Add(CreateEngineStackFrame(frames[frameIndex++]));
+					while (list.Count < maxFrames && frameIndex < frames.Length) {
+						list.Add(CreateEngineStackFrame(frames[frameIndex], frameIndex));
+						frameIndex++;
+					}
 					return list.Count == 0 ? Array.Empty<DbgEngineStackFrame>() : list.ToArray();
 				}
 				catch {
@@ -76,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			}
 		}
 
-		DbgEngineStackFrame CreateEngineStackFrame(StackFrame monoFrame) {
+		DbgEngineStackFrame CreateEngineStackFrame(StackFrame monoFrame, int frameIndex) {
 			engine.DebuggerThread.VerifyAccess();
 			var method = monoFrame.Method;
 			if (method == null) {
@@ -91,7 +93,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			else {
 				var module = engine.TryGetModule(method.DeclaringType.Module);
 				if (module != null)
-					return new ILDbgEngineStackFrame(engine, module, monoFrame, dbgDotNetCodeLocationFactory);
+					return new ILDbgEngineStackFrame(engine, module, monoThread, monoFrame, frameIndex, dbgDotNetCodeLocationFactory);
 
 				SD.Debug.Fail("Creating an error stack frame");
 				return CreateErrorStackFrame();

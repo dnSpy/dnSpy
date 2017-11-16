@@ -50,13 +50,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		bool IsEvaluating => isEvaluatingCounter > 0;
+		internal int MethodInvokeCounter => methodInvokeCounter;
 		volatile int isEvaluatingCounter;
+		volatile int methodInvokeCounter;
 
 		Value TryInvokeMethod(ThreadMirror thread, ObjectMirror obj, MethodMirror method, IList<Value> arguments, out bool timedOut) {
 			debuggerThread.VerifyAccess();
 			Debug.Assert(isEvaluatingCounter == 0);
 			isEvaluatingCounter++;
 			try {
+				methodInvokeCounter++;
 				//TODO: This could block
 				var res = obj.InvokeMethod(thread, method, arguments);
 				timedOut = false;
