@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -29,6 +30,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	sealed class InterpreterLocalsProvider : VariablesProvider {
+		static ReadOnlyCollection<DmdLocalVariableInfo> emptyLocalVariableInfos = new ReadOnlyCollection<DmdLocalVariableInfo>(Array.Empty<DmdLocalVariableInfo>());
 		readonly DebuggerRuntimeImpl runtime;
 		readonly Dictionary<int, DbgDotNetValue> extraLocals;
 		VariablesProvider localsProvider;
@@ -42,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		internal void Initialize(DmdMethodBody realMethodBody, VariablesProvider localsProvider) {
 			Debug.Assert(extraLocals.Count == 0);
-			realLocalVariables = realMethodBody.LocalVariables;
+			realLocalVariables = realMethodBody?.LocalVariables ?? emptyLocalVariableInfos;
 			this.localsProvider = localsProvider;
 		}
 
