@@ -28,64 +28,32 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	struct ReflectionTypeCreator {
 		readonly DbgEngineImpl engine;
 		readonly DmdAppDomain reflectionAppDomain;
-		readonly SpecialTypes specialTypes;
+		readonly TypeCache typeCache;
 		List<DmdType> typesList;
 		int recursionCounter;
 
-		sealed class SpecialTypes {
-			readonly Dictionary<TypeMirror, DmdType> dict;
-
-			public SpecialTypes(DmdAppDomain reflectionAppDomain) {
-				var monoAppDomain = DbgMonoDebugInternalAppDomainImpl.GetAppDomainMirror(reflectionAppDomain);
-				var asm = monoAppDomain.Corlib;
-				const int LEN = 18;
-				dict = new Dictionary<TypeMirror, DmdType>(LEN);
-				Add(asm, "System.Void", reflectionAppDomain.System_Void);
-				Add(asm, "System.Boolean", reflectionAppDomain.System_Boolean);
-				Add(asm, "System.Char", reflectionAppDomain.System_Char);
-				Add(asm, "System.SByte", reflectionAppDomain.System_SByte);
-				Add(asm, "System.Byte", reflectionAppDomain.System_Byte);
-				Add(asm, "System.Int16", reflectionAppDomain.System_Int16);
-				Add(asm, "System.UInt16", reflectionAppDomain.System_UInt16);
-				Add(asm, "System.Int32", reflectionAppDomain.System_Int32);
-				Add(asm, "System.UInt32", reflectionAppDomain.System_UInt32);
-				Add(asm, "System.Int64", reflectionAppDomain.System_Int64);
-				Add(asm, "System.UInt64", reflectionAppDomain.System_UInt64);
-				Add(asm, "System.Single", reflectionAppDomain.System_Single);
-				Add(asm, "System.Double", reflectionAppDomain.System_Double);
-				Add(asm, "System.String", reflectionAppDomain.System_String);
-				Add(asm, "System.TypedReference", reflectionAppDomain.System_TypedReference);
-				Add(asm, "System.IntPtr", reflectionAppDomain.System_IntPtr);
-				Add(asm, "System.UIntPtr", reflectionAppDomain.System_UIntPtr);
-				Add(asm, "System.Object", reflectionAppDomain.System_Object);
-				SD.Debug.Assert(dict.Count == LEN);
-			}
-
-			void Add(AssemblyMirror asm, string fullname, DmdType reflectionType) {
-				var monoType = asm.GetType(fullname, false, false);
-				if (monoType == null)
-					throw new InvalidOperationException();
-				dict.Add(monoType, reflectionType);
-			}
-
+		sealed class TypeCache {
+			readonly Dictionary<TypeMirror, DmdType> dict = new Dictionary<TypeMirror, DmdType>();
 			public bool TryGetType(TypeMirror monoType, out DmdType type) => dict.TryGetValue(monoType, out type);
+			public void Add(TypeMirror monoType, DmdType reflectionType) => dict.Add(monoType, reflectionType);
 		}
 
 		public ReflectionTypeCreator(DbgEngineImpl engine, DmdAppDomain reflectionAppDomain) {
+			SD.Debug.Assert(engine.CheckMonoDebugThread());
 			this.engine = engine;
 			this.reflectionAppDomain = reflectionAppDomain;
-			specialTypes = GetOrCreateSpecialTypes(reflectionAppDomain);
+			typeCache = GetOrCreateTypeCache(reflectionAppDomain);
 			typesList = null;
 			recursionCounter = 0;
 		}
 
-		static SpecialTypes GetOrCreateSpecialTypes(DmdAppDomain reflectionAppDomain) {
-			if (reflectionAppDomain.TryGetData(out SpecialTypes specialTypes))
-				return specialTypes;
-			return GetOrCreateSpecialTypesCore(reflectionAppDomain);
+		static TypeCache GetOrCreateTypeCache(DmdAppDomain reflectionAppDomain) {
+			if (reflectionAppDomain.TryGetData(out TypeCache typeCache))
+				return typeCache;
+			return GetOrCreateTypeCacheCore(reflectionAppDomain);
 
-			SpecialTypes GetOrCreateSpecialTypesCore(DmdAppDomain reflectionAppDomain2) =>
-				reflectionAppDomain2.GetOrCreateData(() => new SpecialTypes(reflectionAppDomain2));
+			TypeCache GetOrCreateTypeCacheCore(DmdAppDomain reflectionAppDomain2) =>
+				reflectionAppDomain2.GetOrCreateData(() => new TypeCache());
 		}
 
 		List<DmdType> GetTypesList() {
@@ -111,12 +79,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				throw new InvalidOperationException();
 
 			List<DmdType> types;
-			if (!specialTypes.TryGetType(type, out var result)) {
+			if (!typeCache.TryGetType(type, out var result)) {
 				if (type.IsByRef)
 					result = Create(type.GetElementType()).MakeByRefType();
 				else if (type.IsArray) {
 					if (type.GetArrayRank() == 1) {
-						//TODO: Verify that this works
 						if (type.FullName.EndsWith("[*]", StringComparison.Ordinal))
 							result = Create(type.GetElementType()).MakeArrayType(1);
 						else
@@ -149,6 +116,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 					result = reflectionType;
 				}
+				typeCache.Add(type, result);
 			}
 
 			recursionCounter--;
