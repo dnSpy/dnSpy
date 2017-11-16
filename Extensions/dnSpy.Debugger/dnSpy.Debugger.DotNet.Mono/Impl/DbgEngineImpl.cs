@@ -73,6 +73,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly Dictionary<AssemblyMirror, List<ModuleMirror>> toAssemblyModules;
 		readonly HashSet<AppDomainMirror> appDomainsThatHaveNotBeenInitializedYet;
 		internal readonly StackFrameData stackFrameData;
+		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
 		VirtualMachine vm;
 		int vmPid;
 		int? vmDeathExitCode;
@@ -97,6 +98,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			toAssemblyModules = new Dictionary<AssemblyMirror, List<ModuleMirror>>();
 			appDomainsThatHaveNotBeenInitializedYet = new HashSet<AppDomainMirror>();
 			stackFrameData = new StackFrameData();
+			dotNetValuesToCloseOnContinue = new List<DbgDotNetValueImpl>();
 			debuggerSettings = deps.DebuggerSettings;
 			dbgDotNetCodeRangeService = deps.DotNetCodeRangeService;
 			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;

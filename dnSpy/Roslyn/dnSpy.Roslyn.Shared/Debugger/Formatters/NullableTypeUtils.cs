@@ -23,6 +23,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	static class NullableTypeUtils {
 		const string HasValueFieldName = "hasValue";
+		const string HasValueFieldName_Mono = "has_value";
 		const string ValueFieldName = "value";
 
 		public static (DmdFieldInfo hasValueField, DmdFieldInfo valueField) TryGetNullableFields(DmdType type) {
@@ -37,6 +38,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 					continue;
 				switch (field.Name) {
 				case HasValueFieldName:
+				case HasValueFieldName_Mono:
 					if ((object)hasValueField != null)
 						return (null, null);
 					hasValueField = field;

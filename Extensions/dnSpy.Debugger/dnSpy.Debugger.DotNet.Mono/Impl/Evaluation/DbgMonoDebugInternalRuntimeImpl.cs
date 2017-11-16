@@ -25,10 +25,12 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
+using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	sealed class DbgMonoDebugInternalRuntimeImpl : DbgMonoDebugInternalRuntime, IDbgDotNetRuntime {
@@ -47,6 +49,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Kind = monoDebugRuntimeKind;
 			Dispatcher = new DbgDotNetDispatcherImpl(engine);
 		}
+
+		DmdType ToReflectionType(TypeMirror type, DmdAppDomain reflectionAppDomain) =>
+			new ReflectionTypeCreator(engine, reflectionAppDomain).Create(type);
 
 		public ModuleId GetModuleId(DbgModule module) => engine.GetModuleId(module);
 
@@ -439,10 +444,30 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				Dispatcher.InvokeRethrow(() => GetLocalValueCore(context2, frame2, index2, cancellationToken2));
 		}
 
+		DbgDotNetValueResult CreateValue(Value value, ILDbgEngineStackFrame ilFrame, TypeMirror slotTypeMirror) {
+			var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
+			var slotType = ToReflectionType(slotTypeMirror, reflectionAppDomain);
+			if (value == null)
+				return new DbgDotNetValueResult(new SyntheticNullValue(slotType), valueIsException: false);
+			var dnValue = engine.CreateDotNetValue_MonoDebug(value, slotType);
+			return new DbgDotNetValueResult(dnValue, valueIsException: false);
+		}
+
 		DbgDotNetValueResult GetLocalValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
-				return new DbgDotNetValueResult("NYI");//TODO:
+				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+					throw new InvalidOperationException();
+				var monoFrame = ilFrame.MonoFrame;
+				var locals = monoFrame.Method.GetLocals();
+				if ((uint)index >= (uint)locals.Length)
+					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
+				var local = locals[(int)index];
+				var value = monoFrame.GetValue(local);
+				return CreateValue(value, ilFrame, local.Type);
+			}
+			catch (AbsentInformationException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetValueResult(ErrorHelper.InternalError);
@@ -528,7 +553,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		public bool CanCreateObjectId(DbgDotNetValue value) {
-			throw new NotImplementedException();//TODO:
+			return false;//TODO:
 		}
 
 		public DbgDotNetObjectId CreateObjectId(DbgDotNetValue value, uint id) {

@@ -37,6 +37,8 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
 
+		internal StackFrame MonoFrame => monoFrame;
+
 		readonly DbgEngineImpl engine;
 		readonly StackFrame monoFrame;
 
@@ -107,6 +109,8 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 				types[i] = reflectionTypeCreator.Create(typeArgs[i]);
 			return types;
 		}
+
+		internal DmdModule GetReflectionModule() => Module.GetReflectionModule() ?? throw new InvalidOperationException();
 
 		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}

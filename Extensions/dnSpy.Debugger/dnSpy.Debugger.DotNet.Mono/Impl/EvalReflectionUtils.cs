@@ -23,20 +23,23 @@ using Mono.Debugger.Soft;
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	static class EvalReflectionUtils {
 		public static string TryGetExceptionMessage(ObjectMirror exObj) {
-			var field = GetField(exObj.Type, "_message");
+			var field = GetField(exObj.Type, "_message", "message");
 			if (field == null)
 				return null;
 			var value = exObj.GetValue(field);
 			if (value is StringMirror sm)
 				return sm.Value ?? dnSpy_Debugger_DotNet_Mono_Resources.ExceptionMessageIsNull;
+			if (value == null || (value is PrimitiveValue pv && pv.Value == null))
+				return dnSpy_Debugger_DotNet_Mono_Resources.ExceptionMessageIsNull;
 			return null;
 		}
 
-		static FieldInfoMirror GetField(TypeMirror type, string name) {
+		static FieldInfoMirror GetField(TypeMirror type, string name1, string name2) {
 			while (type != null) {
-				var field = type.GetField(name);
-				if (field != null)
-					return field;
+				foreach (var field in type.GetFields()) {
+					if (field.Name == name1 || field.Name == name2)
+						return field;
+				}
 				type = type.BaseType;
 			}
 			return null;

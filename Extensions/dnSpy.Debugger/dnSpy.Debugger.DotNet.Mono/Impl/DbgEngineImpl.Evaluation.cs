@@ -17,12 +17,38 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
+		internal DbgDotNetValue CreateDotNetValue_MonoDebug(Value value, DmdType slotType) {
+			debuggerThread.VerifyAccess();
+			if (value == null)
+				return new SyntheticNullValue(slotType);
+
+			var dnValue = new DbgDotNetValueImpl(this, value, slotType);
+			lock (lockObj)
+				dotNetValuesToCloseOnContinue.Add(dnValue);
+			return dnValue;
+		}
+
+		void CloseDotNetValues_MonoDebug() {
+			debuggerThread.VerifyAccess();
+			DbgDotNetValueImpl[] valuesToClose;
+			lock (lockObj) {
+				valuesToClose = dotNetValuesToCloseOnContinue.Count == 0 ? Array.Empty<DbgDotNetValueImpl>() : dotNetValuesToCloseOnContinue.ToArray();
+				dotNetValuesToCloseOnContinue.Clear();
+			}
+			foreach (var value in valuesToClose)
+				value.Dispose();
+		}
+
 		bool IsEvaluating => isEvaluatingCounter > 0;
 		volatile int isEvaluatingCounter;
 
@@ -39,11 +65,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			finally {
 				isEvaluatingCounter--;
 			}
-		}
-
-		void CloseDotNetValues_MonoDebug() {
-			debuggerThread.VerifyAccess();
-			//TODO:
 		}
 	}
 }

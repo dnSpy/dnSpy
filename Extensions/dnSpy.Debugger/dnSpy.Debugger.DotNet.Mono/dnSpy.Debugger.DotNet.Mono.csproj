@@ -64,9 +64,12 @@
     <Compile Include="Impl\Evaluation\DbgDotNetDispatcherExtensions.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetDispatcherImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />
+    <Compile Include="Impl\Evaluation\DbgDotNetRawValueFactory.cs" />
+    <Compile Include="Impl\Evaluation\DbgDotNetValueImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgMonoDebugInternalRuntimeImpl.cs" />
     <Compile Include="Impl\Evaluation\DmdEvaluatorImpl.cs" />
     <Compile Include="Impl\Evaluation\ErrorHelper.cs" />
+    <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
     <Compile Include="Impl\ExceptionUtils.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />
     <Compile Include="Impl\ModuleIdUtils.cs" />
