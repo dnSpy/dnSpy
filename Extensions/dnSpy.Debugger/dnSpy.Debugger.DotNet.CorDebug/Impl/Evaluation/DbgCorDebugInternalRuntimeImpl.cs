@@ -236,6 +236,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return value;
 		}
 
+		public DbgDotNetValue LoadFieldAddress(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) => null;
+
 		public DbgDotNetValueResult LoadField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
 			if (Dispatcher.CheckAccess())
 				return LoadFieldCore(context, frame, obj, field, cancellationToken);
@@ -1012,6 +1014,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return CordbgErrorHelper.InternalError;
 			}
 		}
+
+		public DbgDotNetValue GetLocalValueAddress(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) => null;
+		public DbgDotNetValue GetParameterValueAddress(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) => null;
 
 		public DbgDotNetCreateValueResult CreateValue(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
 			if (Dispatcher.CheckAccess())

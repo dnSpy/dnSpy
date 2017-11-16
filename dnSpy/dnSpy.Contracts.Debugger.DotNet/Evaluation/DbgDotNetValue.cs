@@ -81,6 +81,14 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		}
 
 		/// <summary>
+		/// Gets the address of the element at <paramref name="index"/> in the array or null if it's not supported.
+		/// This method can be called even if it's a multi-dimensional array.
+		/// </summary>
+		/// <param name="index">Zero-based index of the element</param>
+		/// <returns></returns>
+		public virtual DbgDotNetValue GetArrayElementAddressAt(uint index) => null;
+
+		/// <summary>
 		/// Gets the element at <paramref name="index"/> in the array. This method can be called even if it's
 		/// a multi-dimensional array.
 		/// </summary>

@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override DbgDotNetValue GetDotNetValue(ILValue value, DmdType targetType = null) {
 			targetType = targetType ?? value.Type;
-			var dnValue = TryGetDotNetValue(value, value.IsNull ? targetType : value.Type, canCreateValues: true);
+			var dnValue = TryGetDotNetValue(value, value.IsNull ? targetType : value.Type, canCreateValue: true);
 			if (dnValue != null)
 				return dnValue;
 			throw new InvalidOperationException();//TODO:
@@ -152,12 +152,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return dnValue;
 		}
 
-		DbgDotNetValue TryGetDotNetValue(ILValue value, bool canCreateValues) => TryGetDotNetValue(value, value.Type, canCreateValues);
+		DbgDotNetValue TryGetDotNetValue(ILValue value, bool canCreateValue) => TryGetDotNetValue(value, value.Type, canCreateValue);
 
-		DbgDotNetValue TryGetDotNetValue(ILValue value, DmdType valueType, bool canCreateValues) {
+		DbgDotNetValue TryGetDotNetValue(ILValue value, DmdType valueType, bool canCreateValue) {
 			if (value is IDebuggerRuntimeILValue rtValue)
 				return rtValue.GetDotNetValue();
-			if (canCreateValues) {
+			if (canCreateValue) {
 				if (value.IsNull)
 					return new SyntheticNullValue(valueType ?? frame.Module.AppDomain.GetReflectionAppDomain().System_Void);
 
@@ -240,7 +240,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		internal object GetDebuggerValue(ILValue value, DmdType targetType) {
-			var dnValue = TryGetDotNetValue(value, targetType, canCreateValues: false);
+			var dnValue = TryGetDotNetValue(value, targetType, canCreateValue: false);
 			if (dnValue != null)
 				return dnValue;
 
@@ -438,8 +438,23 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override ILValue LoadLocal(int index) => CreateILValue(GetLocal(index));
 		internal DbgDotNetValue LoadLocal2(int index) => RecordValue(GetLocal(index));
 
-		public override ILValue LoadArgumentAddress(int index, DmdType type) => new ArgumentAddress(this, type, index);
-		public override ILValue LoadLocalAddress(int index, DmdType type) => new LocalAddress(this, type, index);
+		public override ILValue LoadArgumentAddress(int index, DmdType type) {
+			var addrValue = argumentsProvider.GetValueAddress(index, type);
+			if (addrValue != null) {
+				Debug.Assert(addrValue.Type.IsByRef);
+				return new ByRefILValueImpl(this, RecordValue(addrValue));
+			}
+			return new ArgumentAddress(this, type, index);
+		}
+
+		public override ILValue LoadLocalAddress(int index, DmdType type) {
+			var addrValue = interpreterLocalsProvider.GetValueAddress(index, type);
+			if (addrValue != null) {
+				Debug.Assert(addrValue.Type.IsByRef);
+				return new ByRefILValueImpl(this, RecordValue(addrValue));
+			}
+			return new LocalAddress(this, type, index);
+		}
 
 		public override bool StoreArgument(int index, DmdType type, ILValue value) => StoreArgument2(index, type, GetDebuggerValue(value, type));
 
@@ -533,7 +548,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override ILValue Box(ILValue value, DmdType type) {
 			if (type.IsValueType) {
-				var dnValue = TryGetDotNetValue(value, type, canCreateValues: true) ?? throw new InvalidOperationException();
+				var dnValue = TryGetDotNetValue(value, type, canCreateValue: true) ?? throw new InvalidOperationException();
 				var boxedValue = dnValue.Box(context, frame, cancellationToken);
 				if (boxedValue == null)
 					return new BoxedValueTypeILValue(this, value, dnValue, type);
@@ -623,7 +638,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return RecordValue(res);
 		}
 
-		public override ILValue LoadStaticFieldAddress(DmdFieldInfo field) => new StaticFieldAddress(this, field);
+		public override ILValue LoadStaticFieldAddress(DmdFieldInfo field) {
+			var addrValue = runtime.LoadFieldAddress(context, frame, null, field, cancellationToken);
+			if (addrValue != null) {
+				Debug.Assert(addrValue.Type.IsByRef);
+				return new ByRefILValueImpl(this, RecordValue(addrValue));
+			}
+			return new StaticFieldAddress(this, field);
+		}
 
 		public override bool StoreStaticField(DmdFieldInfo field, ILValue value) => StoreStaticField(field, GetDebuggerValue(value, field.FieldType));
 		internal bool StoreStaticField(DmdFieldInfo field, object value) {
@@ -657,7 +679,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override bool? Equals(ILValue left, ILValue right) {
 			if (left is AddressILValue laddr && right is AddressILValue raddr)
 				return laddr.Equals(raddr);
-			if (TryGetDotNetValue(left, canCreateValues: false) is DbgDotNetValue lv && TryGetDotNetValue(right, canCreateValues: false) is DbgDotNetValue rv) {
+			if (TryGetDotNetValue(left, canCreateValue: false) is DbgDotNetValue lv && TryGetDotNetValue(right, canCreateValue: false) is DbgDotNetValue rv) {
 				var res = runtime.Equals(lv, rv);
 				if (res != null)
 					return res;
@@ -696,11 +718,24 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		internal ILValue LoadValueTypeFieldAddress(AddressILValue objValue, DmdFieldInfo field) {
 			Debug.Assert(field.ReflectedType.IsValueType);
+			var dnObjValue = TryGetDotNetValue(objValue, canCreateValue: false);
+			if (dnObjValue != null) {
+				var addrValue = runtime.LoadFieldAddress(context, frame, dnObjValue, field, cancellationToken);
+				if (addrValue != null) {
+					Debug.Assert(addrValue.Type.IsByRef);
+					return new ByRefILValueImpl(this, RecordValue(addrValue));
+				}
+			}
 			return new ValueTypeFieldAddress(this, objValue, field);
 		}
 
 		internal ILValue LoadReferenceTypeFieldAddress(DbgDotNetValue objValue, DmdFieldInfo field) {
 			Debug.Assert(field.ReflectedType.IsValueType);
+			var addrValue = runtime.LoadFieldAddress(context, frame, objValue, field, cancellationToken);
+			if (addrValue != null) {
+				Debug.Assert(addrValue.Type.IsByRef);
+				return new ByRefILValueImpl(this, RecordValue(addrValue));
+			}
 			return new ReferenceTypeFieldAddress(this, objValue, field);
 		}
 
@@ -788,7 +823,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		internal int ToInt32(ILValue value) {
 			if (value is ConstantInt32ILValue i32Value)
 				return i32Value.Value;
-			var dnValue = TryGetDotNetValue(value, canCreateValues: false);
+			var dnValue = TryGetDotNetValue(value, canCreateValue: false);
 			if (dnValue != null) {
 				if (dnValue.Type != dnValue.Type.AppDomain.System_Int32)
 					throw new InvalidOperationException();
@@ -847,7 +882,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		DbgDotNetValue IDebuggerRuntime.ToDotNetValue(ILValue value) {
-			var dnValue = TryGetDotNetValue(value, canCreateValues: false);
+			var dnValue = TryGetDotNetValue(value, canCreateValue: false);
 			if (dnValue != null)
 				return dnValue;
 			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);

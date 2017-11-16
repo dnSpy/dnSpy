@@ -38,6 +38,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.cancellationToken = cancellationToken;
 		}
 
+		public override DbgDotNetValue GetValueAddress(int index, DmdType targetType) =>
+			runtime.GetLocalValueAddress(context, frame, (uint)index, targetType, cancellationToken);
+
 		public override DbgDotNetValueResult GetVariable(int index) =>
 			runtime.GetLocalValue(context, frame, (uint)index, cancellationToken);
 

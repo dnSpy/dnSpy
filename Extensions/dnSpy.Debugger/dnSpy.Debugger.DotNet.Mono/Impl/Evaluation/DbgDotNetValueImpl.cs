@@ -187,6 +187,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return false;
 		}
 
+		public override DbgDotNetValue GetArrayElementAddressAt(uint index) {
+			if (!Type.IsArray)
+				return null;
+			if (engine.CheckMonoDebugThread())
+				return GetArrayElementAddressAt_MonoDebug(index);
+			return engine.InvokeMonoDebugThread(() => GetArrayElementAddressAt_MonoDebug(index));
+		}
+
+		DbgDotNetValue GetArrayElementAddressAt_MonoDebug(uint index) {
+			SD.Debug.Assert(Type.IsArray);
+			engine.VerifyMonoDebugThread();
+			return null;//TODO:
+		}
+
 		public override DbgDotNetValue GetArrayElementAt(uint index) {
 			if (!Type.IsArray)
 				return null;

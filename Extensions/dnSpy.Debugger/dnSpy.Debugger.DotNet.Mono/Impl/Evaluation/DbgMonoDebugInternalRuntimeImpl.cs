@@ -146,6 +146,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return state.Method;
 		}
 
+		public DbgDotNetValue LoadFieldAddress(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return LoadFieldAddressCore(context, frame, obj, field, cancellationToken);
+			return LoadFieldAddressCore2(context, frame, obj, field, cancellationToken);
+
+			DbgDotNetValue LoadFieldAddressCore2(DbgEvaluationContext context2, DbgStackFrame frame2, DbgDotNetValue obj2, DmdFieldInfo field2, CancellationToken cancellationToken2) =>
+				Dispatcher.InvokeRethrow(() => LoadFieldAddressCore(context2, frame2, obj2, field2, cancellationToken2));
+		}
+
+		DbgDotNetValue LoadFieldAddressCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			return null;//TODO:
+		}
+
 		public DbgDotNetValueResult LoadField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
 			if (Dispatcher.CheckAccess())
 				return LoadFieldCore(context, frame, obj, field, cancellationToken);
@@ -531,6 +545,36 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return ErrorHelper.InternalError;
 			}
+		}
+
+		public DbgDotNetValue GetLocalValueAddress(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetLocalValueAddressCore(context, frame, index, targetType, cancellationToken);
+			return GetLocalValueAddressCore2(context, frame, index, targetType, cancellationToken);
+
+			DbgDotNetValue GetLocalValueAddressCore2(DbgEvaluationContext context2, DbgStackFrame frame2, uint index2, DmdType targetType2, CancellationToken cancellationToken2) =>
+				Dispatcher.InvokeRethrow(() => GetLocalValueAddressCore(context2, frame2, index2, targetType2, cancellationToken2));
+		}
+
+		DbgDotNetValue GetLocalValueAddressCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
+			return null;//TODO:
+		}
+
+		public DbgDotNetValue GetParameterValueAddress(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return GetParameterValueAddressCore(context, frame, index, targetType, cancellationToken);
+			return GetParameterValueAddressCore2(context, frame, index, targetType, cancellationToken);
+
+			DbgDotNetValue GetParameterValueAddressCore2(DbgEvaluationContext context2, DbgStackFrame frame2, uint index2, DmdType targetType2, CancellationToken cancellationToken2) =>
+				Dispatcher.InvokeRethrow(() => GetParameterValueAddressCore(context2, frame2, index2, targetType2, cancellationToken2));
+		}
+
+		DbgDotNetValue GetParameterValueAddressCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
+			return null;//TODO:
 		}
 
 		public DbgDotNetCreateValueResult CreateValue(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {

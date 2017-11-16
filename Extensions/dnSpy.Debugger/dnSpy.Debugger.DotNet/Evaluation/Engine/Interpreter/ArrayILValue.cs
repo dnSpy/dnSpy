@@ -56,7 +56,15 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				return true;
 
 			case DmdSpecialMethodKind.Array_Address:
-				returnValue = new ArrayElementAddress(runtime, this, GetZeroBasedIndex(arguments, arguments.Length));
+				uint index = GetZeroBasedIndex(arguments, arguments.Length);
+				var addrValue = ObjValue.GetArrayElementAddressAt(index);
+				if (addrValue != null) {
+					Debug.Assert(addrValue.Type.IsByRef);
+					runtime.RecordValue(addrValue);
+					returnValue = new ByRefILValueImpl(runtime, addrValue);
+				}
+				else
+					returnValue = new ArrayElementAddress(runtime, this, index);
 				return true;
 			}
 
@@ -123,6 +131,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				return null;
 			if ((ulong)index > uint.MaxValue)
 				return null;
+			var addrValue = ObjValue.GetArrayElementAddressAt((uint)index);
+			if (addrValue != null) {
+				Debug.Assert(addrValue.Type.IsByRef);
+				runtime.RecordValue(addrValue);
+				return new ByRefILValueImpl(runtime, addrValue);
+			}
 			return new ArrayElementAddress(runtime, this, (uint)index);
 		}
 

@@ -54,6 +54,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			localsProvider.Initialize(context, frame, method, body, cancellationToken);
 		}
 
+		public override DbgDotNetValue GetValueAddress(int index, DmdType targetType) {
+			if ((uint)index < (uint)realLocalVariables.Count)
+				return localsProvider.GetValueAddress(index, targetType);
+			return null;
+		}
+
 		public override DbgDotNetValueResult GetVariable(int index) {
 			if ((uint)index < (uint)realLocalVariables.Count)
 				return localsProvider.GetVariable(index);

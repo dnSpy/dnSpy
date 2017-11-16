@@ -352,6 +352,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DmdMethodBody body, CancellationToken cancellationToken) { }
 
+			public override DbgDotNetValue GetValueAddress(int index, DmdType targetType) => null;
+
 			public override DbgDotNetValueResult GetVariable(int index) {
 				if (index == 0)
 					return new DbgDotNetValueResult(argument, valueIsException: false);

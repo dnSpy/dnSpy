@@ -68,6 +68,17 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DmdMethodBase GetFrameMethod(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Loads the address of an instance or a static field or returns null if it's not supported
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="obj">Instance object or null if it's a static field</param>
+		/// <param name="field">Field</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValue LoadFieldAddress(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Loads an instance or a static field
 		/// </summary>
 		/// <param name="context">Context</param>
@@ -203,7 +214,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DbgDotNetValue GetReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Gets a local value or null if the local doesn't exist or if it's not possible to read it (eg. optimized code)
+		/// Gets a local value
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="frame">Stack frame</param>
@@ -213,7 +224,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DbgDotNetValueResult GetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Gets a parameter value or null if the parameter doesn't exist or if it's not possible to read it (eg. optimized code)
+		/// Gets a parameter value
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="frame">Stack frame</param>
@@ -245,6 +256,28 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		string SetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets the address of a local value or null if it's not supported
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="index">Metadata index of local</param>
+		/// <param name="targetType">Type of the local</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValue GetLocalValueAddress(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets the address of a parameter value or null if it's not supported
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="index">Metadata index of local</param>
+		/// <param name="targetType">Type of the parameter</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetValue GetParameterValueAddress(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates a simple value (a primitive number or a string, or arrays of those types)
