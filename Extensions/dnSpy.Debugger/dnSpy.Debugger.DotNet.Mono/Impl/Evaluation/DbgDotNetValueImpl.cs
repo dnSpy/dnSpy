@@ -161,7 +161,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		uint GetArrayCountCore_MonoDebug() {
 			SD.Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
-			return 0;//TODO:
+			var arrayMirror = value as ArrayMirror;
+			if (arrayMirror == null)
+				return 0;
+			return (uint)arrayMirror.Length;
 		}
 
 		public override bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
@@ -186,10 +189,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		bool GetArrayInfo_MonoDebug(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
 			SD.Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
-			//TODO:
-			elementCount = 0;
-			dimensionInfos = null;
-			return false;
+			var arrayMirror = value as ArrayMirror;
+			if (arrayMirror == null) {
+				elementCount = 0;
+				dimensionInfos = null;
+				return false;
+			}
+			elementCount = (uint)arrayMirror.Length;
+			var infos = new DbgDotNetArrayDimensionInfo[arrayMirror.Rank];
+			for (int i = 0; i < infos.Length; i++)
+				infos[i] = new DbgDotNetArrayDimensionInfo(arrayMirror.GetLowerBound(i), (uint)arrayMirror.GetLength(i));
+			dimensionInfos = infos;
+			return true;
 		}
 
 		public override DbgDotNetValue GetArrayElementAt(uint index) {
@@ -203,7 +214,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValue GetArrayElementAt_MonoDebug(uint index) {
 			SD.Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
-			return null;//TODO:
+			var arrayMirror = value as ArrayMirror;
+			if (arrayMirror == null)
+				return null;
+			var valueLocation = new ArrayElementValueLocation(Type.GetElementType(), arrayMirror, index);
+			return engine.CreateDotNetValue_MonoDebug(valueLocation);
 		}
 
 		public override string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
