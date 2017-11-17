@@ -69,6 +69,7 @@
     <Compile Include="Impl\Evaluation\DbgMonoDebugInternalRuntimeImpl.cs" />
     <Compile Include="Impl\Evaluation\DmdEvaluatorImpl.cs" />
     <Compile Include="Impl\Evaluation\ErrorHelper.cs" />
+    <Compile Include="Impl\Evaluation\MonoDebugTypeCreator.cs" />
     <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
     <Compile Include="Impl\Evaluation\ValueLocations.cs" />
     <Compile Include="Impl\ExceptionUtils.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Impl\ReflectionTypeCreator.cs" />
     <Compile Include="Impl\ThreadMirrorUtils.cs" />
     <Compile Include="Impl\ThreadProperties.cs" />
+    <Compile Include="Impl\TypeCache.cs" />
     <Compile Include="Metadata\DbgAssemblyInfoProviderImpl.cs" />
     <Compile Include="Metadata\DbgModuleIdProviderImpl.cs" />
     <Compile Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.Designer.cs">

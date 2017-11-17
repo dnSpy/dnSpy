@@ -32,28 +32,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		List<DmdType> typesList;
 		int recursionCounter;
 
-		sealed class TypeCache {
-			readonly Dictionary<TypeMirror, DmdType> dict = new Dictionary<TypeMirror, DmdType>();
-			public bool TryGetType(TypeMirror monoType, out DmdType type) => dict.TryGetValue(monoType, out type);
-			public void Add(TypeMirror monoType, DmdType reflectionType) => dict.Add(monoType, reflectionType);
-		}
-
 		public ReflectionTypeCreator(DbgEngineImpl engine, DmdAppDomain reflectionAppDomain) {
 			SD.Debug.Assert(engine.CheckMonoDebugThread());
 			this.engine = engine;
 			this.reflectionAppDomain = reflectionAppDomain;
-			typeCache = GetOrCreateTypeCache(reflectionAppDomain);
+			typeCache = TypeCache.GetOrCreate(reflectionAppDomain);
 			typesList = null;
 			recursionCounter = 0;
-		}
-
-		static TypeCache GetOrCreateTypeCache(DmdAppDomain reflectionAppDomain) {
-			if (reflectionAppDomain.TryGetData(out TypeCache typeCache))
-				return typeCache;
-			return GetOrCreateTypeCacheCore(reflectionAppDomain);
-
-			TypeCache GetOrCreateTypeCacheCore(DmdAppDomain reflectionAppDomain2) =>
-				reflectionAppDomain2.GetOrCreateData(() => new TypeCache());
 		}
 
 		List<DmdType> GetTypesList() {

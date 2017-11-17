@@ -683,6 +683,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return null;
 		}
 
+		internal bool TryGetMonoModule(DbgModule module, out ModuleMirror monoModule) {
+			if (module.TryGetData(out DbgModuleData data) && data.Engine == this) {
+				monoModule = data.MonoModule;
+				return true;
+			}
+			monoModule = null;
+			return false;
+		}
+
 		DbgThread GetThreadPreferMain_MonoDebug() {
 			debuggerThread.VerifyAccess();
 			DbgThread firstThread = null;
