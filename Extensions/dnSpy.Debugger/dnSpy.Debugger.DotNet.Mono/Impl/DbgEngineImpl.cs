@@ -74,6 +74,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly HashSet<AppDomainMirror> appDomainsThatHaveNotBeenInitializedYet;
 		internal readonly StackFrameData stackFrameData;
 		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
+		readonly FuncEvalFactory funcEvalFactory;
 		VirtualMachine vm;
 		int vmPid;
 		int? vmDeathExitCode;
@@ -119,6 +120,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				Debugging = new[] { "Unity" };
 				runtimeInfo = new DbgEngineRuntimeInfo(PredefinedDbgRuntimeGuids.DotNetUnity_Guid, PredefinedDbgRuntimeKindGuids.DotNet_Guid, "Unity", new DotNetMonoRuntimeId(), unityRuntimeTags);
 			}
+			funcEvalFactory = new FuncEvalFactory();
 		}
 		static readonly ReadOnlyCollection<string> monoRuntimeTags = new ReadOnlyCollection<string>(new[] {
 			PredefinedDotNetDbgRuntimeTags.DotNet,

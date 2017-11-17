@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -51,10 +52,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				value.Dispose();
 		}
 
-		bool IsEvaluating => isEvaluatingCounter > 0;
-		internal int MethodInvokeCounter => methodInvokeCounter;
-		volatile int isEvaluatingCounter;
-		volatile int methodInvokeCounter;
+		bool IsEvaluating => funcEvalFactory.IsEvaluating;
+		internal int MethodInvokeCounter => funcEvalFactory.MethodInvokeCounter;
 
 		sealed class EvalTimedOut { }
 
@@ -73,18 +72,28 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		Value TryInvokeMethod(ThreadMirror thread, ObjectMirror obj, MethodMirror method, IList<Value> arguments, out bool timedOut) {
 			debuggerThread.VerifyAccess();
-			Debug.Assert(isEvaluatingCounter == 0);
-			isEvaluatingCounter++;
+			Debug.Assert(!IsEvaluating);
+			var funcEvalTimeout = DbgLanguage.DefaultFuncEvalTimeout;
+			const bool suspendOtherThreads = true;
+			var cancellationToken = CancellationToken.None;
 			try {
-				methodInvokeCounter++;
-				//TODO: This could block
-				var res = obj.InvokeMethod(thread, method, arguments);
 				timedOut = false;
-				return res;
+				using (var funcEval = funcEvalFactory.CreateFuncEval(a => OnFuncEvalComplete(a), thread, funcEvalTimeout, suspendOtherThreads, cancellationToken))
+					return funcEval.CallMethod(method, obj, arguments).Result;
 			}
-			finally {
-				isEvaluatingCounter--;
+			catch (TimeoutException) {
+				timedOut = true;
+				return null;
 			}
+		}
+
+		void OnFuncEvalComplete(FuncEval funcEval, DbgEvaluationContext context) {
+			if (funcEval.EvalTimedOut)
+				context.ContinueContext.GetOrCreateData<EvalTimedOut>();
+			OnFuncEvalComplete(funcEval);
+		}
+
+		void OnFuncEvalComplete(FuncEval funcEval) {
 		}
 	}
 }
