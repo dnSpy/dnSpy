@@ -458,15 +458,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				Dispatcher.InvokeRethrow(() => GetLocalValueCore(context2, frame2, index2, cancellationToken2));
 		}
 
-		DbgDotNetValueResult CreateValue(Value value, ILDbgEngineStackFrame ilFrame, TypeMirror slotTypeMirror) {
-			var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
-			var slotType = ToReflectionType(slotTypeMirror, reflectionAppDomain);
-			if (value == null)
-				return new DbgDotNetValueResult(new SyntheticNullValue(slotType), valueIsException: false);
-			var dnValue = engine.CreateDotNetValue_MonoDebug(value, slotType);
-			return new DbgDotNetValueResult(dnValue, valueIsException: false);
-		}
-
 		DbgDotNetValueResult GetLocalValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
@@ -477,8 +468,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if ((uint)index >= (uint)locals.Length)
 					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
 				var local = locals[(int)index];
-				var value = monoFrame.GetValue(local);
-				return CreateValue(value, ilFrame, local.Type);
+				var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
+				var type = ToReflectionType(local.Type, reflectionAppDomain);
+				var valueLocation = new LocalValueLocation(type, ilFrame, (int)index);
+				var dnValue = engine.CreateDotNetValue_MonoDebug(valueLocation);
+				return new DbgDotNetValueResult(dnValue, valueIsException: false);
 			}
 			catch (AbsentInformationException) {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
@@ -500,7 +494,21 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValueResult GetParameterValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
-				return new DbgDotNetValueResult("NYI");//TODO:
+				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+					throw new InvalidOperationException();
+				var monoFrame = ilFrame.MonoFrame;
+				var parameters = monoFrame.Method.GetParameters();
+				if ((uint)index >= (uint)parameters.Length)
+					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
+				var parameter = parameters[(int)index];
+				var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
+				var type = ToReflectionType(parameter.ParameterType, reflectionAppDomain);
+				var valueLocation = new ArgumentValueLocation(type, ilFrame, (int)index);
+				var dnValue = engine.CreateDotNetValue_MonoDebug(valueLocation);
+				return new DbgDotNetValueResult(dnValue, valueIsException: false);
+			}
+			catch (AbsentInformationException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetValueResult(ErrorHelper.InternalError);

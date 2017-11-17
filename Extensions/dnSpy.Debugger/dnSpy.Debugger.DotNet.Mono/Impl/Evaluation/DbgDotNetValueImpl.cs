@@ -41,14 +41,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		readonly DbgEngineImpl engine;
+		readonly ValueLocation valueLocation;
 		readonly Value value;
 		readonly DbgDotNetRawValue rawValue;
 		readonly ValueFlags flags;
 
-		public DbgDotNetValueImpl(DbgEngineImpl engine, Value value, DmdType slotType) {
+		public DbgDotNetValueImpl(DbgEngineImpl engine, ValueLocation valueLocation, Value value) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
+			this.valueLocation = valueLocation ?? throw new ArgumentNullException(nameof(valueLocation));
 			this.value = value ?? throw new ArgumentNullException(nameof(value));
-			Type = GetType(engine, value, slotType);
+			Type = GetType(engine, value, valueLocation.Type);
 			rawValue = new DbgDotNetRawValueFactory(engine).Create(value, Type);
 
 			var flags = ValueFlags.None;

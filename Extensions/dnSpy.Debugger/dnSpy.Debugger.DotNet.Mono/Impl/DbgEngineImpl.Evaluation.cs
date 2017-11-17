@@ -21,18 +21,18 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
-		internal DbgDotNetValue CreateDotNetValue_MonoDebug(Value value, DmdType slotType) {
+		internal DbgDotNetValue CreateDotNetValue_MonoDebug(ValueLocation valueLocation) {
 			debuggerThread.VerifyAccess();
+			var value = valueLocation.Load();
 			if (value == null)
-				return new SyntheticNullValue(slotType);
+				return new SyntheticNullValue(valueLocation.Type);
 
-			var dnValue = new DbgDotNetValueImpl(this, value, slotType);
+			var dnValue = new DbgDotNetValueImpl(this, valueLocation, value);
 			lock (lockObj)
 				dotNetValuesToCloseOnContinue.Add(dnValue);
 			return dnValue;
