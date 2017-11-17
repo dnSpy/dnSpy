@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.Engine.Evaluation;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
 using Mono.Debugger.Soft;
 
@@ -53,6 +55,21 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal int MethodInvokeCounter => methodInvokeCounter;
 		volatile int isEvaluatingCounter;
 		volatile int methodInvokeCounter;
+
+		sealed class EvalTimedOut { }
+
+		internal DbgDotNetValueResult? CheckFuncEval(DbgEvaluationContext context) {
+			debuggerThread.VerifyAccess();
+			if (!IsPaused)
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CanFuncEvalOnlyWhenPaused);
+			if (isUnhandledException)
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvalWhenUnhandledExceptionHasOccurred);
+			if (context.ContinueContext.HasData<EvalTimedOut>())
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOutNowDisabled);
+			if (IsEvaluating)
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEval);
+			return null;
+		}
 
 		Value TryInvokeMethod(ThreadMirror thread, ObjectMirror obj, MethodMirror method, IList<Value> arguments, out bool timedOut) {
 			debuggerThread.VerifyAccess();

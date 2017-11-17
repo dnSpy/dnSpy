@@ -40,6 +40,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			IsNullByRef			= 0x02,
 		}
 
+		internal ValueLocation ValueLocation => valueLocation;
+		internal Value Value => value;
+
 		readonly DbgEngineImpl engine;
 		readonly ValueLocation valueLocation;
 		readonly Value value;
@@ -187,20 +190,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			elementCount = 0;
 			dimensionInfos = null;
 			return false;
-		}
-
-		public override DbgDotNetValue GetArrayElementAddressAt(uint index) {
-			if (!Type.IsArray)
-				return null;
-			if (engine.CheckMonoDebugThread())
-				return GetArrayElementAddressAt_MonoDebug(index);
-			return engine.InvokeMonoDebugThread(() => GetArrayElementAddressAt_MonoDebug(index));
-		}
-
-		DbgDotNetValue GetArrayElementAddressAt_MonoDebug(uint index) {
-			SD.Debug.Assert(Type.IsArray);
-			engine.VerifyMonoDebugThread();
-			return null;//TODO:
 		}
 
 		public override DbgDotNetValue GetArrayElementAt(uint index) {

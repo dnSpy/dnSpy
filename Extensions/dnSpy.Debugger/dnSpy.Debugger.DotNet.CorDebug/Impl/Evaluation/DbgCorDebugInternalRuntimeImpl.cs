@@ -395,7 +395,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return;
 			var state = type.GetOrCreateData<StaticConstructorInitializedState>();
 			if (state.Initialized > 0 || Interlocked.Exchange(ref state.Initialized, 1) != 0)
-				return; 
+				return;
 			var cctor = type.TypeInitializer;
 			if ((object)cctor != null) {
 				foreach (var field in type.DeclaredFields) {

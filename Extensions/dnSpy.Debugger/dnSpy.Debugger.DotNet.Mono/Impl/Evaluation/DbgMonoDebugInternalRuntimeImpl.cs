@@ -146,19 +146,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return state.Method;
 		}
 
-		public DbgDotNetValue LoadFieldAddress(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
-			if (Dispatcher.CheckAccess())
-				return LoadFieldAddressCore(context, frame, obj, field, cancellationToken);
-			return LoadFieldAddressCore2(context, frame, obj, field, cancellationToken);
+		TypeMirror GetType(DmdType type) => MonoDebugTypeCreator.GetType(engine, type);
 
-			DbgDotNetValue LoadFieldAddressCore2(DbgEvaluationContext context2, DbgStackFrame frame2, DbgDotNetValue obj2, DmdFieldInfo field2, CancellationToken cancellationToken2) =>
-				Dispatcher.InvokeRethrow(() => LoadFieldAddressCore(context2, frame2, obj2, field2, cancellationToken2));
-		}
-
-		DbgDotNetValue LoadFieldAddressCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
-			Dispatcher.VerifyAccess();
-			return null;//TODO:
-		}
+		public DbgDotNetValue LoadFieldAddress(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) => null;
 
 		public DbgDotNetValueResult LoadField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
 			if (Dispatcher.CheckAccess())
@@ -172,11 +162,147 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValueResult LoadFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
-				return new DbgDotNetValueResult("NYI");//TODO:
+				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+					return new DbgDotNetValueResult(ErrorHelper.InternalError);
+
+				TypeMirror monoFieldDeclType;
+				var fieldDeclType = field.DeclaringType;
+				if (obj == null) {
+					if (!field.IsStatic)
+						return new DbgDotNetValueResult(ErrorHelper.InternalError);
+
+					if (field.IsLiteral)
+						return CreateSyntheticValue(field.FieldType, field.GetRawConstantValue());
+					else {
+						monoFieldDeclType = GetType(fieldDeclType);
+						var monoField = MemberMirrorUtils.GetMonoField(monoFieldDeclType, field);
+
+						InitializeStaticConstructor(context, frame, ilFrame, fieldDeclType, monoFieldDeclType, cancellationToken);
+						var valueLocation = new StaticFieldValueLocation(field.FieldType, ilFrame.MonoFrame.Thread, monoField);
+						return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(valueLocation), valueIsException: false);
+					}
+				}
+				else {
+					if (field.IsStatic)
+						return new DbgDotNetValueResult(ErrorHelper.InternalError);
+
+					var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
+					monoFieldDeclType = GetType(fieldDeclType);
+					var monoField = MemberMirrorUtils.GetMonoField(monoFieldDeclType, field);
+					ValueLocation valueLocation;
+					switch (objImp.Value) {
+					case ObjectMirror om:
+						valueLocation = new ReferenceTypeFieldValueLocation(field.FieldType, om, monoField);
+						break;
+
+					case StructMirror sm:
+						valueLocation = new ValueTypeFieldValueLocation(field.FieldType, objImp.ValueLocation, sm, monoField);
+						break;
+
+					case PrimitiveValue pv:
+						return new DbgDotNetValueResult("NYI");//TODO:
+
+					default:
+						// Unreachable
+						return new DbgDotNetValueResult(ErrorHelper.InternalError);
+					}
+					return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(valueLocation), valueIsException: false);
+				}
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetValueResult(ErrorHelper.InternalError);
 			}
+		}
+
+		sealed class StaticConstructorInitializedState {
+			public volatile int Initialized;
+		}
+
+		void InitializeStaticConstructor(DbgEvaluationContext context, DbgStackFrame frame, ILDbgEngineStackFrame ilFrame, DmdType type, TypeMirror monoType, CancellationToken cancellationToken) {
+			if (engine.CheckFuncEval(context) != null)
+				return;
+			var state = type.GetOrCreateData<StaticConstructorInitializedState>();
+			if (state.Initialized > 0 || Interlocked.Exchange(ref state.Initialized, 1) != 0)
+				return;
+			if (monoType.VirtualMachine.Version.AtLeast(2, 23) && monoType.IsInitialized)
+				return;
+			var cctor = type.TypeInitializer;
+			if ((object)cctor != null) {
+				var fields = type.DeclaredFields;
+				for (int i = 0; i < fields.Count; i++) {
+					var field = fields[i];
+					if (!field.IsStatic || field.IsLiteral)
+						continue;
+
+					var monoField = MemberMirrorUtils.GetMonoField(monoType, fields, i);
+					Value fieldValue;
+					try {
+						fieldValue = monoType.GetValue(monoField, ilFrame.MonoFrame.Thread);
+					}
+					catch {
+						break;
+					}
+					if (fieldValue != null) {
+						if (fieldValue is PrimitiveValue pv && pv.Value == null)
+							continue;
+						if (field.FieldType.IsValueType) {
+							if (!IsZero(fieldValue, 0))
+								return;
+						}
+						else {
+							// It's a reference type and not null, so the field has been initialized
+							return;
+						}
+					}
+				}
+			}
+
+			var typeObj = monoType.GetTypeObject();
+			RuntimeHelpersRunClassConstructor(context, frame, ilFrame, type, monoType, typeObj, cancellationToken);
+		}
+
+		// Calls System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor():
+		//		RuntimeHelpers.RunClassConstructor(obj.GetType().TypeHandle);
+		bool RuntimeHelpersRunClassConstructor(DbgEvaluationContext context, DbgStackFrame frame, ILDbgEngineStackFrame ilFrame, DmdType type, TypeMirror corType, Value objValue, CancellationToken cancellationToken) {
+			return false;//TODO:
+		}
+
+		bool IsZero(Value value, int recursionCounter) {
+			if (recursionCounter > 100)
+				return false;
+			if (value is PrimitiveValue pv) {
+				if (pv.Value == null)
+					return true;
+				switch (pv.Type) {
+				case ElementType.Boolean:	return !(bool)pv.Value;
+				case ElementType.Char:		return (char)pv.Value == '\0';
+				case ElementType.I1:		return (sbyte)pv.Value == 0;
+				case ElementType.U1:		return (byte)pv.Value == 0;
+				case ElementType.I2:		return (short)pv.Value == 0;
+				case ElementType.U2:		return (ushort)pv.Value == 0;
+				case ElementType.I4:		return (int)pv.Value == 0;
+				case ElementType.U4:		return (uint)pv.Value == 0;
+				case ElementType.I8:		return (long)pv.Value == 0;
+				case ElementType.U8:		return (ulong)pv.Value == 0;
+				case ElementType.R4:		return (float)pv.Value == 0;
+				case ElementType.R8:		return (double)pv.Value == 0;
+				case ElementType.I:
+				case ElementType.U:
+				case ElementType.Ptr:		return (long)pv.Value == 0;
+				case ElementType.Object:	return true;// It's a null value
+				default:					throw new InvalidOperationException();
+				}
+			}
+			if (value is StructMirror sm) {
+				foreach (var v in sm.Fields) {
+					if (!IsZero(v, recursionCounter + 1))
+						return false;
+				}
+				return true;
+			}
+			Debug.Assert(value is ObjectMirror);
+			// It's a non-null object reference
+			return false;
 		}
 
 		public string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken) {
@@ -197,6 +323,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return ErrorHelper.InternalError;
 			}
+		}
+
+		static DbgDotNetValueResult CreateSyntheticValue(DmdType type, object constant) {
+			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type.AppDomain, constant);
+			if (dnValue != null)
+				return new DbgDotNetValueResult(dnValue, valueIsException: false);
+			return new DbgDotNetValueResult(ErrorHelper.InternalError);
 		}
 
 		public DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken) {
@@ -555,35 +688,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			}
 		}
 
-		public DbgDotNetValue GetLocalValueAddress(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) {
-			if (Dispatcher.CheckAccess())
-				return GetLocalValueAddressCore(context, frame, index, targetType, cancellationToken);
-			return GetLocalValueAddressCore2(context, frame, index, targetType, cancellationToken);
-
-			DbgDotNetValue GetLocalValueAddressCore2(DbgEvaluationContext context2, DbgStackFrame frame2, uint index2, DmdType targetType2, CancellationToken cancellationToken2) =>
-				Dispatcher.InvokeRethrow(() => GetLocalValueAddressCore(context2, frame2, index2, targetType2, cancellationToken2));
-		}
-
-		DbgDotNetValue GetLocalValueAddressCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) {
-			Dispatcher.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
-			return null;//TODO:
-		}
-
-		public DbgDotNetValue GetParameterValueAddress(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) {
-			if (Dispatcher.CheckAccess())
-				return GetParameterValueAddressCore(context, frame, index, targetType, cancellationToken);
-			return GetParameterValueAddressCore2(context, frame, index, targetType, cancellationToken);
-
-			DbgDotNetValue GetParameterValueAddressCore2(DbgEvaluationContext context2, DbgStackFrame frame2, uint index2, DmdType targetType2, CancellationToken cancellationToken2) =>
-				Dispatcher.InvokeRethrow(() => GetParameterValueAddressCore(context2, frame2, index2, targetType2, cancellationToken2));
-		}
-
-		DbgDotNetValue GetParameterValueAddressCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) {
-			Dispatcher.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
-			return null;//TODO:
-		}
+		public DbgDotNetValue GetLocalValueAddress(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) => null;
+		public DbgDotNetValue GetParameterValueAddress(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, CancellationToken cancellationToken) => null;
 
 		public DbgDotNetCreateValueResult CreateValue(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
 			if (Dispatcher.CheckAccess())
