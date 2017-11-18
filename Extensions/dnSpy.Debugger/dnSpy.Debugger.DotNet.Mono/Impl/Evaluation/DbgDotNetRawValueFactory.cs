@@ -91,10 +91,77 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return GetRawValueDefault(value, type);
 
 			case StructMirror sm:
-				if (type == type.AppDomain.System_Decimal)
-					return new DbgDotNetRawValue(DbgSimpleValueType.Decimal, ReadDecimal(sm));
-				if (type == type.AppDomain.System_DateTime)
-					return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, ReadDateTime(sm));
+				if (!type.IsEnum) {
+					// Boxed value
+					PrimitiveValue bpv;
+					switch (DmdType.GetTypeCode(type)) {
+					case TypeCode.Boolean:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is bool)
+							return new DbgDotNetRawValue(DbgSimpleValueType.Boolean, bpv.Value);
+						break;
+
+					case TypeCode.Char:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is char)
+							return new DbgDotNetRawValue(DbgSimpleValueType.CharUtf16, bpv.Value);
+						break;
+
+					case TypeCode.SByte:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is sbyte)
+							return new DbgDotNetRawValue(DbgSimpleValueType.Int8, bpv.Value);
+						break;
+
+					case TypeCode.Byte:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is byte)
+							return new DbgDotNetRawValue(DbgSimpleValueType.UInt8, bpv.Value);
+						break;
+
+					case TypeCode.Int16:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is short)
+							return new DbgDotNetRawValue(DbgSimpleValueType.Int16, bpv.Value);
+						break;
+
+					case TypeCode.UInt16:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is ushort)
+							return new DbgDotNetRawValue(DbgSimpleValueType.UInt16, bpv.Value);
+						break;
+
+					case TypeCode.Int32:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is int)
+							return new DbgDotNetRawValue(DbgSimpleValueType.Int32, bpv.Value);
+						break;
+
+					case TypeCode.UInt32:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is uint)
+							return new DbgDotNetRawValue(DbgSimpleValueType.UInt32, bpv.Value);
+						break;
+
+					case TypeCode.Int64:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is long)
+							return new DbgDotNetRawValue(DbgSimpleValueType.Int64, bpv.Value);
+						break;
+
+					case TypeCode.UInt64:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is ulong)
+							return new DbgDotNetRawValue(DbgSimpleValueType.UInt64, bpv.Value);
+						break;
+
+					case TypeCode.Single:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is float)
+							return new DbgDotNetRawValue(DbgSimpleValueType.Float32, bpv.Value);
+						break;
+
+					case TypeCode.Double:
+						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is double)
+							return new DbgDotNetRawValue(DbgSimpleValueType.Float64, bpv.Value);
+						break;
+
+					case TypeCode.Decimal:
+						return new DbgDotNetRawValue(DbgSimpleValueType.Decimal, ReadDecimal(sm));
+
+					case TypeCode.DateTime:
+						return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, ReadDateTime(sm));
+					}
+				}
 				if (type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr) {
 					if (sm.Fields.Length == 1 && sm.Fields[0] is PrimitiveValue pv && pv.Value is long) {
 						if (type.AppDomain.Runtime.PointerSize == 4)
