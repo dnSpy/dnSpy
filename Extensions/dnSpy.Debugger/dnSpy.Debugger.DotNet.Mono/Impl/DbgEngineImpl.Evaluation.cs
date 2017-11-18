@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 
 					var res = newObj ?
-						funcEval.CallConstructor(func, args, funcEvalOptions) :
+						funcEval.CreateInstance(func, args, funcEvalOptions) :
 						funcEval.CallMethod(func, hiddenThisValue, args, funcEvalOptions);
 					if (res == null)
 						return new DbgDotNetValueResult(ErrorHelper.InternalError);

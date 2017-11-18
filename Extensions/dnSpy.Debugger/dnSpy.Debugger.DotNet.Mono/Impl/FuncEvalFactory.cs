@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Mono.Debugger.Soft;
+using SD = System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed class FuncEvalFactory {
@@ -49,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 	abstract class FuncEval : IDisposable {
 		public abstract bool EvalTimedOut { get; }
-		public abstract InvokeResult CallConstructor(MethodMirror method, IList<Value> arguments, FuncEvalOptions options);
+		public abstract InvokeResult CreateInstance(MethodMirror method, IList<Value> arguments, FuncEvalOptions options);
 		public abstract InvokeResult CallMethod(MethodMirror method, Value obj, IList<Value> arguments, FuncEvalOptions options);
 		public abstract void Dispose();
 	}
@@ -87,7 +88,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return options;
 		}
 
-		public override InvokeResult CallConstructor(MethodMirror method, IList<Value> arguments, FuncEvalOptions options) {
+		public override InvokeResult CreateInstance(MethodMirror method, IList<Value> arguments, FuncEvalOptions options) =>
+			CallCore(method, null, arguments, options, isNewobj: true);
+
+		public override InvokeResult CallMethod(MethodMirror method, Value obj, IList<Value> arguments, FuncEvalOptions options) =>
+			CallCore(method, obj, arguments, options, isNewobj: false);
+
+		InvokeResult CallCore(MethodMirror method, Value obj, IList<Value> arguments, FuncEvalOptions options, bool isNewobj) {
 			if (evalTimedOut)
 				throw new TimeoutException();
 
@@ -99,33 +106,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				if (currTime <= endTime) {
 					funcEvalState.methodInvokeCounter++;
 
-					asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), null, null);
-					if (WaitOne(asyncRes, currTime))
-						return method.DeclaringType.EndInvokeMethodWithResult(asyncRes);
-					asyncRes.Abort();
-				}
-				evalTimedOut = true;
-				throw new TimeoutException();
-			}
-			finally {
-				funcEvalState.isEvaluatingCounter--;
-				asyncRes?.Dispose();
-			}
-		}
-
-		public override InvokeResult CallMethod(MethodMirror method, Value obj, IList<Value> arguments, FuncEvalOptions options) {
-			if (evalTimedOut)
-				throw new TimeoutException();
-
-			IInvokeAsyncResult asyncRes = null;
-			try {
-				funcEvalState.isEvaluatingCounter++;
-
-				var currTime = DateTime.UtcNow;
-				if (currTime <= endTime) {
-					funcEvalState.methodInvokeCounter++;
-
-					if (obj == null) {
+					SD.Debug.Assert(!isNewobj || obj == null);
+					if (obj == null || isNewobj) {
 						asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), null, null);
 						if (WaitOne(asyncRes, currTime))
 							return method.DeclaringType.EndInvokeMethodWithResult(asyncRes);
