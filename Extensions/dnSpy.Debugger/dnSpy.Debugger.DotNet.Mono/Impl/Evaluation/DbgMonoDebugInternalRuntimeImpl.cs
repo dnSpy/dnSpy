@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -225,7 +226,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var state = type.GetOrCreateData<StaticConstructorInitializedState>();
 			if (state.Initialized > 0 || Interlocked.Exchange(ref state.Initialized, 1) != 0)
 				return;
-			if (monoType.VirtualMachine.Version.AtLeast(2, 23) && monoType.IsInitialized)
+			if (engine.MonoVirtualMachine.Version.AtLeast(2, 23) && monoType.IsInitialized)
 				return;
 			var cctor = type.TypeInitializer;
 			if ((object)cctor != null) {
@@ -258,14 +259,43 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				}
 			}
 
-			var typeObj = monoType.GetTypeObject();
-			RuntimeHelpersRunClassConstructor(context, frame, ilFrame, type, monoType, typeObj, cancellationToken);
+			DbgDotNetValue dnObjValue = null;
+			try {
+				var reflectionAppDomain = type.AppDomain;
+				var monoObjValue = monoType.GetTypeObject();
+				var objValueType = new ReflectionTypeCreator(engine, reflectionAppDomain).Create(monoObjValue.Type);
+				var objValueLocation = new NoValueLocation(objValueType, monoObjValue);
+				dnObjValue = engine.CreateDotNetValue_MonoDebug(objValueLocation);
+				RuntimeHelpersRunClassConstructor(context, frame, type, dnObjValue, cancellationToken);
+			}
+			finally {
+				dnObjValue?.Dispose();
+			}
 		}
 
 		// Calls System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor():
 		//		RuntimeHelpers.RunClassConstructor(obj.GetType().TypeHandle);
-		bool RuntimeHelpersRunClassConstructor(DbgEvaluationContext context, DbgStackFrame frame, ILDbgEngineStackFrame ilFrame, DmdType type, TypeMirror corType, Value objValue, CancellationToken cancellationToken) {
-			return false;//TODO:
+		bool RuntimeHelpersRunClassConstructor(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, DbgDotNetValue objValue, CancellationToken cancellationToken) {
+			var reflectionAppDomain = type.AppDomain;
+			var runtimeTypeHandleType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle, isOptional: true);
+			Debug.Assert((object)runtimeTypeHandleType != null);
+			if ((object)runtimeTypeHandleType == null)
+				return false;
+			var getTypeHandleMethod = objValue.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: false);
+			Debug.Assert((object)getTypeHandleMethod != null);
+			if ((object)getTypeHandleMethod == null)
+				return false;
+			var typeHandleRes = engine.FuncEvalCall_MonoDebug(context, frame.Thread, getTypeHandleMethod, objValue, Array.Empty<object>(), DbgDotNetInvokeOptions.None, false, cancellationToken);
+			if (typeHandleRes.Value == null | typeHandleRes.ValueIsException)
+				return false;
+			var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
+			var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
+			Debug.Assert((object)runClassConstructorMethod != null);
+			if ((object)runClassConstructorMethod == null)
+				return false;
+			var res = engine.FuncEvalCall_MonoDebug(context, frame.Thread, runClassConstructorMethod, null, new[] { typeHandleRes.Value }, DbgDotNetInvokeOptions.None, false, cancellationToken);
+			res.Value?.Dispose();
+			return !res.HasError && !res.ValueIsException;
 		}
 
 		bool IsZero(Value value, int recursionCounter) {

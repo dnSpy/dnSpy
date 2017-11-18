@@ -430,7 +430,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				res = engine.FuncEvalCreateInstanceNoCtor_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), type, cancellationToken);
 				if (res.Value == null || res.ValueIsException)
 					return;
-				RuntimeHelpersRunClassConstructor(context, frame, ilFrame, type, corType, res.Value, cancellationToken);
+				RuntimeHelpersRunClassConstructor(context, frame, ilFrame, type, res.Value, cancellationToken);
 			}
 			finally {
 				res.Value?.Dispose();
@@ -448,7 +448,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		// Calls System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor():
 		//		RuntimeHelpers.RunClassConstructor(obj.GetType().TypeHandle);
-		bool RuntimeHelpersRunClassConstructor(DbgEvaluationContext context, DbgStackFrame frame, ILDbgEngineStackFrame ilFrame, DmdType type, CorType corType, DbgDotNetValue objValue, CancellationToken cancellationToken) {
+		bool RuntimeHelpersRunClassConstructor(DbgEvaluationContext context, DbgStackFrame frame, ILDbgEngineStackFrame ilFrame, DmdType type, DbgDotNetValue objValue, CancellationToken cancellationToken) {
 			var reflectionAppDomain = type.AppDomain;
 			var getTypeMethod = objValue.Type.GetMethod(nameof(object.GetType), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, reflectionAppDomain.System_Type, Array.Empty<DmdType>(), throwOnError: false);
 			Debug.Assert((object)getTypeMethod != null);
