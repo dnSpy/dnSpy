@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			dnDebugger.DisposeHandle(value);
 		}
 
-		internal CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(this, appDomain, type);
+		CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(this, appDomain, type);
 
 		sealed class EvalTimedOut { }
 
@@ -131,7 +131,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (method.SpecialMethodKind != DmdSpecialMethodKind.Metadata)
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 
-			var reflectionAppDomain = thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
+			var reflectionAppDomain = method.AppDomain;
 			var methodDbgModule = method.Module.GetDebuggerModule() ?? throw new InvalidOperationException();
 			if (!TryGetDnModule(methodDbgModule, out var methodModule))
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
@@ -343,7 +343,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			CorValue createdCorValue = null;
 			try {
 				var appDomain = ilFrame.GetCorAppDomain();
-				var reflectionAppDomain = thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
+				var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
 				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
 					dnEval.SetThread(dnThread);
 					dnEval.SetTimeout(context.FuncEvalTimeout);
@@ -405,7 +405,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			CreateCorValueResult createResult = default;
 			try {
 				var appDomain = ilFrame.GetCorAppDomain();
-				var reflectionAppDomain = thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
+				var reflectionAppDomain = targetType.AppDomain;
 				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
 					dnEval.SetThread(dnThread);
 					dnEval.SetTimeout(context.FuncEvalTimeout);

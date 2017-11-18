@@ -104,6 +104,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 	}
 
+	sealed class ThisValueLocation : ValueLocation {
+		public override DmdType Type { get; }
+
+		readonly ILDbgEngineStackFrame frame;
+
+		public ThisValueLocation(DmdType type, ILDbgEngineStackFrame frame) {
+			Type = type ?? throw new ArgumentNullException(nameof(type));
+			this.frame = frame ?? throw new ArgumentNullException(nameof(frame));
+		}
+
+		public override Value Load() => frame.MonoFrame.GetThis();
+		public override void Store(Value value) => frame.MonoFrame.SetThis(value);
+	}
+
 	sealed class ArrayElementValueLocation : ValueLocation {
 		public override DmdType Type { get; }
 
@@ -148,7 +162,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			this.objectMirror = objectMirror ?? throw new ArgumentNullException(nameof(objectMirror));
 			this.field = field ?? throw new ArgumentNullException(nameof(field));
 			SD.Debug.Assert(!field.IsStatic);
-			SD.Debug.Assert(field.DeclaringType == objectMirror.Type);
 		}
 
 		public override Value Load() => objectMirror.GetValue(field);

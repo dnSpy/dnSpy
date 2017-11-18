@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			this.valueLocation = valueLocation ?? throw new ArgumentNullException(nameof(valueLocation));
 			this.value = value ?? throw new ArgumentNullException(nameof(value));
-			Type = GetType(engine, value, valueLocation.Type);
+			Type = MonoValueTypeCreator.CreateType(engine, value, valueLocation.Type);
 			rawValue = new DbgDotNetRawValueFactory(engine).Create(value, Type);
 
 			var flags = ValueFlags.None;
@@ -64,50 +64,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					flags |= ValueFlags.IsNull;
 			}
 			this.flags = flags;
-		}
-
-		static DmdType GetType(DbgEngineImpl engine, Value value, DmdType slotType) {
-			var reflectionAppDomain = slotType.AppDomain;
-			switch (value) {
-			case PrimitiveValue pv:
-				switch (pv.Type) {
-				case ElementType.Boolean:	return reflectionAppDomain.System_Boolean;
-				case ElementType.Char:		return reflectionAppDomain.System_Char;
-				case ElementType.I1:		return reflectionAppDomain.System_SByte;
-				case ElementType.U1:		return reflectionAppDomain.System_Byte;
-				case ElementType.I2:		return reflectionAppDomain.System_Int16;
-				case ElementType.U2:		return reflectionAppDomain.System_UInt16;
-				case ElementType.I4:		return reflectionAppDomain.System_Int32;
-				case ElementType.U4:		return reflectionAppDomain.System_UInt32;
-				case ElementType.I8:		return reflectionAppDomain.System_Int64;
-				case ElementType.U8:		return reflectionAppDomain.System_UInt64;
-				case ElementType.R4:		return reflectionAppDomain.System_Single;
-				case ElementType.R8:		return reflectionAppDomain.System_Double;
-				case ElementType.I:			return reflectionAppDomain.System_IntPtr;
-				case ElementType.U:			return reflectionAppDomain.System_UIntPtr;
-				case ElementType.Ptr:		return slotType.IsPointer ? slotType : reflectionAppDomain.System_Void.MakePointerType();
-				case ElementType.Object:	return slotType;// This is a null value
-				default:					throw new InvalidOperationException();
-				}
-
-			case EnumMirror em:
-				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(em.Type);
-
-			case StructMirror sm:
-				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(sm.Type);
-
-			case ArrayMirror am:
-				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(am.Type);
-
-			case StringMirror strVal:
-				return reflectionAppDomain.System_String;
-
-			case ObjectMirror om:
-				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(om.Type);
-
-			default:
-				throw new InvalidOperationException();
-			}
 		}
 
 		public override IDbgDotNetRuntime TryGetDotNetRuntime() => engine.DotNetRuntime;

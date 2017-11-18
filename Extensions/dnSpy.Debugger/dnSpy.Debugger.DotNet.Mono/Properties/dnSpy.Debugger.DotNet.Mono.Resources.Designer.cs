@@ -205,6 +205,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This runtime doesn&apos;t support creating generic methods.
+        /// </summary>
+        public static string Error_RuntimeDoesNotSupportCreatingGenericMethods {
+            get {
+                return ResourceManager.GetString("Error_RuntimeDoesNotSupportCreatingGenericMethods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;&lt;no exception message&gt;&quot;.
         /// </summary>
         public static string ExceptionMessageIsNull {

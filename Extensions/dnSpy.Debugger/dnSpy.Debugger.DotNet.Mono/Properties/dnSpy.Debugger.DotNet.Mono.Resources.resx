@@ -204,4 +204,7 @@
   <data name="StackFrame_NativeTransition" xml:space="preserve">
     <value>Native Transition</value>
   </data>
+  <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
+    <value>This runtime doesn't support creating generic methods</value>
+  </data>
 </root>

@@ -54,6 +54,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public override event EventHandler<DbgEngineMessage> Message;
 
 		internal DbgObjectFactory ObjectFactory => objectFactory;
+		internal VirtualMachine MonoVirtualMachine => vm;
 
 		readonly object lockObj;
 		readonly DebuggerThread debuggerThread;

@@ -209,7 +209,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		EvalArgumentResult ConvertSZArray(string[] array, out DmdType type) {
 			var elementType = reflectionAppDomain.System_String;
 			type = elementType.MakeArrayType();
-			var corElementType = engine.GetType(appDomain, elementType);
+			var corElementType = GetType(elementType);
 			var res = dnEval.CreateSZArray(corElementType, array.Length, out int hr);
 			if (res == null || !res.Value.NormalResult)
 				return EvalArgumentResult.Create(res, hr);
@@ -264,7 +264,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		unsafe EvalArgumentResult ConvertSZArray(void* array, int length, int elementSize, DmdType elementType, out DmdType type) {
 			type = elementType.MakeArrayType();
-			var corElementType = engine.GetType(appDomain, elementType);
+			var corElementType = GetType(elementType);
 			var res = dnEval.CreateSZArray(corElementType, length, out int hr);
 			if (res == null || !res.Value.NormalResult)
 				return EvalArgumentResult.Create(res, hr);
