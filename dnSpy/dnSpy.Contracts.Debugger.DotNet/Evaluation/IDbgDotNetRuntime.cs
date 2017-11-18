@@ -109,9 +109,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="method">Method</param>
 		/// <param name="arguments">Arguments: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
+		/// <param name="invokeOptions">Invoke options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken);
+		DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, DbgDotNetInvokeOptions invokeOptions, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates a new instance of a type by calling its constructor
@@ -120,9 +121,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="frame">Stack frame</param>
 		/// <param name="ctor">Constructor</param>
 		/// <param name="arguments">Arguments: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
+		/// <param name="invokeOptions">Invoke options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValueResult CreateInstance(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, CancellationToken cancellationToken);
+		DbgDotNetValueResult CreateInstance(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, DbgDotNetInvokeOptions invokeOptions, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates a new instance of a type. All fields are initialized to 0 or null. The constructor isn't called.
@@ -348,6 +350,22 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="b">Value #2</param>
 		/// <returns></returns>
 		bool? Equals(DbgDotNetValue a, DbgDotNetValue b);
+	}
+
+	/// <summary>
+	/// Invoke options
+	/// </summary>
+	[Flags]
+	public enum DbgDotNetInvokeOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// Non-virtual call
+		/// </summary>
+		NonVirtual			= 0x00000001,
 	}
 
 	/// <summary>

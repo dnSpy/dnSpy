@@ -60,13 +60,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		public override object CreateInstance(object context, DmdConstructorInfo ctor, object[] arguments) {
 			var evalCtx = GetEvaluatorContext(context);
-			var res = engine.DotNetRuntime.CreateInstance(evalCtx.EvaluationContext, evalCtx.Frame, ctor, arguments, evalCtx.CancellationToken);
+			var res = engine.DotNetRuntime.CreateInstance(evalCtx.EvaluationContext, evalCtx.Frame, ctor, arguments, DbgDotNetInvokeOptions.None, evalCtx.CancellationToken);
 			return GetValueThrow(res);
 		}
 
 		public override object Invoke(object context, DmdMethodBase method, object obj, object[] arguments) {
 			var evalCtx = GetEvaluatorContext(context);
-			var res = engine.DotNetRuntime.Call(evalCtx.EvaluationContext, evalCtx.Frame, GetDotNetValue(obj), method, arguments, evalCtx.CancellationToken);
+			var res = engine.DotNetRuntime.Call(evalCtx.EvaluationContext, evalCtx.Frame, GetDotNetValue(obj), method, arguments, DbgDotNetInvokeOptions.None, evalCtx.CancellationToken);
 			return GetValueThrow(res);
 		}
 

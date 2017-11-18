@@ -511,16 +511,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 		}
 
-		public DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken) {
+		public DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, DbgDotNetInvokeOptions invokeOptions, CancellationToken cancellationToken) {
 			if (Dispatcher.CheckAccess())
-				return CallCore(context, frame, obj, method, arguments, cancellationToken);
-			return Call2(context, frame, obj, method, arguments, cancellationToken);
+				return CallCore(context, frame, obj, method, arguments, invokeOptions, cancellationToken);
+			return Call2(context, frame, obj, method, arguments, invokeOptions, cancellationToken);
 
-			DbgDotNetValueResult Call2(DbgEvaluationContext context2, DbgStackFrame frame2, DbgDotNetValue obj2, DmdMethodBase method2, object[] arguments2, CancellationToken cancellationToken2) =>
-				Dispatcher.InvokeRethrow(() => CallCore(context2, frame2, obj2, method2, arguments2, cancellationToken2));
+			DbgDotNetValueResult Call2(DbgEvaluationContext context2, DbgStackFrame frame2, DbgDotNetValue obj2, DmdMethodBase method2, object[] arguments2, DbgDotNetInvokeOptions invokeOptions2, CancellationToken cancellationToken2) =>
+				Dispatcher.InvokeRethrow(() => CallCore(context2, frame2, obj2, method2, arguments2, invokeOptions2, cancellationToken2));
 		}
 
-		DbgDotNetValueResult CallCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken) {
+		DbgDotNetValueResult CallCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, DbgDotNetInvokeOptions invokeOptions, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
 				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
@@ -545,16 +545,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 		}
 
-		public DbgDotNetValueResult CreateInstance(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, CancellationToken cancellationToken) {
+		public DbgDotNetValueResult CreateInstance(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, DbgDotNetInvokeOptions invokeOptions, CancellationToken cancellationToken) {
 			if (Dispatcher.CheckAccess())
-				return CreateInstanceCore(context, frame, ctor, arguments, cancellationToken);
-			return CreateInstance2(context, frame, ctor, arguments, cancellationToken);
+				return CreateInstanceCore(context, frame, ctor, arguments, invokeOptions, cancellationToken);
+			return CreateInstance2(context, frame, ctor, arguments, invokeOptions, cancellationToken);
 
-			DbgDotNetValueResult CreateInstance2(DbgEvaluationContext context2, DbgStackFrame frame2, DmdConstructorInfo ctor2, object[] arguments2, CancellationToken cancellationToken2) =>
-				Dispatcher.InvokeRethrow(() => CreateInstanceCore(context2, frame2, ctor2, arguments2, cancellationToken2));
+			DbgDotNetValueResult CreateInstance2(DbgEvaluationContext context2, DbgStackFrame frame2, DmdConstructorInfo ctor2, object[] arguments2, DbgDotNetInvokeOptions invokeOptions2, CancellationToken cancellationToken2) =>
+				Dispatcher.InvokeRethrow(() => CreateInstanceCore(context2, frame2, ctor2, arguments2, invokeOptions2, cancellationToken2));
 		}
 
-		DbgDotNetValueResult CreateInstanceCore(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, CancellationToken cancellationToken) {
+		DbgDotNetValueResult CreateInstanceCore(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, DbgDotNetInvokeOptions invokeOptions, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
 				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))

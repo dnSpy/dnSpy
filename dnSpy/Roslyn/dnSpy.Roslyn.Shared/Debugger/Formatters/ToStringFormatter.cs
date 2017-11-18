@@ -67,7 +67,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				return null;
 
 			var runtime = context.Runtime.GetDotNetRuntime();
-			var res = runtime.Call(context, frame, value, state.ToStringMethod, Array.Empty<object>(), cancellationToken);
+			var res = runtime.Call(context, frame, value, state.ToStringMethod, Array.Empty<object>(), DbgDotNetInvokeOptions.None, cancellationToken);
 			if (res.HasError || res.ValueIsException)
 				return null;
 

@@ -468,7 +468,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				var proxyCtor = DebuggerTypeProxyFinder.GetDebuggerTypeProxyConstructor(state.Type);
 				if ((object)proxyCtor != null) {
 					var runtime = context.Runtime.GetDotNetRuntime();
-					var proxyTypeResult = runtime.CreateInstance(context, frame, proxyCtor, new[] { nodeInfo.Value }, cancellationToken);
+					var proxyTypeResult = runtime.CreateInstance(context, frame, proxyCtor, new[] { nodeInfo.Value }, DbgDotNetInvokeOptions.None, cancellationToken);
 					// Use the result even if the constructor threw an exception
 					if (!proxyTypeResult.HasError) {
 						var value = nodeInfo.Value;

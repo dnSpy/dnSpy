@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
@@ -52,7 +53,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				return false;
 
 			var runtime = context.Runtime.GetDotNetRuntime();
-			var res = runtime.Call(context, frame, null, loadMethod, new object[] { assemblyFullName }, cancellationToken);
+			var res = runtime.Call(context, frame, null, loadMethod, new object[] { assemblyFullName }, DbgDotNetInvokeOptions.None, cancellationToken);
 			res.Value?.Dispose();
 			return res.IsNormalResult;
 		}

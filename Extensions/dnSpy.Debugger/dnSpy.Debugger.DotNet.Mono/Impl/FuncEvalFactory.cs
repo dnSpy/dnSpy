@@ -44,6 +44,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		None				= 0,
 		ReturnOutThis		= 0x00000001,
 		ReturnOutArgs		= 0x00000002,
+		Virtual				= 0x00000004,
 	}
 
 	abstract class FuncEval : IDisposable {
@@ -73,14 +74,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			this.cancellationToken = cancellationToken;
 		}
 
-		InvokeOptions GetInvokeOptions(bool returnOutThis, bool returnOutArgs) {
+		InvokeOptions GetInvokeOptions(FuncEvalOptions funcEvalOptions) {
 			var options = InvokeOptions.DisableBreakpoints;
 			if (suspendOtherThreads)
 				options |= InvokeOptions.SingleThreaded;
-			if (returnOutThis)
+			if ((funcEvalOptions & FuncEvalOptions.ReturnOutThis) != 0)
 				options |= InvokeOptions.ReturnOutThis;
-			if (returnOutArgs)
+			if ((funcEvalOptions & FuncEvalOptions.ReturnOutArgs) != 0)
 				options |= InvokeOptions.ReturnOutArgs;
+			if ((funcEvalOptions & FuncEvalOptions.Virtual) != 0)
+				options |= InvokeOptions.Virtual;
 			return options;
 		}
 
@@ -96,9 +99,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				if (currTime <= endTime) {
 					funcEvalState.methodInvokeCounter++;
 
-					bool returnOutThis = (options & FuncEvalOptions.ReturnOutThis) != 0;
-					bool returnOutArgs = (options & FuncEvalOptions.ReturnOutArgs) != 0;
-					asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(returnOutThis, returnOutArgs), null, null);
+					asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), null, null);
 					if (WaitOne(asyncRes, currTime))
 						return method.DeclaringType.EndInvokeMethodWithResult(asyncRes);
 					asyncRes.Abort();
@@ -124,15 +125,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				if (currTime <= endTime) {
 					funcEvalState.methodInvokeCounter++;
 
-					bool returnOutThis = (options & FuncEvalOptions.ReturnOutThis) != 0;
-					bool returnOutArgs = (options & FuncEvalOptions.ReturnOutArgs) != 0;
 					if (obj == null) {
-						asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(returnOutThis, returnOutArgs), null, null);
+						asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), null, null);
 						if (WaitOne(asyncRes, currTime))
 							return method.DeclaringType.EndInvokeMethodWithResult(asyncRes);
 					}
 					else {
-						asyncRes = obj.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(returnOutThis, returnOutArgs), null, null);
+						asyncRes = obj.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), null, null);
 						if (WaitOne(asyncRes, currTime))
 							return obj.EndInvokeMethodWithResult(asyncRes);
 					}

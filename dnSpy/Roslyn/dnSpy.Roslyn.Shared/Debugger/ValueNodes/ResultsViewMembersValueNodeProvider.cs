@@ -75,7 +75,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 
 			var runtime = context.Runtime.GetDotNetRuntime();
-			var proxyTypeResult = runtime.CreateInstance(context, frame, proxyCtor, new[] { instanceValue }, cancellationToken);
+			var proxyTypeResult = runtime.CreateInstance(context, frame, proxyCtor, new[] { instanceValue }, DbgDotNetInvokeOptions.None, cancellationToken);
 			if (proxyTypeResult.HasError)
 				return proxyTypeResult.ErrorMessage;
 

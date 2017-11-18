@@ -79,7 +79,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					}
 					else {
 						var getter = property.GetGetMethod(DmdGetAccessorOptions.All) ?? throw new InvalidOperationException();
-						valueResult = runtime.Call(context, frame, null, getter, Array.Empty<object>(), cancellationToken);
+						valueResult = runtime.Call(context, frame, null, getter, Array.Empty<object>(), DbgDotNetInvokeOptions.None, cancellationToken);
 						isReadOnly = (object)property.GetSetMethod(DmdGetAccessorOptions.All) == null;
 					}
 					break;

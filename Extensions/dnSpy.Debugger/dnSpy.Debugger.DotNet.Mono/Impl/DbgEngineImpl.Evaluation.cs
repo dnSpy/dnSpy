@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		internal DbgDotNetValueResult FuncEvalCall_MonoDebug(DbgEvaluationContext context, DbgThread thread, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, bool newObj, CancellationToken cancellationToken) {
+		internal DbgDotNetValueResult FuncEvalCall_MonoDebug(DbgEvaluationContext context, DbgThread thread, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
 			debuggerThread.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(context);
@@ -129,6 +129,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						throw new InvalidOperationException();
 
 					var funcEvalOptions = FuncEvalOptions.None;
+					if ((invokeOptions & DbgDotNetInvokeOptions.NonVirtual) == 0)
+						funcEvalOptions |= FuncEvalOptions.Virtual;
 					int argsCount = arguments.Length;
 					var args = argsCount == 0 ? Array.Empty<Value>() : new Value[argsCount];
 					DmdType origType;
