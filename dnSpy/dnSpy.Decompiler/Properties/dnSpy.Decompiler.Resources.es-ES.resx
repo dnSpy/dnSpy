@@ -117,94 +117,139 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>参数(_R)</value>
+  <data name="MSBuild_CopyAppConfig" xml:space="preserve">
+    <value>Copia app.config ({0})</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>程序集(_A)</value>
+  <data name="MSBuild_CouldNotCreateDirectory2" xml:space="preserve">
+    <value>No se ha podido crear el directorio {0}, Error: {1}</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>中断于(_B)</value>
+  <data name="MSBuild_CreateApplicationIcon" xml:space="preserve">
+    <value>Crear icono de la aplicación</value>
   </data>
-  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>端口</value>
+  <data name="MSBuild_CreateAppManifest" xml:space="preserve">
+    <value>Crear app.manifest</value>
   </data>
-  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>连接</value>
+  <data name="MSBuild_CreateAppXaml" xml:space="preserve">
+    <value>Crear App.xaml</value>
   </data>
-  <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>IP 地址</value>
+  <data name="MSBuild_CreateEmbeddedResource" xml:space="preserve">
+    <value>Crear {0} recurso incrustado</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>工作目录(_W)</value>
+  <data name="MSBuild_DecompileAssemblyInfoAndFileExtension" xml:space="preserve">
+    <value>Descompilar AssemblyInfo{0}</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>创建进程</value>
+  <data name="MSBuild_DecompileBaml" xml:space="preserve">
+    <value>Descompilar BAML</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>不要中断</value>
+  <data name="MSBuild_FailedToCreateProjectFile" xml:space="preserve">
+    <value>Fallo al crear el proyecto archivo {0}, mensaje de excepción: {1}</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>入口点</value>
+  <data name="MSBuild_FailedToCreateSolutionFile" xml:space="preserve">
+    <value>Error al crear el archivo de solución {0}, mensaje de error: {1}</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>文件不存在</value>
+  <data name="MSBuild_FileCreationFailed2" xml:space="preserve">
+    <value>Error, descripción = {0}, mensaje de error: {1}</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>缺少文件名</value>
+  <data name="MSBuild_FileCreationFailed3" xml:space="preserve">
+    <value>Creación de error ({0}) Descripción del archivo = {1}, mensaje de excepción: {2}</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>调试器 ({0})</value>
+  <data name="ToolTip_Constant" xml:space="preserve">
+    <value>constante</value>
   </data>
-  <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>Could not find {0}</value>
+  <data name="ToolTip_Field" xml:space="preserve">
+    <value>campo</value>
   </data>
-  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>Couldn't connect to the debugged process</value>
+  <data name="ToolTip_GenericParameterInTypeOrMethod" xml:space="preserve">
+    <value>en</value>
   </data>
-  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>Could not find the debugged process</value>
+  <data name="ToolTip_Local" xml:space="preserve">
+    <value>variable local</value>
   </data>
-  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>The connection to the debugged process was unexpectedly closed</value>
+  <data name="ToolTip_NMethodOverloads" xml:space="preserve">
+    <value>{0} sobrecargas</value>
   </data>
-  <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Aborted</value>
+  <data name="ToolTip_OneMethodOverload" xml:space="preserve">
+    <value>1 sobrecarga</value>
   </data>
-  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>AbortRequested</value>
+  <data name="ToolTip_Parameter" xml:space="preserve">
+    <value>parámetro</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Background</value>
+  <data name="Decompile_Namespace_Types" xml:space="preserve">
+    <value>Tipos:</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Stopped</value>
+  <data name="Decompile_AnyCPU32BitPreferred" xml:space="preserve">
+    <value>AnyCPU (32-bit preferido)</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+  <data name="Decompile_AnyCPU64BitPreferred" xml:space="preserve">
+    <value>AnyCPU (64-bit preferido)</value>
   </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspended</value>
+  <data name="Decompile_Architecture" xml:space="preserve">
+    <value>Arquitectura:</value>
   </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>SuspendRequested</value>
+  <data name="Decompile_EntryPoint" xml:space="preserve">
+    <value>Punto de entrada:</value>
   </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Unstarted</value>
+  <data name="Decompile_GlobalType" xml:space="preserve">
+    <value>Tipo global:</value>
   </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+  <data name="Decompile_NativeEntryPoint" xml:space="preserve">
+    <value>Punto de entrada nativo: 0x{0:X8}</value>
   </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; 没有异常消息 &gt;"</value>
+  <data name="Decompile_Runtime" xml:space="preserve">
+    <value>Tiempo de ejecución:</value>
   </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>函数求值</value>
+  <data name="Decompile_ThisAssemblyContainsUnmanagedCode" xml:space="preserve">
+    <value>Este ensamblado contiene código nativo.</value>
   </data>
-  <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Native Transition</value>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Fecha/Hora:</value>
   </data>
-  <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
-    <value>This runtime doesn't support creating generic methods</value>
+  <data name="MSBuild_CreateResource" xml:space="preserve">
+    <value>Crear recurso {0}</value>
+  </data>
+  <data name="MSBuild_CreateSplashScreenResource" xml:space="preserve">
+    <value>Crear recurso de pantalla de bienvenida {0}</value>
+  </data>
+  <data name="MSBuild_CreateWinFormsDesignerFile" xml:space="preserve">
+    <value>Crear archivo de diseñador de WinForms</value>
+  </data>
+  <data name="MSBuild_CreateWinFormsFile" xml:space="preserve">
+    <value>Crear archivo de WinForms</value>
+  </data>
+  <data name="MSBuild_DecompileType" xml:space="preserve">
+    <value>Descompilar tipo {0}</value>
+  </data>
+  <data name="MSBuild_CreateSettingsFile" xml:space="preserve">
+    <value>Crear {0}</value>
+  </data>
+  <data name="MSBuild_CreateSettingsDesignerTypeFile" xml:space="preserve">
+    <value>Crear archivo de configuración de diseño</value>
+  </data>
+  <data name="MSBuild_CreateSettingsTypeFile" xml:space="preserve">
+    <value>Crear archivo de configuración</value>
+  </data>
+  <data name="MSBuild_CreateResXFile" xml:space="preserve">
+    <value>Crear archivo ResX</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt; desconocido &gt;</value>
+  </data>
+  <data name="CSharp_Awaitable_Method" xml:space="preserve">
+    <value>awaitable</value>
+  </data>
+  <data name="CSharp_Deprecated_Member" xml:space="preserve">
+    <value>obsoleto</value>
+  </data>
+  <data name="CSharp_Extension_Method" xml:space="preserve">
+    <value>extensión</value>
+  </data>
+  <data name="VisualBasic_Awaitable_Method" xml:space="preserve">
+    <value>Awaitable</value>
+  </data>
+  <data name="VisualBasic_Deprecated_Member" xml:space="preserve">
+    <value>Obsoleto</value>
+  </data>
+  <data name="VisualBasic_Extension_Method" xml:space="preserve">
+    <value>Extensión</value>
   </data>
 </root>

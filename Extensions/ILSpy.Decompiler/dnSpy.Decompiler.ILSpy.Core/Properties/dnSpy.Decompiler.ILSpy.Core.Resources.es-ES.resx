@@ -117,94 +117,115 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>参数(_R)</value>
+  <data name="DecompilerSettings_AddUsingDeclarations" xml:space="preserve">
+    <value>Añadir declaraciones using</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>程序集(_A)</value>
+  <data name="DecompilerSettings_AllowFieldInitializers" xml:space="preserve">
+    <value>Permiten a inicializadores de campo</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>中断于(_B)</value>
+  <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
+    <value>Siempre generar variables de excepción en bloques catch a menos que sea de tipo objeto</value>
   </data>
-  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>端口</value>
+  <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
+    <value>Orden de decompilación</value>
   </data>
-  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>连接</value>
+  <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
+    <value>Descompilar métodos anónimos/lambdas</value>
   </data>
-  <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>IP 地址</value>
+  <data name="DecompilerSettings_DecompileAsyncMethods" xml:space="preserve">
+    <value>Decompilar métodos asincrónicos (async/await)</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>工作目录(_W)</value>
+  <data name="DecompilerSettings_DecompileAutoEvents" xml:space="preserve">
+    <value>Decompilar eventos automáticos</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>创建进程</value>
+  <data name="DecompilerSettings_DecompileAutoProps" xml:space="preserve">
+    <value>Decompilar propiedades automáticas</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>不要中断</value>
+  <data name="DecompilerSettings_DecompileEnumerators" xml:space="preserve">
+    <value>Decompilar enumeradores (retornos yield)</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>入口点</value>
+  <data name="DecompilerSettings_DecompileExprTrees" xml:space="preserve">
+    <value>Descompilar árboles de expresión</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>文件不存在</value>
+  <data name="DecompilerSettings_DecompileForeachStatements" xml:space="preserve">
+    <value>Decompilar declaraciones foreach</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>缺少文件名</value>
+  <data name="DecompilerSettings_DecompileLockStatements" xml:space="preserve">
+    <value>Decompilar declaraciones lock</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>调试器 ({0})</value>
+  <data name="DecompilerSettings_DecompileQueryExpr" xml:space="preserve">
+    <value>Descompilar expresiones de consulta</value>
   </data>
-  <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>Could not find {0}</value>
+  <data name="DecompilerSettings_DecompileSwitchOnString" xml:space="preserve">
+    <value>Descompilar interruptor de cadena</value>
   </data>
-  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>Couldn't connect to the debugged process</value>
+  <data name="DecompilerSettings_DecompileUsingStatements" xml:space="preserve">
+    <value>Descompilar sentencias using</value>
   </data>
-  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>Could not find the debugged process</value>
+  <data name="DecompilerSettings_FullyQualifyAllTypes" xml:space="preserve">
+    <value>Agregar espacios de nombres a todos los tipos</value>
   </data>
-  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>The connection to the debugged process was unexpectedly closed</value>
+  <data name="DecompilerSettings_FullyQualifyAmbiguousTypeNames" xml:space="preserve">
+    <value>Añadir un espacio de nombres a los tipos con el mismo nombre</value>
   </data>
-  <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Aborted</value>
+  <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
+    <value>Uso de incremento y decremento operadores</value>
   </data>
-  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>AbortRequested</value>
+  <data name="DecompilerSettings_MakeAssignmentExpressions" xml:space="preserve">
+    <value>Asignación de expresiones tales como en mientras que ((cuenta = Do())! = 0);</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Background</value>
+  <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
+    <value>Número máximo de elementos de matriz para mostrar</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Stopped</value>
+  <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
+    <value>Añadir 'private' modificador para los miembros de tipo</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+  <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
+    <value>Descompilar a los inicializadores de objeto o colección</value>
   </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspended</value>
+  <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
+    <value>Mostrar un atributo personalizado por línea</value>
   </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>SuspendRequested</value>
+  <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
+    <value>Quitar los constructores predeterminados de vacío</value>
   </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Unstarted</value>
+  <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
+    <value>Reemplazar 'delegate-class(xxx) nuevo' con 'xxx'</value>
   </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+  <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
+    <value>Mostrar ocultado compilador genera tipos y métodos</value>
   </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; 没有异常消息 &gt;"</value>
+  <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
+    <value>Comentarios de operación ver IL</value>
   </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>函数求值</value>
+  <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
+    <value>Mostrar IL bytes de instrucciones</value>
   </data>
-  <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Native Transition</value>
+  <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
+    <value>Mostrar números de línea y nombres de archivos si está disponible</value>
   </data>
-  <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
-    <value>This runtime doesn't support creating generic methods</value>
+  <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
+    <value>Mostrar fichas, RVAs y compensaciones de archivo</value>
+  </data>
+  <data name="DecompilerSettings_ShowXMLDocComments" xml:space="preserve">
+    <value>Mostrar la documentación XML en código descompilado</value>
+  </data>
+  <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
+    <value>Atributos personalizados tipo</value>
+  </data>
+  <data name="DecompilerSettings_SortMethods" xml:space="preserve">
+    <value>Ordenar los métodos, campos, propiedades, eventos y tipos</value>
+  </data>
+  <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
+    <value>Coloque las directivas 'System' primero al ordenar usos</value>
+  </data>
+  <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
+    <value>Agregue el modificador 'internal' a tipos</value>
+  </data>
+  <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
+    <value>Utilice nombres de variables de símbolos de depuración, si está disponible</value>
+  </data>
+  <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
+    <value>Miembros de la orden en orden de código fuente</value>
   </data>
 </root>

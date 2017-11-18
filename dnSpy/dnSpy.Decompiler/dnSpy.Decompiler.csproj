@@ -108,13 +108,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Decompiler.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.de.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.es-ES.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">

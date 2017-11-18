@@ -43,3 +43,9 @@ German:
 
 	patricksadowski
 	li0nsar3c00l
+
+Spanish:
+
+	Isidro Padilla
+	Phid
+	lemalc

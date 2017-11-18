@@ -92,12 +92,12 @@
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Decompiler.ILSpy.Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.de.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.es-ES.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

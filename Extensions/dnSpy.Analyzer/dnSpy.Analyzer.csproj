@@ -118,12 +118,12 @@
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Analyzer.Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.de.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.es-ES.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

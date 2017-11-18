@@ -156,4 +156,55 @@
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Отладчик ({0})</value>
   </data>
+  <data name="Error_CouldNotFindFile" xml:space="preserve">
+    <value>Could not find {0}</value>
+  </data>
+  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
+    <value>Couldn't connect to the debugged process</value>
+  </data>
+  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
+    <value>Could not find the debugged process</value>
+  </data>
+  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
+    <value>The connection to the debugged process was unexpectedly closed</value>
+  </data>
+  <data name="Thread_UserState_Aborted" xml:space="preserve">
+    <value>Aborted</value>
+  </data>
+  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
+    <value>AbortRequested</value>
+  </data>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>Фоновый</value>
+  </data>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>Остановлен</value>
+  </data>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>Запрос останова</value>
+  </data>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>Приостановлен</value>
+  </data>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>Запрос приостановки</value>
+  </data>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>Незапущен</value>
+  </data>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>WaitSleepJoin</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>«&lt;сообщение без исключения&gt;»</value>
+  </data>
+  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
+    <value>Вычисление функции</value>
+  </data>
+  <data name="StackFrame_NativeTransition" xml:space="preserve">
+    <value>Native Transition</value>
+  </data>
+  <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
+    <value>This runtime doesn't support creating generic methods</value>
+  </data>
 </root>

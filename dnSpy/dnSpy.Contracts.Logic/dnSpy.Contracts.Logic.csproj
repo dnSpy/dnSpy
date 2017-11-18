@@ -132,13 +132,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Contracts.Logic.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.de.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.es-ES.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

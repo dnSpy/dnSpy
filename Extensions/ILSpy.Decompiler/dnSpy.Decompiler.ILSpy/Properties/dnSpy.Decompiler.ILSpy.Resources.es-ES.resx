@@ -117,94 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>参数(_R)</value>
+  <data name="CSharpDecompilerSettingsTabName" xml:space="preserve">
+    <value>C# / VB</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>程序集(_A)</value>
+  <data name="DecompilationOrder_Events" xml:space="preserve">
+    <value>Eventos</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>中断于(_B)</value>
+  <data name="DecompilationOrder_Fields" xml:space="preserve">
+    <value>Campos</value>
   </data>
-  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>端口</value>
+  <data name="DecompilationOrder_Methods" xml:space="preserve">
+    <value>Métodos</value>
   </data>
-  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>连接</value>
+  <data name="DecompilationOrder_NestedTypes" xml:space="preserve">
+    <value>Tipos Anidados</value>
   </data>
-  <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>IP 地址</value>
+  <data name="DecompilationOrder_Properties" xml:space="preserve">
+    <value>Propiedades</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>工作目录(_W)</value>
-  </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>创建进程</value>
-  </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>不要中断</value>
-  </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>入口点</value>
-  </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>文件不存在</value>
-  </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>缺少文件名</value>
+  <data name="ILDecompilerSettingsTabName" xml:space="preserve">
+    <value>IL</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>调试器 ({0})</value>
-  </data>
-  <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>Could not find {0}</value>
-  </data>
-  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>Couldn't connect to the debugged process</value>
-  </data>
-  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>Could not find the debugged process</value>
-  </data>
-  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>The connection to the debugged process was unexpectedly closed</value>
-  </data>
-  <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Aborted</value>
-  </data>
-  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>AbortRequested</value>
-  </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Background</value>
-  </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Stopped</value>
-  </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
-  </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspended</value>
-  </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>SuspendRequested</value>
-  </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Unstarted</value>
-  </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
-  </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; 没有异常消息 &gt;"</value>
-  </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>函数求值</value>
-  </data>
-  <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Native Transition</value>
-  </data>
-  <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
-    <value>This runtime doesn't support creating generic methods</value>
+    <value>Decompilador ILSpy</value>
   </data>
 </root>

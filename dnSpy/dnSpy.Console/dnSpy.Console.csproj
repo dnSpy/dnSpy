@@ -67,13 +67,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Console.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.de.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Console.Resources.es-ES.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\dnSpy\App.config">

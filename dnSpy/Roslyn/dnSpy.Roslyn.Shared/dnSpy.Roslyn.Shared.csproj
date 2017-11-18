@@ -239,13 +239,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Roslyn.Shared.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.de.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.es-ES.resx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Intellisense\QuickInfo\InformationQuickInfoContentControl.xaml">

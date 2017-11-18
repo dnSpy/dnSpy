@@ -117,94 +117,100 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>参数(_R)</value>
+  <data name="ClassesToolTip" xml:space="preserve">
+    <value>Clases</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>程序集(_A)</value>
+  <data name="CompletionSet_All" xml:space="preserve">
+    <value>Todos</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>中断于(_B)</value>
+  <data name="ConstantsToolTip" xml:space="preserve">
+    <value>Constantes</value>
   </data>
-  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>端口</value>
+  <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
+    <value>Expresión ha sido evaluado y no tiene ningún valor</value>
   </data>
-  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>连接</value>
+  <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
+    <value>Miembros compartidos</value>
   </data>
-  <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>IP 地址</value>
+  <data name="DebuggerVarsWindow_Empty_PropertyName" xml:space="preserve">
+    <value>Vacío</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>工作目录(_W)</value>
+  <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
+    <value>Error</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>创建进程</value>
+  <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
+    <value>Ampliar la vista de resultados a enumerar el IEnumerable</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>不要中断</value>
+  <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
+    <value>Miembros de instancia</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>入口点</value>
+  <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
+    <value>Vista sin editar</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>文件不存在</value>
+  <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
+    <value>Vistas de Resultado</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>缺少文件名</value>
+  <data name="DebuggerVarsWindow_ResultsView_NoResults" xml:space="preserve">
+    <value>Enumeración no produjo ningún resultado</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>调试器 ({0})</value>
+  <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
+    <value>Miembros compartidos</value>
   </data>
-  <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>Could not find {0}</value>
+  <data name="DelegatesToolTip" xml:space="preserve">
+    <value>Delegados</value>
   </data>
-  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>Couldn't connect to the debugged process</value>
+  <data name="EnumsToolTip" xml:space="preserve">
+    <value>Enumeraciones</value>
   </data>
-  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>Could not find the debugged process</value>
+  <data name="EventsToolTip" xml:space="preserve">
+    <value>Eventos</value>
   </data>
-  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>The connection to the debugged process was unexpectedly closed</value>
+  <data name="ExtensionMethodsToolTip" xml:space="preserve">
+    <value>Métodos de extensión</value>
   </data>
-  <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Aborted</value>
+  <data name="FieldsToolTip" xml:space="preserve">
+    <value>Campos</value>
   </data>
-  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>AbortRequested</value>
+  <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
+    <value>Expresión compilada lanzó una excepción: {0}</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Background</value>
+  <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
+    <value>Expresión no es válida</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Stopped</value>
+  <data name="InterfacesToolTip" xml:space="preserve">
+    <value>Interfaces</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+  <data name="KeywordsToolTip" xml:space="preserve">
+    <value>Palabras Claves</value>
   </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspended</value>
+  <data name="LocalsAndParametersToolTip" xml:space="preserve">
+    <value>Locales y los parámetros</value>
   </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>SuspendRequested</value>
+  <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
+    <value>{0} devuelto</value>
   </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Unstarted</value>
+  <data name="LocalsWindow_TypeVariables" xml:space="preserve">
+    <value>Tipo de variables</value>
   </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+  <data name="MethodsToolTip" xml:space="preserve">
+    <value>Métodos</value>
   </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; 没有异常消息 &gt;"</value>
+  <data name="ModulesToolTip" xml:space="preserve">
+    <value>Módulos</value>
   </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>函数求值</value>
+  <data name="NamespacesToolTip" xml:space="preserve">
+    <value>Espacios de nombres</value>
   </data>
-  <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Native Transition</value>
+  <data name="PropertiesToolTip" xml:space="preserve">
+    <value>Propiedades</value>
   </data>
-  <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
-    <value>This runtime doesn't support creating generic methods</value>
+  <data name="SnippetsToolTip" xml:space="preserve">
+    <value>Fragmento</value>
+  </data>
+  <data name="StructuresToolTip" xml:space="preserve">
+    <value>Estructuras</value>
+  </data>
+  <data name="SystemCoreDllNotLoaded" xml:space="preserve">
+    <value>Resultados de la visión requiere {0} para hacer referencia a</value>
   </data>
 </root>
