@@ -85,6 +85,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		SafeHandle hProcess_debuggee;
 		volatile int suspendCount;
 		readonly List<PendingMessage> pendingMessages;
+		// The thrown exception. The mono debugger agent keeps it alive until Resume() is called
+		ObjectMirror thrownException;
 
 		static DbgEngineImpl() => ThreadMirror.NativeTransitions = true;
 
@@ -489,15 +491,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var ee = (ExceptionEvent)evt;
+					thrownException = ee.Exception;
+					if (ee.TryGetRequest() == uncaughtRequest)
+						isUnhandledException = true;
 					SendMessage(new DelegatePendingMessage(true, () => {
 						var req = ee.TryGetRequest() as ExceptionEventRequest;
 						DbgExceptionEventFlags exFlags;
 						if (req == caughtRequest)
 							exFlags = DbgExceptionEventFlags.FirstChance;
-						else if (req == uncaughtRequest) {
+						else if (req == uncaughtRequest)
 							exFlags = DbgExceptionEventFlags.SecondChance | DbgExceptionEventFlags.Unhandled;
-							isUnhandledException = true;
-						}
 						else {
 							Debug.Fail("Unknown exception request");
 							exFlags = DbgExceptionEventFlags.FirstChance;
@@ -540,12 +543,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		DbgModule TryGetModule(ThreadMirror thread) {
-			return null;//TODO:
+			var frames = thread.GetFrames();
+			if (frames.Length == 0)
+				return null;
+			return TryGetModule(frames[0].Method?.DeclaringType.Module);
 		}
 
-		static string TryGetExceptionName(ObjectMirror exObj) {
-			return exObj.Type.FullName;//TODO:
-		}
+		static string TryGetExceptionName(ObjectMirror exObj) => exObj.Type.FullName;
 
 		DbgEngineAppDomain TryGetEngineAppDomain(AppDomainMirror monoAppDomain) {
 			if (monoAppDomain == null)
@@ -824,6 +828,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		void ResumeCore() {
 			debuggerThread.VerifyAccess();
 			while (suspendCount > 0) {
+				thrownException = null;
 				vm.Resume();
 				DecrementSuspendCount();
 			}
@@ -866,6 +871,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		public override DbgEngineStepper CreateStepper(DbgThread thread) {
 			throw new NotImplementedException();//TODO:
+		}
+
+		internal DbgDotNetValue TryGetExceptionValue() {
+			debuggerThread.VerifyAccess();
+			var exValue = thrownException;
+			if (exValue == null)
+				return null;
+			var reflectionAppDomain = TryGetEngineAppDomain(exValue.Domain)?.AppDomain.GetReflectionAppDomain();
+			Debug.Assert(reflectionAppDomain != null);
+			if (reflectionAppDomain == null)
+				return null;
+			var exceptionType = new ReflectionTypeCreator(this, reflectionAppDomain).Create(exValue.Type);
+			var valueLocation = new NoValueLocation(exceptionType, exValue);
+			return CreateDotNetValue_MonoDebug(valueLocation);
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {

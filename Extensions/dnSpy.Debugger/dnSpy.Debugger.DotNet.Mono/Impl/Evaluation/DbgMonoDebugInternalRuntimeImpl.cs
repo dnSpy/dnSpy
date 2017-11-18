@@ -547,10 +547,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			cancellationToken.ThrowIfCancellationRequested();
 			if (id != DbgDotNetRuntimeConstants.ExceptionId)
 				return null;
-			var corException = TryGetException(frame);
-			if (corException == null)
-				return null;
-			return null;//TODO:
+			return engine.TryGetExceptionValue();
 		}
 
 		public DbgDotNetValue GetStowedException(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
@@ -565,11 +562,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValue GetStowedExceptionCore(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			return null;
-		}
-
-		object TryGetException(DbgStackFrame frame) {
-			Dispatcher.VerifyAccess();
-			return null;//TODO:
 		}
 
 		public DbgDotNetValue GetReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
