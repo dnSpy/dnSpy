@@ -50,6 +50,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		public DbgDotNetRawValue Create(Value value, DmdType type) => Create(value, type, 0);
 
 		DbgDotNetRawValue Create(Value value, DmdType type, int recursionCounter) {
+			if (type.IsByRef)
+				type = type.GetElementType();
 			if (recursionCounter > 2 || value == null)
 				return GetRawValueDefault(value, type);
 

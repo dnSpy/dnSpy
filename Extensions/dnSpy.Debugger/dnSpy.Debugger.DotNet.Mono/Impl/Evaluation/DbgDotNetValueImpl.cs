@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValue Dereference_MonoDebug() {
 			SD.Debug.Assert(Type.IsByRef && !IsNullByRef);
 			engine.VerifyMonoDebugThread();
-			return null;//TODO:
+			return engine.CreateDotNetValue_MonoDebug(valueLocation.Dereference());
 		}
 
 		public override string StoreIndirect(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {

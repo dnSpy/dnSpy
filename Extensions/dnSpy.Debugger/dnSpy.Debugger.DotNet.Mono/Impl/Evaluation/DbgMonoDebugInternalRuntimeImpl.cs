@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -630,6 +631,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var local = locals[(int)index];
 				var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
 				var type = ToReflectionType(local.Type, reflectionAppDomain);
+
+				var method = GetFrameMethodCore(context, frame, cancellationToken);
+				type = AddByRefIfNeeded(type, GetCachedMethodBody(method).LocalVariables, index);
+
 				var valueLocation = new LocalValueLocation(type, ilFrame, (int)index);
 				var dnValue = engine.CreateDotNetValue_MonoDebug(valueLocation);
 				return new DbgDotNetValueResult(dnValue, valueIsException: false);
@@ -640,6 +645,37 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetValueResult(ErrorHelper.InternalError);
 			}
+		}
+
+		sealed class CachedMethodBodyState {
+			public readonly DmdMethodBody Body;
+			public CachedMethodBodyState(DmdMethodBody body) => Body = body;
+		}
+		static DmdMethodBody GetCachedMethodBody(DmdMethodBase method) {
+			if ((object)method == null)
+				return null;
+			if (method.TryGetData(out CachedMethodBodyState state))
+				return state.Body;
+			return CreateCachedMethodBody(method);
+
+			DmdMethodBody CreateCachedMethodBody(DmdMethodBase method2) =>
+				method2.GetOrCreateData(() => new CachedMethodBodyState(method2.GetMethodBody())).Body;
+		}
+
+		static DmdType AddByRefIfNeeded(DmdType type, ReadOnlyCollection<DmdLocalVariableInfo> locals, uint index) {
+			if (locals == null || index >= (uint)locals.Count)
+				return type;
+			if (locals[(int)index].LocalType.IsByRef)
+				return type.MakeByRefType();
+			return type;
+		}
+
+		static DmdType AddByRefIfNeeded(DmdType type, ReadOnlyCollection<DmdType> types, uint index) {
+			if (types == null || index >= (uint)types.Count)
+				return type;
+			if (types[(int)index].IsByRef)
+				return type.MakeByRefType();
+			return type;
 		}
 
 		public DbgDotNetValueResult GetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
@@ -670,7 +706,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if ((uint)index >= (uint)parameters.Length)
 					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
 				var parameter = parameters[(int)index];
+
 				type = ToReflectionType(parameter.ParameterType, reflectionAppDomain);
+				var method = GetFrameMethodCore(context, frame, cancellationToken);
+				type = AddByRefIfNeeded(type, method?.GetMethodSignature().GetParameterTypes(), index);
+
 				var valueLocation = new ArgumentValueLocation(type, ilFrame, (int)index);
 				return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(valueLocation), valueIsException: false);
 			}

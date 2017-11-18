@@ -24,6 +24,13 @@ using Mono.Debugger.Soft;
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	static class MonoValueTypeCreator {
 		public static DmdType CreateType(DbgEngineImpl engine, Value value, DmdType slotType) {
+			var res = CreateTypeCore(engine, value, slotType);
+			if (slotType.IsByRef && !res.IsByRef)
+				res = res.MakeByRefType();
+			return res;
+		}
+
+		static DmdType CreateTypeCore(DbgEngineImpl engine, Value value, DmdType slotType) {
 			var reflectionAppDomain = slotType.AppDomain;
 			switch (value) {
 			case PrimitiveValue pv:
