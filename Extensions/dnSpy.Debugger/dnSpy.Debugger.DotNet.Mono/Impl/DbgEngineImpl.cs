@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
 		readonly DbgManager dbgManager;
 		readonly DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier;
-		readonly DmdRuntime dmdRuntime;
+		DmdRuntime dmdRuntime;
 		readonly DmdDispatcherImpl dmdDispatcher;
 		internal DbgRawMetadataService RawMetadataService { get; }
 		readonly MonoDebugRuntimeKind monoDebugRuntimeKind;
@@ -110,7 +110,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			dbgModuleMemoryRefreshedNotifier = deps.DbgModuleMemoryRefreshedNotifier;
 			debuggerThread = new DebuggerThread("MonoDebug");
 			debuggerThread.CallDispatcherRun();
-			dmdRuntime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			dmdDispatcher = new DmdDispatcherImpl(this);
 			RawMetadataService = deps.RawMetadataService;
 			this.monoDebugRuntimeKind = monoDebugRuntimeKind;
@@ -764,6 +763,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public override DbgInternalRuntime CreateInternalRuntime(DbgRuntime runtime) {
 			if (internalRuntime != null)
 				throw new InvalidOperationException();
+			dmdRuntime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), runtime.Process.PointerSize == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			return internalRuntime = new DbgMonoDebugInternalRuntimeImpl(this, runtime, dmdRuntime, monoDebugRuntimeKind);
 		}
 
