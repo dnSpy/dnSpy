@@ -378,7 +378,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 			Debug.Assert(length > 0);
 			var arrayValue = (ArrayMirror)res.Value;
-			var addr = DbgDotNetValueImpl.GetArrayAddress(arrayValue, elementType);
+			var addr = DbgDotNetValueImpl.GetArrayAddress(arrayValue, elementType, engine);
 			if (addr == null)
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 

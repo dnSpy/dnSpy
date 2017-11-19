@@ -32,6 +32,29 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
+		internal int? OffsetToStringData => objectConstants?.OffsetToStringData;
+		internal int? OffsetToArrayData => objectConstants?.OffsetToArrayData;
+		ObjectConstants objectConstants;
+		bool canInitializeObjectConstants;
+
+		void InitializeObjectConstants_MonoDebug() {
+			debuggerThread.VerifyAccess();
+			if (!canInitializeObjectConstants)
+				return;
+			if (objectConstants != null)
+				return;
+			if (objectFactory == null)
+				return;
+
+			foreach (var thread in vm.GetThreads()) {
+				if (thread.Name == FinalizerName)
+					continue;
+				var factory = new ObjectConstantsFactory(objectFactory.Process, thread);
+				if (factory.TryCreate(out objectConstants))
+					break;
+			}
+		}
+
 		internal DbgDotNetValue CreateDotNetValue_MonoDebug(DmdAppDomain reflectionAppDomain, Value value) {
 			debuggerThread.VerifyAccess();
 			DmdType type;

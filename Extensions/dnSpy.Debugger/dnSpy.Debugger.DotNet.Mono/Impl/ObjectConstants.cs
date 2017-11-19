@@ -18,29 +18,122 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using dnSpy.Contracts.Debugger;
+using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
-	static class ObjectConstants {
-		const int OffsetToStringData_32 = 12;
-		const int OffsetToStringData_64 = 20;
+	struct ObjectConstantsFactory {
+		const int FuncEvalTimeoutMilliseconds = 5000;
+		readonly DbgProcess process;
+		readonly ThreadMirror thread;
 
-		const int OffsetToArrayData_32 = 16;
-		const int OffsetToArrayData_64 = 32;
-
-		public static int GetOffsetToStringData(int pointerSize) {
-			if (pointerSize == 4)
-				return OffsetToStringData_32;
-			if (pointerSize == 8)
-				return OffsetToStringData_64;
-			throw new InvalidOperationException();
+		public ObjectConstantsFactory(DbgProcess process, ThreadMirror thread) {
+			this.process = process;
+			this.thread = thread;
 		}
 
-		public static int GetOffsetToArrayData(int pointerSize) {
-			if (pointerSize == 4)
-				return OffsetToArrayData_32;
-			if (pointerSize == 8)
-				return OffsetToArrayData_64;
-			throw new InvalidOperationException();
+		public bool TryCreate(out ObjectConstants objectConstants) {
+			try {
+				var offsetToStringData = GetOffsetToStringData();
+				if (offsetToStringData != null) {
+					var offsetToArrayData = GetOffsetToArrayData();
+					if (offsetToArrayData != null) {
+						objectConstants = new ObjectConstants(offsetToStringData, offsetToArrayData);
+						return true;
+					}
+				}
+			}
+			catch {
+			}
+			objectConstants = null;
+			return false;
+		}
+
+		Value Call(MethodMirror method, IList<Value> arguments) {
+			const InvokeOptions invokeOptions = InvokeOptions.DisableBreakpoints | InvokeOptions.SingleThreaded | InvokeOptions.Virtual;
+			var asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, invokeOptions, null, null);
+			if (asyncRes.AsyncWaitHandle.WaitOne(FuncEvalTimeoutMilliseconds))
+				return method.DeclaringType.EndInvokeMethodWithResult(asyncRes).Result;
+			asyncRes.Abort();
+			return null;
+		}
+
+		int? GetOffsetToStringData() {
+			var type = thread.Domain.Corlib.GetType("System.Runtime.CompilerServices.RuntimeHelpers");
+			if (type == null)
+				return null;
+			var method = type.GetMethod("get_" + nameof(System.Runtime.CompilerServices.RuntimeHelpers.OffsetToStringData));
+			if (method == null)
+				return null;
+			var res = Call(method, Array.Empty<Value>());
+			return (res as PrimitiveValue)?.Value as int?;
+		}
+
+		int? GetOffsetToArrayData() {
+			var byteType = thread.Domain.Corlib.GetType("System.Byte");
+			var arrayType = thread.Domain.Corlib.GetType("System.Array");
+			var typeType = thread.Domain.Corlib.GetType("System.Type");
+			if (byteType == null || arrayType == null || typeType == null)
+				return null;
+			var createInstanceMethod = GetCreateInstance(arrayType);
+			if (createInstanceMethod == null)
+				return null;
+			var args = new Value[2] {
+				byteType.GetTypeObject(),
+				new PrimitiveValue(thread.VirtualMachine, ElementType.I4, randomData.Length),
+			};
+			var arrayMirror = Call(createInstanceMethod, args) as ArrayMirror;
+			if (arrayMirror == null)
+				return null;
+
+			var threadTmp = thread;
+			arrayMirror.SetValues(0, randomData.Select(a => new PrimitiveValue(threadTmp.VirtualMachine, ElementType.U1, a)).ToArray());
+			var arrayData = process.ReadMemory((ulong)arrayMirror.Address, randomData.Length + 0x80);
+			var res = GetIndex(arrayData, randomData);
+			arrayMirror.SetValues(0, randomData.Select(a => new PrimitiveValue(threadTmp.VirtualMachine, ElementType.U1, (byte)0)).ToArray());
+			return res;
+		}
+		static readonly byte[] randomData = new byte[] { 0x4A, 0xA3, 0x6F, 0x96, 0xB3, 0x8F, 0x4A, 0x5A, 0xB5, 0xD1, 0x8B, 0x76, 0x06, 0x37, 0xB6, 0x67 };
+
+		static int? GetIndex(byte[] data, byte[] pattern) {
+			for (int i = 0; i + pattern.Length <= data.Length; i++) {
+				bool match = true;
+				for (int j = 0; j < pattern.Length; j++) {
+					if (data[i + j] != pattern[j]) {
+						match = false;
+						break;
+					}
+				}
+				if (match)
+					return i;
+			}
+			return null;
+		}
+
+		MethodMirror GetCreateInstance(TypeMirror arrayType) {
+			foreach (var method in arrayType.GetMethods()) {
+				if (method.Name != nameof(Array.CreateInstance))
+					continue;
+				var ps = method.GetParameters();
+				if (ps.Length != 2)
+					continue;
+				if (ps[0].ParameterType.FullName != "System.Type" || ps[1].ParameterType.FullName != "System.Int32")
+					continue;
+				return method;
+			}
+			return null;
+		}
+	}
+
+	sealed class ObjectConstants {
+		public int? OffsetToStringData { get; }
+		public int? OffsetToArrayData { get; }
+
+		public ObjectConstants(int? offsetToStringData, int? offsetToArrayData) {
+			OffsetToStringData = offsetToStringData;
+			OffsetToArrayData = offsetToArrayData;
 		}
 	}
 }

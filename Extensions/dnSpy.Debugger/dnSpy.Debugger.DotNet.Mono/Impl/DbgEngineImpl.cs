@@ -338,6 +338,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				caughtRequest = vm.CreateExceptionRequest(null, true, false);
 				uncaughtRequest.Enable();
 				caughtRequest.Enable();
+				methodEntryEventRequest = vm.CreateMethodEntryRequest();
+				methodEntryEventRequest.Enable();
 
 				var eventThread = new Thread(MonoEventThread);
 				eventThread.IsBackground = true;
@@ -362,6 +364,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 		ExceptionEventRequest uncaughtRequest;
 		ExceptionEventRequest caughtRequest;
+		MethodEntryEventRequest methodEntryEventRequest;
 
 		void MonoEventThread() {
 			var vm = this.vm;
@@ -393,8 +396,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		void IncrementSuspendCount() {
 			debuggerThread.VerifyAccess();
 			suspendCount++;
-			if (suspendCount == 1)
+			if (suspendCount == 1) {
 				UpdateThreadProperties_MonoDebug();
+				InitializeObjectConstants_MonoDebug();
+			}
 		}
 
 		void DecrementSuspendCount() {
@@ -450,6 +455,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					IncrementSuspendCount();
 					var adue = (AppDomainUnloadEvent)evt;
 					SendMessage(new DelegatePendingMessage(true, () => DestroyAppDomain(adue.Domain)));
+					break;
+
+				case EventType.MethodEntry:
+					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
+					Debug.Assert(evt.TryGetRequest() == methodEntryEventRequest);
+					if (evt.TryGetRequest() == methodEntryEventRequest) {
+						methodEntryEventRequest.Disable();
+						// Func-eval doesn't work at first assembly load event for some reason. Should work now though.
+						canInitializeObjectConstants = true;
+						IncrementSuspendCount();
+						ResumeCore();
+					}
 					break;
 
 				case EventType.AssemblyLoad:

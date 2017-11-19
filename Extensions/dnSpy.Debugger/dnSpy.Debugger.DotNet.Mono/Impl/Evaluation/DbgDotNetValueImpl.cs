@@ -214,24 +214,26 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return null;//TODO:
 		}
 
-		internal static DbgRawAddressValue? GetArrayAddress(ArrayMirror v, DmdType elementType) {
+		internal static DbgRawAddressValue? GetArrayAddress(ArrayMirror v, DmdType elementType, DbgEngineImpl engine) {
+			var offsetToArrayData = engine.OffsetToArrayData;
+			if (offsetToArrayData == null)
+				return null;
 			var addr = (ulong)v.Address;
 			if (addr == 0)
 				return null;
 			var arrayCount = v.Length;
 			if (arrayCount == 0)
 				return new DbgRawAddressValue(addr, 0);
-			int pointerSize = elementType.AppDomain.Runtime.PointerSize;
-			var startAddr = addr + (uint)ObjectConstants.GetOffsetToArrayData(pointerSize);
-			if (!TryGetSize(elementType, pointerSize, out var elemSize))
+			var startAddr = addr + (uint)offsetToArrayData.Value;
+			if (!TryGetSize(elementType, out var elemSize))
 				return null;
 			ulong totalSize = (uint)elemSize * (ulong)(uint)arrayCount;
 			return new DbgRawAddressValue(startAddr, totalSize);
 		}
 
-		static bool TryGetSize(DmdType type, int pointerSize, out int size) {
+		static bool TryGetSize(DmdType type, out int size) {
 			if (!type.IsValueType || type.IsPointer || type.IsFunctionPointer || type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr) {
-				size = pointerSize;
+				size = type.AppDomain.Runtime.PointerSize;
 				return true;
 			}
 
