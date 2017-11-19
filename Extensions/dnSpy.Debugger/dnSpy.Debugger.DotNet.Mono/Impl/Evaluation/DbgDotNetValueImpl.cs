@@ -214,6 +214,44 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return null;//TODO:
 		}
 
+		internal static DbgRawAddressValue? GetArrayAddress(ArrayMirror v, DmdType elementType) {
+			var addr = (ulong)v.Address;
+			if (addr == 0)
+				return null;
+			var arrayCount = v.Length;
+			if (arrayCount == 0)
+				return new DbgRawAddressValue(addr, 0);
+			int pointerSize = elementType.AppDomain.Runtime.PointerSize;
+			var startAddr = addr + (uint)ObjectConstants.GetOffsetToArrayData(pointerSize);
+			if (!TryGetSize(elementType, pointerSize, out var elemSize))
+				return null;
+			ulong totalSize = (uint)elemSize * (ulong)(uint)arrayCount;
+			return new DbgRawAddressValue(startAddr, totalSize);
+		}
+
+		static bool TryGetSize(DmdType type, int pointerSize, out int size) {
+			if (!type.IsValueType || type.IsPointer || type.IsFunctionPointer || type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr) {
+				size = pointerSize;
+				return true;
+			}
+
+			switch (DmdType.GetTypeCode(type)) {
+			case TypeCode.Boolean:		size = 1; return true;
+			case TypeCode.Char:			size = 2; return true;
+			case TypeCode.SByte:		size = 1; return true;
+			case TypeCode.Byte:			size = 1; return true;
+			case TypeCode.Int16:		size = 2; return true;
+			case TypeCode.UInt16:		size = 2; return true;
+			case TypeCode.Int32:		size = 4; return true;
+			case TypeCode.UInt32:		size = 4; return true;
+			case TypeCode.Int64:		size = 8; return true;
+			case TypeCode.UInt64:		size = 8; return true;
+			case TypeCode.Single:		size = 4; return true;
+			case TypeCode.Double:		size = 8; return true;
+			default:					size = 0; return false;
+			}
+		}
+
 		public override DbgDotNetRawValue GetRawValue() => rawValue;
 
 		public override void Dispose() { }//TODO:

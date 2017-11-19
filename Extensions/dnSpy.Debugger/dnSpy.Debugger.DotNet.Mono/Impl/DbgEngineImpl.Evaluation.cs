@@ -32,6 +32,21 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
+		internal DbgDotNetValue CreateDotNetValue_MonoDebug(DmdAppDomain reflectionAppDomain, Value value) {
+			debuggerThread.VerifyAccess();
+			DmdType type;
+			if (value is PrimitiveValue pv)
+				type = MonoValueTypeCreator.CreateType(this, value, reflectionAppDomain.System_Object);
+			else if (value is StructMirror sm)
+				type = new ReflectionTypeCreator(this, reflectionAppDomain).Create(sm.Type);
+			else {
+				Debug.Assert(value is ObjectMirror);
+				type = new ReflectionTypeCreator(this, reflectionAppDomain).Create(((ObjectMirror)value).Type);
+			}
+			var valueLocation = new NoValueLocation(type, value);
+			return CreateDotNetValue_MonoDebug(valueLocation);
+		}
+
 		internal DbgDotNetValue CreateDotNetValue_MonoDebug(ValueLocation valueLocation) {
 			debuggerThread.VerifyAccess();
 			var value = valueLocation.Load();
@@ -122,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			var monoThread = GetThread(thread);
 			try {
 				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
-					var converter = new EvalArgumentConverter(this, monoThread.Domain, method.AppDomain);
+					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, method.AppDomain);
 
 					var paramTypes = GetAllMethodParameterTypes(method.GetMethodSignature());
 					if (paramTypes.Count != arguments.Length)
@@ -189,6 +204,36 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			list.AddRange(sig.GetParameterTypes());
 			list.AddRange(sig.GetVarArgsParameterTypes());
 			return list;
+		}
+
+		internal DbgDotNetCreateValueResult CreateValue_MonoDebug(DbgEvaluationContext context, DbgThread thread, object value, CancellationToken cancellationToken) {
+			debuggerThread.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
+			if (value is DbgDotNetValueImpl)
+				return new DbgDotNetCreateValueResult((DbgDotNetValueImpl)value);
+			var tmp = CheckFuncEval(context);
+			if (tmp != null)
+				return new DbgDotNetCreateValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());
+
+			var monoThread = GetThread(thread);
+			try {
+				var reflectionAppDomain = thread.AppDomain.GetReflectionAppDomain();
+				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
+					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
+					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
+					if (evalRes.ErrorMessage != null)
+						return new DbgDotNetCreateValueResult(evalRes.ErrorMessage);
+
+					var resultValue = CreateDotNetValue_MonoDebug(reflectionAppDomain, evalRes.Value);
+					return new DbgDotNetCreateValueResult(resultValue);
+				}
+			}
+			catch (TimeoutException) {
+				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return new DbgDotNetCreateValueResult(ErrorHelper.InternalError);
+			}
 		}
 	}
 }

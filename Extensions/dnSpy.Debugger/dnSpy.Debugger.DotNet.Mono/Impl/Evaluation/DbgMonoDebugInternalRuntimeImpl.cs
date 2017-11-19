@@ -326,8 +326,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				}
 			}
 			if (value is StructMirror sm) {
-				foreach (var v in sm.Fields) {
-					if (!IsZero(v, recursionCounter + 1))
+				foreach (var f in sm.Fields) {
+					if (!IsZero(f, recursionCounter + 1))
 						return false;
 				}
 				return true;
@@ -633,7 +633,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var type = ToReflectionType(local.Type, reflectionAppDomain);
 
 				var method = GetFrameMethodCore(context, frame, cancellationToken);
-				type = AddByRefIfNeeded(type, GetCachedMethodBody(method).LocalVariables, index);
+				type = AddByRefIfNeeded(type, GetCachedMethodBody(method)?.LocalVariables, index);
 
 				var valueLocation = new LocalValueLocation(type, ilFrame, (int)index);
 				var dnValue = engine.CreateDotNetValue_MonoDebug(valueLocation);
@@ -663,6 +663,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		static DmdType AddByRefIfNeeded(DmdType type, ReadOnlyCollection<DmdLocalVariableInfo> locals, uint index) {
+			if (type.IsByRef)
+				return type;
 			if (locals == null || index >= (uint)locals.Count)
 				return type;
 			if (locals[(int)index].LocalType.IsByRef)
@@ -671,6 +673,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		static DmdType AddByRefIfNeeded(DmdType type, ReadOnlyCollection<DmdType> types, uint index) {
+			if (type.IsByRef)
+				return type;
 			if (types == null || index >= (uint)types.Count)
 				return type;
 			if (types[(int)index].IsByRef)
@@ -777,7 +781,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetCreateValueResult CreateValueCore(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
-				return new DbgDotNetCreateValueResult("NYI");//TODO:
+				return engine.CreateValue_MonoDebug(context, frame.Thread, value, cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetCreateValueResult(ErrorHelper.InternalError);
