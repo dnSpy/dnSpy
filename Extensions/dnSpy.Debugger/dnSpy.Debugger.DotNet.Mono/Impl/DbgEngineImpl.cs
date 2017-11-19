@@ -408,6 +408,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		void OnDebuggerEvents(EventSet eventSet) {
+			try {
+				OnDebuggerEventsCore(eventSet);
+			}
+			catch (SocketException) {
+			}
+			catch (VMDisconnectedException) {
+			}
+		}
+
+		void OnDebuggerEventsCore(EventSet eventSet) {
 			debuggerThread.VerifyAccess();
 
 			Debug.Assert(!gotVMDisconnect);
@@ -791,6 +801,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			runtime.GetOrCreateData(() => new RuntimeData(this));
 
 			MonoDebugThread(() => {
+				if (gotVMDisconnect)
+					return;
 				Debug.Assert(vm != null);
 				if (vm != null) {
 					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(vm.RootDomain)));
