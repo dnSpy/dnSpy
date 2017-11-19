@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -57,6 +58,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		internal DbgDotNetValue CreateDotNetValue_MonoDebug(DmdAppDomain reflectionAppDomain, Value value) {
 			debuggerThread.VerifyAccess();
+			if (value == null)
+				return new SyntheticNullValue(reflectionAppDomain.System_Object);
 			DmdType type;
 			if (value is PrimitiveValue pv)
 				type = MonoValueTypeCreator.CreateType(this, value, reflectionAppDomain.System_Object);
@@ -227,6 +230,31 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			list.AddRange(sig.GetParameterTypes());
 			list.AddRange(sig.GetVarArgsParameterTypes());
 			return list;
+		}
+
+		internal DbgDotNetValueResult Box_MonoDebug(DbgEvaluationContext context, DbgThread thread, Value value, DmdType type, CancellationToken cancellationToken) {
+			debuggerThread.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
+			var tmp = CheckFuncEval(context);
+			if (tmp != null)
+				return tmp.Value;
+
+			var monoThread = GetThread(thread);
+			try {
+				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
+					value = ValueUtils.MakePrimitiveValueIfPossible(value, type);
+					var boxedValue = BoxIfNeeded(monoThread.Domain, value, type.AppDomain.System_Object, type);
+					if (boxedValue == null)
+						return new DbgDotNetValueResult(ErrorHelper.InternalError);
+					return new DbgDotNetValueResult(CreateDotNetValue_MonoDebug(type.AppDomain, boxedValue), valueIsException: false);
+				}
+			}
+			catch (TimeoutException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+			}
 		}
 
 		internal DbgDotNetCreateValueResult CreateValue_MonoDebug(DbgEvaluationContext context, DbgThread thread, object value, CancellationToken cancellationToken) {

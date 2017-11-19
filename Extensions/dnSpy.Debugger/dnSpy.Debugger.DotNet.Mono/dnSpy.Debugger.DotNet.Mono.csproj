@@ -76,6 +76,7 @@
     <Compile Include="Impl\Evaluation\MonoValueTypeCreator.cs" />
     <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
     <Compile Include="Impl\Evaluation\ValueLocations.cs" />
+    <Compile Include="Impl\Evaluation\ValueUtils.cs" />
     <Compile Include="Impl\ExceptionUtils.cs" />
     <Compile Include="Impl\FuncEvalFactory.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />

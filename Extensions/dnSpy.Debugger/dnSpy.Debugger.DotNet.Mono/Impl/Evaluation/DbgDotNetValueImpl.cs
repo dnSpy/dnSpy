@@ -24,6 +24,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Debugger.DotNet.Mono.CallStack;
 using Mono.Debugger.Soft;
 using SD = System.Diagnostics;
 
@@ -200,7 +201,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValue Box_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			engine.VerifyMonoDebugThread();
 			cancellationToken.ThrowIfCancellationRequested();
-			return null;//TODO:
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return null;
+			if (!Type.IsValueType)
+				return null;
+			var value = this.value;
+			// Even if it's boxed, box the unboxed value. This code path should only be called if
+			// the compiler thinks it's an unboxed value, so we must make a new boxed value.
+			if (value is ObjectMirror)
+				value = ValueUtils.Unbox((ObjectMirror)value, Type);
+			var res = engine.Box_MonoDebug(context, frame.Thread, value, Type, cancellationToken);
+			if (res.IsNormalResult)
+				return res.Value;
+			res.Value?.Dispose();
+			return null;
 		}
 
 		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) {

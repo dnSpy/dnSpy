@@ -55,6 +55,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (recursionCounter > 2 || value == null)
 				return GetRawValueDefault(value, type);
 
+			if (value is ObjectMirror && type.IsValueType)
+				value = ValueUtils.Unbox((ObjectMirror)value, type);
+
 			switch (value) {
 			case PrimitiveValue pv:
 				Debug.Assert((pv.Type == ElementType.Object) == (pv.Value == null));
