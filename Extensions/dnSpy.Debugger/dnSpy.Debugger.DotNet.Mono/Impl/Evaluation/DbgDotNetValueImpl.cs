@@ -96,7 +96,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		string StoreIndirect_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
 			engine.VerifyMonoDebugThread();
 			cancellationToken.ThrowIfCancellationRequested();
-			return PredefinedEvaluationErrorMessages.InternalDebuggerError;//TODO:
+			if (!Type.IsByRef)
+				return ErrorHelper.InternalError;
+			var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, Type.GetElementType(), cancellationToken);
+			if (res.ErrorMessage != null)
+				return res.ErrorMessage;
+			valueLocation.Store(res.Value);
+			return null;
 		}
 
 		public override bool GetArrayCount(out uint elementCount) {
@@ -171,11 +177,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValue GetArrayElementAt_MonoDebug(uint index) {
 			SD.Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
+			var info = GetArrayElementValueLocation_MonoDebug(index);
+			if (info.errorMessage != null)
+				return null;
+			return engine.CreateDotNetValue_MonoDebug(info.valueLocation);
+		}
+
+		(ArrayElementValueLocation valueLocation, string errorMessage) GetArrayElementValueLocation_MonoDebug(uint index) {
+			SD.Debug.Assert(Type.IsArray);
+			engine.VerifyMonoDebugThread();
 			var arrayMirror = value as ArrayMirror;
 			if (arrayMirror == null)
-				return null;
-			var valueLocation = new ArrayElementValueLocation(Type.GetElementType(), arrayMirror, index);
-			return engine.CreateDotNetValue_MonoDebug(valueLocation);
+				return (null, PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			return (new ArrayElementValueLocation(Type.GetElementType(), arrayMirror, index), null);
 		}
 
 		public override string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
@@ -189,7 +203,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		string SetArrayElementAt_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
 			engine.VerifyMonoDebugThread();
 			cancellationToken.ThrowIfCancellationRequested();
-			return PredefinedEvaluationErrorMessages.InternalDebuggerError;//TODO:
+			var info = GetArrayElementValueLocation_MonoDebug(index);
+			if (info.errorMessage != null)
+				return info.errorMessage;
+			var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, info.valueLocation.Type, cancellationToken);
+			if (res.ErrorMessage != null)
+				return res.ErrorMessage;
+			info.valueLocation.Store(res.Value);
+			return null;
 		}
 
 		public override DbgDotNetValue Box(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {

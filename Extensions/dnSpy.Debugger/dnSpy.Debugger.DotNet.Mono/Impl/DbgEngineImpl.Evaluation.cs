@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -285,6 +284,48 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetCreateValueResult(ErrorHelper.InternalError);
 			}
+		}
+
+		internal DbgCreateMonoValueResult CreateMonoValue_MonoDebug(DbgEvaluationContext context, DbgThread thread, object value, DmdType targetType, CancellationToken cancellationToken) {
+			debuggerThread.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
+			if (value is DbgDotNetValueImpl)
+				return new DbgCreateMonoValueResult(((DbgDotNetValueImpl)value).Value);
+			var tmp = CheckFuncEval(context);
+			if (tmp != null)
+				return new DbgCreateMonoValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());
+
+			var monoThread = GetThread(thread);
+			try {
+				var reflectionAppDomain = thread.AppDomain.GetReflectionAppDomain();
+				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
+					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
+					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
+					if (evalRes.ErrorMessage != null)
+						return new DbgCreateMonoValueResult(evalRes.ErrorMessage);
+					var newValue = BoxIfNeeded(monoThread.Domain, evalRes.Value, targetType, newValueType);
+					return new DbgCreateMonoValueResult(newValue);
+				}
+			}
+			catch (TimeoutException) {
+				return new DbgCreateMonoValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return new DbgCreateMonoValueResult(ErrorHelper.InternalError);
+			}
+		}
+	}
+
+	struct DbgCreateMonoValueResult {
+		public Value Value { get; }
+		public string ErrorMessage { get; }
+		public DbgCreateMonoValueResult(Value value) {
+			Value = value ?? throw new ArgumentNullException(nameof(value));
+			ErrorMessage = null;
+		}
+		public DbgCreateMonoValueResult(string errorMessage) {
+			Value = null;
+			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 		}
 	}
 }

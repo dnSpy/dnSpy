@@ -73,6 +73,7 @@
     <Compile Include="Impl\Evaluation\MemberMirrorUtils.cs" />
     <Compile Include="Impl\Evaluation\MethodCache.cs" />
     <Compile Include="Impl\Evaluation\MonoDebugTypeCreator.cs" />
+    <Compile Include="Impl\Evaluation\MonoValueFactory.cs" />
     <Compile Include="Impl\Evaluation\MonoValueTypeCreator.cs" />
     <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
     <Compile Include="Impl\Evaluation\ValueLocations.cs" />

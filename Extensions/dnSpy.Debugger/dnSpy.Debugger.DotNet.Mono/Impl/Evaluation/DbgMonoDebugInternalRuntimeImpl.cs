@@ -165,55 +165,58 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValueResult LoadFieldCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
-				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
-					return new DbgDotNetValueResult(ErrorHelper.InternalError);
-
-				TypeMirror monoFieldDeclType;
-				var fieldDeclType = field.DeclaringType;
-				if (obj == null) {
-					if (!field.IsStatic)
-						return new DbgDotNetValueResult(ErrorHelper.InternalError);
-
-					if (field.IsLiteral)
-						return CreateSyntheticValue(field.FieldType, field.GetRawConstantValue());
-					else {
-						monoFieldDeclType = GetType(fieldDeclType);
-						var monoField = MemberMirrorUtils.GetMonoField(monoFieldDeclType, field);
-
-						InitializeStaticConstructor(context, frame, ilFrame, fieldDeclType, monoFieldDeclType, cancellationToken);
-						var valueLocation = new StaticFieldValueLocation(field.FieldType, ilFrame.MonoFrame.Thread, monoField);
-						return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(valueLocation), valueIsException: false);
-					}
-				}
-				else {
-					if (field.IsStatic)
-						return new DbgDotNetValueResult(ErrorHelper.InternalError);
-
-					var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
-					monoFieldDeclType = GetType(fieldDeclType);
-					var monoField = MemberMirrorUtils.GetMonoField(monoFieldDeclType, field);
-					ValueLocation valueLocation;
-					switch (objImp.Value) {
-					case ObjectMirror om:
-						valueLocation = new ReferenceTypeFieldValueLocation(field.FieldType, om, monoField);
-						break;
-
-					case StructMirror sm:
-						valueLocation = new ValueTypeFieldValueLocation(field.FieldType, objImp.ValueLocation, sm, monoField);
-						break;
-
-					case PrimitiveValue pv:
-						return new DbgDotNetValueResult("NYI");//TODO:
-
-					default:
-						// Unreachable
-						return new DbgDotNetValueResult(ErrorHelper.InternalError);
-					}
-					return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(valueLocation), valueIsException: false);
-				}
+				var info = GetFieldValueLocationCore(context, frame, obj, field, cancellationToken);
+				if (info.errorMessage != null)
+					return new DbgDotNetValueResult(info.errorMessage);
+				return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(info.valueLocation), valueIsException: false);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+			}
+		}
+
+		(ValueLocation valueLocation, string errorMessage) GetFieldValueLocationCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				return (null, ErrorHelper.InternalError);
+
+			var fieldDeclType = field.DeclaringType;
+			var monoFieldDeclType = GetType(fieldDeclType);
+			if (obj == null) {
+				if (!field.IsStatic)
+					return (null, ErrorHelper.InternalError);
+
+				if (field.IsLiteral) {
+					var monoValue = MonoValueFactory.TryCreateSyntheticValue(monoFieldDeclType.Assembly.Domain, field.GetRawConstantValue()) ??
+						new PrimitiveValue(monoFieldDeclType.VirtualMachine, ElementType.Object, null);
+					return (new NoValueLocation(field.FieldType, monoValue), null);
+				}
+				else {
+					var monoField = MemberMirrorUtils.GetMonoField(monoFieldDeclType, field);
+
+					InitializeStaticConstructor(context, frame, ilFrame, fieldDeclType, monoFieldDeclType, cancellationToken);
+					return (new StaticFieldValueLocation(field.FieldType, ilFrame.MonoFrame.Thread, monoField), null);
+				}
+			}
+			else {
+				if (field.IsStatic)
+					return (null, ErrorHelper.InternalError);
+
+				var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
+				var monoField = MemberMirrorUtils.GetMonoField(monoFieldDeclType, field);
+				switch (objImp.Value) {
+				case ObjectMirror om:
+					return (new ReferenceTypeFieldValueLocation(field.FieldType, om, monoField), null);
+
+				case StructMirror sm:
+					return (new ValueTypeFieldValueLocation(field.FieldType, objImp.ValueLocation, sm, monoField), null);
+
+				case PrimitiveValue pv:
+					return (null, "NYI");//TODO:
+
+				default:
+					// Unreachable
+					return (null, ErrorHelper.InternalError);
+				}
 			}
 		}
 
@@ -350,18 +353,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Dispatcher.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
 			try {
-				return "NYI";//TODO:
+				var info = GetFieldValueLocationCore(context, frame, obj, field, cancellationToken);
+				if (info.errorMessage != null)
+					return info.errorMessage;
+				var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, field.FieldType, cancellationToken);
+				if (res.ErrorMessage != null)
+					return res.ErrorMessage;
+				info.valueLocation.Store(res.Value);
+				return null;
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return ErrorHelper.InternalError;
 			}
-		}
-
-		static DbgDotNetValueResult CreateSyntheticValue(DmdType type, object constant) {
-			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type.AppDomain, constant);
-			if (dnValue != null)
-				return new DbgDotNetValueResult(dnValue, valueIsException: false);
-			return new DbgDotNetValueResult(ErrorHelper.InternalError);
 		}
 
 		public DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, DbgDotNetInvokeOptions invokeOptions, CancellationToken cancellationToken) {
@@ -561,7 +564,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetReturnValueInfo[] GetReturnValuesCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
-			return Array.Empty<DbgDotNetReturnValueInfo>();//TODO:
+			// Not supported by mono
+			return Array.Empty<DbgDotNetReturnValueInfo>();
 		}
 
 		public DbgDotNetValue GetException(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
@@ -607,7 +611,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValue GetReturnValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
-			return null;//TODO: If id==DbgDotNetRuntimeConstants.LastReturnValueId, return the last return value
+			// Not supported by mono
+			return null;
 		}
 
 		public DbgDotNetValueResult GetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
@@ -622,22 +627,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValueResult GetLocalValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
-				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
-					throw new InvalidOperationException();
-				var monoFrame = ilFrame.MonoFrame;
-				var locals = monoFrame.Method.GetLocals();
-				if ((uint)index >= (uint)locals.Length)
-					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
-				var local = locals[(int)index];
-				var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
-				var type = ToReflectionType(local.Type, reflectionAppDomain);
-
-				var method = GetFrameMethodCore(context, frame, cancellationToken);
-				type = AddByRefIfNeeded(type, GetCachedMethodBody(method)?.LocalVariables, index);
-
-				var valueLocation = new LocalValueLocation(type, ilFrame, (int)index);
-				var dnValue = engine.CreateDotNetValue_MonoDebug(valueLocation);
-				return new DbgDotNetValueResult(dnValue, valueIsException: false);
+				var info = GetLocalValueLocationCore(context, frame, index, cancellationToken);
+				if (info.errorMessage != null)
+					return new DbgDotNetValueResult(info.errorMessage);
+				return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(info.valueLocation), valueIsException: false);
 			}
 			catch (AbsentInformationException) {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
@@ -645,6 +638,23 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetValueResult(ErrorHelper.InternalError);
 			}
+		}
+
+		(ValueLocation valueLocation, string errorMessage) GetLocalValueLocationCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				throw new InvalidOperationException();
+			var monoFrame = ilFrame.MonoFrame;
+			var locals = monoFrame.Method.GetLocals();
+			if ((uint)index >= (uint)locals.Length)
+				return (null, PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
+			var local = locals[(int)index];
+			var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
+			var type = ToReflectionType(local.Type, reflectionAppDomain);
+
+			var method = GetFrameMethodCore(context, frame, cancellationToken);
+			type = AddByRefIfNeeded(type, GetCachedMethodBody(method)?.LocalVariables, index);
+
+			return (new LocalValueLocation(type, ilFrame, (int)index), null);
 		}
 
 		sealed class CachedMethodBodyState {
@@ -694,29 +704,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValueResult GetParameterValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
-				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
-					throw new InvalidOperationException();
-				DmdType type;
-				var monoFrame = ilFrame.MonoFrame;
-				var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
-				if (!monoFrame.Method.IsStatic) {
-					if (index == 0) {
-						type = ToReflectionType(monoFrame.Method.DeclaringType, reflectionAppDomain);
-						return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(new ThisValueLocation(type, ilFrame)), valueIsException: false);
-					}
-					index--;
-				}
-				var parameters = monoFrame.Method.GetParameters();
-				if ((uint)index >= (uint)parameters.Length)
-					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
-				var parameter = parameters[(int)index];
-
-				type = ToReflectionType(parameter.ParameterType, reflectionAppDomain);
-				var method = GetFrameMethodCore(context, frame, cancellationToken);
-				type = AddByRefIfNeeded(type, method?.GetMethodSignature().GetParameterTypes(), index);
-
-				var valueLocation = new ArgumentValueLocation(type, ilFrame, (int)index);
-				return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(valueLocation), valueIsException: false);
+				var info = GetParameterValueLocationCore(context, frame, index, cancellationToken);
+				if (info.errorMessage != null)
+					return new DbgDotNetValueResult(info.errorMessage);
+				return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(info.valueLocation), valueIsException: false);
 			}
 			catch (AbsentInformationException) {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
@@ -724,6 +715,32 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetValueResult(ErrorHelper.InternalError);
 			}
+		}
+
+		(ValueLocation valueLocation, string errorMessage) GetParameterValueLocationCore(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+				throw new InvalidOperationException();
+			DmdType type;
+			var monoFrame = ilFrame.MonoFrame;
+			var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
+			if (!monoFrame.Method.IsStatic) {
+				if (index == 0) {
+					type = ToReflectionType(monoFrame.Method.DeclaringType, reflectionAppDomain);
+					return (new ThisValueLocation(type, ilFrame), null);
+				}
+				index--;
+			}
+			var parameters = monoFrame.Method.GetParameters();
+			if ((uint)index >= (uint)parameters.Length)
+				return (null, PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
+			var parameter = parameters[(int)index];
+
+			type = ToReflectionType(parameter.ParameterType, reflectionAppDomain);
+			var method = GetFrameMethodCore(context, frame, cancellationToken);
+			type = AddByRefIfNeeded(type, method?.GetMethodSignature().GetParameterTypes(), index);
+
+			return (new ArgumentValueLocation(type, ilFrame, (int)index), null);
 		}
 
 		public string SetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
@@ -739,7 +756,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Dispatcher.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
 			try {
-				return "NYI";//TODO:
+				var info = GetLocalValueLocationCore(context, frame, index, cancellationToken);
+				if (info.errorMessage != null)
+					return info.errorMessage;
+				var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, targetType, cancellationToken);
+				if (res.ErrorMessage != null)
+					return res.ErrorMessage;
+				info.valueLocation.Store(res.Value);
+				return null;
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return ErrorHelper.InternalError;
@@ -759,7 +783,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Dispatcher.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
 			try {
-				return "NYI";//TODO:
+				var info = GetParameterValueLocationCore(context, frame, index, cancellationToken);
+				if (info.errorMessage != null)
+					return info.errorMessage;
+				var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, targetType, cancellationToken);
+				if (res.ErrorMessage != null)
+					return res.ErrorMessage;
+				info.valueLocation.Store(res.Value);
+				return null;
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return ErrorHelper.InternalError;

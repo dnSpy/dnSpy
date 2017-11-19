@@ -41,6 +41,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			new FuncEvalImpl(funcEvalState, onEvalComplete, thread, funcEvalTimeout, suspendOtherThreads, cancellationToken);
 	}
 
+	[Flags]
 	enum FuncEvalOptions {
 		None				= 0,
 		ReturnOutThis		= 0x00000001,
