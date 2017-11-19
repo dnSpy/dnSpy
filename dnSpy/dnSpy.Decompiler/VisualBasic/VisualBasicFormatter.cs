@@ -883,8 +883,6 @@ namespace dnSpy.Decompiler.VisualBasic {
 							if (rank == 0)
 								OutputWrite("<RANK0>", BoxedTextColor.Error);
 							else {
-								if (rank == 1)
-									OutputWrite("*", BoxedTextColor.Operator);
 								var indexes = aryType.GetLowerBounds();
 								var dims = aryType.GetSizes();
 								if (ShowArrayValueSizes && (uint)indexes.Count == rank && (uint)dims.Count == rank) {
@@ -901,6 +899,8 @@ namespace dnSpy.Decompiler.VisualBasic {
 									}
 								}
 								else {
+									if (rank == 1)
+										OutputWrite("*", BoxedTextColor.Operator);
 									for (uint i = 1; i < rank; i++)
 										OutputWrite(",", BoxedTextColor.Punctuation);
 								}

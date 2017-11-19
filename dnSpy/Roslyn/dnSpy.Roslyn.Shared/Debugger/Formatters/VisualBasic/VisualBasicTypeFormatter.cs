@@ -165,8 +165,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 							if (rank <= 0)
 								OutputWrite("???", BoxedTextColor.Error);
 							else {
-								if (rank == 1)
-									OutputWrite("*", BoxedTextColor.Operator);
 								if (aryValue == null || aryValue.IsNull || !aryValue.GetArrayInfo(out elementCount, out var dimensionInfos))
 									dimensionInfos = null;
 								if (ShowArrayValueSizes && dimensionInfos != null && dimensionInfos.Length == rank) {
@@ -184,8 +182,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 										}
 									}
 								}
-								else
+								else {
+									if (rank == 1)
+										OutputWrite("*", BoxedTextColor.Operator);
 									OutputWrite(TypeFormatterUtils.GetArrayCommas(rank), BoxedTextColor.Punctuation);
+								}
 							}
 							OutputWrite(ARRAY_CLOSE_PAREN, BoxedTextColor.Punctuation);
 						}
