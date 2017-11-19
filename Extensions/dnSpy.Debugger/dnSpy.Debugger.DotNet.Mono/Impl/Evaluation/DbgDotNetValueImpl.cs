@@ -211,7 +211,47 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		DbgRawAddressValue? GetRawAddressValue_MonoDebug(bool onlyDataAddress) {
 			engine.VerifyMonoDebugThread();
-			return null;//TODO:
+
+			if (IsNull || IsNullByRef || Type.IsByRef)
+				return null;
+
+			ulong addr;
+			switch (value) {
+			case ArrayMirror am:
+				addr = (ulong)am.Address;
+				if (addr == 0)
+					return null;
+				var dataAddr = GetArrayAddress(am, Type.GetElementType(), engine);
+				if (onlyDataAddress || dataAddr == null)
+					return dataAddr ?? new DbgRawAddressValue(addr, 0);
+				var offsetToArrayData = engine.OffsetToArrayData;
+				if (offsetToArrayData == null)
+					return new DbgRawAddressValue(addr, 0);
+				return new DbgRawAddressValue(addr, dataAddr.Value.Length + (uint)offsetToArrayData.Value);
+
+			case StringMirror sm:
+				addr = (ulong)sm.Address;
+				if (addr == 0)
+					return null;
+				var s = rawValue.RawValue as string;
+				if (s == null)
+					return null;
+				var offsetToStringData = engine.OffsetToStringData;
+				if (offsetToStringData == null)
+					return new DbgRawAddressValue(addr, 0);
+				if (onlyDataAddress)
+					return new DbgRawAddressValue(addr + (uint)offsetToStringData.Value, (uint)s.Length * 2);
+				return new DbgRawAddressValue(addr, (uint)offsetToStringData.Value + (uint)s.Length * 2);
+
+			case ObjectMirror om:
+				addr = (ulong)om.Address;
+				if (addr == 0)
+					return null;
+				return new DbgRawAddressValue(addr, 0);
+
+			default:
+				return null;
+			}
 		}
 
 		internal static DbgRawAddressValue? GetArrayAddress(ArrayMirror v, DmdType elementType, DbgEngineImpl engine) {
@@ -222,11 +262,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (addr == 0)
 				return null;
 			var arrayCount = v.Length;
-			if (arrayCount == 0)
-				return new DbgRawAddressValue(addr, 0);
 			var startAddr = addr + (uint)offsetToArrayData.Value;
 			if (!TryGetSize(elementType, out var elemSize))
-				return null;
+				return new DbgRawAddressValue(startAddr, 0);
 			ulong totalSize = (uint)elemSize * (ulong)(uint)arrayCount;
 			return new DbgRawAddressValue(startAddr, totalSize);
 		}
@@ -256,6 +294,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		public override DbgDotNetRawValue GetRawValue() => rawValue;
 
-		public override void Dispose() { }//TODO:
+		public override void Dispose() { }
 	}
 }
