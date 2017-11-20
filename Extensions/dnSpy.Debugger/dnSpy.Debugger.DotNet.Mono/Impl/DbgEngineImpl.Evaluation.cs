@@ -256,7 +256,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						if (val.ErrorMessage != null)
 							return new DbgDotNetValueResult(val.ErrorMessage);
 						hiddenThisValue = BoxIfNeeded(monoThread.Domain, val.Value, declType, origType);
-						if (val.Value == hiddenThisValue && val.Value is StructMirror)
+						if (val.Value == hiddenThisValue && val.Value is StructMirror && vm.Version.AtLeast(2, 35))
 							funcEvalOptions |= FuncEvalOptions.ReturnOutThis;
 					}
 					else
@@ -275,6 +275,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						funcEval.CallMethod(func, hiddenThisValue, args, funcEvalOptions);
 					if (res == null)
 						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+					if ((funcEvalOptions & FuncEvalOptions.ReturnOutThis) != 0 && res.OutThis is StructMirror outStructMirror)
+						(obj as DbgDotNetValueImpl)?.ValueLocation.Store(outStructMirror);
 					var returnType = (method as DmdMethodInfo)?.ReturnType ?? method.ReflectedType;
 					var returnValue = res.Exception ?? res.Result ?? new PrimitiveValue(vm, ElementType.Object, null);
 					var valueLocation = new NoValueLocation(returnType, returnValue);

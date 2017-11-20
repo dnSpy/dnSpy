@@ -24,7 +24,6 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
-using dnSpy.Debugger.DotNet.Mono.CallStack;
 using Mono.Debugger.Soft;
 using SD = System.Diagnostics;
 

@@ -19,7 +19,6 @@
 
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
-using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation.Hooks {
 	abstract class ClassHook {
