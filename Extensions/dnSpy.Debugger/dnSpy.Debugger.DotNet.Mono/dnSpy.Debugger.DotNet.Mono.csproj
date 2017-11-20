@@ -70,6 +70,12 @@
     <Compile Include="Impl\Evaluation\DmdEvaluatorImpl.cs" />
     <Compile Include="Impl\Evaluation\ErrorHelper.cs" />
     <Compile Include="Impl\Evaluation\EvalArgumentConverter.cs" />
+    <Compile Include="Impl\Evaluation\Hooks\ClassHook.cs" />
+    <Compile Include="Impl\Evaluation\Hooks\ClassHookInfo.cs" />
+    <Compile Include="Impl\Evaluation\Hooks\ClassHookProvider.cs" />
+    <Compile Include="Impl\Evaluation\Hooks\IMonoDebugRuntime.cs" />
+    <Compile Include="Impl\Evaluation\Hooks\MonoDebugValueConverterImpl.cs" />
+    <Compile Include="Impl\Evaluation\Hooks\System_String.cs" />
     <Compile Include="Impl\Evaluation\MemberMirrorUtils.cs" />
     <Compile Include="Impl\Evaluation\MethodCache.cs" />
     <Compile Include="Impl\Evaluation\MonoDebugTypeCreator.cs" />

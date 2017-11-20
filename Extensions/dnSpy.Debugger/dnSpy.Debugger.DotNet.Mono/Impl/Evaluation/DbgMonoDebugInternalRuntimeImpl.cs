@@ -32,17 +32,22 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
+using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation.Hooks;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
-	sealed class DbgMonoDebugInternalRuntimeImpl : DbgMonoDebugInternalRuntime, IDbgDotNetRuntime {
+	sealed class DbgMonoDebugInternalRuntimeImpl : DbgMonoDebugInternalRuntime, IDbgDotNetRuntime, IMonoDebugRuntime {
 		public override MonoDebugRuntimeKind Kind { get; }
 		public override DmdRuntime ReflectionRuntime { get; }
 		public override DbgRuntime Runtime { get; }
 		public DbgDotNetDispatcher Dispatcher { get; }
 		public bool SupportsObjectIds => false;//TODO:
 
+		IMonoDebugValueConverter IMonoDebugRuntime.ValueConverter => monoDebugValueConverter;
+
 		readonly DbgEngineImpl engine;
+		readonly Dictionary<DmdWellKnownType, ClassHook> classHooks;
+		readonly IMonoDebugValueConverter monoDebugValueConverter;
 
 		public DbgMonoDebugInternalRuntimeImpl(DbgEngineImpl engine, DbgRuntime runtime, DmdRuntime reflectionRuntime, MonoDebugRuntimeKind monoDebugRuntimeKind) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
@@ -51,6 +56,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Kind = monoDebugRuntimeKind;
 			Dispatcher = new DbgDotNetDispatcherImpl(engine);
 			reflectionRuntime.GetOrCreateData(() => runtime);
+
+			monoDebugValueConverter = new MonoDebugValueConverterImpl(this);
+			classHooks = new Dictionary<DmdWellKnownType, ClassHook>();
+			foreach (var info in ClassHookProvider.Create(engine, this)) {
+				Debug.Assert(info.Hook != null);
+				Debug.Assert(!classHooks.ContainsKey(info.WellKnownType));
+				classHooks.Add(info.WellKnownType, info.Hook);
+			}
 		}
 
 		DmdType ToReflectionType(TypeMirror type, DmdAppDomain reflectionAppDomain) =>
@@ -379,8 +392,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValueResult CallCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, DbgDotNetInvokeOptions invokeOptions, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
-				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
-					return new DbgDotNetValueResult(ErrorHelper.InternalError);
+				var type = method.DeclaringType;
+				if (type.IsConstructedGenericType)
+					type = type.GetGenericTypeDefinition();
+				var typeName = DmdTypeName.Create(type);
+				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
+					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
+						var res = hook.Call(obj, method, arguments);
+						if (res != null)
+							return new DbgDotNetValueResult(res, valueIsException: false);
+					}
+				}
+
 				return engine.FuncEvalCall_MonoDebug(context, frame.Thread, method, obj, arguments, invokeOptions, newObj: false, cancellationToken: cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
@@ -400,8 +423,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValueResult CreateInstanceCore(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, DbgDotNetInvokeOptions invokeOptions, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
-				if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
-					return new DbgDotNetValueResult(ErrorHelper.InternalError);
+				var type = ctor.DeclaringType;
+				if (type.IsConstructedGenericType)
+					type = type.GetGenericTypeDefinition();
+				var typeName = DmdTypeName.Create(type);
+				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
+					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
+						var res = hook.CreateInstance(ctor, arguments);
+						if (res != null)
+							return new DbgDotNetValueResult(res, valueIsException: false);
+					}
+				}
+
 				return engine.FuncEvalCall_MonoDebug(context, frame.Thread, ctor, null, arguments, invokeOptions, newObj: true, cancellationToken: cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
