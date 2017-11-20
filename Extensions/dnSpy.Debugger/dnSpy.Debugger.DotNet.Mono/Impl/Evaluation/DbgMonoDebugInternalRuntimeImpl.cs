@@ -508,11 +508,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		DbgDotNetValueResult CreateSZArrayCore(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, int length, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
+			var appDomain = elementType.AppDomain;
+			DbgDotNetValue typeElementType = null;
 			try {
-				return new DbgDotNetValueResult("NYI");//TODO:
+				typeElementType = engine.CreateDotNetValue_MonoDebug(appDomain, GetType(elementType).GetTypeObject());
+				var methodCreateInstance = appDomain.System_Array.GetMethod(nameof(Array.CreateInstance), DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32 }, throwOnError: true);
+				return engine.FuncEvalCall_MonoDebug(context, frame.Thread, methodCreateInstance, null, new object[] { typeElementType, length }, DbgDotNetInvokeOptions.None, false, cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+			}
+			finally {
+				typeElementType?.Dispose();
 			}
 		}
 
@@ -527,11 +534,25 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		DbgDotNetValueResult CreateArrayCore(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, DbgDotNetArrayDimensionInfo[] dimensionInfos, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
+			var appDomain = elementType.AppDomain;
+			DbgDotNetValue typeElementType = null;
 			try {
-				return new DbgDotNetValueResult("NYI");//TODO:
+				var lengths = new int[dimensionInfos.Length];
+				var lowerBounds = new int[dimensionInfos.Length];
+				for (int i = 0; i < dimensionInfos.Length; i++) {
+					lengths[i] = (int)dimensionInfos[i].Length;
+					lowerBounds[i] = dimensionInfos[i].BaseIndex;
+				}
+
+				typeElementType = engine.CreateDotNetValue_MonoDebug(appDomain, GetType(elementType).GetTypeObject());
+				var methodCreateInstance = appDomain.System_Array.GetMethod(nameof(Array.CreateInstance), DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32.MakeArrayType(), appDomain.System_Int32.MakeArrayType() }, throwOnError: true);
+				return engine.FuncEvalCall_MonoDebug(context, frame.Thread, methodCreateInstance, null, new object[] { typeElementType, lengths, lowerBounds }, DbgDotNetInvokeOptions.None, false, cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+			}
+			finally {
+				typeElementType?.Dispose();
 			}
 		}
 

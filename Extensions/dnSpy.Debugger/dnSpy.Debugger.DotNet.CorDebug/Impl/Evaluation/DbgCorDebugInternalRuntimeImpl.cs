@@ -705,9 +705,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 
 			// There's no ICorDebugEval method that can create multi-dimensional arrays so
-			// we have to use Array.CreateInstance(Type, int[], int[]). This method has a
-			// problem, whenever rank == 1 and lower bounds == 0, it always creates an
-			// SZ array..., see coreclr code: ArrayNative::CreateInstance
+			// we have to use Array.CreateInstance(Type, int[], int[]).
 
 			var appDomain = elementType.AppDomain;
 			DbgDotNetValue typeElementType = null;
@@ -731,12 +729,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				res = engine.FuncEvalCall_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), methodCreateInstance, null, new object[] { typeElementType, lengths, lowerBounds }, false, cancellationToken);
 				if (res.HasError || res.ValueIsException)
 					return res;
-
-				// Verify that it's not an SZ array
-				if (res.Value.Type.IsSZArray) {
-					res.Value.Dispose();
-					return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
-				}
 
 				return res;
 			}
