@@ -1246,7 +1246,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Dispatcher.VerifyAccess();
 			var dnValue = objectId.Value.AddRef();
 			try {
-				return new DbgDotNetValueImpl(engine, dnValue);
+				return engine.CreateDotNetValue_CorDebug(dnValue);
 			}
 			catch {
 				dnValue.Release();

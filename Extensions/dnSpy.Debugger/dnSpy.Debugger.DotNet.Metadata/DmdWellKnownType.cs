@@ -318,6 +318,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_Runtime_CompilerServices_IsByRefLikeAttribute,
 		System_ObsoleteAttribute,
 		System_Span_T,
+		System_Runtime_InteropServices_GCHandle,
 
 		// When adding more types, update DmdWellKnownTypeUtils
 

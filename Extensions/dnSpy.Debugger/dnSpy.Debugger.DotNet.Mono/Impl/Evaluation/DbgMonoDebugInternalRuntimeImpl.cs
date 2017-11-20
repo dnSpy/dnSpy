@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		public override DmdRuntime ReflectionRuntime { get; }
 		public override DbgRuntime Runtime { get; }
 		public DbgDotNetDispatcher Dispatcher { get; }
-		public bool SupportsObjectIds => false;//TODO:
+		public bool SupportsObjectIds => true;
 
 		IMonoDebugValueConverter IMonoDebugRuntime.ValueConverter => monoDebugValueConverter;
 
@@ -184,19 +184,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(info.valueLocation), valueIsException: false);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 
 		(ValueLocation valueLocation, string errorMessage) GetFieldValueLocationCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken) {
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
-				return (null, ErrorHelper.InternalError);
+				return (null, PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			var fieldDeclType = field.DeclaringType;
 			var monoFieldDeclType = GetType(fieldDeclType);
 			if (obj == null) {
 				if (!field.IsStatic)
-					return (null, ErrorHelper.InternalError);
+					return (null, PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 				if (field.IsLiteral) {
 					var monoValue = MonoValueFactory.TryCreateSyntheticValue(engine, monoFieldDeclType.Assembly.Domain, field.FieldType, field.GetRawConstantValue()) ??
@@ -212,7 +212,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			}
 			else {
 				if (field.IsStatic)
-					return (null, ErrorHelper.InternalError);
+					return (null, PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 				var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
 				var monoField = MemberMirrorUtils.GetMonoField(monoFieldDeclType, field);
@@ -228,7 +228,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 				default:
 					// Unreachable
-					return (null, ErrorHelper.InternalError);
+					return (null, PredefinedEvaluationErrorMessages.InternalDebuggerError);
 				}
 			}
 		}
@@ -376,7 +376,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return null;
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return ErrorHelper.InternalError;
+				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			}
 		}
 
@@ -407,7 +407,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return engine.FuncEvalCall_MonoDebug(context, frame.Thread, method, obj, arguments, invokeOptions, newObj: false, cancellationToken: cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 
@@ -438,7 +438,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return engine.FuncEvalCall_MonoDebug(context, frame.Thread, ctor, null, arguments, invokeOptions, newObj: true, cancellationToken: cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 
@@ -459,7 +459,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return CreateReferenceTypeInstanceNoConstructorCore(context, frame, type, cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 
@@ -549,7 +549,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return engine.FuncEvalCall_MonoDebug(context, frame.Thread, methodCreateInstance, null, new object[] { typeElementType, length }, DbgDotNetInvokeOptions.None, false, cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 			finally {
 				typeElementType?.Dispose();
@@ -582,7 +582,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return engine.FuncEvalCall_MonoDebug(context, frame.Thread, methodCreateInstance, null, new object[] { typeElementType, lengths, lowerBounds }, DbgDotNetInvokeOptions.None, false, cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 			finally {
 				typeElementType?.Dispose();
@@ -759,7 +759,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 
@@ -836,7 +836,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(ErrorHelper.InternalError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 
@@ -891,7 +891,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return null;
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return ErrorHelper.InternalError;
+				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			}
 		}
 
@@ -918,7 +918,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return null;
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return ErrorHelper.InternalError;
+				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			}
 		}
 
@@ -940,7 +940,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return engine.CreateValue_MonoDebug(context, frame.Thread, value, cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetCreateValueResult(ErrorHelper.InternalError);
+				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 
@@ -967,39 +967,219 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetCreateValueResult(ErrorHelper.InternalError);
+				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 			finally {
 				res.Value?.Dispose();
 			}
 		}
 
-		public bool CanCreateObjectId(DbgDotNetValue value) {
-			return false;//TODO:
-		}
+		public bool CanCreateObjectId(DbgDotNetValue value) =>
+			(value as DbgDotNetValueImpl)?.Value is ObjectMirror;
 
 		public DbgDotNetObjectId CreateObjectId(DbgDotNetValue value, uint id) {
-			throw new NotImplementedException();//TODO:
+			var valueImpl = value as DbgDotNetValueImpl;
+			if (valueImpl == null)
+				return null;
+			if (Dispatcher.CheckAccess())
+				return CreateObjectIdCore(valueImpl, id);
+			return CreateObjectId2(valueImpl, id);
+
+			DbgDotNetObjectId CreateObjectId2(DbgDotNetValueImpl value2, uint id2) =>
+				Dispatcher.InvokeRethrow(() => CreateObjectIdCore(value2, id2));
+		}
+
+		DbgDotNetObjectId CreateObjectIdCore(DbgDotNetValueImpl value, uint id) {
+			Dispatcher.VerifyAccess();
+			try {
+				if (!engine.IsPaused)
+					return null;
+
+				var valueObjectMirror = value.Value as ObjectMirror;
+				if (valueObjectMirror == null)
+					return null;
+
+				var appDomain = value.Type.AppDomain;
+				var gcHandleType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_GCHandle, isOptional: true);
+				Debug.Assert((object)gcHandleType != null);
+				if ((object)gcHandleType == null)
+					return null;
+
+				var allocMethod = gcHandleType.GetMethod(nameof(System.Runtime.InteropServices.GCHandle.Alloc),
+					DmdSignatureCallingConvention.Default, 0, gcHandleType, new[] { appDomain.System_Object }, throwOnError: false);
+				Debug.Assert((object)allocMethod != null);
+				if ((object)allocMethod == null)
+					return null;
+
+				var res = engine.FuncEvalCall_AnyThread_MonoDebug(allocMethod, null, new[] { value }, DbgDotNetInvokeOptions.None, newObj: false);
+				Debug.Assert(res.IsNormalResult);
+				if (!res.IsNormalResult) {
+					res.Value?.Dispose();
+					return null;
+				}
+
+				return new DbgDotNetObjectIdImpl(this, id, res.Value, valueObjectMirror, appDomain);
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return null;
+			}
+		}
+
+		internal void FreeObjectId(DbgDotNetObjectIdImpl objectId) {
+			if (Dispatcher.CheckAccess())
+				FreeObjectIdCore(objectId);
+			else
+				FreeObjectId2(objectId);
+
+			void FreeObjectId2(DbgDotNetObjectIdImpl objectId2) =>
+				Dispatcher.BeginInvoke(() => FreeObjectIdCore(objectId2));
+		}
+
+		void FreeObjectIdCore(DbgDotNetObjectIdImpl objectId) {
+			Dispatcher.VerifyAccess();
+			engine.AddExecOnPause(() => FreeObjectId_Paused(objectId));
+		}
+
+		void FreeObjectId_Paused(DbgDotNetObjectIdImpl objectId) {
+			Dispatcher.VerifyAccess();
+			if (engine.DbgRuntime.IsClosed)
+				return;
+			Debug.Assert(engine.IsPaused);
+
+			var appDomain = objectId.ReflectionAppDomain;
+			var gcHandleType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_GCHandle, isOptional: true);
+			Debug.Assert((object)gcHandleType != null);
+			if ((object)gcHandleType == null)
+				return;
+
+			var freeMethod = gcHandleType.GetMethod(nameof(System.Runtime.InteropServices.GCHandle.Free),
+				DmdSignatureCallingConvention.HasThis, 0, appDomain.System_Void, Array.Empty<DmdType>(), throwOnError: false);
+			Debug.Assert((object)freeMethod != null);
+			if ((object)freeMethod == null)
+				return;
+
+			var res = engine.FuncEvalCall_AnyThread_MonoDebug(freeMethod, objectId.GCHandleValue, Array.Empty<object>(), DbgDotNetInvokeOptions.None, newObj: false);
+			Debug.Assert(res.IsNormalResult);
+			res.Value?.Dispose();
 		}
 
 		public bool Equals(DbgDotNetObjectId objectId, DbgDotNetValue value) {
-			throw new NotImplementedException();//TODO:
+			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
+			var valueImpl = value as DbgDotNetValueImpl;
+			if (objectIdImpl == null || valueImpl == null)
+				return false;
+			if (Dispatcher.CheckAccess())
+				return EqualsCore(objectIdImpl, valueImpl);
+			return Equals2(objectIdImpl, valueImpl);
+
+			bool Equals2(DbgDotNetObjectIdImpl objectId2, DbgDotNetValueImpl value2) =>
+				Dispatcher.InvokeRethrow(() => EqualsCore(objectId2, value2));
 		}
 
+		struct EquatableValue {
+			public readonly ulong Address;
+
+			public EquatableValue(ObjectMirror value) {
+				if (value == null)
+					Address = 0;
+				else
+					Address = (ulong)value.Address;
+			}
+
+			public bool Equals2(EquatableValue other) => Address != 0 && Address == other.Address;
+			public bool? Equals3(EquatableValue other) => Address == 0 && other.Address == 0 ? (bool?)null : Address == other.Address;
+			public new int GetHashCode() => Address == 0 ? 0 : Address.GetHashCode();
+		}
+
+		bool EqualsCore(DbgDotNetObjectIdImpl objectId, DbgDotNetValueImpl value) {
+			Dispatcher.VerifyAccess();
+
+			var objectIdValue = objectId.Value;
+			var valueObject = value.Value as ObjectMirror;
+			if (valueObject == null)
+				return false;
+			if (objectIdValue == valueObject)
+				return true;
+			var v1 = GetEquatableValue(objectIdValue);
+			var v2 = GetEquatableValue(valueObject);
+			return v1.Equals2(v2);
+		}
+
+		static EquatableValue GetEquatableValue(ObjectMirror value) => new EquatableValue(value);
+
 		public int GetHashCode(DbgDotNetObjectId objectId) {
-			throw new NotImplementedException();//TODO:
+			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
+			if (objectIdImpl == null)
+				return 0;
+			if (Dispatcher.CheckAccess())
+				return GetHashCodeCore(objectIdImpl);
+			return GetHashCode2(objectIdImpl);
+
+			int GetHashCode2(DbgDotNetObjectIdImpl objectId2) =>
+				Dispatcher.InvokeRethrow(() => GetHashCodeCore(objectId2));
+		}
+
+		int GetHashCodeCore(DbgDotNetObjectIdImpl objectId) {
+			Dispatcher.VerifyAccess();
+			return GetEquatableValue(objectId.Value).GetHashCode();
 		}
 
 		public int GetHashCode(DbgDotNetValue value) {
-			throw new NotImplementedException();//TODO:
+			var valueImpl = value as DbgDotNetValueImpl;
+			if (valueImpl == null)
+				return 0;
+			if (Dispatcher.CheckAccess())
+				return GetHashCodeCore(valueImpl);
+			return GetHashCode2(valueImpl);
+
+			int GetHashCode2(DbgDotNetValueImpl value2) =>
+				Dispatcher.InvokeRethrow(() => GetHashCodeCore(value2));
+		}
+
+		int GetHashCodeCore(DbgDotNetValueImpl value) {
+			Dispatcher.VerifyAccess();
+			return GetEquatableValue(value.Value as ObjectMirror).GetHashCode();
 		}
 
 		public DbgDotNetValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetObjectId objectId, CancellationToken cancellationToken) {
-			throw new NotImplementedException();//TODO:
+			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
+			if (objectIdImpl == null)
+				throw new ArgumentException();
+			if (Dispatcher.CheckAccess())
+				return GetValueCore(context, objectIdImpl, cancellationToken);
+			return GetValue2(context, objectIdImpl, cancellationToken);
+
+			DbgDotNetValue GetValue2(DbgEvaluationContext context2, DbgDotNetObjectIdImpl objectId2, CancellationToken cancellationToken2) =>
+				Dispatcher.InvokeRethrow(() => GetValueCore(context2, objectId2, cancellationToken2));
+		}
+
+		DbgDotNetValue GetValueCore(DbgEvaluationContext context, DbgDotNetObjectIdImpl objectId, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			return engine.CreateDotNetValue_MonoDebug(objectId.ReflectionAppDomain, objectId.Value);
 		}
 
 		public bool? Equals(DbgDotNetValue a, DbgDotNetValue b) {
-			throw new NotImplementedException();//TODO:
+			if (a == b)
+				return true;
+			if (a.Type != b.Type)
+				return false;
+			var ai = a as DbgDotNetValueImpl;
+			var bi = b as DbgDotNetValueImpl;
+			if (ai == null || bi == null) {
+				// If they're equal, they're both null
+				return ai == bi ? (bool?)null : false;
+			}
+			if (Dispatcher.CheckAccess())
+				return EqualsCore(ai, bi);
+			return Equals2(ai, bi);
+
+			bool? Equals2(DbgDotNetValueImpl a2, DbgDotNetValueImpl b2) =>
+				Dispatcher.InvokeRethrow(() => EqualsCore(a2, b2));
+		}
+
+		bool? EqualsCore(DbgDotNetValueImpl a, DbgDotNetValueImpl b) {
+			Dispatcher.VerifyAccess();
+			return GetEquatableValue(a.Value as ObjectMirror).Equals3(GetEquatableValue(b.Value as ObjectMirror));
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) { }

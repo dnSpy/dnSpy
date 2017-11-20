@@ -64,11 +64,11 @@
     <Compile Include="Impl\Evaluation\DbgDotNetDispatcherExtensions.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetDispatcherImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />
+    <Compile Include="Impl\Evaluation\DbgDotNetObjectIdImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetRawValueFactory.cs" />
     <Compile Include="Impl\Evaluation\DbgDotNetValueImpl.cs" />
     <Compile Include="Impl\Evaluation\DbgMonoDebugInternalRuntimeImpl.cs" />
     <Compile Include="Impl\Evaluation\DmdEvaluatorImpl.cs" />
-    <Compile Include="Impl\Evaluation\ErrorHelper.cs" />
     <Compile Include="Impl\Evaluation\EvalArgumentConverter.cs" />
     <Compile Include="Impl\Evaluation\Hooks\ClassHook.cs" />
     <Compile Include="Impl\Evaluation\Hooks\ClassHookInfo.cs" />

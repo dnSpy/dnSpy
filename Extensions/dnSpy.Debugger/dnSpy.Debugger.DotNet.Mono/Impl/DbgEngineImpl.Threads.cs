@@ -127,6 +127,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		bool TryGetManagedId(ThreadMirror thread, ThreadMirror threadObj, MethodMirror managedIdGetter, out ulong? managedId) {
 			debuggerThread.VerifyAccess();
 
+			if (thread.Domain != threadObj.Domain) {
+				managedId = null;
+				return true;
+			}
+
 			try {
 				var res = TryInvokeMethod(thread, threadObj, managedIdGetter, Array.Empty<Value>(), out bool timedOut);
 				if (timedOut) {

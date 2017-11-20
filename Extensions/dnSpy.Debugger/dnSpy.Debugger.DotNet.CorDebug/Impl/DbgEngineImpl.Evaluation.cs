@@ -60,6 +60,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
+		internal DbgDotNetValue CreateDotNetValue_CorDebug(DbgCorValueHolder value) {
+			debuggerThread.VerifyAccess();
+			var dnValue = new DbgDotNetValueImpl(this, value);
+			lock (lockObj)
+				dotNetValuesToCloseOnContinue.Add(dnValue);
+			return dnValue;
+		}
+
 		internal void Close(DbgCorValueHolder value) {
 			if (CheckCorDebugThread()) {
 				value.Dispose_CorDebug();

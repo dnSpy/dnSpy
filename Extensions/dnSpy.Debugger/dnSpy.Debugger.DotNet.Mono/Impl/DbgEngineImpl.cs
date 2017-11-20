@@ -76,6 +76,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal readonly StackFrameData stackFrameData;
 		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
 		readonly FuncEvalFactory funcEvalFactory;
+		readonly List<Action> execOnPauseList;
 		VirtualMachine vm;
 		int vmPid;
 		int? vmDeathExitCode;
@@ -103,6 +104,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			appDomainsThatHaveNotBeenInitializedYet = new HashSet<AppDomainMirror>();
 			stackFrameData = new StackFrameData();
 			dotNetValuesToCloseOnContinue = new List<DbgDotNetValueImpl>();
+			execOnPauseList = new List<Action>();
 			debuggerSettings = deps.DebuggerSettings;
 			dbgDotNetCodeRangeService = deps.DotNetCodeRangeService;
 			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;
@@ -398,6 +400,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (suspendCount == 1) {
 				UpdateThreadProperties_MonoDebug();
 				InitializeObjectConstants_MonoDebug();
+				RunExecOnPauseDelegates_MonoDebug();
 			}
 		}
 

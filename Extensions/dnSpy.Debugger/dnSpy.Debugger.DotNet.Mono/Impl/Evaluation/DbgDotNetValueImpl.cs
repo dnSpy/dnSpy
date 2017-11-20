@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		public override string StoreIndirect(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
 			if (!Type.IsByRef)
-				return ErrorHelper.InternalError;
+				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			if (engine.CheckMonoDebugThread())
 				return StoreIndirect_MonoDebug(context, frame, value, cancellationToken);
 			return engine.InvokeMonoDebugThread(() => StoreIndirect_MonoDebug(context, frame, value, cancellationToken));
@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			engine.VerifyMonoDebugThread();
 			cancellationToken.ThrowIfCancellationRequested();
 			if (!Type.IsByRef)
-				return ErrorHelper.InternalError;
+				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, Type.GetElementType(), cancellationToken);
 			if (res.ErrorMessage != null)
 				return res.ErrorMessage;
