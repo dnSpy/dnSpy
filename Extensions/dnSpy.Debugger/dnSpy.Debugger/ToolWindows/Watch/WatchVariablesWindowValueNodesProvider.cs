@@ -138,9 +138,9 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 				var realEvalOptions = evalOptions & ~DbgEvaluationOptions.NoFuncEval;
 				var realNodeEvalOptions = nodeEvalOptions & ~DbgValueNodeEvaluationOptions.NoFuncEval;
 				if (info.ForceEval)
-					realEvalOptions = evalOptions & ~DbgEvaluationOptions.NoSideEffects;
+					realEvalOptions &= ~DbgEvaluationOptions.NoSideEffects;
 				else
-					realEvalOptions = evalOptions | DbgEvaluationOptions.NoSideEffects;
+					realEvalOptions |= DbgEvaluationOptions.NoSideEffects;
 				Debug.Assert(((realEvalOptions & DbgEvaluationOptions.NoFuncEval) != 0) == ((realNodeEvalOptions & DbgValueNodeEvaluationOptions.NoFuncEval) != 0));
 				info.ForceEval = false;
 				if (info.ExpressionEvaluatorState == null)
