@@ -303,7 +303,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
 					if (evalRes.ErrorMessage != null)
 						return new DbgCreateMonoValueResult(evalRes.ErrorMessage);
-					var newValue = BoxIfNeeded(monoThread.Domain, evalRes.Value, targetType, newValueType);
+					var newValue = evalRes.Value;
+					if (targetType.IsEnum)
+						newValue = MonoVirtualMachine.CreateEnumMirror(GetType(targetType), (PrimitiveValue)newValue);
+					newValue = BoxIfNeeded(monoThread.Domain, newValue, targetType, newValueType);
 					return new DbgCreateMonoValueResult(newValue);
 				}
 			}
