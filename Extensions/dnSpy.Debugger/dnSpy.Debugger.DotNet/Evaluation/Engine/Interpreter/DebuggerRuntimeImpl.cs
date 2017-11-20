@@ -550,8 +550,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			if (type.IsValueType) {
 				var dnValue = TryGetDotNetValue(value, type, canCreateValue: true) ?? throw new InvalidOperationException();
 				var boxedValue = dnValue.Box(context, frame, cancellationToken);
-				if (boxedValue == null)
-					return new BoxedValueTypeILValue(this, value, dnValue, type);
+				if (boxedValue == null) {
+					var boxedValueRes = runtime.Box(context, frame, dnValue, cancellationToken);
+					if (boxedValueRes.Error != null)
+						throw new InterpreterMessageException(boxedValueRes.Error);
+					boxedValue = boxedValueRes.Value;
+				}
 				RecordValue(boxedValue);
 				return new BoxedValueTypeILValue(this, value, boxedValue, type);
 			}

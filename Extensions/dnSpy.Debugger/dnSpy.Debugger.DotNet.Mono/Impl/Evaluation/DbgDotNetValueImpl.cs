@@ -222,8 +222,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValue Box_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			engine.VerifyMonoDebugThread();
 			cancellationToken.ThrowIfCancellationRequested();
-			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
-				return null;
 			if (!Type.IsValueType)
 				return null;
 			var value = this.value;

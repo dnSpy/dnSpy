@@ -911,6 +911,36 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			}
 		}
 
+		public DbgDotNetCreateValueResult Box(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+			if (Dispatcher.CheckAccess())
+				return BoxCore(context, frame, value, cancellationToken);
+			return Box2(context, frame, value, cancellationToken);
+
+			DbgDotNetCreateValueResult Box2(DbgEvaluationContext context2, DbgStackFrame frame2, object value2, CancellationToken cancellationToken2) =>
+				Dispatcher.InvokeRethrow(() => BoxCore(context2, frame2, value2, cancellationToken2));
+		}
+
+		DbgDotNetCreateValueResult BoxCore(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+			Dispatcher.VerifyAccess();
+			cancellationToken.ThrowIfCancellationRequested();
+			DbgDotNetCreateValueResult res = default;
+			try {
+				res = CreateValueCore(context, frame, value, cancellationToken);
+				if (res.Error != null)
+					return res;
+				var boxedValue = res.Value.Box(context, frame, cancellationToken);
+				if (boxedValue != null)
+					return new DbgDotNetCreateValueResult(boxedValue);
+				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				return new DbgDotNetCreateValueResult(ErrorHelper.InternalError);
+			}
+			finally {
+				res.Value?.Dispose();
+			}
+		}
+
 		public bool CanCreateObjectId(DbgDotNetValue value) {
 			return false;//TODO:
 		}

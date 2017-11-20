@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		TypeMirror GetType(DmdType type) => MonoDebugTypeCreator.GetType(engine, type);
 
-		public unsafe EvalArgumentResult Convert(object value, DmdType defaultType, out DmdType type) {
+		public EvalArgumentResult Convert(object value, DmdType defaultType, out DmdType type) {
 			var vm = engine.MonoVirtualMachine;
 			if (value == null) {
 				type = defaultType;
@@ -71,6 +71,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				type = dnValueImpl.Type;
 				return new EvalArgumentResult(dnValueImpl.Value);
 			}
+			DmdType origType = null;
 			if (value is DbgDotNetValue dnValue) {
 				var rawValue = dnValue.GetRawValue();
 				if (rawValue.HasRawValue) {
@@ -80,12 +81,24 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 						return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.Object, null));
 					}
 				}
+				origType = dnValue.Type;
 			}
 			if (value is string s) {
 				type = reflectionAppDomain.System_String;
 				return new EvalArgumentResult(appDomain.CreateString(s));
 			}
+			var res = ConvertCore(value, defaultType, out type);
+			if (res.ErrorMessage != null)
+				return res;
+			if (origType != null && origType.IsEnum) {
+				type = origType;
+				return new EvalArgumentResult(vm.CreateEnumMirror(GetType(origType), (PrimitiveValue)res.Value));
+			}
+			return res;
+		}
 
+		unsafe EvalArgumentResult ConvertCore(object value, DmdType defaultType, out DmdType type) {
+			var vm = engine.MonoVirtualMachine;
 			TypeMirror monoType;
 			Value[] monoValues;
 			switch (Type.GetTypeCode(value.GetType())) {

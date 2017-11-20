@@ -79,6 +79,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return new EvalArgumentResult(corValue);
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
+			DmdType origType = null;
 			if (value is DbgDotNetValue dnValue) {
 				var rawValue = dnValue.GetRawValue();
 				if (rawValue.HasRawValue) {
@@ -88,6 +89,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 						return new EvalArgumentResult(dnEval.CreateNull());
 					}
 				}
+				origType = dnValue.Type;
 			}
 			if (value is string s) {
 				type = reflectionAppDomain.System_String;
@@ -98,34 +100,34 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 
 			switch (Type.GetTypeCode(value.GetType())) {
-			case TypeCode.Boolean:		return CreateByte(type = reflectionAppDomain.System_Boolean, (byte)((bool)value ? 1 : 0));
-			case TypeCode.Char:			return CreateUInt16(type = reflectionAppDomain.System_Char, (char)value);
-			case TypeCode.SByte:		return CreateByte(type = reflectionAppDomain.System_SByte, (byte)(sbyte)value);
-			case TypeCode.Byte:			return CreateByte(type = reflectionAppDomain.System_Byte, (byte)value);
-			case TypeCode.Int16:		return CreateUInt16(type = reflectionAppDomain.System_Int16, (ushort)(short)value);
-			case TypeCode.UInt16:		return CreateUInt16(type = reflectionAppDomain.System_UInt16, (ushort)value);
-			case TypeCode.Int32:		return CreateUInt32(type = reflectionAppDomain.System_Int32, (uint)(int)value);
-			case TypeCode.UInt32:		return CreateUInt32(type = reflectionAppDomain.System_UInt32, (uint)value);
-			case TypeCode.Int64:		return CreateUInt64(type = reflectionAppDomain.System_Int64, (ulong)(long)value);
-			case TypeCode.UInt64:		return CreateUInt64(type = reflectionAppDomain.System_UInt64, (ulong)value);
+			case TypeCode.Boolean:		return CreateByte(type = origType ?? reflectionAppDomain.System_Boolean, (byte)((bool)value ? 1 : 0));
+			case TypeCode.Char:			return CreateUInt16(type = origType ?? reflectionAppDomain.System_Char, (char)value);
+			case TypeCode.SByte:		return CreateByte(type = origType ?? reflectionAppDomain.System_SByte, (byte)(sbyte)value);
+			case TypeCode.Byte:			return CreateByte(type = origType ?? reflectionAppDomain.System_Byte, (byte)value);
+			case TypeCode.Int16:		return CreateUInt16(type = origType ?? reflectionAppDomain.System_Int16, (ushort)(short)value);
+			case TypeCode.UInt16:		return CreateUInt16(type = origType ?? reflectionAppDomain.System_UInt16, (ushort)value);
+			case TypeCode.Int32:		return CreateUInt32(type = origType ?? reflectionAppDomain.System_Int32, (uint)(int)value);
+			case TypeCode.UInt32:		return CreateUInt32(type = origType ?? reflectionAppDomain.System_UInt32, (uint)value);
+			case TypeCode.Int64:		return CreateUInt64(type = origType ?? reflectionAppDomain.System_Int64, (ulong)(long)value);
+			case TypeCode.UInt64:		return CreateUInt64(type = origType ?? reflectionAppDomain.System_UInt64, (ulong)value);
 			case TypeCode.Single:
-				type = reflectionAppDomain.System_Single;
+				type = origType ?? reflectionAppDomain.System_Single;
 				return CreateSingle((float)value);
 			case TypeCode.Double:
-				type = reflectionAppDomain.System_Double;
+				type = origType ?? reflectionAppDomain.System_Double;
 				return CreateDouble((double)value);
 			case TypeCode.Decimal:
 				type = reflectionAppDomain.System_Decimal;
 				return CreateDecimal((decimal)value);
 			default:
 				if (value.GetType() == typeof(IntPtr)) {
-					type = reflectionAppDomain.System_IntPtr;
+					type = origType ?? reflectionAppDomain.System_IntPtr;
 					if (IntPtr.Size == 4)
 						return CreateUInt32(reflectionAppDomain.System_IntPtr, (uint)((IntPtr)value).ToInt32());
 					return CreateUInt64(reflectionAppDomain.System_IntPtr, (ulong)((IntPtr)value).ToInt64());
 				}
 				if (value.GetType() == typeof(UIntPtr)) {
-					type = reflectionAppDomain.System_UIntPtr;
+					type = origType ?? reflectionAppDomain.System_UIntPtr;
 					if (IntPtr.Size == 4)
 						return CreateUInt32(reflectionAppDomain.System_UIntPtr, ((UIntPtr)value).ToUInt32());
 					return CreateUInt64(reflectionAppDomain.System_UIntPtr, ((UIntPtr)value).ToUInt64());

@@ -292,6 +292,16 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DbgDotNetCreateValueResult CreateValue(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Boxes the value type
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="value">Value to box</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		DbgDotNetCreateValueResult Box(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Returns true if object IDs are supported by this runtime
 		/// </summary>
 		bool SupportsObjectIds { get; }
