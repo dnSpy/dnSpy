@@ -380,7 +380,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		static DbgDotNetValueResult CreateSyntheticValue(DmdType type, object constant) {
-			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type.AppDomain, constant);
+			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type, constant);
 			if (dnValue != null)
 				return new DbgDotNetValueResult(dnValue, valueIsException: false);
 			return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);

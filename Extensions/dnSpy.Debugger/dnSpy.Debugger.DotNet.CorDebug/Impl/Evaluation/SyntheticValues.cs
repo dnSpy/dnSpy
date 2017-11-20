@@ -54,13 +54,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return null;
 		}
 
-		public static DbgDotNetValue TryCreateSyntheticValue(DmdAppDomain appDomain, object constant) {
-			var type = TryGetType(appDomain, constant);
-			if ((object)type != null)
-				return TryCreateSyntheticValue(type, constant);
-			return null;
-		}
-
 		public static DbgDotNetValue TryCreateSyntheticValue(DmdType type, object constant) {
 			switch (DmdType.GetTypeCode(type)) {
 			case TypeCode.Boolean:

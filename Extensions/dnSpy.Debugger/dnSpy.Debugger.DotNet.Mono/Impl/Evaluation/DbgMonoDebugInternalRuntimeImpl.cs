@@ -186,7 +186,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					return (null, ErrorHelper.InternalError);
 
 				if (field.IsLiteral) {
-					var monoValue = MonoValueFactory.TryCreateSyntheticValue(monoFieldDeclType.Assembly.Domain, field.GetRawConstantValue()) ??
+					var monoValue = MonoValueFactory.TryCreateSyntheticValue(engine, monoFieldDeclType.Assembly.Domain, field.FieldType, field.GetRawConstantValue()) ??
 						new PrimitiveValue(monoFieldDeclType.VirtualMachine, ElementType.Object, null);
 					return (new NoValueLocation(field.FieldType, monoValue), null);
 				}

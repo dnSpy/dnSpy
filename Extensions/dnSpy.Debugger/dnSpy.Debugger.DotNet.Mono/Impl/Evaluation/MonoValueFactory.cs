@@ -18,14 +18,24 @@
 */
 
 using System;
+using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	static class MonoValueFactory {
-		public static Value TryCreateSyntheticValue(AppDomainMirror appDomain, object constant) {
-			var vm = appDomain.VirtualMachine;
+		static TypeMirror GetType(DbgEngineImpl engine, DmdType type) => MonoDebugTypeCreator.GetType(engine, type);
+
+		public static Value TryCreateSyntheticValue(DbgEngineImpl engine, AppDomainMirror appDomain, DmdType fieldType, object constant) {
 			if (constant == null)
-				return new PrimitiveValue(vm, ElementType.Object, null);
+				return new PrimitiveValue(appDomain.VirtualMachine, ElementType.Object, null);
+			var res = TryCreateSyntheticValueCore(appDomain, constant);
+			if (fieldType.IsEnum)
+				return appDomain.VirtualMachine.CreateEnumMirror(GetType(engine, fieldType), (PrimitiveValue)res);
+			return res;
+		}
+
+		static Value TryCreateSyntheticValueCore(AppDomainMirror appDomain, object constant) {
+			var vm = appDomain.VirtualMachine;
 			switch (Type.GetTypeCode(constant.GetType())) {
 			case TypeCode.Boolean:
 				if (constant is bool)
