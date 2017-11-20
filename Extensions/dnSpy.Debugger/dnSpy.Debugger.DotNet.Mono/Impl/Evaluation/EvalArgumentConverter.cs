@@ -145,13 +145,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if (value.GetType() == typeof(IntPtr)) {
 					type = reflectionAppDomain.System_IntPtr;
 					monoType = GetType(type);
-					monoValues = new Value[] { new PrimitiveValue(vm, ElementType.I8, ((IntPtr)value).ToInt64()) };
+					monoValues = new Value[] { new PrimitiveValue(vm, ElementType.Ptr, ((IntPtr)value).ToInt64()) };
 					return new EvalArgumentResult(vm.CreateStructMirror(monoType, monoValues));
 				}
 				if (value.GetType() == typeof(UIntPtr)) {
 					type = reflectionAppDomain.System_UIntPtr;
 					monoType = GetType(type);
-					monoValues = new Value[] { new PrimitiveValue(vm, ElementType.I8, (long)((UIntPtr)value).ToUInt64()) };
+					monoValues = new Value[] { new PrimitiveValue(vm, ElementType.Ptr, (long)((UIntPtr)value).ToUInt64()) };
 					return new EvalArgumentResult(vm.CreateStructMirror(monoType, monoValues));
 				}
 				if (value is Array array && array.Rank == 1 && value.GetType().GetElementType().MakeArrayType() == value.GetType()) {
