@@ -158,7 +158,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			if (!vm.Version.AtLeast(2, 24) && method is DmdMethodInfo && method.IsConstructedGenericMethod)
 				return new DbgDotNetValueResult(dnSpy_Debugger_DotNet_Mono_Resources.Error_RuntimeDoesNotSupportCreatingGenericMethods);
-			var func = MethodCache.GetMethod(method);
+
+			var funcEvalOptions = FuncEvalOptions.None;
+			if ((invokeOptions & DbgDotNetInvokeOptions.NonVirtual) == 0)
+				funcEvalOptions |= FuncEvalOptions.Virtual;
+			MethodMirror func;
+			if ((funcEvalOptions & FuncEvalOptions.Virtual) == 0 || vm.Version.AtLeast(2, 37))
+				func = MethodCache.GetMethod(method);
+			else {
+				func = MethodCache.GetMethod(FindOverloadedMethod(obj?.Type, method));
+				funcEvalOptions &= ~FuncEvalOptions.Virtual;
+			}
+
 			var monoThread = GetThread(thread);
 			try {
 				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
@@ -168,9 +179,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					if (paramTypes.Count != arguments.Length)
 						throw new InvalidOperationException();
 
-					var funcEvalOptions = FuncEvalOptions.None;
-					if ((invokeOptions & DbgDotNetInvokeOptions.NonVirtual) == 0)
-						funcEvalOptions |= FuncEvalOptions.Virtual;
 					int argsCount = arguments.Length;
 					var args = argsCount == 0 ? Array.Empty<Value>() : new Value[argsCount];
 					DmdType origType;
@@ -316,6 +324,37 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgCreateMonoValueResult(ErrorHelper.InternalError);
 			}
+		}
+
+		static DmdMethodBase FindOverloadedMethod(DmdType objType, DmdMethodBase method) {
+			if ((object)objType == null)
+				return method;
+			if (!method.IsVirtual && !method.IsAbstract)
+				return method;
+			if (method.DeclaringType == objType)
+				return method;
+			var comparer = new DmdSigComparer(DmdMemberInfoEqualityComparer.DefaultMember.Options & ~DmdSigComparerOptions.CompareDeclaringType);
+			foreach (var m in objType.Methods) {
+				if (!m.IsVirtual)
+					continue;
+				if (comparer.Equals(m, method))
+					return m;
+			}
+			if (method.DeclaringType.IsInterface) {
+				var sig = method.GetMethodSignature();
+				foreach (var m in objType.Methods) {
+					if (!m.IsVirtual)
+						continue;
+
+					//TODO: Use MethodImpl table. For now assume it's an explicitly implemented iface method if it's private and name doesn't match original name
+					if (!m.IsPrivate || m.Name == method.Name)
+						continue;
+
+					if (comparer.Equals(m.GetMethodSignature(), sig))
+						return m;
+				}
+			}
+			return method;
 		}
 	}
 

@@ -59,6 +59,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public const DmdSigComparerOptions DefaultTypeOptions = DmdSigComparerOptions.CompareDeclaringType;
 
+		/// <summary>
+		/// Gets the options
+		/// </summary>
+		public DmdSigComparerOptions Options => options;
+
 		readonly DmdSigComparerOptions options;
 
 		/// <summary>
