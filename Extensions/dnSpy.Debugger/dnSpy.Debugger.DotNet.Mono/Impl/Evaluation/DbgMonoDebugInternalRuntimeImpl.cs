@@ -796,6 +796,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (!monoFrame.Method.IsStatic) {
 				if (index == 0) {
 					type = ToReflectionType(monoFrame.Method.DeclaringType, reflectionAppDomain);
+					if (type.IsValueType)
+						type = type.MakeByRefType();
 					return (new ThisValueLocation(type, ilFrame), null);
 				}
 				index--;
