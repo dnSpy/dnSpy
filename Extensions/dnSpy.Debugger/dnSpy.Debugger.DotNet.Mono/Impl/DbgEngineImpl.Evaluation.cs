@@ -255,7 +255,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						var val = converter.Convert(obj, declType, out origType);
 						if (val.ErrorMessage != null)
 							return new DbgDotNetValueResult(val.ErrorMessage);
-						hiddenThisValue = BoxIfNeeded(monoThread.Domain, val.Value, declType, origType);
+						// Don't box it if it's a value type and it implements the method, eg. 1.ToString() fails without this check
+						if (origType.IsValueType && method.DeclaringType == origType)
+							hiddenThisValue = val.Value;
+						else
+							hiddenThisValue = BoxIfNeeded(monoThread.Domain, val.Value, declType, origType);
 						if (val.Value == hiddenThisValue && val.Value is StructMirror && vm.Version.AtLeast(2, 35))
 							funcEvalOptions |= FuncEvalOptions.ReturnOutThis;
 					}
