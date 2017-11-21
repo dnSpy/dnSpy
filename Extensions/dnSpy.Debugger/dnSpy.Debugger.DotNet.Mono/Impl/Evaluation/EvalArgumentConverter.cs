@@ -61,10 +61,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		public EvalArgumentResult Convert(object value, DmdType defaultType, out DmdType type) {
 			var vm = engine.MonoVirtualMachine;
-			if (value == null) {
-				type = defaultType;
-				return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.Object, null));
-			}
+			if (value == null)
+				return new EvalArgumentResult(CreateNullValue(defaultType, out type));
 			if (value is DbgValue dbgValue)
 				value = dbgValue.InternalValue;
 			if (value is DbgDotNetValueImpl dnValueImpl) {
@@ -76,10 +74,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var rawValue = dnValue.GetRawValue();
 				if (rawValue.HasRawValue) {
 					value = rawValue.RawValue;
-					if (value == null) {
-						type = defaultType;
-						return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.Object, null));
-					}
+					if (value == null)
+						return new EvalArgumentResult(CreateNullValue(defaultType, out type));
 				}
 				origType = dnValue.Type;
 			}
@@ -99,8 +95,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		unsafe EvalArgumentResult ConvertCore(object value, DmdType defaultType, out DmdType type) {
 			var vm = engine.MonoVirtualMachine;
-			TypeMirror monoType;
-			Value[] monoValues;
 			switch (Type.GetTypeCode(value.GetType())) {
 			case TypeCode.Boolean:
 				type = reflectionAppDomain.System_Boolean;
@@ -131,16 +125,24 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.I4, value));
 
 			case TypeCode.UInt32:
-				type = reflectionAppDomain.System_UInt32;
-				return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.U4, value));
+				if (defaultType.IsPointer || defaultType.IsFunctionPointer || defaultType == defaultType.AppDomain.System_IntPtr || defaultType == defaultType.AppDomain.System_UIntPtr)
+					return new EvalArgumentResult(CreatePointerLikeValue(defaultType, (uint)value, out type));
+				else {
+					type = reflectionAppDomain.System_UInt32;
+					return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.U4, value));
+				}
 
 			case TypeCode.Int64:
 				type = reflectionAppDomain.System_Int64;
 				return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.I8, value));
 
 			case TypeCode.UInt64:
-				type = reflectionAppDomain.System_UInt64;
-				return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.U8, value));
+				if (defaultType.IsPointer || defaultType.IsFunctionPointer || defaultType == defaultType.AppDomain.System_IntPtr || defaultType == defaultType.AppDomain.System_UIntPtr)
+					return new EvalArgumentResult(CreatePointerLikeValue(defaultType, (long)(ulong)value, out type));
+				else {
+					type = reflectionAppDomain.System_UInt64;
+					return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.U8, value));
+				}
 
 			case TypeCode.Single:
 				type = reflectionAppDomain.System_Single;
@@ -155,30 +157,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return CreateDecimal((decimal)value);
 
 			default:
-				if (value.GetType() == typeof(IntPtr)) {
-					if (defaultType.IsPointer || defaultType.IsFunctionPointer) {
-						type = defaultType;
-						return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.Ptr, ((IntPtr)value).ToInt64()));
-					}
-					else {
-						type = reflectionAppDomain.System_IntPtr;
-						monoType = GetType(type);
-						monoValues = new Value[] { new PrimitiveValue(vm, ElementType.Ptr, ((IntPtr)value).ToInt64()) };
-						return new EvalArgumentResult(vm.CreateStructMirror(monoType, monoValues));
-					}
-				}
-				if (value.GetType() == typeof(UIntPtr)) {
-					if (defaultType.IsPointer || defaultType.IsFunctionPointer) {
-						type = defaultType;
-						return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.Ptr, (long)((UIntPtr)value).ToUInt64()));
-					}
-					else {
-						type = reflectionAppDomain.System_UIntPtr;
-						monoType = GetType(type);
-						monoValues = new Value[] { new PrimitiveValue(vm, ElementType.Ptr, (long)((UIntPtr)value).ToUInt64()) };
-						return new EvalArgumentResult(vm.CreateStructMirror(monoType, monoValues));
-					}
-				}
+				if (value.GetType() == typeof(IntPtr))
+					return new EvalArgumentResult(CreatePointerLikeValue(defaultType, ((IntPtr)value).ToInt64(), out type));
+				if (value.GetType() == typeof(UIntPtr))
+					return new EvalArgumentResult(CreatePointerLikeValue(defaultType, (long)((UIntPtr)value).ToUInt64(), out type));
 				if (value is Array array && array.Rank == 1 && value.GetType().GetElementType().MakeArrayType() == value.GetType()) {
 					switch (Type.GetTypeCode(value.GetType().GetElementType())) {
 					case TypeCode.Boolean:
@@ -253,6 +235,33 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 			type = defaultType;
 			return new EvalArgumentResult($"Func-eval: Can't convert type {value.GetType()} to a debugger value");
+		}
+
+		Value CreateNullValue(DmdType defaultType, out DmdType type) {
+			if (defaultType.IsPointer || defaultType.IsFunctionPointer || defaultType == defaultType.AppDomain.System_IntPtr || defaultType == defaultType.AppDomain.System_UIntPtr)
+				return CreatePointerLikeValue(defaultType, 0, out type);
+			else {
+				var vm = engine.MonoVirtualMachine;
+				type = defaultType;
+				return new PrimitiveValue(vm, ElementType.Object, null);
+			}
+		}
+
+		Value CreatePointerLikeValue(DmdType defaultType, long value, out DmdType type) {
+			var vm = engine.MonoVirtualMachine;
+			if (defaultType.IsPointer || defaultType.IsFunctionPointer) {
+				type = defaultType;
+				return new PrimitiveValue(vm, ElementType.Ptr, value);
+			}
+			else {
+				if (defaultType == defaultType.AppDomain.System_IntPtr || defaultType == defaultType.AppDomain.System_UIntPtr)
+					type = defaultType;
+				else
+					type = defaultType.AppDomain.System_IntPtr;
+				var monoType = GetType(type);
+				var monoValues = new Value[] { new PrimitiveValue(vm, ElementType.Ptr, value) };
+				return vm.CreateStructMirror(monoType, monoValues);
+			}
 		}
 
 		EvalArgumentResult CreateDecimal(decimal value) {

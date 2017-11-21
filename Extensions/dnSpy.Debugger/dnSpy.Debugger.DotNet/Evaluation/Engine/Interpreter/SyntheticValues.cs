@@ -129,18 +129,26 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				break;
 
 			default:
-				if (type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr) {
+				if (type.IsPointer || type.IsFunctionPointer || type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr) {
 					if (type.AppDomain.Runtime.PointerSize == 4) {
 						if (constant is int)
 							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)(int)constant));
 						else if (constant is uint)
 							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, constant));
+						else if (constant is IntPtr)
+							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)((IntPtr)constant).ToInt32()));
+						else if (constant is UIntPtr)
+							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, ((UIntPtr)constant).ToUInt32()));
 					}
 					else {
 						if (constant is long)
 							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, (ulong)(long)constant));
 						else if (constant is ulong)
 							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, constant));
+						else if (constant is IntPtr)
+							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, (ulong)((IntPtr)constant).ToInt64()));
+						else if (constant is UIntPtr)
+							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, ((UIntPtr)constant).ToUInt64()));
 					}
 				}
 				else if (constant == null && !type.IsValueType)
