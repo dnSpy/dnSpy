@@ -214,6 +214,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		DbgDotNetValueResult FuncEvalCallCore_MonoDebug(DbgEvaluationContext contextOpt, DbgThread thread, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
+			// ReturnOutThis is only available since 2.35 so we'll special case the common case where a struct ctor
+			// is called (CALL/CALLVIRT). We'll change it to a NEWOBJ and then copy the result to the input 'this' value.
+			if (!newObj && obj is DbgDotNetValueImpl objImpl && method is DmdConstructorInfo ctor && ctor.ReflectedType.IsValueType) {
+				var res = FuncEvalCallCoreReal_MonoDebug(contextOpt, thread, method, null, arguments, invokeOptions, true, cancellationToken);
+				if (res.IsNormalResult)
+					objImpl.ValueLocation.Store(((DbgDotNetValueImpl)res.Value).Value);
+				return res;
+			}
+			else
+				return FuncEvalCallCoreReal_MonoDebug(contextOpt, thread, method, obj, arguments, invokeOptions, newObj, cancellationToken);
+		}
+
+		DbgDotNetValueResult FuncEvalCallCoreReal_MonoDebug(DbgEvaluationContext contextOpt, DbgThread thread, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
 			debuggerThread.VerifyAccess();
 			Debug.Assert(!newObj || method.IsConstructor);
 
