@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
-using SD = System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	struct ReflectionTypeCreator {
@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		int recursionCounter;
 
 		public ReflectionTypeCreator(DbgEngineImpl engine, DmdAppDomain reflectionAppDomain) {
-			SD.Debug.Assert(engine.CheckMonoDebugThread());
+			Debug.Assert(engine.CheckMonoDebugThread());
 			this.engine = engine;
 			this.reflectionAppDomain = reflectionAppDomain;
 			typeCache = TypeCache.GetOrCreate(reflectionAppDomain);
@@ -87,14 +87,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						if (type.VirtualMachine.Version.AtLeast(2, 15))
 							genericArgs = type.GetGenericArguments();
 						else {
-							SD.Debug.Fail("Old version doesn't support generics");
+							Debug.Fail("Old version doesn't support generics");
 							genericArgs = Array.Empty<TypeMirror>();
 						}
 
 						types = GetTypesList();
 						foreach (var t in genericArgs)
 							types.Add(Create(t));
-						SD.Debug.Assert(types.Count == 0 || reflectionType.GetGenericArguments().Count == types.Count);
+						Debug.Assert(types.Count == 0 || reflectionType.GetGenericArguments().Count == types.Count);
 						if (types.Count != 0)
 							reflectionType = reflectionType.MakeGenericType(types.ToArray());
 						FreeTypesList(ref types);

@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using Mono.Debugger.Soft;
-using SD = System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed class FuncEvalFactory {
@@ -107,7 +107,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				if (currTime <= endTime) {
 					funcEvalState.methodInvokeCounter++;
 
-					SD.Debug.Assert(!isNewobj || obj == null);
+					Debug.Assert(!isNewobj || obj == null);
 					if (obj == null || isNewobj) {
 						asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), null, null);
 						if (WaitOne(asyncRes, currTime))

@@ -18,13 +18,14 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Debugger.DotNet.Mono.Impl;
 using dnSpy.Debugger.DotNet.Mono.Properties;
 using Mono.Debugger.Soft;
-using SD = System.Diagnostics;
+using MDS = Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 	sealed class DbgEngineStackWalkerImpl : DbgEngineStackWalker {
@@ -33,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 		readonly ThreadMirror monoThread;
 		readonly DbgThread thread;
 		readonly uint continueCounter;
-		StackFrame[] frames;
+		MDS.StackFrame[] frames;
 		int frameIndex;
 
 		public DbgEngineStackWalkerImpl(Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, DbgEngineImpl engine, ThreadMirror monoThread, DbgThread thread) {
@@ -78,7 +79,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			}
 		}
 
-		DbgEngineStackFrame CreateEngineStackFrame(StackFrame monoFrame, int frameIndex) {
+		DbgEngineStackFrame CreateEngineStackFrame(MDS.StackFrame monoFrame, int frameIndex) {
 			engine.DebuggerThread.VerifyAccess();
 			var method = monoFrame.Method;
 			if (method == null) {
@@ -87,7 +88,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 				if (monoFrame.IsNativeTransition)
 					return engine.ObjectFactory.CreateSpecialStackFrame(dnSpy_Debugger_DotNet_Mono_Resources.StackFrame_NativeTransition);
 
-				SD.Debug.Fail("Unknown frame without a method");
+				Debug.Fail("Unknown frame without a method");
 				return CreateErrorStackFrame();
 			}
 			else {
@@ -95,7 +96,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 				if (module != null)
 					return new ILDbgEngineStackFrame(engine, module, monoThread, monoFrame, frameIndex, dbgDotNetCodeLocationFactory);
 
-				SD.Debug.Fail("Creating an error stack frame");
+				Debug.Fail("Creating an error stack frame");
 				return CreateErrorStackFrame();
 			}
 		}

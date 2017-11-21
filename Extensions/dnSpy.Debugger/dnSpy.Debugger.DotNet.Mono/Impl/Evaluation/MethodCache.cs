@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
-using SD = System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	sealed class MethodCache {
@@ -88,8 +88,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (monoMethods.Length != methods.Count)
 				throw new InvalidOperationException();
 			for (int i = 0; i < monoMethods.Length; i++) {
-				SD.Debug.Assert(methods[i].Name == monoMethods[i].Name);
-				SD.Debug.Assert(methods[i].GetMethodSignature().GetParameterTypes().Count == monoMethods[i].GetParameters().Length);
+				Debug.Assert(methods[i].Name == monoMethods[i].Name);
+				Debug.Assert(methods[i].GetMethodSignature().GetParameterTypes().Count == monoMethods[i].GetParameters().Length);
 				toMonoMethod[methods[i]] = monoMethods[i];
 			}
 

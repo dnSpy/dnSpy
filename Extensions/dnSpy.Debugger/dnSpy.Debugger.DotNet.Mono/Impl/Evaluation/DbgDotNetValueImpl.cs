@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -25,7 +26,6 @@ using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
-using SD = System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	sealed class DbgDotNetValueImpl : DbgDotNetValue {
@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		DbgDotNetValue Dereference_MonoDebug() {
-			SD.Debug.Assert(Type.IsByRef && !IsNullByRef);
+			Debug.Assert(Type.IsByRef && !IsNullByRef);
 			engine.VerifyMonoDebugThread();
 			return engine.CreateDotNetValue_MonoDebug(valueLocation.Dereference());
 		}
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		uint GetArrayCountCore_MonoDebug() {
-			SD.Debug.Assert(Type.IsArray);
+			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var arrayMirror = value as ArrayMirror;
 			if (arrayMirror == null)
@@ -149,7 +149,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		bool GetArrayInfo_MonoDebug(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
-			SD.Debug.Assert(Type.IsArray);
+			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var arrayMirror = value as ArrayMirror;
 			if (arrayMirror == null) {
@@ -174,7 +174,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		DbgDotNetValue GetArrayElementAt_MonoDebug(uint index) {
-			SD.Debug.Assert(Type.IsArray);
+			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var info = GetArrayElementValueLocation_MonoDebug(index);
 			if (info.errorMessage != null)
@@ -183,7 +183,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		(ArrayElementValueLocation valueLocation, string errorMessage) GetArrayElementValueLocation_MonoDebug(uint index) {
-			SD.Debug.Assert(Type.IsArray);
+			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var arrayMirror = value as ArrayMirror;
 			if (arrayMirror == null)

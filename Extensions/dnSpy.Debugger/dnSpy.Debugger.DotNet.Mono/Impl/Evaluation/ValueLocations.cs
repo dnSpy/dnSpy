@@ -18,10 +18,10 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
 using Mono.Debugger.Soft;
-using SD = System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	/// <summary>
@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (!Type.IsByRef)
 				throw new InvalidOperationException();
 			var res = DereferenceCore();
-			SD.Debug.Assert(!res.Type.IsByRef);
+			Debug.Assert(!res.Type.IsByRef);
 			return res;
 		}
 		protected abstract ValueLocation DereferenceCore();
@@ -159,7 +159,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 			this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			this.field = field ?? throw new ArgumentNullException(nameof(field));
-			SD.Debug.Assert(field.IsStatic);
+			Debug.Assert(field.IsStatic);
 		}
 
 		public override Value Load() => field.DeclaringType.GetValue(field, thread);
@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 			this.objectMirror = objectMirror ?? throw new ArgumentNullException(nameof(objectMirror));
 			this.field = field ?? throw new ArgumentNullException(nameof(field));
-			SD.Debug.Assert(!field.IsStatic);
+			Debug.Assert(!field.IsStatic);
 		}
 
 		public override Value Load() => objectMirror.GetValue(field);
@@ -198,9 +198,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			this.containingLocation = containingLocation ?? throw new ArgumentNullException(nameof(containingLocation));
 			this.field = field ?? throw new ArgumentNullException(nameof(field));
 			structType = structMirror.Type;
-			SD.Debug.Assert(!field.IsStatic);
-			SD.Debug.Assert(field.DeclaringType == structType);
-			SD.Debug.Assert(containingLocation.Load() is StructMirror);
+			Debug.Assert(!field.IsStatic);
+			Debug.Assert(field.DeclaringType == structType);
+			Debug.Assert(containingLocation.Load() is StructMirror);
 			valueIndex = GetValueIndex(field);
 			if ((uint)valueIndex >= (uint)structMirror.Fields.Length)
 				throw new InvalidOperationException();
@@ -228,7 +228,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		public override Value Load() {
 			var structMirror = containingLocation.Load() as StructMirror;
-			SD.Debug.Assert(structMirror?.Type == structType);
+			Debug.Assert(structMirror?.Type == structType);
 			if (structMirror?.Type != structType)
 				throw new InvalidOperationException();
 			return structMirror.Fields[valueIndex];
@@ -236,7 +236,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		public override void Store(Value value) {
 			var structMirror = containingLocation.Load() as StructMirror;
-			SD.Debug.Assert(structMirror?.Type == structType);
+			Debug.Assert(structMirror?.Type == structType);
 			if (structMirror?.Type != structType)
 				throw new InvalidOperationException();
 			structMirror.Fields[valueIndex] = value;

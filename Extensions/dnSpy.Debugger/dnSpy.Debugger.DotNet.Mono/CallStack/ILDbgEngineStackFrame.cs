@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
@@ -28,7 +29,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.Impl;
 using Mono.Debugger.Soft;
-using SD = System.Diagnostics;
+using MDS = Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 	sealed class ILDbgEngineStackFrame : DbgEngineStackFrame {
@@ -37,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
 
-		internal StackFrame MonoFrame {
+		internal MDS.StackFrame MonoFrame {
 			get {
 				if (engine.MethodInvokeCounter != methodInvokeCounter)
 					UpdateFrame();
@@ -45,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			}
 		}
 		readonly ThreadMirror frameThread;
-		StackFrame __monoFrame_DONT_USE;
+		MDS.StackFrame __monoFrame_DONT_USE;
 		int frameIndex;
 		int methodInvokeCounter;
 
@@ -61,10 +62,10 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 					return;
 				}
 			}
-			SD.Debug.Fail("Failed to find the frame");
+			Debug.Fail("Failed to find the frame");
 		}
 
-		bool IsSameAsOurFrame(StackFrame otherFrame) {
+		bool IsSameAsOurFrame(MDS.StackFrame otherFrame) {
 			if (otherFrame == null)
 				return false;
 
@@ -87,7 +88,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 
 		readonly DbgEngineImpl engine;
 
-		public ILDbgEngineStackFrame(DbgEngineImpl engine, DbgModule module, ThreadMirror frameThread, StackFrame monoFrame, int frameIndex, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
+		public ILDbgEngineStackFrame(DbgEngineImpl engine, DbgModule module, ThreadMirror frameThread, MDS.StackFrame monoFrame, int frameIndex, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			this.frameThread = frameThread;
 			__monoFrame_DONT_USE = monoFrame ?? throw new ArgumentNullException(nameof(monoFrame));
@@ -138,7 +139,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 				methGenArgs = MonoFrame.Method.GetGenericArguments();
 			}
 			else {
-				SD.Debug.Fail("Old version doesn't support generics");
+				Debug.Fail("Old version doesn't support generics");
 				typeGenArgs = Array.Empty<TypeMirror>();
 				methGenArgs = Array.Empty<TypeMirror>();
 			}

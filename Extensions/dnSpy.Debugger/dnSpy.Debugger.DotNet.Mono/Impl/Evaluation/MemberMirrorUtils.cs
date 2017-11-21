@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
-using SD = System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	static class MemberMirrorUtils {
@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (monoFields.Length != fields.Count)
 				throw new InvalidOperationException();
 			var res = monoFields[fieldIndex];
-			SD.Debug.Assert(res.Name == fields[fieldIndex].Name);
+			Debug.Assert(res.Name == fields[fieldIndex].Name);
 			return res;
 		}
 
