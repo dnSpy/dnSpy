@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			if ((uint)index < (uint)realLocalVariables.Count)
 				return localsProvider.SetVariable(index, targetType, value);
 			if ((uint)index < (uint)localVariables.Count) {
-				extraLocals[index] = runtime.CreateValue(value);
+				extraLocals[index] = runtime.CreateValue(value, targetType);
 				return null;
 			}
 			return PredefinedEvaluationErrorMessages.InternalDebuggerError;

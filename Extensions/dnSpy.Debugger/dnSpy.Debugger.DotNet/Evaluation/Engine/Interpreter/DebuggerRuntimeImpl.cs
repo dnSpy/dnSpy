@@ -93,7 +93,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		DbgStackFrame frame;
 		CancellationToken cancellationToken;
 		bool canFuncEval;
-		DmdAppDomain reflectionAppDomain;
 
 		public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBody realMethodBody, VariablesProvider argumentsProvider, VariablesProvider localsProvider, bool canFuncEval, CancellationToken cancellationToken) {
 			Debug.Assert(this.context == null);
@@ -109,7 +108,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		public override void Initialize(DmdMethodBase method, DmdMethodBody body) {
-			reflectionAppDomain = method.AppDomain;
 			argumentsProvider.Initialize(context, frame, method, body, cancellationToken);
 			interpreterLocalsProvider.Initialize(context, frame, method, body, cancellationToken);
 		}
@@ -127,7 +125,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			argumentsProvider.Clear();
 			interpreterLocalsProvider.Clear();
 			argumentsProvider = null;
-			reflectionAppDomain = null;
 		}
 
 		public override DbgDotNetValue GetDotNetValue(ILValue value, DmdType targetType = null) {
@@ -136,13 +133,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			if (dnValue != null)
 				return dnValue;
 			throw new InvalidOperationException();//TODO:
-		}
-
-		DbgDotNetValue TryCreateSyntheticValue(object value) {
-			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(reflectionAppDomain, value);
-			if (dnValue != null)
-				RecordValue(dnValue);
-			return dnValue;
 		}
 
 		DbgDotNetValue TryCreateSyntheticValue(DmdType type, object value) {
@@ -506,23 +496,23 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		DbgDotNetValue TryCreateDefaultValue(DmdType type) {
 			switch (DmdType.GetTypeCode(type)) {
-			case TypeCode.Boolean:	return TryCreateSyntheticValue(false);
-			case TypeCode.Char:		return TryCreateSyntheticValue('\0');
-			case TypeCode.SByte:	return TryCreateSyntheticValue((sbyte)0);
-			case TypeCode.Byte:		return TryCreateSyntheticValue((byte)0);
-			case TypeCode.Int16:	return TryCreateSyntheticValue((short)0);
-			case TypeCode.UInt16:	return TryCreateSyntheticValue((ushort)0);
-			case TypeCode.Int32:	return TryCreateSyntheticValue(0);
-			case TypeCode.UInt32:	return TryCreateSyntheticValue(0U);
-			case TypeCode.Int64:	return TryCreateSyntheticValue(0L);
-			case TypeCode.UInt64:	return TryCreateSyntheticValue(0UL);
-			case TypeCode.Single:	return TryCreateSyntheticValue(0f);
-			case TypeCode.Double:	return TryCreateSyntheticValue(0d);
+			case TypeCode.Boolean:	return TryCreateSyntheticValue(type, false);
+			case TypeCode.Char:		return TryCreateSyntheticValue(type, '\0');
+			case TypeCode.SByte:	return TryCreateSyntheticValue(type, (sbyte)0);
+			case TypeCode.Byte:		return TryCreateSyntheticValue(type, (byte)0);
+			case TypeCode.Int16:	return TryCreateSyntheticValue(type, (short)0);
+			case TypeCode.UInt16:	return TryCreateSyntheticValue(type, (ushort)0);
+			case TypeCode.Int32:	return TryCreateSyntheticValue(type, 0);
+			case TypeCode.UInt32:	return TryCreateSyntheticValue(type, 0U);
+			case TypeCode.Int64:	return TryCreateSyntheticValue(type, 0L);
+			case TypeCode.UInt64:	return TryCreateSyntheticValue(type, 0UL);
+			case TypeCode.Single:	return TryCreateSyntheticValue(type, 0f);
+			case TypeCode.Double:	return TryCreateSyntheticValue(type, 0d);
 			}
 			if (type == type.AppDomain.System_IntPtr || type.IsPointer || type.IsFunctionPointer)
-				return TryCreateSyntheticValue(IntPtr.Zero);
+				return TryCreateSyntheticValue(type, IntPtr.Zero);
 			if (type == type.AppDomain.System_UIntPtr)
-				return TryCreateSyntheticValue(UIntPtr.Zero);
+				return TryCreateSyntheticValue(type, UIntPtr.Zero);
 			return null;
 		}
 
@@ -840,8 +830,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			throw new InvalidOperationException();
 		}
 
-		DbgDotNetValue IDebuggerRuntime.CreateValue(object value) {
-			var res = TryCreateSyntheticValue(value);
+		DbgDotNetValue IDebuggerRuntime.CreateValue(object value, DmdType targetType) {
+			var res = TryCreateSyntheticValue(targetType, value);
 			if (res != null)
 				return res;
 			return RecordValue(runtime.CreateValue(context, frame, value, cancellationToken));
@@ -966,7 +956,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
-		internal DbgDotNetValue CreateValue(object value) =>
-			((IDebuggerRuntime)this).CreateValue(value);
+		internal DbgDotNetValue CreateValue(object value, DmdType targetType) =>
+			((IDebuggerRuntime)this).CreateValue(value, targetType);
 	}
 }

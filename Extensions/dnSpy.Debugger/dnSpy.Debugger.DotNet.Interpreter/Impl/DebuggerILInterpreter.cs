@@ -4768,7 +4768,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			if (constrainedType.IsValueType) {
 				if (ImplementsMethod(constrainedType, method.Name, method.GetMethodSignature()))
 					return v1;
-				return v1.LoadIndirect(constrainedType, GetLoadValueType(constrainedType))?.Box(constrainedType);
+				var value = v1.LoadIndirect(constrainedType, GetLoadValueType(constrainedType));
+				if (value == null)
+					return null;
+				return value.Box(constrainedType) ?? debuggerRuntime.Box(value, constrainedType);
 			}
 			else
 				return v1.LoadIndirect(constrainedType.AppDomain.System_Object, LoadValueType.Ref);
