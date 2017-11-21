@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				type = dnValueImpl.Type;
 				return new EvalArgumentResult(dnValueImpl.Value);
 			}
-			DmdType origType = null;
+			var origType = defaultType;
 			if (value is DbgDotNetValue dnValue) {
 				var rawValue = dnValue.GetRawValue();
 				if (rawValue.HasRawValue) {
@@ -87,10 +87,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				type = reflectionAppDomain.System_String;
 				return new EvalArgumentResult(appDomain.CreateString(s));
 			}
-			var res = ConvertCore(value, defaultType, out type);
+			var res = ConvertCore(value, origType, out type);
 			if (res.ErrorMessage != null)
 				return res;
-			if (origType != null && origType.IsEnum) {
+			if (origType.IsEnum) {
 				type = origType;
 				return new EvalArgumentResult(vm.CreateEnumMirror(GetType(origType), (PrimitiveValue)res.Value));
 			}
@@ -156,16 +156,28 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 			default:
 				if (value.GetType() == typeof(IntPtr)) {
-					type = reflectionAppDomain.System_IntPtr;
-					monoType = GetType(type);
-					monoValues = new Value[] { new PrimitiveValue(vm, ElementType.Ptr, ((IntPtr)value).ToInt64()) };
-					return new EvalArgumentResult(vm.CreateStructMirror(monoType, monoValues));
+					if (defaultType.IsPointer || defaultType.IsFunctionPointer) {
+						type = defaultType;
+						return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.Ptr, ((IntPtr)value).ToInt64()));
+					}
+					else {
+						type = reflectionAppDomain.System_IntPtr;
+						monoType = GetType(type);
+						monoValues = new Value[] { new PrimitiveValue(vm, ElementType.Ptr, ((IntPtr)value).ToInt64()) };
+						return new EvalArgumentResult(vm.CreateStructMirror(monoType, monoValues));
+					}
 				}
 				if (value.GetType() == typeof(UIntPtr)) {
-					type = reflectionAppDomain.System_UIntPtr;
-					monoType = GetType(type);
-					monoValues = new Value[] { new PrimitiveValue(vm, ElementType.Ptr, (long)((UIntPtr)value).ToUInt64()) };
-					return new EvalArgumentResult(vm.CreateStructMirror(monoType, monoValues));
+					if (defaultType.IsPointer || defaultType.IsFunctionPointer) {
+						type = defaultType;
+						return new EvalArgumentResult(new PrimitiveValue(vm, ElementType.Ptr, (long)((UIntPtr)value).ToUInt64()));
+					}
+					else {
+						type = reflectionAppDomain.System_UIntPtr;
+						monoType = GetType(type);
+						monoValues = new Value[] { new PrimitiveValue(vm, ElementType.Ptr, (long)((UIntPtr)value).ToUInt64()) };
+						return new EvalArgumentResult(vm.CreateStructMirror(monoType, monoValues));
+					}
 				}
 				if (value is Array array && array.Rank == 1 && value.GetType().GetElementType().MakeArrayType() == value.GetType()) {
 					switch (Type.GetTypeCode(value.GetType().GetElementType())) {

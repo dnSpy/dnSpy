@@ -392,7 +392,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				var reflectionAppDomain = thread.AppDomain.GetReflectionAppDomain();
 				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
 					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
-					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
+					var evalRes = converter.Convert(value, targetType, out var newValueType);
 					if (evalRes.ErrorMessage != null)
 						return new DbgCreateMonoValueResult(evalRes.ErrorMessage);
 					var newValue = evalRes.Value;
