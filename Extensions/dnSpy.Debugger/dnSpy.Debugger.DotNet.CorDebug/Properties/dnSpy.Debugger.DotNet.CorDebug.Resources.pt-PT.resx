@@ -209,55 +209,55 @@ Erro: {1}</value>
 Erro: {0}</value>
   </data>
   <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Could not attach to process {0}</value>
+    <value>Não foi possível anexar ao processo {0}</value>
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
     <value>Algum outro processo já estiver depurando o processo {0}</value>
   </data>
   <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Native Frame {0}</value>
+    <value>Estrutura Nativa {0}</value>
   </data>
   <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Appdomain Transition</value>
+    <value>Transição de AppDomain</value>
   </data>
   <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Class Init</value>
+    <value>Inicialização de Classe</value>
   </data>
   <data name="StackFrame_Exception" xml:space="preserve">
     <value>Exceção</value>
   </data>
   <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Function Evaluation</value>
+    <value>Avaliação de Função</value>
   </data>
   <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Internal Call</value>
+    <value>Chamada Interna</value>
   </data>
   <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Internal Frame ({0})</value>
+    <value>Estrutura Interna ({0})</value>
   </data>
   <data name="StackFrame_JITCompilation" xml:space="preserve">
-    <value>JIT Compilation</value>
+    <value>Compilação JIT</value>
   </data>
   <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Lightweight Function</value>
+    <value>Função Leve</value>
   </data>
   <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Managed to Native Transition</value>
+    <value>Transição de Managed para Native</value>
   </data>
   <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Native to Managed Transition</value>
+    <value>Transição de Native para Managed</value>
   </data>
   <data name="StackFrame_Security" xml:space="preserve">
-    <value>Security</value>
+    <value>Segurança</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL offset {0}</value>
+    <value>Desvio de IL {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>linha {0} caráter {1}</value>
   </data>
   <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
-    <value>address {0}</value>
+    <value>endereço {0}</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Não foi possível definir a próxima instrução.</value>
@@ -266,7 +266,7 @@ Erro: {0}</value>
     <value>Could not break process. Error: 0x{0:X8}</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Internal debugger error</value>
+    <value>Erro interno do depurador</value>
   </data>
   <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
     <value>Ocorreu um erro de depurador CLR. Finalize o processo depurado e tente novamente. 

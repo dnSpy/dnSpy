@@ -178,7 +178,7 @@
     <value>Guardar Recursos</value>
   </data>
   <data name="Search_SearchColumnHelpText" xml:space="preserve">
-    <value>Search column: {0}</value>
+    <value>Coluna de pesquisa: {0}</value>
   </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>Valor deve ser de tipo {0}.

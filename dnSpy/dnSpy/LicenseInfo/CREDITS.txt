@@ -38,6 +38,7 @@ Russian:
 Portuguese:
 
 	Raphael Aquiles
+	jp2masa
 
 German:
 

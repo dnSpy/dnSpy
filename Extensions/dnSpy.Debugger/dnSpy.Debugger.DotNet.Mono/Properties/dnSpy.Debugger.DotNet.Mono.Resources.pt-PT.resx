@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DbgAsm_Args" xml:space="preserve">
-    <value>Argumentos</value>
+    <value>A_rgumentos</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>Assembly</value>
+    <value>_Assembly</value>
   </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>Parar em</value>
+    <value>_Parar em</value>
   </data>
   <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>_Port</value>
+    <value>_Porta</value>
   </data>
   <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>Connect</value>
+    <value>Conectar</value>
   </data>
   <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>IP Address</value>
+    <value>Endereço IP</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Diretório de Trabalho</value>
+    <value>_Diretório de Trabalho</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
     <value>CreateProcess</value>
@@ -157,19 +157,19 @@
     <value>Depurador ({0})</value>
   </data>
   <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>Could not find {0}</value>
+    <value>Não foi possível encontrar {0}</value>
   </data>
   <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>Couldn't connect to the debugged process</value>
+    <value>Não foi possível conectar ao processo depurado</value>
   </data>
   <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>Could not find the debugged process</value>
+    <value>Não foi possível encontrar o processo depurado</value>
   </data>
   <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>The connection to the debugged process was unexpectedly closed</value>
+    <value>A conexão ao processo depurado foi fechada inesperadamente</value>
   </data>
   <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Aborted</value>
+    <value>Abortado</value>
   </data>
   <data name="Thread_UserState_AbortRequested" xml:space="preserve">
     <value>AbortRequested</value>
@@ -199,12 +199,12 @@
     <value>"&lt;Nenhuma mensagem de exceção&gt;"</value>
   </data>
   <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Function Evaluation</value>
+    <value>Avaliação de Função</value>
   </data>
   <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Native Transition</value>
+    <value>Transição Nativa</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
-    <value>This runtime doesn't support creating generic methods</value>
+    <value>Este tempo de execução não suporta criar métodos genéricos</value>
   </data>
 </root>
