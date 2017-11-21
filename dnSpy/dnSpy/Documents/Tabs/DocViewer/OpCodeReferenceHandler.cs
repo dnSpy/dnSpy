@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		static string GetMsdnOpCode(OpCode opCode) =>
-			opCode.Name.ToLowerInvariant().Replace('.', '_');
+			opCode.Name.ToLowerInvariant().Replace('.', '_').TrimEnd('_');
 
 		void StartBrowser(string url) {
 			try {
