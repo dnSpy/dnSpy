@@ -55,6 +55,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				throw new InvalidOperationException();
 
 			TypeMirror result;
+			bool addType = true;
 			switch (type.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
 				if (!engine.TryGetMonoModule(type.Module.GetDebuggerModule() ?? throw new InvalidOperationException(), out var monoModule))
@@ -120,7 +121,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				break;
 
 			case DmdTypeSignatureKind.FunctionPointer:
-				result = null;
+				// It's not possible to create function pointers, so use a pointer type instead
+				result = Create(type.AppDomain.System_Void.MakePointerType());
+				addType = false;
 				break;
 
 			default:
@@ -129,7 +132,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 			if (result == null)
 				throw new InvalidOperationException();
-			typeCache.Add(result, type);
+			if (addType)
+				typeCache.Add(result, type);
 
 			recursionCounter--;
 			return result;
