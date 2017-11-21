@@ -54,20 +54,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				default:					throw new InvalidOperationException();
 				}
 
-			case EnumMirror em:
-				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(em.Type);
+			case ObjectMirror om:
+				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(om.Type);
 
 			case StructMirror sm:
 				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(sm.Type);
-
-			case ArrayMirror am:
-				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(am.Type);
-
-			case StringMirror strVal:
-				return reflectionAppDomain.System_String;
-
-			case ObjectMirror om:
-				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(om.Type);
 
 			default:
 				throw new InvalidOperationException();
