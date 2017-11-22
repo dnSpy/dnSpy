@@ -78,6 +78,16 @@ namespace dnSpy.Contracts.Documents {
 	}
 
 	/// <summary>
+	/// A document
+	/// </summary>
+	public interface IDsDocument2 : IDsDocument {
+		/// <summary>
+		/// Called after it's been added to the documents list
+		/// </summary>
+		void OnAdded();
+	}
+
+	/// <summary>
 	/// Extension methods
 	/// </summary>
 	public static class DsDocumentExtensionMethods {
