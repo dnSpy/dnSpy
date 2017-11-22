@@ -693,6 +693,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (dnDebugger.Processes.Length == 0)
 					throw new ErrorException(string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotAttachToProcess, $"PID={options.ProcessId.ToString()}"));
 				OnDebugProcess(dnDebugger);
+				if (debuggerSettings.DisableManagedDebuggerDetection)
+					DisableSystemDebuggerDetection.Initialize(dnDebugger);
 				HookDnDebuggerEvents();
 				return;
 			}

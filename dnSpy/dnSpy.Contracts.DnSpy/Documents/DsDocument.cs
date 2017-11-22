@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Documents {
 	/// <summary>
 	/// Document base class
 	/// </summary>
-	public abstract class DsDocument : IDsDocument {
+	public abstract class DsDocument : IDsDocument2 {
 		/// <inheritdoc/>
 		public abstract DsDocumentInfo? SerializedDocument { get; }
 		/// <inheritdoc/>
@@ -105,6 +105,8 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		public void RemoveAnnotations<T>() where T : class => annotations.RemoveAnnotations<T>();
 		readonly AnnotationsImpl annotations = new AnnotationsImpl();
+		/// <inheritdoc/>
+		public virtual void OnAdded() { }
 	}
 
 	/// <summary>
@@ -170,8 +172,13 @@ namespace dnSpy.Contracts.Documents {
 			loadedSymbols = loadSyms;
 			Filename = module.Location ?? string.Empty;
 			module.EnableTypeDefFindCache = true;
-			if (loadSyms)
-				LoadSymbols(module.Location);
+		}
+
+		/// <inheritdoc/>
+		public override void OnAdded() {
+			if (loadedSymbols)
+				LoadSymbols(ModuleDef.Location);
+			base.OnAdded();
 		}
 
 		/// <summary>
