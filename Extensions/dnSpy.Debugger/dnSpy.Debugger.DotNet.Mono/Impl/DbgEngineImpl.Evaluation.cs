@@ -300,6 +300,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					return new DbgDotNetValueResult(CreateDotNetValue_MonoDebug(valueLocation), valueIsException: res.Exception != null);
 				}
 			}
+			catch (VMNotSuspendedException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
+			}
 			catch (TimeoutException) {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
@@ -340,6 +343,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					return new DbgDotNetValueResult(CreateDotNetValue_MonoDebug(type.AppDomain, boxedValue), valueIsException: false);
 				}
 			}
+			catch (VMNotSuspendedException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
+			}
 			catch (TimeoutException) {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
@@ -369,6 +375,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var resultValue = CreateDotNetValue_MonoDebug(reflectionAppDomain, evalRes.Value);
 					return new DbgDotNetCreateValueResult(resultValue);
 				}
+			}
+			catch (VMNotSuspendedException) {
+				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
 			}
 			catch (TimeoutException) {
 				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
@@ -401,6 +410,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					newValue = BoxIfNeeded(monoThread.Domain, newValue, targetType, newValueType);
 					return new DbgCreateMonoValueResult(newValue);
 				}
+			}
+			catch (VMNotSuspendedException) {
+				return new DbgCreateMonoValueResult(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
 			}
 			catch (TimeoutException) {
 				return new DbgCreateMonoValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
