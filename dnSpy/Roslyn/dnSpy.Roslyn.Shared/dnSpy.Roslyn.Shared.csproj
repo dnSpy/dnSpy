@@ -55,6 +55,7 @@
     <Compile Include="Debugger\FilterExpressionEvaluator\DbgFilterExpressionEvaluatorImpl.cs" />
     <Compile Include="Debugger\FilterExpressionEvaluator\EvalDelegateCreator.cs" />
     <Compile Include="Debugger\Formatters\CSharp\CSharpFormatter.cs" />
+    <Compile Include="Debugger\Formatters\CSharp\CSharpPrimitiveValueFormatter.cs" />
     <Compile Include="Debugger\Formatters\CSharp\CSharpTypeFormatter.cs" />
     <Compile Include="Debugger\Formatters\CSharp\CSharpValueFormatter.cs" />
     <Compile Include="Debugger\Formatters\DbgValueFormatterOptionsExtensions.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Debugger\Formatters\ValueFormatterOptionsExtensions.cs" />
     <Compile Include="Debugger\Formatters\ValueFormatterUtils.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicFormatter.cs" />
+    <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicPrimitiveValueFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicTypeFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicValueFormatter.cs" />
     <Compile Include="Debugger\GetLocalsAssemblyBuilder.cs" />
