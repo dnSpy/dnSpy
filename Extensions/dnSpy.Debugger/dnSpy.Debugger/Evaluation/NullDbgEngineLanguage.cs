@@ -77,6 +77,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) { }
 	}
 
 	sealed class NullDbgEngineLocalsValueNodeProvider : DbgEngineLocalsValueNodeProvider {

@@ -137,17 +137,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			// Needed by DebuggerRuntimeImpl (calls expressionCompiler.TryGetAliasInfo())
 			context.GetOrCreateData(() => expressionCompiler);
 
-			var loc = location as IDbgDotNetCodeLocation;
-			if (loc == null) {
-				// Could be a special frame, eg. managed to native frame
-				return;
+			if ((context.Options & DbgEvaluationContextOptions.NoMethodBody) == 0 && location is IDbgDotNetCodeLocation loc) {
+				var state = StateWithKey<RuntimeState>.GetOrCreate(context.Runtime, decompiler);
+				var debugInfo = GetOrCreateDebugInfo(context, state, loc, cancellationToken);
+				if (debugInfo != null)
+					DbgLanguageDebugInfoExtensions.SetLanguageDebugInfo(context, debugInfo);
 			}
-
-			var state = StateWithKey<RuntimeState>.GetOrCreate(context.Runtime, decompiler);
-			var debugInfo = GetOrCreateDebugInfo(context, state, loc, cancellationToken);
-			if (debugInfo == null)
-				return;
-			DbgLanguageDebugInfoExtensions.SetLanguageDebugInfo(context, debugInfo);
 		}
 
 		DbgLanguageDebugInfo GetOrCreateDebugInfo(DbgEvaluationContext context, RuntimeState state, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {

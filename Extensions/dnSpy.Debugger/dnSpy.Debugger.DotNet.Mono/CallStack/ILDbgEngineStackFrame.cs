@@ -25,7 +25,6 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.Impl;
 using Mono.Debugger.Soft;
@@ -102,15 +101,6 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			var moduleId = DbgEngineImpl.TryGetModuleId(module) ?? default;
 			var options = ilOffset == uint.MaxValue ? DbgDotNetCodeLocationOptions.InvalidOffset : 0;
 			Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset, options);
-		}
-
-		public override void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options) =>
-			engine.DebuggerThread.Invoke(() => Format_MonoDebug(writer, options));
-
-		void Format_MonoDebug(ITextColorWriter writer, DbgStackFrameFormatOptions options) {
-			if (Module.IsClosed)
-				return;
-			writer.Write(BoxedTextColor.Error, "NYI");//TODO:
 		}
 
 		sealed class ILFrameState {

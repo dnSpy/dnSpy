@@ -68,20 +68,6 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		public bool HasFunctionToken => FunctionToken != uint.MaxValue;
 
 		/// <summary>
-		/// Formats the stack frame
-		/// </summary>
-		/// <param name="writer">Writer</param>
-		/// <param name="options">Options</param>
-		public abstract void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options);
-
-		/// <summary>
-		/// ToString()
-		/// </summary>
-		/// <param name="options">Options</param>
-		/// <returns></returns>
-		public abstract string ToString(DbgStackFrameFormatOptions options);
-
-		/// <summary>
 		/// Closes this instance
 		/// </summary>
 		public void Close() => Thread.Process.DbgManager.Close(this);

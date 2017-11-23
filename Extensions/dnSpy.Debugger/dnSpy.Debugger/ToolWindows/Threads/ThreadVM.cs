@@ -20,9 +20,12 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using System.Threading;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
@@ -144,11 +147,13 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public IEditableValue NameEditableValue { get; }
 		public IEditValueProvider NameEditValueProvider { get; }
 
+		readonly DbgLanguageService dbgLanguageService;
 		readonly ThreadCategoryService threadCategoryService;
 		bool initializeThreadCategory;
 		SafeAccessTokenHandle hThread;
 
-		public ThreadVM(DbgThread thread, IThreadContext context, int order, ThreadCategoryService threadCategoryService, IEditValueProvider nameEditValueProvider) {
+		public ThreadVM(DbgLanguageService dbgLanguageService, DbgThread thread, IThreadContext context, int order, ThreadCategoryService threadCategoryService, IEditValueProvider nameEditValueProvider) {
+			this.dbgLanguageService = dbgLanguageService ?? throw new ArgumentNullException(nameof(dbgLanguageService));
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
@@ -216,6 +221,11 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			locationCachedOutput = default;
 			OnPropertyChanged(nameof(LocationObject));
 			OnPropertyChanged(nameof(SuspendedCountObject));
+		}
+
+		// UI thread
+		internal void RefreshLanguageFields_UI() {
+			locationCachedOutput = default;
 		}
 
 		// UI thread
@@ -328,6 +338,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			Context.UIDispatcher.VerifyAccess();
 			DbgStackWalker stackWalker = null;
 			DbgStackFrame[] frames = null;
+			DbgEvaluationContext context = null;
 			try {
 				stackWalker = Thread.CreateStackWalker();
 				frames = stackWalker.GetNextStackFrames(1);
@@ -335,19 +346,13 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 					return new ClassifiedTextCollection(new[] { new ClassifiedText(BoxedTextColor.Text, dnSpy_Debugger_Resources.Thread_LocationNotAvailable) });
 				else {
 					Debug.Assert(frames.Length == 1);
-					var options =
-						DbgStackFrameFormatOptions.ShowModuleNames |
-						DbgStackFrameFormatOptions.ShowParameterTypes |
-						DbgStackFrameFormatOptions.ShowParameterNames |
-						DbgStackFrameFormatOptions.ShowDeclaringTypes |
-						DbgStackFrameFormatOptions.ShowNamespaces |
-						DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords |
-						DbgStackFrameFormatOptions.ShowFunctionOffset;
-					if (!Context.UseHexadecimal)
-						options |= DbgStackFrameFormatOptions.UseDecimal;
-					if (Context.DigitSeparators)
-						options |= DbgStackFrameFormatOptions.DigitSeparators;
-					frames[0].Format(Context.ClassifiedTextWriter, options);
+					var frame = frames[0];
+					var language = dbgLanguageService.GetCurrentLanguage(Thread.Runtime.RuntimeKindGuid);
+					const DbgEvaluationContextOptions ctxOptions = DbgEvaluationContextOptions.NoMethodBody;
+					CancellationToken cancellationToken = default;
+					const CultureInfo cultureInfo = null;
+					context = language.CreateContext(frame, ctxOptions);
+					language.Formatter.Format(context, frame, Context.ClassifiedTextWriter, GetStackFrameFormatterOptions(), DbgValueFormatterOptions.None, cultureInfo, cancellationToken);
 					return Context.ClassifiedTextWriter.GetClassifiedText();
 				}
 			}
@@ -358,7 +363,25 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				}
 				else
 					stackWalker?.Close();
+				context?.Close();
 			}
+		}
+
+		// random thread
+		DbgStackFrameFormatterOptions GetStackFrameFormatterOptions() {
+			var options =
+				DbgStackFrameFormatterOptions.ModuleNames |
+				DbgStackFrameFormatterOptions.ParameterTypes |
+				DbgStackFrameFormatterOptions.ParameterNames |
+				DbgStackFrameFormatterOptions.DeclaringTypes |
+				DbgStackFrameFormatterOptions.Namespaces |
+				DbgStackFrameFormatterOptions.IntrinsicTypeKeywords |
+				DbgStackFrameFormatterOptions.IP;
+			if (!Context.UseHexadecimal)
+				options |= DbgStackFrameFormatterOptions.Decimal;
+			if (Context.DigitSeparators)
+				options |= DbgStackFrameFormatterOptions.DigitSeparators;
+			return options;
 		}
 
 		// UI thread

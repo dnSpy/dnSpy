@@ -18,10 +18,13 @@
 */
 
 using System;
+using System.Globalization;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.CallStack {
@@ -41,10 +44,11 @@ namespace dnSpy.Debugger.CallStack {
 			FunctionToken = functionToken;
 		}
 
-		public override void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options) {
-			writer.Write(BoxedTextColor.Punctuation, "[");
-			writer.Write(BoxedTextColor.Text, name);
-			writer.Write(BoxedTextColor.Punctuation, "]");
+		public override bool TryFormat(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+			output.Write(BoxedTextColor.Punctuation, "[");
+			output.Write(BoxedTextColor.Text, name);
+			output.Write(BoxedTextColor.Punctuation, "]");
+			return true;
 		}
 
 		public override void OnFrameCreated(DbgStackFrame frame) { }

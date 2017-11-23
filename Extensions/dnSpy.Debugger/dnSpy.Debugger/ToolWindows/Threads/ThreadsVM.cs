@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
@@ -120,6 +121,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		readonly Lazy<DbgManager> dbgManager;
+		readonly Lazy<DbgLanguageService> dbgLanguageService;
 		readonly ThreadContext threadContext;
 		readonly ThreadFormatterProvider threadFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
@@ -130,13 +132,14 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		int threadOrder;
 
 		[ImportingConstructor]
-		ThreadsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ThreadFormatterProvider threadFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, ThreadCategoryService threadCategoryService, EditValueProviderService editValueProviderService) {
+		ThreadsVM(Lazy<DbgManager> dbgManager, Lazy<DbgLanguageService> dbgLanguageService, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ThreadFormatterProvider threadFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, ThreadCategoryService threadCategoryService, EditValueProviderService editValueProviderService) {
 			uiDispatcher.VerifyAccess();
 			realAllItems = new List<ThreadVM>();
 			AllItems = new BulkObservableCollection<ThreadVM>();
 			SelectedItems = new ObservableCollection<ThreadVM>();
 			processes = new ObservableCollection<SimpleProcessVM>();
 			this.dbgManager = dbgManager;
+			this.dbgLanguageService = dbgLanguageService;
 			this.threadFormatterProvider = threadFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
 			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
@@ -226,6 +229,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				dbgManager.Value.ProcessesChanged += DbgManager_ProcessesChanged;
 				dbgManager.Value.CurrentThreadChanged += DbgManager_CurrentThreadChanged;
 				dbgManager.Value.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
+				dbgLanguageService.Value.LanguageChanged += DbgLanguageService_LanguageChanged;
 				var threads = new List<DbgThread>();
 				var processes = dbgManager.Value.Processes;
 				foreach (var p in processes) {
@@ -249,6 +253,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				dbgManager.Value.ProcessesChanged -= DbgManager_ProcessesChanged;
 				dbgManager.Value.CurrentThreadChanged -= DbgManager_CurrentThreadChanged;
 				dbgManager.Value.DelayedIsRunningChanged -= DbgManager_DelayedIsRunningChanged;
+				dbgLanguageService.Value.LanguageChanged -= DbgLanguageService_LanguageChanged;
 				foreach (var p in dbgManager.Value.Processes) {
 					DeinitializeProcess_DbgThread(p);
 					foreach (var r in p.Runtimes) {
@@ -260,6 +265,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				UI(() => RemoveAllThreads_UI());
 			}
 		}
+
+		// DbgManager thread
+		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) => UI(() => RefreshLanguageFields_UI());
 
 		// DbgManager thread
 		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) {
@@ -326,11 +334,16 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
 			threadContext.UIDispatcher.VerifyAccess();
-			if (propertyName == nameof(DebuggerSettings.UseHexadecimal) || propertyName == nameof(DebuggerSettings.UseDigitSeparators))
+			switch (propertyName) {
+			case nameof(DebuggerSettings.UseHexadecimal):
+			case nameof(DebuggerSettings.UseDigitSeparators):
 				RefreshHexFields_UI();
-			else if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
+				break;
+
+			case nameof(DebuggerSettings.SyntaxHighlight):
 				threadContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				RefreshThemeFields_UI();
+				break;
 			}
 		}
 
@@ -357,6 +370,13 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				vm.RefreshHexFields_UI();
 			foreach (var vm in processes)
 				vm.UpdateName(debuggerSettings.UseHexadecimal);
+		}
+
+		// UI thread
+		void RefreshLanguageFields_UI() {
+			threadContext.UIDispatcher.VerifyAccess();
+			foreach (var vm in realAllItems)
+				vm.RefreshLanguageFields_UI();
 		}
 
 		// random thread
@@ -493,7 +513,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		void AddItems_UI(IList<DbgThread> threads) {
 			threadContext.UIDispatcher.VerifyAccess();
 			foreach (var t in threads) {
-				var vm = new ThreadVM(t, threadContext, threadOrder++, threadCategoryService, NameEditValueProvider);
+				var vm = new ThreadVM(dbgLanguageService.Value, t, threadContext, threadOrder++, threadCategoryService, NameEditValueProvider);
 				vm.IsCurrentThread = t == dbgManager.Value.CurrentThread.Current;
 				vm.IsBreakThread = t == dbgManager.Value.CurrentThread.Break;
 				realAllItems.Add(vm);

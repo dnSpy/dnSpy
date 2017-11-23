@@ -17,8 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Globalization;
+using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
 
@@ -53,11 +56,15 @@ namespace dnSpy.Contracts.Debugger.Engine.CallStack {
 		public const uint InvalidFunctionToken = uint.MaxValue;
 
 		/// <summary>
-		/// Formats the stack frame
+		/// Formats the stack frame or returns false
 		/// </summary>
-		/// <param name="writer">Writer</param>
-		/// <param name="options">Options</param>
-		public abstract void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options);
+		/// <param name="context">Evaluation context</param>
+		/// <param name="output">Output</param>
+		/// <param name="options">Stack frame options</param>
+		/// <param name="valueOptions">Value option</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public virtual bool TryFormat(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) => false;
 
 		/// <summary>
 		/// Called after the <see cref="DbgStackFrame"/> has been created

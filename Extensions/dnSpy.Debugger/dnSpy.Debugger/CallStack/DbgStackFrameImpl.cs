@@ -18,10 +18,13 @@
 */
 
 using System;
+using System.Globalization;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Impl;
 
@@ -43,25 +46,8 @@ namespace dnSpy.Debugger.CallStack {
 			engineStackFrame.OnFrameCreated(this);
 		}
 
-		public override void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options) {
-			if (writer == null)
-				throw new ArgumentNullException(nameof(writer));
-			engineStackFrame.Format(writer, options);
-		}
-
-		public override string ToString(DbgStackFrameFormatOptions options) {
-			var output = new StringBuilderTextColorOutput();
-			Format(output, options);
-			return output.ToString();
-		}
-
-		const DbgStackFrameFormatOptions DefaultToStringOptions =
-			DbgStackFrameFormatOptions.ShowParameterTypes |
-			DbgStackFrameFormatOptions.ShowFunctionOffset |
-			DbgStackFrameFormatOptions.ShowDeclaringTypes |
-			DbgStackFrameFormatOptions.ShowNamespaces |
-			DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords;
-		public override string ToString() => ToString(DefaultToStringOptions);
+		internal bool TryFormat(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
+			engineStackFrame.TryFormat(context, output, options, valueOptions, cultureInfo, cancellationToken);
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
 			thread.RemoveAutoClose(this);

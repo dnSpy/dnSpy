@@ -18,7 +18,11 @@
 */
 
 using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
@@ -102,9 +106,6 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 
 		// UI thread
-		internal void RefreshHexFields_UI() => RefreshName_UI();
-
-		// UI thread
 		internal void RefreshName_UI() {
 			Context.UIDispatcher.VerifyAccess();
 			cachedOutput = default;
@@ -117,33 +118,57 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			breakpointKindInitd = false;
 			OnPropertyChanged(nameof(BreakpointImage));
 		}
+
+		public virtual void Dispose() { }
 	}
 
 	sealed class NormalStackFrameVM : StackFrameVM {
 		public DbgStackFrame Frame => frame;
+		DbgLanguage language;
 		DbgStackFrame frame;
+
+		DbgEvaluationContext evaluationContext;
 
 		readonly Func<NormalStackFrameVM, BreakpointKind?> getBreakpointKind;
 
-		public NormalStackFrameVM(DbgStackFrame frame, ICallStackContext context, int index, Func<NormalStackFrameVM, BreakpointKind?> getBreakpointKind)
+		public NormalStackFrameVM(DbgLanguage language, DbgStackFrame frame, ICallStackContext context, int index, Func<NormalStackFrameVM, BreakpointKind?> getBreakpointKind)
 			: base(context) {
-			this.frame = frame ?? throw new ArgumentNullException(nameof(frame));
+			this.language = language;
+			this.frame = frame;
 			Index = index;
 			this.getBreakpointKind = getBreakpointKind ?? throw new ArgumentNullException(nameof(getBreakpointKind));
 		}
 
-		public void SetFrame_UI(DbgStackFrame frame) {
+		public void SetFrame_UI(DbgLanguage language, DbgStackFrame frame) {
+			this.language = language;
 			this.frame = frame;
+			evaluationContext?.Close();
+			evaluationContext = null;
 			RefreshName_UI();
 			RefreshBreakpoint_UI();
 		}
 
 		protected override ClassifiedTextCollection CreateName() {
-			Frame.Format(Context.ClassifiedTextWriter, Context.StackFrameFormatOptions);
+			Debug.Assert(language != null);
+			if (language != null && !frame.IsClosed) {
+				const CultureInfo cultureInfo = null;
+				CancellationToken cancellationToken = default;
+
+				if (evaluationContext == null)
+					evaluationContext = language.CreateContext(frame, options: DbgEvaluationContextOptions.NoMethodBody, cancellationToken: cancellationToken);
+				language.Formatter.Format(evaluationContext, frame, Context.ClassifiedTextWriter, Context.StackFrameFormatterOptions, Context.ValueFormatterOptions, cultureInfo, cancellationToken);
+			}
 			return Context.ClassifiedTextWriter.GetClassifiedText();
 		}
 
 		protected override BreakpointKind? GetBreakpointKind() => getBreakpointKind(this);
+
+		public override void Dispose() {
+			language = null;
+			frame = null;
+			evaluationContext?.Close();
+			evaluationContext = null;
+		}
 	}
 
 	sealed class MessageStackFrameVM : StackFrameVM {

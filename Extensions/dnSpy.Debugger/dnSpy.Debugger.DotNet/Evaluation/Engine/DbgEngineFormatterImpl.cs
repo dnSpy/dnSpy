@@ -18,6 +18,9 @@
 */
 
 using System;
+using System.Globalization;
+using System.Threading;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -41,5 +44,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
 			formatter.FormatObjectIdName(context, output, id);
+
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
+			formatter.Format(context, frame, output, options, valueOptions, cultureInfo, cancellationToken);
 	}
 }

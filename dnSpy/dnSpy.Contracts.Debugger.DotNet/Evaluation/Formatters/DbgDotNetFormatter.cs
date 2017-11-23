@@ -86,6 +86,18 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo);
+
+		/// <summary>
+		/// Formats a stack frame
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="output">Output</param>
+		/// <param name="options">Stack frame options</param>
+		/// <param name="valueOptions">Value option</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken);
 	}
 
 	/// <summary>Metadata</summary>

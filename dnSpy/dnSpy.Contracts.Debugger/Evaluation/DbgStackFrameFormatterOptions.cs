@@ -19,75 +19,75 @@
 
 using System;
 
-namespace dnSpy.Contracts.Debugger.CallStack {
+namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
-	/// Flags used when formatting a <see cref="DbgStackFrame"/>
+	/// Stack frame formatter options
 	/// </summary>
 	[Flags]
-	public enum DbgStackFrameFormatOptions {
+	public enum DbgStackFrameFormatterOptions {
 		/// <summary>
 		/// No bit is set
 		/// </summary>
-		None							= 0,
+		None					= 0,
 
 		/// <summary>
-		/// Show return types
+		/// Show module name, eg. <c>module.dll!func</c>
 		/// </summary>
-		ShowReturnTypes					= 0x00000001,
+		ModuleNames				= 0x00000001,
 
 		/// <summary>
 		/// Show parameter types
 		/// </summary>
-		ShowParameterTypes				= 0x00000002,
+		ParameterTypes			= 0x00000002,
 
 		/// <summary>
 		/// Show parameter names
 		/// </summary>
-		ShowParameterNames				= 0x00000004,
+		ParameterNames			= 0x00000004,
 
 		/// <summary>
-		/// Show parameter values (parameters will be evaluated and formatted). See also <see cref="UseDecimal"/>
+		/// Show parameter values
 		/// </summary>
-		ShowParameterValues				= 0x00000008,
+		ParameterValues			= 0x00000008,
 
 		/// <summary>
-		/// Show the offset of the IP relative to the start of the function (always in hexadecimal)
+		/// Show declaring type
 		/// </summary>
-		ShowFunctionOffset				= 0x00000010,
+		DeclaringTypes			= 0x00000010,
 
 		/// <summary>
-		/// Show module names
+		/// Show return type
 		/// </summary>
-		ShowModuleNames					= 0x00000020,
+		ReturnTypes				= 0x00000020,
 
 		/// <summary>
-		/// Show declaring types
+		/// Show namespace
 		/// </summary>
-		ShowDeclaringTypes				= 0x00000040,
-
-		/// <summary>
-		/// Show namespaces
-		/// </summary>
-		ShowNamespaces					= 0x00000080,
+		Namespaces				= 0x00000040,
 
 		/// <summary>
 		/// Show intrinsic type keywords (eg. int instead of Int32)
 		/// </summary>
-		ShowIntrinsicTypeKeywords		= 0x00000100,
+		IntrinsicTypeKeywords	= 0x00000080,
 
 		/// <summary>
-		/// Show tokens (always in hexadecimal)
+		/// Set if integers are shown in decimal, clear if integers are shown in hexadecimal
 		/// </summary>
-		ShowTokens						= 0x00000200,
+		Decimal					= 0x00000100,
 
 		/// <summary>
-		/// Use decimal instead of hexadecimal when formatting parameter values. Offsets, addresses, tokens are always in hexadecimal.
+		/// Show tokens
 		/// </summary>
-		UseDecimal						= 0x00000400,
+		Tokens					= 0x00000200,
+
+		/// <summary>
+		/// Show instruction pointer
+		/// </summary>
+		IP						= 0x00000400,
 
 		/// <summary>
 		/// Use digit separators
 		/// </summary>
-		DigitSeparators					= 0x00000800,
+		DigitSeparators			= 0x00000800,
 	}
 }

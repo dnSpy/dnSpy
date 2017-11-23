@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
@@ -34,7 +34,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		CallStackFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		ClassifiedTextWriter ClassifiedTextWriter { get; }
-		DbgStackFrameFormatOptions StackFrameFormatOptions { get; }
+		DbgStackFrameFormatterOptions StackFrameFormatterOptions { get; }
+		DbgValueFormatterOptions ValueFormatterOptions { get; }
 	}
 
 	sealed class CallStackContext : ICallStackContext {
@@ -46,7 +47,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		public CallStackFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public ClassifiedTextWriter ClassifiedTextWriter { get; }
-		public DbgStackFrameFormatOptions StackFrameFormatOptions { get; set; }
+		public DbgStackFrameFormatterOptions StackFrameFormatterOptions { get; set; }
+		public DbgValueFormatterOptions ValueFormatterOptions { get; set; }
 
 		public CallStackContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory) {
 			UIDispatcher = uiDispatcher;

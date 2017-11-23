@@ -303,7 +303,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if ((object)getTypeHandleMethod == null)
 				return false;
 			var typeHandleRes = engine.FuncEvalCall_MonoDebug(context, frame.Thread, getTypeHandleMethod, objValue, Array.Empty<object>(), DbgDotNetInvokeOptions.None, false, cancellationToken);
-			if (typeHandleRes.Value == null | typeHandleRes.ValueIsException)
+			if (typeHandleRes.Value == null || typeHandleRes.ValueIsException)
 				return false;
 			var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
 			var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);

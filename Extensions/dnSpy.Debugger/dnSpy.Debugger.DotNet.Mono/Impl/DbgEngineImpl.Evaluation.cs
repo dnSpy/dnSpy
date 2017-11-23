@@ -405,7 +405,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					if (evalRes.ErrorMessage != null)
 						return new DbgCreateMonoValueResult(evalRes.ErrorMessage);
 					var newValue = evalRes.Value;
-					if (targetType.IsEnum)
+					if (targetType.IsEnum && !(newValue is EnumMirror))
 						newValue = MonoVirtualMachine.CreateEnumMirror(GetType(targetType), (PrimitiveValue)newValue);
 					newValue = BoxIfNeeded(monoThread.Domain, newValue, targetType, newValueType);
 					return new DbgCreateMonoValueResult(newValue);

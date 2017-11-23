@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -66,6 +67,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
+			Debug.Assert((context.Options & DbgEvaluationContextOptions.NoMethodBody) == 0, "Missing method debug info");
 			return CreateResult(context.Runtime, engineExpressionEvaluator.Evaluate(context, frame, expression, options, state, cancellationToken));
 		}
 
