@@ -378,7 +378,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				ClearAllItems_UI();
 			}
 
-			var language = dbgLanguageService.Value.GetCurrentLanguage(framesThread.Runtime.RuntimeKindGuid);
+			var language = framesThread == null ? null : dbgLanguageService.Value.GetCurrentLanguage(framesThread.Runtime.RuntimeKindGuid);
 
 			int activeFrameIndex = framesInfo.ActiveFrameIndex;
 			if (framesToAdd > 0) {

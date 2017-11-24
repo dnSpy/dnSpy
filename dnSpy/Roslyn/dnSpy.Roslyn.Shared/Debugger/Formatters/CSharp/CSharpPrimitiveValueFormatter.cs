@@ -405,56 +405,56 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		string ToFormattedNumber(string prefix, string number, int digitGroupSize) => ValueFormatterUtils.ToFormattedNumber(DigitSeparators, prefix, number, digitGroupSize);
 		void WriteNumber(string number) => OutputWrite(number, BoxedTextColor.Number);
 
-		string ToFormattedSByte(sbyte value) {
+		public string ToFormattedSByte(sbyte value) {
 			if (Decimal)
 				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X2"));
 		}
 
-		string ToFormattedByte(byte value) {
+		public string ToFormattedByte(byte value) {
 			if (Decimal)
 				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X2"));
 		}
 
-		string ToFormattedInt16(short value) {
+		public string ToFormattedInt16(short value) {
 			if (Decimal)
 				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X4"));
 		}
 
-		string ToFormattedUInt16(ushort value) {
+		public string ToFormattedUInt16(ushort value) {
 			if (Decimal)
 				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X4"));
 		}
 
-		string ToFormattedInt32(int value) {
+		public string ToFormattedInt32(int value) {
 			if (Decimal)
 				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
-		string ToFormattedUInt32(uint value) {
+		public string ToFormattedUInt32(uint value) {
 			if (Decimal)
 				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
-		string ToFormattedInt64(long value) {
+		public string ToFormattedInt64(long value) {
 			if (Decimal)
 				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
 				return ToFormattedHexNumber(value.ToString("X16"));
 		}
 
-		string ToFormattedUInt64(ulong value) {
+		public string ToFormattedUInt64(ulong value) {
 			if (Decimal)
 				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
 			else
@@ -532,12 +532,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			return s;
 		}
 
-		string ToFormattedPointer32(uint value) {
+		public string ToFormattedPointer32(uint value) {
 			// It's always hex
 			return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
-		string ToFormattedPointer64(ulong value) {
+		public string ToFormattedPointer64(ulong value) {
 			// It's always hex
 			return ToFormattedHexNumber(value.ToString("X16"));
 		}

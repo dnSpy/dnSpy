@@ -105,7 +105,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 				output.Write(BoxedTextColor.Keyword, "Get");
 			}
 			else
-				output.Write(MemberUtils.GetColor(method, canBeModule: true), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(method.Name));
+				output.Write(Formatters.TypeFormatterUtils.GetColor(method, canBeModule: true), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(method.Name));
 		}
 	}
 }

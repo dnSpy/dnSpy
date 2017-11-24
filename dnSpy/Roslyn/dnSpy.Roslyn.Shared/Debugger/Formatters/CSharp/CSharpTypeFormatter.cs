@@ -374,7 +374,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				throw new InvalidOperationException();
 			}
 
-			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.MetadataName), TypeFormatterUtils.GetTypeColor(type, canBeModule: false));
+			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.MetadataName), TypeFormatterUtils.GetColor(type, canBeModule: false));
 			WriteTokenComment(type.MetadataToken);
 		}
 

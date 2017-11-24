@@ -83,7 +83,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			}
 		}
 
-		public static object GetTypeColor(DmdType type, bool canBeModule) {
+		public static object GetColor(DmdType type, bool canBeModule) {
 			if (canBeModule && (object)type.DeclaringType == null && type.IsSealed && type.IsAbstract)
 				return BoxedTextColor.Module;
 			if (type.IsInterface)
@@ -110,5 +110,131 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				return s;
 			return s.Substring(0, index);
 		}
+
+		public static (DmdPropertyInfo property, AccessorKind kind) TryGetProperty(DmdMethodBase method) {
+			if ((object)method == null)
+				return (null, AccessorKind.None);
+			foreach (var p in method.DeclaringType.Properties) {
+				if ((object)method == p.GetMethod)
+					return (p, AccessorKind.Getter);
+				if ((object)method == p.SetMethod)
+					return (p, AccessorKind.Setter);
+			}
+			return (null, AccessorKind.None);
+		}
+
+		public static (DmdEventInfo @event, AccessorKind kind) TryGetEvent(DmdMethodBase method) {
+			if ((object)method == null)
+				return (null, AccessorKind.None);
+			foreach (var e in method.DeclaringType.Events) {
+				if ((object)method == e.AddMethod)
+					return (e, AccessorKind.Adder);
+				if ((object)method == e.RemoveMethod)
+					return (e, AccessorKind.Remover);
+			}
+			return (null, AccessorKind.None);
+		}
+
+		static object GetColor(DmdMethodInfo method, object staticValue, object instanceValue) {
+			if ((object)method == null)
+				return instanceValue;
+			if (method.IsStatic)
+				return staticValue;
+			return instanceValue;
+		}
+
+		public static object GetColor(DmdPropertyInfo property) =>
+			GetColor(property.GetMethod ?? property.SetMethod, BoxedTextColor.StaticProperty, BoxedTextColor.InstanceProperty);
+
+		public static object GetColor(DmdEventInfo @event) =>
+			GetColor(@event.AddMethod ?? @event.RemoveMethod, BoxedTextColor.StaticEvent, BoxedTextColor.InstanceEvent);
+
+		public static object GetColor(DmdMethodBase method, bool canBeModule) {
+			if (method.IsConstructor)
+				return GetColor(method.DeclaringType, canBeModule);
+			if (method.IsStatic) {
+				if (method.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute", inherit: false))
+					return BoxedTextColor.ExtensionMethod;
+				return BoxedTextColor.StaticMethod;
+			}
+			return BoxedTextColor.InstanceMethod;
+		}
+
+		public static bool TryGetMethodName(string name, out string containingMethodName, out string localFunctionName) {
+			// Some local function metadata names (real names: Method2(), Method3()) (Roslyn: GeneratedNames.MakeLocalFunctionName())
+			//
+			//		<Method1>g__Method20_0
+			//		<Method1>g__Method30_1
+			//		<Method2>g__Method21_0
+			//		<Method2>g__Method31_1
+			// later C# compiler version
+			//		<Method1>g__Method2|0_0
+			//
+			//	<XXX> = XXX = containing method
+			//	'g' = GeneratedNameKind.LocalFunction
+			//	0_0 = methodOrdinal '_' entityOrdinal
+			//	Method2, Method3 = names of local funcs
+			//
+			// Since a method can end in a digit and method ordinal is a number, we have to guess where
+			// the name ends.
+			//
+			// This has been fixed, see https://github.com/dotnet/roslyn/pull/21848
+
+			containingMethodName = null;
+			localFunctionName = null;
+
+			if (name.Length == 0 || name[0] != '<')
+				return false;
+			int index = name.IndexOf('>');
+			if (index < 0)
+				return false;
+			containingMethodName = name.Substring(1, index - 1);
+			if (containingMethodName.Length == 0)
+				return false;
+			index++;
+			const char GeneratedNameKind_LocalFunction = 'g';
+			if (NextChar(name, ref index) != GeneratedNameKind_LocalFunction)
+				return false;
+			if (NextChar(name, ref index) != '_')
+				return false;
+			if (NextChar(name, ref index) != '_')
+				return false;
+
+			// If it's a later C# compiler version, we can easily find the real name
+			int sepIndex = name.IndexOf('|', index);
+			if (sepIndex >= 0) {
+				if (sepIndex != index) {
+					localFunctionName = name.Substring(index, sepIndex - index);
+					return true;
+				}
+				return false;
+			}
+
+			int endIndex = name.IndexOf('_', index);
+			if (endIndex < 0)
+				endIndex = name.Length;
+			if (char.IsDigit(name[endIndex - 1]))
+				endIndex--;
+			if (index != endIndex) {
+				localFunctionName = name.Substring(index, endIndex - index);
+				return true;
+			}
+
+			return false;
+		}
+
+		static char NextChar(string s, ref int index) {
+			if (index >= s.Length)
+				return (char)0;
+			return s[index++];
+		}
+	}
+
+	enum AccessorKind {
+		None,
+		Getter,
+		Setter,
+		Adder,
+		Remover,
 	}
 }

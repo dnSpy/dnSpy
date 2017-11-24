@@ -85,7 +85,7 @@ namespace dnSpy.Decompiler.CSharp {
 		FormatterOptions options;
 		readonly CultureInfo cultureInfo;
 
-		static readonly Dictionary<string, string[]> nameToOperatorName = new Dictionary<string, string[]> {
+		static readonly Dictionary<string, string[]> nameToOperatorName = new Dictionary<string, string[]>(StringComparer.Ordinal) {
 			{ "op_Addition", "operator +".Split(' ') },
 			{ "op_BitwiseAnd", "operator &".Split(' ') },
 			{ "op_BitwiseOr", "operator |".Split(' ') },
@@ -462,10 +462,12 @@ namespace dnSpy.Decompiler.CSharp {
 			else
 				WriteMethodName(method, method.Name, operatorInfo);
 			if (isExplicitOrImplicit) {
+				WriteToken(method);
 				WriteSpace();
 				ForceWriteReturnType(ref info, writeSpace: false);
 			}
-			WriteToken(method);
+			else
+				WriteToken(method);
 
 			WriteGenericArguments(ref info);
 			WriteMethodParameterList(ref info, MethodParenOpen, MethodParenClose);
@@ -1112,6 +1114,8 @@ namespace dnSpy.Decompiler.CSharp {
 		void WriteReturnType(ref FormatterMethodInfo info, bool writeSpace) {
 			if (!ShowReturnTypes)
 				return;
+			if (info.MethodDef?.IsConstructor == true)
+				return;
 			ForceWriteReturnType(ref info, writeSpace);
 		}
 
@@ -1190,7 +1194,7 @@ namespace dnSpy.Decompiler.CSharp {
 						WriteToken(pd);
 					}
 					else
-						WriteIdentifier("A_" + i.ToString(), BoxedTextColor.Parameter);
+						WriteIdentifier("A_" + (baseIndex + i).ToString(), BoxedTextColor.Parameter);
 				}
 				if (ShowParameterLiteralValues && isDefault) {
 					if (needSpace)

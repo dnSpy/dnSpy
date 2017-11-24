@@ -56,6 +56,7 @@
     <Compile Include="Debugger\FilterExpressionEvaluator\EvalDelegateCreator.cs" />
     <Compile Include="Debugger\Formatters\CSharp\CSharpFormatter.cs" />
     <Compile Include="Debugger\Formatters\CSharp\CSharpPrimitiveValueFormatter.cs" />
+    <Compile Include="Debugger\Formatters\CSharp\CSharpStackFrameFormatter.cs" />
     <Compile Include="Debugger\Formatters\CSharp\CSharpTypeFormatter.cs" />
     <Compile Include="Debugger\Formatters\CSharp\CSharpValueFormatter.cs" />
     <Compile Include="Debugger\Formatters\DbgValueFormatterOptionsExtensions.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Debugger\Formatters\ListCache.cs" />
     <Compile Include="Debugger\Formatters\NullableTypeUtils.cs" />
     <Compile Include="Debugger\Formatters\NumberUtils.cs" />
+    <Compile Include="Debugger\Formatters\StateMachineUtils.cs" />
     <Compile Include="Debugger\Formatters\ToStringFormatter.cs" />
     <Compile Include="Debugger\Formatters\TupleTypeUtils.cs" />
     <Compile Include="Debugger\Formatters\TypeFormatterOptions.cs" />

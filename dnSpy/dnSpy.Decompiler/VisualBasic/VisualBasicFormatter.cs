@@ -90,7 +90,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 		FormatterOptions options;
 		readonly CultureInfo cultureInfo;
 
-		static readonly Dictionary<string, string[]> nameToOperatorName = new Dictionary<string, string[]> {
+		static readonly Dictionary<string, string[]> nameToOperatorName = new Dictionary<string, string[]>(StringComparer.Ordinal) {
 			{ "op_UnaryPlus", "Operator +".Split(' ') },
 			{ "op_UnaryNegation", "Operator -".Split(' ') },
 			{ "op_False", "Operator IsFalse".Split(' ') },
@@ -1228,7 +1228,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 						WriteToken(pd);
 					}
 					else
-						WriteIdentifier("A_" + i.ToString(), BoxedTextColor.Parameter);
+						WriteIdentifier("A_" + (baseIndex + i).ToString(), BoxedTextColor.Parameter);
 				}
 				if (ShowParameterTypes) {
 					if (ShowParameterNames) {

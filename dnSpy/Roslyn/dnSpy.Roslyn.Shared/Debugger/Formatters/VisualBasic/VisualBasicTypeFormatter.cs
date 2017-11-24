@@ -391,7 +391,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				throw new InvalidOperationException();
 			}
 
-			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.MetadataName), TypeFormatterUtils.GetTypeColor(type, canBeModule: true));
+			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.MetadataName), TypeFormatterUtils.GetColor(type, canBeModule: true));
 			WriteTokenComment(type.MetadataToken);
 		}
 
