@@ -139,6 +139,14 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			this.getBreakpointKind = getBreakpointKind ?? throw new ArgumentNullException(nameof(getBreakpointKind));
 		}
 
+		public void SetLanguage_UI(DbgLanguage language) {
+			this.language = language;
+			evaluationContext?.Close();
+			evaluationContext = null;
+			RefreshName_UI();
+			RefreshBreakpoint_UI();
+		}
+
 		public void SetFrame_UI(DbgLanguage language, DbgStackFrame frame) {
 			this.language = language;
 			this.frame = frame;

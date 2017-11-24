@@ -159,7 +159,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 
 		// DbgManager thread
-		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) => UI(() => RefreshName_UI());
+		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) => UI(() => RefreshLanguage_UI());
 
 		// UI thread
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
@@ -353,6 +353,14 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			foreach (var vm in AllItems)
 				vm.Dispose();
 			AllItems.Clear();
+		}
+
+		// UI thread
+		void RefreshLanguage_UI() {
+			callStackContext.UIDispatcher.VerifyAccess();
+			var language = framesThread == null ? null : dbgLanguageService.Value.GetCurrentLanguage(framesThread.Runtime.RuntimeKindGuid);
+			foreach (var vm in AllItems)
+				(vm as NormalStackFrameVM)?.SetLanguage_UI(language);
 		}
 
 		// UI thread
