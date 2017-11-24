@@ -23,6 +23,7 @@ using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
@@ -325,7 +326,37 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		void WriteOffset(DbgStackFrame frame) {
 			if (!ShowIP)
 				return;
-			//TODO:
+			WriteSpace();
+			OutputWrite("(", BoxedTextColor.Punctuation);
+			OutputWrite("IL", BoxedTextColor.Text);
+			OutputWrite("=", BoxedTextColor.Operator);
+			var primitiveFormatter = new VisualBasicPrimitiveValueFormatter(output, GetValueFormatterOptions() & ~ValueFormatterOptions.Decimal, cultureInfo);
+			if (frame.FunctionOffset <= ushort.MaxValue)
+				primitiveFormatter.FormatUInt16((ushort)frame.FunctionOffset);
+			else
+				primitiveFormatter.FormatUInt32(frame.FunctionOffset);
+
+			if (frame.Location is IDbgDotNetCodeLocation loc) {
+				var addr = loc.NativeAddress;
+				if (addr.Address != 0) {
+					WriteCommaSpace();
+					OutputWrite("Native", BoxedTextColor.Text);
+					OutputWrite("=", BoxedTextColor.Operator);
+					if (frame.Runtime.Process.PointerSize == 4)
+						primitiveFormatter.FormatUInt32((uint)addr.Address);
+					else
+						primitiveFormatter.FormatUInt64(addr.Address);
+					long offs = (long)addr.Offset;
+					if (offs < 0) {
+						offs = -offs;
+						OutputWrite("-", BoxedTextColor.Operator);
+					}
+					else
+						OutputWrite("+", BoxedTextColor.Operator);
+					primitiveFormatter.FormatFewDigits((ulong)offs);
+				}
+			}
+			OutputWrite(")", BoxedTextColor.Punctuation);
 		}
 
 		void WriteAccessor(AccessorKind accessorKind) {

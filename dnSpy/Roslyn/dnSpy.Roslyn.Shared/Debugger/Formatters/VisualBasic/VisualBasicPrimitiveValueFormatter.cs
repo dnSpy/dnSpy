@@ -267,14 +267,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			return ToFormattedUInt64(value);
 		}
 
-		void FormatBoolean(bool value) {
+		public void FormatBoolean(bool value) {
 			if (value)
 				OutputWrite(Keyword_true, BoxedTextColor.Keyword);
 			else
 				OutputWrite(Keyword_false, BoxedTextColor.Keyword);
 		}
 
-		void FormatChar(char value) {
+		public void FormatChar(char value) {
 			if (Display) {
 				FormatUInt16(value);
 				WriteSpace();
@@ -305,7 +305,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			OutputWrite(")", BoxedTextColor.Punctuation);
 		}
 
-		void FormatString(string value) {
+		public void FormatString(string value) {
 			if (NoStringQuotes) {
 				OutputWrite(value, BoxedTextColor.DebuggerNoStringQuotesEval);
 				return;
@@ -485,7 +485,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				return ToFormattedHexNumber(value.ToString("X16"));
 		}
 
-		void FormatSingle(float value, DmdAppDomain appDomain) {
+		public string ToFormattedNumberFewDigits(ulong value) {
+			if (Decimal)
+				return ToFormattedDecimalNumber(value.ToString(cultureInfo));
+			else
+				return ToFormattedHexNumber(value.ToString("X"));
+		}
+
+		public void FormatSingle(float value, DmdAppDomain appDomain) {
 			if (float.IsNaN(value)) {
 				if (Display)
 					OutputWrite(ValueFormatterUtils.NaN, BoxedTextColor.Number);
@@ -517,7 +524,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				OutputWrite(value.ToString(cultureInfo), BoxedTextColor.Number);
 		}
 
-		void FormatDouble(double value, DmdAppDomain appDomain) {
+		public void FormatDouble(double value, DmdAppDomain appDomain) {
 			if (double.IsNaN(value)) {
 				if (Display)
 					OutputWrite(ValueFormatterUtils.NaN, BoxedTextColor.Number);
@@ -566,19 +573,20 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			return ToFormattedHexNumber(value.ToString("X16"));
 		}
 
-		void FormatSByte(sbyte value) => WriteNumber(ToFormattedSByte(value));
-		void FormatByte(byte value) => WriteNumber(ToFormattedByte(value));
-		void FormatInt16(short value) => WriteNumber(ToFormattedInt16(value));
-		void FormatUInt16(ushort value) => WriteNumber(ToFormattedUInt16(value));
-		void FormatInt32(int value) => WriteNumber(ToFormattedInt32(value));
-		void FormatUInt32(uint value) => WriteNumber(ToFormattedUInt32(value));
-		void FormatInt64(long value) => WriteNumber(ToFormattedInt64(value));
-		void FormatUInt64(ulong value) => WriteNumber(ToFormattedUInt64(value));
-		void FormatDecimal(decimal value) => WriteNumber(ToFormattedDecimal(value));
-		void FormatPointer32(uint value) => WriteNumber(ToFormattedPointer32(value));
-		void FormatPointer64(ulong value) => WriteNumber(ToFormattedPointer64(value));
+		public void FormatSByte(sbyte value) => WriteNumber(ToFormattedSByte(value));
+		public void FormatByte(byte value) => WriteNumber(ToFormattedByte(value));
+		public void FormatInt16(short value) => WriteNumber(ToFormattedInt16(value));
+		public void FormatUInt16(ushort value) => WriteNumber(ToFormattedUInt16(value));
+		public void FormatInt32(int value) => WriteNumber(ToFormattedInt32(value));
+		public void FormatUInt32(uint value) => WriteNumber(ToFormattedUInt32(value));
+		public void FormatInt64(long value) => WriteNumber(ToFormattedInt64(value));
+		public void FormatUInt64(ulong value) => WriteNumber(ToFormattedUInt64(value));
+		public void FormatDecimal(decimal value) => WriteNumber(ToFormattedDecimal(value));
+		public void FormatPointer32(uint value) => WriteNumber(ToFormattedPointer32(value));
+		public void FormatPointer64(ulong value) => WriteNumber(ToFormattedPointer64(value));
+		public void FormatFewDigits(ulong value) => WriteNumber(ToFormattedNumberFewDigits(value));
 
-		void FormatDateTime(DateTime value) {
+		public void FormatDateTime(DateTime value) {
 			// Roslyn EE always uses invariant culture
 			var s = value.ToString("#M/d/yyyy hh:mm:ss tt#", CultureInfo.InvariantCulture);
 			OutputWrite(s, BoxedTextColor.Number);
