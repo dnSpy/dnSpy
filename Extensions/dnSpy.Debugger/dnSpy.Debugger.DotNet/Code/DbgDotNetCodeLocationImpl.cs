@@ -30,6 +30,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		public override uint Token { get; }
 		public override uint Offset { get; }
 		public override DbgModule DbgModule => null;
+		public override DbgDotNetNativeFunctionAddress NativeAddress => DbgDotNetNativeFunctionAddress.None;
 
 		internal DbgDotNetCodeLocationOptions Options { get; }
 

@@ -19,7 +19,6 @@
 
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents;
-using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Debugger.CallStack {
 	/// <summary>

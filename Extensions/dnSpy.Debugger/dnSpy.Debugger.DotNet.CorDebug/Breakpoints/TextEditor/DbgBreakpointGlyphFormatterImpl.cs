@@ -79,8 +79,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Breakpoints.TextEditor {
 			default: throw new InvalidOperationException();
 			}
 			output.WriteSpace();
-			var addr = location.NativeMethodAddress + location.NativeMethodOffset;
-			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_NativeAddress, "0x" + addr.ToString("X8")));
+			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_NativeAddress, "0x" + location.NativeAddress.IP.ToString("X8")));
 
 			var documentViewer = textView.TextBuffer.TryGetDocumentViewer();
 			Debug.Assert(documentViewer != null);

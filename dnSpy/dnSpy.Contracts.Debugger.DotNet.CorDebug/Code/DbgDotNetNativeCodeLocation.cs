@@ -47,18 +47,13 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug.Code {
 		public abstract DbgILOffsetMapping ILOffsetMapping { get; }
 
 		/// <summary>
-		/// Gets the address of the native method
-		/// </summary>
-		public abstract ulong NativeMethodAddress { get; }
-
-		/// <summary>
-		/// Gets the offset of the native instruction within the native method body
-		/// </summary>
-		public abstract uint NativeMethodOffset { get; }
-
-		/// <summary>
 		/// Gets the debugger module or null
 		/// </summary>
 		public abstract DbgModule DbgModule { get; }
+
+		/// <summary>
+		/// Gets the native address
+		/// </summary>
+		public abstract DbgDotNetNativeFunctionAddress NativeAddress { get; }
 	}
 }

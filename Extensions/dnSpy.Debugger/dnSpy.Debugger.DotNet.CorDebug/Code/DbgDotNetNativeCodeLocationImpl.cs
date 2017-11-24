@@ -103,12 +103,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Punctuation, "(");
-			output.Write(BoxedTextColor.Number, GetHexPrefix() + location.NativeMethodAddress.ToString("X8"));
+			output.Write(BoxedTextColor.Number, GetHexPrefix() + location.NativeAddress.Address.ToString("X8"));
 			output.Write(BoxedTextColor.Operator, "+");
 			output.Write(BoxedTextColor.Number,
 				(options & DbgBreakpointLocationFormatterOptions.Decimal) != 0 ?
-				location.NativeMethodOffset.ToString() :
-				GetHexPrefix() + location.NativeMethodOffset.ToString("X"));
+				location.NativeAddress.Offset.ToString() :
+				GetHexPrefix() + location.NativeAddress.Offset.ToString("X"));
 			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 
