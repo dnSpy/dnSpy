@@ -35,8 +35,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		public override void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrame frame, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
 			new VisualBasicValueFormatter(output, context, frame, this, options.ToValueFormatterOptions(), cultureInfo, cancellationToken).Format(value);
 
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) {
-			output.Write(BoxedTextColor.Error, "NYI");//TODO:
-		}
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
+			new VisualBasicStackFrameFormatter(output, context, this, options, valueOptions.ToValueFormatterOptions(), cultureInfo, cancellationToken).Format(frame);
 	}
 }

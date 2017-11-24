@@ -79,6 +79,7 @@
     <Compile Include="Debugger\Formatters\ValueFormatterUtils.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicPrimitiveValueFormatter.cs" />
+    <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicStackFrameFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicTypeFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicValueFormatter.cs" />
     <Compile Include="Debugger\GetLocalsAssemblyBuilder.cs" />

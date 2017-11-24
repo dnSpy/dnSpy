@@ -17,13 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	static class StateMachineUtils {
 		public static bool TryGetKickoffMethod(DmdMethodBase method, out DmdMethodBase kickoffMethod) {
 			var name = method.DeclaringType.Name;
-			if (!string.IsNullOrEmpty(name) && name[0] == '<') {
+			char c;
+			if (!string.IsNullOrEmpty(name) && ((c = name[0]) == '<' || (c == 'V' && name.StartsWith("VB$StateMachine_", StringComparison.Ordinal)))) {
 				var type = method.DeclaringType.DeclaringType;
 				if ((object)type != null) {
 					string attrName;

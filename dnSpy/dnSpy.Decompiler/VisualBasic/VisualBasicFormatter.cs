@@ -654,10 +654,10 @@ namespace dnSpy.Decompiler.VisualBasic {
 				WriteIdentifier(TypeFormatterUtils.GetPropertyName(ovrMeth), VisualBasicMetadataTextColorProvider.Instance.GetColor(prop));
 			else
 				WriteIdentifier(prop.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(prop));
+			WriteToken(prop);
 			WriteGenericArguments(ref info);
 			if (accessorKind != AccessorKind.None || prop.PropertySig.GetParamCount() != 0)
 				WriteMethodParameterList(ref info, PropertyParenOpen, PropertyParenClose);
-			WriteToken(prop);
 
 			WriteReturnType(ref info);
 		}
