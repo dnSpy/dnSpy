@@ -1677,4 +1677,13 @@ namespace dndbg.Engine {
 			return hr == 0 ? tkImplementation : (uint?)null;
 		}
 	}
+
+	struct MethodOverrideInfo {
+		public uint BodyToken { get; }
+		public uint DeclToken { get; }
+		public MethodOverrideInfo(uint b, uint d) {
+			BodyToken = b;
+			DeclToken = d;
+		}
+	}
 }

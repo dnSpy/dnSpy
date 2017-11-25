@@ -22,9 +22,6 @@ using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	sealed class CorFunctionBreakpoint : COMObject<ICorDebugFunctionBreakpoint>, IEquatable<CorFunctionBreakpoint> {
-		/// <summary>
-		/// Gets the function or null
-		/// </summary>
 		public CorFunction Function {
 			get {
 				int hr = obj.GetFunction(out var func);
@@ -32,9 +29,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets/sets whether the breakpoint is active
-		/// </summary>
 		public bool IsActive {
 			get {
 				int hr = obj.IsActive(out int active);
@@ -45,9 +39,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the offset of the breakpoint
-		/// </summary>
 		public uint Offset => offset;
 		readonly uint offset;
 

@@ -18,6 +18,7 @@
 */
 
 using System;
+using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -26,9 +27,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DbgCorDebugInternalAppDomainImpl : DbgDotNetInternalAppDomain {
 		public override DmdAppDomain ReflectionAppDomain { get; }
 		public override DbgAppDomain AppDomain => appDomain ?? throw new InvalidOperationException();
+		internal DnAppDomain DnAppDomain { get; }
 		DbgAppDomain appDomain;
-		public DbgCorDebugInternalAppDomainImpl(DmdAppDomain reflectionAppDomain) =>
+		public DbgCorDebugInternalAppDomainImpl(DmdAppDomain reflectionAppDomain, DnAppDomain dnAppDomain) {
 			ReflectionAppDomain = reflectionAppDomain ?? throw new ArgumentNullException(nameof(reflectionAppDomain));
+			DnAppDomain = dnAppDomain ?? throw new ArgumentNullException(nameof(dnAppDomain));
+		}
 		internal void SetAppDomain(DbgAppDomain appDomain) {
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			ReflectionAppDomain.GetOrCreateData(() => appDomain);

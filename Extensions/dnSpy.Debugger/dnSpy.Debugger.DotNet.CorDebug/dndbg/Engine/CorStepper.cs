@@ -22,9 +22,6 @@ using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	sealed class CorStepper : COMObject<ICorDebugStepper>, IEquatable<CorStepper> {
-		/// <summary>
-		/// true if the stepper is active
-		/// </summary>
 		public bool IsActive {
 			get {
 				int hr = obj.IsActive(out int active);

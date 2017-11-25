@@ -31,6 +31,7 @@ using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.CorDebug.DAC;
@@ -74,10 +75,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			// If we should read the name, it means the CLR thread object is available so we
 			// should also read the managed ID.
 			if (managedId == null && forceReadName)
-				managedId = GetManagedId(thread);
+				managedId = GetManagedId(thread, appDomain);
 
 			// If it's a new thread, it has no name (m_Name is null)
-			var name = forceReadName ? GetThreadName(thread) : oldProperties?.Name;
+			var name = forceReadName ? GetThreadName(thread, appDomain) : oldProperties?.Name;
 
 			int suspendedCount = thread.CorThread.IsSuspended ? 1 : 0;
 			var userState = thread.CorThread.UserState;
@@ -95,14 +96,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return threadObj;
 		}
 
-		static ulong? GetManagedId(DnThread thread) {
-			var threadObj = TryGetThreadObject(thread);
-			if (threadObj == null)
+		ulong? GetManagedId(DnThread thread, DbgAppDomain appDomain) {
+			var res = ReadField_CorDebug(TryGetThreadObject(thread), appDomain, "m_ManagedThreadId");
+			if (res == null || !res.HasValue)
 				return null;
-			// mscorlib 2.0 and 4.0 and CoreCLR all use this field name
-			if (!EvalReflectionUtils.ReadValue(threadObj, "m_ManagedThreadId", out int managedId))
-				return null;
-			return (uint)managedId;
+			if (res.Value.ValueType == DbgSimpleValueType.Int32)
+				return (uint)(int)res.Value.RawValue;
+			if (res.Value.ValueType == DbgSimpleValueType.UInt32)
+				return (uint)res.Value.RawValue;
+			return null;
 		}
 
 		ulong? GetManagedId_ClrDac(DnThread thread) {
@@ -113,15 +115,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return (uint)info.Value.ManagedThreadId;
 		}
 
-		static string GetThreadName(DnThread thread) {
-			var threadObj = TryGetThreadObject(thread);
-			if (threadObj == null)
+		string GetThreadName(DnThread thread, DbgAppDomain appDomain) {
+			var res = ReadField_CorDebug(TryGetThreadObject(thread), appDomain, "m_Name");
+			if (res == null || !res.HasValue)
 				return null;
-			// mscorlib 2.0 and 4.0 and CoreCLR all use this field name. It's unlikely to change since
-			// VS' debugger probably hard codes the name as well.
-			if (!EvalReflectionUtils.ReadValue(threadObj, "m_Name", out string name))
-				return null;
-			return name;
+			if (res.Value.ValueType == DbgSimpleValueType.StringUtf16)
+				return (string)res.Value.RawValue;
+			return null;
 		}
 
 		string GetThreadKind(DnThread thread, bool isMainThread) {
@@ -132,9 +132,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (s != null)
 				return s;
 
-			if (thread.CorThread.IsStopped)
+			if ((thread.CorThread.UserState & CorDebugUserState.USER_STOPPED) != 0)
 				return PredefinedThreadKinds.Terminated;
-			if (thread.CorThread.IsThreadPool)
+			if ((thread.CorThread.UserState & CorDebugUserState.USER_THREADPOOL) != 0)
 				return PredefinedThreadKinds.ThreadPool;
 			return PredefinedThreadKinds.Unknown;
 		}

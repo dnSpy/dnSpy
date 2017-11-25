@@ -23,9 +23,6 @@ using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	sealed class CorAppDomain : COMObject<ICorDebugAppDomain>, IEquatable<CorAppDomain> {
-		/// <summary>
-		/// Gets the process or null
-		/// </summary>
 		public CorProcess Process {
 			get {
 				int hr = obj.GetProcess(out var process);
@@ -33,15 +30,9 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// AppDomain Id
-		/// </summary>
 		public int Id => id;
 		readonly int id;
 
-		/// <summary>
-		/// AppDomain name
-		/// </summary>
 		public string Name => GetName(obj) ?? string.Empty;
 
 		static string GetName(ICorDebugAppDomain appDomain) {

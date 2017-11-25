@@ -23,9 +23,6 @@ using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	sealed class CorMDA : COMObject<ICorDebugMDA>, IEquatable<CorMDA> {
-		/// <summary>
-		/// Gets the flags
-		/// </summary>
 		public CorDebugMDAFlags Flags {
 			get {
 				CorDebugMDAFlags flags = 0;
@@ -34,9 +31,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the OS thread ID. This could be a non-managed thread ID.
-		/// </summary>
 		public uint OSThreadId {
 			get {
 				int hr = obj.GetOSThreadId(out uint osThreadId);
@@ -44,9 +38,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the name or null on error
-		/// </summary>
 		public string Name {
 			get {
 				int hr = obj.GetName(0, out uint cchName, null);
@@ -59,9 +50,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the description or null on error
-		/// </summary>
 		public string Description {
 			get {
 				int hr = obj.GetDescription(0, out uint cchName, null);
@@ -74,9 +62,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the XML or null on error
-		/// </summary>
 		public string XML {
 			get {
 				int hr = obj.GetXML(0, out uint cchName, null);

@@ -26,9 +26,6 @@ using dndbg.COM.MetaData;
 using dndbg.DotNet;
 
 namespace dndbg.Engine {
-	/// <summary>
-	/// A loaded assembly
-	/// </summary>
 	sealed class DnAssembly {
 		readonly DebuggerCollection<ICorDebugModule, DnModule> modules;
 
@@ -71,24 +68,9 @@ namespace dndbg.Engine {
 		}
 		string fullName;
 
-		/// <summary>
-		/// true if the assembly has been unloaded
-		/// </summary>
 		public bool HasUnloaded { get; private set; }
-
-		/// <summary>
-		/// Gets the owner debugger
-		/// </summary>
 		public DnDebugger Debugger => AppDomain.Debugger;
-
-		/// <summary>
-		/// Gets the owner process
-		/// </summary>
 		public DnProcess Process => AppDomain.Process;
-
-		/// <summary>
-		/// Gets the owner AppDomain
-		/// </summary>
 		public DnAppDomain AppDomain { get; }
 
 		internal DnAssembly(DnAppDomain appDomain, ICorDebugAssembly assembly, int uniqueId, int uniqueIdProcess, int uniqueIdAppDomain) {
@@ -105,10 +87,6 @@ namespace dndbg.Engine {
 		internal void SetHasUnloaded() => HasUnloaded = true;
 		internal DnModule TryAdd(ICorDebugModule comModule) => modules.Add(comModule);
 
-		/// <summary>
-		/// Gets all modules, sorted on the order they were created
-		/// </summary>
-		/// <returns></returns>
 		public DnModule[] Modules {
 			get {
 				Debugger.DebugVerifyThread();
@@ -118,11 +96,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets a module or null
-		/// </summary>
-		/// <param name="comModule">Module</param>
-		/// <returns></returns>
 		public DnModule TryGetModule(ICorDebugModule comModule) {
 			Debugger.DebugVerifyThread();
 			return modules.TryGet(comModule);

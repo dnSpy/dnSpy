@@ -25,9 +25,6 @@ using dnlib.DotNet;
 
 namespace dndbg.Engine {
 	sealed class CorFunction : COMObject<ICorDebugFunction>, IEquatable<CorFunction> {
-		/// <summary>
-		/// Gets the module or null
-		/// </summary>
 		public CorModule Module {
 			get {
 				if (module != null)
@@ -38,9 +35,6 @@ namespace dndbg.Engine {
 		}
 		CorModule module;
 
-		/// <summary>
-		/// Gets the class or null
-		/// </summary>
 		public CorClass Class {
 			get {
 				int hr = obj.GetClass(out var cls);
@@ -57,9 +51,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the token or 0
-		/// </summary>
 		public uint Token {
 			get {
 				int hr = obj.GetToken(out uint token);
@@ -67,9 +58,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets/sets JMC (just my code) flag
-		/// </summary>
 		public bool JustMyCode {
 			get {
 				var func2 = obj as ICorDebugFunction2;
@@ -86,10 +74,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets EnC (edit and continue) version number of the latest edit, and might be greater
-		/// than this function's version number. See <see cref="VersionNumber"/>.
-		/// </summary>
 		public uint CurrentVersionNumber {
 			get {
 				int hr = obj.GetCurrentVersionNumber(out uint ver);
@@ -97,9 +81,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the EnC (edit and continue) version number of this function
-		/// </summary>
 		public uint VersionNumber {
 			get {
 				var func2 = obj as ICorDebugFunction2;
@@ -110,9 +91,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the local variables signature token or 0 if none
-		/// </summary>
 		public uint LocalVarSigToken {
 			get {
 				int hr = obj.GetLocalVarSigToken(out uint token);
@@ -120,9 +98,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the IL code or null
-		/// </summary>
 		public CorCode ILCode {
 			get {
 				int hr = obj.GetILCode(out var code);
@@ -130,12 +105,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the native code or null. If it's a generic method that's been JITed more than once,
-		/// the returned code could be any one of the JITed codes.
-		/// </summary>
-		/// <remarks><c>EnumerateNativeCode()</c> should be called but that method hasn't been
-		/// implemented by the CLR debugger yet.</remarks>
 		public CorCode NativeCode {
 			get {
 				int hr = obj.GetNativeCode(out var code);
@@ -166,13 +135,5 @@ namespace dndbg.Engine {
 		public bool Equals(CorFunction other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorFunction);
 		public override int GetHashCode() => RawObject.GetHashCode();
-
-		public T Write<T>(T output, TypeFormatterFlags flags) where T : ITypeOutput {
-			new TypeFormatter(output, flags).Write(this);
-			return output;
-		}
-
-		public string ToString(TypeFormatterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
-		public override string ToString() => ToString(TypeFormatterFlags.Default);
 	}
 }

@@ -26,9 +26,6 @@ namespace dndbg.Engine {
 	}
 
 	abstract class DnBreakpoint {
-		/// <summary>
-		/// The user can set this property to any value. It's not used by the debugger.
-		/// </summary>
 		public object Tag { get; set; }
 
 		public bool IsEnabled {

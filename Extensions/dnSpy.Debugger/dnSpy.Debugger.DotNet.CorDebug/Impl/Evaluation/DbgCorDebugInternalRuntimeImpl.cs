@@ -221,7 +221,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(engine, appDomain, type);
 
-		static CorValue TryGetObjectOrPrimitiveValue(CorValue value) {
+		internal static CorValue TryGetObjectOrPrimitiveValue(CorValue value) {
 			if (value == null)
 				return null;
 			if (value.IsReference) {

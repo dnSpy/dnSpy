@@ -244,7 +244,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, BitConverter.ToUInt64(data, 0));
 				}
 				else if (type.IsNullable) {
-					if (!value.GetNullableValue(out var nullableValue))
+					if (!GetNullableValue(type, value, out var nullableValue))
 						break;
 					if (nullableValue == null)
 						return new DbgDotNetRawValue(DbgSimpleValueType.Other, null);
@@ -258,6 +258,29 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		DmdType GetType(DmdAppDomain appDomain, CorValue value) =>
 			new ReflectionTypeCreator(engine, appDomain).Create(value.ExactType);
+
+		bool GetNullableValue(DmdType nullableType, CorValue nullableValue, out CorValue value) {
+			value = null;
+			var info = NullableTypeUtils.TryGetNullableFields(nullableType);
+			if ((object)info.hasValueField == null)
+				return false;
+
+			var cls = nullableValue.ExactType?.Class;
+			var hasValueValue = nullableValue.GetFieldValue(cls, (uint)info.hasValueField.MetadataToken);
+			if (hasValueValue == null)
+				return false;
+			var rawValue = hasValueValue.ReadGenericValue();
+			if (rawValue == null || rawValue.Length != 1)
+				return false;
+			if (rawValue[0] == 0)
+				return true;
+
+			var valueValue = nullableValue.GetFieldValue(cls, (uint)info.valueField.MetadataToken);
+			if (valueValue == null)
+				return false;
+			value = valueValue;
+			return true;
+		}
 
 		DbgDotNetRawValue GetRawValueDefault(CorValue value, DmdType type) {
 			if (value.IsNull)

@@ -23,9 +23,6 @@ using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	sealed class CorThread : COMObject<ICorDebugThread>, IEquatable<CorThread> {
-		/// <summary>
-		/// Gets the process or null
-		/// </summary>
 		public CorProcess Process {
 			get {
 				int hr = obj.GetProcess(out var process);
@@ -33,10 +30,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the thread ID (calls ICorDebugThread::GetID()). This is not necessarily the OS
-		/// thread ID in V2 or later, see <see cref="VolatileThreadId"/>
-		/// </summary>
 		public int ThreadId {
 			get {
 				int hr = obj.GetID(out int tid);
@@ -44,9 +37,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the AppDomain or null
-		/// </summary>
 		public CorAppDomain AppDomain {
 			get {
 				int hr = obj.GetAppDomain(out var appDomain);
@@ -54,10 +44,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the OS thread ID (calls ICorDebugThread2::GetVolatileOSThreadID()) or -1. This value
-		/// can change during execution of the thread.
-		/// </summary>
 		public int VolatileThreadId {
 			get {
 				var th2 = obj as ICorDebugThread2;
@@ -68,9 +54,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the active chain or null
-		/// </summary>
 		public CorChain ActiveChain {
 			get {
 				int hr = obj.GetActiveChain(out var chain);
@@ -78,9 +61,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the active frame or null
-		/// </summary>
 		public CorFrame ActiveFrame {
 			get {
 				int hr = obj.GetActiveFrame(out var frame);
@@ -88,9 +68,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets all chains
-		/// </summary>
 		public IEnumerable<CorChain> Chains {
 			get {
 				int hr = obj.EnumerateChains(out var chainEnum);
@@ -105,15 +82,8 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets all frames in all chains
-		/// </summary>
 		public IEnumerable<CorFrame> AllFrames => GetAllFrames(new ICorDebugFrame[1]);
 
-		/// <summary>
-		/// Gets all frames in all chains
-		/// </summary>
-		/// <param name="frames">Frames buffer</param>
 		public IEnumerable<CorFrame> GetAllFrames(ICorDebugFrame[] frames) {
 			foreach (var chain in Chains) {
 				foreach (var frame in chain.GetFrames(frames))
@@ -121,10 +91,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the current thread handle. It's owned by the CLR debugger. The handle may change as
-		/// the process executes, and may be different for different parts of the thread.
-		/// </summary>
 		public IntPtr Handle {
 			get {
 				int hr = obj.GetHandle(out var handle);
@@ -132,19 +98,9 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// true if the thread is running
-		/// </summary>
 		public bool IsRunning => State == CorDebugThreadState.THREAD_RUN;
-
-		/// <summary>
-		/// true if the thread is suspended
-		/// </summary>
 		public bool IsSuspended => State == CorDebugThreadState.THREAD_SUSPEND;
 
-		/// <summary>
-		/// Gets/sets the thread state
-		/// </summary>
 		public CorDebugThreadState State {
 			get {
 				int hr = obj.GetDebugState(out var state);
@@ -155,9 +111,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the current exception or null
-		/// </summary>
 		public CorValue CurrentException {
 			get {
 				int hr = obj.GetCurrentException(out var value);
@@ -165,56 +118,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// true if a termination of the thread has been requested.
-		/// </summary>
-		public bool StopRequested => (UserState & CorDebugUserState.USER_STOP_REQUESTED) != 0;
-
-		/// <summary>
-		/// true if a suspension of the thread has been requested.
-		/// </summary>
-		public bool SuspendRequested => (UserState & CorDebugUserState.USER_SUSPEND_REQUESTED) != 0;
-
-		/// <summary>
-		/// true if the thread is running in the background.
-		/// </summary>
-		public bool IsBackground => (UserState & CorDebugUserState.USER_BACKGROUND) != 0;
-
-		/// <summary>
-		/// true if the thread has not started executing.
-		/// </summary>
-		public bool IsUnstarted => (UserState & CorDebugUserState.USER_UNSTARTED) != 0;
-
-		/// <summary>
-		/// true if the thread has been terminated.
-		/// </summary>
-		public bool IsStopped => (UserState & CorDebugUserState.USER_STOPPED) != 0;
-
-		/// <summary>
-		/// true if the thread is waiting for another thread to complete a task.
-		/// </summary>
-		public bool IsWaitSleepJoin => (UserState & CorDebugUserState.USER_WAIT_SLEEP_JOIN) != 0;
-
-		/// <summary>
-		/// true if the thread has been suspended. Use <see cref="IsSuspended"/> instead of this property.
-		/// </summary>
-		public bool IsUserStateSuspended => (UserState & CorDebugUserState.USER_SUSPENDED) != 0;
-
-		/// <summary>
-		/// true if the thread is at an unsafe point. That is, the thread is at a point in execution where it may block garbage collection.
-		/// 
-		/// Debug events may be dispatched from unsafe points, but suspending a thread at an unsafe point will very likely cause a deadlock until the thread is resumed. The safe and unsafe points are determined by the just-in-time (JIT) and garbage collection implementation.
-		/// </summary>
-		public bool IsUnsafePoint => (UserState & CorDebugUserState.USER_UNSAFE_POINT) != 0;
-
-		/// <summary>
-		/// true if the thread is from the thread pool.
-		/// </summary>
-		public bool IsThreadPool => (UserState & CorDebugUserState.USER_THREADPOOL) != 0;
-
-		/// <summary>
-		/// Gets the user state of this thread
-		/// </summary>
 		public CorDebugUserState UserState {
 			get {
 				int hr = obj.GetUserState(out var state);
@@ -222,9 +125,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the CLR thread object
-		/// </summary>
 		public CorValue Object {
 			get {
 				int hr = obj.GetObject(out var value);
@@ -252,10 +152,6 @@ namespace dndbg.Engine {
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
-		/// <summary>
-		/// Returns a new <see cref="CorEval"/> or null if there was an error
-		/// </summary>
-		/// <returns></returns>
 		public CorEval CreateEval() {
 			int hr = obj.CreateEval(out var eval);
 			return hr < 0 || eval == null ? null : new CorEval(eval);

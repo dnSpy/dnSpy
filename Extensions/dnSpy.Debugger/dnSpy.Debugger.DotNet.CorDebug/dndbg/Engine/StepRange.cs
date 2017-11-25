@@ -32,11 +32,6 @@ namespace dndbg.Engine {
 		/// </summary>
 		public uint EndOffset;		// must be 2nd and last
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="start">Start offset relative to the beginning of the method</param>
-		/// <param name="end">End offset (exclusive)</param>
 		public StepRange(uint start, uint end) {
 			StartOffset = start;
 			EndOffset = end;

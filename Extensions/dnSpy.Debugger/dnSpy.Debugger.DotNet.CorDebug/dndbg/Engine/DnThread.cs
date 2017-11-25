@@ -21,9 +21,6 @@ using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	/// <summary>
-	/// A debugged .NET thread
-	/// </summary>
 	sealed class DnThread {
 		public CorThread CorThread { get; }
 
@@ -37,26 +34,10 @@ namespace dndbg.Engine {
 		/// </summary>
 		public int UniqueIdProcess { get; }
 
-		/// <summary>
-		/// Gets the thread ID (calls ICorDebugThread::GetID()). This is not necessarily the OS
-		/// thread ID in V2 or later, see <see cref="VolatileThreadId"/>
-		/// </summary>
 		public int ThreadId => CorThread.ThreadId;
-
-		/// <summary>
-		/// Gets the OS thread ID (calls ICorDebugThread2::GetVolatileOSThreadID()) or -1. This value
-		/// can change during execution of the thread.
-		/// </summary>
 		public int VolatileThreadId => CorThread.VolatileThreadId;
-
-		/// <summary>
-		/// true if the thread has exited
-		/// </summary>
 		public bool HasExited { get; private set; }
 
-		/// <summary>
-		/// Gets the AppDomain or null if none
-		/// </summary>
 		public DnAppDomain AppDomainOrNull {
 			get {
 				var comAppDomain = CorThread.AppDomain;
@@ -64,31 +45,10 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the owner debugger
-		/// </summary>
 		public DnDebugger Debugger => Process.Debugger;
-
-		/// <summary>
-		/// Gets the owner process
-		/// </summary>
 		public DnProcess Process { get; }
-
-		/// <summary>
-		/// Gets all chains
-		/// </summary>
 		public IEnumerable<CorChain> Chains => CorThread.Chains;
-
-		/// <summary>
-		/// Gets all frames in all chains
-		/// </summary>
 		public IEnumerable<CorFrame> AllFrames => CorThread.AllFrames;
-
-		/// <summary>
-		/// Gets all frames in all chains
-		/// </summary>
-		/// <param name="frames">Frames buffer</param>
-		/// <returns></returns>
 		public IEnumerable<CorFrame> GetAllFrames(ICorDebugFrame[] frames) => CorThread.GetAllFrames(frames);
 
 		internal DnThread(DnProcess ownerProcess, ICorDebugThread thread, int uniqueId, int uniqueIdProcess) {

@@ -31,9 +31,6 @@ using dndbg.COM.MetaHost;
 namespace dndbg.Engine {
 	delegate void DebugCallbackEventHandler(DnDebugger dbg, DebugCallbackEventArgs e);
 
-	/// <summary>
-	/// Only call debugger methods in the dndbg thread since it's not thread safe
-	/// </summary>
 	sealed class DnDebugger : IDisposable {
 		readonly IDebugMessageDispatcher debugMessageDispatcher;
 		readonly ICorDebug corDebug;
@@ -147,10 +144,6 @@ namespace dndbg.Engine {
 			get { DebugVerifyThread(); return nativeCodeBreakpointList.GetBreakpoints(); }
 		}
 
-		/// <summary>
-		/// Gets the last debugger state in <see cref="DebuggerStates"/>. This is never null even if
-		/// <see cref="DebuggerStates"/> is empty.
-		/// </summary>
 		public DebuggerState Current {
 			get {
 				DebugVerifyThread();
@@ -160,11 +153,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// All collected debugger states. It usually contains just one element, but can contain
-		/// more if multiple CLR debugger events were queued, eg. an exception was caught or
-		/// we stepped over a breakpoint (Step event + breakpoint hit event).
-		/// </summary>
 		public DebuggerState[] DebuggerStates {
 			get { DebugVerifyThread(); return debuggerStates.ToArray(); }
 		}
@@ -412,16 +400,10 @@ namespace dndbg.Engine {
 		}
 		bool continuing = false;
 
-		/// <summary>
-		/// true if <see cref="Continue()"/> can be called
-		/// </summary>
 		public bool CanContinue {
 			get { DebugVerifyThread(); return ProcessStateInternal == DebuggerProcessState.Paused; }
 		}
 
-		/// <summary>
-		/// Continue debugging the stopped process
-		/// </summary>
 		public void Continue() {
 			DebugVerifyThread();
 			if (!CanContinue)
@@ -442,15 +424,8 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// true if we can step into, step out or step over
-		/// </summary>
 		public bool CanStep() => CanStep(Current.ILFrame);
 
-		/// <summary>
-		/// true if we can step into, step out or step over
-		/// </summary>
-		/// <param name="frame">Frame</param>
 		public bool CanStep(CorFrame frame) {
 			DebugVerifyThread();
 			return ProcessStateInternal == DebuggerProcessState.Paused && frame != null;
@@ -473,61 +448,27 @@ namespace dndbg.Engine {
 			return stepper;
 		}
 
-		/// <summary>
-		/// Step out of current method in the current IL frame
-		/// </summary>
-		/// <param name="action">Delegate to call when completed or null</param>
-		/// <returns></returns>
 		public CorStepper StepOut(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) => StepOut(Current.ILFrame, action);
-
-		/// <summary>
-		/// Step out of current method in the selected frame
-		/// </summary>
-		/// <param name="frame">Frame</param>
-		/// <param name="action">Delegate to call when completed or null</param>
-		/// <returns></returns>
 		public CorStepper StepOut(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return Step(frame, StepKind.StepOut, action);
 		}
 
-		/// <summary>
-		/// Step into
-		/// </summary>
-		/// <param name="action">Delegate to call when completed or null</param>
-		/// <returns></returns>
 		public CorStepper StepInto(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return StepInto(Current.ILFrame, action);
 		}
 
-		/// <summary>
-		/// Step into
-		/// </summary>
-		/// <param name="frame">Frame</param>
-		/// <param name="action">Delegate to call when completed or null</param>
-		/// <returns></returns>
 		public CorStepper StepInto(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return Step(frame, StepKind.StepInto, action);
 		}
 
-		/// <summary>
-		/// Step over
-		/// </summary>
-		/// <param name="action">Delegate to call when completed or null</param>
-		/// <returns></returns>
 		public CorStepper StepOver(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return StepOver(Current.ILFrame, action);
 		}
 
-		/// <summary>
-		/// Step over
-		/// </summary>
-		/// <param name="frame">Frame</param>
-		/// <param name="action">Delegate to call when completed or null</param>
-		/// <returns></returns>
 		public CorStepper StepOver(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return Step(frame, StepKind.StepOver, action);
@@ -566,47 +507,21 @@ namespace dndbg.Engine {
 			return stepper;
 		}
 
-		/// <summary>
-		/// Step into
-		/// </summary>
-		/// <param name="ranges">Ranges to step over</param>
-		/// <param name="action">Delegate to call when completed or null</param>
-		/// <returns></returns>
 		public CorStepper StepInto(StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return StepInto(Current.ILFrame, ranges, action);
 		}
 
-		/// <summary>
-		/// Step into
-		/// </summary>
-		/// <param name="frame">Frame</param>
-		/// <param name="ranges">Ranges to step over</param>
-		/// <param name="action">Delegate to call when completed or null</param>
-		/// <returns></returns>
 		public CorStepper StepInto(CorFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return StepIntoOver(frame, ranges, true, action);
 		}
 
-		/// <summary>
-		/// Step over
-		/// </summary>
-		/// <param name="ranges">Ranges to step over</param>
-		/// <param name="action">Delegate to call when completed or null</param>
-		/// <returns></returns>
 		public CorStepper StepOver(StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return StepOver(Current.ILFrame, ranges, action);
 		}
 
-		/// <summary>
-		/// Step over
-		/// </summary>
-		/// <param name="frame">Frame</param>
-		/// <param name="ranges">Ranges to step over</param>
-		/// <param name="action">Delegate to call when completed or null</param>
-		/// <returns></returns>
 		public CorStepper StepOver(CorFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return StepIntoOver(frame, ranges, false, action);
@@ -1318,10 +1233,6 @@ namespace dndbg.Engine {
 			return processes.Add(comProcess);
 		}
 
-		/// <summary>
-		/// Gets all processes, sorted on the order they were created
-		/// </summary>
-		/// <returns></returns>
 		public DnProcess[] Processes {
 			get {
 				DebugVerifyThread();
@@ -1331,11 +1242,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets a process or null if it has exited
-		/// </summary>
-		/// <param name="comProcess">Process</param>
-		/// <returns></returns>
 		public DnProcess TryGetValidProcess(ICorDebugProcess comProcess) {
 			DebugVerifyThread();
 			var process = processes.TryGet(comProcess);
@@ -1433,11 +1339,6 @@ namespace dndbg.Engine {
 			return asm.TryGetModule(clsMod.RawObject);
 		}
 
-		/// <summary>
-		/// Re-add breakpoints to the module. Should be called if the debugged module has breakpoints
-		/// in decrypted methods and the methods have now been decrypted.
-		/// </summary>
-		/// <param name="module"></param>
 		public void AddBreakpoints(DnModule module) {
 			foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.DnModuleId))
 				bp.AddBreakpoint(module);
@@ -1445,12 +1346,6 @@ namespace dndbg.Engine {
 				bp.AddBreakpoint(module);
 		}
 
-		/// <summary>
-		/// Creates a debug event breakpoint
-		/// </summary>
-		/// <param name="eventKind">Debug event</param>
-		/// <param name="cond">Condition</param>
-		/// <returns></returns>
 		public DnDebugEventBreakpoint CreateBreakpoint(DebugEventBreakpointKind eventKind, Func<DebugEventBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnDebugEventBreakpoint(eventKind, cond);
@@ -1458,11 +1353,6 @@ namespace dndbg.Engine {
 			return bp;
 		}
 
-		/// <summary>
-		/// Creates a debug event breakpoint that gets hit on all debug events
-		/// </summary>
-		/// <param name="cond">Condition</param>
-		/// <returns></returns>
 		public DnAnyDebugEventBreakpoint CreateAnyDebugEventBreakpoint(Func<AnyDebugEventBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnAnyDebugEventBreakpoint(cond);
@@ -1470,14 +1360,6 @@ namespace dndbg.Engine {
 			return bp;
 		}
 
-		/// <summary>
-		/// Creates an IL instruction breakpoint
-		/// </summary>
-		/// <param name="module">Module</param>
-		/// <param name="token">Method token</param>
-		/// <param name="offset">IL offset</param>
-		/// <param name="cond">Condition</param>
-		/// <returns></returns>
 		public DnILCodeBreakpoint CreateBreakpoint(DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnILCodeBreakpoint(module, token, offset, cond);
@@ -1487,14 +1369,6 @@ namespace dndbg.Engine {
 			return bp;
 		}
 
-		/// <summary>
-		/// Creates a native instruction breakpoint
-		/// </summary>
-		/// <param name="module">Module</param>
-		/// <param name="token">Method token</param>
-		/// <param name="offset">Offset</param>
-		/// <param name="cond">Condition</param>
-		/// <returns></returns>
 		public DnNativeCodeBreakpoint CreateNativeBreakpoint(DnModuleId module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnNativeCodeBreakpoint(module, token, offset, cond);
@@ -1504,13 +1378,6 @@ namespace dndbg.Engine {
 			return bp;
 		}
 
-		/// <summary>
-		/// Creates a native instruction breakpoint
-		/// </summary>
-		/// <param name="code">Native code</param>
-		/// <param name="offset">Offset</param>
-		/// <param name="cond">Condition</param>
-		/// <returns></returns>
 		public DnNativeCodeBreakpoint CreateNativeBreakpoint(CorCode code, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var module = TryGetModuleId(code.Function?.Module) ?? new DnModuleId();
@@ -1715,14 +1582,7 @@ namespace dndbg.Engine {
 			return new DnEval(this, debugMessageDispatcher, suspendOtherThreads, customNotificationList, cancellationToken);
 		}
 
-		/// <summary>
-		/// true if we're evaluating
-		/// </summary>
 		public bool IsEvaluating => evalCounter != 0 && ProcessStateInternal != DebuggerProcessState.Terminated;
-
-		/// <summary>
-		/// true if an eval has completed
-		/// </summary>
 		public bool EvalCompleted => evalCompletedCounter != 0;
 
 		internal void EvalStarted() {
@@ -1763,9 +1623,6 @@ namespace dndbg.Engine {
 		}
 		readonly List<CorValue> disposeValues = new List<CorValue>();
 
-		/// <summary>
-		/// Gets all modules from all processes and app domains
-		/// </summary>
 		public IEnumerable<DnModule> Modules {
 			get {
 				DebugVerifyThread();
@@ -1780,9 +1637,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets all assemblies from all processes and app domains
-		/// </summary>
 		public IEnumerable<DnAssembly> Assemblies {
 			get {
 				DebugVerifyThread();

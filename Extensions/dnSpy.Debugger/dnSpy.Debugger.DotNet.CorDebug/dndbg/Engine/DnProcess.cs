@@ -23,9 +23,6 @@ using System.Threading;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	/// <summary>
-	/// A debugged process
-	/// </summary>
 	sealed class DnProcess {
 		readonly DebuggerCollection<ICorDebugAppDomain, DnAppDomain> appDomains;
 		readonly DebuggerCollection<ICorDebugThread, DnThread> threads;
@@ -37,24 +34,10 @@ namespace dndbg.Engine {
 		/// </summary>
 		public int UniqueId { get; }
 
-		/// <summary>
-		/// Gets the process id (pid) of the process
-		/// </summary>
 		public int ProcessId => CorProcess.ProcessId;
-
-		/// <summary>
-		/// true if the process has exited
-		/// </summary>
 		public bool HasExited { get; private set; }
-
-		/// <summary>
-		/// true if it has been initialized
-		/// </summary>
 		public bool HasInitialized { get; private set; }
 
-		/// <summary>
-		/// Filename or empty string
-		/// </summary>
 		public string Filename => filename;
 		string filename = string.Empty;
 
@@ -64,15 +47,7 @@ namespace dndbg.Engine {
 		public string CommandLine => cmdLine;
 		string cmdLine = string.Empty;
 
-		/// <summary>
-		/// Returns the value of ICorDebugProcess::GetHelperThreadID(). Don't cache this value since
-		/// it can change. 0 is returned if the thread doesn't exist.
-		/// </summary>
 		public uint HelperThreadId => CorProcess.HelperThreadId;
-
-		/// <summary>
-		/// Gets the owner debugger
-		/// </summary>
 		public DnDebugger Debugger { get; }
 
 		internal DnProcess(DnDebugger ownerDebugger, ICorDebugProcess process, int uniqueId) {
@@ -109,10 +84,6 @@ namespace dndbg.Engine {
 
 		internal DnAppDomain TryAdd(ICorDebugAppDomain comAppDomain) => appDomains.Add(comAppDomain);
 
-		/// <summary>
-		/// Gets all AppDomains, sorted on the order they were created
-		/// </summary>
-		/// <returns></returns>
 		public DnAppDomain[] AppDomains {
 			get {
 				Debugger.DebugVerifyThread();
@@ -124,11 +95,6 @@ namespace dndbg.Engine {
 
 		internal DnAppDomain TryGetAppDomain(ICorDebugAppDomain comAppDomain) => appDomains.TryGet(comAppDomain);
 
-		/// <summary>
-		/// Gets an AppDomain or null if it has exited
-		/// </summary>
-		/// <param name="comAppDomain">AppDomain</param>
-		/// <returns></returns>
 		public DnAppDomain TryGetValidAppDomain(ICorDebugAppDomain comAppDomain) {
 			Debugger.DebugVerifyThread();
 			var appDomain = appDomains.TryGet(comAppDomain);
@@ -149,10 +115,6 @@ namespace dndbg.Engine {
 
 		internal DnThread TryAdd(ICorDebugThread comThread) => threads.Add(comThread);
 
-		/// <summary>
-		/// Gets all threads, sorted on the order they were created
-		/// </summary>
-		/// <returns></returns>
 		public DnThread[] Threads {
 			get {
 				Debugger.DebugVerifyThread();
@@ -164,11 +126,6 @@ namespace dndbg.Engine {
 
 		internal DnThread TryGetThread(ICorDebugThread comThread) => threads.TryGet(comThread);
 
-		/// <summary>
-		/// Gets a thread or null if it has exited
-		/// </summary>
-		/// <param name="comThread">Thread</param>
-		/// <returns></returns>
 		public DnThread TryGetValidThread(ICorDebugThread comThread) {
 			Debugger.DebugVerifyThread();
 			var thread = threads.TryGet(comThread);
@@ -189,11 +146,6 @@ namespace dndbg.Engine {
 			return thread;
 		}
 
-		/// <summary>
-		/// Gets the main thread in the main AppDomain, if an AppDomain with threads exist, else
-		/// it returns a thread or null
-		/// </summary>
-		/// <returns></returns>
 		public DnThread GetMainThread() {
 			var threads = Threads;
 			var appDomain = GetMainAppDomain();
@@ -204,18 +156,11 @@ namespace dndbg.Engine {
 			return threads.Length == 0 ? null : threads[0];
 		}
 
-		/// <summary>
-		/// Gets the main AppDomain or null
-		/// </summary>
-		/// <returns></returns>
 		public DnAppDomain GetMainAppDomain() {
 			var appDomains = AppDomains;
 			return appDomains.Length == 0 ? null : appDomains[0];
 		}
 
-		/// <summary>
-		/// Gets all modules from all app domains
-		/// </summary>
 		public IEnumerable<DnModule> Modules {
 			get {
 				Debugger.DebugVerifyThread();
@@ -228,9 +173,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets all assemblies from all app domains
-		/// </summary>
 		public IEnumerable<DnAssembly> Assemblies {
 			get {
 				Debugger.DebugVerifyThread();
@@ -239,23 +181,6 @@ namespace dndbg.Engine {
 						yield return asm;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Finds a frame. Can be called if <paramref name="frame"/> has been neutered
-		/// </summary>
-		/// <param name="frame">Frame</param>
-		/// <returns></returns>
-		public CorFrame FindFrame(CorFrame frame) {
-			if (frame == null)
-				return null;
-			foreach (var thread in threads.GetAll()) {
-				foreach (var f in thread.AllFrames) {
-					if (f.StackStart == frame.StackStart && f.StackEnd == frame.StackEnd)
-						return f;
-				}
-			}
-			return null;
 		}
 
 		public override string ToString() => string.Format("{0} {1} {2}", UniqueId, ProcessId, Filename);

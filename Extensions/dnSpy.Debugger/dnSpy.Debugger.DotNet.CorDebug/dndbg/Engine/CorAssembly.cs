@@ -28,9 +28,6 @@ using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
 	sealed class CorAssembly : COMObject<ICorDebugAssembly>, IEquatable<CorAssembly> {
-		/// <summary>
-		/// Gets all modules
-		/// </summary>
 		public IEnumerable<CorModule> Modules {
 			get {
 				int hr = obj.EnumerateModules(out var moduleEnum);
@@ -78,9 +75,6 @@ namespace dndbg.Engine {
 			return asm.FullName;
 		}
 
-		/// <summary>
-		/// Gets the manifest module or null
-		/// </summary>
 		public CorModule ManifestModule {
 			get {
 				CorModule firstModule = null;

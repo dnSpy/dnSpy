@@ -121,7 +121,7 @@ namespace dndbg.Engine {
 			var et = valueType ?? value?.ExactType;
 			if (et == null)
 				return null;
-			if (value == null || !value.IsGeneric || value.IsBox || value.IsHeap || !valueType.IsValueType)
+			if (value == null || !value.IsGeneric || value.IsBox || value.IsHeap)
 				return value;
 			var cls = et?.Class;
 			if (cls == null)

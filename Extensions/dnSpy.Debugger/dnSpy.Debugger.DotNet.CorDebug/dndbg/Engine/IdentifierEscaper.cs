@@ -21,18 +21,10 @@ using System.Globalization;
 using System.Text;
 
 namespace dndbg.Engine {
-	/// <summary>
-	/// Escapes identifiers
-	/// </summary>
 	static class IdentifierEscaper {
 		const int MAX_IDENTIFIER_LENGTH = 128;
 		const string EMPTY_NAME = "<<EMPTY_NAME>>";
 
-		/// <summary>
-		/// Escapes an identifier
-		/// </summary>
-		/// <param name="id">Identifier</param>
-		/// <returns></returns>
 		public static string Escape(string id) {
 			if (string.IsNullOrEmpty(id))
 				return EMPTY_NAME;

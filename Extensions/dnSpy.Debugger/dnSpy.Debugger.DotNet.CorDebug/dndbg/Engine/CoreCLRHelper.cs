@@ -47,12 +47,6 @@ namespace dndbg.Engine {
 		delegate int CreateDebuggingInterfaceFromVersion([MarshalAs(UnmanagedType.LPWStr)] string szDebuggeeVersion, [MarshalAs(UnmanagedType.IUnknown)] out object ppCordb);
 
 		/// <summary>
-		/// Path to <c>dbgshim.dll</c> that will be used to initialize <c>dbgshim.dll</c> if it hasn't
-		/// been initialized yet.
-		/// </summary>
-		public static string DbgShimPath { get; set; }
-
-		/// <summary>
 		/// Searches for CoreCLR runtimes in a process
 		/// </summary>
 		/// <param name="pid">Process ID</param>
@@ -104,8 +98,6 @@ namespace dndbg.Engine {
 				if (File.Exists(dbgshimPathTemp))
 					list.Add(dbgshimPathTemp);
 			}
-			if (File.Exists(DbgShimPath))
-				list.Add(DbgShimPath);
 			var s = GetDbgShimPathFromRegistry();
 			if (File.Exists(s))
 				list.Add(s);

@@ -22,10 +22,9 @@ using System;
 namespace dndbg.Engine {
 	interface IDebugMessageDispatcher {
 		/// <summary>
-		/// Executes <see cref="action"/> in the dndbg thread. This is typically the GUI thread,
-		/// and must always be the same thread since the debugger isn't thread safe.
+		/// Executes <see cref="action"/> on the dndbg thread.
 		/// </summary>
-		/// <param name="action">Code to execute in the dndbg thread</param>
+		/// <param name="action">Code to execute on the dndbg thread</param>
 		void ExecuteAsync(Action action);
 
 		/// <summary>

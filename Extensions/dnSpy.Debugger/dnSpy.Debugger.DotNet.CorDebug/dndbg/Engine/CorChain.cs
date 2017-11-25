@@ -23,9 +23,6 @@ using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	sealed class CorChain : COMObject<ICorDebugChain>, IEquatable<CorChain> {
-		/// <summary>
-		/// Gets the thread or null
-		/// </summary>
 		public CorThread Thread {
 			get {
 				int hr = obj.GetThread(out var thread);
@@ -33,32 +30,17 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// true if this is a managed chain
-		/// </summary>
 		public bool IsManaged { get; }
 
-		/// <summary>
-		/// Gets the reason
-		/// </summary>
 		public CorDebugChainReason Reason => reason;
 		readonly CorDebugChainReason reason;
 
-		/// <summary>
-		/// Start address of the stack segment
-		/// </summary>
 		public ulong StackStart => rangeStart;
 		readonly ulong rangeStart;
 
-		/// <summary>
-		/// End address of the stack segment
-		/// </summary>
 		public ulong StackEnd => rangeEnd;
 		readonly ulong rangeEnd;
 
-		/// <summary>
-		/// Gets the active frame or null
-		/// </summary>
 		public CorFrame ActiveFrame {
 			get {
 				int hr = obj.GetActiveFrame(out var frame);
@@ -66,9 +48,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the callee or null
-		/// </summary>
 		public CorChain Callee {
 			get {
 				int hr = obj.GetCallee(out var callee);
@@ -76,9 +55,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the caller or null
-		/// </summary>
 		public CorChain Caller {
 			get {
 				int hr = obj.GetCaller(out var caller);
@@ -86,9 +62,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the next chain or null
-		/// </summary>
 		public CorChain Next {
 			get {
 				int hr = obj.GetNext(out var next);
@@ -96,9 +69,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the previous chain or null
-		/// </summary>
 		public CorChain Previous {
 			get {
 				int hr = obj.GetPrevious(out var prev);
@@ -106,16 +76,8 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets all frames
-		/// </summary>
 		public IEnumerable<CorFrame> Frames => GetFrames(new ICorDebugFrame[1]);
 
-		/// <summary>
-		/// Gets all frames
-		/// </summary>
-		/// <param name="frames">Frames buffer</param>
-		/// <returns></returns>
 		public IEnumerable<CorFrame> GetFrames(ICorDebugFrame[] frames) {
 			int hr = obj.EnumerateFrames(out var frameEnum);
 			if (hr < 0)
@@ -156,6 +118,6 @@ namespace dndbg.Engine {
 		public bool Equals(CorChain other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorChain);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[Chain] Managed={0} {1:X8}-{2:X8} {3}", IsManaged ? 1 : 0, StackStart, StackEnd, Reason);
+		public override string ToString() => $"[Chain] Managed={(IsManaged ? 1 : 0)} {StackStart:X8}-{StackEnd:X8} {Reason}";
 	}
 }

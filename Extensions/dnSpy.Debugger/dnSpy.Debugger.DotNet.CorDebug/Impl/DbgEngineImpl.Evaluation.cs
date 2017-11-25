@@ -110,6 +110,53 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			dnDebugger.DisposeHandle(value);
 		}
 
+		DbgDotNetRawValue? ReadField_CorDebug(CorValue obj, DbgAppDomain appDomain, string fieldName) {
+			if (obj == null)
+				return null;
+			var reflectionAppDomain = appDomain.GetReflectionAppDomain();
+			if (reflectionAppDomain == null)
+				return null;
+			DbgDotNetValueImpl objImp = null;
+			try {
+				objImp = CreateDotNetValue_CorDebug(obj, reflectionAppDomain, tryCreateStrongHandle: false) as DbgDotNetValueImpl;
+				if (objImp == null)
+					return null;
+				return ReadField_CorDebug(objImp, fieldName);
+			}
+			finally {
+				objImp?.Dispose();
+			}
+		}
+
+		DbgDotNetRawValue? ReadField_CorDebug(DbgDotNetValueImpl obj, string fieldName) {
+			var field = obj.Type.GetField(fieldName, DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance);
+			Debug.Assert((object)field != null);
+			if ((object)field == null)
+				return null;
+
+			var dnAppDomain = ((DbgCorDebugInternalAppDomainImpl)obj.Type.AppDomain.GetDebuggerAppDomain().InternalAppDomain).DnAppDomain;
+			var corFieldDeclType = GetType(dnAppDomain.CorAppDomain, field.DeclaringType);
+			var objValue = DbgCorDebugInternalRuntimeImpl.TryGetObjectOrPrimitiveValue(obj.TryGetCorValue());
+			if (objValue == null)
+				return null;
+			if (objValue.IsObject) {
+				// This isn't a generic read-field method, so we won't try to load any classes by calling cctors.
+
+				var fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out var hr);
+				if (fieldValue == null)
+					return null;
+				DbgDotNetValue dnValue = null;
+				try {
+					dnValue = CreateDotNetValue_CorDebug(fieldValue, field.AppDomain, tryCreateStrongHandle: false);
+					return dnValue.GetRawValue();
+				}
+				finally {
+					dnValue?.Dispose();
+				}
+			}
+			return null;
+		}
+
 		CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(this, appDomain, type);
 
 		sealed class EvalTimedOut { }

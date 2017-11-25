@@ -19,65 +19,17 @@
 
 namespace dndbg.Engine {
 	enum DebuggerPauseReason {
-		/// <summary>
-		/// Some unknown reason
-		/// </summary>
 		Other,
-
-		/// <summary>
-		/// An unhandled exception
-		/// </summary>
 		UnhandledException,
-
-		/// <summary>
-		/// An exception
-		/// </summary>
 		Exception,
-
-		/// <summary>
-		/// A <see cref="DnDebugEventBreakpoint"/> breakpoint got triggered
-		/// </summary>
 		DebugEventBreakpoint,
-
-		/// <summary>
-		/// A <see cref="DnAnyDebugEventBreakpoint"/> breakpoint got triggered
-		/// </summary>
 		AnyDebugEventBreakpoint,
-
-		/// <summary>
-		/// A 'break' IL instruction was executed
-		/// </summary>
 		Break,
-
-		/// <summary>
-		/// An IL code breakpoint got triggered
-		/// </summary>
 		ILCodeBreakpoint,
-
-		/// <summary>
-		/// A native code breakpoint got triggered
-		/// </summary>
 		NativeCodeBreakpoint,
-
-		/// <summary>
-		/// TryBreakProcesses() was called
-		/// </summary>
 		UserBreak,
-
-		/// <summary>
-		/// Evaluation completed
-		/// </summary>
 		Eval,
-
-		/// <summary>
-		/// Breakpoint at entry point or Module .cctor got hit
-		/// </summary>
 		EntryPointBreakpoint,
-
-		/// <summary>
-		/// Start of user pause reasons
-		/// </summary>
-		UserReason = 0x10000000,
 	}
 
 	class DebuggerPauseState {

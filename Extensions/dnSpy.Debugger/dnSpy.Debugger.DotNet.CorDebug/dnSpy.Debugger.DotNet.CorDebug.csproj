@@ -118,14 +118,12 @@
     <Compile Include="dndbg\Engine\CorMDA.cs" />
     <Compile Include="dndbg\Engine\CorModule.cs" />
     <Compile Include="dndbg\Engine\CorModuleDefHelper.cs" />
-    <Compile Include="dndbg\Engine\CorOverride.cs" />
     <Compile Include="dndbg\Engine\CorProcess.cs" />
     <Compile Include="dndbg\Engine\CorProcessReader.cs" />
     <Compile Include="dndbg\Engine\CorStepper.cs" />
     <Compile Include="dndbg\Engine\CorThread.cs" />
     <Compile Include="dndbg\Engine\CorType.cs" />
     <Compile Include="dndbg\Engine\CorValue.cs" />
-    <Compile Include="dndbg\Engine\CorValueReader.cs" />
     <Compile Include="dndbg\Engine\DebugCallbackEventArgs.cs" />
     <Compile Include="dndbg\Engine\DebugEventBreakpointList.cs" />
     <Compile Include="dndbg\Engine\DebuggeeVersionDetector.cs" />
@@ -142,7 +140,6 @@
     <Compile Include="dndbg\Engine\DnAssembly.cs" />
     <Compile Include="dndbg\Engine\DnBreakpoint.cs" />
     <Compile Include="dndbg\Engine\DnCodeBreakpoint.cs" />
-    <Compile Include="dndbg\Engine\DndbgSignatureReader.cs" />
     <Compile Include="dndbg\Engine\DnDebugEventBreakpoint.cs" />
     <Compile Include="dndbg\Engine\DnDebugger.cs" />
     <Compile Include="dndbg\Engine\DnEval.cs" />
@@ -157,12 +154,9 @@
     <Compile Include="dndbg\Engine\IdentifierEscaper.cs" />
     <Compile Include="dndbg\Engine\ILFrameIP.cs" />
     <Compile Include="dndbg\Engine\MDAPI.cs" />
-    <Compile Include="dndbg\Engine\MetaDataUtils.cs" />
     <Compile Include="dndbg\Engine\NativeMethods.cs" />
     <Compile Include="dndbg\Engine\ProcessCreationFlags.cs" />
     <Compile Include="dndbg\Engine\StepRange.cs" />
-    <Compile Include="dndbg\Engine\TypeFormatter.cs" />
-    <Compile Include="dndbg\Engine\Utils.cs" />
     <Compile Include="dndbg\Engine\Win32EnvironmentStringBuilder.cs" />
     <Compile Include="Impl\CorDebugTypeCreator.cs" />
     <Compile Include="Impl\DbgCorDebugInternalAppDomainImpl.cs" />
@@ -185,7 +179,6 @@
     <Compile Include="Impl\DnThreadUtils.cs" />
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
-    <Compile Include="Impl\EvalReflectionUtils.cs" />
     <Compile Include="Impl\Evaluation\CordbgErrorHelper.cs" />
     <Compile Include="Impl\Evaluation\CreateCorValueResult.cs" />
     <Compile Include="Impl\Evaluation\DbgCorDebugInternalRuntimeImpl.cs" />
@@ -204,6 +197,7 @@
     <Compile Include="Impl\Evaluation\Hooks\CorDebugValueConverterImpl.cs" />
     <Compile Include="Impl\Evaluation\Hooks\ICorDebugRuntime.cs" />
     <Compile Include="Impl\Evaluation\Hooks\System_String.cs" />
+    <Compile Include="Impl\Evaluation\NullableTypeUtils.cs" />
     <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
     <Compile Include="Impl\ExceptionUtils.cs" />
     <Compile Include="Impl\ModuleCreator.cs" />
@@ -223,8 +217,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steppers\DbgEngineStepperImpl.cs" />
-    <Compile Include="Text\TypeColorExtensions.cs" />
-    <Compile Include="Text\TypeOutputTextColorWriter.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="UI\UIDispatcher.cs" />
     <Compile Include="Utilities\DotNetAssemblyUtilities.cs" />

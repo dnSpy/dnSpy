@@ -135,6 +135,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
 			string msg;
+			DbgModule module;
 			switch (e.Kind) {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
@@ -169,9 +170,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (dbg.IsEvaluating && e2.EventType != CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED)
 					break;
 
+				module = TryGetModule(e2.CorFrame, e2.CorThread);
 				var exObj = e2.CorThread?.CurrentException;
-				objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.DotNet, TryGetExceptionName(exObj) ?? "???"), exFlags, TryGetExceptionMessage(exObj), TryGetThread(e2.CorThread), TryGetModule(e2.CorFrame, e2.CorThread), GetMessageFlags());
-				e.AddPauseReason(DebuggerPauseReason.Other);
+				var reflectionAppDomain = module?.GetReflectionModule().AppDomain;
+				DbgDotNetValueImpl dnExObj = null;
+				try {
+					if (exObj != null && reflectionAppDomain != null)
+						dnExObj = CreateDotNetValue_CorDebug(exObj, reflectionAppDomain, tryCreateStrongHandle: false) as DbgDotNetValueImpl;
+					objectFactory.CreateException(new DbgExceptionId(PredefinedExceptionCategories.DotNet, TryGetExceptionName(dnExObj) ?? "???"), exFlags, TryGetExceptionMessage(dnExObj), TryGetThread(e2.CorThread), module, GetMessageFlags());
+					e.AddPauseReason(DebuggerPauseReason.Other);
+				}
+				finally {
+					dnExObj?.Dispose();
+				}
 				break;
 
 			case DebugCallbackKind.MDANotification:
@@ -202,7 +213,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var dnModule = dbg.TryGetModule(lcArgs.CorAppDomain, cls);
 					if (dnModule.IsDynamic) {
 						UpdateDynamicModuleIds(dnModule);
-						var module = TryGetModule(dnModule.CorModule);
+						module = TryGetModule(dnModule.CorModule);
 						Debug.Assert(module != null);
 						if (module != null)
 							dbgModuleMemoryRefreshedNotifier.RaiseModulesRefreshed(new[] { module });
@@ -238,21 +249,22 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		string TryGetExceptionName(CorValue exObj) {
-			var corType = exObj?.ExactType;
-			var module = TryGetModule(corType?.Class?.Module);
-			if (module == null)
+		string TryGetExceptionName(DbgDotNetValue exObj) {
+			if (exObj == null)
 				return null;
-			var type = new ReflectionTypeCreator(this, module.GetReflectionModule().AppDomain).Create(corType);
+			var type = exObj.Type;
 			if (type.IsConstructedGenericType)
 				type = type.GetGenericTypeDefinition();
 			return type.FullName;
 		}
 
-		string TryGetExceptionMessage(CorValue exObj) {
-			if (EvalReflectionUtils.ReadExceptionMessage(exObj, out var message))
-				return message ?? dnSpy_Debugger_DotNet_CorDebug_Resources.ExceptionMessageIsNull;
-			return null;
+		string TryGetExceptionMessage(DbgDotNetValueImpl exObj) {
+			if (exObj == null)
+				return null;
+			var res = ReadField_CorDebug(exObj, "_message");
+			if (res == null || !res.Value.HasRawValue)
+				return null;
+			return res.Value.RawValue as string ?? dnSpy_Debugger_DotNet_CorDebug_Resources.ExceptionMessageIsNull;
 		}
 
 		internal DbgThread TryGetThread(CorThread thread) {
@@ -405,7 +417,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (e.Added) {
 				e.ShouldPause = true;
 				var appDomain = dmdRuntime.CreateAppDomain(e.AppDomain.Id);
-				var internalAppDomain = new DbgCorDebugInternalAppDomainImpl(appDomain);
+				var internalAppDomain = new DbgCorDebugInternalAppDomainImpl(appDomain, e.AppDomain);
 				var engineAppDomain = objectFactory.CreateAppDomain<object>(internalAppDomain, e.AppDomain.Name, e.AppDomain.Id, GetMessageFlags(), data: null, onCreated: engineAppDomain2 => internalAppDomain.SetAppDomain(engineAppDomain2.AppDomain));
 				lock (lockObj)
 					toEngineAppDomain.Add(e.AppDomain, engineAppDomain);

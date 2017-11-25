@@ -19,29 +19,10 @@
 
 namespace dndbg.Engine {
 	enum DebuggerProcessState {
-		/// <summary>
-		/// Creating the first process
-		/// </summary>
 		Starting,
-
-		/// <summary>
-		/// Process is about to run after having been stopped
-		/// </summary>
 		Continuing,
-
-		/// <summary>
-		/// Process is running
-		/// </summary>
 		Running,
-
-		/// <summary>
-		/// Process is temporarily stopped
-		/// </summary>
 		Paused,
-
-		/// <summary>
-		/// All processes have terminated
-		/// </summary>
 		Terminated,
 	}
 }

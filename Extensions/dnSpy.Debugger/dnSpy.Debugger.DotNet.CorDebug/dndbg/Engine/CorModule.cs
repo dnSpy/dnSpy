@@ -27,9 +27,6 @@ using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
 	sealed class CorModule : COMObject<ICorDebugModule>, IEquatable<CorModule> {
-		/// <summary>
-		/// Gets the process or null
-		/// </summary>
 		public CorProcess Process {
 			get {
 				int hr = obj.GetProcess(out var process);
@@ -37,9 +34,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the assembly or null
-		/// </summary>
 		public CorAssembly Assembly {
 			get {
 				int hr = obj.GetAssembly(out var assembly);
@@ -47,9 +41,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// true if this is the manifest module
-		/// </summary>
 		public bool IsManifestModule {
 			get {
 				var mdi = GetMetaDataInterface<IMetaDataImport>();
@@ -83,32 +74,16 @@ namespace dndbg.Engine {
 			return DotNet.Utils.GetUTF8String(MDAPI.GetUtf8Name(mdi, token), MDAPI.GetModuleName(mdi) ?? string.Empty);
 		}
 
-		/// <summary>
-		/// Gets the base address of the module or 0
-		/// </summary>
 		public ulong Address => address;
 		readonly ulong address;
 
-		/// <summary>
-		/// Gets the size of the module or 0
-		/// </summary>
 		public uint Size => size;
 		readonly uint size;
 
-		/// <summary>
-		/// Gets the token or 0
-		/// </summary>
 		public uint Token => token;
 		readonly uint token;
 
-		/// <summary>
-		/// true if it's a dynamic module that can add/remove types
-		/// </summary>
 		public bool IsDynamic { get; }
-
-		/// <summary>
-		/// true if this is an in-memory module
-		/// </summary>
 		public bool IsInMemory { get; }
 
 		string GetSerializedName(uint id) {
@@ -124,11 +99,6 @@ namespace dndbg.Engine {
 
 		public DnModuleId GetModuleId(uint id) => new DnModuleId(Assembly?.FullName ?? string.Empty, GetSerializedName(id), IsDynamic, IsInMemory, false);
 
-		/// <summary>
-		/// Gets/sets the JIT compiler flags. The setter can only be called from the
-		/// ICorDebugManagedCallback::LoadModule handler. The getter can only be called when the
-		/// debugged process is synchronized (paused).
-		/// </summary>
 		public CorDebugJITCompilerFlags JITCompilerFlags {
 			get {
 				var m2 = obj as ICorDebugModule2;
@@ -196,21 +166,11 @@ namespace dndbg.Engine {
 			int hr = m2.SetJMCStatus(isJustMyCode ? 1 : 0, 0, IntPtr.Zero);
 		}
 
-		/// <summary>
-		/// Gets a class
-		/// </summary>
-		/// <param name="token">TypeDef token</param>
-		/// <returns></returns>
 		public CorClass GetClassFromToken(uint token) {
 			int hr = obj.GetClassFromToken(token, out var cls);
 			return hr < 0 || cls == null ? null : new CorClass(cls);
 		}
 
-		/// <summary>
-		/// Gets a metadata interface, eg. <see cref="IMetaDataImport"/> or <see cref="IMetaDataImport2"/>
-		/// </summary>
-		/// <typeparam name="T">Type of COM metadata interface</typeparam>
-		/// <returns></returns>
 		public T GetMetaDataInterface<T>() where T : class {
 			var riid = typeof(T).GUID;
 			int hr = obj.GetMetaDataInterface(ref riid, out object o);
