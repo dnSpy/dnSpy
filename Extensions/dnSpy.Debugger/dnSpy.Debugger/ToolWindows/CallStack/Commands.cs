@@ -18,14 +18,19 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {
@@ -146,12 +151,65 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		public override bool IsEnabled(CallStackCtxMenuContext context) => context.Operations.CanUnwindToFrame;
 	}
 
+	[ExportMenuItem(Header = "res:LanguageCommand", Guid = Constants.LANGUAGE_GUID, Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 100)]
+	sealed class LanguageCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		[ImportingConstructor]
+		LanguageCallStackCtxMenuCommand(Lazy<ICallStackContent> callStackContent)
+			: base(callStackContent) {
+		}
+
+		public override void Execute(CallStackCtxMenuContext context) { }
+		public override bool IsEnabled(CallStackCtxMenuContext context) => context.Operations.GetLanguages().Any(a => a.Name != PredefinedDbgLanguageNames.None);
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.LANGUAGE_GUID, Group = Constants.GROUP_LANGUAGE, Order = 0)]
+	sealed class LanguageXCallStackCtxMenuCommand : CallStackCtxMenuCommand, IMenuItemProvider {
+		[ImportingConstructor]
+		LanguageXCallStackCtxMenuCommand(Lazy<ICallStackContent> callStackContent)
+			: base(callStackContent) {
+		}
+
+		public override void Execute(CallStackCtxMenuContext context) { }
+
+		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
+			var ctx = CreateContext(context);
+			Debug.Assert(ctx != null);
+			if (ctx == null)
+				yield break;
+
+			var languages = ctx.Operations.GetLanguages();
+			if (languages.Count == 0)
+				yield break;
+
+			var currentLanguage = ctx.Operations.GetCurrentLanguage();
+			foreach (var language in languages.OrderBy(a => a.DisplayName, StringComparer.CurrentCultureIgnoreCase)) {
+				var attr = new ExportMenuItemAttribute { Header = UIUtilities.EscapeMenuItemHeader(language.DisplayName) };
+				var cmd = new SetLanguageWindowModulesCtxMenuCommand(callStackContent, language, language == currentLanguage);
+				yield return new CreatedMenuItem(attr, cmd);
+			}
+		}
+	}
+
+	sealed class SetLanguageWindowModulesCtxMenuCommand : CallStackCtxMenuCommand {
+		readonly DbgLanguage language;
+		readonly bool isChecked;
+		public SetLanguageWindowModulesCtxMenuCommand(Lazy<ICallStackContent> callStackContent, DbgLanguage language, bool isChecked)
+			: base(callStackContent) {
+			this.language = language;
+			this.isChecked = isChecked;
+		}
+		public override void Execute(CallStackCtxMenuContext context) => context.Operations.SetCurrentLanguage(language);
+		public override bool IsChecked(CallStackCtxMenuContext context) => isChecked;
+	}
+
 	static class Constants {
 		public const string BREAKPOINTS_GUID = "30BC5C80-9029-4031-9C18-12735CD2894A";
 		public const string GROUP_BREAKPOINTS = "0,049B3FDE-E355-447E-8D38-C31FD3563C57";
 		public const string GROUP_BREAKPOINTS_SETTINGS = "1000,9653A837-BE49-4E6D-AB17-4B0C004BE33F";
 		public const string GROUP_BREAKPOINTS_EDIT = "2000,D49A6DD7-54CD-439F-910A-DD251FA87826";
 		public const string GROUP_BREAKPOINTS_EXPORT = "3000,B942A045-1490-485B-A923-B65C27898ED2";
+		public const string LANGUAGE_GUID = "F8AFC617-943F-4D7A-ACE0-3F7244DB71DE";
+		public const string GROUP_LANGUAGE = "0,68720804-8255-4663-B4DA-DAF328AD48F8";
 	}
 
 	[ExportMenuItem(Header = "res:CallStackBreakpointCommand", Guid = Constants.BREAKPOINTS_GUID, Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_BPS, Order = 0)]
@@ -248,6 +306,18 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		public override void Execute(CallStackCtxMenuContext context) => context.Operations.ToggleUseHexadecimal();
 		public override bool IsEnabled(CallStackCtxMenuContext context) => context.Operations.CanToggleUseHexadecimal;
 		public override bool IsChecked(CallStackCtxMenuContext context) => context.Operations.UseHexadecimal;
+	}
+
+	[ExportMenuItem(Header = "res:DigitSeparatorsCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_HEXOPTS, Order = 10)]
+	sealed class UseDigitSeparatorsCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		[ImportingConstructor]
+		UseDigitSeparatorsCallStackCtxMenuCommand(Lazy<ICallStackContent> callStackContent)
+			: base(callStackContent) {
+		}
+
+		public override void Execute(CallStackCtxMenuContext context) => context.Operations.ToggleUseDigitSeparators();
+		public override bool IsEnabled(CallStackCtxMenuContext context) => context.Operations.CanToggleUseDigitSeparators;
+		public override bool IsChecked(CallStackCtxMenuContext context) => context.Operations.UseDigitSeparators;
 	}
 
 	[ExportMenuItem(Header = "res:ShowModuleNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 0)]
