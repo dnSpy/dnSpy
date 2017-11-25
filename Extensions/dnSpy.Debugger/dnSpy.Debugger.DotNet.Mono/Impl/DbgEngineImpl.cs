@@ -426,6 +426,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (gotVMDisconnect)
 				return;
 
+			int exitCode;
 			foreach (var evt in eventSet.Events) {
 				switch (evt.EventType) {
 				case EventType.VMStart:
@@ -436,7 +437,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.VMDeath:
 					var vmde = (VMDeathEvent)evt;
 					Debug.Assert(vmDeathExitCode == null);
-					vmDeathExitCode = vmde.ExitCode;
+					if (vm.Version.AtLeast(2, 27))
+						vmDeathExitCode = vmde.ExitCode;
+					else if (TryGetProcessExitCode(out exitCode))
+						vmDeathExitCode = exitCode;
+					else
+						vmDeathExitCode = 0;
 					break;
 
 				case EventType.ThreadStart:
@@ -554,7 +560,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.VMDisconnect:
-					if (vmDeathExitCode == null && (!hProcess_debuggee.IsClosed && !hProcess_debuggee.IsInvalid && NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode)))
+					if (vmDeathExitCode == null && TryGetProcessExitCode(out exitCode))
 						vmDeathExitCode = exitCode;
 					if (vmDeathExitCode == null) {
 						vmDeathExitCode = -1;
@@ -569,6 +575,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 				}
 			}
+		}
+
+		bool TryGetProcessExitCode(out int exitCode) {
+			if (!hProcess_debuggee.IsClosed && !hProcess_debuggee.IsInvalid) {
+				if (NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out exitCode))
+					return true;
+			}
+
+			exitCode = 0;
+			return false;
 		}
 
 		DbgModule TryGetModule(ThreadMirror thread) {
