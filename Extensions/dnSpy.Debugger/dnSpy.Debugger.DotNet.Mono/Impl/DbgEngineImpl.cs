@@ -594,7 +594,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return TryGetModule(frames[0].Method?.DeclaringType.Module);
 		}
 
-		static string TryGetExceptionName(ObjectMirror exObj) => exObj.Type.FullName;
+		string TryGetExceptionName(ObjectMirror exObj) {
+			var reflectionAppDomain = TryGetEngineAppDomain(exObj.Domain)?.AppDomain.GetReflectionAppDomain();
+			Debug.Assert(reflectionAppDomain != null);
+			if (reflectionAppDomain == null)
+				return exObj.Type.FullName;
+			var type = new ReflectionTypeCreator(this, reflectionAppDomain).Create(exObj.Type);
+			if (type.IsConstructedGenericType)
+				type = type.GetGenericTypeDefinition();
+			return type.FullName;
+		}
 
 		DbgEngineAppDomain TryGetEngineAppDomain(AppDomainMirror monoAppDomain) {
 			if (monoAppDomain == null)
