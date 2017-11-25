@@ -215,7 +215,7 @@ namespace dnSpy.Roslyn.Shared.Debugger {
 			}
 		}
 
-		static Instruction LoadIndirect(TypeSig type) {
+		Instruction LoadIndirect(TypeSig type) {
 			switch (type.GetElementType()) {
 			case ElementType.Boolean:		return Instruction.Create(OpCodes.Ldind_I1);
 			case ElementType.Char:			return Instruction.Create(OpCodes.Ldind_U2);
@@ -232,21 +232,21 @@ namespace dnSpy.Roslyn.Shared.Debugger {
 			case ElementType.String:		return Instruction.Create(OpCodes.Ldind_Ref);
 			case ElementType.I:				return Instruction.Create(OpCodes.Ldind_I);
 			case ElementType.U:				return Instruction.Create(OpCodes.Ldind_I);
-			case ElementType.ValueType:		return Instruction.Create(OpCodes.Ldobj, type.ToTypeDefOrRef());
+			case ElementType.ValueType:		return Instruction.Create(OpCodes.Ldobj, generatedModule.Import(type).ToTypeDefOrRef());
 			case ElementType.Class:			return Instruction.Create(OpCodes.Ldind_Ref);
 			case ElementType.Array:			return Instruction.Create(OpCodes.Ldind_Ref);
 			case ElementType.Object:		return Instruction.Create(OpCodes.Ldind_Ref);
 			case ElementType.SZArray:		return Instruction.Create(OpCodes.Ldind_Ref);
 			case ElementType.Ptr:			return Instruction.Create(OpCodes.Ldind_I);
 			case ElementType.FnPtr:			return Instruction.Create(OpCodes.Ldind_I);
-			case ElementType.Var:			return Instruction.Create(OpCodes.Ldobj, type.ToTypeDefOrRef());
-			case ElementType.MVar:			return Instruction.Create(OpCodes.Ldobj, type.ToTypeDefOrRef());
-			case ElementType.TypedByRef:	return Instruction.Create(OpCodes.Ldobj, type.ToTypeDefOrRef());
+			case ElementType.Var:			return Instruction.Create(OpCodes.Ldobj, generatedModule.Import(type).ToTypeDefOrRef());
+			case ElementType.MVar:			return Instruction.Create(OpCodes.Ldobj, generatedModule.Import(type).ToTypeDefOrRef());
+			case ElementType.TypedByRef:	return Instruction.Create(OpCodes.Ldobj, generatedModule.Import(type).ToTypeDefOrRef());
 
 			case ElementType.GenericInst:
 				var gis = type as GenericInstSig;
 				if (gis.GenericType.IsValueTypeSig)
-					return Instruction.Create(OpCodes.Ldobj, type.ToTypeDefOrRef());
+					return Instruction.Create(OpCodes.Ldobj, generatedModule.Import(type).ToTypeDefOrRef());
 				return Instruction.Create(OpCodes.Ldind_Ref);
 
 			case ElementType.End:
