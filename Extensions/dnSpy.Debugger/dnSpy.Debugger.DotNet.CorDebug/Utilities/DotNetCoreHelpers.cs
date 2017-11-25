@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			var pathEnvVar = Environment.GetEnvironmentVariable("PATH");
 			if (pathEnvVar == null)
 				return null;
-			foreach (var origPath in pathEnvVar.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)) {
-				var path = origPath.Trim();
+			foreach (var tmp in pathEnvVar.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries)) {
+				var path = tmp.Trim();
 				if (!Directory.Exists(path))
 					continue;
 				try {

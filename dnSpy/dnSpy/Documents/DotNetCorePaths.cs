@@ -94,8 +94,8 @@ namespace dnSpy.Documents {
 		const string DotNetExeName = "dotnet.exe";
 		static IEnumerable<(string path, int bitness)> GetDotNetCoreBaseDirs() {
 			var pathEnvVar = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
-			foreach (var origPath in pathEnvVar.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)) {
-				var path = origPath.Trim();
+			foreach (var tmp in pathEnvVar.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries)) {
+				var path = tmp.Trim();
 				if (!Directory.Exists(path))
 					continue;
 				string file;
