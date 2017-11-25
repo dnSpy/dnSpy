@@ -242,18 +242,18 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 						OutputWrite(Keyword_params, BoxedTextColor.Keyword);
 						WriteSpace();
 					}
-					var paramterType = parameterTypes[i];
+					var parameterType = parameterTypes[i];
 					WriteRefIfByRef(param);
-					if (paramterType.IsByRef)
-						paramterType = paramterType.GetElementType();
-					FormatType(paramterType);
+					if (parameterType.IsByRef)
+						parameterType = parameterType.GetElementType();
+					FormatType(parameterType);
 				}
 				if (showParameterNames) {
 					if (needSpace)
 						WriteSpace();
 					needSpace = true;
 
-					if ((object)param != null)
+					if (!string.IsNullOrEmpty(param?.Name))
 						WriteIdentifier(param.Name, BoxedTextColor.Parameter);
 					else
 						WriteIdentifier("A_" + (baseIndex + i).ToString(), BoxedTextColor.Parameter);

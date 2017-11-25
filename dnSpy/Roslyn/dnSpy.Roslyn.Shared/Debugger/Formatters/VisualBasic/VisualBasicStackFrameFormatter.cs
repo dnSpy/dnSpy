@@ -239,17 +239,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				if (i > 0)
 					WriteCommaSpace();
 
-				var paramterType = parameterTypes[i];
+				var parameterType = parameterTypes[i];
 				var param = i < parameters.Count ? parameters[i] : null;
 				bool needSpace = false;
 				if (showParameterNames || showParameterTypes) {
-					if (paramterType.IsByRef) {
-						paramterType = paramterType.GetElementType();
+					if (parameterType.IsByRef) {
+						parameterType = parameterType.GetElementType();
 						OutputWrite(Keyword_ByRef, BoxedTextColor.Keyword);
 						WriteSpace();
 					}
 
-					if ((object)param != null && param.IsDefined("System.ParamArrayAttribute", false)) {
+					if (param?.IsDefined("System.ParamArrayAttribute", false) == true) {
 						OutputWrite(Keyword_params, BoxedTextColor.Keyword);
 						needSpace = true;
 					}
@@ -260,7 +260,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 						WriteSpace();
 					needSpace = true;
 
-					if ((object)param != null)
+					if (!string.IsNullOrEmpty(param?.Name))
 						WriteIdentifier(param.Name, BoxedTextColor.Parameter);
 					else
 						WriteIdentifier("A_" + (baseIndex + i).ToString(), BoxedTextColor.Parameter);
@@ -274,7 +274,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 						WriteSpace();
 					needSpace = true;
 
-					FormatType(paramterType);
+					FormatType(parameterType);
 				}
 				if (showParameterValues)
 					needSpace = FormatValue(frame, (uint)(baseIndex + i), needSpace);
