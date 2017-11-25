@@ -47,5 +47,21 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
 			formatter.Format(context, frame, output, options, valueOptions, cultureInfo, cancellationToken);
+
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+			var valueImpl = value as DbgEngineValueImpl;
+			if (valueImpl == null)
+				throw new ArgumentException();
+			var dnValue = valueImpl.DotNetValue;
+			formatter.FormatValue(context, output, frame, dnValue, options, cultureInfo, cancellationToken);
+		}
+
+		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+			var valueImpl = value as DbgEngineValueImpl;
+			if (valueImpl == null)
+				throw new ArgumentException();
+			var dnValue = valueImpl.DotNetValue;
+			formatter.FormatType(context, output, dnValue.Type, null, options, cultureInfo);
+		}
 	}
 }

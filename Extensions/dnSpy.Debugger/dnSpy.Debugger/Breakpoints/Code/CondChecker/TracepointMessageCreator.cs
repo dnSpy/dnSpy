@@ -429,7 +429,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			else {
 				var options = GetValueFormatterOptions(flags, isDisplay: true);
 				const CultureInfo cultureInfo = null;
-				language.ValueFormatter.Format(context, frame, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo, cancellationToken);
+				language.Formatter.Format(context, frame, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo, cancellationToken);
 				evalRes.Value.Close();
 			}
 		}

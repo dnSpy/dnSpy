@@ -35,7 +35,6 @@ namespace dnSpy.Debugger.Evaluation {
 		public override string Name => PredefinedDbgLanguageNames.None;
 		public override string DisplayName => "<no name>";
 		public override DbgEngineExpressionEvaluator ExpressionEvaluator { get; }
-		public override DbgEngineValueFormatter ValueFormatter { get; }
 		public override DbgEngineFormatter Formatter { get; }
 		public override DbgEngineLocalsValueNodeProvider LocalsProvider { get; }
 		public override DbgEngineValueNodeProvider AutosProvider { get; }
@@ -46,7 +45,6 @@ namespace dnSpy.Debugger.Evaluation {
 
 		NullDbgEngineLanguage() {
 			ExpressionEvaluator = new NullDbgEngineExpressionEvaluator();
-			ValueFormatter = new NullDbgEngineValueFormatter();
 			Formatter = new NullDbgEngineEngineFormatter();
 			LocalsProvider = new NullDbgEngineLocalsValueNodeProvider();
 			AutosProvider = new NullDbgEngineValueNodeProvider();
@@ -67,17 +65,14 @@ namespace dnSpy.Debugger.Evaluation {
 		public override DbgEngineEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) => new DbgEngineEEAssignmentResult(DbgEEAssignmentResultFlags.CompilerError, ERROR);
 	}
 
-	sealed class NullDbgEngineValueFormatter : DbgEngineValueFormatter {
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) { }
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) { }
-	}
-
 	sealed class NullDbgEngineEngineFormatter : DbgEngineFormatter {
 		public override void FormatExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) { }
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) { }
+		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) { }
 	}
 
 	sealed class NullDbgEngineLocalsValueNodeProvider : DbgEngineLocalsValueNodeProvider {

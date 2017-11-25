@@ -41,7 +41,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override string Name { get; }
 		public override string DisplayName { get; }
 		public override DbgEngineExpressionEvaluator ExpressionEvaluator { get; }
-		public override DbgEngineValueFormatter ValueFormatter { get; }
 		public override DbgEngineFormatter Formatter { get; }
 		public override DbgEngineLocalsValueNodeProvider LocalsProvider { get; }
 		public override DbgEngineValueNodeProvider AutosProvider { get; }
@@ -75,7 +74,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 			var expressionEvaluator = new DbgEngineExpressionEvaluatorImpl(dbgModuleReferenceProvider, expressionCompiler, dnILInterpreter, objectIdService, predefinedEvaluationErrorMessagesHelper);
 			ExpressionEvaluator = expressionEvaluator;
-			ValueFormatter = new DbgEngineValueFormatterImpl(formatter);
 			Formatter = new DbgEngineFormatterImpl(formatter);
 			LocalsProvider = new DbgEngineLocalsProviderImpl(dbgModuleReferenceProvider, expressionCompiler, valueNodeFactory, dnILInterpreter);
 			AutosProvider = new DbgEngineAutosProviderImpl(valueNodeFactory);

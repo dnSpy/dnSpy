@@ -143,7 +143,6 @@
     <Compile Include="Evaluation\DbgObjectIdImpl.cs" />
     <Compile Include="Evaluation\DbgObjectIdServiceImpl.cs" />
     <Compile Include="Evaluation\DbgRuntimeObjectIdService.cs" />
-    <Compile Include="Evaluation\DbgValueFormatterImpl.cs" />
     <Compile Include="Evaluation\DbgValueImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeFactoryImpl.cs" />
     <Compile Include="Evaluation\DbgValueNodeImpl.cs" />

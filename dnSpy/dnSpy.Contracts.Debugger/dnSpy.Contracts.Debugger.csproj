@@ -115,7 +115,6 @@
     <Compile Include="Engine\Evaluation\DbgEngineObjectId.cs" />
     <Compile Include="Engine\Evaluation\DbgEngineObjectIdFactory.cs" />
     <Compile Include="Engine\Evaluation\DbgEngineValue.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineValueFormatter.cs" />
     <Compile Include="Engine\Evaluation\DbgEngineValueNode.cs" />
     <Compile Include="Engine\Evaluation\DbgEngineValueNodeFactory.cs" />
     <Compile Include="Engine\Evaluation\DbgEngineValueNodeProvider.cs" />
@@ -132,7 +131,6 @@
     <Compile Include="Evaluation\DbgObjectIdService.cs" />
     <Compile Include="Evaluation\DbgStackFrameFormatterOptions.cs" />
     <Compile Include="Evaluation\DbgValue.cs" />
-    <Compile Include="Evaluation\DbgValueFormatter.cs" />
     <Compile Include="Evaluation\DbgValueFormatterOptions.cs" />
     <Compile Include="Evaluation\DbgValueFormatterTypeOptions.cs" />
     <Compile Include="Evaluation\DbgValueNode.cs" />

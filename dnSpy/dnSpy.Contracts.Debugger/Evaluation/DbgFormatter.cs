@@ -75,5 +75,28 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Formats a value
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="frame">Stack frame</param>
+		/// <param name="output">Output</param>
+		/// <param name="value">Value to format</param>
+		/// <param name="options">Options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Formats a value's type
+		/// </summary>
+		/// <param name="context">Evaluation context</param>
+		/// <param name="output">Output</param>
+		/// <param name="value">Value to format</param>
+		/// <param name="options">Options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken = default);
 	}
 }

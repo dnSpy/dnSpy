@@ -116,5 +116,49 @@ namespace dnSpy.Debugger.Evaluation {
 			if (!frameImpl.TryFormat(context, output, options, valueOptions, cultureInfo, cancellationToken))
 				engineFormatter.Format(context, frame, output, options, valueOptions, cultureInfo, cancellationToken);
 		}
+
+		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
+				throw new ArgumentException();
+			if (frame == null)
+				throw new ArgumentNullException(nameof(frame));
+			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
+				throw new ArgumentException();
+			if (output == null)
+				throw new ArgumentNullException(nameof(output));
+			if (value == null)
+				throw new ArgumentNullException(nameof(value));
+			if (!(value is DbgValueImpl valueImpl))
+				throw new ArgumentException();
+			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
+				throw new ArgumentException();
+			engineFormatter.Format(context, frame, output, valueImpl.EngineValue, options, cultureInfo, cancellationToken);
+		}
+
+		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
+			if (!(context is DbgEvaluationContextImpl))
+				throw new ArgumentException();
+			if (context.Language != Language)
+				throw new ArgumentException();
+			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
+				throw new ArgumentException();
+			if (output == null)
+				throw new ArgumentNullException(nameof(output));
+			if (value == null)
+				throw new ArgumentNullException(nameof(value));
+			if (!(value is DbgValueImpl valueImpl))
+				throw new ArgumentException();
+			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
+				throw new ArgumentException();
+			engineFormatter.FormatType(context, output, valueImpl.EngineValue, options, cultureInfo, cancellationToken);
+		}
 	}
 }

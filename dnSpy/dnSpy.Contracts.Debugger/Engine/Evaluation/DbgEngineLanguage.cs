@@ -42,11 +42,6 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public abstract DbgEngineExpressionEvaluator ExpressionEvaluator { get; }
 
 		/// <summary>
-		/// Gets the value formatter
-		/// </summary>
-		public abstract DbgEngineValueFormatter ValueFormatter { get; }
-
-		/// <summary>
 		/// Gets the formatter
 		/// </summary>
 		public abstract DbgEngineFormatter Formatter { get; }

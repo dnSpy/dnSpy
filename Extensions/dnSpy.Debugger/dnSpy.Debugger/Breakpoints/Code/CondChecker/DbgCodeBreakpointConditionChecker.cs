@@ -233,7 +233,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			const CultureInfo cultureInfo = null;
 			var sb = ObjectCache.AllocStringBuilder();
 			var output = new StringBuilderTextColorOutput(sb);
-			language.ValueFormatter.FormatType(context, output, value, options, cultureInfo, cancellationToken);
+			language.Formatter.FormatType(context, output, value, options, cultureInfo, cancellationToken);
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
