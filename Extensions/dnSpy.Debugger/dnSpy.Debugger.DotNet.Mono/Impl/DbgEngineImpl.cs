@@ -500,7 +500,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var aue = (AssemblyUnloadEvent)evt;
-					var monoModule = TryGetModule(aue.Assembly.ManifestModule);
+					var monoModule = TryGetModuleCore_NoCreate(aue.Assembly.ManifestModule);
 					Debug.Assert(monoModule != null);
 					if (monoModule != null) {
 						foreach (var module in GetAssemblyModules(monoModule)) {
@@ -704,6 +704,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		int moduleOrder;
 		void CreateModule(ModuleMirror monoModule) {
 			debuggerThread.VerifyAccess();
+
+			// Since we try to discover new modules, the same module could be added twice. The caller
+			// expects that DbgManager calls RunCore() after we send it a new-module message, so if the
+			// module has already been added, call RunCore() so the next message can be sent.
+			if (TryGetModuleCore_NoCreate(monoModule) != null) {
+				MonoDebugThread(() => RunCore());
+				return;
+			}
+
 			var appDomain = TryGetEngineAppDomain(monoModule.Assembly.Domain).AppDomain;
 			var moduleData = new DbgModuleData(this, monoModule);
 			var engineModule = ModuleCreator.CreateModule(this, objectFactory, appDomain, monoModule, moduleOrder++, moduleData);
@@ -737,11 +746,60 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal DbgModule TryGetModule(ModuleMirror monoModule) {
 			if (monoModule == null)
 				return null;
+			var res = TryGetModuleCore_NoCreate(monoModule);
+			if (res != null)
+				return res;
+			DiscoverNewModules(monoModule);
+			res = TryGetModuleCore_NoCreate(monoModule);
+			Debug.Assert(res != null);
+			return res;
+		}
+
+		DbgModule TryGetModuleCore_NoCreate(ModuleMirror monoModule) {
+			if (monoModule == null)
+				return null;
 			lock (lockObj) {
 				if (toEngineModule.TryGetValue(monoModule, out var engineModule))
 					return engineModule.Module;
 			}
 			return null;
+		}
+
+		// The debugger agent doesn't send assembly load events for assemblies that have already been
+		// loaded in some other AppDomain. This method discovers these assemblies. It should be called
+		// when we've found a new module.
+		void DiscoverNewModules(ModuleMirror monoModule) {
+			debuggerThread.VerifyAccess();
+			if (monoModule != null) {
+				Debug.Assert(monoModule.Assembly.ManifestModule == monoModule);
+				AddNewModule(monoModule);
+			}
+			KeyValuePair<AppDomainMirror, DbgEngineAppDomain>[] appDomains;
+			lock (lockObj)
+				appDomains = toEngineAppDomain.ToArray();
+			foreach (var kv in appDomains) {
+				foreach (var monoAssembly in kv.Key.GetAssemblies())
+					AddNewModule(monoAssembly.ManifestModule);
+			}
+		}
+
+		void AddNewModule(ModuleMirror monoModule) {
+			debuggerThread.VerifyAccess();
+			if (TryGetModuleCore_NoCreate(monoModule) != null)
+				return;
+
+			if (suspendCount == 0) {
+				try {
+					vm.Suspend();
+					IncrementSuspendCount();
+				}
+				catch (Exception ex) {
+					Debug.Fail(ex.Message);
+					SendMessage(new DbgMessageBreak(ex.Message, GetMessageFlags()));
+				}
+				Debug.Assert(pendingMessages.Count == 0);
+			}
+			CreateModule(monoModule);
 		}
 
 		internal bool TryGetMonoModule(DbgModule module, out ModuleMirror monoModule) {
