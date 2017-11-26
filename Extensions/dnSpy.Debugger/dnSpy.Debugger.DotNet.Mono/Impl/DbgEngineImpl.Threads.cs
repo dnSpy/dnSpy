@@ -144,6 +144,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					return true;
 				}
 			}
+			catch (CommandException ce) when (ce.ErrorCode == ErrorCode.ERR_NO_INVOCATION) {
+			}
 			catch (VMNotSuspendedException) {
 				// 1. The process is not suspended (should never be the case)
 				// 2. The thread is running native code (eg. it's the finalizer thread)

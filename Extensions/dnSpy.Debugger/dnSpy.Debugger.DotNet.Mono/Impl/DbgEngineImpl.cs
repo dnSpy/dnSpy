@@ -161,7 +161,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		abstract class PendingMessage {
 			public abstract bool MustWaitForRun { get; }
-			public abstract void RaiseMessage();
+			public abstract bool RaiseMessage();
 		}
 		sealed class NormalPendingMessage : PendingMessage {
 			readonly DbgEngineImpl engine;
@@ -172,16 +172,29 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				MustWaitForRun = mustWaitForRun;
 				this.message = message;
 			}
-			public override void RaiseMessage() => engine.Message?.Invoke(engine, message);
+			public override bool RaiseMessage() {
+				engine.Message?.Invoke(engine, message);
+				return true;
+			}
 		}
 		sealed class DelegatePendingMessage : PendingMessage {
-			readonly Action raiseMessage;
+			readonly Action actionRaiseMessage;
+			readonly Func<bool> funcRaiseMessage;
 			public override bool MustWaitForRun { get; }
 			public DelegatePendingMessage(bool mustWaitForRun, Action raiseMessage) {
 				MustWaitForRun = mustWaitForRun;
-				this.raiseMessage = raiseMessage;
+				actionRaiseMessage = raiseMessage;
 			}
-			public override void RaiseMessage() => raiseMessage();
+			public DelegatePendingMessage(bool mustWaitForRun, Func<bool> raiseMessage) {
+				MustWaitForRun = mustWaitForRun;
+				funcRaiseMessage = raiseMessage;
+			}
+			public override bool RaiseMessage() {
+				if (funcRaiseMessage != null)
+					return funcRaiseMessage();
+				actionRaiseMessage();
+				return true;
+			}
 		}
 
 		void SendMessage(DbgEngineMessage message, bool mustWaitForRun = false) =>
@@ -208,8 +221,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 					var pendingMessage = pendingMessages[0];
 					pendingMessages.RemoveAt(0);
-					pendingMessage.RaiseMessage();
-					if (pendingMessage.MustWaitForRun) {
+					bool raisedMessage = pendingMessage.RaiseMessage();
+					if (raisedMessage && pendingMessage.MustWaitForRun) {
 						nextSendRunCounter = runCounter + 1;
 						return true;
 					}
@@ -702,16 +715,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		int moduleOrder;
-		void CreateModule(ModuleMirror monoModule) {
+		bool CreateModule(ModuleMirror monoModule) {
 			debuggerThread.VerifyAccess();
 
-			// Since we try to discover new modules, the same module could be added twice. The caller
-			// expects that DbgManager calls RunCore() after we send it a new-module message, so if the
-			// module has already been added, call RunCore() so the next message can be sent.
-			if (TryGetModuleCore_NoCreate(monoModule) != null) {
-				MonoDebugThread(() => RunCore());
-				return;
-			}
+			if (TryGetModuleCore_NoCreate(monoModule) != null)
+				return false;
 
 			var appDomain = TryGetEngineAppDomain(monoModule.Assembly.Domain).AppDomain;
 			var moduleData = new DbgModuleData(this, monoModule);
@@ -723,6 +731,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				modules.Add(monoModule);
 				toEngineModule.Add(monoModule, engineModule);
 			}
+			return true;
 		}
 
 		void DestroyModule(ModuleMirror monoModule) {
