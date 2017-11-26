@@ -153,7 +153,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		Value TryInvokeMethod(ThreadMirror thread, ObjectMirror obj, MethodMirror method, IList<Value> arguments, out bool timedOut) {
 			debuggerThread.VerifyAccess();
-			Debug.Assert(!IsEvaluating);
+			if (IsEvaluating) {
+				timedOut = true;
+				return null;
+			}
 			var funcEvalTimeout = DbgLanguage.DefaultFuncEvalTimeout;
 			const bool suspendOtherThreads = true;
 			var cancellationToken = CancellationToken.None;

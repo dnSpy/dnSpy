@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows.Threading;
 
@@ -30,7 +31,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		AutoResetEvent callDispatcherRunEvent;
 		readonly string threadName;
 
+		WpfDebugMessageDispatcher WpfDebugMessageDispatcher {
+			get {
+				if (__wpfDebugMessageDispatcher == null)
+					Interlocked.CompareExchange(ref __wpfDebugMessageDispatcher, new WpfDebugMessageDispatcher(Dispatcher), null);
+				return __wpfDebugMessageDispatcher;
+			}
+		}
+		volatile WpfDebugMessageDispatcher __wpfDebugMessageDispatcher;
+
 		public DebuggerThread(string threadName) {
+			// We use WpfDebugMessageDispatcher in BeginInvoke()
+			Debug.Assert(DispPriority == WpfDebugMessageDispatcher.DispPriority);
+
 			this.threadName = threadName;
 			var autoResetEvent = new AutoResetEvent(false);
 			callDispatcherRunEvent = new AutoResetEvent(false);
@@ -70,6 +83,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				Dispatcher.BeginInvokeShutdown(DispatcherPriority.Send);
 		}
 
+		public IDebugMessageDispatcher GetDebugMessageDispatcher() => WpfDebugMessageDispatcher;
+
 		public bool HasShutdownStarted => Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished;
 		public bool CheckAccess() => Dispatcher.CheckAccess();
 		public void VerifyAccess() => Dispatcher.VerifyAccess();
@@ -83,8 +98,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			Dispatcher.Invoke(callback, DispPriority);
 		}
 		public void BeginInvoke(Action callback) {
-			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
-				Dispatcher.BeginInvoke(callback);
+			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished) {
+				// We don't use Dispatcher here because we could get a CreateThread event,
+				// which will notify DbgManager. It will then call engine.Run() which must
+				// continue the process even if we're func evaluating. If we use Dispatcher,
+				// we'll block here since WpfDebugMessageDispatcher is waiting for an event.
+				WpfDebugMessageDispatcher.ExecuteAsync(callback);
+			}
 		}
 	}
 }

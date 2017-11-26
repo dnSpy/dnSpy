@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				Debugging = new[] { "Unity" };
 				runtimeInfo = new DbgEngineRuntimeInfo(PredefinedDbgRuntimeGuids.DotNetUnity_Guid, PredefinedDbgRuntimeKindGuids.DotNet_Guid, "Unity", new DotNetMonoRuntimeId(), unityRuntimeTags);
 			}
-			funcEvalFactory = new FuncEvalFactory();
+			funcEvalFactory = new FuncEvalFactory(debuggerThread.GetDebugMessageDispatcher());
 		}
 		static readonly ReadOnlyCollection<string> monoRuntimeTags = new ReadOnlyCollection<string>(new[] {
 			PredefinedDotNetDbgRuntimeTags.DotNet,

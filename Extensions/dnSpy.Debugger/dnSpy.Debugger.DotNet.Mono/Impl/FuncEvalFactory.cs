@@ -34,11 +34,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public int MethodInvokeCounter => funcEvalState.methodInvokeCounter;
 
 		readonly FuncEvalState funcEvalState;
+		readonly IDebugMessageDispatcher debugMessageDispatcher;
 
-		public FuncEvalFactory() => funcEvalState = new FuncEvalState();
+		public FuncEvalFactory(IDebugMessageDispatcher debugMessageDispatcher) {
+			funcEvalState = new FuncEvalState();
+			this.debugMessageDispatcher = debugMessageDispatcher;
+		}
 
 		public FuncEval CreateFuncEval(Action<FuncEval> onEvalComplete, ThreadMirror thread, TimeSpan funcEvalTimeout, bool suspendOtherThreads, CancellationToken cancellationToken) =>
-			new FuncEvalImpl(funcEvalState, onEvalComplete, thread, funcEvalTimeout, suspendOtherThreads, cancellationToken);
+			new FuncEvalImpl(debugMessageDispatcher, funcEvalState, onEvalComplete, thread, funcEvalTimeout, suspendOtherThreads, cancellationToken);
 	}
 
 	[Flags]
@@ -60,6 +64,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public override bool EvalTimedOut => evalTimedOut;
 		bool evalTimedOut;
 
+		readonly IDebugMessageDispatcher debugMessageDispatcher;
 		readonly FuncEvalFactory.FuncEvalState funcEvalState;
 		readonly Action<FuncEval> onEvalComplete;
 		readonly ThreadMirror thread;
@@ -67,7 +72,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly CancellationToken cancellationToken;
 		readonly DateTime endTime;
 
-		public FuncEvalImpl(FuncEvalFactory.FuncEvalState funcEvalState, Action<FuncEval> onEvalComplete, ThreadMirror thread, TimeSpan funcEvalTimeout, bool suspendOtherThreads, CancellationToken cancellationToken) {
+		public FuncEvalImpl(IDebugMessageDispatcher debugMessageDispatcher, FuncEvalFactory.FuncEvalState funcEvalState, Action<FuncEval> onEvalComplete, ThreadMirror thread, TimeSpan funcEvalTimeout, bool suspendOtherThreads, CancellationToken cancellationToken) {
+			this.debugMessageDispatcher = debugMessageDispatcher ?? throw new ArgumentNullException(nameof(debugMessageDispatcher));
 			this.funcEvalState = funcEvalState ?? throw new ArgumentNullException(nameof(funcEvalState));
 			this.onEvalComplete = onEvalComplete ?? throw new ArgumentNullException(nameof(onEvalComplete));
 			this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
@@ -100,43 +106,54 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				throw new TimeoutException();
 
 			IInvokeAsyncResult asyncRes = null;
+			bool done = false;
 			try {
 				funcEvalState.isEvaluatingCounter++;
 
 				var currTime = DateTime.UtcNow;
-				if (currTime <= endTime) {
+				var timeLeft = endTime - currTime;
+				if (timeLeft >= TimeSpan.Zero) {
 					funcEvalState.methodInvokeCounter++;
 
 					Debug.Assert(!isNewobj || obj == null);
-					if (obj == null || isNewobj) {
-						asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), null, null);
-						if (WaitOne(asyncRes, currTime))
-							return method.DeclaringType.EndInvokeMethodWithResult(asyncRes);
+					bool isInvokeInstanceMethod = obj != null && !isNewobj;
+
+					AsyncCallback asyncCallback = asyncRes2 => {
+						if (done)
+							return;
+						InvokeResult resTmp;
+						if (isInvokeInstanceMethod)
+							resTmp = obj.EndInvokeMethodWithResult(asyncRes2);
+						else
+							resTmp = method.DeclaringType.EndInvokeMethodWithResult(asyncRes2);
+						debugMessageDispatcher.CancelDispatchQueue(resTmp);
+					};
+
+					if (isInvokeInstanceMethod)
+						asyncRes = obj.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), asyncCallback, null);
+					else
+						asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), asyncCallback, null);
+
+					var res = debugMessageDispatcher.DispatchQueue(timeLeft, out bool timedOut);
+					if (timedOut) {
+						asyncRes.Abort();
+						evalTimedOut = true;
+						throw new TimeoutException();
 					}
-					else {
-						asyncRes = obj.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), null, null);
-						if (WaitOne(asyncRes, currTime))
-							return obj.EndInvokeMethodWithResult(asyncRes);
-					}
-					asyncRes.Abort();
+					Debug.Assert(res is InvokeResult);
+					return res as InvokeResult ?? throw new InvalidOperationException();
+
 				}
-				evalTimedOut = true;
-				throw new TimeoutException();
+				else {
+					evalTimedOut = true;
+					throw new TimeoutException();
+				}
 			}
 			finally {
+				done = true;
 				funcEvalState.isEvaluatingCounter--;
 				asyncRes?.Dispose();
 			}
-		}
-
-		bool WaitOne(IInvokeAsyncResult asyncRes, DateTime currTime) {
-			var diff = endTime - currTime;
-			int ms;
-			if (diff.TotalMilliseconds > int.MaxValue)
-				ms = -1;
-			else
-				ms = (int)diff.TotalMilliseconds;
-			return asyncRes.AsyncWaitHandle.WaitOne(ms);
 		}
 
 		public override void Dispose() => onEvalComplete(this);

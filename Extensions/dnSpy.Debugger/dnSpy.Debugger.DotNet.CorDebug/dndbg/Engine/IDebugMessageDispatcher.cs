@@ -22,7 +22,7 @@ using System;
 namespace dndbg.Engine {
 	interface IDebugMessageDispatcher {
 		/// <summary>
-		/// Executes <see cref="action"/> on the dndbg thread.
+		/// Executes <see cref="action"/> on the engine thread.
 		/// </summary>
 		/// <param name="action">Code to execute on the dndbg thread</param>
 		void ExecuteAsync(Action action);
