@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread.VerifyAccess();
 			DnBreakpoint[] breakpointsToRemove;
 			lock (lockObj) {
-				breakpointsToRemove = pendingBreakpointsToRemove.ToArray();
+				breakpointsToRemove = pendingBreakpointsToRemove.Count == 0 ? Array.Empty<DnBreakpoint>() : pendingBreakpointsToRemove.ToArray();
 				pendingBreakpointsToRemove.Clear();
 			}
 			foreach (var bp in breakpointsToRemove)

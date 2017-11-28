@@ -528,7 +528,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.Breakpoint:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
-					break;//TODO:
+					var be = (BreakpointEvent)evt;
+					var bpReq = be.TryGetRequest() as BreakpointEventRequest;
+					Debug.Assert(bpReq != null);
+					if (bpReq != null)
+						SendCodeBreakpointHitMessage_MonoDebug(bpReq, TryGetThread(be.Thread));
+					else
+						SendMessage(new DbgMessageBreak(TryGetThread(be.Thread), GetMessageFlags()));
+					break;
 
 				case EventType.Step:
 					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
@@ -1022,5 +1029,25 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 			hProcess_debuggee?.Close();
 		}
+
+		struct TempBreakHelper : IDisposable {
+			readonly DbgEngineImpl engine;
+			readonly bool pausedIt;
+
+			public TempBreakHelper(DbgEngineImpl engine) {
+				this.engine = engine;
+				bool pausedIt = engine.suspendCount == 0;
+				if (pausedIt)
+					engine.vm.Suspend();
+				this.pausedIt = pausedIt;
+			}
+
+			public void Dispose() {
+				if (pausedIt)
+					engine.vm.Resume();
+			}
+		}
+
+		TempBreakHelper TempBreak() => new TempBreakHelper(this);
 	}
 }
