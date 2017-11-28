@@ -88,6 +88,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly List<PendingMessage> pendingMessages;
 		// The thrown exception. The mono debugger agent keeps it alive until Resume() is called
 		ObjectMirror thrownException;
+		BreakOnEntryPointData breakOnEntryPointData;
+
+		sealed class BreakOnEntryPointData {
+			public BreakpointEventRequest Breakpoint;
+			public string Filename;
+		}
 
 		static DbgEngineImpl() => ThreadMirror.NativeTransitions = true;
 
@@ -277,6 +283,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						psi.Environment[kv.Key] = kv.Value;
 					using (var process = Process.Start(psi))
 						expectedPid = process.Id;
+
+					if (startOptions.BreakKind == PredefinedBreakKinds.EntryPoint)
+						breakOnEntryPointData = new BreakOnEntryPointData { Filename = Path.GetFullPath(startOptions.Filename) };
 				}
 				else if (options is MonoConnectStartDebuggingOptionsBase connectOptions &&
 					(connectOptions is MonoConnectStartDebuggingOptions || connectOptions is UnityConnectStartDebuggingOptions)) {
@@ -531,8 +540,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var be = (BreakpointEvent)evt;
 					var bpReq = be.TryGetRequest() as BreakpointEventRequest;
 					Debug.Assert(bpReq != null);
-					if (bpReq != null)
-						SendCodeBreakpointHitMessage_MonoDebug(bpReq, TryGetThread(be.Thread));
+					if (bpReq != null) {
+						if (breakOnEntryPointData?.Breakpoint == bpReq) {
+							bpReq.Disable();
+							breakOnEntryPointData = null;
+							SendMessage(new DbgMessageEntryPointBreak(TryGetThread(be.Thread), GetMessageFlags()));
+						}
+						else
+							SendCodeBreakpointHitMessage_MonoDebug(bpReq, TryGetThread(be.Thread));
+					}
 					else
 						SendMessage(new DbgMessageBreak(TryGetThread(be.Thread), GetMessageFlags()));
 					break;
@@ -738,7 +754,25 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				modules.Add(monoModule);
 				toEngineModule.Add(monoModule, engineModule);
 			}
+
+			if (breakOnEntryPointData != null && breakOnEntryPointData.Breakpoint == null &&
+				StringComparer.OrdinalIgnoreCase.Equals(breakOnEntryPointData.Filename, engineModule.Module.Filename)) {
+				try {
+					CreateEntryPointBreakpoint(monoModule.Assembly.EntryPoint);
+				}
+				catch (Exception ex) {
+					Debug.Fail(ex.ToString());
+				}
+			}
+
 			return true;
+		}
+
+		void CreateEntryPointBreakpoint(MethodMirror monoMethod) {
+			if (monoMethod == null)
+				return;
+			breakOnEntryPointData.Breakpoint = vm.CreateBreakpointRequest(monoMethod, 0);
+			breakOnEntryPointData.Breakpoint.Enable();
 		}
 
 		void DestroyModule(ModuleMirror monoModule) {

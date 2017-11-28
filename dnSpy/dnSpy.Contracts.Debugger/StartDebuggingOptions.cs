@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Debugger {
 		public const string CreateProcess = nameof(CreateProcess);
 
 		/// <summary>
-		/// Break at entry point
+		/// Entry point
 		/// </summary>
 		public const string EntryPoint = nameof(EntryPoint);
 	}
