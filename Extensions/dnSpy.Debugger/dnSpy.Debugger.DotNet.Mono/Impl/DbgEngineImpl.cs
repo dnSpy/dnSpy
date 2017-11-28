@@ -938,6 +938,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					runCounter++;
 				if (SendNextMessage())
 					return;
+				if (IsEvaluating)
+					return;
 				ResumeCore();
 			}
 			catch (Exception ex) {
