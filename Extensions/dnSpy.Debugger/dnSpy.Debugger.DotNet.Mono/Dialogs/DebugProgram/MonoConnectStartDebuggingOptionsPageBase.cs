@@ -45,6 +45,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(BreakProcessKindsUtils.BreakProcessKindList);
 
+		public bool ProcessIsSuspended {
+			get => processIsSuspended;
+			set {
+				if (processIsSuspended != value) {
+					processIsSuspended = value;
+					OnPropertyChanged(nameof(ProcessIsSuspended));
+				}
+			}
+		}
+		bool processIsSuspended;
+
 		public string BreakKind {
 			get => (string)BreakProcessKindVM.SelectedItem;
 			set => BreakProcessKindVM.SelectedItem = value;
@@ -77,6 +88,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			Address = options.Address;
 			ConnectionPort.Value = options.Port;
 			BreakKind = FilterBreakKind(options.BreakKind);
+			ProcessIsSuspended = options.ProcessIsSuspended;
 		}
 
 		protected T InitializeDefault<T>(T options, string breakKind) where T : MonoConnectStartDebuggingOptionsBase {
@@ -88,6 +100,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			options.Address = Address;
 			options.Port = ConnectionPort.Value;
 			options.BreakKind = FilterBreakKind(BreakKind);
+			options.ProcessIsSuspended = ProcessIsSuspended;
 			return options;
 		}
 

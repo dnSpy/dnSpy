@@ -298,7 +298,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					filename = null;
 					expectedPid = -1;
 					wasAttach = true;
-					processWasRunningOnAttach = wasAttach;
+					processWasRunningOnAttach = !connectOptions.ProcessIsSuspended;
 				}
 				else {
 					// No need to localize it, should be unreachable

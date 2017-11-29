@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 	/// </summary>
 	public abstract class MonoConnectStartDebuggingOptionsBase : StartDebuggingOptions {
 		/// <summary>
-		/// The IP address <c>mono.exe</c> is listening on or null to use <c>127.0.0.1</c>
+		/// The IP address <c>mono.exe</c> is listening on or null / empty string to use <c>127.0.0.1</c>
 		/// </summary>
 		public string Address { get; set; }
 
@@ -38,6 +38,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// Gets the connection timeout. If it's <see cref="TimeSpan.Zero"/>, the default timeout is used.
 		/// </summary>
 		public TimeSpan ConnectionTimeout { get; set; }
+
+		/// <summary>
+		/// true if the process is suspended and waiting for the debugger to connect
+		/// </summary>
+		public bool ProcessIsSuspended { get; set; }
 
 		/// <summary>
 		/// Constructor
@@ -55,6 +60,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 			other.Address = Address;
 			other.Port = Port;
 			other.ConnectionTimeout = ConnectionTimeout;
+			other.ProcessIsSuspended = ProcessIsSuspended;
 		}
 	}
 }
