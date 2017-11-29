@@ -380,6 +380,16 @@
 		<Exception Name="System.Xml.Xsl.XsltCompileException" Flags="stop2" />
 		<Exception Name="System.Xml.Xsl.XsltException" Flags="stop2" />
 	</ExceptionDefs>
+	<ExceptionDefs Category="DotNet">
+		<Exception Name="UnityEngine.AndroidJavaException" />
+		<Exception Name="UnityEngine.Assertions.AssertionException" />
+		<Exception Name="UnityEngine.ExitGUIException" />
+		<Exception Name="UnityEngine.MissingComponentException" />
+		<Exception Name="UnityEngine.MissingReferenceException" />
+		<Exception Name="UnityEngine.PlayerPrefsException" />
+		<Exception Name="UnityEngine.UnassignedReferenceException" />
+		<Exception Name="UnityEngine.UnityException" />
+	</ExceptionDefs>
 	<ExceptionDefs Category="MDA">
 		<Exception Name="AsynchronousThreadAbort" />
 		<Exception Name="BindingFailure" />
