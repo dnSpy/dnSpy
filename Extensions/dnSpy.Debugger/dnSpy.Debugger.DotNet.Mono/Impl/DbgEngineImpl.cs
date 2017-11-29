@@ -654,7 +654,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			Debug.Assert(reflectionAppDomain != null);
 			if (reflectionAppDomain == null)
 				return exObj.Type.FullName;
-			var type = new ReflectionTypeCreator(this, reflectionAppDomain).Create(exObj.Type);
+			var type = GetReflectionType(reflectionAppDomain, exObj.Type, null);
 			if (type.IsConstructedGenericType)
 				type = type.GetGenericTypeDefinition();
 			return type.FullName;
@@ -1090,7 +1090,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			Debug.Assert(reflectionAppDomain != null);
 			if (reflectionAppDomain == null)
 				return null;
-			var exceptionType = new ReflectionTypeCreator(this, reflectionAppDomain).Create(exValue.Type);
+			var exceptionType = GetReflectionType(reflectionAppDomain, exValue.Type, null);
 			var valueLocation = new NoValueLocation(exceptionType, exValue);
 			return CreateDotNetValue_MonoDebug(valueLocation);
 		}
@@ -1124,5 +1124,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		TempBreakHelper TempBreak() => new TempBreakHelper(this);
+
+		internal DmdType GetReflectionType(DmdAppDomain reflectionAppDomain, TypeMirror monoType, DmdType couldBeRealTypeOpt) {
+			// Older debugger agents (eg. the one used by Unity) can't return the generic arguments, so we
+			// can't create the correct instantiated generic type. We can't create a generic DmdType from a
+			// TypeMirror. If we cache the generic DmdType, we'll be able to look it up later when we get
+			// a generic TypeMirror.
+			if ((object)couldBeRealTypeOpt != null && !vm.Version.AtLeast(2, 15))
+				MonoDebugTypeCreator.GetType(this, couldBeRealTypeOpt);
+
+			return new ReflectionTypeCreator(this, reflectionAppDomain).Create(monoType);
+		}
 	}
 }

@@ -142,9 +142,8 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			if (typeArgs.Length == 0)
 				return Array.Empty<DmdType>();
 			var types = new DmdType[typeArgs.Length];
-			var reflectionTypeCreator = new ReflectionTypeCreator(engine, reflectionAppDomain);
 			for (int i = 0; i < types.Length; i++)
-				types[i] = reflectionTypeCreator.Create(typeArgs[i]);
+				types[i] = engine.GetReflectionType(reflectionAppDomain, typeArgs[i], null);
 			return types;
 		}
 

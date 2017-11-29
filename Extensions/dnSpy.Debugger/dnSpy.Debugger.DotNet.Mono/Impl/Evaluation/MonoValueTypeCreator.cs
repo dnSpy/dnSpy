@@ -55,10 +55,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				}
 
 			case ObjectMirror om:
-				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(om.Type);
+				return engine.GetReflectionType(reflectionAppDomain, om.Type, slotType);
 
 			case StructMirror sm:
-				return new ReflectionTypeCreator(engine, reflectionAppDomain).Create(sm.Type);
+				return engine.GetReflectionType(reflectionAppDomain, sm.Type, slotType);
 
 			default:
 				throw new InvalidOperationException();

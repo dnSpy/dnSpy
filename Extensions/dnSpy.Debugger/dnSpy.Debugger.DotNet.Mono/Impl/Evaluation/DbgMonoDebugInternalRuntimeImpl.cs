@@ -76,9 +76,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return res;
 		}
 
-		DmdType ToReflectionType(TypeMirror type, DmdAppDomain reflectionAppDomain) =>
-			new ReflectionTypeCreator(engine, reflectionAppDomain).Create(type);
-
 		public ModuleId GetModuleId(DbgModule module) => engine.GetModuleId(module);
 
 		public DbgDotNetRawModuleBytes GetRawModuleBytes(DbgModule module) {
@@ -296,7 +293,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			try {
 				var reflectionAppDomain = type.AppDomain;
 				var monoObjValue = monoType.GetTypeObject();
-				var objValueType = new ReflectionTypeCreator(engine, reflectionAppDomain).Create(monoObjValue.Type);
+				var objValueType = engine.GetReflectionType(reflectionAppDomain, monoObjValue.Type, null);
 				var objValueLocation = new NoValueLocation(objValueType, monoObjValue);
 				dnObjValue = engine.CreateDotNetValue_MonoDebug(objValueLocation);
 				RuntimeHelpersRunClassConstructor(context, frame, type, dnObjValue, cancellationToken);
@@ -480,7 +477,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		DbgDotNetValueResult CreateValueTypeInstanceNoConstructorCore(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, CancellationToken cancellationToken) {
 			var structMirror = CreateValueType(type, 0);
-			return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(type.AppDomain, structMirror), valueIsException: false);
+			return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(type.AppDomain, structMirror, type), valueIsException: false);
 		}
 
 		Value CreateValueType(DmdType type, int recursionCounter) {
@@ -535,7 +532,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (engine.MonoVirtualMachine.Version.AtLeast(2, 31)) {
 				var monoType = GetType(type);
 				var value = monoType.NewInstance();
-				return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(type.AppDomain, value), valueIsException: false);
+				return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(type.AppDomain, value, type), valueIsException: false);
 			}
 			else {
 				var ctor = type.GetMethod(DmdConstructorInfo.ConstructorName, DmdSignatureCallingConvention.HasThis, 0, type.AppDomain.System_Void, Array.Empty<DmdType>(), throwOnError: false) as DmdConstructorInfo;
@@ -559,7 +556,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var appDomain = elementType.AppDomain;
 			DbgDotNetValue typeElementType = null;
 			try {
-				typeElementType = engine.CreateDotNetValue_MonoDebug(appDomain, GetType(elementType).GetTypeObject());
+				typeElementType = engine.CreateDotNetValue_MonoDebug(appDomain, GetType(elementType).GetTypeObject(), null);
 				var methodCreateInstance = appDomain.System_Array.GetMethod(nameof(Array.CreateInstance), DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32 }, throwOnError: true);
 				return engine.FuncEvalCall_MonoDebug(context, frame.Thread, methodCreateInstance, null, new object[] { typeElementType, length }, DbgDotNetInvokeOptions.None, false, cancellationToken);
 			}
@@ -592,7 +589,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					lowerBounds[i] = dimensionInfos[i].BaseIndex;
 				}
 
-				typeElementType = engine.CreateDotNetValue_MonoDebug(appDomain, GetType(elementType).GetTypeObject());
+				typeElementType = engine.CreateDotNetValue_MonoDebug(appDomain, GetType(elementType).GetTypeObject(), null);
 				var methodCreateInstance = appDomain.System_Array.GetMethod(nameof(Array.CreateInstance), DmdSignatureCallingConvention.Default, 0, appDomain.System_Array, new[] { appDomain.System_Type, appDomain.System_Int32.MakeArrayType(), appDomain.System_Int32.MakeArrayType() }, throwOnError: true);
 				return engine.FuncEvalCall_MonoDebug(context, frame.Thread, methodCreateInstance, null, new object[] { typeElementType, lengths, lowerBounds }, DbgDotNetInvokeOptions.None, false, cancellationToken);
 			}
@@ -790,10 +787,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return (null, PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
 			var local = locals[(int)index];
 			var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
-			var type = ToReflectionType(local.Type, reflectionAppDomain);
 
 			var method = GetFrameMethodCore(context, frame, cancellationToken);
-			type = AddByRefIfNeeded(type, GetCachedMethodBody(method)?.LocalVariables, index);
+			var localVars = GetCachedMethodBody(method)?.LocalVariables;
+			var localType = localVars != null && (uint)index < (uint)localVars.Count ? localVars[(int)index].LocalType : null;
+			if ((object)localType != null && localType.IsByRef)
+				localType = localType.GetElementType();
+			var type = engine.GetReflectionType(reflectionAppDomain, local.Type, localType);
+			type = AddByRefIfNeeded(type, localVars, index);
 
 			return (new LocalValueLocation(type, ilFrame, (int)index), null);
 		}
@@ -870,7 +871,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
 			if (!monoFrame.Method.IsStatic) {
 				if (index == 0) {
-					type = ToReflectionType(monoFrame.Method.DeclaringType, reflectionAppDomain);
+					type = engine.GetReflectionType(reflectionAppDomain, monoFrame.Method.DeclaringType, null);
 					if (type.IsValueType)
 						type = type.MakeByRefType();
 					return (new ThisValueLocation(type, ilFrame), null);
@@ -882,9 +883,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return (null, PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
 			var parameter = parameters[(int)index];
 
-			type = ToReflectionType(parameter.ParameterType, reflectionAppDomain);
 			var method = GetFrameMethodCore(context, frame, cancellationToken);
-			type = AddByRefIfNeeded(type, method?.GetMethodSignature().GetParameterTypes(), index);
+			var paramTypes = method?.GetMethodSignature().GetParameterTypes();
+			var paramType = paramTypes != null && (uint)index < (uint)paramTypes.Count ? paramTypes[(int)index] : null;
+			if ((object)paramType != null && paramType.IsByRef)
+				paramType = paramType.GetElementType();
+			type = engine.GetReflectionType(reflectionAppDomain, parameter.ParameterType, paramType);
+			type = AddByRefIfNeeded(type, paramTypes, index);
 
 			return (new ArgumentValueLocation(type, ilFrame, (int)index), null);
 		}
@@ -1174,7 +1179,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		DbgDotNetValue GetValueCore(DbgEvaluationContext context, DbgDotNetObjectIdImpl objectId, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
-			return engine.CreateDotNetValue_MonoDebug(objectId.ReflectionAppDomain, objectId.Value);
+			return engine.CreateDotNetValue_MonoDebug(objectId.ReflectionAppDomain, objectId.Value, null);
 		}
 
 		public bool? Equals(DbgDotNetValue a, DbgDotNetValue b) {

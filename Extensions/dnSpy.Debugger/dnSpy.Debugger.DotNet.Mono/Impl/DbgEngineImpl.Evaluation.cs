@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		internal DbgDotNetValue CreateDotNetValue_MonoDebug(DmdAppDomain reflectionAppDomain, Value value) {
+		internal DbgDotNetValue CreateDotNetValue_MonoDebug(DmdAppDomain reflectionAppDomain, Value value, DmdType realTypeOpt) {
 			debuggerThread.VerifyAccess();
 			if (value == null)
 				return new SyntheticNullValue(reflectionAppDomain.System_Object);
@@ -63,10 +63,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (value is PrimitiveValue pv)
 				type = MonoValueTypeCreator.CreateType(this, value, reflectionAppDomain.System_Object);
 			else if (value is StructMirror sm)
-				type = new ReflectionTypeCreator(this, reflectionAppDomain).Create(sm.Type);
+				type = GetReflectionType(reflectionAppDomain, sm.Type, realTypeOpt);
 			else {
 				Debug.Assert(value is ObjectMirror);
-				type = new ReflectionTypeCreator(this, reflectionAppDomain).Create(((ObjectMirror)value).Type);
+				type = GetReflectionType(reflectionAppDomain, ((ObjectMirror)value).Type, realTypeOpt);
 			}
 			var valueLocation = new NoValueLocation(type, value);
 			return CreateDotNetValue_MonoDebug(valueLocation);
@@ -360,7 +360,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var boxedValue = BoxIfNeeded(monoThread.Domain, value, type.AppDomain.System_Object, type);
 					if (boxedValue == null)
 						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
-					return new DbgDotNetValueResult(CreateDotNetValue_MonoDebug(type.AppDomain, boxedValue), valueIsException: false);
+					return new DbgDotNetValueResult(CreateDotNetValue_MonoDebug(type.AppDomain, boxedValue, type), valueIsException: false);
 				}
 			}
 			catch (VMNotSuspendedException) {
@@ -392,7 +392,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					if (evalRes.ErrorMessage != null)
 						return new DbgDotNetCreateValueResult(evalRes.ErrorMessage);
 
-					var resultValue = CreateDotNetValue_MonoDebug(reflectionAppDomain, evalRes.Value);
+					var resultValue = CreateDotNetValue_MonoDebug(reflectionAppDomain, evalRes.Value, newValueType);
 					return new DbgDotNetCreateValueResult(resultValue);
 				}
 			}

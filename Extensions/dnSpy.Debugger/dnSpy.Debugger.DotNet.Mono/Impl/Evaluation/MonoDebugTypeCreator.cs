@@ -33,8 +33,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (typeCache.TryGetType(type, out var monoType))
 				return monoType;
 
-			monoType = new MonoDebugTypeCreator(engine, typeCache).Create(type);
-			typeCache.Add(monoType, type);
+			var info = new MonoDebugTypeCreator(engine, typeCache).Create(type);
+			monoType = info.type;
+			if (!info.containsGenericParameters)
+				typeCache.Add(monoType, type);
 			return monoType;
 		}
 
@@ -44,17 +46,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			recursionCounter = 0;
 		}
 
-		public TypeMirror Create(DmdType type) {
+		(TypeMirror type, bool containsGenericParameters) Create(DmdType type) {
 			if ((object)type == null)
 				throw new ArgumentNullException(nameof(type));
 
 			if (typeCache.TryGetType(type, out var cachedType))
-				return cachedType;
+				return (cachedType, false);
 
 			if (recursionCounter++ > 100)
 				throw new InvalidOperationException();
 
-			TypeMirror result;
+			(TypeMirror type, bool containsGenericParameters) result;
 			bool addType = true;
 			switch (type.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
@@ -62,62 +64,65 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					throw new InvalidOperationException();
 				Debug.Assert((type.MetadataToken >> 24) == 0x02);
 				//TODO: It's possible to resolve types, but it's an internal method and it requires a method in the module
-				result = monoModule.Assembly.GetType(type.FullName, false, false);
-				if (result == null)
+				result = (monoModule.Assembly.GetType(type.FullName, false, false), false);
+				if (result.type == null)
 					throw new InvalidOperationException();
-				if (result.MetadataToken != type.MetadataToken)
+				if (result.type.MetadataToken != type.MetadataToken)
 					throw new InvalidOperationException();
 				break;
 
 			case DmdTypeSignatureKind.Pointer:
 				result = Create(type.GetElementType());
-				result = result.Module.Assembly.GetType(type.FullName, false, false);
-				if (result == null)
+				result = (result.type.Module.Assembly.GetType(type.FullName ?? type.GetGenericTypeDefinition().FullName, false, false), result.containsGenericParameters);
+				if (result.type == null)
 					throw new InvalidOperationException();
-				if (!result.IsPointer)
+				if (!result.type.IsPointer)
 					throw new InvalidOperationException();
 				break;
 
 			case DmdTypeSignatureKind.ByRef:
 				result = Create(type.GetElementType());
-				result = result.Module.Assembly.GetType(type.FullName, false, false);
-				if (result == null)
+				result = (result.type.Module.Assembly.GetType(type.FullName ?? type.GetGenericTypeDefinition().FullName, false, false), result.containsGenericParameters);
+				if (result.type == null)
 					throw new InvalidOperationException();
 				// This currently always fails
 				//TODO: We could func-eval MakeByRefType()
-				if (!result.IsByRef)
+				if (!result.type.IsByRef)
 					throw new InvalidOperationException();
 				break;
 
 			case DmdTypeSignatureKind.TypeGenericParameter:
 			case DmdTypeSignatureKind.MethodGenericParameter:
-				throw new InvalidOperationException();
+				result = (Create(type.AppDomain.System_Object).type, true);
+				addType = false;
+				break;
 
 			case DmdTypeSignatureKind.SZArray:
 				result = Create(type.GetElementType());
-				result = result.Module.Assembly.GetType(type.FullName, false, false);
-				if (result == null)
+				result = (result.type.Module.Assembly.GetType(type.FullName ?? type.GetGenericTypeDefinition().FullName, false, false), result.containsGenericParameters);
+				if (result.type == null)
 					throw new InvalidOperationException();
-				if (!result.IsArray || result.GetArrayRank() != 1 || !result.FullName.EndsWith("[]", StringComparison.Ordinal))
+				if (!result.type.IsArray || result.type.GetArrayRank() != 1 || !result.type.FullName.EndsWith("[]", StringComparison.Ordinal))
 					throw new InvalidOperationException();
 				break;
 
 			case DmdTypeSignatureKind.MDArray:
 				result = Create(type.GetElementType());
-				result = result.Module.Assembly.GetType(type.FullName, false, false);
-				if (result == null)
+				result = (result.type.Module.Assembly.GetType(type.FullName ?? type.GetGenericTypeDefinition().FullName, false, false), result.containsGenericParameters);
+				if (result.type == null)
 					throw new InvalidOperationException();
-				if (!result.IsArray || (result.GetArrayRank() == 1 && result.FullName.EndsWith("[]", StringComparison.Ordinal)))
+				if (!result.type.IsArray || (result.type.GetArrayRank() == 1 && result.type.FullName.EndsWith("[]", StringComparison.Ordinal)))
 					throw new InvalidOperationException();
 				break;
 
 			case DmdTypeSignatureKind.GenericInstance:
 				result = Create(type.GetGenericTypeDefinition());
-				result = result.Module.Assembly.GetType(type.FullName, false, false);
-				if (result == null)
+				result = (result.type.Module.Assembly.GetType(type.FullName ?? type.GetGenericTypeDefinition().FullName, false, false), result.containsGenericParameters);
+				if (result.type == null)
 					throw new InvalidOperationException();
-				if (!result.IsGenericType)
-					throw new InvalidOperationException();
+				// This fails on Unity (version < 2.12), since it doesn't have that info available
+				//if (!result.type.IsGenericType)
+				//	throw new InvalidOperationException();
 				break;
 
 			case DmdTypeSignatureKind.FunctionPointer:
@@ -130,10 +135,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				throw new InvalidOperationException();
 			}
 
-			if (result == null)
+			if (result.type == null)
 				throw new InvalidOperationException();
-			if (addType)
-				typeCache.Add(result, type);
+			if (addType && !result.containsGenericParameters)
+				typeCache.Add(result.type, type);
 
 			recursionCounter--;
 			return result;
