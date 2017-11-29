@@ -56,5 +56,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			Debug.Assert((object)ctor != null);
 			return ctor;
 		}
+
+		public static string GetDebugViewTypeDisplayName(DmdType enumerableType) =>
+			enumerableType.IsConstructedGenericType ? "System.Linq.SystemCore_EnumerableDebugView<T>" : "System.Linq.SystemCore_EnumerableDebugView";
 	}
 }

@@ -372,8 +372,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, field.FieldType, cancellationToken);
 				if (res.ErrorMessage != null)
 					return res.ErrorMessage;
-				info.valueLocation.Store(res.Value);
-				return null;
+				return info.valueLocation.Store(res.Value);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
@@ -755,6 +754,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					return new DbgDotNetValueResult(info.errorMessage);
 				return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(info.valueLocation), valueIsException: false);
 			}
+			catch (InvalidStackFrameException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
+			}
 			catch (AbsentInformationException) {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
 			}
@@ -832,6 +834,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					return new DbgDotNetValueResult(info.errorMessage);
 				return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(info.valueLocation), valueIsException: false);
 			}
+			catch (InvalidStackFrameException) {
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
+			}
 			catch (AbsentInformationException) {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway);
 			}
@@ -887,8 +892,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, targetType, cancellationToken);
 				if (res.ErrorMessage != null)
 					return res.ErrorMessage;
-				info.valueLocation.Store(res.Value);
-				return null;
+				return info.valueLocation.Store(res.Value);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
@@ -914,8 +918,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, targetType, cancellationToken);
 				if (res.ErrorMessage != null)
 					return res.ErrorMessage;
-				info.valueLocation.Store(res.Value);
-				return null;
+				return info.valueLocation.Store(res.Value);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;

@@ -22,7 +22,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class dnSpy_Roslyn_Shared_Resources {
+    public class dnSpy_Roslyn_Shared_Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("dnSpy.Roslyn.Shared.Properties.dnSpy.Roslyn.Shared.Resources", typeof(dnSpy_Roslyn_Shared_Resources).Assembly);
@@ -51,7 +51,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Classes.
         /// </summary>
-        internal static string ClassesToolTip {
+        public static string ClassesToolTip {
             get {
                 return ResourceManager.GetString("ClassesToolTip", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
-        internal static string CompletionSet_All {
+        public static string CompletionSet_All {
             get {
                 return ResourceManager.GetString("CompletionSet_All", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Constants.
         /// </summary>
-        internal static string ConstantsToolTip {
+        public static string ConstantsToolTip {
             get {
                 return ResourceManager.GetString("ConstantsToolTip", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Expression has been evaluated and has no value.
         /// </summary>
-        internal static string DebuggerExpressionHasNoValue {
+        public static string DebuggerExpressionHasNoValue {
             get {
                 return ResourceManager.GetString("DebuggerExpressionHasNoValue", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Static members.
         /// </summary>
-        internal static string DebuggerVarsWindow_CSharp_StaticMembers {
+        public static string DebuggerVarsWindow_CSharp_StaticMembers {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_CSharp_StaticMembers", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Empty.
         /// </summary>
-        internal static string DebuggerVarsWindow_Empty_PropertyName {
+        public static string DebuggerVarsWindow_Empty_PropertyName {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_Empty_PropertyName", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
-        internal static string DebuggerVarsWindow_Error_PropertyName {
+        public static string DebuggerVarsWindow_Error_PropertyName {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_Error_PropertyName", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Expanding the Results View will enumerate the IEnumerable.
         /// </summary>
-        internal static string DebuggerVarsWindow_ExpandResultsViewMessage {
+        public static string DebuggerVarsWindow_ExpandResultsViewMessage {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_ExpandResultsViewMessage", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Instance members.
         /// </summary>
-        internal static string DebuggerVarsWindow_InstanceMembers {
+        public static string DebuggerVarsWindow_InstanceMembers {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_InstanceMembers", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Raw View.
         /// </summary>
-        internal static string DebuggerVarsWindow_RawView {
+        public static string DebuggerVarsWindow_RawView {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_RawView", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Results View.
         /// </summary>
-        internal static string DebuggerVarsWindow_ResultsView {
+        public static string DebuggerVarsWindow_ResultsView {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_ResultsView", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Enumeration yielded no results.
         /// </summary>
-        internal static string DebuggerVarsWindow_ResultsView_NoResults {
+        public static string DebuggerVarsWindow_ResultsView_NoResults {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_ResultsView_NoResults", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Shared members.
         /// </summary>
-        internal static string DebuggerVarsWindow_VisualBasic_SharedMembers {
+        public static string DebuggerVarsWindow_VisualBasic_SharedMembers {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_VisualBasic_SharedMembers", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Delegates.
         /// </summary>
-        internal static string DelegatesToolTip {
+        public static string DelegatesToolTip {
             get {
                 return ResourceManager.GetString("DelegatesToolTip", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Enums.
         /// </summary>
-        internal static string EnumsToolTip {
+        public static string EnumsToolTip {
             get {
                 return ResourceManager.GetString("EnumsToolTip", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Events.
         /// </summary>
-        internal static string EventsToolTip {
+        public static string EventsToolTip {
             get {
                 return ResourceManager.GetString("EventsToolTip", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Extension methods.
         /// </summary>
-        internal static string ExtensionMethodsToolTip {
+        public static string ExtensionMethodsToolTip {
             get {
                 return ResourceManager.GetString("ExtensionMethodsToolTip", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Fields.
         /// </summary>
-        internal static string FieldsToolTip {
+        public static string FieldsToolTip {
             get {
                 return ResourceManager.GetString("FieldsToolTip", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Compiled expression threw an exception: {0}.
         /// </summary>
-        internal static string FilterExpressionEvaluator_CompiledExpressionThrewAnException {
+        public static string FilterExpressionEvaluator_CompiledExpressionThrewAnException {
             get {
                 return ResourceManager.GetString("FilterExpressionEvaluator_CompiledExpressionThrewAnException", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Expression is invalid.
         /// </summary>
-        internal static string FilterExpressionEvaluator_InvalidExpression {
+        public static string FilterExpressionEvaluator_InvalidExpression {
             get {
                 return ResourceManager.GetString("FilterExpressionEvaluator_InvalidExpression", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Interfaces.
         /// </summary>
-        internal static string InterfacesToolTip {
+        public static string InterfacesToolTip {
             get {
                 return ResourceManager.GetString("InterfacesToolTip", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Keywords.
         /// </summary>
-        internal static string KeywordsToolTip {
+        public static string KeywordsToolTip {
             get {
                 return ResourceManager.GetString("KeywordsToolTip", resourceCulture);
             }
@@ -261,7 +261,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Locals and parameters.
         /// </summary>
-        internal static string LocalsAndParametersToolTip {
+        public static string LocalsAndParametersToolTip {
             get {
                 return ResourceManager.GetString("LocalsAndParametersToolTip", resourceCulture);
             }
@@ -270,7 +270,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to {0} returned.
         /// </summary>
-        internal static string LocalsWindow_MethodOrProperty_Returned {
+        public static string LocalsWindow_MethodOrProperty_Returned {
             get {
                 return ResourceManager.GetString("LocalsWindow_MethodOrProperty_Returned", resourceCulture);
             }
@@ -279,7 +279,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Type variables.
         /// </summary>
-        internal static string LocalsWindow_TypeVariables {
+        public static string LocalsWindow_TypeVariables {
             get {
                 return ResourceManager.GetString("LocalsWindow_TypeVariables", resourceCulture);
             }
@@ -288,7 +288,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Methods.
         /// </summary>
-        internal static string MethodsToolTip {
+        public static string MethodsToolTip {
             get {
                 return ResourceManager.GetString("MethodsToolTip", resourceCulture);
             }
@@ -297,7 +297,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Modules.
         /// </summary>
-        internal static string ModulesToolTip {
+        public static string ModulesToolTip {
             get {
                 return ResourceManager.GetString("ModulesToolTip", resourceCulture);
             }
@@ -306,7 +306,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Namespaces.
         /// </summary>
-        internal static string NamespacesToolTip {
+        public static string NamespacesToolTip {
             get {
                 return ResourceManager.GetString("NamespacesToolTip", resourceCulture);
             }
@@ -315,7 +315,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Properties.
         /// </summary>
-        internal static string PropertiesToolTip {
+        public static string PropertiesToolTip {
             get {
                 return ResourceManager.GetString("PropertiesToolTip", resourceCulture);
             }
@@ -324,7 +324,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Snippets.
         /// </summary>
-        internal static string SnippetsToolTip {
+        public static string SnippetsToolTip {
             get {
                 return ResourceManager.GetString("SnippetsToolTip", resourceCulture);
             }
@@ -333,7 +333,7 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Structures.
         /// </summary>
-        internal static string StructuresToolTip {
+        public static string StructuresToolTip {
             get {
                 return ResourceManager.GetString("StructuresToolTip", resourceCulture);
             }
@@ -342,9 +342,18 @@ namespace dnSpy.Roslyn.Shared.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Results View requires {0} to be referenced.
         /// </summary>
-        internal static string SystemCoreDllNotLoaded {
+        public static string SystemCoreDllNotLoaded {
             get {
                 return ResourceManager.GetString("SystemCoreDllNotLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type &apos;{0}&apos; doesn&apos;t exist in assembly &apos;{1}&apos;.
+        /// </summary>
+        public static string TypeDoesNotExistInAssembly {
+            get {
+                return ResourceManager.GetString("TypeDoesNotExistInAssembly", resourceCulture);
             }
         }
     }

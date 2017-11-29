@@ -151,6 +151,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to It&apos;s not possible to write to &apos;this&apos;.
+        /// </summary>
+        public static string Error_CanNotWriteToThisArgument {
+            get {
+                return ResourceManager.GetString("Error_CanNotWriteToThisArgument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The connection to the debugged process was unexpectedly closed.
         /// </summary>
         public static string Error_ConnectionWasUnexpectedlyClosed {

@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl : DbgEngine {
 		const int DefaultConnectionTimeoutMilliseconds = 10 * 1000;
 
-		public override DbgStartKind StartKind => DbgStartKind.Start;
+		public override DbgStartKind StartKind => wasAttach ? DbgStartKind.Attach : DbgStartKind.Start;
 		public override DbgEngineRuntimeInfo RuntimeInfo => runtimeInfo;
 		public override string[] DebugTags => new[] { PredefinedDebugTags.DotNetDebugger };
 		public override string[] Debugging { get; }
@@ -77,6 +77,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
 		readonly FuncEvalFactory funcEvalFactory;
 		readonly List<Action> execOnPauseList;
+		bool wasAttach;
+		bool processWasRunningOnAttach;
 		VirtualMachine vm;
 		int vmPid;
 		int? vmDeathExitCode;
@@ -242,7 +244,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		public override void Start(DebugProgramOptions options) => MonoDebugThread(() => StartCore(options));
-
 		void StartCore(DebugProgramOptions options) {
 			debuggerThread.VerifyAccess();
 			try {
@@ -296,6 +297,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					connectionTimeout = connectOptions.ConnectionTimeout;
 					filename = null;
 					expectedPid = -1;
+					wasAttach = true;
+					processWasRunningOnAttach = wasAttach;
 				}
 				else {
 					// No need to localize it, should be unreachable
@@ -352,17 +355,27 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					EventType.AppDomainUnload,
 					EventType.AssemblyLoad,
 					EventType.AssemblyUnload,
-					EventType.UserLog,
 				};
-				if (!debuggerSettings.IgnoreBreakInstructions)
-					events.Add(EventType.UserBreak);
+				if (vm.Version.AtLeast(2, 5)) {
+					events.Add(EventType.UserLog);
+					if (!debuggerSettings.IgnoreBreakInstructions)
+						events.Add(EventType.UserBreak);
+				}
 				vm.EnableEvents(events.ToArray(), SuspendPolicy.All);
-				uncaughtRequest = vm.CreateExceptionRequest(null, false, true);
-				caughtRequest = vm.CreateExceptionRequest(null, true, false);
-				uncaughtRequest.Enable();
-				caughtRequest.Enable();
-				methodEntryEventRequest = vm.CreateMethodEntryRequest();
-				methodEntryEventRequest.Enable();
+				if (vm.Version.AtLeast(2, 1)) {
+					uncaughtRequest = vm.CreateExceptionRequest(null, false, true);
+					caughtRequest = vm.CreateExceptionRequest(null, true, false);
+				}
+				else
+					caughtRequest = vm.CreateExceptionRequest(null, true, true);
+				uncaughtRequest?.Enable();
+				caughtRequest?.Enable();
+				if (processWasRunningOnAttach)
+					canInitializeObjectConstants = true;
+				else {
+					methodEntryEventRequest = vm.CreateMethodEntryRequest();
+					methodEntryEventRequest.Enable();
+				}
 
 				var eventThread = new Thread(MonoEventThread);
 				eventThread.IsBackground = true;
@@ -452,13 +465,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			foreach (var evt in eventSet.Events) {
 				switch (evt.EventType) {
 				case EventType.VMStart:
+					if (processWasRunningOnAttach)
+						vm.Suspend();
 					IncrementSuspendCount();
 					SendMessage(new DbgMessageConnected((uint)vmPid, GetMessageFlags()));
 					break;
 
 				case EventType.VMDeath:
 					var vmde = (VMDeathEvent)evt;
-					Debug.Assert(vmDeathExitCode == null);
+					// We get two VMDeath events when exiting a Unity game. Ignore the 2nd one
+					if (vmDeathExitCode != null)
+						break;
 					if (vm.Version.AtLeast(2, 27))
 						vmDeathExitCode = vmde.ExitCode;
 					else if (TryGetProcessExitCode(out exitCode))
@@ -468,7 +485,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.ThreadStart:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var tse = (ThreadStartEvent)evt;
 					InitializeDomain(tse.Thread.Domain);
@@ -476,29 +492,35 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.ThreadDeath:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					var tde = (ThreadDeathEvent)evt;
 					// Destroy it before calling IncrementSuspendCount() since it will update thread props
-					SendMessage(new DelegatePendingMessage(true, () => DestroyThread(tde.Thread)));
+					SendMessage(new DelegatePendingMessage(true, () => DestroyThread(TryGetThreadMirror(tde))));
 					IncrementSuspendCount();
 					break;
 
+					ThreadMirror TryGetThreadMirror(ThreadDeathEvent tde2) {
+						try {
+							return tde2.Thread;
+						}
+						catch (ObjectCollectedException) {
+							Debug.Assert(!vm.Version.AtLeast(2, 2));
+							return null;
+						}
+					}
+
 				case EventType.AppDomainCreate:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var adce = (AppDomainCreateEvent)evt;
-					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(adce.Domain)));
+					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(adce.Domain, isNewAppDomainEvent: true)));
 					break;
 
 				case EventType.AppDomainUnload:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var adue = (AppDomainUnloadEvent)evt;
 					SendMessage(new DelegatePendingMessage(true, () => DestroyAppDomain(adue.Domain)));
 					break;
 
 				case EventType.MethodEntry:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					Debug.Assert(evt.TryGetRequest() == methodEntryEventRequest);
 					if (evt.TryGetRequest() == methodEntryEventRequest) {
 						methodEntryEventRequest.Disable();
@@ -510,7 +532,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.AssemblyLoad:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var ale = (AssemblyLoadEvent)evt;
 					InitializeDomain(ale.Assembly.Domain);
@@ -519,7 +540,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.AssemblyUnload:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var aue = (AssemblyUnloadEvent)evt;
 					var monoModule = TryGetModuleCore_NoCreate(aue.Assembly.ManifestModule);
@@ -535,7 +555,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.Breakpoint:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var be = (BreakpointEvent)evt;
 					var bpReq = be.TryGetRequest() as BreakpointEventRequest;
@@ -554,17 +573,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.Step:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					break;//TODO:
 
 				case EventType.Exception:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
-					IncrementSuspendCount();
 					var ee = (ExceptionEvent)evt;
-					thrownException = ee.Exception;
 					if (ee.TryGetRequest() == uncaughtRequest)
 						isUnhandledException = true;
+					if (IsEvaluating && !isUnhandledException) {
+						ResumeVirtualMachine();
+						return;
+					}
+					IncrementSuspendCount();
+					thrownException = ee.Exception;
 					SendMessage(new DelegatePendingMessage(true, () => {
 						var req = ee.TryGetRequest() as ExceptionEventRequest;
 						DbgExceptionEventFlags exFlags;
@@ -582,14 +603,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.UserBreak:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var ube = (UserBreakEvent)evt;
 					SendMessage(new DbgMessageBreak(TryGetThread(ube.Thread), GetMessageFlags()));
 					break;
 
 				case EventType.UserLog:
-					Debug.Assert(eventSet.SuspendPolicy == SuspendPolicy.All);
 					IncrementSuspendCount();
 					var ule = (UserLogEvent)evt;
 					SendMessage(new NormalPendingMessage(this, true, new DbgMessageProgramMessage(ule.Message, TryGetThread(ule.Thread), GetMessageFlags())));
@@ -672,7 +691,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			SendMessage(new DelegatePendingMessage(true, () => CreateModule(monoAppDomain.Corlib.ManifestModule)));
 		}
 
-		void CreateAppDomain(AppDomainMirror monoAppDomain) {
+		void CreateAppDomain(AppDomainMirror monoAppDomain, bool isNewAppDomainEvent) {
 			debuggerThread.VerifyAccess();
 			int appDomainId = GetAppDomainId(monoAppDomain);
 			var appDomain = dmdRuntime.CreateAppDomain(appDomainId);
@@ -680,7 +699,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			var appDomainName = monoAppDomain.FriendlyName;
 			var engineAppDomain = objectFactory.CreateAppDomain<object>(internalAppDomain, appDomainName, appDomainId, GetMessageFlags(), data: null, onCreated: engineAppDomain2 => internalAppDomain.SetAppDomain(engineAppDomain2.AppDomain));
 			lock (lockObj) {
-				appDomainsThatHaveNotBeenInitializedYet.Add(monoAppDomain);
+				if (isNewAppDomainEvent)
+					appDomainsThatHaveNotBeenInitializedYet.Add(monoAppDomain);
 				toEngineAppDomain.Add(monoAppDomain, engineAppDomain);
 			}
 		}
@@ -941,7 +961,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					return;
 				Debug.Assert(vm != null);
 				if (vm != null) {
-					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(vm.RootDomain)));
+					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(vm.RootDomain, isNewAppDomainEvent: !processWasRunningOnAttach)));
+					if (processWasRunningOnAttach) {
+						// It's not possible to get a list of all AppDomains, so just init the main one
+
+						// Make sure corlib is added first, some code (eg. DmdAppDomain) depend on it
+						var corlib = vm.RootDomain.Corlib;
+						SendMessage(new DelegatePendingMessage(true, () => CreateModule(corlib.ManifestModule)));
+						foreach (var assembly in vm.RootDomain.GetAssemblies()) {
+							if (assembly != corlib)
+								SendMessage(new DelegatePendingMessage(true, () => CreateModule(assembly.ManifestModule)));
+						}
+					}
 					foreach (var monoThread in vm.GetThreads())
 						SendMessage(new DelegatePendingMessage(true, () => CreateThread(monoThread)));
 				}
@@ -996,8 +1027,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			while (suspendCount > 0) {
 				thrownException = null;
-				vm.Resume();
+				ResumeVirtualMachine();
 				DecrementSuspendCount();
+			}
+		}
+
+		void ResumeVirtualMachine() {
+			try {
+				vm.Resume();
+			}
+			catch (VMNotSuspendedException) {
 			}
 		}
 
@@ -1078,7 +1117,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			public void Dispose() {
 				if (pausedIt)
-					engine.vm.Resume();
+					engine.ResumeVirtualMachine();
 			}
 		}
 

@@ -100,8 +100,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, Type.GetElementType(), cancellationToken);
 			if (res.ErrorMessage != null)
 				return res.ErrorMessage;
-			valueLocation.Store(res.Value);
-			return null;
+			return valueLocation.Store(res.Value);
 		}
 
 		public override bool GetArrayCount(out uint elementCount) {
@@ -208,8 +207,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, info.valueLocation.Type, cancellationToken);
 			if (res.ErrorMessage != null)
 				return res.ErrorMessage;
-			info.valueLocation.Store(res.Value);
-			return null;
+			return info.valueLocation.Store(res.Value);
 		}
 
 		public override DbgDotNetValue Box(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {

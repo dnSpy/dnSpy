@@ -169,7 +169,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			Context.UIDispatcher.VerifyAccess();
 			Debug.Assert(hThread != null);
 			if (hThread == null || hThread.IsInvalid)
-				return (ThreadPriority)int.MinValue;
+				return ThreadPriority.Normal;
 			return (ThreadPriority)NativeMethods.GetThreadPriority(hThread.DangerousGetHandle());
 		}
 

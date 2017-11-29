@@ -86,10 +86,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						TypeMirror[] genericArgs;
 						if (type.VirtualMachine.Version.AtLeast(2, 15))
 							genericArgs = type.GetGenericArguments();
-						else {
-							Debug.Fail("Old version doesn't support generics");
+						else
 							genericArgs = Array.Empty<TypeMirror>();
-						}
 
 						types = GetTypesList();
 						foreach (var t in genericArgs)

@@ -129,7 +129,6 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 				methGenArgs = MonoFrame.Method.GetGenericArguments();
 			}
 			else {
-				Debug.Fail("Old version doesn't support generics");
 				typeGenArgs = Array.Empty<TypeMirror>();
 				methGenArgs = Array.Empty<TypeMirror>();
 			}

@@ -221,8 +221,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			// is called (CALL/CALLVIRT). We'll change it to a NEWOBJ and then copy the result to the input 'this' value.
 			if (!newObj && obj is DbgDotNetValueImpl objImpl && method is DmdConstructorInfo ctor && ctor.ReflectedType.IsValueType) {
 				var res = FuncEvalCallCoreReal_MonoDebug(contextOpt, thread, method, null, arguments, invokeOptions, true, cancellationToken);
-				if (res.IsNormalResult)
-					objImpl.ValueLocation.Store(((DbgDotNetValueImpl)res.Value).Value);
+				if (res.IsNormalResult) {
+					try {
+						var error = objImpl.ValueLocation.Store(((DbgDotNetValueImpl)res.Value).Value);
+						if (error != null) {
+							res.Value?.Dispose();
+							return new DbgDotNetValueResult(error);
+						}
+					}
+					catch {
+						res.Value?.Dispose();
+						throw;
+					}
+				}
 				return res;
 			}
 			else
@@ -241,7 +252,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return new DbgDotNetValueResult(dnSpy_Debugger_DotNet_Mono_Resources.Error_RuntimeDoesNotSupportCreatingGenericMethods);
 
 			var funcEvalOptions = FuncEvalOptions.None;
-			if ((invokeOptions & DbgDotNetInvokeOptions.NonVirtual) == 0)
+			if ((invokeOptions & DbgDotNetInvokeOptions.NonVirtual) == 0 && !method.IsStatic && (method.IsVirtual || method.IsAbstract))
 				funcEvalOptions |= FuncEvalOptions.Virtual;
 			MethodMirror func;
 			if ((funcEvalOptions & FuncEvalOptions.Virtual) == 0 || vm.Version.AtLeast(2, 37))
@@ -295,8 +306,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						funcEval.CallMethod(func, hiddenThisValue, args, funcEvalOptions);
 					if (res == null)
 						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
-					if ((funcEvalOptions & FuncEvalOptions.ReturnOutThis) != 0 && res.OutThis is StructMirror outStructMirror)
-						(obj as DbgDotNetValueImpl)?.ValueLocation.Store(outStructMirror);
+					if ((funcEvalOptions & FuncEvalOptions.ReturnOutThis) != 0 && res.OutThis is StructMirror outStructMirror) {
+						var error = (obj as DbgDotNetValueImpl)?.ValueLocation.Store(outStructMirror);
+						if (error != null)
+							return new DbgDotNetValueResult(error);
+					}
 					var returnType = (method as DmdMethodInfo)?.ReturnType ?? method.ReflectedType;
 					var returnValue = res.Exception ?? res.Result ?? new PrimitiveValue(vm, ElementType.Object, null);
 					var valueLocation = new NoValueLocation(returnType, returnValue);
