@@ -255,12 +255,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if ((invokeOptions & DbgDotNetInvokeOptions.NonVirtual) == 0 && !method.IsStatic && (method.IsVirtual || method.IsAbstract))
 				funcEvalOptions |= FuncEvalOptions.Virtual;
 			MethodMirror func;
+			DmdMethodBase calledMethod;
 			if ((funcEvalOptions & FuncEvalOptions.Virtual) == 0 || vm.Version.AtLeast(2, 37))
-				func = MethodCache.GetMethod(method);
+				func = MethodCache.GetMethod(calledMethod = method);
 			else {
-				func = MethodCache.GetMethod(FindOverloadedMethod(obj?.Type, method));
+				func = MethodCache.GetMethod(calledMethod = FindOverloadedMethod(obj?.Type, method));
 				funcEvalOptions &= ~FuncEvalOptions.Virtual;
 			}
+			if (!vm.Version.AtLeast(2, 15) && calledMethod.DeclaringType.ContainsGenericParameters)
+				return new DbgDotNetValueResult(dnSpy_Debugger_DotNet_Mono_Resources.Error_CannotAccessMemberRuntimeLimitations);
 
 			var monoThread = GetThread(thread);
 			try {

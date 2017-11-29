@@ -65,6 +65,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			List<DmdType> types;
 			if (!typeCache.TryGetType(type, out var result)) {
+				bool canAddType = true;
 				if (type.IsByRef)
 					result = Create(type.GetElementType()).MakeByRefType();
 				else if (type.IsArray) {
@@ -86,8 +87,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						TypeMirror[] genericArgs;
 						if (type.VirtualMachine.Version.AtLeast(2, 15))
 							genericArgs = type.GetGenericArguments();
-						else
+						else {
 							genericArgs = Array.Empty<TypeMirror>();
+							canAddType = false;
+						}
 
 						types = GetTypesList();
 						foreach (var t in genericArgs)
@@ -99,7 +102,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 					result = reflectionType;
 				}
-				typeCache.Add(type, result);
+				if (canAddType)
+					typeCache.Add(type, result);
 			}
 
 			recursionCounter--;

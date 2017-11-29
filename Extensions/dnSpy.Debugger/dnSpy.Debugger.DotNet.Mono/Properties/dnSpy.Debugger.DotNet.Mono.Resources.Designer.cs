@@ -160,6 +160,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Member can&apos;t be accessed due to runtime limitations.
+        /// </summary>
+        public static string Error_CannotAccessMemberRuntimeLimitations {
+            get {
+                return ResourceManager.GetString("Error_CannotAccessMemberRuntimeLimitations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to It&apos;s not possible to write to &apos;this&apos;.
         /// </summary>
         public static string Error_CanNotWriteToThisArgument {

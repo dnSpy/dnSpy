@@ -33,6 +33,7 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation.Hooks;
+using dnSpy.Debugger.DotNet.Mono.Properties;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
@@ -202,6 +203,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return (null, PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			var fieldDeclType = field.DeclaringType;
+			bool canNotAccessField = !engine.MonoVirtualMachine.Version.AtLeast(2, 15) && fieldDeclType.ContainsGenericParameters;
 			var monoFieldDeclType = GetType(fieldDeclType);
 			if (obj == null) {
 				if (!field.IsStatic)
@@ -213,6 +215,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					return (new NoValueLocation(field.FieldType, monoValue), null);
 				}
 				else {
+					if (canNotAccessField)
+						return (null, dnSpy_Debugger_DotNet_Mono_Resources.Error_CannotAccessMemberRuntimeLimitations);
 					var monoField = MemberMirrorUtils.GetMonoField(monoFieldDeclType, field);
 
 					InitializeStaticConstructor(context, frame, ilFrame, fieldDeclType, monoFieldDeclType, cancellationToken);
@@ -222,6 +226,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			else {
 				if (field.IsStatic)
 					return (null, PredefinedEvaluationErrorMessages.InternalDebuggerError);
+
+				if (canNotAccessField)
+					return (null, dnSpy_Debugger_DotNet_Mono_Resources.Error_CannotAccessMemberRuntimeLimitations);
 
 				var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
 				var monoField = MemberMirrorUtils.GetMonoField(monoFieldDeclType, field);
