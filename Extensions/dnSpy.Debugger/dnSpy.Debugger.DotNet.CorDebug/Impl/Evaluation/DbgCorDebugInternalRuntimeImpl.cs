@@ -46,6 +46,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public override string ClrFilename { get; }
 		public override string RuntimeDirectory { get; }
 		public DbgDotNetDispatcher Dispatcher { get; }
+		public DbgDotNetRuntimeFeatures Features => DbgDotNetRuntimeFeatures.None;
 		public bool SupportsObjectIds => true;
 
 		ICorDebugValueConverter ICorDebugRuntime.ValueConverter => corDebugValueConverter;

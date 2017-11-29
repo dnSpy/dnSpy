@@ -35,6 +35,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DbgDotNetDispatcher Dispatcher { get; }
 
 		/// <summary>
+		/// Gets the feature flags
+		/// </summary>
+		DbgDotNetRuntimeFeatures Features { get; }
+
+		/// <summary>
 		/// Gets the module id
 		/// </summary>
 		/// <param name="module">Module</param>
@@ -376,6 +381,21 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Non-virtual call
 		/// </summary>
 		NonVirtual			= 0x00000001,
+	}
+
+	/// <summary>
+	/// .NET runtime features
+	/// </summary>
+	public enum DbgDotNetRuntimeFeatures {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// Calling generic methods isn't supported
+		/// </summary>
+		NoGenericMethods	= 0x00000001,
 	}
 
 	/// <summary>

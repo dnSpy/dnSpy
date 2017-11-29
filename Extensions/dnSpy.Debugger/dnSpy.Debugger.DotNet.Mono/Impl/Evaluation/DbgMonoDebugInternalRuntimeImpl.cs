@@ -41,6 +41,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		public override DmdRuntime ReflectionRuntime { get; }
 		public override DbgRuntime Runtime { get; }
 		public DbgDotNetDispatcher Dispatcher { get; }
+		public DbgDotNetRuntimeFeatures Features { get; }
 		public bool SupportsObjectIds => true;
 
 		IMonoDebugValueConverter IMonoDebugRuntime.ValueConverter => monoDebugValueConverter;
@@ -55,6 +56,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			ReflectionRuntime = reflectionRuntime ?? throw new ArgumentNullException(nameof(reflectionRuntime));
 			Kind = monoDebugRuntimeKind;
 			Dispatcher = new DbgDotNetDispatcherImpl(engine);
+			Features = CalculateFeatures(engine.MonoVirtualMachine);
 			reflectionRuntime.GetOrCreateData(() => runtime);
 
 			monoDebugValueConverter = new MonoDebugValueConverterImpl(this);
@@ -64,6 +66,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				Debug.Assert(!classHooks.ContainsKey(info.WellKnownType));
 				classHooks.Add(info.WellKnownType, info.Hook);
 			}
+		}
+
+		static DbgDotNetRuntimeFeatures CalculateFeatures(VirtualMachine vm) {
+			var res = DbgDotNetRuntimeFeatures.None;
+			if (!vm.Version.AtLeast(2, 24))
+				res |= DbgDotNetRuntimeFeatures.NoGenericMethods;
+			return res;
 		}
 
 		DmdType ToReflectionType(TypeMirror type, DmdAppDomain reflectionAppDomain) =>
