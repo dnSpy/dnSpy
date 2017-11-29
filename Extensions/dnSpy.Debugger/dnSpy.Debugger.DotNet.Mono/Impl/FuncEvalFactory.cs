@@ -136,13 +136,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 					var res = debugMessageDispatcher.DispatchQueue(timeLeft, out bool timedOut);
 					if (timedOut) {
-						asyncRes.Abort();
 						evalTimedOut = true;
+						try {
+							asyncRes.Abort();
+						}
+						catch (CommandException ce) when (ce.ErrorCode == ErrorCode.ERR_NO_INVOCATION) { }
 						throw new TimeoutException();
 					}
 					Debug.Assert(res is InvokeResult);
 					return res as InvokeResult ?? throw new InvalidOperationException();
-
 				}
 				else {
 					evalTimedOut = true;

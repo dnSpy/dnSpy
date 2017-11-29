@@ -34,8 +34,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
 		const string FinalizerName = "Finalizer";
 		const int CheckNewThreadNameDelayMilliseconds = 1000;
-		const int CheckNewManagedIdDelayMilliseconds = 1;
-		const int MaxCheckNewManagedId = 10;
+		const int CheckNewManagedIdDelayMilliseconds = 100;
+		const int MaxCheckNewManagedId = 2;
 
 		sealed class DbgThreadData {
 			public ThreadMirror MonoThread { get; }
@@ -108,6 +108,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return new ThreadProperties(appDomain, kind, id, managedId, name, suspendedCount, threadState);
 		}
 
+		bool getManagedIdFuncEvalTimedOut;
 		sealed class GetManagedIdState {
 			public MethodMirror ManagedIdGetter;
 		}
@@ -150,7 +151,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		bool TryGetManagedId(ThreadMirror thread, ThreadMirror threadObj, MethodMirror managedIdGetter, out ulong? managedId) {
 			debuggerThread.VerifyAccess();
 
-			if (thread.Domain != threadObj.Domain) {
+			if (getManagedIdFuncEvalTimedOut || thread.Domain != threadObj.Domain) {
 				managedId = null;
 				return true;
 			}
@@ -158,6 +159,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			try {
 				var res = TryInvokeMethod(thread, threadObj, managedIdGetter, Array.Empty<Value>(), out bool timedOut);
 				if (timedOut) {
+					getManagedIdFuncEvalTimedOut = true;
 					managedId = null;
 					return false;
 				}
@@ -222,6 +224,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void UpdateThreadProperties_MonoDebug() {
 			debuggerThread.VerifyAccess();
+			getManagedIdFuncEvalTimedOut = false;
 			List<(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)> threadsToUpdate = null;
 			KeyValuePair<ThreadMirror, DbgEngineThread>[] infos;
 			lock (lockObj)
