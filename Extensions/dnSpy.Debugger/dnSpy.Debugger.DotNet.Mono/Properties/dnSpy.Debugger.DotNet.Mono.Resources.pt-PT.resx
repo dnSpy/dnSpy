@@ -207,4 +207,13 @@
   <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
     <value>Este tempo de execução não suporta criar métodos genéricos</value>
   </data>
+  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
+    <value>Process is paused and _waiting for the debugger</value>
+  </data>
+  <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
+    <value>It's not possible to write to 'this'</value>
+  </data>
+  <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
+    <value>Member can't be accessed due to runtime limitations</value>
+  </data>
 </root>

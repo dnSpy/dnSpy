@@ -130,10 +130,10 @@
     <value>_Port</value>
   </data>
   <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>Connect</value>
+    <value>Соединение</value>
   </data>
   <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>IP Address</value>
+    <value>IP адрес</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Рабочий каталог</value>
@@ -157,19 +157,19 @@
     <value>Отладчик ({0})</value>
   </data>
   <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>Could not find {0}</value>
+    <value>Не удалось найти {0}</value>
   </data>
   <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>Couldn't connect to the debugged process</value>
+    <value>Не удается подключиться к отлаживаемому процессу</value>
   </data>
   <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>Could not find the debugged process</value>
+    <value>Не удалось найти отлаживаемый процесс</value>
   </data>
   <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>The connection to the debugged process was unexpectedly closed</value>
+    <value>Подключение к отлаживаемому процессу неожиданно закрыто</value>
   </data>
   <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Aborted</value>
+    <value>Прервано</value>
   </data>
   <data name="Thread_UserState_AbortRequested" xml:space="preserve">
     <value>AbortRequested</value>
@@ -205,6 +205,15 @@
     <value>Native Transition</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
-    <value>This runtime doesn't support creating generic methods</value>
+    <value>Этот runtime не поддерживает создание универсальных методов</value>
+  </data>
+  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
+    <value>Process is paused and _waiting for the debugger</value>
+  </data>
+  <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
+    <value>It's not possible to write to 'this'</value>
+  </data>
+  <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
+    <value>Member can't be accessed due to runtime limitations</value>
   </data>
 </root>

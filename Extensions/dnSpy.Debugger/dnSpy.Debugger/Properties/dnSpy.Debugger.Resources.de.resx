@@ -1450,10 +1450,10 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Suppress JIT optimization on module load</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
-    <value>Program modules</value>
+    <value>Programm Module</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
-    <value>System modules</value>
+    <value>System Module</value>
   </data>
   <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
     <value>The runtime is unable to evaluate this expression.</value>
@@ -1471,6 +1471,6 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Möchten Sie das Debuggen beenden?</value>
   </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
-    <value>Give focus to debugged process</value>
+    <value>Fokus auf Fehlersuche des Prozesses</value>
   </data>
 </root>

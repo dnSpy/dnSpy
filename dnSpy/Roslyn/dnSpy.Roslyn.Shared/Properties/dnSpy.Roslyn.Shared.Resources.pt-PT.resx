@@ -213,4 +213,7 @@
   <data name="SystemCoreDllNotLoaded" xml:space="preserve">
     <value>A Vista de Resultados requer que {0} seja referenciado</value>
   </data>
+  <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
+    <value>Type '{0}' doesn't exist in assembly '{1}'</value>
+  </data>
 </root>
