@@ -159,16 +159,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return PredefinedThreadKinds.WorkerThread;
 		}
 
-		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug_NoLock(DnThread thread) {
+		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug(DnThread thread) {
 			debuggerThread.VerifyAccess();
-			bool b = toEngineThread.TryGetValue(thread, out var engineThread);
-			Debug.Assert(b);
-			if (!b)
+			var engineThread = TryGetEngineThread(thread);
+			Debug.Assert(engineThread != null);
+			if (engineThread == null)
 				return null;
-			return UpdateThreadProperties_CorDebug_NoLock(engineThread);
+			return UpdateThreadProperties_CorDebug(engineThread);
 		}
 
-		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug_NoLock(DbgEngineThread engineThread) {
+		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug(DbgEngineThread engineThread) {
 			debuggerThread.VerifyAccess();
 			var threadData = engineThread.Thread.GetData<DbgThreadData>();
 			var newProps = GetThreadProperties_CorDebug(threadData.DnThread, threadData.Last, isCreateThread: false, forceReadName: threadData.HasNewName, isMainThread: threadData.IsMainThread);
@@ -191,15 +191,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		void UpdateThreadProperties_CorDebug() {
 			debuggerThread.VerifyAccess();
 			List<(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)> threadsToUpdate = null;
-			lock (lockObj) {
-				foreach (var kv in toEngineThread) {
-					var info = UpdateThreadProperties_CorDebug_NoLock(kv.Value);
-					if (info == null)
-						continue;
-					if (threadsToUpdate == null)
-						threadsToUpdate = new List<(DbgEngineThread, DbgEngineThread.UpdateOptions, ThreadProperties)>();
-					threadsToUpdate.Add(info.Value);
-				}
+			KeyValuePair<DnThread, DbgEngineThread>[] infos;
+			lock (lockObj)
+				infos = toEngineThread.ToArray();
+			foreach (var kv in infos) {
+				var info = UpdateThreadProperties_CorDebug(kv.Value);
+				if (info == null)
+					continue;
+				if (threadsToUpdate == null)
+					threadsToUpdate = new List<(DbgEngineThread, DbgEngineThread.UpdateOptions, ThreadProperties)>();
+				threadsToUpdate.Add(info.Value);
 			}
 			if (threadsToUpdate != null) {
 				foreach (var info in threadsToUpdate)
@@ -273,7 +274,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			Debug.Assert(StartKind == DbgStartKind.Attach);
 			if (alreadyKnowsMainThread)
 				return;
-			(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? info = null;
+			(DnThread thread, DbgThreadData data) mainThreadInfo = default;
 			lock (lockObj) {
 				var list = new List<(DnThread thread, DbgThreadData data)>();
 				foreach (var kv in toEngineThread) {
@@ -289,21 +290,20 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					// The main thread should have a low managed ID, very often MID=1
 					list.Sort((a, b) => (a.data.Last.ManagedId ?? defaultManagedId).CompareTo(b.data.Last.ManagedId ?? defaultManagedId));
 					alreadyKnowsMainThread = true;
-					(DnThread thread, DbgThreadData data) mainThreadInfo = default;
 					foreach (var threadInfo in list) {
 						if (IsMainThreadCheckCallStack(threadInfo.thread)) {
 							mainThreadInfo = threadInfo;
 							break;
 						}
 					}
-					if (mainThreadInfo.thread != null) {
-						mainThreadInfo.data.IsMainThread = true;
-						info = UpdateThreadProperties_CorDebug_NoLock(mainThreadInfo.thread);
-					}
 				}
 			}
-			if (info != null)
-				NotifyThreadPropertiesChanged_CorDebug(info.Value.engineThread, info.Value.updateOptions, info.Value.props);
+			if (mainThreadInfo.thread != null) {
+				mainThreadInfo.data.IsMainThread = true;
+				var info = UpdateThreadProperties_CorDebug(mainThreadInfo.thread);
+				if (info != null)
+					NotifyThreadPropertiesChanged_CorDebug(info.Value.engineThread, info.Value.updateOptions, info.Value.props);
+			}
 		}
 
 		bool IsMainThreadCheckCallStack(DnThread dnThread) {
@@ -369,9 +369,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					return;
 				corThread.State = CorDebugThreadState.THREAD_RUN;
 			}
-			(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? info;
-			lock (lockObj)
-				info = UpdateThreadProperties_CorDebug_NoLock(threadData.DnThread);
+			var info = UpdateThreadProperties_CorDebug(threadData.DnThread);
 			if (info != null)
 				NotifyThreadPropertiesChanged_CorDebug(info.Value.engineThread, info.Value.updateOptions, info.Value.props);
 		}

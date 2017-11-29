@@ -680,14 +680,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void InitializeDomain(AppDomainMirror monoAppDomain) {
 			debuggerThread.VerifyAccess();
+			DbgEngineAppDomain engineAppDomain;
+			bool b;
 			lock (lockObj) {
 				if (!appDomainsThatHaveNotBeenInitializedYet.Remove(monoAppDomain))
 					return;
-				bool b = toEngineAppDomain.TryGetValue(monoAppDomain, out var engineAppDomain);
-				Debug.Assert(b);
-				if (b)
-					engineAppDomain.UpdateName(monoAppDomain.FriendlyName);
+				b = toEngineAppDomain.TryGetValue(monoAppDomain, out engineAppDomain);
 			}
+			Debug.Assert(b);
+			if (b)
+				engineAppDomain.UpdateName(monoAppDomain.FriendlyName);
 			SendMessage(new DelegatePendingMessage(true, () => CreateModule(monoAppDomain.Corlib.ManifestModule)));
 		}
 

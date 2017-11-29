@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine;
@@ -199,7 +200,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return PredefinedThreadKinds.WorkerThread;
 		}
 
-		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_MonoDebug_NoLock(DbgEngineThread engineThread) {
+		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_MonoDebug(DbgEngineThread engineThread) {
 			debuggerThread.VerifyAccess();
 			var threadData = engineThread.Thread.GetData<DbgThreadData>();
 			var newProps = GetThreadProperties_MonoDebug(threadData.MonoThread, threadData, isCreateThread: false, forceReadName: threadData.HasNewName, isMainThread: threadData.IsMainThread, isFinalizerThread: threadData.IsFinalizerThread);
@@ -222,15 +223,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		void UpdateThreadProperties_MonoDebug() {
 			debuggerThread.VerifyAccess();
 			List<(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)> threadsToUpdate = null;
-			lock (lockObj) {
-				foreach (var kv in toEngineThread) {
-					var info = UpdateThreadProperties_MonoDebug_NoLock(kv.Value);
-					if (info == null)
-						continue;
-					if (threadsToUpdate == null)
-						threadsToUpdate = new List<(DbgEngineThread, DbgEngineThread.UpdateOptions, ThreadProperties)>();
-					threadsToUpdate.Add(info.Value);
-				}
+			KeyValuePair<ThreadMirror, DbgEngineThread>[] infos;
+			lock (lockObj)
+				infos = toEngineThread.ToArray();
+			foreach (var kv in infos) {
+				var info = UpdateThreadProperties_MonoDebug(kv.Value);
+				if (info == null)
+					continue;
+				if (threadsToUpdate == null)
+					threadsToUpdate = new List<(DbgEngineThread, DbgEngineThread.UpdateOptions, ThreadProperties)>();
+				threadsToUpdate.Add(info.Value);
 			}
 			if (threadsToUpdate != null) {
 				foreach (var info in threadsToUpdate)
