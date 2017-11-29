@@ -724,7 +724,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		internal ILValue LoadReferenceTypeFieldAddress(DbgDotNetValue objValue, DmdFieldInfo field) {
-			Debug.Assert(field.ReflectedType.IsValueType);
+			Debug.Assert(!field.ReflectedType.IsValueType);
 			var addrValue = runtime.LoadFieldAddress(context, frame, objValue, field, cancellationToken);
 			if (addrValue != null) {
 				Debug.Assert(addrValue.Type.IsByRef);
