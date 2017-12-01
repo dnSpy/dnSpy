@@ -224,13 +224,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if (field.IsStatic)
 					return (null, PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
-				if (canNotAccessField)
-					return (null, dnSpy_Debugger_DotNet_Mono_Resources.Error_CannotAccessMemberRuntimeLimitations);
-
 				var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
 				var monoField = MemberMirrorUtils.GetMonoField(monoFieldDeclType, field);
 				switch (objImp.Value) {
 				case ObjectMirror om:
+					if (canNotAccessField)
+						return (null, dnSpy_Debugger_DotNet_Mono_Resources.Error_CannotAccessMemberRuntimeLimitations);
 					return (new ReferenceTypeFieldValueLocation(field.FieldType, om, monoField), null);
 
 				case StructMirror sm:
