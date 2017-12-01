@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -373,7 +374,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		internal DbgDotNetCreateValueResult CreateValue_MonoDebug(DbgEvaluationContext context, DbgThread thread, object value, CancellationToken cancellationToken) {
+		internal DbgDotNetCreateValueResult CreateValue_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
 			debuggerThread.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
 			if (value is DbgDotNetValueImpl)
@@ -382,9 +383,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (tmp != null)
 				return new DbgDotNetCreateValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());
 
-			var monoThread = GetThread(thread);
+			var monoThread = GetThread(frame.Thread);
 			try {
-				var reflectionAppDomain = thread.AppDomain.GetReflectionAppDomain();
+				var reflectionAppDomain = frame.AppDomain.GetReflectionAppDomain();
 				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
 					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
 					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
@@ -406,7 +407,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		internal DbgCreateMonoValueResult CreateMonoValue_MonoDebug(DbgEvaluationContext context, DbgThread thread, object value, DmdType targetType, CancellationToken cancellationToken) {
+		internal DbgCreateMonoValueResult CreateMonoValue_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, object value, DmdType targetType, CancellationToken cancellationToken) {
 			debuggerThread.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
 			if (value is DbgDotNetValueImpl)
@@ -415,9 +416,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (tmp != null)
 				return new DbgCreateMonoValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());
 
-			var monoThread = GetThread(thread);
+			var monoThread = GetThread(frame.Thread);
 			try {
-				var reflectionAppDomain = thread.AppDomain.GetReflectionAppDomain();
+				var reflectionAppDomain = frame.AppDomain.GetReflectionAppDomain();
 				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
 					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
 					var evalRes = converter.Convert(value, targetType, out var newValueType);

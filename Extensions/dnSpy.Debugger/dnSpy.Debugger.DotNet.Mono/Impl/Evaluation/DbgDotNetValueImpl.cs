@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			cancellationToken.ThrowIfCancellationRequested();
 			if (!Type.IsByRef)
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
-			var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, Type.GetElementType(), cancellationToken);
+			var res = engine.CreateMonoValue_MonoDebug(context, frame, value, Type.GetElementType(), cancellationToken);
 			if (res.ErrorMessage != null)
 				return res.ErrorMessage;
 			return valueLocation.Store(res.Value);
@@ -204,7 +204,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var info = GetArrayElementValueLocation_MonoDebug(index);
 			if (info.errorMessage != null)
 				return info.errorMessage;
-			var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, info.valueLocation.Type, cancellationToken);
+			var res = engine.CreateMonoValue_MonoDebug(context, frame, value, info.valueLocation.Type, cancellationToken);
 			if (res.ErrorMessage != null)
 				return res.ErrorMessage;
 			return info.valueLocation.Store(res.Value);

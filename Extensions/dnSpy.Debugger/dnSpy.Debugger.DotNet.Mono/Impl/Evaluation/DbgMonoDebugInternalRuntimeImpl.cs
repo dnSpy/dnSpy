@@ -382,7 +382,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var info = GetFieldValueLocationCore(context, frame, obj, field, cancellationToken);
 				if (info.errorMessage != null)
 					return info.errorMessage;
-				var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, field.FieldType, cancellationToken);
+				var res = engine.CreateMonoValue_MonoDebug(context, frame, value, field.FieldType, cancellationToken);
 				if (res.ErrorMessage != null)
 					return res.ErrorMessage;
 				return info.valueLocation.Store(res.Value);
@@ -910,7 +910,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var info = GetLocalValueLocationCore(context, frame, index, cancellationToken);
 				if (info.errorMessage != null)
 					return info.errorMessage;
-				var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, targetType, cancellationToken);
+				var res = engine.CreateMonoValue_MonoDebug(context, frame, value, targetType, cancellationToken);
 				if (res.ErrorMessage != null)
 					return res.ErrorMessage;
 				return info.valueLocation.Store(res.Value);
@@ -936,7 +936,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var info = GetParameterValueLocationCore(context, frame, index, cancellationToken);
 				if (info.errorMessage != null)
 					return info.errorMessage;
-				var res = engine.CreateMonoValue_MonoDebug(context, frame.Thread, value, targetType, cancellationToken);
+				var res = engine.CreateMonoValue_MonoDebug(context, frame, value, targetType, cancellationToken);
 				if (res.ErrorMessage != null)
 					return res.ErrorMessage;
 				return info.valueLocation.Store(res.Value);
@@ -961,7 +961,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetCreateValueResult CreateValueCore(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			try {
-				return engine.CreateValue_MonoDebug(context, frame.Thread, value, cancellationToken);
+				return engine.CreateValue_MonoDebug(context, frame, value, cancellationToken);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
