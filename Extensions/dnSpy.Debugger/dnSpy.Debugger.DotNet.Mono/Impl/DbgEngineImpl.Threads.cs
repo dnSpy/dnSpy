@@ -25,6 +25,7 @@ using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
+using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
@@ -282,6 +283,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		bool IsMainThread(ThreadMirror thread) {
 			if (alreadyKnowsMainThread)
+				return false;
+			// Don't try to guess the main thread if it's Unity since any thread could be the main thread
+			if (monoDebugRuntimeKind == MonoDebugRuntimeKind.Unity && StartKind == DbgStartKind.Attach)
 				return false;
 			if (IsNotMainThread(thread))
 				return false;
