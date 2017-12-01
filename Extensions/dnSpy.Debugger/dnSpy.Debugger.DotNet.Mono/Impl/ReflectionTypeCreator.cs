@@ -84,21 +84,29 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var module = engine.TryGetModule(type.Module)?.GetReflectionModule() ?? throw new InvalidOperationException();
 					var reflectionType = module.ResolveType(type.MetadataToken, DmdResolveOptions.ThrowOnError);
 					if (reflectionType.GetGenericArguments().Count != 0) {
+						DmdType parsedType = null;
 						TypeMirror[] genericArgs;
 						if (type.VirtualMachine.Version.AtLeast(2, 15))
 							genericArgs = type.GetGenericArguments();
 						else {
+							parsedType = reflectionType.Assembly.GetType(type.FullName);
+							if ((object)parsedType != null && parsedType.MetadataToken != type.MetadataToken)
+								parsedType = null;
 							genericArgs = Array.Empty<TypeMirror>();
-							canAddType = false;
+							canAddType = (object)parsedType != null;
 						}
 
-						types = GetTypesList();
-						foreach (var t in genericArgs)
-							types.Add(Create(t));
-						Debug.Assert(types.Count == 0 || reflectionType.GetGenericArguments().Count == types.Count);
-						if (types.Count != 0)
-							reflectionType = reflectionType.MakeGenericType(types.ToArray());
-						FreeTypesList(ref types);
+						if ((object)parsedType != null)
+							reflectionType = parsedType;
+						else {
+							types = GetTypesList();
+							foreach (var t in genericArgs)
+								types.Add(Create(t));
+							Debug.Assert(types.Count == 0 || reflectionType.GetGenericArguments().Count == types.Count);
+							if (types.Count != 0)
+								reflectionType = reflectionType.MakeGenericType(types.ToArray());
+							FreeTypesList(ref types);
+						}
 					}
 					result = reflectionType;
 				}

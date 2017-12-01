@@ -1252,8 +1252,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			// can't create the correct instantiated generic type. We can't create a generic DmdType from a
 			// TypeMirror. If we cache the generic DmdType, we'll be able to look it up later when we get
 			// a generic TypeMirror.
-			if ((object)couldBeRealTypeOpt != null && !vm.Version.AtLeast(2, 15))
-				MonoDebugTypeCreator.GetType(this, couldBeRealTypeOpt);
+			if ((object)couldBeRealTypeOpt != null && !vm.Version.AtLeast(2, 15)) {
+				try {
+					MonoDebugTypeCreator.GetType(this, couldBeRealTypeOpt);
+				}
+				catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				}
+			}
 
 			return new ReflectionTypeCreator(this, reflectionAppDomain).Create(monoType);
 		}
