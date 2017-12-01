@@ -82,14 +82,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (typeNames.Count == 0)
 					return null;
 
-				if (assemblyName != null && !AssemblyNameEqualityComparer.Instance.Equals(module.Assembly.GetName(), assemblyName))
-					return null;
+				var targetModule = module;
+				var targetAssembly = targetModule.assembly;
+				if (assemblyName != null && !AssemblyNameEqualityComparer.Instance.Equals(targetAssembly.GetName(), assemblyName)) {
+					targetAssembly = (DmdAssemblyImpl)targetAssembly.AppDomain.GetAssembly(assemblyName);
+					targetModule = (DmdModuleImpl)targetAssembly?.ManifestModule;
+					if (targetModule == null)
+						return null;
+				}
 
 				DmdTypeDef type;
 				DmdTypeUtilities.SplitFullName(typeNames[0], out string @namespace, out string name);
 
-				var typeRef = new DmdParsedTypeRef(module, null, DmdTypeScope.Invalid, @namespace, name, null);
-				type = module.GetType(typeRef, ignoreCase);
+				var typeRef = new DmdParsedTypeRef(targetModule, null, DmdTypeScope.Invalid, @namespace, name, null);
+				type = targetModule.GetType(typeRef, ignoreCase);
 
 				if ((object)type == null)
 					return null;
