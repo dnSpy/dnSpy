@@ -40,11 +40,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		public TimeSpan ConnectionTimeout { get; set; }
 
 		/// <summary>
-		/// true if the process is suspended and waiting for the debugger to connect
-		/// </summary>
-		public bool ProcessIsSuspended { get; set; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		protected MonoConnectStartDebuggingOptionsBase() => ConnectionTimeout = TimeSpan.Zero;
@@ -60,7 +55,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 			other.Address = Address;
 			other.Port = Port;
 			other.ConnectionTimeout = ConnectionTimeout;
-			other.ProcessIsSuspended = ProcessIsSuspended;
 		}
 	}
 }

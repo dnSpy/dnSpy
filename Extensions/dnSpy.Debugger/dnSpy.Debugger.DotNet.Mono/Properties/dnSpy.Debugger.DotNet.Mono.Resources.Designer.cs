@@ -115,15 +115,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Process is paused and _waiting for the debugger.
-        /// </summary>
-        public static string DbgAsm_ProcessIsSuspended {
-            get {
-                return ResourceManager.GetString("DbgAsm_ProcessIsSuspended", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Working Directory.
         /// </summary>
         public static string DbgAsm_WorkingDir {

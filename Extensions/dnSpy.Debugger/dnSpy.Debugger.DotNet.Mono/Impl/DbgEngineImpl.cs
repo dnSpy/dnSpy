@@ -80,6 +80,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly FuncEvalFactory funcEvalFactory;
 		readonly List<Action> execOnPauseList;
 		bool wasAttach;
+		bool wasStartDebuggingOptions;
 		bool processWasRunningOnAttach;
 		VirtualMachine vm;
 		int vmPid;
@@ -90,7 +91,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		SafeHandle hProcess_debuggee;
 		volatile int suspendCount;
 		readonly List<PendingMessage> pendingMessages;
-		// The thrown exception. The mono debugger agent keeps it alive until Resume() is called
+		// The thrown exception. The mono debugger agent keeps it alive until Resume() is called,
+		// but Unity uses a buggy debugger agent that doesn't keep it alive so it could get GC'd.
 		ObjectMirror thrownException;
 		BreakOnEntryPointData breakOnEntryPointData;
 
@@ -256,6 +258,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				int expectedPid;
 				string filename;
 				if (options is MonoStartDebuggingOptions startOptions) {
+					wasStartDebuggingOptions = true;
 					connectionAddress = "127.0.0.1";
 					connectionPort = startOptions.ConnectionPort;
 					connectionTimeout = startOptions.ConnectionTimeout;
@@ -293,6 +296,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 				else if (options is MonoConnectStartDebuggingOptionsBase connectOptions &&
 					(connectOptions is MonoConnectStartDebuggingOptions || connectOptions is UnityConnectStartDebuggingOptions)) {
+					wasStartDebuggingOptions = false;
 					connectionAddress = connectOptions.Address;
 					if (string.IsNullOrWhiteSpace(connectionAddress))
 						connectionAddress = "127.0.0.1";
@@ -301,7 +305,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					filename = null;
 					expectedPid = -1;
 					wasAttach = true;
-					processWasRunningOnAttach = !connectOptions.ProcessIsSuspended;
 				}
 				else {
 					// No need to localize it, should be unreachable
@@ -348,37 +351,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				vmPid = pid.Value;
 
 				hProcess_debuggee = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)vmPid);
-
-				var events = new List<EventType> {
-					EventType.VMStart,
-					EventType.VMDeath,
-					EventType.ThreadStart,
-					EventType.ThreadDeath,
-					EventType.AppDomainCreate,
-					EventType.AppDomainUnload,
-					EventType.AssemblyLoad,
-					EventType.AssemblyUnload,
-				};
-				if (vm.Version.AtLeast(2, 5)) {
-					events.Add(EventType.UserLog);
-					if (!debuggerSettings.IgnoreBreakInstructions)
-						events.Add(EventType.UserBreak);
-				}
-				vm.EnableEvents(events.ToArray(), SuspendPolicy.All);
-				if (vm.Version.AtLeast(2, 1)) {
-					uncaughtRequest = vm.CreateExceptionRequest(null, false, true);
-					caughtRequest = vm.CreateExceptionRequest(null, true, false);
-				}
-				else
-					caughtRequest = vm.CreateExceptionRequest(null, true, true);
-				uncaughtRequest?.Enable();
-				caughtRequest?.Enable();
-				if (processWasRunningOnAttach)
-					canInitializeObjectConstants = true;
-				else {
-					methodEntryEventRequest = vm.CreateMethodEntryRequest();
-					methodEntryEventRequest.Enable();
-				}
 
 				var eventThread = new Thread(MonoEventThread);
 				eventThread.IsBackground = true;
@@ -444,7 +416,50 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void DecrementSuspendCount() {
 			debuggerThread.VerifyAccess();
+			Debug.Assert(suspendCount > 0);
 			suspendCount--;
+		}
+
+		void EnableEvent(EventType evt, SuspendPolicy suspendPolicy) => vm.EnableEvents(new[] { evt }, suspendPolicy);
+
+		TypeLoadEventRequest typeLoadRequest;
+		void InitializeVirtualMachine() {
+			try {
+				EnableEvent(EventType.AppDomainCreate, SuspendPolicy.All);
+				EnableEvent(EventType.AppDomainUnload, SuspendPolicy.All);
+				EnableEvent(EventType.AssemblyLoad, SuspendPolicy.All);
+				EnableEvent(EventType.AssemblyUnload, SuspendPolicy.All);
+				EnableEvent(EventType.ThreadStart, SuspendPolicy.All);
+				// If we don't do this we won't get AppDomain/Assembly/Thread create events
+				if (StartKind == DbgStartKind.Attach && monoDebugRuntimeKind == MonoDebugRuntimeKind.Unity) {
+					typeLoadRequest = vm.CreateTypeLoadRequest();
+					typeLoadRequest.Enable();
+				}
+				EnableEvent(EventType.ThreadDeath, SuspendPolicy.None);
+
+				if (vm.Version.AtLeast(2, 5)) {
+					EnableEvent(EventType.UserLog, SuspendPolicy.All);
+					if (!debuggerSettings.IgnoreBreakInstructions)
+						EnableEvent(EventType.UserBreak, SuspendPolicy.All);
+				}
+
+				if (vm.Version.AtLeast(2, 1)) {
+					uncaughtRequest = vm.CreateExceptionRequest(null, false, true);
+					caughtRequest = vm.CreateExceptionRequest(null, true, false);
+				}
+				else
+					caughtRequest = vm.CreateExceptionRequest(null, true, true);
+				uncaughtRequest?.Enable();
+				caughtRequest?.Enable();
+				if (processWasRunningOnAttach)
+					canInitializeObjectConstants = true;
+				else {
+					methodEntryEventRequest = vm.CreateMethodEntryRequest();
+					methodEntryEventRequest.Enable();
+				}
+			}
+			catch (VMDisconnectedException) {
+			}
 		}
 
 		void OnDebuggerEvents(EventSet eventSet) {
@@ -457,6 +472,50 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
+		SuspendPolicy GetSuspendPolicy(EventSet eventSet) {
+			var spolicy = eventSet.SuspendPolicy;
+			// If it's the old debugger agent used by Unity, we can trust it
+			if (monoDebugRuntimeKind == MonoDebugRuntimeKind.Unity)
+				return spolicy;
+
+			// The latest one sends one value but then possibly changes it and uses that value to
+			// decide if it should suspend the process...
+			foreach (var e in eventSet.Events) {
+				switch (e.EventType) {
+				case EventType.VMStart:
+					spolicy = wasStartDebuggingOptions ? SuspendPolicy.All : SuspendPolicy.None;
+					break;
+
+				case EventType.VMDeath:
+					spolicy = SuspendPolicy.None;
+					break;
+
+				case EventType.ThreadStart:
+				case EventType.ThreadDeath:
+				case EventType.AppDomainCreate:
+				case EventType.AppDomainUnload:
+				case EventType.MethodEntry:
+				case EventType.MethodExit:
+				case EventType.AssemblyLoad:
+				case EventType.AssemblyUnload:
+				case EventType.Breakpoint:
+				case EventType.Step:
+				case EventType.TypeLoad:
+				case EventType.Exception:
+				case EventType.KeepAlive:
+				case EventType.UserBreak:
+				case EventType.UserLog:
+				case EventType.VMDisconnect:
+					break;
+
+				default:
+					Debug.Fail($"Unknown event {e.EventType}");
+					break;
+				}
+			}
+			return spolicy;
+		}
+
 		void OnDebuggerEventsCore(EventSet eventSet) {
 			debuggerThread.VerifyAccess();
 
@@ -464,19 +523,26 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (gotVMDisconnect)
 				return;
 
+			var spolicy = GetSuspendPolicy(eventSet);
+			if (spolicy == SuspendPolicy.All)
+				IncrementSuspendCount();
+
 			int exitCode;
-			foreach (var evt in eventSet.Events) {
+			int suspCounter = 0;
+			for (int i = 0; i < eventSet.Events.Length; i++) {
+				var evt = eventSet.Events[i];
+
+				SuspendPolicy expectedSuspendPolicy;
 				switch (evt.EventType) {
 				case EventType.VMStart:
-					if (processWasRunningOnAttach)
-						vm.Suspend();
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
+					processWasRunningOnAttach = spolicy == SuspendPolicy.None;
 					SendMessage(new DbgMessageConnected((uint)vmPid, GetMessageFlags()));
 					break;
 
 				case EventType.VMDeath:
+					expectedSuspendPolicy = SuspendPolicy.None;
 					var vmde = (VMDeathEvent)evt;
-					// We get two VMDeath events when exiting a Unity game. Ignore the 2nd one
 					if (vmDeathExitCode != null)
 						break;
 					if (vm.Version.AtLeast(2, 27))
@@ -488,52 +554,51 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.ThreadStart:
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
 					var tse = (ThreadStartEvent)evt;
-					InitializeDomain(tse.Thread.Domain);
+					SendMessage(new DelegatePendingMessage(true, () => InitializeDomain(tse.Thread.Domain)));
 					SendMessage(new DelegatePendingMessage(true, () => CreateThread(tse.Thread)));
 					break;
 
 				case EventType.ThreadDeath:
+					expectedSuspendPolicy = SuspendPolicy.All;
 					var tde = (ThreadDeathEvent)evt;
-					// Destroy it before calling IncrementSuspendCount() since it will update thread props
 					SendMessage(new DelegatePendingMessage(true, () => DestroyThread(TryGetThreadMirror(tde))));
-					IncrementSuspendCount();
 					break;
 
 				case EventType.AppDomainCreate:
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
 					var adce = (AppDomainCreateEvent)evt;
 					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(adce.Domain, isNewAppDomainEvent: true)));
 					break;
 
 				case EventType.AppDomainUnload:
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
 					var adue = (AppDomainUnloadEvent)evt;
 					SendMessage(new DelegatePendingMessage(true, () => DestroyAppDomain(adue.Domain)));
 					break;
 
 				case EventType.MethodEntry:
+					expectedSuspendPolicy = SuspendPolicy.None;
 					Debug.Assert(evt.TryGetRequest() == methodEntryEventRequest);
-					if (evt.TryGetRequest() == methodEntryEventRequest) {
+					if (methodEntryEventRequest != null && evt.TryGetRequest() == methodEntryEventRequest) {
 						methodEntryEventRequest.Disable();
+						methodEntryEventRequest = null;
 						// Func-eval doesn't work at first assembly load event for some reason. Should work now though.
 						canInitializeObjectConstants = true;
-						IncrementSuspendCount();
-						ResumeCore();
 					}
 					break;
 
 				case EventType.AssemblyLoad:
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
 					var ale = (AssemblyLoadEvent)evt;
-					InitializeDomain(ale.Assembly.Domain);
+					SendMessage(new DelegatePendingMessage(true, () => InitializeDomain(ale.Assembly.Domain)));
 					// The debugger agent doesn't support netmodules...
 					SendMessage(new DelegatePendingMessage(true, () => CreateModule(ale.Assembly.ManifestModule)));
 					break;
 
 				case EventType.AssemblyUnload:
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
 					var aue = (AssemblyUnloadEvent)evt;
 					var monoModule = TryGetModuleCore_NoCreate(aue.Assembly.ManifestModule);
 					Debug.Assert(monoModule != null);
@@ -548,7 +613,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.Breakpoint:
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
 					var be = (BreakpointEvent)evt;
 					var bpReq = be.TryGetRequest() as BreakpointEventRequest;
 					Debug.Assert(bpReq != null);
@@ -566,18 +631,26 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.Step:
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
 					break;//TODO:
+
+				case EventType.TypeLoad:
+					expectedSuspendPolicy = SuspendPolicy.None;
+					if (typeLoadRequest != null && evt.TryGetRequest() == typeLoadRequest) {
+						typeLoadRequest.Disable();
+						typeLoadRequest = null;
+					}
+					break;
 
 				case EventType.Exception:
 					var ee = (ExceptionEvent)evt;
 					if (ee.TryGetRequest() == uncaughtRequest)
 						isUnhandledException = true;
 					if (IsEvaluating && !isUnhandledException) {
-						ResumeVirtualMachine();
-						return;
+						expectedSuspendPolicy = SuspendPolicy.None;
+						break;
 					}
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
 					thrownException = ee.Exception;
 					SendMessage(new DelegatePendingMessage(true, () => {
 						var req = ee.TryGetRequest() as ExceptionEventRequest;
@@ -596,18 +669,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.UserBreak:
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
 					var ube = (UserBreakEvent)evt;
 					SendMessage(new DbgMessageBreak(TryGetThread(ube.Thread), GetMessageFlags()));
 					break;
 
 				case EventType.UserLog:
-					IncrementSuspendCount();
+					expectedSuspendPolicy = SuspendPolicy.All;
 					var ule = (UserLogEvent)evt;
 					SendMessage(new NormalPendingMessage(this, true, new DbgMessageProgramMessage(ule.Message, TryGetThread(ule.Thread), GetMessageFlags())));
 					break;
 
 				case EventType.VMDisconnect:
+					expectedSuspendPolicy = SuspendPolicy.None;
 					if (vmDeathExitCode == null && TryGetProcessExitCode(out exitCode))
 						vmDeathExitCode = exitCode;
 					if (vmDeathExitCode == null) {
@@ -619,8 +693,49 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				default:
+					expectedSuspendPolicy = SuspendPolicy.None;
 					Debug.Fail($"Unknown event type: {evt.EventType}");
 					break;
+				}
+
+				// If it's the first iteration, don't suspend it if it must be suspended since
+				// it was suspended by the debugger agent.
+				int suspDir;
+				if (expectedSuspendPolicy == SuspendPolicy.All && spolicy == SuspendPolicy.All)
+					suspDir = i == 0 ? 0 : 1;
+				else if (expectedSuspendPolicy == SuspendPolicy.All && spolicy == SuspendPolicy.None)
+					suspDir = 1;
+				else if (expectedSuspendPolicy == SuspendPolicy.None && spolicy == SuspendPolicy.All)
+					suspDir = i == 0 ? -1 : 0;
+				else if (expectedSuspendPolicy == SuspendPolicy.None && spolicy == SuspendPolicy.None)
+					suspDir = 0;
+				else {
+					Debug.Fail("Shouldn't be here");
+					suspDir = 0;
+				}
+				suspCounter += suspDir;
+			}
+			if (suspCounter < 0) {
+				Debug.Assert(suspCounter == -1);
+				while (suspCounter++ < 0) {
+					try {
+						vm.Resume();
+						DecrementSuspendCount();
+					}
+					catch (VMDisconnectedException) {
+						break;
+					}
+				}
+			}
+			else if (suspCounter > 0) {
+				while (suspCounter-- > 0) {
+					try {
+						vm.Suspend();
+						IncrementSuspendCount();
+					}
+					catch (VMDisconnectedException) {
+						break;
+					}
 				}
 			}
 		}
@@ -681,23 +796,27 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 		int nextAppDomainId = 1;
 
-		void InitializeDomain(AppDomainMirror monoAppDomain) {
+		bool InitializeDomain(AppDomainMirror monoAppDomain) {
 			debuggerThread.VerifyAccess();
 			DbgEngineAppDomain engineAppDomain;
 			bool b;
 			lock (lockObj) {
 				if (!appDomainsThatHaveNotBeenInitializedYet.Remove(monoAppDomain))
-					return;
+					return false;
 				b = toEngineAppDomain.TryGetValue(monoAppDomain, out engineAppDomain);
 			}
 			Debug.Assert(b);
 			if (b)
 				engineAppDomain.UpdateName(monoAppDomain.FriendlyName);
-			SendMessage(new DelegatePendingMessage(true, () => CreateModule(monoAppDomain.Corlib.ManifestModule)));
+			return CreateModule(monoAppDomain.Corlib.ManifestModule);
 		}
 
-		void CreateAppDomain(AppDomainMirror monoAppDomain, bool isNewAppDomainEvent) {
+		bool CreateAppDomain(AppDomainMirror monoAppDomain, bool isNewAppDomainEvent) {
 			debuggerThread.VerifyAccess();
+			lock (lockObj) {
+				if (toEngineAppDomain.ContainsKey(monoAppDomain))
+					return false;
+			}
 			int appDomainId = GetAppDomainId(monoAppDomain);
 			var appDomain = dmdRuntime.CreateAppDomain(appDomainId);
 			var internalAppDomain = new DbgMonoDebugInternalAppDomainImpl(appDomain, monoAppDomain);
@@ -708,6 +827,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					appDomainsThatHaveNotBeenInitializedYet.Add(monoAppDomain);
 				toEngineAppDomain.Add(monoAppDomain, engineAppDomain);
 			}
+			return true;
 		}
 
 		void DestroyAppDomain(AppDomainMirror monoAppDomain) {
@@ -966,20 +1086,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					return;
 				Debug.Assert(vm != null);
 				if (vm != null) {
+					InitializeVirtualMachine();
+					// Create the root AppDomain now since we want it to get id=1, which isn't guaranteed
+					// if it's an attach and we wait for AppDomainCreate events.
 					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(vm.RootDomain, isNewAppDomainEvent: !processWasRunningOnAttach)));
-					if (processWasRunningOnAttach) {
-						// It's not possible to get a list of all AppDomains, so just init the main one
-
-						// Make sure corlib is added first, some code (eg. DmdAppDomain) depend on it
-						var corlib = vm.RootDomain.Corlib;
-						SendMessage(new DelegatePendingMessage(true, () => CreateModule(corlib.ManifestModule)));
-						foreach (var assembly in vm.RootDomain.GetAssemblies()) {
-							if (assembly != corlib)
-								SendMessage(new DelegatePendingMessage(true, () => CreateModule(assembly.ManifestModule)));
-						}
-					}
-					foreach (var monoThread in vm.GetThreads())
+					// We need to add all threads even if it's an attach. Unity notifies us of all threads,
+					// except it sends the same thread N times in a row (N = number of threads).
+					foreach (var monoThread in vm.GetThreads()) {
+						SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(monoThread.Domain, isNewAppDomainEvent: !processWasRunningOnAttach)));
+						SendMessage(new DelegatePendingMessage(true, () => CreateModule(monoThread.Domain.Corlib.ManifestModule)));
 						SendMessage(new DelegatePendingMessage(true, () => CreateThread(monoThread)));
+					}
 				}
 			});
 		}

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using Mono.Debugger.Soft;
 
@@ -122,11 +123,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						if (done)
 							return;
 						InvokeResult resTmp;
-						if (isInvokeInstanceMethod)
-							resTmp = obj.EndInvokeMethodWithResult(asyncRes2);
-						else
-							resTmp = method.DeclaringType.EndInvokeMethodWithResult(asyncRes2);
-						debugMessageDispatcher.CancelDispatchQueue(resTmp);
+						try {
+							if (isInvokeInstanceMethod)
+								resTmp = obj.EndInvokeMethodWithResult(asyncRes2);
+							else
+								resTmp = method.DeclaringType.EndInvokeMethodWithResult(asyncRes2);
+							debugMessageDispatcher.CancelDispatchQueue(resTmp);
+						}
+						catch (Exception ex) {
+							debugMessageDispatcher.CancelDispatchQueue(ExceptionDispatchInfo.Capture(ex));
+						}
 					};
 
 					if (isInvokeInstanceMethod)
@@ -143,6 +149,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						catch (CommandException ce) when (ce.ErrorCode == ErrorCode.ERR_NO_INVOCATION) { }
 						throw new TimeoutException();
 					}
+					if (res is ExceptionDispatchInfo exInfo)
+						exInfo.Throw();
 					Debug.Assert(res is InvokeResult);
 					return res as InvokeResult ?? throw new InvalidOperationException();
 				}
