@@ -150,7 +150,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				method = module.ResolveMethod((int)location.Token);
 				if ((object)method == null)
 					return (null, DbgEngineBoundCodeBreakpointMessage.CreateFunctionNotFound(GetFunctionName(location)));
-				monoMethod = MethodCache.GetMethod(method);
+				monoMethod = MethodCache.GetMethod(method, null);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				return (null, DbgEngineBoundCodeBreakpointMessage.CreateFunctionNotFound(GetFunctionName(location)));

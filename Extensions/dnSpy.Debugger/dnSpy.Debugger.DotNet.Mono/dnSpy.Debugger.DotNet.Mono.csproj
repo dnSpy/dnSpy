@@ -89,6 +89,7 @@
     <Compile Include="Impl\ModuleCreator.cs" />
     <Compile Include="Impl\ModuleIdUtils.cs" />
     <Compile Include="Impl\MonoExeFinder.cs" />
+    <Compile Include="Impl\MonoTypeLoader.cs" />
     <Compile Include="Impl\NativeMethods.cs" />
     <Compile Include="Impl\NetUtils.cs" />
     <Compile Include="Impl\ObjectConstants.cs" />

@@ -117,8 +117,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		bool IsEvaluating => funcEvalFactory.IsEvaluating;
 		internal int MethodInvokeCounter => funcEvalFactory.MethodInvokeCounter;
 
-		internal TypeMirror GetType(DmdType type) => MonoDebugTypeCreator.GetType(this, type);
-
 		sealed class EvalTimedOut { }
 
 		internal DbgDotNetValueResult? CheckFuncEval(DbgEvaluationContext context) {
@@ -200,27 +198,33 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			var cancellationToken = CancellationToken.None;
 			foreach (var thread in GetFuncEvalCallThreads(method.AppDomain)) {
-				var res = FuncEvalCallCore_MonoDebug(null, thread, method, obj, arguments, invokeOptions, newObj, cancellationToken);
+				var res = FuncEvalCallCore_MonoDebug(null, null, thread, method, obj, arguments, invokeOptions, newObj, cancellationToken);
 				if (!res.HasError)
 					return res;
 			}
 			return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
-		internal DbgDotNetValueResult FuncEvalCall_MonoDebug(DbgEvaluationContext context, DbgThread thread, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
+		internal DbgDotNetValueResult FuncEvalCall_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
 			debuggerThread.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(context);
 			if (tmp != null)
 				return tmp.Value;
-			return FuncEvalCallCore_MonoDebug(context, thread, method, obj, arguments, invokeOptions, newObj, cancellationToken);
+			return FuncEvalCallCore_MonoDebug(context, frame, frame.Thread, method, obj, arguments, invokeOptions, newObj, cancellationToken);
 		}
 
-		DbgDotNetValueResult FuncEvalCallCore_MonoDebug(DbgEvaluationContext contextOpt, DbgThread thread, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
+		internal MonoTypeLoader TryCreateMonoTypeLoader(DbgEvaluationContext contextOpt, DbgStackFrame frameOpt, CancellationToken cancellationToken) {
+			if (contextOpt == null || frameOpt == null)
+				return null;
+			return new MonoTypeLoaderImpl(this, contextOpt, frameOpt, cancellationToken);
+		}
+
+		DbgDotNetValueResult FuncEvalCallCore_MonoDebug(DbgEvaluationContext contextOpt, DbgStackFrame frameOpt, DbgThread thread, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
 			// ReturnOutThis is only available since 2.35 so we'll special case the common case where a struct ctor
 			// is called (CALL/CALLVIRT). We'll change it to a NEWOBJ and then copy the result to the input 'this' value.
 			if (!newObj && obj is DbgDotNetValueImpl objImpl && method is DmdConstructorInfo ctor && ctor.ReflectedType.IsValueType) {
-				var res = FuncEvalCallCoreReal_MonoDebug(contextOpt, thread, method, null, arguments, invokeOptions, true, cancellationToken);
+				var res = FuncEvalCallCoreReal_MonoDebug(contextOpt, frameOpt, thread, method, null, arguments, invokeOptions, true, cancellationToken);
 				if (res.IsNormalResult) {
 					try {
 						var error = objImpl.ValueLocation.Store(((DbgDotNetValueImpl)res.Value).Value);
@@ -237,10 +241,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return res;
 			}
 			else
-				return FuncEvalCallCoreReal_MonoDebug(contextOpt, thread, method, obj, arguments, invokeOptions, newObj, cancellationToken);
+				return FuncEvalCallCoreReal_MonoDebug(contextOpt, frameOpt, thread, method, obj, arguments, invokeOptions, newObj, cancellationToken);
 		}
 
-		DbgDotNetValueResult FuncEvalCallCoreReal_MonoDebug(DbgEvaluationContext contextOpt, DbgThread thread, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
+		DbgDotNetValueResult FuncEvalCallCoreReal_MonoDebug(DbgEvaluationContext contextOpt, DbgStackFrame frameOpt, DbgThread thread, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
 			debuggerThread.VerifyAccess();
 			Debug.Assert(!newObj || method.IsConstructor);
 
@@ -257,9 +261,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			MethodMirror func;
 			DmdMethodBase calledMethod;
 			if ((funcEvalOptions & FuncEvalOptions.Virtual) == 0 || vm.Version.AtLeast(2, 37))
-				func = MethodCache.GetMethod(calledMethod = method);
+				func = MethodCache.GetMethod(calledMethod = method, TryCreateMonoTypeLoader(contextOpt, frameOpt, cancellationToken));
 			else {
-				func = MethodCache.GetMethod(calledMethod = FindOverloadedMethod(obj?.Type, method));
+				func = MethodCache.GetMethod(calledMethod = FindOverloadedMethod(obj?.Type, method), TryCreateMonoTypeLoader(contextOpt, frameOpt, cancellationToken));
 				funcEvalOptions &= ~FuncEvalOptions.Virtual;
 			}
 			if (!vm.Version.AtLeast(2, 15) && calledMethod.DeclaringType.ContainsGenericParameters)
@@ -426,7 +430,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						return new DbgCreateMonoValueResult(evalRes.ErrorMessage);
 					var newValue = evalRes.Value;
 					if (targetType.IsEnum && !(newValue is EnumMirror))
-						newValue = MonoVirtualMachine.CreateEnumMirror(GetType(targetType), (PrimitiveValue)newValue);
+						newValue = MonoVirtualMachine.CreateEnumMirror(MonoDebugTypeCreator.GetType(this, targetType, TryCreateMonoTypeLoader(context, frame, cancellationToken)), (PrimitiveValue)newValue);
 					newValue = BoxIfNeeded(monoThread.Domain, newValue, targetType, newValueType);
 					return new DbgCreateMonoValueResult(newValue);
 				}

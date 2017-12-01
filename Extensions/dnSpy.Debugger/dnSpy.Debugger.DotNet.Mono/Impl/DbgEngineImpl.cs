@@ -1254,7 +1254,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			// a generic TypeMirror.
 			if ((object)couldBeRealTypeOpt != null && !vm.Version.AtLeast(2, 15)) {
 				try {
-					MonoDebugTypeCreator.GetType(this, couldBeRealTypeOpt);
+					MonoDebugTypeCreator.GetType(this, couldBeRealTypeOpt, null);
 				}
 				catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
 				}

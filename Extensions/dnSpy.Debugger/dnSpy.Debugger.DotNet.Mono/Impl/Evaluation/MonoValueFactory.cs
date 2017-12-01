@@ -23,7 +23,7 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	static class MonoValueFactory {
-		static TypeMirror GetType(DbgEngineImpl engine, DmdType type) => MonoDebugTypeCreator.GetType(engine, type);
+		static TypeMirror GetType(DbgEngineImpl engine, DmdType type) => MonoDebugTypeCreator.GetType(engine, type, null);
 
 		public static Value TryCreateSyntheticValue(DbgEngineImpl engine, AppDomainMirror appDomain, DmdType fieldType, object constant) {
 			if (constant == null)

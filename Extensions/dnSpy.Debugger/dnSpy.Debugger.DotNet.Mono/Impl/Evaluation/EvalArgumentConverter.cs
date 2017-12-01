@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			this.reflectionAppDomain = reflectionAppDomain;
 		}
 
-		TypeMirror GetType(DmdType type) => MonoDebugTypeCreator.GetType(engine, type);
+		TypeMirror GetType(DmdType type) => MonoDebugTypeCreator.GetType(engine, type, null);
 
 		public EvalArgumentResult Convert(object value, DmdType defaultType, out DmdType type) {
 			var vm = engine.MonoVirtualMachine;
@@ -372,7 +372,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				monoElementType.GetTypeObject(),
 				new PrimitiveValue(engine.MonoVirtualMachine, ElementType.I4, length),
 			};
-			var result = funcEval.CallMethod(MethodCache.GetMethod(methodCreateInstance), null, args, FuncEvalOptions.None);
+			var result = funcEval.CallMethod(MethodCache.GetMethod(methodCreateInstance, null), null, args, FuncEvalOptions.None);
 			return EvalArgumentResult.Create(result);
 		}
 

@@ -26,21 +26,30 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	struct MonoDebugTypeCreator {
 		readonly DbgEngineImpl engine;
 		readonly TypeCache typeCache;
+		readonly MonoTypeLoader monoTypeLoader;
 		int recursionCounter;
 
-		public static TypeMirror GetType(DbgEngineImpl engine, DmdType type) {
+		public static TypeMirror GetType(DbgEngineImpl engine, DmdType type, MonoTypeLoader monoTypeLoader) {
 			var typeCache = TypeCache.GetOrCreate(type.AppDomain);
 			if (typeCache.TryGetType(type, out var monoType))
 				return monoType;
 
-			var info = new MonoDebugTypeCreator(engine, typeCache).Create(type);
+			var info = new MonoDebugTypeCreator(engine, typeCache, monoTypeLoader).Create(type);
 			monoType = info.type;
 			return monoType;
 		}
 
-		MonoDebugTypeCreator(DbgEngineImpl engine, TypeCache typeCache) {
+		public static TypeMirror TryGetType(DmdType type) {
+			var typeCache = TypeCache.GetOrCreate(type.AppDomain);
+			if (typeCache.TryGetType(type, out var monoType))
+				return monoType;
+			return null;
+		}
+
+		MonoDebugTypeCreator(DbgEngineImpl engine, TypeCache typeCache, MonoTypeLoader monoTypeLoader) {
 			this.engine = engine;
 			this.typeCache = typeCache;
+			this.monoTypeLoader = monoTypeLoader;
 			recursionCounter = 0;
 		}
 
@@ -142,17 +151,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return result;
 		}
 
-		static TypeMirror TryResolveType(TypeMirror monoType, DmdType realType) {
+		TypeMirror TryResolveType(TypeMirror monoType, DmdType realType) {
 			var fullName = realType.FullName;
 			if (fullName == null && realType.IsGenericType)
 				fullName = realType.GetGenericTypeDefinition().FullName;
 			if (string.IsNullOrEmpty(fullName))
 				return null;
 			// This fails if fullName is a generic instantiated type and at least one generic argument
-			// is a type in another assembly, eg. List<Mytype>.
-			//TODO: func-eval could be used to create the type:
-			//		Call(monoType.Assembly.GetAssemblyObject(), method_GetType, fullName)
-			return monoType.Module.Assembly.GetType(fullName);
+			// is a type in another assembly, eg. List<MyType>.
+			var result = monoType.Module.Assembly.GetType(fullName);
+			if (result != null)
+				return result;
+			return monoTypeLoader?.Load(monoType.Assembly, fullName);
 		}
 	}
 }
