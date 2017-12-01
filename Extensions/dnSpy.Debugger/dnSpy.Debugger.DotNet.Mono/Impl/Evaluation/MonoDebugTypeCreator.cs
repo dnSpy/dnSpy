@@ -35,8 +35,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 			var info = new MonoDebugTypeCreator(engine, typeCache).Create(type);
 			monoType = info.type;
-			if (!info.containsGenericParameters)
-				typeCache.Add(monoType, type);
 			return monoType;
 		}
 

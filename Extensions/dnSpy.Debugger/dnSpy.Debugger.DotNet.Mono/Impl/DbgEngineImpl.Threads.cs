@@ -24,10 +24,13 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
+using dnSpy.Debugger.DotNet.Mono.Properties;
 using Mono.Debugger.Soft;
+using MDS = Mono.Debugger.Soft;
 using ST = System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
@@ -258,6 +261,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void DestroyThread(ThreadMirror monoThread) {
 			debuggerThread.VerifyAccess();
+			if (monoThread == null)
+				return;
 			DbgEngineThread engineThread;
 			lock (lockObj) {
 				if (toEngineThread.TryGetValue(monoThread, out engineThread))
@@ -327,12 +332,74 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return new DbgEngineStackWalkerImpl(dbgDotNetCodeLocationFactory, this, threadData.MonoThread, thread);
 		}
 
-		public override void SetIP(DbgThread thread, DbgCodeLocation location) {
-			//TODO:
+		public override void SetIP(DbgThread thread, DbgCodeLocation location) =>
+			MonoDebugThread(() => SetIP_MonoDebug(thread, location));
+
+		void SetIP_MonoDebug(DbgThread thread, DbgCodeLocation location) {
+			debuggerThread.VerifyAccess();
+			var threadData = TryGetThreadData(thread);
+			if (threadData == null || !vm.Version.AtLeast(2, 29) || !(location is IDbgDotNetCodeLocation loc)) {
+				SendMessage(new DbgMessageSetIPComplete(thread, false, dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotSetNextStatement, GetMessageFlags()));
+				return;
+			}
+			Debug.Assert(CanSetIP(thread, location));
+
+			try {
+				var error = SetIPCore_MonoDebug(threadData, loc, out bool framesInvalidated);
+				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, error, GetMessageFlags()));
+			}
+			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+				SendMessage(new DbgMessageSetIPComplete(thread, true, dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotSetNextStatement, GetMessageFlags()));
+			}
 		}
 
-		public override bool CanSetIP(DbgThread thread, DbgCodeLocation location) {
-			return false;//TODO:
+		string SetIPCore_MonoDebug(DbgThreadData threadData, IDbgDotNetCodeLocation location, out bool framesInvalidated) {
+			debuggerThread.VerifyAccess();
+			framesInvalidated = false;
+
+			if (!VerifySetIPLocation(threadData, location, out var monoMethod, out var frame))
+				return dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotSetNextStatement;
+
+			framesInvalidated = true;
+			threadData.MonoThread.SetIP(monoMethod, location.Offset);
+			currentFrameOffset[frame] = location.Offset;
+			return null;
 		}
+
+		internal uint GetFrameOffset(MDS.StackFrame frame) {
+			debuggerThread.VerifyAccess();
+			if (currentFrameOffset.TryGetValue(frame, out var offset))
+				return offset;
+			return (uint)frame.ILOffset;
+		}
+
+		bool VerifySetIPLocation(DbgThreadData threadData, IDbgDotNetCodeLocation location, out MethodMirror monoMethod, out MDS.StackFrame frame) {
+			monoMethod = null;
+			frame = null;
+			var frames = threadData.MonoThread.GetFrames();
+			if (frames.Length == 0)
+				return false;
+			frame = frames[0];
+			monoMethod = frame.Method;
+			if (monoMethod.MetadataToken != (int)location.Token)
+				return false;
+			var module = TryGetModule(monoMethod.DeclaringType.Module);
+			if (module == null)
+				return false;
+
+			if (location.DbgModule != null) {
+				if (location.DbgModule != module)
+					return false;
+			}
+			else {
+				if (TryGetModuleId(module) != location.Module)
+					return false;
+			}
+
+			return true;
+		}
+
+		public override bool CanSetIP(DbgThread thread, DbgCodeLocation location) =>
+			!isUnhandledException && location is IDbgDotNetCodeLocation && vm.Version.AtLeast(2, 29);
 	}
 }

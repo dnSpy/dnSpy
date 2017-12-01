@@ -214,6 +214,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not set the next statement..
+        /// </summary>
+        public static string Error_CouldNotSetNextStatement {
+            get {
+                return ResourceManager.GetString("Error_CouldNotSetNextStatement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file doesn&apos;t exist.
         /// </summary>
         public static string Error_FileDoesNotExist {

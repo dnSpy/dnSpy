@@ -103,7 +103,8 @@ namespace dndbg.Engine {
 
 		static string GetFullName(string filename) {
 			try {
-				return Path.GetFullPath(filename);
+				if (!string.IsNullOrEmpty(filename))
+					return Path.GetFullPath(filename);
 			}
 			catch {
 			}

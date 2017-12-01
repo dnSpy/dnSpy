@@ -216,4 +216,7 @@
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
     <value>Member can't be accessed due to runtime limitations</value>
   </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>Could not set the next statement.</value>
+  </data>
 </root>

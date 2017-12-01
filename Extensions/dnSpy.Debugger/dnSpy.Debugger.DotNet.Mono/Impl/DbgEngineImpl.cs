@@ -42,6 +42,7 @@ using dnSpy.Debugger.DotNet.Mono.CallStack;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Mono.Properties;
 using Mono.Debugger.Soft;
+using MDS = Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl : DbgEngine {
@@ -73,6 +74,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly Dictionary<ThreadMirror, DbgEngineThread> toEngineThread;
 		readonly Dictionary<AssemblyMirror, List<ModuleMirror>> toAssemblyModules;
 		readonly HashSet<AppDomainMirror> appDomainsThatHaveNotBeenInitializedYet;
+		readonly Dictionary<MDS.StackFrame, uint> currentFrameOffset;
 		internal readonly StackFrameData stackFrameData;
 		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
 		readonly FuncEvalFactory funcEvalFactory;
@@ -110,6 +112,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			toEngineThread = new Dictionary<ThreadMirror, DbgEngineThread>();
 			toAssemblyModules = new Dictionary<AssemblyMirror, List<ModuleMirror>>();
 			appDomainsThatHaveNotBeenInitializedYet = new HashSet<AppDomainMirror>();
+			currentFrameOffset = new Dictionary<MDS.StackFrame, uint>();
 			stackFrameData = new StackFrameData();
 			dotNetValuesToCloseOnContinue = new List<DbgDotNetValueImpl>();
 			execOnPauseList = new List<Action>();
@@ -498,16 +501,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					IncrementSuspendCount();
 					break;
 
-					ThreadMirror TryGetThreadMirror(ThreadDeathEvent tde2) {
-						try {
-							return tde2.Thread;
-						}
-						catch (ObjectCollectedException) {
-							Debug.Assert(!vm.Version.AtLeast(2, 2));
-							return null;
-						}
-					}
-
 				case EventType.AppDomainCreate:
 					IncrementSuspendCount();
 					var adce = (AppDomainCreateEvent)evt;
@@ -629,6 +622,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					Debug.Fail($"Unknown event type: {evt.EventType}");
 					break;
 				}
+			}
+		}
+
+		ThreadMirror TryGetThreadMirror(ThreadDeathEvent tde2) {
+			try {
+				return tde2.Thread;
+			}
+			catch (ObjectCollectedException) {
+				Debug.Assert(!vm.Version.AtLeast(2, 2));
+				return null;
 			}
 		}
 
@@ -1035,7 +1038,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		void ResumeVirtualMachine() {
+			debuggerThread.VerifyAccess();
 			try {
+				currentFrameOffset.Clear();
 				vm.Resume();
 			}
 			catch (VMNotSuspendedException) {
