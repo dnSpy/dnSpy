@@ -36,6 +36,11 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		public DbgRuntime Runtime => Thread.Runtime;
 
 		/// <summary>
+		/// Gets the AppDomain or null if it's unknown
+		/// </summary>
+		public DbgAppDomain AppDomain => Module?.AppDomain ?? Thread.AppDomain;
+
+		/// <summary>
 		/// Gets the thread
 		/// </summary>
 		public abstract DbgThread Thread { get; }

@@ -140,7 +140,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var frame = dbgCallStackService.Value.ActiveFrame;
 			if (frame == null)
 				return (null, null);
-			var language = dbgLanguageService.Value.GetCurrentLanguage(frame.Thread.Runtime.RuntimeKindGuid);
+			var language = dbgLanguageService.Value.GetCurrentLanguage(frame.Runtime.RuntimeKindGuid);
 			return (language, frame);
 		}
 

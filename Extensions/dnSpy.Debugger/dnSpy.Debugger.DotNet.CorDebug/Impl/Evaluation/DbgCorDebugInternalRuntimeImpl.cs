@@ -859,7 +859,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var corException = TryGetException(frame);
 			if (corException == null)
 				return null;
-			var reflectionAppDomain = frame.Thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
+			var reflectionAppDomain = frame.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
 			return engine.CreateDotNetValue_CorDebug(corException, reflectionAppDomain, tryCreateStrongHandle: true);
 		}
 
@@ -880,7 +880,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var corStowedException = TryGetStowedException(frame);
 			if (corStowedException == null)
 				return null;
-			var reflectionAppDomain = frame.Thread.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
+			var reflectionAppDomain = frame.AppDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
 			return engine.CreateDotNetValue_CorDebug(corStowedException, reflectionAppDomain, tryCreateStrongHandle: true);
 		}
 

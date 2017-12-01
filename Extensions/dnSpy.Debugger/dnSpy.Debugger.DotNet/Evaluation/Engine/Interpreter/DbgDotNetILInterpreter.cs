@@ -131,7 +131,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			var debuggerRuntime = debuggerRuntimeFactory.Create(context.Runtime);
 			debuggerRuntime.Runtime.Dispatcher.VerifyAccess();
 
-			var appDomain = frame.Thread.AppDomain;
+			var appDomain = frame.AppDomain;
 			if (appDomain == null)
 				throw new ArgumentException("No AppDomain available");
 
