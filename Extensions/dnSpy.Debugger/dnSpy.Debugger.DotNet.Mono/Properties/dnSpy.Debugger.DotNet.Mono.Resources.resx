@@ -219,4 +219,7 @@
   <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
     <value>The type has not been loaded yet.</value>
   </data>
+  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
+    <value>Process is paused and _waiting for the debugger</value>
+  </data>
 </root>

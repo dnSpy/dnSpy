@@ -81,7 +81,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly List<Action> execOnPauseList;
 		readonly Dictionary<StepEventRequest, StepperInfo> toStepper;
 		bool wasAttach;
-		bool wasStartDebuggingOptions;
 		bool processWasRunningOnAttach;
 		VirtualMachine vm;
 		int vmPid;
@@ -260,7 +259,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				int expectedPid;
 				string filename;
 				if (options is MonoStartDebuggingOptions startOptions) {
-					wasStartDebuggingOptions = true;
 					connectionAddress = "127.0.0.1";
 					connectionPort = startOptions.ConnectionPort;
 					connectionTimeout = startOptions.ConnectionTimeout;
@@ -298,7 +296,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 				else if (options is MonoConnectStartDebuggingOptionsBase connectOptions &&
 					(connectOptions is MonoConnectStartDebuggingOptions || connectOptions is UnityConnectStartDebuggingOptions)) {
-					wasStartDebuggingOptions = false;
 					connectionAddress = connectOptions.Address;
 					if (string.IsNullOrWhiteSpace(connectionAddress))
 						connectionAddress = "127.0.0.1";
@@ -307,6 +304,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					filename = null;
 					expectedPid = -1;
 					wasAttach = true;
+					if (connectOptions is MonoConnectStartDebuggingOptions)
+						processWasRunningOnAttach = !((MonoConnectStartDebuggingOptions)connectOptions).ProcessIsSuspended;
 				}
 				else {
 					// No need to localize it, should be unreachable
@@ -485,7 +484,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			foreach (var e in eventSet.Events) {
 				switch (e.EventType) {
 				case EventType.VMStart:
-					spolicy = wasStartDebuggingOptions ? SuspendPolicy.All : SuspendPolicy.None;
+					spolicy = processWasRunningOnAttach ? SuspendPolicy.None : SuspendPolicy.All;
 					break;
 
 				case EventType.VMDeath:

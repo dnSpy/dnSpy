@@ -29,6 +29,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetMonoConnect;
 		public override string DisplayName => "Mono (" + dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_Connect_To_Process + ")";
 
+		public bool ProcessIsSuspended {
+			get => processIsSuspended;
+			set {
+				if (processIsSuspended != value) {
+					processIsSuspended = value;
+					OnPropertyChanged(nameof(ProcessIsSuspended));
+				}
+			}
+		}
+		bool processIsSuspended;
+
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var dncOptions = options as MonoConnectStartDebuggingOptions;
 			if (dncOptions == null)
@@ -50,10 +61,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		void Initialize(MonoConnectStartDebuggingOptions options) {
 			base.Initialize(options);
+			ProcessIsSuspended = options.ProcessIsSuspended;
 		}
 
 		public override StartDebuggingOptionsInfo GetOptions() {
 			var options = GetOptions(new MonoConnectStartDebuggingOptions());
+			options.ProcessIsSuspended = ProcessIsSuspended;
 			return new StartDebuggingOptionsInfo(options);
 		}
 	}
