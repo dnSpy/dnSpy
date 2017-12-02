@@ -127,19 +127,19 @@
     <value>中断于(_B)</value>
   </data>
   <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>端口</value>
+    <value>端口(_P)</value>
   </data>
   <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
     <value>连接</value>
   </data>
   <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>IP 地址</value>
+    <value>IP地址</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>工作目录(_W)</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>创建进程</value>
+    <value>CreateProcess</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
     <value>不要中断</value>
@@ -204,16 +204,22 @@
   <data name="StackFrame_NativeTransition" xml:space="preserve">
     <value>Native Transition</value>
   </data>
-  <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
-    <value>This runtime doesn't support creating generic methods</value>
-  </data>
-  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Process is paused and _waiting for the debugger</value>
+  <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
+    <value>This runtime doesn't support calling generic methods</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
     <value>It's not possible to write to 'this'</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
     <value>Member can't be accessed due to runtime limitations</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>无法设置下一条语句。</value>
+  </data>
+  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
+    <value>The type has not been loaded yet.</value>
+  </data>
+  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
+    <value>Process is paused and _waiting for the debugger</value>
   </data>
 </root>

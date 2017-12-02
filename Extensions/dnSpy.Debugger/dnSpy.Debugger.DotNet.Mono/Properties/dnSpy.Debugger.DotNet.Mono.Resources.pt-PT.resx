@@ -204,16 +204,22 @@
   <data name="StackFrame_NativeTransition" xml:space="preserve">
     <value>Transição Nativa</value>
   </data>
-  <data name="Error_RuntimeDoesNotSupportCreatingGenericMethods" xml:space="preserve">
-    <value>Este tempo de execução não suporta criar métodos genéricos</value>
-  </data>
-  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Process is paused and _waiting for the debugger</value>
+  <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
+    <value>This runtime doesn't support calling generic methods</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
     <value>It's not possible to write to 'this'</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
     <value>Member can't be accessed due to runtime limitations</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>Não foi possível definir a próxima instrução.</value>
+  </data>
+  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
+    <value>The type has not been loaded yet.</value>
+  </data>
+  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
+    <value>Process is paused and _waiting for the debugger</value>
   </data>
 </root>
