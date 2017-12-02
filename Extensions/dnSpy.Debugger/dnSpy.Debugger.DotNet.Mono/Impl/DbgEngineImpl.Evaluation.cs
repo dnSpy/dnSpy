@@ -189,7 +189,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return 1;
 			if (a.IsMain)
 				return 2;
-			if (a.Name != PredefinedThreadKinds.Finalizer)
+			if (a.Kind != PredefinedThreadKinds.Finalizer)
 				return 3;
 			return int.MaxValue;
 		}
@@ -253,7 +253,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			if (!vm.Version.AtLeast(2, 24) && method is DmdMethodInfo && method.IsConstructedGenericMethod)
-				return new DbgDotNetValueResult(dnSpy_Debugger_DotNet_Mono_Resources.Error_RuntimeDoesNotSupportCreatingGenericMethods);
+				return new DbgDotNetValueResult(dnSpy_Debugger_DotNet_Mono_Resources.Error_RuntimeDoesNotSupportCallingGenericMethods);
 
 			var funcEvalOptions = FuncEvalOptions.None;
 			if ((invokeOptions & DbgDotNetInvokeOptions.NonVirtual) == 0 && !method.IsStatic && (method.IsVirtual || method.IsAbstract))

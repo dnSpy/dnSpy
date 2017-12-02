@@ -70,6 +70,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if (!engine.TryGetMonoModule(type.Module.GetDebuggerModule() ?? throw new InvalidOperationException(), out var monoModule))
 					throw new InvalidOperationException();
 				Debug.Assert((type.MetadataToken >> 24) == 0x02);
+				//TODO: This can sometimes crash Unity's old mono fork
 				//TODO: It's possible to resolve types, but it's an internal method and it requires a method in the module
 				result = (monoModule.Assembly.GetType(type.FullName, false, false), false);
 				if (result.type == null)

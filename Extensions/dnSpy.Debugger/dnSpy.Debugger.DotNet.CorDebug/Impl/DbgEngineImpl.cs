@@ -436,6 +436,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						foreach (var kv in toEngineModule.ToArray()) {
 							if (kv.Value.Module.AppDomain == appDomain) {
 								toEngineModule.Remove(kv.Key);
+								kv.Value.Remove(GetMessageFlags());
 								toDynamicModuleHelper.Remove(kv.Key);
 							}
 						}

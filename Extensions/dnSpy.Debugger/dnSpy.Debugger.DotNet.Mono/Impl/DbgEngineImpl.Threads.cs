@@ -117,8 +117,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			public MethodMirror ManagedIdGetter;
 		}
 		ulong? GetManagedId(ThreadMirror thread) {
+			// Too many problems with Unity, its Mono fork is old and buggy and sometimes crashes.
+			// The managed ID isn't that important so don't try to get it.
+			bool dontFuncEval = true;
+			if (dontFuncEval)
+				return null;
+
 			var appDomain = TryGetEngineAppDomain(thread.Domain)?.AppDomain;
-			Debug.Assert(appDomain != null);
 			if (appDomain != null) {
 				try {
 					var state = appDomain.GetOrCreateData<GetManagedIdState>();

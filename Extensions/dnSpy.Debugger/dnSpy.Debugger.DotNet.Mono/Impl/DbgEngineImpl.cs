@@ -422,7 +422,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void EnableEvent(EventType evt, SuspendPolicy suspendPolicy) => vm.EnableEvents(new[] { evt }, suspendPolicy);
 
-		TypeLoadEventRequest typeLoadRequest;
 		void InitializeVirtualMachine() {
 			try {
 				EnableEvent(EventType.AppDomainCreate, SuspendPolicy.All);
@@ -430,11 +429,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				EnableEvent(EventType.AssemblyLoad, SuspendPolicy.All);
 				EnableEvent(EventType.AssemblyUnload, SuspendPolicy.All);
 				EnableEvent(EventType.ThreadStart, SuspendPolicy.All);
-				// If we don't do this we won't get AppDomain/Assembly/Thread create events
-				if (StartKind == DbgStartKind.Attach && monoDebugRuntimeKind == MonoDebugRuntimeKind.Unity) {
-					typeLoadRequest = vm.CreateTypeLoadRequest();
-					typeLoadRequest.Enable();
-				}
+				EnableEvent(EventType.TypeLoad, SuspendPolicy.All);
 				EnableEvent(EventType.ThreadDeath, SuspendPolicy.None);
 
 				if (vm.Version.AtLeast(2, 5)) {
@@ -464,13 +459,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void OnDebuggerEvents(EventSet eventSet) {
 			try {
+				eventHandlerRecursionCounter++;
 				OnDebuggerEventsCore(eventSet);
 			}
 			catch (SocketException) {
 			}
 			catch (VMDisconnectedException) {
 			}
+			finally {
+				eventHandlerRecursionCounter--;
+			}
 		}
+		int eventHandlerRecursionCounter;
 
 		SuspendPolicy GetSuspendPolicy(EventSet eventSet) {
 			var spolicy = eventSet.SuspendPolicy;
@@ -523,6 +523,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (gotVMDisconnect)
 				return;
 
+			bool wasRunning = suspendCount == 0;
 			var spolicy = GetSuspendPolicy(eventSet);
 			if (spolicy == SuspendPolicy.All)
 				IncrementSuspendCount();
@@ -531,7 +532,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			int suspCounter = 0;
 			for (int i = 0; i < eventSet.Events.Length; i++) {
 				var evt = eventSet.Events[i];
-
 				SuspendPolicy expectedSuspendPolicy;
 				switch (evt.EventType) {
 				case EventType.VMStart:
@@ -601,8 +601,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					expectedSuspendPolicy = SuspendPolicy.All;
 					var aue = (AssemblyUnloadEvent)evt;
 					var monoModule = TryGetModuleCore_NoCreate(aue.Assembly.ManifestModule);
-					Debug.Assert(monoModule != null);
-					if (monoModule != null) {
+					if (monoModule == null)
+						expectedSuspendPolicy = SuspendPolicy.None;
+					else {
 						foreach (var module in GetAssemblyModules(monoModule)) {
 							if (!TryGetModuleData(module, out var data))
 								continue;
@@ -636,10 +637,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 				case EventType.TypeLoad:
 					expectedSuspendPolicy = SuspendPolicy.None;
-					if (typeLoadRequest != null && evt.TryGetRequest() == typeLoadRequest) {
-						typeLoadRequest.Disable();
-						typeLoadRequest = null;
-					}
+					var tle = (TypeLoadEvent)evt;
+
+					// Add it to the cache
+					var reflectionAppDomain = TryGetEngineAppDomain(tle.Type.Assembly.Domain)?.AppDomain.GetReflectionAppDomain();
+					if (reflectionAppDomain != null)
+						GetReflectionType(reflectionAppDomain, tle.Type, null);
+
+					InitializeBreakpoints(tle.Type);
 					break;
 
 				case EventType.Exception:
@@ -715,6 +720,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 				suspCounter += suspDir;
 			}
+
 			if (suspCounter < 0) {
 				Debug.Assert(suspCounter == -1);
 				while (suspCounter++ < 0) {
@@ -738,7 +744,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 				}
 			}
+			if (wasRunning && pendingRunCore && eventHandlerRecursionCounter == 1) {
+				pendingRunCore = false;
+				RunCore();
+			}
 		}
+		bool pendingRunCore;
 
 		ThreadMirror TryGetThreadMirror(ThreadDeathEvent tde2) {
 			try {
@@ -769,7 +780,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		string TryGetExceptionName(ObjectMirror exObj) {
 			var reflectionAppDomain = TryGetEngineAppDomain(exObj.Domain)?.AppDomain.GetReflectionAppDomain();
-			Debug.Assert(reflectionAppDomain != null);
 			if (reflectionAppDomain == null)
 				return exObj.Type.FullName;
 			var type = GetReflectionType(reflectionAppDomain, exObj.Type, null);
@@ -785,13 +795,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			bool b;
 			lock (lockObj)
 				b = toEngineAppDomain.TryGetValue(monoAppDomain, out engineAppDomain);
-			Debug.Assert(b);
+			if (!b) {
+				//TODO: This sometimes fails
+			}
 			return engineAppDomain;
 		}
 
 		int GetAppDomainId(AppDomainMirror monoAppDomain) {
 			debuggerThread.VerifyAccess();
-			//TODO: Get AD obj, func-eval get_Id()
+			// We don't func-eval because of Unity func-eval crashes, just use an ID that's probably correct
 			return nextAppDomainId++;
 		}
 		int nextAppDomainId = 1;
@@ -844,8 +856,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 							toEngineThread.Remove(kv.Key);
 					}
 					foreach (var kv in toEngineModule.ToArray()) {
-						if (kv.Value.Module.AppDomain == appDomain)
+						if (kv.Value.Module.AppDomain == appDomain) {
 							toEngineModule.Remove(kv.Key);
+							kv.Value.Remove(GetMessageFlags());
+						}
 					}
 				}
 			}
@@ -889,7 +903,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (TryGetModuleCore_NoCreate(monoModule) != null)
 				return false;
 
-			var appDomain = TryGetEngineAppDomain(monoModule.Assembly.Domain).AppDomain;
+			var appDomain = TryGetEngineAppDomain(monoModule.Assembly.Domain)?.AppDomain;
+			if (appDomain == null)
+				return false;
+
 			var moduleData = new DbgModuleData(this, monoModule);
 			var engineModule = ModuleCreator.CreateModule(this, objectFactory, appDomain, monoModule, moduleOrder++, moduleData);
 			moduleData.ModuleId = ModuleIdUtils.Create(engineModule.Module, monoModule);
@@ -1132,8 +1149,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					runCounter++;
 				if (SendNextMessage())
 					return;
-				if (IsEvaluating)
+				if (IsEvaluating) {
+					pendingRunCore = true;
 					return;
+				}
 				ResumeCore();
 			}
 			catch (Exception ex) {
@@ -1209,7 +1228,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (exValue == null)
 				return null;
 			var reflectionAppDomain = TryGetEngineAppDomain(exValue.Domain)?.AppDomain.GetReflectionAppDomain();
-			Debug.Assert(reflectionAppDomain != null);
 			if (reflectionAppDomain == null)
 				return null;
 			var exceptionType = GetReflectionType(reflectionAppDomain, exValue.Type, null);
@@ -1218,9 +1236,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
+			debuggerThread.Terminate();
 			try {
 				if (!gotVMDisconnect)
 					vm?.Detach();
+			}
+			catch {
+			}
+			try {
+				vm?.ForceDisconnect();
 			}
 			catch {
 			}

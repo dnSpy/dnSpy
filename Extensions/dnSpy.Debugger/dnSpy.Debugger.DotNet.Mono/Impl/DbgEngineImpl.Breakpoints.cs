@@ -29,12 +29,13 @@ using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
+using dnSpy.Debugger.DotNet.Mono.Properties;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
 		sealed class BoundBreakpointData : IDisposable {
-			public BreakpointEventRequest Breakpoint { get; }
+			public BreakpointEventRequest Breakpoint { get; set; }
 			public ModuleId Module { get; }
 			public DbgEngineBoundCodeBreakpoint EngineBoundCodeBreakpoint { get; set; }
 			public DbgEngineImpl Engine { get; }
@@ -112,35 +113,130 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				if (dict.Count == 0)
 					return;
 
-				using (TempBreak()) {
-					var createdBreakpoints = new List<DbgBoundCodeBreakpointInfo<BoundBreakpointData>>();
-					foreach (var module in modules) {
-						if (!TryGetModuleData(module, out var data))
-							continue;
-						if (dict.TryGetValue(data.ModuleId, out var moduleLocations)) {
-							var reflectionModule = module.GetReflectionModule();
-							foreach (var location in moduleLocations) {
-								var info = CreateBreakpoint(reflectionModule, location);
-								const ulong address = DbgObjectFactory.BoundBreakpointNoAddress;
-								var msg = info.error;
-								var bpData = new BoundBreakpointData(this, location.Module, info.bp);
-								createdBreakpoints.Add(new DbgBoundCodeBreakpointInfo<BoundBreakpointData>(location, module, address, msg, bpData));
-							}
-						}
-					}
-					var boundBreakpoints = objectFactory.Create(createdBreakpoints.ToArray());
-					foreach (var ebp in boundBreakpoints) {
-						var bpData = ebp.BoundCodeBreakpoint.GetData<BoundBreakpointData>();
-						bpData.EngineBoundCodeBreakpoint = ebp;
-						if (bpData.Breakpoint != null)
-							bpData.Breakpoint.Tag = bpData;
-					}
+				foreach (var module in modules) {
+					if (!TryGetModuleData(module, out var data))
+						continue;
+					if (dict.TryGetValue(data.ModuleId, out var moduleLocations))
+						EnableBreakpoints(data.MonoModule, module, moduleLocations);
 				}
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.Message);
 				dbgManager.ShowError(ex.Message);
 			}
+		}
+
+		void EnableBreakpoints(ModuleMirror monoModule, DbgModule module, List<DbgDotNetCodeLocation> moduleLocations) {
+			debuggerThread.VerifyAccess();
+			if (moduleLocations.Count == 0)
+				return;
+
+			var createdBreakpoints = new DbgBoundCodeBreakpointInfo<BoundBreakpointData>[moduleLocations.Count];
+			var reflectionModule = module.GetReflectionModule();
+			for (int i = 0; i < createdBreakpoints.Length; i++) {
+				var location = moduleLocations[i];
+				const ulong address = DbgObjectFactory.BoundBreakpointNoAddress;
+
+				DbgEngineBoundCodeBreakpointMessage msg;
+				var method = reflectionModule.ResolveMethod((int)location.Token, DmdResolveOptions.None);
+				if ((object)method == null)
+					msg = DbgEngineBoundCodeBreakpointMessage.CreateFunctionNotFound(GetFunctionName(location));
+				else
+					msg = DbgEngineBoundCodeBreakpointMessage.CreateCustomWarning(dnSpy_Debugger_DotNet_Mono_Resources.TypeHasNotBeenLoadedYet);
+				var bpData = new BoundBreakpointData(this, location.Module, null);
+				createdBreakpoints[i] = new DbgBoundCodeBreakpointInfo<BoundBreakpointData>(location, module, address, msg, bpData);
+			}
+
+			var boundBreakpoints = objectFactory.Create(createdBreakpoints.ToArray());
+			foreach (var ebp in boundBreakpoints) {
+				var bpData = ebp.BoundCodeBreakpoint.GetData<BoundBreakpointData>();
+				bpData.EngineBoundCodeBreakpoint = ebp;
+				if (bpData.Breakpoint != null)
+					bpData.Breakpoint.Tag = bpData;
+			}
+
+			for (int i = 0; i < createdBreakpoints.Length; i++) {
+				var location = moduleLocations[i];
+				var method = reflectionModule.ResolveMethod((int)location.Token, DmdResolveOptions.None);
+				if ((object)method == null)
+					continue;
+
+				var state = module.GetOrCreateData<TypeLoadBreakpointState>();
+				var boundBp = boundBreakpoints[i];
+				state.AddBreakpoint(method.DeclaringType.MetadataToken, boundBp, () => EnableBreakpointCore(module, method, boundBp, location));
+			}
+		}
+
+		void EnableBreakpointCore(DbgModule module, DmdMethodBase method, DbgEngineBoundCodeBreakpoint ebp, DbgDotNetCodeLocation location) {
+			debuggerThread.VerifyAccess();
+			if (ebp.BoundCodeBreakpoint.IsClosed)
+				return;
+			using (TempBreak()) {
+				var info = CreateBreakpoint(method.Module, location);
+				var bpData = ebp.BoundCodeBreakpoint.GetData<BoundBreakpointData>();
+				Debug.Assert(bpData.Breakpoint == null);
+				bpData.Breakpoint = info.bp;
+				if (bpData.Breakpoint != null)
+					bpData.Breakpoint.Tag = bpData;
+				ebp.UpdateMessage(info.error);
+			}
+		}
+
+		sealed class TypeLoadBreakpointState {
+			readonly HashSet<int> loadedTypes = new HashSet<int>();
+			readonly Dictionary<int, List<PendingBreakpoint>> pendingBreakpoints = new Dictionary<int, List<PendingBreakpoint>>();
+
+			struct PendingBreakpoint {
+				public DbgEngineBoundCodeBreakpoint BoundBreakpoint { get; }
+				public Action OnTypeLoaded { get; }
+				public PendingBreakpoint(DbgEngineBoundCodeBreakpoint boundBreakpoint, Action onTypeLoaded) {
+					BoundBreakpoint = boundBreakpoint;
+					OnTypeLoaded = onTypeLoaded;
+				}
+			}
+
+			public void OnTypeLoaded(TypeMirror monoType) {
+				int typeToken = monoType.MetadataToken;
+				// This can fail if it's a generic instantiated type, eg. List<int> if List<string> has already been loaded
+				bool b = loadedTypes.Add(typeToken);
+				if (!b)
+					return;
+
+				if (pendingBreakpoints.TryGetValue(typeToken, out var list)) {
+					pendingBreakpoints.Remove(typeToken);
+					foreach (var info in list)
+						NotifyLoaded(info);
+				}
+			}
+
+			public void AddBreakpoint(int typeToken, DbgEngineBoundCodeBreakpoint boundBreakpoint, Action onTypeLoaded) {
+				var pendingBreakpoint = new PendingBreakpoint(boundBreakpoint, onTypeLoaded);
+				if (loadedTypes.Contains(typeToken))
+					NotifyLoaded(pendingBreakpoint);
+				else {
+					if (!pendingBreakpoints.TryGetValue(typeToken, out var list))
+						pendingBreakpoints.Add(typeToken, list = new List<PendingBreakpoint>());
+					list.Add(pendingBreakpoint);
+				}
+			}
+
+			void NotifyLoaded(PendingBreakpoint pendingBreakpoint) {
+				if (!pendingBreakpoint.BoundBreakpoint.BoundCodeBreakpoint.IsClosed)
+					pendingBreakpoint.OnTypeLoaded();
+			}
+		}
+
+		void InitializeBreakpoints(TypeMirror monoType) {
+			debuggerThread.VerifyAccess();
+			Debug.Assert(monoType != null);
+			if (monoType == null)
+				return;
+			var module = TryGetModuleCore_NoCreate(monoType.Module);
+			if (module == null)
+				return;
+
+			var state = module.GetOrCreateData<TypeLoadBreakpointState>();
+			state.OnTypeLoaded(monoType);
 		}
 
 		(BreakpointEventRequest bp, DbgEngineBoundCodeBreakpointMessage error) CreateBreakpoint(DmdModule module, DbgDotNetCodeLocation location) {
@@ -165,9 +261,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				// ArgumentException is thrown if we get error NO_SEQ_POINT_AT_IL_OFFSET
 				return (null, DbgEngineBoundCodeBreakpointMessage.CreateCouldNotCreateBreakpoint());
 			}
-
-			string GetFunctionName(DbgDotNetCodeLocation location2) => $"0x{location2.Token:X8} ({location2.Module.ModuleName})";
 		}
+
+		static string GetFunctionName(DbgDotNetCodeLocation location) => $"0x{location.Token:X8} ({location.Module.ModuleName})";
 
 		Dictionary<ModuleId, List<BoundBreakpointData>> CreateBoundBreakpointsDictionary(DbgBoundCodeBreakpoint[] boundBreakpoints) {
 			var dict = new Dictionary<ModuleId, List<BoundBreakpointData>>();

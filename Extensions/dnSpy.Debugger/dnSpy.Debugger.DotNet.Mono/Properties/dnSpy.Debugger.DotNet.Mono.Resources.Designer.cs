@@ -232,11 +232,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This runtime doesn&apos;t support creating generic methods.
+        ///   Looks up a localized string similar to This runtime doesn&apos;t support calling generic methods.
         /// </summary>
-        public static string Error_RuntimeDoesNotSupportCreatingGenericMethods {
+        public static string Error_RuntimeDoesNotSupportCallingGenericMethods {
             get {
-                return ResourceManager.GetString("Error_RuntimeDoesNotSupportCreatingGenericMethods", resourceCulture);
+                return ResourceManager.GetString("Error_RuntimeDoesNotSupportCallingGenericMethods", resourceCulture);
             }
         }
         
@@ -354,6 +354,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         public static string Thread_UserState_WaitSleepJoin {
             get {
                 return ResourceManager.GetString("Thread_UserState_WaitSleepJoin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type has not been loaded yet..
+        /// </summary>
+        public static string TypeHasNotBeenLoadedYet {
+            get {
+                return ResourceManager.GetString("TypeHasNotBeenLoadedYet", resourceCulture);
             }
         }
     }
