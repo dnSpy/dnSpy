@@ -95,14 +95,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				return;
 
 			case DbgEngineStepKind.StepOut:
-				newCorStepper = dbg.StepOut(frame, (_, e) => StepCompleted(e, newCorStepper, tag, null));
-				break;
+				newCorStepper = dbg.StepOut(frame, (_, e) => StepCompleted(e, newCorStepper, tag));
+				SaveStepper(newCorStepper, tag);
+				return;
 
 			default:
 				RaiseStepComplete(thread, tag, $"Unsupported step kind: {step}");
 				return;
 			}
-			SaveStepper(newCorStepper, tag);
 		}
 
 		void SaveStepper(CorStepper newCorStepper, object tag) {
@@ -125,7 +125,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				SaveStepper(null, tag);
 			else {
 				uint continueCounter = dnThread.Debugger.ContinueCounter;
-				dbgDotNetCodeRangeService.GetCodeRanges(module, frame.Token, offset.Value, result => engine.CorDebugThread(() => GotStepRanges(frame, tag, isStepInto, result, continueCounter)));
+				dbgDotNetCodeRangeService.GetCodeRanges(module, frame.Token, offset.Value,
+					result => engine.CorDebugThread(() => GotStepRanges(frame, tag, isStepInto, result, continueCounter)));
 			}
 		}
 
@@ -148,9 +149,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			CorStepper newCorStepper = null;
 			var dbg = dnThread.Debugger;
 			if (isStepInto)
-				newCorStepper = dbg.StepInto(frame, ranges, (_, e) => StepCompleted(e, newCorStepper, tag, null));
+				newCorStepper = dbg.StepInto(frame, ranges, (_, e) => StepCompleted(e, newCorStepper, tag));
 			else
-				newCorStepper = dbg.StepOver(frame, ranges, (_, e) => StepCompleted(e, newCorStepper, tag, null));
+				newCorStepper = dbg.StepOver(frame, ranges, (_, e) => StepCompleted(e, newCorStepper, tag));
 			SaveStepper(newCorStepper, tag);
 		}
 
@@ -183,7 +184,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			return null;
 		}
 
-		void StepCompleted(StepCompleteDebugCallbackEventArgs e, CorStepper corStepper, object tag, object p) {
+		void StepCompleted(StepCompleteDebugCallbackEventArgs e, CorStepper corStepper, object tag) {
 			engine.VerifyCorDebugThread();
 			if (stepData == null || stepData.CorStepper != corStepper || stepData.Tag != tag)
 				return;
@@ -197,10 +198,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 		public override void Cancel(object tag) => engine.CorDebugThread(() => Cancel_CorDebug(tag));
 		void Cancel_CorDebug(object tag) {
 			engine.VerifyCorDebugThread();
-			var oldDnStepperData = stepData;
-			if (oldDnStepperData == null)
+			var oldStepperData = stepData;
+			if (oldStepperData == null)
 				return;
-			if (oldDnStepperData.Tag != tag)
+			if (oldStepperData.Tag != tag)
 				return;
 			ForceCancel_CorDebug();
 		}

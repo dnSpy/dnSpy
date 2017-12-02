@@ -51,6 +51,7 @@
     <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.Evaluation.cs" />
+    <Compile Include="Impl\DbgEngineImpl.Steppers.cs" />
     <Compile Include="Impl\DbgEngineImpl.Threads.cs" />
     <Compile Include="Impl\DbgEngineImplDependencies.cs" />
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
@@ -106,6 +107,7 @@
       <DependentUpon>dnSpy.Debugger.DotNet.Mono.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Steppers\DbgEngineStepperImpl.cs" />
     <Compile Include="TheExtension.cs" />
   </ItemGroup>
   <ItemGroup>

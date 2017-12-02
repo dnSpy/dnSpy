@@ -34,13 +34,13 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.Engine;
-using dnSpy.Contracts.Debugger.Engine.Steppers;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Mono.Properties;
+using dnSpy.Debugger.DotNet.Mono.Steppers;
 using Mono.Debugger.Soft;
 using MDS = Mono.Debugger.Soft;
 
@@ -79,6 +79,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
 		readonly FuncEvalFactory funcEvalFactory;
 		readonly List<Action> execOnPauseList;
+		readonly Dictionary<StepEventRequest, StepperInfo> toStepper;
 		bool wasAttach;
 		bool wasStartDebuggingOptions;
 		bool processWasRunningOnAttach;
@@ -118,6 +119,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			stackFrameData = new StackFrameData();
 			dotNetValuesToCloseOnContinue = new List<DbgDotNetValueImpl>();
 			execOnPauseList = new List<Action>();
+			toStepper = new Dictionary<StepEventRequest, StepperInfo>();
 			debuggerSettings = deps.DebuggerSettings;
 			dbgDotNetCodeRangeService = deps.DotNetCodeRangeService;
 			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;
@@ -632,8 +634,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.Step:
-					expectedSuspendPolicy = SuspendPolicy.All;
-					break;//TODO:
+					var se = (StepEvent)evt;
+					if (OnStep(se.TryGetRequest() as StepEventRequest))
+						expectedSuspendPolicy = SuspendPolicy.All;
+					else
+						expectedSuspendPolicy = SuspendPolicy.None;
+					break;
 
 				case EventType.TypeLoad:
 					expectedSuspendPolicy = SuspendPolicy.None;
@@ -1137,7 +1143,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		public override void Run() => MonoDebugThread(RunCore);
-		void RunCore() {
+		internal void RunCore() {
 			debuggerThread.VerifyAccess();
 			if (!HasConnected_MonoDebugThread)
 				return;
@@ -1216,10 +1222,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				Debug.Fail(ex.Message);
 				dbgManager.ShowError(ex.Message);
 			}
-		}
-
-		public override DbgEngineStepper CreateStepper(DbgThread thread) {
-			throw new NotImplementedException();//TODO:
 		}
 
 		internal DbgDotNetValue TryGetExceptionValue() {
