@@ -115,5 +115,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 			return null;
 		}
+
+		public static int? GetProcessIdOfListenerLocalAddress(byte[] address, ushort port) {
+			if (address.Length != 4)
+				return null;
+			uint addr = ((uint)address[3] << 24) | ((uint)address[2] << 16) | ((uint)address[1] << 8) | address[0];
+			port = (ushort)((port >> 8) | (port << 8));
+			var rows = GetTcpRows();
+			foreach (var row in rows) {
+				if (row.dwLocalAddr == addr && row.dwLocalPort == port)
+					return (int)row.dwOwningPid;
+			}
+			return null;
+		}
 	}
 }

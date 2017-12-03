@@ -1027,6 +1027,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					vm.Suspend();
 					IncrementSuspendCount();
 				}
+				catch (VMDisconnectedException) {
+				}
 				catch (Exception ex) {
 					Debug.Fail(ex.Message);
 					SendMessage(new DbgMessageBreak(ex.Message, GetMessageFlags()));
@@ -1159,6 +1161,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 				SendMessage(new DbgMessageBreak(GetThreadPreferMain_MonoDebug(), GetMessageFlags()));
 			}
+			catch (VMDisconnectedException) {
+			}
 			catch (Exception ex) {
 				Debug.Fail(ex.Message);
 				SendMessage(new DbgMessageBreak(ex.Message, GetMessageFlags()));
@@ -1183,6 +1187,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					return;
 				}
 				ResumeCore();
+			}
+			catch (VMDisconnectedException) {
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.Message);
@@ -1223,6 +1229,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				else
 					vm.Exit(0);
 			}
+			catch (VMDisconnectedException) {
+			}
 			catch (Exception ex) {
 				Debug.Fail(ex.Message);
 				dbgManager.ShowError(ex.Message);
@@ -1239,6 +1247,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			try {
 				vm.Detach();
 				vmDeathExitCode = -1;
+			}
+			catch (VMDisconnectedException) {
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.Message);

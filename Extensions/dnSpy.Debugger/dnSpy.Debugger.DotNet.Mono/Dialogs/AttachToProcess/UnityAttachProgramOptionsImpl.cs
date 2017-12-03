@@ -34,13 +34,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 		readonly string address;
 		readonly ushort port;
 
-		public UnityAttachProgramOptionsImpl(int pid, string address, ushort port) {
+		public UnityAttachProgramOptionsImpl(int pid, string address, ushort port, string name) {
 			ProcessId = (uint)pid;
 			RuntimeId = new DotNetMonoRuntimeId() {
 				Address = address,
 				Port = port,
 			};
-			RuntimeName = "Unity Editor";
+			RuntimeName = name;
 			this.address = address;
 			this.port = port;
 		}

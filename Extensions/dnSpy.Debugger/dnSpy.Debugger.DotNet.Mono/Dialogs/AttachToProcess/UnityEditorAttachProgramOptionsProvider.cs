@@ -32,10 +32,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 			var processes = Process.GetProcessesByName("Unity");
 			try {
 				foreach (var p in processes) {
+					context.CancellationToken.ThrowIfCancellationRequested();
 					// Don't shoot the messenger
 					ushort port = (ushort)(56000 + p.Id % 1000);
 					const string ipAddress = "127.0.0.1";
-					yield return new UnityAttachProgramOptionsImpl(p.Id, ipAddress, port);
+					yield return new UnityAttachProgramOptionsImpl(p.Id, ipAddress, port, "Unity Editor");
 				}
 			}
 			finally {
