@@ -17,24 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.Attach {
+using System;
+using dnSpy.Contracts.Debugger;
+
+namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 	/// <summary>
-	/// Predefined <see cref="AttachProgramOptionsProviderFactory"/> names
+	/// Debugging options base class shared by .NET Framework code and .NET Core code
 	/// </summary>
-	public static class PredefinedAttachProgramOptionsProviderNames {
+	abstract class CorDebugAttachToProgramOptions : AttachToProgramOptions {
 		/// <summary>
-		/// .NET Framework
+		/// Gets the process id
 		/// </summary>
-		public const string DotNetFramework = nameof(DotNetFramework);
+		public ulong ProcessId { get; set; }
 
 		/// <summary>
-		/// .NET Core
+		/// Copies this instance to <paramref name="other"/>
 		/// </summary>
-		public const string DotNetCore = nameof(DotNetCore);
-
-		/// <summary>
-		/// Unity Editor
-		/// </summary>
-		public const string UnityEditor = nameof(UnityEditor);
+		/// <param name="other">Destination</param>
+		protected void CopyTo(CorDebugAttachToProgramOptions other) {
+			if (other == null)
+				throw new ArgumentNullException(nameof(other));
+			base.CopyTo(other);
+			other.ProcessId = ProcessId;
+		}
 	}
 }

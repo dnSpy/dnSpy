@@ -150,8 +150,9 @@ namespace dnSpy.Debugger.Impl {
 
 			Bitness = ProcessUtilities.GetBitness(hProcess.DangerousGetHandle());
 			Machine = GetMachine(Bitness);
-			Filename = GetProcessFilename(pid) ?? string.Empty;
-			Name = Path.GetFileName(Filename);
+			var info = GetProcessName(pid);
+			Filename = info.filename ?? string.Empty;
+			Name = info.name ?? string.Empty;
 
 			new DelayedIsRunningHelper(this, dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}
@@ -236,14 +237,20 @@ namespace dnSpy.Debugger.Impl {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
-		static string GetProcessFilename(ulong pid) {
+		static (string filename, string name) GetProcessName(ulong pid) {
+			string name = null;
+			string filename = null;
 			try {
-				using (var p = Process.GetProcessById((int)pid))
-					return p.MainModule.FileName;
+				using (var p = Process.GetProcessById((int)pid)) {
+					name = p.ProcessName;
+					// Could throw
+					filename = p.MainModule.FileName;
+					name = Path.GetFileName(filename);
+				}
 			}
 			catch {
 			}
-			return string.Empty;
+			return (filename, name);
 		}
 
 		static DbgMachine GetMachine(int bitness) {

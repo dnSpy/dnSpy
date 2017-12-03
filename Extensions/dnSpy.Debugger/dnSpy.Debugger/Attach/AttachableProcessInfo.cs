@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach;
@@ -84,10 +85,6 @@ namespace dnSpy.Debugger.Attach {
 
 			var process = processProvider.GetProcess(attachProgramOptions.ProcessId);
 			if (process != null) {
-				if (attachProgramOptions.Name == null)
-					name = Path.GetFileName(attachProgramOptions.Filename ?? process.MainModule.FileName);
-				if (attachProgramOptions.Filename == null)
-					filename = process.MainModule.FileName;
 				if (attachProgramOptions.CommandLine == null)
 					commandLine = Win32CommandLineProvider.TryGetCommandLine(process.Handle);
 				if (attachProgramOptions.Title == null)
@@ -99,9 +96,22 @@ namespace dnSpy.Debugger.Attach {
 					default: arch = "???"; break;
 					}
 				}
+				if (attachProgramOptions.Name == null)
+					name = Path.GetFileName(attachProgramOptions.Filename ?? GetProcessName(process));
+				if (attachProgramOptions.Filename == null)
+					filename = GetProcessName(process);
 			}
 
 			return (name, title, filename, commandLine, arch);
+		}
+
+		static string GetProcessName(Process process) {
+			try {
+				return process.MainModule.FileName;
+			}
+			catch {
+			}
+			return process.ProcessName;
 		}
 	}
 }

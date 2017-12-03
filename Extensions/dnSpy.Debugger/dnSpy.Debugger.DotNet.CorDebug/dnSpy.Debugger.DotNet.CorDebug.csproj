@@ -158,6 +158,9 @@
     <Compile Include="dndbg\Engine\ProcessCreationFlags.cs" />
     <Compile Include="dndbg\Engine\StepRange.cs" />
     <Compile Include="dndbg\Engine\Win32EnvironmentStringBuilder.cs" />
+    <Compile Include="Impl\Attach\CorDebugAttachToProgramOptions.cs" />
+    <Compile Include="Impl\Attach\DotNetCoreAttachToProgramOptions.cs" />
+    <Compile Include="Impl\Attach\DotNetFrameworkAttachToProgramOptions.cs" />
     <Compile Include="Impl\CorDebugTypeCreator.cs" />
     <Compile Include="Impl\DbgCorDebugInternalAppDomainImpl.cs" />
     <Compile Include="Impl\DbgCorDebugInternalModuleImpl.cs" />

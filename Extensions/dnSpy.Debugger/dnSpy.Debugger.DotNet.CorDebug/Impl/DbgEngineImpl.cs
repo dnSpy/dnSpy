@@ -40,6 +40,7 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Debugger.DotNet.CorDebug.DAC;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.Properties;
 using dnSpy.Debugger.DotNet.CorDebug.Steppers;

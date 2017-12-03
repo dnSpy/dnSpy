@@ -18,26 +18,29 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger;
 
-namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
+namespace dnSpy.Debugger.DotNet.Mono.Impl.Attach {
 	/// <summary>
-	/// Debugging options base class shared by .NET Framework code and .NET Core code
+	/// Debugging options used when connecting to a Unity program
 	/// </summary>
-	abstract class CorDebugAttachToProgramOptions : AttachToProgramOptions {
+	sealed class UnityAttachToProgramOptions : MonoAttachToProgramOptionsBase {
 		/// <summary>
-		/// Gets the process id
-		/// </summary>
-		public ulong ProcessId { get; set; }
-
-		/// <summary>
-		/// Copies this instance to <paramref name="other"/>
+		/// Copies this instance to <paramref name="other"/> and returns it
 		/// </summary>
 		/// <param name="other">Destination</param>
-		protected void CopyTo(CorDebugAttachToProgramOptions other) {
+		/// <returns></returns>
+		public UnityAttachToProgramOptions CopyTo(UnityAttachToProgramOptions other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
-			other.ProcessId = ProcessId;
+			return other;
 		}
+
+		/// <summary>
+		/// Clones this instance
+		/// </summary>
+		/// <returns></returns>
+		public override DebugProgramOptions Clone() => CopyTo(new UnityAttachToProgramOptions());
 	}
 }

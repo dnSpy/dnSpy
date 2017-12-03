@@ -38,6 +38,7 @@ using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
+using dnSpy.Debugger.DotNet.Mono.Impl.Attach;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Mono.Properties;
 using Mono.Debugger.Soft;
@@ -77,6 +78,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly FuncEvalFactory funcEvalFactory;
 		readonly List<Action> execOnPauseList;
 		readonly Dictionary<StepEventRequest, StepperInfo> toStepper;
+		readonly DotNetMonoRuntimeId monoRuntimeId;
 		bool wasAttach;
 		bool processWasRunningOnAttach;
 		VirtualMachine vm;
@@ -123,16 +125,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread = new DebuggerThread("MonoDebug");
 			debuggerThread.CallDispatcherRun();
 			dmdDispatcher = new DmdDispatcherImpl(this);
+			monoRuntimeId = new DotNetMonoRuntimeId();
 			RawMetadataService = deps.RawMetadataService;
 			this.monoDebugRuntimeKind = monoDebugRuntimeKind;
 			if (monoDebugRuntimeKind == MonoDebugRuntimeKind.Mono) {
 				Debugging = new[] { "MonoCLR" };
-				runtimeInfo = new DbgEngineRuntimeInfo(PredefinedDbgRuntimeGuids.DotNetMono_Guid, PredefinedDbgRuntimeKindGuids.DotNet_Guid, "MonoCLR", new DotNetMonoRuntimeId(), monoRuntimeTags);
+				runtimeInfo = new DbgEngineRuntimeInfo(PredefinedDbgRuntimeGuids.DotNetMono_Guid, PredefinedDbgRuntimeKindGuids.DotNet_Guid, "MonoCLR", monoRuntimeId, monoRuntimeTags);
 			}
 			else {
 				Debug.Assert(monoDebugRuntimeKind == MonoDebugRuntimeKind.Unity);
 				Debugging = new[] { "Unity" };
-				runtimeInfo = new DbgEngineRuntimeInfo(PredefinedDbgRuntimeGuids.DotNetUnity_Guid, PredefinedDbgRuntimeKindGuids.DotNet_Guid, "Unity", new DotNetMonoRuntimeId(), unityRuntimeTags);
+				runtimeInfo = new DbgEngineRuntimeInfo(PredefinedDbgRuntimeGuids.DotNetUnity_Guid, PredefinedDbgRuntimeKindGuids.DotNet_Guid, "Unity", monoRuntimeId, unityRuntimeTags);
 			}
 			funcEvalFactory = new FuncEvalFactory(debuggerThread.GetDebugMessageDispatcher());
 		}
@@ -303,10 +306,22 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					if (connectOptions is MonoConnectStartDebuggingOptions)
 						processWasRunningOnAttach = !((MonoConnectStartDebuggingOptions)connectOptions).ProcessIsSuspended;
 				}
+				else if (options is MonoAttachToProgramOptionsBase attachOptions) {
+					connectionAddress = attachOptions.Address;
+					if (string.IsNullOrWhiteSpace(connectionAddress))
+						connectionAddress = "127.0.0.1";
+					connectionPort = attachOptions.Port;
+					connectionTimeout = attachOptions.ConnectionTimeout;
+					filename = null;
+					expectedPid = -1;
+					wasAttach = true;
+				}
 				else {
 					// No need to localize it, should be unreachable
 					throw new Exception("Invalid start options");
 				}
+				monoRuntimeId.Address = connectionAddress;
+				monoRuntimeId.Port = connectionPort;
 
 				if (connectionTimeout == TimeSpan.Zero)
 					connectionTimeout = TimeSpan.FromMilliseconds(DefaultConnectionTimeoutMilliseconds);
@@ -1105,7 +1120,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			this.objectFactory = objectFactory;
 			runtime.GetOrCreateData(() => new RuntimeData(this));
 
-			MonoDebugThread(() => {
+			MonoDebugThread(() => OnConnected_MonoDebug());
+		}
+
+		void OnConnected_MonoDebug() {
+			debuggerThread.VerifyAccess();
+			try {
 				if (gotVMDisconnect)
 					return;
 				Debug.Assert(vm != null);
@@ -1122,7 +1142,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						SendMessage(new DelegatePendingMessage(true, () => CreateThread(monoThread)));
 					}
 				}
-			});
+			}
+			catch (VMDisconnectedException) {
+			}
 		}
 
 		public override void Break() => MonoDebugThread(BreakCore);

@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	[ExportDbgEngineProvider]

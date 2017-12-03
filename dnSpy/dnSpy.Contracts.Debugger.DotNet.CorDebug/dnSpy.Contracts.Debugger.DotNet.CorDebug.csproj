@@ -43,13 +43,10 @@
   <ItemGroup>
     <Compile Include="Code\DbgDotNetNativeCodeLocation.cs" />
     <Compile Include="Code\DbgILOffsetMapping.cs" />
-    <Compile Include="CorDebugAttachToProgramOptions.cs" />
     <Compile Include="CorDebugStartDebuggingOptions.cs" />
     <Compile Include="CorThreadUserStates.cs" />
     <Compile Include="DbgCorDebugInternalRuntime.cs" />
-    <Compile Include="DotNetCoreAttachToProgramOptions.cs" />
     <Compile Include="DotNetCoreStartDebuggingOptions.cs" />
-    <Compile Include="DotNetFrameworkAttachToProgramOptions.cs" />
     <Compile Include="DotNetFrameworkStartDebuggingOptions.cs" />
     <Compile Include="CorDebugRuntimeKind.cs" />
     <Compile Include="CorDebugRuntimeVersion.cs" />

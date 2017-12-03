@@ -17,11 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed class DotNetMonoRuntimeId : RuntimeId {
-		public override bool Equals(object obj) => this == obj;
-		public override int GetHashCode() => 0;
+		public string Address { get; set; }
+		public ushort Port { get; set; }
+
+		public override bool Equals(object obj) =>
+			obj is DotNetMonoRuntimeId other &&
+			StringComparer.OrdinalIgnoreCase.Equals(Address ?? string.Empty, other.Address ?? string.Empty) &&
+			Port == other.Port;
+
+		public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Address ?? string.Empty) ^ Port;
 	}
 }

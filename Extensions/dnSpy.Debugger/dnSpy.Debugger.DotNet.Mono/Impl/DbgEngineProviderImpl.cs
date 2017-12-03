@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.DotNet.Mono.Impl.Attach;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	[ExportDbgEngineProvider]
@@ -39,6 +40,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return new DbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, MonoDebugRuntimeKind.Mono);
 
 			case UnityConnectStartDebuggingOptions _:
+			case UnityAttachToProgramOptions _:
 				return new DbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, MonoDebugRuntimeKind.Unity);
 			}
 

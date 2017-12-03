@@ -41,6 +41,8 @@
     <Compile Include="CallStack\ILDbgEngineStackFrame.cs" />
     <Compile Include="CallStack\NullDbgEngineStackWalker.cs" />
     <Compile Include="CallStack\StackFrameData.cs" />
+    <Compile Include="Dialogs\AttachToProcess\UnityAttachProgramOptionsImpl.cs" />
+    <Compile Include="Dialogs\AttachToProcess\UnityEditorAttachProgramOptionsProvider.cs" />
     <Compile Include="Dialogs\DebugProgram\BreakProcessKindsUtils.cs" />
     <Compile Include="Dialogs\DebugProgram\MonoConnectStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\MonoConnectStartDebuggingOptionsPageBase.cs" />
@@ -48,6 +50,8 @@
     <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\UnityConnectStartDebuggingOptionsPage.cs" />
+    <Compile Include="Impl\Attach\MonoAttachToProgramOptionsBase.cs" />
+    <Compile Include="Impl\Attach\UnityAttachToProgramOptions.cs" />
     <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.Evaluation.cs" />

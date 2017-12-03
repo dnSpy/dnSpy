@@ -25,8 +25,8 @@ using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {

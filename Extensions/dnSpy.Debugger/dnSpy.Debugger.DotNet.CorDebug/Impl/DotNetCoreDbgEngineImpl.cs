@@ -26,6 +26,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 using dnSpy.Debugger.DotNet.CorDebug.Properties;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 

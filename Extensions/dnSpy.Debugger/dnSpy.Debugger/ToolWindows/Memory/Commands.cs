@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			try {
 				if (process != null) {
 					var title = Filter(process.MainWindowTitle, 200);
-					var name = process.MainModule.ModuleName;
+					var name = GetProcessName(process);
 					if (string.IsNullOrWhiteSpace(title))
 						return $"{pid} {name}";
 					return $"{pid} {name} - {title}";
@@ -105,6 +105,15 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			catch {
 			}
 			return pid.ToString();
+		}
+
+		static string GetProcessName(Process process) {
+			try {
+				return process.MainModule.ModuleName;
+			}
+			catch {
+			}
+			return process.ProcessName;
 		}
 
 		static string Filter(string s, int maxLength) {
