@@ -354,8 +354,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void SetIP_MonoDebug(DbgThread thread, DbgCodeLocation location) {
 			debuggerThread.VerifyAccess();
+			if (!vm.Version.AtLeast(2, 29)) {
+				SendMessage(new DbgMessageSetIPComplete(thread, false, dnSpy_Debugger_DotNet_Mono_Resources.Error_RuntimeDoesNotSupportSettingNewStatement, GetMessageFlags()));
+				return;
+			}
 			var threadData = TryGetThreadData(thread);
-			if (threadData == null || !vm.Version.AtLeast(2, 29) || !(location is IDbgDotNetCodeLocation loc)) {
+			if (isUnhandledException || threadData == null || !(location is IDbgDotNetCodeLocation loc)) {
 				SendMessage(new DbgMessageSetIPComplete(thread, false, dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotSetNextStatement, GetMessageFlags()));
 				return;
 			}
