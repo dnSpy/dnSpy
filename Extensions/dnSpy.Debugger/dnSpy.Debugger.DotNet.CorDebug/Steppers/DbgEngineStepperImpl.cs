@@ -126,11 +126,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			else {
 				uint continueCounter = dnThread.Debugger.ContinueCounter;
 				dbgDotNetCodeRangeService.GetCodeRanges(module, frame.Token, offset.Value,
-					result => engine.CorDebugThread(() => GotStepRanges(frame, tag, isStepInto, result, continueCounter)));
+					result => engine.CorDebugThread(() => GotStepRanges(frame, offset.Value, tag, isStepInto, result, continueCounter)));
 			}
 		}
 
-		void GotStepRanges(CorFrame frame, object tag, bool isStepInto, GetCodeRangeResult result, uint continueCounter) {
+		void GotStepRanges(CorFrame frame, uint offset, object tag, bool isStepInto, GetCodeRangeResult result, uint continueCounter) {
 			engine.VerifyCorDebugThread();
 			if (IsClosed)
 				return;
@@ -140,12 +140,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				RaiseStepComplete(thread, tag, "Internal error");
 				return;
 			}
-			if (!result.Success) {
-				RaiseStepComplete(thread, tag, "Couldn't find statement code range");
-				return;
-			}
-
-			var ranges = ToStepRanges(result.StatementRanges);
+			// If we failed to find the statement ranges (result.Success == false), step anyway.
+			// We'll just step until the next sequence point instead of not doing anything.
+			var ranges = result.Success ? ToStepRanges(result.StatementRanges) : new StepRange[] { new StepRange(offset, offset + 1) };
 			CorStepper newCorStepper = null;
 			var dbg = dnThread.Debugger;
 			if (isStepInto)
