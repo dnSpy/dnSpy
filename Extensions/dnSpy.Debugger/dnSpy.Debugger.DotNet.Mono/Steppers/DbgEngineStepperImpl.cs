@@ -252,7 +252,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			engine.VerifyMonoDebugThread();
 			var oldStepperData = stepData;
 			stepData = null;
-			engine.CancelStepper(oldStepperData.MonoStepper);
+			if (oldStepperData != null)
+				engine.CancelStepper(oldStepperData.MonoStepper);
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {

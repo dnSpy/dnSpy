@@ -138,7 +138,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			OnFuncEvalComplete(funcEval);
 		}
 
-		void OnFuncEvalComplete(FuncEval funcEval) => currentFrameOffset.Clear();
+		void OnFuncEvalComplete(FuncEval funcEval) {
+		}
 
 		FuncEval CreateFuncEval(DbgEvaluationContext context, ThreadMirror monoThread, CancellationToken cancellationToken) =>
 			funcEvalFactory.CreateFuncEval(a => OnFuncEvalComplete(a, context), monoThread, context.FuncEvalTimeout, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0, cancellationToken: cancellationToken);

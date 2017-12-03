@@ -40,9 +40,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
 using dnSpy.Debugger.DotNet.Mono.Impl.Evaluation;
 using dnSpy.Debugger.DotNet.Mono.Properties;
-using dnSpy.Debugger.DotNet.Mono.Steppers;
 using Mono.Debugger.Soft;
-using MDS = Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl : DbgEngine {
@@ -74,7 +72,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly Dictionary<ThreadMirror, DbgEngineThread> toEngineThread;
 		readonly Dictionary<AssemblyMirror, List<ModuleMirror>> toAssemblyModules;
 		readonly HashSet<AppDomainMirror> appDomainsThatHaveNotBeenInitializedYet;
-		readonly Dictionary<MDS.StackFrame, uint> currentFrameOffset;
 		internal readonly StackFrameData stackFrameData;
 		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
 		readonly FuncEvalFactory funcEvalFactory;
@@ -114,7 +111,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			toEngineThread = new Dictionary<ThreadMirror, DbgEngineThread>();
 			toAssemblyModules = new Dictionary<AssemblyMirror, List<ModuleMirror>>();
 			appDomainsThatHaveNotBeenInitializedYet = new HashSet<AppDomainMirror>();
-			currentFrameOffset = new Dictionary<MDS.StackFrame, uint>();
 			stackFrameData = new StackFrameData();
 			dotNetValuesToCloseOnContinue = new List<DbgDotNetValueImpl>();
 			execOnPauseList = new List<Action>();
@@ -1181,7 +1177,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		void ResumeVirtualMachine() {
 			debuggerThread.VerifyAccess();
 			try {
-				currentFrameOffset.Clear();
 				vm.Resume();
 			}
 			catch (VMNotSuspendedException) {

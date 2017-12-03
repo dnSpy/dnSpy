@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			Module = module ?? throw new ArgumentNullException(nameof(module));
 			FunctionToken = (uint)monoFrame.Method.MetadataToken;
 			// Native transitions have no IL offset so -1 is used by mono, but we should use 0 instead
-			var ilOffset = engine.GetFrameOffset(monoFrame);
+			uint ilOffset = (uint)monoFrame.ILOffset;
 			FunctionOffset = ilOffset == uint.MaxValue ? 0 : ilOffset;
 			var moduleId = DbgEngineImpl.TryGetModuleId(module) ?? default;
 			var options = ilOffset == uint.MaxValue || monoFrame.IsNativeTransition ? DbgDotNetCodeLocationOptions.InvalidOffset : 0;

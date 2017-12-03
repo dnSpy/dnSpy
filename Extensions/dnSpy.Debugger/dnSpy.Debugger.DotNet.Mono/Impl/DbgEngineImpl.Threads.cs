@@ -383,15 +383,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			framesInvalidated = true;
 			threadData.MonoThread.SetIP(monoMethod, location.Offset);
-			currentFrameOffset[frame] = location.Offset;
+			frame.SetILOffset((int)location.Offset);
 			return null;
-		}
-
-		internal uint GetFrameOffset(MDS.StackFrame frame) {
-			debuggerThread.VerifyAccess();
-			if (currentFrameOffset.TryGetValue(frame, out var offset))
-				return offset;
-			return (uint)frame.ILOffset;
 		}
 
 		bool VerifySetIPLocation(DbgThreadData threadData, IDbgDotNetCodeLocation location, out MethodMirror monoMethod, out MDS.StackFrame frame) {
