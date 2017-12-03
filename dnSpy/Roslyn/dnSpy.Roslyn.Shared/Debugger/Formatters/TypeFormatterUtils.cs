@@ -150,7 +150,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			GetColor(@event.AddMethod ?? @event.RemoveMethod, BoxedTextColor.StaticEvent, BoxedTextColor.InstanceEvent);
 
 		public static object GetColor(DmdMethodBase method, bool canBeModule) {
-			if (method.IsConstructor)
+			if (method is DmdConstructorInfo)
 				return GetColor(method.DeclaringType, canBeModule);
 			if (method.IsStatic) {
 				if (method.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute", inherit: false))
