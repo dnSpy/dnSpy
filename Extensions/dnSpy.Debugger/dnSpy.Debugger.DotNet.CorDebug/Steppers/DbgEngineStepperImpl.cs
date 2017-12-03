@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			if (IsClosed)
 				return;
 			Debug.Assert(StepComplete != null);
-			StepComplete?.Invoke(this, new DbgEngineStepCompleteEventArgs(thread, tag, error));
+			StepComplete?.Invoke(this, new DbgEngineStepCompleteEventArgs(thread, tag, error, false));
 		}
 
 		public override void Step(object tag, DbgEngineStepKind step) => engine.CorDebugThread(() => Step_CorDebug(tag, step));

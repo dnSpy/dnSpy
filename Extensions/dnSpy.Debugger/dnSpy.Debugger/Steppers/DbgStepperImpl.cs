@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Steppers {
 				stepperTag = null;
 			}
 			var stepThread = (DbgThreadImpl)e.Thread ?? thread;
-			dbgManager.StepComplete_DbgThread(stepThread, e.Error);
+			dbgManager.StepComplete_DbgThread(stepThread, e.Error, e.ForciblyCanceled);
 			if (wasStepping)
 				RaiseStepComplete_DbgThread(stepThread, e.Error);
 		}

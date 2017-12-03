@@ -65,15 +65,14 @@ namespace dnSpy.Debugger.Impl {
 			stepper.RaiseError_DbgThread(string.Format(dnSpy_Debugger_Resources.DebugStepProcessError, error));
 		}
 
-		internal void StepComplete_DbgThread(DbgThreadImpl thread, string error) {
+		internal void StepComplete_DbgThread(DbgThreadImpl thread, string error, bool forciblyCanceled) {
 			Dispatcher.VerifyAccess();
 			var engine = thread.RuntimeImpl.Engine;
 			Debug.Assert(IsOurEngine(engine));
 			if (!IsOurEngine(engine))
 				return;
 			var e = new DbgMessageStepCompleteEventArgs(thread, error);
-			// This is a good default value...
-			e.Pause = true;
+			e.Pause = !forciblyCanceled;
 			OnConditionalBreak_DbgThread(engine, e, thread, DbgEngineMessageFlags.None);
 		}
 	}

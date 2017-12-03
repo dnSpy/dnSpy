@@ -39,6 +39,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal StepEventRequest CreateStepRequest(ThreadMirror monoThread, Func<StepCompleteEventArgs, bool> onStep) {
 			debuggerThread.VerifyAccess();
 			var stepReq = vm.CreateStepRequest(monoThread);
+
+			// There can be at most one stepper active at a time. This is a limitation of mono.
+			foreach (var kv in toStepper) {
+				kv.Key.Disable();
+				kv.Value.OnStep(new StepCompleteEventArgs(kv.Key, true));
+			}
+			toStepper.Clear();
+
 			toStepper.Add(stepReq, new StepperInfo(onStep));
 			return stepReq;
 		}
@@ -53,7 +61,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return false;
 			toStepper.Remove(stepReq);
 			stepReq.Disable();
-			return info.OnStep(new StepCompleteEventArgs(stepReq));
+			return info.OnStep(new StepCompleteEventArgs(stepReq, false));
 		}
 
 		internal void CancelStepper(StepEventRequest stepReq) {
@@ -71,6 +79,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 	struct StepCompleteEventArgs {
 		public StepEventRequest StepEventRequest { get; }
-		public StepCompleteEventArgs(StepEventRequest stepEventRequest) => StepEventRequest = stepEventRequest;
+		public bool ForciblyCanceled { get; }
+		public StepCompleteEventArgs(StepEventRequest stepEventRequest, bool forciblyCanceled) {
+			StepEventRequest = stepEventRequest;
+			ForciblyCanceled = forciblyCanceled;
+		}
 	}
 }

@@ -58,6 +58,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		public DmdType Create(TypeMirror type) {
+			var result = CreateCore(type);
+			if ((object)result == null)
+				throw new InvalidOperationException();
+			return result;
+		}
+
+		DmdType CreateCore(TypeMirror type) {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
 			if (recursionCounter++ > 100)
@@ -67,23 +74,23 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (!typeCache.TryGetType(type, out var result)) {
 				bool canAddType = true;
 				if (type.IsByRef)
-					result = Create(type.GetElementType()).MakeByRefType();
+					result = CreateCore(type.GetElementType())?.MakeByRefType();
 				else if (type.IsArray) {
 					if (type.GetArrayRank() == 1) {
 						if (type.FullName.EndsWith("[*]", StringComparison.Ordinal))
-							result = Create(type.GetElementType()).MakeArrayType(1);
+							result = CreateCore(type.GetElementType())?.MakeArrayType(1);
 						else
-							result = Create(type.GetElementType()).MakeArrayType();
+							result = CreateCore(type.GetElementType())?.MakeArrayType();
 					}
 					else
-						result = Create(type.GetElementType()).MakeArrayType(type.GetArrayRank());
+						result = CreateCore(type.GetElementType())?.MakeArrayType(type.GetArrayRank());
 				}
 				else if (type.IsPointer)
-					result = Create(type.GetElementType()).MakePointerType();
+					result = CreateCore(type.GetElementType())?.MakePointerType();
 				else {
 					var module = engine.TryGetModule(type.Module)?.GetReflectionModule() ?? throw new InvalidOperationException();
-					var reflectionType = module.ResolveType(type.MetadataToken, DmdResolveOptions.ThrowOnError);
-					if (reflectionType.GetGenericArguments().Count != 0) {
+					var reflectionType = module.ResolveType(type.MetadataToken, DmdResolveOptions.None);
+					if ((object)reflectionType != null && reflectionType.GetGenericArguments().Count != 0) {
 						DmdType parsedType = null;
 						TypeMirror[] genericArgs;
 						if (type.VirtualMachine.Version.AtLeast(2, 15))
@@ -100,17 +107,25 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 							reflectionType = parsedType;
 						else {
 							types = GetTypesList();
-							foreach (var t in genericArgs)
-								types.Add(Create(t));
-							Debug.Assert(types.Count == 0 || reflectionType.GetGenericArguments().Count == types.Count);
-							if (types.Count != 0)
-								reflectionType = reflectionType.MakeGenericType(types.ToArray());
+							foreach (var t in genericArgs) {
+								var newType = CreateCore(t);
+								if ((object)newType == null) {
+									reflectionType = null;
+									break;
+								}
+								types.Add(newType);
+							}
+							if ((object)reflectionType != null) {
+								Debug.Assert(types.Count == 0 || reflectionType.GetGenericArguments().Count == types.Count);
+								if (types.Count != 0)
+									reflectionType = reflectionType.MakeGenericType(types.ToArray());
+							}
 							FreeTypesList(ref types);
 						}
 					}
 					result = reflectionType;
 				}
-				if (canAddType)
+				if (canAddType && (object)result != null)
 					typeCache.Add(type, result);
 			}
 

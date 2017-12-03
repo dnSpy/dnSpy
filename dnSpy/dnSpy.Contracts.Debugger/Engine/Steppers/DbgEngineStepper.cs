@@ -64,15 +64,22 @@ namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 		public string Error { get; }
 
 		/// <summary>
+		/// true if the stepper was canceled by the engine
+		/// </summary>
+		public bool ForciblyCanceled { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="thread">Thread or null to use the default thread that was used to create the stepper</param>
 		/// <param name="tag">Same value that was passed to <see cref="DbgEngineStepper.Step(object, DbgEngineStepKind)"/></param>
 		/// <param name="error">Error message or null if none</param>
-		public DbgEngineStepCompleteEventArgs(DbgThread thread, object tag, string error) {
+		/// <param name="forciblyCanceled">true if the stepper was canceled by the engine</param>
+		public DbgEngineStepCompleteEventArgs(DbgThread thread, object tag, string error, bool forciblyCanceled) {
 			Thread = thread;
 			Tag = tag;
 			Error = error;
+			ForciblyCanceled = forciblyCanceled;
 		}
 	}
 }

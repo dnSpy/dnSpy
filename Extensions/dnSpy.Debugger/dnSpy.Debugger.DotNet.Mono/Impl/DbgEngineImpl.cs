@@ -583,6 +583,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						methodEntryEventRequest = null;
 						// Func-eval doesn't work at first assembly load event for some reason. Should work now though.
 						canInitializeObjectConstants = true;
+						InitializeObjectConstants_MonoDebug();
 					}
 					break;
 
@@ -642,8 +643,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 					// Add it to the cache
 					var reflectionAppDomain = TryGetEngineAppDomain(tle.Type.Assembly.Domain)?.AppDomain.GetReflectionAppDomain();
-					if (reflectionAppDomain != null)
-						GetReflectionType(reflectionAppDomain, tle.Type, null);
+					if (reflectionAppDomain != null) {
+						try {
+							GetReflectionType(reflectionAppDomain, tle.Type, null);
+						}
+						catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
+						}
+					}
 
 					InitializeBreakpoints(tle.Type);
 					break;

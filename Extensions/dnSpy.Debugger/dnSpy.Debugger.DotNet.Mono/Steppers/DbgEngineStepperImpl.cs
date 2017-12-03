@@ -67,11 +67,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			this.monoThread = monoThread ?? throw new ArgumentNullException(nameof(monoThread));
 		}
 
-		void RaiseStepComplete(DbgThread thread, object tag, string error) {
+		void RaiseStepComplete(DbgThread thread, object tag, string error, bool forciblyCanceled = false) {
 			if (IsClosed)
 				return;
 			Debug.Assert(StepComplete != null);
-			StepComplete?.Invoke(this, new DbgEngineStepCompleteEventArgs(thread, tag, error));
+			StepComplete?.Invoke(this, new DbgEngineStepCompleteEventArgs(thread, tag, error, forciblyCanceled));
 		}
 
 		MDS.StackFrame GetFrame() {
@@ -140,6 +140,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		static StepFilter GetStepFilterFlags() => StepFilter.StaticCtor;
 
+		static string GetErrorMessage(StepCompleteEventArgs e) => e.ForciblyCanceled ? "Only one stepper can be active at a time" : null;
+
 		void SaveStepper(StepEventRequest newMonoStepper, object tag, bool callRunCore) {
 			engine.VerifyMonoDebugThread();
 			if (newMonoStepper != null) {
@@ -158,7 +160,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			if (stepData == null || stepData.MonoStepper != e.StepEventRequest || stepData.Tag != tag)
 				return false;
 			stepData = null;
-			RaiseStepComplete(thread, tag, null);
+			RaiseStepComplete(thread, tag, GetErrorMessage(e), e.ForciblyCanceled);
 			return true;
 		}
 
@@ -197,6 +199,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			try {
 				stepIntoOverData.StepCounter++;
 				var stepReq = engine.CreateStepRequest(monoThread, e => OnStepIntoOverCompleted(e, tag, stepIntoOverData));
+				//TODO: StepOver fails on mono unless there's a portable PDB file available
 				stepReq.Depth = stepIntoOverData.IsStepInto ? StepDepth.Into : StepDepth.Over;
 				stepReq.Size = StepSize.Min;
 				stepReq.Filter = GetStepFilterFlags();
@@ -219,12 +222,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			var frame = GetFrame();
 			uint offset = (uint)(frame?.ILOffset ?? -1);
 
-			if (stepIntoOverData.StepCounter < MAX_STEPS && frame?.Method == stepIntoOverData.Method && IsInCodeRange(stepIntoOverData.StatementRanges, offset)) {
+			if (!e.ForciblyCanceled && stepIntoOverData.StepCounter < MAX_STEPS && frame?.Method == stepIntoOverData.Method && IsInCodeRange(stepIntoOverData.StatementRanges, offset)) {
 				StartStepIntoOver(tag, stepIntoOverData);
 				return false;
 			}
 			else {
-				RaiseStepComplete(thread, tag, null);
+				RaiseStepComplete(thread, tag, GetErrorMessage(e), e.ForciblyCanceled);
 				return true;
 			}
 		}
