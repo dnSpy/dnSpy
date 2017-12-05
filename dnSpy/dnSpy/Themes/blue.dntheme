@@ -728,5 +728,8 @@
 		<color name="debuggerbreakpointglyphmargincontrolborder" bg="#FFDCE0EC" />
 		<color name="debuggerbreakpointglyphmargincontrolbackground" bg="#FFF0F0F0" />
 		<color name="debuggerbreakpointglyphmargincontrolhoverbackground" bg="#FFFFFCF4" />
+		<color name="hyperlinknormal" bg="#FF0066CC" />
+		<color name="hyperlinkmouseover" bg="Red" />
+		<color name="hyperlinkdisabled" bg="#FF6D6D6D" />
 	</colors>
 </theme>

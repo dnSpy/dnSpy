@@ -768,6 +768,9 @@ namespace dnSpy.Contracts.Themes {
 		DebuggerBreakpointGlyphMarginControlBorder,
 		DebuggerBreakpointGlyphMarginControlBackground,
 		DebuggerBreakpointGlyphMarginControlHoverBackground,
+		HyperlinkNormal,
+		HyperlinkMouseOver,
+		HyperlinkDisabled,
 
 		// Add new color types before this comment
 

@@ -4435,6 +4435,31 @@
         </Style.Resources>
     </Style>
 
+    <Style x:Key="{x:Type Hyperlink}"
+           TargetType="{x:Type Hyperlink}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource HyperlinkNormal}"/>
+        <Setter Property="TextDecorations"
+                Value="Underline"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver"
+                     Value="true">
+                <Setter Property="Foreground"
+                        Value="{DynamicResource HyperlinkMouseOver}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled"
+                     Value="false">
+                <Setter Property="Foreground"
+                        Value="{DynamicResource HyperlinkDisabled}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled"
+                     Value="true">
+                <Setter Property="Cursor"
+                        Value="Hand"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
 
 
     <!-- I've disabled the (IMHO) useless and ugly toolbar thumb that's always present on the right

@@ -1865,6 +1865,18 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FF52B0EF",
 				BackgroundResourceKey = "DebuggerBreakpointGlyphMarginControlHoverBackground",
 			},
+			new BrushColorInfo(ColorType.HyperlinkNormal, "") {
+				DefaultBackground = "#FF0066CC",
+				BackgroundResourceKey = "HyperlinkNormal",
+			},
+			new BrushColorInfo(ColorType.HyperlinkMouseOver, "") {
+				DefaultBackground = "Red",
+				BackgroundResourceKey = "HyperlinkMouseOver",
+			},
+			new BrushColorInfo(ColorType.HyperlinkDisabled, "") {
+				DefaultBackground = "#FF6D6D6D",
+				BackgroundResourceKey = "HyperlinkDisabled",
+			},
 			new BrushColorInfo(ColorType.LineNumber, "Line number"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput1, "REPL line number #1 (input)"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput2, "REPL line number #2 (input)"),
