@@ -35,14 +35,14 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
     </winlocal:WindowBase.Resources>
-    <Grid>
+    <Grid img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0" Margin="5 5 5 0" mvvm:InitDataTemplateAP.Initialize="True" img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
+        <Grid Grid.Column="0" Margin="5 5 5 0" mvvm:InitDataTemplateAP.Initialize="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -126,7 +126,7 @@
             </ListView.View>
         </ListView>
 
-        <Grid Grid.Row="2" Margin="5" img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
+        <Grid Grid.Row="2" Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />

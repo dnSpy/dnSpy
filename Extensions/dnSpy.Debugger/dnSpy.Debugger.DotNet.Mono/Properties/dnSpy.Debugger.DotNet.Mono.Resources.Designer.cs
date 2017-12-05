@@ -70,6 +70,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use the Attach to Process (Unity) dialog box to attach to debug builds.
+        /// </summary>
+        public static string ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage {
+            get {
+                return ResourceManager.GetString("ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A_rguments.
         /// </summary>
         public static string DbgAsm_Args {

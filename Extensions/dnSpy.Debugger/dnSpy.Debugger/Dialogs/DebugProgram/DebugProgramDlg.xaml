@@ -22,11 +22,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:dnSpy.Debugger.Dialogs.DebugProgram"
              mc:Ignorable="d" 
              xmlns:winlocal="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              Width="500"
              Title="{x:Static p:dnSpy_Debugger_Resources.DbgAsm_Title}"
              SizeToContent="Height"
@@ -35,7 +35,7 @@
     <winlocal:WindowBase.Resources>
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
     </winlocal:WindowBase.Resources>
-    <Grid>
+    <Grid img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />

@@ -231,4 +231,7 @@
   <data name="UnityEditor" xml:space="preserve">
     <value>Editor</value>
   </data>
+  <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
+    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+  </data>
 </root>
