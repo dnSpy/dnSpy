@@ -20,7 +20,6 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using dnSpy.Debugger.Utilities;
 
 namespace dnSpy.Debugger.Attach {
 	// MS forces us to use an undocumented function and structures to get the command line.

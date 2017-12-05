@@ -141,12 +141,6 @@
   <data name="Attach_AttachToProcess" xml:space="preserve">
     <value>Attach to Process</value>
   </data>
-  <data name="Attach_AttachToProcess32" xml:space="preserve">
-    <value>Attach to Process (32-bit only)</value>
-  </data>
-  <data name="Attach_AttachToProcess64" xml:space="preserve">
-    <value>Attach to Process (64-bit only)</value>
-  </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
     <value>Use dnSpy.exe to attach to 64-bit processes</value>
   </data>

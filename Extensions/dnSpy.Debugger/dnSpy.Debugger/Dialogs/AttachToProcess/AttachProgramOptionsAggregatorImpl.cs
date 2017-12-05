@@ -38,8 +38,8 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			this.attachProgramOptionsProviderFactories = attachProgramOptionsProviderFactories.ToArray();
 		}
 
-		public override AttachProgramOptionsAggregator Create() =>
-			new AttachProgramOptionsAggregatorImpl(uiDispatcher, attachProgramOptionsProviderFactories);
+		public override AttachProgramOptionsAggregator Create(string[] providerNames) =>
+			new AttachProgramOptionsAggregatorImpl(uiDispatcher, attachProgramOptionsProviderFactories, providerNames);
 	}
 
 	sealed class AttachProgramOptionsAggregatorImpl : AttachProgramOptionsAggregator {
@@ -51,6 +51,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories;
 		readonly List<ProviderInfo> providerInfos;
+		readonly string[] providerNames;
 		CancellationTokenSource cancellationTokenSource;
 
 		sealed class ProviderInfo {
@@ -86,9 +87,10 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			public void Start() => Thread.Start();
 		}
 
-		public AttachProgramOptionsAggregatorImpl(UIDispatcher uiDispatcher, Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories) {
+		public AttachProgramOptionsAggregatorImpl(UIDispatcher uiDispatcher, Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories, string[] providerNames) {
 			this.uiDispatcher = uiDispatcher;
 			this.attachProgramOptionsProviderFactories = attachProgramOptionsProviderFactories ?? throw new ArgumentNullException(nameof(attachProgramOptionsProviderFactories));
+			this.providerNames = providerNames;
 			lockObj = new object();
 			pendingOptions = new List<AttachProgramOptions>();
 			providerInfos = new List<ProviderInfo>(attachProgramOptionsProviderFactories.Length);
@@ -164,9 +166,15 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				if (disposed)
 					return;
 				started = true;
+				var providerNames = this.providerNames;
+				if (providerNames == null)
+					providerNames = Array.Empty<string>();
 				var providerContext = new AttachProgramOptionsProviderContext(cancellationTokenSource.Token);
+				bool allFactories = providerNames.Length == 0;
 				foreach (var lz in attachProgramOptionsProviderFactories) {
-					var provider = lz.Value.Create();
+					if (providerNames.Length != 0 && Array.IndexOf(providerNames, lz.Metadata.Name) < 0)
+						continue;
+					var provider = lz.Value.Create(allFactories);
 					if (provider == null)
 						continue;
 					providerInfos.Add(new ProviderInfo(this, providerContext, provider));

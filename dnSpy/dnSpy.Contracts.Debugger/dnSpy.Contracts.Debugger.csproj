@@ -47,6 +47,8 @@
     <Compile Include="Attach\AttachProgramOptions.cs" />
     <Compile Include="Attach\AttachProgramOptionsProvider.cs" />
     <Compile Include="Attach\AttachProgramOptionsProviderFactory.cs" />
+    <Compile Include="Attach\Dialogs\ShowAttachToProcessDialog.cs" />
+    <Compile Include="Attach\Dialogs\ShowAttachToProcessDialogOptions.cs" />
     <Compile Include="Attach\PredefinedArchitectureNames.cs" />
     <Compile Include="Attach\PredefinedAttachProgramOptionsProviderNames.cs" />
     <Compile Include="Breakpoints\Code\DbgBoundCodeBreakpoint.cs" />

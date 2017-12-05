@@ -104,10 +104,11 @@ namespace dnSpy.Debugger.Attach {
 				if (providerNames == null)
 					providerNames = Array.Empty<string>();
 				var providerContext = new AttachProgramOptionsProviderContext(cancellationToken);
+				bool allFactories = providerNames.Length == 0;
 				foreach (var lz in attachProgramOptionsProviderFactories) {
 					if (providerNames.Length != 0 && Array.IndexOf(providerNames, lz.Metadata.Name) < 0)
 						continue;
-					var provider = lz.Value.Create();
+					var provider = lz.Value.Create(allFactories);
 					if (provider == null)
 						continue;
 					providerInfos.Add(new ProviderInfo(this, providerContext, provider));

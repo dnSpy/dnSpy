@@ -17,19 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger;
-
-namespace dnSpy.Debugger.Dialogs.AttachToProcess {
-	abstract class ShowAttachToProcessDialog {
+namespace dnSpy.Contracts.Debugger.Attach.Dialogs {
+	/// <summary>
+	/// Shows the Attach to Process dialog box
+	/// </summary>
+	public abstract class ShowAttachToProcessDialog {
 		/// <summary>
 		/// Shows the dialog box and returns the selected processes or an empty list
 		/// </summary>
+		/// <param name="options">Options or null to use the default options</param>
 		/// <returns></returns>
-		public abstract AttachToProgramOptions[] Show();
+		public abstract AttachToProgramOptions[] Show(ShowAttachToProcessDialogOptions options = null);
 
 		/// <summary>
 		/// Shows the dialog box and attaches to the selected processes
 		/// </summary>
-		public abstract void Attach();
+		/// <param name="options">Options or null to use the default options</param>
+		public abstract void Attach(ShowAttachToProcessDialogOptions options = null);
 	}
 }

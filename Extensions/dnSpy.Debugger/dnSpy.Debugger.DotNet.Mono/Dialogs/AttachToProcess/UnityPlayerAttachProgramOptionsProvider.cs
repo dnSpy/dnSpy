@@ -31,7 +31,7 @@ using dnSpy.Debugger.DotNet.Mono.Impl;
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.UnityPlayer)]
 	sealed class UnityPlayerAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
-		public override AttachProgramOptionsProvider Create() => new UnityPlayerAttachProgramOptionsProvider();
+		public override AttachProgramOptionsProvider Create(bool allFactories) => allFactories ? null : new UnityPlayerAttachProgramOptionsProvider();
 	}
 
 	sealed class UnityPlayerAttachProgramOptionsProvider : AttachProgramOptionsProvider {

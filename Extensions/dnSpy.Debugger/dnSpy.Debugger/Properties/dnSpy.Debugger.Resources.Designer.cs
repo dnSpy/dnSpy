@@ -151,24 +151,6 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Attach to Process (32-bit only).
-        /// </summary>
-        public static string Attach_AttachToProcess32 {
-            get {
-                return ResourceManager.GetString("Attach_AttachToProcess32", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Attach to Process (64-bit only).
-        /// </summary>
-        public static string Attach_AttachToProcess64 {
-            get {
-                return ResourceManager.GetString("Attach_AttachToProcess64", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Use dnSpy.exe to attach to 64-bit processes.
         /// </summary>
         public static string Attach_UseDnSpy32 {

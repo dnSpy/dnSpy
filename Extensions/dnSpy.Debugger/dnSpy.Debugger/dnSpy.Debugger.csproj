@@ -119,7 +119,6 @@
     <Compile Include="Dialogs\AttachToProcess\ProgramFormatter.cs" />
     <Compile Include="Dialogs\AttachToProcess\ProgramVM.cs" />
     <Compile Include="Dialogs\AttachToProcess\SearchTextClassifierProvider.cs" />
-    <Compile Include="Dialogs\AttachToProcess\ShowAttachToProcessDialog.cs" />
     <Compile Include="Dialogs\AttachToProcess\ShowAttachToProcessDialogImpl.cs" />
     <Compile Include="Dialogs\CodeBreakpoints\ShowCodeBreakpointSettingsDlg.xaml.cs">
       <DependentUpon>ShowCodeBreakpointSettingsDlg.xaml</DependentUpon>

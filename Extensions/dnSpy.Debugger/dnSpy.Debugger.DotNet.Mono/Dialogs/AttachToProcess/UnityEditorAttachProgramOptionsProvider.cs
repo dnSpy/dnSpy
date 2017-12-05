@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger.Attach;
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.UnityEditor)]
 	sealed class UnityEditorAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
-		public override AttachProgramOptionsProvider Create() => new UnityEditorAttachProgramOptionsProvider();
+		public override AttachProgramOptionsProvider Create(bool allFactories) => allFactories ? null : new UnityEditorAttachProgramOptionsProvider();
 	}
 
 	sealed class UnityEditorAttachProgramOptionsProvider : AttachProgramOptionsProvider {

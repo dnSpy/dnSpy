@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Attach.Dialogs;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
@@ -46,21 +47,15 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public ICommand RefreshCommand => new RelayCommand(a => Refresh(), a => CanRefresh);
 		public string SearchHelpToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.SearchHelp_ToolTip, null);
 
-		public ICommand MakingAnImageEasierToDebugCommand => new RelayCommand(a => ShowMakingAnImageEasierToDebugPage());
-		public string MakingAnImageEasierToDebugToolTip => "Making an Image Easier to Debug";
-		const string MakingAnImageEasierToDebugPage = "https://docs.microsoft.com/en-us/dotnet/framework/debug-trace-profile/making-an-image-easier-to-debug";
+		public ICommand InfoLinkCommand => new RelayCommand(a => ShowInfoLinkPage());
+		public bool HasInfoLink => InfoLinkToolTip != null && infoLink != null;
+		public string InfoLinkToolTip { get; }
+		readonly string infoLink;
 
-		public string Title {
-			get {
-				if (!Environment.Is64BitOperatingSystem)
-					return dnSpy_Debugger_Resources.Attach_AttachToProcess;
-				return IntPtr.Size == 4 ? dnSpy_Debugger_Resources.Attach_AttachToProcess32 :
-						dnSpy_Debugger_Resources.Attach_AttachToProcess64;
-			}
-		}
+		public string Title { get; }
 
-		public bool HasDebuggingText => Environment.Is64BitOperatingSystem;
-		public string DebuggingText => IntPtr.Size == 4 ? dnSpy_Debugger_Resources.Attach_UseDnSpy32 : dnSpy_Debugger_Resources.Attach_UseDnSpy64;
+		public bool HasMessageText => !string.IsNullOrEmpty(MessageText);
+		public string MessageText { get; }
 
 		public string FilterText {
 			get => filterText;
@@ -79,10 +74,29 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		readonly AttachProgramOptionsAggregatorFactory attachProgramOptionsAggregatorFactory;
 		readonly AttachToProcessContext attachToProcessContext;
 		readonly Action searchHelp;
+		readonly string[] providerNames;
 		AttachProgramOptionsAggregator attachProgramOptionsAggregator;
 		ProcessProvider processProvider;
 
-		public AttachToProcessVM(UIDispatcher uiDispatcher, DbgManager dbgManager, DebuggerSettings debuggerSettings, ProgramFormatterProvider programFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, AttachProgramOptionsAggregatorFactory attachProgramOptionsAggregatorFactory, Action searchHelp) {
+		public AttachToProcessVM(ShowAttachToProcessDialogOptions options, UIDispatcher uiDispatcher, DbgManager dbgManager, DebuggerSettings debuggerSettings, ProgramFormatterProvider programFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, AttachProgramOptionsAggregatorFactory attachProgramOptionsAggregatorFactory, Action searchHelp) {
+			if (options == null) {
+				options = new ShowAttachToProcessDialogOptions();
+				options.InfoLink = new AttachToProcessLinkInfo {
+					ToolTipMessage = "Making an Image Easier to Debug",
+					Url = "https://docs.microsoft.com/en-us/dotnet/framework/debug-trace-profile/making-an-image-easier-to-debug",
+				};
+			}
+			Title = GetTitle(options);
+			MessageText = GetMessage(options);
+			if (options.InfoLink != null) {
+				var l = options.InfoLink.Value;
+				if (!string.IsNullOrEmpty(l.Url)) {
+					InfoLinkToolTip = l.ToolTipMessage;
+					infoLink = l.Url;
+				}
+			}
+
+			providerNames = options.ProviderNames;
 			realAllItems = new ObservableCollection<ProgramVM>();
 			AllItems = new BulkObservableCollection<ProgramVM>();
 			SelectedItems = new ObservableCollection<ProgramVM>();
@@ -110,6 +124,21 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowCommandLine, "c", dnSpy_Debugger_Resources.Column_ProcessCommandLine),
 		};
 
+		static string GetTitle(ShowAttachToProcessDialogOptions options) {
+			var s = options.Title ?? dnSpy_Debugger_Resources.Attach_AttachToProcess;
+			if (!string.IsNullOrEmpty(options.ProcessType))
+				return s + " (" + options.ProcessType + ")";
+			return s;
+		}
+
+		static string GetMessage(ShowAttachToProcessDialogOptions options) {
+			if (options.Message != null)
+				return options.Message;
+			if (!Environment.Is64BitOperatingSystem)
+				return null;
+			return IntPtr.Size == 4 ? dnSpy_Debugger_Resources.Attach_UseDnSpy32 : dnSpy_Debugger_Resources.Attach_UseDnSpy64;
+		}
+
 		public string GetSearchHelpText() => attachToProcessContext.SearchMatcher.GetHelpText();
 
 		public bool IsRefreshing => !CanRefresh;
@@ -126,7 +155,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			RemoveAggregator();
 			ClearAllItems();
 			processProvider = new ProcessProvider();
-			attachProgramOptionsAggregator = attachProgramOptionsAggregatorFactory.Create();
+			attachProgramOptionsAggregator = attachProgramOptionsAggregatorFactory.Create(providerNames);
 			attachProgramOptionsAggregator.AttachProgramOptionsAdded += AttachProgramOptionsAggregator_AttachProgramOptionsAdded;
 			attachProgramOptionsAggregator.Completed += AttachProgramOptionsAggregator_Completed;
 			attachProgramOptionsAggregator.Start();
@@ -291,7 +320,10 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			return sbOutput.ToString();
 		}
 
-		void ShowMakingAnImageEasierToDebugPage() => OpenWebPage(MakingAnImageEasierToDebugPage);
+		void ShowInfoLinkPage() {
+			if (infoLink != null)
+				OpenWebPage(infoLink);
+		}
 
 		static void OpenWebPage(string url) {
 			try {

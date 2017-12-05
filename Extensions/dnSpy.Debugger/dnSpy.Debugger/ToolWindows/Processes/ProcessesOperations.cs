@@ -25,11 +25,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Attach.Dialogs;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Steppers;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Text;
-using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
