@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal DbgDotNetValue CreateDotNetValue_MonoDebug(DmdAppDomain reflectionAppDomain, Value value, DmdType realTypeOpt) {
 			debuggerThread.VerifyAccess();
 			if (value == null)
-				return new SyntheticNullValue(reflectionAppDomain.System_Object);
+				return new SyntheticNullValue(realTypeOpt ?? reflectionAppDomain.System_Object);
 			DmdType type;
 			if (value is PrimitiveValue pv)
 				type = MonoValueTypeCreator.CreateType(this, value, reflectionAppDomain.System_Object);

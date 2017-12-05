@@ -63,8 +63,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var vm = engine.MonoVirtualMachine;
 			if (value == null)
 				return new EvalArgumentResult(CreateNullValue(defaultType, out type));
-			if (value is DbgValue dbgValue)
+			if (value is DbgValue dbgValue) {
 				value = dbgValue.InternalValue;
+				if (value == null)
+					return new EvalArgumentResult(CreateNullValue(defaultType, out type));
+			}
 			if (value is DbgDotNetValueImpl dnValueImpl) {
 				type = dnValueImpl.Type;
 				return new EvalArgumentResult(dnValueImpl.Value);

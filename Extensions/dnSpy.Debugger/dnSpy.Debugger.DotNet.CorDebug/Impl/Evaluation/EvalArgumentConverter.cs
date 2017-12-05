@@ -70,8 +70,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				type = defaultType;
 				return new EvalArgumentResult(dnEval.CreateNull());
 			}
-			if (value is DbgValue dbgValue)
+			if (value is DbgValue dbgValue) {
 				value = dbgValue.InternalValue;
+				if (value == null) {
+					type = defaultType;
+					return new EvalArgumentResult(dnEval.CreateNull());
+				}
+			}
 			if (value is DbgDotNetValueImpl dnValueImpl) {
 				type = dnValueImpl.Type;
 				var corValue = dnValueImpl.TryGetCorValue();

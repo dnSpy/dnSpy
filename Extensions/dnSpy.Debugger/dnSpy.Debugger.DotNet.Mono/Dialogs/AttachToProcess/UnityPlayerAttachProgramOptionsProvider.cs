@@ -78,11 +78,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 					var playerId = new PlayerId(ipAddress, port);
 					if (!foundIds.Add(playerId))
 						continue;
-					// This sometimes fails because it sends the wrong guid. VS also fails to connect
-					// to the process since it uses the same port.
-					int pid = NetUtils.GetProcessIdOfListenerLocalAddress(IPAddress.Any.MapToIPv4().GetAddressBytes(), port) ?? 0;
+					var pid = NetUtils.GetProcessIdOfListenerLocalAddress(IPAddress.Any.MapToIPv4().GetAddressBytes(), port);
+					if (pid == null) {
+						foundIds.Remove(playerId);
+						continue;
+					}
 					ipAddress = "127.0.0.1";
-					yield return new UnityAttachProgramOptionsImpl(pid, ipAddress, port, "Unity (" + id + ")");
+					yield return new UnityAttachProgramOptionsImpl(pid.Value, ipAddress, port, "Unity (" + id + ")");
 				}
 			}
 		}
@@ -109,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 			var debuggerPort = m.Groups[10].Value;
 			var debug = m.Groups[11].Value;
 
-			if (machine != Environment.MachineName)
+			if (machine != Dns.GetHostName())
 				return false;
 			if (ip == string.Empty)
 				return false;

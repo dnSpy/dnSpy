@@ -628,9 +628,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var res = new DbgDotNetAliasInfo[count];
 				int w = 0;
 				if (exception != null)
-					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.Exception, exception.Type, 0, Guid.Empty, null);
+					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.Exception, exception.Type, DbgDotNetRuntimeConstants.ExceptionId, Guid.Empty, null);
 				if (stowedException != null)
-					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.StowedException, stowedException.Type, 0, Guid.Empty, null);
+					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.StowedException, stowedException.Type, DbgDotNetRuntimeConstants.StowedExceptionId, Guid.Empty, null);
 				if (returnValues.Length != 0) {
 					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.ReturnValue, returnValues[returnValues.Length - 1].Value.Type, DbgDotNetRuntimeConstants.LastReturnValueId, Guid.Empty, null);
 					foreach (var returnValue in returnValues) {
