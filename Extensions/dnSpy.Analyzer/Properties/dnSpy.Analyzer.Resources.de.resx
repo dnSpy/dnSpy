@@ -124,7 +124,7 @@
     <value>Analysierer</value>
   </data>
   <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Angewendet auf</value>
+    <value>Angewandt auf</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
     <value>Zugewiesen von</value>
@@ -136,13 +136,13 @@
     <value>Doppelklick</value>
   </data>
   <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>Hinzufügen</value>
+    <value>hinzufügen</value>
   </data>
   <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>Entfernen</value>
+    <value>entfernen</value>
   </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Exponiert durch</value>
+    <value>Sichtbar durch</value>
   </data>
   <data name="ExtensionMethodsTreeNode" xml:space="preserve">
     <value>Erweiterungsmethoden</value>
@@ -151,7 +151,7 @@
     <value>Gehe zu Verweis</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode</value>
+    <value>Verweis in Methode zeigen</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
     <value>Zeige Verweis in Methode (neuer _Tab)</value>
@@ -193,7 +193,7 @@
     <value>_Entfernen</value>
   </data>
   <data name="Searching" xml:space="preserve">
-    <value>Suche...</value>
+    <value>Suchen...</value>
   </data>
   <data name="ShiftDoubleClick" xml:space="preserve">
     <value>Umschalt+Doppelklick</value>
@@ -205,7 +205,7 @@
     <value>Strg+Umschalt+R</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Löschen</value>
+    <value>Entf</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
     <value>Tokens zeigen</value>

@@ -118,1396 +118,1396 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="About_Issues" xml:space="preserve">
-    <value>_Issues</value>
+    <value>_Kérdések</value>
   </data>
   <data name="About_LatestBuild" xml:space="preserve">
-    <value>Neuester _Build</value>
+    <value>L_egújabb build</value>
   </data>
   <data name="About_LatestRelease" xml:space="preserve">
-    <value>_Aktuelle Version</value>
+    <value>_Legújabb kiadás</value>
   </data>
   <data name="About_Menu" xml:space="preserve">
-    <value>_Über</value>
+    <value>_A programról</value>
   </data>
   <data name="About_SourceCode" xml:space="preserve">
-    <value>_Quelltext</value>
+    <value>_Forráskód</value>
   </data>
   <data name="About_TabTitle" xml:space="preserve">
-    <value>Über</value>
+    <value>Információk</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
-    <value>Alle Dateien</value>
+    <value>Minden Fájl</value>
   </data>
   <data name="AssemblyExplorerCommand" xml:space="preserve">
-    <value>Assembly Ex_plorer</value>
+    <value>S_zerelvény Böngésző</value>
   </data>
   <data name="AssemblyExplorerKey" xml:space="preserve">
-    <value>Strg+Alt+L</value>
+    <value>Ctrl + Alt + L</value>
   </data>
   <data name="AssemblyExplorerTitle" xml:space="preserve">
-    <value>Assembly Explorer</value>
+    <value>Szerelvény Böngésző</value>
   </data>
   <data name="BaseTypeFolder" xml:space="preserve">
-    <value>Basistyp und Schnittstellen</value>
+    <value>Alap típus és interfészek</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>_Abbrechen</value>
+    <value>_Mégse</value>
   </data>
   <data name="Button_No" xml:space="preserve">
-    <value>_Nein</value>
+    <value>_Nem</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
     <value>_OK</value>
   </data>
   <data name="Button_Save" xml:space="preserve">
-    <value>_Speichern...</value>
+    <value>_Mentés...</value>
   </data>
   <data name="Button_SaveCode" xml:space="preserve">
-    <value>Code _speichern...</value>
+    <value>_Kód mentése...</value>
   </data>
   <data name="Button_Yes" xml:space="preserve">
-    <value>_Ja</value>
+    <value>_Igen</value>
   </data>
   <data name="CantConvertInputToType" xml:space="preserve">
-    <value>Die Eingabe kann nicht in den gewünschten Typ konvertiert werden: {0}</value>
+    <value>A bemenet nem konvertálható a kívánt típusra: {0}</value>
   </data>
   <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
-    <value>Alle Registergruppen außer dieser schließen</value>
+    <value>Többi fülcsoport bezárása</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
-    <value>_Alle außer diesem schließen</value>
+    <value>Min_den más bezárása</value>
   </data>
   <data name="CloseAllTabsCommand" xml:space="preserve">
-    <value>A_lle Registerkarten schließen</value>
+    <value>_Minden fül bezárása</value>
   </data>
   <data name="CloseTabCommand" xml:space="preserve">
-    <value>_Schließen</value>
+    <value>_Bezár</value>
   </data>
   <data name="CloseTabGroupCommand" xml:space="preserve">
-    <value>Registergruppe schließen</value>
+    <value>Fülcsoport bezárása</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>_Kopieren</value>
+    <value>Má_sol</value>
   </data>
   <data name="CopyKey" xml:space="preserve">
-    <value>Strg+C</value>
+    <value>Ctrl + C</value>
   </data>
   <data name="CopyMDTokenCommand" xml:space="preserve">
-    <value>MD-Token _kopieren</value>
+    <value>_MD token másolása</value>
   </data>
   <data name="CouldNotStartBrowser" xml:space="preserve">
-    <value>Browser konnte nicht gestartet werden</value>
+    <value>Nem indítható el a böngésző</value>
   </data>
   <data name="DecompilationCanceled" xml:space="preserve">
-    <value>Der Vorgang wurde abgebrochen</value>
+    <value>A művelet meg lett szakítva</value>
   </data>
   <data name="DecompilationException" xml:space="preserve">
-    <value>Ein Fehler ist aufgetreten</value>
+    <value>Hiba történt</value>
   </data>
   <data name="DecompileCancelButton" xml:space="preserve">
-    <value>Abbrechen</value>
+    <value>Mégsem</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
-    <value>Dekompiliere...</value>
+    <value>Visszafordítás...</value>
   </data>
   <data name="DerivedTypes" xml:space="preserve">
-    <value>Abgeleitete Typen</value>
+    <value>Származtatott típus</value>
   </data>
   <data name="DotNetExes" xml:space="preserve">
-    <value>.NET Executables</value>
+    <value>.NET futtathatók</value>
   </data>
   <data name="EmptyTabTitle" xml:space="preserve">
-    <value>&lt;leer&gt;</value>
+    <value>&lt;üres&gt;</value>
   </data>
   <data name="ExceptionMessage" xml:space="preserve">
-    <value>Eine Ausnahme trat auf:</value>
+    <value>Kivétel történt:</value>
   </data>
   <data name="ExitAppCommand" xml:space="preserve">
-    <value>S_chließen</value>
+    <value>K_ilépés</value>
   </data>
   <data name="ExitAppKey" xml:space="preserve">
-    <value>Alt+F4</value>
+    <value>Alt + F4</value>
   </data>
   <data name="ExplorerOpenWithDnSpy" xml:space="preserve">
-    <value>Mit dnSpy öffnen</value>
+    <value>Megnyitás dnSpy-jal</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
-    <value>_Schnellsuche</value>
+    <value>_Keres</value>
   </data>
   <data name="FindCommand2" xml:space="preserve">
-    <value>Schnellsuche</value>
+    <value>Keresés</value>
   </data>
   <data name="FindKey" xml:space="preserve">
-    <value>Strg+F</value>
+    <value>Ctrl + F</value>
   </data>
   <data name="FullScreenCommand" xml:space="preserve">
-    <value>V_ollbild</value>
+    <value>_Teljes képernyő</value>
   </data>
   <data name="FullScreenKey" xml:space="preserve">
-    <value>Umschalt+Alt+Enter</value>
+    <value>Shift+Alt+Enter</value>
   </data>
   <data name="FullScreenToolBarCommand" xml:space="preserve">
-    <value>Vollbild</value>
+    <value>Teljes képernyő</value>
   </data>
   <data name="GoToEntryPointCommand" xml:space="preserve">
-    <value>Gehe zu _Einstiegspunkt</value>
+    <value>_Ugrás a belépési pontra</value>
   </data>
   <data name="GoToGlobalCctorCommand" xml:space="preserve">
-    <value>Gehe zu &lt;Module&gt; .ccto_r</value>
+    <value>_Ugrás a .ccto_r &lt;modulhoz&gt;</value>
   </data>
   <data name="GoToLine_EnterLineNum" xml:space="preserve">
-    <value>Zeilennummer eingeben</value>
+    <value>Írjon be egy sorszámot</value>
   </data>
   <data name="GoToLine_InvalidLine" xml:space="preserve">
-    <value>Ungültige Zeile: {0}</value>
+    <value>Hibás sor: {0}</value>
   </data>
   <data name="GoToLine_Label" xml:space="preserve">
-    <value>_Zeile [, Spalte]</value>
+    <value>_Sor [, oszlop]</value>
   </data>
   <data name="GoToLine_Title" xml:space="preserve">
-    <value>Gehe zu Zeile</value>
+    <value>Ugrás sorra</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Gehe zu Verweis</value>
+    <value>Ugrás a referenciához</value>
   </data>
   <data name="GoToReferenceKey" xml:space="preserve">
-    <value>Doppelklick</value>
+    <value>Dupla kattintás</value>
   </data>
   <data name="GoToTokenCommand" xml:space="preserve">
-    <value>Gehe zu M_D Token...</value>
+    <value>_Ugrás az MD tokenhez...</value>
   </data>
   <data name="GoToTokenKey" xml:space="preserve">
-    <value>Strg+D</value>
+    <value>Ctrl + D</value>
   </data>
   <data name="GoToToken_CouldNotResolve" xml:space="preserve">
-    <value>Konnte Member Referenztoken nicht auflösen: 0x{0:X8}</value>
+    <value>Nem sikerült feloldani a tag referencia tokent: 0x{0:X8}</value>
   </data>
   <data name="GoToToken_InvalidToken" xml:space="preserve">
-    <value>Ungültiges Metadaten Token: 0x{0:X8}</value>
+    <value>Hibás metadata token: 0x{0:X8}</value>
   </data>
   <data name="GoToToken_Label" xml:space="preserve">
-    <value>_Metadaten Token</value>
+    <value>_Metadata token</value>
   </data>
   <data name="GoToToken_Title" xml:space="preserve">
-    <value>Gehe zu MD Token</value>
+    <value>Ugrás az MD tokenhez</value>
   </data>
   <data name="HideAllToolWindowsCommand" xml:space="preserve">
-    <value>_Verstecke alle Registerkarten</value>
+    <value>Mi_nden fül elrejtése</value>
   </data>
   <data name="HideToolWindowCommand" xml:space="preserve">
-    <value>_Ausblenden</value>
+    <value>_Elrejt</value>
   </data>
   <data name="HighlightLine" xml:space="preserve">
-    <value>Aktuelle _Zeile markieren</value>
+    <value>_Aktuális sor kiemelése</value>
   </data>
   <data name="InvalidInputTextMessageBox" xml:space="preserve">
-    <value>Der Text ist ungültig</value>
+    <value>Hibás szöveg</value>
   </data>
   <data name="LoadingDnSpyPleaseWait" xml:space="preserve">
-    <value>Lade dnSpy. Bitte warten...</value>
+    <value>dnSpy indítása. Kérem várjon...</value>
   </data>
   <data name="Menu_Edit" xml:space="preserve">
-    <value>_Bearbeiten</value>
+    <value>_Szerkesztés</value>
   </data>
   <data name="Menu_File" xml:space="preserve">
-    <value>_Datei</value>
+    <value>_Fájl</value>
   </data>
   <data name="Menu_Help" xml:space="preserve">
-    <value>_Hilfe</value>
+    <value>Sú_gó</value>
   </data>
   <data name="Menu_Themes" xml:space="preserve">
-    <value>_Theme</value>
+    <value>Té_ma</value>
   </data>
   <data name="Menu_View" xml:space="preserve">
-    <value>_Ansicht</value>
+    <value>_Nézet</value>
   </data>
   <data name="Menu_Windows" xml:space="preserve">
-    <value>_Fenster</value>
+    <value>_Ablak</value>
   </data>
   <data name="MergeAllTabGroupsCommand" xml:space="preserve">
-    <value>Führe alle Registergruppen zusammen</value>
+    <value>Lapcsoportok egyesítése</value>
   </data>
   <data name="MessageBoxDontShowAgain" xml:space="preserve">
-    <value>_Nicht wieder anzeigen</value>
+    <value>_Ne jelenjen meg újra</value>
   </data>
   <data name="MoveAllTabsToNextTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe alle in nächste Registergruppe</value>
+    <value>Minden mozgatása a _következő lapcsoportba</value>
   </data>
   <data name="MoveAllToPreviousTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe alle in vorherige Registergruppe</value>
+    <value>Minden mozgatása az _előző lapcsoportba</value>
   </data>
   <data name="MoveBottomCommand" xml:space="preserve">
-    <value>_Unten</value>
+    <value>_Alul</value>
   </data>
   <data name="MoveLeftCommand" xml:space="preserve">
-    <value>_Links</value>
+    <value>_Bal</value>
   </data>
   <data name="MoveRightCommand" xml:space="preserve">
-    <value>_Rechts</value>
+    <value>_Jobb</value>
   </data>
   <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe Registergruppe hinter nächste Registergruppe</value>
+    <value>Lapcsoport mozgatása a következő lapcsoport mögé</value>
   </data>
   <data name="MoveTabGroupBeforePreviousTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe Registergruppe vor vorherige Registergruppe</value>
+    <value>Lapcsoport mozgatása az előző lapcsoport elé</value>
   </data>
   <data name="MoveToNextTabGroupCommand" xml:space="preserve">
-    <value>Gehe zu _nächster Registergruppe</value>
+    <value>Lépés a _következő lapcsoportra</value>
   </data>
   <data name="MoveToolWindowCommand" xml:space="preserve">
-    <value>_Verschieben</value>
+    <value>_Mozgat</value>
   </data>
   <data name="MoveToolWindowGroupCommand" xml:space="preserve">
-    <value>_Gruppe verschieben</value>
+    <value>_Csoport mozgatása</value>
   </data>
   <data name="MoveTopCommand" xml:space="preserve">
-    <value>_Oben</value>
+    <value>_Fent</value>
   </data>
   <data name="MoveToPreviousTabGroupCommand" xml:space="preserve">
-    <value>Gehe zu _vorheriger Registergruppen</value>
+    <value>Lépés az _előző lapcsoportra</value>
   </data>
   <data name="NavigateBackCommand" xml:space="preserve">
-    <value>Rückwärts navigieren</value>
+    <value>Navigálás hátra</value>
   </data>
   <data name="NavigateForwardCommand" xml:space="preserve">
-    <value>Vorwärts navigieren</value>
+    <value>Navigálás előre</value>
   </data>
   <data name="NewDataIsNotAnImage" xml:space="preserve">
-    <value>Die neuen Daten sind kein Bild.</value>
+    <value>Az új adat nem kép.</value>
   </data>
   <data name="NewHorizontalTabGroupCommand" xml:space="preserve">
-    <value>Neue hori_zontale Registergruppe</value>
+    <value>Új _vízszintes lapcsoport</value>
   </data>
   <data name="NewTabCommand" xml:space="preserve">
-    <value>Neues _Register</value>
+    <value>Új _fül</value>
   </data>
   <data name="NewVerticalTabGroupCommand" xml:space="preserve">
-    <value>Neue _vertikale Registergruppe</value>
+    <value>Ú_j függőleges fülcsoport</value>
   </data>
   <data name="NewWindowCommand" xml:space="preserve">
-    <value>_Neues Fenster</value>
+    <value>Ú_j ablak</value>
   </data>
   <data name="OpenCommand" xml:space="preserve">
-    <value>_Öffnen...</value>
+    <value>M_egnyitás...</value>
   </data>
   <data name="OpenContainingFolderCommand" xml:space="preserve">
-    <value>Beinhaltendes Verzeichnis _öffnen</value>
+    <value>_Tartalmazó mappa megnyitása</value>
   </data>
   <data name="OpenGACCommand" xml:space="preserve">
-    <value>Von _GAC öffnen...</value>
+    <value>Megnyitás _GAC-ból...</value>
   </data>
   <data name="OpenGAC_CreatedBy_Label" xml:space="preserve">
-    <value>Erstellt von:</value>
+    <value>Készítette:</value>
   </data>
   <data name="OpenGAC_FileVersion_Label" xml:space="preserve">
-    <value>Datei Version:</value>
+    <value>Fájl verzió:</value>
   </data>
   <data name="OpenGAC_Name_Column" xml:space="preserve">
-    <value>Name</value>
+    <value>Név</value>
   </data>
   <data name="OpenGAC_Name_Label" xml:space="preserve">
-    <value>Name:</value>
+    <value>Név:</value>
   </data>
   <data name="OpenGAC_Path_Label" xml:space="preserve">
-    <value>Pfad:</value>
+    <value>Útvonal:</value>
   </data>
   <data name="OpenGAC_ShowDupes_CheckBox" xml:space="preserve">
-    <value>_Duplikate anzeigen</value>
+    <value>_Ismétlődések megjelenítése</value>
   </data>
   <data name="OpenGAC_ShowFiles" xml:space="preserve">
-    <value>Zeige {0:n0} von {1:n0} Dateien</value>
+    <value>{0:n0}/{1:n0} fájl megjelenítve</value>
   </data>
   <data name="OpenGAC_Title" xml:space="preserve">
-    <value>Von GAC öffnen</value>
+    <value>Megnyitás GAC-ból</value>
   </data>
   <data name="OpenGAC_Version_Column" xml:space="preserve">
-    <value>Version</value>
+    <value>Verzió</value>
   </data>
   <data name="OpenGAC_Version_Label" xml:space="preserve">
-    <value>Version:</value>
+    <value>Verzió:</value>
   </data>
   <data name="OpenInNewTabCommand" xml:space="preserve">
-    <value>In neuem Tab öffnen</value>
+    <value>Megnyitás új _fülön</value>
   </data>
   <data name="OpenInNewTabKey" xml:space="preserve">
-    <value>Strg+T</value>
+    <value>Ctrl + T</value>
   </data>
   <data name="OpenInNewTabKey2" xml:space="preserve">
-    <value>Strg+F12</value>
+    <value>Ctrl + F12</value>
   </data>
   <data name="OpenInNewTabKey3" xml:space="preserve">
-    <value>Strg+Klick</value>
+    <value>Ctrl + kattintás</value>
   </data>
   <data name="OpenKey" xml:space="preserve">
-    <value>Strg+O</value>
+    <value>Ctrl+O</value>
   </data>
   <data name="OpenListCommand" xml:space="preserve">
-    <value>L_iste öffnen...</value>
+    <value>_Lista megnyitása...</value>
   </data>
   <data name="OpenList_AskForName" xml:space="preserve">
-    <value>_Name</value>
+    <value>_Név</value>
   </data>
   <data name="OpenList_Files_Column" xml:space="preserve">
-    <value>Dateien</value>
+    <value>Fájlok</value>
   </data>
   <data name="OpenList_MissingName" xml:space="preserve">
-    <value>Fehlender Name</value>
+    <value>Hiányzó név</value>
   </data>
   <data name="OpenList_Name_Column" xml:space="preserve">
-    <value>Name</value>
+    <value>Név</value>
   </data>
   <data name="OpenList_New_Button" xml:space="preserve">
-    <value>_Neu...</value>
+    <value>Ú_j...</value>
   </data>
   <data name="OpenList_Open_Button" xml:space="preserve">
-    <value>_Öffnen</value>
+    <value>M_egnyitás</value>
   </data>
   <data name="OpenList_Remove_Button" xml:space="preserve">
-    <value>_Entfernen</value>
+    <value>_Eltávolít</value>
   </data>
   <data name="OpenList_SavedLists_CheckBox" xml:space="preserve">
-    <value>G_espeicherte Listen</value>
+    <value>Me_ntett listák</value>
   </data>
   <data name="OpenList_Search_Label" xml:space="preserve">
-    <value>_Suche</value>
+    <value>_Keresés</value>
   </data>
   <data name="OpenList_Title" xml:space="preserve">
-    <value>Liste öffnen</value>
+    <value>Lista megnyitása</value>
   </data>
   <data name="OpenToolBarToolTip" xml:space="preserve">
-    <value>Öffnen</value>
+    <value>Megnyitás</value>
   </data>
   <data name="OptionsTitle" xml:space="preserve">
-    <value>Optionen</value>
+    <value>Beállítások</value>
   </data>
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
-    <value>Aktiviere alle Warnung</value>
+    <value>Minden figyelmeztető üzenet engedélyezése</value>
   </data>
   <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Deserialisiere Typen in Ressourcen (unsicher)</value>
+    <value>Típusok deszerializálása az erőforrásokban (nem biztonságos)</value>
   </data>
   <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Jede Assembly könnte mit den Daten aus den Ressourcen geladen und ausgeführt werden.</value>
+    <value>Minden szerelvény betöltődhet és elindulhat az erőforrásokban lévő adatokkal.</value>
   </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
-    <value>Nutze Memory-Mapped I/O</value>
+    <value>Memóriába leképezett I/O használata</value>
   </data>
   <data name="ReferencesFolder" xml:space="preserve">
-    <value>Verweise</value>
+    <value>Hivatkozások</value>
   </data>
   <data name="ReloadAsmsCommand" xml:space="preserve">
-    <value>Alle Assemblies neu _laden</value>
+    <value>Minden _szerelvény újratöltése</value>
   </data>
   <data name="ResourcesFolder" xml:space="preserve">
-    <value>Ressourcen</value>
+    <value>Erőforrások</value>
   </data>
   <data name="SaveKey" xml:space="preserve">
-    <value>Strg+S</value>
+    <value>Ctrl+S</value>
   </data>
   <data name="SaveResourceButton" xml:space="preserve">
-    <value>Speichern</value>
+    <value>Mentés</value>
   </data>
   <data name="SavingCode" xml:space="preserve">
-    <value>Speichern...</value>
+    <value>Mentés...</value>
   </data>
   <data name="SearchAbortedMessage" xml:space="preserve">
-    <value>Suche abgebrochen, mehr als {0:n0} Ergebnisse gefunden.</value>
+    <value>Keresés megszakadt, több mint {0:n0} találat.</value>
   </data>
   <data name="SearchAssembliesCommand" xml:space="preserve">
-    <value>Assemblies _suchen</value>
+    <value>_Szerelvény keresése</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Assemblies suchen</value>
+    <value>Szerelvény keresése</value>
   </data>
   <data name="Searching" xml:space="preserve">
-    <value>Suchen...</value>
+    <value>Keresés...</value>
   </data>
   <data name="SearchMsdnCommand" xml:space="preserve">
-    <value>_MSDN durchsuchen</value>
+    <value>Keresés az _MSDN-en</value>
   </data>
   <data name="SearchWindow_Options" xml:space="preserve">
-    <value>Optionen</value>
+    <value>Beállítások</value>
   </data>
   <data name="SearchWindow_SearchFor" xml:space="preserve">
-    <value>Suchen nach:</value>
+    <value>Keresés:</value>
   </data>
   <data name="ShowCodeCommand" xml:space="preserve">
-    <value>_Code</value>
+    <value>_Kód</value>
   </data>
   <data name="ShowCodeKey" xml:space="preserve">
-    <value>Strg+Alt+0</value>
+    <value>Ctrl+Alt+0</value>
   </data>
   <data name="OpenInNewTabKey4" xml:space="preserve">
-    <value>Umschalt+Doppelklick</value>
+    <value>Shift+dupla katt</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Syntax hervorheben</value>
+    <value>Szintaxis kiemelése</value>
   </data>
   <data name="TabsDlg_Activate_Button" xml:space="preserve">
-    <value>_Aktivieren</value>
+    <value>_Aktivál</value>
   </data>
   <data name="TabsDlg_CloseWindow_Button" xml:space="preserve">
-    <value>Fenster s_chließen</value>
+    <value>_Ablak bezárása</value>
   </data>
   <data name="TabsDlg_Module_Column" xml:space="preserve">
     <value>Modul</value>
   </data>
   <data name="TabsDlg_Name_Column" xml:space="preserve">
-    <value>Name</value>
+    <value>Név</value>
   </data>
   <data name="TabsDlg_Path_Column" xml:space="preserve">
-    <value>Pfad</value>
+    <value>Elérési út</value>
   </data>
   <data name="TabsDlg_Title" xml:space="preserve">
-    <value>Fenster</value>
+    <value>Ablakok</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
-    <value>Ein unbekannter Fehler trat auf</value>
+    <value>Ismeretlen hiba történt</value>
   </data>
   <data name="UseHorizontalTabGroupsCommand" xml:space="preserve">
-    <value>Horizontale Registergruppe benutzen</value>
+    <value>Vízszintes fülcsoportok használata</value>
   </data>
   <data name="UseVerticalTabGroupsCommand" xml:space="preserve">
-    <value>Vertikale Registergruppe benutzen</value>
+    <value>Függőleges fülcsoportok használata</value>
   </data>
   <data name="WindowsCommand" xml:space="preserve">
-    <value>_Fenster...</value>
+    <value>_Ablakok...</value>
   </data>
   <data name="WordWrapHeader" xml:space="preserve">
-    <value>_Zeilenumbruch</value>
+    <value>_Sortörés</value>
   </data>
   <data name="CloseTabButtonToolTip" xml:space="preserve">
-    <value>Schließen</value>
+    <value>Bezárás</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>Kompletten Typ statt einzelne Member dekompilieren</value>
+    <value>A tagot tartalmazó osztály visszafordítása az osztály tagja helyett</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
-    <value>Übereinstimmungen hervorheben</value>
+    <value>Hivatkozások kiemelése</value>
   </data>
   <data name="DisplaySettings_RestoreTabs" xml:space="preserve">
-    <value>Registerkarten beim Start wiederherstellen</value>
+    <value>Fülek visszaállítása indításkor</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
-    <value>Assembly Public Key Token anzeigen</value>
+    <value>Szerelvény publikus kulcsának mutatása</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
-    <value>Assembly Version anzeigen</value>
+    <value>Szerelvény verzió mutatása</value>
   </data>
   <data name="DisplaySettings_ShowLineNumbers" xml:space="preserve">
-    <value>Zeilennummern anzeigen</value>
+    <value>Sor számok mutatása</value>
   </data>
   <data name="DisplaySettings_ShowTokens" xml:space="preserve">
-    <value>Metadaten Tokens anzeigen</value>
+    <value>Metadata tokenek megjelenítése</value>
   </data>
   <data name="OptionsCommand" xml:space="preserve">
-    <value>_Optionen...</value>
+    <value>_Beállítások...</value>
   </data>
   <data name="SearchWindow_AllAbove" xml:space="preserve">
-    <value>Alle oberhalb</value>
+    <value>A fentiek közül mind</value>
   </data>
   <data name="SearchWindow_AllAbove_Key" xml:space="preserve">
-    <value>Strg+B</value>
+    <value>Ctrl+B</value>
   </data>
   <data name="SearchWindow_Assembly" xml:space="preserve">
-    <value>Assembly</value>
+    <value>Szerelvény</value>
   </data>
   <data name="SearchWindow_AssemblyRef" xml:space="preserve">
-    <value>Assembly Ref</value>
+    <value>SzerelvényRef</value>
   </data>
   <data name="SearchWindow_CaseSensitiveSearch" xml:space="preserve">
-    <value>Groß-/Kleinschreibung beachten</value>
+    <value>Kis- és nagybetűk megkülönböztetése</value>
   </data>
   <data name="SearchWindow_Class" xml:space="preserve">
-    <value>Klasse</value>
+    <value>Osztály</value>
   </data>
   <data name="SearchWindow_DecompileResources" xml:space="preserve">
-    <value>Ressourcen dekompilieren (z. B. XAML)</value>
+    <value>Erőforrások visszafordítása (pl. XAML)</value>
   </data>
   <data name="SearchWindow_Delegate" xml:space="preserve">
-    <value>Delegat</value>
+    <value>Delegált</value>
   </data>
   <data name="SearchWindow_Enum" xml:space="preserve">
-    <value>Enumeration</value>
+    <value>Enum</value>
   </data>
   <data name="SearchWindow_Event" xml:space="preserve">
-    <value>Ereignis</value>
+    <value>Esemény</value>
   </data>
   <data name="SearchWindow_Event_Key" xml:space="preserve">
-    <value>Strg+E</value>
+    <value>Ctrl+E</value>
   </data>
   <data name="SearchWindow_Field" xml:space="preserve">
-    <value>Feld</value>
+    <value>Mező</value>
   </data>
   <data name="SearchWindow_Field_Key" xml:space="preserve">
-    <value>Strg+F</value>
+    <value>Ctrl+F</value>
   </data>
   <data name="SearchWindow_Generic" xml:space="preserve">
-    <value>Generischer Typ</value>
+    <value>Általános típus</value>
   </data>
   <data name="SearchWindow_Interface" xml:space="preserve">
-    <value>Schnittstelle</value>
+    <value>Interfész</value>
   </data>
   <data name="SearchWindow_Literal" xml:space="preserve">
-    <value>Zahl/Text</value>
+    <value>Szám/Karakterlánc</value>
   </data>
   <data name="SearchWindow_Literal_Key" xml:space="preserve">
-    <value>Strg+L</value>
+    <value>Ctrl+L</value>
   </data>
   <data name="SearchWindow_Local" xml:space="preserve">
-    <value>Lokal</value>
+    <value>Helyi</value>
   </data>
   <data name="SearchWindow_Local_Key" xml:space="preserve">
-    <value>Strg+I</value>
+    <value>Ctrl+I</value>
   </data>
   <data name="SearchWindow_MatchAny" xml:space="preserve">
-    <value>Nach jedem Begriff suchen</value>
+    <value>Bármelyik keresett szóval egyezés</value>
   </data>
   <data name="SearchWindow_MatchWholeWords" xml:space="preserve">
-    <value>Nur ganzes Wort suchen</value>
+    <value>Teljes szavak egyezése</value>
   </data>
   <data name="SearchWindow_Member" xml:space="preserve">
-    <value>Member</value>
+    <value>Tag</value>
   </data>
   <data name="SearchWindow_Member_Key" xml:space="preserve">
-    <value>Strg+U</value>
+    <value>Ctrl+U</value>
   </data>
   <data name="SearchWindow_Method" xml:space="preserve">
-    <value>Methode</value>
+    <value>Metódus</value>
   </data>
   <data name="SearchWindow_Method_Key" xml:space="preserve">
-    <value>Strg+M</value>
+    <value>Ctrl+M</value>
   </data>
   <data name="SearchWindow_Module" xml:space="preserve">
     <value>Modul</value>
   </data>
   <data name="SearchWindow_ModuleRef" xml:space="preserve">
-    <value>Modul Ref</value>
+    <value>ModulRef</value>
   </data>
   <data name="SearchWindow_Namespace" xml:space="preserve">
-    <value>Namensraum</value>
+    <value>Névtér</value>
   </data>
   <data name="SearchWindow_NonGeneric" xml:space="preserve">
-    <value>Nicht-Generischer Typ</value>
+    <value>Nem általános típus</value>
   </data>
   <data name="SearchWindow_Parameter" xml:space="preserve">
-    <value>Parameter</value>
+    <value>Paraméter</value>
   </data>
   <data name="SearchWindow_ParameterLocal" xml:space="preserve">
-    <value>Parameter/Lokal</value>
+    <value>Paraméter/helyi</value>
   </data>
   <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
-    <value>Strg+N</value>
+    <value>Ctrl+N</value>
   </data>
   <data name="SearchWindow_Parameter_Key" xml:space="preserve">
-    <value>Strg+J</value>
+    <value>Ctrl+J</value>
   </data>
   <data name="SearchWindow_Property" xml:space="preserve">
-    <value>Eigenschaft</value>
+    <value>Tulajdonság</value>
   </data>
   <data name="SearchWindow_Property_Key" xml:space="preserve">
-    <value>Strg+P</value>
+    <value>Ctrl+P</value>
   </data>
   <data name="SearchWindow_Resource" xml:space="preserve">
-    <value>Ressource</value>
+    <value>Erőforrás</value>
   </data>
   <data name="SearchWindow_Resource_Key" xml:space="preserve">
-    <value>Strg+R</value>
+    <value>Ctrl+R</value>
   </data>
   <data name="SearchWindow_Struct" xml:space="preserve">
-    <value>Struktur</value>
+    <value>Struktúra</value>
   </data>
   <data name="SearchWindow_Title" xml:space="preserve">
-    <value>Suchen</value>
+    <value>Keresés</value>
   </data>
   <data name="SearchWindow_Type" xml:space="preserve">
-    <value>Typ</value>
+    <value>Típus</value>
   </data>
   <data name="SearchWindow_Type_Key" xml:space="preserve">
-    <value>Strg+T</value>
+    <value>Ctrl+T</value>
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
-    <value>Fensterposition</value>
+    <value>Ablak pozíció</value>
   </data>
   <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Neuen Textformatierer benutzen</value>
+    <value>Új szöveg formázó használata</value>
   </data>
   <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>Der neue Textformatierer ist schneller, unterstützt aber keinen Zeilenumbruch oder alle Unicode Zeichen.</value>
+    <value>Az új szöveg formázó gyorsabb, de nem támogatja a sortörést vagy minden unicode karaktert.</value>
   </data>
   <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Hex Editor</value>
+    <value>Hexa szerkesztő</value>
   </data>
   <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Text Editor</value>
+    <value>Szöveg szerkesztő</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
-    <value>_Blau</value>
+    <value>_Kék</value>
   </data>
   <data name="Theme_Dark" xml:space="preserve">
-    <value>_Dunkel</value>
+    <value>_Sötét</value>
   </data>
   <data name="Theme_HighContrast" xml:space="preserve">
-    <value>_Hoher Konstrast</value>
+    <value>_Nagy kontrasztú</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
-    <value>_Hell</value>
+    <value>_Világos</value>
   </data>
   <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
-    <value>Suchen</value>
+    <value>Keresés</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
-    <value>Sprache</value>
+    <value>Nyelv</value>
   </data>
   <data name="Language_OperatingSystemLanguage" xml:space="preserve">
-    <value>System</value>
+    <value>Rendszer</value>
   </data>
   <data name="LanguageSwitchMessage" xml:space="preserve">
-    <value>Sie müssen dnSpy neustarten, damit die Sprachänderung wirksam wird.</value>
+    <value>A nyelvi beállítások módosításához a dnSpy újraindítása szükséges.</value>
   </data>
   <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
-    <value>Strg+Umschalt+O</value>
+    <value>Ctrl+Shift+O</value>
   </data>
   <data name="SortAsmsCommand" xml:space="preserve">
-    <value>Assemblies sor_tieren</value>
+    <value>_Szerelvények rendezése</value>
   </data>
   <data name="AskReadSettings" xml:space="preserve">
-    <value>Möchten Sie die gespeicherten Einstellungen laden?</value>
+    <value>Szeretné betölteni az elmentett beállításokat?</value>
   </data>
   <data name="ExportToProjectCommand" xml:space="preserve">
-    <value>In Pro_jekt exportieren...</value>
+    <value>Exportálás _projektbe...</value>
   </data>
   <data name="ExportToProject_Title" xml:space="preserve">
-    <value>In Projekt exportieren</value>
+    <value>Exportálás projektbe</value>
   </data>
   <data name="Error_FileAlreadyExists" xml:space="preserve">
-    <value>Es existiert bereits eine Datei mit dem gleichen Namen wie das Ausgabeverzeichnis.</value>
+    <value>Már létezik egy fájl a célmappáéval megegyező névvel.</value>
   </data>
   <data name="Error_MissingDestinationFolder" xml:space="preserve">
-    <value>Fehlendes Ausgabeverzeichnis.</value>
+    <value>Hiányzó cél mappa.</value>
   </data>
   <data name="ExportToProject_Button_Export" xml:space="preserve">
-    <value>_Exportieren</value>
+    <value>_Export</value>
   </data>
   <data name="ExportToProject_CreateResX" xml:space="preserve">
-    <value>.res_x Dateien erzeugen</value>
+    <value>.res_x fájlok létrehozása</value>
   </data>
   <data name="ExportToProject_DecompileXaml" xml:space="preserve">
-    <value>Dekompiliere _baml zu xaml</value>
+    <value>Visszafordítani a _baml-t xaml-ra</value>
   </data>
   <data name="ExportToProject_DestinationFolder" xml:space="preserve">
-    <value>_Verzeichnis</value>
+    <value>_Mappa</value>
   </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
-    <value>Eine Datei wird dekompiliert. Wählen Sie mehr als eine Assembly, um mehr als eine Datei zu dekompilieren.</value>
+    <value>Egy fájl lesz visszafordítva. Jelöljön ki több szerelvényt, hogy több fájl legyen visszafordítva.</value>
   </data>
   <data name="ExportToProject_ExportNFilesMessage" xml:space="preserve">
-    <value>{0:n0} Dateien werden dekompiliert.</value>
+    <value>{0:n0} fájl lesz visszafordítva.</value>
   </data>
   <data name="ExportToProject_Language" xml:space="preserve">
-    <value>_Sprache</value>
+    <value>_Nyelv</value>
   </data>
   <data name="ExportToProject_OpenProjectInVisualStudio" xml:space="preserve">
-    <value>_Projekt in Visual Studio öffnen</value>
+    <value>_Projekt megnyitása Visual Studio-ban</value>
   </data>
   <data name="ExportToProject_ProjectVersion" xml:space="preserve">
-    <value>_Version</value>
+    <value>_Verzió</value>
   </data>
   <data name="ExportToProject_SolutionFilename" xml:space="preserve">
-    <value>_Projektmappe</value>
+    <value>_Megoldás</value>
   </data>
   <data name="ExportToProject_UnpackResources" xml:space="preserve">
-    <value>Ressourcen _entpacken</value>
+    <value>_Erőforrások kicsomagolása</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Fehlender Dateiname</value>
+    <value>Hiányzó fájlnév</value>
   </data>
   <data name="Button_Close" xml:space="preserve">
-    <value>_Schließen</value>
+    <value>_Bezár</value>
   </data>
   <data name="ErrorExceptionOccurred" xml:space="preserve">
-    <value>Eine Ausnahme trat auf
+    <value>Kivétel történt:
 
 {0}</value>
   </data>
   <data name="ExportToProject_ErrorLogMsg" xml:space="preserve">
-    <value>Fehlerprotokoll</value>
+    <value>Hibanapló</value>
   </data>
   <data name="DecompilerDlgTabTitle" xml:space="preserve">
-    <value>Dekompilierer</value>
+    <value>Decompiler</value>
   </data>
   <data name="MemberKind_Events" xml:space="preserve">
-    <value>Ereignisse</value>
+    <value>Események</value>
   </data>
   <data name="MemberKind_Fields" xml:space="preserve">
-    <value>Felder</value>
+    <value>Mezők</value>
   </data>
   <data name="MemberKind_Methods" xml:space="preserve">
-    <value>Methoden</value>
+    <value>Metódusok</value>
   </data>
   <data name="MemberKind_NestedTypes" xml:space="preserve">
-    <value>Geschachtelte Typen</value>
+    <value>Beágyazott típusok</value>
   </data>
   <data name="MemberKind_Properties" xml:space="preserve">
-    <value>Eigenschaften</value>
+    <value>Tulajdonságok</value>
   </data>
   <data name="AboutScreen_LicenseInfo" xml:space="preserve">
-    <value>dnSpy ist unter GPLv3 lizensiert.</value>
+    <value>A dnSpy a GPLv3 szerint van licenszelve.</value>
   </data>
   <data name="AboutScreen_LoadedFiles" xml:space="preserve">
-    <value>Geladene Dateien:</value>
+    <value>Betöltött fájlok:</value>
   </data>
   <data name="SearchWindow_SearchGacAssemblies" xml:space="preserve">
-    <value>In GAC Assemblies suchen</value>
+    <value>Keresés a GAC szerelvényekben</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
-    <value>Alle Dateien</value>
+    <value>Minden fájl</value>
   </data>
   <data name="SearchWindow_Where_FilesInSameFolder" xml:space="preserve">
-    <value>Dateien im selben Verzeichnis</value>
+    <value>Ugyanabban a mappában található fájlok</value>
   </data>
   <data name="SearchWindow_Where_SelectedFiles" xml:space="preserve">
-    <value>Ausgewählte Dateien</value>
+    <value>Kiválasztott fájlok</value>
   </data>
   <data name="SearchWindow_Where_SelectedType" xml:space="preserve">
-    <value>Ausgewählter Typ</value>
+    <value>Kiválasztott típus</value>
   </data>
   <data name="GoToResourceCommand" xml:space="preserve">
-    <value>Gehe zu Re_ssource</value>
+    <value>Ugrás az _Erőforrásra</value>
   </data>
   <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
-    <value>Alle Knoten zusammenklappen</value>
+    <value>_Fa nézet pontjainak összecsukása</value>
   </data>
   <data name="CloseAllCommand" xml:space="preserve">
-    <value>Alle schließen</value>
+    <value>Minden _bezárása</value>
   </data>
   <data name="ExportToProject_NewGuid" xml:space="preserve">
-    <value>_Neu</value>
+    <value>_Új</value>
   </data>
   <data name="ExportToProject_ProjectGuid" xml:space="preserve">
     <value>_Projekt GUID</value>
   </data>
   <data name="ShortCutKeyCtrlShiftP" xml:space="preserve">
-    <value>Strg+Umschalt+P</value>
+    <value>Ctrl+Shift+P</value>
   </data>
   <data name="About_Wiki" xml:space="preserve">
     <value>_Wiki</value>
   </data>
   <data name="Window_Output" xml:space="preserve">
-    <value>Ausgabe</value>
+    <value>Kimenet</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Alle löschen</value>
+    <value>Minden törlése</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
-    <value>Ausgabe anzeigen von:</value>
+    <value>_Kimenet megjelenítése innen:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Zeilenumbruch umschalten</value>
+    <value>Sortörés beállítása</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
   </data>
   <data name="Window_Output2" xml:space="preserve">
-    <value>Ausga_be</value>
+    <value>K_imenet</value>
   </data>
   <data name="Output_Save_ToolTip" xml:space="preserve">
-    <value>Speichern</value>
+    <value>Mentés</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
-    <value>A_lle löschen</value>
+    <value>_Minden törlése</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
-    <value>Strg+L</value>
+    <value>Ctrl+L</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
-    <value>Text-Dateien</value>
+    <value>Szöveges fájlok</value>
   </data>
   <data name="ShowLineNumbersCommand" xml:space="preserve">
-    <value>Zeilennummern anzeigen</value>
+    <value>Sor számok mutatása</value>
   </data>
   <data name="ShortCutKeyCtrlDIGIT" xml:space="preserve">
-    <value>Strg+{0}</value>
+    <value>Ctrl+{0}</value>
   </data>
   <data name="ShowTimestampsCommand" xml:space="preserve">
-    <value>Zeitstempel anzeigen</value>
+    <value>Időbélyegek mutatása</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
-    <value>Strg+E, Strg+W</value>
+    <value>Ctrl+E, Ctrl+W</value>
   </data>
   <data name="ShortCutKeyCtrlF4" xml:space="preserve">
-    <value>Strg+F4</value>
+    <value>Ctrl+F4</value>
   </data>
   <data name="ShortCutKeyShiftEsc" xml:space="preserve">
-    <value>Umschalt+Esc</value>
+    <value>Shift+Esc</value>
   </data>
   <data name="Window_Close" xml:space="preserve">
-    <value>Schließen</value>
+    <value>Bezárás</value>
   </data>
   <data name="Window_Maximize" xml:space="preserve">
-    <value>Maximieren</value>
+    <value>Nagyítás</value>
   </data>
   <data name="Window_Minimize" xml:space="preserve">
-    <value>Minimieren</value>
+    <value>Kicsinyítés</value>
   </data>
   <data name="Window_Restore" xml:space="preserve">
-    <value>Wiederherstellen</value>
+    <value>Előző méret</value>
   </data>
   <data name="BackgroundImageOptDlgTab" xml:space="preserve">
-    <value>Hintergrundbild</value>
+    <value>Háttérkép</value>
   </data>
   <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
-    <value>Text-Editor</value>
+    <value>Kódszerkesztő</value>
   </data>
   <data name="BgImgDisplayName_Default" xml:space="preserve">
-    <value>Andere Textfenster</value>
+    <value>Egyéb szöveg megjelenítő</value>
   </data>
   <data name="BgImgDisplayName_DocumentViewer" xml:space="preserve">
-    <value>Haupttextfenster</value>
+    <value>Fő szöveg megjelenítő</value>
   </data>
   <data name="BgImgDisplayName_Logger" xml:space="preserve">
-    <value>Protokollfenster</value>
+    <value>Napló ablak</value>
   </data>
   <data name="BgImgDisplayName_REPL" xml:space="preserve">
-    <value>REPL Fenster</value>
+    <value>REPL ablak</value>
   </data>
   <data name="BgImgSettings_Direction" xml:space="preserve">
-    <value>Richtung</value>
+    <value>Irány</value>
   </data>
   <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
-    <value>Horizontaler Versatz</value>
+    <value>Vízszintes eltolás</value>
   </data>
   <data name="BgImgSettings_Images" xml:space="preserve">
-    <value>Pfad zu Bildern oder Bildverzeichnissen, ein Pfad pro Zeile:</value>
+    <value>Útvonal hozzáadása a képekhez és a kép mappákhoz, soronként egy útvonal:</value>
   </data>
   <data name="BgImgSettings_Interval" xml:space="preserve">
-    <value>Interval</value>
+    <value>Intervallum</value>
   </data>
   <data name="BgImgSettings_MaxHeight" xml:space="preserve">
-    <value>Maximale Höhe</value>
+    <value>Max magasság</value>
   </data>
   <data name="BgImgSettings_MaxWidth" xml:space="preserve">
-    <value>Maximale Breite</value>
+    <value>Max szélesség</value>
   </data>
   <data name="BgImgSettings_Opacity" xml:space="preserve">
-    <value>Deckkraft</value>
+    <value>Átlátszóság</value>
   </data>
   <data name="BgImgSettings_Placement" xml:space="preserve">
-    <value>Platzierung</value>
+    <value>Elhelyezés</value>
   </data>
   <data name="BgImgSettings_RandomImage" xml:space="preserve">
-    <value>Zufallsbild</value>
+    <value>Véletlenszerű kép</value>
   </data>
   <data name="BgImgSettings_Reset" xml:space="preserve">
-    <value>Zurücksetzen</value>
+    <value>Alaphelyzet</value>
   </data>
   <data name="BgImgSettings_Zoom" xml:space="preserve">
-    <value>Zoom %</value>
+    <value>Nagyítás %</value>
   </data>
   <data name="BgImgSettings_ShowImages" xml:space="preserve">
-    <value>Bilder anzeigen</value>
+    <value>Kép megjelenítése</value>
   </data>
   <data name="BgImgSettings_Stretch" xml:space="preserve">
-    <value>Strecken</value>
+    <value>Nyújtás</value>
   </data>
   <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
-    <value>Vertikaler Versatz</value>
+    <value>Függőleges eltolás</value>
   </data>
   <data name="ImagePlacement_Bottom" xml:space="preserve">
-    <value>Unten</value>
+    <value>Lent</value>
   </data>
   <data name="ImagePlacement_BottomLeft" xml:space="preserve">
-    <value>Unten links</value>
+    <value>Balra lent</value>
   </data>
   <data name="ImagePlacement_BottomRight" xml:space="preserve">
-    <value>Unten rechts</value>
+    <value>Jobbra lent</value>
   </data>
   <data name="ImagePlacement_Center" xml:space="preserve">
-    <value>Zentriert</value>
+    <value>Középen</value>
   </data>
   <data name="ImagePlacement_Left" xml:space="preserve">
-    <value>Links</value>
+    <value>Balra</value>
   </data>
   <data name="ImagePlacement_Right" xml:space="preserve">
-    <value>Rechts</value>
+    <value>Jobbra</value>
   </data>
   <data name="ImagePlacement_Top" xml:space="preserve">
-    <value>Oben</value>
+    <value>Felül</value>
   </data>
   <data name="ImagePlacement_TopLeft" xml:space="preserve">
-    <value>Oben links</value>
+    <value>Balra fent</value>
   </data>
   <data name="ImagePlacement_TopRight" xml:space="preserve">
-    <value>Oben rechts</value>
+    <value>Jobbra fent</value>
   </data>
   <data name="StretchDirection_Both" xml:space="preserve">
-    <value>Beide</value>
+    <value>Mindkettő</value>
   </data>
   <data name="StretchDirection_DownOnly" xml:space="preserve">
-    <value>Nur nach unten</value>
+    <value>Csak lefelé</value>
   </data>
   <data name="StretchDirection_UpOnly" xml:space="preserve">
-    <value>Nur nach oben</value>
+    <value>Csak felfelé</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
-    <value>Bilder</value>
+    <value>Képek</value>
   </data>
   <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
-    <value>Unterer Abstand %</value>
+    <value>Alsó margó %</value>
   </data>
   <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
-    <value>Linker Abstand %</value>
+    <value>Bal margó %</value>
   </data>
   <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
-    <value>Rechter Abstand %</value>
+    <value>Jobb margó %</value>
   </data>
   <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
-    <value>Oberer Abstand %</value>
+    <value>Felső margó %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
-    <value>Weitersuchen</value>
+    <value>Következő keresése</value>
   </data>
   <data name="Search_FindPreviousToolTip" xml:space="preserve">
-    <value>Vorheriges suchen</value>
+    <value>Előző keresése</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Groß-/Kleinschreibung beachten</value>
+    <value>Kis- és nagybetűk egyezése</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Nur ganzes Wort suchen</value>
+    <value>Teljes szó keresése</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Alle ersetzen</value>
+    <value>Az összes cseréje</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Nächstes ersetzen</value>
+    <value>Következő cseréje</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Reguläre Ausdrücke verwenden</value>
+    <value>Reguláris kifejezés használata</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
-    <value>Umschalter zwischen den Modi "Suchen" und "Ersetzen"</value>
+    <value>Kapcsoló a keresés és a csere mód közötti váltáshoz</value>
   </data>
   <data name="Search_CloseToolTip" xml:space="preserve">
-    <value>Schließen</value>
+    <value>Bezárás</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>Inkrementelle Suche</value>
+    <value>Növekményes keresés</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
-    <value>Strg+I</value>
+    <value>Ctrl+I</value>
   </data>
   <data name="ShortCutKeyAltPlusAnyKey" xml:space="preserve">
     <value>Alt+{0}</value>
   </data>
   <data name="SignatureHelp_Signature_N_of_TotalCount" xml:space="preserve">
-    <value>{0} von {1}</value>
+    <value>{0} / {1}</value>
   </data>
   <data name="UriFollowLinkMessage" xml:space="preserve">
-    <value>Strg+Klicken um Link zu folgen</value>
+    <value>CTRL + kattintás megnyitja a hivatkozást</value>
   </data>
   <data name="EnvironmentSettings" xml:space="preserve">
-    <value>Umgebung</value>
+    <value>Környezet</value>
   </data>
   <data name="GeneralSettings" xml:space="preserve">
-    <value>Allgemein</value>
+    <value>Általános</value>
   </data>
   <data name="GeneralSettings_Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>Téma</value>
   </data>
   <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
-    <value>In Windows Explorer integrieren</value>
+    <value>Integrálás a Windows Intézőbe</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
-    <value>Reihenfolge (Neustart erforderlich)</value>
+    <value>Sorrend (újraindítás szükséges)</value>
   </data>
   <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
-    <value>Knoten durch einfachen Klick öffnen</value>
+    <value>Egy kattintás kinyitja a csomópontot</value>
   </data>
   <data name="AssemblyExplorerSettings_SyntaxHighlight" xml:space="preserve">
-    <value>Syntax hervorheben</value>
+    <value>Szintaxis kiemelés</value>
   </data>
   <data name="FontSettings" xml:space="preserve">
-    <value>Schrift</value>
+    <value>Betűtípus</value>
   </data>
   <data name="CodeEditorSettings" xml:space="preserve">
-    <value>Text-Editor</value>
+    <value>Kódszerkesztő</value>
   </data>
   <data name="TabsSettings" xml:space="preserve">
-    <value>Tabstopps</value>
+    <value>Lapok</value>
   </data>
   <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
-    <value>Tabstopps in Leerzeichen umwandeln</value>
+    <value>Tab-ok cserélése szóközre</value>
   </data>
   <data name="TextEditorLineNumbers" xml:space="preserve">
-    <value>Zeilen_nummern</value>
+    <value>_Sor számok</value>
   </data>
   <data name="TextEditorVirtualSpace" xml:space="preserve">
-    <value>_Virtuellen Bereich aktivieren</value>
+    <value>_Virtuális hely</value>
   </data>
   <data name="TextEditorWordWrap" xml:space="preserve">
-    <value>_Zeilenumbruch</value>
+    <value>_Sortörés</value>
   </data>
   <data name="TextEditorIndentSize" xml:space="preserve">
-    <value>_Einzugsgröße</value>
+    <value>_Behúzás mérete</value>
   </data>
   <data name="TextEditorTabSize" xml:space="preserve">
-    <value>_Tabstoppgröße</value>
+    <value>_Tabulátor méret</value>
   </data>
   <data name="TextViewerSettings" xml:space="preserve">
-    <value>Nur Text</value>
+    <value>Szövegszerkesztő</value>
   </data>
   <data name="AdvancedSettings" xml:space="preserve">
-    <value>Erweitert</value>
+    <value>Speciális</value>
   </data>
   <data name="ScrollBarsSettings" xml:space="preserve">
-    <value>Scrollleisten</value>
+    <value>Görgető sávok</value>
   </data>
   <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
-    <value>Leere Zeilen verdichten</value>
+    <value>Üres sorok elrejtése</value>
   </data>
   <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
-    <value>Zeilen verdichten die keine alphanumerischen Zeichen enthalten</value>
+    <value>Az alfanumerikus karaktereket nem tartalmazó sorok tömörítése</value>
   </data>
   <data name="TextEditorGlyphMargin" xml:space="preserve">
-    <value>Indikatorrand</value>
+    <value>Indikátor margó</value>
   </data>
   <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
-    <value>Aktuelle _Zeile markieren</value>
+    <value>Aktuális sor kiemelése</value>
   </data>
   <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
-    <value>Zusammengehörige Klammern hervorheben</value>
+    <value>Zárójelek kiemelése</value>
   </data>
   <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
-    <value>Verwandte _Schlüsselbegriffe unter Cursor anzeigen</value>
+    <value>Kapcsolódó kulcsszavak kiemelése</value>
   </data>
   <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
-    <value>Horizontale _Scrollleiste anzeigen</value>
+    <value>_Vízszintes görgetősáv megjelenítése</value>
   </data>
   <data name="TextEditorLineHeight" xml:space="preserve">
-    <value>Zeilenhöhe</value>
+    <value>Sormagasság</value>
   </data>
   <data name="TextEditorLineSeparators" xml:space="preserve">
-    <value>_Zeilentrennzeichen in Prozeduren anzeigen</value>
+    <value>Eljárás sor elválasztók mutatása</value>
   </data>
   <data name="TextEditorMargins" xml:space="preserve">
-    <value>Rahmen</value>
+    <value>Margók</value>
   </data>
   <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
-    <value>Keinen zusätzlichen Zeilenabstand hinzufügen</value>
+    <value>Ne legyen extra sor kitöltés</value>
   </data>
   <data name="TextEditorMouseWheelZoom" xml:space="preserve">
-    <value>Mausrad Zoom</value>
+    <value>Egér görgős nagyítás</value>
   </data>
   <data name="TextEditorReferenceHighlighting" xml:space="preserve">
-    <value>Übereinstimmungen hervorheben</value>
+    <value>Hivatkozások kiemelése</value>
   </data>
   <data name="TextEditorSelectionMargin" xml:space="preserve">
-    <value>Auswahlrahmen</value>
+    <value>Kijelölés margója</value>
   </data>
   <data name="TextEditorShowStructureLines" xml:space="preserve">
-    <value>Einrückungen anzeigen</value>
+    <value>Behúzási segédek mutatása</value>
   </data>
   <data name="TextEditorVerticalScrollBar" xml:space="preserve">
-    <value>_Vertikale Scrollleiste anzeigen</value>
+    <value>_Függőleges görgetősáv megjelenítése</value>
   </data>
   <data name="TextEditorZoom" xml:space="preserve">
-    <value>Zoom</value>
+    <value>Nagyítás</value>
   </data>
   <data name="TextEditorZoomControl" xml:space="preserve">
-    <value>Zoom-Steuerelement</value>
+    <value>Nagyítás vezérlés</value>
   </data>
   <data name="OutputWindowSettings" xml:space="preserve">
-    <value>Ausgabefenster</value>
+    <value>Kimeneti ablak</value>
   </data>
   <data name="TextEditorShowTimestamps" xml:space="preserve">
-    <value>Zeitstempel anzeigen</value>
+    <value>Időbélyegek mutatása</value>
   </data>
   <data name="ReplSettings" xml:space="preserve">
     <value>REPL</value>
   </data>
   <data name="AssemblyExplorerSettings_Filter" xml:space="preserve">
-    <value>Filter für gezogene Elemente</value>
+    <value>Húzott elemek szűrője</value>
   </data>
   <data name="DocumentFilterType_All" xml:space="preserve">
-    <value>Alle</value>
+    <value>Mind</value>
   </data>
   <data name="DocumentFilterType_AllSupported" xml:space="preserve">
-    <value>Alle unterstützten</value>
+    <value>Minden támogatott</value>
   </data>
   <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
-    <value>Nur .NET</value>
+    <value>csak .NET</value>
   </data>
   <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
-    <value>Alle Dateien wurden herausgefiltert.
-Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
+    <value>Minden fájl ki lett szűrve.
+A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
   </data>
   <data name="BlockStructureLineKind_DashedLines" xml:space="preserve">
-    <value>Gestrichelte Linien</value>
+    <value>Szaggatott vonalak</value>
   </data>
   <data name="BlockStructureLineKind_SolidLines" xml:space="preserve">
-    <value>Durchgezogene Linien</value>
+    <value>Folytonos vonalak</value>
   </data>
   <data name="ShortCutKeyCtrlShiftK" xml:space="preserve">
-    <value>Strg+Umschalt+K</value>
+    <value>Ctrl+Shift+K</value>
   </data>
   <data name="BgImgDisplayName_HexEditor" xml:space="preserve">
-    <value>Hex Editor</value>
+    <value>Hexa szerkesztő</value>
   </data>
   <data name="HexEditorGroup_Default" xml:space="preserve">
-    <value>Standard</value>
+    <value>Alapértelmezett</value>
   </data>
   <data name="HexEditorSettings" xml:space="preserve">
-    <value>Hex Editor</value>
+    <value>Hexa szerkesztő</value>
   </data>
   <data name="HexEditorEncoding" xml:space="preserve">
-    <value>Encoding</value>
+    <value>Kódolás</value>
   </data>
   <data name="HexEditorGroupSizeInBytes" xml:space="preserve">
-    <value>Gruppengröße</value>
+    <value>Csoportméret</value>
   </data>
   <data name="HexEditorHighlightCurrentValue" xml:space="preserve">
-    <value>Aktuellen Wert markieren</value>
+    <value>Aktuális érték kiemelése</value>
   </data>
   <data name="HexEditorOffsetFormat" xml:space="preserve">
-    <value>Offset</value>
+    <value>Eltolás</value>
   </data>
   <data name="HexEditorOffsetLowerCaseHex" xml:space="preserve">
-    <value>Kleinbuchstaben Hex (Versatz)</value>
+    <value>Kisbetűs hexa (eltolás)</value>
   </data>
   <data name="HexEditorValuesLowerCaseHex" xml:space="preserve">
-    <value>Kleinbuchstaben Hex (Werte)</value>
+    <value>Kisbetűs hexa (értékek)</value>
   </data>
   <data name="BlockStructureLineKind_None" xml:space="preserve">
-    <value>Kein</value>
+    <value>Nincs</value>
   </data>
   <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
-    <value>Zeilentrennzeichen in Spalten anzeigen</value>
+    <value>Oszlop vonal elválasztók megjelenítése</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
-    <value>_Versatz</value>
+    <value>_Eltolás</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
-    <value>Gehe zu Versatz</value>
+    <value>Ugrás eltolásra</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
-    <value>_Ende</value>
+    <value>_Vége</value>
   </data>
   <data name="HexEditorSelect_Start" xml:space="preserve">
     <value>_Start</value>
   </data>
   <data name="HexEditorSelect_Title" xml:space="preserve">
-    <value>Auswahl</value>
+    <value>Kiválaszt</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
-    <value>Ungültiger Wert</value>
+    <value>Helytelen érték</value>
   </data>
   <data name="ValueMustBeWithinRange" xml:space="preserve">
-    <value>Der Wert muss zwischen {0} und {1} liegen</value>
+    <value>Az értéknek {0} és {1} között kell lennie</value>
   </data>
   <data name="AnErrorOccurred" xml:space="preserve">
-    <value>Ein Fehler ist aufgetreten:
+    <value>Hiba történt:
 
 {0}</value>
   </data>
   <data name="HexEditorSaveSelection_Title" xml:space="preserve">
-    <value>Auswahl 0x{0:X}-0x{1:X} speichern</value>
+    <value>0x{0:X}-0x{1:X} kijelölés mentése</value>
   </data>
   <data name="Button_DefaultSettings" xml:space="preserve">
-    <value>Standardeinstellungen</value>
+    <value>_Alapértelmezett beállítások</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
-    <value>Zurücksetzen</value>
+    <value>Alaphelyzet</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
-    <value>Bytes pro Zeile</value>
+    <value>Soronkénti bájtok</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
-    <value>Byte leeren</value>
+    <value>Bájt törlése</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>Ausgewählte Bytes leeren</value>
+    <value>Kiválasztott bájtok törlése</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>C#-Array kopieren</value>
+    <value>C# tömb másolása</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>Versatz kopieren</value>
+    <value>Eltolás másolása</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
-    <value>Kopieren spezial</value>
+    <value>Különleges másolás</value>
   </data>
   <data name="CopyTextCommand" xml:space="preserve">
-    <value>Text kopieren</value>
+    <value>Szöveg másolása</value>
   </data>
   <data name="CopyUnicodeStringCommand" xml:space="preserve">
-    <value>Unicode-Zeichenfolge kopieren</value>
+    <value>Unicode karakterlánc másolása</value>
   </data>
   <data name="CopyUTF8StringCommand" xml:space="preserve">
-    <value>UTF-8-Zeichenfolge kopieren</value>
+    <value>UTF-8 karakterlánc másolása</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>Visual-Basic-Array kopieren</value>
+    <value>Visual Basic tömb másolása</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Fülle Auswahl mit Byte...</value>
+    <value>Kijelölés feltöltése bájttal...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
-    <value>_Byte</value>
+    <value>_Bájt</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
-    <value>Wert eingeben</value>
+    <value>Érték megadása</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>Gehe zu Versatz...</value>
+    <value>Ugrás eltolásra...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
-    <value>Speichere Auswah_l...</value>
+    <value>_Kijelölés mentése...</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
-    <value>Auswählen...</value>
+    <value>Kiválasztás...</value>
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
-    <value>Einstellungen...</value>
+    <value>Beállítások...</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
-    <value>_16 Bytes</value>
+    <value>_16 bájt</value>
   </data>
   <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
-    <value>_32 Bytes</value>
+    <value>_32 bájt</value>
   </data>
   <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
-    <value>_48 Bytes</value>
+    <value>_48 bájt</value>
   </data>
   <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
-    <value>_64 Bytes</value>
+    <value>_64 bájt</value>
   </data>
   <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
-    <value>_8 Bytes</value>
+    <value>_8 bájt</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>An Breite anpassen</value>
+    <value>_Szélességhez illesztés</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
-    <value>_Basisversatz</value>
+    <value>_Alap eltolás</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
-    <value>Dieser Wert wird zum Anfangsversatz hinzugefügt bevor er angezeigt wird</value>
+    <value>Ez az érték hozzáadásra kerül a kezdő eltoláshoz, mielőtt az megjelenne a képernyőn</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
-    <value>B_ytes pro Zeile</value>
+    <value>_Soronkénti bájtok</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>_Endversatz</value>
+    <value>_Utolsó eltolás</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
-    <value>Offset Bi_t Größe</value>
+    <value>Eltolás bit mérete</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
-    <value>_Zeige ASCII</value>
+    <value>_ASCII mutatása</value>
   </data>
   <data name="LocalHexSettings_ShowOffset" xml:space="preserve">
-    <value>Zeige Versatz</value>
+    <value>_Eltolás mutatása</value>
   </data>
   <data name="LocalHexSettings_ShowValues" xml:space="preserve">
-    <value>Zeige Werte</value>
+    <value>É_rtékek mutatása</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>_Anfangsversatz</value>
+    <value>_Kezdő eltolás</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
-    <value>Lokale Hex-Editor-Einstellungen</value>
+    <value>Helyi Hexa szerkesztő beállítások</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>Relativen Versatz nutzen</value>
+    <value>_Relatív eltolások használata</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
-    <value>Alle Versätze sind relativ zum Anfangsversatz</value>
+    <value>Minden eltolás relatív a kezdő eltoláshoz képest</value>
   </data>
   <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
-    <value>Wert_format</value>
+    <value>Érték _formátum</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>_Einfügen</value>
+    <value>_Beillesztés</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>Einfügen (#Blob-Daten)</value>
+    <value>Beillesztés (#Blob adat)</value>
   </data>
   <data name="PasteSpecialCommand" xml:space="preserve">
-    <value>Einfügen spezial</value>
+    <value>Különleges beillesztés</value>
   </data>
   <data name="PasteUnicodeCommand" xml:space="preserve">
-    <value>Einfügen (Unicode)</value>
+    <value>Beillesztés (Unicode)</value>
   </data>
   <data name="PasteUTF8Command" xml:space="preserve">
-    <value>Einfügen (UTF-8)</value>
+    <value>Beillesztés (UTF-8)</value>
   </data>
   <data name="ShortCutKeyCtrl8" xml:space="preserve">
-    <value>Strg+8</value>
+    <value>Ctrl+8</value>
   </data>
   <data name="ShortCutKeyCtrlAltO" xml:space="preserve">
-    <value>Strg+Alt+O</value>
+    <value>Ctrl+Alt+O</value>
   </data>
   <data name="ShortCutKeyCtrlAltS" xml:space="preserve">
-    <value>Strg+Alt+S</value>
+    <value>Ctrl+Alt+S</value>
   </data>
   <data name="ShortCutKeyCtrlB" xml:space="preserve">
-    <value>Strg+B</value>
+    <value>Ctrl+B</value>
   </data>
   <data name="ShortCutKeyCtrlD" xml:space="preserve">
-    <value>Strg+D</value>
+    <value>Ctrl + D</value>
   </data>
   <data name="ShortCutKeyCtrlG" xml:space="preserve">
-    <value>Strg+G</value>
+    <value>Ctrl+G</value>
   </data>
   <data name="ShortCutKeyCtrlShift8" xml:space="preserve">
-    <value>Strg+Umschalt+8</value>
+    <value>Ctrl+Shift+8</value>
   </data>
   <data name="ShortCutKeyCtrlShiftB" xml:space="preserve">
-    <value>Strg+Umschalt+B</value>
+    <value>Ctrl+Shift+B</value>
   </data>
   <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
-    <value>Strg+Umschalt+C</value>
+    <value>Ctrl+Shift+C</value>
   </data>
   <data name="ShortCutKeyCtrlShiftD" xml:space="preserve">
-    <value>Strg+Umschalt+D</value>
+    <value>Ctrl+Shift+D</value>
   </data>
   <data name="ShortCutKeyCtrlShiftH" xml:space="preserve">
-    <value>Strg+Umschalt+H</value>
+    <value>Ctrl+Shift+H</value>
   </data>
   <data name="ShortCutKeyCtrlShiftU" xml:space="preserve">
-    <value>Strg+Umschalt+U</value>
+    <value>Ctrl+Shift+U</value>
   </data>
   <data name="ShortCutKeyCtrlU" xml:space="preserve">
-    <value>Strg+U</value>
+    <value>Ctrl+U</value>
   </data>
   <data name="ShortCutKeyCtrlV" xml:space="preserve">
-    <value>Strg+V</value>
+    <value>Ctrl+V</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Entf</value>
+    <value>Del</value>
     <comment>the delete key</comment>
   </data>
   <data name="ShowAllBytesCommand" xml:space="preserve">
-    <value>Alle Bytes anzeigen</value>
+    <value>Minden bájt megjelenítése</value>
   </data>
   <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
-    <value>Nur ausgewählte Bytes anzeigen</value>
+    <value>Csak kiválasztott bájtok megjelenítése</value>
   </data>
   <data name="ValueFormatCommand" xml:space="preserve">
-    <value>Wertformat</value>
+    <value>Érték formátuma</value>
   </data>
   <data name="ShortCutKeyF5" xml:space="preserve">
     <value>F5</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Aktualisieren</value>
+    <value>Frissítés</value>
   </data>
   <data name="TextEditor" xml:space="preserve">
-    <value>Text Editor</value>
+    <value>Szöveg szerkesztő</value>
   </data>
   <data name="Search_BigEndianToolTip" xml:space="preserve">
-    <value>Big Endian</value>
+    <value>Nagy az elején bájtsorrend</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
@@ -1519,166 +1519,166 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Alt+U</value>
   </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
-    <value>Strg+F</value>
+    <value>Ctrl+F</value>
   </data>
   <data name="PasteUnicodeAndLength7Command" xml:space="preserve">
-    <value>Einfügen (Unicode und Länge)</value>
+    <value>Beillesztés (Unicode és hossz)</value>
   </data>
   <data name="PasteUTF8AndLength7Command" xml:space="preserve">
-    <value>Einfügen (UTF-8 und Länge)</value>
+    <value>Beillesztés (UTF-8 és hossz)</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrl8" xml:space="preserve">
-    <value>Strg+K, Strg+8</value>
+    <value>Ctrl+K, Ctrl+8</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrlU" xml:space="preserve">
-    <value>Strg+K, Strg+U</value>
+    <value>Ctrl+K, Ctrl+U</value>
   </data>
   <data name="HexGoToCodeOrStructure" xml:space="preserve">
-    <value>Gehe zu Code oder Struktur</value>
+    <value>Ugrás kódra vagy struktúrára</value>
   </data>
   <data name="ShortCutKeyF12" xml:space="preserve">
     <value>F12</value>
   </data>
   <data name="HexEditorHighlightStructureUnderMouseCursor" xml:space="preserve">
-    <value>Struktur unter Cursor hervorheben</value>
+    <value>Egér kurzor alatti struktúra kiemelése</value>
   </data>
   <data name="HexToolTipIndex" xml:space="preserve">
-    <value>Index</value>
+    <value>index</value>
   </data>
   <data name="HexToolTipOffset" xml:space="preserve">
-    <value>Versatz</value>
+    <value>eltolás</value>
   </data>
   <data name="BigEndian" xml:space="preserve">
-    <value>Big Endian</value>
+    <value>Nagy az elején</value>
   </data>
   <data name="CopyDataCommand" xml:space="preserve">
-    <value>{0} kopieren</value>
+    <value>{0} másolása</value>
   </data>
   <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
-    <value>Absoluten Versatz kopieren</value>
+    <value>Abszolút eltolás másolása</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
-    <value>Dateiversatz kopieren</value>
+    <value>Fájl eltolás másolása</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>RVA kopieren</value>
+    <value>RVA másolása</value>
   </data>
   <data name="CopyValueCommand" xml:space="preserve">
-    <value>Wert kopieren</value>
+    <value>Érték másolása</value>
   </data>
   <data name="ShortCutKeyCtrlShiftQ" xml:space="preserve">
-    <value>Strg+Umschalt+Q</value>
+    <value>Ctrl+Shift+Q</value>
   </data>
   <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
-    <value>Strg+Umschalt+A</value>
+    <value>Ctrl+Shift+A</value>
   </data>
   <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Strg+Umschalt+R</value>
+    <value>Ctrl + Shift + R</value>
   </data>
   <data name="ShortCutKeyCtrlShiftV" xml:space="preserve">
-    <value>Strg+Umschalt+V</value>
+    <value>Ctrl+Shift+V</value>
   </data>
   <data name="GoToAbsolutePosition" xml:space="preserve">
-    <value>Position</value>
+    <value>Pozíció</value>
   </data>
   <data name="GoToCurrentPosition" xml:space="preserve">
-    <value>Aktuelle Position</value>
+    <value>Jelenlegi pozíció</value>
   </data>
   <data name="GoToFilePosition" xml:space="preserve">
-    <value>Datei</value>
+    <value>Fájl</value>
   </data>
   <data name="ShortCutKeyCtrl1" xml:space="preserve">
-    <value>Strg+1</value>
+    <value>Ctrl+1</value>
   </data>
   <data name="ShortCutKeyCtrl2" xml:space="preserve">
-    <value>Strg+2</value>
+    <value>Ctrl+2</value>
   </data>
   <data name="ShortCutKeyCtrl3" xml:space="preserve">
-    <value>Strg+3</value>
+    <value>Ctrl+3</value>
   </data>
   <data name="ShortCutKeyCtrl4" xml:space="preserve">
-    <value>Strg+4</value>
+    <value>Ctrl+4</value>
   </data>
   <data name="SelectToNewPosition" xml:space="preserve">
-    <value>Bis zur neuen Position auswählen</value>
+    <value>_Kijelölés új pozícióba</value>
   </data>
   <data name="ShortCutKeyCtrlO" xml:space="preserve">
-    <value>Strg+O</value>
+    <value>Ctrl+O</value>
   </data>
   <data name="SelectLength" xml:space="preserve">
-    <value>Länge</value>
+    <value>Hossz</value>
   </data>
   <data name="GoToMetadata_Title" xml:space="preserve">
-    <value>Gehe zu Metadaten</value>
+    <value>Ugrás a metaadatokra</value>
   </data>
   <data name="GoToMetadata_Token_Label" xml:space="preserve">
     <value>_Token</value>
   </data>
   <data name="ShortCutKeyCtrl5" xml:space="preserve">
-    <value>Strg+5</value>
+    <value>Ctrl+5</value>
   </data>
   <data name="ShortCutKeyCtrl6" xml:space="preserve">
-    <value>Strg+6</value>
+    <value>Ctrl+6</value>
   </data>
   <data name="GoToMetadataCommand" xml:space="preserve">
-    <value>Gehe zu Metadaten...</value>
+    <value>Ugrás a metaadatokra...</value>
   </data>
   <data name="ShortCutKeyCtrlM" xml:space="preserve">
-    <value>Strg+M</value>
+    <value>Ctrl+M</value>
   </data>
   <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
-    <value>Ungültiger Versatz oder Metadaten Token</value>
+    <value>Érvénytelen eltolás vagy metaadat token</value>
   </data>
   <data name="GoToMetadataMethodBody" xml:space="preserve">
-    <value>Methodenrumpf</value>
+    <value>Metódus törzs</value>
   </data>
   <data name="GoToMetadataToken" xml:space="preserve">
-    <value>Metadaten Token</value>
+    <value>Metaadat token</value>
   </data>
   <data name="GoToMetadata_Index_Label" xml:space="preserve">
     <value>_Index</value>
   </data>
   <data name="HexFollowFieldValueReference" xml:space="preserve">
-    <value>Verweis folgen</value>
+    <value>Referencia követése</value>
   </data>
   <data name="ShortCutKeyCtrlF12" xml:space="preserve">
-    <value>Strg+F12</value>
+    <value>Ctrl + F12</value>
   </data>
   <data name="HexEditorSelectFileCommand" xml:space="preserve">
-    <value>Datei auswählen</value>
+    <value>Fájl kiválasztása</value>
   </data>
   <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
-    <value>Verschachtelte Datei auswählen</value>
+    <value>Beágyazott fájl kiválasztása</value>
   </data>
   <data name="SelectSpecialCommand" xml:space="preserve">
-    <value>Auswählen spezial</value>
+    <value>Különleges kijelölés</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlF" xml:space="preserve">
-    <value>Strg+E, Strg+F</value>
+    <value>Ctrl+E, Ctrl+F</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlN" xml:space="preserve">
-    <value>Strg+E, Strg+N</value>
+    <value>Ctrl+E, Ctrl+N</value>
   </data>
   <data name="HexEditorSelectStructureCommand" xml:space="preserve">
-    <value>Struktur auswählen</value>
+    <value>Struktúra kiválasztása</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
-    <value>Strg+E, Strg+S</value>
+    <value>Ctrl+E, Ctrl+S</value>
   </data>
   <data name="HexEditFieldCommand" xml:space="preserve">
-    <value>Bearbeite Feld</value>
+    <value>Mező szerkesztése</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
-    <value>Den Text einfärben</value>
+    <value>Szöveg színezése</value>
   </data>
   <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
-    <value>Alt+Pfeil rechts</value>
+    <value>Alt+Jobb nyíl</value>
   </data>
   <data name="ShortCutKeyBackspace" xml:space="preserve">
-    <value>Rücktaste</value>
+    <value>Backspace</value>
   </data>
   <data name="ShortCutKeyCtrlS" xml:space="preserve">
-    <value>Strg+S</value>
+    <value>Ctrl+S</value>
   </data>
   <data name="ShortCutKeyAltA" xml:space="preserve">
     <value>Alt+A</value>
@@ -1699,7 +1699,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Esc</value>
   </data>
   <data name="ShortCutKeyShiftF3" xml:space="preserve">
-    <value>Umschalt+F3</value>
+    <value>Shift+F3</value>
   </data>
   <data name="ShortCutKeyF3" xml:space="preserve">
     <value>F3</value>
@@ -1708,127 +1708,127 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Alt+R</value>
   </data>
   <data name="TimestampDateTimeFormat" xml:space="preserve">
-    <value>Zeitstempel Format</value>
+    <value>Időbélyeg formátum</value>
   </data>
   <data name="Window_Bookmarks" xml:space="preserve">
-    <value>Lesezeichen</value>
+    <value>Könyvjelzők</value>
   </data>
   <data name="BookmarksOptDlgTab" xml:space="preserve">
-    <value>Lesezeichen</value>
+    <value>Könyvjelzők</value>
   </data>
   <data name="BookmarksSettings_SyntaxHighlight" xml:space="preserve">
-    <value>Syntax hervorheben</value>
+    <value>Szintaxis kiemelés</value>
   </data>
   <data name="SearchHelp_ToolTip" xml:space="preserve">
-    <value>Hilfe</value>
+    <value>Súgó</value>
   </data>
   <data name="Column_Labels" xml:space="preserve">
-    <value>Bezeichnungen</value>
+    <value>Címkék</value>
   </data>
   <data name="Column_Location" xml:space="preserve">
-    <value>Position</value>
+    <value>Hely</value>
   </data>
   <data name="Column_Module" xml:space="preserve">
     <value>Modul</value>
   </data>
   <data name="Column_Name" xml:space="preserve">
-    <value>Name</value>
+    <value>Név</value>
   </data>
   <data name="Bookmarks_NoMatch" xml:space="preserve">
-    <value>Keine Lesezeichen stimmen mit dem Suchtext überein.</value>
+    <value>Nincs a keresési feltételnek megfelelő könyvjelző.</value>
   </data>
   <data name="Bookmarks_Search" xml:space="preserve">
-    <value>Suchen</value>
+    <value>Keresés</value>
   </data>
   <data name="BookmarksCommand" xml:space="preserve">
-    <value>Leze_zeichen</value>
+    <value>Kö_nyvjelzők</value>
   </data>
   <data name="BookmarksWindowCommand" xml:space="preserve">
-    <value>Lese_zeichenfenster</value>
+    <value>_Könyvjelző ablak</value>
   </data>
   <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Alle Lesezeichen exportieren, die mit den aktuellen Suchkriterien übereinstimmen</value>
+    <value>Az aktuális keresési feltételeknek megfelelő könyvjelzők exportálása</value>
   </data>
   <data name="Bookmarks_GoToLocation_ToolTip" xml:space="preserve">
-    <value>Einfügemarke zum ausgewählten Lesezeichen verschieben.</value>
+    <value>Beszúrási jel mozgatása a kijelölt könyvjelzőhöz.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Einfügemarke zum nächsten Lesezeichen im aktuellen Dokument verschieben.</value>
+    <value>Beszúrási jel mozgatása az aktuális fájl következő könyvjelzőjéhez.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Einfügemarke zum nächsten Lesezeichen mit selber Bezeichnung verschieben.</value>
+    <value>Beszúrási jel mozgatása a következő azonos címkéjű könyvjelzőhöz.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmark_ToolTip" xml:space="preserve">
-    <value>Einfügemarke zum nächsten Lesezeichen verschieben.</value>
+    <value>Beszúrási jel mozgatása a következő könyvjelzőhöz.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Einfügemarke zum vorherigen Lesezeichen im aktuellen Dokument verschieben.</value>
+    <value>Beszúrási jel mozgatása az aktuális fájl előző könyvjelzőjéhez.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Einfügemarke zum vorherigen Lesezeichen mit selber Bezeichnung verschieben.</value>
+    <value>Beszúrási jel mozgatása az előző azonos címkéjű könyvjelzőhöz.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmark_ToolTip" xml:space="preserve">
-    <value>Einfügemarke zum vorherigen Lesezeichen verschieben.</value>
+    <value>Beszúrási jel mozgatása az előző könyvjelzőhöz.</value>
   </data>
   <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
-    <value>Lesezeichen aus einer Datei importieren</value>
+    <value>Könyvjelzők importálása fájlból</value>
   </data>
   <data name="Bookmarks_RemoveBookmark_ToolTip" xml:space="preserve">
-    <value>Lesezeichen löschen</value>
+    <value>Könyvjelző eltávolítása</value>
   </data>
   <data name="Bookmarks_RemoveMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Alle Lesezeichen löschen, die mit den aktuellen Suchkriterien übereinstimmen</value>
+    <value>Az aktuális keresési feltételeknek megfelelő összes könyvjelző eltávolítása</value>
   </data>
   <data name="Bookmarks_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Alle Suchkriterien zurücksetzen, sodass alle Lesezeichen angezeigt werden</value>
+    <value>Keresési feltételek törlése, hogy az összes könyvjelző látszódjon</value>
   </data>
   <data name="Bookmarks_Search_ToolTip" xml:space="preserve">
-    <value>Text eingeben, der in allen Lesezeichen gesucht werden soll</value>
+    <value>Könyvjelző keresése</value>
   </data>
   <data name="Bookmarks_ToggleCreateBookmark_ToolTip" xml:space="preserve">
-    <value>Lesezeichen für die aktuelle Zeile umschalten.</value>
+    <value>Könyvjelző beállítása az aktuális sorra.</value>
   </data>
   <data name="Bookmarks_ToggleMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Alle Lesezeichen aktivieren bzw. deaktivieren, die mit den aktuellen Suchkriterien übereinstimmen</value>
+    <value>Az aktuális keresési feltételeknek megfelelő összes könyvjelző engedélyezése vagy tiltása</value>
   </data>
   <data name="BookmarkDefaultName" xml:space="preserve">
-    <value>Lesezeichen{0}</value>
+    <value>Könyvjelző{0}</value>
   </data>
   <data name="RenameCommand" xml:space="preserve">
-    <value>Umbenennen</value>
+    <value>Átnevezés</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
-    <value>Gehe zu Lesezeichen</value>
+    <value>Ugrás könyvjelzőhöz</value>
   </data>
   <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
-    <value>Strg+{0}</value>
+    <value>Ctrl+{0}</value>
   </data>
   <data name="DisableBookmarkCommand3" xml:space="preserve">
-    <value>Lesezeichen deaktivieren</value>
+    <value>Könyvjelző tiltása</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
-    <value>Bezeichnungen bearbeiten</value>
+    <value>Címkék szerkesztése</value>
   </data>
   <data name="EnableBookmarkCommand3" xml:space="preserve">
-    <value>Lesezeichen aktivieren</value>
+    <value>Könyvjelző engedélyezése</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
-    <value>Auswahl _exportieren...</value>
+    <value>Kiválasztott _exportálása...</value>
   </data>
   <data name="RemoveAllBookmarksCommand" xml:space="preserve">
-    <value>Alle Lesezeichen löschen</value>
+    <value>Minden könyvjelző törlése</value>
   </data>
   <data name="RemoveBookmarkCommand" xml:space="preserve">
-    <value>Lesezeichen löschen</value>
+    <value>Könyvjelző eltávolítása</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
-    <value>_Alles auswählen</value>
+    <value>_Minden kijelölése</value>
   </data>
   <data name="ShortCutKeyCtrlA" xml:space="preserve">
-    <value>Strg+A</value>
+    <value>Ctrl+A</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Strg+C</value>
+    <value>Ctrl+C</value>
   </data>
   <data name="ShortCutKeyEnter" xml:space="preserve">
     <value>Enter</value>
@@ -1837,87 +1837,87 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>F2</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>Deklarierenten Typ anzeigen</value>
+    <value>Deklaráló típusok mutatása</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>Intrinsische Typschlüsselwörter anzeigen</value>
+    <value>Belső típus kulcsszavak mutatása</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
-    <value>_Modulnamen anzeigen</value>
+    <value>_Modul nevek megjelenítése</value>
   </data>
   <data name="ShowNamespacesCommand" xml:space="preserve">
-    <value>Namensräume anzeigen</value>
+    <value>Névterek mutatása</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
-    <value>Parameter_namen anzeigen</value>
+    <value>_Paraméter nevek mutatása</value>
   </data>
   <data name="ShowParameterTypesCommand2" xml:space="preserve">
-    <value>Parametertypen anzeigen</value>
+    <value>Paraméter típusok mutatása</value>
   </data>
   <data name="ShowReturnTypesCommand" xml:space="preserve">
-    <value>Rückgabetypen anzeigen</value>
+    <value>Visszatérési értékek mutatása</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Tokens zeigen</value>
+    <value>Token-ek mutatása</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlW" xml:space="preserve">
-    <value>Strg+K, Strg+W</value>
+    <value>Ctrl+K, Ctrl+W</value>
   </data>
   <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
-    <value>Alle Lesezeichen im Dokument löschen</value>
+    <value>Minden könyvjelző törlése a dokumentumban</value>
   </data>
   <data name="ClearBookmarksCommand" xml:space="preserve">
-    <value>Lesezeichen _entfernen</value>
+    <value>Könyvjelzők _törlése</value>
   </data>
   <data name="DisableAllBookmarksCommand" xml:space="preserve">
-    <value>Alle Le_sezeichen deaktivieren</value>
+    <value>Minden könyvjelző _letiltása</value>
   </data>
   <data name="EnableAllBookmarksCommand" xml:space="preserve">
-    <value>Alle Le_sezeichen aktivieren</value>
+    <value>Minden könyvjelző _engedélyezése</value>
   </data>
   <data name="EnableBookmarkCommand" xml:space="preserve">
-    <value>Lesezeichen aktivieren</value>
+    <value>Könyvjelző engedélyezése</value>
   </data>
   <data name="GoToNextBookmarkCommand" xml:space="preserve">
-    <value>N_ächstes Lesezeichen</value>
+    <value>_Következő könyvjelző</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
-    <value>Nä_chstes Lesezeichen im Dokument</value>
+    <value>Kö_vetkező könyvjelző a dokumentumban</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Näc_hstes Lesezeichen mit selber Bezeichnung</value>
+    <value>Következő könyvjelző azonos címkével</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
-    <value>V_orheriges Lesezeichen</value>
+    <value>_Előző könyvjelző</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
-    <value>Vo_rheriges Lesezeichen im Dokument</value>
+    <value>E_lőző könyvjelző a dokumentumban</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Vor_heriges Lesezeichen mit selber Bezeichnung</value>
+    <value>Előző könyvjelző azonos címkével</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
-    <value>Strg+K, Strg+K</value>
+    <value>Ctrl+K, Ctrl+K</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlL" xml:space="preserve">
-    <value>Strg+K, Strg+L</value>
+    <value>Ctrl+K, Ctrl+L</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlN" xml:space="preserve">
-    <value>Strg+K, Strg+N</value>
+    <value>Ctrl+K, Ctrl+N</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlP" xml:space="preserve">
-    <value>Strg+K, Strg+P</value>
+    <value>Ctrl+K, Ctrl+P</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
-    <value>Lesezeichen _umschalten</value>
+    <value>_Könyvjelzők kapcsolása</value>
   </data>
   <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
-    <value>Bezeichnungen</value>
+    <value>Címkék</value>
   </data>
   <data name="EditLabelsTitle" xml:space="preserve">
-    <value>Bezeichnungen bearbeiten</value>
+    <value>Címkék szerkesztése</value>
   </data>
   <data name="User_Administrator" xml:space="preserve">
-    <value>Administrator</value>
+    <value>Adminisztrátor</value>
   </data>
 </root>

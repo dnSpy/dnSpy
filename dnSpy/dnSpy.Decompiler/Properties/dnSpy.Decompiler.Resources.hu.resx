@@ -117,121 +117,139 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>A_rgumentos</value>
+  <data name="MSBuild_CopyAppConfig" xml:space="preserve">
+    <value>app.config másolása ({0})</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamble</value>
+  <data name="MSBuild_CouldNotCreateDirectory2" xml:space="preserve">
+    <value>{0} mappa létrehozása sikertelen, hiba: {1}</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>_Romper en</value>
+  <data name="MSBuild_CreateApplicationIcon" xml:space="preserve">
+    <value>Alkalmazás ikon létrehozása</value>
   </data>
-  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>_Puerto</value>
+  <data name="MSBuild_CreateAppManifest" xml:space="preserve">
+    <value>App.manifest létrehozása</value>
   </data>
-  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>Conectar</value>
+  <data name="MSBuild_CreateAppXaml" xml:space="preserve">
+    <value>App.xaml létrehozása</value>
   </data>
-  <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>Dirección IP</value>
+  <data name="MSBuild_CreateEmbeddedResource" xml:space="preserve">
+    <value>Beágyazott erőforrás {0} létrehozása</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Directorio de _Trabajo</value>
+  <data name="MSBuild_DecompileAssemblyInfoAndFileExtension" xml:space="preserve">
+    <value>AssemblyInfo{0} visszafejtése</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Crear Proceso</value>
+  <data name="MSBuild_DecompileBaml" xml:space="preserve">
+    <value>BAML visszafejtése</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>No romper</value>
+  <data name="MSBuild_FailedToCreateProjectFile" xml:space="preserve">
+    <value>Nem sikerült a(z) {0} projekt fájl létrehozása, kivétel: {1}</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Punto de entrada</value>
+  <data name="MSBuild_FailedToCreateSolutionFile" xml:space="preserve">
+    <value>Nem sikerült a(z) {0} megoldás fájl létrehozása, kivétel: {1}</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>El archivo no existe</value>
+  <data name="MSBuild_FileCreationFailed2" xml:space="preserve">
+    <value>Nem sikerült, leírás = {0}, kivétel: {1}</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nombre de archivo faltante</value>
+  <data name="MSBuild_FileCreationFailed3" xml:space="preserve">
+    <value>Fájl létrehozása nem sikerült ({0}), leírás = {1}, kivétel: {2}</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+  <data name="ToolTip_Constant" xml:space="preserve">
+    <value>konstans</value>
   </data>
-  <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>No se pudo encontrar {0}</value>
+  <data name="ToolTip_Field" xml:space="preserve">
+    <value>mező</value>
   </data>
-  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>No pudo conectarse con el proceso de depurado</value>
+  <data name="ToolTip_GenericParameterInTypeOrMethod" xml:space="preserve">
+    <value>itt:</value>
   </data>
-  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>No se pudo encontrar el proceso depurado</value>
+  <data name="ToolTip_Local" xml:space="preserve">
+    <value>helyi változó</value>
   </data>
-  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>La conexión al proceso de depurado se cerró inesperadamente</value>
+  <data name="ToolTip_NMethodOverloads" xml:space="preserve">
+    <value>{0} túlterhelés</value>
   </data>
-  <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Cancelado</value>
+  <data name="ToolTip_OneMethodOverload" xml:space="preserve">
+    <value>1 túlterhelés</value>
   </data>
-  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>Requiere cancelarlo</value>
+  <data name="ToolTip_Parameter" xml:space="preserve">
+    <value>paraméter</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Fondo</value>
+  <data name="Decompile_Namespace_Types" xml:space="preserve">
+    <value>Típusok:</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Detenido</value>
+  <data name="Decompile_AnyCPU32BitPreferred" xml:space="preserve">
+    <value>AnyCPU (32-bit preferált)</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+  <data name="Decompile_AnyCPU64BitPreferred" xml:space="preserve">
+    <value>AnyCPU (64-bit preferált)</value>
   </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspendido</value>
+  <data name="Decompile_Architecture" xml:space="preserve">
+    <value>Architektúra:</value>
   </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Suspender consulta</value>
+  <data name="Decompile_EntryPoint" xml:space="preserve">
+    <value>Belépési pont:</value>
   </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Sin comenzar</value>
+  <data name="Decompile_GlobalType" xml:space="preserve">
+    <value>Globális típus:</value>
   </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+  <data name="Decompile_NativeEntryPoint" xml:space="preserve">
+    <value>Natív belépési pont: 0x{0:X8}</value>
   </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; ningún mensaje de la excepción &gt;"</value>
+  <data name="Decompile_Runtime" xml:space="preserve">
+    <value>Futási idő:</value>
   </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Evaluación de la función</value>
+  <data name="Decompile_ThisAssemblyContainsUnmanagedCode" xml:space="preserve">
+    <value>Ez a szerelvény nem felügyelt kódot tartalmaz.</value>
   </data>
-  <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Transición natural</value>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Időbélyeg:</value>
   </data>
-  <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
-    <value>Esta ejecución no soporta llamadas a métodos genéricos</value>
+  <data name="MSBuild_CreateResource" xml:space="preserve">
+    <value>{0} erőforrás létrehozása</value>
   </data>
-  <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>No es posible escribir a 'esto'</value>
+  <data name="MSBuild_CreateSplashScreenResource" xml:space="preserve">
+    <value>{0} üdvözlő képernyő erőforrás létrehozása</value>
   </data>
-  <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Miembro no puede accederse debido a limitaciones de tiempo de ejecución</value>
+  <data name="MSBuild_CreateWinFormsDesignerFile" xml:space="preserve">
+    <value>WinForms Designer fájl létrehozása</value>
   </data>
-  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>No se pudo establecer la siguiente instrucción.</value>
+  <data name="MSBuild_CreateWinFormsFile" xml:space="preserve">
+    <value>WinForms fájl létrehozása</value>
   </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>El tipo no se ha cargado todavía.</value>
+  <data name="MSBuild_DecompileType" xml:space="preserve">
+    <value>{0} típus visszafordítása</value>
   </data>
-  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Proceso se ha detenido y _waiting para el depurador</value>
+  <data name="MSBuild_CreateSettingsFile" xml:space="preserve">
+    <value>{0} létrehozása</value>
   </data>
-  <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
-    <value>El tiempo de ejecución no admite la configuración de una nueva declaración</value>
+  <data name="MSBuild_CreateSettingsDesignerTypeFile" xml:space="preserve">
+    <value>Beállítás designer fájl létrehozása</value>
   </data>
-  <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
+  <data name="MSBuild_CreateSettingsTypeFile" xml:space="preserve">
+    <value>Beállítás fájl létrehozása</value>
   </data>
-  <data name="UnityEditor" xml:space="preserve">
-    <value>Editor</value>
+  <data name="MSBuild_CreateResXFile" xml:space="preserve">
+    <value>ResX fájl létrehozása</value>
   </data>
-  <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Ismeretlen&gt;</value>
+  </data>
+  <data name="CSharp_Awaitable_Method" xml:space="preserve">
+    <value>megvárható</value>
+  </data>
+  <data name="CSharp_Deprecated_Member" xml:space="preserve">
+    <value>elavult</value>
+  </data>
+  <data name="CSharp_Extension_Method" xml:space="preserve">
+    <value>kiterjesztés</value>
+  </data>
+  <data name="VisualBasic_Awaitable_Method" xml:space="preserve">
+    <value>Megvárható</value>
+  </data>
+  <data name="VisualBasic_Deprecated_Member" xml:space="preserve">
+    <value>Elavult</value>
+  </data>
+  <data name="VisualBasic_Extension_Method" xml:space="preserve">
+    <value>Bővítmény</value>
   </data>
 </root>

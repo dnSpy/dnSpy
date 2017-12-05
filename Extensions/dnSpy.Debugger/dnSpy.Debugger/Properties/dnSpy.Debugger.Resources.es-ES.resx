@@ -141,12 +141,6 @@
   <data name="Attach_AttachToProcess" xml:space="preserve">
     <value>Adjuntar al proceso de</value>
   </data>
-  <data name="Attach_AttachToProcess32" xml:space="preserve">
-    <value>Adjuntar al proceso (sólo 64 bits)</value>
-  </data>
-  <data name="Attach_AttachToProcess64" xml:space="preserve">
-    <value>Adjuntar al proceso (sólo 64 bits)</value>
-  </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
     <value>Utilice dnSpy.exe para conectar a los procesos de 64 bits</value>
   </data>
@@ -339,7 +333,8 @@
     <value>No se puede evaluar cuando ha ocurrido una excepción no controlada</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
-    <value>No se pudo iniciar '{0}' ERROR: {0}</value>
+    <value>Could not start '{0}'
+ERROR: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
     <value>Configuración de E_xcepción</value>

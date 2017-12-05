@@ -117,121 +117,73 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>A_rgumentos</value>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Minden fájl</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamble</value>
+  <data name="AnErrorOccurred" xml:space="preserve">
+    <value>Hiba történt:
+
+{0}</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>_Romper en</value>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_Mégsem</value>
   </data>
-  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>_Puerto</value>
+  <data name="CouldNotConvert" xml:space="preserve">
+    <value>'{0}' nem konvertálható</value>
   </data>
-  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>Conectar</value>
+  <data name="CouldNotConvertFromString" xml:space="preserve">
+    <value>Nem tudtam átalakítani a stringről: {0}</value>
   </data>
-  <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>Dirección IP</value>
+  <data name="CouldNotDeserializeData" xml:space="preserve">
+    <value>Nem sikerült deszerializálni az adatokat: {0}</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Directorio de _Trabajo</value>
+  <data name="Files_DotNetExecutables" xml:space="preserve">
+    <value>.NET futtathatók</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Crear Proceso</value>
+  <data name="Files_DotNetNetModules" xml:space="preserve">
+    <value>.NET NetModul</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>No romper</value>
+  <data name="Files_Executables" xml:space="preserve">
+    <value>Végrehajtható fájlok</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Punto de entrada</value>
+  <data name="Files_Images" xml:space="preserve">
+    <value>Képek</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>El archivo no existe</value>
+  <data name="Files_StrongNameKeyFiles" xml:space="preserve">
+    <value>Erős nevű kulcs fájlok</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nombre de archivo faltante</value>
+  <data name="Files_XmlFiles" xml:space="preserve">
+    <value>XML fájlok</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>Érvénytelen GUID</value>
   </data>
-  <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>No se pudo encontrar {0}</value>
+  <data name="NewDataNotImageList" xml:space="preserve">
+    <value>Az új adat nem kép lista.</value>
   </data>
-  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>No pudo conectarse con el proceso de depurado</value>
+  <data name="NoTypeConverter" xml:space="preserve">
+    <value>{0} nem renlekezik TypeConverterrel és nem konvertálható karakterláncból.</value>
   </data>
-  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>No se pudo encontrar el proceso depurado</value>
+  <data name="NumberOfBytes" xml:space="preserve">
+    <value>{0} bájt</value>
   </data>
-  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>La conexión al proceso de depurado se cerró inesperadamente</value>
+  <data name="NumberOfBytesAndType" xml:space="preserve">
+    <value>{0} bájt, típus = {1}</value>
   </data>
-  <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Cancelado</value>
+  <data name="ResourceTypeCantBeChanged" xml:space="preserve">
+    <value>Erőforrás típus nem módosítható</value>
   </data>
-  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>Requiere cancelarlo</value>
+  <data name="SaveResource" xml:space="preserve">
+    <value>Erőforrás mentése</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Fondo</value>
+  <data name="SaveResources" xml:space="preserve">
+    <value>Erőforrások mentése</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Detenido</value>
+  <data name="Search_SearchColumnHelpText" xml:space="preserve">
+    <value>Keresett oszlop: {0}</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
-  </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspendido</value>
-  </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Suspender consulta</value>
-  </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Sin comenzar</value>
-  </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
-  </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; ningún mensaje de la excepción &gt;"</value>
-  </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Evaluación de la función</value>
-  </data>
-  <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Transición natural</value>
-  </data>
-  <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
-    <value>Esta ejecución no soporta llamadas a métodos genéricos</value>
-  </data>
-  <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>No es posible escribir a 'esto'</value>
-  </data>
-  <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Miembro no puede accederse debido a limitaciones de tiempo de ejecución</value>
-  </data>
-  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>No se pudo establecer la siguiente instrucción.</value>
-  </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>El tipo no se ha cargado todavía.</value>
-  </data>
-  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Proceso se ha detenido y _waiting para el depurador</value>
-  </data>
-  <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
-    <value>El tiempo de ejecución no admite la configuración de una nueva declaración</value>
-  </data>
-  <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
-  </data>
-  <data name="UnityEditor" xml:space="preserve">
-    <value>Editor</value>
-  </data>
-  <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+  <data name="ValueMustBeType" xml:space="preserve">
+    <value>Az értéknek {0} típusúnak kell lennie.
+Hiba: {1}</value>
   </data>
 </root>

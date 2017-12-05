@@ -50,3 +50,7 @@ Spanish:
 	Isidro Padilla
 	Phid
 	lemalc
+
+Hungarian:
+	Gábor Mizda
+	Krisztián Szilágyi

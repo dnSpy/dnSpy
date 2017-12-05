@@ -141,12 +141,6 @@
   <data name="Attach_AttachToProcess" xml:space="preserve">
     <value>Присоединиться к процессу</value>
   </data>
-  <data name="Attach_AttachToProcess32" xml:space="preserve">
-    <value>Присоединиться к процессу (только 32-bit)</value>
-  </data>
-  <data name="Attach_AttachToProcess64" xml:space="preserve">
-    <value>Присоединиться к процессу (только 64-bit)</value>
-  </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
     <value>Используйте dnSpy.exe для присоединения к 64-битным процессам</value>
   </data>
@@ -339,8 +333,8 @@
     <value>Не могу вычислить пока появляется необработанное исключение</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
-    <value>Не могу запустить '{0}'
-ОШИБКА: {0}</value>
+    <value>Could not start '{0}'
+ERROR: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
     <value>Настройки и_сключений</value>

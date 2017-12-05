@@ -116,6 +116,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.es-ES.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.hu.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

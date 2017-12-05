@@ -160,22 +160,22 @@
     <value>'{0}' warf eine Ausnahme vom Typ '{1}'</value>
   </data>
   <data name="ModuleMetadataNotFoundOrInvalid" xml:space="preserve">
-    <value>The metadata of the module couldn't be found or it is invalid</value>
+    <value>Die Metadaten des Moduls konnten nicht gefunden werden oder sind ungültig</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>Sie müssen den Prozess anhalten um dynamische Module laden zu können.</value>
   </data>
   <data name="NoDotNetObjectFoundAtAddress" xml:space="preserve">
-    <value>Es wurde kein Objekt unter der angegebenen Adresse gefunden</value>
+    <value>Es wurde kein Objekt an der angegebenen Adresse gefunden</value>
   </data>
   <data name="NoExceptionOnTheCurrentThread" xml:space="preserve">
-    <value>There is no exception on the current thread</value>
+    <value>Es gibt keine Ausnahmen im aktuellen Thread</value>
   </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
     <value>Alle Methodenrümpfe neu laden</value>
   </data>
   <data name="ReturnValueNotAvailable" xml:space="preserve">
-    <value>Return value is not currently available</value>
+    <value>Rückgabewert derzeit nicht verfügbar</value>
   </data>
   <data name="UnknownVariableOrObjectId" xml:space="preserve">
     <value>Unbekannte Variable oder Objekt ID</value>

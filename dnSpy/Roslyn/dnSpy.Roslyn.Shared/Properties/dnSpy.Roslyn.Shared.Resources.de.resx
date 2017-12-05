@@ -214,6 +214,6 @@
     <value>Ergebnisansicht benötigt einen Verweis auf {0}</value>
   </data>
   <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
-    <value>Type '{0}' doesn't exist in assembly '{1}'</value>
+    <value>Typ "{0}" existiert nicht in Assembly "{1}"</value>
   </data>
 </root>

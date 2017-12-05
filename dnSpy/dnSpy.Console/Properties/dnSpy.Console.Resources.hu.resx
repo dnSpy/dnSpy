@@ -1,0 +1,321 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error1" xml:space="preserve">
+    <value>HIBA: {0}</value>
+  </data>
+  <data name="FileOrDirDoesNotExist" xml:space="preserve">
+    <value>'{0}' fájl/mappa nem létezik</value>
+  </data>
+  <data name="InvalidOption" xml:space="preserve">
+    <value>Hibás opció: {0}</value>
+  </data>
+  <data name="InvalidSolutionName" xml:space="preserve">
+    <value>A .sln névnek ({0}) relatívnak kell lennie a projekt mappához</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Érvénytelen metaadat token</value>
+  </data>
+  <data name="InvalidVSVersion" xml:space="preserve">
+    <value>Érvénytelen Visual Studio verzió: {0}</value>
+  </data>
+  <data name="LanguageDoesNotExist" xml:space="preserve">
+    <value>A(z) '{0}' nyelv nem létezik</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>Nyelvek:</value>
+  </data>
+  <data name="LanguageXDoesNotExist" xml:space="preserve">
+    <value>A(z) '{0}' nyelv nem létezik</value>
+  </data>
+  <data name="MissingAsmSearchPath" xml:space="preserve">
+    <value>Hiányzó szerelvény keresési útvonala</value>
+  </data>
+  <data name="MissingDotNetFilename" xml:space="preserve">
+    <value>Hiányzó .NET fájlnév</value>
+  </data>
+  <data name="MissingLanguageName" xml:space="preserve">
+    <value>Hiányzó nyelv név</value>
+  </data>
+  <data name="MissingMDToken" xml:space="preserve">
+    <value>Hiányzó metadata token</value>
+  </data>
+  <data name="MissingNumberOfThreads" xml:space="preserve">
+    <value>Hiányzó szálak száma</value>
+  </data>
+  <data name="MissingOptions" xml:space="preserve">
+    <value>Nincs opció megadva.</value>
+  </data>
+  <data name="MissingOutputDir" xml:space="preserve">
+    <value>Hiányzó kimeneti mappa</value>
+  </data>
+  <data name="MissingSolutionName" xml:space="preserve">
+    <value>Hiányzó .sln név</value>
+  </data>
+  <data name="MissingVSVersion" xml:space="preserve">
+    <value>Hiányzó Visual Studio verzió</value>
+  </data>
+  <data name="NoLanguagesFound" xml:space="preserve">
+    <value>A nyelv nem található. Győződjön meg róla, hogy a nyelvi dll fájlok ugyan abban a mappában vannak, mint a program.</value>
+  </data>
+  <data name="NotDotNetFile" xml:space="preserve">
+    <value>{0} nem egy .NET fájl</value>
+  </data>
+  <data name="OnlyOneFileCanBeDecompiled" xml:space="preserve">
+    <value>A --md használatakor csak egy fájlt lehet visszafordítani</value>
+  </data>
+  <data name="MissingUserGacPath" xml:space="preserve">
+    <value>Hiányzó felhasználói GAC elérési út</value>
+  </data>
+  <data name="InvalidMemberToDecompile" xml:space="preserve">
+    <value>Csak típusok, metódusok, mezők, események és tulajdonságok fordíthatók vissza</value>
+  </data>
+  <data name="CouldNotFindTypeX" xml:space="preserve">
+    <value>A(z) {0} típus nem található</value>
+  </data>
+  <data name="CouldNotResolveGacFileX" xml:space="preserve">
+    <value>A(z) '{0}' GAC szerelvény nem oldható fel</value>
+  </data>
+  <data name="MissingGacFile" xml:space="preserve">
+    <value>Hiányzó GAC szerelvény-név</value>
+  </data>
+  <data name="MissingTypeName" xml:space="preserve">
+    <value>Hiányzik a típus teljes neve</value>
+  </data>
+  <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
+    <value>A(z) {0} nyelv nem támogatja projekt fájlok létrehozását</value>
+  </data>
+  <data name="LanguageOptions" xml:space="preserve">
+    <value>Nyelv opciók:</value>
+  </data>
+  <data name="LanguageOptionsDesc" xml:space="preserve">
+    <value>Minden boolean opció letiltható a 'no-' vagy a 'dont-' használatával, pl. --dont-sort-members</value>
+  </data>
+  <data name="MissingOptionArgument" xml:space="preserve">
+    <value>Hiányzó opció kapcsoló</value>
+  </data>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>Érvénytelen GUID</value>
+  </data>
+  <data name="CmdLineAssembly" xml:space="preserve">
+    <value>szerelvény</value>
+  </data>
+  <data name="CmdLineDescription_AsmPath" xml:space="preserve">
+    <value>szerelvény keresési útvonal. Az elérési utakat '{0}' karakterrel lehet elválasztani vagy több --asm-path kapcsoló is használható</value>
+  </data>
+  <data name="CmdLineDescription_GACFile" xml:space="preserve">
+    <value>egy GAC-ban lévő szerelvény visszafordítása. Adja meg a teljes szerelvény nevet egy adott verzió használatához.</value>
+  </data>
+  <data name="CmdLineDescription_Language" xml:space="preserve">
+    <value>beállítja a nyelvet, alapértelmezetten C#. GUID-ok is használhatóak.</value>
+  </data>
+  <data name="CmdLineDescription_MDToken" xml:space="preserve">
+    <value>visszafordítja az N metaadat tokenű tagot a szabványos kimenetre</value>
+  </data>
+  <data name="CmdLineDescription_NoBAML" xml:space="preserve">
+    <value>ne fordítsa vissza a baml-t xaml-re</value>
+  </data>
+  <data name="CmdLineDescription_NoGAC" xml:space="preserve">
+    <value>ne keressen szerelvényeket a GAC-ban. Hasznos a --no-stdlib kapcsolóval</value>
+  </data>
+  <data name="CmdLineDescription_NoResources" xml:space="preserve">
+    <value>ne csomagolja ki az erőforrásokat</value>
+  </data>
+  <data name="CmdLineDescription_NoResX" xml:space="preserve">
+    <value>ne hozzon létre .resx fájlt</value>
+  </data>
+  <data name="CmdLineDescription_NoSLN" xml:space="preserve">
+    <value>ne hozzon létre .sln fájlt</value>
+  </data>
+  <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
+    <value>a projektek nem hivatkoznak az mscorlib-re</value>
+  </data>
+  <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
+    <value>munka szálak száma. Alapértelmezetten egy szál CPU magonként</value>
+  </data>
+  <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
+    <value>kimeneti mappa</value>
+  </data>
+  <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
+    <value>projekt guid</value>
+  </data>
+  <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
+    <value>visszafordítandó .NET fájlok rekurzív keresése</value>
+  </data>
+  <data name="CmdLineDescription_SlnName" xml:space="preserve">
+    <value>.sln fájl neve</value>
+  </data>
+  <data name="CmdLineDescription_Type1" xml:space="preserve">
+    <value>a megadott nevű típus visszafordítása a szabványos kimenetre. Vagy Névtér.Név vagy Név, betűméretre nem érzékeny</value>
+  </data>
+  <data name="CmdLineDescription_Type2" xml:space="preserve">
+    <value>ugyan az, mint a -t</value>
+  </data>
+  <data name="CmdLineDescription_UserGAC" xml:space="preserve">
+    <value>felhasználói GAC elérési út. Az elérési utakat '{0}' karakterrel lehet elválasztani vagy több --user-gac kapcsoló is használható</value>
+  </data>
+  <data name="CmdLineDescription_VSVersion" xml:space="preserve">
+    <value>Visual Studio verzió, 2005, 2008, ..., {0}</value>
+  </data>
+  <data name="CmdLineLanguage" xml:space="preserve">
+    <value>nyelv</value>
+  </data>
+  <data name="CmdLineName" xml:space="preserve">
+    <value>név</value>
+  </data>
+  <data name="CmdLineOutputDir" xml:space="preserve">
+    <value>kimeneti mappa</value>
+  </data>
+  <data name="CmdLinePath" xml:space="preserve">
+    <value>útvonal</value>
+  </data>
+  <data name="ExampleDescription1" xml:space="preserve">
+    <value>Visszafordít minden .NET fájlt a megadott mappában és a fájlokat elmenti a C:\out\path mappába</value>
+  </data>
+  <data name="ExampleDescription2" xml:space="preserve">
+    <value>Visszafordít minden .NET fájlt a megadott mappában és almappáiban</value>
+  </data>
+  <data name="ExampleDescription3" xml:space="preserve">
+    <value>Visszafordít minden *.dll .NET fájlt a megadott mappában és a fájlokat elmenti a C:\out\path mappába</value>
+  </data>
+  <data name="ExampleDescription4" xml:space="preserve">
+    <value>Visszafordítja a 0x06000123 token-ű tagot.</value>
+  </data>
+  <data name="ExampleDescription5" xml:space="preserve">
+    <value>Visszafordítja a System.Int32 osztályt az mscorlib-ből</value>
+  </data>
+  <data name="ExamplesHeader" xml:space="preserve">
+    <value>Példák:</value>
+  </data>
+  <data name="UsageHeader" xml:space="preserve">
+    <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>
+  </data>
+  <data name="CmdLineDescription_NoColor" xml:space="preserve">
+    <value>ne színezze a szöveget</value>
+  </data>
+  <data name="CmdLineDescription_Spaces" xml:space="preserve">
+    <value>Tab mérete szóközökben vagy 0, ha egy tab</value>
+  </data>
+  <data name="InvalidSpacesArgument" xml:space="preserve">
+    <value>A szóközök számának {0} és {1} között kell lennie</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>Hiányzó argumentum</value>
+  </data>
+</root>

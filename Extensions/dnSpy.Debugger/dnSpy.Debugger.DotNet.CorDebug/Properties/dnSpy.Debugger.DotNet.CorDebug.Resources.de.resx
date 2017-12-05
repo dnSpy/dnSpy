@@ -224,7 +224,7 @@ Fehler: {0}</value>
     <value>Init-Klasse</value>
   </data>
   <data name="StackFrame_Exception" xml:space="preserve">
-    <value>Ausname</value>
+    <value>Ausnahme</value>
   </data>
   <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
     <value>Funktionsauswertung</value>

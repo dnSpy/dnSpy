@@ -160,7 +160,7 @@
     <value>XAML _speichern...</value>
   </data>
   <data name="Saving" xml:space="preserve">
-    <value>Speichere...</value>
+    <value>Speichern...</value>
   </data>
   <data name="XAMLFile" xml:space="preserve">
     <value>XAML-Datei</value>

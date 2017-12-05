@@ -170,6 +170,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.es-ES.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.hu.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

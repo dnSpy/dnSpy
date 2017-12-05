@@ -117,121 +117,106 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>A_rgumentos</value>
+  <data name="AnalyzeCommand" xml:space="preserve">
+    <value>_Analizál</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamble</value>
+  <data name="AnalyzerWindowTitle" xml:space="preserve">
+    <value>Analizáló / Elemző</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>_Romper en</value>
+  <data name="AppliedToTreeNode" xml:space="preserve">
+    <value>Alkalmazva:</value>
   </data>
-  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>_Puerto</value>
+  <data name="AssignedByTreeNode" xml:space="preserve">
+    <value>Hozzárendelve:</value>
   </data>
-  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>Conectar</value>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>_Másolás</value>
   </data>
-  <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>Dirección IP</value>
+  <data name="DoubleClick" xml:space="preserve">
+    <value>Dupla kattintás</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Directorio de _Trabajo</value>
+  <data name="EventAdderTreeNodeName" xml:space="preserve">
+    <value>hozzáad</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Crear Proceso</value>
+  <data name="EventRemoverTreeNodeName" xml:space="preserve">
+    <value>eltávolít</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>No romper</value>
+  <data name="ExposedByTreeNode" xml:space="preserve">
+    <value>kiajánlja</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Punto de entrada</value>
+  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
+    <value>Kiterjesztés metódusok</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>El archivo no existe</value>
+  <data name="GoToReferenceCommand" xml:space="preserve">
+    <value>Ugrás a referenciához</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nombre de archivo faltante</value>
+  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
+    <value>Referencia mutatása a metódusban</value>
+  </data>
+  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
+    <value>Referencia megjelenítése a metódusban (Új _lap)</value>
+  </data>
+  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
+    <value>Ugrás a referenciára (új _lap)</value>
+  </data>
+  <data name="HidesParent" xml:space="preserve">
+    <value>elrejti</value>
+  </data>
+  <data name="ImplementedByTreeNode" xml:space="preserve">
+    <value>implementál</value>
+  </data>
+  <data name="InstantiatedByTreeNode" xml:space="preserve">
+    <value>példányosít</value>
+  </data>
+  <data name="OverriddenByTreeNode" xml:space="preserve">
+    <value>felülbírál</value>
+  </data>
+  <data name="OverridesTreeNode" xml:space="preserve">
+    <value>Felülbírál</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+    <value>Szerelvények analizálása</value>
   </data>
-  <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>No se pudo encontrar {0}</value>
+  <data name="PropertyGetterTreeNode" xml:space="preserve">
+    <value>get</value>
   </data>
-  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>No pudo conectarse con el proceso de depurado</value>
+  <data name="PropertySetterTreeNode" xml:space="preserve">
+    <value>set</value>
   </data>
-  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>No se pudo encontrar el proceso depurado</value>
+  <data name="RaisedByTreeNode" xml:space="preserve">
+    <value>kiváltó</value>
   </data>
-  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>La conexión al proceso de depurado se cerró inesperadamente</value>
+  <data name="ReadByTreeNode" xml:space="preserve">
+    <value>olvasva</value>
   </data>
-  <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Cancelado</value>
+  <data name="RemoveCommand" xml:space="preserve">
+    <value>_Eltávolít</value>
   </data>
-  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>Requiere cancelarlo</value>
+  <data name="Searching" xml:space="preserve">
+    <value>Keresés...</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Fondo</value>
+  <data name="ShiftDoubleClick" xml:space="preserve">
+    <value>Shift+dupla katt</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Detenido</value>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl + C</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
+    <value>Ctrl + Shift + R</value>
   </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspendido</value>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
   </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Suspender consulta</value>
+  <data name="ShowMetadataTokensCommand" xml:space="preserve">
+    <value>Token-ek mutatása</value>
   </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Sin comenzar</value>
+  <data name="SyntaxHighlightCommand" xml:space="preserve">
+    <value>Szintaxis kiemelése</value>
   </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+  <data name="UsedByTreeNode" xml:space="preserve">
+    <value>Felhasznált</value>
   </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; ningún mensaje de la excepción &gt;"</value>
-  </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Evaluación de la función</value>
-  </data>
-  <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Transición natural</value>
-  </data>
-  <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
-    <value>Esta ejecución no soporta llamadas a métodos genéricos</value>
-  </data>
-  <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>No es posible escribir a 'esto'</value>
-  </data>
-  <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Miembro no puede accederse debido a limitaciones de tiempo de ejecución</value>
-  </data>
-  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>No se pudo establecer la siguiente instrucción.</value>
-  </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>El tipo no se ha cargado todavía.</value>
-  </data>
-  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Proceso se ha detenido y _waiting para el depurador</value>
-  </data>
-  <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
-    <value>El tiempo de ejecución no admite la configuración de una nueva declaración</value>
-  </data>
-  <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
-  </data>
-  <data name="UnityEditor" xml:space="preserve">
-    <value>Editor</value>
-  </data>
-  <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+  <data name="UsesTreeNode" xml:space="preserve">
+    <value>Használja</value>
   </data>
 </root>

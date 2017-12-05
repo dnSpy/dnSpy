@@ -121,6 +121,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.es-ES.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.hu.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

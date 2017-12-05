@@ -141,12 +141,6 @@
   <data name="Attach_AttachToProcess" xml:space="preserve">
     <value>附加到进程</value>
   </data>
-  <data name="Attach_AttachToProcess32" xml:space="preserve">
-    <value>附加到进程（仅32位）</value>
-  </data>
-  <data name="Attach_AttachToProcess64" xml:space="preserve">
-    <value>附加到进程（仅64位）</value>
-  </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
     <value>请改用dnSpy.exe来附加到64位进程</value>
   </data>
@@ -339,8 +333,8 @@
     <value>当未捕捉异常发生时无法计算</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
-    <value>无法启动 '{0}' 
-错误: {0}</value>
+    <value>Could not start '{0}'
+ERROR: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
     <value>异常设置(_X)</value>

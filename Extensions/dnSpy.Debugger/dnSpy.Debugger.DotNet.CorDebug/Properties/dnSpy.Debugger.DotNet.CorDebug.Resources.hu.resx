@@ -118,120 +118,160 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DbgAsm_Args" xml:space="preserve">
-    <value>A_rgumentos</value>
+    <value>_Argumentumok</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamble</value>
+    <value>_Szerelvény</value>
   </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>_Romper en</value>
+    <value>_Töréspont</value>
   </data>
-  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>_Puerto</value>
+  <data name="DbgAsm_Host" xml:space="preserve">
+    <value>_Hoszt</value>
   </data>
-  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>Conectar</value>
-  </data>
-  <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>Dirección IP</value>
+  <data name="DbgAsm_HostArgs" xml:space="preserve">
+    <value>Hoszt A_rgumentumok</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Directorio de _Trabajo</value>
+    <value>Munka könyvtár</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Crear Proceso</value>
+    <value>FolyamatLétrehozás</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>No romper</value>
+    <value>Ne álljon meg</value>
   </data>
   <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Punto de entrada</value>
+    <value>Belépési pont</value>
+  </data>
+  <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
+    <value>A .NET Core gazda '{0}' nem található</value>
+  </data>
+  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
+    <value>A hibakereső nem indítható. {0}</value>
+  </data>
+  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
+    <value>A hibakereső nem indítható. Ellenőrizze, hogy hozzáfér a fájlhoz: '{0}'
+
+Hiba: {1}</value>
+  </data>
+  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
+    <value>A hibakereső nem indítható. A nyomkövetett programnak rendszergazdai jogosultság szükséges. Indítsa újra a dnSpy-t rendszergazdai jogkörrel és próbálja újra.</value>
   </data>
   <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>El archivo no existe</value>
+    <value>A fájl nem létezik</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nombre de archivo faltante</value>
+    <value>Hiányzó fájlnév</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
-  </data>
-  <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>No se pudo encontrar {0}</value>
-  </data>
-  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>No pudo conectarse con el proceso de depurado</value>
-  </data>
-  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>No se pudo encontrar el proceso depurado</value>
-  </data>
-  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>La conexión al proceso de depurado se cerró inesperadamente</value>
-  </data>
-  <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Cancelado</value>
-  </data>
-  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>Requiere cancelarlo</value>
+    <value>Hibakereső ({0})</value>
   </data>
   <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Fondo</value>
+    <value>Háttér</value>
   </data>
   <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Detenido</value>
+    <value>Megállítva</value>
   </data>
   <data name="Thread_UserState_StopRequested" xml:space="preserve">
     <value>StopRequested</value>
   </data>
   <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspendido</value>
+    <value>Felfüggesztve</value>
   </data>
   <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Suspender consulta</value>
+    <value>SuspendRequested</value>
+  </data>
+  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
+    <value>Szálkészlet</value>
+  </data>
+  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
+    <value>UnsafePoint</value>
   </data>
   <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Sin comenzar</value>
+    <value>El nem indított</value>
   </data>
   <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
     <value>WaitSleepJoin</value>
   </data>
+  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
+    <value>dnSpy-x86.exe használata a 32 bites alkalmazások debuggolásához.</value>
+  </data>
+  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
+    <value>dnSpy.exe használata a 64 bites alkalmazások debuggolásához.</value>
+  </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; ningún mensaje de la excepción &gt;"</value>
+    <value>"&lt; nincs kivétel üzenet &gt;"</value>
+  </data>
+  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
+    <value>Nem indítható el a hibakereső.
+
+Hiba: {0}</value>
+  </data>
+  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
+    <value>Nem lehet csatlakozni a(z) {0} folyamathoz</value>
+  </data>
+  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
+    <value>Más folyamat már hibakeresést futtat a(z) {0} folyamaton</value>
+  </data>
+  <data name="StackFrame_NativeFrame" xml:space="preserve">
+    <value>Natív keret {0}</value>
+  </data>
+  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
+    <value>Alkalmazás tartomány átmenet</value>
+  </data>
+  <data name="StackFrame_ClassInit" xml:space="preserve">
+    <value>Osztály inicializálás</value>
+  </data>
+  <data name="StackFrame_Exception" xml:space="preserve">
+    <value>Kivétel</value>
   </data>
   <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Evaluación de la función</value>
+    <value>Függvény kiértékelés</value>
   </data>
-  <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Transición natural</value>
+  <data name="StackFrame_InternalCall" xml:space="preserve">
+    <value>Belső hívás</value>
   </data>
-  <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
-    <value>Esta ejecución no soporta llamadas a métodos genéricos</value>
+  <data name="StackFrame_InternalFrame" xml:space="preserve">
+    <value>Belső keret ({0})</value>
   </data>
-  <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>No es posible escribir a 'esto'</value>
+  <data name="StackFrame_JITCompilation" xml:space="preserve">
+    <value>JIT fordítás</value>
   </data>
-  <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Miembro no puede accederse debido a limitaciones de tiempo de ejecución</value>
+  <data name="StackFrame_LightweightFunction" xml:space="preserve">
+    <value>Pehelysúlyú függvény</value>
+  </data>
+  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
+    <value>Menedzselt-natív átmenet</value>
+  </data>
+  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
+    <value>Natív-menedzselt átmenet</value>
+  </data>
+  <data name="StackFrame_Security" xml:space="preserve">
+    <value>Biztonság</value>
+  </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL eltolás {0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>{0} sor {1} karakter</value>
+  </data>
+  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
+    <value>{0} cím</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>No se pudo establecer la siguiente instrucción.</value>
+    <value>Nem állítható be a következő utasítás.</value>
   </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>El tipo no se ha cargado todavía.</value>
+  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
+    <value>A folyamat nem megszakítható. Hiba: 0x{0:X8}</value>
   </data>
-  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Proceso se ha detenido y _waiting para el depurador</value>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Belső debugger hiba</value>
   </data>
-  <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
-    <value>El tiempo de ejecución no admite la configuración de una nueva declaración</value>
-  </data>
-  <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
-  </data>
-  <data name="UnityEditor" xml:space="preserve">
-    <value>Editor</value>
-  </data>
-  <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
+    <value>CLR hibakereső hiba történt. Szakítsa meg a vizsgált folyamatot és próbálja újra.
+
+HR: 0x{0:X8}
+Hiba: 0x{1:X8}</value>
   </data>
 </root>

@@ -117,121 +117,67 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>A_rgumentos</value>
+  <data name="AddClassBreakpointCommand" xml:space="preserve">
+    <value>Osztály töréspont hozzáadása</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamble</value>
+  <data name="AddClassTracepointCommand" xml:space="preserve">
+    <value>Osztály nyomkövetési pont hozzáadása</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>_Romper en</value>
+  <data name="AddMethodBreakpointCommand" xml:space="preserve">
+    <value>Metódus töréspont hozzáadása</value>
   </data>
-  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>_Puerto</value>
+  <data name="BreakWhenExceptionThrownCommand" xml:space="preserve">
+    <value>_Töréspont kivételnél</value>
   </data>
-  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>Conectar</value>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_Mégsem</value>
   </data>
-  <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>Dirección IP</value>
+  <data name="CancelLoadingModulesMessage" xml:space="preserve">
+    <value>Megszakítja a modulok betöltését?</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Directorio de _Trabajo</value>
+  <data name="CantEvaluateWhenCurrentFrameIsNative" xml:space="preserve">
+    <value>A kifejezés nem értékelhető ki ha az aktuális verem keret egy natív verem keret</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Crear Proceso</value>
+  <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
+    <value>A visszafordított változók nem értékelhetőek ki</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>No romper</value>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL eltolás {0}</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Punto de entrada</value>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>{0} sor {1} karakter</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>El archivo no existe</value>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Belső debugger hiba</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nombre de archivo faltante</value>
+  <data name="LoadModule_InfoText" xml:space="preserve">
+    <value>Modul betöltése. Ez eltarthat egy ideig ha ez egy nagy modul.</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+  <data name="LoadModule_Title" xml:space="preserve">
+    <value>Dinamikus modulok betöltése</value>
   </data>
-  <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>No se pudo encontrar {0}</value>
+  <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
+    <value>'{0}' egy '{1}' típusú kivételt okozott</value>
   </data>
-  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>No pudo conectarse con el proceso de depurado</value>
+  <data name="ModuleMetadataNotFoundOrInvalid" xml:space="preserve">
+    <value>A modul metaadata nem található vagy érvénytelen</value>
   </data>
-  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>No se pudo encontrar el proceso depurado</value>
+  <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
+    <value>Meg kell szakítania a folyamatot, hogy a dinamikus modulokat be lehessen tölteni.</value>
   </data>
-  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>La conexión al proceso de depurado se cerró inesperadamente</value>
+  <data name="NoDotNetObjectFoundAtAddress" xml:space="preserve">
+    <value>Nincs objektum az adott címen</value>
   </data>
-  <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Cancelado</value>
+  <data name="NoExceptionOnTheCurrentThread" xml:space="preserve">
+    <value>Nincs kivétel az aktív szálban</value>
   </data>
-  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>Requiere cancelarlo</value>
+  <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
+    <value>Minden metódus törzs újratöltése</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Fondo</value>
+  <data name="ReturnValueNotAvailable" xml:space="preserve">
+    <value>A visszatérési érték jelenleg nem elérhető</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Detenido</value>
-  </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
-  </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspendido</value>
-  </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Suspender consulta</value>
-  </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Sin comenzar</value>
-  </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
-  </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; ningún mensaje de la excepción &gt;"</value>
-  </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Evaluación de la función</value>
-  </data>
-  <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Transición natural</value>
-  </data>
-  <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
-    <value>Esta ejecución no soporta llamadas a métodos genéricos</value>
-  </data>
-  <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>No es posible escribir a 'esto'</value>
-  </data>
-  <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Miembro no puede accederse debido a limitaciones de tiempo de ejecución</value>
-  </data>
-  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>No se pudo establecer la siguiente instrucción.</value>
-  </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>El tipo no se ha cargado todavía.</value>
-  </data>
-  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Proceso se ha detenido y _waiting para el depurador</value>
-  </data>
-  <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
-    <value>El tiempo de ejecución no admite la configuración de una nueva declaración</value>
-  </data>
-  <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
-  </data>
-  <data name="UnityEditor" xml:space="preserve">
-    <value>Editor</value>
-  </data>
-  <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+  <data name="UnknownVariableOrObjectId" xml:space="preserve">
+    <value>Ismeretlen változó vagy objektum ID</value>
   </data>
 </root>

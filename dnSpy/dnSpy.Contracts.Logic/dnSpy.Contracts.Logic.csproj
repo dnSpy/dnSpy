@@ -140,6 +140,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.es-ES.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.hu.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

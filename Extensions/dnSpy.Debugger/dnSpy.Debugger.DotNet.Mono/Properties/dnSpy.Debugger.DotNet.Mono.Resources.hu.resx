@@ -118,112 +118,112 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DbgAsm_Args" xml:space="preserve">
-    <value>A_rgumentos</value>
+    <value>_Argumentumok</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamble</value>
+    <value>_Szerelvény</value>
   </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>_Romper en</value>
+    <value>_Töréspont</value>
   </data>
   <data name="DbgAsm_ConnectionPort" xml:space="preserve">
-    <value>_Puerto</value>
+    <value>_Port</value>
   </data>
   <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
-    <value>Conectar</value>
+    <value>Kapcsolódás</value>
   </data>
   <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>Dirección IP</value>
+    <value>IP cím</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Directorio de _Trabajo</value>
+    <value>Munka könyvtár</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Crear Proceso</value>
+    <value>FolyamatLétrehozás</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>No romper</value>
+    <value>Ne álljon meg</value>
   </data>
   <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Punto de entrada</value>
+    <value>Belépési pont</value>
   </data>
   <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>El archivo no existe</value>
+    <value>A fájl nem létezik</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nombre de archivo faltante</value>
+    <value>Hiányzó fájlnév</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+    <value>Hibakereső ({0})</value>
   </data>
   <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>No se pudo encontrar {0}</value>
+    <value>{0} nem található</value>
   </data>
   <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>No pudo conectarse con el proceso de depurado</value>
+    <value>Nem lehet kapcsolódni a nyomon követett folyamathoz</value>
   </data>
   <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>No se pudo encontrar el proceso depurado</value>
+    <value>A nyomon követett folyamat nem található</value>
   </data>
   <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>La conexión al proceso de depurado se cerró inesperadamente</value>
+    <value>A kapcsolat a nyomon követett folyamattal váratlanul bezárult</value>
   </data>
   <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Cancelado</value>
+    <value>Megszakított</value>
   </data>
   <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>Requiere cancelarlo</value>
+    <value>AbortRequested</value>
   </data>
   <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Fondo</value>
+    <value>Háttér</value>
   </data>
   <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Detenido</value>
+    <value>Megállítva</value>
   </data>
   <data name="Thread_UserState_StopRequested" xml:space="preserve">
     <value>StopRequested</value>
   </data>
   <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspendido</value>
+    <value>Felfüggesztve</value>
   </data>
   <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Suspender consulta</value>
+    <value>SuspendRequested</value>
   </data>
   <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Sin comenzar</value>
+    <value>El nem indított</value>
   </data>
   <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
     <value>WaitSleepJoin</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; ningún mensaje de la excepción &gt;"</value>
+    <value>"&lt; nincs kivétel üzenet &gt;"</value>
   </data>
   <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Evaluación de la función</value>
+    <value>Függvény kiértékelés</value>
   </data>
   <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Transición natural</value>
+    <value>Natív átmenet</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
-    <value>Esta ejecución no soporta llamadas a métodos genéricos</value>
+    <value>Ez a futtató környezet nem támogatja a generikus metódusok hívását</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>No es posible escribir a 'esto'</value>
+    <value>Nem lehet írni a 'this'-be</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Miembro no puede accederse debido a limitaciones de tiempo de ejecución</value>
+    <value>A tag nem érhető el a futtató környezet korlátozásai miatt</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>No se pudo establecer la siguiente instrucción.</value>
+    <value>Nem állítható be a következő utasítás.</value>
   </data>
   <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>El tipo no se ha cargado todavía.</value>
+    <value>A típus még nincs betöltve.</value>
   </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Proceso se ha detenido y _waiting para el depurador</value>
+    <value>A folyamat felfüggesztve és _vár a hibakeresőre</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
-    <value>El tiempo de ejecución no admite la configuración de una nueva declaración</value>
+    <value>A futtató környezet nem támogatja egy új utasítás beállítását</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
     <value>Attach to Process ({0})...</value>

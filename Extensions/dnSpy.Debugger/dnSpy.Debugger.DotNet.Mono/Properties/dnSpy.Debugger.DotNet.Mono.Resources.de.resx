@@ -133,7 +133,7 @@
     <value>Verbinden</value>
   </data>
   <data name="DbgAsm_IP_Address" xml:space="preserve">
-    <value>IP Adresse</value>
+    <value>IP-Adresse</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Arbeitsverzeichnis</value>
@@ -157,22 +157,22 @@
     <value>Debugger ({0})</value>
   </data>
   <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>Konnte nicht gefunden werden {0}</value>
+    <value>{0} konnte nicht gefunden werden</value>
   </data>
   <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>Couldn't connect to the debugged process</value>
+    <value>Es konnte keine Verbindung zum debuggten Prozess hergestellt werden</value>
   </data>
   <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>Could not find the debugged process</value>
+    <value>Der debuggte Prozess konnte nicht gefunden werden</value>
   </data>
   <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>The connection to the debugged process was unexpectedly closed</value>
+    <value>Die Verbindung zum debuggten Prozess wurde unerwartet unterbrochen</value>
   </data>
   <data name="Thread_UserState_Aborted" xml:space="preserve">
     <value>Abgebrochen</value>
   </data>
   <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>AbortRequested</value>
+    <value>Abbruch angefordert</value>
   </data>
   <data name="Thread_UserState_Background" xml:space="preserve">
     <value>Hintergrund</value>
@@ -184,10 +184,10 @@
     <value>Beenden angefordert</value>
   </data>
   <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Ausgesetzt</value>
+    <value>Unterbrochen</value>
   </data>
   <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Anhalten angefordert</value>
+    <value>Unterbrechen angefordert</value>
   </data>
   <data name="Thread_UserState_Unstarted" xml:space="preserve">
     <value>Nicht gestartet</value>
@@ -202,24 +202,36 @@
     <value>Funktionsauswertung</value>
   </data>
   <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Native Transition</value>
+    <value>Nativer Übergang</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
-    <value>This runtime doesn't support calling generic methods</value>
+    <value>Diese Laufzeit unterstützt den Aufruf generischer Methoden nicht</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>It's not possible to write to 'this'</value>
+    <value>'this' kann nicht überschrieben werden</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Member can't be accessed due to runtime limitations</value>
+    <value>Aufgrund von Laufzeiteinschränkungen kann auf dieses Feld nicht zugegriffen werden</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Konnte nächste Anweisung nicht setzen.</value>
   </data>
   <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>The type has not been loaded yet.</value>
+    <value>Dieser Typ wurde noch nicht geladen.</value>
   </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Process is paused and _waiting for the debugger</value>
+    <value>Prozess wurde angehalten und wartet auf Debugger</value>
+  </data>
+  <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
+    <value>Diese Laufzeit unterstützt das Hinzufügen neuer Statements nicht</value>
+  </data>
+  <data name="AttachToProcessXCommand" xml:space="preserve">
+    <value>Attach to Process ({0})...</value>
+  </data>
+  <data name="UnityEditor" xml:space="preserve">
+    <value>Editor</value>
+  </data>
+  <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
+    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
   </data>
 </root>

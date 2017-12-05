@@ -124,6 +124,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.es-ES.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.hu.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
