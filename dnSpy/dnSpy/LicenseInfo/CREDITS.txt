@@ -52,5 +52,6 @@ Spanish:
 	lemalc
 
 Hungarian:
+
 	Gábor Mizda
 	Krisztián Szilágyi
