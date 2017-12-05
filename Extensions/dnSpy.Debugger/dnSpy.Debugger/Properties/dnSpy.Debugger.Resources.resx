@@ -340,7 +340,7 @@
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
     <value>Could not start '{0}'
-ERROR: {0}</value>
+ERROR: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
     <value>E_xception Settings</value>

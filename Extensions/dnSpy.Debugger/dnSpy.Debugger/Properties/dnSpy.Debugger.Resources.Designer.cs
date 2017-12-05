@@ -1808,7 +1808,7 @@ namespace dnSpy.Debugger.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Could not start &apos;{0}&apos;
-        ///ERROR: {0}.
+        ///ERROR: {1}.
         /// </summary>
         public static string Error_StartWithoutDebuggingCouldNotStart {
             get {
