@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.CallStack {
 		public override DbgThread Thread => thread;
 		public override DbgCodeLocation Location => engineStackFrame.Location;
 		public override DbgModule Module => engineStackFrame.Module;
+		public override DbgStackFrameFlags Flags => engineStackFrame.Flags;
 		public override uint FunctionOffset => engineStackFrame.FunctionOffset;
 		public override uint FunctionToken => engineStackFrame.FunctionToken;
 

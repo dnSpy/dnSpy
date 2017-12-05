@@ -35,6 +35,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 	sealed class ILDbgEngineStackFrame : DbgEngineStackFrame {
 		public override DbgCodeLocation Location { get; }
 		public override DbgModule Module { get; }
+		public override DbgStackFrameFlags Flags => DbgStackFrameFlags.LocationIsNextStatement;
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
 

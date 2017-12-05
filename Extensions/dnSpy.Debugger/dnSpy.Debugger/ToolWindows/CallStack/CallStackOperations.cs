@@ -175,7 +175,13 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			//TODO:
 		}
 
-		public override bool CanRunToCursor => SelectedItems.Count == 1 && SelectedItems[0] is NormalStackFrameVM vm && vm.Index != 0 && vm.Frame.Location is DbgCodeLocation location && dbgCodeBreakpointsService.Value.TryGetBreakpoint(location) == null;
+		public override bool CanRunToCursor =>
+			SelectedItems.Count == 1 &&
+			SelectedItems[0] is NormalStackFrameVM vm &&
+			(vm.Frame.Flags & DbgStackFrameFlags.LocationIsNextStatement) != 0 &&
+			vm.Index != 0 &&
+			vm.Frame.Location is DbgCodeLocation location &&
+			dbgCodeBreakpointsService.Value.TryGetBreakpoint(location) == null;
 		public override void RunToCursor() {
 			if (!CanRunToCursor)
 				return;
@@ -207,6 +213,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			var vm = SelectedItems[0] as NormalStackFrameVM;
 			if (vm == null)
 				return null;
+			if ((vm.Frame.Flags & DbgStackFrameFlags.LocationIsNextStatement) == 0)
+				return null;
 			var location = vm.Frame.Location;
 			if (location == null)
 				return null;
@@ -220,6 +228,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					return BreakpointsCommandKind.None;
 				var vm = SelectedItems[0] as NormalStackFrameVM;
 				if (vm == null)
+					return BreakpointsCommandKind.None;
+				if ((vm.Frame.Flags & DbgStackFrameFlags.LocationIsNextStatement) == 0)
 					return BreakpointsCommandKind.None;
 				var location = vm.Frame.Location;
 				if (location == null)

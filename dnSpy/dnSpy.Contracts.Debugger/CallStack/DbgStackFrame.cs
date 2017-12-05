@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents;
 
@@ -57,6 +58,11 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		public abstract DbgModule Module { get; }
 
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public abstract DbgStackFrameFlags Flags { get; }
+
+		/// <summary>
 		/// Gets the offset of the IP relative to the start of the function
 		/// </summary>
 		public abstract uint FunctionOffset { get; }
@@ -75,5 +81,25 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// Closes this instance
 		/// </summary>
 		public void Close() => Thread.Process.DbgManager.Close(this);
+	}
+
+	/// <summary>
+	/// Stack frame flags
+	/// </summary>
+	[Flags]
+	public enum DbgStackFrameFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// Set if <see cref="DbgStackFrame.Location"/> is the next statement to execute in this frame. It's also
+		/// possible to set a BP at that location.
+		/// 
+		/// It's false if <see cref="DbgStackFrame.Location"/> is just an approximate location and it's not safe
+		/// to set a BP at the location.
+		/// </summary>
+		LocationIsNextStatement	= 0x00000001,
 	}
 }

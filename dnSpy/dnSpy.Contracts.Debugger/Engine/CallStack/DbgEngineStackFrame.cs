@@ -46,6 +46,11 @@ namespace dnSpy.Contracts.Debugger.Engine.CallStack {
 		public abstract uint FunctionOffset { get; }
 
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public abstract DbgStackFrameFlags Flags { get; }
+
+		/// <summary>
 		/// Gets the function token or <see cref="InvalidFunctionToken"/> if it doesn't have a token.
 		/// </summary>
 		public abstract uint FunctionToken { get; }

@@ -433,6 +433,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		// UI thread
 		BreakpointKind? GetBreakpointKind_UI(NormalStackFrameVM vm) {
 			callStackContext.UIDispatcher.VerifyAccess();
+			if ((vm.Frame.Flags & DbgStackFrameFlags.LocationIsNextStatement) == 0)
+				return null;
 			var location = vm.Frame.Location;
 			var breakpoint = location == null ? null : dbgCodeBreakpointsService.Value.TryGetBreakpoint(location);
 			if (breakpoint == null || breakpoint.IsHidden)
