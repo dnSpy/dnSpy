@@ -40,7 +40,7 @@ namespace dnSpy.MainApp {
 				var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dnSpy", "Startup");
 				Directory.CreateDirectory(profileDir);
 				ProfileOptimization.SetProfileRoot(profileDir);
-				ProfileOptimization.StartProfile(string.Format("startup-{0}.profile", IntPtr.Size * 8));
+				ProfileOptimization.StartProfile($"startup-{IntPtr.Size * 8}.profile");
 			}
 			catch {
 			}
