@@ -45,6 +45,7 @@
     <Compile Include="Dialogs\AttachToProcess\UnityDataReceiver.cs" />
     <Compile Include="Dialogs\AttachToProcess\UnityEditorAttachProgramOptionsProvider.cs" />
     <Compile Include="Dialogs\AttachToProcess\UnityPlayerAttachProgramOptionsProvider.cs" />
+    <Compile Include="Dialogs\DebugMenuCommands.cs" />
     <Compile Include="Dialogs\DebugProgram\BreakProcessKindsUtils.cs" />
     <Compile Include="Dialogs\DebugProgram\MonoConnectStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\MonoConnectStartDebuggingOptionsPageBase.cs" />

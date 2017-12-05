@@ -61,6 +61,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Attach to Process ({0})....
+        /// </summary>
+        public static string AttachToProcessXCommand {
+            get {
+                return ResourceManager.GetString("AttachToProcessXCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A_rguments.
         /// </summary>
         public static string DbgAsm_Args {
@@ -381,6 +390,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         public static string TypeHasNotBeenLoadedYet {
             get {
                 return ResourceManager.GetString("TypeHasNotBeenLoadedYet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Editor.
+        /// </summary>
+        public static string UnityEditor {
+            get {
+                return ResourceManager.GetString("UnityEditor", resourceCulture);
             }
         }
     }

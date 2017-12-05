@@ -225,4 +225,10 @@
   <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
     <value>The runtime doesn't support setting a new statement</value>
   </data>
+  <data name="AttachToProcessXCommand" xml:space="preserve">
+    <value>Attach to Process ({0})...</value>
+  </data>
+  <data name="UnityEditor" xml:space="preserve">
+    <value>Editor</value>
+  </data>
 </root>

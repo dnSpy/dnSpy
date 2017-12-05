@@ -20,6 +20,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Attach;
+using dnSpy.Debugger.DotNet.Mono.Properties;
 
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.UnityEditor)]
@@ -36,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 					// Don't shoot the messenger
 					ushort port = (ushort)(56000 + p.Id % 1000);
 					const string ipAddress = "127.0.0.1";
-					yield return new UnityAttachProgramOptionsImpl(p.Id, ipAddress, port, "Unity Editor");
+					yield return new UnityAttachProgramOptionsImpl(p.Id, ipAddress, port, $"Unity ({dnSpy_Debugger_DotNet_Mono_Resources.UnityEditor})");
 				}
 			}
 			finally {

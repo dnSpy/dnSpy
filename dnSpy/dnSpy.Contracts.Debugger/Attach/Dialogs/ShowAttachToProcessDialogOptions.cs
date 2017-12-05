@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Debugger.Attach.Dialogs {
 		/// <summary>
 		/// Type of processes that can be attached to. Shown in the title bar, eg. "Unity" or null to not show anything
 		/// </summary>
-		public string ProcessType { get; }
+		public string ProcessType { get; set; }
 
 		/// <summary>
 		/// Text shown at the bottom of the dialog box between the buttons or null to use the default value
