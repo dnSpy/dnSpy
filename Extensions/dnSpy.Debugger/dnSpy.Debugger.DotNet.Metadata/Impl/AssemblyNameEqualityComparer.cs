@@ -25,22 +25,51 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public static readonly AssemblyNameEqualityComparer Instance = new AssemblyNameEqualityComparer();
 		AssemblyNameEqualityComparer() { }
 
+		static readonly byte[][] systemPublicKeyTokens;
+
+		static AssemblyNameEqualityComparer() {
+			systemPublicKeyTokens = new byte[][] {
+				new byte[8] { 0x07, 0x38, 0xEB, 0x9F, 0x13, 0x2E, 0xD7, 0x56 },
+				new byte[8] { 0xB7, 0x7A, 0x5C, 0x56, 0x19, 0x34, 0xE0, 0x89 },
+				new byte[8] { 0x7C, 0xEC, 0x85, 0xD7, 0xBE, 0xA7, 0x79, 0x8E },
+				new byte[8] { 0x31, 0xBF, 0x38, 0x56, 0xAD, 0x36, 0x4E, 0x35 },
+				new byte[8] { 0xB0, 0x3F, 0x5F, 0x7F, 0x11, 0xD5, 0x0A, 0x3A },
+			};
+		}
+
 		public bool Equals(IDmdAssemblyName x, IDmdAssemblyName y) {
 			if (!StringComparer.OrdinalIgnoreCase.Equals(x.Name, y.Name))
 				return false;
 
 			// Version number is ignored since an assembly reference can be redirected to any other version at runtime
 
-			if (x.CultureName != null && y.CultureName != null && !StringComparer.OrdinalIgnoreCase.Equals(x.CultureName, y.CultureName))
+			if (!StringComparer.OrdinalIgnoreCase.Equals(x.CultureName ?? string.Empty, y.CultureName ?? string.Empty))
 				return false;
 
-			if (x.GetPublicKeyToken() != null && y.GetPublicKeyToken() != null && !Equals(x.GetPublicKeyToken(), y.GetPublicKeyToken()))
-				return false;
-
-			return true;
+			return PublicKeyTokenEquals(x.GetPublicKeyToken(), y.GetPublicKeyToken());
 		}
 
-		bool Equals(byte[] a, byte[] b) {
+		internal static bool PublicKeyTokenEquals(byte[] a, byte[] b) {
+			if (a == null)
+				a = Array.Empty<byte>();
+			if (b == null)
+				b = Array.Empty<byte>();
+			if (Equals(a, b))
+				return true;
+			return IsSystemPublicKeyToken(a) && IsSystemPublicKeyToken(b);
+		}
+
+		static bool IsSystemPublicKeyToken(byte[] a) {
+			if (a == null)
+				return false;
+			foreach (var sys in systemPublicKeyTokens) {
+				if (Equals(sys, a))
+					return true;
+			}
+			return false;
+		}
+
+		static bool Equals(byte[] a, byte[] b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
@@ -57,8 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public int GetHashCode(IDmdAssemblyName obj) {
 			int hc = StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Name ?? string.Empty);
 			// Version number is ignored, see Equals()
-			if (obj.CultureName != null)
-				hc ^= obj.CultureName.GetHashCode();
+			hc ^= (obj.CultureName ?? string.Empty).GetHashCode();
 			return hc;
 		}
 	}

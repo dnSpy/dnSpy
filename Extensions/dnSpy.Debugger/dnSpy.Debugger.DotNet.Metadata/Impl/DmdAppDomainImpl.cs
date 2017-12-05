@@ -244,8 +244,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return GetAssemblyCore(name.Name, name);
 		}
 
+		static readonly Version zeroVersion = new Version(0, 0, 0, 0);
 		DmdAssembly GetAssemblyCore(string simpleName, IDmdAssemblyName name) {
-			bool onlySimpleName = name == null || (name.Version == null && name.CultureName == null && name.GetPublicKeyToken() == null);
+			bool onlySimpleName = name == null ||
+				((name.Version == null || name.Version == zeroVersion) && string.IsNullOrEmpty(name.CultureName) && (name.GetPublicKeyToken() ?? Array.Empty<byte>()).Length == 0);
 			if (onlySimpleName)
 				name = null;
 

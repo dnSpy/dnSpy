@@ -356,8 +356,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			const DmdAssemblyNameFlags flagsMask = DmdAssemblyNameFlags.ContentType_Mask;
 			return (a.RawFlags & flagsMask) == (b.RawFlags & flagsMask) &&
 				StringComparer.OrdinalIgnoreCase.Equals(a.Name, b.Name) &&
-				StringComparer.OrdinalIgnoreCase.Equals(a.CultureName, b.CultureName) &&
-				Equals(a.GetPublicKeyToken(), b.GetPublicKeyToken());
+				StringComparer.OrdinalIgnoreCase.Equals(a.CultureName ?? string.Empty, b.CultureName ?? string.Empty) &&
+				Impl.AssemblyNameEqualityComparer.PublicKeyTokenEquals(a.GetPublicKeyToken(), b.GetPublicKeyToken());
 		}
 
 		/// <summary>
@@ -423,20 +423,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (a.Count != b.Count)
 				return false;
 			for (int i = 0; i < a.Count; i++) {
-				if (a[i] != b[i])
-					return false;
-			}
-			return true;
-		}
-
-		bool Equals(byte[] a, byte[] b) {
-			if (a == b)
-				return true;
-			if (a == null || b == null)
-				return false;
-			if (a.Length != b.Length)
-				return false;
-			for (int i = 0; i < a.Length; i++) {
 				if (a[i] != b[i])
 					return false;
 			}
