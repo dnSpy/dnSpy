@@ -18,9 +18,12 @@
 */
 
 using System;
+using System.Diagnostics;
+using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 	sealed class UnityConnectStartDebuggingOptionsPage : MonoConnectStartDebuggingOptionsPageBase {
@@ -28,6 +31,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetUnity;
 		// Shouldn't be localized
 		public override string DisplayName => "Unity";
+
+		public ICommand DebuggingUnityGamesCommand => new RelayCommand(a => OpenDebuggingUnityGames());
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var dncOptions = options as UnityConnectStartDebuggingOptions;
@@ -55,6 +60,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		public override StartDebuggingOptionsInfo GetOptions() {
 			var options = GetOptions(new UnityConnectStartDebuggingOptions());
 			return new StartDebuggingOptionsInfo(options);
+		}
+
+		void OpenDebuggingUnityGames() => OpenWebPage("https://github.com/0xd4d/dnSpy/wiki/Debugging-Unity-Games");
+
+		static void OpenWebPage(string url) {
+			try {
+				Process.Start(url);
+			}
+			catch {
+			}
 		}
 	}
 }

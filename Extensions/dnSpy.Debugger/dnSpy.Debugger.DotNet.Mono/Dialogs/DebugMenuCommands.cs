@@ -47,6 +47,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs {
 						PredefinedAttachProgramOptionsProviderNames.UnityPlayer,
 					},
 					Message = string.Empty,
+					InfoLink = new AttachToProcessLinkInfo {
+						ToolTipMessage = "Debugging Unity Games",
+						Url = "https://github.com/0xd4d/dnSpy/wiki/Debugging-Unity-Games",
+					},
 				};
 				showAttachToProcessDialog.Value.Attach(options);
 			}

@@ -94,6 +94,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -111,6 +112,8 @@
                 <img:DsImage ImageReference="{x:Static img:DsImages.StatusInformation}"/>
                 <TextBlock Margin="5 0 0 0" Text="{x:Static p:dnSpy_Debugger_DotNet_Mono_Resources.ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage}" />
             </StackPanel>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="5 5 0 0"><Hyperlink Command="{Binding DebuggingUnityGamesCommand}">Debugging Unity Games</Hyperlink></TextBlock>
         </Grid>
     </DataTemplate>
 
