@@ -397,7 +397,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			for (;;) {
 				try {
 					var eventSet = vm.GetNextEventSet();
-					MonoDebugThread(() => OnDebuggerEvents(eventSet));
+					bool start;
+					lock (pendingEventSets) {
+						start = pendingEventSets.Count == 0;
+						pendingEventSets.Add(eventSet);
+					}
+					if (start)
+						MonoDebugThread(() => OnDebuggerEvents());
 					foreach (var evt in eventSet.Events) {
 						if (evt.EventType == EventType.VMDisconnect)
 							return;
@@ -415,6 +421,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 			}
 		}
+		readonly List<EventSet> pendingEventSets = new List<EventSet>();
 
 		void IncrementSuspendCount() {
 			debuggerThread.VerifyAccess();
@@ -466,6 +473,28 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 			}
 			catch (VMDisconnectedException) {
+			}
+		}
+
+		void OnDebuggerEvents() {
+			for (;;) {
+				EventSet eventSet = null;
+				EventSet[] eventSets = null;
+				lock (pendingEventSets) {
+					if (pendingEventSets.Count == 0)
+						return;
+					if (pendingEventSets.Count == 1)
+						eventSet = pendingEventSets[0];
+					else
+						eventSets = pendingEventSets.ToArray();
+					pendingEventSets.Clear();
+				}
+				if (eventSet != null)
+					OnDebuggerEvents(eventSet);
+				else {
+					foreach (var e in eventSets)
+						OnDebuggerEvents(e);
+				}
 			}
 		}
 
