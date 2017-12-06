@@ -1467,4 +1467,7 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
     <value>Give focus to debugged process</value>
   </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Open All Modules</value>
+  </data>
 </root>

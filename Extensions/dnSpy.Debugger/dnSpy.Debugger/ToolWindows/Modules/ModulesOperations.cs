@@ -48,6 +48,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public abstract int LoadModulesCount { get; }
 		public abstract bool CanLoadModules { get; }
 		public abstract void LoadModules();
+		public abstract bool CanLoadAllModules { get; }
+		public abstract void LoadAllModules();
 		public abstract bool CanShowInMemoryWindow { get; }
 		public abstract void ShowInMemoryWindow(int windowIndex);
 		public abstract void ShowInMemoryWindow();
@@ -148,8 +150,17 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public override bool CanLoadModules => SelectedItems.Count > 1;
 		public override void LoadModules() {
 			if (CanLoadModules)
-				moduleLoader.Value.LoadModules(SelectedItems.Select(a => a.Module).ToArray(), useMemory: false);
+				LoadModules(SelectedItems);
 		}
+
+		public override bool CanLoadAllModules => AllItems.Count > 0;
+		public override void LoadAllModules() {
+			if (CanLoadAllModules)
+				LoadModules(AllItems);
+		}
+
+		void LoadModules(IList<ModuleVM> modules) =>
+			moduleLoader.Value.LoadModules(modules.Select(a => a.Module).ToArray(), useMemory: false);
 
 		public override bool CanShowInMemoryWindow => GetShowInMemoryWindowModule() != null;
 		public override void ShowInMemoryWindow(int windowIndex) {

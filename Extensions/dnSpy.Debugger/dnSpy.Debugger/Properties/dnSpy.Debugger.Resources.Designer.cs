@@ -2233,6 +2233,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open All Modules.
+        /// </summary>
+        public static string LoadAllModulesCommand {
+            get {
+                return ResourceManager.GetString("LoadAllModulesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Modules.
         /// </summary>
         public static string LoadModulesCommand {
