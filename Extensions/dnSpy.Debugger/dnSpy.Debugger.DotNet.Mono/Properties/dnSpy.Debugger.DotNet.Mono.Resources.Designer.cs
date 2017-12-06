@@ -70,6 +70,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t set a breakpoint when the process is paused..
+        /// </summary>
+        public static string CanNotSetABreakpointWhenProcessIsPaused {
+            get {
+                return ResourceManager.GetString("CanNotSetABreakpointWhenProcessIsPaused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use the Attach to Process (Unity) dialog box to attach to debug builds.
         /// </summary>
         public static string ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage {

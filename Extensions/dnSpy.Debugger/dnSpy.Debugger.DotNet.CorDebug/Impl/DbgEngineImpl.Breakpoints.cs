@@ -84,6 +84,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		static Dictionary<ModuleId, List<DbgDotNetCodeLocation>> CreateDotNetCodeLocationDictionary(DbgCodeLocation[] locations) {
 			var dict = new Dictionary<ModuleId, List<DbgDotNetCodeLocation>>();
 			foreach (var location in locations) {
+				if (location.IsClosed)
+					continue;
 				if (location is DbgDotNetCodeLocation loc) {
 					if (!dict.TryGetValue(loc.Module, out var list))
 						dict.Add(loc.Module, list = new List<DbgDotNetCodeLocation>());
@@ -96,6 +98,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		Dictionary<ModuleId, List<DbgDotNetNativeCodeLocationImpl>> CreateDotNetNativeCodeLocationDictionary(DbgCodeLocation[] locations) {
 			var dict = new Dictionary<ModuleId, List<DbgDotNetNativeCodeLocationImpl>>();
 			foreach (var location in locations) {
+				if (location.IsClosed)
+					continue;
 				if (location is DbgDotNetNativeCodeLocationImpl loc) {
 					if (loc.CorCode.Object == null || loc.CorCode.Engine != this)
 						continue;
@@ -139,7 +143,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 			var boundBreakpoints = objectFactory.Create(createdBreakpoints.ToArray());
 			foreach (var ebp in boundBreakpoints) {
-				var bpData = ebp.BoundCodeBreakpoint.GetData<BoundBreakpointData>();
+				if (!ebp.BoundCodeBreakpoint.TryGetData(out BoundBreakpointData bpData)) {
+					Debug.Assert(ebp.BoundCodeBreakpoint.IsClosed);
+					continue;
+				}
 				bpData.EngineBoundCodeBreakpoint = ebp;
 				bpData.Breakpoint.Tag = bpData;
 			}

@@ -234,4 +234,7 @@
   <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
     <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
   </data>
+  <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
+    <value>Can't set a breakpoint when the process is paused.</value>
+  </data>
 </root>

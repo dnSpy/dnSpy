@@ -94,6 +94,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		static Dictionary<ModuleId, List<DbgDotNetCodeLocation>> CreateDotNetCodeLocationDictionary(DbgCodeLocation[] locations) {
 			var dict = new Dictionary<ModuleId, List<DbgDotNetCodeLocation>>();
 			foreach (var location in locations) {
+				// The BP could've gotten closed. It's more likely to happen if the debugged process is
+				// completely paused when it loses keyboard focus. Mono.Debugger.Soft will block until
+				// it gets a reply back from the now paused process.
+				if (location.IsClosed)
+					continue;
 				if (location is DbgDotNetCodeLocation loc) {
 					if (!dict.TryGetValue(loc.Module, out var list))
 						dict.Add(loc.Module, list = new List<DbgDotNetCodeLocation>());
@@ -133,6 +138,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			var createdBreakpoints = new DbgBoundCodeBreakpointInfo<BoundBreakpointData>[moduleLocations.Count];
 			var reflectionModule = module.GetReflectionModule();
+			var state = module.GetOrCreateData<TypeLoadBreakpointState>();
 			for (int i = 0; i < createdBreakpoints.Length; i++) {
 				var location = moduleLocations[i];
 				const ulong address = DbgObjectFactory.BoundBreakpointNoAddress;
@@ -141,28 +147,34 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				var method = reflectionModule.ResolveMethod((int)location.Token, DmdResolveOptions.None);
 				if ((object)method == null)
 					msg = DbgEngineBoundCodeBreakpointMessage.CreateFunctionNotFound(GetFunctionName(location));
-				else
-					msg = DbgEngineBoundCodeBreakpointMessage.CreateCustomWarning(dnSpy_Debugger_DotNet_Mono_Resources.TypeHasNotBeenLoadedYet);
+				else {
+					var warning = state.IsTypeLoaded(method.DeclaringType.MetadataToken) ?
+						dnSpy_Debugger_DotNet_Mono_Resources.CanNotSetABreakpointWhenProcessIsPaused :
+						dnSpy_Debugger_DotNet_Mono_Resources.TypeHasNotBeenLoadedYet;
+					msg = DbgEngineBoundCodeBreakpointMessage.CreateCustomWarning(warning);
+				}
 				var bpData = new BoundBreakpointData(this, location.Module, null);
 				createdBreakpoints[i] = new DbgBoundCodeBreakpointInfo<BoundBreakpointData>(location, module, address, msg, bpData);
 			}
 
 			var boundBreakpoints = objectFactory.Create(createdBreakpoints.ToArray());
 			foreach (var ebp in boundBreakpoints) {
-				var bpData = ebp.BoundCodeBreakpoint.GetData<BoundBreakpointData>();
+				if (!ebp.BoundCodeBreakpoint.TryGetData(out BoundBreakpointData bpData)) {
+					Debug.Assert(ebp.BoundCodeBreakpoint.IsClosed);
+					continue;
+				}
 				bpData.EngineBoundCodeBreakpoint = ebp;
 				if (bpData.Breakpoint != null)
 					bpData.Breakpoint.Tag = bpData;
 			}
 
-			for (int i = 0; i < createdBreakpoints.Length; i++) {
-				var location = moduleLocations[i];
+			for (int i = 0; i < boundBreakpoints.Length; i++) {
+				var boundBp = boundBreakpoints[i];
+				var location = (DbgDotNetCodeLocation)boundBp.BoundCodeBreakpoint.Breakpoint.Location;
 				var method = reflectionModule.ResolveMethod((int)location.Token, DmdResolveOptions.None);
 				if ((object)method == null)
 					continue;
 
-				var state = module.GetOrCreateData<TypeLoadBreakpointState>();
-				var boundBp = boundBreakpoints[i];
 				state.AddBreakpoint(method.DeclaringType.MetadataToken, boundBp, () => EnableBreakpointCore(module, method, boundBp, location));
 			}
 		}
@@ -173,7 +185,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return;
 			using (TempBreak()) {
 				var info = CreateBreakpoint(method.Module, location);
-				var bpData = ebp.BoundCodeBreakpoint.GetData<BoundBreakpointData>();
+				if (!ebp.BoundCodeBreakpoint.TryGetData(out BoundBreakpointData bpData)) {
+					Debug.Assert(ebp.BoundCodeBreakpoint.IsClosed);
+					return;
+				}
 				Debug.Assert(bpData.Breakpoint == null);
 				bpData.Breakpoint = info.bp;
 				if (bpData.Breakpoint != null)
@@ -195,8 +210,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 			}
 
+			public bool IsTypeLoaded(int metadataToken) => (metadataToken & 0x00FFFFFF) != 0 && loadedTypes.Contains(metadataToken);
+
 			public void OnTypeLoaded(TypeMirror monoType) {
 				int typeToken = monoType.MetadataToken;
+				if ((typeToken & 0x00FFFFFF) == 0)
+					return;
+
 				// This can fail if it's a generic instantiated type, eg. List<int> if List<string> has already been loaded
 				bool b = loadedTypes.Add(typeToken);
 				if (!b)
