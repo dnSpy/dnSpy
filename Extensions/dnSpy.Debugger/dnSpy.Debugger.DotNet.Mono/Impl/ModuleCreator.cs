@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
@@ -57,19 +58,46 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			new ModuleCreator(engine, objectFactory, appDomain, monoModule, moduleOrder).CreateModuleCore(data);
 
 		DbgEngineModule CreateModuleCore<T>(T data) where T : class {
-			//TODO: Use func-eval to get these values, or update debugger agent
-			moduleAddress = 0;
-			moduleSize = 0;
-			if (File.Exists(monoModule.FullyQualifiedName)) {
+			DbgImageLayout imageLayout;
+
+			const string InMemoryModulePrefix = "data-";
+			if (monoModule.FullyQualifiedName.StartsWith(InMemoryModulePrefix, StringComparison.Ordinal)) {
+				isDynamic = false;
+				isInMemory = true;
+				moduleAddress = 0;
+				moduleSize = 0;
+				imageLayout = DbgImageLayout.File;
+
+				var hexAddrString = monoModule.FullyQualifiedName.Substring(InMemoryModulePrefix.Length);
+				bool b = ulong.TryParse(hexAddrString, NumberStyles.HexNumber, null, out var inMemoryAddr);
+				Debug.Assert(b);
+				if (b) {
+					moduleAddress = inMemoryAddr;
+					b = PortableExecutableHelper.TryGetSizeOfImage(engine.DbgRuntime.Process, moduleAddress, imageLayout == DbgImageLayout.File, out uint imageSize);
+					Debug.Assert(b);
+					if (b)
+						moduleSize = imageSize;
+				}
+			}
+			else if (File.Exists(monoModule.FullyQualifiedName)) {
 				isDynamic = false;
 				isInMemory = false;
+				moduleAddress = 0;
+				moduleSize = 0;
+				if (PortableExecutableHelper.TryGetModuleAddressAndSize(engine.DbgRuntime.Process, monoModule.FullyQualifiedName, out var imageAddr, out var imageSize)) {
+					moduleAddress = imageAddr;
+					moduleSize = imageSize;
+				}
+				imageLayout = moduleAddress == 0 ? DbgImageLayout.File : DbgImageLayout.Memory;
 			}
 			else {
-				isDynamic = false;//TODO:
+				isDynamic = true;
 				isInMemory = true;
+				moduleAddress = 0;
+				moduleSize = 0;
+				imageLayout = DbgImageLayout.Unknown;
 			}
 
-			var imageLayout = CalculateImageLayout();
 			string name = GetFilename(monoModule.FullyQualifiedName);
 			string filename = monoModule.FullyQualifiedName;
 			bool? isOptimized = CalculateIsOptimized();
@@ -150,14 +178,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			};
 		}
 
-		DbgImageLayout CalculateImageLayout() {
-			if (isDynamic)
-				return DbgImageLayout.Unknown;
-			if (isInMemory)
-				return DbgImageLayout.File;
-			return DbgImageLayout.Memory;
-		}
-
 		bool? CalculateIsOptimized() {
 			return null;//TODO:
 		}
@@ -185,7 +205,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			else if (isInMemory) {
 				Debug.Assert(imageLayout == DbgImageLayout.File, nameof(GetFileVersion) + " assumes file layout");
 
-				var bytes = engine.DbgRuntime.Process.ReadMemory(moduleAddress, (int)moduleSize);
+				var bytes = moduleSize == 0 ? null : engine.DbgRuntime.Process.ReadMemory(moduleAddress, (int)moduleSize);
 				if (bytes != null) {
 					try {
 						version = GetFileVersion(bytes);
