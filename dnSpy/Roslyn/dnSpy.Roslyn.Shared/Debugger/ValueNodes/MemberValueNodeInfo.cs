@@ -51,6 +51,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public bool IsPublic => (Flags & MemberValueNodeInfoFlags.Public) != 0;
 		public bool NeedCast => (Flags & MemberValueNodeInfoFlags.NeedCast) != 0;
 		public bool NeedTypeName => (Flags & MemberValueNodeInfoFlags.NeedTypeName) != 0;
+		public bool DeprecatedError => (Flags & MemberValueNodeInfoFlags.DeprecatedError) != 0;
 
 		[Flags]
 		enum MemberValueNodeInfoFlags : byte {
@@ -63,6 +64,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			Public								= 8,
 			NeedCast							= 0x10,
 			NeedTypeName						= 0x20,
+			DeprecatedError						= 0x40,
 		}
 
 		public MemberValueNodeInfo(DmdMemberInfo member, byte inheritanceLevel) {
@@ -86,7 +88,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				var ca = cas[i];
 				var type = ca.AttributeType;
 				switch (type.MetadataName) {
-				case "DebuggerBrowsableAttribute":
+				case nameof(DebuggerBrowsableAttribute):
 					if (type.MetadataNamespace == "System.Diagnostics") {
 						if (ca.ConstructorArguments.Count == 1) {
 							var arg = ca.ConstructorArguments[0];
@@ -101,6 +103,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 									break;
 								}
 							}
+						}
+					}
+					break;
+
+				case nameof(ObsoleteAttribute):
+					if (type.MetadataNamespace == "System") {
+						if (ca.ConstructorArguments.Count == 2 && ca.ConstructorArguments[0].ArgumentType == member.AppDomain.System_String) {
+							var arg = ca.ConstructorArguments[1];
+							if (arg.Value is bool && (bool)arg.Value)
+								flags |= MemberValueNodeInfoFlags.DeprecatedError;
 						}
 					}
 					break;

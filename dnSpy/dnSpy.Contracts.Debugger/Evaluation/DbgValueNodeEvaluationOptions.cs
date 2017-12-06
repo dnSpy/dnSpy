@@ -61,5 +61,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Roots can't be hidden
 		/// </summary>
 		NoHideRoots					= 0x00000020,
+
+		/// <summary>
+		/// Hide deprecated members
+		/// </summary>
+		HideDeprecatedError			= 0x00000040,
 	}
 }

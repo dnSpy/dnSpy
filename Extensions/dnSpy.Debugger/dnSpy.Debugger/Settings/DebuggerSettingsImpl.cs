@@ -410,6 +410,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool respectHideMemberAttributes = true;
 
+		public override bool HideDeprecatedError {
+			get {
+				lock (lockObj)
+					return hideDeprecatedError;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = hideDeprecatedError != value;
+					hideDeprecatedError = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(HideDeprecatedError));
+					OnModified();
+				}
+			}
+		}
+		bool hideDeprecatedError = false;
+
 		public override bool SuppressJITOptimization_SystemModules {
 			get {
 				lock (lockObj)
@@ -490,6 +509,7 @@ namespace dnSpy.Debugger.Settings {
 			other.ShowDecompilerGeneratedVariables = ShowDecompilerGeneratedVariables;
 			other.HideCompilerGeneratedMembers = HideCompilerGeneratedMembers;
 			other.RespectHideMemberAttributes = RespectHideMemberAttributes;
+			other.HideDeprecatedError = HideDeprecatedError;
 			other.SuppressJITOptimization_SystemModules = SuppressJITOptimization_SystemModules;
 			other.SuppressJITOptimization_ProgramModules = SuppressJITOptimization_ProgramModules;
 			other.FocusActiveProcess = FocusActiveProcess;
@@ -530,6 +550,7 @@ namespace dnSpy.Debugger.Settings {
 			ShowDecompilerGeneratedVariables = sect.Attribute<bool?>(nameof(ShowDecompilerGeneratedVariables)) ?? ShowDecompilerGeneratedVariables;
 			HideCompilerGeneratedMembers = sect.Attribute<bool?>(nameof(HideCompilerGeneratedMembers)) ?? HideCompilerGeneratedMembers;
 			RespectHideMemberAttributes = sect.Attribute<bool?>(nameof(RespectHideMemberAttributes)) ?? RespectHideMemberAttributes;
+			HideDeprecatedError = sect.Attribute<bool?>(nameof(HideDeprecatedError)) ?? HideDeprecatedError;
 			SuppressJITOptimization_SystemModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_SystemModules)) ?? SuppressJITOptimization_SystemModules;
 			SuppressJITOptimization_ProgramModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_ProgramModules)) ?? SuppressJITOptimization_ProgramModules;
 			FocusActiveProcess = sect.Attribute<bool?>(nameof(FocusActiveProcess)) ?? FocusActiveProcess;
@@ -561,6 +582,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(ShowDecompilerGeneratedVariables), ShowDecompilerGeneratedVariables);
 			sect.Attribute(nameof(HideCompilerGeneratedMembers), HideCompilerGeneratedMembers);
 			sect.Attribute(nameof(RespectHideMemberAttributes), RespectHideMemberAttributes);
+			sect.Attribute(nameof(HideDeprecatedError), HideDeprecatedError);
 			sect.Attribute(nameof(SuppressJITOptimization_SystemModules), SuppressJITOptimization_SystemModules);
 			sect.Attribute(nameof(SuppressJITOptimization_ProgramModules), SuppressJITOptimization_ProgramModules);
 			sect.Attribute(nameof(FocusActiveProcess), FocusActiveProcess);

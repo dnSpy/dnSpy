@@ -534,7 +534,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			bool hideCompilerGeneratedMembers = (evalOptions & DbgValueNodeEvaluationOptions.HideCompilerGeneratedMembers) != 0;
 			bool respectHideMemberAttributes = (evalOptions & DbgValueNodeEvaluationOptions.RespectHideMemberAttributes) != 0;
 			bool publicMembers = (evalOptions & DbgValueNodeEvaluationOptions.PublicMembers) != 0;
-			if (!hideCompilerGeneratedMembers && !respectHideMemberAttributes && !publicMembers)
+			bool hideDeprecatedError = (evalOptions & DbgValueNodeEvaluationOptions.HideDeprecatedError) != 0;
+			if (!hideCompilerGeneratedMembers && !respectHideMemberAttributes && !publicMembers && !hideDeprecatedError)
 				return infos;
 			bool hasHideRoot = false;
 			var members = infos.Members.Where(a => {
@@ -544,6 +545,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				if (respectHideMemberAttributes && a.HasDebuggerBrowsableState_Never)
 					return false;
 				if (hideCompilerGeneratedMembers && a.IsCompilerGenerated)
+					return false;
+				if (hideDeprecatedError && a.DeprecatedError)
 					return false;
 				hasHideRoot |= a.HasDebuggerBrowsableState_RootHidden;
 				return true;

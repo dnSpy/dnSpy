@@ -1470,4 +1470,7 @@ Are you sure you want to expand it?</value>
   <data name="LoadAllModulesCommand" xml:space="preserve">
     <value>Open All Modules</value>
   </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Hide deprecated members in variables windows</value>
+  </data>
 </root>

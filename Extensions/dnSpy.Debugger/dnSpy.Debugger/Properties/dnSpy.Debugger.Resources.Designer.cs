@@ -1204,6 +1204,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide deprecated members in variables windows.
+        /// </summary>
+        public static string DbgSettings_HideDeprecatedError {
+            get {
+                return ResourceManager.GetString("DbgSettings_HideDeprecatedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Highlight changed variables in variables windows.
         /// </summary>
         public static string DbgSettings_HighlightChangedVariables {
