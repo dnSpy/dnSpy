@@ -143,6 +143,13 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessArchitecture}">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding MachineObject, Mode=OneWay, Converter={StaticResource processColumnConverter}}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Path}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

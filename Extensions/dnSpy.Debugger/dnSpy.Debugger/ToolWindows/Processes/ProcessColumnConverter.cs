@@ -44,6 +44,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				formatter.WriteState(writer, obj.VM);
 			else if (obj.Tag == PredefinedTextClassifierTags.ProcessesWindowDebugging)
 				formatter.WriteDebugging(writer, obj.VM.Process);
+			else if (obj.Tag == PredefinedTextClassifierTags.ProcessesWindowMachine)
+				formatter.WriteMachine(writer, obj.VM.Process.Machine);
 			else if (obj.Tag == PredefinedTextClassifierTags.ProcessesWindowPath)
 				formatter.WritePath(writer, obj.VM.Process);
 			else

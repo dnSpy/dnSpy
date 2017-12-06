@@ -411,6 +411,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string ProcessesWindowDebugging = "Debugging";
 
 		/// <summary>
+		/// Processes window column: Arch
+		/// </summary>
+		public static readonly string ProcessesWindowMachine = "Machine";
+
+		/// <summary>
 		/// Processes window column: Path
 		/// </summary>
 		public static readonly string ProcessesWindowPath = "Path";

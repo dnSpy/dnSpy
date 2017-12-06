@@ -107,6 +107,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WriteDebugging(output, vm.Process);
 				output.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteMachine(output, vm.Process.Machine);
+				output.Write(BoxedTextColor.Text, "\t");
 				formatter.WritePath(output, vm.Process);
 				output.WriteLine();
 			}

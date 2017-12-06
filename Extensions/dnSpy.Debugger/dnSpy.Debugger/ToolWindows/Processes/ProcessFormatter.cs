@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
@@ -59,6 +60,18 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 					output.Write(BoxedTextColor.Text, ", ");
 				comma = true;
 				output.Write(BoxedTextColor.Text, s);
+			}
+		}
+
+		public void WriteMachine(ITextColorWriter output, DbgMachine machine) => output.Write(BoxedTextColor.Text, GetMachineString(machine));
+
+		static string GetMachineString(DbgMachine machine) {
+			switch (machine) {
+			case DbgMachine.X86:		return "x86";
+			case DbgMachine.X64:		return "x64";
+			default:
+				Debug.Fail($"Unknown arch: {machine}");
+				return "???";
 			}
 		}
 
