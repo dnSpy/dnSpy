@@ -36,8 +36,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		public override IEnumerable<StartDebuggingOptionsPage> Create(StartDebuggingOptionsPageContext context) {
 			yield return new UnityConnectStartDebuggingOptionsPage();
-			yield return new MonoStartDebuggingOptionsPage(pickFilename, pickDirectory);
-			yield return new MonoConnectStartDebuggingOptionsPage();
+			// Disable mono support, see https://github.com/0xd4d/dnSpy/issues/643
+			// (Step Over doesn't work unless there's a portable PDB file available)
+			//yield return new MonoStartDebuggingOptionsPage(pickFilename, pickDirectory);
+			//yield return new MonoConnectStartDebuggingOptionsPage();
 		}
 	}
 }
