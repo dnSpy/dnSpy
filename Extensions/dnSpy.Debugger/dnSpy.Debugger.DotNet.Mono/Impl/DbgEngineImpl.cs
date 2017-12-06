@@ -659,7 +659,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					expectedSuspendPolicy = SuspendPolicy.All;
 					var be = (BreakpointEvent)evt;
 					var bpReq = be.TryGetRequest() as BreakpointEventRequest;
-					Debug.Assert(bpReq != null);
 					if (bpReq != null) {
 						if (breakOnEntryPointData?.Breakpoint == bpReq) {
 							bpReq.Disable();
@@ -669,8 +668,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						else
 							SendCodeBreakpointHitMessage_MonoDebug(bpReq, TryGetThread(be.Thread));
 					}
-					else
-						SendMessage(new DbgMessageBreak(TryGetThread(be.Thread), GetMessageFlags()));
+					else {
+						// It's a removed BP. Repro: Step and stop on a BP, remove the BP, step again
+						expectedSuspendPolicy = SuspendPolicy.None;
+					}
 					break;
 
 				case EventType.Step:
