@@ -552,6 +552,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 			catch (SocketException) {
 			}
+			catch (ObjectDisposedException) {
+			}
 			catch (VMDisconnectedException) {
 			}
 			finally {
