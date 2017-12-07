@@ -226,12 +226,24 @@
     <value>Diese Laufzeit unterstützt das Hinzufügen neuer Statements nicht</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
+    <value>An Prozess ({0}) anhängen...</value>
   </data>
   <data name="UnityEditor" xml:space="preserve">
     <value>Editor</value>
   </data>
   <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+    <value>Verwenden Sie das An Prozess Anhängen (Unity) Dialogfenster zum Anhängen an Debug Builds</value>
+  </data>
+  <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
+    <value>Es kann kein Haltepunkt gesetzt werden, solange der Prozess angehalten ist.</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>E_xecutable</value>
+  </data>
+  <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
+    <value>Make sure you have patched the game's mono.dll file</value>
+  </data>
+  <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
+    <value>_Timeout (s)</value>
   </data>
 </root>

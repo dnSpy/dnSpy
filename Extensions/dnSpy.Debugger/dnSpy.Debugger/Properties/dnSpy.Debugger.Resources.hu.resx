@@ -1467,4 +1467,10 @@ Biztosan ki akarja nyitni?</value>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
     <value>Fókusz adása a nyomkövetett folyamatnak</value>
   </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Minden modul megnyitása</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Az elavult tagok elrejtése a változó ablakban</value>
+  </data>
 </root>

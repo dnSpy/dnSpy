@@ -226,12 +226,24 @@
     <value>A futtató környezet nem támogatja egy új utasítás beállítását</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
+    <value>Kapcsolódás folyamathoz ({0})...</value>
   </data>
   <data name="UnityEditor" xml:space="preserve">
-    <value>Editor</value>
+    <value>Szerkesztő</value>
   </data>
   <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+    <value>Használja a Kapcsolódás folyamathoz (Unity) dialógus ablakot a nyomkövetéses fordításokhoz való kapcsolódáshoz</value>
+  </data>
+  <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
+    <value>Nem lehet töréspontot beállítsani, ha a folyamat szüneteltetve van.</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>E_xecutable</value>
+  </data>
+  <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
+    <value>Make sure you have patched the game's mono.dll file</value>
+  </data>
+  <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
+    <value>_Timeout (s)</value>
   </data>
 </root>

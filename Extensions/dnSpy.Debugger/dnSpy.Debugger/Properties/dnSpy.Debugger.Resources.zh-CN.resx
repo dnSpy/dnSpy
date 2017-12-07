@@ -1390,19 +1390,19 @@ ERROR: {1}</value>
     <value>Group parameters and locals together</value>
   </data>
   <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
-    <value>Show compiler generated variables</value>
+    <value>显示编译器生成的变量</value>
   </data>
   <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
-    <value>Show decompiler generated variables</value>
+    <value>显示反编译器生成的变量</value>
   </data>
   <data name="DbgSettings_SortLocals" xml:space="preserve">
-    <value>Sort locals</value>
+    <value>对局部变量排序</value>
   </data>
   <data name="DbgSettings_SortParameters" xml:space="preserve">
-    <value>Sort parameters</value>
+    <value>对参数排序</value>
   </data>
   <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
-    <value>Hide compiler generated members</value>
+    <value>隐藏编译器生成的成员</value>
   </data>
   <data name="FunctionEvaluationDisabled" xml:space="preserve">
     <value>Implicit function evaluation is turned off by the user</value>
@@ -1414,34 +1414,34 @@ ERROR: {1}</value>
     <value>内部调试器错误</value>
   </data>
   <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
-    <value>The function evaluation requires all threads to run.</value>
+    <value>函数求值需要所有线程都在运行。</value>
   </data>
   <data name="DigitSeparatorsCommand" xml:space="preserve">
-    <value>Digit Separators</value>
+    <value>数字分隔符</value>
   </data>
   <data name="Column_ProcessCommandLine" xml:space="preserve">
-    <value>Command Line</value>
+    <value>命令行</value>
   </data>
   <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
-    <value>Cannot obtain value of the local variable or argument because it is not available at this instruction pointer, possibly because it has been optimized away.</value>
+    <value>无法获取局部变量或参数的值，因为它在此时不可用，可能是被优化了。</value>
   </data>
   <data name="ExceptionMessage" xml:space="preserve">
-    <value>Message: {0}</value>
+    <value>信息: {0}</value>
   </data>
   <data name="ExceptionName" xml:space="preserve">
-    <value>Exception: {0}</value>
+    <value>异常: {0}</value>
   </data>
   <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
-    <value>An unhandled exception occurred in {0} ({1})</value>
+    <value>{0} ({1}) 中出现未处理的异常</value>
   </data>
   <data name="StatusBar_BreakpointHit" xml:space="preserve">
     <value>断点</value>
   </data>
   <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
-    <value>The breakpoint expression must be a boolean expression</value>
+    <value>断点表达式必须是布尔表达式</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
-    <value>Suppress JIT optimization on module load</value>
+    <value>在模块加载时禁用JIT优化</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
     <value>Program modules</value>
@@ -1450,7 +1450,7 @@ ERROR: {1}</value>
     <value>System modules</value>
   </data>
   <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
-    <value>The runtime is unable to evaluate this expression.</value>
+    <value>运行时无法计算此表达式。</value>
   </data>
   <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
     <value>Enable or disable all exceptions matching the current search criteria</value>
@@ -1466,5 +1466,11 @@ ERROR: {1}</value>
   </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
     <value>Give focus to debugged process</value>
+  </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Open All Modules</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Hide deprecated members in variables windows</value>
   </data>
 </root>

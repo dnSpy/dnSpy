@@ -1467,4 +1467,10 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
     <value>Fokussiere debuggten Prozess</value>
   </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Alle Module öffnen</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Veraltete Felder im Variablen-Fenster ausblenden</value>
+  </data>
 </root>

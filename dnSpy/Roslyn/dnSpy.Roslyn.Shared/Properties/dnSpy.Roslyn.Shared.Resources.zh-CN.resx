@@ -139,7 +139,7 @@
     <value>错误</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
-    <value>Expanding the Results View will enumerate the IEnumerable</value>
+    <value>展开“结果”视图将枚举IEnumerable</value>
   </data>
   <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
     <value>实例成员</value>
@@ -151,7 +151,7 @@
     <value>结果视图</value>
   </data>
   <data name="DebuggerVarsWindow_ResultsView_NoResults" xml:space="preserve">
-    <value>Enumeration yielded no results</value>
+    <value>枚举未产生任何结果</value>
   </data>
   <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
     <value>共享的成员</value>
@@ -214,6 +214,6 @@
     <value>Results View requires {0} to be referenced</value>
   </data>
   <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
-    <value>Type '{0}' doesn't exist in assembly '{1}'</value>
+    <value>程序集 '{1}' 中不存在类型 '{0}' </value>
   </data>
 </root>

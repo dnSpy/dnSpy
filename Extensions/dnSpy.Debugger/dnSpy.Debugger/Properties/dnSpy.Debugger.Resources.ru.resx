@@ -1467,4 +1467,10 @@ ERROR: {1}</value>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
     <value>Установить фокус на отлаживаемый процесс</value>
   </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Open All Modules</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Hide deprecated members in variables windows</value>
+  </data>
 </root>

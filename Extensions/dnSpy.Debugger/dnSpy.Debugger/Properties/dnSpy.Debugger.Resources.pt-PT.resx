@@ -1464,4 +1464,10 @@ Tem certeza que deseja expandi-la?</value>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
     <value>Dar foco ao processo depurado</value>
   </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Open All Modules</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Hide deprecated members in variables windows</value>
+  </data>
 </root>

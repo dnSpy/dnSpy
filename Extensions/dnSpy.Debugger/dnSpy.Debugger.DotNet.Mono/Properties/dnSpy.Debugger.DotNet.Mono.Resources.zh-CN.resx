@@ -157,22 +157,22 @@
     <value>调试器 ({0})</value>
   </data>
   <data name="Error_CouldNotFindFile" xml:space="preserve">
-    <value>Could not find {0}</value>
+    <value>无法找到 {0}</value>
   </data>
   <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>Couldn't connect to the debugged process</value>
+    <value>无法连接到被调试进程</value>
   </data>
   <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
-    <value>Could not find the debugged process</value>
+    <value>找不到被调试进程</value>
   </data>
   <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
-    <value>The connection to the debugged process was unexpectedly closed</value>
+    <value>与被调试进程的连接被意外关闭</value>
   </data>
   <data name="Thread_UserState_Aborted" xml:space="preserve">
-    <value>Aborted</value>
+    <value>已中止</value>
   </data>
   <data name="Thread_UserState_AbortRequested" xml:space="preserve">
-    <value>AbortRequested</value>
+    <value>已请求中止</value>
   </data>
   <data name="Thread_UserState_Background" xml:space="preserve">
     <value>Background</value>
@@ -202,36 +202,48 @@
     <value>函数求值</value>
   </data>
   <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Native Transition</value>
+    <value>本机转换</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
-    <value>This runtime doesn't support calling generic methods</value>
+    <value>此运行时不支持调用泛型方法</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>It's not possible to write to 'this'</value>
+    <value>不能写入到“this”</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Member can't be accessed due to runtime limitations</value>
+    <value>由于运行时限制，无法访问成员</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>无法设置下一条语句。</value>
   </data>
   <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>The type has not been loaded yet.</value>
+    <value>尚未加载该类型。</value>
   </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Process is paused and _waiting for the debugger</value>
+    <value>进程已暂停，等待调试器</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
     <value>The runtime doesn't support setting a new statement</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
+    <value>附加到进程 ({0})...</value>
   </data>
   <data name="UnityEditor" xml:space="preserve">
-    <value>Editor</value>
+    <value>编辑器</value>
   </data>
   <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+    <value>使用 "附加到进程(Unity)" 对话框来附加到调试版本</value>
+  </data>
+  <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
+    <value>进程暂停时无法设置断点。</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>E_xecutable</value>
+  </data>
+  <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
+    <value>Make sure you have patched the game's mono.dll file</value>
+  </data>
+  <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
+    <value>_Timeout (s)</value>
   </data>
 </root>
