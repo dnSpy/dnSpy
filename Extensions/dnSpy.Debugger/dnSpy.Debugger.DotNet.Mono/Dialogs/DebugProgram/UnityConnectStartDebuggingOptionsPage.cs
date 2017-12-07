@@ -18,21 +18,21 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Debugger.DotNet.Mono.Properties;
 
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 	sealed class UnityConnectStartDebuggingOptionsPage : MonoConnectStartDebuggingOptionsPageBase {
 		public override Guid Guid => new Guid("D244A779-9A4B-401B-99D4-6546B313260A");
-		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetUnity;
+		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetUnityConnect;
 		// Shouldn't be localized
-		public override string DisplayName => "Unity";
+		public override string DisplayName => "Unity (" + dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_Connect_To_Process + ")";
 
-		public ICommand DebuggingUnityGamesCommand => new RelayCommand(a => OpenDebuggingUnityGames());
+		public ICommand DebuggingUnityGamesCommand => new RelayCommand(a => DebuggingUnityGamesHelper.OpenDebuggingUnityGames());
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var dncOptions = options as UnityConnectStartDebuggingOptions;
@@ -60,16 +60,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		public override StartDebuggingOptionsInfo GetOptions() {
 			var options = GetOptions(new UnityConnectStartDebuggingOptions());
 			return new StartDebuggingOptionsInfo(options);
-		}
-
-		void OpenDebuggingUnityGames() => OpenWebPage("https://github.com/0xd4d/dnSpy/wiki/Debugging-Unity-Games");
-
-		static void OpenWebPage(string url) {
-			try {
-				Process.Start(url);
-			}
-			catch {
-			}
 		}
 	}
 }

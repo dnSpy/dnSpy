@@ -41,6 +41,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			case UnityConnectStartDebuggingOptions _:
 			case UnityAttachToProgramOptions _:
+			case UnityStartDebuggingOptions _:
 				return new DbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, MonoDebugRuntimeKind.Unity);
 			}
 

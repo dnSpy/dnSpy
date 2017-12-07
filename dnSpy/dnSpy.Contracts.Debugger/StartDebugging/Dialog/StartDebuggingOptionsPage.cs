@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// <summary>
 		/// .NET Mono
 		/// </summary>
-		public const double DotNetMono = 1000000;
+		public const double DotNetMono = DotNetFramework + 1;
 
 		/// <summary>
 		/// .NET Unity

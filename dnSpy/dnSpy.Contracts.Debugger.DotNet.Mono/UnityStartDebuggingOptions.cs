@@ -21,15 +21,22 @@ using System;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 	/// <summary>
-	/// Debugging options used when connecting to a Mono program
+	/// Debugging options used when starting a Unity game. The game must use a patched mono.dll.
 	/// </summary>
-	public sealed class MonoConnectStartDebuggingOptions : MonoConnectStartDebuggingOptionsBase {
+	public sealed class UnityStartDebuggingOptions : MonoStartDebuggingOptionsBase {
+		static readonly TimeSpan DefaultUnityConnectionTimeout = TimeSpan.FromSeconds(30);
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public UnityStartDebuggingOptions() => ConnectionTimeout = DefaultUnityConnectionTimeout;
+
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/> and returns it
 		/// </summary>
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
-		public MonoConnectStartDebuggingOptions CopyTo(MonoConnectStartDebuggingOptions other) {
+		public UnityStartDebuggingOptions CopyTo(UnityStartDebuggingOptions other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
@@ -40,6 +47,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public override DebugProgramOptions Clone() => CopyTo(new MonoConnectStartDebuggingOptions());
+		public override DebugProgramOptions Clone() => CopyTo(new UnityStartDebuggingOptions());
 	}
 }

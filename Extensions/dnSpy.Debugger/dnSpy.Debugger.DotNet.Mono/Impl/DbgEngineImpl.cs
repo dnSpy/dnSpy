@@ -26,6 +26,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet;
@@ -45,7 +46,8 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl : DbgEngine {
-		const int DefaultConnectionTimeoutMilliseconds = 10 * 1000;
+		static readonly TimeSpan defaultConnectionTimeout = TimeSpan.FromSeconds(10);
+		static readonly TimeSpan maxConnectionTimeout = TimeSpan.FromMinutes(5);
 
 		public override DbgStartKind StartKind => wasAttach ? DbgStartKind.Attach : DbgStartKind.Start;
 		public override DbgEngineRuntimeInfo RuntimeInfo => runtimeInfo;
@@ -251,17 +253,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public override void Start(DebugProgramOptions options) => MonoDebugThread(() => StartCore(options));
 		void StartCore(DebugProgramOptions options) {
 			debuggerThread.VerifyAccess();
+			string defaultCouldNotConnectMessage = null;
 			try {
 				string connectionAddress;
 				ushort connectionPort;
 				TimeSpan connectionTimeout;
 				int expectedPid;
 				string filename;
-				if (options is MonoStartDebuggingOptions startOptions) {
+				if (options is MonoStartDebuggingOptions startMonoOptions) {
 					connectionAddress = "127.0.0.1";
-					connectionPort = startOptions.ConnectionPort;
-					connectionTimeout = startOptions.ConnectionTimeout;
-					filename = startOptions.Filename;
+					connectionPort = startMonoOptions.ConnectionPort;
+					connectionTimeout = startMonoOptions.ConnectionTimeout;
+					filename = startMonoOptions.Filename;
 					if (string.IsNullOrEmpty(filename))
 						throw new Exception("Missing filename");
 					if (connectionPort == 0) {
@@ -272,26 +275,65 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						connectionPort = (ushort)port;
 					}
 
-					var monoExe = startOptions.MonoExePath;
+					var monoExe = startMonoOptions.MonoExePath;
 					if (string.IsNullOrEmpty(monoExe))
-						monoExe = MonoExeFinder.Find(startOptions.MonoExeOptions);
+						monoExe = MonoExeFinder.Find(startMonoOptions.MonoExeOptions);
 					if (!File.Exists(monoExe))
 						throw new StartException(string.Format(dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotFindFile, MonoExeFinder.MONO_EXE));
 					Debug.Assert(!connectionAddress.Contains(" "));
 					var psi = new ProcessStartInfo {
 						FileName = monoExe,
-						Arguments = $"--debug --debugger-agent=transport=dt_socket,server=y,address={connectionAddress}:{connectionPort} \"{startOptions.Filename}\" {startOptions.CommandLine}",
-						WorkingDirectory = startOptions.WorkingDirectory,
+						Arguments = $"--debug --debugger-agent=transport=dt_socket,server=y,address={connectionAddress}:{connectionPort} \"{startMonoOptions.Filename}\" {startMonoOptions.CommandLine}",
+						WorkingDirectory = startMonoOptions.WorkingDirectory,
 						UseShellExecute = false,
 					};
 					var env = new Dictionary<string, string>();
-					foreach (var kv in startOptions.Environment.Environment)
+					foreach (var kv in startMonoOptions.Environment.Environment)
 						psi.Environment[kv.Key] = kv.Value;
 					using (var process = Process.Start(psi))
 						expectedPid = process.Id;
 
-					if (startOptions.BreakKind == PredefinedBreakKinds.EntryPoint)
-						breakOnEntryPointData = new BreakOnEntryPointData { Filename = Path.GetFullPath(startOptions.Filename) };
+					if (startMonoOptions.BreakKind == PredefinedBreakKinds.EntryPoint)
+						breakOnEntryPointData = new BreakOnEntryPointData { Filename = Path.GetFullPath(startMonoOptions.Filename) };
+				}
+				else if (options is UnityStartDebuggingOptions startUnityOptions) {
+					connectionAddress = "127.0.0.1";
+					connectionPort = startUnityOptions.ConnectionPort;
+					connectionTimeout = startUnityOptions.ConnectionTimeout;
+					filename = startUnityOptions.Filename;
+					if (string.IsNullOrEmpty(filename))
+						throw new Exception("Missing filename");
+					if (connectionPort == 0) {
+						int port = NetUtils.GetConnectionPort();
+						Debug.Assert(port >= 0);
+						if (port < 0)
+							throw new Exception("All ports are in use");
+						connectionPort = (ushort)port;
+					}
+
+					const string dnSpyUnityDebugEnvVarName = "DNSPY_UNITY_DBG";
+					Debug.Assert(!connectionAddress.Contains(" "));
+					var sb = new StringBuilder();
+					sb.Append($"--debugger-agent=transport=dt_socket,server=y,address={connectionAddress}:{connectionPort},defer=y");
+					if (!debuggerSettings.DisableManagedDebuggerDetection)
+						sb.Append(",no-hide-debugger");
+					var envVarValue = sb.ToString();
+
+					var psi = new ProcessStartInfo {
+						FileName = startUnityOptions.Filename,
+						Arguments = startUnityOptions.CommandLine,
+						WorkingDirectory = startUnityOptions.WorkingDirectory,
+						UseShellExecute = false,
+					};
+					var env = new Dictionary<string, string>();
+					foreach (var kv in startUnityOptions.Environment.Environment)
+						psi.Environment[kv.Key] = kv.Value;
+					psi.Environment[dnSpyUnityDebugEnvVarName] = envVarValue;
+					using (var process = Process.Start(psi))
+						expectedPid = process.Id;
+
+					defaultCouldNotConnectMessage = GetCouldNotConnectErrorMessage(connectionAddress, connectionPort, filename) + "\r\n\r\n" +
+						dnSpy_Debugger_DotNet_Mono_Resources.CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched;
 				}
 				else if (options is MonoConnectStartDebuggingOptionsBase connectOptions &&
 					(connectOptions is MonoConnectStartDebuggingOptions || connectOptions is UnityConnectStartDebuggingOptions)) {
@@ -303,8 +345,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					filename = null;
 					expectedPid = -1;
 					wasAttach = true;
-					if (connectOptions is MonoConnectStartDebuggingOptions)
-						processWasRunningOnAttach = !((MonoConnectStartDebuggingOptions)connectOptions).ProcessIsSuspended;
+					processWasRunningOnAttach = !connectOptions.ProcessIsSuspended;
 				}
 				else if (options is MonoAttachToProgramOptionsBase attachOptions) {
 					connectionAddress = attachOptions.Address;
@@ -324,7 +365,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				monoRuntimeId.Port = connectionPort;
 
 				if (connectionTimeout == TimeSpan.Zero)
-					connectionTimeout = TimeSpan.FromMilliseconds(DefaultConnectionTimeoutMilliseconds);
+					connectionTimeout = defaultConnectionTimeout;
+				if (connectionTimeout > maxConnectionTimeout)
+					connectionTimeout = maxConnectionTimeout;
 
 				if (!IPAddress.TryParse(connectionAddress, out var ipAddr)) {
 					ipAddr = Dns.GetHostEntry(connectionAddress).AddressList.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
@@ -337,12 +380,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				for (;;) {
 					var elapsedTime = DateTime.UtcNow - startTime;
 					if (elapsedTime >= connectionTimeout)
-						throw new StartException(GetCouldNotConnectErrorMessage(connectionAddress, connectionPort, filename));
+						throw new CouldNotConnectException(GetCouldNotConnectErrorMessage(connectionAddress, connectionPort, filename));
 					try {
 						var asyncConn = VirtualMachineManager.BeginConnect(endPoint, null);
 						if (!asyncConn.AsyncWaitHandle.WaitOne(connectionTimeout - elapsedTime)) {
 							VirtualMachineManager.CancelConnection(asyncConn);
-							throw new StartException(GetCouldNotConnectErrorMessage(connectionAddress, connectionPort, filename));
+							throw new CouldNotConnectException(GetCouldNotConnectErrorMessage(connectionAddress, connectionPort, filename));
 						}
 						else {
 							vm = VirtualMachineManager.EndConnect(asyncConn);
@@ -377,10 +420,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				vm = null;
 
 				string msg;
-				if (ex is StartException)
+				if (ex is CouldNotConnectException)
+					msg = defaultCouldNotConnectMessage ?? ex.Message;
+				else if (ex is StartException)
 					msg = ex.Message;
-				else
-					msg = dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotConnectToProcess + "\r\n\r\n" + ex.Message;
+				else {
+					msg = defaultCouldNotConnectMessage ??
+						dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotConnectToProcess + "\r\n\r\n" + ex.Message;
+				}
 				SendMessage(new DbgMessageConnected(msg, GetMessageFlags()));
 				return;
 			}
@@ -1101,8 +1148,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return engineThread?.Thread;
 		}
 
-		sealed class StartException : Exception {
+		class StartException : Exception {
 			public StartException(string message) : base(message) { }
+		}
+		sealed class CouldNotConnectException : StartException {
+			public CouldNotConnectException(string message) : base(message) { }
 		}
 
 		static string GetCouldNotConnectErrorMessage(string address, ushort port, string filenameOpt) {

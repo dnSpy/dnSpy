@@ -88,6 +88,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make sure you have patched the game&apos;s mono.dll file.
+        /// </summary>
+        public static string CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched {
+            get {
+                return ResourceManager.GetString("CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A_rguments.
         /// </summary>
         public static string DbgAsm_Args {
@@ -129,6 +138,24 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         public static string DbgAsm_ConnectionPort {
             get {
                 return ResourceManager.GetString("DbgAsm_ConnectionPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Timeout (s).
+        /// </summary>
+        public static string DbgAsm_ConnectionTimeoutInSeconds {
+            get {
+                return ResourceManager.GetString("DbgAsm_ConnectionTimeoutInSeconds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E_xecutable.
+        /// </summary>
+        public static string DbgAsm_Executable {
+            get {
+                return ResourceManager.GetString("DbgAsm_Executable", resourceCulture);
             }
         }
         

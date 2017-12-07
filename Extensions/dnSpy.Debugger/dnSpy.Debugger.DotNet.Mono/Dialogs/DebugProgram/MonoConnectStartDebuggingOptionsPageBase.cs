@@ -41,6 +41,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		string address;
 
 		public UInt16VM ConnectionPort { get; }
+		public UInt32VM ConnectionTimeout { get; }
 
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(BreakProcessKindsUtils.BreakProcessKindList);
@@ -49,6 +50,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			get => (string)BreakProcessKindVM.SelectedItem;
 			set => BreakProcessKindVM.SelectedItem = value;
 		}
+
+		public bool ProcessIsSuspended {
+			get => processIsSuspended;
+			set {
+				if (processIsSuspended != value) {
+					processIsSuspended = value;
+					OnPropertyChanged(nameof(ProcessIsSuspended));
+				}
+			}
+		}
+		bool processIsSuspended;
 
 		public override bool IsValid => isValid;
 		bool isValid;
@@ -63,6 +75,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		protected MonoConnectStartDebuggingOptionsPageBase() {
 			ConnectionPort = new UInt16VM(a => UpdateIsValid(), useDecimal: true) { Min = 1 };
+			ConnectionTimeout = new UInt32VM(a => UpdateIsValid(), useDecimal: true);
 		}
 
 		static string FilterBreakKind(string breakKind) {
@@ -76,7 +89,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		protected void Initialize(MonoConnectStartDebuggingOptionsBase options) {
 			Address = options.Address;
 			ConnectionPort.Value = options.Port;
+			ConnectionTimeout.Value = (uint)options.ConnectionTimeout.TotalSeconds;
 			BreakKind = FilterBreakKind(options.BreakKind);
+			ProcessIsSuspended = options.ProcessIsSuspended;
 		}
 
 		protected T InitializeDefault<T>(T options, string breakKind) where T : MonoConnectStartDebuggingOptionsBase {
@@ -87,7 +102,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		protected T GetOptions<T>(T options) where T : MonoConnectStartDebuggingOptionsBase {
 			options.Address = Address;
 			options.Port = ConnectionPort.Value;
+			options.ConnectionTimeout = TimeSpan.FromSeconds(ConnectionTimeout.Value);
 			options.BreakKind = FilterBreakKind(BreakKind);
+			options.ProcessIsSuspended = ProcessIsSuspended;
 			return options;
 		}
 
@@ -101,10 +118,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		bool CalculateIsValid() =>
 			!ConnectionPort.HasError &&
+			!ConnectionTimeout.HasError &&
 			string.IsNullOrEmpty(Verify(nameof(Address)));
 
-		string Verify(string columnName) {
-			return string.Empty;
-		}
+		string Verify(string columnName) => string.Empty;
 	}
 }

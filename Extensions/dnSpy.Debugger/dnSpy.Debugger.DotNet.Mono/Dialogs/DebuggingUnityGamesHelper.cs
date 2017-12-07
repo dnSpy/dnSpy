@@ -17,26 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Diagnostics;
 
-namespace dnSpy.Contracts.Debugger.StartDebugging {
-	/// <summary>
-	/// Predefined generic debug engine guids
-	/// </summary>
-	public static class PredefinedGenericDebugEngineGuids {
-		/// <summary>
-		/// .NET Framework or compatible framework (eg. Mono)
-		/// </summary>
-		public static readonly Guid DotNetFramework = new Guid("0F99555D-5523-4AAE-BD4C-0451B9D50126");
+namespace dnSpy.Debugger.DotNet.Mono.Dialogs {
+	static class DebuggingUnityGamesHelper {
+		public const string DebuggingUnityGamesUrl = "https://github.com/0xd4d/dnSpy/wiki/Debugging-Unity-Games";
+		public const string DebuggingUnityGamesText = "Debugging Unity Games";
+		public static void OpenDebuggingUnityGames() => OpenWebPage(DebuggingUnityGamesUrl);
 
-		/// <summary>
-		/// .NET Core
-		/// </summary>
-		public static readonly Guid DotNetCore = new Guid("7D294510-4730-433B-85C1-61EC0B4F6C3C");
-
-		/// <summary>
-		/// Unity
-		/// </summary>
-		public static readonly Guid DotNetUnity = new Guid("7FE300C8-C855-46F0-A3F4-2A18B4283C70");
+		static void OpenWebPage(string url) {
+			try {
+				Process.Start(url);
+			}
+			catch {
+			}
+		}
 	}
 }

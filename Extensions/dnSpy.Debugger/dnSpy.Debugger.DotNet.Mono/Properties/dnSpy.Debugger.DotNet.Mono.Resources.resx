@@ -237,4 +237,13 @@
   <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
     <value>Can't set a breakpoint when the process is paused.</value>
   </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>E_xecutable</value>
+  </data>
+  <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
+    <value>Make sure you have patched the game's mono.dll file</value>
+  </data>
+  <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
+    <value>_Timeout (s)</value>
+  </data>
 </root>

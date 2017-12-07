@@ -21,6 +21,51 @@ using System;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 	/// <summary>
+	/// Debugging options used when starting a Mono program
+	/// </summary>
+	public sealed class MonoStartDebuggingOptions : MonoStartDebuggingOptionsBase {
+		/// <summary>
+		/// Path to <c>mono.exe</c> or null / empty string if it should be auto detected
+		/// </summary>
+		public string MonoExePath { get; set; }
+
+		/// <summary>
+		/// <c>mono.exe</c> options
+		/// </summary>
+		public MonoExeOptions MonoExeOptions { get; set; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public MonoStartDebuggingOptions() {
+			if (IntPtr.Size == 4)
+				MonoExeOptions = MonoExeOptions.Prefer32 | MonoExeOptions.Debug32 | MonoExeOptions.Debug64;
+			else
+				MonoExeOptions = MonoExeOptions.Prefer64 | MonoExeOptions.Debug32 | MonoExeOptions.Debug64;
+		}
+
+		/// <summary>
+		/// Copies this instance to <paramref name="other"/> and returns it
+		/// </summary>
+		/// <param name="other">Destination</param>
+		/// <returns></returns>
+		public MonoStartDebuggingOptions CopyTo(MonoStartDebuggingOptions other) {
+			if (other == null)
+				throw new ArgumentNullException(nameof(other));
+			base.CopyTo(other);
+			other.MonoExePath = MonoExePath;
+			other.MonoExeOptions = MonoExeOptions;
+			return other;
+		}
+
+		/// <summary>
+		/// Clones this instance
+		/// </summary>
+		/// <returns></returns>
+		public override DebugProgramOptions Clone() => CopyTo(new MonoStartDebuggingOptions());
+	}
+
+	/// <summary>
 	/// <c>mono.exe</c> options
 	/// </summary>
 	[Flags]
@@ -49,89 +94,5 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// Prefer 64-bit <c>mono.exe</c> over 32-bit <c>mono.exe</c>
 		/// </summary>
 		Prefer64			= 0x00000008,
-	}
-
-	/// <summary>
-	/// Debugging options used when starting a Mono program
-	/// </summary>
-	public sealed class MonoStartDebuggingOptions : StartDebuggingOptions {
-		/// <summary>
-		/// Path to application to debug
-		/// </summary>
-		public string Filename { get; set; }
-
-		/// <summary>
-		/// Command line
-		/// </summary>
-		public string CommandLine { get; set; }
-
-		/// <summary>
-		/// Working directory
-		/// </summary>
-		public string WorkingDirectory { get; set; }
-
-		/// <summary>
-		/// Environment variables
-		/// </summary>
-		public DbgEnvironment Environment { get; }
-
-		/// <summary>
-		/// Path to <c>mono.exe</c> or null / empty string if it should be auto detected
-		/// </summary>
-		public string MonoExePath { get; set; }
-
-		/// <summary>
-		/// Connection port or 0 to use a random port
-		/// </summary>
-		public ushort ConnectionPort { get; set; }
-
-		/// <summary>
-		/// Gets the connection timeout. If it's <see cref="TimeSpan.Zero"/>, the default timeout is used.
-		/// </summary>
-		public TimeSpan ConnectionTimeout { get; set; }
-
-		/// <summary>
-		/// <c>mono.exe</c> options
-		/// </summary>
-		public MonoExeOptions MonoExeOptions { get; set; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public MonoStartDebuggingOptions() {
-			Environment = new DbgEnvironment();
-			ConnectionTimeout = TimeSpan.Zero;
-			if (IntPtr.Size == 4)
-				MonoExeOptions = MonoExeOptions.Prefer32 | MonoExeOptions.Debug32 | MonoExeOptions.Debug64;
-			else
-				MonoExeOptions = MonoExeOptions.Prefer64 | MonoExeOptions.Debug32 | MonoExeOptions.Debug64;
-		}
-
-		/// <summary>
-		/// Copies this instance to <paramref name="other"/> and returns it
-		/// </summary>
-		/// <param name="other">Destination</param>
-		/// <returns></returns>
-		public MonoStartDebuggingOptions CopyTo(MonoStartDebuggingOptions other) {
-			if (other == null)
-				throw new ArgumentNullException(nameof(other));
-			base.CopyTo(other);
-			other.Filename = Filename;
-			other.CommandLine = CommandLine;
-			other.WorkingDirectory = WorkingDirectory;
-			other.Environment.Clear();
-			other.Environment.AddRange(Environment.Environment);
-			other.MonoExePath = MonoExePath;
-			other.ConnectionPort = ConnectionPort;
-			other.ConnectionTimeout = ConnectionTimeout;
-			other.MonoExeOptions = MonoExeOptions;
-			return other;
-		}
-
-		/// <summary>
-		/// Clones this instance
-		/// </summary>
-		/// <returns></returns>
-		public override DebugProgramOptions Clone() => CopyTo(new MonoStartDebuggingOptions());
 	}
 }

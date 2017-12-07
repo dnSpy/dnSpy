@@ -18,62 +18,19 @@
 */
 
 using System;
-using System.ComponentModel;
-using System.IO;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Debugger.DotNet.Mono.Properties;
 
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
-	sealed class MonoStartDebuggingOptionsPage : StartDebuggingOptionsPage, IDataErrorInfo {
+	sealed class MonoStartDebuggingOptionsPage : MonoStartDebuggingOptionsPageBase {
 		public override Guid Guid => new Guid("334A6F3E-2118-4ABE-B9C8-0D16EF723B37");
 		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetMono;
 		// Shouldn't be localized
 		public override string DisplayName => "Mono";
-		public override object UIObject => this;
-
-		public string Filename {
-			get => filename;
-			set {
-				if (filename != value) {
-					filename = value;
-					OnPropertyChanged(nameof(Filename));
-					UpdateIsValid();
-					var path = GetPath(filename);
-					if (path != null)
-						WorkingDirectory = path;
-				}
-			}
-		}
-		string filename = string.Empty;
-
-		public string CommandLine {
-			get => commandLine;
-			set {
-				if (commandLine != value) {
-					commandLine = value;
-					OnPropertyChanged(nameof(CommandLine));
-					UpdateIsValid();
-				}
-			}
-		}
-		string commandLine = string.Empty;
-
-		public string WorkingDirectory {
-			get => workingDirectory;
-			set {
-				if (workingDirectory != value) {
-					workingDirectory = value;
-					OnPropertyChanged(nameof(WorkingDirectory));
-					UpdateIsValid();
-				}
-			}
-		}
-		string workingDirectory = string.Empty;
 
 		public string MonoExePath {
 			get => monoExePath;
@@ -87,68 +44,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		}
 		string monoExePath;
 
-		public UInt16VM ConnectionPort { get; }
-
-		public ICommand PickFilenameCommand => new RelayCommand(a => PickNewFilename());
-		public ICommand PickWorkingDirectoryCommand => new RelayCommand(a => PickNewWorkingDirectory());
 		public ICommand PickMonoExePathCommand => new RelayCommand(a => PickMonoExePath());
 
-		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
-		readonly EnumListVM breakProcessKindVM = new EnumListVM(BreakProcessKindsUtils.BreakProcessKindList);
-
-		public string BreakKind {
-			get => (string)BreakProcessKindVM.SelectedItem;
-			set => BreakProcessKindVM.SelectedItem = value;
-		}
-
-		public override bool IsValid => isValid;
-		bool isValid;
-
-		void UpdateIsValid() {
-			var newIsValid = CalculateIsValid();
-			if (newIsValid == isValid)
-				return;
-			isValid = newIsValid;
-			OnPropertyChanged(nameof(IsValid));
-		}
-
-		readonly IPickFilename pickFilename;
-		readonly IPickDirectory pickDirectory;
-
-		public MonoStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory) {
-			this.pickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
-			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
-			ConnectionPort = new UInt16VM(a => UpdateIsValid(), useDecimal: true);
-		}
-
-		static string GetPath(string file) {
-			try {
-				return Path.GetDirectoryName(file);
-			}
-			catch {
-			}
-			return null;
-		}
-
-		static void Initialize(string filename, MonoStartDebuggingOptions options) {
-			options.Filename = filename;
-			options.WorkingDirectory = GetPath(options.Filename);
-		}
-
-		void PickNewFilename() {
-			var newFilename = pickFilename.GetFilename(Filename, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
-			if (newFilename == null)
-				return;
-
-			Filename = newFilename;
-		}
-
-		void PickNewWorkingDirectory() {
-			var newDir = pickDirectory.GetDirectory(WorkingDirectory);
-			if (newDir == null)
-				return;
-
-			WorkingDirectory = newDir;
+		public MonoStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(pickFilename, pickDirectory) {
 		}
 
 		static readonly string MonoExeFilter = $"mono.exe|mono.exe";
@@ -160,56 +59,27 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			MonoExePath = newMonoExePath;
 		}
 
-		static string FilterBreakKind(string breakKind) {
-			foreach (var info in BreakProcessKindsUtils.BreakProcessKindList) {
-				if (StringComparer.Ordinal.Equals(breakKind, (string)info.Value))
-					return breakKind;
-			}
-			return PredefinedBreakKinds.DontBreak;
-		}
-
 		void Initialize(MonoStartDebuggingOptions options) {
-			Filename = options.Filename;
-			CommandLine = options.CommandLine;
-			// Must be init'd after Filename since it also overwrites this property
-			WorkingDirectory = options.WorkingDirectory;
+			base.Initialize(options);
 			MonoExePath = options.MonoExePath;
-			ConnectionPort.Value = options.ConnectionPort;
-			BreakKind = FilterBreakKind(options.BreakKind);
 		}
 
 		MonoStartDebuggingOptions InitializeDefault(MonoStartDebuggingOptions options, string breakKind) {
-			options.BreakKind = FilterBreakKind(breakKind);
+			base.InitializeDefault(options, breakKind);
 			return options;
 		}
 
 		MonoStartDebuggingOptions GetOptions(MonoStartDebuggingOptions options) {
-			options.Filename = Filename;
-			options.CommandLine = CommandLine;
-			options.WorkingDirectory = WorkingDirectory;
+			base.GetOptions(options);
 			options.MonoExePath = MonoExePath;
-			options.ConnectionPort = ConnectionPort.Value;
-			options.BreakKind = FilterBreakKind(BreakKind);
 			return options;
 		}
 
-		string IDataErrorInfo.Error => throw new NotImplementedException();
-		string IDataErrorInfo.this[string columnName] => Verify(columnName);
-
-		static string VerifyFilename(string filename) {
-			if (!File.Exists(filename)) {
-				if (string.IsNullOrWhiteSpace(filename))
-					return dnSpy_Debugger_DotNet_Mono_Resources.Error_MissingFilename;
-				return dnSpy_Debugger_DotNet_Mono_Resources.Error_FileDoesNotExist;
-			}
-			return string.Empty;
-		}
-
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
-			var dncOptions = options as MonoStartDebuggingOptions;
-			if (dncOptions == null)
+			var msdOptions = options as MonoStartDebuggingOptions;
+			if (msdOptions == null)
 				return;
-			Initialize(dncOptions);
+			Initialize(msdOptions);
 		}
 
 		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
@@ -218,14 +88,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		MonoStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
 			bool isExe = PortableExecutableFileHelpers.IsExecutable(filename);
 			if (isExe) {
-				var dncOptions = CreateOptions(breakKind);
-				Initialize(filename, dncOptions);
-				return dncOptions;
+				var msdOptions = CreateOptions(breakKind);
+				Initialize(filename, msdOptions);
+				return msdOptions;
 			}
 			else {
 				// If it's a DLL, use the old EXE options if available
-				if (options is MonoStartDebuggingOptions dncOptions)
-					return dncOptions;
+				if (options is MonoStartDebuggingOptions msdOptions)
+					return msdOptions;
 				return CreateOptions(breakKind);
 			}
 		}
@@ -248,18 +118,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			return false;
 		}
 
-		bool CalculateIsValid() =>
-			!ConnectionPort.HasError &&
-			string.IsNullOrEmpty(Verify(nameof(MonoExePath))) &&
-			string.IsNullOrEmpty(Verify(nameof(Filename)));
+		protected override bool CalculateIsValidCore() => string.IsNullOrEmpty(Verify(nameof(MonoExePath)));
 
-		string Verify(string columnName) {
+		protected override string VerifyCore(string columnName) {
 			if (columnName == nameof(MonoExePath)) {
 				if (!string.IsNullOrWhiteSpace(MonoExePath))
 					return VerifyFilename(MonoExePath);
 			}
-			else if (columnName == nameof(Filename))
-				return VerifyFilename(Filename);
 
 			return string.Empty;
 		}
