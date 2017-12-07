@@ -55,6 +55,7 @@
     <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\UnityConnectStartDebuggingOptionsPage.cs" />
+    <Compile Include="Dialogs\DebugProgram\UnityGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Dialogs\DebugProgram\UnityStartDebuggingOptionsPage.cs" />
     <Compile Include="Impl\Attach\MonoAttachToProgramOptionsBase.cs" />
     <Compile Include="Impl\Attach\UnityAttachToProgramOptions.cs" />

@@ -66,5 +66,10 @@ namespace dnSpy.Contracts.Debugger.StartDebugging {
 		/// .NET Framework / .NET Core
 		/// </summary>
 		public const double DotNet = 1000000;
+
+		/// <summary>
+		/// Unity
+		/// </summary>
+		public const double DotNetUnity = DotNet + 1;
 	}
 }

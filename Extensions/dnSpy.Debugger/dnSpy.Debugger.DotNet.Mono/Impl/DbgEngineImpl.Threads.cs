@@ -290,7 +290,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (alreadyKnowsMainThread)
 				return false;
 			// Don't try to guess the main thread if it's Unity since any thread could be the main thread
-			if (monoDebugRuntimeKind == MonoDebugRuntimeKind.Unity && StartKind == DbgStartKind.Attach)
+			if (monoDebugRuntimeKind == MonoDebugRuntimeKind.Unity)
 				return false;
 			if (IsNotMainThread(thread))
 				return false;
